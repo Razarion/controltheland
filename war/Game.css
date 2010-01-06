@@ -1,0 +1,218 @@
+/** Add css rules here for your application. */
+
+/** Example rules used by the template application (remove for your app) */
+h1 {
+    font-size: 2em;
+    font-weight: bold;
+    color: #777777;
+    margin: 40px 0px 70px;
+    text-align: center;
+}
+
+td.box {
+    border: 1px dashed blue;
+    padding: 10px;
+}
+
+.sendButton {
+    display: block;
+    font-size: 16pt;
+}
+
+.dialogVPanel {
+    margin: 5px;
+}
+
+.serverResponseLabelError {
+    color: red;
+}
+
+/** Set ids using widget.getElement().setId("idOfElement") */
+#closeButton {
+    margin: 15px 6px 6px;
+}
+
+.gwt-marked {
+    border-color: white;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.gwt-unmarked {
+    border-style: none;
+}
+
+.gwt-ProgressBar-shell {
+    border: 0px solid #faf9f7;
+    border-right: 0px solid #848280;
+    border-bottom: 0px solid #848280;
+    background-color: #FF0000;
+    height: 3px;
+    width: 100%;
+}
+
+.gwt-ProgressBar-shell .gwt-ProgressBar-bar {
+    background-color: #00FF00;
+}
+
+.gwt-ProgressBar-shell .gwt-ProgressBar-text {
+    padding: 0px;
+    margin: 0px;
+    color: white;
+}
+
+.gwt-DeviceBuildBar-shell {
+    border: 0px solid #faf9f7;
+    border-right: 0px solid #848280;
+    border-bottom: 0px solid #848280;
+    height: 4px;
+    width: 100%;
+}
+
+.gwt-DeviceBuildBar-shell .gwt-ProgressBar-bar {
+    background-color: #5555FF;
+}
+
+.gwt-EnergyBar-shell {
+    border: 0px solid #faf9f7;
+    border-right: 0px solid #848280;
+    border-bottom: 0px solid #848280;
+    background-color: #00FF00;
+    height: 4px;
+    width: 100%;
+}
+
+.gwt-EnergyBar-shell .gwt-ProgressBar-bar {
+    background-color: #FF0000;
+}
+
+.gwt-PushButton-up,
+    .gwt-PushButton-up-hovering,
+    .gwt-PushButton-up-disabled,
+    .gwt-PushButton-down,
+    .gwt-PushButton-down-hovering,
+    .gwt-PushButton-down-disabled {
+    margin: 0;
+    text-decoration: none;
+    background: url("images/hborder.png") repeat-x 0px -27px;
+}
+
+.gwt-PushButton-up,
+    .gwt-PushButton-up-hovering,
+    .gwt-PushButton-up-disabled {
+    padding: 3px 5px 3px 5px;
+}
+
+.gwt-PushButton-up {
+    border: 1px outset #ccc;
+    cursor: pointer;
+}
+
+.gwt-PushButton-up-hovering {
+    border: 1px outset;
+    border-color: #9cf #69e #69e #7af;
+    cursor: pointer;
+}
+
+.gwt-PushButton-up-disabled {
+    border: 1px outset #ccc;
+    cursor: default;
+    opacity: .5;
+    filter: alpha(opacity = 40);
+    zoom: 1;
+}
+
+.gwt-PushButton-down,
+    .gwt-PushButton-down-hovering,
+    .gwt-PushButton-down-disabled {
+    padding: 4px 4px 2px 6px;
+}
+
+.gwt-PushButton-down {
+    border: 1px inset #666;
+    cursor: pointer;
+}
+
+.gwt-PushButton-down-hovering {
+    border: 1px inset;
+    border-color: #9cf #69e #69e #7af;
+    cursor: pointer;
+}
+
+.gwt-PushButton-down-disabled {
+    border: 1px outset #ccc;
+    cursor: default;
+    opacity: 0.5;
+    filter: alpha(opacity = 40);
+    zoom: 1;
+}
+
+.speechBubble {
+    border: none;
+    padding: 0px;
+    background: transparent;
+}
+
+.topMapPanel {
+}
+
+.topMapPanel .topCenter {
+    background: url(images/template/border/borderT.gif) repeat-X;
+    height: 20px;
+}
+
+.topMapPanel .bottomCenter {
+    background: url(images/template/border/borderB.gif) repeat-X;
+    height: 20px;
+}
+
+.topMapPanel .middleLeft {
+    background: url(images/template/border/borderL.gif) repeat-y;
+    width: 20px;
+}
+
+.topMapPanel .middleRight {
+    background: url(images/template/border/borderR.gif) repeat-y;
+    width: 20px;
+}
+
+.topMapPanel .topLeft {
+    background: url(images/template/border/cornerTL.gif) no-repeat;
+}
+
+.topMapPanel .topRight {
+    background: url(images/template/border/cornerTR.gif) no-repeat;
+}
+
+.topMapPanel .bottomLeft {
+    background: url(images/template/border/cornerBL.gif) no-repeat;
+}
+
+.topMapPanel .bottomRight {
+    background: url(images/template/border/cornerBR.gif) no-repeat;
+}
+
+.topMapPanel .topLeftInner,
+    .topMapPanel .topRightInner,
+    .topMapPanel .bottomLeftInner,
+    .topMapPanel .bottomRightInner {
+    width: 5px;
+    height: 5px;
+    zoom: 1;
+}
+
+* html .topMapPanel .topLeftInner,
+    * html .topMapPanel .topRightInner,
+    * html .topMapPanel .bottomLeftInner,
+    * html .topMapPanel .bottomRightInner {
+    width: 5px;
+    height: 5px;
+    overflow: hidden;
+}
+
+.middleCenterInner {
+}
+
+.topMapPanelText {
+    color: darkorange;
+}
