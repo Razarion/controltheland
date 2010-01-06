@@ -1,0 +1,24 @@
+
+.tile-selector td {
+  border: 1px solid #BBBBBB;
+  padding: 3px;
+}
+
+.tile-selector-item-selected {
+    border-color: blue;
+    border-width: 3px;
+    border-style: solid;
+}
+
+.tile-selector-item-unselected {
+    border-width: 3px;
+    border-color: transparent;
+}
+
+tr.odd {
+    background-color: #FFFFFF;
+}
+
+tr.even {
+    background-color: #ECECEC;
+}

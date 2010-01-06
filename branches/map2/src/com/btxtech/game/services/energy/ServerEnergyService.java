@@ -1,0 +1,35 @@
+/*
+ * Copyright (c) 2010.
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; version 2 of the License.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ */
+
+package com.btxtech.game.services.energy;
+
+import com.btxtech.game.jsre.common.gameengine.services.energy.EnergyService;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.services.base.Base;
+import java.util.Collection;
+
+/**
+ * User: beat
+ * Date: 23.12.2009
+ * Time: 16:52:23
+ */
+public interface ServerEnergyService extends EnergyService {
+    void onBaseItemKilled(SyncBaseItem syncBaseItem);
+
+    void onBaseKilled(Base base);
+
+    void restoreItems(Collection<SyncItem> syncItems);
+
+    void pauseService(boolean pause);
+}
