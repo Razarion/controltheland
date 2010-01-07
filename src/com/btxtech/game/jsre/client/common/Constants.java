@@ -21,8 +21,8 @@ package com.btxtech.game.jsre.client.common;
 public class Constants {
     // Terrain
     public static final String URL_PARAM_TERRAIN_TILE_ID = "id";
-    public static final int TILE_WIDTH = 64;
-    public static final int TILE_HEIGHT = 64;
+    public static final int TILE_WIDTH = 100;
+    public static final int TILE_HEIGHT = 100;
     public static final int SCROLL_DISTANCE = 500;
     public static final String TERRAIN = "/spring/terrain?id=";
 
