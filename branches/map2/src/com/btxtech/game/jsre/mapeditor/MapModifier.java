@@ -13,13 +13,11 @@
 
 package com.btxtech.game.jsre.mapeditor;
 
-import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.TerrainMouseButtonListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.TerrainUtil;
 import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 
 /**
@@ -51,11 +49,12 @@ public class MapModifier implements TerrainMouseButtonListener {
         Index tileIndex = TerrainUtil.getTerrainTileIndexForAbsPosition(absoluteX, absoluteY);
         TerrainView terrainView = TerrainView.getInstance();
         terrainView.getTerrainHandler().getTerrainField()[tileIndex.getX()][tileIndex.getY()] = tileId;
-        terrainView.getTerrainHandler().loadTilesAndDrawMap();
+        terrainView.getTerrainHandler().loadBackgroundAndDrawMap();
     }
 
     public void saveMap() {
-        int[][] filed = TerrainView.getInstance().getTerrainHandler().getTerrainField();
+        // TODO
+       /* int[][] filed = TerrainView.getInstance().getTerrainHandler().getTerrainField();
         button.setEnabled(false);
         terrainAsync.setTerrainField(filed, new AsyncCallback<Void>() {
             @Override
@@ -69,6 +68,6 @@ public class MapModifier implements TerrainMouseButtonListener {
                 button.setEnabled(true);
             }
 
-        });
+        });*/
     }
 }

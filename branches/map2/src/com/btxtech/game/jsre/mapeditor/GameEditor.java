@@ -16,7 +16,7 @@ package com.btxtech.game.jsre.mapeditor;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import java.util.List;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 
 /**
  * User: beat
@@ -25,11 +25,13 @@ import java.util.List;
  */
 @RemoteServiceRelativePath("gwtrpc/TerrainServiceService")
 public interface GameEditor extends RemoteService {
-   
-    int[][] getTerrainField();
 
-    void setTerrainField(int[][] filed);
+    //int[][] getTerrainField();
 
-    List<Integer> getTiles();
+    // void setTerrainField(int[][] filed);
+
+    //List<Integer> getTiles();
+
+    TerrainSettings getTerrainSettings();
 
 }

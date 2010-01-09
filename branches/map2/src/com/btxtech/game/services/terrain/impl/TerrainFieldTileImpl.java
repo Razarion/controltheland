@@ -27,6 +27,7 @@ import javax.persistence.ManyToOne;
  * Time: 11:25:46 AM
  */
 @Entity(name = "TERRAIN_FIELD")
+@Deprecated
 public class TerrainFieldTileImpl implements TerrainFieldTile {
     @EmbeddedId
     private DbKey dbKey;

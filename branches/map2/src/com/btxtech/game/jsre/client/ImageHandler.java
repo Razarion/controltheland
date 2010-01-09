@@ -118,10 +118,6 @@ public class ImageHandler {
         return angle;
     }
 
-    public static String getTerrainImageUrl(int terrainTileId) {
-        return Constants.TERRAIN + terrainTileId;
-    }
-
     public static String getMuzzleFlashImageUrl(BaseItemType baseItemType) {
         StringBuilder url = new StringBuilder();
         url.append(Constants.MUZZLE_ITEM_IMAGE_URL);
@@ -136,9 +132,26 @@ public class ImageHandler {
         return url.toString();
     }
 
+    @Deprecated
     public static Image getTerrainImage(int terrainTileId) {
         return createImageIE6TransparencyProblem(getTerrainImageUrl(terrainTileId), Constants.TILE_WIDTH, Constants.TILE_HEIGHT);
     }
+
+    @Deprecated
+    public static String getTerrainImageUrl(int terrainTileId) {
+        return Constants.TERRAIN_CONTROLLER_URL + terrainTileId;
+    }
+
+    public static String getTerrainBackgroundUrl() {
+        StringBuilder url = new StringBuilder();
+        url.append(Constants.TERRAIN_CONTROLLER_URL);
+        url.append("?");
+        url.append(Constants.TERRAIN_IMG_TYPE);
+        url.append("=");
+        url.append(Constants.TERRAIN_IMG_TYPE_BACKGROUND);
+        return url.toString();
+    }
+
 
     public static String getExplosion() {
         return "/" + IMAGES + "/" + EXPLOSION + "/" + "ex4" + PNG_SUFFIX;

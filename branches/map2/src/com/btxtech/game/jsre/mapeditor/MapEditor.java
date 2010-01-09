@@ -15,15 +15,16 @@ package com.btxtech.game.jsre.mapeditor;
 
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
+import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
 import java.util.List;
 
 /**
@@ -38,7 +39,7 @@ public class MapEditor implements EntryPoint {
         // Setup common
         GwtCommon.setUncaughtExceptionHandler();
         GwtCommon.disableBrowserContextMenuJSNI();
-        GameEditorAsync terrainAsync = GWT.create(GameEditor.class);
+        GameEditorAsync gameEditor = GWT.create(GameEditor.class);
 
         // Setup map
         RootPanel.get("map").add(MapWindow.getAbsolutePanel());
@@ -52,7 +53,7 @@ public class MapEditor implements EntryPoint {
 
 
         Button saveMapButton = new Button("Save Map");
-        final MapModifier mapModifier = new MapModifier(terrainAsync, tileSelector, saveMapButton);        
+        final MapModifier mapModifier = new MapModifier(gameEditor, tileSelector, saveMapButton);
         saveMapButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
@@ -62,19 +63,19 @@ public class MapEditor implements EntryPoint {
         RootPanel.get("tools").add(saveMapButton);
 
         // Get data from server
-        terrainAsync.getTerrainField(new AsyncCallback<int[][]>() {
+        gameEditor.getTerrainSettings(new AsyncCallback<TerrainSettings>() {
             @Override
             public void onFailure(Throwable throwable) {
                 GwtCommon.handleException(throwable);
             }
 
             @Override
-            public void onSuccess(int[][] terrainField) {
-                TerrainView.getInstance().setupTerrain(terrainField, null);
+            public void onSuccess(TerrainSettings terrainSettings) {
+               TerrainView.getInstance().setupTerrain(terrainSettings);
             }
         });
 
-        terrainAsync.getTiles(new AsyncCallback<List<Integer>>() {
+        /*gameEditor.getTiles(new AsyncCallback<List<Integer>>() {
             @Override
             public void onFailure(Throwable throwable) {
                 GwtCommon.handleException(throwable);
@@ -84,10 +85,9 @@ public class MapEditor implements EntryPoint {
             public void onSuccess(List<Integer> tileIds) {
                 tileSelector.setupTiles(tileIds);
             }
-        });
+        });*/
 
         TerrainView.getInstance().setTerrainMouseButtonListener(mapModifier);
-        //TerrainView.getInstance().setTerrainMouseMoveListener(mapModifier);
     }
 
 }

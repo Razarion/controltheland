@@ -49,6 +49,14 @@ public class DbKey implements Serializable{
         return new Index(indexX, indexY);
     }
 
+    public void setIndexX(int indexX) {
+        this.indexX = indexX;
+    }
+
+    public void setIndexY(int indexY) {
+        this.indexY = indexY;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.mapeditor;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import java.util.List;
 
 /**
@@ -25,9 +26,11 @@ import java.util.List;
  */
 @RemoteServiceRelativePath("gwtrpc/TerrainServiceService")
 public interface GameEditorAsync extends RemoteService {
-    void getTerrainField(AsyncCallback<int[][]> async);
+    //void getTerrainField(AsyncCallback<int[][]> async);
 
-    void getTiles(AsyncCallback<List<Integer>> async);
+    //void getTiles(AsyncCallback<List<Integer>> async);
 
-    void setTerrainField(int[][] filed, AsyncCallback<Void> asyncCallback);
+   // void setTerrainField(int[][] filed, AsyncCallback<Void> asyncCallback);
+
+    void getTerrainSettings(AsyncCallback<TerrainSettings> asyncCallback);
 }

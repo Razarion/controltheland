@@ -26,11 +26,11 @@ import com.google.gwt.widgetideas.graphics.client.Color;
  * Date: 22.12.2009
  * Time: 21:52:27
  */
-public class FrameView extends MiniMap implements TerrainScrollListener, TerrainListener, MouseDownHandler {
+public class RadarFrameView extends MiniMap implements TerrainScrollListener, TerrainListener, MouseDownHandler {
     private double scaleX = 1.0;
     private double scaleY = 1.0;
 
-    public FrameView(int width, int height) {
+    public RadarFrameView(int width, int height) {
         super(width, height);
         TerrainView.getInstance().addTerrainScrollListener(this);
         TerrainView.getInstance().getTerrainHandler().addTerrainListener(this);
