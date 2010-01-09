@@ -14,8 +14,8 @@
 package com.btxtech.game.controllers;
 
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.services.terrain.TerrainImage;
 import com.btxtech.game.services.terrain.TerrainService;
-import com.btxtech.game.services.terrain.Tile;
 import java.io.IOException;
 import java.io.OutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -39,21 +39,22 @@ public class TerrainImageController implements Controller {
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
-
-
-        String tileIdString = httpServletRequest.getParameter(Constants.URL_PARAM_TERRAIN_TILE_ID);
-
-        if (tileIdString == null) {
-            handleBadRequest(httpServletResponse);
-            return null;
-        }
-
         try {
-            int tileId = Integer.parseInt(tileIdString);
-            Tile tile = terrainService.getTile(tileId);
-            //httpServletResponse.setContentType(tile.getImageMimeType());
-            byte[] image = tile.getImageData();
+            String type = httpServletRequest.getParameter(Constants.TERRAIN_IMG_TYPE);
+            TerrainImage terrainImage;
+            if (Constants.TERRAIN_IMG_TYPE_BACKGROUND.equalsIgnoreCase(type)) {
+                terrainImage = terrainService.getTerrainSetting().getTerrainBackground();
+            } else if (Constants.TERRAIN_IMG_TYPE_FOREGROUND.equalsIgnoreCase(type)) {
+                String strId = httpServletRequest.getParameter(Constants.TERRAIN_IMG_TYPE_IMG_ID);
+                int id = Integer.parseInt(strId);
+                terrainImage = terrainService.getTerrainImage(id);
+            } else {
+                throw new IllegalArgumentException("Unknown terrain image type: " + type);
+            }
+
+            byte[] image = terrainImage.getImageData();
             httpServletResponse.setContentLength(image.length);
+            httpServletResponse.setContentType(terrainImage.getContentType());
             OutputStream out = httpServletResponse.getOutputStream();
             out.write(image);
             out.close();
@@ -62,7 +63,6 @@ public class TerrainImageController implements Controller {
             handleBadRequest(httpServletResponse);
             return null;
         }
-
 
         return null;
     }

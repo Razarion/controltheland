@@ -27,6 +27,7 @@ import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.terrain.TerrainChangeListener;
 import com.btxtech.game.services.terrain.TerrainFieldTile;
 import com.btxtech.game.services.terrain.TerrainService;
+import com.btxtech.game.services.terrain.DbTerrainSetting;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,10 +60,10 @@ public class CollisionServiceImpl implements CollisionService, TerrainChangeList
     }
 
     private void setupPassableTerrain() {
-        Index atomCount = terrainService.getTerrainFieldTileCount();
-        passableTerrain = new boolean[atomCount.getX()][atomCount.getY()];
-        for (int x = 0; x < atomCount.getX(); x++) {
-            for (int y = 0; y < atomCount.getY(); y++) {
+        DbTerrainSetting dbTerrainSetting = terrainService.getTerrainSetting();
+        passableTerrain = new boolean[dbTerrainSetting.getTileXCount()][dbTerrainSetting.getTileYCount()];
+        for (int x = 0; x < dbTerrainSetting.getTileXCount(); x++) {
+            for (int y = 0; y < dbTerrainSetting.getTileYCount(); y++) {
                 TerrainFieldTile terrainTile = terrainService.getTerrainFieldTile(x, y);
                 passableTerrain[x][y] = isTerrainAtomPassable(terrainTile);
             }
@@ -169,11 +170,11 @@ public class CollisionServiceImpl implements CollisionService, TerrainChangeList
                 canGrowNorth = false;
             }
 
-            if (rectangle.getEnd().getX() == terrainService.getPlayFieldXSize() - 1) {
+            if (rectangle.getEnd().getX() == terrainService.getTerrainSetting().getPlayFieldXSize() - 1) {
                 canGrowEast = false;
             }
 
-            if (rectangle.getEnd().getY() == terrainService.getPlayFieldYSize() - 1) {
+            if (rectangle.getEnd().getY() == terrainService.getTerrainSetting().getPlayFieldYSize() - 1) {
                 canGrowSouth = false;
             }
 
@@ -320,7 +321,8 @@ public class CollisionServiceImpl implements CollisionService, TerrainChangeList
 
     @Override
     public boolean isFree(Index position, ItemType toBePlaced) {
-        Index atomPosition = TerrainUtil.getTerrainTileIndexForAbsPosition(position);
+        // TODO
+        /*Index atomPosition = TerrainUtil.getTerrainTileIndexForAbsPosition(position);
         int tileWidth = TerrainUtil.getTerrainTileCount4PixelWidth(toBePlaced.getWidth());
         int tileHeight = TerrainUtil.getTerrainTileCount4PixelHeight(toBePlaced.getHeight());
 
@@ -330,7 +332,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainChangeList
                     return false;
                 }
             }
-        }
+        }*/
         return true;
     }
 
@@ -338,8 +340,8 @@ public class CollisionServiceImpl implements CollisionService, TerrainChangeList
     public Index getFreeRandomPosition(ItemType itemType, int edgeLength) {
         Random random = new Random();
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
-            int x = random.nextInt(terrainService.getPlayFieldXSize() - 200) + 100;
-            int y = random.nextInt(terrainService.getPlayFieldYSize() - 200) + 100;
+            int x = random.nextInt(terrainService.getTerrainSetting().getPlayFieldXSize() - 200) + 100;
+            int y = random.nextInt(terrainService.getTerrainSetting().getPlayFieldYSize() - 200) + 100;
             Index point = new Index(x, y);
             if (!isFree(point, itemType)) {
                 continue;

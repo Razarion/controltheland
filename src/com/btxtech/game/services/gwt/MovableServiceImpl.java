@@ -102,7 +102,8 @@ public class MovableServiceImpl implements MovableService {
     @Override
     public int[][] getTerrainField() {
         try {
-            return terrainService.getTerrainField();
+            // TODO return terrainService.getTerrainField();
+            return null;
         } catch (Throwable t) {
             log.error("", t);
             return null;
@@ -115,8 +116,8 @@ public class MovableServiceImpl implements MovableService {
             GameInfo gameInfo = new GameInfo();
             gameInfo.setBase(baseService.getBase().getSimpleBase());
             gameInfo.setStartPoint(baseService.getBase().getIndexOfInteresst());
-            gameInfo.setTerrainField(terrainService.getTerrainField());
-            gameInfo.setPassableTerrainTileIds(terrainService.getPassableTerrainTileIds());
+            // TODO return gameInfo.setTerrainField(terrainService.getTerrainField());
+            // TODO return gameInfo.setPassableTerrainTileIds(terrainService.getPassableTerrainTileIds());
             gameInfo.setAccountBalance(baseService.getBase().getAccountBalance());
             gameInfo.setAllowedItemTypes(serverItemTypeAccessService.getAllowedItemTypes());
             gameInfo.setXp(serverItemTypeAccessService.getXp());

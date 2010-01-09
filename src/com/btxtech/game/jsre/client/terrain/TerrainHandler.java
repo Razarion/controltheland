@@ -14,16 +14,14 @@
 package com.btxtech.game.jsre.client.terrain;
 
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainService;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.TerrainUtil;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.widgetideas.graphics.client.ImageLoader;
 import java.util.List;
-import java.util.Collection;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -33,25 +31,18 @@ import java.util.HashMap;
  * Time: 22:58:26
  */
 public class TerrainHandler implements TerrainService {
-    private int tileXCount = 50;
-    private int tileYCount = 50;
-    private int terrainWidth;
-    private int terrainHeight;
-    private int[][] terrainField;
-    private Collection<Integer> passableTerrainTileIds;
-    private HashMap<Integer, ImageElement> terrainTileImages = new HashMap<Integer, ImageElement>();    
+    private HashMap<Integer, ImageElement> terrainTileImages = new HashMap<Integer, ImageElement>();
     private ArrayList<TerrainListener> terrainListeners = new ArrayList<TerrainListener>();
+    private TerrainSettings terrainSettings;
+    private ImageElement backgroundImage;
 
-    public void setupTerrain(int[][] terrainField, Collection<Integer> passableTerrainTileIds) {
-        this.terrainField = terrainField;
-        this.passableTerrainTileIds = passableTerrainTileIds;
+    public void setupTerrain(TerrainSettings terrainSettings) {
+        this.terrainSettings = terrainSettings;
+        loadBackgroundAndDrawMap();
+    }
 
-        tileXCount = terrainField.length;
-        tileYCount = terrainField[0].length;
-        terrainWidth = Constants.TILE_WIDTH * tileXCount;
-        terrainHeight = Constants.TILE_HEIGHT * tileYCount;
-
-        loadTilesAndDrawMap();
+    public TerrainSettings getTerrainSettings() {
+        return terrainSettings;
     }
 
     @Override
@@ -71,11 +62,14 @@ public class TerrainHandler implements TerrainService {
 
     @Override
     public boolean isFree(Index posititon, ItemType itemType) {
+        // TODO
         return true;
     }
 
+    @Deprecated
     public boolean isTerrainPassable(Index absolutePos) {
-        if (absolutePos == null) {
+        // TODO
+        /* if (absolutePos == null) {
             return false;
         }
         Index tilePos = TerrainUtil.getTerrainTileIndexForAbsPosition(absolutePos);
@@ -84,35 +78,38 @@ public class TerrainHandler implements TerrainService {
         }
 
         int tileId = terrainField[tilePos.getX()][tilePos.getY()];
-        return passableTerrainTileIds.contains(tileId);
+        return passableTerrainTileIds.contains(tileId);*/
+        return true;
     }
 
+    @Deprecated
     public int getTileXCount() {
-        return tileXCount;
+        return 0;
     }
 
+    @Deprecated
     public int getTileYCount() {
-        return tileYCount;
+        return 0;
     }
 
+    @Deprecated
     public int getTerrainWidth() {
-        return terrainWidth;
+        return 0;
     }
 
+    @Deprecated
     public int getTerrainHeight() {
-        return terrainHeight;
+        return 0;
     }
 
+    @Deprecated
     public int getTileId(int x, int y) {
-        return terrainField[x][y];
+        return 0;
     }
 
-    public boolean isLoaded() {
-        return terrainField != null;
-    }
-
+    @Deprecated
     public int[][] getTerrainField() {
-        return terrainField;
+        return null;
     }
 
     public ImageElement getTileImageElement(int tileId) {
@@ -120,38 +117,22 @@ public class TerrainHandler implements TerrainService {
     }
 
     public void addTerrainListener(TerrainListener terrainListener) {
-       terrainListeners.add(terrainListener);
+        terrainListeners.add(terrainListener);
     }
 
-    public void loadTilesAndDrawMap() {
-        // Get used tiles
-        final ArrayList<Integer> usedTileIds = new ArrayList<Integer>();
-        for (int x = 0; x < getTileXCount(); x++) {
-            for (int y = 0; y < getTileYCount(); y++) {
-                int tileId = getTileId(x, y);
-                if (!usedTileIds.contains(tileId)) {
-                    usedTileIds.add(tileId);
-                }
-            }
-        }
+    public ImageElement getBackgroundImage() {
+        return backgroundImage;
+    }
 
-        // Load all images
-        final ArrayList<String> urls = new ArrayList<String>();
-        for (int tileId : usedTileIds) {
-            String url = ImageHandler.getTerrainImageUrl(tileId);
-            urls.add(url);
-        }
-
-        ImageLoader.loadImages(urls.toArray(new String[urls.size()]), new ImageLoader.CallBack() {
+    public void loadBackgroundAndDrawMap() {
+        ImageLoader.loadImages(new String[]{ImageHandler.getTerrainBackgroundUrl()}, new ImageLoader.CallBack() {
 
             @Override
             public void onImagesLoaded(ImageElement[] imageElements) {
                 try {
-                    for (int i = 0; i < imageElements.length; i++) {
-                        terrainTileImages.put(usedTileIds.get(i), imageElements[i]);
-                    }
+                    backgroundImage = imageElements[0];
                     for (TerrainListener terrainListener : terrainListeners) {
-                         terrainListener.onTerrainChanged();
+                        terrainListener.onTerrainChanged();
                     }
                 } catch (Throwable throwable) {
                     GwtCommon.handleException(throwable);

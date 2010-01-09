@@ -13,20 +13,17 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.services.terrain.TerrainImage;
 import com.btxtech.game.services.terrain.TerrainService;
-import com.btxtech.game.services.terrain.Tile;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Resource;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.repeater.Item;
@@ -45,46 +42,105 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 public class TerrainTileEditor extends WebPage {
     @SpringBean
     private TerrainService terrainService;
-    private HashMap<Tile, Model<TerrainType>> allowedItems = new HashMap<Tile, Model<TerrainType>>();
-    private HashMap<Tile, FileUploadField> uploads = new HashMap<Tile, FileUploadField>();
+    private TerrainImage terrainBackgroundImage;
 
     public TerrainTileEditor() {
+        terrainBackgroundImage = terrainService.getTerrainSetting().getTerrainBackground();
         Form form = new Form("tileForm");
         add(form);
 
-        final List<TerrainType> allItemTypes = Arrays.asList(TerrainType.values());
+        // Background image
+        Image bgImage = new Image("bgImage") {
+            protected Resource getImageResource() {
+                if (terrainBackgroundImage != null) {
+                    return new ByteArrayResource(terrainBackgroundImage.getContentType(), terrainBackgroundImage.getImageData());
+                } else {
+                    return null;
+                }
+            }
+        };
+        form.add(bgImage);
+        form.add(new FileUploadField("bgUpload", new IModel<FileUpload>() {
+            @Override
+            public FileUpload getObject() {
+                return null;
+            }
 
+            @Override
+            public void setObject(FileUpload fileUpload) {
+                terrainBackgroundImage = new TerrainImage();
+                terrainBackgroundImage.setImageData(fileUpload.getBytes());
+                terrainBackgroundImage.setContentType(fileUpload.getContentType());
+            }
 
-        DataView<Tile> tileList = new DataView<Tile>("tiles", new TileProvider()) {
-            protected void populateItem(final Item<Tile> item) {
+            @Override
+            public void detach() {
+                //Ignored
+            }
+        }));
+        form.add(new Label("bgSize", new IModel<Double>() {
+            @Override
+            public Double getObject() {
+                TerrainImage terrainImage = terrainService.getTerrainSetting().getTerrainBackground();
+                if (terrainImage != null) {
+                    return terrainImage.getImageData().length / 1000.0;
+                } else {
+                    return 0.0;
+                }
+            }
+
+            @Override
+            public void setObject(Double aDouble) {
+                // Ignore
+            }
+
+            @Override
+            public void detach() {
+                // Ignore
+            }
+        }));
+
+        // Image table
+        final DataView<TerrainImage> tileList = new DataView<TerrainImage>("tiles", new TileProvider()) {
+            protected void populateItem(final Item<TerrainImage> item) {
                 // image
                 if (item.getModelObject().getImageData() != null && item.getModelObject().getImageData().length > 0) {
                     Image image = new Image("image", new ByteArrayResource("", item.getModelObject().getImageData()));
                     item.add(image);
-                    image.add(new AttributeModifier("width", true, new Model<Integer>(Constants.TILE_WIDTH)));
-                    image.add(new AttributeModifier("height", true, new Model<Integer>(Constants.TILE_HEIGHT)));
                 } else {
                     Image noImage = new Image("image");
                     noImage.setVisible(false);
                     item.add(noImage);
                 }
                 // upload
-                FileUploadField upload = new FileUploadField("upload");
-                uploads.put(item.getModelObject(), upload);
+                FileUploadField upload = new FileUploadField("upload", new IModel<FileUpload>() {
+                    @Override
+                    public FileUpload getObject() {
+                        return null;
+                    }
+
+                    @Override
+                    public void setObject(FileUpload fileUpload) {
+                        item.getModelObject().setImageData(fileUpload.getBytes());
+                        item.getModelObject().setContentType(fileUpload.getContentType());
+                    }
+
+                    @Override
+                    public void detach() {
+                        //Ignored
+                    }
+                });
                 item.add(upload);
                 // Size
-                double size = item.getModelObject().getImageSize() / 1000.0;
+                double size = item.getModelObject().getImageData() != null ? item.getModelObject().getImageData().length / 1000.0 : 0;
                 item.add(new Label("size", Double.toString(size)));
                 // Allowed Item
-                Model<TerrainType> allowedItemTypeModel = new Model<TerrainType>(item.getModelObject().getTerrainType());
-                allowedItems.put(item.getModelObject(), allowedItemTypeModel);
-                item.add(new DropDownChoice<TerrainType>("allowedItem", allowedItemTypeModel, allItemTypes));
                 // Delete
                 Button delete = new Button("delete") {
                     @Override
                     public void onSubmit() {
-                        super.onSubmit();
-                        terrainService.deleteTile(item.getModelObject());
+                        TileProvider tileProvider = (TileProvider) getDataProvider();
+                        tileProvider.removeTile(item.getModelObject());
                     }
                 };
                 item.add(delete);
@@ -96,54 +152,61 @@ public class TerrainTileEditor extends WebPage {
         form.add(new Button("save") {
             @Override
             public void onSubmit() {
-                super.onSubmit();
-                for (Tile tile : terrainService.getTiles()) {
-                    Model<TerrainType> itemType = allowedItems.get(tile);
-                    if (itemType != null) {
-                        tile.setTerrainType(itemType.getObject());
-                    }
-                    FileUploadField upload = uploads.get(tile);
-                    if (upload != null && upload.getFileUpload() != null && upload.getFileUpload().getBytes() != null && upload.getFileUpload().getBytes().length > 0) {
-                        tile.setImageData(upload.getFileUpload().getBytes());
-                    }
-
-                    terrainService.saveTile(tile);
-                }
+                TileProvider tileProvider = (TileProvider) tileList.getDataProvider();
+                terrainService.saveAndActivateTerrainImages(tileProvider.getTerrainImages(), terrainBackgroundImage);
             }
         });
 
         form.add(new Button("add") {
             @Override
             public void onSubmit() {
-                super.onSubmit();
-                terrainService.createTile();
+                TileProvider tileProvider = (TileProvider) tileList.getDataProvider();
+                tileProvider.createTile();
             }
         });
 
 
     }
 
-    class TileProvider implements IDataProvider<Tile> {
+    class TileProvider implements IDataProvider<TerrainImage> {
+        private List<TerrainImage> terrainImages;
+
+        TileProvider() {
+            terrainImages = terrainService.getTerrainImagesCopy();
+        }
+
         @Override
-        public Iterator<Tile> iterator(int first, int count) {
-            if (first != 0 && count != terrainService.getTiles().size()) {
-                throw new IllegalArgumentException("first: " + first + " count: " + count + " | " + terrainService.getTiles().size());
+        public Iterator<TerrainImage> iterator(int first, int count) {
+            if (first != 0 && count != terrainImages.size()) {
+                throw new IllegalArgumentException("first: " + first + " count: " + count + " | " + terrainImages.size());
             }
-            return terrainService.getTiles().iterator();
+            return terrainImages.iterator();
         }
 
         @Override
         public int size() {
-            return terrainService.getTiles().size();
+            return terrainImages.size();
         }
 
         @Override
-        public IModel<Tile> model(Tile tile) {
-            return new Model<Tile>(tile);
+        public IModel<TerrainImage> model(TerrainImage tile) {
+            return new Model<TerrainImage>(tile);
         }
 
         @Override
         public void detach() {
+        }
+
+        public void createTile() {
+            terrainImages.add(new TerrainImage());
+        }
+
+        public void removeTile(TerrainImage terrainImage) {
+            terrainImages.remove(terrainImage);
+        }
+
+        public List<TerrainImage> getTerrainImages() {
+            return terrainImages;
         }
     }
 

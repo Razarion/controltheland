@@ -15,8 +15,8 @@ package com.btxtech.game.jsre.client.terrain;
 
 import com.btxtech.game.jsre.client.ExtendedCanvas;
 import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -62,125 +62,88 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         canvas.sinkEvents(Event.ONMOUSEMOVE);
     }
 
-    public void setupTerrain(int[][] terrainField, Collection<Integer> passableTerrainTileIds) {
-        if (terrainField == null || terrainField.length == 0 || terrainField[0] == null || terrainField[0].length == 0) {
-            GwtCommon.sendLogToServer("Invalid terrain data received");
+    public void setupTerrain(TerrainSettings terrainSettings) {
+        if (terrainSettings == null) {
+            GwtCommon.sendLogToServer("Invalid terrain settings");
             return;
         }
         terrainHandler.addTerrainListener(this);
-        terrainHandler.setupTerrain(terrainField, passableTerrainTileIds);
+        terrainHandler.setupTerrain(terrainSettings);
+    }
+
+    @Deprecated
+    public void setupTerrain(int[][] terrainField, Collection<Integer> passableTerrainTileIds) {
     }
 
     public static TerrainView getInstance() {
         return INSTANCE;
     }
 
-    private void drawMap() {
-        if (!terrainHandler.isLoaded()) {
+    private void drawBackground() {
+        ImageElement imageElement = terrainHandler.getBackgroundImage();
+        if (imageElement == null) {
             return;
         }
-        int tileXStart = viewOriginLeft / Constants.TILE_WIDTH;
-        int tileXEnd = (viewOriginLeft + viewWidth) / Constants.TILE_WIDTH;
-        int tileYStart = viewOriginTop / Constants.TILE_HEIGHT;
-        int tileYEnd = (viewOriginTop + viewHeight) / Constants.TILE_HEIGHT;
+        int bgTileXStart = viewOriginLeft / imageElement.getWidth();
+        int bgTileXEnd = (viewOriginLeft + viewWidth) / imageElement.getWidth();
+        int bgTileYStart = viewOriginTop / imageElement.getHeight();
+        int bgTileYEnd = (viewOriginTop + viewHeight) / imageElement.getHeight();
 
-        int tileLeftOffset = viewOriginLeft % Constants.TILE_WIDTH;
-        int tileRightOffset = (viewOriginLeft + viewWidth) % Constants.TILE_WIDTH;
-        int tileTopOffset = viewOriginTop % Constants.TILE_HEIGHT;
-        int tileBottomOffset = (viewOriginTop + viewHeight) % Constants.TILE_HEIGHT;
+        int bgTileLeftOffset = viewOriginLeft % imageElement.getWidth();
+        int bgTileRightOffset = (viewOriginLeft + viewWidth) % imageElement.getWidth();
+        int bgTileTopOffset = viewOriginTop % imageElement.getHeight();
+        int bgTileBottomOffset = (viewOriginTop + viewHeight) % imageElement.getHeight();
 
-        canvas.clear();
+        canvas.clear(); // TODO may remove
         int posX = 0;
         int posY;
-        for (int x = tileXStart; x <= tileXEnd; x++) {
+        for (int x = bgTileXStart; x <= bgTileXEnd; x++) {
             posY = 0;
             int srcXStart;
             int srcXWidth;
-            if (x == tileXStart) {
+            if (x == bgTileXStart) {
                 // first column
-                srcXStart = tileLeftOffset;
-                srcXWidth = Constants.TILE_WIDTH - tileLeftOffset;
-            } else if (x == tileXEnd) {
+                srcXStart = bgTileLeftOffset;
+                srcXWidth = imageElement.getWidth() - bgTileLeftOffset;
+            } else if (x == bgTileXEnd) {
                 // last column
                 srcXStart = 0;
-                srcXWidth = tileRightOffset;
+                srcXWidth = bgTileRightOffset;
             } else {
                 // middle
                 srcXStart = 0;
-                srcXWidth = Constants.TILE_WIDTH;
+                srcXWidth = imageElement.getWidth();
             }
             if (srcXWidth == 0) {
                 // Sould never happen but happens in opera
                 continue;
             }
-            for (int y = tileYStart; y <= tileYEnd; y++) {
+            for (int y = bgTileYStart; y <= bgTileYEnd; y++) {
                 int srcYStart;
                 int srcYWidth;
-                if (y == tileYStart) {
+                if (y == bgTileYStart) {
                     // first row
-                    srcYStart = tileTopOffset;
-                    srcYWidth = Constants.TILE_HEIGHT - tileTopOffset;
-                } else if (y == tileYEnd) {
+                    srcYStart = bgTileTopOffset;
+                    srcYWidth = imageElement.getHeight() - bgTileTopOffset;
+                } else if (y == bgTileYEnd) {
                     // last row
                     srcYStart = 0;
-                    srcYWidth = tileBottomOffset;
+                    srcYWidth = bgTileBottomOffset;
                 } else {
                     // middle
                     srcYStart = 0;
-                    srcYWidth = Constants.TILE_HEIGHT;
+                    srcYWidth = imageElement.getHeight();
                 }
                 if (srcYWidth == 0) {
                     // Sould never happen but happens in opera
                     continue;
                 }
 
-                int tileId = terrainHandler.getTileId(x, y);
-                ImageElement imageElement = terrainHandler.getTileImageElement(tileId);
-                if (imageElement != null && imageElement.getHeight() == Constants.TILE_HEIGHT && imageElement.getWidth() == Constants.TILE_WIDTH) {
-                    try {
-                        canvas.drawImage(imageElement, srcXStart, srcYStart, srcXWidth, srcYWidth, posX, posY, srcXWidth, srcYWidth);
-                    } catch (Throwable t) {
-                        GwtCommon.handleException(t);
-
-                        StringBuilder builder = new StringBuilder();
-                        builder.append("imageElement: ");
-                        builder.append(imageElement);
-                        builder.append("\n");
-
-                        builder.append("srcXStart: ");
-                        builder.append(srcXStart);
-                        builder.append("\n");
-
-                        builder.append("srcYStart: ");
-                        builder.append(srcYStart);
-                        builder.append("\n");
-
-                        builder.append("srcXWidth: ");
-                        builder.append(srcXWidth);
-                        builder.append("\n");
-
-                        builder.append("srcYWidth: ");
-                        builder.append(srcYWidth);
-                        builder.append("\n");
-
-                        builder.append("posX: ");
-                        builder.append(posX);
-                        builder.append("\n");
-
-                        builder.append("posY: ");
-                        builder.append(posY);
-                        builder.append("\n");
-
-                        builder.append("srcXWidth: ");
-                        builder.append(srcXWidth);
-                        builder.append("\n");
-
-                        builder.append("srcYWidth: ");
-                        builder.append(srcYWidth);
-                        builder.append("\n");
-
-                        GwtCommon.sendLogToServer(builder.toString());
-                    }
+                try {
+                    canvas.drawImage(imageElement, srcXStart, srcYStart, srcXWidth, srcYWidth, posX, posY, srcXWidth, srcYWidth);
+                } catch (Throwable t) {
+                    GwtCommon.handleException(t);
+                    sendErrorInfoToServer(imageElement, posX, posY, srcXStart, srcXWidth, srcYStart, srcYWidth);
                 }
                 posY += srcYWidth;
             }
@@ -203,10 +166,10 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
 
         if (tmpViewOriginLeft < 0) {
             left = left - tmpViewOriginLeft;
-        } else if (tmpViewOriginLeft > terrainHandler.getTerrainWidth() - viewWidth - 1) {
-            left = left - (tmpViewOriginLeft - (terrainHandler.getTerrainWidth() - viewWidth)) - 1;
+        } else if (tmpViewOriginLeft > terrainHandler.getTerrainSettings().getPlayFieldXSize() - viewWidth - 1) {
+            left = left - (tmpViewOriginLeft - (terrainHandler.getTerrainSettings().getPlayFieldXSize() - viewWidth)) - 1;
         }
-        if (viewWidth > terrainHandler.getTerrainWidth()) {
+        if (viewWidth > terrainHandler.getTerrainSettings().getPlayFieldXSize()) {
             left = -viewOriginLeft;
             viewOriginLeft = 0;
         } else {
@@ -215,10 +178,10 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
 
         if (tmpViewOriginTop < 0) {
             top = top - tmpViewOriginTop;
-        } else if (tmpViewOriginTop > terrainHandler.getTerrainHeight() - viewHeight - 1) {
-            top = top - (tmpViewOriginTop - (terrainHandler.getTerrainHeight() - viewHeight)) - 1;
+        } else if (tmpViewOriginTop > terrainHandler.getTerrainSettings().getPlayFieldYSize() - viewHeight - 1) {
+            top = top - (tmpViewOriginTop - (terrainHandler.getTerrainSettings().getPlayFieldYSize() - viewHeight)) - 1;
         }
-        if (viewHeight > terrainHandler.getTerrainHeight()) {
+        if (viewHeight > terrainHandler.getTerrainSettings().getPlayFieldYSize()) {
             top = 0;
             viewOriginTop = 0;
         } else {
@@ -230,7 +193,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
             return;
         }
 
-        drawMap();
+        drawBackground();
         fireScrollEvent(left, top);
     }
 
@@ -266,14 +229,14 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         viewWidth = parent.getOffsetWidth();
         viewHeight = parent.getOffsetHeight();
         canvas.resize(viewWidth, viewHeight);
-        drawMap();
+        drawBackground();
         Window.addResizeHandler(new ResizeHandler() {
             @Override
             public void onResize(ResizeEvent resizeEvent) {
                 viewWidth = parent.getOffsetWidth();
                 viewHeight = parent.getOffsetHeight();
                 canvas.resize(viewWidth, viewHeight);
-                drawMap();
+                drawBackground();
                 fireScrollEvent(0, 0);
             }
         });
@@ -318,6 +281,48 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
 
     @Override
     public void onTerrainChanged() {
-        drawMap();
+        drawBackground();
+    }
+
+
+    private void sendErrorInfoToServer(ImageElement imageElement, int posX, int posY, int srcXStart, int srcXWidth, int srcYStart, int srcYWidth) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("imageElement: ");
+        builder.append(imageElement);
+        builder.append("\n");
+
+        builder.append("srcXStart: ");
+        builder.append(srcXStart);
+        builder.append("\n");
+
+        builder.append("srcYStart: ");
+        builder.append(srcYStart);
+        builder.append("\n");
+
+        builder.append("srcXWidth: ");
+        builder.append(srcXWidth);
+        builder.append("\n");
+
+        builder.append("srcYWidth: ");
+        builder.append(srcYWidth);
+        builder.append("\n");
+
+        builder.append("posX: ");
+        builder.append(posX);
+        builder.append("\n");
+
+        builder.append("posY: ");
+        builder.append(posY);
+        builder.append("\n");
+
+        builder.append("srcXWidth: ");
+        builder.append(srcXWidth);
+        builder.append("\n");
+
+        builder.append("srcYWidth: ");
+        builder.append(srcYWidth);
+        builder.append("\n");
+
+        GwtCommon.sendLogToServer(builder.toString());
     }
 }

@@ -13,13 +13,34 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.terrain;
 
+import com.btxtech.game.jsre.client.common.Index;
+import java.io.Serializable;
+
 /**
  * User: beat
- * Date: 18.11.2009
- * Time: 15:09:53
+ * Date: 07.01.2010
+ * Time: 22:25:25
  */
-@Deprecated
-public enum TerrainType {
-    WATER,
-    LAND
+public class TerrainImagePosition implements Serializable{
+    private Index tile;
+    private int imageId;
+
+    /**
+     * Used by GWT
+     */
+    public TerrainImagePosition() {
+    }
+
+    public TerrainImagePosition(Index tile, int imageId) {
+        this.tile = tile;
+        this.imageId = imageId;
+    }
+
+    public Index getTile() {
+        return tile;
+    }
+
+    public int getImageId() {
+        return imageId;
+    }
 }

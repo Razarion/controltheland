@@ -27,6 +27,7 @@ import javax.persistence.Id;
  * Time: 6:45:44 PM
  */
 @Entity(name = "TERRAIN_TILE")
+@Deprecated
 public class TileImpl implements Tile, Serializable {
     @Id
     @GeneratedValue
