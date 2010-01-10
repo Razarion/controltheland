@@ -164,9 +164,7 @@ public class ClientSyncBaseItemView extends ClientSyncItemView {
         } else {
             SelectionHandler.getInstance().setTargetSelected(this, event);
         }
-        // Just to prevent image dragging
-        event.stopPropagation();
-        event.preventDefault();
+        GwtCommon.preventImageDragging(event);
     }
 
     public SyncBaseItem getSyncBaseItem() {

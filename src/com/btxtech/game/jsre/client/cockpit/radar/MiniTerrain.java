@@ -40,7 +40,9 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
             for (int y = 0; y < yCount; y++) {
                 int tileId = TerrainView.getInstance().getTerrainHandler().getTerrainField()[x][y];
                 ImageElement imageElement = TerrainView.getInstance().getTerrainHandler().getTileImageElement(tileId);
-                drawImage(imageElement, Constants.TILE_WIDTH * x, Constants.TILE_HEIGHT * y);
+                if (imageElement != null) {
+                    drawImage(imageElement, Constants.TILE_WIDTH * x, Constants.TILE_HEIGHT * y);
+                }
             }
         }
     }

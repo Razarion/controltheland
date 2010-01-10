@@ -72,8 +72,6 @@ public class TerrainServiceImpl implements TerrainService {
         List<DbTerrainImagePosition> dbTerrainImagePositions = hibernateTemplate.loadAll(DbTerrainImagePosition.class);
         for (DbTerrainImagePosition dbTerrainImagePosition : dbTerrainImagePositions) {
             terrainImagePositions.add(dbTerrainImagePosition.createTerrainImagePosition());
-            TerrainImage terrainImage = dbTerrainImagePosition.getTerrainImage();
-            terrainImages.put(terrainImage.getId(), terrainImage);
         }
 
 
