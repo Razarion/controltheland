@@ -14,6 +14,7 @@
 package com.btxtech.game.services.terrain;
 
 import com.btxtech.game.jsre.client.common.Index;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +39,8 @@ public interface TerrainService {
     TerrainImage getTerrainImage(int id);
 
     List<TerrainImage> getTerrainImagesCopy();
+
+    Collection<Integer> getTerrainImageIds();
 
     void saveAndActivateTerrainImages(List<TerrainImage> terrainImages, TerrainImage terrainBackgroundImage);
 }

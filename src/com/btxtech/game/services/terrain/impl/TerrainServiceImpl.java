@@ -17,12 +17,13 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.services.terrain.DbTerrainImagePosition;
+import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainChangeListener;
 import com.btxtech.game.services.terrain.TerrainFieldTile;
 import com.btxtech.game.services.terrain.TerrainImage;
 import com.btxtech.game.services.terrain.TerrainService;
-import com.btxtech.game.services.terrain.DbTerrainSetting;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -124,6 +125,11 @@ public class TerrainServiceImpl implements TerrainService {
     @Override
     public List<TerrainImage> getTerrainImagesCopy() {
         return new ArrayList<TerrainImage>(terrainImages.values());
+    }
+
+    @Override
+    public Collection<Integer> getTerrainImageIds() {
+        return new ArrayList<Integer>(terrainImages.keySet());
     }
 
     @Override

@@ -13,28 +13,33 @@
 
 package com.btxtech.game.jsre.mapeditor;
 
+import com.btxtech.game.jsre.client.TopMapPanel;
 import com.google.gwt.user.client.ui.FlexTable;
-import java.util.List;
+import com.google.gwt.user.client.ui.Widget;
+import java.util.Collection;
 
 /**
  * User: beat
  * Date: Sep 2, 2009
  * Time: 9:30:48 PM
  */
-public class TileSelector extends FlexTable {
+public class TileSelector  extends TopMapPanel {
     private TileSelectorItem selection;
+    private FlexTable flexTable;
 
-    public TileSelector() {
-        setWidth("64px");
-        setCellSpacing(5);
-        setCellPadding(3);
-        addStyleName("tile-selector");
+    @Override
+    protected Widget createBody() {
+        flexTable = new FlexTable();
+        flexTable.setCellSpacing(5);
+        flexTable.setCellPadding(3);
+        flexTable.addStyleName("tile-selector");
+        return flexTable;
     }
 
-    public void setupTiles(List<Integer> tileIds) {
+    public void setupTiles(Collection<Integer> tileIds) {
         for (Integer tileId : tileIds) {
-            int numRows = getRowCount();
-            setWidget(numRows, 0, new TileSelectorItem(this, tileId));
+            int numRows = flexTable.getRowCount();
+            flexTable.setWidget(numRows, 0, new TileSelectorItem(this, tileId));
         }
     }
 
@@ -54,6 +59,6 @@ public class TileSelector extends FlexTable {
         if(selection == null) {
             return -1;
         }
-        return selection.getTileId();
+        return selection.getImageId();
     }
 }
