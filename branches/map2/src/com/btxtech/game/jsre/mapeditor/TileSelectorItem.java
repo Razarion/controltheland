@@ -13,11 +13,12 @@
 
 package com.btxtech.game.jsre.mapeditor;
 
+import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.ImageHandler;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.btxtech.game.jsre.client.ImageHandler;
 
 /**
  * User: beat
@@ -27,12 +28,11 @@ import com.btxtech.game.jsre.client.ImageHandler;
 public class TileSelectorItem extends FlowPanel implements MouseDownHandler {
     private TileSelector tileSelector;
     private int imageId;
-    private Image image;
 
     public TileSelectorItem(TileSelector tileSelector, int imageId) {
         this.tileSelector = tileSelector;
         this.imageId = imageId;
-        image = ImageHandler.getTerrainImage(imageId);
+        Image image = ImageHandler.getTerrainImage(imageId);
         add(image);
         image.addMouseDownHandler(this);
         setSelected(false);
@@ -41,7 +41,8 @@ public class TileSelectorItem extends FlowPanel implements MouseDownHandler {
 
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
-       tileSelector.onSelectionChanged(this); 
+       GwtCommon.preventImageDragging(mouseDownEvent); 
+       new PlaceablePreviewTerrainImagePoition(imageId, mouseDownEvent); 
     }
 
     public void setSelected(boolean selected) {

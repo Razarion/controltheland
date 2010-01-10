@@ -17,8 +17,8 @@ import com.btxtech.game.jsre.client.ExtendedCanvas;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -169,6 +169,9 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
             int relXStart = absolutePos.getX() - viewOriginLeft;
             int relYStart = absolutePos.getY() - viewOriginTop;
             ImageElement imageElement = terrainHandler.getTileImageElement(terrainImagePosition.getImageId());
+            if(imageElement == null) {
+                continue;
+            }
             try {
                 canvas.drawImage(imageElement, relXStart, relYStart);
             } catch (Throwable t) {
@@ -180,7 +183,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
 
 
     public void move(int left, int top) {
-        if(terrainHandler.getTerrainSettings() == null) {
+        if (terrainHandler.getTerrainSettings() == null) {
             return;
         }
 
@@ -317,6 +320,12 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         drawImages();
     }
 
+    public void addNewTerrainImage(int relX, int relY, int imageId) {
+        int absX = relX + viewOriginLeft;
+        int absY = relY + viewOriginTop;
+
+        terrainHandler.addNewTerrainImage(absX, absY, imageId);
+    }
 
     private void sendErrorInfoToServer(ImageElement imageElement, int posX, int posY, int srcXStart, int srcXWidth, int srcYStart, int srcYWidth) {
         StringBuilder builder = new StringBuilder();

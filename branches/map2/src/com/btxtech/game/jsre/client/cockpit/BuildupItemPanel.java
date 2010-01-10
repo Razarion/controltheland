@@ -97,7 +97,7 @@ public class BuildupItemPanel extends HorizontalPanel implements SelectionListen
             itemsToBuild.add(setupBuildupBlock(itemType, enabled, new MouseDownHandler() {
                 @Override
                 public void onMouseDown(MouseDownEvent event) {
-                    new PlaceablePreviewWidget(ImageHandler.getItemTypeImage(itemType), event, constructionVehicles, itemType);
+                    new PlaceablePreviewSyncItem(ImageHandler.getItemTypeImage(itemType), event, constructionVehicles, itemType);
                 }
             }));
         }

@@ -13,10 +13,7 @@
 
 package com.btxtech.game.jsre.mapeditor;
 
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.TerrainMouseButtonListener;
-import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.common.TerrainUtil;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.user.client.ui.Button;
 
@@ -38,18 +35,7 @@ public class MapModifier implements TerrainMouseButtonListener {
 
     @Override
     public void onMouseDown(int absoluteX, int absoluteY, MouseDownEvent mouseDownEvent) {
-        flipTile(absoluteX, absoluteY);
-    }
-
-    private void flipTile(int absoluteX, int absoluteY) {
-        int tileId = tileSelector.getSelection();
-        if (tileId < 0) {
-            return;
-        }
-        Index tileIndex = TerrainUtil.getTerrainTileIndexForAbsPosition(absoluteX, absoluteY);
-        TerrainView terrainView = TerrainView.getInstance();
-        terrainView.getTerrainHandler().getTerrainField()[tileIndex.getX()][tileIndex.getY()] = tileId;
-        // TODO terrainView.getTerrainHandler().loadBackgroundAndDrawMap();
+        //flipTile(absoluteX, absoluteY);
     }
 
     public void saveMap() {
