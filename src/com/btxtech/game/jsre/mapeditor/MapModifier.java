@@ -49,7 +49,7 @@ public class MapModifier implements TerrainMouseButtonListener {
         Index tileIndex = TerrainUtil.getTerrainTileIndexForAbsPosition(absoluteX, absoluteY);
         TerrainView terrainView = TerrainView.getInstance();
         terrainView.getTerrainHandler().getTerrainField()[tileIndex.getX()][tileIndex.getY()] = tileId;
-        terrainView.getTerrainHandler().loadBackgroundAndDrawMap();
+        // TODO terrainView.getTerrainHandler().loadBackgroundAndDrawMap();
     }
 
     public void saveMap() {

@@ -13,17 +13,19 @@
 
 package com.btxtech.game.jsre.client.terrain;
 
+import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.ImageHandler;
-import com.btxtech.game.jsre.client.GwtCommon;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.widgetideas.graphics.client.ImageLoader;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * User: beat
@@ -35,10 +37,16 @@ public class TerrainHandler implements TerrainService {
     private ArrayList<TerrainListener> terrainListeners = new ArrayList<TerrainListener>();
     private TerrainSettings terrainSettings;
     private ImageElement backgroundImage;
+    private List<TerrainImagePosition> terrainImagePositions;
 
     public void setupTerrain(TerrainSettings terrainSettings) {
         this.terrainSettings = terrainSettings;
         loadBackgroundAndDrawMap();
+    }
+
+    public void setupTerrainImages(List<TerrainImagePosition> terrainImagePositions) {
+        this.terrainImagePositions = terrainImagePositions;
+        loadImagesAndDrawMap();
     }
 
     public TerrainSettings getTerrainSettings() {
@@ -124,7 +132,7 @@ public class TerrainHandler implements TerrainService {
         return backgroundImage;
     }
 
-    public void loadBackgroundAndDrawMap() {
+    private void loadBackgroundAndDrawMap() {
         ImageLoader.loadImages(new String[]{ImageHandler.getTerrainBackgroundUrl()}, new ImageLoader.CallBack() {
 
             @Override
@@ -140,4 +148,70 @@ public class TerrainHandler implements TerrainService {
             }
         });
     }
+
+    private void loadImagesAndDrawMap() {
+        ArrayList<String> urls = new ArrayList<String>();
+        for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
+            urls.add(ImageHandler.getTerrainImageUrl(terrainImagePosition.getImageId()));
+        }
+        ImageLoader.loadImages(urls.toArray(new String[urls.size()]), new ImageLoader.CallBack() {
+
+            @Override
+            public void onImagesLoaded(ImageElement[] imageElements) {
+                try {
+                    for (int i = 0; i < imageElements.length; i++) {
+                        terrainTileImages.put(terrainImagePositions.get(i).getImageId(), imageElements[i]);
+                    }
+                    for (TerrainListener terrainListener : terrainListeners) {
+                        terrainListener.onTerrainChanged();
+                    }
+                } catch (Throwable throwable) {
+                    GwtCommon.handleException(throwable);
+                }
+            }
+        });
+    }
+
+    public List<TerrainImagePosition> getTerrainImagesInRegion(Rectangle absolutePxRectangle) {
+        ArrayList<TerrainImagePosition> result = new ArrayList<TerrainImagePosition>();
+        if (terrainSettings == null || terrainImagePositions == null) {
+            return result;
+        }
+        Rectangle tileRect = convertToTilePosition(absolutePxRectangle);
+        for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
+            if (tileRect.contains(terrainImagePosition.getTileIndex())) {
+                result.add(terrainImagePosition);
+            }
+        }
+        return result;
+    }
+
+    // TODO also used on the server -> move to super class
+    public Index getTerrainTileIndexForAbsPosition(int x, int y) {
+        return new Index(x / terrainSettings.getTileWidth(), y / terrainSettings.getTileHeight());
+    }
+
+    // TODO also used on the server -> move to super class
+    public Index getTerrainTileIndexForAbsPosition(Index absolutePos) {
+        return new Index(absolutePos.getX() / terrainSettings.getTileWidth(), absolutePos.getY() / terrainSettings.getTileHeight());
+    }
+
+    // TODO also used on the server -> move to super class
+    public Index getAbsolutIndexForTerrainTileIndex(Index tileIndex) {
+        return new Index(tileIndex.getX() * terrainSettings.getTileWidth(), tileIndex.getY() * terrainSettings.getTileHeight());
+    }
+
+    // TODO also used on the server -> move to super class
+    public Index getAbsolutIndexForTerrainTileIndex(int xTile, int yTile) {
+        return new Index(xTile * terrainSettings.getTileWidth(), yTile * terrainSettings.getTileHeight());
+    }
+
+    // TODO also used on the server -> move to super class
+    public Rectangle convertToTilePosition(Rectangle rectangle) {
+        Index start = getTerrainTileIndexForAbsPosition(rectangle.getStart());
+        Index end = getTerrainTileIndexForAbsPosition(rectangle.getEnd());
+        return new Rectangle(start, end);
+    }
+
+
 }
