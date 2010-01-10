@@ -16,7 +16,9 @@ package com.btxtech.game.jsre.client.terrain;
 import com.btxtech.game.jsre.client.ExtendedCanvas;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -32,6 +34,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.widgetideas.graphics.client.GWTCanvas;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * User: beat
@@ -71,6 +74,10 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         terrainHandler.setupTerrain(terrainSettings);
     }
 
+    public void setupTerrainImages(List<TerrainImagePosition> terrainImagePositions) {
+        terrainHandler.setupTerrainImages(terrainImagePositions);
+    }
+
     @Deprecated
     public void setupTerrain(int[][] terrainField, Collection<Integer> passableTerrainTileIds) {
     }
@@ -94,7 +101,6 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         int bgTileTopOffset = viewOriginTop % imageElement.getHeight();
         int bgTileBottomOffset = (viewOriginTop + viewHeight) % imageElement.getHeight();
 
-        canvas.clear(); // TODO may remove
         int posX = 0;
         int posY;
         for (int x = bgTileXStart; x <= bgTileXEnd; x++) {
@@ -152,7 +158,32 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
 
     }
 
+    private void drawImages() {
+        List<TerrainImagePosition> terrainImagePositions = terrainHandler.getTerrainImagesInRegion(new Rectangle(viewOriginLeft, viewOriginTop, viewWidth, viewHeight));
+        if (terrainImagePositions.isEmpty()) {
+            return;
+        }
+
+        for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
+            Index absolutePos = terrainHandler.getAbsolutIndexForTerrainTileIndex(terrainImagePosition.getTileIndex());
+            int relXStart = absolutePos.getX() - viewOriginLeft;
+            int relYStart = absolutePos.getY() - viewOriginTop;
+            ImageElement imageElement = terrainHandler.getTileImageElement(terrainImagePosition.getImageId());
+            try {
+                canvas.drawImage(imageElement, relXStart, relYStart);
+            } catch (Throwable t) {
+                GwtCommon.handleException(t);
+                sendErrorInfoToServer(imageElement, relXStart, relYStart, 0, 0, 0, 0);
+            }
+        }
+    }
+
+
     public void move(int left, int top) {
+        if(terrainHandler.getTerrainSettings() == null) {
+            return;
+        }
+
         if (viewWidth == 0 && viewHeight == 0) {
             return;
         }
@@ -193,7 +224,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
             return;
         }
 
-        drawBackground();
+        onTerrainChanged();
         fireScrollEvent(left, top);
     }
 
@@ -229,14 +260,14 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         viewWidth = parent.getOffsetWidth();
         viewHeight = parent.getOffsetHeight();
         canvas.resize(viewWidth, viewHeight);
-        drawBackground();
+        onTerrainChanged();
         Window.addResizeHandler(new ResizeHandler() {
             @Override
             public void onResize(ResizeEvent resizeEvent) {
                 viewWidth = parent.getOffsetWidth();
                 viewHeight = parent.getOffsetHeight();
                 canvas.resize(viewWidth, viewHeight);
-                drawBackground();
+                onTerrainChanged();
                 fireScrollEvent(0, 0);
             }
         });
@@ -281,7 +312,9 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
 
     @Override
     public void onTerrainChanged() {
+        canvas.clear();
         drawBackground();
+        drawImages();
     }
 
 

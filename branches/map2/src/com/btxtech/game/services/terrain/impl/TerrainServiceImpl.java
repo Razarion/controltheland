@@ -133,6 +133,11 @@ public class TerrainServiceImpl implements TerrainService {
     }
 
     @Override
+    public List<TerrainImagePosition> getTerrainImagePositions() {
+        return terrainImagePositions;
+    }
+
+    @Override
     public void saveAndActivateTerrainImages(List<TerrainImage> terrainImages, TerrainImage terrainBackgroundImage) {
         dbTerrainSetting.setTerrainBackground(terrainBackgroundImage);
         hibernateTemplate.saveOrUpdate(dbTerrainSetting);

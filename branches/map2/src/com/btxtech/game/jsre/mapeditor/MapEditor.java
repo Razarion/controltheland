@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -26,6 +27,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.RootPanel;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * User: beat
@@ -71,6 +73,18 @@ public class MapEditor implements EntryPoint {
             @Override
             public void onSuccess(TerrainSettings terrainSettings) {
                TerrainView.getInstance().setupTerrain(terrainSettings);
+            }
+        });
+
+        gameEditor.getTerrainImagePositions(new AsyncCallback<List<TerrainImagePosition>>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+                GwtCommon.handleException(throwable);
+            }
+
+            @Override
+            public void onSuccess(List<TerrainImagePosition> terrainImagePositions) {
+                 TerrainView.getInstance().setupTerrainImages(terrainImagePositions);
             }
         });
 

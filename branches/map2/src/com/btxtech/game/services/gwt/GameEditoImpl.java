@@ -13,10 +13,12 @@
 
 package com.btxtech.game.services.gwt;
 
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.jsre.mapeditor.GameEditor;
 import com.btxtech.game.services.terrain.TerrainService;
 import java.util.Collection;
+import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +49,16 @@ public class GameEditoImpl implements GameEditor {
     public Collection<Integer> getImageIds() {
         try {
             return terrainService.getTerrainImageIds();
+        } catch (Throwable t) {
+            log.error("", t);
+            return null;
+        }
+    }
+
+    @Override
+    public List<TerrainImagePosition> getTerrainImagePositions() {
+        try {
+            return terrainService.getTerrainImagePositions();
         } catch (Throwable t) {
             log.error("", t);
             return null;

@@ -22,7 +22,7 @@ import java.io.Serializable;
  * Time: 22:25:25
  */
 public class TerrainImagePosition implements Serializable{
-    private Index tile;
+    private Index tileIndex;
     private int imageId;
 
     /**
@@ -31,13 +31,13 @@ public class TerrainImagePosition implements Serializable{
     public TerrainImagePosition() {
     }
 
-    public TerrainImagePosition(Index tile, int imageId) {
-        this.tile = tile;
+    public TerrainImagePosition(Index tileIndex, int imageId) {
+        this.tileIndex = tileIndex;
         this.imageId = imageId;
     }
 
-    public Index getTile() {
-        return tile;
+    public Index getTileIndex() {
+        return tileIndex;
     }
 
     public int getImageId() {
