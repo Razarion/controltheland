@@ -25,7 +25,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.RootPanel;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -42,15 +42,14 @@ public class MapEditor implements EntryPoint {
         GameEditorAsync gameEditor = GWT.create(GameEditor.class);
 
         // Setup map
-        RootPanel.get("map").add(MapWindow.getAbsolutePanel());
+        RootPanel.get().add(MapWindow.getAbsolutePanel());
         TerrainView.getInstance().addToParent(MapWindow.getAbsolutePanel());
         TerrainView.getInstance().getCanvas().getElement().getStyle().setZIndex(Constants.Z_INDEX_TERRAIN);
         TerrainView.getInstance().addTerrainScrollListener(MapWindow.getInstance());
 
         // Setup editor
         final TileSelector tileSelector = new TileSelector();
-        RootPanel.get("tiles").add(tileSelector);
-
+        MapWindow.getAbsolutePanel().add(tileSelector, 30, 30);
 
         Button saveMapButton = new Button("Save Map");
         final MapModifier mapModifier = new MapModifier(gameEditor, tileSelector, saveMapButton);
@@ -60,7 +59,7 @@ public class MapEditor implements EntryPoint {
                 mapModifier.saveMap();
             }
         });
-        RootPanel.get("tools").add(saveMapButton);
+        // TODO RootPanel.get("tools").add(saveMapButton);
 
         // Get data from server
         gameEditor.getTerrainSettings(new AsyncCallback<TerrainSettings>() {
@@ -75,17 +74,17 @@ public class MapEditor implements EntryPoint {
             }
         });
 
-        /*gameEditor.getTiles(new AsyncCallback<List<Integer>>() {
+        gameEditor.getImageIds(new AsyncCallback<Collection<Integer>>() {
             @Override
             public void onFailure(Throwable throwable) {
                 GwtCommon.handleException(throwable);
             }
 
             @Override
-            public void onSuccess(List<Integer> tileIds) {
+            public void onSuccess(Collection<Integer> tileIds) {
                 tileSelector.setupTiles(tileIds);
             }
-        });*/
+        });
 
         TerrainView.getInstance().setTerrainMouseButtonListener(mapModifier);
     }

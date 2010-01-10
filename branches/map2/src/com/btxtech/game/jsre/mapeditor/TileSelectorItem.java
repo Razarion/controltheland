@@ -26,17 +26,17 @@ import com.btxtech.game.jsre.client.ImageHandler;
  */
 public class TileSelectorItem extends FlowPanel implements MouseDownHandler {
     private TileSelector tileSelector;
-    private int tileId;
+    private int imageId;
     private Image image;
 
-    public TileSelectorItem(TileSelector tileSelector, int tileId) {
+    public TileSelectorItem(TileSelector tileSelector, int imageId) {
         this.tileSelector = tileSelector;
-        this.tileId = tileId;
-        image = ImageHandler.getTerrainImage(tileId);
+        this.imageId = imageId;
+        image = ImageHandler.getTerrainImage(imageId);
         add(image);
         image.addMouseDownHandler(this);
         setSelected(false);
-
+        image.setPixelSize(100,100);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class TileSelectorItem extends FlowPanel implements MouseDownHandler {
         }
     }
 
-    public int getTileId() {
-        return tileId;
+    public int getImageId() {
+        return imageId;
     }
 }
