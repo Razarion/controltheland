@@ -13,11 +13,19 @@
 
 package com.btxtech.game.jsre.mapeditor;
 
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.TopMapPanel;
+import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * User: beat
@@ -28,6 +36,11 @@ public class Cockpit extends TopMapPanel {
     private TileSelectorItem selection;
     private FlexTable tileSelector;
     private ToggleButton deleteButton;
+    private GameEditorAsync gameEditor;
+
+    public Cockpit(GameEditorAsync gameEditor) {
+        this.gameEditor = gameEditor;
+    }
 
     @Override
     protected Widget createBody() {
@@ -35,13 +48,35 @@ public class Cockpit extends TopMapPanel {
         // Dele Button
         deleteButton = new ToggleButton("Delete");
         controlPanel.setWidget(0, 0, deleteButton);
+        // Save Button
+        final Button saveButton = new Button("Save");
+        saveButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                saveButton.setEnabled(false);
+                gameEditor.saveTerrainImagePositions(TerrainView.getInstance().getTerrainHandler().getTerrainImagePosition(),  new AsyncCallback<List<TerrainImagePosition>>() {
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        GwtCommon.handleException(throwable);
+                        saveButton.setEnabled(true);
+                    }
+
+                    @Override
+                    public void onSuccess(List<TerrainImagePosition> terrainImagePositions) {
+                        saveButton.setEnabled(true);
+                    }
+                });
+
+            }
+        });
+        controlPanel.setWidget(1, 0, saveButton);
 
         // Tile Panel
         tileSelector = new FlexTable();
         tileSelector.setCellSpacing(5);
         tileSelector.setCellPadding(3);
         tileSelector.addStyleName("tile-selector");
-        controlPanel.setWidget(1, 0, tileSelector);
+        controlPanel.setWidget(2, 0, tileSelector);
         return controlPanel;
     }
 
@@ -65,7 +100,7 @@ public class Cockpit extends TopMapPanel {
     }
 
     public int getSelection() {
-        if(selection == null) {
+        if (selection == null) {
             return -1;
         }
         return selection.getImageId();

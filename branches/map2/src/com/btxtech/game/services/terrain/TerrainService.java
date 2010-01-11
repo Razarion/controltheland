@@ -46,4 +46,6 @@ public interface TerrainService {
     List<TerrainImagePosition> getTerrainImagePositions();
 
     void saveAndActivateTerrainImages(List<TerrainImage> terrainImages, TerrainImage terrainBackgroundImage);
+
+    void saveAndActivateTerrainImagePositions(List<TerrainImagePosition> terrainImagePositions);
 }

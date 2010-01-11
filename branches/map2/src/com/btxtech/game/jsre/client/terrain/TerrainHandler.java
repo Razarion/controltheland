@@ -225,6 +225,10 @@ public class TerrainHandler implements TerrainService {
         }
     }
 
+    public List<TerrainImagePosition> getTerrainImagePosition() {
+        return terrainImagePositions;
+    }
+
     // TODO also used on the server -> move to super class
     public Index getTerrainTileIndexForAbsPosition(int x, int y) {
         return new Index(x / terrainSettings.getTileWidth(), y / terrainSettings.getTileHeight());
@@ -251,5 +255,4 @@ public class TerrainHandler implements TerrainService {
         Index end = getTerrainTileIndexForAbsPosition(rectangle.getEnd());
         return new Rectangle(start, end);
     }
-
 }

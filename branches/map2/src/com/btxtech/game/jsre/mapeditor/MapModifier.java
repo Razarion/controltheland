@@ -13,27 +13,23 @@
 
 package com.btxtech.game.jsre.mapeditor;
 
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.terrain.TerrainMouseButtonListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.user.client.ui.Button;
 
 /**
  * User: beat
  * Date: Sep 3, 2009
  * Time: 6:26:18 PM
  */
+@Deprecated
 public class MapModifier implements TerrainMouseButtonListener {
-    private GameEditorAsync terrainAsync;
     private Cockpit cockpit;
-    private Button button;
 
-    public MapModifier(GameEditorAsync terrainAsync, Cockpit cockpit, Button button) {
-        this.terrainAsync = terrainAsync;
+    public MapModifier(Cockpit cockpit) {
         this.cockpit = cockpit;
-        this.button = button;
     }
 
     @Override
@@ -45,28 +41,10 @@ public class MapModifier implements TerrainMouseButtonListener {
         }
 
         if (cockpit.isDeleteModus()) {
-            TerrainView.getInstance().removeTerrainImagePosition(terrainImagePosition);
+            TerrainView.getInstance().getTerrainHandler().removeTerrainImagePosition(terrainImagePosition);
         } else {
             new PlaceablePreviewTerrainImagePoition(terrainImagePosition, mouseDownEvent);
         }
     }
 
-    public void saveMap() {
-        // TODO
-        /* int[][] filed = TerrainView.getInstance().getTerrainHandler().getTerrainField();
-        button.setEnabled(false);
-        terrainAsync.setTerrainField(filed, new AsyncCallback<Void>() {
-            @Override
-            public void onFailure(Throwable throwable) {
-                button.setEnabled(true);
-                GwtCommon.handleException(throwable);
-            }
-
-            @Override
-            public void onSuccess(Void aVoid) {
-                button.setEnabled(true);
-            }
-
-        });*/
-    }
 }

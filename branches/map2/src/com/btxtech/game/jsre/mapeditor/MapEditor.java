@@ -21,10 +21,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosi
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.RootPanel;
 import java.util.Collection;
 import java.util.List;
@@ -50,18 +47,10 @@ public class MapEditor implements EntryPoint {
         TerrainView.getInstance().addTerrainScrollListener(MapWindow.getInstance());
 
         // Setup editor
-        final Cockpit cockpit = new Cockpit();
+        final Cockpit cockpit = new Cockpit(gameEditor);
         MapWindow.getAbsolutePanel().add(cockpit, 30, 30);
 
-        Button saveMapButton = new Button("Save Map");
-        final MapModifier mapModifier = new MapModifier(gameEditor, cockpit, saveMapButton);
-        saveMapButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                mapModifier.saveMap();
-            }
-        });
-        // TODO RootPanel.get("tools").add(saveMapButton);
+        MapModifier mapModifier = new MapModifier(cockpit);
 
         // Get data from server
         gameEditor.getTerrainSettings(new AsyncCallback<TerrainSettings>() {

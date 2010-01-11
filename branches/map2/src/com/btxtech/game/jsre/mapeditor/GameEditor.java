@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosi
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,4 +34,7 @@ public interface GameEditor extends RemoteService {
     TerrainSettings getTerrainSettings();
 
     List<TerrainImagePosition> getTerrainImagePositions();
+
+    void saveTerrainImagePositions(List<TerrainImagePosition> terrainImagePositions);
+
 }

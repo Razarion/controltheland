@@ -148,6 +148,21 @@ public class TerrainServiceImpl implements TerrainService {
         loadTerrain();
     }
 
+    @Override
+    public void saveAndActivateTerrainImagePositions(List<TerrainImagePosition> terrainImagePositions) {
+        List<DbTerrainImagePosition> dbTerrainImagePositions = hibernateTemplate.loadAll(DbTerrainImagePosition.class);
+        hibernateTemplate.deleteAll(dbTerrainImagePositions);
+        ArrayList<DbTerrainImagePosition> dbTerrainImagePositionsNew = new ArrayList<DbTerrainImagePosition>();
+        for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
+            DbTerrainImagePosition dbTerrainImagePosition = new DbTerrainImagePosition(terrainImagePosition.getTileIndex());
+            TerrainImage terrainImage = getTerrainImage(terrainImagePosition.getImageId());
+            dbTerrainImagePosition.setTerrainImage(terrainImage);
+            dbTerrainImagePositionsNew.add(dbTerrainImagePosition);
+        }
+        hibernateTemplate.saveOrUpdateAll(dbTerrainImagePositionsNew);
+        loadTerrain();
+    }
+
     //////////////// DUMMY IMPL  ////////////////
     @Override
     @Deprecated

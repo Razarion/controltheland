@@ -334,11 +334,6 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         terrainHandler.moveTerrainImagePosition(absX, absY, terrainImagePosition);
     }
 
-    public void removeTerrainImagePosition(TerrainImagePosition terrainImagePosition) {
-        terrainHandler.removeTerrainImagePosition(terrainImagePosition);
-    }
-
-    
     private void sendErrorInfoToServer(ImageElement imageElement, int posX, int posY, int srcXStart, int srcXWidth, int srcYStart, int srcYWidth) {
         StringBuilder builder = new StringBuilder();
         builder.append("imageElement: ");

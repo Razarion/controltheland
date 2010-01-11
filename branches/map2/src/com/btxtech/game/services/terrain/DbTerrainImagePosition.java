@@ -17,10 +17,9 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.services.terrain.impl.DbKey;
 import java.io.Serializable;
-import javax.persistence.Entity;
 import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import javax.persistence.CascadeType;
 
 /**
  * User: beat
@@ -31,7 +30,7 @@ import javax.persistence.CascadeType;
 public class DbTerrainImagePosition implements Serializable {
     @EmbeddedId
     private DbKey dbKey;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     private TerrainImage terrainImage;
 
     /**

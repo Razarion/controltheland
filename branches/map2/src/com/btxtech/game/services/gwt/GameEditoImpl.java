@@ -64,4 +64,13 @@ public class GameEditoImpl implements GameEditor {
             return null;
         }
     }
+
+    @Override
+    public void saveTerrainImagePositions(List<TerrainImagePosition> terrainImagePositions) {
+        try {
+            terrainService.saveAndActivateTerrainImagePositions(terrainImagePositions);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
 }
