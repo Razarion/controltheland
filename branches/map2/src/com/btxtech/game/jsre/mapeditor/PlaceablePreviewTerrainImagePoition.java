@@ -49,7 +49,7 @@ public class PlaceablePreviewTerrainImagePoition extends PlaceablePreviewWidget 
         if (terrainImagePosition != null) {
             TerrainView.getInstance().moveTerrainImagePosition(relX, relY, terrainImagePosition);
         } else {
-            TerrainView.getInstance().addNewTerrainImage(relX, relY, imageId);
+            TerrainView.getInstance().addNewTerrainImagePosition(relX, relY, imageId);
         }
     }
 }

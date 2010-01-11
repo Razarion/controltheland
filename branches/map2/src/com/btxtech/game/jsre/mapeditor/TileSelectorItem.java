@@ -26,11 +26,11 @@ import com.google.gwt.user.client.ui.Image;
  * Time: 10:07:13 PM
  */
 public class TileSelectorItem extends FlowPanel implements MouseDownHandler {
-    private TileSelector tileSelector;
+    private Cockpit cockpit;
     private int imageId;
 
-    public TileSelectorItem(TileSelector tileSelector, int imageId) {
-        this.tileSelector = tileSelector;
+    public TileSelectorItem(Cockpit cockpit, int imageId) {
+        this.cockpit = cockpit;
         this.imageId = imageId;
         Image image = ImageHandler.getTerrainImage(imageId);
         add(image);
