@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.mapeditor;
 
 import com.btxtech.game.jsre.client.TopMapPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 import java.util.Collection;
 
@@ -23,23 +24,31 @@ import java.util.Collection;
  * Date: Sep 2, 2009
  * Time: 9:30:48 PM
  */
-public class TileSelector  extends TopMapPanel {
+public class Cockpit extends TopMapPanel {
     private TileSelectorItem selection;
-    private FlexTable flexTable;
+    private FlexTable tileSelector;
+    private ToggleButton deleteButton;
 
     @Override
     protected Widget createBody() {
-        flexTable = new FlexTable();
-        flexTable.setCellSpacing(5);
-        flexTable.setCellPadding(3);
-        flexTable.addStyleName("tile-selector");
-        return flexTable;
+        FlexTable controlPanel = new FlexTable();
+        // Dele Button
+        deleteButton = new ToggleButton("Delete");
+        controlPanel.setWidget(0, 0, deleteButton);
+
+        // Tile Panel
+        tileSelector = new FlexTable();
+        tileSelector.setCellSpacing(5);
+        tileSelector.setCellPadding(3);
+        tileSelector.addStyleName("tile-selector");
+        controlPanel.setWidget(1, 0, tileSelector);
+        return controlPanel;
     }
 
     public void setupTiles(Collection<Integer> tileIds) {
         for (Integer tileId : tileIds) {
-            int numRows = flexTable.getRowCount();
-            flexTable.setWidget(numRows, 0, new TileSelectorItem(this, tileId));
+            int numRows = tileSelector.getRowCount();
+            tileSelector.setWidget(numRows, 0, new TileSelectorItem(this, tileId));
         }
     }
 
@@ -60,5 +69,9 @@ public class TileSelector  extends TopMapPanel {
             return -1;
         }
         return selection.getImageId();
+    }
+
+    public boolean isDeleteModus() {
+        return deleteButton.isDown();
     }
 }

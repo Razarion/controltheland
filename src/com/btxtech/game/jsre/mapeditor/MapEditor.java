@@ -50,11 +50,11 @@ public class MapEditor implements EntryPoint {
         TerrainView.getInstance().addTerrainScrollListener(MapWindow.getInstance());
 
         // Setup editor
-        final TileSelector tileSelector = new TileSelector();
-        MapWindow.getAbsolutePanel().add(tileSelector, 30, 30);
+        final Cockpit cockpit = new Cockpit();
+        MapWindow.getAbsolutePanel().add(cockpit, 30, 30);
 
         Button saveMapButton = new Button("Save Map");
-        final MapModifier mapModifier = new MapModifier(gameEditor, tileSelector, saveMapButton);
+        final MapModifier mapModifier = new MapModifier(gameEditor, cockpit, saveMapButton);
         saveMapButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
@@ -96,7 +96,7 @@ public class MapEditor implements EntryPoint {
 
             @Override
             public void onSuccess(Collection<Integer> tileIds) {
-                tileSelector.setupTiles(tileIds);
+                cockpit.setupTiles(tileIds);
             }
         });
 

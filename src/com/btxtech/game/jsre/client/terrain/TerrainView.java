@@ -320,7 +320,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         drawImages();
     }
 
-    public void addNewTerrainImage(int relX, int relY, int imageId) {
+    public void addNewTerrainImagePosition(int relX, int relY, int imageId) {
         int absX = relX + viewOriginLeft;
         int absY = relY + viewOriginTop;
 
@@ -333,6 +333,11 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
 
         terrainHandler.moveTerrainImagePosition(absX, absY, terrainImagePosition);
     }
+
+    public void removeTerrainImagePosition(TerrainImagePosition terrainImagePosition) {
+        terrainHandler.removeTerrainImagePosition(terrainImagePosition);
+    }
+
     
     private void sendErrorInfoToServer(ImageElement imageElement, int posX, int posY, int srcXStart, int srcXWidth, int srcYStart, int srcYWidth) {
         StringBuilder builder = new StringBuilder();
@@ -374,4 +379,5 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
 
         GwtCommon.sendLogToServer(builder.toString());
     }
+
 }

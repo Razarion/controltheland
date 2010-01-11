@@ -218,6 +218,13 @@ public class TerrainHandler implements TerrainService {
         }        
     }
 
+    public void removeTerrainImagePosition(TerrainImagePosition terrainImagePosition) {
+        terrainImagePositions.remove(terrainImagePosition);
+        for (TerrainListener terrainListener : terrainListeners) {
+            terrainListener.onTerrainChanged();
+        }
+    }
+
     // TODO also used on the server -> move to super class
     public Index getTerrainTileIndexForAbsPosition(int x, int y) {
         return new Index(x / terrainSettings.getTileWidth(), y / terrainSettings.getTileHeight());
@@ -244,4 +251,5 @@ public class TerrainHandler implements TerrainService {
         Index end = getTerrainTileIndexForAbsPosition(rectangle.getEnd());
         return new Rectangle(start, end);
     }
+
 }

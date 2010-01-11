@@ -27,12 +27,12 @@ import com.google.gwt.user.client.ui.Button;
  */
 public class MapModifier implements TerrainMouseButtonListener {
     private GameEditorAsync terrainAsync;
-    private TileSelector tileSelector;
+    private Cockpit cockpit;
     private Button button;
 
-    public MapModifier(GameEditorAsync terrainAsync, TileSelector tileSelector, Button button) {
+    public MapModifier(GameEditorAsync terrainAsync, Cockpit cockpit, Button button) {
         this.terrainAsync = terrainAsync;
-        this.tileSelector = tileSelector;
+        this.cockpit = cockpit;
         this.button = button;
     }
 
@@ -40,7 +40,13 @@ public class MapModifier implements TerrainMouseButtonListener {
     public void onMouseDown(int absoluteX, int absoluteY, MouseDownEvent mouseDownEvent) {
         TerrainImagePosition terrainImagePosition = TerrainView.getInstance().getTerrainHandler().getTerrainImagePosition(absoluteX, absoluteY);
         GwtCommon.preventImageDragging(mouseDownEvent);
-        if (terrainImagePosition != null) {
+        if (terrainImagePosition == null) {
+            return;
+        }
+
+        if (cockpit.isDeleteModus()) {
+            TerrainView.getInstance().removeTerrainImagePosition(terrainImagePosition);
+        } else {
             new PlaceablePreviewTerrainImagePoition(terrainImagePosition, mouseDownEvent);
         }
     }
