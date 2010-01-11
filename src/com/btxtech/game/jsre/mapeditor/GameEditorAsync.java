@@ -31,5 +31,7 @@ public interface GameEditorAsync extends RemoteService {
 
     void getTerrainSettings(AsyncCallback async);
 
-    void getTerrainImagePositions(AsyncCallback<List<TerrainImagePosition>> async);
+    void getTerrainImagePositions(AsyncCallback async);
+
+    void saveTerrainImagePositions(List<TerrainImagePosition> terrainImagePositions, AsyncCallback async);
 }
