@@ -14,6 +14,9 @@
 package com.btxtech.game.jsre.mapeditor;
 
 import com.btxtech.game.jsre.client.terrain.TerrainMouseButtonListener;
+import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.user.client.ui.Button;
 
@@ -35,12 +38,16 @@ public class MapModifier implements TerrainMouseButtonListener {
 
     @Override
     public void onMouseDown(int absoluteX, int absoluteY, MouseDownEvent mouseDownEvent) {
-        //flipTile(absoluteX, absoluteY);
+        TerrainImagePosition terrainImagePosition = TerrainView.getInstance().getTerrainHandler().getTerrainImagePosition(absoluteX, absoluteY);
+        GwtCommon.preventImageDragging(mouseDownEvent);
+        if (terrainImagePosition != null) {
+            new PlaceablePreviewTerrainImagePoition(terrainImagePosition, mouseDownEvent);
+        }
     }
 
     public void saveMap() {
         // TODO
-       /* int[][] filed = TerrainView.getInstance().getTerrainHandler().getTerrainField();
+        /* int[][] filed = TerrainView.getInstance().getTerrainHandler().getTerrainField();
         button.setEnabled(false);
         terrainAsync.setTerrainField(filed, new AsyncCallback<Void>() {
             @Override

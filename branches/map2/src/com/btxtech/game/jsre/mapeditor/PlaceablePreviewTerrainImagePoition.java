@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.PlaceablePreviewWidget;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.google.gwt.event.dom.client.MouseEvent;
 
 /**
@@ -26,10 +27,16 @@ import com.google.gwt.event.dom.client.MouseEvent;
  */
 public class PlaceablePreviewTerrainImagePoition extends PlaceablePreviewWidget {
     private int imageId;
+    private TerrainImagePosition terrainImagePosition;
 
     protected PlaceablePreviewTerrainImagePoition(int imageId, MouseEvent mouseEvent) {
         super(ImageHandler.getTerrainImage(imageId), mouseEvent);
         this.imageId = imageId;
+    }
+
+    public PlaceablePreviewTerrainImagePoition(TerrainImagePosition terrainImagePosition, MouseEvent mouseEvent) {
+        super(ImageHandler.getTerrainImage(terrainImagePosition.getImageId()), mouseEvent);
+        this.terrainImagePosition = terrainImagePosition;
     }
 
     @Override
@@ -39,6 +46,10 @@ public class PlaceablePreviewTerrainImagePoition extends PlaceablePreviewWidget 
         if (relX < 0 || relY < 0) {
             return;
         }
-        TerrainView.getInstance().addNewTerrainImage(relX, relY, imageId);
+        if (terrainImagePosition != null) {
+            TerrainView.getInstance().moveTerrainImagePosition(relX, relY, terrainImagePosition);
+        } else {
+            TerrainView.getInstance().addNewTerrainImage(relX, relY, imageId);
+        }
     }
 }

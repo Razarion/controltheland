@@ -40,6 +40,10 @@ public class TerrainImagePosition implements Serializable{
         return tileIndex;
     }
 
+    public void setTileIndex(Index tileIndex) {
+        this.tileIndex = tileIndex;
+    }
+
     public int getImageId() {
         return imageId;
     }
