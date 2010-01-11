@@ -177,6 +177,7 @@ public class TerrainHandler implements TerrainService {
         });
     }
 
+    // TODO also used on the server -> move to super class
     public List<TerrainImagePosition> getTerrainImagesInRegion(Rectangle absolutePxRectangle) {
         ArrayList<TerrainImagePosition> result = new ArrayList<TerrainImagePosition>();
         if (terrainSettings == null || terrainImagePositions == null) {
@@ -191,6 +192,16 @@ public class TerrainHandler implements TerrainService {
         return result;
     }
 
+    // TODO also used on the server -> move to super class
+    public TerrainImagePosition getTerrainImagePosition(int absoluteX, int absoluteY) {
+        Rectangle rectangle = new Rectangle(absoluteX, absoluteY, terrainSettings.getTileWidth(), terrainSettings.getTileHeight());
+        List<TerrainImagePosition> terrainImagePositions = getTerrainImagesInRegion(rectangle);
+        if (terrainImagePositions.isEmpty()) {
+            return null;
+        }
+        return terrainImagePositions.get(0);
+    }
+
     public void addNewTerrainImage(int absX, int absY, int imageId) {
         Index index = getTerrainTileIndexForAbsPosition(absX, absY);
         terrainImagePositions.add(new TerrainImagePosition(index, imageId));
@@ -199,6 +210,13 @@ public class TerrainHandler implements TerrainService {
         }
     }
 
+    public void moveTerrainImagePosition(int absX, int absY, TerrainImagePosition terrainImagePosition) {
+        Index index = getTerrainTileIndexForAbsPosition(absX, absY);
+        terrainImagePosition.setTileIndex(index);
+        for (TerrainListener terrainListener : terrainListeners) {
+            terrainListener.onTerrainChanged();
+        }        
+    }
 
     // TODO also used on the server -> move to super class
     public Index getTerrainTileIndexForAbsPosition(int x, int y) {
