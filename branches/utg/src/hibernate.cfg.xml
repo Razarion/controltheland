@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE hibernate-configuration PUBLIC
+ "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+ "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+  <session-factory>
+      <mapping class="com.btxtech.game.services.history.CreatedElement"/>
+      <mapping class="com.btxtech.game.services.history.BaseHasBeenDefeated"/>
+      <mapping class="com.btxtech.game.services.history.DestroyedElement"/>
+      <mapping class="com.btxtech.game.services.history.UserEntered"/>
+      <mapping class="com.btxtech.game.services.connection.Interaction"/>
+      <mapping class="com.btxtech.game.services.connection.ConnectionStatistics"/>
+      <mapping class="com.btxtech.game.services.connection.ClientLogEntry"/>
+      <mapping class="com.btxtech.game.services.terrain.impl.TerrainFieldTileImpl"/>
+      <mapping class="com.btxtech.game.services.terrain.impl.TileImpl"/>
+      <mapping class="com.btxtech.game.services.user.User"/>
+      <mapping class="com.btxtech.game.services.mgmt.impl.BackupEntry"/>
+      <mapping class="com.btxtech.game.services.mgmt.impl.GenericBaseItem"/>
+      <mapping class="com.btxtech.game.services.mgmt.impl.GenericResourceItem"/>
+      <mapping class="com.btxtech.game.services.base.Base"/>
+      <mapping class="com.btxtech.game.services.base.BaseColor"/>
+      <mapping class="com.btxtech.game.services.mgmt.impl.SavedQuery"/>
+      <mapping class="com.btxtech.game.services.item.itemType.DbResourceItemType"/>
+      <mapping class="com.btxtech.game.services.item.itemType.DbBaseItemType"/>
+      <mapping class="com.btxtech.game.services.item.itemType.DbBuilderType"/>
+      <mapping class="com.btxtech.game.services.item.itemType.DbFactoryType"/>
+      <mapping class="com.btxtech.game.services.item.itemType.DbHarvesterType"/>
+      <mapping class="com.btxtech.game.services.item.itemType.DbMovableType"/>
+      <mapping class="com.btxtech.game.services.item.itemType.DbTurnableType"/>
+      <mapping class="com.btxtech.game.services.item.itemType.DbWeaponType"/>
+      <mapping class="com.btxtech.game.services.item.itemType.DbItemTypeImage"/>
+      <mapping class="com.btxtech.game.services.item.itemType.DbConsumerType"/>
+      <mapping class="com.btxtech.game.services.item.itemType.DbGeneratorType"/>
+      <mapping class="com.btxtech.game.services.item.itemType.DbSpecialType"/>
+      <mapping class="com.btxtech.game.services.item.itemType.DbItemTypeData"/>
+      <mapping class="com.btxtech.game.services.itemTypeAccess.ItemTypeAccessEntry"/>
+      <mapping class="com.btxtech.game.services.itemTypeAccess.impl.UserItemTypeAccess"/>
+  </session-factory>
+</hibernate-configuration>

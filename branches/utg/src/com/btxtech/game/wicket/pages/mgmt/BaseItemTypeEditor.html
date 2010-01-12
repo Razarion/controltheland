@@ -1,0 +1,287 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="GameEditor.css">
+    <title>Item Type Editor</title>
+    <script>
+        var count = 0;
+        var progress = 0;
+        var builder = '';
+        function dodrop(event)
+        {
+            var data = event.dataTransfer;
+            count = data.files.length;
+            progress = 0;
+            builder = '';
+            for (var i = 0; i < data.files.length; i++) {
+                var file = data.files[i];
+                output(file.name + " " + file.type + "\n");
+                getAsText(file);
+            }
+        }
+
+        function output(text)
+        {
+            document.getElementById("output").textContent += text;
+            //dump(text);
+        }
+
+        function getAsText(readFile) {
+            var reader = new FileReader();
+            reader.fileName = readFile.name;
+            reader.readAsDataURL(readFile);
+            //reader.onprogress = updateProgress;
+            reader.onload = loaded;
+            reader.onerror = errorHandler;
+        }
+
+        function loaded(evt) {
+            progress++;
+            output(progress + " of " + count + "\n");
+            builder += ",";
+            builder += this.fileName;
+            builder += ",";
+            builder += evt.target.result;
+            if (progress >= count) {
+                output("*** DONE ***");
+                document.getElementById("imageFileField").value = builder;
+            }
+        }
+
+        function errorHandler(evt) {
+            output("ERROR: " + evt);
+        }
+
+    </script>
+
+</head>
+<body>
+
+<h1>Item Type Editor</h1>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="itemTypeForm">
+    <table border="0" cellSpacing="1"
+           cellPadding="0">
+        <tr bgcolor="#DDDDDD">
+            <td colspan="3" valign="top"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Name</td>
+            <td valign="top"><input wicket:id="name" type="text" size="30" maxlength="100"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Description</td>
+            <td valign="top"><input wicket:id="description" type="text" size="30" maxlength="100"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Health</td>
+            <td valign="top"><input wicket:id="health" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Price</td>
+            <td valign="top"><input wicket:id="price" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr>
+            <td colspan="3" valign="top">&nbsp;</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="3" valign="top"><input type="checkbox" wicket:id="turnable">Turnable</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top" width="20px">&nbsp;</td>
+            <td valign="top">Image Count</td>
+            <td valign="top"><input wicket:id="imageCount" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr>
+            <td colspan="3" valign="top">&nbsp;</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="3" valign="top"><input type="checkbox" wicket:id="movable">Movable</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top" width="20px">&nbsp;</td>
+            <td valign="top">Speed</td>
+            <td valign="top"><input wicket:id="speed" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top" width="20px">&nbsp;</td>
+            <td valign="top">Terrain Type</td>
+            <td valign="top">Land</td>
+        </tr>
+        <tr>
+            <td colspan="3" valign="top">&nbsp;</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="3" valign="top"><input type="checkbox" wicket:id="weapon">Weapon</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top" width="20px">&nbsp;</td>
+            <td valign="top">Damage</td>
+            <td valign="top"><input wicket:id="damage" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top" width="20px">&nbsp;</td>
+            <td valign="top">Range</td>
+            <td valign="top"><input wicket:id="weaponRange" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top" width="20px">&nbsp;</td>
+            <td valign="top">Reload Time</td>
+            <td valign="top"><input wicket:id="weaponReloadTime" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top" width="20px">&nbsp;</td>
+            <td valign="top">Sound</td>
+            <td valign="top"><input type="file" wicket:id="weaponSound"/></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top" width="20px">&nbsp;</td>
+            <td valign="top">Muzzle Image</td>
+            <td valign="top"><input type="file" wicket:id="weaponMuzzleImage"/></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top" width="20px">&nbsp;</td>
+            <td valign="top">Muzzle Point X 0</td>
+            <td valign="top"><input wicket:id="weaponMuzzlePointX_0" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top" width="20px">&nbsp;</td>
+            <td valign="top">Muzzle Point Y 0</td>
+            <td valign="top"><input wicket:id="weaponMuzzlePointY_0" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top" width="20px">&nbsp;</td>
+            <td valign="top">Muzzle Point X 90</td>
+            <td valign="top"><input wicket:id="weaponMuzzlePointX_90" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top" width="20px">&nbsp;</td>
+            <td valign="top">Muzzle Point Y 90</td>
+            <td valign="top"><input wicket:id="weaponMuzzlePointY_90" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top" width="20px">&nbsp;</td>
+            <td valign="top">Stretch to Target</td>
+            <td valign="top"><input wicket:id="weaponMuzzleStretch" type="checkbox"></td>
+        </tr>
+        <tr>
+            <td colspan="3" valign="top">&nbsp;</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="3" valign="top"><input type="checkbox" wicket:id="factory">Factory</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top" width="20px">&nbsp;</td>
+            <td valign="top">Progress</td>
+            <td valign="top"><input wicket:id="factoryProgress" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top" width="20px">&nbsp;</td>
+            <td valign="top">Able to build</td>
+            <td valign="top"><input wicket:id="factoryAbleToBuild" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr>
+            <td colspan="3" valign="top">&nbsp;</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="3" valign="top"><input type="checkbox" wicket:id="harvester">Harvester</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top" width="20px">&nbsp;</td>
+            <td valign="top">Progress</td>
+            <td valign="top"><input wicket:id="harvesterProgress" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top" width="20px">&nbsp;</td>
+            <td valign="top">Range</td>
+            <td valign="top"><input wicket:id="harvesterRange" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr>
+            <td colspan="3" valign="top">&nbsp;</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="3" valign="top"><input type="checkbox" wicket:id="builder">Builder</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top" width="20px">&nbsp;</td>
+            <td valign="top">Progress</td>
+            <td valign="top"><input wicket:id="builderProgress" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top" width="20px">&nbsp;</td>
+            <td valign="top">Range</td>
+            <td valign="top"><input wicket:id="builderRange" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top" width="20px">&nbsp;</td>
+            <td valign="top">Able to build</td>
+            <td valign="top"><input wicket:id="builderAbleToBuild" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr>
+            <td colspan="3" valign="top">&nbsp;</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="3" valign="top"><input type="checkbox" wicket:id="consumer">Energy Consumer</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top" width="20px">&nbsp;</td>
+            <td valign="top">Wattage</td>
+            <td valign="top"><input wicket:id="consumerWattage" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr>
+            <td colspan="3" valign="top">&nbsp;</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="3" valign="top"><input type="checkbox" wicket:id="generator">Energy Generator</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top" width="20px">&nbsp;</td>
+            <td valign="top">Wattage</td>
+            <td valign="top"><input wicket:id="generatorWattage" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr>
+            <td colspan="3" valign="top">&nbsp;</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="3" valign="top"><input type="checkbox" wicket:id="special">Special</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top" width="20px">&nbsp;</td>
+            <td valign="top">String</td>
+            <td valign="top"><input wicket:id="specialString" type="text" size="30" maxlength="40"></td>
+        </tr>
+
+
+    </table>
+    <br>
+    <input type="submit" wicket:id="save" value="Save">
+    <input type="submit" wicket:id="cancel" value="Cancel">
+    <br>
+    <br>
+
+    <input type="hidden" id="imageFileField" wicket:id="imageFileField"/>
+
+    <div id="output" style="min-height: 100px; white-space: pre; border: 1px solid black;"
+         ondragenter="document.getElementById('output').textContent = ''; event.stopPropagation(); event.preventDefault();"
+         ondragover="event.stopPropagation(); event.preventDefault();"
+         ondrop="event.stopPropagation(); event.preventDefault(); dodrop(event);"></div>
+</form>
+
+</body>
+</html>
