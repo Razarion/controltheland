@@ -57,7 +57,6 @@ public class SessionImpl implements Session, Serializable {
         UserDetails userDetails = new UserDetails(sessionId, 
                 userAgent,
                 request.getHeader("Accept-Language"),
-                request.getRemoteHost(),
                 request.getRemoteAddr());
         userTrackingService.newSession(userDetails);
     }
