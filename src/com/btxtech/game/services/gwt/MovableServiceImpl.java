@@ -23,6 +23,7 @@ import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.ConnectionService;
@@ -30,6 +31,7 @@ import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.itemTypeAccess.ServerItemTypeAccessService;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.energy.ServerEnergyService;
+import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.Collection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,6 +54,8 @@ public class MovableServiceImpl implements MovableService {
     private ServerItemTypeAccessService serverItemTypeAccessService;
     @Autowired
     private ServerEnergyService serverEnergyService;
+    @Autowired
+    private UserTrackingService userTrackingService;
 
     private Log log = LogFactory.getLog(MovableServiceImpl.class);
 
@@ -106,6 +110,15 @@ public class MovableServiceImpl implements MovableService {
         } catch (Throwable t) {
             log.error("", t);
             return null;
+        }
+    }
+
+    @Override
+    public void gameStartupState(GameStartupState state) {
+        try {
+            userTrackingService.gameStartup(state);
+        } catch (Throwable t) {
+            log.error("", t);
         }
     }
 

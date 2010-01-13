@@ -13,19 +13,20 @@
 
 package com.btxtech.game.services.utg;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Column;
 import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 
 /**
  * User: beat
  * Date: 12.01.2010
  * Time: 22:45:47
  */
-@Entity(name = "TRACKER_PAGE_ACCESS")
-public class PageAccess {
+@Entity(name = "TRACKER_GAME_STARTUP")
+public class GameStartup {
     @Id
     @GeneratedValue
     private Integer id;
@@ -34,20 +35,18 @@ public class PageAccess {
     @Column(nullable = false)
     private String sessionId;
     @Column(nullable = false)
-    private String page;
-    private String additional;
+    private GameStartupState state;
 
     /**
      * Used by Hibernate
      */
-    public PageAccess() {
+    public GameStartup() {
     }
 
-    public PageAccess(String sessionId, String page, String additional) {
+    public GameStartup(String sessionId, GameStartupState state) {
         timeStamp = new Date();
         this.sessionId = sessionId;
-        this.page = page;
-        this.additional = additional;
+        this.state = state;
     }
 
     @Override
@@ -55,7 +54,7 @@ public class PageAccess {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        PageAccess that = (PageAccess) o;
+        GameStartup that = (GameStartup) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
 

@@ -11,20 +11,15 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.utg;
-
-import com.btxtech.game.wicket.pages.basepage.BasePage;
-import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
+package com.btxtech.game.jsre.common.gameengine.services.utg;
 
 /**
  * User: beat
- * Date: 12.01.2010
- * Time: 22:04:31
- */
-public interface UserTrackingService {
-    void newSession(UserDetails userDetails);
-
-    void pageAccess(BasePage basePage);
-
-    void gameStartup(GameStartupState server);
+* Date: 13.01.2010
+* Time: 15:07:16
+*/
+public enum GameStartupState {
+    SERVER,
+    CLIENT_START,
+    CLIENT_RUNNING;
 }

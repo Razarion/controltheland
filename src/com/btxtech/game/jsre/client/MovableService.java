@@ -15,10 +15,11 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.GameInfo;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
+import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -30,6 +31,8 @@ import java.util.Collection;
  */
 @RemoteServiceRelativePath("gwtrpc/movableService")
 public interface MovableService extends RemoteService {
+    void gameStartupState(GameStartupState state);    
+
     GameInfo getGameInfo();
 
     void log(String message);

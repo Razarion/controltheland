@@ -14,10 +14,12 @@
 package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.services.connection.Session;
+import com.btxtech.game.services.utg.GameStartup;
 import com.btxtech.game.services.utg.PageAccess;
-import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.UserDetails;
+import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
+import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -48,5 +50,11 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     @Override
     public void newSession(UserDetails userDetails) {
         hibernateTemplate.saveOrUpdate(userDetails);
+    }
+
+    @Override
+    public void gameStartup(GameStartupState state) {
+        GameStartup gameStartup = new GameStartup(session.getSessionId(), state);
+        hibernateTemplate.saveOrUpdate(gameStartup);
     }
 }

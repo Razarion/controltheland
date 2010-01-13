@@ -52,5 +52,6 @@
       <mapping class="com.btxtech.game.services.itemTypeAccess.impl.UserItemTypeAccess"/>
       <mapping class="com.btxtech.game.services.utg.PageAccess"/>
       <mapping class="com.btxtech.game.services.utg.UserDetails"/>
+      <mapping class="com.btxtech.game.services.utg.GameStartup"/>
   </session-factory>
 </hibernate-configuration>
