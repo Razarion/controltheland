@@ -18,6 +18,8 @@ import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Column;
 import java.util.Date;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * User: beat
@@ -44,13 +46,18 @@ public class UserDetails {
     public UserDetails() {
     }
 
-    public UserDetails(String sessionId, String userAgent, String language, String remoteHost, String remoteAddr) {
+    public UserDetails(String sessionId, String userAgent, String language, String remoteAddr) {
         timeStamp = new Date();
         this.sessionId = sessionId;
         this.userAgent = userAgent;
         this.language = language;
-        this.remoteHost = remoteHost;
         this.remoteAddr = remoteAddr;
+        try {
+            InetAddress inetAddress = InetAddress.getByName(remoteAddr);
+            remoteHost = inetAddress.getHostName();
+        } catch (UnknownHostException e) {
+            remoteHost = "???";
+        }
     }
 
 
