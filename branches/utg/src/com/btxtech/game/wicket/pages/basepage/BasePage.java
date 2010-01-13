@@ -14,6 +14,7 @@
 package com.btxtech.game.wicket.pages.basepage;
 
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.pages.home.Home;
 import com.btxtech.game.wicket.pages.market.MarketPage;
 import com.btxtech.game.wicket.pages.statistics.StatisticsPage;
@@ -39,6 +40,8 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 public class BasePage extends WebPage {
     @SpringBean
     private UserService userService;
+    @SpringBean
+    private UserTrackingService userTrackingService;
 
     public BasePage(PageParameters pageParameters) {
         super(pageParameters);
@@ -87,6 +90,8 @@ public class BasePage extends WebPage {
 
     @Override
     protected void onBeforeRender() {
+        userTrackingService.pageAccess(this);
+
         // TODO this is ugly
         remove("signinBox");
         if (userService.isLoggedin()) {
@@ -95,6 +100,10 @@ public class BasePage extends WebPage {
             add(new LoginBox());
         }
         super.onBeforeRender();
+    }
+
+    public String getAdditionalPageInfo() {
+        return null;
     }
 
     class MenuItem implements Serializable {
