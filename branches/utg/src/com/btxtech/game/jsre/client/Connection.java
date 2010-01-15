@@ -39,6 +39,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * User: beat
@@ -118,7 +119,7 @@ public class Connection implements AsyncCallback<Void> {
                                 GwtCommon.handleException(t);
                             }
                         }
-                        ClientUserTracker.getInstance().sandGameStartupState(GameStartupState.CLIENT_RUNNING);                        
+                        ClientUserTracker.getInstance().sandGameStartupState(GameStartupState.CLIENT_RUNNING, new Date());                        
                     }
                 });
             }

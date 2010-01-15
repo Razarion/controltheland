@@ -15,15 +15,18 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
+import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.Date;
+import java.util.ArrayList;
 
 /**
  * The async counterpart of <code>MovableService</code>.
  */
 public interface MovableServiceAsync {
 
-    void gameStartupState(GameStartupState state, AsyncCallback<Void> async);
+    void gameStartupState(GameStartupState state, Date timeStamp, AsyncCallback<Void> async);
 
     void getGameInfo(AsyncCallback async);
 
@@ -38,4 +41,6 @@ public interface MovableServiceAsync {
     void getItemTypes(AsyncCallback async);
 
     void getTerrainField(AsyncCallback async);
+
+    void sendUserActions(ArrayList<UserAction> userActions, AsyncCallback<Void> asyncCallback);
 }

@@ -13,11 +13,12 @@
 
 package com.btxtech.game.jsre.client.terrain;
 
+import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.InfoPanel;
-import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.TopMapPanel;
 import com.btxtech.game.jsre.client.dialogs.SpeechBubble;
+import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
@@ -36,6 +37,7 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
     public static final int AUTO_SCROLL_DETECTION_WIDTH = 40;
     public static final int SCROLL_SPEED = 50;
     public static final int SCROLL_DISTANCE = 50;
+
     private enum ScrollDirection {
         NORTH,
         SOUTH,
@@ -169,6 +171,7 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
                 MapWindow.getAbsolutePanel().setWidgetPosition(w, newLeft, newtop);
             }
         }
+        ClientUserTracker.getInstance().scroll(left, top, width, height);
     }
 
 }

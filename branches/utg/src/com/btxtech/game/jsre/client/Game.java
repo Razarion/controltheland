@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
+import java.util.Date;
 
 public class Game implements EntryPoint {
     static private boolean isDebug = false;
@@ -31,7 +32,7 @@ public class Game implements EntryPoint {
     public void onModuleLoad() {
         try {
             GwtCommon.setUncaughtExceptionHandler();
-            ClientUserTracker.getInstance().sandGameStartupState(GameStartupState.CLIENT_START);
+            ClientUserTracker.getInstance().sandGameStartupState(GameStartupState.CLIENT_START, new Date());
 
             isDebug = Boolean.parseBoolean(Window.Location.getParameter("debug"));
 

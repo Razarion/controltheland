@@ -20,18 +20,21 @@ import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
+import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import java.util.Collection;
+import java.util.Date;
+import java.util.ArrayList;
 
 /**
  * The client side stub for the RPC service.
  */
 @RemoteServiceRelativePath("gwtrpc/movableService")
 public interface MovableService extends RemoteService {
-    void gameStartupState(GameStartupState state);    
+    void gameStartupState(GameStartupState state, Date timeStamp);
 
     GameInfo getGameInfo();
 
@@ -46,4 +49,6 @@ public interface MovableService extends RemoteService {
     Collection<ItemType> getItemTypes();
 
     int[][] getTerrainField();
+
+    void sendUserActions(ArrayList<UserAction> userActions);
 }
