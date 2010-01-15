@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.CursorHandler;
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -42,6 +43,8 @@ public class ClientSyncResourceItemView extends ClientSyncItemView {
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
         SelectionHandler.getInstance().setTargetSelected(this, mouseDownEvent);
+        ClientUserTracker.getInstance().clickResourceItem(syncResourceItem);
+
         // Just to prevent image dragging
         mouseDownEvent.stopPropagation();
         mouseDownEvent.preventDefault();

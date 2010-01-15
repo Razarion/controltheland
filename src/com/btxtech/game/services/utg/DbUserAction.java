@@ -13,20 +13,20 @@
 
 package com.btxtech.game.services.utg;
 
+import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 
 /**
  * User: beat
- * Date: 12.01.2010
- * Time: 22:45:47
+ * Date: 14.01.2010
+ * Time: 18:17:24
  */
-@Entity(name = "TRACKER_GAME_STARTUP")
-public class GameStartup {
+@Entity(name = "TRACKER_USER_ACTION")
+public class DbUserAction {
     @Id
     @GeneratedValue
     private Integer id;
@@ -35,19 +35,29 @@ public class GameStartup {
     @Column(nullable = false)
     private String sessionId;
     @Column(nullable = false)
-    private GameStartupState state;
     private Date clientTimeStamp;
+    @Column(nullable = false)
+    private String type;
+    private String additionalString;
+    private Date clientTimeStampLast;
+    private String additionalStringLast;
+    private int repeatingCount;
+
     /**
      * Used by Hibernate
      */
-    public GameStartup() {
+    public DbUserAction() {
     }
 
-    public GameStartup(String sessionId, GameStartupState state, Date timeStamp) {
-        this.timeStamp = new Date();
+    public DbUserAction(UserAction userAction, String sessionId) {
+        timeStamp = new Date();
         this.sessionId = sessionId;
-        this.state = state;
-        clientTimeStamp = timeStamp;
+        clientTimeStamp = userAction.getTimeStamp();
+        type = userAction.getType();
+        additionalString = userAction.getAdditionalString();
+        clientTimeStampLast = userAction.getTimeStampLast();
+        additionalStringLast = userAction.getAdditionalStringLast();
+        repeatingCount = userAction.getRepeatingCount();
     }
 
     @Override
@@ -55,7 +65,7 @@ public class GameStartup {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        GameStartup that = (GameStartup) o;
+        DbUserAction that = (DbUserAction) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
 

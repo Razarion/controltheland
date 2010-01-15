@@ -29,7 +29,7 @@ public class Game extends WebPage {
 
     @Override
     protected void onBeforeRender() {
-        userTrackingService.gameStartup(GameStartupState.SERVER);
+        userTrackingService.gameStartup(GameStartupState.SERVER, null);
         super.onBeforeRender();
     }
 
