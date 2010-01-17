@@ -15,6 +15,7 @@ package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import java.util.Date;
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,7 +27,7 @@ import javax.persistence.Id;
  * Time: 18:17:24
  */
 @Entity(name = "TRACKER_USER_ACTION")
-public class DbUserAction {
+public class DbUserAction implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
