@@ -24,6 +24,7 @@ import java.util.ArrayList;
 public class VisitorDetailInfo {
     private UserDetails userDetails;
     private List<GameTrackingInfo> gameTrackingInfos = new ArrayList<GameTrackingInfo>();
+    private List<PageAccess> pageAccessHistory;
 
     public VisitorDetailInfo(UserDetails userDetails) {
         this.userDetails = userDetails;
@@ -39,5 +40,13 @@ public class VisitorDetailInfo {
 
     public void setGameTrackingInfos(List<GameTrackingInfo> gameTrackingInfos) {
         this.gameTrackingInfos = gameTrackingInfos;
+    }
+
+    public void setPageAccessHistory(List<PageAccess> pageAccessHistory) {
+        this.pageAccessHistory = pageAccessHistory;
+    }
+
+    public List<PageAccess> getPageAccessHistory() {
+        return pageAccessHistory;
     }
 }

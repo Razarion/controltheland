@@ -50,6 +50,22 @@ public class PageAccess {
         this.additional = additional;
     }
 
+    public Date getTimeStamp() {
+        return timeStamp;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public String getPage() {
+        return page;
+    }
+
+    public String getAdditional() {
+        return additional;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

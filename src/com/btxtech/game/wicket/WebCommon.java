@@ -13,6 +13,8 @@
 
 package com.btxtech.game.wicket;
 
+import java.util.Date;
+
 /**
  * User: beat
  * Date: Aug 2, 2009
@@ -25,5 +27,11 @@ public class WebCommon {
     static public String formatDuration(long duration) {
         duration = duration / 1000;
         return String.format("%d:%02d:%02d", duration / 3600, (duration % 3600) / 60, (duration % 60));
+    }
+
+    public static String getTimeDiff(Date start, Date end) {
+        long diffMs = end.getTime() - start.getTime();
+        diffMs /= 1000;
+        return Long.toString(diffMs);
     }
 }
