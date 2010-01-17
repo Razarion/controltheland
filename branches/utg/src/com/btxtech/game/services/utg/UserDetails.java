@@ -39,6 +39,7 @@ public class UserDetails {
     private String language;
     private String remoteHost;
     private String remoteAddr;
+    private boolean isCrawler;
 
     /**
      * Used by Hibernate
@@ -58,6 +59,7 @@ public class UserDetails {
         } catch (UnknownHostException e) {
             remoteHost = "???";
         }
+        isCrawler = CrawlerDetection.isCrawler(userAgent, remoteHost);
     }
 
 
