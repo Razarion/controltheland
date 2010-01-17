@@ -60,6 +60,38 @@ public class DbUserAction {
         repeatingCount = userAction.getRepeatingCount();
     }
 
+    public Date getTimeStamp() {
+        return timeStamp;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public Date getClientTimeStamp() {
+        return clientTimeStamp;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getAdditionalString() {
+        return additionalString;
+    }
+
+    public Date getClientTimeStampLast() {
+        return clientTimeStampLast;
+    }
+
+    public String getAdditionalStringLast() {
+        return additionalStringLast;
+    }
+
+    public int getRepeatingCount() {
+        return repeatingCount;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

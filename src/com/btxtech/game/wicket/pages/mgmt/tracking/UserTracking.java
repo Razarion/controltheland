@@ -19,6 +19,7 @@ import com.btxtech.game.wicket.WebCommon;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -37,9 +38,14 @@ public class UserTracking extends WebPage {
 
     public UserTracking() {
         ListView<VisitorInfo> listView = new ListView<VisitorInfo>("visits", new IModel<List<VisitorInfo>>() {
+            private List<VisitorInfo> visitorInfos;
+
             @Override
             public List<VisitorInfo> getObject() {
-                return userTrackingService.getVisitorInfos();
+                if (visitorInfos == null) {
+                    visitorInfos = userTrackingService.getVisitorInfos();
+                }
+                return visitorInfos;
             }
 
             @Override
@@ -49,16 +55,24 @@ public class UserTracking extends WebPage {
 
             @Override
             public void detach() {
-                // Ignored
+                visitorInfos = null;
             }
         }) {
             @Override
-            protected void populateItem(ListItem<VisitorInfo> listItem) {
+            protected void populateItem(final ListItem<VisitorInfo> listItem) {
                 listItem.add(new Label("date", simpleDateFormat.format(listItem.getModelObject().getDate())));
                 listItem.add(new Label("pageHits", Integer.toString(listItem.getModelObject().getPageHits())));
                 listItem.add(new Label("enterSetup", Integer.toString(listItem.getModelObject().getEnterSetupHits())));
                 listItem.add(new Label("enterGame", Integer.toString(listItem.getModelObject().getEnterGameHits())));
-                listItem.add(new Label("sessionId", listItem.getModelObject().getSessionId()));
+                Link link = new Link("visitorLink") {
+
+                    @Override
+                    public void onClick() {
+                        setResponsePage(new VisitorDetails(listItem.getModelObject().getSessionId()));
+                    }
+                };
+                link.add(new Label("sessionId", listItem.getModelObject().getSessionId()));
+                listItem.add(link);
             }
         };
         add(listView);

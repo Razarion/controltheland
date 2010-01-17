@@ -62,6 +62,33 @@ public class UserDetails {
         isCrawler = CrawlerDetection.isCrawler(userAgent, remoteHost);
     }
 
+    public Date getTimeStamp() {
+        return timeStamp;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public String getUserAgent() {
+        return userAgent;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public String getRemoteHost() {
+        return remoteHost;
+    }
+
+    public String getRemoteAddr() {
+        return remoteAddr;
+    }
+
+    public boolean isCrawler() {
+        return isCrawler;
+    }
 
     @Override
     public boolean equals(Object o) {

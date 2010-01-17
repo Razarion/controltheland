@@ -50,6 +50,22 @@ public class GameStartup {
         clientTimeStamp = timeStamp;
     }
 
+    public Date getTimeStamp() {
+        return timeStamp;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public GameStartupState getState() {
+        return state;
+    }
+
+    public Date getClientTimeStamp() {
+        return clientTimeStamp;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
