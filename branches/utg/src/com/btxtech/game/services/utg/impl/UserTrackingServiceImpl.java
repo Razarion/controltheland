@@ -18,9 +18,11 @@ import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.utg.DbUserAction;
 import com.btxtech.game.services.utg.GameStartup;
+import com.btxtech.game.services.utg.GameTrackingInfo;
 import com.btxtech.game.services.utg.PageAccess;
 import com.btxtech.game.services.utg.UserDetails;
 import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.services.utg.VisitorDetailInfo;
 import com.btxtech.game.services.utg.VisitorInfo;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import com.btxtech.game.wicket.pages.entergame.EnterBasePanel;
@@ -31,6 +33,7 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,7 +90,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         for (Object[] datesAndHit : datesAndHits) {
             Date timeStamp = (Date) datesAndHit[0];
             String sessionId = (String) datesAndHit[1];
-            int hits = ((Long)datesAndHit[2]).intValue();
+            int hits = ((Long) datesAndHit[2]).intValue();
             int enterSetupHits = getHitsForPage(sessionId, EnterBasePanel.class);
             int enterGameHits = getHitsForGameStartup(sessionId);
             visitorInfos.add(new VisitorInfo(timeStamp, sessionId, hits, enterSetupHits, enterGameHits));
@@ -123,4 +126,94 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         return list.get(0);
     }
 
+    @Override
+    public VisitorDetailInfo getVisitorDetails(final String sessionId) {
+        List<UserDetails> list = (List<UserDetails>) hibernateTemplate.execute(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(UserDetails.class);
+                criteria.add(Restrictions.eq("sessionId", sessionId));
+                return criteria.list();
+            }
+        });
+        if (list.size() != 1) {
+            throw new IllegalStateException("Only 1 UserDetails expected: " + list.size());
+        }
+        VisitorDetailInfo visitorDetailInfo = new VisitorDetailInfo(list.get(0));
+        visitorDetailInfo.setGameTrackingInfos(getGameTrackingInfos(sessionId));
+        return visitorDetailInfo;
+    }
+
+    private List<GameTrackingInfo> getGameTrackingInfos(final String sessionId) {
+        ArrayList<GameTrackingInfo> gameTrackingInfos = new ArrayList<GameTrackingInfo>();
+        // Get all game startups
+        List<GameStartup> list = (List<GameStartup>) hibernateTemplate.execute(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(GameStartup.class);
+                criteria.add(Restrictions.eq("sessionId", sessionId));
+                criteria.addOrder(Order.asc("timeStamp"));
+                return criteria.list();
+            }
+        });
+        // Sort game startups
+        GameTrackingInfo gameTrackingInfo = null;
+        for (GameStartup gameStartup : list) {
+            switch (gameStartup.getState()) {
+                case SERVER:
+                    gameTrackingInfo = new GameTrackingInfo();
+                    gameTrackingInfos.add(gameTrackingInfo);
+                    gameTrackingInfo.setServerGameStartup(gameStartup);
+                    break;
+                case CLIENT_START:
+                    gameTrackingInfo.setClientStartGameStartup(gameStartup);
+                    break;
+                case CLIENT_RUNNING:
+                    gameTrackingInfo.setClientRunningGameStartup(gameStartup);
+                    break;
+            }
+        }
+
+        GameTrackingInfo previous = null;
+        for (GameTrackingInfo trackingInfo : gameTrackingInfos) {
+            if (previous == null) {
+                if (trackingInfo.getClientRunningGameStartup() != null) {
+                    previous = trackingInfo;
+                }
+                continue;
+            }
+            if (trackingInfo.getClientRunningGameStartup() == null) {
+                continue;
+            }
+
+            List<DbUserAction> userActions = getUserAction(sessionId, previous.getClientStartGameStartup().getClientTimeStamp(), trackingInfo.getClientStartGameStartup().getClientTimeStamp());
+            previous.setUserAction(userActions);
+            if (previous.getClientRunningGameStartup() != null) {
+                previous = trackingInfo;
+            }
+        }
+        // Add last one
+        if (previous != null && previous.getClientRunningGameStartup() != null) {
+            List<DbUserAction> userActions = getUserAction(sessionId, previous.getClientStartGameStartup().getClientTimeStamp(), null);
+            previous.setUserAction(userActions);
+        }
+        return gameTrackingInfos;
+    }
+
+    private List<DbUserAction> getUserAction(final String sessionId, final Date from, final Date to) {
+        List<DbUserAction> list = (List<DbUserAction>) hibernateTemplate.execute(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbUserAction.class);
+                criteria.add(Restrictions.eq("sessionId", sessionId));
+                criteria.add(Restrictions.ge("clientTimeStamp", from));
+                if (to != null) {
+                    criteria.add(Restrictions.le("clientTimeStamp", to));
+                }
+                criteria.addOrder(Order.asc("clientTimeStamp"));
+                return criteria.list();
+            }
+        });
+        return list;
+    }
 }

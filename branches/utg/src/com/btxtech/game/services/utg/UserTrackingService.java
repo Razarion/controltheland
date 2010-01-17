@@ -35,4 +35,6 @@ public interface UserTrackingService {
     void saveUserActions(ArrayList<UserAction> userActions);
 
     List<VisitorInfo> getVisitorInfos();
+
+    VisitorDetailInfo getVisitorDetails(String sessionId);
 }
