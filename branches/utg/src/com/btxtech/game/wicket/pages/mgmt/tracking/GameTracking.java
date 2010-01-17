@@ -48,7 +48,7 @@ public class GameTracking extends Panel {
         add(new Label("serverTimeServer", simpleDateFormat.format(server.getTimeStamp())));
         if (clientStart != null) {
             add(new Label("clientStartTimeServer", simpleDateFormat.format(clientStart.getTimeStamp())));
-            add(new Label("clientStartDelteServer", getTimeDiff(server.getTimeStamp(), clientStart.getTimeStamp())));
+            add(new Label("clientStartDelteServer", WebCommon.getTimeDiff(server.getTimeStamp(), clientStart.getTimeStamp())));
             add(new Label("clientStartTimeClient", simpleDateFormat.format(clientStart.getClientTimeStamp())));
         } else {
             add(new Label("clientStartTimeServer", "?"));
@@ -59,8 +59,8 @@ public class GameTracking extends Panel {
         if (clientRunning != null) {
             add(new Label("clientRunningTimeServer", simpleDateFormat.format(clientRunning.getTimeStamp())));
             if (clientStart != null) {
-                add(new Label("clientRunningDelteServer", getTimeDiff(clientStart.getTimeStamp(), clientRunning.getTimeStamp())));
-                add(new Label("clientRunningTimeDelta", getTimeDiff(clientStart.getClientTimeStamp(), clientRunning.getClientTimeStamp())));
+                add(new Label("clientRunningDelteServer", WebCommon.getTimeDiff(clientStart.getTimeStamp(), clientRunning.getTimeStamp())));
+                add(new Label("clientRunningTimeDelta", WebCommon.getTimeDiff(clientStart.getClientTimeStamp(), clientRunning.getClientTimeStamp())));
             } else {
                 add(new Label("clientRunningDelteServer", "?"));
                 add(new Label("clientRunningTimeDelta", "?"));
@@ -82,7 +82,7 @@ public class GameTracking extends Panel {
             protected void populateItem(ListItem<DbUserAction> listItem) {
                 listItem.add(new Label("clientTime", simpleDateFormat.format(listItem.getModelObject().getClientTimeStamp())));
                 if (previous != null) {
-                    listItem.add(new Label("clientTimeDelta", getTimeDiff(previous, listItem.getModelObject().getClientTimeStamp())));
+                    listItem.add(new Label("clientTimeDelta", WebCommon.getTimeDiff(previous, listItem.getModelObject().getClientTimeStamp())));
                 } else {
                     listItem.add(new Label("clientTimeDelta", ""));
                 }
@@ -102,9 +102,4 @@ public class GameTracking extends Panel {
         add(userActionList);
     }
 
-    private String getTimeDiff(Date start, Date end) {
-        long diffMs = end.getTime() - start.getTime();
-        diffMs /= 1000;
-        return Long.toString(diffMs);
-    }
 }

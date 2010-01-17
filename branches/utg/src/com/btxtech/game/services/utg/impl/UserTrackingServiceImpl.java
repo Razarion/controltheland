@@ -141,6 +141,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         }
         VisitorDetailInfo visitorDetailInfo = new VisitorDetailInfo(list.get(0));
         visitorDetailInfo.setGameTrackingInfos(getGameTrackingInfos(sessionId));
+        visitorDetailInfo.setPageAccessHistory(getPageAccessHistory(sessionId));
         return visitorDetailInfo;
     }
 
@@ -216,4 +217,18 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         });
         return list;
     }
+
+    private List<PageAccess> getPageAccessHistory(final String sessionId) {
+        List<PageAccess> list = (List<PageAccess>) hibernateTemplate.execute(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(PageAccess.class);
+                criteria.add(Restrictions.eq("sessionId", sessionId));
+                criteria.addOrder(Order.asc("timeStamp"));
+                return criteria.list();
+            }
+        });
+        return list;
+    }
+
 }

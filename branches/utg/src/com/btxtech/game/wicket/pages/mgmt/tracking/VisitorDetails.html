@@ -53,8 +53,27 @@
 </table>
 
 <h2>Details</h2>
-<tr wicket:id="gameTrackings">
-    <td wicket:id="gameTracking"/>
-</tr>
+<table border="0">
+    <tr wicket:id="gameTrackings">
+        <td wicket:id="gameTracking"/>
+    </tr>
+</table>
+
+<h2>Pages</h2>
+<table border="0">
+    <tr>
+        <th bgcolor="#dadada">Time</th>
+        <th bgcolor="#dadada">Delta Time</th>
+        <th bgcolor="#dadada">Page</th>
+        <th bgcolor="#dadada">Additional</th>
+    </tr>
+    <tr wicket:id="pageAccessHistory">
+        <td wicket:id="time"/>
+        <td align="center" wicket:id="delta"/>
+        <td wicket:id="page"/>
+        <td wicket:id="additional"/>
+    </tr>
+</table>
+
 </body>
 </html>

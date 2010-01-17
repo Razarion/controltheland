@@ -14,15 +14,17 @@
 package com.btxtech.game.wicket.pages.mgmt.tracking;
 
 import com.btxtech.game.services.utg.GameTrackingInfo;
+import com.btxtech.game.services.utg.PageAccess;
 import com.btxtech.game.services.utg.UserDetails;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.VisitorDetailInfo;
 import com.btxtech.game.wicket.WebCommon;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -55,6 +57,26 @@ public class VisitorDetails extends WebPage {
             }
         };
         add(gameTrackingInfoList);
+
+        // Page access history
+        ListView<PageAccess> pageAccessHistory = new ListView<PageAccess>("pageAccessHistory", visitorDetailInfo.getPageAccessHistory()) {
+            private Date previous;
+
+            @Override
+            protected void populateItem(ListItem<PageAccess> listItem) {
+                listItem.add(new Label("time", simpleDateFormat.format(listItem.getModelObject().getTimeStamp())));
+                if (previous != null) {
+                    listItem.add(new Label("delta", WebCommon.getTimeDiff(previous, listItem.getModelObject().getTimeStamp())));
+                } else {
+                    listItem.add(new Label("delta", ""));
+                }
+                previous = listItem.getModelObject().getTimeStamp();
+                listItem.add(new Label("page", listItem.getModelObject().getPage()));
+                listItem.add(new Label("additional", listItem.getModelObject().getAdditional()));
+            }
+        };
+        add(pageAccessHistory);
+
     }
 
 }
