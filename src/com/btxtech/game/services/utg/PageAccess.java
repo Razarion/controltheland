@@ -18,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Column;
 import java.util.Date;
+import java.io.Serializable;
 
 /**
  * User: beat
@@ -25,7 +26,7 @@ import java.util.Date;
  * Time: 22:45:47
  */
 @Entity(name = "TRACKER_PAGE_ACCESS")
-public class PageAccess {
+public class PageAccess implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;

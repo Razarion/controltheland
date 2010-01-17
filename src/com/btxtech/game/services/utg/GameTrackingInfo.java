@@ -14,13 +14,14 @@
 package com.btxtech.game.services.utg;
 
 import java.util.List;
+import java.io.Serializable;
 
 /**
  * User: beat
  * Date: 17.01.2010
  * Time: 13:15:17
  */
-public class GameTrackingInfo {
+public class GameTrackingInfo implements Serializable {
     private GameStartup serverGameStartup;
     private GameStartup clientStartGameStartup;
     private GameStartup clientRunningGameStartup;

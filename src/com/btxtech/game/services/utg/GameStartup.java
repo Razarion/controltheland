@@ -14,6 +14,7 @@
 package com.btxtech.game.services.utg;
 
 import java.util.Date;
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -26,7 +27,7 @@ import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
  * Time: 22:45:47
  */
 @Entity(name = "TRACKER_GAME_STARTUP")
-public class GameStartup {
+public class GameStartup implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
@@ -37,6 +38,7 @@ public class GameStartup {
     @Column(nullable = false)
     private GameStartupState state;
     private Date clientTimeStamp;
+
     /**
      * Used by Hibernate
      */
