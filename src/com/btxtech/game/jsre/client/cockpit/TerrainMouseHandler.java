@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.TerrainMouseButtonListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 
@@ -37,6 +38,7 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
 
     @Override
     public void onMouseDown(int absoluteX, int absoluteY, MouseDownEvent mouseDownEvent) {
+        ClientUserTracker.getInstance().clickOnTerrain(absoluteX, absoluteY, mouseDownEvent);
         if (mouseDownEvent.getNativeButton() == NativeEvent.BUTTON_RIGHT) {
             executeMoveCommand(absoluteX, absoluteY);
         } else if (mouseDownEvent.getNativeButton() == NativeEvent.BUTTON_LEFT) {

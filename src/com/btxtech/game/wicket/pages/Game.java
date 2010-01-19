@@ -14,6 +14,9 @@
 package com.btxtech.game.wicket.pages;
 
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.spring.injection.annot.SpringBean;
+import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 
 /**
  * User: beat
@@ -21,4 +24,13 @@ import org.apache.wicket.markup.html.WebPage;
  * Time: 12:10:57 AM
  */
 public class Game extends WebPage {
+    @SpringBean
+    private UserTrackingService userTrackingService;
+
+    @Override
+    protected void onBeforeRender() {
+        userTrackingService.gameStartup(GameStartupState.SERVER, null);
+        super.onBeforeRender();
+    }
+
 }
