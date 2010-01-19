@@ -15,6 +15,7 @@ package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,4 +38,6 @@ public interface UserTrackingService {
     List<VisitorInfo> getVisitorInfos();
 
     VisitorDetailInfo getVisitorDetails(String sessionId);
+
+    void saveUserCommand(BaseCommand baseCommand);
 }
