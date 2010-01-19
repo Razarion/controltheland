@@ -136,6 +136,7 @@ public class ActionHandler {
         syncItem.stop();
         MoveCommand moveCommand = new MoveCommand();
         moveCommand.setId(syncItem.getId());
+        moveCommand.setTimeStamp();
         moveCommand.setDestination(destination);
         try {
             syncItem.executeCommand(moveCommand);
@@ -166,6 +167,7 @@ public class ActionHandler {
         syncItem.stop();
         BuilderCommand builderCommand = new BuilderCommand();
         builderCommand.setId(syncItem.getId());
+        builderCommand.setTimeStamp();
         builderCommand.setToBeBuilt(toBeBuilt.getId());
         builderCommand.setPositionToBeBuilt(positionToBeBuild);
         try {
@@ -192,6 +194,7 @@ public class ActionHandler {
         }
         FactoryCommand factoryCommand = new FactoryCommand();
         factoryCommand.setId(factory.getId());
+        factoryCommand.setTimeStamp();
         factoryCommand.setToBeBuilt(itemType.getId());
 
         try {
@@ -221,6 +224,7 @@ public class ActionHandler {
         tank.stop();
         AttackCommand attackCommand = new AttackCommand();
         attackCommand.setId(tank.getId());
+        attackCommand.setTimeStamp();
         attackCommand.setTarget(target.getId());
         attackCommand.setFollowTarget(true);
 
@@ -249,6 +253,7 @@ public class ActionHandler {
         collector.stop();
         MoneyCollectCommand collectCommand = new MoneyCollectCommand();
         collectCommand.setId(collector.getId());
+        collectCommand.setTimeStamp();
         collectCommand.setTarget(money.getId());
 
         try {

@@ -15,7 +15,9 @@ package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.services.connection.Session;
+import com.btxtech.game.services.utg.UserCommand;
 import com.btxtech.game.services.utg.DbUserAction;
 import com.btxtech.game.services.utg.GameStartup;
 import com.btxtech.game.services.utg.GameTrackingInfo;
@@ -40,6 +42,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * User: beat
@@ -51,6 +55,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     @Autowired
     private Session session;
     private HibernateTemplate hibernateTemplate;
+    private Log log = LogFactory.getLog(UserTrackingServiceImpl.class);
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -229,6 +234,17 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             }
         });
         return list;
+    }
+
+    @Override
+    public void saveUserCommand(BaseCommand baseCommand) {
+        try {
+            UserCommand userUserCommand = new UserCommand(session.getConnection(), baseCommand);
+            log.debug(userUserCommand);
+            hibernateTemplate.saveOrUpdate(userUserCommand);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
     }
 
 }

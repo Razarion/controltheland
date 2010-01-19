@@ -13,10 +13,9 @@
 
 package com.btxtech.game.services.connection;
 
+import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.NoConnectionException;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.services.base.Base;
 
 /**
@@ -36,6 +35,4 @@ public interface ConnectionService extends com.btxtech.game.jsre.common.gameengi
     void closeConnection();
 
     void sendPacket(SimpleBase base, Packet packet);
-
-    void saveUserInteraction(BaseCommand baseCommand);
 }
