@@ -84,4 +84,14 @@ public class UserPage extends BasePage {
             throw new IllegalArgumentException("No such viewUser: " + viewUserName);
         }
     }
+
+    @Override
+    public String getAdditionalPageInfo() {
+       if(viewUser != null) {
+           return viewUser.getName();
+       } else {
+           return "???";
+       }
+    }
+    
 }

@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.AccountBalancePackt;
 import com.btxtech.game.jsre.common.EnergyPacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
@@ -31,12 +32,14 @@ import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.XpBalancePackt;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccessSyncInfo;
+import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * User: beat
@@ -116,6 +119,7 @@ public class Connection implements AsyncCallback<Void> {
                                 GwtCommon.handleException(t);
                             }
                         }
+                        ClientUserTracker.getInstance().sandGameStartupState(GameStartupState.CLIENT_RUNNING, new Date());                        
                     }
                 });
             }
