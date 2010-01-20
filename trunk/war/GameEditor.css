@@ -22,3 +22,7 @@ tr.odd {
 tr.even {
     background-color: #ECECEC;
 }
+
+tr.command {
+    background-color: #ffcccc;
+}
