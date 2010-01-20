@@ -13,10 +13,12 @@
 
 package com.btxtech.game.services.utg;
 
+import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 
 /**
  * User: beat
@@ -35,6 +37,7 @@ public class GameTrackingInfo implements Serializable {
     private GameStartup clientStartGameStartup;
     private GameStartup clientRunningGameStartup;
     private List<DbUserAction> userActions;
+    private List<UserCommand> userCommands;
 
     public Date getStart() {
         return start;
@@ -89,8 +92,8 @@ public class GameTrackingInfo implements Serializable {
         }
     }
 
-    public List<DbUserAction> getUserActions() {
-        return userActions;
+    public void setUserCommands(List<UserCommand> userCommands) {
+        this.userCommands = userCommands;
     }
 
     public void setAttackCommands(int attackCommands) {
@@ -131,5 +134,19 @@ public class GameTrackingInfo implements Serializable {
 
     public int getMoneyCollectCommands() {
         return moneyCollectCommands;
+    }
+
+    public List<UserActionCommand> getUserActionCommand() {
+        ArrayList<UserActionCommand> userActionCommands = new ArrayList<UserActionCommand>();
+        for (DbUserAction userAction : userActions) {
+           userActionCommands.add(new UserActionCommand(userAction));
+        }
+        for (UserCommand userCommand : userCommands) {
+            userActionCommands.add(new UserActionCommand(userCommand));
+        }
+
+        Collections.sort(userActionCommands);
+
+        return userActionCommands;
     }
 }

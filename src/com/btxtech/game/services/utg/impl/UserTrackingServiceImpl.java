@@ -103,7 +103,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             int hits = ((Long) datesAndHit[2]).intValue();
             int enterSetupHits = getHitsForPage(sessionId, EnterBasePanel.class);
             int enterGameHits = getHitsForGameStartup(sessionId);
-            int commands = getUserCommands(sessionId, null, null, null);
+            int commands = getUserCommandCount(sessionId, null, null, null);
             visitorInfos.add(new VisitorInfo(timeStamp, sessionId, hits, enterSetupHits, enterGameHits, commands));
         }
         return visitorInfos;
@@ -137,7 +137,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         return list.get(0);
     }
 
-    private int getUserCommands(final String sessionId, final Class<? extends BaseCommand> command, final Date from, final Date to) {
+    private int getUserCommandCount(final String sessionId, final Class<? extends BaseCommand> command, final Date from, final Date to) {
         List<Integer> list = (List<Integer>) hibernateTemplate.execute(new HibernateCallback() {
             @Override
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
@@ -158,6 +158,22 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         });
         return list.get(0);
     }
+
+    private List<UserCommand> getUserCommands(final String sessionId, final Date from, final Date to) {
+        List<UserCommand> list = (List<UserCommand>) hibernateTemplate.execute(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(UserCommand.class);
+                criteria.add(Restrictions.eq("sessionId", sessionId));
+                criteria.add(Restrictions.ge("clientTimeStamp", from));
+                criteria.add(Restrictions.le("clientTimeStamp", to));
+                criteria.addOrder(Order.asc("clientTimeStamp"));
+                return criteria.list();
+            }
+        });
+        return list;
+    }
+
 
     @Override
     public VisitorDetailInfo getVisitorDetails(final String sessionId) {
@@ -232,16 +248,18 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             previous.setUserAction(userActions);
         }
 
-        // Fill the overview data
+        // Fill the overview data and user commands
         for (GameTrackingInfo trackingInfo : gameTrackingInfos) {
             if (trackingInfo.getStart() == null || trackingInfo.getEnd() == null) {
+                trackingInfo.setUserCommands(new ArrayList<UserCommand>());                
                 continue;
             }
-            trackingInfo.setAttackCommands(getUserCommands(sessionId, AttackCommand.class, trackingInfo.getStart(), trackingInfo.getEnd()));
-            trackingInfo.setMoveCommands(getUserCommands(sessionId, MoveCommand.class, trackingInfo.getStart(), trackingInfo.getEnd()));
-            trackingInfo.setBuilderCommands(getUserCommands(sessionId, BuilderCommand.class, trackingInfo.getStart(), trackingInfo.getEnd()));
-            trackingInfo.setFactoryCommands(getUserCommands(sessionId, FactoryCommand.class, trackingInfo.getStart(), trackingInfo.getEnd()));
-            trackingInfo.setMoneyCollectCommands(getUserCommands(sessionId, MoneyCollectCommand.class, trackingInfo.getStart(), trackingInfo.getEnd()));
+            trackingInfo.setAttackCommands(getUserCommandCount(sessionId, AttackCommand.class, trackingInfo.getStart(), trackingInfo.getEnd()));
+            trackingInfo.setMoveCommands(getUserCommandCount(sessionId, MoveCommand.class, trackingInfo.getStart(), trackingInfo.getEnd()));
+            trackingInfo.setBuilderCommands(getUserCommandCount(sessionId, BuilderCommand.class, trackingInfo.getStart(), trackingInfo.getEnd()));
+            trackingInfo.setFactoryCommands(getUserCommandCount(sessionId, FactoryCommand.class, trackingInfo.getStart(), trackingInfo.getEnd()));
+            trackingInfo.setMoneyCollectCommands(getUserCommandCount(sessionId, MoneyCollectCommand.class, trackingInfo.getStart(), trackingInfo.getEnd()));
+            trackingInfo.setUserCommands(getUserCommands(sessionId, trackingInfo.getStart(), trackingInfo.getEnd()));
         }
 
         return gameTrackingInfos;

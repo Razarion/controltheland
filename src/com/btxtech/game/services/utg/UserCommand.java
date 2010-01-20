@@ -16,6 +16,7 @@ package com.btxtech.game.services.utg;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.services.connection.Connection;
 import java.util.Date;
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,7 +28,7 @@ import javax.persistence.Id;
  * Time: 11:09:27 AM
  */
 @Entity(name = "TRACKER_USER_COMMAND")
-public class UserCommand {
+public class UserCommand implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
@@ -55,7 +56,7 @@ public class UserCommand {
         sessionId = connection.getSessionId();
         this.interaction = baseCommand.toString();
         interactionClass = baseCommand.getClass().getName();
-        clientTimeStamp =  baseCommand.getTimeStamp();
+        clientTimeStamp = baseCommand.getTimeStamp();
         timeStamp = new Date();
     }
 
@@ -77,6 +78,10 @@ public class UserCommand {
 
     public Date getClientTimeStamp() {
         return clientTimeStamp;
+    }
+
+    public String getInteractionClass() {
+        return interactionClass;
     }
 
     @Override
