@@ -26,13 +26,20 @@ public class VisitorInfo {
     private int pageHits;
     private int enterSetupHits;
     private int enterGameHits;
+    private int commands;
 
-    public VisitorInfo(Date date, String sessionId, int pageHits, int enterSetupHits, int enterGameHits) {
+    public VisitorInfo(Date date,
+                       String sessionId,
+                       int pageHits,
+                       int enterSetupHits,
+                       int enterGameHits,
+                       int commands) {
         this.date = date;
         this.sessionId = sessionId;
         this.pageHits = pageHits;
         this.enterSetupHits = enterSetupHits;
         this.enterGameHits = enterGameHits;
+        this.commands = commands;
     }
 
     public Date getDate() {
@@ -53,5 +60,9 @@ public class VisitorInfo {
 
     public int getEnterGameHits() {
         return enterGameHits;
+    }
+
+    public int getCommands() {
+        return commands;
     }
 }

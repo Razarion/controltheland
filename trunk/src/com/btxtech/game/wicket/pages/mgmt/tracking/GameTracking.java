@@ -33,17 +33,31 @@ import org.apache.wicket.markup.html.list.ListItem;
 public class GameTracking extends Panel {
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(WebCommon.DATE_TIME_FORMAT_STRING);
 
-    public GameTracking(String id, GameTrackingInfo clientRunningTimeDelta) {
+    public GameTracking(String id, GameTrackingInfo gameTrackingInfo) {
         super(id);
-        gameStartup(clientRunningTimeDelta);
-        userActions(clientRunningTimeDelta.getUserActions());
+        overview(gameTrackingInfo);
+        gameStartup(gameTrackingInfo);
+        userActions(gameTrackingInfo.getUserActions());
     }
 
-    private void gameStartup(GameTrackingInfo clientRunningTimeDelta) {
+    private void overview(GameTrackingInfo gameTrackingInfo) {
+        if(gameTrackingInfo.getInGameMilliS() < 0) {
+            add(new Label("timeInGame", "???"));
+        } else {
+            add(new Label("timeInGame", WebCommon.formatDuration(gameTrackingInfo.getInGameMilliS())));
+        }
+        add(new Label("moveCommands", Integer.toString(gameTrackingInfo.getMoveCommands())));
+        add(new Label("builderCommands", Integer.toString(gameTrackingInfo.getBuilderCommands())));
+        add(new Label("factoryCommands", Integer.toString(gameTrackingInfo.getFactoryCommands())));
+        add(new Label("collectCommands", Integer.toString(gameTrackingInfo.getMoneyCollectCommands())));
+        add(new Label("attackCommands", Integer.toString(gameTrackingInfo.getAttackCommands())));
+    }
+
+    private void gameStartup(GameTrackingInfo gameTrackingInfo) {
         // Startup
-        GameStartup server = clientRunningTimeDelta.getServerGameStartup();
-        GameStartup clientStart = clientRunningTimeDelta.getClientStartGameStartup();
-        GameStartup clientRunning = clientRunningTimeDelta.getClientRunningGameStartup();
+        GameStartup server = gameTrackingInfo.getServerGameStartup();
+        GameStartup clientStart = gameTrackingInfo.getClientStartGameStartup();
+        GameStartup clientRunning = gameTrackingInfo.getClientRunningGameStartup();
 
         add(new Label("serverTimeServer", simpleDateFormat.format(server.getTimeStamp())));
         if (clientStart != null) {

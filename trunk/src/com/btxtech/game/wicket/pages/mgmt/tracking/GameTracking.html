@@ -19,6 +19,35 @@
 </head>
 <body>
 <wicket:panel>
+    <hr>
+    <h2>Details</h2>
+    <h3>Overview</h3>
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Time in Game</td>
+            <td wicket:id="timeInGame"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Move Commands</td>
+            <td wicket:id="moveCommands"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Build Commands</td>
+            <td wicket:id="builderCommands"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Factory Commands</td>
+            <td wicket:id="factoryCommands"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Collect Commands</td>
+            <td wicket:id="collectCommands"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Attack Commands</td>
+            <td wicket:id="attackCommands"/>
+        </tr>
+    </table>
     <h3>Startup</h3>
     <table border="0">
         <tr>
@@ -30,24 +59,24 @@
         </tr>
         <tr>
             <td bgcolor="#dadada">Server</td>
-            <td wicket:id="serverTimeServer" />
+            <td wicket:id="serverTimeServer"/>
             <td align="center">-</td>
             <td align="center">-</td>
             <td align="center">-</td>
         </tr>
         <tr>
             <td bgcolor="#dadada">Clinet start</td>
-            <td wicket:id="clientStartTimeServer" />
-            <td align="center" wicket:id="clientStartDelteServer" />
-            <td wicket:id="clientStartTimeClient" />
+            <td wicket:id="clientStartTimeServer"/>
+            <td align="center" wicket:id="clientStartDelteServer"/>
+            <td wicket:id="clientStartTimeClient"/>
             <td align="center">-</td>
         </tr>
         <tr>
             <td bgcolor="#dadada">Clinet running</td>
-            <td wicket:id="clientRunningTimeServer" />
-            <td align="center" wicket:id="clientRunningDelteServer" />
-            <td wicket:id="clientRunningTimeClient" />
-            <td align="center" wicket:id="clientRunningTimeDelta" />
+            <td wicket:id="clientRunningTimeServer"/>
+            <td align="center" wicket:id="clientRunningDelteServer"/>
+            <td wicket:id="clientRunningTimeClient"/>
+            <td align="center" wicket:id="clientRunningTimeDelta"/>
         </tr>
     </table>
 
@@ -63,13 +92,13 @@
             <th bgcolor="#dadada">Last Additional</th>
         </tr>
         <tr wicket:id="userActions">
-            <td wicket:id="clientTime" />
-            <td align="center" wicket:id="clientTimeDelta" />
-            <td wicket:id="type" />
-            <td wicket:id="additional" />
-            <td align="center" wicket:id="repeat" />
-            <td wicket:id="lastTime" />
-            <td wicket:id="lastAdditional" />
+            <td wicket:id="clientTime"/>
+            <td align="center" wicket:id="clientTimeDelta"/>
+            <td wicket:id="type"/>
+            <td wicket:id="additional"/>
+            <td align="center" wicket:id="repeat"/>
+            <td wicket:id="lastTime"/>
+            <td wicket:id="lastAdditional"/>
         </tr>
     </table>
 

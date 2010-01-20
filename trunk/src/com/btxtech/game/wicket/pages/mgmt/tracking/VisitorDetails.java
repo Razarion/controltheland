@@ -39,26 +39,15 @@ public class VisitorDetails extends WebPage {
 
     public VisitorDetails(String sessionId) {
         VisitorDetailInfo visitorDetailInfo = userTrackingService.getVisitorDetails(sessionId);
-        // User Info
-        UserDetails userDetails = visitorDetailInfo.getUserDetails();
-        add(new Label("sessionId", sessionId));
-        add(new Label("timeStamp", simpleDateFormat.format(userDetails.getTimeStamp())));
-        add(new Label("userAgent", userDetails.getUserAgent()));
-        add(new Label("language", userDetails.getLanguage()));
-        add(new Label("remoteHost", userDetails.getRemoteHost()));
-        add(new Label("remoteAddr", userDetails.getRemoteAddr()));
-        add(new Label("crawler", userDetails.isCrawler() ? "Yes" : "No"));
 
-        // Game
-        ListView<GameTrackingInfo> gameTrackingInfoList = new ListView<GameTrackingInfo>("gameTrackings", visitorDetailInfo.getGameTrackingInfos()) {
-            @Override
-            protected void populateItem(ListItem<GameTrackingInfo> listItem) {
-                listItem.add(new GameTracking("gameTracking", listItem.getModelObject()));
-            }
-        };
-        add(gameTrackingInfoList);
+        userInfo(sessionId, visitorDetailInfo);
 
-        // Page access history
+        pageHostory(visitorDetailInfo);
+
+        gameInfo(visitorDetailInfo);
+    }
+
+    private void pageHostory(final VisitorDetailInfo visitorDetailInfo) {
         ListView<PageAccess> pageAccessHistory = new ListView<PageAccess>("pageAccessHistory", visitorDetailInfo.getPageAccessHistory()) {
             private Date previous;
 
@@ -76,7 +65,27 @@ public class VisitorDetails extends WebPage {
             }
         };
         add(pageAccessHistory);
+    }
 
+    private void gameInfo(final VisitorDetailInfo visitorDetailInfo) {
+        ListView<GameTrackingInfo> gameTrackingInfoList = new ListView<GameTrackingInfo>("gameTrackings", visitorDetailInfo.getGameTrackingInfos()) {
+            @Override
+            protected void populateItem(ListItem<GameTrackingInfo> listItem) {
+                listItem.add(new GameTracking("gameTracking", listItem.getModelObject()));
+            }
+        };
+        add(gameTrackingInfoList);
+    }
+
+    private void userInfo(String sessionId, VisitorDetailInfo visitorDetailInfo) {
+        UserDetails userDetails = visitorDetailInfo.getUserDetails();
+        add(new Label("sessionId", sessionId));
+        add(new Label("timeStamp", simpleDateFormat.format(userDetails.getTimeStamp())));
+        add(new Label("userAgent", userDetails.getUserAgent()));
+        add(new Label("language", userDetails.getLanguage()));
+        add(new Label("remoteHost", userDetails.getRemoteHost()));
+        add(new Label("remoteAddr", userDetails.getRemoteAddr()));
+        add(new Label("crawler", userDetails.isCrawler() ? "Yes" : "No"));
     }
 
 }
