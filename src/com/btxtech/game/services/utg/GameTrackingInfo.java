@@ -13,8 +13,10 @@
 
 package com.btxtech.game.services.utg;
 
-import java.util.List;
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 
 /**
  * User: beat
@@ -22,10 +24,35 @@ import java.io.Serializable;
  * Time: 13:15:17
  */
 public class GameTrackingInfo implements Serializable {
+    private Date start;
+    private Date end;
+    private int attackCommands;
+    private int moveCommands;
+    private int builderCommands;
+    private int factoryCommands;
+    private int moneyCollectCommands;
     private GameStartup serverGameStartup;
     private GameStartup clientStartGameStartup;
     private GameStartup clientRunningGameStartup;
     private List<DbUserAction> userActions;
+
+    public Date getStart() {
+        return start;
+    }
+
+    public Date getEnd() {
+        return end;
+    }
+
+    public long getInGameMilliS() {
+        if (start == null) {
+            return 0;
+        }
+        if (end == null) {
+            return -1;
+        }
+        return end.getTime() - start.getTime();
+    }
 
     public void setServerGameStartup(GameStartup serverGameStartup) {
         this.serverGameStartup = serverGameStartup;
@@ -37,6 +64,7 @@ public class GameTrackingInfo implements Serializable {
 
     public void setClientRunningGameStartup(GameStartup clientRunningGameStartup) {
         this.clientRunningGameStartup = clientRunningGameStartup;
+        start = clientRunningGameStartup.getClientTimeStamp();
     }
 
     public GameStartup getServerGameStartup() {
@@ -53,9 +81,55 @@ public class GameTrackingInfo implements Serializable {
 
     public void setUserAction(List<DbUserAction> userActions) {
         this.userActions = userActions;
+        for (DbUserAction dbUserAction : userActions) {
+            if (dbUserAction.getType().equals(UserAction.CLOSE_WINDOW)) {
+                end = dbUserAction.getClientTimeStamp();
+                break;
+            }
+        }
     }
 
     public List<DbUserAction> getUserActions() {
         return userActions;
+    }
+
+    public void setAttackCommands(int attackCommands) {
+        this.attackCommands = attackCommands;
+    }
+
+    public void setMoveCommands(int moveCommands) {
+        this.moveCommands = moveCommands;
+    }
+
+    public void setBuilderCommands(int builderCommands) {
+        this.builderCommands = builderCommands;
+    }
+
+    public void setFactoryCommands(int factoryCommands) {
+        this.factoryCommands = factoryCommands;
+    }
+
+    public void setMoneyCollectCommands(int moneyCollectCommands) {
+        this.moneyCollectCommands = moneyCollectCommands;
+    }
+
+    public int getAttackCommands() {
+        return attackCommands;
+    }
+
+    public int getMoveCommands() {
+        return moveCommands;
+    }
+
+    public int getBuilderCommands() {
+        return builderCommands;
+    }
+
+    public int getFactoryCommands() {
+        return factoryCommands;
+    }
+
+    public int getMoneyCollectCommands() {
+        return moneyCollectCommands;
     }
 }

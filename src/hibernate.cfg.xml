@@ -23,7 +23,6 @@
       <mapping class="com.btxtech.game.services.history.BaseHasBeenDefeated"/>
       <mapping class="com.btxtech.game.services.history.DestroyedElement"/>
       <mapping class="com.btxtech.game.services.history.UserEntered"/>
-      <mapping class="com.btxtech.game.services.utg.UserCommand"/>
       <mapping class="com.btxtech.game.services.connection.ConnectionStatistics"/>
       <mapping class="com.btxtech.game.services.connection.ClientLogEntry"/>
       <mapping class="com.btxtech.game.services.terrain.impl.TerrainFieldTileImpl"/>
@@ -54,5 +53,6 @@
       <mapping class="com.btxtech.game.services.utg.UserDetails"/>
       <mapping class="com.btxtech.game.services.utg.GameStartup"/>
       <mapping class="com.btxtech.game.services.utg.DbUserAction"/>
+      <mapping class="com.btxtech.game.services.utg.UserCommand"/>
   </session-factory>
 </hibernate-configuration>

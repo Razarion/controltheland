@@ -62,8 +62,8 @@ public class UserTracking extends WebPage {
             protected void populateItem(final ListItem<VisitorInfo> listItem) {
                 listItem.add(new Label("date", simpleDateFormat.format(listItem.getModelObject().getDate())));
                 listItem.add(new Label("pageHits", Integer.toString(listItem.getModelObject().getPageHits())));
-                listItem.add(new Label("enterSetup", Integer.toString(listItem.getModelObject().getEnterSetupHits())));
                 listItem.add(new Label("enterGame", Integer.toString(listItem.getModelObject().getEnterGameHits())));
+                listItem.add(new Label("commands", Integer.toString(listItem.getModelObject().getCommands())));
                 Link link = new Link("visitorLink") {
 
                     @Override

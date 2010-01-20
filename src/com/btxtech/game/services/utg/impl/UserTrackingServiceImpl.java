@@ -15,13 +15,18 @@ package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.services.connection.Session;
-import com.btxtech.game.services.utg.UserCommand;
 import com.btxtech.game.services.utg.DbUserAction;
 import com.btxtech.game.services.utg.GameStartup;
 import com.btxtech.game.services.utg.GameTrackingInfo;
 import com.btxtech.game.services.utg.PageAccess;
+import com.btxtech.game.services.utg.UserCommand;
 import com.btxtech.game.services.utg.UserDetails;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.VisitorDetailInfo;
@@ -32,6 +37,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
@@ -42,8 +49,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * User: beat
@@ -98,7 +103,8 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             int hits = ((Long) datesAndHit[2]).intValue();
             int enterSetupHits = getHitsForPage(sessionId, EnterBasePanel.class);
             int enterGameHits = getHitsForGameStartup(sessionId);
-            visitorInfos.add(new VisitorInfo(timeStamp, sessionId, hits, enterSetupHits, enterGameHits));
+            int commands = getUserCommands(sessionId, null, null, null);
+            visitorInfos.add(new VisitorInfo(timeStamp, sessionId, hits, enterSetupHits, enterGameHits, commands));
         }
         return visitorInfos;
     }
@@ -124,6 +130,28 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 Criteria criteria = session.createCriteria(GameStartup.class);
                 criteria.add(Restrictions.eq("sessionId", sessionId));
                 criteria.add(Restrictions.eq("state", GameStartupState.SERVER));
+                criteria.setProjection(Projections.rowCount());
+                return criteria.list();
+            }
+        });
+        return list.get(0);
+    }
+
+    private int getUserCommands(final String sessionId, final Class<? extends BaseCommand> command, final Date from, final Date to) {
+        List<Integer> list = (List<Integer>) hibernateTemplate.execute(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(UserCommand.class);
+                criteria.add(Restrictions.eq("sessionId", sessionId));
+                if (command != null) {
+                    criteria.add(Restrictions.eq("interactionClass", command.getName()));
+                }
+                if (from != null) {
+                    criteria.add(Restrictions.ge("clientTimeStamp", from));
+                }
+                if (to != null) {
+                    criteria.add(Restrictions.le("clientTimeStamp", to));
+                }
                 criteria.setProjection(Projections.rowCount());
                 return criteria.list();
             }
@@ -203,6 +231,19 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             List<DbUserAction> userActions = getUserAction(sessionId, previous.getClientStartGameStartup().getClientTimeStamp(), null);
             previous.setUserAction(userActions);
         }
+
+        // Fill the overview data
+        for (GameTrackingInfo trackingInfo : gameTrackingInfos) {
+            if (trackingInfo.getStart() == null || trackingInfo.getEnd() == null) {
+                continue;
+            }
+            trackingInfo.setAttackCommands(getUserCommands(sessionId, AttackCommand.class, trackingInfo.getStart(), trackingInfo.getEnd()));
+            trackingInfo.setMoveCommands(getUserCommands(sessionId, MoveCommand.class, trackingInfo.getStart(), trackingInfo.getEnd()));
+            trackingInfo.setBuilderCommands(getUserCommands(sessionId, BuilderCommand.class, trackingInfo.getStart(), trackingInfo.getEnd()));
+            trackingInfo.setFactoryCommands(getUserCommands(sessionId, FactoryCommand.class, trackingInfo.getStart(), trackingInfo.getEnd()));
+            trackingInfo.setMoneyCollectCommands(getUserCommands(sessionId, MoneyCollectCommand.class, trackingInfo.getStart(), trackingInfo.getEnd()));
+        }
+
         return gameTrackingInfos;
     }
 
