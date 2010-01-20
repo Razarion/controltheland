@@ -119,7 +119,8 @@ public class Connection implements AsyncCallback<Void> {
                                 GwtCommon.handleException(t);
                             }
                         }
-                        ClientUserTracker.getInstance().sandGameStartupState(GameStartupState.CLIENT_RUNNING, new Date());                        
+                        ClientUserTracker.getInstance().sandGameStartupState(GameStartupState.CLIENT_RUNNING, new Date());
+                        timer.schedule(MIN_DELAY_BETWEEN_TICKS);
                     }
                 });
             }
@@ -131,7 +132,6 @@ public class Connection implements AsyncCallback<Void> {
                 tick();
             }
         };
-        tick();
     }
 
     private void tick() {

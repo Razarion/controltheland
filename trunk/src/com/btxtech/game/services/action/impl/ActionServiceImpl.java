@@ -222,6 +222,8 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
             executeCommand(attackCommand, true);
         } catch (IllegalAccessException e) {
             log.error("", e);
+        } catch (ItemDoesNotExistException e) {
+            // Ignore, may the item has just now been destroyed
         }
         return true;
     }
@@ -246,8 +248,9 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
                 executeCommand(cmd, true);
             } catch (IllegalAccessException e) {
                 log.error("", e);
+            } catch (ItemDoesNotExistException e) {
+                // Ignore, may the item has just now been destroyed
             }
-
         }
     }
 
@@ -281,7 +284,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
     }
 
     @Override
-    public void executeCommand(BaseCommand baseCommand, boolean cmdFromSystem) throws IllegalAccessException {
+    public void executeCommand(BaseCommand baseCommand, boolean cmdFromSystem) throws IllegalAccessException, ItemDoesNotExistException {
         SyncBaseItem syncItem;
         try {
             syncItem = (SyncBaseItem) itemService.getItem(baseCommand.getId());
@@ -297,6 +300,8 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
             syncItem.stop();
             syncItem.executeCommand(baseCommand);
             finalizeCommand(syncItem, cmdFromSystem);
+        } catch (ItemDoesNotExistException e) {
+            throw e;
         } catch (InsufficientFundsException e) {
             connectionService.sendSyncInfo(syncItem);
             baseService.sendAccountBaseUpdate(syncItem);
