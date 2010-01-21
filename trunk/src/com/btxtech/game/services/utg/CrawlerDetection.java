@@ -45,7 +45,8 @@ public class CrawlerDetection {
             "ZyBorg",
             "rabaz",
             "msnbot",
-            "panscient"};
+            "panscient",
+            "exabot"};
 
     public static boolean isCrawler(String userAgentString, String remoteHost) {
         if (userAgentString == null) {
@@ -54,9 +55,9 @@ public class CrawlerDetection {
         return findCrawlerString(userAgentString) || findCrawlerString(remoteHost);
     }
 
-    private static boolean findCrawlerString(String userAgentString) {
+    private static boolean findCrawlerString(String string) {
         for (String crawler : CRAWLERS) {
-            if (userAgentString.toUpperCase().contains(crawler.toUpperCase())) {
+            if (string.toUpperCase().contains(crawler.toUpperCase())) {
                 return true;
             }
         }
