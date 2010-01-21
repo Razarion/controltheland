@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseUpEvent;
 
 /**
  * User: beat
@@ -39,11 +40,17 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
     @Override
     public void onMouseDown(int absoluteX, int absoluteY, MouseDownEvent mouseDownEvent) {
         ClientUserTracker.getInstance().clickOnTerrain(absoluteX, absoluteY, mouseDownEvent);
-        if (mouseDownEvent.getNativeButton() == NativeEvent.BUTTON_RIGHT) {
-            executeMoveCommand(absoluteX, absoluteY);
-        } else if (mouseDownEvent.getNativeButton() == NativeEvent.BUTTON_LEFT) {
+        if (mouseDownEvent.getNativeButton() == NativeEvent.BUTTON_LEFT) {
+            new GroupSelectionFrame(mouseDownEvent.getX(), mouseDownEvent.getY(), this);
+        } else if (mouseDownEvent.getNativeButton() == NativeEvent.BUTTON_RIGHT) {
             SelectionHandler.getInstance().clearSelection();
-            new GroupSelectionFrame(mouseDownEvent.getX(), mouseDownEvent.getY());
+        }
+    }
+
+    @Override
+    public void onMouseUp(int absoluteX, int absoluteY, MouseUpEvent event) {
+        if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
+            executeMoveCommand(absoluteX, absoluteY);
         }
     }
 
@@ -53,7 +60,7 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
             return;
         }
 
-        if(!selection.canMove()) {
+        if (!selection.canMove()) {
             return;
         }
 
