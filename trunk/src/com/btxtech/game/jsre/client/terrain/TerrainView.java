@@ -309,7 +309,11 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
 
     @Override
     public void onMouseUp(MouseUpEvent event) {
-        // Ignore
+        int x = event.getRelativeX(canvas.getElement()) + viewOriginLeft;
+        int y = event.getRelativeY(canvas.getElement()) + viewOriginTop;
+        if (terrainMouseButtonListener != null) {
+            terrainMouseButtonListener.onMouseUp(x, y, event);
+        }
     }
 
     public TerrainHandler getTerrainHandler() {

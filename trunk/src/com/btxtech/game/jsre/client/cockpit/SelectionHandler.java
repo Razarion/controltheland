@@ -61,11 +61,6 @@ public class SelectionHandler {
         }
 
         if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
-            clearSelection();
-            this.selectedTargetClientSyncItem = selectedTargetClientSyncItem;
-            selectedTargetClientSyncItem.setSelected(true);
-            onTargetSelectionItemChanged(selectedTargetClientSyncItem);
-        } else if (event.getNativeButton() == NativeEvent.BUTTON_RIGHT) {
             if (selectedGroup != null) {
                 if (selectedGroup.canAttack() && selectedTargetClientSyncItem instanceof ClientSyncBaseItemView) {
                     ActionHandler.getInstance().attack(selectedGroup.getItems(), ((ClientSyncBaseItemView)selectedTargetClientSyncItem).getSyncBaseItem());

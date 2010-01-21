@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.terrain.TerrainMouseButtonListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.TerrainUtil;
 import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 
@@ -41,6 +42,11 @@ public class MapModifier implements TerrainMouseButtonListener {
     @Override
     public void onMouseDown(int absoluteX, int absoluteY, MouseDownEvent mouseDownEvent) {
         flipTile(absoluteX, absoluteY);
+    }
+
+    @Override
+    public void onMouseUp(int absoluteX, int absoluteY, MouseUpEvent event) {
+        // Ignore
     }
 
     private void flipTile(int absoluteX, int absoluteY) {

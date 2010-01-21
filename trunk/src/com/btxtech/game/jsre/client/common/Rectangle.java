@@ -201,6 +201,10 @@ public class Rectangle implements Serializable {
         throw new IllegalArgumentException("The point is inside the rectangle");
     }
 
+    public boolean hasMinSize(int minSize) {
+        return getHeight() >= minSize || getWeidth() >= minSize;
+    }
+
     /**
      * @param center where this rectaggle is turned arount
      * @param angle  to turn thie rectaggle counterclockwise
