@@ -36,7 +36,7 @@ public class GameTrackingInfo implements Serializable {
     private GameStartup serverGameStartup;
     private GameStartup clientStartGameStartup;
     private GameStartup clientRunningGameStartup;
-    private List<DbUserAction> userActions;
+    private List<DbUserAction> userActions = new ArrayList<DbUserAction>();
     private List<UserCommand> userCommands;
 
     public Date getStart() {
