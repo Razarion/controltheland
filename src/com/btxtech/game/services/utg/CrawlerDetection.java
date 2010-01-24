@@ -46,13 +46,11 @@ public class CrawlerDetection {
             "rabaz",
             "msnbot",
             "panscient",
-            "exabot"};
+            "exabot",
+            "SurveyBot"};
 
     public static boolean isCrawler(String userAgentString, String remoteHost) {
-        if (userAgentString == null) {
-            return true;
-        }
-        return findCrawlerString(userAgentString) || findCrawlerString(remoteHost);
+        return userAgentString == null || findCrawlerString(userAgentString) || findCrawlerString(remoteHost);
     }
 
     private static boolean findCrawlerString(String string) {
