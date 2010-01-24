@@ -84,11 +84,23 @@ public class GameTrackingInfo implements Serializable {
 
     public void setUserAction(List<DbUserAction> userActions) {
         this.userActions = userActions;
+    }
+
+    public void calculateEnd(GameTrackingInfo next) {
+        DbUserAction last = null;
         for (DbUserAction dbUserAction : userActions) {
             if (dbUserAction.getType().equals(UserAction.CLOSE_WINDOW)) {
                 end = dbUserAction.getClientTimeStamp();
-                break;
+                return;
             }
+            last = dbUserAction;
+        }
+        if (last != null) {
+            end = last.getClientTimeStamp();
+            return;
+        }
+        if (next != null && next.getClientRunningGameStartup() != null) {
+            end = next.getClientRunningGameStartup().getClientTimeStamp();
         }
     }
 
@@ -139,7 +151,7 @@ public class GameTrackingInfo implements Serializable {
     public List<UserActionCommand> getUserActionCommand() {
         ArrayList<UserActionCommand> userActionCommands = new ArrayList<UserActionCommand>();
         for (DbUserAction userAction : userActions) {
-           userActionCommands.add(new UserActionCommand(userAction));
+            userActionCommands.add(new UserActionCommand(userAction));
         }
         for (UserCommand userCommand : userCommands) {
             userActionCommands.add(new UserActionCommand(userCommand));

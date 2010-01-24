@@ -191,6 +191,11 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         VisitorDetailInfo visitorDetailInfo = new VisitorDetailInfo(list.get(0));
         visitorDetailInfo.setGameTrackingInfos(getGameTrackingInfos(sessionId));
         visitorDetailInfo.setPageAccessHistory(getPageAccessHistory(sessionId));
+        visitorDetailInfo.setAttackCommands(getUserCommandCount(sessionId, AttackCommand.class, null, null));
+        visitorDetailInfo.setMoveCommands(getUserCommandCount(sessionId, MoveCommand.class, null, null));
+        visitorDetailInfo.setBuilderCommands(getUserCommandCount(sessionId, BuilderCommand.class, null, null));
+        visitorDetailInfo.setFactoryCommands(getUserCommandCount(sessionId, FactoryCommand.class, null, null));
+        visitorDetailInfo.setMoneyCollectCommands(getUserCommandCount(sessionId, MoneyCollectCommand.class, null, null));
         return visitorDetailInfo;
     }
 
@@ -249,9 +254,15 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         }
 
         // Fill the overview data and user commands
-        for (GameTrackingInfo trackingInfo : gameTrackingInfos) {
-            if (trackingInfo.getStart() == null || trackingInfo.getEnd() == null) {
-                trackingInfo.setUserCommands(new ArrayList<UserCommand>());                
+        for (int i = 0; i < gameTrackingInfos.size(); i++) {
+            GameTrackingInfo trackingInfo = gameTrackingInfos.get(i);
+            if (i + 1 < gameTrackingInfos.size()) {
+                trackingInfo.calculateEnd(gameTrackingInfos.get(i + 1));
+            } else {
+                trackingInfo.calculateEnd(null);
+            }
+            if (trackingInfo.getStart() == null) {
+                trackingInfo.setUserCommands(new ArrayList<UserCommand>());
                 continue;
             }
             trackingInfo.setAttackCommands(getUserCommandCount(sessionId, AttackCommand.class, trackingInfo.getStart(), trackingInfo.getEnd()));
