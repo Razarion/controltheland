@@ -32,7 +32,7 @@ public class SpeechBubble extends AbsolutePanel {
     public static final int BUBLLE_BORDER_SIZE = 40;
     public static final int BEAK_LENGTH = 30;
     public static final int BEAK_WIDTH = 30;
-    public static final int LINE_WIDTH = 2;
+    public static final int LINE_SIZE = 2;
 
     enum Direction {
         TOP,
@@ -43,50 +43,121 @@ public class SpeechBubble extends AbsolutePanel {
 
     public SpeechBubble(int beakRelX, int beakRelY) {
         int scrrenWidth = TerrainView.getInstance().getViewWidth();
+        int scrrenHeight = TerrainView.getInstance().getViewHeight();
         int htmlWidth = 200;
         int htmlHeight = 200;
-        int bubblWidth = htmlWidth + 2 * BUBLLE_BORDER_SIZE + 2 * LINE_WIDTH;
-        int bubblHeight = htmlHeight + 2 * BUBLLE_BORDER_SIZE + 2 * LINE_WIDTH + BEAK_LENGTH;
+        int bubbleWidth = htmlWidth + 2 * BUBLLE_BORDER_SIZE + 2 * LINE_SIZE;
+        int bubbleHeight = htmlHeight + 2 * BUBLLE_BORDER_SIZE + 2 * LINE_SIZE;
 
-        Direction direction = Direction.TOP;
-        int left;
+        Direction direction = getBeakDirection(beakRelX, beakRelY, scrrenWidth, scrrenHeight, bubbleWidth, bubbleHeight);
+
+        int totalBubbleWidth = bubbleWidth;
+        int totalBubbleHeight = bubbleHeight;
+        if (direction == Direction.LEFT || direction == Direction.RIGHT) {
+            totalBubbleWidth += BEAK_LENGTH;
+        } else if (direction == Direction.TOP || direction == Direction.BOTTOM) {
+            totalBubbleHeight += BEAK_LENGTH;
+        }
+
         int beakOffset;
-        if (beakRelX < SPACING + CURVE_SIZE + BEAK_WIDTH / 2) {
-            left = SPACING;
-            beakOffset = beakRelX;
-        } else if (beakRelX > scrrenWidth - bubblWidth - SPACING) {
-            left = scrrenWidth - SPACING - bubblWidth;
-            beakOffset = beakRelX - left;
-        } else {
-            beakOffset = BEAK_WIDTH + CURVE_SIZE;
-            left = beakRelX - BEAK_WIDTH - CURVE_SIZE;
+        int left;
+        int top;
+
+        switch (direction) {
+            case BOTTOM:
+                left = getBubbleLeft(beakRelX, scrrenWidth, totalBubbleWidth);
+                top = beakRelY - totalBubbleHeight;
+                beakOffset = beakRelX - left;
+                break;
+            case LEFT:
+                left = beakRelX;
+                top = getBubbleTop(beakRelY, scrrenHeight, totalBubbleHeight);
+                beakOffset = beakRelY - top;
+                break;
+            case RIGHT:
+                left = beakRelX - totalBubbleWidth;
+                top = getBubbleTop(beakRelY, scrrenHeight, totalBubbleHeight);
+                beakOffset = beakRelY - top;
+                break;
+            case TOP:
+                left = getBubbleLeft(beakRelX, scrrenWidth, totalBubbleWidth);
+                top = beakRelY;
+                beakOffset = beakRelX - left;
+                break;
+            default:
+                throw new IllegalArgumentException(this + " unsupported direction: " + direction);
         }
 
 
-        int top = beakRelY;
-
-        ////
-        setPixelSize(bubblWidth, bubblHeight);
-        getElement().getStyle().setBackgroundColor("#888888");
+        setPixelSize(totalBubbleWidth, totalBubbleHeight);
         getElement().getStyle().setZIndex(Constants.Z_INDEX_SPEECH_BUBBLE);
         MapWindow.getAbsolutePanel().add(this, left, top);
         // HTML content
         HTML content = new HTML("<h3>Hallo Du</h3> sdffsdaaf sdafsdaf sdfsdafasdf sdafsdafsdaf");
         content.getElement().getStyle().setZIndex(2);
         content.setPixelSize(htmlWidth, htmlHeight);
-        add(content, BUBLLE_BORDER_SIZE, BUBLLE_BORDER_SIZE + BEAK_LENGTH);
-        ////
-        buildBubble(LINE_WIDTH, LINE_WIDTH, bubblWidth - LINE_WIDTH, bubblHeight - LINE_WIDTH, beakOffset, direction);
+        switch (direction) {
+            case BOTTOM:
+                add(content, BUBLLE_BORDER_SIZE, BUBLLE_BORDER_SIZE);
+                break;
+            case LEFT:
+                add(content, BUBLLE_BORDER_SIZE + BEAK_LENGTH, BUBLLE_BORDER_SIZE);
+                break;
+            case RIGHT:
+                add(content, BUBLLE_BORDER_SIZE, BUBLLE_BORDER_SIZE);
+                break;
+            case TOP:
+                add(content, BUBLLE_BORDER_SIZE, BUBLLE_BORDER_SIZE + BEAK_LENGTH);
+                break;
+        }
 
-        //buildBubble(2, 2, 198, 198, 199);
-        //buildBubble(2, 2, 198, 198, 144);
+        buildBubble(LINE_SIZE, LINE_SIZE, totalBubbleWidth - LINE_SIZE, totalBubbleHeight - LINE_SIZE, beakOffset, direction);
+    }
 
-        //buildBubble(2, 2, 198, 198, 1);
-        //buildBubble(2, 2, 198, 198, 56);
+    private int getBubbleTop(int beakRelY, int scrrenHeight, int bubblHeight) {
+        int top;
+        if (beakRelY < (bubblHeight + BEAK_WIDTH) / 2) {
+            top = SPACING;
+        } else if (beakRelY > scrrenHeight - (bubblHeight + BEAK_WIDTH) / 2) {
+            top = scrrenHeight - SPACING - bubblHeight;
+        } else {
+            top = beakRelY - bubblHeight / 2;
+        }
+        return top;
+    }
 
-        //buildBubble(2, 2, 198, 198, 143);
-        //  buildBubble(2, 2, 198, 198, 57);
-        //buildBubble(2, 2, 198, 198, 100);
+    private int getBubbleLeft(int beakRelX, int scrrenWidth, int bubblWidth) {
+        int left;
+        if (beakRelX < (bubblWidth + BEAK_WIDTH) / 2) {
+            left = SPACING;
+        } else if (beakRelX > scrrenWidth - (bubblWidth + BEAK_WIDTH) / 2) {
+            left = scrrenWidth - SPACING - bubblWidth;
+        } else {
+            left = beakRelX - bubblWidth / 2;
+        }
+        return left;
+    }
+
+    private Direction getBeakDirection(int beakRelX, int beakRelY, int scrrenWidth, int scrrenHeight, int bubblWidth, int bubblHeight) {
+        Direction direction = null;
+        if (beakRelX < (bubblWidth + BEAK_WIDTH) / 2) {
+            direction = Direction.LEFT;
+        } else if (beakRelX > scrrenWidth - (bubblWidth + BEAK_WIDTH) / 2) {
+            direction = Direction.RIGHT;
+        }
+        if (beakRelY < bubblHeight) {
+            if (direction == null) {
+                direction = Direction.TOP;
+            }
+        } else if (beakRelY > scrrenHeight - bubblHeight) {
+            if (direction == null) {
+                direction = Direction.BOTTOM;
+            }
+        }
+        if (direction == null) {
+            direction = Direction.BOTTOM;
+        }
+        return direction;
     }
 
     private void buildBubble(int left, int top, int right, int bottom, int beakOffset, Direction direction) {
@@ -109,10 +180,10 @@ public class SpeechBubble extends AbsolutePanel {
                 break;
         }
 
-        ExtendedCanvas extendedCanvas = new ExtendedCanvas(right + LINE_WIDTH, bodyBottom + LINE_WIDTH);
+        ExtendedCanvas extendedCanvas = new ExtendedCanvas(right + LINE_SIZE, bottom + LINE_SIZE);
         extendedCanvas.getElement().getStyle().setZIndex(1);
         add(extendedCanvas, 0, 0);
-        extendedCanvas.setLineWidth(LINE_WIDTH);
+        extendedCanvas.setLineWidth(LINE_SIZE);
         extendedCanvas.beginPath();
         extendedCanvas.moveTo(CURVE_SIZE + bodyLeft, bodyTop);
         extendedCanvas.quadraticCurveTo(bodyLeft, bodyTop, bodyLeft, CURVE_SIZE + bodyTop);
