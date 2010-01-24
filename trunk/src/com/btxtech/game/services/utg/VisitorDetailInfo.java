@@ -25,6 +25,12 @@ public class VisitorDetailInfo {
     private UserDetails userDetails;
     private List<GameTrackingInfo> gameTrackingInfos = new ArrayList<GameTrackingInfo>();
     private List<PageAccess> pageAccessHistory;
+    private long totalTime;
+    private int attackCommands;
+    private int moveCommands;
+    private int builderCommands;
+    private int factoryCommands;
+    private int moneyCollectCommands;
 
     public VisitorDetailInfo(UserDetails userDetails) {
         this.userDetails = userDetails;
@@ -40,6 +46,14 @@ public class VisitorDetailInfo {
 
     public void setGameTrackingInfos(List<GameTrackingInfo> gameTrackingInfos) {
         this.gameTrackingInfos = gameTrackingInfos;
+        totalTime = 0;
+        for (GameTrackingInfo gameTrackingInfo : gameTrackingInfos) {
+            totalTime += gameTrackingInfo.getInGameMilliS();
+        }
+    }
+
+    public int getGameAttemps() {
+        return gameTrackingInfos.size();
     }
 
     public void setPageAccessHistory(List<PageAccess> pageAccessHistory) {
@@ -48,5 +62,53 @@ public class VisitorDetailInfo {
 
     public List<PageAccess> getPageAccessHistory() {
         return pageAccessHistory;
+    }
+
+    public long getTotalTime() {
+        return totalTime;
+    }
+
+    public void setTotalTime(long totalTime) {
+        this.totalTime = totalTime;
+    }
+
+    public int getAttackCommands() {
+        return attackCommands;
+    }
+
+    public void setAttackCommands(int attackCommands) {
+        this.attackCommands = attackCommands;
+    }
+
+    public int getMoveCommands() {
+        return moveCommands;
+    }
+
+    public void setMoveCommands(int moveCommands) {
+        this.moveCommands = moveCommands;
+    }
+
+    public int getBuilderCommands() {
+        return builderCommands;
+    }
+
+    public void setBuilderCommands(int builderCommands) {
+        this.builderCommands = builderCommands;
+    }
+
+    public int getFactoryCommands() {
+        return factoryCommands;
+    }
+
+    public void setFactoryCommands(int factoryCommands) {
+        this.factoryCommands = factoryCommands;
+    }
+
+    public int getMoneyCollectCommands() {
+        return moneyCollectCommands;
+    }
+
+    public void setMoneyCollectCommands(int moneyCollectCommands) {
+        this.moneyCollectCommands = moneyCollectCommands;
     }
 }

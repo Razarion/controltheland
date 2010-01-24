@@ -42,6 +42,8 @@ public class VisitorDetails extends WebPage {
 
         userInfo(sessionId, visitorDetailInfo);
 
+        gameOverview(visitorDetailInfo);
+
         pageHostory(visitorDetailInfo);
 
         gameInfo(visitorDetailInfo);
@@ -88,4 +90,13 @@ public class VisitorDetails extends WebPage {
         add(new Label("crawler", userDetails.isCrawler() ? "Yes" : "No"));
     }
 
+    private void gameOverview(VisitorDetailInfo visitorDetailInfo) {
+        add(new Label("totalTime", WebCommon.formatDuration(visitorDetailInfo.getTotalTime())));
+        add(new Label("gameAttempts", Integer.toString(visitorDetailInfo.getGameAttemps())));
+        add(new Label("moveCommands", Integer.toString(visitorDetailInfo.getMoveCommands())));
+        add(new Label("builderCommands", Integer.toString(visitorDetailInfo.getBuilderCommands())));
+        add(new Label("factoryCommands", Integer.toString(visitorDetailInfo.getFactoryCommands())));
+        add(new Label("collectCommands", Integer.toString(visitorDetailInfo.getMoneyCollectCommands())));
+        add(new Label("attackCommands", Integer.toString(visitorDetailInfo.getAttackCommands())));
+    }
 }
