@@ -19,15 +19,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 /**
  * User: beat
  * Date: Jul 26, 2009
  * Time: 12:56:17 PM
  */
-@Entity
-@Table(name = "CONNECTION_STATISTICS")
+@Entity(name = "CONNECTION_STATISTICS")
 public class ConnectionStatistics {
     @Id
     @GeneratedValue
@@ -40,6 +38,12 @@ public class ConnectionStatistics {
     private double ticksPerSecond;
     @Column(nullable = false)
     private String userName;
+
+    /**
+     * Used by Hibernate
+     */
+    protected ConnectionStatistics() {
+    }
 
     public ConnectionStatistics(SimpleBase simpleBase, String sessionId, double ticksPerSecond) {
         this.sessionId = sessionId;

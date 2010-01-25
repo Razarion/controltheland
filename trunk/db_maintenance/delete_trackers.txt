@@ -1,3 +1,11 @@
+Running MYSQL on windows
+------------------------
+my.ini add:
+[mysqld]
+lower_case_table_names=2
+
+User Tracking
+-------------
 DELETE FROM TRACKER_USER_DETAILS;
 DELETE FROM TRACKER_GAME_STARTUP;
 DELETE FROM TRACKER_PAGE_ACCESS;
