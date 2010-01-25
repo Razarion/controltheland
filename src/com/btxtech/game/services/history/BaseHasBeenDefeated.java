@@ -16,6 +16,7 @@ package com.btxtech.game.services.history;
 import com.btxtech.game.jsre.common.SimpleBase;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 /**
  * User: beat
@@ -36,6 +37,7 @@ public class BaseHasBeenDefeated extends HistoryElement {
     }
 
     @Override
+    @Transient    
     public String getMessage() {
         return "'" + getUser() + "' has been defeated";
     }

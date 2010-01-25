@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 /**
  * User: beat
@@ -42,6 +43,7 @@ public class DestroyedElement extends HistoryElement {
     }
 
     @Override
+    @Transient
     public String getMessage() {
         return "'" + getUser() + "' destroyed a " + target + " from '" + targetUser + "'";
     }

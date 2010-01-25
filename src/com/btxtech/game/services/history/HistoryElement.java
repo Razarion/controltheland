@@ -31,8 +31,7 @@ import javax.persistence.Table;
  * Date: Jul 5, 2009
  * Time: 7:28:46 PM
  */
-@Entity
-@Table(name="HISTORY")
+@Entity(name="HISTORY")
 @Inheritance(strategy= InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="HISTORY_TYPE", discriminatorType= DiscriminatorType.STRING)
 abstract public class HistoryElement implements Serializable{
