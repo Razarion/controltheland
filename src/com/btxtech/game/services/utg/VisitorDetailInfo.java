@@ -31,6 +31,7 @@ public class VisitorDetailInfo {
     private int builderCommands;
     private int factoryCommands;
     private int moneyCollectCommands;
+    private int completedMissionCount;
 
     public VisitorDetailInfo(UserDetails userDetails) {
         this.userDetails = userDetails;
@@ -110,5 +111,13 @@ public class VisitorDetailInfo {
 
     public void setMoneyCollectCommands(int moneyCollectCommands) {
         this.moneyCollectCommands = moneyCollectCommands;
+    }
+
+    public void setCompletedMissionCount(int completedMissionCount) {
+        this.completedMissionCount = completedMissionCount;
+    }
+
+    public int getCompletedMissionCount() {
+        return completedMissionCount;
     }
 }

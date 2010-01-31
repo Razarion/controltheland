@@ -27,7 +27,7 @@ public class MissionAction implements Serializable {
     public static final String MISSION_COMPLETED = "MISSION_COMPLETED";
 
     private String action;
-    private String description;
+    private String mission;
     private String task;
     private Date timeStamp;
 
@@ -37,9 +37,9 @@ public class MissionAction implements Serializable {
     public MissionAction() {
     }
 
-    public MissionAction(String action, String description, String task) {
+    public MissionAction(String action, String mission, String task) {
         this.action = action;
-        this.description = description;
+        this.mission = mission;
         this.task = task;
         timeStamp = new Date();
     }
@@ -48,8 +48,8 @@ public class MissionAction implements Serializable {
         return action;
     }
 
-    public String getDescription() {
-        return description;
+    public String getMission() {
+        return mission;
     }
 
     public String getTask() {

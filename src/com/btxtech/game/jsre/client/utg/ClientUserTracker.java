@@ -169,6 +169,7 @@ public class ClientUserTracker {
                 }
             });
             userActions = new ArrayList<UserAction>();
+            missionActions = new ArrayList<MissionAction>();
         }
 
     }
