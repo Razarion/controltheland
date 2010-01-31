@@ -15,11 +15,13 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
+import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import java.util.Date;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * The async counterpart of <code>MovableService</code>.
@@ -42,5 +44,9 @@ public interface MovableServiceAsync {
 
     void getTerrainField(AsyncCallback async);
 
-    void sendUserActions(ArrayList<UserAction> userActions, AsyncCallback<Void> asyncCallback);
+    void sendUserActions(ArrayList<UserAction> userActions, ArrayList<MissionAction> missionActions, AsyncCallback<Void> asyncCallback);
+
+    void createMissionTraget(Id attacker, AsyncCallback<Void> asyncCallback);
+
+    void createMissionMoney(Id harvester, AsyncCallback<Void> asyncCallback);
 }

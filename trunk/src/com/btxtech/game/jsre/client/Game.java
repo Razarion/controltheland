@@ -28,6 +28,7 @@ import java.util.Date;
 
 public class Game implements EntryPoint {
     static private boolean isDebug = false;
+    static public CockpitPanel cockpitPanel;
 
     public void onModuleLoad() {
         try {
@@ -44,7 +45,7 @@ public class Game implements EntryPoint {
             RadarPanel.getInstance().getElement().getStyle().setProperty("left", "");
             RadarPanel.getInstance().getElement().getStyle().setProperty("right", "30px");
 
-            CockpitPanel cockpitPanel = new CockpitPanel();
+            cockpitPanel = new CockpitPanel();
             MapWindow.getAbsolutePanel().add(cockpitPanel, 30, 200);
             cockpitPanel.getElement().getStyle().setProperty("top", "");
             cockpitPanel.getElement().getStyle().setProperty("bottom", "30px");

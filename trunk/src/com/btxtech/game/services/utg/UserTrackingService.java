@@ -15,6 +15,7 @@ package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
+import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public interface UserTrackingService {
 
     void gameStartup(GameStartupState server, Date timeStamp);
 
-    void saveUserActions(ArrayList<UserAction> userActions);
+    void saveUserActions(ArrayList<UserAction> userActions, ArrayList<MissionAction> missionActions);
 
     List<VisitorInfo> getVisitorInfos();
 

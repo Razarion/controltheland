@@ -96,6 +96,9 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
 
     @Override
     public void moneyItemDeleted(SyncResourceItem moneyImpl) {
+        if(moneyImpl.isMissionMoney()) {
+            return;
+        }
         synchronized (moneys) {
             moneys.remove(moneyImpl);
         }

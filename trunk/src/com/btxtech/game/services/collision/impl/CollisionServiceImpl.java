@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.TerrainUtil;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.collision.CollisionServiceChangedListener;
 import com.btxtech.game.services.collision.PassableRectangle;
@@ -87,7 +88,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainChangeList
 
         buildPassableRectangleList(mapAsRectangles);
         for (CollisionServiceChangedListener collisionServiceChangedListener : collisionServiceChangedListeners) {
-           collisionServiceChangedListener.collisionServiceChanged(); 
+            collisionServiceChangedListener.collisionServiceChanged();
         }
     }
 
@@ -354,6 +355,46 @@ public class CollisionServiceImpl implements CollisionService, TerrainChangeList
         throw new IllegalStateException("Can not find free position");
     }
 
+    @Override
+    public Index getFreeRandomPositionInRect(ItemType itemType, SyncItem attackerItem, int targetMinRange, int targetMaxRange) {
+        Random random = new Random();
+        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+            int x;
+            int y;
+            if (random.nextBoolean()) {
+                x = attackerItem.getPosition().getX() + targetMinRange + random.nextInt(targetMaxRange - targetMinRange);
+            } else {
+                x = attackerItem.getPosition().getX() - targetMinRange - random.nextInt(targetMaxRange - targetMinRange);
+            }
+            if (random.nextBoolean()) {
+                y = attackerItem.getPosition().getY() + targetMinRange + random.nextInt(targetMaxRange - targetMinRange);
+            } else {
+                y = attackerItem.getPosition().getY() - targetMinRange - random.nextInt(targetMaxRange - targetMinRange);
+            }
+            if (x < itemType.getWidth() / 2 || y < itemType.getHeight() / 2) {
+                continue;
+            }
+            if (x + itemType.getWidth() / 2 > terrainService.getPlayFieldXSize() || y + itemType.getHeight() / 2 > terrainService.getPlayFieldYSize()) {
+                continue;
+            }
+
+            Index point = new Index(x, y);
+            if (!isFree(point, itemType)) {
+                continue;
+            }
+            Rectangle itemRectangle = new Rectangle(x - itemType.getWidth() / 2,
+                    y - itemType.getHeight() / 2,
+                    itemType.getWidth(),
+                    itemType.getHeight());
+
+            if (itemService.hasItemsInRectangle(itemRectangle)) {
+                continue;
+            }
+            return point;
+        }
+        throw new IllegalStateException("Can not find free position");
+    }
+
     public boolean isFreeAbsolue(Index absoluePosition) {
         Index atomPosition = TerrainUtil.getTerrainTileIndexForAbsPosition(absoluePosition);
         return isFreeAtom(atomPosition);
@@ -409,8 +450,8 @@ public class CollisionServiceImpl implements CollisionService, TerrainChangeList
     @Override
     public void addCollisionServiceChangedListener(CollisionServiceChangedListener collisionServiceChangedListener) {
         collisionServiceChangedListeners.add(collisionServiceChangedListener);
-        if(passableTerrain != null) {
-           collisionServiceChangedListener.collisionServiceChanged();
+        if (passableTerrain != null) {
+            collisionServiceChangedListener.collisionServiceChanged();
         }
     }
 
@@ -418,5 +459,4 @@ public class CollisionServiceImpl implements CollisionService, TerrainChangeList
     public void removeCollisionServiceChangedListener(CollisionServiceChangedListener collisionServiceChangedListener) {
         collisionServiceChangedListeners.remove(collisionServiceChangedListener);
     }
-
 }

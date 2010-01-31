@@ -26,6 +26,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInf
  */
 public class SyncResourceItem extends SyncItem {
     private int amount;
+    private boolean missionMoney = false;
 
     public SyncResourceItem(Id id, Index position, ResourceType resourceType, Services services) {
         super(id, position, resourceType, services);
@@ -69,5 +70,13 @@ public class SyncResourceItem extends SyncItem {
 
     public void setAmount(int amount) {
         this.amount = amount;
+    }
+
+    public boolean isMissionMoney() {
+        return missionMoney;
+    }
+
+    public void setMissionMoney(boolean missionMoney) {
+        this.missionMoney = missionMoney;
     }
 }

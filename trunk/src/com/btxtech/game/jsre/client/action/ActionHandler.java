@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.client.utg.ClientUserGuidance;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.RectangleFormation;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
@@ -30,9 +31,9 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 import com.google.gwt.user.client.Timer;
 import java.util.Collection;
 import java.util.HashSet;
@@ -81,6 +82,7 @@ public class ActionHandler {
                 SyncBaseItem activeItem = iterator.next();
                 try {
                     if (!activeItem.tick(factor)) {
+                        ClientUserGuidance.getInstance().onSyncItemDeactivated(activeItem);
                         iterator.remove();
                     }
                 } catch (ItemDoesNotExistException ife) {
@@ -280,6 +282,7 @@ public class ActionHandler {
 
     private void executeCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
         Connection.getInstance().sendCommand(baseCommand);
+        ClientUserGuidance.getInstance().onExecuteCommand(syncItem, baseCommand);
         addActiveItem(syncItem);
     }
 

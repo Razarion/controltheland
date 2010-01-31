@@ -109,7 +109,7 @@ public class GroupSelectionFrame extends AbsolutePanel implements MouseMoveHandl
             unsuccessfulSelection(mouseEvent);
             return;
         }
-        Collection<ClientSyncBaseItemView> selectedItems = ItemContainer.getInstance().getItemsInRect(selection);
+        Collection<ClientSyncBaseItemView> selectedItems = ItemContainer.getInstance().getItemsInRect(selection, true);
         if (selectedItems.isEmpty()) {
             return;
         }

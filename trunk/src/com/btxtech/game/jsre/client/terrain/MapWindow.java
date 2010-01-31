@@ -17,8 +17,8 @@ import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.InfoPanel;
 import com.btxtech.game.jsre.client.TopMapPanel;
-import com.btxtech.game.jsre.client.dialogs.SpeechBubble;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
+import com.btxtech.game.jsre.client.utg.SpeechBubble;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
@@ -53,7 +53,6 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
     };
 
     private void scroll() {
-        SpeechBubble.closeAllBubbles();
         int scrollX = 0;
         if (scrollDirectionX == ScrollDirection.WEST) {
             scrollX = -SCROLL_DISTANCE;
@@ -165,7 +164,9 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
             if (w instanceof ClientSyncItemView) {
                 ClientSyncItemView clientSyncItemView = (ClientSyncItemView) w;
                 clientSyncItemView.setViewOrigin(left, top);
-            } else if (w != TerrainView.getInstance().getCanvas() && !(w instanceof TopMapPanel)) {
+            } else if (w != TerrainView.getInstance().getCanvas() &&
+                    !(w instanceof TopMapPanel) &&
+                    !(w instanceof SpeechBubble && ((SpeechBubble) w).isPreventScroll())) {
                 int newLeft = MapWindow.getAbsolutePanel().getWidgetLeft(w) - deltaLeft;
                 int newtop = MapWindow.getAbsolutePanel().getWidgetTop(w) - deltaTop;
                 MapWindow.getAbsolutePanel().setWidgetPosition(w, newLeft, newtop);
