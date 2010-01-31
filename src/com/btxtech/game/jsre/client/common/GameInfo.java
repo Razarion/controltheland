@@ -26,7 +26,6 @@ public class GameInfo implements Serializable{
     private SimpleBase base;
     private int accountBalance;
     private int xp;
-    private Index startPoint;
     private int[][] terrainField;
     private Collection<Integer> passableTerrainTileIds;
     private Collection<Integer> allowedItemTypes;
@@ -47,14 +46,6 @@ public class GameInfo implements Serializable{
 
     public void setAccountBalance(int accountBalance) {
         this.accountBalance = accountBalance;
-    }
-
-    public Index getStartPoint() {
-        return startPoint;
-    }
-
-    public void setStartPoint(Index startPoint) {
-        this.startPoint = startPoint;
     }
 
     public int[][] getTerrainField() {

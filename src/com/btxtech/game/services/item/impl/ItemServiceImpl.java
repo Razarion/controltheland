@@ -46,6 +46,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Iterator;
 import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -238,6 +239,19 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         synchronized (items) {
             return new ArrayList<SyncItem>(items.values());
         }
+    }
+
+    @Override
+    public List<SyncItem> getItemsCopyNoDummies() {
+        List<SyncItem> syncItems = getItemsCopy();
+        SimpleBase dummy = baseService.getDummyBase();
+        for (Iterator<SyncItem> it = syncItems.iterator(); it.hasNext();) {
+            SyncItem syncItem = it.next();
+            if ((syncItem instanceof SyncBaseItem) && dummy.equals(((SyncBaseItem) syncItem).getBase())) {
+                it.remove();
+            }
+        }
+        return syncItems;
     }
 
     @Override

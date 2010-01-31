@@ -14,7 +14,11 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.GameInfo;
+import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -39,6 +43,7 @@ public class InfoPanel extends TopMapPanel {
     private ProgressBar energyBar;
     private int generating;
     private int consuming;
+    private Button scrollHome;
 
     /**
      * Simgleton
@@ -91,11 +96,23 @@ public class InfoPanel extends TopMapPanel {
         layout.setWidget(5, 1, energyBar);
         layout.getFlexCellFormatter().setColSpan(5, 1, 2);
 
+        // Move home button
+        layout.getFlexCellFormatter().setColSpan(6, 1, 2);
+        scrollHome = new Button("Scroll Home");
+        layout.setWidget(6, 1, scrollHome);
+        scrollHome.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                TerrainView.getInstance().moveToHome();
+            }
+        });
+
+        // Debug
         if (Game.isDebug()) {
             // Cursor
-            layout.setHTML(6, 1, "Cursor");
+            layout.setHTML(7, 1, "Cursor");
             cursorPos = new Label("???");
-            layout.setWidget(6, 2, cursorPos);
+            layout.setWidget(7, 2, cursorPos);
         }
 
         return layout;
@@ -141,5 +158,13 @@ public class InfoPanel extends TopMapPanel {
             energyBar.setMaxProgress(generating);
         }
         energyBar.setProgress(consuming);
+    }
+
+    public Button getScrollHome() {
+        return scrollHome;
+    }
+
+    public Label getMoney() {
+        return money;
     }
 }

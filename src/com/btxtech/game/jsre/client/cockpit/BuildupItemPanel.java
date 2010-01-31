@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -32,6 +33,8 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import java.util.Collection;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * User: beat
@@ -39,8 +42,9 @@ import java.util.Collection;
  * Time: 14:12:18
  */
 public class BuildupItemPanel extends HorizontalPanel implements SelectionListener {
-    private  HorizontalPanel description;
-    private  HorizontalPanel itemsToBuild;
+    private HorizontalPanel description;
+    private HorizontalPanel itemsToBuild;
+    private Map<ItemType, Widget> itemTypesToBuild = new HashMap<ItemType, Widget>();
     public static BuildupItemPanel uglyWayToRefreshGui;
 
     public BuildupItemPanel() {
@@ -90,6 +94,7 @@ public class BuildupItemPanel extends HorizontalPanel implements SelectionListen
     private void setupBuildupItemsCV(final Group constructionVehicles) throws NoSuchItemTypeException {
         description.getElement().getStyle().setColor("darkorange");
         itemsToBuild.getElement().getStyle().setColor("darkorange");
+        itemTypesToBuild.clear();
         Collection<Integer> itemTypeIDs = constructionVehicles.getFirst().getSyncBaseItem().getBaseItemType().getBuilderType().getAbleToBuild();
         for (Integer itemTypeID : itemTypeIDs) {
             final BaseItemType itemType = (BaseItemType) ClientServices.getInstance().getItemService().getItemType(itemTypeID);
@@ -105,6 +110,7 @@ public class BuildupItemPanel extends HorizontalPanel implements SelectionListen
 
     private void setupBuildupItemsFactory(final Group factories) throws NoSuchItemTypeException {
         Collection<Integer> itemTypeIDs = factories.getFirst().getSyncBaseItem().getBaseItemType().getFactoryType().getAbleToBuild();
+        itemTypesToBuild.clear();
         for (Integer itemTypeID : itemTypeIDs) {
             final BaseItemType itemType = (BaseItemType) ClientServices.getInstance().getItemService().getItemType(itemTypeID);
             boolean enabled = ClientItemTypeAccess.getInstance().isAllowed(itemTypeID);
@@ -130,6 +136,10 @@ public class BuildupItemPanel extends HorizontalPanel implements SelectionListen
         button.addMouseDownHandler(mouseDownHandler);
         verticalPanel.add(button);
         verticalPanel.add(new Label("$" + itemType.getPrice()));
+        if (enabled) {
+            itemTypesToBuild.put(itemType, button);
+        }
+        
         return verticalPanel;
 
     }
@@ -141,5 +151,7 @@ public class BuildupItemPanel extends HorizontalPanel implements SelectionListen
         description.add(label);
     }
 
-
+    public Map<ItemType, Widget> getItemTypesToBuild() {
+        return itemTypesToBuild;
+    }
 }

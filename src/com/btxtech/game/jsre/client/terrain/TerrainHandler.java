@@ -13,19 +13,22 @@
 
 package com.btxtech.game.jsre.client.terrain;
 
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainService;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.TerrainUtil;
-import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.item.ItemContainer;
+import com.btxtech.game.jsre.common.TerrainUtil;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainService;
 import com.google.gwt.dom.client.ImageElement;
+import com.google.gwt.user.client.Random;
 import com.google.gwt.widgetideas.graphics.client.ImageLoader;
-import java.util.List;
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * User: beat
@@ -39,7 +42,7 @@ public class TerrainHandler implements TerrainService {
     private int terrainHeight;
     private int[][] terrainField;
     private Collection<Integer> passableTerrainTileIds;
-    private HashMap<Integer, ImageElement> terrainTileImages = new HashMap<Integer, ImageElement>();    
+    private HashMap<Integer, ImageElement> terrainTileImages = new HashMap<Integer, ImageElement>();
     private ArrayList<TerrainListener> terrainListeners = new ArrayList<TerrainListener>();
 
     public void setupTerrain(int[][] terrainField, Collection<Integer> passableTerrainTileIds) {
@@ -87,6 +90,40 @@ public class TerrainHandler implements TerrainService {
         return passableTerrainTileIds.contains(tileId);
     }
 
+    public Index getAbsoluteFreeTerrainInRegion(Index absolutePos, int targetMinRange, int targetMaxRange) {
+        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+            int x;
+            int y;
+            if (Random.nextBoolean()) {
+                x = absolutePos.getX() + targetMinRange + Random.nextInt(targetMaxRange - targetMinRange);
+            } else {
+                x = absolutePos.getX() - targetMinRange - Random.nextInt(targetMaxRange - targetMinRange);
+            }
+            if (Random.nextBoolean()) {
+                y = absolutePos.getY() + targetMinRange + Random.nextInt(targetMaxRange - targetMinRange);
+            } else {
+                y = absolutePos.getY() - targetMinRange - Random.nextInt(targetMaxRange - targetMinRange);
+            }
+            if (x < 0 || y < 0) {
+                continue;
+            }
+            if (x > terrainWidth || y > terrainHeight) {
+                continue;
+            }
+
+            Index point = new Index(x, y);
+            if (!isTerrainPassable(point)) {
+                continue;
+            }
+            Rectangle itemRectangle = new Rectangle(x - 50, y - 50, 100, 100);
+            if (!ItemContainer.getInstance().getItemsInRect(itemRectangle, false).isEmpty()) {
+                continue;
+            }
+            return point;
+        }
+        throw new IllegalStateException(this + " getAbsoluteFreeTerrainInRegion: Can not find free position");
+    }
+
     public int getTileXCount() {
         return tileXCount;
     }
@@ -120,7 +157,7 @@ public class TerrainHandler implements TerrainService {
     }
 
     public void addTerrainListener(TerrainListener terrainListener) {
-       terrainListeners.add(terrainListener);
+        terrainListeners.add(terrainListener);
     }
 
     public void loadTilesAndDrawMap() {
@@ -151,7 +188,7 @@ public class TerrainHandler implements TerrainService {
                         terrainTileImages.put(usedTileIds.get(i), imageElements[i]);
                     }
                     for (TerrainListener terrainListener : terrainListeners) {
-                         terrainListener.onTerrainChanged();
+                        terrainListener.onTerrainChanged();
                     }
                 } catch (Throwable throwable) {
                     GwtCommon.handleException(throwable);

@@ -15,7 +15,12 @@ package com.btxtech.game.jsre.client.utg;
 
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.ClientSyncItemView;
+import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
+import com.btxtech.game.jsre.client.cockpit.Group;
+import com.btxtech.game.jsre.client.utg.missions.Mission;
 import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
+import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
@@ -37,6 +42,7 @@ public class ClientUserTracker {
     public static final int SEND_TIMEOUT = 1000 * 60;
     private static final ClientUserTracker INSTANCE = new ClientUserTracker();
     private ArrayList<UserAction> userActions = new ArrayList<UserAction>();
+    private ArrayList<MissionAction> missionActions = new ArrayList<MissionAction>();
 
     public static ClientUserTracker getInstance() {
         return INSTANCE;
@@ -97,6 +103,37 @@ public class ClientUserTracker {
         userActions.add(userAction);
     }
 
+    public void onOwnItemSelectionChanged(Group selection) {
+        StringBuffer buffer = new StringBuffer();
+        for (ClientSyncBaseItemView clientSyncBaseItemView : selection.getItems()) {
+            buffer.append(clientSyncBaseItemView.getSyncItem().getId().toString());
+            buffer.append(";");
+        }
+        UserAction userAction = new UserAction(UserAction.OWN_ITEM_SELECTION_CHANGE, buffer.toString());
+        userActions.add(userAction);
+    }
+
+    public void onTargetSelectionItemChanged(ClientSyncItemView selection) {
+        UserAction userAction = new UserAction(UserAction.TRAGET_SELECTION_CHANGED, selection.getSyncItem().getId().toString());
+        userActions.add(userAction);
+    }
+
+    public void clickSpeechBubble() {
+        UserAction userAction = new UserAction(UserAction.SPEECH_BUBBLE_CLICKED, null);
+        userActions.add(userAction);
+    }
+
+    public void onMissionAction(String action, Mission mission) {
+        missionActions.add(new MissionAction(action, mission.getName(), null));
+        if (action.equals(MissionAction.MISSION_COMPLETED)) {
+            sendUserActionsToServer();
+        }
+    }
+
+    public void onMissionTask(Mission mission, Enum task) {
+        missionActions.add(new MissionAction(MissionAction.TASK_START, mission.getName(), task.name()));
+    }
+
     public void scroll(int left, int top, int width, int height) {
         if (userActions.isEmpty()) {
             UserAction userAction = new UserAction(UserAction.SCROLL, "Origin " + left + ":" + top + " width:" + width + " height:" + height);
@@ -119,8 +156,8 @@ public class ClientUserTracker {
     }
 
     private void sendUserActionsToServer() {
-        if (Connection.isConnected() && !userActions.isEmpty()) {
-            Connection.getMovableServiceAsync().sendUserActions(userActions, new AsyncCallback<Void>() {
+        if (Connection.isConnected() && !userActions.isEmpty() && !missionActions.isEmpty()) {
+            Connection.getMovableServiceAsync().sendUserActions(userActions, missionActions, new AsyncCallback<Void>() {
                 @Override
                 public void onFailure(Throwable throwable) {
                     GwtCommon.handleException(throwable);
@@ -135,5 +172,4 @@ public class ClientUserTracker {
         }
 
     }
-
 }

@@ -17,25 +17,28 @@ package com.btxtech.game.services.gwt;
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.GameInfo;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
+import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
+import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.ConnectionService;
+import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.itemTypeAccess.ServerItemTypeAccessService;
 import com.btxtech.game.services.terrain.TerrainService;
-import com.btxtech.game.services.energy.ServerEnergyService;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.ArrayList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +62,8 @@ public class MovableServiceImpl implements MovableService {
     private ServerEnergyService serverEnergyService;
     @Autowired
     private UserTrackingService userTrackingService;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
 
     private Log log = LogFactory.getLog(MovableServiceImpl.class);
 
@@ -126,9 +131,9 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public void sendUserActions(ArrayList<UserAction> userActions) {
+    public void sendUserActions(ArrayList<UserAction> userActions, ArrayList<MissionAction> missionActions) {
         try {
-            userTrackingService.saveUserActions(userActions);
+            userTrackingService.saveUserActions(userActions, missionActions);
         } catch (Throwable t) {
             log.error("", t);
         }
@@ -139,7 +144,6 @@ public class MovableServiceImpl implements MovableService {
         try {
             GameInfo gameInfo = new GameInfo();
             gameInfo.setBase(baseService.getBase().getSimpleBase());
-            gameInfo.setStartPoint(baseService.getBase().getIndexOfInteresst());
             gameInfo.setTerrainField(terrainService.getTerrainField());
             gameInfo.setPassableTerrainTileIds(terrainService.getPassableTerrainTileIds());
             gameInfo.setAccountBalance(baseService.getBase().getAccountBalance());
@@ -164,4 +168,21 @@ public class MovableServiceImpl implements MovableService {
         }
     }
 
+    @Override
+    public void createMissionTraget(Id attacker) {
+        try {
+            userGuidanceService.createMissionTraget(attacker);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    public void createMissionMoney(Id harvester) {
+        try {
+            userGuidanceService.createMissionMoney(harvester);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
 }

@@ -15,6 +15,7 @@ package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
+import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
@@ -31,6 +32,7 @@ import com.btxtech.game.services.utg.UserDetails;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.VisitorDetailInfo;
 import com.btxtech.game.services.utg.VisitorInfo;
+import com.btxtech.game.services.utg.DbMissionAction;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import com.btxtech.game.wicket.pages.entergame.EnterBasePanel;
 import java.sql.SQLException;
@@ -85,12 +87,17 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public void saveUserActions(ArrayList<UserAction> userActions) {
+    public void saveUserActions(ArrayList<UserAction> userActions, ArrayList<MissionAction> missionActions) {
         ArrayList<DbUserAction> dbUserActions = new ArrayList<DbUserAction>();
         for (UserAction userAction : userActions) {
             dbUserActions.add(new DbUserAction(userAction, session.getSessionId()));
         }
         hibernateTemplate.saveOrUpdateAll(dbUserActions);
+        ArrayList<DbMissionAction> dbMissionActions = new ArrayList<DbMissionAction>();
+        for (MissionAction missionAction : missionActions) {
+            dbMissionActions.add(new DbMissionAction(missionAction, session.getSessionId()));
+        }
+        hibernateTemplate.saveOrUpdateAll(dbMissionActions);
     }
 
     @Override

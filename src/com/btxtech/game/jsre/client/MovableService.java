@@ -21,8 +21,10 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
+import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import java.util.Collection;
@@ -50,5 +52,9 @@ public interface MovableService extends RemoteService {
 
     int[][] getTerrainField();
 
-    void sendUserActions(ArrayList<UserAction> userActions);
+    void sendUserActions(ArrayList<UserAction> userActions, ArrayList<MissionAction> missionActions);
+
+    void createMissionTraget(Id attacker);
+
+    void createMissionMoney(Id harvester);
 }
