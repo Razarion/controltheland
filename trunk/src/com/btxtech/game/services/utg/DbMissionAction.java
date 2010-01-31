@@ -18,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Column;
 import java.util.Date;
+import java.io.Serializable;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 
 /**
@@ -26,7 +27,7 @@ import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
  * Time: 15:55:52
  */
 @Entity(name = "TRACKER_MISSION_ACTION")
-public class DbMissionAction {
+public class DbMissionAction implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
@@ -38,8 +39,9 @@ public class DbMissionAction {
     private Date clientTimeStamp;
     @Column(nullable = false)
     private String action;
-    private String description;
+    private String mission;
     private String task;
+
     /**
      * Used by Hibernate
      */
@@ -51,7 +53,31 @@ public class DbMissionAction {
         this.sessionId = sessionId;
         clientTimeStamp = missionAction.getTimeStamp();
         action = missionAction.getAction();
-        description = missionAction.getDescription();
+        mission = missionAction.getMission();
         task = missionAction.getTask();
+    }
+
+    public Date getTimeStamp() {
+        return timeStamp;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public Date getClientTimeStamp() {
+        return clientTimeStamp;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public String getMission() {
+        return mission;
+    }
+
+    public String getTask() {
+        return task;
     }
 }

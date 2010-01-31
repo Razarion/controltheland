@@ -38,6 +38,8 @@ public class GameTrackingInfo implements Serializable {
     private GameStartup clientRunningGameStartup;
     private List<DbUserAction> userActions = new ArrayList<DbUserAction>();
     private List<UserCommand> userCommands;
+    private List<DbMissionAction> missionActions;
+    private int completedMissionCount;
 
     public Date getStart() {
         return start;
@@ -108,6 +110,10 @@ public class GameTrackingInfo implements Serializable {
         this.userCommands = userCommands;
     }
 
+    public void setMissionActions(List<DbMissionAction> missionActions) {
+        this.missionActions = missionActions;
+    }
+
     public void setAttackCommands(int attackCommands) {
         this.attackCommands = attackCommands;
     }
@@ -148,17 +154,28 @@ public class GameTrackingInfo implements Serializable {
         return moneyCollectCommands;
     }
 
-    public List<UserActionCommand> getUserActionCommand() {
-        ArrayList<UserActionCommand> userActionCommands = new ArrayList<UserActionCommand>();
+    public List<UserActionCommandMissions> getUserActionCommand() {
+        ArrayList<UserActionCommandMissions> userActionCommands = new ArrayList<UserActionCommandMissions>();
         for (DbUserAction userAction : userActions) {
-            userActionCommands.add(new UserActionCommand(userAction));
+            userActionCommands.add(new UserActionCommandMissions(userAction));
         }
         for (UserCommand userCommand : userCommands) {
-            userActionCommands.add(new UserActionCommand(userCommand));
+            userActionCommands.add(new UserActionCommandMissions(userCommand));
+        }
+        for (DbMissionAction missionAction : missionActions) {
+            userActionCommands.add(new UserActionCommandMissions(missionAction));
         }
 
         Collections.sort(userActionCommands);
 
         return userActionCommands;
+    }
+
+    public void setCompletedMissionCount(int completedMissionCount) {
+        this.completedMissionCount = completedMissionCount;
+    }
+
+    public int getCompletedMissionCount() {
+        return completedMissionCount;
     }
 }

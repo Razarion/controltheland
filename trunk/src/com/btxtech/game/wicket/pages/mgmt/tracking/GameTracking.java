@@ -13,10 +13,12 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tracking;
 
+import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
+import com.btxtech.game.services.utg.DbMissionAction;
+import com.btxtech.game.services.utg.DbUserAction;
 import com.btxtech.game.services.utg.GameStartup;
 import com.btxtech.game.services.utg.GameTrackingInfo;
-import com.btxtech.game.services.utg.UserActionCommand;
-import com.btxtech.game.services.utg.DbUserAction;
+import com.btxtech.game.services.utg.UserActionCommandMissions;
 import com.btxtech.game.services.utg.UserCommand;
 import com.btxtech.game.wicket.WebCommon;
 import java.text.SimpleDateFormat;
@@ -56,6 +58,7 @@ public class GameTracking extends Panel {
         add(new Label("factoryCommands", Integer.toString(gameTrackingInfo.getFactoryCommands())));
         add(new Label("collectCommands", Integer.toString(gameTrackingInfo.getMoneyCollectCommands())));
         add(new Label("attackCommands", Integer.toString(gameTrackingInfo.getAttackCommands())));
+        add(new Label("completedMissions", Integer.toString(gameTrackingInfo.getCompletedMissionCount())));
     }
 
     private void gameStartup(GameTrackingInfo gameTrackingInfo) {
@@ -93,12 +96,12 @@ public class GameTracking extends Panel {
         }
     }
 
-    private void userActions(List<UserActionCommand> userActions) {
-        ListView<UserActionCommand> userActionList = new ListView<UserActionCommand>("userActions", userActions) {
+    private void userActions(List<UserActionCommandMissions> userActions) {
+        ListView<UserActionCommandMissions> userActionList = new ListView<UserActionCommandMissions>("userActions", userActions) {
             private Date previous;
 
             @Override
-            protected void populateItem(ListItem<UserActionCommand> listItem) {
+            protected void populateItem(ListItem<UserActionCommandMissions> listItem) {
                 listItem.add(new Label("clientTime", simpleDateFormat.format(listItem.getModelObject().getClientTimeStamp())));
                 if (previous != null) {
                     listItem.add(new Label("clientTimeDelta", WebCommon.getTimeDiff(previous, listItem.getModelObject().getClientTimeStamp())));
@@ -110,15 +113,17 @@ public class GameTracking extends Panel {
 
                 if (listItem.getModelObject().getUserAction() != null) {
                     populateClinetAction(listItem, listItem.getModelObject().getUserAction());
-                } else {
+                } else if (listItem.getModelObject().getUserCommand() != null) {
                     populateCommand(listItem, listItem.getModelObject().getUserCommand());
+                } else {
+                    populateMission(listItem, listItem.getModelObject().getDbMissionAction());
                 }
             }
         };
         add(userActionList);
     }
 
-    private void populateClinetAction(ListItem<UserActionCommand> listItem, DbUserAction userAction) {
+    private void populateClinetAction(ListItem<UserActionCommandMissions> listItem, DbUserAction userAction) {
         listItem.add(new Label("type", userAction.getType()));
         listItem.add(new Label("additional", userAction.getAdditionalString()));
         listItem.add(new Label("repeat", Integer.toString(userAction.getRepeatingCount())));
@@ -131,7 +136,7 @@ public class GameTracking extends Panel {
         }
     }
 
-    private void populateCommand(ListItem<UserActionCommand> listItem, UserCommand userCommand) {
+    private void populateCommand(ListItem<UserActionCommandMissions> listItem, UserCommand userCommand) {
         listItem.add(new AttributeModifier("class", true, new Model<String>("command")));
 
         Label label = new Label("type", userCommand.getInteraction());
@@ -156,5 +161,30 @@ public class GameTracking extends Panel {
         listItem.add(label);
     }
 
+    private void populateMission(ListItem<UserActionCommandMissions> listItem, DbMissionAction dbMissionAction) {
+        if (dbMissionAction.getAction().equals(MissionAction.MISSION_COMPLETED)) {
+            listItem.add(new AttributeModifier("class", true, new Model<String>("missionFinished")));
+        } else {
+            listItem.add(new AttributeModifier("class", true, new Model<String>("mission")));
+        }
 
+        Label label = new Label("type", dbMissionAction.getAction());
+        listItem.add(label);
+
+        label = new Label("additional", dbMissionAction.getMission());
+        listItem.add(label);
+
+        label = new Label("repeat", dbMissionAction.getTask());
+        label.add(new AttributeAppender("colspan", new Model<String>("3"), " "));
+        listItem.add(label);
+
+        // Blank out the other colums
+        label = new Label("lastTime", "");
+        label.setVisible(false);
+        listItem.add(label);
+
+        label = new Label("lastAdditional", "");
+        label.setVisible(false);
+        listItem.add(label);
+    }
 }

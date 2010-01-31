@@ -27,19 +27,22 @@ public class VisitorInfo {
     private int enterSetupHits;
     private int enterGameHits;
     private int commands;
+    private int missions;
 
     public VisitorInfo(Date date,
                        String sessionId,
                        int pageHits,
                        int enterSetupHits,
                        int enterGameHits,
-                       int commands) {
+                       int commands,
+                       int missions) {
         this.date = date;
         this.sessionId = sessionId;
         this.pageHits = pageHits;
         this.enterSetupHits = enterSetupHits;
         this.enterGameHits = enterGameHits;
         this.commands = commands;
+        this.missions = missions;
     }
 
     public Date getDate() {
@@ -64,5 +67,9 @@ public class VisitorInfo {
 
     public int getCommands() {
         return commands;
+    }
+
+    public int getMissions() {
+        return missions;
     }
 }

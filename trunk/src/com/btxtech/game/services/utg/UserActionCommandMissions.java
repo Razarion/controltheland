@@ -21,34 +21,45 @@ import java.io.Serializable;
  * Date: 20.01.2010
  * Time: 14:32:31
  */
-public class UserActionCommand implements Comparable, Serializable {
+public class UserActionCommandMissions implements Comparable, Serializable {
     private DbUserAction userAction;
     private UserCommand userCommand;
+    private DbMissionAction dbMissionAction;
 
-    public UserActionCommand(DbUserAction userAction) {
+    public UserActionCommandMissions(DbUserAction userAction) {
         this.userAction = userAction;
     }
 
-    public UserActionCommand(UserCommand userCommand) {
+    public UserActionCommandMissions(UserCommand userCommand) {
         this.userCommand = userCommand;
+    }
+
+    public UserActionCommandMissions(DbMissionAction dbMissionAction) {
+        this.dbMissionAction = dbMissionAction;
     }
 
     @Override
     public int compareTo(Object o) {
-        UserActionCommand other = (UserActionCommand) o;
+        UserActionCommandMissions other = (UserActionCommandMissions) o;
 
         Date timeStamp;
         if (userAction != null) {
             timeStamp = userAction.getClientTimeStamp();
-        } else {
+        } else if (userCommand != null) {
             timeStamp = userCommand.getClientTimeStamp();
+        } else {
+            timeStamp = dbMissionAction.getClientTimeStamp();
         }
+
         Date otherTimeStamp;
         if (other.userAction != null) {
             otherTimeStamp = other.userAction.getClientTimeStamp();
-        } else {
+        } else if (other.userCommand != null) {
             otherTimeStamp = other.userCommand.getClientTimeStamp();
+        } else {
+            otherTimeStamp = other.dbMissionAction.getClientTimeStamp();
         }
+
         if (timeStamp.after(otherTimeStamp)) {
             return 1;
         }
@@ -69,8 +80,10 @@ public class UserActionCommand implements Comparable, Serializable {
     public Date getClientTimeStamp() {
         if (userAction != null) {
             return userAction.getClientTimeStamp();
-        } else {
+        } else if (userCommand != null) {
             return userCommand.getClientTimeStamp();
+        } else {
+            return dbMissionAction.getClientTimeStamp();
         }
     }
 
@@ -80,5 +93,9 @@ public class UserActionCommand implements Comparable, Serializable {
 
     public UserCommand getUserCommand() {
         return userCommand;
+    }
+
+    public DbMissionAction getDbMissionAction() {
+        return dbMissionAction;
     }
 }
