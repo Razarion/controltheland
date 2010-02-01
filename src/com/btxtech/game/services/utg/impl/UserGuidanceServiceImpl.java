@@ -21,7 +21,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
-import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.item.ItemService;
@@ -49,31 +48,21 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
     @Override
     public void createMissionTraget(Id attacker) throws NoSuchItemTypeException, ItemDoesNotExistException {
-        Base base = baseService.getBase();
-        if (base.isMissionTargetCreated()) {
-            throw new IllegalStateException("Mission Target already generated");
-        }
         ItemType targetItemType = itemService.getItemType("Jeep");
         SyncItem attackerItem = itemService.getItem(attacker);
         Index targetPos = collisionService.getFreeRandomPositionInRect(targetItemType, attackerItem, TARGET_MIN_RANGE, TARGET_MAX_RANGE);
         SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(targetItemType, targetPos, null, baseService.getDummyBase(), 0);
         syncBaseItem.setBuild(true);
         syncBaseItem.setFullHealth();
-        base.setMissionTargetCreated(true);
     }
 
     @Override
     public void createMissionMoney(Id harvester) throws NoSuchItemTypeException, ItemDoesNotExistException {
-        Base base = baseService.getBase();
-        if (base.isMissionMoneyCreated()) {
-            throw new IllegalStateException("Mission Money already generated");
-        }
         ItemType moneyItemType = itemService.getItemType("Money");
         SyncItem attackerItem = itemService.getItem(harvester);
         Index targetPos = collisionService.getFreeRandomPositionInRect(moneyItemType, attackerItem, TARGET_MIN_RANGE, TARGET_MAX_RANGE);
         SyncResourceItem syncBaseItem = (SyncResourceItem) itemService.createSyncObject(moneyItemType, targetPos, null, null, 0);
         syncBaseItem.setAmount(MISSON_MONEY);
         syncBaseItem.setMissionMoney(true);
-        base.setMissionMoneyCreated(true);
     }
 }

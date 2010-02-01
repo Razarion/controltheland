@@ -66,10 +66,6 @@ public class Base implements Serializable {
     private final HashSet<SyncBaseItem> items = new HashSet<SyncBaseItem>();
     @Transient
     private UserItemTypeAccess userItemTypeAccess;
-    @Transient
-    private boolean missionTargetCreated = false;
-    @Transient
-    private boolean missionMoneyCreated = false;
 
     /**
      * Used by hibernate
@@ -203,21 +199,5 @@ public class Base implements Serializable {
 
     public void setUserItemTypeAccess(UserItemTypeAccess userItemTypeAccess) {
         this.userItemTypeAccess = userItemTypeAccess;
-    }
-
-    public boolean isMissionTargetCreated() {
-        return missionTargetCreated;
-    }
-
-    public void setMissionTargetCreated(boolean missionAttackTargetCreated) {
-        this.missionTargetCreated = missionAttackTargetCreated;
-    }
-
-    public boolean isMissionMoneyCreated() {
-        return missionMoneyCreated;
-    }
-
-    public void setMissionMoneyCreated(boolean missionMoneyCreated) {
-        this.missionMoneyCreated = missionMoneyCreated;
     }
 }
