@@ -134,16 +134,21 @@ public class ClientUserTracker {
         missionActions.add(new MissionAction(MissionAction.TASK_START, mission.getName(), task.name()));
     }
 
-    public void scroll(int left, int top, int width, int height) {
+    public void onScrollHome() {
+        UserAction userAction = new UserAction(UserAction.SCROLL_HOME_BUTTON, null);
+        userActions.add(userAction);
+    }
+
+    public void scroll(int left, int top, int width, int height, int deltaLeft, int deltaTop) {
         if (userActions.isEmpty()) {
-            UserAction userAction = new UserAction(UserAction.SCROLL, "Origin " + left + ":" + top + " width:" + width + " height:" + height);
+            UserAction userAction = new UserAction(UserAction.SCROLL, "Origin " + left + ":" + top + " width:" + width + " height:" + height + " deltaLeft:" + deltaLeft + " deltaTop:" + deltaTop);
             userActions.add(userAction);
         } else {
             UserAction prevAction = userActions.get(userActions.size() - 1);
-            if (prevAction.getType() == UserAction.SCROLL) {
-                prevAction.repeat("Origin " + left + ":" + top + " width:" + width + " height:" + height);
+            if (prevAction.getType().equals(UserAction.SCROLL)) {
+                prevAction.repeat("Origin " + left + ":" + top + " width:" + width + " height:" + height + " deltaLeft:" + deltaLeft + " deltaTop:" + deltaTop);
             } else {
-                UserAction userAction = new UserAction(UserAction.SCROLL, "Origin " + left + ":" + top + " width:" + width + " height:" + height);
+                UserAction userAction = new UserAction(UserAction.SCROLL, "Origin " + left + ":" + top + " width:" + width + " height:" + height + " deltaLeft:" + deltaLeft + " deltaTop:" + deltaTop);
                 userActions.add(userAction);
             }
         }

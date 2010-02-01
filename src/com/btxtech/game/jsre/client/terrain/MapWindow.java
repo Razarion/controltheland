@@ -172,7 +172,7 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
                 MapWindow.getAbsolutePanel().setWidgetPosition(w, newLeft, newtop);
             }
         }
-        ClientUserTracker.getInstance().scroll(left, top, width, height);
+        ClientUserTracker.getInstance().scroll(left, top, width, height, deltaLeft, deltaTop);
     }
 
 }

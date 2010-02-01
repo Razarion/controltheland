@@ -28,6 +28,7 @@ public class UserAction implements Serializable {
     public static final String RESOURCE_CLICKED = "RESOURCE_CLICKED";
     public static final String OWN_ITEM_SELECTION_CHANGE = "OWN_ITEM_SELECTION_CHANGE";
     public static final String TRAGET_SELECTION_CHANGED = "TRAGET_SELECTION_CHANGED";
+    public static final String SCROLL_HOME_BUTTON = "SCROLL_HOME_BUTTON";
     public static final String SCROLL = "SCROLL";
     public static final String SPEECH_BUBBLE_CLICKED = "SPEECH_BUBBLE_CLICKED";
     public static final String CLOSE_WINDOW = "CLOSE_WINDOW";
