@@ -87,6 +87,7 @@ public class VisitorDetails extends WebPage {
         add(new Label("language", userDetails.getLanguage()));
         add(new Label("remoteHost", userDetails.getRemoteHost()));
         add(new Label("remoteAddr", userDetails.getRemoteAddr()));
+        add(new Label("cookieId", userDetails.getCookieId()));
         add(new Label("crawler", userDetails.isCrawler() ? "Yes" : "No"));
     }
 

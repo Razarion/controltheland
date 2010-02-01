@@ -65,6 +65,7 @@ public class UserTracking extends WebPage {
                 listItem.add(new Label("enterGame", Integer.toString(listItem.getModelObject().getEnterGameHits())));
                 listItem.add(new Label("commands", Integer.toString(listItem.getModelObject().getCommands())));
                 listItem.add(new Label("missions", Integer.toString(listItem.getModelObject().getMissions())));
+                listItem.add(new Label("cookie", listItem.getModelObject().isCookie() ? "Yes" : ""));
                 Link link = new Link("visitorLink") {
 
                     @Override

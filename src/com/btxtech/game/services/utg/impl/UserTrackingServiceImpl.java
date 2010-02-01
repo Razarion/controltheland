@@ -103,16 +103,17 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     @Override
     public List<VisitorInfo> getVisitorInfos() {
         ArrayList<VisitorInfo> visitorInfos = new ArrayList<VisitorInfo>();
-        List<Object[]> datesAndHits = (List<Object[]>) hibernateTemplate.find("select u.timeStamp, u.sessionId, count(p) from com.btxtech.game.services.utg.UserDetails u, com.btxtech.game.services.utg.PageAccess p where u.sessionId = p.sessionId and u.isCrawler = false group by u.sessionId order by u.timeStamp desc");
+        List<Object[]> datesAndHits = (List<Object[]>) hibernateTemplate.find("select u.timeStamp, u.sessionId, u.cookieId ,count(p) from com.btxtech.game.services.utg.UserDetails u, com.btxtech.game.services.utg.PageAccess p where u.sessionId = p.sessionId and u.isCrawler = false group by u.sessionId order by u.timeStamp desc");
         for (Object[] datesAndHit : datesAndHits) {
             Date timeStamp = (Date) datesAndHit[0];
             String sessionId = (String) datesAndHit[1];
-            int hits = ((Long) datesAndHit[2]).intValue();
+            boolean cookie = datesAndHit[2] != null;
+            int hits = ((Long) datesAndHit[3]).intValue();
             int enterSetupHits = getHitsForPage(sessionId, EnterBasePanel.class);
             int enterGameHits = getHitsForGameStartup(sessionId);
             int commands = getUserCommandCount(sessionId, null, null, null);
             int completedMissions = getCompletedMissionCount(sessionId, null, null);
-            visitorInfos.add(new VisitorInfo(timeStamp, sessionId, hits, enterSetupHits, enterGameHits, commands, completedMissions));
+            visitorInfos.add(new VisitorInfo(timeStamp, sessionId, hits, enterSetupHits, enterGameHits, commands, completedMissions, cookie));
         }
         return visitorInfos;
     }
