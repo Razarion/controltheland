@@ -106,12 +106,16 @@ public class ClientUserGuidance implements SelectionListener {
 
         boolean hasMoveItem = false;
         boolean hasFactory = false;
+        boolean hasJeep = false;
         for (ClientSyncBaseItemView item : items) {
             if (item.getSyncBaseItem().hasSyncMovable()) {
                 hasMoveItem = true;
             }
             if (item.getSyncBaseItem().hasSyncFactory()) {
                 hasFactory = true;
+            }
+            if (item.getSyncBaseItem().hasSyncWaepon()) {
+                hasJeep = true;
             }
         }
         if (hasMoveItem) {
@@ -121,7 +125,9 @@ public class ClientUserGuidance implements SelectionListener {
         if (!hasFactory) {
             missions.add(new BuildMission());
         }
-        missions.add(new CreateJeepMission());
+        if(!hasJeep) {
+            missions.add(new CreateJeepMission());            
+        }
         missions.add(new AttackMission());
         missions.add(new CollectMission());
         missions.add(new FinishedMission());

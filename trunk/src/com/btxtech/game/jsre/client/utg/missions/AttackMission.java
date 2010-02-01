@@ -41,7 +41,7 @@ public class AttackMission extends Mission {
     }
 
     private SpeechBubble speechBubble;
-    private ClientSyncBaseItemView item;
+    private ClientSyncBaseItemView jeep;
     private Task task;
     private long lastAction;
     private ClientSyncBaseItemView target;
@@ -53,34 +53,33 @@ public class AttackMission extends Mission {
     public void start() throws MissionAportedException {
         Collection<ClientSyncBaseItemView> items = ItemContainer.getInstance().getOwnItems();
 
-        item = null;
+        jeep = null;
         for (ClientSyncBaseItemView clientSyncBaseItemView : items) {
             if (clientSyncBaseItemView.getSyncBaseItem().hasSyncWaepon() && clientSyncBaseItemView.getSyncBaseItem().hasSyncMovable()) {
-                item = clientSyncBaseItemView;
+                jeep = clientSyncBaseItemView;
             }
         }
 
-        if (item == null) {
+        if (jeep == null) {
             throw new MissionAportedException("No Attcking Item found");
         }
 
-        scrollToItem(item);
+        scrollToItem(jeep);
 
-        speechBubble = new SpeechBubble(item, HtmlConstants.ATTACK_HTML1, false);
+        speechBubble = new SpeechBubble(jeep, HtmlConstants.ATTACK_HTML1, false);
         task = Task.WAITING_SELECTION;
         lastAction = System.currentTimeMillis();
         ClientUserTracker.getInstance().onMissionTask(this, task);
     }
 
     public void onOwnSelectionChanged(Group selectedGroup) {
-        if (task != Task.WAITING_SELECTION && selectedGroup.contains(item)) {
-            return;
+        if (task == Task.WAITING_SELECTION && selectedGroup.canAttack()) {
+            lastAction = System.currentTimeMillis();
+            task = Task.WAITING_TARGET;
+            ClientUserTracker.getInstance().onMissionTask(this, task);
+            speechBubble.close();
+            Connection.getInstance().createMissionTraget(jeep.getSyncBaseItem());
         }
-        lastAction = System.currentTimeMillis();
-        task = Task.WAITING_TARGET;
-        ClientUserTracker.getInstance().onMissionTask(this, task);
-        speechBubble.close();
-        Connection.getInstance().createMissionTraget(item.getSyncBaseItem());
     }
 
     @Override
@@ -99,7 +98,7 @@ public class AttackMission extends Mission {
 
     @Override
     public void onExecuteCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
-        if (baseCommand instanceof AttackCommand && syncItem.equals(item.getSyncItem()) && task == Task.WAITING_ATTACK) {
+        if (baseCommand instanceof AttackCommand && syncItem.equals(jeep.getSyncItem()) && task == Task.WAITING_ATTACK) {
             task = Task.WAITING_KILL;
             ClientUserTracker.getInstance().onMissionTask(this, task);
             lastAction = System.currentTimeMillis();
@@ -108,10 +107,10 @@ public class AttackMission extends Mission {
     }
 
     @Override
-    public void onItemDeleted(ClientSyncItemView item) {
-        if (item.getSyncItem().equals(target.getSyncItem()) && task == Task.WAITING_KILL) {
+    public void onSyncItemDeactivated(SyncBaseItem syncBaseItem) {
+        if (jeep.getSyncItem().equals(syncBaseItem) && task == Task.WAITING_KILL) {
             lastAction = System.currentTimeMillis();
-            speechBubble = new SpeechBubble(item, HtmlConstants.ATTACK_HTML3, false);
+            speechBubble = new SpeechBubble(jeep, HtmlConstants.ATTACK_HTML3, false);
             task = Task.FINISHED;
         }
     }
