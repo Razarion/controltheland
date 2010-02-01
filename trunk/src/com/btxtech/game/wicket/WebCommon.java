@@ -14,6 +14,9 @@
 package com.btxtech.game.wicket;
 
 import java.util.Date;
+import java.util.UUID;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * User: beat
@@ -23,6 +26,7 @@ import java.util.Date;
 public class WebCommon {
     public static final String DATE_TIME_FORMAT_STRING = "dd.MM.yyyy HH:mm:ss";
     public static final String DATE_FORMAT_STRING = "dd.MM.yyyy";
+    public static final String COOKIE_ID = "cookieId";
 
     static public String formatDuration(long duration) {
         duration = duration / 1000;
@@ -34,4 +38,20 @@ public class WebCommon {
         diffMs /= 1000;
         return Long.toString(diffMs);
     }
+
+    public static String getCookieId(Cookie[] cookies) {
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals(COOKIE_ID)) {
+                return cookie.getValue();
+            }
+        }
+        return null;
+    }
+
+    public static void generateAndSetCookieId(HttpServletResponse response) {
+        Cookie cookie = new Cookie(COOKIE_ID, UUID.randomUUID().toString().toUpperCase());
+        cookie.setMaxAge(Integer.MAX_VALUE);
+        response.addCookie(cookie);
+    }
+
 }

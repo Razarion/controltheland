@@ -28,6 +28,7 @@ public class VisitorInfo {
     private int enterGameHits;
     private int commands;
     private int missions;
+    private boolean cookie;
 
     public VisitorInfo(Date date,
                        String sessionId,
@@ -35,7 +36,8 @@ public class VisitorInfo {
                        int enterSetupHits,
                        int enterGameHits,
                        int commands,
-                       int missions) {
+                       int missions,
+                       boolean cookie) {
         this.date = date;
         this.sessionId = sessionId;
         this.pageHits = pageHits;
@@ -43,6 +45,7 @@ public class VisitorInfo {
         this.enterGameHits = enterGameHits;
         this.commands = commands;
         this.missions = missions;
+        this.cookie = cookie;
     }
 
     public Date getDate() {
@@ -71,5 +74,9 @@ public class VisitorInfo {
 
     public int getMissions() {
         return missions;
+    }
+
+    public boolean isCookie() {
+        return cookie;
     }
 }

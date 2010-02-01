@@ -40,6 +40,7 @@ public class UserDetails {
     private String remoteHost;
     private String remoteAddr;
     private boolean isCrawler;
+    private String cookieId;
 
     /**
      * Used by Hibernate
@@ -47,7 +48,8 @@ public class UserDetails {
     public UserDetails() {
     }
 
-    public UserDetails(String sessionId, String userAgent, String language, String remoteAddr) {
+    public UserDetails(String sessionId, String cookieId, String userAgent, String language, String remoteAddr) {
+        this.cookieId = cookieId;
         timeStamp = new Date();
         this.sessionId = sessionId;
         this.userAgent = userAgent;
@@ -88,6 +90,10 @@ public class UserDetails {
 
     public boolean isCrawler() {
         return isCrawler;
+    }
+
+    public String getCookieId() {
+        return cookieId;
     }
 
     @Override
