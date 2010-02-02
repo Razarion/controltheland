@@ -40,6 +40,9 @@ public class WebCommon {
     }
 
     public static String getCookieId(Cookie[] cookies) {
+        if(cookies == null) {
+            return null;
+        }
         for (Cookie cookie : cookies) {
             if (cookie.getName().equals(COOKIE_ID)) {
                 return cookie.getValue();
