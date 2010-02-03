@@ -18,14 +18,17 @@ import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.widgetideas.graphics.client.ImageLoader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
@@ -34,20 +37,29 @@ import java.util.List;
  */
 public class TerrainHandler implements TerrainService {
     private HashMap<Integer, ImageElement> terrainTileImages = new HashMap<Integer, ImageElement>();
+    private List<TerrainImagePosition> terrainImagePositions;
+    private Map<Integer, TerrainImage> terrainImages = new HashMap<Integer, TerrainImage>();
     private ArrayList<TerrainListener> terrainListeners = new ArrayList<TerrainListener>();
     private TerrainSettings terrainSettings;
     private ImageElement backgroundImage;
-    private List<TerrainImagePosition> terrainImagePositions;
 
     public void setupTerrain(TerrainSettings terrainSettings) {
         this.terrainSettings = terrainSettings;
         loadBackgroundAndDrawMap();
     }
 
-    public void setupTerrainImages(List<TerrainImagePosition> terrainImagePositions) {
+    public void setupTerrainImagePositions(List<TerrainImagePosition> terrainImagePositions) {
         this.terrainImagePositions = terrainImagePositions;
         loadImagesAndDrawMap();
     }
+
+    public void setupTerrainImages(Collection<TerrainImage> terrainImages) {
+        this.terrainImages.clear();
+        for (TerrainImage terrainImage : terrainImages) {
+            this.terrainImages.put(terrainImage.getId(), terrainImage);
+        }
+    }
+
 
     public TerrainSettings getTerrainSettings() {
         return terrainSettings;
@@ -185,7 +197,7 @@ public class TerrainHandler implements TerrainService {
         }
         Rectangle tileRect = convertToTilePosition(absolutePxRectangle);
         for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
-            if (tileRect.contains(terrainImagePosition.getTileIndex())) {
+            if (tileRect.adjoins(getTerrainImagePositionRectangle(terrainImagePosition))) {
                 result.add(terrainImagePosition);
             }
         }
@@ -193,18 +205,40 @@ public class TerrainHandler implements TerrainService {
     }
 
     // TODO also used on the server -> move to super class
-    public TerrainImagePosition getTerrainImagePosition(int absoluteX, int absoluteY) {
-        Rectangle rectangle = new Rectangle(absoluteX, absoluteY, terrainSettings.getTileWidth(), terrainSettings.getTileHeight());
-        List<TerrainImagePosition> terrainImagePositions = getTerrainImagesInRegion(rectangle);
-        if (terrainImagePositions.isEmpty()) {
-            return null;
-        }
-        return terrainImagePositions.get(0);
+    public Rectangle getTerrainImagePositionRectangle(TerrainImagePosition terrainImagePosition) {
+        TerrainImage terrainImage = getTerrainImage(terrainImagePosition);
+        return new Rectangle(terrainImagePosition.getTileIndex().getX(),
+                terrainImagePosition.getTileIndex().getY(),
+                terrainImage.getTileWidth(),
+                terrainImage.getTileHeight());
     }
 
-    public void addNewTerrainImage(int absX, int absY, int imageId) {
+    // TODO also used on the server -> move to super class
+    public TerrainImage getTerrainImage(TerrainImagePosition terrainImagePosition) {
+        TerrainImage terrainImage = terrainImages.get(terrainImagePosition.getImageId());
+        if (terrainImage == null) {
+            throw new IllegalArgumentException(this + " getTerrainImagePosRect(): image id does not exit: " + terrainImagePosition.getImageId());
+        }
+        return terrainImage;
+    }
+
+    // TODO also used on the server -> move to super class
+    public TerrainImagePosition getTerrainImagePosition(int absoluteX, int absoluteY) {
+        if (terrainSettings == null || terrainImagePositions == null) {
+            return null;
+        }
+        Index tileIndex = getTerrainTileIndexForAbsPosition(absoluteX, absoluteY);
+        for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
+            if (getTerrainImagePositionRectangle(terrainImagePosition).containsExclusive(tileIndex)) {
+                return terrainImagePosition;
+            }
+        }
+        return null;
+    }
+
+    public void addNewTerrainImage(int absX, int absY, TerrainImage terrainImage) {
         Index index = getTerrainTileIndexForAbsPosition(absX, absY);
-        terrainImagePositions.add(new TerrainImagePosition(index, imageId));
+        terrainImagePositions.add(new TerrainImagePosition(index, terrainImage.getId()));
         for (TerrainListener terrainListener : terrainListeners) {
             terrainListener.onTerrainChanged();
         }
@@ -215,7 +249,7 @@ public class TerrainHandler implements TerrainService {
         terrainImagePosition.setTileIndex(index);
         for (TerrainListener terrainListener : terrainListeners) {
             terrainListener.onTerrainChanged();
-        }        
+        }
     }
 
     public void removeTerrainImagePosition(TerrainImagePosition terrainImagePosition) {
@@ -225,6 +259,7 @@ public class TerrainHandler implements TerrainService {
         }
     }
 
+    // TODO also used on the server -> move to super class
     public List<TerrainImagePosition> getTerrainImagePosition() {
         return terrainImagePositions;
     }
@@ -232,6 +267,16 @@ public class TerrainHandler implements TerrainService {
     // TODO also used on the server -> move to super class
     public Index getTerrainTileIndexForAbsPosition(int x, int y) {
         return new Index(x / terrainSettings.getTileWidth(), y / terrainSettings.getTileHeight());
+    }
+
+    // TODO also used on the server -> move to super class
+    public int getTerrainTileIndexForAbsXPosition(int x) {
+        return x / terrainSettings.getTileWidth();
+    }
+
+    // TODO also used on the server -> move to super class
+    public int getTerrainTileIndexForAbsYPosition(int y) {
+        return y / terrainSettings.getTileHeight();
     }
 
     // TODO also used on the server -> move to super class
@@ -247,6 +292,16 @@ public class TerrainHandler implements TerrainService {
     // TODO also used on the server -> move to super class
     public Index getAbsolutIndexForTerrainTileIndex(int xTile, int yTile) {
         return new Index(xTile * terrainSettings.getTileWidth(), yTile * terrainSettings.getTileHeight());
+    }
+
+    // TODO also used on the server -> move to super class
+    public int getAbsolutXForTerrainTile(int xTile) {
+        return xTile * terrainSettings.getTileWidth();
+    }
+
+    // TODO also used on the server -> move to super class
+    public int getAbsolutYForTerrainTile(int yTile) {
+        return yTile * terrainSettings.getTileHeight();
     }
 
     // TODO also used on the server -> move to super class

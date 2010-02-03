@@ -14,7 +14,7 @@
 package com.btxtech.game.controllers;
 
 import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.services.terrain.TerrainImage;
+import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.services.terrain.TerrainService;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -41,22 +41,29 @@ public class TerrainImageController implements Controller {
     public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
         try {
             String type = httpServletRequest.getParameter(Constants.TERRAIN_IMG_TYPE);
-            TerrainImage terrainImage;
+            byte[] imageData;
+            String imageContentType;
             if (Constants.TERRAIN_IMG_TYPE_BACKGROUND.equalsIgnoreCase(type)) {
-                terrainImage = terrainService.getTerrainSetting().getTerrainBackground();
+                imageData = terrainService.getTerrainSetting().getBgImageData();
+                imageContentType = terrainService.getTerrainSetting().getBgContentType();
             } else if (Constants.TERRAIN_IMG_TYPE_FOREGROUND.equalsIgnoreCase(type)) {
                 String strId = httpServletRequest.getParameter(Constants.TERRAIN_IMG_TYPE_IMG_ID);
                 int id = Integer.parseInt(strId);
-                terrainImage = terrainService.getTerrainImage(id);
+                DbTerrainImage dbTerrainImage = terrainService.getTerrainImage(id);
+                imageData = dbTerrainImage.getImageData();
+                imageContentType = dbTerrainImage.getContentType();
             } else {
                 throw new IllegalArgumentException("Unknown terrain image type: " + type);
             }
 
-            byte[] image = terrainImage.getImageData();
-            httpServletResponse.setContentLength(image.length);
-            httpServletResponse.setContentType(terrainImage.getContentType());
+            if (imageData == null || imageContentType == null) {
+                httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                return null;
+            }
+            httpServletResponse.setContentLength(imageData.length);
+            httpServletResponse.setContentType(imageContentType);
             OutputStream out = httpServletResponse.getOutputStream();
-            out.write(image);
+            out.write(imageData);
             out.close();
         } catch (Exception e) {
             log.error("", e);

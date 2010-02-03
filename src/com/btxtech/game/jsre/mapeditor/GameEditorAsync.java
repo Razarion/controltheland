@@ -13,10 +13,13 @@
 
 package com.btxtech.game.jsre.mapeditor;
 
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -26,12 +29,11 @@ import java.util.List;
  */
 @RemoteServiceRelativePath("gwtrpc/TerrainServiceService")
 public interface GameEditorAsync extends RemoteService {
+    void getTerrainSettings(AsyncCallback<TerrainSettings> async);
 
-    void getImageIds(AsyncCallback async);
+    void getTerrainImagePositions(AsyncCallback<List<TerrainImagePosition>> asyncCallback);
 
-    void getTerrainSettings(AsyncCallback async);
+    void getTerrainImages(AsyncCallback<Collection<TerrainImage>> asyncCallback);
 
-    void getTerrainImagePositions(AsyncCallback async);
-
-    void saveTerrainImagePositions(List<TerrainImagePosition> terrainImagePositions, AsyncCallback async);
+    void saveTerrainImagePositions(List<TerrainImagePosition> terrainImagePositions, AsyncCallback<Void> async);
 }

@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.mapeditor;
 
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -26,13 +27,11 @@ import com.google.gwt.user.client.ui.Image;
  * Time: 10:07:13 PM
  */
 public class TileSelectorItem extends FlowPanel implements MouseDownHandler {
-    private Cockpit cockpit;
-    private int imageId;
+    private TerrainImage terrainImage;
 
-    public TileSelectorItem(Cockpit cockpit, int imageId) {
-        this.cockpit = cockpit;
-        this.imageId = imageId;
-        Image image = ImageHandler.getTerrainImage(imageId);
+    public TileSelectorItem(TerrainImage terrainImage) {
+        this.terrainImage = terrainImage;
+        Image image = ImageHandler.getTerrainImage(terrainImage.getId());
         add(image);
         image.addMouseDownHandler(this);
         setSelected(false);
@@ -42,7 +41,7 @@ public class TileSelectorItem extends FlowPanel implements MouseDownHandler {
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
        GwtCommon.preventImageDragging(mouseDownEvent); 
-       new PlaceablePreviewTerrainImagePoition(imageId, mouseDownEvent); 
+       new PlaceablePreviewTerrainImagePoition(terrainImage, mouseDownEvent); 
     }
 
     public void setSelected(boolean selected) {
@@ -51,9 +50,5 @@ public class TileSelectorItem extends FlowPanel implements MouseDownHandler {
         } else {
             setStyleName("tile-selector-item-unselected");
         }
-    }
-
-    public int getImageId() {
-        return imageId;
     }
 }

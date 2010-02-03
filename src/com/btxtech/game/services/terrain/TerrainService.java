@@ -15,6 +15,7 @@ package com.btxtech.game.services.terrain;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -37,15 +38,15 @@ public interface TerrainService {
 
     DbTerrainSetting getTerrainSetting();
 
-    TerrainImage getTerrainImage(int id);
+    DbTerrainImage getTerrainImage(int id);
 
-    List<TerrainImage> getTerrainImagesCopy();
-
-    Collection<Integer> getTerrainImageIds();
+    List<DbTerrainImage> getDbTerrainImagesCopy();
 
     List<TerrainImagePosition> getTerrainImagePositions();
 
-    void saveAndActivateTerrainImages(List<TerrainImage> terrainImages, TerrainImage terrainBackgroundImage);
+    void saveAndActivateTerrainImages(List<DbTerrainImage> dbTerrainImages, byte[] bgImage, String bgImageType);
 
     void saveAndActivateTerrainImagePositions(List<TerrainImagePosition> terrainImagePositions);
+
+    Collection<TerrainImage> getTerrainImages();
 }

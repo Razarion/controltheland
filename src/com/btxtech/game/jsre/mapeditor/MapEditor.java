@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -73,23 +74,25 @@ public class MapEditor implements EntryPoint {
 
             @Override
             public void onSuccess(List<TerrainImagePosition> terrainImagePositions) {
-                 TerrainView.getInstance().setupTerrainImages(terrainImagePositions);
+                 TerrainView.getInstance().getTerrainHandler().setupTerrainImagePositions(terrainImagePositions);
             }
         });
 
-        gameEditor.getImageIds(new AsyncCallback<Collection<Integer>>() {
+        gameEditor.getTerrainImages(new AsyncCallback<Collection<TerrainImage>>() {
             @Override
             public void onFailure(Throwable throwable) {
                 GwtCommon.handleException(throwable);
             }
 
             @Override
-            public void onSuccess(Collection<Integer> tileIds) {
-                cockpit.setupTiles(tileIds);
+            public void onSuccess(Collection<TerrainImage> terrainImages) {
+                TerrainView.getInstance().getTerrainHandler().setupTerrainImages(terrainImages);
+                cockpit.setupTerrainImages(terrainImages);
             }
         });
 
         TerrainView.getInstance().setTerrainMouseButtonListener(mapModifier);
+        MapWindow.getInstance().setTerrainMouseMoveListener(mapModifier);
     }
 
 }

@@ -347,12 +347,10 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/war/WEB-INF/lib/gwt-incubator-july-14-2009.jar!/" />
+          <root url="jar://$MODULE_DIR$/war/WEB-INF/lib/gwt-incubator-20091216-r1739.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../../../tech/google-web-toolkit-incubator/src" />
-        </SOURCES>
+        <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="module-library">

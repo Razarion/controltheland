@@ -14,10 +14,10 @@
 package com.btxtech.game.services.terrain;
 
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
-import javax.persistence.Embedded;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 /**
  * User: beat
@@ -33,8 +33,9 @@ public class DbTerrainSetting {
     private int tileYCount;
     private int tileHeight;
     private int tileWidth;
-    @Embedded
-    private TerrainImage terrainBackground;
+    @Column(length = 500000)
+    private byte[] bgImageData;
+    private String bgContentType;
 
     public Integer getId() {
         return id;
@@ -72,12 +73,20 @@ public class DbTerrainSetting {
         this.tileWidth = tileWidth;
     }
 
-    public TerrainImage getTerrainBackground() {
-        return terrainBackground;
+    public byte[] getBgImageData() {
+        return bgImageData;
     }
 
-    public void setTerrainBackground(TerrainImage terrainBackground) {
-        this.terrainBackground = terrainBackground;
+    public void setBgImageData(byte[] bgImageData) {
+        this.bgImageData = bgImageData;
+    }
+
+    public String getBgContentType() {
+        return bgContentType;
+    }
+
+    public void setBgContentType(String bgContentType) {
+        this.bgContentType = bgContentType;
     }
 
     public int getPlayFieldXSize() {
