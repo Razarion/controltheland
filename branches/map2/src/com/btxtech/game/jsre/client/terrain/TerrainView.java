@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -72,10 +73,6 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         }
         terrainHandler.addTerrainListener(this);
         terrainHandler.setupTerrain(terrainSettings);
-    }
-
-    public void setupTerrainImages(List<TerrainImagePosition> terrainImagePositions) {
-        terrainHandler.setupTerrainImages(terrainImagePositions);
     }
 
     @Deprecated
@@ -320,11 +317,11 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         drawImages();
     }
 
-    public void addNewTerrainImagePosition(int relX, int relY, int imageId) {
+    public void addNewTerrainImagePosition(int relX, int relY, TerrainImage terrainImage) {
         int absX = relX + viewOriginLeft;
         int absY = relY + viewOriginTop;
 
-        terrainHandler.addNewTerrainImage(absX, absY, imageId);
+        terrainHandler.addNewTerrainImage(absX, absY, terrainImage);
     }
 
     public void moveTerrainImagePosition(int relX, int relY, TerrainImagePosition terrainImagePosition) {

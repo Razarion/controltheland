@@ -16,16 +16,16 @@ package com.btxtech.game.jsre.mapeditor;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.TopMapPanel;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * User: beat
@@ -54,7 +54,7 @@ public class Cockpit extends TopMapPanel {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 saveButton.setEnabled(false);
-                gameEditor.saveTerrainImagePositions(TerrainView.getInstance().getTerrainHandler().getTerrainImagePosition(),  new AsyncCallback<List<TerrainImagePosition>>() {
+                gameEditor.saveTerrainImagePositions(TerrainView.getInstance().getTerrainHandler().getTerrainImagePosition(), new AsyncCallback<Void>() {
                     @Override
                     public void onFailure(Throwable throwable) {
                         GwtCommon.handleException(throwable);
@@ -62,7 +62,7 @@ public class Cockpit extends TopMapPanel {
                     }
 
                     @Override
-                    public void onSuccess(List<TerrainImagePosition> terrainImagePositions) {
+                    public void onSuccess(Void aVoid) {
                         saveButton.setEnabled(true);
                     }
                 });
@@ -76,14 +76,17 @@ public class Cockpit extends TopMapPanel {
         tileSelector.setCellSpacing(5);
         tileSelector.setCellPadding(3);
         tileSelector.addStyleName("tile-selector");
-        controlPanel.setWidget(2, 0, tileSelector);
+        ScrollPanel scrollPanel = new ScrollPanel(tileSelector);
+        scrollPanel.setHeight("700px");
+        scrollPanel.setAlwaysShowScrollBars(true);
+        controlPanel.setWidget(2, 0, scrollPanel);
         return controlPanel;
     }
 
-    public void setupTiles(Collection<Integer> tileIds) {
-        for (Integer tileId : tileIds) {
+    public void setupTerrainImages(Collection<TerrainImage> terrainImages) {
+        for (TerrainImage terrainImage : terrainImages) {
             int numRows = tileSelector.getRowCount();
-            tileSelector.setWidget(numRows, 0, new TileSelectorItem(this, tileId));
+            tileSelector.setWidget(numRows, 0, new TileSelectorItem(terrainImage));
         }
     }
 
@@ -97,13 +100,6 @@ public class Cockpit extends TopMapPanel {
 
         selection = newSelection;
         selection.setSelected(true);
-    }
-
-    public int getSelection() {
-        if (selection == null) {
-            return -1;
-        }
-        return selection.getImageId();
     }
 
     public boolean isDeleteModus() {

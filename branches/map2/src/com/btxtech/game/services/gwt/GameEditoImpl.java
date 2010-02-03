@@ -15,6 +15,7 @@ package com.btxtech.game.services.gwt;
 
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.mapeditor.GameEditor;
 import com.btxtech.game.services.terrain.TerrainService;
 import java.util.Collection;
@@ -46,9 +47,9 @@ public class GameEditoImpl implements GameEditor {
     }
 
     @Override
-    public Collection<Integer> getImageIds() {
+    public Collection<TerrainImage> getTerrainImages() {
         try {
-            return terrainService.getTerrainImageIds();
+            return terrainService.getTerrainImages();
         } catch (Throwable t) {
             log.error("", t);
             return null;

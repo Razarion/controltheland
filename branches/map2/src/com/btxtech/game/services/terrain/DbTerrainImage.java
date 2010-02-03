@@ -13,9 +13,9 @@
 
 package com.btxtech.game.services.terrain;
 
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import java.io.Serializable;
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -26,14 +26,15 @@ import javax.persistence.Id;
  * Time: 22:09:11
  */
 @Entity(name = "TERRAIN_IMAGE")
-@Embeddable
-public class TerrainImage implements Serializable{
+public class DbTerrainImage implements Serializable{
     @Id
     @GeneratedValue
     private Integer id;
     @Column(length = 500000)    
     private byte[] imageData;
     private String contentType;
+    private int tileWidth;
+    private int tileHeight;
 
     public int getId() {
         return id;
@@ -55,12 +56,32 @@ public class TerrainImage implements Serializable{
         this.contentType = contentType;
     }
 
+    public void setTileWidth(int tileWidth) {
+        this.tileWidth = tileWidth;
+    }
+
+    public void setTileHeight(int tileHeight) {
+        this.tileHeight = tileHeight;
+    }
+
+    public int getTileWidth() {
+        return tileWidth;
+    }
+
+    public int getTileHeight() {
+        return tileHeight;
+    }
+
+    public TerrainImage createTerrainImage() {
+        return new TerrainImage(id, tileWidth, tileHeight);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        TerrainImage that = (TerrainImage) o;
+        DbTerrainImage that = (DbTerrainImage) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
 

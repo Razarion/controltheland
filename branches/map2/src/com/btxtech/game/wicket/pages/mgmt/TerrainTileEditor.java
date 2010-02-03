@@ -13,7 +13,7 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.services.terrain.TerrainImage;
+import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.services.terrain.TerrainService;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +33,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.resource.ByteArrayResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import javax.swing.ImageIcon;
 
 /**
  * User: beat
@@ -42,24 +43,26 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 public class TerrainTileEditor extends WebPage {
     @SpringBean
     private TerrainService terrainService;
-    private TerrainImage terrainBackgroundImage;
+    private byte[] bgImage;
+    private String bgImageType;
 
     public TerrainTileEditor() {
-        terrainBackgroundImage = terrainService.getTerrainSetting().getTerrainBackground();
+        bgImage = terrainService.getTerrainSetting().getBgImageData();
+        bgImageType = terrainService.getTerrainSetting().getBgContentType();
         Form form = new Form("tileForm");
         add(form);
 
         // Background image
-        Image bgImage = new Image("bgImage") {
+        Image wicketBgImage = new Image("bgImage") {
             protected Resource getImageResource() {
-                if (terrainBackgroundImage != null) {
-                    return new ByteArrayResource(terrainBackgroundImage.getContentType(), terrainBackgroundImage.getImageData());
+                if (bgImage != null && bgImageType != null) {
+                    return new ByteArrayResource(bgImageType, bgImage);
                 } else {
                     return null;
                 }
             }
         };
-        form.add(bgImage);
+        form.add(wicketBgImage);
         form.add(new FileUploadField("bgUpload", new IModel<FileUpload>() {
             @Override
             public FileUpload getObject() {
@@ -68,9 +71,8 @@ public class TerrainTileEditor extends WebPage {
 
             @Override
             public void setObject(FileUpload fileUpload) {
-                terrainBackgroundImage = new TerrainImage();
-                terrainBackgroundImage.setImageData(fileUpload.getBytes());
-                terrainBackgroundImage.setContentType(fileUpload.getContentType());
+                bgImage = fileUpload.getBytes();
+                bgImageType = fileUpload.getContentType();
             }
 
             @Override
@@ -81,9 +83,8 @@ public class TerrainTileEditor extends WebPage {
         form.add(new Label("bgSize", new IModel<Double>() {
             @Override
             public Double getObject() {
-                TerrainImage terrainImage = terrainService.getTerrainSetting().getTerrainBackground();
-                if (terrainImage != null) {
-                    return terrainImage.getImageData().length / 1000.0;
+                if (bgImage != null) {
+                    return bgImage.length / 1000.0;
                 } else {
                     return 0.0;
                 }
@@ -101,8 +102,8 @@ public class TerrainTileEditor extends WebPage {
         }));
 
         // Image table
-        final DataView<TerrainImage> tileList = new DataView<TerrainImage>("tiles", new TileProvider()) {
-            protected void populateItem(final Item<TerrainImage> item) {
+        final DataView<DbTerrainImage> tileList = new DataView<DbTerrainImage>("tiles", new TileProvider()) {
+            protected void populateItem(final Item<DbTerrainImage> item) {
                 // image
                 if (item.getModelObject().getImageData() != null && item.getModelObject().getImageData().length > 0) {
                     Image image = new Image("image", new ByteArrayResource("", item.getModelObject().getImageData()));
@@ -121,8 +122,11 @@ public class TerrainTileEditor extends WebPage {
 
                     @Override
                     public void setObject(FileUpload fileUpload) {
+                        ImageIcon image = new ImageIcon(fileUpload.getBytes());
                         item.getModelObject().setImageData(fileUpload.getBytes());
                         item.getModelObject().setContentType(fileUpload.getContentType());
+                        item.getModelObject().setTileWidth((int) Math.ceil(image.getIconHeight() / terrainService.getTerrainSetting().getTileHeight()));
+                        item.getModelObject().setTileHeight((int) Math.ceil(image.getIconWidth() / terrainService.getTerrainSetting().getTileWidth()));
                     }
 
                     @Override
@@ -153,7 +157,7 @@ public class TerrainTileEditor extends WebPage {
             @Override
             public void onSubmit() {
                 TileProvider tileProvider = (TileProvider) tileList.getDataProvider();
-                terrainService.saveAndActivateTerrainImages(tileProvider.getTerrainImages(), terrainBackgroundImage);
+                terrainService.saveAndActivateTerrainImages(tileProvider.getTerrainImages(), bgImage, bgImageType);
             }
         });
 
@@ -168,29 +172,29 @@ public class TerrainTileEditor extends WebPage {
 
     }
 
-    class TileProvider implements IDataProvider<TerrainImage> {
-        private List<TerrainImage> terrainImages;
+    class TileProvider implements IDataProvider<DbTerrainImage> {
+        private List<DbTerrainImage> dbTerrainImages;
 
         TileProvider() {
-            terrainImages = terrainService.getTerrainImagesCopy();
+            dbTerrainImages = terrainService.getDbTerrainImagesCopy();
         }
 
         @Override
-        public Iterator<TerrainImage> iterator(int first, int count) {
-            if (first != 0 && count != terrainImages.size()) {
-                throw new IllegalArgumentException("first: " + first + " count: " + count + " | " + terrainImages.size());
+        public Iterator<DbTerrainImage> iterator(int first, int count) {
+            if (first != 0 && count != dbTerrainImages.size()) {
+                throw new IllegalArgumentException("first: " + first + " count: " + count + " | " + dbTerrainImages.size());
             }
-            return terrainImages.iterator();
+            return dbTerrainImages.iterator();
         }
 
         @Override
         public int size() {
-            return terrainImages.size();
+            return dbTerrainImages.size();
         }
 
         @Override
-        public IModel<TerrainImage> model(TerrainImage tile) {
-            return new Model<TerrainImage>(tile);
+        public IModel<DbTerrainImage> model(DbTerrainImage tile) {
+            return new Model<DbTerrainImage>(tile);
         }
 
         @Override
@@ -198,15 +202,15 @@ public class TerrainTileEditor extends WebPage {
         }
 
         public void createTile() {
-            terrainImages.add(new TerrainImage());
+            dbTerrainImages.add(new DbTerrainImage());
         }
 
-        public void removeTile(TerrainImage terrainImage) {
-            terrainImages.remove(terrainImage);
+        public void removeTile(DbTerrainImage dbTerrainImage) {
+            dbTerrainImages.remove(dbTerrainImage);
         }
 
-        public List<TerrainImage> getTerrainImages() {
-            return terrainImages;
+        public List<DbTerrainImage> getTerrainImages() {
+            return dbTerrainImages;
         }
     }
 

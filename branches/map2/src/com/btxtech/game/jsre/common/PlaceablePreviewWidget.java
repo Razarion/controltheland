@@ -60,13 +60,35 @@ public abstract class PlaceablePreviewWidget implements MouseMoveHandler, MouseU
 
     @Override
     public void onMouseMove(MouseMoveEvent event) {
-        int x = event.getClientX() - image.getOffsetWidth() / 2;
-        int y = event.getClientY() - image.getOffsetHeight() / 2;
+        int x = event.getClientX()/* - image.getOffsetWidth() / 2*/;
+        int y = event.getClientY()/* - image.getOffsetHeight() / 2*/;
+        x = specialMoveX(x);
+        y = specialMoveY(y);
         RootPanel.get().setWidgetPosition(image, x, y);
         hasMoved = true;
         DOM.setCapture(image.getElement()); //IE6 need this to prevent losing of image
         image.getElement().getStyle().setProperty("cursor", "move");//IE6
         MapWindow.getInstance().onMouseMove(event);
+    }
+
+    /**
+     * Override in subclass if muve behaves special
+     *
+     * @param x original input
+     * @return special x posisition
+     */
+    protected int specialMoveX(int x) {
+        return x;
+    }
+
+    /**
+     * Override in subclass if muve behaves special
+     *
+     * @param y original input
+     * @return special y posisition
+     */
+    protected int specialMoveY(int y) {
+        return y;
     }
 
     @Override

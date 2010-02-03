@@ -36,6 +36,7 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
     public static final int AUTO_SCROLL_DETECTION_WIDTH = 40;
     public static final int SCROLL_SPEED = 50;
     public static final int SCROLL_DISTANCE = 50;
+
     private enum ScrollDirection {
         NORTH,
         SOUTH,
@@ -43,6 +44,7 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
         EAST;
     }
 
+    private TerrainMouseMoveListener terrainMouseMoveListener;
     private Timer timer = new Timer() {
         @Override
         public void run() {
@@ -122,6 +124,9 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
         if (Game.isDebug()) {
             InfoPanel.getInstance().setAbsoluteCureserPos(x + TerrainView.getInstance().getViewOriginLeft(), y + TerrainView.getInstance().getViewOriginTop());
         }
+        if (terrainMouseMoveListener != null) {
+            terrainMouseMoveListener.onMove(x + TerrainView.getInstance().getViewOriginLeft(), y + TerrainView.getInstance().getViewOriginTop(), x, y);
+        }
     }
 
     private void executeScrolling(ScrollDirection tmpScrollDirectionX, ScrollDirection tmpScrollDirectionY) {
@@ -145,6 +150,10 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
     @Override
     public void onMouseOut(MouseOutEvent event) {
         executeScrolling(null, null);
+    }
+
+    public void setTerrainMouseMoveListener(TerrainMouseMoveListener terrainMouseMoveListener) {
+        this.terrainMouseMoveListener = terrainMouseMoveListener;
     }
 
     public static MapWindow getInstance() {

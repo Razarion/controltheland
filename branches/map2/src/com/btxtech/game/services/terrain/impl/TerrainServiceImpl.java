@@ -16,11 +16,12 @@ package com.btxtech.game.services.terrain.impl;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.services.terrain.DbTerrainImagePosition;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainChangeListener;
 import com.btxtech.game.services.terrain.TerrainFieldTile;
-import com.btxtech.game.services.terrain.TerrainImage;
+import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.services.terrain.TerrainService;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,7 +43,8 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 public class TerrainServiceImpl implements TerrainService {
     private HibernateTemplate hibernateTemplate;
     private List<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
-    private HashMap<Integer, TerrainImage> terrainImages = new HashMap<Integer, TerrainImage>();
+    private List<TerrainImage> terrainImages = new ArrayList<TerrainImage>();
+    private HashMap<Integer, DbTerrainImage> dbTerrainImages = new HashMap<Integer, DbTerrainImage>();
     private Log log = LogFactory.getLog(TerrainServiceImpl.class);
     private ArrayList<TerrainChangeListener> terrainChangeListeners = new ArrayList<TerrainChangeListener>();
     private DbTerrainSetting dbTerrainSetting;
@@ -75,10 +77,12 @@ public class TerrainServiceImpl implements TerrainService {
         }
 
 
-        List<TerrainImage> imageList = hibernateTemplate.loadAll(TerrainImage.class);
-        terrainImages = new HashMap<Integer, TerrainImage>();
-        for (TerrainImage terrainImage : imageList) {
-            terrainImages.put(terrainImage.getId(), terrainImage);
+        List<DbTerrainImage> imageList = hibernateTemplate.loadAll(DbTerrainImage.class);
+        terrainImages.clear();
+        dbTerrainImages = new HashMap<Integer, DbTerrainImage>();
+        for (DbTerrainImage dbTerrainImage : imageList) {
+            dbTerrainImages.put(dbTerrainImage.getId(), dbTerrainImage);
+            terrainImages.add(dbTerrainImage.createTerrainImage());
         }
 
         for (TerrainChangeListener terrainChangeListener : terrainChangeListeners) {
@@ -112,22 +116,22 @@ public class TerrainServiceImpl implements TerrainService {
     }
 
     @Override
-    public TerrainImage getTerrainImage(int id) {
-        TerrainImage terrainImage = terrainImages.get(id);
-        if (terrainImage == null) {
+    public DbTerrainImage getTerrainImage(int id) {
+        DbTerrainImage dbTerrainImage = dbTerrainImages.get(id);
+        if (dbTerrainImage == null) {
             throw new IllegalArgumentException("No terrain image for id: " + id);
         }
-        return terrainImage;
+        return dbTerrainImage;
     }
 
     @Override
-    public List<TerrainImage> getTerrainImagesCopy() {
-        return new ArrayList<TerrainImage>(terrainImages.values());
+    public List<DbTerrainImage> getDbTerrainImagesCopy() {
+        return new ArrayList<DbTerrainImage>(dbTerrainImages.values());
     }
 
     @Override
-    public Collection<Integer> getTerrainImageIds() {
-        return new ArrayList<Integer>(terrainImages.keySet());
+    public Collection<TerrainImage> getTerrainImages() {
+        return terrainImages;
     }
 
     @Override
@@ -136,12 +140,13 @@ public class TerrainServiceImpl implements TerrainService {
     }
 
     @Override
-    public void saveAndActivateTerrainImages(List<TerrainImage> terrainImages, TerrainImage terrainBackgroundImage) {
-        dbTerrainSetting.setTerrainBackground(terrainBackgroundImage);
+    public void saveAndActivateTerrainImages(List<DbTerrainImage> dbTerrainImages, byte[] bgImage, String bgImageType) {
+        dbTerrainSetting.setBgImageData(bgImage);
+        dbTerrainSetting.setBgContentType(bgImageType);
         hibernateTemplate.saveOrUpdate(dbTerrainSetting);
-        hibernateTemplate.saveOrUpdateAll(terrainImages);
-        ArrayList<TerrainImage> doBeDeleted = new ArrayList<TerrainImage>(this.terrainImages.values());
-        doBeDeleted.removeAll(terrainImages);
+        hibernateTemplate.saveOrUpdateAll(dbTerrainImages);
+        ArrayList<DbTerrainImage> doBeDeleted = new ArrayList<DbTerrainImage>(this.dbTerrainImages.values());
+        doBeDeleted.removeAll(dbTerrainImages);
         if (!doBeDeleted.isEmpty()) {
             hibernateTemplate.deleteAll(doBeDeleted);
         }
@@ -155,8 +160,8 @@ public class TerrainServiceImpl implements TerrainService {
         ArrayList<DbTerrainImagePosition> dbTerrainImagePositionsNew = new ArrayList<DbTerrainImagePosition>();
         for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
             DbTerrainImagePosition dbTerrainImagePosition = new DbTerrainImagePosition(terrainImagePosition.getTileIndex());
-            TerrainImage terrainImage = getTerrainImage(terrainImagePosition.getImageId());
-            dbTerrainImagePosition.setTerrainImage(terrainImage);
+            DbTerrainImage dbTerrainImage = getTerrainImage(terrainImagePosition.getImageId());
+            dbTerrainImagePosition.setTerrainImage(dbTerrainImage);
             dbTerrainImagePositionsNew.add(dbTerrainImagePosition);
         }
         hibernateTemplate.saveOrUpdateAll(dbTerrainImagePositionsNew);

@@ -18,7 +18,9 @@ import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.PlaceablePreviewWidget;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.google.gwt.event.dom.client.MouseEvent;
+import com.google.gwt.event.dom.client.MouseDownEvent;
 
 /**
  * User: beat
@@ -26,17 +28,17 @@ import com.google.gwt.event.dom.client.MouseEvent;
  * Time: 19:37:39
  */
 public class PlaceablePreviewTerrainImagePoition extends PlaceablePreviewWidget {
-    private int imageId;
+    private TerrainImage terrainImage;
     private TerrainImagePosition terrainImagePosition;
-
-    protected PlaceablePreviewTerrainImagePoition(int imageId, MouseEvent mouseEvent) {
-        super(ImageHandler.getTerrainImage(imageId), mouseEvent);
-        this.imageId = imageId;
-    }
 
     public PlaceablePreviewTerrainImagePoition(TerrainImagePosition terrainImagePosition, MouseEvent mouseEvent) {
         super(ImageHandler.getTerrainImage(terrainImagePosition.getImageId()), mouseEvent);
         this.terrainImagePosition = terrainImagePosition;
+    }
+
+    public PlaceablePreviewTerrainImagePoition(TerrainImage terrainImage, MouseDownEvent mouseDownEvent) {
+        super(ImageHandler.getTerrainImage(terrainImage.getId()), mouseDownEvent);
+        this.terrainImage = terrainImage;
     }
 
     @Override
@@ -49,7 +51,19 @@ public class PlaceablePreviewTerrainImagePoition extends PlaceablePreviewWidget 
         if (terrainImagePosition != null) {
             TerrainView.getInstance().moveTerrainImagePosition(relX, relY, terrainImagePosition);
         } else {
-            TerrainView.getInstance().addNewTerrainImagePosition(relX, relY, imageId);
+            TerrainView.getInstance().addNewTerrainImagePosition(relX, relY, terrainImage);
         }
+    }
+
+    @Override
+    protected int specialMoveX(int x) {
+        int tileX = TerrainView.getInstance().getTerrainHandler().getTerrainTileIndexForAbsXPosition(x);
+        return TerrainView.getInstance().getTerrainHandler().getAbsolutXForTerrainTile(tileX);
+    }
+
+    @Override
+    protected int specialMoveY(int y) {
+        int tileY = TerrainView.getInstance().getTerrainHandler().getTerrainTileIndexForAbsYPosition(y);
+        return TerrainView.getInstance().getTerrainHandler().getAbsolutYForTerrainTile(tileY);
     }
 }

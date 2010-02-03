@@ -31,7 +31,7 @@ public class DbTerrainImagePosition implements Serializable {
     @EmbeddedId
     private DbKey dbKey;
     @OneToOne
-    private TerrainImage terrainImage;
+    private DbTerrainImage dbTerrainImage;
 
     /**
      * Used by hibernate
@@ -52,16 +52,16 @@ public class DbTerrainImagePosition implements Serializable {
         dbKey.setIndexY(tileIndex.getY());
     }
 
-    public TerrainImage getTerrainImage() {
-        return terrainImage;
+    public DbTerrainImage getTerrainImage() {
+        return dbTerrainImage;
     }
 
-    public void setTerrainImage(TerrainImage terrainImage) {
-        this.terrainImage = terrainImage;
+    public void setTerrainImage(DbTerrainImage dbTerrainImage) {
+        this.dbTerrainImage = dbTerrainImage;
     }
 
     public TerrainImagePosition createTerrainImagePosition() {
-        return new TerrainImagePosition(dbKey.getIndex().getCopy(), terrainImage.getId());
+        return new TerrainImagePosition(dbKey.getIndex().getCopy(), dbTerrainImage.getId());
     }
 
     @Override
@@ -71,9 +71,8 @@ public class DbTerrainImagePosition implements Serializable {
 
         DbTerrainImagePosition that = (DbTerrainImagePosition) o;
 
-        if (dbKey != null ? !dbKey.equals(that.dbKey) : that.dbKey != null) return false;
+        return !(dbKey != null ? !dbKey.equals(that.dbKey) : that.dbKey != null);
 
-        return true;
     }
 
     @Override

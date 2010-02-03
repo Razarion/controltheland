@@ -13,38 +13,39 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.terrain;
 
-import com.btxtech.game.jsre.client.common.Index;
 import java.io.Serializable;
 
 /**
  * User: beat
- * Date: 07.01.2010
- * Time: 22:25:25
+ * Date: 02.02.2010
+ * Time: 22:53:15
  */
-public class TerrainImagePosition implements Serializable {
-    private Index tileIndex;
-    private int imageId;
+public class TerrainImage implements Serializable {
+    private int id;
+    private int tileWidth;
+    private int tileHeight;
 
     /**
      * Used by GWT
      */
-    public TerrainImagePosition() {
+    public TerrainImage() {
     }
 
-    public TerrainImagePosition(Index tileIndex, int imageId) {
-        this.tileIndex = tileIndex;
-        this.imageId = imageId;
+    public TerrainImage(int id, int tileWidth, int tileHeight) {
+        this.id = id;
+        this.tileWidth = tileWidth;
+        this.tileHeight = tileHeight;
     }
 
-    public Index getTileIndex() {
-        return tileIndex;
+    public int getId() {
+        return id;
     }
 
-    public void setTileIndex(Index tileIndex) {
-        this.tileIndex = tileIndex;
+    public int getTileWidth() {
+        return tileWidth;
     }
 
-    public int getImageId() {
-        return imageId;
+    public int getTileHeight() {
+        return tileHeight;
     }
 }
