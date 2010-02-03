@@ -13,49 +13,79 @@
 
 package com.btxtech.game.jsre.common;
 
-import com.google.gwt.event.dom.client.MouseMoveHandler;
-import com.google.gwt.event.dom.client.MouseUpHandler;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseUpEvent;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseEvent;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.btxtech.game.jsre.client.terrain.MapWindow;
-import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.ExtendedCanvas;
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.terrain.MapWindow;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseEvent;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.widgetideas.graphics.client.Color;
 
 /**
  * User: beat
  * Date: 10.01.2010
  * Time: 19:23:21
  */
-public abstract class PlaceablePreviewWidget implements MouseMoveHandler, MouseUpHandler, MouseDownHandler {
+public abstract class PlaceablePreviewWidget extends AbsolutePanel implements MouseMoveHandler, MouseUpHandler, MouseDownHandler {
     private boolean hasMoved = false;
     private Image image;
+    private ExtendedCanvas marker;
 
     protected PlaceablePreviewWidget(Image image, MouseEvent mouseEvent) {
         this.image = image;
-        DOM.setCapture(image.getElement());
-        int x = mouseEvent.getClientX() - image.getWidth() / 2;
-        int y = mouseEvent.getClientY() - image.getHeight() / 2;
-        RootPanel.get().add(image, x, y);
-        image.addMouseMoveHandler(this);
-        image.addMouseUpHandler(this);
-        image.addMouseDownHandler(this);
-        image.getElement().getStyle().setZIndex(Constants.Z_INDEX_PLACEABLE_PREVIEW);
+        DOM.setCapture(getElement());
+        int x = mouseEvent.getClientX()/* - image.getWidth() / 2*/;
+        int y = mouseEvent.getClientY()/* - image.getHeight() / 2*/;
+        x = specialMoveX(x);
+        y = specialMoveY(y);
+        RootPanel.get().add(this, x, y);
+        addMouseMoveHandler(this);
+        addMouseUpHandler(this);
+        addMouseDownHandler(this);
+        image.getElement().getStyle().setZIndex(2);
+        add(image);
+        getElement().getStyle().setZIndex(Constants.Z_INDEX_PLACEABLE_PREVIEW);
         if (!GwtCommon.isIe6()) {
             image.getElement().getStyle().setProperty("filter", "alpha(opacity=50)");
         }
         image.getElement().getStyle().setProperty("opacity", "0.5");
         image.getElement().getStyle().setProperty("cursor", "move");
+        setupMarker();
+        if (allowedToPlace(x, y)) {
+            marker.setVisible(false);
+        } else {
+            marker.setVisible(true);
+        }        
+    }
+
+    private void setupMarker() {
+        marker = new ExtendedCanvas(image.getOffsetWidth(), image.getOffsetHeight());
+        marker.getElement().getStyle().setZIndex(1);
+        add(marker, 0, 0);
+        marker.setVisible(false);
+        marker.setStrokeStyle(Color.RED);
+        marker.setLineWidth(10);
+        marker.beginPath();
+        marker.moveTo(0, 0);
+        marker.lineTo(image.getOffsetWidth() - 1, image.getOffsetHeight() - 1);
+        marker.moveTo(0, image.getOffsetWidth() - 1);
+        marker.lineTo(image.getOffsetWidth() - 1, 0);
+        marker.stroke();
     }
 
     public void close() {
-        DOM.releaseCapture(image.getElement());
-        RootPanel.get().remove(image);
+        DOM.releaseCapture(getElement());
+        RootPanel.get().remove(this);
     }
 
     @Override
@@ -64,11 +94,16 @@ public abstract class PlaceablePreviewWidget implements MouseMoveHandler, MouseU
         int y = event.getClientY()/* - image.getOffsetHeight() / 2*/;
         x = specialMoveX(x);
         y = specialMoveY(y);
-        RootPanel.get().setWidgetPosition(image, x, y);
+        RootPanel.get().setWidgetPosition(this, x, y);
         hasMoved = true;
-        DOM.setCapture(image.getElement()); //IE6 need this to prevent losing of image
-        image.getElement().getStyle().setProperty("cursor", "move");//IE6
+        DOM.setCapture(this.getElement()); //IE6 need this to prevent losing of image
+        getElement().getStyle().setProperty("cursor", "move");//IE6
         MapWindow.getInstance().onMouseMove(event);
+        if (allowedToPlace(x, y)) {
+            marker.setVisible(false);
+        } else {
+            marker.setVisible(true);
+        }
     }
 
     /**
@@ -91,9 +126,21 @@ public abstract class PlaceablePreviewWidget implements MouseMoveHandler, MouseU
         return y;
     }
 
+    /**
+     * Ovberride in subclass
+     *
+     * @param relX relative x Offset
+     * @param relY relative y Offset
+     * @return true of allowed to place
+     */
+    protected boolean allowedToPlace(int relX, int relY) {
+        return true;
+    }
+
     @Override
     public void onMouseUp(MouseUpEvent event) {
-        if (hasMoved) {
+        if (hasMoved && allowedToPlace(event.getRelativeX(MapWindow.getAbsolutePanel().getElement()),
+                event.getRelativeY(MapWindow.getAbsolutePanel().getElement()))) {
             close();
             execute(event);
         }
@@ -101,10 +148,25 @@ public abstract class PlaceablePreviewWidget implements MouseMoveHandler, MouseU
 
     @Override
     public void onMouseDown(MouseDownEvent event) {
-        close();
-        execute(event);
+        if (allowedToPlace(event.getRelativeX(MapWindow.getAbsolutePanel().getElement()),
+                event.getRelativeY(MapWindow.getAbsolutePanel().getElement()))) {
+            close();
+            execute(event);
+        }
     }
 
     protected abstract void execute(MouseEvent event);
+
+    private HandlerRegistration addMouseMoveHandler(MouseMoveHandler handler) {
+        return addDomHandler(handler, MouseMoveEvent.getType());
+    }
+
+    private HandlerRegistration addMouseDownHandler(MouseDownHandler handler) {
+        return addDomHandler(handler, MouseDownEvent.getType());
+    }
+
+    private HandlerRegistration addMouseUpHandler(MouseUpHandler handler) {
+        return addDomHandler(handler, MouseUpEvent.getType());
+    }
 
 }

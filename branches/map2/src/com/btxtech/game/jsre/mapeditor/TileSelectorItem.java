@@ -28,9 +28,11 @@ import com.google.gwt.user.client.ui.Image;
  */
 public class TileSelectorItem extends FlowPanel implements MouseDownHandler {
     private TerrainImage terrainImage;
+    private MapModifier mapModifier;
 
-    public TileSelectorItem(TerrainImage terrainImage) {
+    public TileSelectorItem(TerrainImage terrainImage, MapModifier mapModifier) {
         this.terrainImage = terrainImage;
+        this.mapModifier = mapModifier;
         Image image = ImageHandler.getTerrainImage(terrainImage.getId());
         add(image);
         image.addMouseDownHandler(this);
@@ -41,7 +43,8 @@ public class TileSelectorItem extends FlowPanel implements MouseDownHandler {
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
        GwtCommon.preventImageDragging(mouseDownEvent); 
-       new PlaceablePreviewTerrainImagePoition(terrainImage, mouseDownEvent); 
+       PlaceablePreviewTerrainImagePoition placeablePreview = new PlaceablePreviewTerrainImagePoition(terrainImage, mouseDownEvent, mapModifier);
+        mapModifier.setPlaceablePreview(placeablePreview);        
     }
 
     public void setSelected(boolean selected) {

@@ -37,9 +37,14 @@ public class Cockpit extends TopMapPanel {
     private FlexTable tileSelector;
     private ToggleButton deleteButton;
     private GameEditorAsync gameEditor;
+    private MapModifier mapModifier;
 
     public Cockpit(GameEditorAsync gameEditor) {
         this.gameEditor = gameEditor;
+    }
+
+    public void setMapModifier(MapModifier mapModifier) {
+        this.mapModifier = mapModifier;
     }
 
     @Override
@@ -86,7 +91,7 @@ public class Cockpit extends TopMapPanel {
     public void setupTerrainImages(Collection<TerrainImage> terrainImages) {
         for (TerrainImage terrainImage : terrainImages) {
             int numRows = tileSelector.getRowCount();
-            tileSelector.setWidget(numRows, 0, new TileSelectorItem(terrainImage));
+            tileSelector.setWidget(numRows, 0, new TileSelectorItem(terrainImage, mapModifier));
         }
     }
 
