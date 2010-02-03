@@ -18,7 +18,6 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
-import com.btxtech.game.jsre.client.terrain.TerrainMouseButtonListener;
 import com.btxtech.game.jsre.client.terrain.TerrainMouseMoveListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
@@ -32,10 +31,11 @@ import com.google.gwt.widgetideas.graphics.client.Color;
  * Date: Sep 3, 2009
  * Time: 6:26:18 PM
  */
-public class MapModifier implements TerrainMouseButtonListener, TerrainMouseMoveListener, MouseDownHandler {
+public class MapModifier implements TerrainMouseMoveListener, MouseDownHandler {
     public static final int LINE_WIDTH = 2;
     private Cockpit cockpit;
     private ExtendedCanvas marker;
+    private PlaceablePreviewTerrainImagePoition placeablePreview;
 
     public MapModifier(Cockpit cockpit) {
         this.cockpit = cockpit;
@@ -49,9 +49,9 @@ public class MapModifier implements TerrainMouseButtonListener, TerrainMouseMove
 
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
-        marker.setVisible(false);        
+        marker.setVisible(false);
         int absoluteX = mouseDownEvent.getRelativeX(MapWindow.getAbsolutePanel().getElement()) + TerrainView.getInstance().getViewOriginLeft();
-        int absoluteY = mouseDownEvent.getRelativeY(MapWindow.getAbsolutePanel().getElement())+ TerrainView.getInstance().getViewOriginTop();
+        int absoluteY = mouseDownEvent.getRelativeY(MapWindow.getAbsolutePanel().getElement()) + TerrainView.getInstance().getViewOriginTop();
         TerrainImagePosition terrainImagePosition = TerrainView.getInstance().getTerrainHandler().getTerrainImagePosition(absoluteX, absoluteY);
         GwtCommon.preventImageDragging(mouseDownEvent);
         if (terrainImagePosition == null) {
@@ -61,18 +61,16 @@ public class MapModifier implements TerrainMouseButtonListener, TerrainMouseMove
         if (cockpit.isDeleteModus()) {
             TerrainView.getInstance().getTerrainHandler().removeTerrainImagePosition(terrainImagePosition);
         } else {
-            new PlaceablePreviewTerrainImagePoition(terrainImagePosition, mouseDownEvent);
+            placeablePreview = new PlaceablePreviewTerrainImagePoition(terrainImagePosition, mouseDownEvent, this);
         }
-    }
-
-
-    @Override
-    @Deprecated
-    public void onMouseDown(int absoluteX, int absoluteY, MouseDownEvent mouseDownEvent) {
     }
 
     @Override
     public void onMove(int absoluteLeft, int absoluteTop, int relativeLeft, int relativeTop) {
+        if (placeablePreview != null) {
+            return;
+        }
+
         TerrainImagePosition terrainImagePosition = TerrainView.getInstance().getTerrainHandler().getTerrainImagePosition(absoluteLeft, absoluteTop);
         if (terrainImagePosition != null) {
             marker.setVisible(true);
@@ -95,4 +93,7 @@ public class MapModifier implements TerrainMouseButtonListener, TerrainMouseMove
         }
     }
 
+    public void setPlaceablePreview(PlaceablePreviewTerrainImagePoition placeablePreview) {
+        this.placeablePreview = placeablePreview;
+    }
 }

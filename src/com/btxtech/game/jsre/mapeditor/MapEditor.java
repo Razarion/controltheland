@@ -50,8 +50,8 @@ public class MapEditor implements EntryPoint {
         // Setup editor
         final Cockpit cockpit = new Cockpit(gameEditor);
         MapWindow.getAbsolutePanel().add(cockpit, 30, 30);
-
         MapModifier mapModifier = new MapModifier(cockpit);
+        cockpit.setMapModifier(mapModifier);
 
         // Get data from server
         gameEditor.getTerrainSettings(new AsyncCallback<TerrainSettings>() {
@@ -91,7 +91,6 @@ public class MapEditor implements EntryPoint {
             }
         });
 
-        TerrainView.getInstance().setTerrainMouseButtonListener(mapModifier);
         MapWindow.getInstance().setTerrainMouseMoveListener(mapModifier);
     }
 

@@ -17,10 +17,10 @@ import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.PlaceablePreviewWidget;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
-import com.google.gwt.event.dom.client.MouseEvent;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseEvent;
 
 /**
  * User: beat
@@ -30,15 +30,18 @@ import com.google.gwt.event.dom.client.MouseDownEvent;
 public class PlaceablePreviewTerrainImagePoition extends PlaceablePreviewWidget {
     private TerrainImage terrainImage;
     private TerrainImagePosition terrainImagePosition;
+    private MapModifier mapModifier;
 
-    public PlaceablePreviewTerrainImagePoition(TerrainImagePosition terrainImagePosition, MouseEvent mouseEvent) {
+    public PlaceablePreviewTerrainImagePoition(TerrainImagePosition terrainImagePosition, MouseEvent mouseEvent, MapModifier mapModifier) {
         super(ImageHandler.getTerrainImage(terrainImagePosition.getImageId()), mouseEvent);
         this.terrainImagePosition = terrainImagePosition;
+        this.mapModifier = mapModifier;
     }
 
-    public PlaceablePreviewTerrainImagePoition(TerrainImage terrainImage, MouseDownEvent mouseDownEvent) {
+    public PlaceablePreviewTerrainImagePoition(TerrainImage terrainImage, MouseDownEvent mouseDownEvent, MapModifier mapModifier) {
         super(ImageHandler.getTerrainImage(terrainImage.getId()), mouseDownEvent);
         this.terrainImage = terrainImage;
+        this.mapModifier = mapModifier;
     }
 
     @Override
@@ -53,17 +56,33 @@ public class PlaceablePreviewTerrainImagePoition extends PlaceablePreviewWidget 
         } else {
             TerrainView.getInstance().addNewTerrainImagePosition(relX, relY, terrainImage);
         }
+
+        mapModifier.setPlaceablePreview(null);
     }
 
     @Override
     protected int specialMoveX(int x) {
-        int tileX = TerrainView.getInstance().getTerrainHandler().getTerrainTileIndexForAbsXPosition(x);
-        return TerrainView.getInstance().getTerrainHandler().getAbsolutXForTerrainTile(tileX);
+        int offset = TerrainView.getInstance().getViewOriginLeft();
+        int tileX = TerrainView.getInstance().getTerrainHandler().getTerrainTileIndexForAbsXPosition(x + offset);
+        return TerrainView.getInstance().getTerrainHandler().getAbsolutXForTerrainTile(tileX) - offset;
     }
 
     @Override
     protected int specialMoveY(int y) {
-        int tileY = TerrainView.getInstance().getTerrainHandler().getTerrainTileIndexForAbsYPosition(y);
-        return TerrainView.getInstance().getTerrainHandler().getAbsolutYForTerrainTile(tileY);
+        int offset = TerrainView.getInstance().getViewOriginTop();
+        int tileY = TerrainView.getInstance().getTerrainHandler().getTerrainTileIndexForAbsYPosition(y + offset);
+        return TerrainView.getInstance().getTerrainHandler().getAbsolutYForTerrainTile(tileY - offset);
+    }
+
+    @Override
+    protected boolean allowedToPlace(int relX, int relY) {
+        int absoluteX = relX + TerrainView.getInstance().getViewOriginLeft();
+        int absoluteY = relY + TerrainView.getInstance().getViewOriginTop();
+        TerrainImagePosition terrainImagePosition = TerrainView.getInstance().getTerrainHandler().getTerrainImagePosition(absoluteX, absoluteY);
+        if (terrainImagePosition == null) {
+            return true;
+        } else {
+            return terrainImagePosition.equals(this.terrainImagePosition);
+        }
     }
 }
