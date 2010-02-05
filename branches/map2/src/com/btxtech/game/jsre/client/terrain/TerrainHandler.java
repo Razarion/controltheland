@@ -197,7 +197,7 @@ public class TerrainHandler implements TerrainService {
         }
         Rectangle tileRect = convertToTilePosition(absolutePxRectangle);
         for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
-            if (tileRect.adjoins(getTerrainImagePositionRectangle(terrainImagePosition))) {
+            if (tileRect.adjoinsEclusive(getTerrainImagePositionRectangle(terrainImagePosition))) {
                 result.add(terrainImagePosition);
             }
         }
@@ -308,6 +308,13 @@ public class TerrainHandler implements TerrainService {
     public Rectangle convertToTilePosition(Rectangle rectangle) {
         Index start = getTerrainTileIndexForAbsPosition(rectangle.getStart());
         Index end = getTerrainTileIndexForAbsPosition(rectangle.getEnd());
+        return new Rectangle(start, end);
+    }
+
+    // TODO also used on the server -> move to super class
+    public Rectangle convertToAbsolutePosition(Rectangle rectangle) {
+        Index start = getAbsolutIndexForTerrainTileIndex(rectangle.getStart());
+        Index end = getAbsolutIndexForTerrainTileIndex(rectangle.getEnd());
         return new Rectangle(start, end);
     }
 }

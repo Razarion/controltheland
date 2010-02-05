@@ -61,11 +61,11 @@ public abstract class PlaceablePreviewWidget extends AbsolutePanel implements Mo
         image.getElement().getStyle().setProperty("opacity", "0.5");
         image.getElement().getStyle().setProperty("cursor", "move");
         setupMarker();
-        if (allowedToPlace(x, y)) {
+       /* if (allowedToPlace(x, y)) {
             marker.setVisible(false);
         } else {
             marker.setVisible(true);
-        }        
+        } */       
     }
 
     private void setupMarker() {
