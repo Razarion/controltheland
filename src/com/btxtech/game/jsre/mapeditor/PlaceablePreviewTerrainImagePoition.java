@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.mapeditor;
 
 import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.PlaceablePreviewWidget;
@@ -21,6 +22,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseEvent;
+import java.util.List;
 
 /**
  * User: beat
@@ -76,13 +78,24 @@ public class PlaceablePreviewTerrainImagePoition extends PlaceablePreviewWidget 
 
     @Override
     protected boolean allowedToPlace(int relX, int relY) {
-        int absoluteX = relX + TerrainView.getInstance().getViewOriginLeft();
-        int absoluteY = relY + TerrainView.getInstance().getViewOriginTop();
-        TerrainImagePosition terrainImagePosition = TerrainView.getInstance().getTerrainHandler().getTerrainImagePosition(absoluteX, absoluteY);
-        if (terrainImagePosition == null) {
-            return true;
+        int tileX = TerrainView.getInstance().getTerrainHandler().getTerrainTileIndexForAbsXPosition(relX + TerrainView.getInstance().getViewOriginLeft());
+        int tileY = TerrainView.getInstance().getTerrainHandler().getTerrainTileIndexForAbsYPosition(relY + TerrainView.getInstance().getViewOriginTop());
+        TerrainImage tmpTerrainImage;
+        if (terrainImage != null) {
+            tmpTerrainImage = terrainImage;
         } else {
-            return terrainImagePosition.equals(this.terrainImagePosition);
+            tmpTerrainImage = TerrainView.getInstance().getTerrainHandler().getTerrainImage(terrainImagePosition);
+        }
+        Rectangle rectangle = new Rectangle(tileX, tileY, tmpTerrainImage.getTileWidth(), tmpTerrainImage.getTileHeight());
+        rectangle = TerrainView.getInstance().getTerrainHandler().convertToAbsolutePosition(rectangle);
+        List<TerrainImagePosition> terrainImagePositions = TerrainView.getInstance().getTerrainHandler().getTerrainImagesInRegion(rectangle);
+        if (terrainImagePositions.isEmpty()) {
+            return true;
+        } else if (terrainImagePositions.size() == 1) {
+            return terrainImagePositions.get(0).equals(this.terrainImagePosition);
+        } else {
+            return false;
         }
     }
+
 }

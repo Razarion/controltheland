@@ -87,7 +87,17 @@ public class Rectangle implements Serializable {
         int endX = Math.min(end.getX(), rectangle.end.getX());
         int endY = Math.min(end.getY(), rectangle.end.getY());
 
-        return !(startX > endX || startY > endY);
+        return startX <= endX && startY <= endY;
+    }
+
+    public boolean adjoinsEclusive(Rectangle rectangle) {
+        int startX = Math.max(start.getX(), rectangle.start.getX());
+        int startY = Math.max(start.getY(), rectangle.start.getY());
+
+        int endX = Math.min(end.getX(), rectangle.end.getX());
+        int endY = Math.min(end.getY(), rectangle.end.getY());
+
+        return startX < endX && startY < endY;
     }
 
     public Rectangle getCrossSection(Rectangle rectangle) {
@@ -97,7 +107,7 @@ public class Rectangle implements Serializable {
         int endX = Math.min(end.getX(), rectangle.end.getX());
         int endY = Math.min(end.getY(), rectangle.end.getY());
 
-        if (startX > endX || startY > endY) {
+        if (startX <= endX && startY <= endY) {
             throw new IllegalArgumentException("Rectangles do not overlap");
         }
 
