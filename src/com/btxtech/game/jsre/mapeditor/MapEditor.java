@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.mapeditor;
 
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -53,6 +54,13 @@ public class MapEditor implements EntryPoint {
         MapModifier mapModifier = new MapModifier(cockpit);
         cockpit.setMapModifier(mapModifier);
 
+        // Radar panel
+        MapWindow.getAbsolutePanel().add(RadarPanel.getInstance(), 1, 30);
+        RadarPanel.getInstance().getElement().getStyle().setProperty("left", "");
+        RadarPanel.getInstance().getElement().getStyle().setProperty("right", "30px");
+        RadarPanel.getInstance().setRadarState(true);
+        RadarPanel.getInstance().updateEnergy(1, 0);
+
         // Get data from server
         gameEditor.getTerrainSettings(new AsyncCallback<TerrainSettings>() {
             @Override
@@ -62,7 +70,7 @@ public class MapEditor implements EntryPoint {
 
             @Override
             public void onSuccess(TerrainSettings terrainSettings) {
-               TerrainView.getInstance().setupTerrain(terrainSettings);
+                TerrainView.getInstance().setupTerrain(terrainSettings);
             }
         });
 
@@ -74,7 +82,7 @@ public class MapEditor implements EntryPoint {
 
             @Override
             public void onSuccess(List<TerrainImagePosition> terrainImagePositions) {
-                 TerrainView.getInstance().getTerrainHandler().setupTerrainImagePositions(terrainImagePositions);
+                TerrainView.getInstance().getTerrainHandler().setupTerrainImagePositions(terrainImagePositions);
             }
         });
 
