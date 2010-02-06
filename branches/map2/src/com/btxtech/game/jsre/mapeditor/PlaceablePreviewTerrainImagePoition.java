@@ -86,6 +86,9 @@ public class PlaceablePreviewTerrainImagePoition extends PlaceablePreviewWidget 
         } else {
             tmpTerrainImage = TerrainView.getInstance().getTerrainHandler().getTerrainImage(terrainImagePosition);
         }
+        if(tileX < 0 || tileY < 0) {
+            return false;
+        }
         Rectangle rectangle = new Rectangle(tileX, tileY, tmpTerrainImage.getTileWidth(), tmpTerrainImage.getTileHeight());
         rectangle = TerrainView.getInstance().getTerrainHandler().convertToAbsolutePosition(rectangle);
         List<TerrainImagePosition> terrainImagePositions = TerrainView.getInstance().getTerrainHandler().getTerrainImagesInRegion(rectangle);

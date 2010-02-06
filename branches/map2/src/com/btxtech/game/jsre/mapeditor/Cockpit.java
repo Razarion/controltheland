@@ -59,7 +59,7 @@ public class Cockpit extends TopMapPanel {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 saveButton.setEnabled(false);
-                gameEditor.saveTerrainImagePositions(TerrainView.getInstance().getTerrainHandler().getTerrainImagePosition(), new AsyncCallback<Void>() {
+                gameEditor.saveTerrainImagePositions(TerrainView.getInstance().getTerrainHandler().getTerrainImagePositions(), new AsyncCallback<Void>() {
                     @Override
                     public void onFailure(Throwable throwable) {
                         GwtCommon.handleException(throwable);

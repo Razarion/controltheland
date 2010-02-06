@@ -47,9 +47,10 @@ public class RadarFrameView extends MiniMap implements TerrainScrollListener, Te
 
     @Override
     public void onTerrainChanged() {
-        scaleX = (double) getWidth() / (double) TerrainView.getInstance().getTerrainHandler().getTerrainWidth();
-        scaleY = (double) getHeight() / (double) TerrainView.getInstance().getTerrainHandler().getTerrainHeight();
-        resize(TerrainView.getInstance().getTerrainHandler().getTerrainWidth(), TerrainView.getInstance().getTerrainHandler().getTerrainHeight());
+        scaleX = (double) getWidth() / (double) TerrainView.getInstance().getTerrainHandler().getTerrainSettings().getPlayFieldYSize();
+        scaleY = (double) getHeight() / (double) TerrainView.getInstance().getTerrainHandler().getTerrainSettings().getPlayFieldYSize();
+        resize(TerrainView.getInstance().getTerrainHandler().getTerrainSettings().getPlayFieldYSize(),
+                TerrainView.getInstance().getTerrainHandler().getTerrainSettings().getPlayFieldYSize());
         scale(scaleX, scaleY);
         setLineWidth(1.0 / scaleX);
         setStrokeStyle(Color.LIGHTGREY);
@@ -63,9 +64,9 @@ public class RadarFrameView extends MiniMap implements TerrainScrollListener, Te
 
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
-        int x = (int) ((double)mouseDownEvent.getRelativeX(this.getElement()) / scaleX);
-        int y = (int) ((double)mouseDownEvent.getRelativeY(this.getElement()) / scaleY);
-        TerrainView.getInstance().moveToMiddle(new Index(x,y));
+        int x = (int) ((double) mouseDownEvent.getRelativeX(this.getElement()) / scaleX);
+        int y = (int) ((double) mouseDownEvent.getRelativeY(this.getElement()) / scaleY);
+        TerrainView.getInstance().moveToMiddle(new Index(x, y));
 
     }
 }
