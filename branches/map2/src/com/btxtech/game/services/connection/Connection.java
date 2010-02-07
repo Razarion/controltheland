@@ -65,7 +65,7 @@ public class Connection implements Serializable {
             }
             for (SyncItem syncItem : pendingSyncItem) {
                 SyncItemInfo syncInfo = syncItem.getSyncInfo();
-                log.debug("Send to client: " + base.getName() + " | " + syncInfo);
+                //log.debug("Send to client: " + base.getName() + " | " + syncInfo);
                 packets.add(syncInfo);
             }
             pendingSyncItem.clear();

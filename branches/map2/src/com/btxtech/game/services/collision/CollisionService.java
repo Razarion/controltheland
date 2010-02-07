@@ -15,6 +15,7 @@ package com.btxtech.game.services.collision;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import java.util.List;
 
 /**
@@ -27,9 +28,13 @@ public interface CollisionService {
 
     Index getFreeRandomPosition(ItemType itemType, int edgeLength);
 
+    Index getFreeRandomPositionInRect(ItemType targetItemType, SyncItem attackerItem, int targetMinRange, int targetMaxRange);    
+
     boolean[][] getPassableTerrain();
 
     void addCollisionServiceChangedListener(CollisionServiceChangedListener collisionServiceChangedListener);
 
     void removeCollisionServiceChangedListener(CollisionServiceChangedListener collisionServiceChangedListener);
+
+    List<Index> setupPathToDestination(Index start, Index destination);
 }

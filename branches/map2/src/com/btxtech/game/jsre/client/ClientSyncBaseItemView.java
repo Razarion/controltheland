@@ -18,6 +18,8 @@ import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.effects.AttackEffectHandler;
+import com.btxtech.game.jsre.client.utg.ClientUserGuidance;
+import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.dom.client.Style;
@@ -115,6 +117,9 @@ public class ClientSyncBaseItemView extends ClientSyncItemView {
     @Override
     public void onItemChanged(Change change, SyncItem syncItem) {
         switch (change) {
+            case BUILD:
+                ClientUserGuidance.getInstance().onItemBuilt(this);
+                break;
             case ANGEL:
                 setupImage();
                 break;
@@ -161,8 +166,10 @@ public class ClientSyncBaseItemView extends ClientSyncItemView {
             Group group = new Group();
             group.addItem(this);
             SelectionHandler.getInstance().setItemGroupSelected(group);
+            ClientUserTracker.getInstance().clickOwnItem(syncBaseItem);
         } else {
             SelectionHandler.getInstance().setTargetSelected(this, event);
+            ClientUserTracker.getInstance().clickEnemyItem(syncBaseItem);
         }
         GwtCommon.preventImageDragging(event);
     }

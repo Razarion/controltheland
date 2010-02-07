@@ -55,6 +55,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import javax.annotation.PostConstruct;
 
 /**
  * User: beat
@@ -83,6 +84,15 @@ public class BaseServiceImpl implements BaseService {
     private final HashMap<String, Base> bases = new HashMap<String, Base>();
     private HashSet<String> colorsUsed = new HashSet<String>();
     private HibernateTemplate hibernateTemplate;
+    private Base dummyBase;
+
+    @PostConstruct
+    public void setupDummyBase() {
+        BaseColor baseColor = new BaseColor(0, 0, 0);
+        dummyBase = new Base(Constants.DUMMY_BASE_NAME, baseColor, null);
+        bases.put(Constants.DUMMY_BASE_NAME, dummyBase);
+        colorsUsed.add(baseColor.getHtmlColor());
+    }
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -165,7 +175,7 @@ public class BaseServiceImpl implements BaseService {
         }
         return base;
     }
-    
+
     @Override
     public Base getBase(SyncBaseItem baseSyncItem) {
         Base base = bases.get(baseSyncItem.getBase().getName());
@@ -264,8 +274,10 @@ public class BaseServiceImpl implements BaseService {
         base.removeItem(syncItem);
         if (!base.hasItems()) {
             historyService.addHistoryElement(new BaseHasBeenDefeated(base.getSimpleBase()));
-            sendDefeatedMessage(syncItem, actor);
-            deleteBase(base);
+            if (!base.getSimpleBase().equals(dummyBase.getSimpleBase())) {
+                sendDefeatedMessage(syncItem, actor);
+                deleteBase(base);
+            }
         }
     }
 
@@ -331,6 +343,11 @@ public class BaseServiceImpl implements BaseService {
     }
 
     @Override
+    public SimpleBase getDummyBase() {
+        return dummyBase.getSimpleBase();
+    }
+
+    @Override
     public void surenderBase(Base base) {
         base.setUser(null);
         base.setAbandoned(true);
@@ -346,7 +363,7 @@ public class BaseServiceImpl implements BaseService {
         synchronized (bases) {
             bases.clear();
             colorsUsed.clear();
-
+            setupDummyBase();
             for (Base newBase : newBases) {
                 bases.put(newBase.getName(), newBase);
                 colorsUsed.add(newBase.getBaseColor().getHtmlColor());

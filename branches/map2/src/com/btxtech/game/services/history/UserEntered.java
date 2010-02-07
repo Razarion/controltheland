@@ -16,6 +16,7 @@ package com.btxtech.game.services.history;
 import com.btxtech.game.jsre.common.SimpleBase;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 /**
  * User: beat
@@ -35,6 +36,7 @@ public class UserEntered extends HistoryElement{
     }
 
     @Override
+    @Transient
     public String getMessage() {
         return "'" + getUser() + "' entered the game";
     }

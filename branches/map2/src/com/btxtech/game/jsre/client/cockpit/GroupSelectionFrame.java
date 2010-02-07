@@ -18,10 +18,12 @@ import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
+import com.btxtech.game.jsre.client.terrain.TerrainMouseButtonListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseEvent;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
@@ -37,13 +39,16 @@ import java.util.Collection;
  * Time: 11:55:18
  */
 public class GroupSelectionFrame extends AbsolutePanel implements MouseMoveHandler, MouseDownHandler, MouseUpHandler {
+    public static final int MIN_PIXEL_FRAME_SIZE = 10;
     private int originX;
     private int originY;
+    private TerrainMouseButtonListener alternativeTerrainMouseButtonListener;
     private Rectangle selection;
 
-    public GroupSelectionFrame(int x, int y) {
+    public GroupSelectionFrame(int x, int y, TerrainMouseButtonListener alternativeTerrainMouseButtonListener) {
         originX = x;
         originY = y;
+        this.alternativeTerrainMouseButtonListener = alternativeTerrainMouseButtonListener;
         setPixelSize(0, 0);
         getElement().getStyle().setBorderColor("#FFFFFF");
         getElement().getStyle().setBorderWidth(1.0, Style.Unit.PX);
@@ -85,21 +90,26 @@ public class GroupSelectionFrame extends AbsolutePanel implements MouseMoveHandl
 
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
-        finalizeSelection();
+        finalizeSelection(mouseDownEvent);
     }
 
     @Override
     public void onMouseUp(MouseUpEvent mouseUpEvent) {
-        finalizeSelection();
+        finalizeSelection(mouseUpEvent);
     }
 
-    private void finalizeSelection() {
+    private void finalizeSelection(MouseEvent mouseEvent) {
         DOM.releaseCapture(getElement());
         MapWindow.getAbsolutePanel().remove(this);
         if (selection == null) {
+            unsuccessfulSelection(mouseEvent);
             return;
         }
-        Collection<ClientSyncBaseItemView> selectedItems = ItemContainer.getInstance().getItemsInRect(selection);
+        if (!selection.hasMinSize(MIN_PIXEL_FRAME_SIZE)) {
+            unsuccessfulSelection(mouseEvent);
+            return;
+        }
+        Collection<ClientSyncBaseItemView> selectedItems = ItemContainer.getInstance().getItemsInRect(selection, true);
         if (selectedItems.isEmpty()) {
             return;
         }
@@ -108,6 +118,17 @@ public class GroupSelectionFrame extends AbsolutePanel implements MouseMoveHandl
             group.addItem(selectedItem);
         }
         SelectionHandler.getInstance().setItemGroupSelected(group);
+    }
+
+    private void unsuccessfulSelection(MouseEvent mouseEvent) {
+        int x = mouseEvent.getRelativeX(TerrainView.getInstance().getCanvas().getElement()) + TerrainView.getInstance().getViewOriginLeft();
+        int y = mouseEvent.getRelativeY(TerrainView.getInstance().getCanvas().getElement()) + TerrainView.getInstance().getViewOriginTop();
+
+        if (mouseEvent instanceof MouseUpEvent) {
+            alternativeTerrainMouseButtonListener.onMouseUp(x, y, (MouseUpEvent) mouseEvent);
+        } else if (mouseEvent instanceof MouseDownEvent) {
+            alternativeTerrainMouseButtonListener.onMouseDown(x, y, (MouseDownEvent) mouseEvent);
+        }
     }
 
 

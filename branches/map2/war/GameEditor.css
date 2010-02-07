@@ -22,3 +22,15 @@ tr.odd {
 tr.even {
     background-color: #ECECEC;
 }
+
+tr.command {
+    background-color: #ffcccc;
+}
+
+tr.mission {
+    background-color: #ffff99;
+}
+
+tr.missionFinished {
+    background-color: #ccffcc;
+}

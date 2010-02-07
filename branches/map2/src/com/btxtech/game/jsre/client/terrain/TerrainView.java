@@ -13,10 +13,14 @@
 
 package com.btxtech.game.jsre.client.terrain;
 
+import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
+import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.ExtendedCanvas;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.item.ItemContainer;
+import com.btxtech.game.jsre.client.utg.missions.ScrollMission;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
@@ -164,7 +168,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
             int relXStart = absolutePos.getX() - viewOriginLeft;
             int relYStart = absolutePos.getY() - viewOriginTop;
             ImageElement imageElement = terrainHandler.getTileImageElement(terrainImagePosition.getImageId());
-            if(imageElement == null) {
+            if (imageElement == null) {
                 continue;
             }
             try {
@@ -242,6 +246,12 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         return viewHeight;
     }
 
+    public void moveToMiddle(ClientSyncItemView clientSyncItemView) {
+        int left = clientSyncItemView.getSyncItem().getPosition().getX() - parent.getOffsetWidth() / 2 - viewOriginLeft;
+        int top = clientSyncItemView.getSyncItem().getPosition().getY() - parent.getOffsetHeight() / 2 - viewOriginTop;
+        move(left, top);
+    }
+
     public void moveToMiddle(Index startPoint) {
         int left = startPoint.getX() - parent.getOffsetWidth() / 2 - viewOriginLeft;
         int top = startPoint.getY() - parent.getOffsetHeight() / 2 - viewOriginTop;
@@ -250,6 +260,24 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
 
     public GWTCanvas getCanvas() {
         return canvas;
+    }
+
+    public void moveToHome() {
+        ClientSyncBaseItemView scrollTo = null;
+        for (ClientSyncBaseItemView itemView : ItemContainer.getInstance().getOwnItems()) {
+            if (itemView.getSyncBaseItem().hasSyncFactory()) {
+                scrollTo = itemView;
+                break;
+            }
+            if (itemView.getSyncBaseItem().hasSyncBuilder()) {
+                scrollTo = itemView;
+                break;
+            }
+            scrollTo = itemView;
+        }
+        if (scrollTo != null) {
+            moveToMiddle(scrollTo);
+        }
     }
 
     public void addToParent(final AbsolutePanel parent) {
@@ -285,6 +313,10 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         terrainScrollListeners.add(terrainScrollListener);
     }
 
+    public void removeTerrainScrollListener(ScrollMission terrainScrollListener) {
+        terrainScrollListeners.remove(terrainScrollListener);
+    }
+
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
         int x = mouseDownEvent.getRelativeX(canvas.getElement()) + viewOriginLeft;
@@ -301,7 +333,11 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
 
     @Override
     public void onMouseUp(MouseUpEvent event) {
-        // Ignore
+        int x = event.getRelativeX(canvas.getElement()) + viewOriginLeft;
+        int y = event.getRelativeY(canvas.getElement()) + viewOriginTop;
+        if (terrainMouseButtonListener != null) {
+            terrainMouseButtonListener.onMouseUp(x, y, event);
+        }
     }
 
     public TerrainHandler getTerrainHandler() {
@@ -369,5 +405,4 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
 
         GwtCommon.sendLogToServer(builder.toString());
     }
-
 }

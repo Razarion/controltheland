@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.common.gameengine.syncObjects.command;
 
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * User: beat
@@ -23,6 +24,7 @@ import java.io.Serializable;
  */
 public class BaseCommand implements Serializable {
     private Id id;
+    private Date timeStamp;
 
     public Id getId() {
         return id;
@@ -30,6 +32,14 @@ public class BaseCommand implements Serializable {
 
     public void setId(Id id) {
         this.id = id;
+    }
+
+    public Date getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp() {
+        this.timeStamp = new Date();
     }
 
     @Override

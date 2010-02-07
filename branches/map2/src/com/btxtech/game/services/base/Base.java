@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.base;
 
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -104,21 +103,6 @@ public class Base implements Serializable {
 
     public HashSet<SyncBaseItem> getItems() {
         return items;
-    }
-
-    public Index getIndexOfInteresst() {
-        SyncItem syncItem = null;
-        for (SyncBaseItem item : items) {
-            if (item.hasSyncBuilder()) {
-                return item.getPosition();
-            } else {
-                syncItem = item;
-            }
-        }
-        if (syncItem == null) {
-            throw new IllegalStateException("Base does not have any items: " + getName());
-        }
-        return syncItem.getPosition();
     }
 
     public String getName() {

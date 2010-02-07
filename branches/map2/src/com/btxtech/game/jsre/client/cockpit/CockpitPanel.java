@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class CockpitPanel extends TopMapPanel implements SelectionListener {
     private HorizontalPanel detailPanel;
+    private BuildupItemPanel buildupItemPanel;
 
     @Override
     protected Widget createBody() {
@@ -41,7 +42,8 @@ public class CockpitPanel extends TopMapPanel implements SelectionListener {
         detailPanel = new HorizontalPanel();
         horizontalPanel.add(detailPanel);
         // Build up panel
-        horizontalPanel.add(new BuildupItemPanel());
+        buildupItemPanel = new BuildupItemPanel();
+        horizontalPanel.add(buildupItemPanel);
 
         SelectionHandler.getInstance().addSelectionListener(this);
         setVisible(false);
@@ -88,4 +90,7 @@ public class CockpitPanel extends TopMapPanel implements SelectionListener {
         detailPanel.add(label);
     }
 
+    public BuildupItemPanel getBuildupItemPanel() {
+        return buildupItemPanel;
+    }
 }

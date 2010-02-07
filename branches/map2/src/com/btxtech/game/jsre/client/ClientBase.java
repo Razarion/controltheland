@@ -27,6 +27,13 @@ public class ClientBase implements BaseService {
     private static final ClientBase INSTANCE = new ClientBase();
     private int accountBalance;
     private SimpleBase simpleBase;
+    private DepositResourceListener depositResourceListener;
+
+    /**
+     * Singleton
+     */
+    private ClientBase() {
+    }
 
     public static ClientBase getInstance() {
         return INSTANCE;
@@ -58,6 +65,9 @@ public class ClientBase implements BaseService {
         if (this.simpleBase.equals(simpleBase)) {
             accountBalance += price;
             InfoPanel.getInstance().updateMoney();
+            if(depositResourceListener != null) {
+                depositResourceListener.onDeposit();
+            }
         }
     }
 
@@ -73,5 +83,9 @@ public class ClientBase implements BaseService {
 
     public boolean isRegisteredUser() {
         return simpleBase.isRegistered();
+    }
+
+    public void setDepositResourceListener(DepositResourceListener depositResourceListener) {
+        this.depositResourceListener = depositResourceListener;
     }
 }

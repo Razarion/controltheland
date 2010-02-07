@@ -13,8 +13,10 @@
 
 package com.btxtech.game.services.terrain.impl;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
+import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.services.terrain.DbTerrainImagePosition;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
@@ -40,6 +42,8 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     private HashMap<Integer, DbTerrainImage> dbTerrainImages = new HashMap<Integer, DbTerrainImage>();
     private Log log = LogFactory.getLog(TerrainServiceImpl.class);
     private DbTerrainSetting dbTerrainSettings;
+    @Autowired
+    private CollisionService collisionService;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -138,5 +142,40 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         }
         hibernateTemplate.saveOrUpdateAll(dbTerrainImagePositionsNew);
         loadTerrain();
+    }
+
+    @Override
+    public List<Index> setupPathToDestination(Index absolutePosition, Index absoluteDestination, int maxRadius) {
+        if (absolutePosition.isInRadius(absoluteDestination, maxRadius)) {
+            ArrayList<Index> singleIndex = new ArrayList<Index>();
+            singleIndex.add(absolutePosition);
+            return singleIndex;
+        }
+
+        List<Index> path = setupPathToDestination(absolutePosition, absoluteDestination);
+        path.remove(path.size() - 1); // This will be replace
+        Index secondLastPoint;
+        if (path.isEmpty()) {
+            // Start and destination are in the same passable rectangle
+            secondLastPoint = absolutePosition;
+        } else {
+            secondLastPoint = path.get(path.size() - 1);
+        }
+        double angle = absoluteDestination.getAngleToNord(secondLastPoint);
+        for (int radius = maxRadius; radius > 0; radius -= getTerrainSettings().getTileHeight()) {
+            for (double testAngle = angle; testAngle < angle + 2 * Math.PI; testAngle += Math.PI / 0.01) {
+                Index newDestination = absoluteDestination.getPointFromAngelToNord(angle, maxRadius);
+                if (getTerrainImagePosition(newDestination.getX(), newDestination.getY()) == null) {
+                    path.add(newDestination);
+                    return path;
+                }
+            }
+        }
+        throw new IllegalStateException("Can not find position");
+    }
+
+    @Override
+    public List<Index> setupPathToDestination(Index start, Index destination) {
+        return collisionService.setupPathToDestination(start, destination);
     }
 }

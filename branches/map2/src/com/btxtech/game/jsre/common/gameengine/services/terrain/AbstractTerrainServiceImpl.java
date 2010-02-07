@@ -21,7 +21,9 @@ import java.util.Collection;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
+import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.google.gwt.user.client.Random;
 
 /**
  * User: beat
@@ -193,7 +195,6 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
     }
 
     @Override
-    // TODO
     public List<Index> setupPathToDestination(Index start, Index destionation, int range) {
         Index destination = start.getPointWithDistance(range, destionation);
         ArrayList<Index> path = new ArrayList<Index>();
@@ -202,7 +203,6 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
     }
 
     @Override
-    // TODO
     public List<Index> setupPathToDestination(Index start, Index destination) {
         ArrayList<Index> path = new ArrayList<Index>();
         path.add(destination);
@@ -223,6 +223,40 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
         return posititon != null && !(posititon.getX() >= terrainSettings.getPlayFieldXSize() || posititon.getY() >= terrainSettings.getPlayFieldYSize())
                 && getTerrainImagePosition(posititon.getX(), posititon.getY()) == null;
 
+    }
+
+    public Index getAbsoluteFreeTerrainInRegion(Index absolutePos, int targetMinRange, int targetMaxRange) {
+        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+            int x;
+            int y;
+            if (Random.nextBoolean()) {
+                x = absolutePos.getX() + targetMinRange + Random.nextInt(targetMaxRange - targetMinRange);
+            } else {
+                x = absolutePos.getX() - targetMinRange - Random.nextInt(targetMaxRange - targetMinRange);
+            }
+            if (Random.nextBoolean()) {
+                y = absolutePos.getY() + targetMinRange + Random.nextInt(targetMaxRange - targetMinRange);
+            } else {
+                y = absolutePos.getY() - targetMinRange - Random.nextInt(targetMaxRange - targetMinRange);
+            }
+            if (x < 0 || y < 0) {
+                continue;
+            }
+            if (x > terrainSettings.getPlayFieldXSize() || y > terrainSettings.getPlayFieldYSize()) {
+                continue;
+            }
+
+            Index point = new Index(x, y);
+            if (!isTerrainPassable(point)) {
+                continue;
+            }
+            Rectangle itemRectangle = new Rectangle(x - 50, y - 50, 100, 100);
+            if (!ItemContainer.getInstance().getItemsInRect(itemRectangle, false).isEmpty()) {
+                continue;
+            }
+            return point;
+        }
+        throw new IllegalStateException(this + " getAbsoluteFreeTerrainInRegion: Can not find free position");
     }
 
 }

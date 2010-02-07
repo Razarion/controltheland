@@ -15,21 +15,29 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.GameInfo;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
+import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
+import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
+import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import java.util.Collection;
+import java.util.Date;
+import java.util.ArrayList;
 
 /**
  * The client side stub for the RPC service.
  */
 @RemoteServiceRelativePath("gwtrpc/movableService")
 public interface MovableService extends RemoteService {
+    void gameStartupState(GameStartupState state, Date timeStamp);
+
     GameInfo getGameInfo();
 
     void log(String message);
@@ -41,4 +49,10 @@ public interface MovableService extends RemoteService {
     Collection<SyncItemInfo> getAllSyncInfo();
 
     Collection<ItemType> getItemTypes();
+
+    void sendUserActions(ArrayList<UserAction> userActions, ArrayList<MissionAction> missionActions);
+
+    void createMissionTraget(Id attacker);
+
+    void createMissionMoney(Id harvester);
 }

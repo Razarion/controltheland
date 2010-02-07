@@ -24,8 +24,8 @@ import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.dialogs.SpeechBubble;
 import com.btxtech.game.jsre.client.effects.ExplosionHandler;
+import com.btxtech.game.jsre.client.utg.ClientUserGuidance;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -95,13 +95,8 @@ public class ItemContainer extends AbstractItemService {
         if (syncItemInfo.isAlive()) {
             if (clientSyncItemView == null) {
                 clientSyncItemView = createAndAddItem(syncItemInfo.getId(), syncItemInfo.getPosition(), syncItemInfo.getItemTypeId(), syncItemInfo.getBase());
+                ClientUserGuidance.getInstance().onItemCreated(clientSyncItemView);
                 checkSpecialAdded(clientSyncItemView);
-                if (clientSyncItemView instanceof ClientSyncBaseItemView && ((ClientSyncBaseItemView) clientSyncItemView).isMyOwnProperty()) {
-                    ClientSyncBaseItemView clientSyncBaseItemView = (ClientSyncBaseItemView) clientSyncItemView;
-                    if (clientSyncBaseItemView.getSyncBaseItem().hasSyncBuilder()) {
-                        SpeechBubble.createBubble(clientSyncItemView, SpeechBubble.CONSTRUCTION_VEHICLE, SpeechBubble.CONSTRUCTION_VEHICLE_TEXT);
-                    }
-                }
             } else {
                 // Check for  Teleportation effect
                 if (clientSyncItemView.getSyncItem().getPosition().getDistance(syncItemInfo.getPosition()) > 100) {
@@ -110,6 +105,7 @@ public class ItemContainer extends AbstractItemService {
                 ClientSyncItemView orphanItem = orphanItems.remove(clientSyncItemView.getSyncItem().getId());
                 if (orphanItem != null) {
                     orphanItem.setVisible(true);
+                    ClientUserGuidance.getInstance().onItemCreated(orphanItem);
                     checkSpecialAdded(clientSyncItemView);
                 }
             }
@@ -170,6 +166,7 @@ public class ItemContainer extends AbstractItemService {
         checkSpecialRemoved(itemView);
         deadItems.remove(itemView.getSyncItem().getId());
         SelectionHandler.getInstance().itemKilled(itemView);
+        ClientUserGuidance.getInstance().onItemDeleted(itemView);
 
 
         if (itemView instanceof ClientSyncBaseItemView) {
@@ -202,20 +199,38 @@ public class ItemContainer extends AbstractItemService {
         return items.values();
     }
 
-    public Collection<ClientSyncBaseItemView> getItemsInRect(Rectangle rectangle) {
+    public Collection<ClientSyncBaseItemView> getItemsInRect(Rectangle rectangle, boolean onlyOwnItems) {
+        ArrayList<ClientSyncBaseItemView> clientBaseItems = new ArrayList<ClientSyncBaseItemView>();
+        for (ClientSyncItemView clientBaseItem : items.values()) {
+            if (clientBaseItem instanceof ClientSyncBaseItemView &&
+                    !orphanItems.containsKey(clientBaseItem.getSyncItem().getId()) &&
+                    !deadItems.containsKey(clientBaseItem.getSyncItem().getId()) &&
+                    rectangle.contains(clientBaseItem.getSyncItem().getPosition())) {
+                if (onlyOwnItems) {
+                    if (((ClientSyncBaseItemView) clientBaseItem).isMyOwnProperty()) {
+                        clientBaseItems.add((ClientSyncBaseItemView) clientBaseItem);
+                    }
+                } else {
+                    clientBaseItems.add((ClientSyncBaseItemView) clientBaseItem);
+                }
+            }
+        }
+        return clientBaseItems;
+    }
+
+    public Collection<ClientSyncBaseItemView> getOwnItems() {
         ArrayList<ClientSyncBaseItemView> clientBaseItems = new ArrayList<ClientSyncBaseItemView>();
         for (ClientSyncItemView clientBaseItem : items.values()) {
             if (clientBaseItem instanceof ClientSyncBaseItemView &&
                     ((ClientSyncBaseItemView) clientBaseItem).isMyOwnProperty() &&
                     !orphanItems.containsKey(clientBaseItem.getSyncItem().getId()) &&
-                    !deadItems.containsKey(clientBaseItem.getSyncItem().getId()) &&
-                    rectangle.contains(clientBaseItem.getSyncItem().getPosition())) {
+                    !deadItems.containsKey(clientBaseItem.getSyncItem().getId())) {
                 clientBaseItems.add((ClientSyncBaseItemView) clientBaseItem);
-
             }
         }
         return clientBaseItems;
     }
+
 
     @Override
     protected BaseService getBaseService() {
@@ -270,4 +285,6 @@ public class ItemContainer extends AbstractItemService {
         }
         return false;
     }
+
+
 }

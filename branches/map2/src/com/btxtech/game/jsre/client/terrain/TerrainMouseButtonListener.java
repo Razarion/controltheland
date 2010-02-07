@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.terrain;
 
 import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseUpEvent;
 
 /**
  * User: beat
@@ -22,4 +23,6 @@ import com.google.gwt.event.dom.client.MouseDownEvent;
  */
 public interface TerrainMouseButtonListener {
     void onMouseDown(int absoluteX, int absoluteY, MouseDownEvent mouseDownEvent);
+
+    void onMouseUp(int absoluteX, int absoluteY, MouseUpEvent event);
 }

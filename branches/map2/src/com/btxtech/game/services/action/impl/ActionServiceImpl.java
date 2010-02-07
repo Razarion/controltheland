@@ -30,6 +30,7 @@ import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.collision.CollisionServiceChangedListener;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -58,6 +59,8 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
     private BaseService baseService;
     @Autowired
     private ConnectionService connectionService;
+    @Autowired
+    private UserTrackingService userTrackingService;
     @Autowired
     private CollisionService collisionService;
     private final HashSet<SyncBaseItem> activeItems = new HashSet<SyncBaseItem>();
@@ -93,6 +96,9 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
 
     @Override
     public void moneyItemDeleted(SyncResourceItem moneyImpl) {
+        if(moneyImpl.isMissionMoney()) {
+            return;
+        }
         synchronized (moneys) {
             moneys.remove(moneyImpl);
         }
@@ -219,6 +225,8 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
             executeCommand(attackCommand, true);
         } catch (IllegalAccessException e) {
             log.error("", e);
+        } catch (ItemDoesNotExistException e) {
+            // Ignore, may the item has just now been destroyed
         }
         return true;
     }
@@ -243,14 +251,16 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
                 executeCommand(cmd, true);
             } catch (IllegalAccessException e) {
                 log.error("", e);
+            } catch (ItemDoesNotExistException e) {
+                // Ignore, may the item has just now been destroyed
             }
-
         }
     }
 
     private AttackCommand createAttackCommand(SyncBaseItem target, SyncBaseItem attacker) {
         AttackCommand attackCommand = new AttackCommand();
         attackCommand.setId(attacker.getId());
+        attackCommand.setTimeStamp();
         attackCommand.setFollowTarget(false);
         attackCommand.setTarget(target.getId());
         return attackCommand;
@@ -277,7 +287,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
     }
 
     @Override
-    public void executeCommand(BaseCommand baseCommand, boolean cmdFromSystem) throws IllegalAccessException {
+    public void executeCommand(BaseCommand baseCommand, boolean cmdFromSystem) throws IllegalAccessException, ItemDoesNotExistException {
         SyncBaseItem syncItem;
         try {
             syncItem = (SyncBaseItem) itemService.getItem(baseCommand.getId());
@@ -287,12 +297,14 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
         }
         if (!cmdFromSystem) {
             baseService.checkBaseAccess(syncItem);
-            connectionService.saveUserInteraction(baseCommand);
+            userTrackingService.saveUserCommand(baseCommand);
         }
         try {
             syncItem.stop();
             syncItem.executeCommand(baseCommand);
             finalizeCommand(syncItem, cmdFromSystem);
+        } catch (ItemDoesNotExistException e) {
+            throw e;
         } catch (InsufficientFundsException e) {
             connectionService.sendSyncInfo(syncItem);
             baseService.sendAccountBaseUpdate(syncItem);

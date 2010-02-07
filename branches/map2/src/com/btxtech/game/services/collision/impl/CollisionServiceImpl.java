@@ -13,11 +13,11 @@
 
 package com.btxtech.game.services.collision.impl;
 
-import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.collision.CollisionServiceChangedListener;
 import com.btxtech.game.services.collision.PassableRectangle;
@@ -246,74 +246,6 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
         return passableRectangles;
     }
 
-    // @Override
-    // TODO wrong here
-    public List<Index> setupPathToDestination(Index start, Index destination) {
-        PassableRectangle atomStartRect = getPassableRectangleOfAbsoluteIndex(start);
-        PassableRectangle atomDestRect = getPassableRectangleOfAbsoluteIndex(destination);
-        if (atomStartRect == null || atomDestRect == null) {
-            throw new IllegalArgumentException("Illegal atomStartRect or absoluteDestionation");
-        }
-
-        if (atomStartRect.equals(atomDestRect)) {
-            ArrayList<Index> singleIndex = new ArrayList<Index>();
-            singleIndex.add(destination);
-            return singleIndex;
-        }
-
-        List<Path> allPaths = atomStartRect.findAllPossiblePassableRectanglePaths(atomDestRect, 1000);
-        int minDistance = Integer.MAX_VALUE;
-        List<Index> bestSelection = null;
-        for (Path path : allPaths) {
-            List<Rectangle> borders = path.getAllPassableBorders();
-            List<Index> indeces = getShortestPath(start, borders);
-            ArrayList<Index> totalIndeces = new ArrayList<Index>(indeces);
-            totalIndeces.add(0, start);
-            totalIndeces.add(destination);
-            int distance = getDistance(totalIndeces);
-            if (distance < minDistance) {
-                minDistance = distance;
-                bestSelection = indeces;
-            }
-        }
-
-        if (bestSelection == null) {
-            throw new IllegalArgumentException("Unable get best way");
-        }
-        bestSelection.add(destination);
-        return bestSelection;
-    }
-
-    // @Override
-    // TODO wrong here
-    public List<Index> setupPathToDestination(Index absolutePosition, Index absoluteDestination, int maxRadius) {
-        if (absolutePosition.isInRadius(absoluteDestination, maxRadius)) {
-            ArrayList<Index> singleIndex = new ArrayList<Index>();
-            singleIndex.add(absolutePosition);
-            return singleIndex;
-        }
-
-        List<Index> path = setupPathToDestination(absolutePosition, absoluteDestination);
-        path.remove(path.size() - 1); // This will be replace
-        Index secondLastPoint;
-        if (path.isEmpty()) {
-            // Start and destination are in the same passable rectangle
-            secondLastPoint = absolutePosition;
-        } else {
-            secondLastPoint = path.get(path.size() - 1);
-        }
-        double angle = absoluteDestination.getAngleToNord(secondLastPoint);
-        for (int radius = maxRadius; radius > 0; radius -= Constants.TILE_HEIGHT) {
-            for (double testAngle = angle; testAngle < angle + 2 * Math.PI; testAngle += Math.PI / 0.01) {
-                Index newDestination = absoluteDestination.getPointFromAngelToNord(angle, maxRadius);
-                if (terrainService.getTerrainImagePosition(newDestination.getX(), newDestination.getY()) == null) {
-                    path.add(newDestination);
-                    return path;
-                }
-            }
-        }
-        throw new IllegalStateException("Can not find position");
-    }
 
     // @Override
     // TODO wrong here
@@ -346,6 +278,47 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
             Index start = point.sub(new Index(edgeLength / 2, edgeLength / 2));
             Rectangle rectangle = new Rectangle(start.getX(), start.getY(), edgeLength, edgeLength);
             if (itemService.hasItemsInRectangle(rectangle)) {
+                continue;
+            }
+            return point;
+        }
+        throw new IllegalStateException("Can not find free position");
+    }
+
+     @Override
+    public Index getFreeRandomPositionInRect(ItemType itemType, SyncItem attackerItem, int targetMinRange, int targetMaxRange) {
+        Random random = new Random();
+        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+            int x;
+            int y;
+            if (random.nextBoolean()) {
+                x = attackerItem.getPosition().getX() + targetMinRange + random.nextInt(targetMaxRange - targetMinRange);
+            } else {
+                x = attackerItem.getPosition().getX() - targetMinRange - random.nextInt(targetMaxRange - targetMinRange);
+            }
+            if (random.nextBoolean()) {
+                y = attackerItem.getPosition().getY() + targetMinRange + random.nextInt(targetMaxRange - targetMinRange);
+            } else {
+                y = attackerItem.getPosition().getY() - targetMinRange - random.nextInt(targetMaxRange - targetMinRange);
+            }
+            if (x < itemType.getWidth() / 2 || y < itemType.getHeight() / 2) {
+                continue;
+            }
+            if (x + itemType.getWidth() / 2 > terrainService.getTerrainSettings().getPlayFieldXSize()
+                    || y + itemType.getHeight() / 2 > terrainService.getTerrainSettings().getPlayFieldYSize()) {
+                continue;
+            }
+
+            Index point = new Index(x, y);
+            if (!isFree(point, itemType)) {
+                continue;
+            }
+            Rectangle itemRectangle = new Rectangle(x - itemType.getWidth() / 2,
+                    y - itemType.getHeight() / 2,
+                    itemType.getWidth(),
+                    itemType.getHeight());
+
+            if (itemService.hasItemsInRectangle(itemRectangle)) {
                 continue;
             }
             return point;
@@ -408,5 +381,44 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     public void removeCollisionServiceChangedListener(CollisionServiceChangedListener collisionServiceChangedListener) {
         collisionServiceChangedListeners.remove(collisionServiceChangedListener);
     }
+
+    @Override
+    public List<Index> setupPathToDestination(Index start, Index destination) {
+        PassableRectangle atomStartRect = getPassableRectangleOfAbsoluteIndex(start);
+        PassableRectangle atomDestRect = getPassableRectangleOfAbsoluteIndex(destination);
+        if (atomStartRect == null || atomDestRect == null) {
+            throw new IllegalArgumentException("Illegal atomStartRect or absoluteDestionation");
+        }
+
+        if (atomStartRect.equals(atomDestRect)) {
+            ArrayList<Index> singleIndex = new ArrayList<Index>();
+            singleIndex.add(destination);
+            return singleIndex;
+        }
+
+        List<Path> allPaths = atomStartRect.findAllPossiblePassableRectanglePaths(atomDestRect, 1000);
+        int minDistance = Integer.MAX_VALUE;
+        List<Index> bestSelection = null;
+        for (Path path : allPaths) {
+            List<Rectangle> borders = path.getAllPassableBorders();
+            List<Index> indeces = getShortestPath(start, borders);
+            ArrayList<Index> totalIndeces = new ArrayList<Index>(indeces);
+            totalIndeces.add(0, start);
+            totalIndeces.add(destination);
+            int distance = getDistance(totalIndeces);
+            if (distance < minDistance) {
+                minDistance = distance;
+                bestSelection = indeces;
+            }
+        }
+
+        if (bestSelection == null) {
+            throw new IllegalArgumentException("Unable get best way");
+        }
+        bestSelection.add(destination);
+        return bestSelection;
+    }
+
+
 
 }

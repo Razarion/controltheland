@@ -50,9 +50,8 @@ public class TerrainFieldTileImpl implements TerrainFieldTile {
 
         TerrainFieldTileImpl that = (TerrainFieldTileImpl) o;
 
-        if (dbKey != null ? !dbKey.equals(that.dbKey) : that.dbKey != null) return false;
+        return !(dbKey != null ? !dbKey.equals(that.dbKey) : that.dbKey != null);
 
-        return true;
     }
 
     @Override
