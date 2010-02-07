@@ -125,8 +125,8 @@ public class TerrainTileEditor extends WebPage {
                         ImageIcon image = new ImageIcon(fileUpload.getBytes());
                         item.getModelObject().setImageData(fileUpload.getBytes());
                         item.getModelObject().setContentType(fileUpload.getContentType());
-                        item.getModelObject().setTileWidth((int) Math.ceil(image.getIconHeight() / terrainService.getTerrainSetting().getTileHeight()));
-                        item.getModelObject().setTileHeight((int) Math.ceil(image.getIconWidth() / terrainService.getTerrainSetting().getTileWidth()));
+                        item.getModelObject().setTileWidth((int) Math.ceil(image.getIconWidth() / terrainService.getTerrainSetting().getTileWidth()));
+                        item.getModelObject().setTileHeight((int) Math.ceil(image.getIconHeight() / terrainService.getTerrainSetting().getTileHeight()));
                     }
 
                     @Override
