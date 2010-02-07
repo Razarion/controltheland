@@ -73,7 +73,7 @@ public class PlaceablePreviewTerrainImagePoition extends PlaceablePreviewWidget 
     protected int specialMoveY(int y) {
         int offset = TerrainView.getInstance().getViewOriginTop();
         int tileY = TerrainView.getInstance().getTerrainHandler().getTerrainTileIndexForAbsYPosition(y + offset);
-        return TerrainView.getInstance().getTerrainHandler().getAbsolutYForTerrainTile(tileY - offset);
+        return TerrainView.getInstance().getTerrainHandler().getAbsolutYForTerrainTile(tileY) - offset;
     }
 
     @Override
@@ -86,7 +86,7 @@ public class PlaceablePreviewTerrainImagePoition extends PlaceablePreviewWidget 
         } else {
             tmpTerrainImage = TerrainView.getInstance().getTerrainHandler().getTerrainImage(terrainImagePosition);
         }
-        if(tileX < 0 || tileY < 0) {
+        if (tileX < 0 || tileY < 0) {
             return false;
         }
         Rectangle rectangle = new Rectangle(tileX, tileY, tmpTerrainImage.getTileWidth(), tmpTerrainImage.getTileHeight());
