@@ -22,7 +22,7 @@ import com.btxtech.game.jsre.common.gameengine.services.base.BaseService;
 import com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService;
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccess;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainService;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 /**
@@ -48,7 +48,7 @@ public class ClientServices implements Services {
     }
 
     @Override
-    public TerrainService getTerrainService() {
+    public AbstractTerrainService getTerrainService() {
         return TerrainView.getInstance().getTerrainHandler();
     }
 

@@ -47,8 +47,8 @@ public class TerrainTileEditor extends WebPage {
     private String bgImageType;
 
     public TerrainTileEditor() {
-        bgImage = terrainService.getTerrainSetting().getBgImageData();
-        bgImageType = terrainService.getTerrainSetting().getBgContentType();
+        bgImage = terrainService.getDbTerrainSettings().getBgImageData();
+        bgImageType = terrainService.getDbTerrainSettings().getBgContentType();
         Form form = new Form("tileForm");
         add(form);
 
@@ -125,8 +125,8 @@ public class TerrainTileEditor extends WebPage {
                         ImageIcon image = new ImageIcon(fileUpload.getBytes());
                         item.getModelObject().setImageData(fileUpload.getBytes());
                         item.getModelObject().setContentType(fileUpload.getContentType());
-                        item.getModelObject().setTileWidth((int) Math.ceil(image.getIconWidth() / terrainService.getTerrainSetting().getTileWidth()));
-                        item.getModelObject().setTileHeight((int) Math.ceil(image.getIconHeight() / terrainService.getTerrainSetting().getTileHeight()));
+                        item.getModelObject().setTileWidth((int) Math.ceil(image.getIconWidth() / terrainService.getDbTerrainSettings().getTileWidth()));
+                        item.getModelObject().setTileHeight((int) Math.ceil(image.getIconHeight() / terrainService.getDbTerrainSettings().getTileHeight()));
                     }
 
                     @Override

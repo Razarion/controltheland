@@ -41,6 +41,4 @@ public interface MovableService extends RemoteService {
     Collection<SyncItemInfo> getAllSyncInfo();
 
     Collection<ItemType> getItemTypes();
-
-    int[][] getTerrainField();
 }

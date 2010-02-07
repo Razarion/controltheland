@@ -100,29 +100,18 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public int[][] getTerrainField() {
-        try {
-            // TODO return terrainService.getTerrainField();
-            return null;
-        } catch (Throwable t) {
-            log.error("", t);
-            return null;
-        }
-    }
-
-    @Override
     public GameInfo getGameInfo() {
         try {
             GameInfo gameInfo = new GameInfo();
             gameInfo.setBase(baseService.getBase().getSimpleBase());
-            gameInfo.setStartPoint(baseService.getBase().getIndexOfInteresst());
-            // TODO return gameInfo.setTerrainField(terrainService.getTerrainField());
-            // TODO return gameInfo.setPassableTerrainTileIds(terrainService.getPassableTerrainTileIds());
             gameInfo.setAccountBalance(baseService.getBase().getAccountBalance());
             gameInfo.setAllowedItemTypes(serverItemTypeAccessService.getAllowedItemTypes());
             gameInfo.setXp(serverItemTypeAccessService.getXp());
             gameInfo.setEnergyConsuming(serverEnergyService.getConsuming());
             gameInfo.setEnergyGenerating(serverEnergyService.getGenerating());
+            gameInfo.setTerrainSettings(terrainService.getTerrainSettings());
+            gameInfo.setTerrainImagePositions(terrainService.getTerrainImagePositions());
+            gameInfo.setTerrainImages(terrainService.getTerrainImages());
             return gameInfo;
         } catch (Throwable t) {
             log.error("", t);

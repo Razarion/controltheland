@@ -44,12 +44,12 @@ public class TerrainImageController implements Controller {
             byte[] imageData;
             String imageContentType;
             if (Constants.TERRAIN_IMG_TYPE_BACKGROUND.equalsIgnoreCase(type)) {
-                imageData = terrainService.getTerrainSetting().getBgImageData();
-                imageContentType = terrainService.getTerrainSetting().getBgContentType();
+                imageData = terrainService.getDbTerrainSettings().getBgImageData();
+                imageContentType = terrainService.getDbTerrainSettings().getBgContentType();
             } else if (Constants.TERRAIN_IMG_TYPE_FOREGROUND.equalsIgnoreCase(type)) {
                 String strId = httpServletRequest.getParameter(Constants.TERRAIN_IMG_TYPE_IMG_ID);
                 int id = Integer.parseInt(strId);
-                DbTerrainImage dbTerrainImage = terrainService.getTerrainImage(id);
+                DbTerrainImage dbTerrainImage = terrainService.getDbTerrainImage(id);
                 imageData = dbTerrainImage.getImageData();
                 imageContentType = dbTerrainImage.getContentType();
             } else {

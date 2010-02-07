@@ -29,11 +29,7 @@ import java.util.List;
  */
 @RemoteServiceRelativePath("gwtrpc/TerrainServiceService")
 public interface GameEditorAsync extends RemoteService {
-    void getTerrainSettings(AsyncCallback<TerrainSettings> async);
+   void  getEditorInfo(AsyncCallback<EditorInfo> async);
 
-    void getTerrainImagePositions(AsyncCallback<List<TerrainImagePosition>> asyncCallback);
-
-    void getTerrainImages(AsyncCallback<Collection<TerrainImage>> asyncCallback);
-
-    void saveTerrainImagePositions(List<TerrainImagePosition> terrainImagePositions, AsyncCallback<Void> async);
+    void saveTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions, AsyncCallback<Void> async);
 }

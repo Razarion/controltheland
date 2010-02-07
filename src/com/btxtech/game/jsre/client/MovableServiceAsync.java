@@ -37,6 +37,4 @@ public interface MovableServiceAsync {
     void getAllSyncInfo(AsyncCallback<Collection<SyncItemInfo>> async);
 
     void getItemTypes(AsyncCallback<Collection<ItemType>> async);
-
-    void getTerrainField(AsyncCallback<int[][]> async);
 }
