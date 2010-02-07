@@ -327,10 +327,12 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
     }
 
     private void checkMoneyStack(SyncResourceItem money) {
-        if (!collisionService.isFree(money.getPosition(), money.getItemType())) {
+        throw new NullPointerException("NOT IMPLEMENTED");
+        // TODO
+       /* if (!collisionService.isFree(money.getPosition(), money.getItemType())) {
             Index position = collisionService.getFreeRandomPosition(money.getItemType(), Constants.MIN_FREE_MONEY_DISTANCE);
             money.setPosition(position);
-        }
+        } */
     }
 
     private void addMoneyStack() {

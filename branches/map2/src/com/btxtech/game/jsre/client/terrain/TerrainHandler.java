@@ -16,32 +16,32 @@ package com.btxtech.game.jsre.client.terrain;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.widgetideas.graphics.client.ImageLoader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * User: beat
  * Date: 30.11.2009
  * Time: 22:58:26
  */
-public class TerrainHandler extends AbstractTerrainService {
+public class TerrainHandler extends AbstractTerrainServiceImpl {
     private HashMap<Integer, ImageElement> terrainTileImageElements = new HashMap<Integer, ImageElement>();
     private ImageElement backgroundImage;
 
-    public void setupTerrain(TerrainSettings terrainSettings) {
+    public void setupTerrain(TerrainSettings terrainSettings,
+                             Collection<TerrainImagePosition> terrainImagePositions,
+                             Collection<TerrainImage> terrainImages) {
         setTerrainSettings(terrainSettings);
-        loadBackgroundAndDrawMap();
-    }
-
-    public void setupTerrainImagePositions(List<TerrainImagePosition> terrainImagePositions) {
         setTerrainImagePositions(terrainImagePositions);
+        setupTerrainImages(terrainImages);
+        loadBackgroundAndDrawMap();
         loadImagesAndDrawMap();
     }
 
@@ -75,8 +75,10 @@ public class TerrainHandler extends AbstractTerrainService {
 
     private void loadImagesAndDrawMap() {
         ArrayList<String> urls = new ArrayList<String>();
+        final ArrayList<Integer> ids = new ArrayList<Integer>();
         for (TerrainImagePosition terrainImagePosition : getTerrainImagePositions()) {
             urls.add(ImageHandler.getTerrainImageUrl(terrainImagePosition.getImageId()));
+            ids.add(terrainImagePosition.getImageId());
         }
         ImageLoader.loadImages(urls.toArray(new String[urls.size()]), new ImageLoader.CallBack() {
 
@@ -85,7 +87,7 @@ public class TerrainHandler extends AbstractTerrainService {
                 terrainTileImageElements.clear();
                 try {
                     for (int i = 0; i < imageElements.length; i++) {
-                        terrainTileImageElements.put(getTerrainImagePositions().get(i).getImageId(), imageElements[i]);
+                        terrainTileImageElements.put(ids.get(i), imageElements[i]);
                     }
                     fireTerrainChanged();
                 } catch (Throwable throwable) {

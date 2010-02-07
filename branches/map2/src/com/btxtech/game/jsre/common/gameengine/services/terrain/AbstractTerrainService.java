@@ -13,194 +13,60 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.terrain;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Collection;
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import java.util.List;
+import java.util.Collection;
 
 /**
  * User: beat
- * Date: 05.02.2010
- * Time: 22:28:01
+ * Date: 21.11.2009
+ * Time: 14:23:09
  */
-public class AbstractTerrainService implements TerrainService {
-    private List<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
-    private Map<Integer, TerrainImage> terrainImages = new HashMap<Integer, TerrainImage>();
-    private ArrayList<TerrainListener> terrainListeners = new ArrayList<TerrainListener>();
-    private TerrainSettings terrainSettings;
+public interface AbstractTerrainService {
+    List<Index> setupPathToDestination(Index target, Index destination, int range);
 
-    public List<TerrainImagePosition> getTerrainImagePositions() {
-        return terrainImagePositions;
-    }
+    List<Index> setupPathToDestination(Index start, Index destination);
 
-    public void setTerrainImagePositions(List<TerrainImagePosition> terrainImagePositions) {
-        this.terrainImagePositions = terrainImagePositions;
-    }
+    Collection<TerrainImagePosition> getTerrainImagePositions();
 
-    protected void addTerrainImagePosition(TerrainImagePosition terrainImagePosition) {
-        terrainImagePositions.add(terrainImagePosition);
-    }
+    TerrainSettings getTerrainSettings();
 
-    protected void removeTerrainImagePosition(TerrainImagePosition terrainImagePosition) {
-        terrainImagePositions.remove(terrainImagePosition);
-    }
+    void addTerrainListener(TerrainListener terrainListener);
 
-    public void setTerrainSettings(TerrainSettings terrainSettings) {
-        this.terrainSettings = terrainSettings;
-    }
+    List<TerrainImagePosition> getTerrainImagesInRegion(Rectangle absolutePxRectangle);
 
-    public TerrainSettings getTerrainSettings() {
-        return terrainSettings;
-    }
+    Collection<TerrainImage> getTerrainImages();
 
-    public void addTerrainListener(TerrainListener terrainListener) {
-        terrainListeners.add(terrainListener);
-    }
+    Rectangle getTerrainImagePositionRectangle(TerrainImagePosition terrainImagePosition);
 
-    protected void fireTerrainChanged() {
-        for (TerrainListener terrainListener : terrainListeners) {
-            terrainListener.onTerrainChanged();
-        }
-    }
+    TerrainImage getTerrainImage(TerrainImagePosition terrainImagePosition);
 
-    public void setupTerrainImages(Collection<TerrainImage> terrainImages) {
-        this.terrainImages.clear();
-        for (TerrainImage terrainImage : terrainImages) {
-            this.terrainImages.put(terrainImage.getId(), terrainImage);
-        }
-    }
+    TerrainImagePosition getTerrainImagePosition(int absoluteX, int absoluteY);
 
-    public List<TerrainImagePosition> getTerrainImagesInRegion(Rectangle absolutePxRectangle) {
-        ArrayList<TerrainImagePosition> result = new ArrayList<TerrainImagePosition>();
-        if (terrainSettings == null || terrainImagePositions == null) {
-            return result;
-        }
-        Rectangle tileRect = convertToTilePosition(absolutePxRectangle);
-        for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
-            if (tileRect.adjoinsEclusive(getTerrainImagePositionRectangle(terrainImagePosition))) {
-                result.add(terrainImagePosition);
-            }
-        }
-        return result;
-    }
+    Index getTerrainTileIndexForAbsPosition(int x, int y);
 
-    public Rectangle getTerrainImagePositionRectangle(TerrainImagePosition terrainImagePosition) {
-        TerrainImage terrainImage = getTerrainImage(terrainImagePosition);
-        return new Rectangle(terrainImagePosition.getTileIndex().getX(),
-                terrainImagePosition.getTileIndex().getY(),
-                terrainImage.getTileWidth(),
-                terrainImage.getTileHeight());
-    }
+    int getTerrainTileIndexForAbsXPosition(int x);
 
-    public TerrainImage getTerrainImage(TerrainImagePosition terrainImagePosition) {
-        TerrainImage terrainImage = terrainImages.get(terrainImagePosition.getImageId());
-        if (terrainImage == null) {
-            throw new IllegalArgumentException(this + " getTerrainImagePosRect(): image id does not exit: " + terrainImagePosition.getImageId());
-        }
-        return terrainImage;
-    }
+    int getTerrainTileIndexForAbsYPosition(int y);
 
-    public TerrainImagePosition getTerrainImagePosition(int absoluteX, int absoluteY) {
-        if (terrainSettings == null || terrainImagePositions == null) {
-            return null;
-        }
-        Index tileIndex = getTerrainTileIndexForAbsPosition(absoluteX, absoluteY);
-        for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
-            if (getTerrainImagePositionRectangle(terrainImagePosition).containsExclusive(tileIndex)) {
-                return terrainImagePosition;
-            }
-        }
-        return null;
-    }
+    Index getTerrainTileIndexForAbsPosition(Index absolutePos);
 
-    public Index getTerrainTileIndexForAbsPosition(int x, int y) {
-        return new Index(x / terrainSettings.getTileWidth(), y / terrainSettings.getTileHeight());
-    }
+    Index getAbsolutIndexForTerrainTileIndex(Index tileIndex);
 
-    public int getTerrainTileIndexForAbsXPosition(int x) {
-        return x / terrainSettings.getTileWidth();
-    }
+    Index getAbsolutIndexForTerrainTileIndex(int xTile, int yTile);
 
-    public int getTerrainTileIndexForAbsYPosition(int y) {
-        return y / terrainSettings.getTileHeight();
-    }
+    int getAbsolutXForTerrainTile(int xTile);
 
-    public Index getTerrainTileIndexForAbsPosition(Index absolutePos) {
-        return new Index(absolutePos.getX() / terrainSettings.getTileWidth(), absolutePos.getY() / terrainSettings.getTileHeight());
-    }
+    int getAbsolutYForTerrainTile(int yTile);
 
-    public Index getAbsolutIndexForTerrainTileIndex(Index tileIndex) {
-        return new Index(tileIndex.getX() * terrainSettings.getTileWidth(), tileIndex.getY() * terrainSettings.getTileHeight());
-    }
+    Rectangle convertToTilePosition(Rectangle rectangle);
 
-    public Index getAbsolutIndexForTerrainTileIndex(int xTile, int yTile) {
-        return new Index(xTile * terrainSettings.getTileWidth(), yTile * terrainSettings.getTileHeight());
-    }
+    Rectangle convertToAbsolutePosition(Rectangle rectangle);
 
-    public int getAbsolutXForTerrainTile(int xTile) {
-        return xTile * terrainSettings.getTileWidth();
-    }
+    boolean isFree(Index posititon, ItemType itemType);
 
-    public int getAbsolutYForTerrainTile(int yTile) {
-        return yTile * terrainSettings.getTileHeight();
-    }
-
-    public Rectangle convertToTilePosition(Rectangle rectangle) {
-        Index start = getTerrainTileIndexForAbsPosition(rectangle.getStart());
-        Index end = getTerrainTileIndexForAbsPosition(rectangle.getEnd());
-        return new Rectangle(start, end);
-    }
-
-    public Rectangle convertToAbsolutePosition(Rectangle rectangle) {
-        Index start = getAbsolutIndexForTerrainTileIndex(rectangle.getStart());
-        Index end = getAbsolutIndexForTerrainTileIndex(rectangle.getEnd());
-        return new Rectangle(start, end);
-    }
-
-        @Override
-    // TODO move zp
-    public List<Index> setupPathToDestination(Index start, Index destionation, int range) {
-        Index destination = start.getPointWithDistance(range, destionation);
-        ArrayList<Index> path = new ArrayList<Index>();
-        path.add(destination);
-        return path;
-    }
-
-    @Override
-    // TODO move zp
-    public List<Index> setupPathToDestination(Index start, Index destination) {
-        ArrayList<Index> path = new ArrayList<Index>();
-        path.add(destination);
-        return path;
-    }
-
-    @Override
-    // TODO move zp
-    public boolean isFree(Index posititon, ItemType itemType) {
-        // TODO
-        return true;
-    }
-
-    @Deprecated
-    // TODO move zp
-    public boolean isTerrainPassable(Index absolutePos) {
-        // TODO
-        /* if (absolutePos == null) {
-            return false;
-        }
-        Index tilePos = TerrainUtil.getTerrainTileIndexForAbsPosition(absolutePos);
-        if (tilePos.getX() >= tileXCount || tilePos.getY() >= tileYCount) {
-            return false;
-        }
-
-        int tileId = terrainField[tilePos.getX()][tilePos.getY()];
-        return passableTerrainTileIds.contains(tileId);*/
-        return true;
-    }
-
+    boolean isTerrainPassable(Index posititon);
 }

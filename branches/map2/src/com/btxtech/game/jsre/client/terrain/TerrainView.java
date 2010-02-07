@@ -17,9 +17,9 @@ import com.btxtech.game.jsre.client.ExtendedCanvas;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -66,17 +66,15 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         canvas.sinkEvents(Event.ONMOUSEMOVE);
     }
 
-    public void setupTerrain(TerrainSettings terrainSettings) {
+    public void setupTerrain(TerrainSettings terrainSettings,
+                             Collection<TerrainImagePosition> terrainImagePositions,
+                             Collection<TerrainImage> terrainImages) {
         if (terrainSettings == null) {
             GwtCommon.sendLogToServer("Invalid terrain settings");
             return;
         }
         terrainHandler.addTerrainListener(this);
-        terrainHandler.setupTerrain(terrainSettings);
-    }
-
-    @Deprecated
-    public void setupTerrain(int[][] terrainField, Collection<Integer> passableTerrainTileIds) {
+        terrainHandler.setupTerrain(terrainSettings, terrainImagePositions, terrainImages);
     }
 
     public static TerrainView getInstance() {

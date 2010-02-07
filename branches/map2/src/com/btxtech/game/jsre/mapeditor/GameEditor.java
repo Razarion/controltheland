@@ -28,12 +28,8 @@ import java.util.List;
  */
 @RemoteServiceRelativePath("gwtrpc/TerrainServiceService")
 public interface GameEditor extends RemoteService {
-    TerrainSettings getTerrainSettings();
+    EditorInfo getEditorInfo();
 
-    Collection<TerrainImage> getTerrainImages();
-
-    List<TerrainImagePosition> getTerrainImagePositions();
-
-    void saveTerrainImagePositions(List<TerrainImagePosition> terrainImagePositions);
+    void saveTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions);
 
 }

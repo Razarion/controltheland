@@ -14,12 +14,10 @@
 package com.btxtech.game.services.gwt;
 
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
+import com.btxtech.game.jsre.mapeditor.EditorInfo;
 import com.btxtech.game.jsre.mapeditor.GameEditor;
 import com.btxtech.game.services.terrain.TerrainService;
 import java.util.Collection;
-import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +35,13 @@ public class GameEditoImpl implements GameEditor {
     private Log log = LogFactory.getLog(GameEditoImpl.class);
 
     @Override
-    public TerrainSettings getTerrainSettings() {
+    public EditorInfo getEditorInfo(){
         try {
-            return terrainService.getTerrainSetting().createTerrainSettings();
+            EditorInfo editorInfo = new EditorInfo();
+            editorInfo.setTerrainSettings(terrainService.getTerrainSettings());
+            editorInfo.setTerrainImagePositions(terrainService.getTerrainImagePositions());
+            editorInfo.setTerrainImages(terrainService.getTerrainImages());
+            return editorInfo;
         } catch (Throwable t) {
             log.error("", t);
             return null;
@@ -47,27 +49,7 @@ public class GameEditoImpl implements GameEditor {
     }
 
     @Override
-    public Collection<TerrainImage> getTerrainImages() {
-        try {
-            return terrainService.getTerrainImages();
-        } catch (Throwable t) {
-            log.error("", t);
-            return null;
-        }
-    }
-
-    @Override
-    public List<TerrainImagePosition> getTerrainImagePositions() {
-        try {
-            return terrainService.getTerrainImagePositions();
-        } catch (Throwable t) {
-            log.error("", t);
-            return null;
-        }
-    }
-
-    @Override
-    public void saveTerrainImagePositions(List<TerrainImagePosition> terrainImagePositions) {
+    public void saveTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions) {
         try {
             terrainService.saveAndActivateTerrainImagePositions(terrainImagePositions);
         } catch (Throwable t) {

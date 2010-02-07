@@ -18,15 +18,10 @@ import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * User: beat
@@ -61,45 +56,21 @@ public class MapEditor implements EntryPoint {
         RadarPanel.getInstance().setRadarState(true);
         RadarPanel.getInstance().updateEnergy(1, 0);
 
-        // Get data from server
-        gameEditor.getTerrainSettings(new AsyncCallback<TerrainSettings>() {
+        gameEditor.getEditorInfo(new AsyncCallback<EditorInfo>() {
             @Override
             public void onFailure(Throwable throwable) {
                 GwtCommon.handleException(throwable);
             }
 
             @Override
-            public void onSuccess(TerrainSettings terrainSettings) {
-                TerrainView.getInstance().setupTerrain(terrainSettings);
-            }
-        });
-
-        gameEditor.getTerrainImagePositions(new AsyncCallback<List<TerrainImagePosition>>() {
-            @Override
-            public void onFailure(Throwable throwable) {
-                GwtCommon.handleException(throwable);
-            }
-
-            @Override
-            public void onSuccess(List<TerrainImagePosition> terrainImagePositions) {
-                TerrainView.getInstance().getTerrainHandler().setupTerrainImagePositions(terrainImagePositions);
-            }
-        });
-
-        gameEditor.getTerrainImages(new AsyncCallback<Collection<TerrainImage>>() {
-            @Override
-            public void onFailure(Throwable throwable) {
-                GwtCommon.handleException(throwable);
-            }
-
-            @Override
-            public void onSuccess(Collection<TerrainImage> terrainImages) {
-                TerrainView.getInstance().getTerrainHandler().setupTerrainImages(terrainImages);
-                cockpit.setupTerrainImages(terrainImages);
+            public void onSuccess(EditorInfo editorInfo) {
+                TerrainView.getInstance().setupTerrain(editorInfo.getTerrainSettings(),
+                        editorInfo.getTerrainImagePositions(),
+                        editorInfo.getTerrainImages());
+                cockpit.setupTerrainImages(editorInfo.getTerrainImages());
             }
         });
 
         MapWindow.getInstance().setTerrainMouseMoveListener(mapModifier);
     }
-
 }
