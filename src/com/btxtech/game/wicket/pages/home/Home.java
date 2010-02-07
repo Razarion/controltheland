@@ -13,7 +13,11 @@
 
 package com.btxtech.game.wicket.pages.home;
 
+import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
+import javax.servlet.http.Cookie;
+import org.apache.wicket.protocol.http.WebRequest;
+import org.apache.wicket.protocol.http.WebResponse;
 
 /**
  * User: beat
@@ -24,5 +28,10 @@ public class Home extends BasePage {
     public Home() {
         add(new HomeMainContent("homeMain"));
         add(new HomeStatistics("homeStatistics"));
+
+        Cookie[] cookies = ((WebRequest) getRequestCycle().getRequest()).getCookies();
+        if (WebCommon.getCookieId(cookies) == null) {
+            WebCommon.generateAndSetCookieId(((WebResponse) getRequestCycle().getResponse()).getHttpServletResponse());
+        }
     }
 }

@@ -1,0 +1,47 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>User Tracking</title>
+</head>
+<body>
+<h1>User Tracking</h1>
+
+<table border="0">
+    <tr>
+        <th bgcolor="#dadada">Date</th>
+        <th bgcolor="#dadada">Pages Hits</th>
+        <th bgcolor="#dadada">Enter Game</th>
+        <th bgcolor="#dadada">Commands</th>
+        <th bgcolor="#dadada">Missions</th>
+        <th bgcolor="#dadada">Cookie</th>
+        <th bgcolor="#dadada">Session Id</th>
+    </tr>
+    <tr wicket:id="visits">
+        <td wicket:id="date"/>
+        <td align="right" wicket:id="pageHits"/>
+        <td align="right" wicket:id="enterGame"/>
+        <td align="right" wicket:id="commands"/>
+        <td align="right" wicket:id="missions"/>
+        <td align="right" wicket:id="cookie"/>
+        <td align="right">
+          <a href="" wicket:id="visitorLink"><span wicket:id = "sessionId">xxx</span></a>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

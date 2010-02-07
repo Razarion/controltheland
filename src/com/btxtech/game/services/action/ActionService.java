@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 
 /**
  * User: beat
@@ -24,7 +25,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
  * Time: 12:47:37 PM
  */
 public interface ActionService extends SyncItemListener {
-    void executeCommand(BaseCommand baseCommand, boolean supressUserCheck) throws IllegalAccessException;
+    void executeCommand(BaseCommand baseCommand, boolean supressUserCheck) throws IllegalAccessException, ItemDoesNotExistException;
 
     void addGuardingBaseItem(SyncBaseItem syncItem);
 

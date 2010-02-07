@@ -17,6 +17,9 @@ import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.itemTypeAccess.impl.UserItemTypeAccess;
 import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.utg.UserDetails;
+import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.wicket.WebCommon;
 import java.io.Serializable;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +34,8 @@ public class SessionImpl implements Session, Serializable {
     private Connection connection;
     @Autowired
     private HttpServletRequest request;
+    @Autowired
+    UserTrackingService userTrackingService;
     private String sessionId;
     private String userAgent;
     private User user;
@@ -50,6 +55,12 @@ public class SessionImpl implements Session, Serializable {
     public void init() {
         sessionId = request.getSession().getId();
         userAgent = request.getHeader("user-agent");
+        UserDetails userDetails = new UserDetails(sessionId,
+                WebCommon.getCookieId(request.getCookies()),
+                userAgent,
+                request.getHeader("Accept-Language"),
+                request.getRemoteAddr());
+        userTrackingService.newSession(userDetails);
     }
 
     @Override

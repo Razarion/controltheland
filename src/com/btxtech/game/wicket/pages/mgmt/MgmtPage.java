@@ -15,6 +15,7 @@ package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.wicket.WebCommon;
+import com.btxtech.game.wicket.pages.mgmt.tracking.UserTracking;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -92,5 +93,6 @@ public class MgmtPage extends WebPage {
         toolPages.add(new LinkAndName("Backup/Restore", BackupRestore.class));
         toolPages.add(new LinkAndName("Item Type Editpr", ItemTypeTable.class));
         toolPages.add(new LinkAndName("Item Type Access Editpr", ItemTypeAccessEntryEditor.class));
+        toolPages.add(new LinkAndName("User Tracking", UserTracking.class));
     }
 }

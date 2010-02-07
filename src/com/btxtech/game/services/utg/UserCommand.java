@@ -11,29 +11,31 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.connection;
+package com.btxtech.game.services.utg;
 
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.services.connection.Connection;
 import java.util.Date;
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 
 /**
  * User: beat
  * Date: Jul 26, 2009
  * Time: 11:09:27 AM
  */
-@Entity
-@Table(name = "USER_INTERACTION")
-public class Interaction {
+@Entity(name = "TRACKER_USER_COMMAND")
+public class UserCommand implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
     @Column(nullable = false)
     private Date timeStamp;
+    @Column(nullable = false)
+    private Date clientTimeStamp;
     @Column(nullable = false)
     private String sessionId;
     @Column(nullable = false)
@@ -46,14 +48,15 @@ public class Interaction {
     /**
      * Used by hibernate
      */
-    public Interaction() {
+    public UserCommand() {
     }
 
-    public Interaction(Connection connection, BaseCommand baseCommand) {
+    public UserCommand(Connection connection, BaseCommand baseCommand) {
         userName = connection.getBase().getName();
         sessionId = connection.getSessionId();
         this.interaction = baseCommand.toString();
         interactionClass = baseCommand.getClass().getName();
+        clientTimeStamp = baseCommand.getTimeStamp();
         timeStamp = new Date();
     }
 
@@ -73,12 +76,20 @@ public class Interaction {
         return timeStamp;
     }
 
+    public Date getClientTimeStamp() {
+        return clientTimeStamp;
+    }
+
+    public String getInteractionClass() {
+        return interactionClass;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Interaction that = (Interaction) o;
+        UserCommand that = (UserCommand) o;
 
         return !(id != null ? !id.equals(that.id) : that.id != null);
 

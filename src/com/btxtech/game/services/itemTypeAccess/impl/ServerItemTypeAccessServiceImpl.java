@@ -71,7 +71,7 @@ public class ServerItemTypeAccessServiceImpl extends TimerTask implements Server
     @PostConstruct
     public void start() {
         timer = new Timer(getClass().getName(), true);
-        timer.scheduleAtFixedRate(this, 0, TICK_TIME_MILI_SECONDS_POINT_DISPATCHING);
+        timer.scheduleAtFixedRate(this, TICK_TIME_MILI_SECONDS_POINT_DISPATCHING, TICK_TIME_MILI_SECONDS_POINT_DISPATCHING);
     }
 
     @PreDestroy
@@ -190,7 +190,7 @@ public class ServerItemTypeAccessServiceImpl extends TimerTask implements Server
 
     @Override
     public void run() {
-        List<SyncItem> syncItems = itemService.getItemsCopy();
+        List<SyncItem> syncItems = itemService.getItemsCopyNoDummies();
         for (SyncItem syncItem : syncItems) {
             if (syncItem instanceof SyncBaseItem) {
                 SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;

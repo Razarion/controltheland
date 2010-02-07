@@ -17,14 +17,12 @@ import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.ClientLogEntry;
 import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.ConnectionStatistics;
-import com.btxtech.game.services.connection.Interaction;
 import com.btxtech.game.services.connection.Session;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -133,17 +131,6 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
             ClientLogEntry clientLogEntry = new ClientLogEntry(message, session);
  //           hibernateTemplate.saveOrUpdate(clientLogEntry);
             log.info(clientLogEntry.getFormatMessage());
-        } catch (Throwable t) {
-            log.error("", t);
-        }
-    }
-
-    @Override
-    public void saveUserInteraction(BaseCommand baseCommand) {
-        try {
-            Interaction userInteraction = new Interaction(session.getConnection(), baseCommand);
-            log.debug(userInteraction);
-            hibernateTemplate.saveOrUpdate(userInteraction);
         } catch (Throwable t) {
             log.error("", t);
         }

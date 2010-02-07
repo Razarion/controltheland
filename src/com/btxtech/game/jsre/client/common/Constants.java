@@ -43,18 +43,19 @@ public class Constants {
     public static final String ITEM_IMAGE_INDEX = "ix";
 
     // zIndex
-    public static final int Z_INDEX_DIALOG = 12;
-    public static final int Z_INDEX_GROUP_SELECTION_FRAME = 11;
-    public static final int Z_INDEX_SPEECH_BUBBLE = 10;
-    public static final int Z_INDEX_PLACEABLE_PREVIEW = 9;
-    public static final int Z_INDEX_TOP_MAP_PANEL = 8;
-    public static final int Z_INDEX_EXPLOSION = 7;
-    public static final int Z_INDEX_MUZZLE_FLASH = 6;
-    public static final int Z_INDEX_MACHINE_GUN_ATTACK = 5;
-    public static final int Z_INDEX_MOVABLE = 4;
-    public static final int Z_INDEX_MONEY = 3;
-    public static final int Z_INDEX_BUILDING = 2;
-    public static final int Z_INDEX_TERRAIN = 1;
+    public static final int Z_INDEX_DIALOG = 13;
+    public static final int Z_INDEX_GROUP_SELECTION_FRAME = 12;
+    public static final int Z_INDEX_SPEECH_BUBBLE = 11;
+    public static final int Z_INDEX_PLACEABLE_PREVIEW = 10;
+    public static final int Z_INDEX_TOP_MAP_PANEL = 9;
+    public static final int Z_INDEX_EXPLOSION = 8;
+    public static final int Z_INDEX_MUZZLE_FLASH = 7;
+    public static final int Z_INDEX_MACHINE_GUN_ATTACK = 6;
+    public static final int Z_INDEX_MOVABLE = 5;
+    public static final int Z_INDEX_MONEY = 4;
+    public static final int Z_INDEX_BUILDING = 3;
+    public static final int Z_INDEX_TERRAIN = 2;
+    public static final int Z_INDEX_HIDDEN = 1;
 
     // Financial
     public static final int START_MONEY = 50000;
@@ -63,5 +64,6 @@ public class Constants {
     // Distances
     public static final int MIN_FREE_MONEY_DISTANCE = 100;
 
-
+    // Base
+    public static final String DUMMY_BASE_NAME = "Dummy";
 }

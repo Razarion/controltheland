@@ -70,4 +70,6 @@ public interface BaseService extends com.btxtech.game.jsre.common.gameengine.ser
     List<Base> getBases();
 
     void restoreBases(Collection<Base> bases);
+
+    SimpleBase getDummyBase();
 }

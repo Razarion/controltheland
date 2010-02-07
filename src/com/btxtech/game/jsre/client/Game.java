@@ -19,16 +19,22 @@ import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.client.utg.ClientUserTracker;
+import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
+import java.util.Date;
 
 public class Game implements EntryPoint {
     static private boolean isDebug = false;
+    static public CockpitPanel cockpitPanel;
 
     public void onModuleLoad() {
         try {
             GwtCommon.setUncaughtExceptionHandler();
+            ClientUserTracker.getInstance().sandGameStartupState(GameStartupState.CLIENT_START, new Date());
+
             isDebug = Boolean.parseBoolean(Window.Location.getParameter("debug"));
 
             GwtCommon.disableBrowserContextMenuJSNI();
@@ -39,7 +45,7 @@ public class Game implements EntryPoint {
             RadarPanel.getInstance().getElement().getStyle().setProperty("left", "");
             RadarPanel.getInstance().getElement().getStyle().setProperty("right", "30px");
 
-            CockpitPanel cockpitPanel = new CockpitPanel();
+            cockpitPanel = new CockpitPanel();
             MapWindow.getAbsolutePanel().add(cockpitPanel, 30, 200);
             cockpitPanel.getElement().getStyle().setProperty("top", "");
             cockpitPanel.getElement().getStyle().setProperty("bottom", "30px");

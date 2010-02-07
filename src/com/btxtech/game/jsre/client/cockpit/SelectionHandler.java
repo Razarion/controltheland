@@ -16,8 +16,8 @@ package com.btxtech.game.jsre.client.cockpit;
 import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.ClientSyncResourceItemView;
+import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.client.action.ActionHandler;
-import com.btxtech.game.jsre.client.dialogs.SpeechBubble;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import java.util.ArrayList;
@@ -54,18 +54,11 @@ public class SelectionHandler {
     }
 
     public void setTargetSelected(ClientSyncItemView selectedTargetClientSyncItem, MouseDownEvent event) {
-        SpeechBubble.closeAllBubbles();
-
         if (selectedTargetClientSyncItem.equals(this.selectedTargetClientSyncItem)) {
             return;
         }
 
         if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
-            clearSelection();
-            this.selectedTargetClientSyncItem = selectedTargetClientSyncItem;
-            selectedTargetClientSyncItem.setSelected(true);
-            onTargetSelectionItemChanged(selectedTargetClientSyncItem);
-        } else if (event.getNativeButton() == NativeEvent.BUTTON_RIGHT) {
             if (selectedGroup != null) {
                 if (selectedGroup.canAttack() && selectedTargetClientSyncItem instanceof ClientSyncBaseItemView) {
                     ActionHandler.getInstance().attack(selectedGroup.getItems(), ((ClientSyncBaseItemView)selectedTargetClientSyncItem).getSyncBaseItem());
@@ -80,8 +73,6 @@ public class SelectionHandler {
     }
 
     public void setItemGroupSelected(Group selectedGroup) {
-        SpeechBubble.closeAllBubbles();
-
         clearSelection();
         if (selectedGroup.equals(this.selectedGroup)) {
             return;
@@ -113,6 +104,7 @@ public class SelectionHandler {
             listener.onTargetSelectionChanged(selection);
         }
         CursorHandler.getInstance().onSelectionCleared();
+        ClientUserTracker.getInstance().onTargetSelectionItemChanged(selection);
     }
 
     private void onOwnItemSelectionChanged(Group selection) {
@@ -120,6 +112,7 @@ public class SelectionHandler {
             listener.onOwnSelectionChanged(selection);
         }
         CursorHandler.getInstance().onOwnSelectionChanged(selection);
+        ClientUserTracker.getInstance().onOwnItemSelectionChanged(selection);
     }
 
 
