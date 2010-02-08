@@ -136,10 +136,9 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
 
     private Collection<Index> getPassableTiles() {
         HashSet<Index> passableTiles = new HashSet<Index>();
-        for (int x = 0; x < terrainService.getDbTerrainSettings().getTileXCount(); x++) {
-            for (int y = 0; y < terrainService.getDbTerrainSettings().getTileYCount(); y++) {
-                Index abs = terrainService.getTerrainTileIndexForAbsPosition(x, y);
-                if (terrainService.getTerrainImagePosition(abs.getX(), abs.getY()) == null) {
+        for (int x = 0; x < passableTerrain.length; x++) {
+            for (int y = 0; y < passableTerrain[x].length; y++) {
+                if (passableTerrain[x][y]) {
                     passableTiles.add(new Index(x, y));
                 }
             }
@@ -340,7 +339,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
 
     private PassableRectangle getPassableRectangleOfAbsoluteIndex(Index absoluteIndex) {
         for (PassableRectangle passableRectangle : passableRectangles) {
-            if (passableRectangle.containAbsoluteIndex(absoluteIndex)) {
+            if (passableRectangle.containAbsoluteIndex(absoluteIndex, terrainService.getDbTerrainSettings())) {
                 return passableRectangle;
             }
         }
