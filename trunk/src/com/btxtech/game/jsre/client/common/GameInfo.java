@@ -14,6 +14,9 @@
 package com.btxtech.game.jsre.client.common;
 
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -26,11 +29,12 @@ public class GameInfo implements Serializable{
     private SimpleBase base;
     private int accountBalance;
     private int xp;
-    private int[][] terrainField;
-    private Collection<Integer> passableTerrainTileIds;
     private Collection<Integer> allowedItemTypes;
     private int energyGenerating;
     private int energyConsuming;
+    private TerrainSettings terrainSettings;
+    private Collection<TerrainImagePosition> terrainImagePositions;
+    private Collection<TerrainImage> terrainImages;
 
     public SimpleBase getBase() {
         return base;
@@ -46,22 +50,6 @@ public class GameInfo implements Serializable{
 
     public void setAccountBalance(int accountBalance) {
         this.accountBalance = accountBalance;
-    }
-
-    public int[][] getTerrainField() {
-        return terrainField;
-    }
-
-    public void setTerrainField(int[][] terrainField) {
-        this.terrainField = terrainField;
-    }
-
-    public Collection<Integer> getPassableTerrainTileIds() {
-        return passableTerrainTileIds;
-    }
-
-    public void setPassableTerrainTileIds(Collection<Integer> passableTerrainTileIds) {
-        this.passableTerrainTileIds = passableTerrainTileIds;
     }
 
     public Collection<Integer> getAllowedItemTypes() {
@@ -94,5 +82,29 @@ public class GameInfo implements Serializable{
 
     public void setEnergyConsuming(int energyConsuming) {
         this.energyConsuming = energyConsuming;
+    }
+
+    public TerrainSettings getTerrainSettings() {
+        return terrainSettings;
+}
+
+    public void setTerrainSettings(TerrainSettings terrainSettings) {
+        this.terrainSettings = terrainSettings;
+    }
+
+    public Collection<TerrainImagePosition> getTerrainImagePositions() {
+        return terrainImagePositions;
+    }
+
+    public void setTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions) {
+        this.terrainImagePositions = terrainImagePositions;
+    }
+
+    public Collection<TerrainImage> getTerrainImages() {
+        return terrainImages;
+    }
+
+    public void setTerrainImages(Collection<TerrainImage> terrainImages) {
+        this.terrainImages = terrainImages;
     }
 }

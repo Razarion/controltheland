@@ -23,14 +23,18 @@
 <h1>Tile Editor</h1>
 
 <form wicket:id="tileForm">
+    <h2>Background Image</h2>
+    <img border="1" wicket:id="bgImage"/><br/>
+    <input type="file" wicket:id="bgUpload" /><br/>
+    Size:<span wicket:id="bgSize"/>K
 
+    <h2>Terrain Images</h2>
     <table cellpadding="1" cellspacing="1" border="0">
         <tr>
-            <th bgcolor="#dadada">Preview</th>
             <th bgcolor="#dadada">Image</th>
+            <th bgcolor="#dadada">Upload</th>
             <th bgcolor="#dadada">Size in K</th>
-            <th bgcolor="#dadada">Allowed Item</th>
-            <th bgcolor="#dadada">Image</th>
+            <th bgcolor="#dadada">Delete</th>
         </tr>
 
         <tr wicket:id="tiles">
@@ -41,9 +45,6 @@
                 <input type="file" wicket:id="upload" />
             </td>
             <td wicket:id="size" align="right" valign="center"/>
-            <td valign="center">
-                <select wicket:id="allowedItem"/>
-            </td>
             <td valign="center">
                 <input type="submit" value="Delete" wicket:id="delete"/>
             </td>

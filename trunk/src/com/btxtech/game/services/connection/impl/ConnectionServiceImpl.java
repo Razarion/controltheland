@@ -129,7 +129,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     public void clientLog(String message) {
         try {
             ClientLogEntry clientLogEntry = new ClientLogEntry(message, session);
-            hibernateTemplate.saveOrUpdate(clientLogEntry);
+ //           hibernateTemplate.saveOrUpdate(clientLogEntry);
             log.info(clientLogEntry.getFormatMessage());
         } catch (Throwable t) {
             log.error("", t);

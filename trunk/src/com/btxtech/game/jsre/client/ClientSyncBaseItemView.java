@@ -171,9 +171,7 @@ public class ClientSyncBaseItemView extends ClientSyncItemView {
             SelectionHandler.getInstance().setTargetSelected(this, event);
             ClientUserTracker.getInstance().clickEnemyItem(syncBaseItem);
         }
-        // Just to prevent image dragging
-        event.stopPropagation();
-        event.preventDefault();
+        GwtCommon.preventImageDragging(event);
     }
 
     public SyncBaseItem getSyncBaseItem() {

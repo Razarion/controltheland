@@ -13,9 +13,11 @@
 
 package com.btxtech.game.services.gwt;
 
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
+import com.btxtech.game.jsre.mapeditor.EditorInfo;
 import com.btxtech.game.jsre.mapeditor.GameEditor;
 import com.btxtech.game.services.terrain.TerrainService;
-import java.util.List;
+import java.util.Collection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +35,13 @@ public class GameEditoImpl implements GameEditor {
     private Log log = LogFactory.getLog(GameEditoImpl.class);
 
     @Override
-    public int[][] getTerrainField() {
+    public EditorInfo getEditorInfo(){
         try {
-            return terrainService.getTerrainField();
+            EditorInfo editorInfo = new EditorInfo();
+            editorInfo.setTerrainSettings(terrainService.getTerrainSettings());
+            editorInfo.setTerrainImagePositions(terrainService.getTerrainImagePositions());
+            editorInfo.setTerrainImages(terrainService.getTerrainImages());
+            return editorInfo;
         } catch (Throwable t) {
             log.error("", t);
             return null;
@@ -43,21 +49,11 @@ public class GameEditoImpl implements GameEditor {
     }
 
     @Override
-    public void setTerrainField(int[][] filed) {
+    public void saveTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions) {
         try {
-            terrainService.activateTerrainField(filed);
+            terrainService.saveAndActivateTerrainImagePositions(terrainImagePositions);
         } catch (Throwable t) {
             log.error("", t);
         }
     }
-
-    @Override
-    public List<Integer> getTiles() {
-        try {
-            return terrainService.getTileIds();
-        } catch (Throwable t) {
-            log.error("", t);
-            return null;
         }
-    }
-}

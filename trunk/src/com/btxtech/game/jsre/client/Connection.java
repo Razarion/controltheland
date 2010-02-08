@@ -89,10 +89,12 @@ public class Connection implements AsyncCallback<Void> {
     private void setupGameStructure(final GameInfo gameInfo) {
         ClientBase.getInstance().setBase(gameInfo.getBase());
         ClientBase.getInstance().setAccountBalance(gameInfo.getAccountBalance());
-        TerrainView.getInstance().setupTerrain(gameInfo.getTerrainField(), gameInfo.getPassableTerrainTileIds());
         InfoPanel.getInstance().setGameInfo(gameInfo);
         ClientItemTypeAccess.getInstance().setAllowedItemTypes(gameInfo.getAllowedItemTypes());
         RadarPanel.getInstance().updateEnergy(gameInfo.getEnergyGenerating(), gameInfo.getEnergyConsuming());
+        TerrainView.getInstance().setupTerrain(gameInfo.getTerrainSettings(),
+                gameInfo.getTerrainImagePositions(),
+                gameInfo.getTerrainImages());
         movableServiceAsync.getItemTypes(new AsyncCallback<Collection<ItemType>>() {
             @Override
             public void onFailure(Throwable throwable) {

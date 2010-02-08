@@ -13,9 +13,9 @@
 
 package com.btxtech.game.services.collision;
 
-import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.services.terrain.DbTerrainSetting;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -85,18 +85,18 @@ public class PassableRectangle {
         neighbors.put(neighborPassableRectangle, neighbor);
     }
 
-    public Rectangle getPixelRectangle() {
-        int x = rectangle.getX() * Constants.TILE_WIDTH;
-        int y = rectangle.getY() * Constants.TILE_HEIGHT;
+    public Rectangle getPixelRectangle(DbTerrainSetting dbTerrainSetting) {
+        int x = rectangle.getX() * dbTerrainSetting.getTileWidth();
+        int y = rectangle.getY() * dbTerrainSetting.getTileHeight();
 
-        int width = rectangle.getWeidth() * Constants.TILE_WIDTH;
-        int height = rectangle.getHeight() * Constants.TILE_HEIGHT;
+        int width = rectangle.getWeidth() * dbTerrainSetting.getTileWidth();
+        int height = rectangle.getHeight() * dbTerrainSetting.getTileHeight();
 
         return new Rectangle(x, y, width, height);
     }
 
-    public boolean containAbsoluteIndex(Index absolueIndex) {
-        return getPixelRectangle().contains(absolueIndex);
+    public boolean containAbsoluteIndex(Index absolueIndex, DbTerrainSetting dbTerrainSetting) {
+        return getPixelRectangle(dbTerrainSetting).contains(absolueIndex);
     }
 
     public List<Path> findAllPossiblePassableRectanglePaths(PassableRectangle destinationRect, int fuzzyLimitPaths) {

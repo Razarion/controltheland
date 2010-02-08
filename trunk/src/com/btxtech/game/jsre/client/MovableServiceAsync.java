@@ -42,8 +42,6 @@ public interface MovableServiceAsync {
 
     void getItemTypes(AsyncCallback async);
 
-    void getTerrainField(AsyncCallback async);
-
     void sendUserActions(ArrayList<UserAction> userActions, ArrayList<MissionAction> missionActions, AsyncCallback<Void> asyncCallback);
 
     void createMissionTraget(Id attacker, AsyncCallback<Void> asyncCallback);

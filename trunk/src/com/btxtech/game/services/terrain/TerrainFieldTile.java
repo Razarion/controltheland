@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.client.common.Index;
  * Date: Sep 2, 2009
  * Time: 12:21:54 PM
  */
+@Deprecated
 public interface TerrainFieldTile {
     Tile getTile();
 

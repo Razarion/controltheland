@@ -14,15 +14,15 @@
 package com.btxtech.game.services.common;
 
 import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.base.BaseService;
+import com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService;
 import com.btxtech.game.jsre.common.gameengine.services.energy.EnergyService;
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccess;
-import com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService;
-import com.btxtech.game.jsre.common.gameengine.services.base.BaseService;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainService;
-import com.btxtech.game.services.collision.CollisionService;
-import com.btxtech.game.services.itemTypeAccess.ServerItemTypeAccessService;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.services.energy.ServerEnergyService;
+import com.btxtech.game.services.itemTypeAccess.ServerItemTypeAccessService;
+import com.btxtech.game.services.terrain.TerrainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +36,7 @@ public class ServerServices implements Services {
     @Autowired
     private com.btxtech.game.services.item.ItemService itemService;
     @Autowired
-    private CollisionService collisionService;
+    private TerrainService terrainService;
     @Autowired
     private com.btxtech.game.services.base.BaseService baseService;
     @Autowired
@@ -52,8 +52,8 @@ public class ServerServices implements Services {
     }
 
     @Override
-    public TerrainService getTerrainService() {
-        return collisionService;
+    public AbstractTerrainService getTerrainService() {
+        return terrainService;
     }
 
     @Override
