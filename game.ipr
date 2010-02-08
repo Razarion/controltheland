@@ -402,7 +402,7 @@
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="ProjectRunConfigurationManager">
-    <configuration default="false" name="GWT Client [Game]" type="Application" factoryName="Application" enabled="false" merge="false" sample_coverage="true" runner="emma">
+    <configuration default="false" name="RT GWT Client [Game]" type="Application" factoryName="Application" enabled="false" merge="false" sample_coverage="true" runner="emma">
       <option name="MAIN_CLASS_NAME" value="com.google.gwt.dev.DevMode" />
       <option name="VM_PARAMETERS" value="-Xmx128M" />
       <option name="PROGRAM_PARAMETERS" value="-noserver -war war -startupUrl http://localhost:8080 com.btxtech.game.jsre.Game" />
@@ -426,7 +426,7 @@
         <option name="Make" value="true" />
       </method>
     </configuration>
-    <configuration default="false" name="GWT Client [Map Editor]" type="Application" factoryName="Application" enabled="false" merge="false" sample_coverage="true" runner="emma">
+    <configuration default="false" name="RT GWT Client [Map Editor]" type="Application" factoryName="Application" enabled="false" merge="false" sample_coverage="true" runner="emma">
       <option name="MAIN_CLASS_NAME" value="com.google.gwt.dev.DevMode" />
       <option name="VM_PARAMETERS" value="-Xmx128M" />
       <option name="PROGRAM_PARAMETERS" value="-noserver -war war -startupUrl http://localhost:8080/?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.mgmt.MapEditor com.btxtech.game.jsre.MapEditor" />
@@ -502,7 +502,7 @@
       <option name="OPEN_IN_BROWSER" value="false" />
       <option name="OPEN_IN_BROWSER_URL" value="http://localhost:8080/" />
       <option name="BROWSER_ID" value="system" />
-      <option name="COMMON_VM_ARGUMENTS" value="-Xmx128M" />
+      <option name="COMMON_VM_ARGUMENTS" value="-Xmx1024M" />
       <option name="BUILD_ON_FRAME_DEACTIVATION" value="true" />
       <JAVAEE_FACET FACET_ID="game/web/Web2" DEPLOYMENT_SOURCE_NAME="exploded">
         <option name="CONTEXT_PATH" value="/" />

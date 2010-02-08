@@ -50,8 +50,6 @@ public interface MovableService extends RemoteService {
 
     Collection<ItemType> getItemTypes();
 
-    int[][] getTerrainField();
-
     void sendUserActions(ArrayList<UserAction> userActions, ArrayList<MissionAction> missionActions);
 
     void createMissionTraget(Id attacker);

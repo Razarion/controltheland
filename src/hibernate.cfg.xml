@@ -27,6 +27,9 @@
       <mapping class="com.btxtech.game.services.connection.ClientLogEntry"/>
       <mapping class="com.btxtech.game.services.terrain.impl.TerrainFieldTileImpl"/>
       <mapping class="com.btxtech.game.services.terrain.impl.TileImpl"/>
+      <mapping class="com.btxtech.game.services.terrain.DbTerrainImagePosition"/>
+      <mapping class="com.btxtech.game.services.terrain.DbTerrainImage"/>
+      <mapping class="com.btxtech.game.services.terrain.DbTerrainSetting"/>
       <mapping class="com.btxtech.game.services.user.User"/>
       <mapping class="com.btxtech.game.services.mgmt.impl.BackupEntry"/>
       <mapping class="com.btxtech.game.services.mgmt.impl.GenericBaseItem"/>

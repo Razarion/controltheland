@@ -13,11 +13,13 @@
 
 package com.btxtech.game.jsre.mapeditor;
 
+import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.btxtech.game.jsre.client.ImageHandler;
 
 /**
  * User: beat
@@ -25,23 +27,24 @@ import com.btxtech.game.jsre.client.ImageHandler;
  * Time: 10:07:13 PM
  */
 public class TileSelectorItem extends FlowPanel implements MouseDownHandler {
-    private TileSelector tileSelector;
-    private int tileId;
-    private Image image;
+    private TerrainImage terrainImage;
+    private MapModifier mapModifier;
 
-    public TileSelectorItem(TileSelector tileSelector, int tileId) {
-        this.tileSelector = tileSelector;
-        this.tileId = tileId;
-        image = ImageHandler.getTerrainImage(tileId);
+    public TileSelectorItem(TerrainImage terrainImage, MapModifier mapModifier) {
+        this.terrainImage = terrainImage;
+        this.mapModifier = mapModifier;
+        Image image = ImageHandler.getTerrainImage(terrainImage.getId());
         add(image);
         image.addMouseDownHandler(this);
         setSelected(false);
-
+        image.setPixelSize(100,100);
     }
 
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
-       tileSelector.onSelectionChanged(this); 
+       GwtCommon.preventImageDragging(mouseDownEvent); 
+       PlaceablePreviewTerrainImagePoition placeablePreview = new PlaceablePreviewTerrainImagePoition(terrainImage, mouseDownEvent, mapModifier);
+        mapModifier.setPlaceablePreview(placeablePreview);        
     }
 
     public void setSelected(boolean selected) {
@@ -51,8 +54,4 @@ public class TileSelectorItem extends FlowPanel implements MouseDownHandler {
             setStyleName("tile-selector-item-unselected");
         }
     }
-
-    public int getTileId() {
-        return tileId;
     }
-}

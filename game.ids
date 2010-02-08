@@ -13,7 +13,63 @@
     <option name="DATABASE_PRODUCT_NAME" value="MySQL" />
     <option name="DATABASE_PRODUCT_VERSION" value="5.1.40-community" />
     <TABLE_DATA>
-      <option name="NAME" value="BACKUP_BASE" />
+      <option name="NAME" value="achivement" />
+      <option name="SCHEMA" />
+      <option name="CATALOG" value="gamedb" />
+      <option name="TYPE" value="TABLE" />
+      <FIELD_ELEMENT>
+        <option name="NAME" value="ACHIVEMENT_TYPE" />
+        <option name="SQL_TYPE" value="VARCHAR" />
+        <option name="JDBC_TYPE" value="12" />
+        <option name="TYPE" />
+        <option name="PRIMARY" value="false" />
+        <option name="LENGTH" value="31" />
+        <option name="PRECISION" value="0" />
+        <option name="NULLABLE" value="false" />
+      </FIELD_ELEMENT>
+      <FIELD_ELEMENT>
+        <option name="NAME" value="id" />
+        <option name="SQL_TYPE" value="INT" />
+        <option name="JDBC_TYPE" value="4" />
+        <option name="TYPE" />
+        <option name="PRIMARY" value="true" />
+        <option name="LENGTH" value="10" />
+        <option name="PRECISION" value="0" />
+        <option name="NULLABLE" value="false" />
+      </FIELD_ELEMENT>
+      <FIELD_ELEMENT>
+        <option name="NAME" value="initiator" />
+        <option name="SQL_TYPE" value="VARCHAR" />
+        <option name="JDBC_TYPE" value="12" />
+        <option name="TYPE" />
+        <option name="PRIMARY" value="false" />
+        <option name="LENGTH" value="255" />
+        <option name="PRECISION" value="0" />
+        <option name="NULLABLE" value="false" />
+      </FIELD_ELEMENT>
+      <FIELD_ELEMENT>
+        <option name="NAME" value="timeStamp" />
+        <option name="SQL_TYPE" value="DATETIME" />
+        <option name="JDBC_TYPE" value="93" />
+        <option name="TYPE" />
+        <option name="PRIMARY" value="false" />
+        <option name="LENGTH" value="19" />
+        <option name="PRECISION" value="0" />
+        <option name="NULLABLE" value="false" />
+      </FIELD_ELEMENT>
+      <FIELD_ELEMENT>
+        <option name="NAME" value="victim" />
+        <option name="SQL_TYPE" value="VARCHAR" />
+        <option name="JDBC_TYPE" value="12" />
+        <option name="TYPE" />
+        <option name="PRIMARY" value="false" />
+        <option name="LENGTH" value="255" />
+        <option name="PRECISION" value="0" />
+        <option name="NULLABLE" value="true" />
+      </FIELD_ELEMENT>
+    </TABLE_DATA>
+    <TABLE_DATA>
+      <option name="NAME" value="backup_base" />
       <option name="SCHEMA" />
       <option name="CATALOG" value="gamedb" />
       <option name="TYPE" value="TABLE" />
@@ -29,36 +85,6 @@
       </FIELD_ELEMENT>
       <FIELD_ELEMENT>
         <option name="NAME" value="accountBalance" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="created" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="kills" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="lost" />
         <option name="SQL_TYPE" value="INT" />
         <option name="JDBC_TYPE" value="4" />
         <option name="TYPE" />
@@ -88,24 +114,14 @@
         <option name="NULLABLE" value="true" />
       </FIELD_ELEMENT>
       <FIELD_ELEMENT>
-        <option name="NAME" value="totalEarned" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
+        <option name="NAME" value="user_name" />
+        <option name="SQL_TYPE" value="VARCHAR" />
+        <option name="JDBC_TYPE" value="12" />
         <option name="TYPE" />
         <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
+        <option name="LENGTH" value="255" />
         <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="totalSpent" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
+        <option name="NULLABLE" value="true" />
       </FIELD_ELEMENT>
       <FIELD_ELEMENT>
         <option name="NAME" value="baseColor_id" />
@@ -118,22 +134,52 @@
         <option name="NULLABLE" value="true" />
       </FIELD_ELEMENT>
       <FIELD_ELEMENT>
-        <option name="NAME" value="user_name" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
+        <option name="NAME" value="kills" />
+        <option name="SQL_TYPE" value="INT" />
+        <option name="JDBC_TYPE" value="4" />
         <option name="TYPE" />
         <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
+        <option name="LENGTH" value="10" />
         <option name="PRECISION" value="0" />
         <option name="NULLABLE" value="true" />
       </FIELD_ELEMENT>
       <FIELD_ELEMENT>
-        <option name="NAME" value="abandoned" />
-        <option name="SQL_TYPE" value="BIT" />
-        <option name="JDBC_TYPE" value="-7" />
+        <option name="NAME" value="created" />
+        <option name="SQL_TYPE" value="INT" />
+        <option name="JDBC_TYPE" value="4" />
         <option name="TYPE" />
         <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="1" />
+        <option name="LENGTH" value="10" />
+        <option name="PRECISION" value="0" />
+        <option name="NULLABLE" value="true" />
+      </FIELD_ELEMENT>
+      <FIELD_ELEMENT>
+        <option name="NAME" value="lost" />
+        <option name="SQL_TYPE" value="INT" />
+        <option name="JDBC_TYPE" value="4" />
+        <option name="TYPE" />
+        <option name="PRIMARY" value="false" />
+        <option name="LENGTH" value="10" />
+        <option name="PRECISION" value="0" />
+        <option name="NULLABLE" value="true" />
+      </FIELD_ELEMENT>
+      <FIELD_ELEMENT>
+        <option name="NAME" value="totalEarned" />
+        <option name="SQL_TYPE" value="INT" />
+        <option name="JDBC_TYPE" value="4" />
+        <option name="TYPE" />
+        <option name="PRIMARY" value="false" />
+        <option name="LENGTH" value="10" />
+        <option name="PRECISION" value="0" />
+        <option name="NULLABLE" value="true" />
+      </FIELD_ELEMENT>
+      <FIELD_ELEMENT>
+        <option name="NAME" value="totalSpent" />
+        <option name="SQL_TYPE" value="INT" />
+        <option name="JDBC_TYPE" value="4" />
+        <option name="TYPE" />
+        <option name="PRIMARY" value="false" />
+        <option name="LENGTH" value="10" />
         <option name="PRECISION" value="0" />
         <option name="NULLABLE" value="true" />
       </FIELD_ELEMENT>
@@ -159,7 +205,7 @@
       </RELATIONSHIP_ELEMENT>
     </TABLE_DATA>
     <TABLE_DATA>
-      <option name="NAME" value="BACKUP_ENTRY" />
+      <option name="NAME" value="backup_entry" />
       <option name="SCHEMA" />
       <option name="CATALOG" value="gamedb" />
       <option name="TYPE" value="TABLE" />
@@ -185,20 +231,10 @@
       </FIELD_ELEMENT>
     </TABLE_DATA>
     <TABLE_DATA>
-      <option name="NAME" value="BACKUP_GENERIC_ITEM" />
+      <option name="NAME" value="backup_generic_item" />
       <option name="SCHEMA" />
       <option name="CATALOG" value="gamedb" />
       <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="ITEM_TYPE" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="31" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
       <FIELD_ELEMENT>
         <option name="NAME" value="id" />
         <option name="SQL_TYPE" value="INT" />
@@ -208,76 +244,6 @@
         <option name="LENGTH" value="10" />
         <option name="PRECISION" value="0" />
         <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="ownId" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="parentId" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="childIndex" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="xPos" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="yPos" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="angel" />
-        <option name="SQL_TYPE" value="DOUBLE" />
-        <option name="JDBC_TYPE" value="8" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="22" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="build" />
-        <option name="SQL_TYPE" value="BIT" />
-        <option name="JDBC_TYPE" value="-7" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="1" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
       </FIELD_ELEMENT>
       <FIELD_ELEMENT>
         <option name="NAME" value="buildupProgress" />
@@ -320,12 +286,82 @@
         <option name="NULLABLE" value="true" />
       </FIELD_ELEMENT>
       <FIELD_ELEMENT>
+        <option name="NAME" value="ownId" />
+        <option name="SQL_TYPE" value="INT" />
+        <option name="JDBC_TYPE" value="4" />
+        <option name="TYPE" />
+        <option name="PRIMARY" value="false" />
+        <option name="LENGTH" value="10" />
+        <option name="PRECISION" value="0" />
+        <option name="NULLABLE" value="true" />
+      </FIELD_ELEMENT>
+      <FIELD_ELEMENT>
+        <option name="NAME" value="parentId" />
+        <option name="SQL_TYPE" value="INT" />
+        <option name="JDBC_TYPE" value="4" />
+        <option name="TYPE" />
+        <option name="PRIMARY" value="false" />
+        <option name="LENGTH" value="10" />
+        <option name="PRECISION" value="0" />
+        <option name="NULLABLE" value="true" />
+      </FIELD_ELEMENT>
+      <FIELD_ELEMENT>
+        <option name="NAME" value="childIndex" />
+        <option name="SQL_TYPE" value="INT" />
+        <option name="JDBC_TYPE" value="4" />
+        <option name="TYPE" />
+        <option name="PRIMARY" value="false" />
+        <option name="LENGTH" value="10" />
+        <option name="PRECISION" value="0" />
+        <option name="NULLABLE" value="true" />
+      </FIELD_ELEMENT>
+      <FIELD_ELEMENT>
+        <option name="NAME" value="itemType" />
+        <option name="SQL_TYPE" value="INT" />
+        <option name="JDBC_TYPE" value="4" />
+        <option name="TYPE" />
+        <option name="PRIMARY" value="false" />
+        <option name="LENGTH" value="10" />
+        <option name="PRECISION" value="0" />
+        <option name="NULLABLE" value="true" />
+      </FIELD_ELEMENT>
+      <FIELD_ELEMENT>
+        <option name="NAME" value="money" />
+        <option name="SQL_TYPE" value="INT" />
+        <option name="JDBC_TYPE" value="4" />
+        <option name="TYPE" />
+        <option name="PRIMARY" value="false" />
+        <option name="LENGTH" value="10" />
+        <option name="PRECISION" value="0" />
+        <option name="NULLABLE" value="true" />
+      </FIELD_ELEMENT>
+      <FIELD_ELEMENT>
         <option name="NAME" value="pathToAbsoluteDestination" />
         <option name="SQL_TYPE" value="VARCHAR" />
         <option name="JDBC_TYPE" value="12" />
         <option name="TYPE" />
         <option name="PRIMARY" value="false" />
         <option name="LENGTH" value="255" />
+        <option name="PRECISION" value="0" />
+        <option name="NULLABLE" value="true" />
+      </FIELD_ELEMENT>
+      <FIELD_ELEMENT>
+        <option name="NAME" value="xPos" />
+        <option name="SQL_TYPE" value="INT" />
+        <option name="JDBC_TYPE" value="4" />
+        <option name="TYPE" />
+        <option name="PRIMARY" value="false" />
+        <option name="LENGTH" value="10" />
+        <option name="PRECISION" value="0" />
+        <option name="NULLABLE" value="true" />
+      </FIELD_ELEMENT>
+      <FIELD_ELEMENT>
+        <option name="NAME" value="yPos" />
+        <option name="SQL_TYPE" value="INT" />
+        <option name="JDBC_TYPE" value="4" />
+        <option name="TYPE" />
+        <option name="PRIMARY" value="false" />
+        <option name="LENGTH" value="10" />
         <option name="PRECISION" value="0" />
         <option name="NULLABLE" value="true" />
       </FIELD_ELEMENT>
@@ -350,7 +386,17 @@
         <option name="NULLABLE" value="true" />
       </FIELD_ELEMENT>
       <FIELD_ELEMENT>
-        <option name="NAME" value="amount" />
+        <option name="NAME" value="readyToBuild" />
+        <option name="SQL_TYPE" value="BIT" />
+        <option name="JDBC_TYPE" value="-7" />
+        <option name="TYPE" />
+        <option name="PRIMARY" value="false" />
+        <option name="LENGTH" value="1" />
+        <option name="PRECISION" value="0" />
+        <option name="NULLABLE" value="true" />
+      </FIELD_ELEMENT>
+      <FIELD_ELEMENT>
+        <option name="NAME" value="toBeBuilt" />
         <option name="SQL_TYPE" value="INT" />
         <option name="JDBC_TYPE" value="4" />
         <option name="TYPE" />
@@ -370,16 +416,6 @@
         <option name="NULLABLE" value="false" />
       </FIELD_ELEMENT>
       <FIELD_ELEMENT>
-        <option name="NAME" value="itemType_id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
         <option name="NAME" value="baseId" />
         <option name="SQL_TYPE" value="INT" />
         <option name="JDBC_TYPE" value="4" />
@@ -390,7 +426,7 @@
         <option name="NULLABLE" value="true" />
       </FIELD_ELEMENT>
       <FIELD_ELEMENT>
-        <option name="NAME" value="baseTarget_id" />
+        <option name="NAME" value="target_id" />
         <option name="SQL_TYPE" value="INT" />
         <option name="JDBC_TYPE" value="4" />
         <option name="TYPE" />
@@ -399,46 +435,6 @@
         <option name="PRECISION" value="0" />
         <option name="NULLABLE" value="true" />
       </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="resourceTarget_id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="toBeBuilt_id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="reloadProgress" />
-        <option name="SQL_TYPE" value="DOUBLE" />
-        <option name="JDBC_TYPE" value="8" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="22" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FK8B25FBF81E01BBFF" />
-        <option name="TARGET_TABLE" value="backup_generic_item" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="baseTarget_id" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
       <RELATIONSHIP_ELEMENT>
         <option name="RELATION_NAME" value="FK8B25FBF861CE5F87" />
         <option name="TARGET_TABLE" value="backup_entry" />
@@ -450,32 +446,12 @@
         <option name="CASCADE_UPDATE" value="false" />
       </RELATIONSHIP_ELEMENT>
       <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FK8B25FBF8AC60E09F" />
+        <option name="RELATION_NAME" value="FK8B25FBF872E146BF" />
         <option name="TARGET_TABLE" value="backup_generic_item" />
         <option name="TARGET_SCHEMA" />
         <option name="TARGET_CATALOG" value="gamedb" />
         <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="resourceTarget_id" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FK8B25FBF8D35557AF" />
-        <option name="TARGET_TABLE" value="item_type" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="toBeBuilt_id" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FK8B25FBF8D936AE91" />
-        <option name="TARGET_TABLE" value="item_type" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="itemType_id" />
+        <option name="SOURCE_COLUMN" value="target_id" />
         <option name="CASCADE_REMOVE" value="false" />
         <option name="CASCADE_UPDATE" value="false" />
       </RELATIONSHIP_ELEMENT>
@@ -491,7 +467,7 @@
       </RELATIONSHIP_ELEMENT>
     </TABLE_DATA>
     <TABLE_DATA>
-      <option name="NAME" value="BASE_COLOR" />
+      <option name="NAME" value="base_color" />
       <option name="SCHEMA" />
       <option name="CATALOG" value="gamedb" />
       <option name="TYPE" value="TABLE" />
@@ -517,7 +493,7 @@
       </FIELD_ELEMENT>
     </TABLE_DATA>
     <TABLE_DATA>
-      <option name="NAME" value="CLIENT_LOG_ENTRY" />
+      <option name="NAME" value="client_log_entry" />
       <option name="SCHEMA" />
       <option name="CATALOG" value="gamedb" />
       <option name="TYPE" value="TABLE" />
@@ -533,11 +509,11 @@
       </FIELD_ELEMENT>
       <FIELD_ELEMENT>
         <option name="NAME" value="message" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
+        <option name="SQL_TYPE" value="LONGTEXT" />
+        <option name="JDBC_TYPE" value="-1" />
         <option name="TYPE" />
         <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10000" />
+        <option name="LENGTH" value="2147483647" />
         <option name="PRECISION" value="0" />
         <option name="NULLABLE" value="false" />
       </FIELD_ELEMENT>
@@ -583,7 +559,7 @@
       </FIELD_ELEMENT>
     </TABLE_DATA>
     <TABLE_DATA>
-      <option name="NAME" value="CONNECTION_STATISTICS" />
+      <option name="NAME" value="connection_statistics" />
       <option name="SCHEMA" />
       <option name="CATALOG" value="gamedb" />
       <option name="TYPE" value="TABLE" />
@@ -639,7 +615,7 @@
       </FIELD_ELEMENT>
     </TABLE_DATA>
     <TABLE_DATA>
-      <option name="NAME" value="HISTORY" />
+      <option name="NAME" value="history" />
       <option name="SCHEMA" />
       <option name="CATALOG" value="gamedb" />
       <option name="TYPE" value="TABLE" />
@@ -715,947 +691,7 @@
       </FIELD_ELEMENT>
     </TABLE_DATA>
     <TABLE_DATA>
-      <option name="NAME" value="ITEM_BUILDER_TYPE" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="progress" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="theRange" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="ITEM_BUILDER_TYPE_ABLE_TO_BUILD" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="builderId" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="itemTypeId" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FKA882C47AC99DF1DD" />
-        <option name="TARGET_TABLE" value="item_type" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="itemTypeId" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FKA882C47A21A5F434" />
-        <option name="TARGET_TABLE" value="item_builder_type" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="builderId" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="ITEM_CONSUMER_TYPE" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="wattage" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="ITEM_FACTORY_TYPE" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="progress" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="ITEM_FACTORY_TYPE_ABLE_TO_BUILD" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="factoryId" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="itemTypeId" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FK8695D6ABC99DF1DD" />
-        <option name="TARGET_TABLE" value="item_type" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="itemTypeId" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FK8695D6AB85BD87D2" />
-        <option name="TARGET_TABLE" value="item_factory_type" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="factoryId" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="ITEM_GENERATOR_TYPE" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="wattage" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="ITEM_HARVESTER_TYPE" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="progress" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="theRange" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="ITEM_MOVABLE_TYPE" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="speed" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="terrainType" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="ITEM_SPECIAL_TYPE" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="string" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="ITEM_TURNABLE_TYPE" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="imageCount" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="ITEM_TYPE" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="TYPE" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="31" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="description" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="height" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="name" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="width" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="amount" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="health" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="price" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="dbBuilderType_id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="dbFactoryType_id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="dbHarvesterType_id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="dbMovableType_id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="dbTurnableType_id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="dbWeaponType_id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="dbConsumerType_id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="dbGeneratorType_id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="dbSpecialType_id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FK283BC0E68CE369C1" />
-        <option name="TARGET_TABLE" value="item_special_type" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="dbSpecialType_id" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FK283BC0E6120C21" />
-        <option name="TARGET_TABLE" value="item_factory_type" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="dbFactoryType_id" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FK283BC0E61F8733F3" />
-        <option name="TARGET_TABLE" value="item_consumer_type" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="dbConsumerType_id" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FK283BC0E630003C53" />
-        <option name="TARGET_TABLE" value="item_turnable_type" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="dbTurnableType_id" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FK283BC0E6423272E1" />
-        <option name="TARGET_TABLE" value="item_harvester_type" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="dbHarvesterType_id" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FK283BC0E664570681" />
-        <option name="TARGET_TABLE" value="item_builder_type" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="dbBuilderType_id" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FK283BC0E68B2CCC73" />
-        <option name="TARGET_TABLE" value="item_weapon_type" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="dbWeaponType_id" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FK283BC0E6BD3121A1" />
-        <option name="TARGET_TABLE" value="item_movable_type" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="dbMovableType_id" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FK283BC0E6F0605C1" />
-        <option name="TARGET_TABLE" value="item_generator_type" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="dbGeneratorType_id" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="ITEM_TYPE_ACCESS_ENTRY" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="alwaysAllowed" />
-        <option name="SQL_TYPE" value="BIT" />
-        <option name="JDBC_TYPE" value="-7" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="1" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="price" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="itemType_id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="precondition_id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FK63135070D936AE91" />
-        <option name="TARGET_TABLE" value="item_type" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="itemType_id" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FK6313507092253359" />
-        <option name="TARGET_TABLE" value="item_type_access_entry" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="precondition_id" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="ITEM_TYPE_DATA" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="contentType" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="data" />
-        <option name="SQL_TYPE" value="MEDIUMBLOB" />
-        <option name="JDBC_TYPE" value="-4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="16777215" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="ITEM_TYPE_IMAGE" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="contentType" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="data" />
-        <option name="SQL_TYPE" value="MEDIUMBLOB" />
-        <option name="JDBC_TYPE" value="-4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="16777215" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="number" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="itemType_id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FKA98A10A2D936AE91" />
-        <option name="TARGET_TABLE" value="item_type" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="itemType_id" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="ITEM_WEAPON_TYPE" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="damage" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="theRange" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="muzzleFlashLength" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="muzzleFlashWidth" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="muzzlePointX_0" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="muzzlePointX_90" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="muzzlePointY_0" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="muzzlePointY_90" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="reloadTime" />
-        <option name="SQL_TYPE" value="DOUBLE" />
-        <option name="JDBC_TYPE" value="8" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="22" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="stretchMuzzleFlashToTarget" />
-        <option name="SQL_TYPE" value="BIT" />
-        <option name="JDBC_TYPE" value="-7" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="1" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="dbMuzzleImage_id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="dbSound_id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FKB27EC851CAFD3F57" />
-        <option name="TARGET_TABLE" value="item_type_data" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="dbSound_id" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FKB27EC851DEEAEA6C" />
-        <option name="TARGET_TABLE" value="item_type_data" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="dbMuzzleImage_id" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="SAVED_QUERY" />
+      <option name="NAME" value="saved_query" />
       <option name="SCHEMA" />
       <option name="CATALOG" value="gamedb" />
       <option name="TYPE" value="TABLE" />
@@ -1681,7 +717,43 @@
       </FIELD_ELEMENT>
     </TABLE_DATA>
     <TABLE_DATA>
-      <option name="NAME" value="TERRAIN_FIELD" />
+      <option name="NAME" value="terrain" />
+      <option name="SCHEMA" />
+      <option name="CATALOG" value="gamedb" />
+      <option name="TYPE" value="TABLE" />
+      <FIELD_ELEMENT>
+        <option name="NAME" value="indexX" />
+        <option name="SQL_TYPE" value="INT" />
+        <option name="JDBC_TYPE" value="4" />
+        <option name="TYPE" />
+        <option name="PRIMARY" value="true" />
+        <option name="LENGTH" value="10" />
+        <option name="PRECISION" value="0" />
+        <option name="NULLABLE" value="false" />
+      </FIELD_ELEMENT>
+      <FIELD_ELEMENT>
+        <option name="NAME" value="indexY" />
+        <option name="SQL_TYPE" value="INT" />
+        <option name="JDBC_TYPE" value="4" />
+        <option name="TYPE" />
+        <option name="PRIMARY" value="true" />
+        <option name="LENGTH" value="10" />
+        <option name="PRECISION" value="0" />
+        <option name="NULLABLE" value="false" />
+      </FIELD_ELEMENT>
+      <FIELD_ELEMENT>
+        <option name="NAME" value="terrainAtomType" />
+        <option name="SQL_TYPE" value="INT" />
+        <option name="JDBC_TYPE" value="4" />
+        <option name="TYPE" />
+        <option name="PRIMARY" value="false" />
+        <option name="LENGTH" value="10" />
+        <option name="PRECISION" value="0" />
+        <option name="NULLABLE" value="false" />
+      </FIELD_ELEMENT>
+    </TABLE_DATA>
+    <TABLE_DATA>
+      <option name="NAME" value="terrain_field" />
       <option name="SCHEMA" />
       <option name="CATALOG" value="gamedb" />
       <option name="TYPE" value="TABLE" />
@@ -1727,7 +799,7 @@
       </RELATIONSHIP_ELEMENT>
     </TABLE_DATA>
     <TABLE_DATA>
-      <option name="NAME" value="TERRAIN_TILE" />
+      <option name="NAME" value="terrain_tile" />
       <option name="SCHEMA" />
       <option name="CATALOG" value="gamedb" />
       <option name="TYPE" value="TABLE" />
@@ -1737,6 +809,16 @@
         <option name="JDBC_TYPE" value="4" />
         <option name="TYPE" />
         <option name="PRIMARY" value="true" />
+        <option name="LENGTH" value="10" />
+        <option name="PRECISION" value="0" />
+        <option name="NULLABLE" value="false" />
+      </FIELD_ELEMENT>
+      <FIELD_ELEMENT>
+        <option name="NAME" value="allowedItem" />
+        <option name="SQL_TYPE" value="INT" />
+        <option name="JDBC_TYPE" value="4" />
+        <option name="TYPE" />
+        <option name="PRIMARY" value="false" />
         <option name="LENGTH" value="10" />
         <option name="PRECISION" value="0" />
         <option name="NULLABLE" value="false" />
@@ -1751,389 +833,9 @@
         <option name="PRECISION" value="0" />
         <option name="NULLABLE" value="false" />
       </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="terrainType" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
     </TABLE_DATA>
     <TABLE_DATA>
-      <option name="NAME" value="TRACKER_GAME_STARTUP" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="clientTimeStamp" />
-        <option name="SQL_TYPE" value="DATETIME" />
-        <option name="JDBC_TYPE" value="93" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="19" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="sessionId" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="state" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="timeStamp" />
-        <option name="SQL_TYPE" value="DATETIME" />
-        <option name="JDBC_TYPE" value="93" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="19" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="TRACKER_PAGE_ACCESS" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="additional" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="page" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="sessionId" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="timeStamp" />
-        <option name="SQL_TYPE" value="DATETIME" />
-        <option name="JDBC_TYPE" value="93" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="19" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="TRACKER_USER_ACTION" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="additionalString" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="additionalStringLast" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="clientTimeStamp" />
-        <option name="SQL_TYPE" value="DATETIME" />
-        <option name="JDBC_TYPE" value="93" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="19" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="clientTimeStampLast" />
-        <option name="SQL_TYPE" value="DATETIME" />
-        <option name="JDBC_TYPE" value="93" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="19" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="repeatingCount" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="sessionId" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="timeStamp" />
-        <option name="SQL_TYPE" value="DATETIME" />
-        <option name="JDBC_TYPE" value="93" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="19" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="type" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="TRACKER_USER_COMMAND" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="interaction" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="interactionClass" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="sessionId" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="timeStamp" />
-        <option name="SQL_TYPE" value="DATETIME" />
-        <option name="JDBC_TYPE" value="93" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="19" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="userName" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="clientTimeStamp" />
-        <option name="SQL_TYPE" value="DATETIME" />
-        <option name="JDBC_TYPE" value="93" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="19" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="TRACKER_USER_DETAILS" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="isCrawler" />
-        <option name="SQL_TYPE" value="BIT" />
-        <option name="JDBC_TYPE" value="-7" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="1" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="language" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="remoteAddr" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="remoteHost" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="sessionId" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="timeStamp" />
-        <option name="SQL_TYPE" value="DATETIME" />
-        <option name="JDBC_TYPE" value="93" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="19" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="userAgent" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="USER" />
+      <option name="NAME" value="user" />
       <option name="SCHEMA" />
       <option name="CATALOG" value="gamedb" />
       <option name="TYPE" value="TABLE" />
@@ -2177,29 +879,9 @@
         <option name="PRECISION" value="0" />
         <option name="NULLABLE" value="true" />
       </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="userItemTypeAccess_id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FK27E3CB9F7D349E" />
-        <option name="TARGET_TABLE" value="user_item_type_access" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="userItemTypeAccess_id" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
     </TABLE_DATA>
     <TABLE_DATA>
-      <option name="NAME" value="USER_ITEM_TYPE_ACCESS" />
+      <option name="NAME" value="user_interaction" />
       <option name="SCHEMA" />
       <option name="CATALOG" value="gamedb" />
       <option name="TYPE" value="TABLE" />
@@ -2214,115 +896,47 @@
         <option name="NULLABLE" value="false" />
       </FIELD_ELEMENT>
       <FIELD_ELEMENT>
-        <option name="NAME" value="xp" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
+        <option name="NAME" value="interaction" />
+        <option name="SQL_TYPE" value="VARCHAR" />
+        <option name="JDBC_TYPE" value="12" />
         <option name="TYPE" />
         <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="USER_ITEM_TYPE_ACCESS_BOUGHT" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="itemTypeAccessId" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
+        <option name="LENGTH" value="255" />
         <option name="PRECISION" value="0" />
         <option name="NULLABLE" value="false" />
       </FIELD_ELEMENT>
       <FIELD_ELEMENT>
-        <option name="NAME" value="userItemTypeId" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FKE0968C191CF436AC" />
-        <option name="TARGET_TABLE" value="user_item_type_access" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="itemTypeAccessId" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FKE0968C194156732A" />
-        <option name="TARGET_TABLE" value="item_type_access_entry" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="userItemTypeId" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="terrain" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="indexX" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="indexY" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="terrainAtomType" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
+        <option name="NAME" value="sessionId" />
+        <option name="SQL_TYPE" value="VARCHAR" />
+        <option name="JDBC_TYPE" value="12" />
         <option name="TYPE" />
         <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
+        <option name="LENGTH" value="255" />
         <option name="PRECISION" value="0" />
         <option name="NULLABLE" value="false" />
       </FIELD_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="terrain_image" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
       <FIELD_ELEMENT>
-        <option name="NAME" value="id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
+        <option name="NAME" value="timeStamp" />
+        <option name="SQL_TYPE" value="DATETIME" />
+        <option name="JDBC_TYPE" value="93" />
         <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
+        <option name="PRIMARY" value="false" />
+        <option name="LENGTH" value="19" />
         <option name="PRECISION" value="0" />
         <option name="NULLABLE" value="false" />
       </FIELD_ELEMENT>
       <FIELD_ELEMENT>
-        <option name="NAME" value="contentType" />
+        <option name="NAME" value="userName" />
+        <option name="SQL_TYPE" value="VARCHAR" />
+        <option name="JDBC_TYPE" value="12" />
+        <option name="TYPE" />
+        <option name="PRIMARY" value="false" />
+        <option name="LENGTH" value="255" />
+        <option name="PRECISION" value="0" />
+        <option name="NULLABLE" value="false" />
+      </FIELD_ELEMENT>
+      <FIELD_ELEMENT>
+        <option name="NAME" value="interactionClass" />
         <option name="SQL_TYPE" value="VARCHAR" />
         <option name="JDBC_TYPE" value="12" />
         <option name="TYPE" />
@@ -2330,143 +944,11 @@
         <option name="LENGTH" value="255" />
         <option name="PRECISION" value="0" />
         <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="imageData" />
-        <option name="SQL_TYPE" value="MEDIUMBLOB" />
-        <option name="JDBC_TYPE" value="-4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="16777215" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="terrain_image_position" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="indexX" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="indexY" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="terrainImage_id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <RELATIONSHIP_ELEMENT>
-        <option name="RELATION_NAME" value="FK35775E179B585466" />
-        <option name="TARGET_TABLE" value="terrain_image" />
-        <option name="TARGET_SCHEMA" />
-        <option name="TARGET_CATALOG" value="gamedb" />
-        <option name="TARGET_COLUMN" value="id" />
-        <option name="SOURCE_COLUMN" value="terrainImage_id" />
-        <option name="CASCADE_REMOVE" value="false" />
-        <option name="CASCADE_UPDATE" value="false" />
-      </RELATIONSHIP_ELEMENT>
-    </TABLE_DATA>
-    <TABLE_DATA>
-      <option name="NAME" value="terrain_settings" />
-      <option name="SCHEMA" />
-      <option name="CATALOG" value="gamedb" />
-      <option name="TYPE" value="TABLE" />
-      <FIELD_ELEMENT>
-        <option name="NAME" value="id" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="true" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="contentType" />
-        <option name="SQL_TYPE" value="VARCHAR" />
-        <option name="JDBC_TYPE" value="12" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="255" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="imageData" />
-        <option name="SQL_TYPE" value="MEDIUMBLOB" />
-        <option name="JDBC_TYPE" value="-4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="16777215" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="true" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="tileHeight" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="tileWidth" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="tileXCount" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
-      </FIELD_ELEMENT>
-      <FIELD_ELEMENT>
-        <option name="NAME" value="tileYCount" />
-        <option name="SQL_TYPE" value="INT" />
-        <option name="JDBC_TYPE" value="4" />
-        <option name="TYPE" />
-        <option name="PRIMARY" value="false" />
-        <option name="LENGTH" value="10" />
-        <option name="PRECISION" value="0" />
-        <option name="NULLABLE" value="false" />
       </FIELD_ELEMENT>
     </TABLE_DATA>
     <libraries>
       <library>
-        <url>jar://C:/dev/projects/game/trunk/war/WEB-INF/lib/mysql-connector-java-5.1.6-bin.jar!/</url>
+        <url>jar://C:/dev/projects/game/branches/generic_item/war/WEB-INF/lib/mysql-connector-java-5.1.6-bin.jar!/</url>
       </library>
     </libraries>
   </DataSource>

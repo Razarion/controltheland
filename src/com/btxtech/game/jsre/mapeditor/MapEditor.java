@@ -14,17 +14,14 @@
 package com.btxtech.game.jsre.mapeditor;
 
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
+import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import java.util.List;
 
 /**
  * User: beat
@@ -38,56 +35,42 @@ public class MapEditor implements EntryPoint {
         // Setup common
         GwtCommon.setUncaughtExceptionHandler();
         GwtCommon.disableBrowserContextMenuJSNI();
-        GameEditorAsync terrainAsync = GWT.create(GameEditor.class);
+        GameEditorAsync gameEditor = GWT.create(GameEditor.class);
 
         // Setup map
-        RootPanel.get("map").add(MapWindow.getAbsolutePanel());
+        RootPanel.get().add(MapWindow.getAbsolutePanel());
         TerrainView.getInstance().addToParent(MapWindow.getAbsolutePanel());
         TerrainView.getInstance().getCanvas().getElement().getStyle().setZIndex(Constants.Z_INDEX_TERRAIN);
         TerrainView.getInstance().addTerrainScrollListener(MapWindow.getInstance());
 
         // Setup editor
-        final TileSelector tileSelector = new TileSelector();
-        RootPanel.get("tiles").add(tileSelector);
+        final Cockpit cockpit = new Cockpit(gameEditor);
+        MapWindow.getAbsolutePanel().add(cockpit, 30, 30);
+        MapModifier mapModifier = new MapModifier(cockpit);
+        cockpit.setMapModifier(mapModifier);
 
+        // Radar panel
+        MapWindow.getAbsolutePanel().add(RadarPanel.getInstance(), 1, 30);
+        RadarPanel.getInstance().getElement().getStyle().setProperty("left", "");
+        RadarPanel.getInstance().getElement().getStyle().setProperty("right", "30px");
+        RadarPanel.getInstance().setRadarState(true);
+        RadarPanel.getInstance().updateEnergy(1, 0);
 
-        Button saveMapButton = new Button("Save Map");
-        final MapModifier mapModifier = new MapModifier(terrainAsync, tileSelector, saveMapButton);        
-        saveMapButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent clickEvent) {
-                mapModifier.saveMap();
-            }
-        });
-        RootPanel.get("tools").add(saveMapButton);
-
-        // Get data from server
-        terrainAsync.getTerrainField(new AsyncCallback<int[][]>() {
+        gameEditor.getEditorInfo(new AsyncCallback<EditorInfo>() {
             @Override
             public void onFailure(Throwable throwable) {
                 GwtCommon.handleException(throwable);
             }
 
             @Override
-            public void onSuccess(int[][] terrainField) {
-                TerrainView.getInstance().setupTerrain(terrainField, null);
+            public void onSuccess(EditorInfo editorInfo) {
+                TerrainView.getInstance().setupTerrain(editorInfo.getTerrainSettings(),
+                        editorInfo.getTerrainImagePositions(),
+                        editorInfo.getTerrainImages());
+                cockpit.setupTerrainImages(editorInfo.getTerrainImages());
             }
         });
 
-        terrainAsync.getTiles(new AsyncCallback<List<Integer>>() {
-            @Override
-            public void onFailure(Throwable throwable) {
-                GwtCommon.handleException(throwable);
+        MapWindow.getInstance().setTerrainMouseMoveListener(mapModifier);
             }
-
-            @Override
-            public void onSuccess(List<Integer> tileIds) {
-                tileSelector.setupTiles(tileIds);
             }
-        });
-
-        TerrainView.getInstance().setTerrainMouseButtonListener(mapModifier);
-        //TerrainView.getInstance().setTerrainMouseMoveListener(mapModifier);
-    }
-
-}

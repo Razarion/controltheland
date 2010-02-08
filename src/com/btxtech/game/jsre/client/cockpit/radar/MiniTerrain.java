@@ -13,10 +13,12 @@
 
 package com.btxtech.game.jsre.client.cockpit.radar;
 
-import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.google.gwt.dom.client.ImageElement;
+import com.google.gwt.widgetideas.graphics.client.Color;
 
 /**
  * User: beat
@@ -24,6 +26,8 @@ import com.google.gwt.dom.client.ImageElement;
  * Time: 12:43:55
  */
 public class MiniTerrain extends MiniMap implements TerrainListener {
+    private boolean first = true;
+
     public MiniTerrain(int width, int height) {
         super(width, height);
         TerrainView.getInstance().getTerrainHandler().addTerrainListener(this);
@@ -31,17 +35,69 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
 
     @Override
     public void onTerrainChanged() {
-        int xCount = TerrainView.getInstance().getTerrainHandler().getTileXCount();
-        int yCount = TerrainView.getInstance().getTerrainHandler().getTileYCount();
-        double scaleX = (double) getWidth() / (double) TerrainView.getInstance().getTerrainHandler().getTerrainWidth();
-        double scaleY = (double) getHeight() / (double) TerrainView.getInstance().getTerrainHandler().getTerrainHeight();
+        int playFieldXSize = TerrainView.getInstance().getTerrainHandler().getTerrainSettings().getPlayFieldXSize();
+        int playFieldYSize = TerrainView.getInstance().getTerrainHandler().getTerrainSettings().getPlayFieldYSize();
+        if (first) {
+            double scaleX = (double) getWidth() / (double) playFieldXSize;
+            double scaleY = (double) getHeight() / (double) playFieldYSize;
         scale(scaleX, scaleY);
-        for (int x = 0; x < xCount; x++) {
-            for (int y = 0; y < yCount; y++) {
-                int tileId = TerrainView.getInstance().getTerrainHandler().getTerrainField()[x][y];
-                ImageElement imageElement = TerrainView.getInstance().getTerrainHandler().getTileImageElement(tileId);
-                drawImage(imageElement, Constants.TILE_WIDTH * x, Constants.TILE_HEIGHT * y);
+            first = false;
+            setCoordSize(playFieldXSize, playFieldYSize);
             }
+        clear();
+        // Draw terrain background
+        setBackgroundColor(new Color(30,100,0));
+        //drawBackground(playFieldXSize, playFieldYSize);
+
+        // Draw terrain
+        for (TerrainImagePosition terrainImagePosition : TerrainView.getInstance().getTerrainHandler().getTerrainImagePositions()) {
+            Index absolute = TerrainView.getInstance().getTerrainHandler().getAbsolutIndexForTerrainTileIndex(terrainImagePosition.getTileIndex());
+            ImageElement imageElement = TerrainView.getInstance().getTerrainHandler().getTileImageElement(terrainImagePosition.getImageId());
+            if (imageElement != null) {
+                drawImage(imageElement, absolute.getX(), absolute.getY());
+        }
+    }
+    }
+
+    private void drawBackground(int playFieldXSize, int playFieldYSize) {
+        ImageElement bgImageElement = TerrainView.getInstance().getTerrainHandler().getBackgroundImage();
+        if (bgImageElement == null) {
+            return;
+        }
+        int bgTileWidth = bgImageElement.getWidth();
+        int bgTileHeight = bgImageElement.getHeight();
+        for (int x = 0; x < playFieldXSize / bgTileWidth; x++) {
+            for (int y = 0; y < playFieldYSize / bgTileHeight; y++) {
+                drawImage(bgImageElement, (bgTileWidth * x), (bgTileHeight * y));
+            }
+        }
+        int bgXRest = playFieldXSize % bgTileWidth;
+        int bgYRest = playFieldYSize % bgTileHeight;
+        if (bgXRest > 0) {
+            for (int y = 0; y < playFieldYSize / bgTileHeight; y++) {
+                drawImage(bgImageElement,
+                        playFieldXSize - bgXRest,
+                        bgTileHeight * y,
+                        bgXRest,
+                        bgTileHeight);
+            }
+        }
+        if (bgYRest > 0) {
+            for (int x = 0; x < playFieldXSize / bgTileWidth; x++) {
+                drawImage(bgImageElement,
+                        bgTileWidth * x,
+                        playFieldYSize - bgYRest,
+                        bgXRest,
+                        bgYRest);
+            }
+        }
+        if (bgXRest > 0 && bgYRest > 0) {
+            drawImage(bgImageElement,
+                    playFieldXSize - bgXRest,
+                    playFieldYSize - bgYRest,
+                    bgXRest,
+                    bgYRest);
+
         }
     }
 

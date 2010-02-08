@@ -14,8 +14,8 @@
 package com.btxtech.game.controllers;
 
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.services.terrain.TerrainService;
-import com.btxtech.game.services.terrain.Tile;
 import java.io.IOException;
 import java.io.OutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -39,30 +39,37 @@ public class TerrainImageController implements Controller {
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
+        try {
+            String type = httpServletRequest.getParameter(Constants.TERRAIN_IMG_TYPE);
+            byte[] imageData;
+            String imageContentType;
+            if (Constants.TERRAIN_IMG_TYPE_BACKGROUND.equalsIgnoreCase(type)) {
+                imageData = terrainService.getDbTerrainSettings().getBgImageData();
+                imageContentType = terrainService.getDbTerrainSettings().getBgContentType();
+            } else if (Constants.TERRAIN_IMG_TYPE_FOREGROUND.equalsIgnoreCase(type)) {
+                String strId = httpServletRequest.getParameter(Constants.TERRAIN_IMG_TYPE_IMG_ID);
+                int id = Integer.parseInt(strId);
+                DbTerrainImage dbTerrainImage = terrainService.getDbTerrainImage(id);
+                imageData = dbTerrainImage.getImageData();
+                imageContentType = dbTerrainImage.getContentType();
+            } else {
+                throw new IllegalArgumentException("Unknown terrain image type: " + type);
+            }
 
-
-        String tileIdString = httpServletRequest.getParameter(Constants.URL_PARAM_TERRAIN_TILE_ID);
-
-        if (tileIdString == null) {
-            handleBadRequest(httpServletResponse);
+            if (imageData == null || imageContentType == null) {
+                httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return null;
         }
-
-        try {
-            int tileId = Integer.parseInt(tileIdString);
-            Tile tile = terrainService.getTile(tileId);
-            //httpServletResponse.setContentType(tile.getImageMimeType());
-            byte[] image = tile.getImageData();
-            httpServletResponse.setContentLength(image.length);
+            httpServletResponse.setContentLength(imageData.length);
+            httpServletResponse.setContentType(imageContentType);
             OutputStream out = httpServletResponse.getOutputStream();
-            out.write(image);
+            out.write(imageData);
             out.close();
         } catch (Exception e) {
             log.error("", e);
             handleBadRequest(httpServletResponse);
             return null;
         }
-
 
         return null;
     }

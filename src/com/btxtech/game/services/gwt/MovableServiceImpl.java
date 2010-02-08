@@ -112,16 +112,6 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public int[][] getTerrainField() {
-        try {
-            return terrainService.getTerrainField();
-        } catch (Throwable t) {
-            log.error("", t);
-            return null;
-        }
-    }
-
-    @Override
     public void gameStartupState(GameStartupState state, Date timeStamp) {
         try {
             userTrackingService.gameStartup(state, timeStamp);
@@ -144,13 +134,14 @@ public class MovableServiceImpl implements MovableService {
         try {
             GameInfo gameInfo = new GameInfo();
             gameInfo.setBase(baseService.getBase().getSimpleBase());
-            gameInfo.setTerrainField(terrainService.getTerrainField());
-            gameInfo.setPassableTerrainTileIds(terrainService.getPassableTerrainTileIds());
             gameInfo.setAccountBalance(baseService.getBase().getAccountBalance());
             gameInfo.setAllowedItemTypes(serverItemTypeAccessService.getAllowedItemTypes());
             gameInfo.setXp(serverItemTypeAccessService.getXp());
             gameInfo.setEnergyConsuming(serverEnergyService.getConsuming());
             gameInfo.setEnergyGenerating(serverEnergyService.getGenerating());
+            gameInfo.setTerrainSettings(terrainService.getTerrainSettings());
+            gameInfo.setTerrainImagePositions(terrainService.getTerrainImagePositions());
+            gameInfo.setTerrainImages(terrainService.getTerrainImages());
             return gameInfo;
         } catch (Throwable t) {
             log.error("", t);

@@ -18,6 +18,7 @@ package com.btxtech.game.jsre.common.gameengine.services.terrain;
  * Date: 18.11.2009
  * Time: 15:09:53
  */
+@Deprecated
 public enum TerrainType {
     WATER,
     LAND

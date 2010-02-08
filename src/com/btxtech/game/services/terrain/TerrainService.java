@@ -13,57 +13,24 @@
 
 package com.btxtech.game.services.terrain;
 
-import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
-import java.util.Map;
-import java.util.List;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * User: beat
  * Date: May 22, 2009
  * Time: 11:55:20 AM
  */
-public interface TerrainService {
-    TerrainFieldTile getTerrainFieldTile(int indexX, int indexY);
+public interface TerrainService extends AbstractTerrainService {
+    DbTerrainSetting getDbTerrainSettings();
 
-    Index getTerrainFieldTileCount();
+    DbTerrainImage getDbTerrainImage(int id);
 
-    Map<Index, TerrainFieldTile> getTerrainFieldTilesCopy();
+    List<DbTerrainImage> getDbTerrainImagesCopy();
 
-    int getPlayFieldXSize();
+    void saveAndActivateTerrainImages(List<DbTerrainImage> dbTerrainImages, byte[] bgImage, String bgImageType);
 
-    int getPlayFieldYSize();
-
-    Tile getTile(int id);
-
-    int[][] getTerrainField();
-
-    void clearTiles();
-
-    void clearTerrain();
-
-    void createNewTerrain(int xCount, int yCount, Tile tile);
-
-    Tile createTile(byte[] imageData,  TerrainType terrainType);
-
-    List<Integer> getTileIds();
-
-    List<Tile> getTiles();
-
-    void saveTile(final Tile tile);
-
-    void deleteTile(Tile tile);
-
-    void createTile();
-
-    void activateTerrainField(int[][] filed);
-
-    boolean isTerrainValid();
-
-    void addTerrainChangeListener(TerrainChangeListener terrainChangeListener);
-
-    void removeTerrainChangeListener(TerrainChangeListener terrainChangeListener);
-
-    Collection<Integer> getPassableTerrainTileIds();
+    void saveAndActivateTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions);
 }

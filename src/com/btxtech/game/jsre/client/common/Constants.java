@@ -20,11 +20,18 @@ package com.btxtech.game.jsre.client.common;
  */
 public class Constants {
     // Terrain
+    @Deprecated
     public static final String URL_PARAM_TERRAIN_TILE_ID = "id";
-    public static final int TILE_WIDTH = 64;
-    public static final int TILE_HEIGHT = 64;
+    @Deprecated
+    public static final int TILE_WIDTH = 100;
+    @Deprecated
+    public static final int TILE_HEIGHT = 100;
     public static final int SCROLL_DISTANCE = 500;
-    public static final String TERRAIN = "/spring/terrain?id=";
+    public static final String TERRAIN_CONTROLLER_URL = "/spring/terrain";
+    public static final String TERRAIN_IMG_TYPE = "tp";
+    public static final String TERRAIN_IMG_TYPE_BACKGROUND = "bg";
+    public static final String TERRAIN_IMG_TYPE_FOREGROUND = "fg";
+    public static final String TERRAIN_IMG_TYPE_IMG_ID = "id";
 
     // Item Images
     public static final String ITEM_IMAGE_URL = "/spring/item";

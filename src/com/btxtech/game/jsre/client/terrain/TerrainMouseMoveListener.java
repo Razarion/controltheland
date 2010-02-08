@@ -11,13 +11,13 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.terrain;
+package com.btxtech.game.jsre.client.terrain;
 
 /**
  * User: beat
- * Date: Sep 13, 2009
- * Time: 4:18:11 PM
+ * Date: Sep 3, 2009
+ * Time: 6:21:03 PM
  */
-public interface TerrainChangeListener {
-    void onTerrainChanged();
+public interface TerrainMouseMoveListener {
+    void onMove(int absoluteLeft, int absoluteTop,int relativeLeft, int relativeTop );
 }

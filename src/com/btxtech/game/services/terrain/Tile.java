@@ -21,6 +21,7 @@ import java.io.Serializable;
  * Date: Sep 2, 2009
  * Time: 12:17:34 PM
  */
+@Deprecated
 public interface Tile extends Serializable {
     byte[] getImageData();
 

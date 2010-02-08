@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.MouseEvent;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class GwtCommon {
@@ -107,4 +108,11 @@ public class GwtCommon {
         $doc.oncontextmenu = function() { return false; };
     }-*/;
 
+    /*
+     * Just to prevent image dragging
+     */
+    public static void preventImageDragging(MouseEvent event) {
+        event.stopPropagation();
+        event.preventDefault();
+}
 }

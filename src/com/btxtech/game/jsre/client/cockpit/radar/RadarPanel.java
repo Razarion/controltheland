@@ -31,7 +31,7 @@ public class RadarPanel extends TopMapPanel {
     public static final String RADAR_1 = "Radar 1";
     private static final RadarPanel INSTANCE = new RadarPanel();
     private MiniTerrain miniTerrain;
-    private FrameView frameView;
+    private RadarFrameView radarFrameView;
     private boolean hasRadar = false;
     private boolean hasEnergy = false;
     private HTML noRadaPanel;
@@ -68,10 +68,10 @@ public class RadarPanel extends TopMapPanel {
         absolutePanel.add(miniTerrain, 0, 0);
 
         // Frame view
-        frameView = new FrameView(WIDTH, HEIGHT);
-        frameView.getElement().getStyle().setZIndex(2);
-        frameView.setVisible(state);
-        absolutePanel.add(frameView, 0, 0);
+        radarFrameView = new RadarFrameView(WIDTH, HEIGHT);
+        radarFrameView.getElement().getStyle().setZIndex(2);
+        radarFrameView.setVisible(state);
+        absolutePanel.add(radarFrameView, 0, 0);
 
         return absolutePanel;
     }
@@ -90,8 +90,8 @@ public class RadarPanel extends TopMapPanel {
         if (miniTerrain != null) {
             miniTerrain.setVisible(state);
         }
-        if (frameView != null) {
-            frameView.setVisible(state);
+        if (radarFrameView != null) {
+            radarFrameView.setVisible(state);
         }
         if (noRadaPanel != null) {
             if (state) {

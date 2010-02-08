@@ -15,185 +15,103 @@ package com.btxtech.game.jsre.client.terrain;
 
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
-import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.item.ItemContainer;
-import com.btxtech.game.jsre.common.TerrainUtil;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainService;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainServiceImpl;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.dom.client.ImageElement;
-import com.google.gwt.user.client.Random;
 import com.google.gwt.widgetideas.graphics.client.ImageLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * User: beat
  * Date: 30.11.2009
  * Time: 22:58:26
  */
-public class TerrainHandler implements TerrainService {
-    private int tileXCount = 50;
-    private int tileYCount = 50;
-    private int terrainWidth;
-    private int terrainHeight;
-    private int[][] terrainField;
-    private Collection<Integer> passableTerrainTileIds;
-    private HashMap<Integer, ImageElement> terrainTileImages = new HashMap<Integer, ImageElement>();
-    private ArrayList<TerrainListener> terrainListeners = new ArrayList<TerrainListener>();
+public class TerrainHandler extends AbstractTerrainServiceImpl {
+    private HashMap<Integer, ImageElement> terrainTileImageElements = new HashMap<Integer, ImageElement>();
+    private ImageElement backgroundImage;
 
-    public void setupTerrain(int[][] terrainField, Collection<Integer> passableTerrainTileIds) {
-        this.terrainField = terrainField;
-        this.passableTerrainTileIds = passableTerrainTileIds;
-
-        tileXCount = terrainField.length;
-        tileYCount = terrainField[0].length;
-        terrainWidth = Constants.TILE_WIDTH * tileXCount;
-        terrainHeight = Constants.TILE_HEIGHT * tileYCount;
-
-        loadTilesAndDrawMap();
-    }
-
-    @Override
-    public List<Index> setupPathToDestination(Index start, Index destionation, int range) {
-        Index destination = start.getPointWithDistance(range, destionation);
-        ArrayList<Index> path = new ArrayList<Index>();
-        path.add(destination);
-        return path;
-    }
-
-    @Override
-    public List<Index> setupPathToDestination(Index start, Index destination) {
-        ArrayList<Index> path = new ArrayList<Index>();
-        path.add(destination);
-        return path;
-    }
-
-    @Override
-    public boolean isFree(Index posititon, ItemType itemType) {
-        return true;
-    }
-
-    public boolean isTerrainPassable(Index absolutePos) {
-        if (absolutePos == null) {
-            return false;
-        }
-        Index tilePos = TerrainUtil.getTerrainTileIndexForAbsPosition(absolutePos);
-        if (tilePos.getX() >= tileXCount || tilePos.getY() >= tileYCount) {
-            return false;
-        }
-
-        int tileId = terrainField[tilePos.getX()][tilePos.getY()];
-        return passableTerrainTileIds.contains(tileId);
-    }
-
-    public Index getAbsoluteFreeTerrainInRegion(Index absolutePos, int targetMinRange, int targetMaxRange) {
-        for (int i = 0; i < Integer.MAX_VALUE; i++) {
-            int x;
-            int y;
-            if (Random.nextBoolean()) {
-                x = absolutePos.getX() + targetMinRange + Random.nextInt(targetMaxRange - targetMinRange);
-            } else {
-                x = absolutePos.getX() - targetMinRange - Random.nextInt(targetMaxRange - targetMinRange);
-            }
-            if (Random.nextBoolean()) {
-                y = absolutePos.getY() + targetMinRange + Random.nextInt(targetMaxRange - targetMinRange);
-            } else {
-                y = absolutePos.getY() - targetMinRange - Random.nextInt(targetMaxRange - targetMinRange);
-            }
-            if (x < 0 || y < 0) {
-                continue;
-            }
-            if (x > terrainWidth || y > terrainHeight) {
-                continue;
-            }
-
-            Index point = new Index(x, y);
-            if (!isTerrainPassable(point)) {
-                continue;
-            }
-            Rectangle itemRectangle = new Rectangle(x - 50, y - 50, 100, 100);
-            if (!ItemContainer.getInstance().getItemsInRect(itemRectangle, false).isEmpty()) {
-                continue;
-            }
-            return point;
-        }
-        throw new IllegalStateException(this + " getAbsoluteFreeTerrainInRegion: Can not find free position");
-    }
-
-    public int getTileXCount() {
-        return tileXCount;
-    }
-
-    public int getTileYCount() {
-        return tileYCount;
-    }
-
-    public int getTerrainWidth() {
-        return terrainWidth;
-    }
-
-    public int getTerrainHeight() {
-        return terrainHeight;
-    }
-
-    public int getTileId(int x, int y) {
-        return terrainField[x][y];
-    }
-
-    public boolean isLoaded() {
-        return terrainField != null;
-    }
-
-    public int[][] getTerrainField() {
-        return terrainField;
+    public void setupTerrain(TerrainSettings terrainSettings,
+                             Collection<TerrainImagePosition> terrainImagePositions,
+                             Collection<TerrainImage> terrainImages) {
+        setTerrainSettings(terrainSettings);
+        setTerrainImagePositions(terrainImagePositions);
+        setupTerrainImages(terrainImages);
+        loadBackgroundAndDrawMap();
+        loadImagesAndDrawMap();
     }
 
     public ImageElement getTileImageElement(int tileId) {
-        return terrainTileImages.get(tileId);
+        ImageElement imageElement = terrainTileImageElements.get(tileId);
+        if (imageElement == null) {
+            loadImagesAndDrawMap();
+            return terrainTileImageElements.get(tileId);
+    }
+        return imageElement;
     }
 
-    public void addTerrainListener(TerrainListener terrainListener) {
-        terrainListeners.add(terrainListener);
+    public ImageElement getBackgroundImage() {
+        return backgroundImage;
     }
 
-    public void loadTilesAndDrawMap() {
-        // Get used tiles
-        final ArrayList<Integer> usedTileIds = new ArrayList<Integer>();
-        for (int x = 0; x < getTileXCount(); x++) {
-            for (int y = 0; y < getTileYCount(); y++) {
-                int tileId = getTileId(x, y);
-                if (!usedTileIds.contains(tileId)) {
-                    usedTileIds.add(tileId);
-                }
-            }
-        }
-
-        // Load all images
-        final ArrayList<String> urls = new ArrayList<String>();
-        for (int tileId : usedTileIds) {
-            String url = ImageHandler.getTerrainImageUrl(tileId);
-            urls.add(url);
-        }
-
-        ImageLoader.loadImages(urls.toArray(new String[urls.size()]), new ImageLoader.CallBack() {
+    private void loadBackgroundAndDrawMap() {
+        ImageLoader.loadImages(new String[]{ImageHandler.getTerrainBackgroundUrl()}, new ImageLoader.CallBack() {
 
             @Override
             public void onImagesLoaded(ImageElement[] imageElements) {
                 try {
+                    backgroundImage = imageElements[0];
+                    fireTerrainChanged();
+                } catch (Throwable throwable) {
+                    GwtCommon.handleException(throwable);
+    }
+            }
+        });
+            }
+
+    private void loadImagesAndDrawMap() {
+        ArrayList<String> urls = new ArrayList<String>();
+        final ArrayList<Integer> ids = new ArrayList<Integer>();
+        for (TerrainImagePosition terrainImagePosition : getTerrainImagePositions()) {
+            urls.add(ImageHandler.getTerrainImageUrl(terrainImagePosition.getImageId()));
+            ids.add(terrainImagePosition.getImageId());
+            }
+        ImageLoader.loadImages(urls.toArray(new String[urls.size()]), new ImageLoader.CallBack() {
+
+            @Override
+            public void onImagesLoaded(ImageElement[] imageElements) {
+                terrainTileImageElements.clear();
+                try {
                     for (int i = 0; i < imageElements.length; i++) {
-                        terrainTileImages.put(usedTileIds.get(i), imageElements[i]);
+                        terrainTileImageElements.put(ids.get(i), imageElements[i]);
                     }
-                    for (TerrainListener terrainListener : terrainListeners) {
-                        terrainListener.onTerrainChanged();
-                    }
+                    fireTerrainChanged();
                 } catch (Throwable throwable) {
                     GwtCommon.handleException(throwable);
                 }
             }
         });
     }
+
+    public void addNewTerrainImage(int absX, int absY, TerrainImage terrainImage) {
+        Index index = getTerrainTileIndexForAbsPosition(absX, absY);
+        addTerrainImagePosition(new TerrainImagePosition(index, terrainImage.getId()));
+        fireTerrainChanged();
+}
+
+    public void moveTerrainImagePosition(int absX, int absY, TerrainImagePosition terrainImagePosition) {
+        Index index = getTerrainTileIndexForAbsPosition(absX, absY);
+        terrainImagePosition.setTileIndex(index);
+        fireTerrainChanged();
+    }
+
+    public void removeTerrainImagePosition(TerrainImagePosition terrainImagePosition) {
+        super.removeTerrainImagePosition(terrainImagePosition);
+        fireTerrainChanged();
+    }
+
 }

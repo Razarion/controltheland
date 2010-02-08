@@ -56,6 +56,10 @@ public class Rectangle implements Serializable {
         return position.getX() >= start.getX() && position.getY() >= start.getY() && position.getX() <= end.getX() && position.getY() <= end.getY();
     }
 
+    public boolean containsExclusive(Index position) {
+        return position.getX() >= start.getX() && position.getY() >= start.getY() && position.getX() < end.getX() && position.getY() < end.getY();
+    }
+
     public Index getOffestToStart(Index index) {
         if (!contains(index)) {
             return null;
@@ -83,7 +87,17 @@ public class Rectangle implements Serializable {
         int endX = Math.min(end.getX(), rectangle.end.getX());
         int endY = Math.min(end.getY(), rectangle.end.getY());
 
-        return !(startX > endX || startY > endY);
+        return startX <= endX && startY <= endY;
+    }
+
+    public boolean adjoinsEclusive(Rectangle rectangle) {
+        int startX = Math.max(start.getX(), rectangle.start.getX());
+        int startY = Math.max(start.getY(), rectangle.start.getY());
+
+        int endX = Math.min(end.getX(), rectangle.end.getX());
+        int endY = Math.min(end.getY(), rectangle.end.getY());
+
+        return startX < endX && startY < endY;
     }
 
     public Rectangle getCrossSection(Rectangle rectangle) {
