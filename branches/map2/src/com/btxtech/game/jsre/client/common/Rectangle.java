@@ -107,7 +107,7 @@ public class Rectangle implements Serializable {
         int endX = Math.min(end.getX(), rectangle.end.getX());
         int endY = Math.min(end.getY(), rectangle.end.getY());
 
-        if (startX <= endX && startY <= endY) {
+        if (startX > endX || startY > endY) {
             throw new IllegalArgumentException("Rectangles do not overlap");
         }
 
