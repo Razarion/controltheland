@@ -50,7 +50,7 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
         if (imageElement == null) {
             loadImagesAndDrawMap();
             return terrainTileImageElements.get(tileId);
-    }
+        }
         return imageElement;
     }
 
@@ -65,13 +65,15 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
             public void onImagesLoaded(ImageElement[] imageElements) {
                 try {
                     backgroundImage = imageElements[0];
-                    fireTerrainChanged();
+                    if (!terrainTileImageElements.isEmpty()) {
+                        fireTerrainChanged();
+                    }
                 } catch (Throwable throwable) {
                     GwtCommon.handleException(throwable);
-    }
+                }
             }
         });
-            }
+    }
 
     private void loadImagesAndDrawMap() {
         ArrayList<String> urls = new ArrayList<String>();
@@ -79,7 +81,7 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
         for (TerrainImagePosition terrainImagePosition : getTerrainImagePositions()) {
             urls.add(ImageHandler.getTerrainImageUrl(terrainImagePosition.getImageId()));
             ids.add(terrainImagePosition.getImageId());
-            }
+        }
         ImageLoader.loadImages(urls.toArray(new String[urls.size()]), new ImageLoader.CallBack() {
 
             @Override
@@ -89,7 +91,9 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
                     for (int i = 0; i < imageElements.length; i++) {
                         terrainTileImageElements.put(ids.get(i), imageElements[i]);
                     }
-                    fireTerrainChanged();
+                    if (backgroundImage != null) {
+                        fireTerrainChanged();
+                    }
                 } catch (Throwable throwable) {
                     GwtCommon.handleException(throwable);
                 }
@@ -101,7 +105,7 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
         Index index = getTerrainTileIndexForAbsPosition(absX, absY);
         addTerrainImagePosition(new TerrainImagePosition(index, terrainImage.getId()));
         fireTerrainChanged();
-}
+    }
 
     public void moveTerrainImagePosition(int absX, int absY, TerrainImagePosition terrainImagePosition) {
         Index index = getTerrainTileIndexForAbsPosition(absX, absY);
@@ -114,4 +118,7 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
         fireTerrainChanged();
     }
 
+    public HashMap<Integer, ImageElement> getTerrainImageElements() {
+        return terrainTileImageElements;
+    }
 }

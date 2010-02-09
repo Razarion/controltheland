@@ -87,7 +87,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
 
     private void drawBackground() {
         ImageElement imageElement = terrainHandler.getBackgroundImage();
-        if (imageElement == null) {
+        if (imageElement == null || terrainHandler.getTerrainImageElements().isEmpty()) {
             return;
         }
         int bgTileXStart = viewOriginLeft / imageElement.getWidth();
@@ -144,22 +144,21 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
                     continue;
                 }
 
-                    try {
-                        canvas.drawImage(imageElement, srcXStart, srcYStart, srcXWidth, srcYWidth, posX, posY, srcXWidth, srcYWidth);
-                    } catch (Throwable t) {
-                        GwtCommon.handleException(t);
+                try {
+                    canvas.drawImage(imageElement, srcXStart, srcYStart, srcXWidth, srcYWidth, posX, posY, srcXWidth, srcYWidth);
+                } catch (Throwable t) {
+                    GwtCommon.handleException(t);
                     sendErrorInfoToServer(imageElement, posX, posY, srcXStart, srcXWidth, srcYStart, srcYWidth);
                 }
                 posY += srcYWidth;
             }
             posX += srcXWidth;
         }
-
     }
 
     private void drawImages() {
         List<TerrainImagePosition> terrainImagePositions = terrainHandler.getTerrainImagesInRegion(new Rectangle(viewOriginLeft, viewOriginTop, viewWidth, viewHeight));
-        if (terrainImagePositions.isEmpty()) {
+        if (terrainImagePositions.isEmpty() || terrainHandler.getTerrainImageElements().isEmpty() || terrainHandler.getBackgroundImage() == null) {
             return;
         }
 
@@ -170,21 +169,21 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
             ImageElement imageElement = terrainHandler.getTileImageElement(terrainImagePosition.getImageId());
             if (imageElement == null) {
                 continue;
-                    }
+            }
             try {
                 canvas.drawImage(imageElement, relXStart, relYStart);
             } catch (Throwable t) {
                 GwtCommon.handleException(t);
                 sendErrorInfoToServer(imageElement, relXStart, relYStart, 0, 0, 0, 0);
-                }
             }
         }
+    }
 
 
     public void move(int left, int top) {
         if (terrainHandler.getTerrainSettings() == null) {
             return;
-    }
+        }
 
         if (viewWidth == 0 && viewHeight == 0) {
             return;
@@ -356,7 +355,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         int absY = relY + viewOriginTop;
 
         terrainHandler.addNewTerrainImage(absX, absY, terrainImage);
-}
+    }
 
     public void moveTerrainImagePosition(int relX, int relY, TerrainImagePosition terrainImagePosition) {
         int absX = relX + viewOriginLeft;
