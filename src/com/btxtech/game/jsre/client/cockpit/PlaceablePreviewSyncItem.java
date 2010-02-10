@@ -14,8 +14,10 @@
 package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.ClientServices;
+import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.PlaceablePreviewWidget;
@@ -69,6 +71,14 @@ public class PlaceablePreviewSyncItem extends PlaceablePreviewWidget {
 
     @Override
     protected boolean allowedToPlace(int relX, int relY) {
+        Rectangle rectangle = new Rectangle(Game.cockpitPanel.getAbsoluteLeft(),
+                Game.cockpitPanel.getAbsoluteTop(),
+                Game.cockpitPanel.getOffsetWidth(),
+                Game.cockpitPanel.getOffsetHeight());
+        if (rectangle.contains(new Index(relX + itemTypeToBuilt.getHeight() / 2, relY + itemTypeToBuilt.getWidth() / 2))) {
+            return false;
+        }
+
         int absX = relX + TerrainView.getInstance().getViewOriginLeft();
         int absY = relY + TerrainView.getInstance().getViewOriginTop();
         if (absX < 0 || absY < 0) {
@@ -76,6 +86,6 @@ public class PlaceablePreviewSyncItem extends PlaceablePreviewWidget {
         }
         absX += itemTypeToBuilt.getWidth() / 2;
         absY += itemTypeToBuilt.getHeight() / 2;
-        return ClientServices.getInstance().getTerrainService().isFree(new Index(absX,absY), itemTypeToBuilt);
+        return ClientServices.getInstance().getTerrainService().isFree(new Index(absX, absY), itemTypeToBuilt);
     }
 }
