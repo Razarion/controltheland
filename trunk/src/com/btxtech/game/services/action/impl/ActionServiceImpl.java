@@ -30,6 +30,7 @@ import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.collision.CollisionServiceChangedListener;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,6 +64,8 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
     private UserTrackingService userTrackingService;
     @Autowired
     private CollisionService collisionService;
+    @Autowired
+    private TerrainService terrainService;
     private final HashSet<SyncBaseItem> activeItems = new HashSet<SyncBaseItem>();
     private final HashSet<SyncBaseItem> guardingItems = new HashSet<SyncBaseItem>();
     private ArrayList<SyncBaseItem> tmpActiveItems = new ArrayList<SyncBaseItem>();
@@ -96,7 +99,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
 
     @Override
     public void moneyItemDeleted(SyncResourceItem moneyImpl) {
-        if(moneyImpl.isMissionMoney()) {
+        if (moneyImpl.isMissionMoney()) {
             return;
         }
         synchronized (moneys) {
@@ -339,13 +342,11 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
     }
 
     private void checkMoneyStack(SyncResourceItem money) {
-        throw new NullPointerException("NOT IMPLEMENTED");
-        // TODO
-       /* if (!collisionService.isFree(money.getPosition(), money.getItemType())) {
+        if (!terrainService.isFree(money.getPosition(), money.getItemType())) {
             Index position = collisionService.getFreeRandomPosition(money.getItemType(), Constants.MIN_FREE_MONEY_DISTANCE);
             money.setPosition(position);
-        } */
         }
+    }
 
     private void addMoneyStack() {
         try {
