@@ -72,5 +72,5 @@ public class MapEditor implements EntryPoint {
         });
 
         MapWindow.getInstance().setTerrainMouseMoveListener(mapModifier);
-            }
-            }
+    }
+}

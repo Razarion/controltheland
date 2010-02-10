@@ -16,7 +16,10 @@ package com.btxtech.game.jsre.client.cockpit;
 import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.ClientSyncResourceItemView;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
+import com.btxtech.game.jsre.client.terrain.MapWindow;
+import com.btxtech.game.jsre.client.terrain.TerrainMouseMoveListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.google.gwt.user.client.DOM;
@@ -27,16 +30,18 @@ import com.google.gwt.widgetideas.graphics.client.GWTCanvas;
  * Date: Jun 27, 2009
  * Time: 9:43:48 AM
  */
-public class CursorHandler {
+public class CursorHandler implements TerrainMouseMoveListener {
     private static CursorHandler INSTANCE = new CursorHandler();
     private boolean hasAttackCursor = false;
     private boolean hasCollectCursor = false;
+    private boolean isMoveAllowed = true;
+    private boolean hasMoveCursor = false;
 
     /**
      * Singleton
      */
     private CursorHandler() {
-
+        MapWindow.getInstance().setTerrainMouseMoveListener(this);
     }
 
     public void setAttackCursor() {
@@ -97,11 +102,19 @@ public class CursorHandler {
     public void setMoveCursor() {
         GWTCanvas terrain = TerrainView.getInstance().getCanvas();
         DOM.setStyleAttribute(terrain.getElement(), "cursor", "url(/images/cursors/go.cur), crosshair");
+        hasMoveCursor = true;
+    }
+
+    private void setMoveForbiddenCursor() {
+        GWTCanvas terrain = TerrainView.getInstance().getCanvas();
+        DOM.setStyleAttribute(terrain.getElement(), "cursor", "url(/images/cursors/nogo.cur), crosshair");
+        hasMoveCursor = true;
     }
 
     public void removeMoveCursor() {
         GWTCanvas terrain = TerrainView.getInstance().getCanvas();
         DOM.setStyleAttribute(terrain.getElement(), "cursor", "default");
+        hasMoveCursor = false;
     }
 
     public static CursorHandler getInstance() {
@@ -126,5 +139,18 @@ public class CursorHandler {
         if (selection.canCollect()) {
             setCollectCursor();
         }
+    }
+
+    @Override
+    public void onMove(int absoluteLeft, int absoluteTop, int relativeLeft, int relativeTop) {
+        boolean tmpIsMoveAllowed = TerrainView.getInstance().getTerrainHandler().isTerrainPassable(new Index(absoluteLeft, absoluteTop));
+        if (hasMoveCursor && tmpIsMoveAllowed != isMoveAllowed) {
+            if (tmpIsMoveAllowed) {
+                setMoveCursor();
+            } else {
+                setMoveForbiddenCursor();
+            }
+        }
+        isMoveAllowed = tmpIsMoveAllowed;
     }
 }

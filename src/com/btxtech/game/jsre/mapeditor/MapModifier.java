@@ -56,20 +56,20 @@ public class MapModifier implements TerrainMouseMoveListener, MouseDownHandler {
         GwtCommon.preventImageDragging(mouseDownEvent);
         if (terrainImagePosition == null) {
             return;
-    }
+        }
 
         if (cockpit.isDeleteModus()) {
             TerrainView.getInstance().getTerrainHandler().removeTerrainImagePosition(terrainImagePosition);
         } else {
             placeablePreview = new PlaceablePreviewTerrainImagePoition(terrainImagePosition, mouseDownEvent, this);
-    }
         }
+    }
 
-            @Override
+    @Override
     public void onMove(int absoluteLeft, int absoluteTop, int relativeLeft, int relativeTop) {
         if (placeablePreview != null) {
             return;
-            }
+        }
 
         TerrainImagePosition terrainImagePosition = TerrainView.getInstance().getTerrainHandler().getTerrainImagePosition(absoluteLeft, absoluteTop);
         if (terrainImagePosition != null) {
@@ -90,7 +90,7 @@ public class MapModifier implements TerrainMouseMoveListener, MouseDownHandler {
             marker.stroke();
         } else {
             marker.setVisible(false);
-            }
+        }
     }
 
     public void setPlaceablePreview(PlaceablePreviewTerrainImagePoition placeablePreview) {
