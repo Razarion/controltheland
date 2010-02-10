@@ -55,7 +55,7 @@ public class Path {
         for (PassableRectangle passableRectangle : rectanglePath) {
             if (previous != null) {
                 Rectangle rectangle = previous.getBorder(passableRectangle);
-                if(rectangle.getWeidth() > 0 && rectangle.getHeight() > 0) {
+                if(rectangle.getWidth() > 0 && rectangle.getHeight() > 0) {
                     throw new IllegalArgumentException("Border mus be a line");
                 }
                 allBorders.add(rectangle);

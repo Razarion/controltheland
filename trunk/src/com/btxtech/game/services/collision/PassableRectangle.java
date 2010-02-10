@@ -37,7 +37,7 @@ public class PassableRectangle {
 
         private Neighbor(PassableRectangle passableRectangle, Rectangle crossSection) {
             this.passableRectangle = passableRectangle;
-            if (crossSection.getWeidth() > 0 && crossSection.getHeight() > 0) {
+            if (crossSection.getWidth() > 0 && crossSection.getHeight() > 0) {
                 throw new IllegalArgumentException();
             }
 
@@ -78,7 +78,7 @@ public class PassableRectangle {
 
     public void addNeighbor(PassableRectangle neighborPassableRectangle) {
         Rectangle crossSectionRectangle = rectangle.getCrossSection(neighborPassableRectangle.rectangle);
-        if (crossSectionRectangle.getWeidth() > 0 && crossSectionRectangle.getHeight() > 0) {
+        if (crossSectionRectangle.getWidth() > 0 && crossSectionRectangle.getHeight() > 0) {
             throw new IllegalArgumentException("Rectangle must be a line");
         }
         Neighbor neighbor = new Neighbor(neighborPassableRectangle, crossSectionRectangle);
@@ -89,7 +89,7 @@ public class PassableRectangle {
         int x = rectangle.getX() * dbTerrainSetting.getTileWidth();
         int y = rectangle.getY() * dbTerrainSetting.getTileHeight();
 
-        int width = rectangle.getWeidth() * dbTerrainSetting.getTileWidth();
+        int width = rectangle.getWidth() * dbTerrainSetting.getTileWidth();
         int height = rectangle.getHeight() * dbTerrainSetting.getTileHeight();
 
         return new Rectangle(x, y, width, height);

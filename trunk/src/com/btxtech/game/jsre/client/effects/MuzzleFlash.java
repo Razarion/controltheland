@@ -66,7 +66,7 @@ public class MuzzleFlash {
                     weaponType.getMuzzleFlashLength());
         }
         rectangle = rectangle.getSurroundedRectangle(center, angel);
-        canvas = new GWTCanvas(rectangle.getWeidth(), rectangle.getHeight());
+        canvas = new GWTCanvas(rectangle.getWidth(), rectangle.getHeight());
         MapWindow.getAbsolutePanel().add(canvas,
                 rectangle.getStart().getX() - TerrainView.getInstance().getViewOriginLeft(),
                 rectangle.getStart().getY() - TerrainView.getInstance().getViewOriginTop());

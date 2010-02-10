@@ -56,6 +56,8 @@ public interface AbstractTerrainService {
 
     Index getAbsolutIndexForTerrainTileIndex(Index tileIndex);
 
+    Index getTerrainTileIndexForAbsPositionRoundUp(Index absolutePos);
+
     Index getAbsolutIndexForTerrainTileIndex(int xTile, int yTile);
 
     int getAbsolutXForTerrainTile(int xTile);
@@ -63,6 +65,8 @@ public interface AbstractTerrainService {
     int getAbsolutYForTerrainTile(int yTile);
 
     Rectangle convertToTilePosition(Rectangle rectangle);
+
+    Rectangle convertToTilePositionRoundUp(Rectangle rectangle);
 
     Rectangle convertToAbsolutePosition(Rectangle rectangle);
 

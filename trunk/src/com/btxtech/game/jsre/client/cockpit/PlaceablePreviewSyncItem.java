@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
+import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
@@ -46,5 +47,35 @@ public class PlaceablePreviewSyncItem extends PlaceablePreviewWidget {
         }
         Index positionToBuilt = new Index(absX, absY);
         ActionHandler.getInstance().buildFactory(group.getItems(), positionToBuilt, itemTypeToBuilt);
+    }
+
+    @Override
+    protected int specialMoveX(int x) {
+        if (itemTypeToBuilt != null) {
+            return x -= itemTypeToBuilt.getWidth() / 2;
+        } else {
+            return x -= getImage().getWidth() / 2;
+        }
+    }
+
+    @Override
+    protected int specialMoveY(int y) {
+        if (itemTypeToBuilt != null) {
+            return y -= itemTypeToBuilt.getHeight() / 2;
+        } else {
+            return y -= getImage().getHeight() / 2;
+        }
+    }
+
+    @Override
+    protected boolean allowedToPlace(int relX, int relY) {
+        int absX = relX + TerrainView.getInstance().getViewOriginLeft();
+        int absY = relY + TerrainView.getInstance().getViewOriginTop();
+        if (absX < 0 || absY < 0) {
+            return false;
+        }
+        absX += itemTypeToBuilt.getWidth() / 2;
+        absY += itemTypeToBuilt.getHeight() / 2;
+        return ClientServices.getInstance().getTerrainService().isFree(new Index(absX,absY), itemTypeToBuilt);
     }
 }

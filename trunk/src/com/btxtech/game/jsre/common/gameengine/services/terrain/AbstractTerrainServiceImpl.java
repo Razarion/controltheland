@@ -99,7 +99,7 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
         if (terrainSettings == null || terrainImagePositions == null) {
             return result;
         }
-        Rectangle tileRect = convertToTilePosition(absolutePxRectangle);
+        Rectangle tileRect = convertToTilePositionRoundUp(absolutePxRectangle);
         for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
             if (tileRect.adjoinsEclusive(getTerrainImagePositionRectangle(terrainImagePosition))) {
                 result.add(terrainImagePosition);
@@ -166,6 +166,12 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
     }
 
     @Override
+    public Index getTerrainTileIndexForAbsPositionRoundUp(Index absolutePos) {
+        return new Index((int) Math.ceil((double) absolutePos.getX() / (double) terrainSettings.getTileWidth()),
+                (int) Math.ceil((double) absolutePos.getY() / (double) terrainSettings.getTileHeight()));
+    }
+
+    @Override
     public Index getAbsolutIndexForTerrainTileIndex(int xTile, int yTile) {
         return new Index(xTile * terrainSettings.getTileWidth(), yTile * terrainSettings.getTileHeight());
     }
@@ -184,6 +190,13 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
     public Rectangle convertToTilePosition(Rectangle rectangle) {
         Index start = getTerrainTileIndexForAbsPosition(rectangle.getStart());
         Index end = getTerrainTileIndexForAbsPosition(rectangle.getEnd());
+        return new Rectangle(start, end);
+    }
+
+    @Override
+    public Rectangle convertToTilePositionRoundUp(Rectangle rectangle) {
+        Index start = getTerrainTileIndexForAbsPosition(rectangle.getStart());
+        Index end = getTerrainTileIndexForAbsPositionRoundUp(rectangle.getEnd());
         return new Rectangle(start, end);
     }
 
