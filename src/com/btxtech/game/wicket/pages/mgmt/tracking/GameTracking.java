@@ -53,11 +53,11 @@ public class GameTracking extends Panel {
         } else {
             add(new Label("timeInGame", WebCommon.formatDuration(gameTrackingInfo.getInGameMilliS())));
         }
-        add(new Label("moveCommands", Integer.toString(gameTrackingInfo.getMoveCommands())));
-        add(new Label("builderCommands", Integer.toString(gameTrackingInfo.getBuilderCommands())));
-        add(new Label("factoryCommands", Integer.toString(gameTrackingInfo.getFactoryCommands())));
-        add(new Label("collectCommands", Integer.toString(gameTrackingInfo.getMoneyCollectCommands())));
-        add(new Label("attackCommands", Integer.toString(gameTrackingInfo.getAttackCommands())));
+        add(new Label("moveCommands", Integer.toString(gameTrackingInfo.getMoveCommandCount())));
+        add(new Label("builderCommands", Integer.toString(gameTrackingInfo.getBuilderCommandCount())));
+        add(new Label("factoryCommands", Integer.toString(gameTrackingInfo.getFactoryCommandCount())));
+        add(new Label("collectCommands", Integer.toString(gameTrackingInfo.getMoneyCollectCommandCount())));
+        add(new Label("attackCommands", Integer.toString(gameTrackingInfo.getAttackCommandCount())));
         add(new Label("completedMissions", Integer.toString(gameTrackingInfo.getCompletedMissionCount())));
     }
 
