@@ -102,7 +102,7 @@ public class MoveMission extends Mission {
 
     @Override
     public void onExecuteCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
-        if (syncItem.equals(item.getSyncBaseItem())) {
+        if (syncItem.equals(item.getSyncBaseItem()) && speechBubble != null) {
             speechBubble.close();
             speechBubble = null;
         }

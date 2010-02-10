@@ -170,14 +170,7 @@ public abstract class PlaceablePreviewWidget extends AbsolutePanel implements Mo
 
     @Override
     public void onMouseDown(MouseDownEvent event) {
-        int x = event.getClientX();
-        int y = event.getClientY();
-        x = specialMoveX(x);
-        y = specialMoveY(y);
-        if (allowedToPlace(x, y)) {
-            close();
-            execute(event);
-        }
+        GwtCommon.preventImageDragging(event);
     }
 
     protected abstract void execute(MouseEvent event);
