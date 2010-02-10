@@ -17,6 +17,9 @@ import com.btxtech.game.jsre.client.ExtendedCanvas;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseEvent;
@@ -27,9 +30,11 @@ import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.widgetideas.graphics.client.Color;
+import com.google.gwt.dom.client.Style;
 
 /**
  * User: beat
@@ -40,6 +45,7 @@ public abstract class PlaceablePreviewWidget extends AbsolutePanel implements Mo
     private boolean hasMoved = false;
     private Image image;
     private ExtendedCanvas marker;
+    private FocusPanel focusPanel;
 
     protected PlaceablePreviewWidget(Image image, MouseEvent mouseEvent) {
         this.image = image;
@@ -61,11 +67,23 @@ public abstract class PlaceablePreviewWidget extends AbsolutePanel implements Mo
         image.getElement().getStyle().setProperty("opacity", "0.5");
         image.getElement().getStyle().setProperty("cursor", "move");
         setupMarker();
-       /* if (allowedToPlace(x, y)) {
-            marker.setVisible(false);
-        } else {
-            marker.setVisible(true);
-        } */       
+        addEscKeyHandler();
+    }
+
+    private void addEscKeyHandler() {
+        focusPanel = new FocusPanel();
+        focusPanel.setPixelSize(1, 1);
+        focusPanel.getElement().getStyle().setBorderWidth(0, Style.Unit.PX);
+        add(focusPanel);
+        focusPanel.addKeyDownHandler(new KeyDownHandler() {
+            @Override
+            public void onKeyDown(KeyDownEvent keyDownEvent) {
+                if (keyDownEvent.getNativeKeyCode() == KeyCodes.KEY_ESCAPE) {
+                    close();
+                }
+            }
+        });
+        focusPanel.setFocus(true);
     }
 
     private void setupMarker() {
@@ -84,6 +102,7 @@ public abstract class PlaceablePreviewWidget extends AbsolutePanel implements Mo
     }
 
     public void close() {
+        focusPanel.setFocus(false);
         DOM.releaseCapture(getElement());
         RootPanel.get().remove(this);
     }
@@ -139,8 +158,11 @@ public abstract class PlaceablePreviewWidget extends AbsolutePanel implements Mo
 
     @Override
     public void onMouseUp(MouseUpEvent event) {
-        if (hasMoved && allowedToPlace(event.getRelativeX(MapWindow.getAbsolutePanel().getElement()),
-                event.getRelativeY(MapWindow.getAbsolutePanel().getElement()))) {
+        int x = event.getClientX();
+        int y = event.getClientY();
+        x = specialMoveX(x);
+        y = specialMoveY(y);
+        if (hasMoved && allowedToPlace(x, y)) {
             close();
             execute(event);
         }
@@ -148,8 +170,11 @@ public abstract class PlaceablePreviewWidget extends AbsolutePanel implements Mo
 
     @Override
     public void onMouseDown(MouseDownEvent event) {
-        if (allowedToPlace(event.getRelativeX(MapWindow.getAbsolutePanel().getElement()),
-                event.getRelativeY(MapWindow.getAbsolutePanel().getElement()))) {
+        int x = event.getClientX();
+        int y = event.getClientY();
+        x = specialMoveX(x);
+        y = specialMoveY(y);
+        if (allowedToPlace(x, y)) {
             close();
             execute(event);
         }
@@ -169,4 +194,7 @@ public abstract class PlaceablePreviewWidget extends AbsolutePanel implements Mo
         return addDomHandler(handler, MouseUpEvent.getType());
     }
 
+    public Image getImage() {
+        return image;
+    }
 }

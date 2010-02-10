@@ -162,7 +162,7 @@ public class Rectangle implements Serializable {
         return end.getY() - start.getY();
     }
 
-    public int getWeidth() {
+    public int getWidth() {
         return end.getX() - start.getX();
     }
 
@@ -216,7 +216,7 @@ public class Rectangle implements Serializable {
     }
 
     public boolean hasMinSize(int minSize) {
-        return getHeight() >= minSize || getWeidth() >= minSize;
+        return getHeight() >= minSize || getWidth() >= minSize;
     }
 
     /**
