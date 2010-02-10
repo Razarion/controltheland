@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,18 +27,18 @@ import java.util.List;
 public class GameTrackingInfo implements Serializable {
     private Date start;
     private Date end;
-    private int attackCommands;
-    private int moveCommands;
-    private int builderCommands;
-    private int factoryCommands;
-    private int moneyCollectCommands;
+    private int attackCommandCount;
+    private int moveCommandCount;
+    private int builderCommandCount;
+    private int factoryCommandCount;
+    private int moneyCollectCommandCount;
+    private int completedMissionCount;
     private GameStartup serverGameStartup;
     private GameStartup clientStartGameStartup;
     private GameStartup clientRunningGameStartup;
     private List<DbUserAction> userActions = new ArrayList<DbUserAction>();
-    private List<UserCommand> userCommands;
-    private List<DbMissionAction> missionActions;
-    private int completedMissionCount;
+    private List<UserCommand> userCommands = new ArrayList<UserCommand>();
+    private List<DbMissionAction> missionActions = new ArrayList<DbMissionAction>();
 
     public Date getStart() {
         return start;
@@ -47,6 +46,14 @@ public class GameTrackingInfo implements Serializable {
 
     public Date getEnd() {
         return end;
+    }
+
+    public void setStart(Date start) {
+        this.start = start;
+    }
+
+    public void setEnd(Date end) {
+        this.end = end;
     }
 
     public long getInGameMilliS() {
@@ -69,7 +76,6 @@ public class GameTrackingInfo implements Serializable {
 
     public void setClientRunningGameStartup(GameStartup clientRunningGameStartup) {
         this.clientRunningGameStartup = clientRunningGameStartup;
-        start = clientRunningGameStartup.getClientTimeStamp();
     }
 
     public GameStartup getServerGameStartup() {
@@ -84,26 +90,8 @@ public class GameTrackingInfo implements Serializable {
         return clientRunningGameStartup;
     }
 
-    public void setUserAction(List<DbUserAction> userActions) {
+    public void setUserActions(List<DbUserAction> userActions) {
         this.userActions = userActions;
-    }
-
-    public void calculateEnd(GameTrackingInfo next) {
-        DbUserAction last = null;
-        for (DbUserAction dbUserAction : userActions) {
-            if (dbUserAction.getType().equals(UserAction.CLOSE_WINDOW)) {
-                end = dbUserAction.getClientTimeStamp();
-                return;
-            }
-            last = dbUserAction;
-        }
-        if (last != null) {
-            end = last.getClientTimeStamp();
-            return;
-        }
-        if (next != null && next.getClientRunningGameStartup() != null) {
-            end = next.getClientRunningGameStartup().getClientTimeStamp();
-        }
     }
 
     public void setUserCommands(List<UserCommand> userCommands) {
@@ -114,44 +102,44 @@ public class GameTrackingInfo implements Serializable {
         this.missionActions = missionActions;
     }
 
-    public void setAttackCommands(int attackCommands) {
-        this.attackCommands = attackCommands;
+    public void setAttackCommandCount(int attackCommandCount) {
+        this.attackCommandCount = attackCommandCount;
     }
 
-    public void setMoveCommands(int moveCommands) {
-        this.moveCommands = moveCommands;
+    public void setMoveCommandCount(int moveCommandCount) {
+        this.moveCommandCount = moveCommandCount;
     }
 
-    public void setBuilderCommands(int builderCommands) {
-        this.builderCommands = builderCommands;
+    public void setBuilderCommandCount(int builderCommandCount) {
+        this.builderCommandCount = builderCommandCount;
     }
 
-    public void setFactoryCommands(int factoryCommands) {
-        this.factoryCommands = factoryCommands;
+    public void setFactoryCommandCount(int factoryCommandCount) {
+        this.factoryCommandCount = factoryCommandCount;
     }
 
-    public void setMoneyCollectCommands(int moneyCollectCommands) {
-        this.moneyCollectCommands = moneyCollectCommands;
+    public void setMoneyCollectCommandCount(int moneyCollectCommandCount) {
+        this.moneyCollectCommandCount = moneyCollectCommandCount;
     }
 
-    public int getAttackCommands() {
-        return attackCommands;
+    public int getAttackCommandCount() {
+        return attackCommandCount;
     }
 
-    public int getMoveCommands() {
-        return moveCommands;
+    public int getMoveCommandCount() {
+        return moveCommandCount;
     }
 
-    public int getBuilderCommands() {
-        return builderCommands;
+    public int getBuilderCommandCount() {
+        return builderCommandCount;
     }
 
-    public int getFactoryCommands() {
-        return factoryCommands;
+    public int getFactoryCommandCount() {
+        return factoryCommandCount;
     }
 
-    public int getMoneyCollectCommands() {
-        return moneyCollectCommands;
+    public int getMoneyCollectCommandCount() {
+        return moneyCollectCommandCount;
     }
 
     public List<UserActionCommandMissions> getUserActionCommand() {
