@@ -140,8 +140,8 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
             for (int y = 0; y < passableTerrain[x].length; y++) {
                 if (passableTerrain[x][y]) {
                     passableTiles.add(new Index(x, y));
+                }
             }
-        }
         }
         return passableTiles;
     }
@@ -387,7 +387,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
         PassableRectangle atomDestRect = getPassableRectangleOfAbsoluteIndex(destination);
         if (atomStartRect == null || atomDestRect == null) {
             throw new IllegalArgumentException("Illegal atomStartRect or absoluteDestionation");
-}
+        }
 
         if (atomStartRect.equals(atomDestRect)) {
             ArrayList<Index> singleIndex = new ArrayList<Index>();
@@ -417,7 +417,6 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
         bestSelection.add(destination);
         return bestSelection;
     }
-
 
 
 }
