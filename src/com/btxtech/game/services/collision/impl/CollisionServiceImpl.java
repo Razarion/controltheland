@@ -246,21 +246,17 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     }
 
 
-    // @Override
-    // TODO wrong here
-    public boolean isFree(Index position, ItemType toBePlaced) {
-        // TODO
-        /*Index atomPosition = TerrainUtil.getTerrainTileIndexForAbsPosition(position);
-        int tileWidth = TerrainUtil.getTerrainTileCount4PixelWidth(toBePlaced.getWidth());
-        int tileHeight = TerrainUtil.getTerrainTileCount4PixelHeight(toBePlaced.getHeight());
+    private boolean isFree(Index position, ItemType toBePlaced) {
+        Index atomPosition = terrainService.getTerrainTileIndexForAbsPosition(position);
+        Index tileSize = terrainService.getTerrainTileIndexForAbsPositionRoundUp(new Index(toBePlaced.getWidth(), toBePlaced.getHeight()));
 
-        for (int x = atomPosition.getX() - (tileWidth / 2); x <= atomPosition.getX() + (tileWidth / 2); x++) {
-            for (int y = atomPosition.getY() - (tileHeight / 2); y <= atomPosition.getY() + (tileHeight / 2); y++) {
+        for (int x = atomPosition.getX() - (tileSize.getX() / 2); x <= atomPosition.getX() + (tileSize.getX() / 2); x++) {
+            for (int y = atomPosition.getY() - (tileSize.getY() / 2); y <= atomPosition.getY() + (tileSize.getY() / 2); y++) {
                 if (!passableTerrain[x][y]) {
                     return false;
                 }
             }
-        }*/
+        }
         return true;
     }
 
