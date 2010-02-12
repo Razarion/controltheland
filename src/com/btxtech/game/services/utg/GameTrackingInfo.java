@@ -39,6 +39,8 @@ public class GameTrackingInfo implements Serializable {
     private List<DbUserAction> userActions = new ArrayList<DbUserAction>();
     private List<UserCommand> userCommands = new ArrayList<UserCommand>();
     private List<DbMissionAction> missionActions = new ArrayList<DbMissionAction>();
+    private Date mapBgLoaded;
+    private Date mapImagesLoaded;
 
     public Date getStart() {
         return start;
@@ -165,5 +167,21 @@ public class GameTrackingInfo implements Serializable {
 
     public int getCompletedMissionCount() {
         return completedMissionCount;
+    }
+
+    public Date getMapBgLoaded() {
+        return mapBgLoaded;
+    }
+
+    public void setMapBgLoaded(Date mapBgLoaded) {
+        this.mapBgLoaded = mapBgLoaded;
+    }
+
+    public Date getMapImagesLoaded() {
+        return mapImagesLoaded;
+    }
+
+    public void setMapImagesLoaded(Date mapImagesLoaded) {
+        this.mapImagesLoaded = mapImagesLoaded;
     }
 }

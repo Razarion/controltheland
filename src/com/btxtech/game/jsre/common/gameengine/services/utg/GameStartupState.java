@@ -21,5 +21,7 @@ package com.btxtech.game.jsre.common.gameengine.services.utg;
 public enum GameStartupState {
     SERVER,
     CLIENT_START,
-    CLIENT_RUNNING;
+    CLIENT_RUNNING,
+    CLIENT_MAP_BG_LOADED,
+    CLIENT_MAP_IMAGES_LOADED;
 }

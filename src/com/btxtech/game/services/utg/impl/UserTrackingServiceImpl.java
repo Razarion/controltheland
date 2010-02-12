@@ -271,13 +271,26 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                     break;
                 case CLIENT_START:
                     if (gameTrackingInfo == null) {
+                        // Browser did not reload the page
                         gameTrackingInfo = new GameTrackingInfo();
                         gameTrackingInfos.add(gameTrackingInfo);
                     }
                     gameTrackingInfo.setClientStartGameStartup(gameStartup);
                     break;
                 case CLIENT_RUNNING:
-                    gameTrackingInfo.setClientRunningGameStartup(gameStartup);
+                    if (gameTrackingInfo != null) {
+                        gameTrackingInfo.setClientRunningGameStartup(gameStartup);
+                    }
+                    break;
+                case CLIENT_MAP_BG_LOADED:
+                    if (gameTrackingInfo != null) {
+                        gameTrackingInfo.setMapBgLoaded(gameStartup.getClientTimeStamp());
+                    }
+                    break;
+                case CLIENT_MAP_IMAGES_LOADED:
+                    if (gameTrackingInfo != null) {
+                        gameTrackingInfo.setMapImagesLoaded(gameStartup.getClientTimeStamp());
+                    }
                     break;
             }
         }

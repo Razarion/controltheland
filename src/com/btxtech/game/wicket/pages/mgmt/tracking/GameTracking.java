@@ -102,6 +102,32 @@ public class GameTracking extends Panel {
             add(new Label("clientRunningTimeClient", "?"));
             add(new Label("clientRunningTimeDelta", "?"));
         }
+
+        Date mapBgLoaded = gameTrackingInfo.getMapBgLoaded();
+        if (mapBgLoaded != null) {
+            add(new Label("clientTimeMapBg", simpleDateFormat.format(mapBgLoaded)));
+        } else {
+            add(new Label("clientTimeMapBg", "?"));
+        }
+
+        if (mapBgLoaded != null && clientStart != null) {
+            add(new Label("clientDeltaMapBg", WebCommon.getTimeDiff(clientStart.getTimeStamp(), mapBgLoaded)));
+        } else {
+            add(new Label("clientDeltaMapBg", "?"));
+        }
+
+        Date mapBgImages = gameTrackingInfo.getMapImagesLoaded();
+        if (mapBgImages != null) {
+            add(new Label("clientTimeMapImages", simpleDateFormat.format(mapBgImages)));
+        } else {
+            add(new Label("clientTimeMapImages", "?"));
+        }
+
+        if (mapBgImages != null && clientStart != null) {
+            add(new Label("clientDeltaMapImages", WebCommon.getTimeDiff(clientStart.getTimeStamp(), mapBgImages)));
+        } else {
+            add(new Label("clientDeltaMapImages", "?"));
+        }
     }
 
     private void userActions(List<UserActionCommandMissions> userActions) {

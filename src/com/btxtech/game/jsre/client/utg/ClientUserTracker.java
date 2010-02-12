@@ -39,7 +39,7 @@ import java.util.Date;
  * Time: 15:12:08
  */
 public class ClientUserTracker {
-    public static final int SEND_TIMEOUT = 1000 * 20;
+    public static final int SEND_TIMEOUT = 1000 * 30;
     private static final ClientUserTracker INSTANCE = new ClientUserTracker();
     private ArrayList<UserAction> userActions = new ArrayList<UserAction>();
     private ArrayList<MissionAction> missionActions = new ArrayList<MissionAction>();
@@ -67,9 +67,9 @@ public class ClientUserTracker {
         timer.scheduleRepeating(SEND_TIMEOUT);
     }
 
-    public void sandGameStartupState(GameStartupState state, Date timeStamp) {
+    public void sandGameStartupState(GameStartupState state) {
         if (Connection.isConnected()) {
-            Connection.getMovableServiceAsync().gameStartupState(state, timeStamp, new AsyncCallback<Void>() {
+            Connection.getMovableServiceAsync().gameStartupState(state, new Date(), new AsyncCallback<Void>() {
                 @Override
                 public void onFailure(Throwable throwable) {
                     GwtCommon.handleException(throwable);
@@ -161,7 +161,7 @@ public class ClientUserTracker {
     }
 
     private void sendUserActionsToServer() {
-        if (Connection.isConnected() && !userActions.isEmpty() && !missionActions.isEmpty()) {
+        if (Connection.isConnected() && (!userActions.isEmpty() || !missionActions.isEmpty())) {
             Connection.getMovableServiceAsync().sendUserActions(userActions, missionActions, new AsyncCallback<Void>() {
                 @Override
                 public void onFailure(Throwable throwable) {
