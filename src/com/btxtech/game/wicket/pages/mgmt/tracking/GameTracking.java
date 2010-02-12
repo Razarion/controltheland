@@ -67,10 +67,18 @@ public class GameTracking extends Panel {
         GameStartup clientStart = gameTrackingInfo.getClientStartGameStartup();
         GameStartup clientRunning = gameTrackingInfo.getClientRunningGameStartup();
 
-        add(new Label("serverTimeServer", simpleDateFormat.format(server.getTimeStamp())));
+        if (server != null) {
+            add(new Label("serverTimeServer", simpleDateFormat.format(server.getTimeStamp())));
+        } else {
+            add(new Label("serverTimeServer", "?"));
+        }
         if (clientStart != null) {
             add(new Label("clientStartTimeServer", simpleDateFormat.format(clientStart.getTimeStamp())));
-            add(new Label("clientStartDelteServer", WebCommon.getTimeDiff(server.getTimeStamp(), clientStart.getTimeStamp())));
+            if (server != null) {
+                add(new Label("clientStartDelteServer", WebCommon.getTimeDiff(server.getTimeStamp(), clientStart.getTimeStamp())));
+            } else {
+                add(new Label("clientStartDelteServer", "?"));
+            }
             add(new Label("clientStartTimeClient", simpleDateFormat.format(clientStart.getClientTimeStamp())));
         } else {
             add(new Label("clientStartTimeServer", "?"));

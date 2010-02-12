@@ -270,6 +270,10 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                     gameTrackingInfo.setServerGameStartup(gameStartup);
                     break;
                 case CLIENT_START:
+                    if (gameTrackingInfo == null) {
+                        gameTrackingInfo = new GameTrackingInfo();
+                        gameTrackingInfos.add(gameTrackingInfo);
+                    }
                     gameTrackingInfo.setClientStartGameStartup(gameStartup);
                     break;
                 case CLIENT_RUNNING:
@@ -308,7 +312,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             trackingInfo.setUserCommands(getUserCommands(sessionId, trackingInfo.getStart(), trackingInfo.getEnd()));
             trackingInfo.setMissionActions(getMissionActions(sessionId, trackingInfo.getStart(), trackingInfo.getEnd()));
             // Fix end if not set
-            if (trackingInfo.getEnd() == null) {
+            if (trackingInfo.getEnd() == null && !trackingInfo.getUserActionCommand().isEmpty()) {
                 List<UserActionCommandMissions> actions = trackingInfo.getUserActionCommand();
                 trackingInfo.setEnd(actions.get(actions.size() - 1).getClientTimeStamp());
             }

@@ -39,7 +39,7 @@ import java.util.Date;
  * Time: 15:12:08
  */
 public class ClientUserTracker {
-    public static final int SEND_TIMEOUT = 1000 * 60;
+    public static final int SEND_TIMEOUT = 1000 * 20;
     private static final ClientUserTracker INSTANCE = new ClientUserTracker();
     private ArrayList<UserAction> userActions = new ArrayList<UserAction>();
     private ArrayList<MissionAction> missionActions = new ArrayList<MissionAction>();
