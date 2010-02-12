@@ -26,7 +26,6 @@ import com.google.gwt.widgetideas.graphics.client.Color;
  * Time: 12:43:55
  */
 public class MiniTerrain extends MiniMap implements TerrainListener {
-    private boolean first = true;
 
     public MiniTerrain(int width, int height) {
         super(width, height);
@@ -37,17 +36,14 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
     public void onTerrainChanged() {
         int playFieldXSize = TerrainView.getInstance().getTerrainHandler().getTerrainSettings().getPlayFieldXSize();
         int playFieldYSize = TerrainView.getInstance().getTerrainHandler().getTerrainSettings().getPlayFieldYSize();
-        if (first) {
-            double scaleX = (double) getWidth() / (double) playFieldXSize;
-            double scaleY = (double) getHeight() / (double) playFieldYSize;
+        double scaleX = (double) getWidth() / (double) playFieldXSize;
+        double scaleY = (double) getHeight() / (double) playFieldYSize;
+        resize(playFieldXSize, playFieldYSize);
         scale(scaleX, scaleY);
-            first = false;
-            setCoordSize(playFieldXSize, playFieldYSize);
-            }
         clear();
+
         // Draw terrain background
-        setBackgroundColor(new Color(30,100,0));
-        //drawBackground(playFieldXSize, playFieldYSize);
+        setBackgroundColor(new Color(30, 100, 0));
 
         // Draw terrain
         for (TerrainImagePosition terrainImagePosition : TerrainView.getInstance().getTerrainHandler().getTerrainImagePositions()) {
@@ -55,49 +51,7 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
             ImageElement imageElement = TerrainView.getInstance().getTerrainHandler().getTileImageElement(terrainImagePosition.getImageId());
             if (imageElement != null) {
                 drawImage(imageElement, absolute.getX(), absolute.getY());
-        }
-    }
-    }
-
-    private void drawBackground(int playFieldXSize, int playFieldYSize) {
-        ImageElement bgImageElement = TerrainView.getInstance().getTerrainHandler().getBackgroundImage();
-        if (bgImageElement == null) {
-            return;
-        }
-        int bgTileWidth = bgImageElement.getWidth();
-        int bgTileHeight = bgImageElement.getHeight();
-        for (int x = 0; x < playFieldXSize / bgTileWidth; x++) {
-            for (int y = 0; y < playFieldYSize / bgTileHeight; y++) {
-                drawImage(bgImageElement, (bgTileWidth * x), (bgTileHeight * y));
             }
-        }
-        int bgXRest = playFieldXSize % bgTileWidth;
-        int bgYRest = playFieldYSize % bgTileHeight;
-        if (bgXRest > 0) {
-            for (int y = 0; y < playFieldYSize / bgTileHeight; y++) {
-                drawImage(bgImageElement,
-                        playFieldXSize - bgXRest,
-                        bgTileHeight * y,
-                        bgXRest,
-                        bgTileHeight);
-            }
-        }
-        if (bgYRest > 0) {
-            for (int x = 0; x < playFieldXSize / bgTileWidth; x++) {
-                drawImage(bgImageElement,
-                        bgTileWidth * x,
-                        playFieldYSize - bgYRest,
-                        bgXRest,
-                        bgYRest);
-            }
-        }
-        if (bgXRest > 0 && bgYRest > 0) {
-            drawImage(bgImageElement,
-                    playFieldXSize - bgXRest,
-                    playFieldYSize - bgYRest,
-                    bgXRest,
-                    bgYRest);
-
         }
     }
 
