@@ -15,11 +15,13 @@ package com.btxtech.game.jsre.client.terrain;
 
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
+import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.widgetideas.graphics.client.ImageLoader;
 import java.util.ArrayList;
@@ -46,12 +48,7 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
     }
 
     public ImageElement getTileImageElement(int tileId) {
-        ImageElement imageElement = terrainTileImageElements.get(tileId);
-        if (imageElement == null) {
-            loadImagesAndDrawMap();
-            return terrainTileImageElements.get(tileId);
-        }
-        return imageElement;
+        return terrainTileImageElements.get(tileId);
     }
 
     public ImageElement getBackgroundImage() {
@@ -65,9 +62,8 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
             public void onImagesLoaded(ImageElement[] imageElements) {
                 try {
                     backgroundImage = imageElements[0];
-                    if (!terrainTileImageElements.isEmpty()) {
-                        fireTerrainChanged();
-                    }
+                    fireTerrainChanged();
+                    ClientUserTracker.getInstance().sandGameStartupState(GameStartupState.CLIENT_MAP_BG_LOADED);
                 } catch (Throwable throwable) {
                     GwtCommon.handleException(throwable);
                 }
@@ -75,7 +71,7 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
         });
     }
 
-    private void loadImagesAndDrawMap() {
+    public void loadImagesAndDrawMap() {
         ArrayList<String> urls = new ArrayList<String>();
         final ArrayList<Integer> ids = new ArrayList<Integer>();
         for (TerrainImagePosition terrainImagePosition : getTerrainImagePositions()) {
@@ -94,6 +90,7 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
                     if (backgroundImage != null) {
                         fireTerrainChanged();
                     }
+                    ClientUserTracker.getInstance().sandGameStartupState(GameStartupState.CLIENT_MAP_IMAGES_LOADED);
                 } catch (Throwable throwable) {
                     GwtCommon.handleException(throwable);
                 }

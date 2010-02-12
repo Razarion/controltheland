@@ -168,6 +168,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
             int relYStart = absolutePos.getY() - viewOriginTop;
             ImageElement imageElement = terrainHandler.getTileImageElement(terrainImagePosition.getImageId());
             if (imageElement == null) {
+                terrainHandler.loadImagesAndDrawMap();
                 continue;
             }
             try {

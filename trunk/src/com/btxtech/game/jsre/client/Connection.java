@@ -41,7 +41,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.Collection;
-import java.util.Date;
 
 /**
  * User: beat
@@ -123,7 +122,7 @@ public class Connection implements AsyncCallback<Void> {
                             }
                         }
                         TerrainView.getInstance().moveToHome();
-                        ClientUserTracker.getInstance().sandGameStartupState(GameStartupState.CLIENT_RUNNING, new Date());
+                        ClientUserTracker.getInstance().sandGameStartupState(GameStartupState.CLIENT_RUNNING);
                         ClientUserGuidance.getInstance().start();
                         timer.schedule(MIN_DELAY_BETWEEN_TICKS);
                     }
