@@ -111,7 +111,7 @@ public class GameTracking extends Panel {
         }
 
         if (mapBgLoaded != null && clientStart != null) {
-            add(new Label("clientDeltaMapBg", WebCommon.getTimeDiff(clientStart.getTimeStamp(), mapBgLoaded)));
+            add(new Label("clientDeltaMapBg", WebCommon.getTimeDiff(clientStart.getClientTimeStamp(), mapBgLoaded)));
         } else {
             add(new Label("clientDeltaMapBg", "?"));
         }
@@ -124,7 +124,7 @@ public class GameTracking extends Panel {
         }
 
         if (mapBgImages != null && clientStart != null) {
-            add(new Label("clientDeltaMapImages", WebCommon.getTimeDiff(clientStart.getTimeStamp(), mapBgImages)));
+            add(new Label("clientDeltaMapImages", WebCommon.getTimeDiff(clientStart.getClientTimeStamp(), mapBgImages)));
         } else {
             add(new Label("clientDeltaMapImages", "?"));
         }
