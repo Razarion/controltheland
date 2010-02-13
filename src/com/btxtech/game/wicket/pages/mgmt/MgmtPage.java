@@ -88,11 +88,12 @@ public class MgmtPage extends WebPage {
         toolPages = new ArrayList<LinkAndName>();
         toolPages.add(new LinkAndName("DB View", DbView.class));
         toolPages.add(new LinkAndName("Log View", LogView.class));
-        toolPages.add(new LinkAndName("Terrain Field Editor", TerrainFieldEditor.class));
+        toolPages.add(new LinkAndName("Map Editor", TerrainFieldEditor.class));
         toolPages.add(new LinkAndName("Terrain Tile Editor", TerrainTileEditor.class));
         toolPages.add(new LinkAndName("Backup/Restore", BackupRestore.class));
         toolPages.add(new LinkAndName("Item Type Editpr", ItemTypeTable.class));
-        toolPages.add(new LinkAndName("Item Type Access Editpr", ItemTypeAccessEntryEditor.class));
+        toolPages.add(new LinkAndName("Market", ItemTypeAccessEntryEditor.class));
         toolPages.add(new LinkAndName("User Tracking", UserTracking.class));
+        toolPages.add(new LinkAndName("Pathfinding", Pathfinding.class));
     }
 }

@@ -11,3 +11,12 @@ DELETE FROM TRACKER_GAME_STARTUP;
 DELETE FROM TRACKER_PAGE_ACCESS;
 DELETE FROM TRACKER_USER_COMMAND;
 DELETE FROM TRACKER_USER_ACTION;
+
+
+MAP
+---
+<mapping class="com.btxtech.game.services.terrain.impl.TerrainFieldTileImpl"/>
+<mapping class="com.btxtech.game.services.terrain.impl.TileImpl"/>
+
+TERRAIN_FIELD
+TERRAIN_TILE

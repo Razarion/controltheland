@@ -17,10 +17,10 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * User: beat
@@ -99,11 +99,32 @@ public class PassableRectangle {
         return getPixelRectangle(dbTerrainSetting).contains(absolueIndex);
     }
 
-    public List<Path> findAllPossiblePassableRectanglePaths(PassableRectangle destinationRect, int fuzzyLimitPaths) {
-        Path path = new Path();
+    public List<Path> findAllPossiblePassableRectanglePaths(PassableRectangle destinationRect, int maxDepth) {
         ArrayList<Path> successfulPaths = new ArrayList<Path>();
+        Set<Path> allPaths = new HashSet<Path>();
+        for (PassableRectangle passableRectangle : neighbors.keySet()) {
+            Path path = new Path();
+            path.add(this);
+            path.add(passableRectangle);
+            allPaths.add(path);
+        }
 
-        askMyNeighborsForPath(destinationRect, path, successfulPaths, fuzzyLimitPaths);
+        // Check level 1
+        checkIfPathIsDest(allPaths, destinationRect, successfulPaths);
+        if (!successfulPaths.isEmpty()) {
+            return successfulPaths;
+        }
+
+        // Check level n+1
+        for (int i = 0; i < maxDepth; i++) {
+            allPaths = getAllNeighbors(allPaths);
+            //System.out.println("Depth: " + i + " to check: " + passableRectanglePathsToCheck.size());
+            checkIfPathIsDest(allPaths, destinationRect, successfulPaths);
+            if (!successfulPaths.isEmpty()) {
+                return successfulPaths;
+            }
+        }
+
 
         if (successfulPaths.isEmpty()) {
             throw new IllegalStateException("Path can not be found");
@@ -111,37 +132,32 @@ public class PassableRectangle {
         return successfulPaths;
     }
 
-    private void askMyNeighborsForPath(PassableRectangle destinationRect, Path path, List<Path> successfulPaths, int fuzzyLimitPaths) {
-        if (path.contains(this)) {
-            // We have already been here
-            return;
-        }
-
-        path.add(this);
-
-        // First see if a neighbor is may the destination
-        Collection<PassableRectangle> neighborsCopy = new ArrayList<PassableRectangle>(neighbors.keySet());
-        Iterator<PassableRectangle> iterator = neighborsCopy.iterator();
-        while (iterator.hasNext()) {
-            PassableRectangle neighbor = iterator.next();
-            if (destinationRect.equals(neighbor)) {
-                Path subPath = path.createSubPath();
-                subPath.add(neighbor);
-                successfulPaths.add(subPath);
-                iterator.remove();
+    private Set<Path> getAllNeighbors(Set<Path> paths) {
+        HashSet<Path> allPaths = new HashSet<Path>();
+        for (Path path : paths) {
+            for (PassableRectangle neighbor : path.getTail().neighbors.keySet()) {
+                Path newPath = path.createSubPath();
+                newPath.add(neighbor);
+                allPaths.add(newPath);
             }
         }
+        return allPaths;
+    }
 
-        if (successfulPaths.size() >= fuzzyLimitPaths) {
-            return;
+    private void checkIfPathIsDest(Set<Path> pathsToCheck, PassableRectangle destinationRect, List<Path> successfulPaths) {
+        // if (path.contains(this)) {
+        // We have already been here
+        //     return;
+        // }
+
+        // path.add(this);
+
+        for (Path path : pathsToCheck) {
+            if (destinationRect.equals(path.getTail())) {
+                successfulPaths.add(path);
+                return;
+            }
         }
-
-        // Ask the remainig neighbors
-        for (PassableRectangle neighbor : neighborsCopy) {
-            Path subPath = path.createSubPath();
-            neighbor.askMyNeighborsForPath(destinationRect, subPath, successfulPaths, fuzzyLimitPaths);
-        }
-
     }
 
 

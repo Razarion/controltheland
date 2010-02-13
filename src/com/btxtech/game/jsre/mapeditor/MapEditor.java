@@ -56,18 +56,18 @@ public class MapEditor implements EntryPoint {
         RadarPanel.getInstance().setRadarState(true);
         RadarPanel.getInstance().updateEnergy(1, 0);
 
-        gameEditor.getEditorInfo(new AsyncCallback<EditorInfo>() {
+        gameEditor.getTerrainInfo(new AsyncCallback<TerrainInfo>() {
             @Override
             public void onFailure(Throwable throwable) {
                 GwtCommon.handleException(throwable);
             }
 
             @Override
-            public void onSuccess(EditorInfo editorInfo) {
-                TerrainView.getInstance().setupTerrain(editorInfo.getTerrainSettings(),
-                        editorInfo.getTerrainImagePositions(),
-                        editorInfo.getTerrainImages());
-                cockpit.setupTerrainImages(editorInfo.getTerrainImages());
+            public void onSuccess(TerrainInfo terrainInfo) {
+                TerrainView.getInstance().setupTerrain(terrainInfo.getTerrainSettings(),
+                        terrainInfo.getTerrainImagePositions(),
+                        terrainInfo.getTerrainImages());
+                cockpit.setupTerrainImages(terrainInfo.getTerrainImages());
             }
         });
 

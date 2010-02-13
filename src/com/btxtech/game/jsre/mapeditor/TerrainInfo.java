@@ -24,7 +24,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
  * Date: 07.02.2010
  * Time: 13:30:32
  */
-public class EditorInfo implements Serializable{
+public class TerrainInfo implements Serializable{
     private TerrainSettings terrainSettings;
     private Collection<TerrainImagePosition> terrainImagePositions;
     private Collection<TerrainImage> terrainImages;

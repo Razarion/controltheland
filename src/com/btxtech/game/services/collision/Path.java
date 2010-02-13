@@ -48,6 +48,9 @@ public class Path {
         return new Path(this);
     }
 
+    public PassableRectangle getTail() {
+       return rectanglePath.get(rectanglePath.size() - 1);
+    }
 
     public List<Rectangle> getAllPassableBorders() {
         PassableRectangle previous = null;

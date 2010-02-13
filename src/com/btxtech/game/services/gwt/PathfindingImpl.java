@@ -13,11 +13,15 @@
 
 package com.btxtech.game.services.gwt;
 
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
+import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
-import com.btxtech.game.jsre.mapeditor.GameEditor;
+import com.btxtech.game.jsre.pathfinding.Pathfinding;
+import com.btxtech.game.services.collision.CollisionService;
+import com.btxtech.game.services.collision.PassableRectangle;
 import com.btxtech.game.services.terrain.TerrainService;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +32,28 @@ import org.springframework.stereotype.Component;
  * Date: Sep 2, 2009
  * Time: 8:32:46 PM
  */
-@Component("terrainEditor")
-public class GameEditoImpl implements GameEditor {
+@Component("pathfinding")
+public class PathfindingImpl implements Pathfinding {
+    @Autowired
+    private CollisionService collisionService;
     @Autowired
     private TerrainService terrainService;
-    private Log log = LogFactory.getLog(GameEditoImpl.class);
+    private Log log = LogFactory.getLog(PathfindingImpl.class);
+
+    @Override
+    public List<Rectangle> getPassableRectangles() {
+        try {
+            ArrayList<Rectangle> rectangles = new ArrayList<Rectangle>();
+            List<PassableRectangle> passableRectangles = collisionService.getPassableRectangles();
+            for (PassableRectangle passableRectangle : passableRectangles) {
+                rectangles.add(passableRectangle.getPixelRectangle(terrainService.getDbTerrainSettings()));
+            }
+            return rectangles;
+        } catch (Throwable t) {
+            log.error("", t);
+            return null;
+        }
+    }
 
     @Override
     public TerrainInfo getTerrainInfo() {
@@ -49,11 +70,14 @@ public class GameEditoImpl implements GameEditor {
     }
 
     @Override
-    public void saveTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions) {
+    public List<Index> findPath(Index start, Index destination) {
         try {
-            terrainService.saveAndActivateTerrainImagePositions(terrainImagePositions);
+            return collisionService.setupPathToDestination(start, destination);
         } catch (Throwable t) {
             log.error("", t);
+            return null;
         }
     }
+
+
 }
