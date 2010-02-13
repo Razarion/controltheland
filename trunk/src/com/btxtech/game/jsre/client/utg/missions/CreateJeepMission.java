@@ -39,6 +39,7 @@ public class CreateJeepMission extends Mission {
         WAITING_FOR_CREATION,
         FINISHED
     }
+
     private SpeechBubble speechBubble;
     private ClientSyncBaseItemView item;
     private Task task;
@@ -71,7 +72,7 @@ public class CreateJeepMission extends Mission {
     }
 
     public void onOwnSelectionChanged(Group selectedGroup) throws MissionAportedException {
-        if (task != Task.WAITING_FOR_SELECTION) {
+        if (task != Task.WAITING_FOR_SELECTION || speechBubble == null) {
             return;
         }
         lastAction = System.currentTimeMillis();
@@ -82,11 +83,11 @@ public class CreateJeepMission extends Mission {
 
         Widget widget = null;
         for (Map.Entry<ItemType, Widget> itemTypeWidgetEntry : Game.cockpitPanel.getBuildupItemPanel().getItemTypesToBuild().entrySet()) {
-            if(itemTypeWidgetEntry.getKey() instanceof BaseItemType && ((BaseItemType)itemTypeWidgetEntry.getKey()).getWeaponType() != null) {
-               widget = itemTypeWidgetEntry.getValue();
+            if (itemTypeWidgetEntry.getKey() instanceof BaseItemType && ((BaseItemType) itemTypeWidgetEntry.getKey()).getWeaponType() != null) {
+                widget = itemTypeWidgetEntry.getValue();
             }
         }
-        if(widget == null) {
+        if (widget == null) {
             throw new MissionAportedException("No Jeep found");
         }
         int x = widget.getAbsoluteLeft() + widget.getOffsetWidth() / 2;
@@ -99,7 +100,9 @@ public class CreateJeepMission extends Mission {
 
     @Override
     public void onExecuteCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
-        speechBubble.close();
+        if (speechBubble != null) {
+            speechBubble.close();
+        }
     }
 
     @Override

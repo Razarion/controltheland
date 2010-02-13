@@ -95,7 +95,7 @@ public class CollectMission extends Mission implements DepositResourceListener {
         if (selectedGroup.isEmpty()) {
             return;
         }
-        if (selectedGroup.contains(factory) && task == Task.WAITING_SELECTION_FACTORY) {
+        if (selectedGroup.contains(factory) && task == Task.WAITING_SELECTION_FACTORY && speechBubble != null) {
             speechBubble.close();
             speechBubble2.close();
             speechBubble2 = null;
@@ -115,7 +115,7 @@ public class CollectMission extends Mission implements DepositResourceListener {
             task = Task.WAITING_HARVESTER_CLICK;
             ClientUserTracker.getInstance().onMissionTask(this, task);
             lastAction = System.currentTimeMillis();
-        } else if (selectedGroup.contains(harvester) && task == Task.WAITING_SELECT_HARVESTER) {
+        } else if (selectedGroup.contains(harvester) && task == Task.WAITING_SELECT_HARVESTER && speechBubble != null) {
             speechBubble.close();
             Connection.getInstance().createMissionMoney(harvester.getSyncBaseItem());
             task = Task.WAITING_CREATE_MONEY;
@@ -126,13 +126,13 @@ public class CollectMission extends Mission implements DepositResourceListener {
 
     @Override
     public void onExecuteCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
-        if (baseCommand instanceof FactoryCommand && task == Task.WAITING_HARVESTER_CLICK) {
+        if (baseCommand instanceof FactoryCommand && task == Task.WAITING_HARVESTER_CLICK && speechBubble != null) {
             lastAction = System.currentTimeMillis();
             task = Task.WAITING_CREATE_HARVESTER;
             ClientUserTracker.getInstance().onMissionTask(this, task);
             speechBubble.close();
             speechBubble = null;
-        } else if (baseCommand instanceof MoneyCollectCommand && task == Task.WAITING_COLLECT_COMMAND) {
+        } else if (baseCommand instanceof MoneyCollectCommand && task == Task.WAITING_COLLECT_COMMAND && speechBubble != null) {
             task = Task.WAITING_COLLECT;
             ClientUserTracker.getInstance().onMissionTask(this, task);
             speechBubble.close();

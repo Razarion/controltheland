@@ -43,6 +43,7 @@
         <servlet-name>gwtrpc-spring-dispatcher</servlet-name>
         <url-pattern>/mapeditor/gwtrpc/*</url-pattern>
         <url-pattern>/game/gwtrpc/*</url-pattern>
+        <url-pattern>/pathfinding/gwtrpc/*</url-pattern>
     </servlet-mapping>
 
     <!-- Spring controller integration -->

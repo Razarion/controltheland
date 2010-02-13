@@ -68,7 +68,7 @@ public class BuildMission extends Mission {
     }
 
     public void onOwnSelectionChanged(Group selectedGroup) {
-        if (task != Task.WAITING_SELECTION) {
+        if (task != Task.WAITING_SELECTION || speechBubble == null) {
             return;
         }
         lastAction = System.currentTimeMillis();
@@ -88,7 +88,7 @@ public class BuildMission extends Mission {
 
     @Override
     public void onExecuteCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
-        if (syncItem.equals(item.getSyncBaseItem())) {
+        if (syncItem.equals(item.getSyncBaseItem()) && speechBubble != null) {
             speechBubble.close();
             speechBubble = null;
         }

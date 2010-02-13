@@ -74,7 +74,7 @@ public class MoveMission extends Mission {
     }
 
     public void onOwnSelectionChanged(Group selectedGroup) {
-        if (task != Task.WAITING_FOR_SELECTION) {
+        if (task != Task.WAITING_FOR_SELECTION || speechBubble == null) {
             return;
         }
         lastAction = System.currentTimeMillis();
