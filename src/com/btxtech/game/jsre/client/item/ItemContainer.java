@@ -80,7 +80,7 @@ public class ItemContainer extends AbstractItemService {
                     long insertTime = entry.getKey().getUserTimeStamp();
                     if (insertTime + CLEANUP_INTERVALL < System.currentTimeMillis()) {
                         it.remove();
-                        GwtCommon.sendLogToServer("Dead item removed due timeout: " + entry.getValue());
+                        GwtCommon.sendLogToServer("Can not definitely kill item due to missing ack from server: " + entry.getValue());
                     }
 
                 }
