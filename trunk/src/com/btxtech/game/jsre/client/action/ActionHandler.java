@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.action;
 
+import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
@@ -91,7 +92,9 @@ public class ActionHandler {
                 } catch (InsufficientFundsException ife) {
                     iterator.remove();
                     activeItem.stop();
-                    MessageDialog.show("Insufficient Money!", "You do not have enough money. You have to Collect more money");
+                    if (ClientBase.getInstance().isMyOwnProperty(activeItem)) {
+                        MessageDialog.show("Insufficient Money!", "You do not have enough money. You have to Collect more money");
+                    }
                 } catch (Throwable throwable) {
                     GwtCommon.handleException(throwable);
                     activeItem.stop();
