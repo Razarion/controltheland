@@ -39,6 +39,7 @@ public class DbUserAction implements Serializable {
     private Date clientTimeStamp;
     @Column(nullable = false)
     private String type;
+    @Column(length = 1000)
     private String additionalString;
     private Date clientTimeStampLast;
     private String additionalStringLast;
