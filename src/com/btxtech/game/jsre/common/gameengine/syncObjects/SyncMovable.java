@@ -96,7 +96,7 @@ public class SyncMovable extends SyncBaseAbility {
     }
 
     private int getSpeed(double factor) {
-        return (int) (movableType.getSpeed() * factor);
+        return (int) Math.round(movableType.getSpeed() * factor);
     }
 
     public void tickMoveToTarget(double factor, int range, Index target) {
