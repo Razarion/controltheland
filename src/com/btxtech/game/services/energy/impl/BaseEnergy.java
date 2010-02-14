@@ -54,6 +54,7 @@ public class BaseEnergy {
     public void consumerActivated(SyncConsumer syncConsumer) {
         syncConsumers.add(syncConsumer);
         recalculateConsumption();
+        syncConsumer.setOperationState(hasEnoughPower(generating, consuming));
     }
 
     public void consumerDeactivated(SyncConsumer syncConsumer) {
