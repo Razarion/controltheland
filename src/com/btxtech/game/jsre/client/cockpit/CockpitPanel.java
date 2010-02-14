@@ -13,10 +13,12 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
-import com.btxtech.game.jsre.client.ClientSyncItemView;
-import com.btxtech.game.jsre.client.TopMapPanel;
 import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
+import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.ClientSyncResourceItemView;
+import com.btxtech.game.jsre.client.Game;
+import com.btxtech.game.jsre.client.TopMapPanel;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -62,9 +64,17 @@ public class CockpitPanel extends TopMapPanel implements SelectionListener {
             builder.append("This item belongs to <b>");
             builder.append(((ClientSyncBaseItemView) selection).getSyncBaseItem().getBase().getName());
             builder.append("</b>. This is your enemy!<br/></b>Attack it!</b>");
+            if (Game.isDebug()) {
+                builder.append("<br/>ID: ");
+                builder.append(selection.getSyncItem().getId());
+            }
             setupDescrBox(builder.toString());
         } else if (selection instanceof ClientSyncResourceItemView) {
-            setupDescrBox(selection.getSyncItem().getItemType().getDescription());
+            if (Game.isDebug()) {
+                setupDescrBox(selection.getSyncItem().getItemType().getDescription() + "<br/>ID: " + selection.getSyncItem().getId());
+            } else {
+                setupDescrBox(selection.getSyncItem().getItemType().getDescription());
+            }
         } else {
             throw new IllegalArgumentException(this + " can not set details for: " + selection);
         }
@@ -74,6 +84,12 @@ public class CockpitPanel extends TopMapPanel implements SelectionListener {
     public void onOwnSelectionChanged(Group selectedGroup) {
         detailPanel.clear();
         if (selectedGroup.count() == 1) {
+            if (Game.isDebug()) {
+                SyncItem syncItem = selectedGroup.getFirst().getSyncItem();
+                setupDescrBox(syncItem.getItemType().getDescription() + "<br/>ID: " + syncItem.getId());
+            } else {
+                setupDescrBox(selectedGroup.getFirst().getSyncItem().getItemType().getDescription());
+            }
             setupDescrBox(selectedGroup.getFirst().getSyncItem().getItemType().getDescription());
         } else if (selectedGroup.canAttack()) {
             setupDescrBox(selectedGroup.getFirst().getSyncItem().getItemType().getDescription());
