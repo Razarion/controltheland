@@ -58,13 +58,15 @@ public class TerrainImageController implements Controller {
 
             if (imageData == null || imageContentType == null) {
                 httpServletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST);
-            return null;
-        }
+                return null;
+            }
             httpServletResponse.setContentLength(imageData.length);
             httpServletResponse.setContentType(imageContentType);
             OutputStream out = httpServletResponse.getOutputStream();
             out.write(imageData);
             out.close();
+        } catch (IOException e) {
+            // Connection lost -> ignore
         } catch (Exception e) {
             log.error("", e);
             handleBadRequest(httpServletResponse);
