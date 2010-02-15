@@ -391,6 +391,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
             return singleIndex;
         }
 
+        long time = System.currentTimeMillis();
         List<Path> allPaths = atomStartRect.findAllPossiblePassableRectanglePaths(atomDestRect, 1000);
         int minDistance = Integer.MAX_VALUE;
         List<Index> bestSelection = null;
@@ -407,8 +408,12 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
             }
         }
 
+        if(System.currentTimeMillis() - time > 1000) {
+            log.fatal("Pathfinding took: " + (System.currentTimeMillis() - time) + "ms start: " + start + " destination: " + destination);
+        }
+
         if (bestSelection == null) {
-            throw new IllegalArgumentException("Unable get best way");
+            throw new IllegalArgumentException("Unable get best way: start: " + start + " destination: " + destination);
         }
         bestSelection.add(destination);
         return bestSelection;
