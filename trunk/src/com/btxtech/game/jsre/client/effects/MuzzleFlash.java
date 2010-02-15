@@ -41,7 +41,6 @@ public class MuzzleFlash {
     private Index normCenter;
     private GWTCanvas canvas;
     private ClientSyncBaseItemView clientSyncBaseItemView;
-    private int distance;
     private double angel;
     private long time;
 
@@ -51,20 +50,29 @@ public class MuzzleFlash {
         SoundHandler.playMuzzleFlashSound(clientSyncBaseItemView.getSyncBaseItem().getBaseItemType());
         Index center = getAbsoluteStartPoint(clientSyncBaseItemView);
         WeaponType weaponType = clientSyncBaseItemView.getSyncBaseItem().getSyncWaepon().getWeaponType();
-        Rectangle rectangle;
+        int x;
+        int y;
+        int width;
+        int height;
+
         if (weaponType.stretchMuzzleFlashToTarget()) {
             SyncItem target = ItemContainer.getInstance().getItem(clientSyncBaseItemView.getSyncBaseItem().getSyncWaepon().getTarget());
-            distance = target.getPosition().getDistance(center);
-            rectangle = new Rectangle((int) (center.getX() - Math.round(weaponType.getMuzzleFlashWidth() / 2.0)),
-                    center.getY() - distance,
-                    weaponType.getMuzzleFlashWidth(),
-                    distance);
+            int distance = target.getPosition().getDistance(center);
+            x = (int) (center.getX() - Math.round(weaponType.getMuzzleFlashWidth() / 2.0));
+            y = center.getY() - distance;
+            width = weaponType.getMuzzleFlashWidth();
+            height = distance;
         } else {
-            rectangle = new Rectangle((int) (center.getX() - Math.round(weaponType.getMuzzleFlashWidth() / 2.0)),
-                    center.getY() - weaponType.getMuzzleFlashLength(),
-                    weaponType.getMuzzleFlashWidth(),
-                    weaponType.getMuzzleFlashLength());
+            x = (int) (center.getX() - Math.round(weaponType.getMuzzleFlashWidth() / 2.0));
+            y = center.getY() - weaponType.getMuzzleFlashLength();
+            width = weaponType.getMuzzleFlashWidth();
+            height = weaponType.getMuzzleFlashLength();
         }
+        if (x < 0 || y < 0 || width < 0 || height < 0) {
+            return;
+        }
+
+        Rectangle rectangle = new Rectangle(x, y, width, height);
         rectangle = rectangle.getSurroundedRectangle(center, angel);
         canvas = new GWTCanvas(rectangle.getWidth(), rectangle.getHeight());
         MapWindow.getAbsolutePanel().add(canvas,
@@ -117,7 +125,6 @@ public class MuzzleFlash {
             y = y + ellipseMiddle.getY() - baseItemType.getHeight() / 2 + clientSyncBaseItemView.getSyncItem().getPosition().getY();
             Index index = new Index(x, y);
             angel = index.getAngleToNord(target.getPosition());
-            //displayOval(x,y,a,b, tmpAngel);
             return index;
         } else {
             int x = baseItemType.getWeaponType().getMuzzlePointX_0() - baseItemType.getWidth() / 2 + clientSyncBaseItemView.getSyncItem().getPosition().getX();
@@ -130,46 +137,11 @@ public class MuzzleFlash {
     }
 
     public void dispose() {
-        MapWindow.getAbsolutePanel().remove(canvas);
+        if (canvas != null) {
+            MapWindow.getAbsolutePanel().remove(canvas);
+        }
     }
 
-   /*    private void displayOval(int middleX, int intMiddleY, int a, int b, double angel) {
-        final int CROSS_HALF = 3;
-        GWTCanvas oval = new GWTCanvas(2 * a, 2 * b);
-        int rSmall = Math.min(a, b);
-        int rBig = Math.max(a, b);
-        MapWindow.getAbsolutePanel().add(oval, middleX - a - TerrainView.getInstance().getViewOriginLeft(), intMiddleY - b- TerrainView.getInstance().getViewOriginTop());
-        //oval.getElement().getStyle().setZIndex(Constants.Z_INDEX_MUZZLE_FLASH + 1);
-        //oval.setLineWidth(1);
-        //oval.setStrokeStyle(Color.RED);
-        oval.beginPath();
-        // Cross
-        //makeCorss(a, b, CROSS_HALF, oval);
-        // Border
-        //oval.moveTo(0, 0);
-        //oval.lineTo(2 * a - 1, 0);
-        //oval.lineTo(2 * a - 1, 2 * b - 1);
-        //oval.lineTo(0, 2 * b - 1);
-        //oval.lineTo(0, 0);
-        // Oval
-        oval.scale((double) a / (double) rBig, (double) b / (double) rBig);
-        oval.arc((double) a * rBig / (double) a, (double) b * rBig / (double) b, rBig, 0, Math.PI * 2, true);
-        int x = a + (int) (a * Math.cos(-angel));
-        int y = b + (int) (b * Math.sin(-angel));
-        System.out.println("angel: " + angel + " x:" + x + " y:" + y + " Math.cos(angel): " + Math.cos(angel) + " Math.sin(angel): " + Math.sin(angel));
-        makeCorss(x, y, CROSS_HALF, oval);
-
-
-        oval.stroke();
-    }
-
-    private void makeCorss(int a, int b, int CROSS_HALF, GWTCanvas oval) {
-        oval.moveTo(a - CROSS_HALF, b);
-        oval.lineTo(a + CROSS_HALF, b);
-        oval.moveTo(a, b - CROSS_HALF);
-        oval.lineTo(a, b + CROSS_HALF);
-    }*/
-    
     public boolean isTimeUp() {
         return System.currentTimeMillis() >= time + MILIS_SHOW_TIME;
     }
