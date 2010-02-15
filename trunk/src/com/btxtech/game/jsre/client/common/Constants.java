@@ -53,7 +53,7 @@ public class Constants {
 
     // Financial
     public static final int START_MONEY = 50000;
-    public static final int MONEY_STACK_COUNT = 5;
+    public static final int MONEY_STACK_COUNT = 8;
 
     // Distances
     public static final int MIN_FREE_MONEY_DISTANCE = 100;
