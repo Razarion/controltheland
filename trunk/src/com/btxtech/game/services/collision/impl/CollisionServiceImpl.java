@@ -408,7 +408,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
             }
         }
 
-        if(System.currentTimeMillis() - time > 1000) {
+        if(System.currentTimeMillis() - time > 500) {
             log.fatal("Pathfinding took: " + (System.currentTimeMillis() - time) + "ms start: " + start + " destination: " + destination);
         }
 
