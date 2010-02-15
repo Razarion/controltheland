@@ -99,8 +99,9 @@ public class ItemContainer extends AbstractItemService {
                 checkSpecialAdded(clientSyncItemView);
             } else {
                 // Check for  Teleportation effect
-                if (clientSyncItemView.getSyncItem().getPosition().getDistance(syncItemInfo.getPosition()) > 100) {
-                    GwtCommon.sendLogToServer("Teleportation detected. Info:" + syncItemInfo + " | Item:" + clientSyncItemView.getSyncItem());
+                int distance = clientSyncItemView.getSyncItem().getPosition().getDistance(syncItemInfo.getPosition());
+                if (distance > 100) {
+                    GwtCommon.sendLogToServer("Teleportation detected. Distance: " + distance + " Info:" + syncItemInfo + " | Item:" + clientSyncItemView.getSyncItem());
                 }
                 ClientSyncItemView orphanItem = orphanItems.remove(clientSyncItemView.getSyncItem().getId());
                 if (orphanItem != null) {
