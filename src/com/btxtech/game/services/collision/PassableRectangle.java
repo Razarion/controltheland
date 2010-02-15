@@ -109,20 +109,13 @@ public class PassableRectangle {
             allPaths.add(path);
         }
 
-        // Check level 1
-        checkIfPathIsDest(allPaths, destinationRect, successfulPaths);
-        if (!successfulPaths.isEmpty()) {
-            return successfulPaths;
-        }
-
-        // Check level n+1
+        // Check level 
         for (int i = 0; i < maxDepth; i++) {
-            allPaths = getAllNeighbors(allPaths);
-            //System.out.println("Depth: " + i + " to check: " + passableRectanglePathsToCheck.size());
             checkIfPathIsDest(allPaths, destinationRect, successfulPaths);
             if (!successfulPaths.isEmpty()) {
                 return successfulPaths;
             }
+            allPaths = getAllNeighbors(allPaths);
         }
 
 
@@ -136,6 +129,9 @@ public class PassableRectangle {
         HashSet<Path> allPaths = new HashSet<Path>();
         for (Path path : paths) {
             for (PassableRectangle neighbor : path.getTail().neighbors.keySet()) {
+                if(path.contains(neighbor)) {
+                    continue;
+                }
                 Path newPath = path.createSubPath();
                 newPath.add(neighbor);
                 allPaths.add(newPath);
@@ -145,13 +141,6 @@ public class PassableRectangle {
     }
 
     private void checkIfPathIsDest(Set<Path> pathsToCheck, PassableRectangle destinationRect, List<Path> successfulPaths) {
-        // if (path.contains(this)) {
-        // We have already been here
-        //     return;
-        // }
-
-        // path.add(this);
-
         for (Path path : pathsToCheck) {
             if (destinationRect.equals(path.getTail())) {
                 successfulPaths.add(path);
