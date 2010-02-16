@@ -238,7 +238,7 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
 
     }
 
-    public Index getAbsoluteFreeTerrainInRegion(Index absolutePos, int targetMinRange, int targetMaxRange) {
+    public Index getAbsoluteFreeTerrainInRegion(Index absolutePos, int targetMinRange, int targetMaxRange, int edgeLength) {
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
             int x;
             int y;
@@ -252,10 +252,10 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
             } else {
                 y = absolutePos.getY() - targetMinRange - Random.nextInt(targetMaxRange - targetMinRange);
             }
-            if (x < 0 || y < 0) {
+            if (x - edgeLength / 2 < 0 || y - edgeLength / 2 < 0) {
                 continue;
             }
-            if (x > terrainSettings.getPlayFieldXSize() || y > terrainSettings.getPlayFieldYSize()) {
+            if (x + edgeLength / 2 > terrainSettings.getPlayFieldXSize() || y + edgeLength / 2 > terrainSettings.getPlayFieldYSize()) {
                 continue;
             }
 
@@ -263,7 +263,7 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
             if (!isTerrainPassable(point)) {
                 continue;
             }
-            Rectangle itemRectangle = new Rectangle(x - 50, y - 50, 100, 100);
+            Rectangle itemRectangle = new Rectangle(x - edgeLength / 2, y - edgeLength / 2, edgeLength, edgeLength);
             if (!ItemContainer.getInstance().getItemsInRect(itemRectangle, false).isEmpty()) {
                 continue;
             }
