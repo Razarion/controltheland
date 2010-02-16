@@ -82,7 +82,7 @@ public class MoveMission extends Mission {
         task = Task.WAITING_FOR_TERRAIN_CLICK;
         ClientUserTracker.getInstance().onMissionTask(this, task);
         speechBubble.close();
-        Index absPos = TerrainView.getInstance().getTerrainHandler().getAbsoluteFreeTerrainInRegion(item.getSyncItem().getPosition(), MIN_RADIUS, MAX_RADIUS);
+        Index absPos = TerrainView.getInstance().getTerrainHandler().getAbsoluteFreeTerrainInRegion(item.getSyncItem().getPosition(), MIN_RADIUS, MAX_RADIUS, 100);
         speechBubble = new SpeechBubble(absPos.getX() - TerrainView.getInstance().getViewOriginLeft(),
                 absPos.getY() - TerrainView.getInstance().getViewOriginTop(),
                 HtmlConstants.MOVE_HTML2, false);
