@@ -39,6 +39,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.Collection;
 
@@ -77,7 +78,11 @@ public class Connection implements AsyncCallback<Void> {
             @Override
             public void onSuccess(GameInfo gameInfo) {
                 try {
-                    setupGameStructure(gameInfo);
+                    if (gameInfo != null) {
+                        setupGameStructure(gameInfo);
+                    } else {
+                        Window.Location.assign("/");
+                    }
                 } catch (Throwable throwable) {
                     GwtCommon.handleException(throwable);
                 }
