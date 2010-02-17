@@ -219,6 +219,20 @@ public class ItemContainer extends AbstractItemService {
         return clientBaseItems;
     }
 
+    public boolean hasBuildingsInRect(Rectangle rectangle) {
+        for (ClientSyncItemView syncItemView : items.values()) {
+            if (syncItemView instanceof ClientSyncBaseItemView &&
+                    !orphanItems.containsKey(syncItemView.getSyncItem().getId()) &&
+                    !deadItems.containsKey(syncItemView.getSyncItem().getId()) &&
+                    !((ClientSyncBaseItemView)syncItemView).getSyncBaseItem().hasSyncMovable() &&
+                    rectangle.adjoins(syncItemView.getSyncItem().getRectangle())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
     public Collection<ClientSyncBaseItemView> getOwnItems() {
         ArrayList<ClientSyncBaseItemView> clientBaseItems = new ArrayList<ClientSyncBaseItemView>();
         for (ClientSyncItemView clientBaseItem : items.values()) {
