@@ -14,9 +14,9 @@
 package com.btxtech.game.services.itemTypeAccess.impl;
 
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccessSyncInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccessSyncInfo;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.ConnectionService;
@@ -24,6 +24,7 @@ import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.itemTypeAccess.ItemTypeAccessEntry;
 import com.btxtech.game.services.itemTypeAccess.ServerItemTypeAccessService;
+import com.btxtech.game.services.itemTypeAccess.XpSettings;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import java.sql.SQLException;
@@ -51,9 +52,7 @@ import org.springframework.stereotype.Component;
  * Time: 21:11:36
  */
 @Component("serverItemTypeAccess")
-public class ServerItemTypeAccessServiceImpl extends TimerTask implements ServerItemTypeAccessService {
-    private static final long TICK_TIME_MILI_SECONDS_POINT_DISPATCHING = 10 * 60 *1000;
-    private static final double POINT_DISPATCHING_FACTOR = 0.001;
+public class ServerItemTypeAccessServiceImpl implements ServerItemTypeAccessService {
     @Autowired
     private BaseService baseService;
     @Autowired
@@ -66,18 +65,41 @@ public class ServerItemTypeAccessServiceImpl extends TimerTask implements Server
     private ConnectionService connectionService;
     private HibernateTemplate hibernateTemplate;
     private Timer timer;
+    private XpSettings xpSettings;
     private Log log = LogFactory.getLog(ServerItemTypeAccessServiceImpl.class);
 
     @PostConstruct
     public void start() {
-        timer = new Timer(getClass().getName(), true);
-        timer.scheduleAtFixedRate(this, TICK_TIME_MILI_SECONDS_POINT_DISPATCHING, TICK_TIME_MILI_SECONDS_POINT_DISPATCHING);
+        stop();
+        loadXpPointSettings();
+        if (xpSettings.getPeriodMilliSeconds() > 0) {
+            timer = new Timer(getClass().getName(), true);
+            timer.scheduleAtFixedRate(new XpPeriodTask(), xpSettings.getPeriodMilliSeconds(), xpSettings.getPeriodMilliSeconds());
+        }
+    }
+
+    private void loadXpPointSettings() {
+        List<XpSettings> settings = hibernateTemplate.loadAll(XpSettings.class);
+        if (settings.isEmpty()) {
+            log.warn("No XpSettings found in DB. Will be created.");
+            xpSettings = new XpSettings();
+            xpSettings.setKillPriceFactor(0.1);
+            xpSettings.setPeriodItemFactor(0.001);
+            xpSettings.setPeriodMinutes(10);
+            hibernateTemplate.saveOrUpdate(xpSettings);
+        } else if (settings.size() != 1) {
+            log.warn("More then one XpSettings found in DB.");
+            xpSettings = settings.get(0);
+        } else {
+            xpSettings = settings.get(0);
+        }
     }
 
     @PreDestroy
     public void stop() {
         if (timer != null) {
             timer.cancel();
+            timer = null;
         }
     }
 
@@ -107,7 +129,7 @@ public class ServerItemTypeAccessServiceImpl extends TimerTask implements Server
             baseService.sendPackage(itemTypeAccessSyncInfo);
             baseService.sendXpUpdate(userItemTypeAccess, baseService.getBase());
         }
-        if(userItemTypeAccess.isPersistent()) {
+        if (userItemTypeAccess.isPersistent()) {
             hibernateTemplate.saveOrUpdate(userItemTypeAccess);
         }
     }
@@ -188,21 +210,6 @@ public class ServerItemTypeAccessServiceImpl extends TimerTask implements Server
         return getUserItemTypeAccess().getXp();
     }
 
-    @Override
-    public void run() {
-        List<SyncItem> syncItems = itemService.getItemsCopyNoDummies();
-        for (SyncItem syncItem : syncItems) {
-            if (syncItem instanceof SyncBaseItem) {
-                SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
-                try {
-                    increaseXpPerItem(syncBaseItem);
-                } catch (Exception e) {
-                    log.error("", e);
-                }
-            }
-        }
-    }
-
     private void increaseXpPerItem(SyncBaseItem syncBaseItem) {
         SimpleBase simpleBase = syncBaseItem.getBase();
         Base base = baseService.getBase(simpleBase);
@@ -212,10 +219,10 @@ public class ServerItemTypeAccessServiceImpl extends TimerTask implements Server
 
         UserItemTypeAccess userItemTypeAccess = getUserItemTypeAccess4Base(base);
         if (userItemTypeAccess != null) {
-            if(userItemTypeAccess.isPersistent()) {
-               hibernateTemplate.refresh(userItemTypeAccess);
+            if (userItemTypeAccess.isPersistent()) {
+                hibernateTemplate.refresh(userItemTypeAccess);
             }
-            increaseXp((int) (syncBaseItem.getBaseItemType().getPrice() * POINT_DISPATCHING_FACTOR), userItemTypeAccess, base);
+            increaseXp((int) (syncBaseItem.getBaseItemType().getPrice() * xpSettings.getPeriodItemFactor()), userItemTypeAccess, base);
         }
     }
 
@@ -230,7 +237,7 @@ public class ServerItemTypeAccessServiceImpl extends TimerTask implements Server
     @Override
     public void increaseXp(Base actorBase, SyncBaseItem syncBaseItem) {
         if (actorBase.getUserItemTypeAccess() != null && !actorBase.isAbandoned()) {
-            increaseXp(syncBaseItem.getBaseItemType().getPrice(), actorBase.getUserItemTypeAccess(), actorBase);
+            increaseXp((int) (syncBaseItem.getBaseItemType().getPrice() * xpSettings.getKillPriceFactor()), actorBase.getUserItemTypeAccess(), actorBase);
         }
     }
 
@@ -249,5 +256,35 @@ public class ServerItemTypeAccessServiceImpl extends TimerTask implements Server
     @Override
     public void clearSession() {
         session.setUserItemTypeAccess(null);
+    }
+
+    public XpSettings getXpPointSettings() {
+        try {
+            return (XpSettings) xpSettings.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void saveXpPointSettings(XpSettings xpSettings) {
+        hibernateTemplate.saveOrUpdate(xpSettings);
+        start();
+    }
+
+    class XpPeriodTask extends TimerTask {
+        @Override
+        public void run() {
+            List<SyncItem> syncItems = itemService.getItemsCopyNoDummies();
+            for (SyncItem syncItem : syncItems) {
+                if (syncItem instanceof SyncBaseItem) {
+                    SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
+                    try {
+                        increaseXpPerItem(syncBaseItem);
+                    } catch (Exception e) {
+                        log.error("", e);
+                    }
+                }
+            }
+        }
     }
 }
