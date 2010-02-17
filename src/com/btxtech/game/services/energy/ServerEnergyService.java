@@ -16,6 +16,7 @@ package com.btxtech.game.services.energy;
 import com.btxtech.game.jsre.common.gameengine.services.energy.EnergyService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.services.base.Base;
 import java.util.Collection;
 
@@ -32,4 +33,8 @@ public interface ServerEnergyService extends EnergyService {
     void restoreItems(Collection<SyncItem> syncItems);
 
     void pauseService(boolean pause);
+
+    int getConsuming(SimpleBase simpleBase);
+
+    int getGenerating(SimpleBase simpleBase);
 }

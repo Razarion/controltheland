@@ -169,7 +169,15 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public void killBaseSyncObject(SyncItem syncItem, SyncBaseItem actor) {
+    public void killBaseSyncObject(SyncItem syncItem, SyncBaseItem actor, boolean force) {
+        if(force) {
+            if(syncItem instanceof SyncBaseItem) {
+                ((SyncBaseItem)syncItem).setHealth(0);
+            } else if(syncItem instanceof SyncResourceItem) {
+                ((SyncResourceItem)syncItem).setAmount(0);
+            }
+        }
+
         if (syncItem.isAlive()) {
             throw new IllegalStateException("SyncItem is still alive: " + syncItem);
         }
@@ -184,11 +192,13 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
         if (syncItem instanceof SyncBaseItem) {
             actionService.removeGuardingBaseItem((SyncBaseItem) syncItem);
-            historyService.addHistoryElement(new DestroyedElement(actor, (SyncBaseItem) syncItem));
+            if (actor != null) {
+                historyService.addHistoryElement(new DestroyedElement(actor, (SyncBaseItem) syncItem));
+                Base actorBase = baseService.getBase(actor);
+                actorBase.increaseKills();
+                serverItemTypeAccessService.increaseXp(actorBase, (SyncBaseItem) syncItem);
+            }
             baseService.itemDeleted((SyncBaseItem) syncItem, actor);
-            Base actorBase = baseService.getBase(actor);
-            actorBase.increaseKills();
-            serverItemTypeAccessService.increaseXp(actorBase, (SyncBaseItem) syncItem);
             serverEnergyService.onBaseItemKilled((SyncBaseItem) syncItem);
         }
 

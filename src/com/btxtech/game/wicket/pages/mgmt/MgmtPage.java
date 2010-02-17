@@ -95,5 +95,6 @@ public class MgmtPage extends WebPage {
         toolPages.add(new LinkAndName("Market", ItemTypeAccessEntryEditor.class));
         toolPages.add(new LinkAndName("User Tracking", UserTracking.class));
         toolPages.add(new LinkAndName("Pathfinding", Pathfinding.class));
+        toolPages.add(new LinkAndName("Bases", BasesTable.class));
     }
 }

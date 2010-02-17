@@ -153,7 +153,7 @@ public class ItemContainer extends AbstractItemService {
     }
 
     @Override
-    public void killBaseSyncObject(SyncItem syncItem, SyncBaseItem actor) {
+    public void killBaseSyncObject(SyncItem syncItem, SyncBaseItem actor, boolean force) {
         ClientSyncItemView clientSyncItemView = items.get(syncItem.getId());
         if (items.containsKey(syncItem.getId())) {
             deadItems.put(syncItem.getId(), clientSyncItemView);
