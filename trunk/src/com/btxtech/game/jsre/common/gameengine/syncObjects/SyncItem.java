@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -55,7 +56,7 @@ public abstract class SyncItem {
         syncItemInfo.setId(id);
         syncItemInfo.setPosition(position);
         syncItemInfo.setItemTypeId(itemType.getId());
-        syncItemInfo.setAlive(isAlive());        
+        syncItemInfo.setAlive(isAlive());
         return syncItemInfo;
     }
 
@@ -100,6 +101,13 @@ public abstract class SyncItem {
 
     public SyncTurnable getSyncTurnable() {
         return null;
+    }
+
+    public Rectangle getRectangle() {
+        return new Rectangle(position.getX() - itemType.getWidth() / 2,
+                position.getY() - itemType.getHeight() / 2,
+                itemType.getWidth(),
+                itemType.getHeight());
     }
 
     @Override

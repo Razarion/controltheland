@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.Game;
+import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
@@ -71,6 +72,7 @@ public class PlaceablePreviewSyncItem extends PlaceablePreviewWidget {
 
     @Override
     protected boolean allowedToPlace(int relX, int relY) {
+        // Check if over cockpit
         Rectangle rectangle = new Rectangle(Game.cockpitPanel.getAbsoluteLeft(),
                 Game.cockpitPanel.getAbsoluteTop(),
                 Game.cockpitPanel.getOffsetWidth(),
@@ -79,13 +81,20 @@ public class PlaceablePreviewSyncItem extends PlaceablePreviewWidget {
             return false;
         }
 
+        // Check terrain
         int absX = relX + TerrainView.getInstance().getViewOriginLeft();
         int absY = relY + TerrainView.getInstance().getViewOriginTop();
         if (absX < 0 || absY < 0) {
             return false;
         }
-        absX += itemTypeToBuilt.getWidth() / 2;
-        absY += itemTypeToBuilt.getHeight() / 2;
-        return ClientServices.getInstance().getTerrainService().isFree(new Index(absX, absY), itemTypeToBuilt);
+        int terrainX = absX + itemTypeToBuilt.getWidth() / 2;
+        int terrainY =absY + itemTypeToBuilt.getHeight() / 2;
+        if (!ClientServices.getInstance().getTerrainService().isFree(new Index(terrainX, terrainY), itemTypeToBuilt)) {
+            return false;
+        }
+
+        // Check items
+        Rectangle itemRect = new Rectangle(absX, absY, itemTypeToBuilt.getWidth(), itemTypeToBuilt.getHeight());
+        return ItemContainer.getInstance().hasBuildingsInRect(itemRect);
     }
 }
