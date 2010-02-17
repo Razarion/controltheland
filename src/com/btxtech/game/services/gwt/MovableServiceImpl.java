@@ -143,10 +143,12 @@ public class MovableServiceImpl implements MovableService {
             gameInfo.setTerrainImagePositions(terrainService.getTerrainImagePositions());
             gameInfo.setTerrainImages(terrainService.getTerrainImages());
             return gameInfo;
+        } catch (com.btxtech.game.services.connection.NoConnectionException t) {
+            log.error(t.getMessage() + " SessionId: " + t.getSessionId());
         } catch (Throwable t) {
             log.error("", t);
-            return null;
         }
+        return null;
     }
 
 

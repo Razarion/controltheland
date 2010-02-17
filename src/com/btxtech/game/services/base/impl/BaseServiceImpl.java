@@ -32,6 +32,7 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.ConnectionService;
+import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.energy.impl.BaseEnergy;
@@ -48,6 +49,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -55,7 +57,6 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
-import javax.annotation.PostConstruct;
 
 /**
  * User: beat
@@ -167,11 +168,11 @@ public class BaseServiceImpl implements BaseService {
     public Base getBase() {
         Connection connection = session.getConnection();
         if (connection == null) {
-            throw new IllegalStateException("No connection sessionId: " + session.getSessionId());
+            throw new NoConnectionException("No connection", session.getSessionId());
         }
         Base base = connection.getBase();
         if (base == null) {
-            throw new IllegalStateException("Base does not exist sessionId: " + session.getSessionId());
+            throw new NoConnectionException("Base does not exist", session.getSessionId());
         }
         return base;
     }
@@ -364,7 +365,7 @@ public class BaseServiceImpl implements BaseService {
     public List<SimpleBase> getSimpleBases() {
         ArrayList<SimpleBase> simpleBases = new ArrayList<SimpleBase>();
         for (Base base : bases.values()) {
-           simpleBases.add(base.getSimpleBase()); 
+            simpleBases.add(base.getSimpleBase());
         }
         return simpleBases;
     }
