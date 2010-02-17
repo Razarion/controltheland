@@ -45,4 +45,8 @@ public interface ServerItemTypeAccessService extends ItemTypeAccess {
     int getXp();
 
     void buy(ItemTypeAccessEntry itemTypeAccessEntry);
+
+    XpSettings getXpPointSettings();
+
+    void saveXpPointSettings(XpSettings xpSettings);
 }
