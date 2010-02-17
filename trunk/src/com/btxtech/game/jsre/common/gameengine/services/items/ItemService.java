@@ -33,7 +33,7 @@ import java.util.Collection;
 public interface ItemService {
     SyncItem getItem(Id id) throws ItemDoesNotExistException;
 
-    void killBaseSyncObject(SyncItem syncItem, SyncBaseItem actor);
+    void killBaseSyncObject(SyncItem syncItem, SyncBaseItem actor, boolean force);
 
     SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws NoSuchItemTypeException;
 

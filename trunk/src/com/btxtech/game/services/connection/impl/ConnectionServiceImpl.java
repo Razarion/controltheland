@@ -16,6 +16,7 @@ package com.btxtech.game.services.connection.impl;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
@@ -25,6 +26,7 @@ import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.ConnectionStatistics;
 import com.btxtech.game.services.connection.Session;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -86,6 +88,14 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
             }
         }
     }
+
+    @Override
+    public void sendSyncInfos(Collection<SyncBaseItem> syncItem) {
+        for (SyncItem item : syncItem) {
+           sendSyncInfo(item);
+        }
+    }
+
 
     @Override
     public void sendPacket(SimpleBase base, Packet packet) {

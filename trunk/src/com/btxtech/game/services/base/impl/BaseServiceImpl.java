@@ -275,7 +275,9 @@ public class BaseServiceImpl implements BaseService {
         if (!base.hasItems()) {
             historyService.addHistoryElement(new BaseHasBeenDefeated(base.getSimpleBase()));
             if (!base.getSimpleBase().equals(dummyBase.getSimpleBase())) {
-                sendDefeatedMessage(syncItem, actor);
+                if (actor != null) {
+                    sendDefeatedMessage(syncItem, actor);
+                }
                 deleteBase(base);
             }
         }
@@ -359,6 +361,15 @@ public class BaseServiceImpl implements BaseService {
     }
 
     @Override
+    public List<SimpleBase> getSimpleBases() {
+        ArrayList<SimpleBase> simpleBases = new ArrayList<SimpleBase>();
+        for (Base base : bases.values()) {
+           simpleBases.add(base.getSimpleBase()); 
+        }
+        return simpleBases;
+    }
+
+    @Override
     public void restoreBases(Collection<Base> newBases) {
         synchronized (bases) {
             bases.clear();
@@ -380,4 +391,5 @@ public class BaseServiceImpl implements BaseService {
     public void withdrawalMoney(int price, SimpleBase simpleBase) throws InsufficientFundsException {
         getBase(simpleBase).withdrawalMoney(price);
     }
+
 }

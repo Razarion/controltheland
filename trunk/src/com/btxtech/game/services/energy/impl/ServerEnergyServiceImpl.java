@@ -130,7 +130,7 @@ public class ServerEnergyServiceImpl implements ServerEnergyService {
     @Override
     public int getConsuming() {
         BaseEnergy baseEnergy = getBaseEnergy();
-        if(baseEnergy == null) {
+        if (baseEnergy == null) {
             return 0;
         }
         return baseEnergy.getConsuming();
@@ -139,10 +139,20 @@ public class ServerEnergyServiceImpl implements ServerEnergyService {
     @Override
     public int getGenerating() {
         BaseEnergy baseEnergy = getBaseEnergy();
-        if(baseEnergy == null) {
+        if (baseEnergy == null) {
             return 0;
         }
         return baseEnergy.getGenerating();
+    }
+
+    @Override
+    public int getConsuming(SimpleBase simpleBase) {
+        return getBaseEnergy(simpleBase).getConsuming();
+    }
+
+    @Override
+    public int getGenerating(SimpleBase simpleBase) {
+        return getBaseEnergy(simpleBase).getGenerating();
     }
 
     private BaseEnergy getBaseEnergy() {
@@ -152,6 +162,10 @@ public class ServerEnergyServiceImpl implements ServerEnergyService {
 
     private BaseEnergy getBaseEnergy(SyncBaseItem syncBaseItem) {
         SimpleBase simpleBase = syncBaseItem.getBase();
+        return getBaseEnergy(simpleBase);
+    }
+
+    private BaseEnergy getBaseEnergy(SimpleBase simpleBase) {
         synchronized (baseEntries) {
             BaseEnergy baseEnergy = baseEntries.get(simpleBase);
             if (baseEnergy == null) {
@@ -161,4 +175,5 @@ public class ServerEnergyServiceImpl implements ServerEnergyService {
             return baseEnergy;
         }
     }
+
 }

@@ -16,7 +16,9 @@ package com.btxtech.game.services.connection;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.Base;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -35,4 +37,7 @@ public interface ConnectionService extends com.btxtech.game.jsre.common.gameengi
     void closeConnection();
 
     void sendPacket(SimpleBase base, Packet packet);
+
+    void sendSyncInfos(Collection<SyncBaseItem> syncItem);
+
 }
