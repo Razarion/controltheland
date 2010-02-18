@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.MouseEvent;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.Date;
 
 public class GwtCommon {
     //private static ExceptionDialog exceptionDialog;
@@ -62,7 +63,7 @@ public class GwtCommon {
         System.out.println(logMessage);
         try {
             if (Connection.isConnected()) {
-                Connection.getMovableServiceAsync().log(logMessage, new AsyncCallback() {
+                Connection.getMovableServiceAsync().log(logMessage, new Date(), new AsyncCallback() {
                     @Override
                     public void onFailure(Throwable caught) {
                         //Ignore
@@ -114,5 +115,5 @@ public class GwtCommon {
     public static void preventImageDragging(MouseEvent event) {
         event.stopPropagation();
         event.preventDefault();
-}
+    }
 }

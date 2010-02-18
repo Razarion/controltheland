@@ -40,7 +40,7 @@ public interface MovableService extends RemoteService {
 
     GameInfo getGameInfo();
 
-    void log(String message);
+    void log(String message, Date date);
 
     void sendCommand(BaseCommand baseCommand);
 

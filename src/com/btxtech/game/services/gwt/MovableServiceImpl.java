@@ -153,9 +153,9 @@ public class MovableServiceImpl implements MovableService {
 
 
     @Override
-    public void log(String message) {
+    public void log(String message, Date date) {
         try {
-            connectionService.clientLog(message);
+            connectionService.clientLog(message, date);
         } catch (Throwable t) {
             log.error("", t);
         }

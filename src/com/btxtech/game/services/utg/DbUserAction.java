@@ -39,10 +39,10 @@ public class DbUserAction implements Serializable {
     private Date clientTimeStamp;
     @Column(nullable = false)
     private String type;
-    @Column(length = 2000)
+    @Column(length = 5000)
     private String additionalString;
     private Date clientTimeStampLast;
-    @Column(length = 2000)
+    @Column(length = 5000)
     private String additionalStringLast;
     private int repeatingCount;
 

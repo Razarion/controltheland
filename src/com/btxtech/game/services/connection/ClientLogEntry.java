@@ -33,6 +33,7 @@ public class ClientLogEntry {
     private Integer id;
     @Column(nullable = false)
     private Date timeStamp;
+    private Date clientTimeStamp;
     private String userAgent;
     private String userName;
     @Column(nullable = false)
@@ -40,9 +41,10 @@ public class ClientLogEntry {
     @Column(nullable = false, length = 10000)
     private String message;
 
-    public ClientLogEntry(String message, Session session) {
+    public ClientLogEntry(String message, Date date, Session session) {
         this.message = message;
         timeStamp = new Date();
+        clientTimeStamp = date;
         userAgent = session.getUserAgent();
         sessionId = session.getSessionId();
         try {
@@ -98,6 +100,11 @@ public class ClientLogEntry {
     public String getFormatMessage() {
         StringBuilder builder = new StringBuilder();
         builder.append("CLIENT LOG ENTRY ---------------------------\n");
+
+        builder.append("Cleint Time: ");
+        builder.append(clientTimeStamp);
+        builder.append("\n");
+
         builder.append("userAgent: ");
         builder.append(userAgent);
         builder.append("\n");

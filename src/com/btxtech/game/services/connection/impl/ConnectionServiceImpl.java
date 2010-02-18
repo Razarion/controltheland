@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import org.apache.commons.logging.Log;
@@ -136,9 +137,9 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     }
 
     @Override
-    public void clientLog(String message) {
+    public void clientLog(String message, Date date) {
         try {
-            ClientLogEntry clientLogEntry = new ClientLogEntry(message, session);
+            ClientLogEntry clientLogEntry = new ClientLogEntry(message, date, session);
  //           hibernateTemplate.saveOrUpdate(clientLogEntry);
             log.info(clientLogEntry.getFormatMessage());
         } catch (Throwable t) {

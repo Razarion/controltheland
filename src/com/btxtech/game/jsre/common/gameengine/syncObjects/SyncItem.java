@@ -112,6 +112,6 @@ public abstract class SyncItem {
 
     @Override
     public String toString() {
-        return "SyncItem: " + itemType;
+        return "SyncItem: " + id + " " + itemType;
     }
 }
