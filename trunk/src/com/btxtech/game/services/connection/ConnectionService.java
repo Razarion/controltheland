@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.Base;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * User: beat
@@ -26,7 +27,7 @@ import java.util.Collection;
  * Time: 1:20:07 PM
  */
 public interface ConnectionService extends com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService{
-    void clientLog(String message);
+    void clientLog(String message, Date date);
 
     boolean hasConnection();    
 

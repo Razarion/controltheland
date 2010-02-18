@@ -32,7 +32,7 @@ public interface MovableServiceAsync {
 
     void getGameInfo(AsyncCallback async);
 
-    void log(String message, AsyncCallback async);
+    void log(String message, Date date, AsyncCallback async);
 
     void sendCommand(BaseCommand baseCommand, AsyncCallback async);
 
