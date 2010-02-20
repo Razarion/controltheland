@@ -21,7 +21,7 @@ import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.utg.missions.AttackMission;
-import com.btxtech.game.jsre.client.utg.missions.BuildMission;
+import com.btxtech.game.jsre.client.utg.missions.BuildFactoryMission;
 import com.btxtech.game.jsre.client.utg.missions.CollectMission;
 import com.btxtech.game.jsre.client.utg.missions.CreateJeepMission;
 import com.btxtech.game.jsre.client.utg.missions.FinishedMission;
@@ -29,6 +29,7 @@ import com.btxtech.game.jsre.client.utg.missions.Mission;
 import com.btxtech.game.jsre.client.utg.missions.MissionAportedException;
 import com.btxtech.game.jsre.client.utg.missions.MoveMission;
 import com.btxtech.game.jsre.client.utg.missions.ScrollMission;
+import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
@@ -62,15 +63,19 @@ public class ClientUserGuidance implements SelectionListener {
     }
 
     public void start() {
-        setupMissions();
-        startTimer();
-        Collection<ClientSyncBaseItemView> items = ItemContainer.getInstance().getOwnItems();
-        if (items.isEmpty()) {
-            return;
+        try {
+            setupMissions();
+            startTimer();
+            Collection<ClientSyncBaseItemView> items = ItemContainer.getInstance().getOwnItems();
+            if (items.isEmpty()) {
+                return;
+            }
+            startNextMission();
+            SelectionHandler.getInstance().addSelectionListener(this);
+            isRunning = true;
+        } catch (NoSuchItemTypeException e) {
+            GwtCommon.handleException(e);
         }
-        startNextMission();
-        SelectionHandler.getInstance().addSelectionListener(this);
-        isRunning = true;
     }
 
     private void startTimer() {
@@ -79,7 +84,7 @@ public class ClientUserGuidance implements SelectionListener {
             public void run() {
                 if (currentMission != null) {
                     if (currentMission.isAccomplished()) {
-                        if (System.currentTimeMillis() > APPLAUSE_TIME + currentMission.getAccomplishedTimeStamp()) {
+                        if (System.currentTimeMillis() > APPLAUSE_TIME + currentMission.getLastTaskChangeTime()) {
                             currentMission.close();
                             ClientUserTracker.getInstance().onMissionAction(MissionAction.MISSION_COMPLETED, currentMission);
                             currentMission = null;
@@ -99,37 +104,14 @@ public class ClientUserGuidance implements SelectionListener {
         timer.scheduleRepeating(TICK_INTERVALL);
     }
 
-    private void setupMissions() {
+    private void setupMissions() throws NoSuchItemTypeException {
         missions = new ArrayList<Mission>();
-
-        Collection<ClientSyncBaseItemView> items = ItemContainer.getInstance().getOwnItems();
-
-        boolean hasMoveItem = false;
-        boolean hasFactory = false;
-        boolean hasJeep = false;
-        for (ClientSyncBaseItemView item : items) {
-            if (item.getSyncBaseItem().hasSyncMovable()) {
-                hasMoveItem = true;
-            }
-            if (item.getSyncBaseItem().hasSyncFactory()) {
-                hasFactory = true;
-            }
-            if (item.getSyncBaseItem().hasSyncWaepon()) {
-                hasJeep = true;
-            }
-        }
-        if (hasMoveItem) {
-            missions.add(new MoveMission());
-        }
-        missions.add(new ScrollMission());
-        if (!hasFactory) {
-            missions.add(new BuildMission());
-        }
-        if(!hasJeep) {
-            missions.add(new CreateJeepMission());            
-        }
+        missions.add(new MoveMission());
+        missions.add(new BuildFactoryMission());
+        missions.add(new CreateJeepMission());
         missions.add(new AttackMission());
         missions.add(new CollectMission());
+        missions.add(new ScrollMission());
         missions.add(new FinishedMission());
     }
 
@@ -186,12 +168,14 @@ public class ClientUserGuidance implements SelectionListener {
     }
 
     private void startNextMission() {
-        if (missions.isEmpty()) {
-            currentMission = null;
-            return;
-        }
+        do {
+            if (missions.isEmpty()) {
+                currentMission = null;
+                return;
+            }
+            currentMission = missions.remove(0);
+        } while (!currentMission.init());
 
-        currentMission = missions.remove(0);
         try {
             ClientUserTracker.getInstance().onMissionAction(MissionAction.MISSION_START, currentMission);
             currentMission.start();

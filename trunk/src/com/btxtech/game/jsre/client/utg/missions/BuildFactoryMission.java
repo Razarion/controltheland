@@ -19,7 +19,7 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.utg.missions.tasks.CreateCommandTask;
 import com.btxtech.game.jsre.client.utg.missions.tasks.SelectProtagonistTask;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
 import java.util.Collection;
 
 /**
@@ -27,32 +27,24 @@ import java.util.Collection;
  * Date: 26.01.2010
  * Time: 22:20:04
  */
-public class CreateJeepMission extends Mission {
-    public CreateJeepMission() throws NoSuchItemTypeException {
-        super("Create Jeep", HtmlConstants.CREATE_JEEP_HTML3);
-        addTask(new SelectProtagonistTask(HtmlConstants.CREATE_JEEP_HTML1));
-        addTask(new CreateCommandTask(HtmlConstants.CREATE_JEEP_HTML2, Constants.JEEP, FactoryCommand.class));
+public class BuildFactoryMission extends Mission {
+
+    public BuildFactoryMission() throws NoSuchItemTypeException {
+        super("BuildFactoryMission", HtmlConstants.BUILD_HTML3);
+        addTask(new SelectProtagonistTask(HtmlConstants.BUILD_HTML1));
+        addTask(new CreateCommandTask(HtmlConstants.BUILD_HTML2, Constants.FACTORY, BuilderCommand.class));
     }
 
     @Override
     public boolean init() {
         Collection<ClientSyncBaseItemView> items = ItemContainer.getInstance().getOwnItems();
-        ClientSyncBaseItemView factory = null;
-        for (ClientSyncBaseItemView itemView : items) {
-            String name = itemView.getSyncBaseItem().getBaseItemType().getName();
-            if (name.equals(Constants.FACTORY)) {
-                factory = itemView;
-            }
-            if (name.equals(Constants.JEEP)) {
-                return false;
+        if (items.size() == 1) {
+            ClientSyncBaseItemView builder = items.iterator().next();
+            if (builder.getSyncBaseItem().hasSyncBuilder()) {
+                setProtagonist(builder);
+                return true;
             }
         }
-        if (factory != null) {
-            setProtagonist(factory);
-            return true;
-        } else {
-            return false;
-        }
+        return false;
     }
-
 }

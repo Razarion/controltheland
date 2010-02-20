@@ -46,7 +46,7 @@ public class ScrollMission extends Mission implements TerrainScrollListener, Cli
     private HandlerRegistration handlerRegistrationHomeButton;
 
     public ScrollMission() {
-        super("ScrollMission");
+        super("ScrollMission", HtmlConstants.SCROLL_HTML2);
     }
 
     public void start() throws MissionAportedException {
@@ -89,7 +89,7 @@ public class ScrollMission extends Mission implements TerrainScrollListener, Cli
     }
 
     @Override
-    public long getAccomplishedTimeStamp() {
+    public long getLastTaskChangeTime() {
         return lastAction;
     }
 
