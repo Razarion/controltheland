@@ -12,9 +12,26 @@
   -->
 
 <wicket:extend>
-    <h2>Get items for your Expirience Points</h2>
+    <h2>Market</h2>
 
-    <h3>Your current points: <span wicket:id="xp"/> Points. <a href="">How to get points</a></h3>
+    <p>The Market is the place to go for new units and buildings. You can buy them by spending your experience points.
+        Once you bought an new item it will appear in the user interface in the game. <br/>
+        <b>Please not:</b> it can be possible that you need different buildings and/or construction vehicle to
+        be able to build some of the units you can buy in the market.</p>
+
+
+    <b>There are different ways to get experience points</b>
+    <ul>
+        <li>You get experience points for every unit and building every 10 minutes. As long as your
+            units and buildings are not destroyed, you get points for them
+        </li>
+        <li>Destroy units and buildings of other players</li>
+    </ul>
+
+    <p><b>Please note:</b> you continue to get points while you are not logged in to the game. You can come
+        back to the game if you have a registered user. Please register <a href="" wicket:id="createAccountLink">here</a> if you don't have a user yet.</p>
+
+    <h3>Your current points: <span wicket:id="xp"/> Points.</h3>
 
     <form wicket:id="marketForm">
         <table class="helpT">

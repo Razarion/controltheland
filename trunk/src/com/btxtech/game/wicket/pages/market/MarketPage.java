@@ -19,6 +19,7 @@ import com.btxtech.game.services.itemTypeAccess.ItemTypeAccessEntry;
 import com.btxtech.game.services.itemTypeAccess.ServerItemTypeAccessService;
 import com.btxtech.game.services.itemTypeAccess.impl.UserItemTypeAccess;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
+import com.btxtech.game.wicket.pages.user.NewUser;
 import java.util.Iterator;
 import java.util.Set;
 import org.apache.wicket.AttributeModifier;
@@ -26,6 +27,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
@@ -44,6 +46,13 @@ public class MarketPage extends BasePage {
     private ServerItemTypeAccessService serverItemTypeAccessService;
 
     public MarketPage() {
+        add(new Link("createAccountLink") {
+            @Override
+            public void onClick() {
+                setResponsePage(NewUser.class);
+            }
+        });
+
         add(new Label("xp", Integer.toString(serverItemTypeAccessService.getXp())));
 
         Form form = new Form("marketForm");
