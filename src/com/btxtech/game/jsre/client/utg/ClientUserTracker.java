@@ -13,10 +13,10 @@
 
 package com.btxtech.game.jsre.client.utg;
 
+import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
+import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.ClientSyncItemView;
-import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.utg.missions.Mission;
 import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
@@ -130,8 +130,13 @@ public class ClientUserTracker {
         }
     }
 
-    public void onMissionTask(Mission mission, Enum task) {
-        missionActions.add(new MissionAction(MissionAction.TASK_START, mission.getName(), task.name()));
+    @Deprecated
+    public void onMissionTask(Mission mission, Enum theEnum) {
+        onMissionTask(mission, theEnum.name());
+    }
+
+    public void onMissionTask(Mission mission, String taskName) {
+        missionActions.add(new MissionAction(MissionAction.TASK_START, mission.getName(), taskName));
     }
 
     public void onScrollHome() {

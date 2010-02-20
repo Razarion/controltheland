@@ -118,7 +118,7 @@ public class BaseServiceImpl implements BaseService {
     @Override
     public void createNewBase(String name, BaseColor baseColor) throws AlreadyUsedException, NoSuchItemTypeException {
         Base base;
-        ItemType constructionVehicle = itemService.getItemType("Construction Vehicle");
+        ItemType constructionVehicle = itemService.getItemType(Constants.CONSTRUCTION_VEHICLE);
         synchronized (bases) {
             if (bases.containsKey(name)) {
                 throw new AlreadyUsedException(name);

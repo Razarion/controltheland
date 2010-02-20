@@ -14,14 +14,9 @@
 package com.btxtech.game.jsre.client.utg.missions;
 
 import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
-import com.btxtech.game.jsre.client.cockpit.Group;
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
-import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.client.utg.SpeechBubble;
-import com.btxtech.game.jsre.client.utg.ClientUserTracker;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.client.utg.missions.tasks.SelectProtagonistTask;
+import com.btxtech.game.jsre.client.utg.missions.tasks.TerrainClickTask;
 import java.util.Collection;
 
 /**
@@ -30,108 +25,22 @@ import java.util.Collection;
  * Time: 22:20:04
  */
 public class MoveMission extends Mission {
-    public static final int MIN_RADIUS = 50;
-    public static final int MAX_RADIUS = 150;
-
-    enum Task {
-        WAITING_FOR_SELECTION,
-        WAITING_FOR_TERRAIN_CLICK,
-        FINISHED
-    }
-
-    private SpeechBubble speechBubble;
-    private ClientSyncBaseItemView item;
-    private Task task;
-    private long lastAction;
-
     public MoveMission() {
-        super("MoveMission");
+        super("MoveMission", HtmlConstants.MOVE_HTML3);
+        addTask(new SelectProtagonistTask(HtmlConstants.MOVE_HTML1));
+        addTask(new TerrainClickTask(HtmlConstants.MOVE_HTML2));
     }
 
-    public void start() throws MissionAportedException {
+    @Override
+    public boolean init() {
         Collection<ClientSyncBaseItemView> items = ItemContainer.getInstance().getOwnItems();
-
-        item = null;
-        for (ClientSyncBaseItemView clientSyncBaseItemView : items) {
-            if (clientSyncBaseItemView.getSyncBaseItem().hasSyncBuilder()) {
-                item = clientSyncBaseItemView;
-                break;
-            }
-            if (clientSyncBaseItemView.getSyncBaseItem().hasSyncMovable()) {
-                item = clientSyncBaseItemView;
-                break;
+        if (items.size() == 1) {
+            ClientSyncBaseItemView builder = items.iterator().next();
+            if (builder.getSyncBaseItem().hasSyncBuilder()) {
+                setProtagonist(builder);
+                return true;
             }
         }
-
-        if (item == null) {
-            throw new MissionAportedException("No movable item found");
-        }
-
-        speechBubble = new SpeechBubble(item, HtmlConstants.MOVE_HTML1, false);
-        task = Task.WAITING_FOR_SELECTION;
-        ClientUserTracker.getInstance().onMissionTask(this, task);
-        lastAction = System.currentTimeMillis();
-    }
-
-    public void onOwnSelectionChanged(Group selectedGroup) {
-        if (task != Task.WAITING_FOR_SELECTION || speechBubble == null) {
-            return;
-        }
-        lastAction = System.currentTimeMillis();
-        speechBubble.blinkOff();
-        task = Task.WAITING_FOR_TERRAIN_CLICK;
-        ClientUserTracker.getInstance().onMissionTask(this, task);
-        speechBubble.close();
-        Index absPos = TerrainView.getInstance().getTerrainHandler().getAbsoluteFreeTerrainInRegion(item.getSyncItem().getPosition(), MIN_RADIUS, MAX_RADIUS, 100);
-        speechBubble = new SpeechBubble(absPos.getX() - TerrainView.getInstance().getViewOriginLeft(),
-                absPos.getY() - TerrainView.getInstance().getViewOriginTop(),
-                HtmlConstants.MOVE_HTML2, false);
-    }
-
-    public void onSyncItemDeactivated(SyncBaseItem syncBaseItem) {
-        if (syncBaseItem.equals(item.getSyncBaseItem())) {
-            if (task != Task.WAITING_FOR_TERRAIN_CLICK) {
-                return;
-            }
-            task = Task.FINISHED;
-
-            speechBubble = new SpeechBubble(item, HtmlConstants.MOVE_HTML3, false);
-            lastAction = System.currentTimeMillis();
-        }
-    }
-
-    @Override
-    public void onExecuteCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
-        if (syncItem.equals(item.getSyncBaseItem()) && speechBubble != null) {
-            speechBubble.close();
-            speechBubble = null;
-        }
-    }
-
-    @Override
-    public void blink() {
-        if (speechBubble == null) {
-            return;
-        }
-        if (System.currentTimeMillis() > HtmlConstants.WAITING_FOR_BLINK + lastAction) {
-            speechBubble.blink();
-        }
-    }
-
-    @Override
-    public boolean isAccomplished() {
-        return task == Task.FINISHED;
-    }
-
-    @Override
-    public long getAccomplishedTimeStamp() {
-        return lastAction;
-    }
-
-    @Override
-    public void close() {
-        if (speechBubble != null) {
-            speechBubble.close();
-        }
+        return false;
     }
 }

@@ -14,6 +14,7 @@
 package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -35,9 +36,6 @@ import org.springframework.stereotype.Component;
  */
 @Component("userGuidanceService")
 public class UserGuidanceServiceImpl implements UserGuidanceService {
-    public static final int TARGET_MAX_RANGE = 300;
-    public static final int TARGET_MIN_RANGE = 150;
-    public static final int MISSON_MONEY = 5000;
     @Autowired
     private BaseService baseService;
     @Autowired
@@ -50,7 +48,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     public void createMissionTraget(Id attacker) throws NoSuchItemTypeException, ItemDoesNotExistException {
         ItemType targetItemType = itemService.getItemType("Jeep");
         SyncItem attackerItem = itemService.getItem(attacker);
-        Index targetPos = collisionService.getFreeRandomPositionInRect(targetItemType, attackerItem, TARGET_MIN_RANGE, TARGET_MAX_RANGE);
+        Index targetPos = collisionService.getFreeRandomPosition(targetItemType, attackerItem, Constants.TARGET_MIN_RANGE, Constants.TARGET_MAX_RANGE);
         SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(targetItemType, targetPos, null, baseService.getDummyBase(), 0);
         syncBaseItem.setBuild(true);
         syncBaseItem.setFullHealth();
@@ -60,9 +58,9 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     public void createMissionMoney(Id harvester) throws NoSuchItemTypeException, ItemDoesNotExistException {
         ItemType moneyItemType = itemService.getItemType("Money");
         SyncItem attackerItem = itemService.getItem(harvester);
-        Index targetPos = collisionService.getFreeRandomPositionInRect(moneyItemType, attackerItem, TARGET_MIN_RANGE, TARGET_MAX_RANGE);
+        Index targetPos = collisionService.getFreeRandomPosition(moneyItemType, attackerItem, Constants.TARGET_MIN_RANGE, Constants.TARGET_MAX_RANGE);
         SyncResourceItem syncBaseItem = (SyncResourceItem) itemService.createSyncObject(moneyItemType, targetPos, null, null, 0);
-        syncBaseItem.setAmount(MISSON_MONEY);
+        syncBaseItem.setAmount(Constants.MISSON_MONEY);
         syncBaseItem.setMissionMoney(true);
     }
 }

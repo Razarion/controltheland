@@ -127,7 +127,6 @@ public class Index implements Serializable {
         return angle;
     }
 
-    @Deprecated
     public Index getPointFromAngelToNord(double angle, int radius) {
         int gk = (int) (Math.sin(angle) * (double) radius);
         int ak = (int) (Math.cos(angle) * (double) radius);

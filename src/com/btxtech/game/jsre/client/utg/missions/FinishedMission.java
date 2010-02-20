@@ -29,7 +29,7 @@ public class FinishedMission extends Mission {
     private long lastAction;
 
     public FinishedMission() {
-        super("FinishedMission");
+        super("FinishedMission", HtmlConstants.FINISHED);
     }
 
     public void start() throws MissionAportedException {
@@ -63,7 +63,7 @@ public class FinishedMission extends Mission {
     }
 
     @Override
-    public long getAccomplishedTimeStamp() {
+    public long getLastTaskChangeTime() {
         return lastAction;
     }
 

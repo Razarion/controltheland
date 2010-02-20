@@ -60,4 +60,16 @@ public class Constants {
 
     // Base
     public static final String DUMMY_BASE_NAME = "Dummy";
+
+    // Item names
+    public static final String CONSTRUCTION_VEHICLE = "Construction Vehicle";
+    public static final String FACTORY = "Factory";
+    public static final String JEEP = "Jeep";
+    public static final String HARVESTER = "Harvester";
+    public static final String MONEY = "Money";
+
+    // Missions
+    public static final int TARGET_MAX_RANGE = 300;
+    public static final int TARGET_MIN_RANGE = 150;
+    public static final int MISSON_MONEY = 5000;
 }

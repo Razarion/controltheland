@@ -219,12 +219,24 @@ public class ItemContainer extends AbstractItemService {
         return clientBaseItems;
     }
 
+    public ClientSyncItemView getFirstItemInRange(ItemType itemType, Index origin, int maxRange) {
+        for (ClientSyncItemView syncItemView : items.values()) {
+            if (syncItemView.getSyncItem().getItemType().equals(itemType) &&
+                    !orphanItems.containsKey(syncItemView.getSyncItem().getId()) &&
+                    !deadItems.containsKey(syncItemView.getSyncItem().getId()) &&
+                    syncItemView.getSyncItem().getPosition().getDistance(origin) <= maxRange) {
+                return syncItemView;
+            }
+        }
+        return null;
+    }
+
     public boolean hasBuildingsInRect(Rectangle rectangle) {
         for (ClientSyncItemView syncItemView : items.values()) {
             if (syncItemView instanceof ClientSyncBaseItemView &&
                     !orphanItems.containsKey(syncItemView.getSyncItem().getId()) &&
                     !deadItems.containsKey(syncItemView.getSyncItem().getId()) &&
-                    !((ClientSyncBaseItemView)syncItemView).getSyncBaseItem().hasSyncMovable() &&
+                    !((ClientSyncBaseItemView) syncItemView).getSyncBaseItem().hasSyncMovable() &&
                     rectangle.adjoins(syncItemView.getSyncItem().getRectangle())) {
                 return false;
             }

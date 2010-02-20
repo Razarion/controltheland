@@ -281,35 +281,18 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     }
 
     @Override
-    public Index getFreeRandomPositionInRect(ItemType itemType, SyncItem attackerItem, int targetMinRange, int targetMaxRange) {
+    public Index getFreeRandomPosition(ItemType itemType, SyncItem origin, int targetMinRange, int targetMaxRange) {
         Random random = new Random();
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
-            int x;
-            int y;
-            if (random.nextBoolean()) {
-                x = attackerItem.getPosition().getX() + targetMinRange + random.nextInt(targetMaxRange - targetMinRange);
-            } else {
-                x = attackerItem.getPosition().getX() - targetMinRange - random.nextInt(targetMaxRange - targetMinRange);
-            }
-            if (random.nextBoolean()) {
-                y = attackerItem.getPosition().getY() + targetMinRange + random.nextInt(targetMaxRange - targetMinRange);
-            } else {
-                y = attackerItem.getPosition().getY() - targetMinRange - random.nextInt(targetMaxRange - targetMinRange);
-            }
-            if (x < itemType.getWidth() / 2 || y < itemType.getHeight() / 2) {
-                continue;
-            }
-            if (x + itemType.getWidth() / 2 > terrainService.getTerrainSettings().getPlayFieldXSize()
-                    || y + itemType.getHeight() / 2 > terrainService.getTerrainSettings().getPlayFieldYSize()) {
-                continue;
-            }
+            double angel = random.nextDouble() * 2.0 * Math.PI;
+            int discance = targetMinRange + random.nextInt(targetMaxRange - targetMinRange);
+            Index point = origin.getPosition().getPointFromAngelToNord(angel, discance);
 
-            Index point = new Index(x, y);
             if (!isFree(point, itemType)) {
                 continue;
             }
-            Rectangle itemRectangle = new Rectangle(x - itemType.getWidth() / 2,
-                    y - itemType.getHeight() / 2,
+            Rectangle itemRectangle = new Rectangle(point.getX() - itemType.getWidth() / 2,
+                    point.getY() - itemType.getHeight() / 2,
                     itemType.getWidth(),
                     itemType.getHeight());
 
@@ -408,7 +391,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
             }
         }
 
-        if(System.currentTimeMillis() - time > 200) {
+        if (System.currentTimeMillis() - time > 200) {
             log.fatal("Pathfinding took: " + (System.currentTimeMillis() - time) + "ms start: " + start + " destination: " + destination);
         }
 

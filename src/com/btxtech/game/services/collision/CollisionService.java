@@ -28,7 +28,7 @@ public interface CollisionService {
 
     Index getFreeRandomPosition(ItemType itemType, int edgeLength);
 
-    Index getFreeRandomPositionInRect(ItemType targetItemType, SyncItem attackerItem, int targetMinRange, int targetMaxRange);
+    Index getFreeRandomPosition(ItemType targetItemType, SyncItem attackerItem, int targetMinRange, int targetMaxRange);
 
     boolean[][] getPassableTerrain();
 
