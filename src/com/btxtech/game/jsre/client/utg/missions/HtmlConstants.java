@@ -49,4 +49,11 @@ public class HtmlConstants {
 
     public static final String FINISHED = "<h3>This is how it works!</h3>It is now your turn to build your base attack the enemy and collect money" ;
 
+    // Register
+    public static final String REGISTRATION_DIALOG = "<b>Attention:</b> if you continue without registration you will not be able to return to your base after you leave the game.";
+    public static final String REGISTRATION_FAILED = "Registration failed";
+    public static final String REGISTRATION_FILLED = "All fields must be filled in";
+    public static final String REGISTRATION_MATCH = "Password and confirm password do not match";
+    public static final String REGISTRATION_EXISTS = "The user already exists";
+
 }

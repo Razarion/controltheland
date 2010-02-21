@@ -11,7 +11,12 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.user;
+package com.btxtech.game.jsre.common.gameengine.services.user;
 
-public class UserAlreadyExistsException extends Exception {
+/**
+ * User: beat
+ * Date: 21.01.2009
+ * Time: 22:18:34
+ */
+public class PasswordNotMatchException extends Exception {
 }

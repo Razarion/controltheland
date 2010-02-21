@@ -114,7 +114,7 @@ public class Base implements Serializable {
     }
 
     public SimpleBase getSimpleBase() {
-        return new SimpleBase(name, baseColor.getHtmlColor(), user != null);
+        return new SimpleBase(name, baseColor.getHtmlColor());
     }
 
     public void depositMoney(int amount) {

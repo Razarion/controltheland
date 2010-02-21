@@ -47,4 +47,6 @@ public interface MovableServiceAsync {
     void createMissionTraget(Id attacker, AsyncCallback<Void> asyncCallback);
 
     void createMissionMoney(Id harvester, AsyncCallback<Void> asyncCallback);
+
+    void register(String userName, String password, String confirmPassword, AsyncCallback<Void> asyncCallback);
 }

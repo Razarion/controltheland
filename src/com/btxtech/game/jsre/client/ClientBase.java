@@ -81,10 +81,6 @@ public class ClientBase implements BaseService {
         }
     }
 
-    public boolean isRegisteredUser() {
-        return simpleBase.isRegistered();
-    }
-
     public void setDepositResourceListener(DepositResourceListener depositResourceListener) {
         this.depositResourceListener = depositResourceListener;
     }
