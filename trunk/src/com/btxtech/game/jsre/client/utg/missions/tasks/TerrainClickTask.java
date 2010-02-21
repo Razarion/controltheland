@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client.utg.missions.tasks;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.SpeechBubble;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
 /**
  * User: beat
@@ -44,4 +45,8 @@ public class TerrainClickTask extends Task {
                 getHtml(), false));
     }
 
+    @Override
+    public void onSyncItemDeactivated(SyncBaseItem syncBaseItem) {
+        activateNextTask();
+    }
 }

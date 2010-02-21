@@ -13,7 +13,9 @@
 
 package com.btxtech.game.jsre.client.utg.missions.tasks;
 
+import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
+import com.btxtech.game.jsre.client.DepositResourceListener;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -21,28 +23,23 @@ import com.btxtech.game.jsre.client.utg.SpeechBubble;
 import com.btxtech.game.jsre.client.utg.missions.MissionAportedException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
 /**
  * User: beat
  * Date: 17.02.2010
  * Time: 20:03:23
  */
-public class ItemCommandTask extends Task {
-    private Class<? extends BaseCommand> commandClass;
+public class CollectResourceTask extends Task implements DepositResourceListener {
     private ItemType targetItemType;
-    private boolean commandReceived = false;
 
-    public ItemCommandTask(String html, String targetItemTypeName, Class<? extends BaseCommand> commandClass) throws NoSuchItemTypeException {
+    public CollectResourceTask(String html) throws NoSuchItemTypeException {
         super(html);
-        this.commandClass = commandClass;
-        targetItemType = ItemContainer.getInstance().getItemType(targetItemTypeName);
+        targetItemType = ItemContainer.getInstance().getItemType(Constants.MONEY);
     }
 
     @Override
     public String getName() {
-        return "Item command: " + commandClass.getName();
+        return "Wait for collect";
     }
 
     @Override
@@ -53,20 +50,14 @@ public class ItemCommandTask extends Task {
             throw new MissionAportedException("ItemCommandTask: no item type to attack found");
         }
         setSpeechBubble(new SpeechBubble(targetItem, getHtml(), false));
+        ClientBase.getInstance().setDepositResourceListener(this);
     }
 
     @Override
-    public void onSyncItemDeactivated(SyncBaseItem syncBaseItem) {
-        if (commandReceived) {
-            activateNextTask();
-        }
+    public void onDeposit() {
+        ClientBase.getInstance().setDepositResourceListener(null);
+        activateNextTask();
     }
 
-    @Override
-    public void onExecuteCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
-        if (baseCommand.getClass().equals(commandClass)) {
-            closeBubble();
-            commandReceived = true;
-        }
-    }
+    
 }

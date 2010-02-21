@@ -144,12 +144,7 @@ public class ClientUserGuidance implements SelectionListener {
     @Override
     public void onOwnSelectionChanged(Group selectedGroup) {
         if (currentMission != null && isRunning) {
-            try {
-                currentMission.onOwnSelectionChanged(selectedGroup);
-            } catch (MissionAportedException e) {
-                GwtCommon.handleException(e);
-                currentMission = null;
-            }
+            currentMission.onOwnSelectionChanged(selectedGroup);
         }
     }
 

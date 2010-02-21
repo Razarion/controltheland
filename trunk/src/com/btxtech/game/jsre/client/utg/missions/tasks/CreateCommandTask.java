@@ -14,11 +14,13 @@
 package com.btxtech.game.jsre.client.utg.missions.tasks;
 
 import com.btxtech.game.jsre.client.Game;
+import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.utg.SpeechBubble;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.google.gwt.user.client.ui.Widget;
 import java.util.Map;
 
@@ -46,13 +48,13 @@ public class CreateCommandTask extends Task {
     public void run() {
         Widget widget = null;
         for (Map.Entry<ItemType, Widget> entry : Game.cockpitPanel.getBuildupItemPanel().getItemTypesToBuild().entrySet()) {
-            if(entry.getKey().equals(itemType)) {
+            if (entry.getKey().equals(itemType)) {
                 widget = entry.getValue();
                 break;
             }
         }
 
-        if(widget == null) {
+        if (widget == null) {
             throw new IllegalArgumentException(this + " no buildup button find for " + itemType);
         }
 
@@ -61,11 +63,18 @@ public class CreateCommandTask extends Task {
         setSpeechBubble(new SpeechBubble(x, y, getHtml(), true));
     }
 
-    public Class<? extends BaseCommand> getCommandClass() {
-        return commandClass;
+    @Override
+    public void onExecuteCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
+        if (baseCommand.getClass().equals(commandClass)) {
+            closeBubble();
+        }
     }
 
-    public ItemType getItemType() {
-        return itemType;
+    @Override
+    public void onItemBuilt(ClientSyncBaseItemView clientSyncItemView) {
+        if (clientSyncItemView.getSyncBaseItem().isReady() && clientSyncItemView.getSyncBaseItem().getBaseItemType().equals(itemType)) {
+            getMission().setProtagonist(clientSyncItemView);
+            activateNextTask();
+        }
     }
 }

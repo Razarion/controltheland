@@ -20,13 +20,7 @@ import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.client.utg.SpeechBubble;
-import com.btxtech.game.jsre.client.utg.missions.tasks.CreateCommandTask;
-import com.btxtech.game.jsre.client.utg.missions.tasks.CreateTargetTask;
-import com.btxtech.game.jsre.client.utg.missions.tasks.ItemCommandTask;
-import com.btxtech.game.jsre.client.utg.missions.tasks.SelectProtagonistAndMoneyTask;
-import com.btxtech.game.jsre.client.utg.missions.tasks.SelectProtagonistTask;
 import com.btxtech.game.jsre.client.utg.missions.tasks.Task;
-import com.btxtech.game.jsre.client.utg.missions.tasks.TerrainClickTask;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import java.util.ArrayList;
@@ -63,12 +57,21 @@ public abstract class Mission {
         return protagonist;
     }
 
-    protected void setProtagonist(ClientSyncBaseItemView protagonist) {
+    public void setProtagonist(ClientSyncBaseItemView protagonist) {
         this.protagonist = protagonist;
         scrollToItem(protagonist);
     }
 
-    protected void activateNextTask() throws MissionAportedException {
+    public void activateNextTask() {
+        try {
+            startNextTask();
+        } catch (MissionAportedException e) {
+            GwtCommon.handleException(e);
+            aportMission();
+        }
+    }
+
+    private void startNextTask() throws MissionAportedException {
         closeTask();
         lastTaskChange = System.currentTimeMillis();
         if (tasks.isEmpty()) {
@@ -81,8 +84,8 @@ public abstract class Mission {
         }
     }
 
-    private void showCompletedMessage() {
-        if (protagonist != null) {
+    protected void showCompletedMessage() {
+        if (protagonist != null && htmlCompleted != null) {
             completedBubble = new SpeechBubble(protagonist, htmlCompleted, false);
         }
     }
@@ -125,59 +128,27 @@ public abstract class Mission {
         tasks.clear();
     }
 
-    public void onOwnSelectionChanged(Group selectedGroup) throws MissionAportedException {     // TODO remove MissionAportedException
-        if ((currentTask instanceof SelectProtagonistAndMoneyTask || currentTask instanceof SelectProtagonistTask) && selectedGroup.getFirst().equals(protagonist)) {
-            try {
-                activateNextTask();
-            } catch (MissionAportedException e) {
-                GwtCommon.handleException(e);
-                aportMission();
-            }
+    public void onOwnSelectionChanged(Group selectedGroup) {
+        if (currentTask != null && selectedGroup.getFirst().equals(protagonist)) {
+            currentTask.onOwnSelectionChanged(selectedGroup);
         }
     }
 
     public void onSyncItemDeactivated(SyncBaseItem syncBaseItem) {
-        if (currentTask instanceof TerrainClickTask || (currentTask instanceof ItemCommandTask && ((ItemCommandTask) currentTask).isCommandFulfilled())) {
-            try {
-                activateNextTask();
-            } catch (MissionAportedException e) {
-                GwtCommon.handleException(e);
-                aportMission();
-            }
+        if (currentTask != null && syncBaseItem.equals(protagonist.getSyncBaseItem())) {
+            currentTask.onSyncItemDeactivated(syncBaseItem);
         }
     }
 
     public void onExecuteCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
-        if (currentTask instanceof CreateCommandTask &&
-                baseCommand.getClass().equals(((CreateCommandTask) currentTask).getCommandClass()) &&
-                syncItem.equals(getProtagonist().getSyncBaseItem())) {
-            currentTask.closeBubble();
-        } else if (currentTask instanceof ItemCommandTask &&
-                syncItem.equals(getProtagonist().getSyncBaseItem()) &&
-                ((ItemCommandTask) currentTask).isCommandAccepted(baseCommand)) {
-            currentTask.closeBubble();
-            ItemCommandTask itemCommandTask = (ItemCommandTask) currentTask;
-            if (itemCommandTask.awaitIdle()) {
-                itemCommandTask.setCommandAccepted();
-            } else {
-                try {
-                    activateNextTask();
-                } catch (MissionAportedException e) {
-                    GwtCommon.handleException(e);
-                    aportMission();
-                }
-            }
+        if (currentTask != null && syncItem.equals(protagonist.getSyncBaseItem())) {
+            currentTask.onExecuteCommand(syncItem, baseCommand);
         }
     }
 
     public void onItemCreated(ClientSyncItemView item) {
-        if (currentTask instanceof CreateTargetTask && ((CreateTargetTask) currentTask).isTargetAccepted(item)) {
-            try {
-                activateNextTask();
-            } catch (MissionAportedException e) {
-                GwtCommon.handleException(e);
-                aportMission();
-            }
+        if (currentTask != null) {
+            currentTask.onItemCreated(item);
         }
     }
 
@@ -185,16 +156,8 @@ public abstract class Mission {
     }
 
     public void onItemBuilt(ClientSyncBaseItemView clientSyncItemView) {
-        if (clientSyncItemView.getSyncBaseItem().isReady() &&
-                currentTask instanceof CreateCommandTask
-                && clientSyncItemView.getSyncBaseItem().getBaseItemType().equals(((CreateCommandTask) currentTask).getItemType())) {
-            try {
-                setProtagonist(clientSyncItemView);
-                activateNextTask();
-            } catch (MissionAportedException e) {
-                GwtCommon.handleException(e);
-                aportMission();
-            }
+        if (currentTask != null) {
+            currentTask.onItemBuilt(clientSyncItemView);
         }
     }
 

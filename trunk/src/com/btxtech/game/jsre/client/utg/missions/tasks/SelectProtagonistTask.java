@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.utg.missions.tasks;
 
 import com.btxtech.game.jsre.client.utg.SpeechBubble;
+import com.btxtech.game.jsre.client.cockpit.Group;
 
 /**
  * User: beat
@@ -35,4 +36,10 @@ public class SelectProtagonistTask extends Task {
     public void run() {
         setSpeechBubble(new SpeechBubble(getMission().getProtagonist(), getHtml(), false));
     }
+
+    @Override
+    public void onOwnSelectionChanged(Group selectedGroup) {
+        activateNextTask();
+    }
+    
 }
