@@ -51,6 +51,8 @@ public class ClientUserGuidance implements SelectionListener {
     private List<Mission> missions;
     private Timer timer;
     private boolean isRunning = false;
+    private boolean dialogOk = false;
+    private boolean startupOk = false;
 
     public static ClientUserGuidance getInstance() {
         return INSTANCE;
@@ -62,7 +64,7 @@ public class ClientUserGuidance implements SelectionListener {
     private ClientUserGuidance() {
     }
 
-    public void start() {
+    private void start() {
         try {
             setupMissions();
             startTimer();
@@ -75,6 +77,20 @@ public class ClientUserGuidance implements SelectionListener {
             isRunning = true;
         } catch (NoSuchItemTypeException e) {
             GwtCommon.handleException(e);
+        }
+    }
+
+    public void setDialogOk() {
+        dialogOk = true;
+        if (startupOk) {
+            start();
+        }
+    }
+
+    public void setStartupOk() {
+        startupOk = true;
+        if (dialogOk) {
+            start();
         }
     }
 

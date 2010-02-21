@@ -102,7 +102,10 @@ public class Connection implements AsyncCallback<Void> {
                 gameInfo.getTerrainImages());
         if(!gameInfo.isRegistered()) {
             RegisterDialog.showDialog();
+        } else {
+            ClientUserGuidance.getInstance().setDialogOk();
         }
+        
         movableServiceAsync.getItemTypes(new AsyncCallback<Collection<ItemType>>() {
             @Override
             public void onFailure(Throwable throwable) {
@@ -132,7 +135,7 @@ public class Connection implements AsyncCallback<Void> {
                         }
                         TerrainView.getInstance().moveToHome();
                         ClientUserTracker.getInstance().sandGameStartupState(GameStartupState.CLIENT_RUNNING);
-                        ClientUserGuidance.getInstance().start();
+                        ClientUserGuidance.getInstance().setStartupOk();
                         timer.schedule(MIN_DELAY_BETWEEN_TICKS);
                     }
                 });

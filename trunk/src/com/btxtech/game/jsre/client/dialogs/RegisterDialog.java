@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client.dialogs;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.utg.missions.HtmlConstants;
+import com.btxtech.game.jsre.client.utg.ClientUserGuidance;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.google.gwt.dom.client.Style;
@@ -58,7 +59,7 @@ public class RegisterDialog extends Dialog {
         skip.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                hide(true);
+                closeDialog();
             }
         });
         grid.getFlexCellFormatter().setColSpan(0, 0, 2);
@@ -112,13 +113,18 @@ public class RegisterDialog extends Dialog {
 
             @Override
             public void onSuccess(Void aVoid) {
-                hide(true);
+                 closeDialog();
             }
         });
     }
 
+    private void closeDialog() {
+        hide(true);
+        ClientUserGuidance.getInstance().setDialogOk();
+    }
 
     public static void showDialog() {
         new RegisterDialog();
     }
+
 }
