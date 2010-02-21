@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.utg.missions.tasks;
 
 import com.btxtech.game.jsre.client.InfoPanel;
+import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.utg.SpeechBubble;
 import com.btxtech.game.jsre.client.utg.missions.HtmlConstants;
 import com.google.gwt.user.client.ui.Widget;
@@ -59,5 +60,10 @@ public class SelectProtagonistAndMoneyTask extends Task {
         if (moneySpeechBubble != null) {
             moneySpeechBubble.blink();
         }
+    }
+
+    @Override
+    public void onOwnSelectionChanged(Group selectedGroup) {
+        activateNextTask();
     }
 }

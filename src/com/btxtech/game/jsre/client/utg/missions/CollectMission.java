@@ -14,16 +14,18 @@
 package com.btxtech.game.jsre.client.utg.missions;
 
 import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
+import com.btxtech.game.jsre.client.InfoPanel;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.item.ItemContainer;
+import com.btxtech.game.jsre.client.utg.missions.tasks.CollectResourceTask;
 import com.btxtech.game.jsre.client.utg.missions.tasks.CreateCommandTask;
 import com.btxtech.game.jsre.client.utg.missions.tasks.CreateTargetTask;
-import com.btxtech.game.jsre.client.utg.missions.tasks.ItemCommandTask;
 import com.btxtech.game.jsre.client.utg.missions.tasks.SelectProtagonistAndMoneyTask;
 import com.btxtech.game.jsre.client.utg.missions.tasks.SelectProtagonistTask;
+import com.btxtech.game.jsre.client.utg.SpeechBubble;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
+import com.google.gwt.user.client.ui.Widget;
 import java.util.Collection;
 
 /**
@@ -32,13 +34,15 @@ import java.util.Collection;
  * Time: 22:20:04
  */
 public class CollectMission extends Mission {
+    private SpeechBubble completedBubble;
+
     public CollectMission() throws NoSuchItemTypeException {
-        super("CollectMission", HtmlConstants.COLLECT_HTML6);
+        super("CollectMission", null);
         addTask(new SelectProtagonistAndMoneyTask(HtmlConstants.COLLECT_HTML2));
         addTask(new CreateCommandTask(HtmlConstants.COLLECT_HTML4, Constants.HARVESTER, FactoryCommand.class));
         addTask(new SelectProtagonistTask(HtmlConstants.COLLECT_HTML4));
         addTask(new CreateTargetTask(Constants.MONEY));
-        addTask(new ItemCommandTask(HtmlConstants.COLLECT_HTML5, Constants.MONEY, MoneyCollectCommand.class, false));
+        addTask(new CollectResourceTask(HtmlConstants.COLLECT_HTML5));
     }
 
     @Override
@@ -60,6 +64,23 @@ public class CollectMission extends Mission {
         } else {
             return false;
         }
+    }
 
+    @Override
+    protected void showCompletedMessage() {
+        super.showCompletedMessage();
+        Widget w = InfoPanel.getInstance().getMoney();
+        int x = w.getAbsoluteLeft() + w.getOffsetWidth() / 2;
+        int y = w.getAbsoluteTop() + w.getOffsetHeight() / 2;
+        completedBubble = new SpeechBubble(x, y, HtmlConstants.COLLECT_HTML6, true);
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        if (completedBubble != null) {
+            completedBubble.close();
+            completedBubble = null;
+        }
     }
 }

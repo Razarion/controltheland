@@ -33,7 +33,7 @@ public class AttackMission extends Mission {
         super("AttackMission", HtmlConstants.ATTACK_HTML3);
         addTask(new SelectProtagonistTask(HtmlConstants.ATTACK_HTML1));
         addTask(new CreateTargetTask(Constants.JEEP));
-        addTask(new ItemCommandTask(HtmlConstants.ATTACK_HTML2, Constants.JEEP, AttackCommand.class, true));
+        addTask(new ItemCommandTask(HtmlConstants.ATTACK_HTML2, Constants.JEEP, AttackCommand.class));
     }
 
     @Override

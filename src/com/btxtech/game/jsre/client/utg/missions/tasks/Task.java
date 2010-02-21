@@ -16,6 +16,11 @@ package com.btxtech.game.jsre.client.utg.missions.tasks;
 import com.btxtech.game.jsre.client.utg.missions.Mission;
 import com.btxtech.game.jsre.client.utg.missions.MissionAportedException;
 import com.btxtech.game.jsre.client.utg.SpeechBubble;
+import com.btxtech.game.jsre.client.cockpit.Group;
+import com.btxtech.game.jsre.client.ClientSyncItemView;
+import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 
 /**
  * User: beat
@@ -64,4 +69,22 @@ abstract public class Task {
         return html;
     }
 
+    protected void activateNextTask() {
+        getMission().activateNextTask();
+    }
+
+    public void onOwnSelectionChanged(Group selectedGroup) {
+    }
+
+    public void onSyncItemDeactivated(SyncBaseItem syncBaseItem) {
+    }
+
+    public void onExecuteCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
+    }
+
+    public void onItemCreated(ClientSyncItemView item) {
+    }
+
+    public void onItemBuilt(ClientSyncBaseItemView clientSyncItemView) {
+    }
 }

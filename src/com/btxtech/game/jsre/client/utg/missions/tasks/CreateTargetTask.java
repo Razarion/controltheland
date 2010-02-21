@@ -52,7 +52,14 @@ public class CreateTargetTask extends Task {
         }
     }
 
-    public boolean isTargetAccepted(ClientSyncItemView item) {
+    @Override
+    public void onItemCreated(ClientSyncItemView item) {
+       if(isTargetAccepted(item)) {
+           activateNextTask();
+       }
+    }
+
+    private boolean isTargetAccepted(ClientSyncItemView item) {
         if (item.getSyncItem().getPosition().getDistance(getMission().getProtagonist().getSyncBaseItem().getPosition()) > Constants.TARGET_MAX_RANGE) {
             return false;
         }
