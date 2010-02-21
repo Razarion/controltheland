@@ -23,7 +23,6 @@ import java.io.Serializable;
 public class SimpleBase implements Serializable {
     private String name;
     private String htmlColor;
-    private boolean isRegistered;
 
     /**
      * Used by GWT
@@ -31,10 +30,9 @@ public class SimpleBase implements Serializable {
     SimpleBase() {
     }
 
-    public SimpleBase(String name, String htmlColor,  boolean isRegistered) {
+    public SimpleBase(String name, String htmlColor) {
         this.htmlColor = htmlColor;
         this.name = name;
-        this.isRegistered = isRegistered;
     }
 
     public String getName() {
@@ -43,10 +41,6 @@ public class SimpleBase implements Serializable {
 
     public String getHtmlColor() {
         return htmlColor;
-    }
-
-    public boolean isRegistered() {
-        return isRegistered;
     }
 
     @Override

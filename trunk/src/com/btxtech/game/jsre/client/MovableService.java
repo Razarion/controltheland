@@ -25,6 +25,8 @@ import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
+import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import java.util.Collection;
@@ -55,4 +57,6 @@ public interface MovableService extends RemoteService {
     void createMissionTraget(Id attacker);
 
     void createMissionMoney(Id harvester);
+
+    void register(String userName, String password, String confirmPassword) throws UserAlreadyExistsException, PasswordNotMatchException;
 }

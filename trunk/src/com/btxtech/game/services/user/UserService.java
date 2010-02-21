@@ -15,6 +15,8 @@ package com.btxtech.game.services.user;
 
 
 import java.util.List;
+import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
+import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 
 public interface UserService {
 

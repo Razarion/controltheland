@@ -22,8 +22,8 @@ import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
-import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
+import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
@@ -34,6 +34,9 @@ import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.itemTypeAccess.ServerItemTypeAccessService;
 import com.btxtech.game.services.terrain.TerrainService;
+import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
+import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.ArrayList;
@@ -64,6 +67,8 @@ public class MovableServiceImpl implements MovableService {
     private UserTrackingService userTrackingService;
     @Autowired
     private UserGuidanceService userGuidanceService;
+    @Autowired
+    private UserService userService;
 
     private Log log = LogFactory.getLog(MovableServiceImpl.class);
 
@@ -134,6 +139,7 @@ public class MovableServiceImpl implements MovableService {
         try {
             GameInfo gameInfo = new GameInfo();
             gameInfo.setBase(baseService.getBase().getSimpleBase());
+            gameInfo.setRegistered(baseService.getBase().getUser() != null);
             gameInfo.setAccountBalance(baseService.getBase().getAccountBalance());
             gameInfo.setAllowedItemTypes(serverItemTypeAccessService.getAllowedItemTypes());
             gameInfo.setXp(serverItemTypeAccessService.getXp());
@@ -177,5 +183,19 @@ public class MovableServiceImpl implements MovableService {
         } catch (Throwable t) {
             log.error("", t);
         }
+    }
+
+    @Override
+    public void register(String userName, String password, String confirmPassword) throws UserAlreadyExistsException, PasswordNotMatchException {
+        try {
+            userService.createUserAndLoggin(userName, password, confirmPassword);
+        } catch(UserAlreadyExistsException e){
+            throw e;
+        } catch(PasswordNotMatchException e){
+            throw e;
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+
     }
 }

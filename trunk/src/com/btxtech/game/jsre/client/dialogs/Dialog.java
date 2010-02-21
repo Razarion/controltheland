@@ -26,25 +26,32 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * Time: 3:19:00 PM
  */
 public abstract class Dialog extends DialogBox {
+    private boolean showCloseButton = true;
+
+    protected void setShowCloseButton(boolean showCloseButton) {
+        this.showCloseButton = showCloseButton;
+    }
+
     protected void setupDialog(String title) {
         setText(title);
         setAnimationEnabled(true);
-        final Button closeButton = new Button("Close");
         VerticalPanel dialogVPanel = new VerticalPanel();
         //setupExceptionPanel(dialogVPanel, t);
         setupPanel(dialogVPanel);
         dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
-        dialogVPanel.add(closeButton);
         setWidget(dialogVPanel);
+        if (showCloseButton) {
+            final Button closeButton = new Button("Close");
+            dialogVPanel.add(closeButton);
 
-        closeButton.addClickHandler(new ClickHandler() {
-            public void onClick(ClickEvent event) {
-                hide(true);
-            }
-        });
-
+            closeButton.addClickHandler(new ClickHandler() {
+                public void onClick(ClickEvent event) {
+                    hide(true);
+                }
+            });
+            closeButton.setFocus(true);
+        }
         center();
-        closeButton.setFocus(true);
         getElement().getStyle().setZIndex(Constants.Z_INDEX_DIALOG);
     }
 

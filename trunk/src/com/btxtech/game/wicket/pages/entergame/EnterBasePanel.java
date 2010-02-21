@@ -30,13 +30,6 @@ public class EnterBasePanel extends BasePage {
     private BaseService baseService;
 
     public EnterBasePanel() {
-        add(new NotLoggedIn("noLoggedIn") {
-            @Override
-            public boolean isVisible() {
-                return !userService.isLoggedin();
-            }
-        });
-
         add(new BaseRunning("baseRunning") {
             @Override
             public boolean isVisible() {

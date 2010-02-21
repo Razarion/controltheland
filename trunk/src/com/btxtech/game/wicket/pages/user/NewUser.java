@@ -13,8 +13,8 @@
 
 package com.btxtech.game.wicket.pages.user;
 
-import com.btxtech.game.services.user.PasswordNotMatchException;
-import com.btxtech.game.services.user.UserAlreadyExistsException;
+import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
+import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.pages.Info;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
