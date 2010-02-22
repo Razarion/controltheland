@@ -24,7 +24,6 @@ import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
-import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.Timer;
@@ -83,8 +82,13 @@ public class ClientUserTracker {
         }
     }
 
-    public void clickOnTerrain(int absoluteX, int absoluteY, MouseDownEvent mouseDownEvent) {
-        UserAction userAction = new UserAction(UserAction.TERRAIN_CLICKED, absoluteX + ":" + absoluteY);
+    public void onMouseDownTerrain(int absoluteX, int absoluteY) {
+        UserAction userAction = new UserAction(UserAction.TERRAIN_MOUSE_DOWN, absoluteX + ":" + absoluteY);
+        userActions.add(userAction);
+    }
+
+    public void onMouseUpTerrain(int absoluteX, int absoluteY) {
+        UserAction userAction = new UserAction(UserAction.TERRAIN_MOUSE_UP, absoluteX + ":" + absoluteY);
         userActions.add(userAction);
     }
 

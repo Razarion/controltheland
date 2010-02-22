@@ -39,7 +39,7 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
 
     @Override
     public void onMouseDown(int absoluteX, int absoluteY, MouseDownEvent mouseDownEvent) {
-        ClientUserTracker.getInstance().clickOnTerrain(absoluteX, absoluteY, mouseDownEvent);
+        ClientUserTracker.getInstance().onMouseDownTerrain(absoluteX, absoluteY);
         if (mouseDownEvent.getNativeButton() == NativeEvent.BUTTON_LEFT) {
             new GroupSelectionFrame(mouseDownEvent.getX(), mouseDownEvent.getY(), this);
         } else if (mouseDownEvent.getNativeButton() == NativeEvent.BUTTON_RIGHT) {
@@ -49,6 +49,7 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
 
     @Override
     public void onMouseUp(int absoluteX, int absoluteY, MouseUpEvent event) {
+        ClientUserTracker.getInstance().onMouseUpTerrain(absoluteX, absoluteY);
         if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
             executeMoveCommand(absoluteX, absoluteY);
         }

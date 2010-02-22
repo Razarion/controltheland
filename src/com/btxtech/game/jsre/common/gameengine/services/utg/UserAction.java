@@ -22,7 +22,8 @@ import java.util.Date;
  * Time: 22:04:47
  */
 public class UserAction implements Serializable {
-    public static final String TERRAIN_CLICKED = "TERRAIN_CLICKED";
+    public static final String TERRAIN_MOUSE_DOWN = "TERRAIN_MOUSE_DOWN";
+    public static final String TERRAIN_MOUSE_UP = "TERRAIN_MOUSE_UP";
     public static final String OWN_ITEM_CLICKED = "OWN_ITEM_CLICKED";
     public static final String ENEMY_ITEM_CLICKED = "ENEMY_ITEM_CLICKED";
     public static final String RESOURCE_CLICKED = "RESOURCE_CLICKED";
