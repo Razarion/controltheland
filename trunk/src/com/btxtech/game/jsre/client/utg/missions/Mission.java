@@ -38,6 +38,7 @@ public abstract class Mission {
     private String htmlCompleted;
     private ClientSyncBaseItemView protagonist;
     private SpeechBubble completedBubble;
+    private boolean autoTaskChange = false;
 
     protected Mission(String name, String htmlCompleted) {
         this.name = name;
@@ -47,6 +48,10 @@ public abstract class Mission {
     protected void addTask(Task task) {
         tasks.add(task);
         task.setMission(this);
+    }
+
+    public void setAutoTaskChange(boolean autoTaskChange) {
+        this.autoTaskChange = autoTaskChange;
     }
 
     public void start() throws MissionAportedException {
@@ -94,12 +99,15 @@ public abstract class Mission {
         return currentTask == null && tasks.isEmpty();
     }
 
-    public void blink() {
+    public void tick() {
         if (currentTask == null) {
             return;
         }
         if (System.currentTimeMillis() > HtmlConstants.WAITING_FOR_BLINK + lastTaskChange) {
             currentTask.blink();
+        }
+        if (autoTaskChange && System.currentTimeMillis() > HtmlConstants.AUTO_TASK_CHANGE + lastTaskChange) {
+            activateNextTask();
         }
     }
 

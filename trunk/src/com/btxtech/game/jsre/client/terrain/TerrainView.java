@@ -20,7 +20,6 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
-import com.btxtech.game.jsre.client.utg.missions.ScrollMission;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
@@ -313,7 +312,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         terrainScrollListeners.add(terrainScrollListener);
     }
 
-    public void removeTerrainScrollListener(ScrollMission terrainScrollListener) {
+    public void removeTerrainScrollListener(TerrainScrollListener terrainScrollListener) {
         terrainScrollListeners.remove(terrainScrollListener);
     }
 
