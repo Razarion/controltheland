@@ -20,6 +20,7 @@ package com.btxtech.game.jsre.client.utg.missions;
  */
 public class HtmlConstants {
     public static final long WAITING_FOR_BLINK = 5000;
+    public static final long AUTO_TASK_CHANGE = 6000;
 
     public static final String MOVE_HTML1 = "<h3>This is your construction vehicle</h3>Click the left mouse button to select it.";
     public static final String MOVE_HTML2 = "If you see the move cursor you can move your vehicle around by a left mouse button click on the terrain. Click here to move the construction vehicle to here.";

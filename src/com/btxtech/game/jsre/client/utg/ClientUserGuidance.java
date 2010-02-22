@@ -106,7 +106,7 @@ public class ClientUserGuidance implements SelectionListener {
                             currentMission = null;
                         }
                     } else {
-                        currentMission.blink();
+                        currentMission.tick();
                     }
                 } else {
                     startNextMission();

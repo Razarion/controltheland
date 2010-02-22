@@ -53,7 +53,8 @@ public class FinishedMission extends Mission {
     }
 
     @Override
-    public void blink() {
+    public void tick() {
+        super.tick();
         speechBubble.blink();
     }
 
