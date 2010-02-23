@@ -104,9 +104,11 @@ public class SyncMovable extends SyncBaseAbility {
             Index destination = pathToDestination.get(pathToDestination.size() - 1);
             if (!destination.isInRadius(target, range)) {
                 pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getPosition(), target, range);
+                getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
             }
         } else {
             pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getPosition(), target, range);
+            getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
         }
         tick(factor);
     }
