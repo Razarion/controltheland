@@ -156,6 +156,7 @@ public class ItemContainer extends AbstractItemService {
     public void killBaseSyncObject(SyncItem syncItem, SyncBaseItem actor, boolean force) {
         ClientSyncItemView clientSyncItemView = items.get(syncItem.getId());
         if (items.containsKey(syncItem.getId())) {
+            syncItem.getId().setUserTimeStamp(System.currentTimeMillis());
             deadItems.put(syncItem.getId(), clientSyncItemView);
         } else {
             GwtCommon.sendLogToServer("This sould never happen: ItemContainer.killBaseSyncObject() syncItem:" + syncItem + " actor:" + actor);
