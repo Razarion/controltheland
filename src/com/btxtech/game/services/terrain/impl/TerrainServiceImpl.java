@@ -65,14 +65,14 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
                 log.error("More than one terrain setting row found: " + dbTerrainSettings.size());
             }
             this.dbTerrainSettings = dbTerrainSettings.get(0);
-    }
+        }
         setTerrainSettings(this.dbTerrainSettings.createTerrainSettings());
 
         setTerrainImagePositions(new ArrayList<TerrainImagePosition>());
         List<DbTerrainImagePosition> dbTerrainImagePositions = hibernateTemplate.loadAll(DbTerrainImagePosition.class);
         for (DbTerrainImagePosition dbTerrainImagePosition : dbTerrainImagePositions) {
             addTerrainImagePosition(dbTerrainImagePosition.createTerrainImagePosition());
-                }
+        }
 
 
         List<DbTerrainImage> imageList = hibernateTemplate.loadAll(DbTerrainImage.class);
@@ -81,7 +81,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         for (DbTerrainImage dbTerrainImage : imageList) {
             dbTerrainImages.put(dbTerrainImage.getId(), dbTerrainImage);
             putTerrainImage(dbTerrainImage.createTerrainImage());
-    }
+        }
 
         fireTerrainChanged();
     }
@@ -99,14 +99,14 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     @Override
     public DbTerrainSetting getDbTerrainSettings() {
         return dbTerrainSettings;
-            }
+    }
 
     @Override
     public DbTerrainImage getDbTerrainImage(int id) {
         DbTerrainImage dbTerrainImage = dbTerrainImages.get(id);
         if (dbTerrainImage == null) {
             throw new IllegalArgumentException("No terrain image for id: " + id);
-            }
+        }
         return dbTerrainImage;
     }
 
@@ -125,7 +125,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         doBeDeleted.removeAll(dbTerrainImages);
         if (!doBeDeleted.isEmpty()) {
             hibernateTemplate.deleteAll(doBeDeleted);
-    }
+        }
         loadTerrain();
     }
 
@@ -150,7 +150,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
             ArrayList<Index> singleIndex = new ArrayList<Index>();
             singleIndex.add(absolutePosition);
             return singleIndex;
-                }
+        }
 
         List<Index> path = setupPathToDestination(absolutePosition, absoluteDestination);
         path.remove(path.size() - 1); // This will be replace
@@ -168,14 +168,14 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
                 if (getTerrainImagePosition(newDestination.getX(), newDestination.getY()) == null) {
                     path.add(newDestination);
                     return path;
-        }
-    }
-    }
-        throw new IllegalStateException("Can not find position");
+                }
             }
+        }
+        throw new IllegalStateException("Can not find position. Pos: " + absolutePosition + " dest: " + absoluteDestination + " maxRadius: " + maxRadius);
+    }
 
     @Override
     public List<Index> setupPathToDestination(Index start, Index destination) {
         return collisionService.setupPathToDestination(start, destination);
     }
-    }
+}
