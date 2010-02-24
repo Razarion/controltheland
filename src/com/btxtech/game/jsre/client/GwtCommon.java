@@ -15,12 +15,14 @@ package com.btxtech.game.jsre.client;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.MouseEvent;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.Date;
 
 public class GwtCommon {
     //private static ExceptionDialog exceptionDialog;
     private static Boolean isIe6;
+    private static Boolean isOpera;
 
     public static void setUncaughtExceptionHandler() {
         GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
@@ -93,16 +95,18 @@ public class GwtCommon {
         }
     }
 
-
-    public static native String getUserAgent() /*-{
-      return navigator.userAgent.toLowerCase();
-    }-*/;
-
     public static boolean isIe6() {
         if (isIe6 == null) {
-            isIe6 = getUserAgent().contains("msie 6");
+            isIe6 =  Window.Navigator.getUserAgent().contains("msie 6");
         }
         return isIe6;
+    }
+
+    public static boolean isOpera() {
+        if (isOpera == null) {
+            isOpera = Window.Navigator.getUserAgent().contains("Opera");
+        }
+        return isOpera;
     }
 
     public static native void disableBrowserContextMenuJSNI() /*-{
