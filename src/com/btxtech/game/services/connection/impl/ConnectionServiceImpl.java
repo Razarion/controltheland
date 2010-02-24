@@ -93,7 +93,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     @Override
     public void sendSyncInfos(Collection<SyncBaseItem> syncItem) {
         for (SyncItem item : syncItem) {
-           sendSyncInfo(item);
+            sendSyncInfo(item);
         }
     }
 
@@ -127,8 +127,10 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
                     it.remove();
                 } else {
                     double ticksPerSecond = (double) tickCount / (double) (USER_TRACKING_PERIODE / 1000);
-                    ConnectionStatistics connectionStatistics = new ConnectionStatistics(connection.getBase().getSimpleBase(), connection.getSessionId(), ticksPerSecond);
-                    hibernateTemplate.saveOrUpdate(connectionStatistics);
+                    if (!Double.isInfinite(ticksPerSecond) && !Double.isNaN(ticksPerSecond)) {
+                        ConnectionStatistics connectionStatistics = new ConnectionStatistics(connection.getBase().getSimpleBase(), connection.getSessionId(), ticksPerSecond);
+                        hibernateTemplate.saveOrUpdate(connectionStatistics);
+                    }
                 }
             } catch (Throwable t) {
                 log.error("", t);
@@ -140,7 +142,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     public void clientLog(String message, Date date) {
         try {
             ClientLogEntry clientLogEntry = new ClientLogEntry(message, date, session);
- //           hibernateTemplate.saveOrUpdate(clientLogEntry);
+            //           hibernateTemplate.saveOrUpdate(clientLogEntry);
             log.info(clientLogEntry.getFormatMessage());
         } catch (Throwable t) {
             log.error("", t);
@@ -167,9 +169,6 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         Connection connection = session.getConnection();
         if (connection == null) {
             throw new IllegalStateException("Connection does not exist");
-        }
-        if (connection.isClosed()) {
-            throw new IllegalStateException("Connection already closed");
         }
         connection.setClosed();
         session.setConnection(null);
