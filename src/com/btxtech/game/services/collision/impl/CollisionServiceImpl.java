@@ -288,6 +288,13 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
             int discance = targetMinRange + random.nextInt(targetMaxRange - targetMinRange);
             Index point = origin.getPosition().getPointFromAngelToNord(angel, discance);
 
+            if(point.getX() >= terrainService.getDbTerrainSettings().getPlayFieldXSize()) {
+               continue;
+            }
+            if(point.getY() >= terrainService.getDbTerrainSettings().getPlayFieldYSize()) {
+               continue;
+            }
+
             if (!isFree(point, itemType)) {
                 continue;
             }

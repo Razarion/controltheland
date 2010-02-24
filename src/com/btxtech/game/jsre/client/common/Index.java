@@ -130,7 +130,15 @@ public class Index implements Serializable {
     public Index getPointFromAngelToNord(double angle, int radius) {
         int gk = (int) (Math.sin(angle) * (double) radius);
         int ak = (int) (Math.cos(angle) * (double) radius);
-        return new Index(x - gk, y - ak);
+        int newX = x - gk;
+        if (newX < 0) {
+            newX = 0;
+        }
+        int newY = y - ak;
+        if (newY < 0) {
+            newY = 0;
+        }
+        return new Index(newX, newY);
     }
 
     public Index getPointWithDistance(int distance, Index directionTo) {
