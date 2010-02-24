@@ -368,7 +368,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     public void saveUserCommand(BaseCommand baseCommand) {
         try {
             UserCommand userUserCommand = new UserCommand(session.getConnection(), baseCommand);
-            //log.debug(userUserCommand);
+            log.debug(userUserCommand);
             hibernateTemplate.saveOrUpdate(userUserCommand);
         } catch (Throwable t) {
             log.error("", t);
