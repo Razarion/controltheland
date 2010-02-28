@@ -143,13 +143,13 @@ public abstract class Mission {
     }
 
     public void onSyncItemDeactivated(SyncBaseItem syncBaseItem) {
-        if (currentTask != null && syncBaseItem.equals(protagonist.getSyncBaseItem())) {
+        if (currentTask != null && protagonist != null && syncBaseItem.equals(protagonist.getSyncBaseItem())) {
             currentTask.onSyncItemDeactivated(syncBaseItem);
         }
     }
 
     public void onExecuteCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
-        if (currentTask != null && syncItem.equals(protagonist.getSyncBaseItem())) {
+        if (currentTask != null && protagonist != null && syncItem.equals(protagonist.getSyncBaseItem())) {
             currentTask.onExecuteCommand(syncItem, baseCommand);
         }
     }

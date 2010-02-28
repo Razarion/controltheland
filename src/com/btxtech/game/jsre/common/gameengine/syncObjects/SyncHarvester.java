@@ -58,6 +58,7 @@ public class SyncHarvester extends SyncBaseAbility{
 
     public void stop() {
         target = null;
+        getSyncBaseItem().getSyncMovable().stop();
     }
 
     @Override

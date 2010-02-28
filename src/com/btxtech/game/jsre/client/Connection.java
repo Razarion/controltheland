@@ -32,6 +32,7 @@ import com.btxtech.game.jsre.common.EnergyPacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.XpBalancePackt;
+import com.btxtech.game.jsre.common.ai.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccessSyncInfo;
 import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
@@ -100,12 +101,14 @@ public class Connection implements AsyncCallback<Void> {
         TerrainView.getInstance().setupTerrain(gameInfo.getTerrainSettings(),
                 gameInfo.getTerrainImagePositions(),
                 gameInfo.getTerrainImages());
-        if(!gameInfo.isRegistered()) {
-            RegisterDialog.showDialog();
-        } else {
-            ClientUserGuidance.getInstance().setDialogOk();
+        if (!PlayerSimulation.isActive()) {
+            if (!gameInfo.isRegistered()) {
+                RegisterDialog.showDialog();
+            } else {
+                ClientUserGuidance.getInstance().setDialogOk();
+            }
         }
-        
+
         movableServiceAsync.getItemTypes(new AsyncCallback<Collection<ItemType>>() {
             @Override
             public void onFailure(Throwable throwable) {
@@ -135,7 +138,10 @@ public class Connection implements AsyncCallback<Void> {
                         }
                         TerrainView.getInstance().moveToHome();
                         ClientUserTracker.getInstance().sandGameStartupState(GameStartupState.CLIENT_RUNNING);
-                        ClientUserGuidance.getInstance().setStartupOk();
+                        if (!PlayerSimulation.isActive()) {
+                            ClientUserGuidance.getInstance().setStartupOk();
+                        }
+                        PlayerSimulation.getInstance().start();
                         timer.schedule(MIN_DELAY_BETWEEN_TICKS);
                     }
                 });

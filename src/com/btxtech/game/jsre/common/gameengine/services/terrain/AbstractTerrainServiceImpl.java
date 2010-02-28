@@ -224,10 +224,14 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
 
     @Override
     public boolean isFree(Index posititon, ItemType itemType) {
-        Rectangle rectangle = new Rectangle(posititon.getX() - itemType.getWidth() / 2,
-                posititon.getY() - itemType.getHeight() / 2,
-                itemType.getWidth(),
-                itemType.getHeight());
+        int x = posititon.getX() - itemType.getWidth() / 2;
+        int y = posititon.getY() - itemType.getHeight() / 2;
+
+        if(x < 0 || y < 0) {
+            return false;
+        }
+
+        Rectangle rectangle = new Rectangle(x, y, itemType.getWidth(), itemType.getHeight());
         return getTerrainImagesInRegion(rectangle).isEmpty();
     }
 

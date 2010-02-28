@@ -88,6 +88,7 @@ public class SyncBuilder extends SyncBaseAbility {
         currentBuildup = null;
         toBeBuiltType = null;
         toBeBuildPosition = null;
+        getSyncBaseItem().getSyncMovable().stop();
     }
 
     @Override

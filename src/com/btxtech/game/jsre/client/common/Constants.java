@@ -56,7 +56,7 @@ public class Constants {
     public static final int MONEY_STACK_COUNT = 8;
 
     // Distances
-    public static final int MIN_FREE_MONEY_DISTANCE = 100;
+    public static final int MIN_FREE_MONEY_DISTANCE = 400;
 
     // Base
     public static final String DUMMY_BASE_NAME = "Dummy";

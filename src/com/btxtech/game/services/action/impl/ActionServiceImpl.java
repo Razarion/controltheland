@@ -335,23 +335,18 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
     @Override
     public void setupAllMoneyStacks() {
         for (SyncResourceItem money : moneys) {
-            checkMoneyStack(money);
+            if (!terrainService.isFree(money.getPosition(), money.getItemType())) {
+                log.error("Money has wrong position: " + money);
+            }
         }
         for (int i = moneys.size(); i < Constants.MONEY_STACK_COUNT; i++) {
             addMoneyStack();
         }
     }
 
-    private void checkMoneyStack(SyncResourceItem money) {
-        if (!terrainService.isFree(money.getPosition(), money.getItemType())) {
-            Index position = collisionService.getFreeRandomPosition(money.getItemType(), Constants.MIN_FREE_MONEY_DISTANCE);
-            money.setPosition(position);
-        }
-    }
-
     private void addMoneyStack() {
         try {
-            ItemType itemType = itemService.getItemType("Money");
+            ItemType itemType = itemService.getItemType(Constants.MONEY);
             Index position = collisionService.getFreeRandomPosition(itemType, Constants.MIN_FREE_MONEY_DISTANCE);
             SyncResourceItem money = (SyncResourceItem) itemService.createSyncObject(itemType, position, null, null, 0);
             connectionService.sendSyncInfo(money);
