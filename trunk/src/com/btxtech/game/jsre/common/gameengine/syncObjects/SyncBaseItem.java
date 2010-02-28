@@ -400,6 +400,10 @@ public class SyncBaseItem extends SyncItem {
     }
 
     public void setBuild(boolean isBuild) {
+        if(this.isBuild == isBuild) {
+            return;
+        }
+
         this.isBuild = isBuild;
         if (syncConsumer != null) {
             syncConsumer.setConsuming(isBuild);
@@ -424,5 +428,14 @@ public class SyncBaseItem extends SyncItem {
 
     public void setFullHealth() {
         health = baseItemType.getHealth();
+    }
+
+    @Override
+    public String toString() {
+        if(hasSyncHarvester()) {
+            return super.toString() + " target: " + getSyncHarvester().getTarget();
+        } else {
+            return super.toString();
+        }
     }
 }

@@ -94,6 +94,9 @@ public class SyncWeapon extends SyncBaseAbility {
 
     public void stop() {
         target = null;
+        if (getSyncBaseItem().hasSyncMovable()) {
+            getSyncBaseItem().getSyncMovable().stop();
+        }
     }
 
     @Override

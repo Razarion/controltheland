@@ -25,8 +25,10 @@ import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.effects.ExplosionHandler;
+import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientUserGuidance;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.ai.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseService;
@@ -37,12 +39,14 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Timer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -92,10 +96,11 @@ public class ItemContainer extends AbstractItemService {
     public void sychronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException {
         ClientSyncItemView clientSyncItemView = items.get(syncItemInfo.getId());
 
+        boolean isCreated = false;
         if (syncItemInfo.isAlive()) {
             if (clientSyncItemView == null) {
                 clientSyncItemView = createAndAddItem(syncItemInfo.getId(), syncItemInfo.getPosition(), syncItemInfo.getItemTypeId(), syncItemInfo.getBase());
-                ClientUserGuidance.getInstance().onItemCreated(clientSyncItemView);
+                isCreated = true;
                 checkSpecialAdded(clientSyncItemView);
             } else {
                 // Check for  Teleportation effect
@@ -106,11 +111,15 @@ public class ItemContainer extends AbstractItemService {
                 ClientSyncItemView orphanItem = orphanItems.remove(clientSyncItemView.getSyncItem().getId());
                 if (orphanItem != null) {
                     orphanItem.setVisible(true);
-                    ClientUserGuidance.getInstance().onItemCreated(orphanItem);
+                    isCreated = true;
                     checkSpecialAdded(clientSyncItemView);
                 }
             }
             clientSyncItemView.getSyncItem().synchronize(syncItemInfo);
+            if(isCreated) {
+                ClientUserGuidance.getInstance().onItemCreated(clientSyncItemView);
+                PlayerSimulation.getInstance().onItemCreated(clientSyncItemView);
+            }
             clientSyncItemView.update();
             checkSpecialItem(clientSyncItemView);
             if (clientSyncItemView instanceof ClientSyncBaseItemView) {
@@ -259,6 +268,62 @@ public class ItemContainer extends AbstractItemService {
         return clientBaseItems;
     }
 
+    public List<SyncItem> getItems(ItemType itemType, boolean own) {
+        ArrayList<SyncItem> syncItems = new ArrayList<SyncItem>();
+        for (ClientSyncItemView clientBaseItem : items.values()) {
+            SyncItem syncItem = clientBaseItem.getSyncItem();
+            if (orphanItems.containsKey(syncItem.getId()) || deadItems.containsKey(syncItem.getId())) {
+                continue;
+            }
+
+            if (!syncItem.getItemType().equals(itemType)) {
+                continue;
+            }
+
+            if (own) {
+                if (clientBaseItem instanceof ClientSyncBaseItemView && ((ClientSyncBaseItemView) clientBaseItem).isMyOwnProperty()) {
+                    syncItems.add(syncItem);
+                }
+            } else {
+                syncItems.add(syncItem);
+            }
+        }
+        return syncItems;
+
+    }
+
+    public List<SyncItem> getItems(String itemTypeName, boolean own) throws NoSuchItemTypeException {
+        return getItems(getItemType(itemTypeName), own);
+    }
+
+    public Index getFreeRandomPosition(ItemType itemType, SyncItem origin, int targetMinRange, int targetMaxRange) {
+        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+            double angel = Random.nextDouble() * 2.0 * Math.PI;
+            int discance = targetMinRange + Random.nextInt(targetMaxRange - targetMinRange);
+            Index point = origin.getPosition().getPointFromAngelToNord(angel, discance);
+
+            if (point.getX() >= TerrainView.getInstance().getTerrainHandler().getTerrainSettings().getPlayFieldXSize()) {
+                continue;
+            }
+            if (point.getY() >= TerrainView.getInstance().getTerrainHandler().getTerrainSettings().getPlayFieldYSize()) {
+                continue;
+            }
+
+            if (!TerrainView.getInstance().getTerrainHandler().isFree(point, itemType)) {
+                continue;
+            }
+            Rectangle itemRectangle = new Rectangle(point.getX() - itemType.getWidth() / 2,
+                    point.getY() - itemType.getHeight() / 2,
+                    itemType.getWidth(),
+                    itemType.getHeight());
+
+            if (!getItemsInRect(itemRectangle, false).isEmpty()) {
+                continue;
+            }
+            return point;
+        }
+        throw new IllegalStateException("Can not find free position");
+    }
 
     @Override
     protected BaseService getBaseService() {

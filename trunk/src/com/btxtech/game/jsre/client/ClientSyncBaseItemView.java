@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.effects.AttackEffectHandler;
 import com.btxtech.game.jsre.client.utg.ClientUserGuidance;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
+import com.btxtech.game.jsre.common.ai.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.dom.client.Style;
@@ -119,6 +120,7 @@ public class ClientSyncBaseItemView extends ClientSyncItemView {
         switch (change) {
             case BUILD:
                 ClientUserGuidance.getInstance().onItemBuilt(this);
+                PlayerSimulation.getInstance().onItemBuilt(this);
                 break;
             case ANGEL:
                 setupImage();

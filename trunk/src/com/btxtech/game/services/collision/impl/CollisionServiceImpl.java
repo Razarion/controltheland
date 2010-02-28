@@ -246,20 +246,6 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     }
 
 
-    private boolean isFree(Index position, ItemType toBePlaced) {
-        Index atomPosition = terrainService.getTerrainTileIndexForAbsPosition(position);
-        Index tileSize = terrainService.getTerrainTileIndexForAbsPositionRoundUp(new Index(toBePlaced.getWidth(), toBePlaced.getHeight()));
-
-        for (int x = atomPosition.getX() - (tileSize.getX() / 2); x <= atomPosition.getX() + (tileSize.getX() / 2); x++) {
-            for (int y = atomPosition.getY() - (tileSize.getY() / 2); y <= atomPosition.getY() + (tileSize.getY() / 2); y++) {
-                if (!passableTerrain[x][y]) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
     @Override
     public Index getFreeRandomPosition(ItemType itemType, int edgeLength) {
         Random random = new Random();
@@ -267,7 +253,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
             int x = random.nextInt(terrainService.getDbTerrainSettings().getPlayFieldXSize() - 200) + 100;
             int y = random.nextInt(terrainService.getDbTerrainSettings().getPlayFieldYSize() - 200) + 100;
             Index point = new Index(x, y);
-            if (!isFree(point, itemType)) {
+            if (!terrainService.isFree(point, itemType)) {
                 continue;
             }
             Index start = point.sub(new Index(edgeLength / 2, edgeLength / 2));
@@ -295,7 +281,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
                continue;
             }
 
-            if (!isFree(point, itemType)) {
+            if (!terrainService.isFree(point, itemType)) {
                 continue;
             }
             Rectangle itemRectangle = new Rectangle(point.getX() - itemType.getWidth() / 2,
@@ -372,7 +358,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
         PassableRectangle atomStartRect = getPassableRectangleOfAbsoluteIndex(start);
         PassableRectangle atomDestRect = getPassableRectangleOfAbsoluteIndex(destination);
         if (atomStartRect == null || atomDestRect == null) {
-            throw new IllegalArgumentException("Illegal atomStartRect or absoluteDestionation");
+            throw new IllegalArgumentException("Illegal atomStartRect or absoluteDestionation. start: " + start + " destination: " + destination);
         }
 
         if (atomStartRect.equals(atomDestRect)) {

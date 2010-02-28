@@ -23,6 +23,7 @@ import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientUserGuidance;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.RectangleFormation;
+import com.btxtech.game.jsre.common.ai.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -84,6 +85,7 @@ public class ActionHandler {
                 try {
                     if (!activeItem.tick(factor)) {
                         ClientUserGuidance.getInstance().onSyncItemDeactivated(activeItem);
+                        PlayerSimulation.getInstance().onSyncItemDeactivated(activeItem);
                         iterator.remove();
                     }
                 } catch (ItemDoesNotExistException ife) {
@@ -92,7 +94,7 @@ public class ActionHandler {
                 } catch (InsufficientFundsException ife) {
                     iterator.remove();
                     activeItem.stop();
-                    if (ClientBase.getInstance().isMyOwnProperty(activeItem)) {
+                    if (ClientBase.getInstance().isMyOwnProperty(activeItem) && !PlayerSimulation.isActive()) {
                         MessageDialog.show("Insufficient Money!", "You do not have enough money. You have to Collect more money");
                     }
                 } catch (Throwable throwable) {
@@ -206,7 +208,9 @@ public class ActionHandler {
             factory.executeCommand(factoryCommand);
             executeCommand(factory, factoryCommand);
         } catch (InsufficientFundsException e) {
-            MessageDialog.show("Insufficient Money!", "You do not have enough money. You have to Collect more money");
+            if (!PlayerSimulation.isActive()) {
+                MessageDialog.show("Insufficient Money!", "You do not have enough money. You have to Collect more money");
+            }
         } catch (Exception e) {
             GwtCommon.handleException(e);
         }
