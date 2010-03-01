@@ -59,7 +59,8 @@ public class SessionImpl implements Session, Serializable {
                 WebCommon.getCookieId(request.getCookies()),
                 userAgent,
                 request.getHeader("Accept-Language"),
-                request.getRemoteAddr());
+                request.getRemoteAddr(),
+                request.getHeader("Referer"));
         userTrackingService.newSession(userDetails);
     }
 

@@ -186,8 +186,10 @@ public class Connection implements AsyncCallback<Void> {
                 if (packet instanceof SyncItemInfo) {
                     ItemContainer.getInstance().sychronize((SyncItemInfo) packet);
                 } else if (packet instanceof Message) {
-                    Message message = (Message) packet;
-                    MessageDialog.show(message.getTitle(), "<h1>" + message.getMessage() + "</h1>");
+                    if (!PlayerSimulation.isActive()) {
+                        Message message = (Message) packet;
+                        MessageDialog.show(message.getTitle(), "<h1>" + message.getMessage() + "</h1>");
+                    }
                 } else if (packet instanceof AccountBalancePackt) {
                     AccountBalancePackt balancePackt = (AccountBalancePackt) packet;
                     ClientBase.getInstance().setAccountBalance(balancePackt.getAccountBalance());

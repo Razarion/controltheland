@@ -75,6 +75,7 @@ public class UserTracking extends WebPage {
                 };
                 link.add(new Label("sessionId", listItem.getModelObject().getSessionId()));
                 listItem.add(link);
+                listItem.add(new Label("referer", listItem.getModelObject().getReferer()));                
             }
         };
         add(listView);

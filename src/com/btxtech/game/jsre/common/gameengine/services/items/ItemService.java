@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * User: beat
@@ -45,9 +46,12 @@ public interface ItemService {
 
     ItemType getItemType(String name) throws NoSuchItemTypeException;
 
-    Collection<ItemType> getItemTypes();    
+    Collection<ItemType> getItemTypes();
 
     boolean areItemTypesLoaded();
 
     SyncItem newSyncItem(Id id, Index position, int itemTypeId, SimpleBase base, Services services) throws NoSuchItemTypeException;
+
+    List<BaseItemType> ableToBuild(BaseItemType toBeBuilt);
+
 }

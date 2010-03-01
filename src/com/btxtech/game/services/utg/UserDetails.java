@@ -41,6 +41,7 @@ public class UserDetails {
     private String remoteAddr;
     private boolean isCrawler;
     private String cookieId;
+    private String referer;
 
     /**
      * Used by Hibernate
@@ -48,7 +49,7 @@ public class UserDetails {
     public UserDetails() {
     }
 
-    public UserDetails(String sessionId, String cookieId, String userAgent, String language, String remoteAddr) {
+    public UserDetails(String sessionId, String cookieId, String userAgent, String language, String remoteAddr, String Referer) {
         this.cookieId = cookieId;
         timeStamp = new Date();
         this.sessionId = sessionId;
@@ -61,6 +62,7 @@ public class UserDetails {
         } catch (UnknownHostException e) {
             remoteHost = "???";
         }
+        referer = Referer;
         isCrawler = CrawlerDetection.isCrawler(userAgent, remoteHost);
     }
 
@@ -94,6 +96,10 @@ public class UserDetails {
 
     public String getCookieId() {
         return cookieId;
+    }
+
+    public String getReferer() {
+        return referer;
     }
 
     @Override

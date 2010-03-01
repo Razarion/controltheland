@@ -21,6 +21,7 @@ import java.util.Date;
  * Time: 12:24:41
  */
 public class VisitorInfo {
+    public static final int MAX_REFERER_LENGTH = 30;
     private Date date;
     private String sessionId;
     private int pageHits;
@@ -29,6 +30,7 @@ public class VisitorInfo {
     private int commands;
     private int missions;
     private boolean cookie;
+    private String referer;
 
     public VisitorInfo(Date date,
                        String sessionId,
@@ -37,7 +39,8 @@ public class VisitorInfo {
                        int enterGameHits,
                        int commands,
                        int missions,
-                       boolean cookie) {
+                       boolean cookie,
+                       String referer) {
         this.date = date;
         this.sessionId = sessionId;
         this.pageHits = pageHits;
@@ -46,6 +49,11 @@ public class VisitorInfo {
         this.commands = commands;
         this.missions = missions;
         this.cookie = cookie;
+        if (referer != null && referer.length() > MAX_REFERER_LENGTH) {
+            this.referer = referer.substring(0, MAX_REFERER_LENGTH);
+        } else {
+            this.referer = referer;
+        }
     }
 
     public Date getDate() {
@@ -78,5 +86,9 @@ public class VisitorInfo {
 
     public boolean isCookie() {
         return cookie;
+    }
+
+    public String getReferer() {
+        return referer;
     }
 }
