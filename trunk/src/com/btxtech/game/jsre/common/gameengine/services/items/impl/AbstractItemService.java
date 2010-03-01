@@ -30,6 +30,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * User: beat
@@ -125,6 +126,24 @@ abstract public class AbstractItemService implements ItemService {
     @Override
     public boolean areItemTypesLoaded() {
         return !itemTypes.isEmpty();
+    }
+
+    @Override
+    public List<BaseItemType> ableToBuild(BaseItemType toBeBuilt) {
+        ArrayList<BaseItemType> result = new ArrayList<BaseItemType>();
+        for (ItemType itemType : itemTypes.values()) {
+            if (!(itemType instanceof BaseItemType)) {
+                continue;
+            }
+            BaseItemType baseItemType = (BaseItemType) itemType;
+            if(baseItemType.getBuilderType() != null && baseItemType.getBuilderType().getAbleToBuild().contains(toBeBuilt.getId())) {
+                result.add(baseItemType);
+            }
+            if(baseItemType.getFactoryType() != null && baseItemType.getFactoryType().getAbleToBuild().contains(toBeBuilt.getId())) {
+                result.add(baseItemType);
+            }
+        }
+        return result;
     }
 
     abstract protected BaseService getBaseService();

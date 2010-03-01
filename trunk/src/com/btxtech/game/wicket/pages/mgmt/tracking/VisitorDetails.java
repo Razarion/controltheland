@@ -89,6 +89,7 @@ public class VisitorDetails extends WebPage {
         add(new Label("remoteAddr", userDetails.getRemoteAddr()));
         add(new Label("cookieId", userDetails.getCookieId()));
         add(new Label("crawler", userDetails.isCrawler() ? "Yes" : "No"));
+        add(new Label("referer", userDetails.getReferer()));
     }
 
     private void gameOverview(VisitorDetailInfo visitorDetailInfo) {

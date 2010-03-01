@@ -31,6 +31,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.ai.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseService;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.items.impl.AbstractItemService;
@@ -61,6 +62,7 @@ public class ItemContainer extends AbstractItemService {
     private HashSet<ClientSyncBaseItemView> specialItems = new HashSet<ClientSyncBaseItemView>();
     private HashMap<Id, ClientSyncItemView> orphanItems = new HashMap<Id, ClientSyncItemView>();
     private HashMap<Id, ClientSyncItemView> deadItems = new HashMap<Id, ClientSyncItemView>();
+    private Object groupedItems;
 
     /**
      * Singleton
@@ -105,7 +107,7 @@ public class ItemContainer extends AbstractItemService {
             } else {
                 // Check for  Teleportation effect
                 int distance = clientSyncItemView.getSyncItem().getPosition().getDistance(syncItemInfo.getPosition());
-                if (distance > 100) {
+                if (distance > 200) {
                     GwtCommon.sendLogToServer("Teleportation detected. Distance: " + distance + " Info:" + syncItemInfo + " | Item:" + clientSyncItemView.getSyncItem());
                 }
                 ClientSyncItemView orphanItem = orphanItems.remove(clientSyncItemView.getSyncItem().getId());
@@ -116,7 +118,7 @@ public class ItemContainer extends AbstractItemService {
                 }
             }
             clientSyncItemView.getSyncItem().synchronize(syncItemInfo);
-            if(isCreated) {
+            if (isCreated) {
                 ClientUserGuidance.getInstance().onItemCreated(clientSyncItemView);
                 PlayerSimulation.getInstance().onItemCreated(clientSyncItemView);
             }
@@ -268,6 +270,19 @@ public class ItemContainer extends AbstractItemService {
         return clientBaseItems;
     }
 
+    public List<ClientSyncBaseItemView> getEnemyItems() {
+        ArrayList<ClientSyncBaseItemView> clientBaseItems = new ArrayList<ClientSyncBaseItemView>();
+        for (ClientSyncItemView clientBaseItem : items.values()) {
+            if (clientBaseItem instanceof ClientSyncBaseItemView &&
+                    !((ClientSyncBaseItemView) clientBaseItem).isMyOwnProperty() &&
+                    !orphanItems.containsKey(clientBaseItem.getSyncItem().getId()) &&
+                    !deadItems.containsKey(clientBaseItem.getSyncItem().getId())) {
+                clientBaseItems.add((ClientSyncBaseItemView) clientBaseItem);
+            }
+        }
+        return clientBaseItems;
+    }
+
     public List<SyncItem> getItems(ItemType itemType, boolean own) {
         ArrayList<SyncItem> syncItems = new ArrayList<SyncItem>();
         for (ClientSyncItemView clientBaseItem : items.values()) {
@@ -380,4 +395,28 @@ public class ItemContainer extends AbstractItemService {
     }
 
 
+    public Map<BaseItemType, List<SyncBaseItem>> getItems4Base(SimpleBase simpleBase) {
+        Map<BaseItemType, List<SyncBaseItem>> result = new HashMap<BaseItemType, List<SyncBaseItem>>();
+        for (ClientSyncItemView clientSyncItemView : items.values()) {
+            if (orphanItems.containsKey(clientSyncItemView.getSyncItem().getId()) ||
+                    deadItems.containsKey(clientSyncItemView.getSyncItem().getId())) {
+                continue;
+            }
+
+            if (!(clientSyncItemView instanceof ClientSyncBaseItemView)) {
+                continue;
+            }
+            SyncBaseItem syncBaseItem = ((ClientSyncBaseItemView) clientSyncItemView).getSyncBaseItem();
+            if (!syncBaseItem.getBase().equals(simpleBase)) {
+                continue;
+            }
+            List<SyncBaseItem> syncBaseItems = result.get(syncBaseItem.getBaseItemType());
+            if (syncBaseItems == null) {
+                syncBaseItems = new ArrayList<SyncBaseItem>();
+                result.put(syncBaseItem.getBaseItemType(), syncBaseItems);
+            }
+            syncBaseItems.add(syncBaseItem);
+        }
+        return result;
+    }
 }
