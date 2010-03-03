@@ -164,8 +164,12 @@ public class ClientUserTracker {
     }
 
 
-    public void onRegisterDialogClose() {
-        userActions.add(new UserAction(UserAction.REGISTER_DIALOG_CLOSE, null));
+    public void onRegisterDialogCloseReg() {
+        userActions.add(new UserAction(UserAction.REGISTER_DIALOG_CLOSE_REG, null));
+    }
+
+    public void onRegisterDialogCloseNoReg() {
+        userActions.add(new UserAction(UserAction.REGISTER_DIALOG_CLOSE_NO_REG, null));
     }
 
     public void onRegisterDialogOpen() {

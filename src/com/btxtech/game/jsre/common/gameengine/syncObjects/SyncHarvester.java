@@ -37,6 +37,10 @@ public class SyncHarvester extends SyncBaseAbility{
     }
 
     public boolean tick(double factor) throws ItemDoesNotExistException {
+        if (!getSyncBaseItem().isAlive()) {
+            return false;
+        }       
+
         try {
             SyncResourceItem resource = (SyncResourceItem) getServices().getItemService().getItem(target);
             if (isTargetInRange(resource.getPosition(), harvesterType.getRange())) {

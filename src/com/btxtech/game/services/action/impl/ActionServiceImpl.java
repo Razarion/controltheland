@@ -296,7 +296,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
         try {
             syncItem = (SyncBaseItem) itemService.getItem(baseCommand.getId());
         } catch (ItemDoesNotExistException e) {
-            log.error("Can not execute command. Item does no longer exist " + baseCommand);
+            log.info("Can not execute command. Item does no longer exist " + baseCommand);
             return;
         }
         if (!cmdFromSystem) {

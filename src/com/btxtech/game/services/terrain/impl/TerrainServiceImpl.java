@@ -166,8 +166,8 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
             angle = absoluteDestination.getAngleToNord(secondLastPoint);
         }
         for (int radius = maxRadius; radius > 0; radius -= getTerrainSettings().getTileHeight() / 10) {
-            for (double testAngle = angle; testAngle < angle + 2 * Math.PI; testAngle += Math.PI / 0.01) {
-                Index newDestination = absoluteDestination.getPointFromAngelToNord(angle, maxRadius);
+            for (double testAngle = angle; testAngle < angle + 2 * Math.PI; testAngle += Math.PI / 50) {
+                Index newDestination = absoluteDestination.getPointFromAngelToNord(testAngle, maxRadius);
                 if (getTerrainImagePosition(newDestination.getX(), newDestination.getY()) == null) {
                     path.add(newDestination);
                     return path;

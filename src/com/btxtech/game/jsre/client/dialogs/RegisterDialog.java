@@ -60,6 +60,7 @@ public class RegisterDialog extends Dialog {
         skip.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
+                ClientUserTracker.getInstance().onRegisterDialogCloseNoReg();
                 closeDialog();
             }
         });
@@ -114,14 +115,14 @@ public class RegisterDialog extends Dialog {
 
             @Override
             public void onSuccess(Void aVoid) {
-                 closeDialog();
+                ClientUserTracker.getInstance().onRegisterDialogCloseReg();
+                closeDialog();
             }
         });
     }
 
     private void closeDialog() {
         hide(true);
-        ClientUserTracker.getInstance().onRegisterDialogClose();
         ClientUserGuidance.getInstance().setDialogOk();
     }
 

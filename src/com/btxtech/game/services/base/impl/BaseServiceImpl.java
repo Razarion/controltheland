@@ -57,6 +57,8 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * User: beat
@@ -66,6 +68,7 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 public class BaseServiceImpl implements BaseService {
     public static final String DEFAULT_PLAYER_NAME_PREFIX = "Player ";
     public static final int EDGE_LENGTH = 200;
+    private Log log = LogFactory.getLog(BaseServiceImpl.class);
     @Autowired
     private Session session;
     @Autowired
@@ -128,6 +131,7 @@ public class BaseServiceImpl implements BaseService {
             }
 
             base = new Base(name, baseColor, userService.getLoggedinUser());
+            log.info("Base created: " + base);            
             base.setAccountBalance(Constants.START_MONEY);
             bases.put(name, base);
             colorsUsed.add(baseColor.getHtmlColor());
@@ -153,6 +157,7 @@ public class BaseServiceImpl implements BaseService {
     }
 
     private void deleteBase(Base base) {
+        log.info("Base deleted: " + base);
         synchronized (bases) {
             if (bases.remove(base.getName()) == null) {
                 throw new IllegalArgumentException("Base does not exist: " + base.getSimpleBase());

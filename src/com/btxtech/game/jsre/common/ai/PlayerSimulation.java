@@ -201,7 +201,7 @@ public class PlayerSimulation {
             if (attacker.getSyncWaepon().isActive()) {
                 continue;
             }
-            doHarvest(attacker);
+            doAttack(attacker);
         }
     }
 
