@@ -33,7 +33,8 @@ public class UserAction implements Serializable {
     public static final String SCROLL = "SCROLL";
     public static final String SPEECH_BUBBLE_CLICKED = "SPEECH_BUBBLE_CLICKED";
     public static final String REGISTER_DIALOG_OPEN = "REGISTER_DIALOG_OPEN";
-    public static final String REGISTER_DIALOG_CLOSE = "REGISTER_DIALOG_CLOSE";
+    public static final String REGISTER_DIALOG_CLOSE_REG = "REGISTER_DIALOG_CLOSE_REG";
+    public static final String REGISTER_DIALOG_CLOSE_NO_REG = "REGISTER_DIALOG_CLOSE_NO_REG";
     public static final String CLOSE_WINDOW = "CLOSE_WINDOW";
     private Date timeStamp;
     private String type;

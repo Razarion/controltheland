@@ -200,4 +200,9 @@ public class Base implements Serializable {
     public void setUserItemTypeAccess(UserItemTypeAccess userItemTypeAccess) {
         this.userItemTypeAccess = userItemTypeAccess;
     }
+
+    @Override
+    public String toString() {
+        return getSimpleBase().toString();
+    }
 }
