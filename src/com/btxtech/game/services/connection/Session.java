@@ -28,6 +28,8 @@ public interface Session {
 
     String getSessionId();
 
+    String getCookieId();
+
     String getUserAgent();
 
     User getUser();
