@@ -52,10 +52,11 @@
       <mapping class="com.btxtech.game.services.itemTypeAccess.impl.UserItemTypeAccess"/>
       <mapping class="com.btxtech.game.services.itemTypeAccess.XpSettings"/>
       <mapping class="com.btxtech.game.services.utg.PageAccess"/>
-      <mapping class="com.btxtech.game.services.utg.UserDetails"/>
+      <mapping class="com.btxtech.game.services.utg.BrowserDetails"/>
       <mapping class="com.btxtech.game.services.utg.GameStartup"/>
       <mapping class="com.btxtech.game.services.utg.DbUserAction"/>
       <mapping class="com.btxtech.game.services.utg.DbMissionAction"/>
       <mapping class="com.btxtech.game.services.utg.UserCommand"/>
+      <mapping class="com.btxtech.game.services.utg.UserHistory"/>
   </session-factory>
 </hibernate-configuration>

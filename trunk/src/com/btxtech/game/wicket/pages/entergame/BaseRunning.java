@@ -45,7 +45,7 @@ public class BaseRunning extends BorderPanel {
 
             @Override
             public void onSubmit() {
-                baseService.surenderBase(baseService.getBaseForLoggedInUser());
+                baseService.surrenderBase(baseService.getBaseForLoggedInUser());
             }
         });
     }

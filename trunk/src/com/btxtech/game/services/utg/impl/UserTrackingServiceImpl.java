@@ -23,7 +23,10 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryComman
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.connection.Session;
+import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.utg.BrowserDetails;
 import com.btxtech.game.services.utg.DbMissionAction;
 import com.btxtech.game.services.utg.DbUserAction;
 import com.btxtech.game.services.utg.GameStartup;
@@ -31,7 +34,7 @@ import com.btxtech.game.services.utg.GameTrackingInfo;
 import com.btxtech.game.services.utg.PageAccess;
 import com.btxtech.game.services.utg.UserActionCommandMissions;
 import com.btxtech.game.services.utg.UserCommand;
-import com.btxtech.game.services.utg.UserDetails;
+import com.btxtech.game.services.utg.UserHistory;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.VisitorDetailInfo;
 import com.btxtech.game.services.utg.VisitorInfo;
@@ -80,8 +83,8 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public void newSession(UserDetails userDetails) {
-        hibernateTemplate.saveOrUpdate(userDetails);
+    public void newSession(BrowserDetails browserDetails) {
+        hibernateTemplate.saveOrUpdate(browserDetails);
     }
 
     @Override
@@ -107,7 +110,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     @Override
     public List<VisitorInfo> getVisitorInfos() {
         ArrayList<VisitorInfo> visitorInfos = new ArrayList<VisitorInfo>();
-        List<Object[]> datesAndHits = (List<Object[]>) hibernateTemplate.find("select u.timeStamp, u.sessionId, u.cookieId, u.referer ,count(p) from com.btxtech.game.services.utg.UserDetails u, com.btxtech.game.services.utg.PageAccess p where u.sessionId = p.sessionId and u.isCrawler = false group by u.sessionId order by u.timeStamp desc");
+        List<Object[]> datesAndHits = (List<Object[]>) hibernateTemplate.find("select u.timeStamp, u.sessionId, u.cookieId, u.referer ,count(p) from com.btxtech.game.services.utg.BrowserDetails u, com.btxtech.game.services.utg.PageAccess p where u.sessionId = p.sessionId and u.isCrawler = false group by u.sessionId order by u.timeStamp desc");
         for (Object[] datesAndHit : datesAndHits) {
             Date timeStamp = (Date) datesAndHit[0];
             String sessionId = (String) datesAndHit[1];
@@ -229,16 +232,16 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     public VisitorDetailInfo getVisitorDetails(final String sessionId) {
-        List<UserDetails> list = (List<UserDetails>) hibernateTemplate.execute(new HibernateCallback() {
+        List<BrowserDetails> list = (List<BrowserDetails>) hibernateTemplate.execute(new HibernateCallback() {
             @Override
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(UserDetails.class);
+                Criteria criteria = session.createCriteria(BrowserDetails.class);
                 criteria.add(Restrictions.eq("sessionId", sessionId));
                 return criteria.list();
             }
         });
         if (list.size() != 1) {
-            throw new IllegalStateException("Only 1 UserDetails expected: " + list.size());
+            throw new IllegalStateException("Only 1 BrowserDetails expected: " + list.size());
         }
         VisitorDetailInfo visitorDetailInfo = new VisitorDetailInfo(list.get(0));
         visitorDetailInfo.setGameTrackingInfos(getGameTrackingInfos(sessionId));
@@ -375,6 +378,100 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             UserCommand userUserCommand = new UserCommand(session.getConnection(), baseCommand);
             // log.debug("User Command: " + userUserCommand);
             hibernateTemplate.saveOrUpdate(userUserCommand);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    public void onUserCreated(User user) {
+        try {
+            UserHistory userHistory = new UserHistory(user);
+            userHistory.setCreated();
+            hibernateTemplate.saveOrUpdate(userHistory);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    public void onUserLoggedIn(User user, Base base) {
+        try {
+            UserHistory userHistory = new UserHistory(user);
+            userHistory.setLoggedIn();
+            if (base != null) {
+                //
+                userHistory.setBaseName(base.getName());
+            }
+            hibernateTemplate.saveOrUpdate(userHistory);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    public void onUserLoggedOut(User user) {
+        try {
+            UserHistory userHistory = new UserHistory(user);
+            userHistory.setLoggedOut();
+            hibernateTemplate.saveOrUpdate(userHistory);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    public void onBaseCreated(User user, Base base) {
+        try {
+            UserHistory userHistory = new UserHistory(user);
+            userHistory.setBaseCreated();
+            userHistory.setBaseName(base.getName());
+            hibernateTemplate.saveOrUpdate(userHistory);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    public void onBaseDefeated(User user, Base base) {
+        try {
+            UserHistory userHistory = new UserHistory(user);
+            userHistory.setBaseDefeated();
+            userHistory.setBaseName(base.getName());
+            hibernateTemplate.saveOrUpdate(userHistory);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    public void onBaseSurrender(User user, Base base) {
+        try {
+            UserHistory userHistory = new UserHistory(user);
+            userHistory.setBaseSurrender();
+            userHistory.setBaseName(base.getName());
+            hibernateTemplate.saveOrUpdate(userHistory);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+
+    public void onUserEnterGame(User user) {
+        try {
+            UserHistory userHistory = new UserHistory(user);
+            userHistory.setGameEntered();
+            hibernateTemplate.saveOrUpdate(userHistory);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    public void onUserLeftGame(User user) {
+        try {
+            UserHistory userHistory = new UserHistory(user);
+            userHistory.setGameLeft();
+            hibernateTemplate.saveOrUpdate(userHistory);
         } catch (Throwable t) {
             log.error("", t);
         }

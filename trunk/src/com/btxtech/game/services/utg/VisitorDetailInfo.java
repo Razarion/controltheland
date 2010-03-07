@@ -22,7 +22,7 @@ import java.util.ArrayList;
  * Time: 12:01:19
  */
 public class VisitorDetailInfo {
-    private UserDetails userDetails;
+    private BrowserDetails browserDetails;
     private List<GameTrackingInfo> gameTrackingInfos = new ArrayList<GameTrackingInfo>();
     private List<PageAccess> pageAccessHistory;
     private long totalTime;
@@ -33,12 +33,12 @@ public class VisitorDetailInfo {
     private int moneyCollectCommands;
     private int completedMissionCount;
 
-    public VisitorDetailInfo(UserDetails userDetails) {
-        this.userDetails = userDetails;
+    public VisitorDetailInfo(BrowserDetails browserDetails) {
+        this.browserDetails = browserDetails;
     }
 
-    public UserDetails getUserDetails() {
-        return userDetails;
+    public BrowserDetails getUserDetails() {
+        return browserDetails;
     }
 
     public List<GameTrackingInfo> getGameTrackingInfos() {

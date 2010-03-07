@@ -18,6 +18,8 @@ import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
+import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.base.Base;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,7 +30,7 @@ import java.util.List;
  * Time: 22:04:31
  */
 public interface UserTrackingService {
-    void newSession(UserDetails userDetails);
+    void newSession(BrowserDetails browserDetails);
 
     void pageAccess(BasePage basePage);
 
@@ -41,4 +43,21 @@ public interface UserTrackingService {
     VisitorDetailInfo getVisitorDetails(String sessionId);
 
     void saveUserCommand(BaseCommand baseCommand);
+
+    void onUserCreated(User user);
+
+    void onUserLoggedIn(User user, Base base);
+
+    void onUserLoggedOut(User user);
+
+    void onBaseCreated(User user, Base base);
+
+    void onBaseDefeated(User user, Base base);
+
+    void onBaseSurrender(User user, Base base);
+
+    void onUserEnterGame(User user);
+
+    void onUserLeftGame(User user);
+
 }

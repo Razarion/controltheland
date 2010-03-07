@@ -15,7 +15,7 @@ package com.btxtech.game.wicket.pages.mgmt.tracking;
 
 import com.btxtech.game.services.utg.GameTrackingInfo;
 import com.btxtech.game.services.utg.PageAccess;
-import com.btxtech.game.services.utg.UserDetails;
+import com.btxtech.game.services.utg.BrowserDetails;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.VisitorDetailInfo;
 import com.btxtech.game.wicket.WebCommon;
@@ -80,16 +80,16 @@ public class VisitorDetails extends WebPage {
     }
 
     private void userInfo(String sessionId, VisitorDetailInfo visitorDetailInfo) {
-        UserDetails userDetails = visitorDetailInfo.getUserDetails();
+        BrowserDetails browserDetails = visitorDetailInfo.getUserDetails();
         add(new Label("sessionId", sessionId));
-        add(new Label("timeStamp", simpleDateFormat.format(userDetails.getTimeStamp())));
-        add(new Label("userAgent", userDetails.getUserAgent()));
-        add(new Label("language", userDetails.getLanguage()));
-        add(new Label("remoteHost", userDetails.getRemoteHost()));
-        add(new Label("remoteAddr", userDetails.getRemoteAddr()));
-        add(new Label("cookieId", userDetails.getCookieId()));
-        add(new Label("crawler", userDetails.isCrawler() ? "Yes" : "No"));
-        add(new Label("referer", userDetails.getReferer()));
+        add(new Label("timeStamp", simpleDateFormat.format(browserDetails.getTimeStamp())));
+        add(new Label("userAgent", browserDetails.getUserAgent()));
+        add(new Label("language", browserDetails.getLanguage()));
+        add(new Label("remoteHost", browserDetails.getRemoteHost()));
+        add(new Label("remoteAddr", browserDetails.getRemoteAddr()));
+        add(new Label("cookieId", browserDetails.getCookieId()));
+        add(new Label("crawler", browserDetails.isCrawler() ? "Yes" : "No"));
+        add(new Label("referer", browserDetails.getReferer()));
     }
 
     private void gameOverview(VisitorDetailInfo visitorDetailInfo) {

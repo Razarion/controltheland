@@ -21,6 +21,7 @@ import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.itemTypeAccess.ServerItemTypeAccessService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.Date;
 import java.util.List;
 import org.hibernate.Criteria;
@@ -41,6 +42,8 @@ public class UserServiceImpl implements UserService {
     private ServerItemTypeAccessService serverItemTypeAccessService;
     @Autowired
     private BaseService baseService;
+    @Autowired
+    private UserTrackingService userTrackingService;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -81,6 +84,7 @@ public class UserServiceImpl implements UserService {
         }
         session.clearGame();
         serverItemTypeAccessService.clearSession();
+        userTrackingService.onUserLoggedOut(session.getUser());
     }
 
     @SuppressWarnings("unchecked")
@@ -128,18 +132,25 @@ public class UserServiceImpl implements UserService {
         if (!password.equals(confirmPassword)) {
             throw new PasswordNotMatchException();
         }
+        User user = createAndSaveUser(name, password);
+        loginUser(user, true);
+    }
+
+    private User createAndSaveUser(String name, String password) {
         User user = new User();
         user.setName(name);
         user.setPassword(password);
         user.setRegisterDate(new Date());
         save(user);
-        loginUser(user, true);
+        userTrackingService.onUserCreated(user);
+        return user;
     }
 
     private void loginUser(User user, boolean keepGame) {
+        Base base = null;
         if (keepGame) {
             try {
-                Base base = baseService.getBase();
+                base = baseService.getBase();
                 base.setUser(user);
                 base.setUserItemTypeAccess(serverItemTypeAccessService.getUserItemTypeAccess());
             } catch (NoConnectionException e) {
@@ -152,6 +163,7 @@ public class UserServiceImpl implements UserService {
         session.setUser(user);
         user.setLastLoginDate(new Date());
         save(user);
+        userTrackingService.onUserLoggedIn(user, base);
     }
 
 }

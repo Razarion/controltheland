@@ -44,12 +44,15 @@ import com.btxtech.game.services.itemTypeAccess.ServerItemTypeAccessService;
 import com.btxtech.game.services.itemTypeAccess.impl.UserItemTypeAccess;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
@@ -57,8 +60,6 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * User: beat
@@ -85,6 +86,8 @@ public class BaseServiceImpl implements BaseService {
     private ServerItemTypeAccessService serverItemTypeAccessService;
     @Autowired
     private ServerEnergyService serverEnergyService;
+    @Autowired
+    private UserTrackingService userTrackingService;
     private final HashMap<String, Base> bases = new HashMap<String, Base>();
     private HashSet<String> colorsUsed = new HashSet<String>();
     private HibernateTemplate hibernateTemplate;
@@ -131,10 +134,13 @@ public class BaseServiceImpl implements BaseService {
             }
 
             base = new Base(name, baseColor, userService.getLoggedinUser());
-            log.info("Base created: " + base);            
+            log.info("Base created: " + base);
             base.setAccountBalance(Constants.START_MONEY);
             bases.put(name, base);
             colorsUsed.add(baseColor.getHtmlColor());
+            if (userService.getLoggedinUser() != null) {
+                userTrackingService.onBaseCreated(userService.getLoggedinUser(), base);
+            }
         }
         base.setUser(userService.getLoggedinUser());
         connectionService.createConnection(base);
@@ -284,6 +290,9 @@ public class BaseServiceImpl implements BaseService {
                 if (actor != null) {
                     sendDefeatedMessage(syncItem, actor);
                 }
+                if (base.getUser() != null) {
+                    userTrackingService.onBaseDefeated(base.getUser(), base);
+                }
                 deleteBase(base);
             }
         }
@@ -356,7 +365,10 @@ public class BaseServiceImpl implements BaseService {
     }
 
     @Override
-    public void surenderBase(Base base) {
+    public void surrenderBase(Base base) {
+        if (base.getUser() != null) {
+            userTrackingService.onBaseSurrender(base.getUser(), base);
+        }
         base.setUser(null);
         base.setAbandoned(true);
     }
