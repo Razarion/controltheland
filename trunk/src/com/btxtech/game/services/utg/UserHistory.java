@@ -41,6 +41,8 @@ public class UserHistory {
     private Date gameEntered;
     private Date gameLeft;
     private String baseName;
+    private String sessionId;
+    private String cookieId;
 
     /**
      * Used by hibernate
@@ -122,6 +124,26 @@ public class UserHistory {
 
     public void setBaseName(String baseName) {
         this.baseName = baseName;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public String getCookieId() {
+        return cookieId;
+    }
+
+    public void setCookieId(String cookieId) {
+        this.cookieId = cookieId;
+    }
+
+    public User getUser() {
+        return user;
     }
 
     @Override

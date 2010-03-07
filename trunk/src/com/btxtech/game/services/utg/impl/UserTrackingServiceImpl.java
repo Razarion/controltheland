@@ -387,6 +387,8 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     public void onUserCreated(User user) {
         try {
             UserHistory userHistory = new UserHistory(user);
+            userHistory.setSessionId(session.getSessionId());
+            userHistory.setCookieId(session.getCookieId());
             userHistory.setCreated();
             hibernateTemplate.saveOrUpdate(userHistory);
         } catch (Throwable t) {
@@ -398,6 +400,8 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     public void onUserLoggedIn(User user, Base base) {
         try {
             UserHistory userHistory = new UserHistory(user);
+            userHistory.setSessionId(session.getSessionId());
+            userHistory.setCookieId(session.getCookieId());
             userHistory.setLoggedIn();
             if (base != null) {
                 //

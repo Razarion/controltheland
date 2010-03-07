@@ -38,6 +38,7 @@ public class SessionImpl implements Session, Serializable {
     @Autowired
     UserTrackingService userTrackingService;
     private String sessionId;
+    private String cookieId;
     private String userAgent;
     private User user;
     private UserItemTypeAccess userItemTypeAccess;
@@ -56,8 +57,9 @@ public class SessionImpl implements Session, Serializable {
     public void init() {
         sessionId = request.getSession().getId();
         userAgent = request.getHeader("user-agent");
+        cookieId = WebCommon.getCookieId(request.getCookies());
         BrowserDetails browserDetails = new BrowserDetails(sessionId,
-                WebCommon.getCookieId(request.getCookies()),
+                cookieId,
                 userAgent,
                 request.getHeader("Accept-Language"),
                 request.getRemoteAddr(),
@@ -75,6 +77,11 @@ public class SessionImpl implements Session, Serializable {
     @Override
     public String getSessionId() {
         return sessionId;
+    }
+
+    @Override
+    public String getCookieId() {
+        return cookieId;
     }
 
     @Override
