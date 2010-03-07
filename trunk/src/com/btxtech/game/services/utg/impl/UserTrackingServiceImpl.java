@@ -14,26 +14,27 @@
 package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
-import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
+import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
+import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.Session;
+import com.btxtech.game.services.utg.DbMissionAction;
 import com.btxtech.game.services.utg.DbUserAction;
 import com.btxtech.game.services.utg.GameStartup;
 import com.btxtech.game.services.utg.GameTrackingInfo;
 import com.btxtech.game.services.utg.PageAccess;
+import com.btxtech.game.services.utg.UserActionCommandMissions;
 import com.btxtech.game.services.utg.UserCommand;
 import com.btxtech.game.services.utg.UserDetails;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.VisitorDetailInfo;
 import com.btxtech.game.services.utg.VisitorInfo;
-import com.btxtech.game.services.utg.DbMissionAction;
-import com.btxtech.game.services.utg.UserActionCommandMissions;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import com.btxtech.game.wicket.pages.entergame.EnterBasePanel;
 import java.sql.SQLException;
@@ -62,6 +63,8 @@ import org.springframework.stereotype.Component;
 public class UserTrackingServiceImpl implements UserTrackingService {
     @Autowired
     private Session session;
+    @Autowired
+    private BaseService baseService;
     private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(UserTrackingServiceImpl.class);
 
@@ -83,7 +86,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     public void gameStartup(GameStartupState state, Date timeStamp) {
-        GameStartup gameStartup = new GameStartup(session.getSessionId(), state, timeStamp);
+        GameStartup gameStartup = new GameStartup(session.getSessionId(), state, timeStamp, baseService.getBase().getName());
         hibernateTemplate.saveOrUpdate(gameStartup);
     }
 
@@ -269,6 +272,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                     gameTrackingInfo = new GameTrackingInfo();
                     gameTrackingInfos.add(gameTrackingInfo);
                     gameTrackingInfo.setServerGameStartup(gameStartup);
+                    gameTrackingInfo.setBaseName(gameStartup.getBaseName());
                     break;
                 case CLIENT_START:
                     if (gameTrackingInfo == null) {
