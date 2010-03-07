@@ -38,6 +38,7 @@ public class GameStartup implements Serializable {
     @Column(nullable = false)
     private GameStartupState state;
     private Date clientTimeStamp;
+    private String baseName;
 
     /**
      * Used by Hibernate
@@ -45,7 +46,8 @@ public class GameStartup implements Serializable {
     public GameStartup() {
     }
 
-    public GameStartup(String sessionId, GameStartupState state, Date timeStamp) {
+    public GameStartup(String sessionId, GameStartupState state, Date timeStamp, String baseName) {
+        this.baseName = baseName;
         this.timeStamp = new Date();
         this.sessionId = sessionId;
         this.state = state;
@@ -66,6 +68,10 @@ public class GameStartup implements Serializable {
 
     public Date getClientTimeStamp() {
         return clientTimeStamp;
+    }
+
+    public String getBaseName() {
+        return baseName;
     }
 
     @Override

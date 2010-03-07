@@ -41,6 +41,7 @@ public class GameTrackingInfo implements Serializable {
     private List<DbMissionAction> missionActions = new ArrayList<DbMissionAction>();
     private Date mapBgLoaded;
     private Date mapImagesLoaded;
+    private String baseName;
 
     public Date getStart() {
         return start;
@@ -183,5 +184,13 @@ public class GameTrackingInfo implements Serializable {
 
     public void setMapImagesLoaded(Date mapImagesLoaded) {
         this.mapImagesLoaded = mapImagesLoaded;
+    }
+
+    public String getBaseName() {
+        return baseName;
+    }
+
+    public void setBaseName(String baseName) {
+        this.baseName = baseName;
     }
 }
