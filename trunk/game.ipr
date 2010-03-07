@@ -540,9 +540,9 @@
       <option name="BROWSER_ID" value="system" />
       <option name="COMMON_VM_ARGUMENTS" value="-Xmx1024M" />
       <option name="BUILD_ON_FRAME_DEACTIVATION" value="true" />
-      <JAVAEE_FACET FACET_ID="game/web/Web2" DEPLOYMENT_SOURCE_NAME="exploded">
+      <JAVAEE_FACET FACET_ID="game/web/game" DEPLOYMENT_SOURCE_NAME="exploded">
         <option name="CONTEXT_PATH" value="/" />
-        <option name="DEPLOY" value="true" />
+        <option name="DEPLOY" value="false" />
       </JAVAEE_FACET>
       <server-settings>
         <option name="DEPLOY_TOMCAT_MANAGER" value="false" />

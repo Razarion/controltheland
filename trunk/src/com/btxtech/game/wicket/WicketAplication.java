@@ -36,7 +36,9 @@ public class WicketAplication extends WebApplication {
 
     @Override
     public String getConfigurationType() {
-        return Application.DEVELOPMENT;
+        return Application.DEPLOYMENT;
     }
+
+    
 
 }
