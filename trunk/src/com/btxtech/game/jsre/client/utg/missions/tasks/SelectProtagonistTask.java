@@ -13,8 +13,9 @@
 
 package com.btxtech.game.jsre.client.utg.missions.tasks;
 
-import com.btxtech.game.jsre.client.utg.SpeechBubble;
 import com.btxtech.game.jsre.client.cockpit.Group;
+import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
+import com.btxtech.game.jsre.client.utg.SpeechBubble;
 
 /**
  * User: beat
@@ -41,5 +42,10 @@ public class SelectProtagonistTask extends Task {
     public void onOwnSelectionChanged(Group selectedGroup) {
         activateNextTask();
     }
-    
+
+    @Override
+    public boolean canSkip() {
+        Group ownSelection = SelectionHandler.getInstance().getOwnSelection();
+        return ownSelection != null && ownSelection.contains(getMission().getProtagonist());
+    }
 }

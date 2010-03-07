@@ -185,7 +185,12 @@ public class ClientUserGuidance implements SelectionListener {
                 return;
             }
             currentMission = missions.remove(0);
-        } while (!currentMission.init());
+            if(currentMission.init()) {
+                break;
+            } else {
+                ClientUserTracker.getInstance().onMissionAction(MissionAction.MISSION_SKIPPED, currentMission);
+            }
+        } while (true);
 
         try {
             ClientUserTracker.getInstance().onMissionAction(MissionAction.MISSION_START, currentMission);

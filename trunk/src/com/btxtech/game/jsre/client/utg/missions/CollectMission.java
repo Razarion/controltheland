@@ -17,12 +17,11 @@ import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
 import com.btxtech.game.jsre.client.InfoPanel;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.item.ItemContainer;
-import com.btxtech.game.jsre.client.utg.missions.tasks.CollectResourceTask;
-import com.btxtech.game.jsre.client.utg.missions.tasks.CreateCommandTask;
-import com.btxtech.game.jsre.client.utg.missions.tasks.CreateTargetTask;
-import com.btxtech.game.jsre.client.utg.missions.tasks.SelectProtagonistAndMoneyTask;
-import com.btxtech.game.jsre.client.utg.missions.tasks.SelectProtagonistTask;
 import com.btxtech.game.jsre.client.utg.SpeechBubble;
+import com.btxtech.game.jsre.client.utg.missions.tasks.CollectResourceTask;
+import com.btxtech.game.jsre.client.utg.missions.tasks.CreateCommandTaskAndMoneyTask;
+import com.btxtech.game.jsre.client.utg.missions.tasks.CreateTargetTask;
+import com.btxtech.game.jsre.client.utg.missions.tasks.SelectProtagonistTask;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 import com.google.gwt.user.client.ui.Widget;
@@ -38,8 +37,8 @@ public class CollectMission extends Mission {
 
     public CollectMission() throws NoSuchItemTypeException {
         super("CollectMission", null);
-        addTask(new SelectProtagonistAndMoneyTask(HtmlConstants.COLLECT_HTML2));
-        addTask(new CreateCommandTask(HtmlConstants.COLLECT_HTML4, Constants.HARVESTER, FactoryCommand.class));
+        addTask(new SelectProtagonistTask(HtmlConstants.COLLECT_HTML2));
+        addTask(new CreateCommandTaskAndMoneyTask(Constants.HARVESTER, FactoryCommand.class));
         addTask(new SelectProtagonistTask(HtmlConstants.COLLECT_HTML4));
         addTask(new CreateTargetTask(Constants.MONEY));
         addTask(new CollectResourceTask(HtmlConstants.COLLECT_HTML5));

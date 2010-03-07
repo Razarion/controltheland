@@ -197,7 +197,7 @@ public class GameTracking extends Panel {
     }
 
     private void populateMission(ListItem<UserActionCommandMissions> listItem, DbMissionAction dbMissionAction) {
-        if (dbMissionAction.getAction().equals(MissionAction.MISSION_COMPLETED)) {
+        if (dbMissionAction.getAction().equals(MissionAction.MISSION_COMPLETED) || dbMissionAction.getAction().equals(MissionAction.MISSION_SKIPPED)) {
             listItem.add(new AttributeModifier("class", true, new Model<String>("missionFinished")));
         } else {
             listItem.add(new AttributeModifier("class", true, new Model<String>("mission")));

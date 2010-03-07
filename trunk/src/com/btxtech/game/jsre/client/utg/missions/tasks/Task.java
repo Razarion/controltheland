@@ -87,4 +87,8 @@ abstract public class Task {
 
     public void onItemBuilt(ClientSyncBaseItemView clientSyncItemView) {
     }
+
+    public boolean canSkip() {
+        return false;
+    }
 }
