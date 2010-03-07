@@ -26,8 +26,8 @@ import java.net.UnknownHostException;
  * Date: 12.01.2010
  * Time: 22:45:47
  */
-@Entity(name = "TRACKER_USER_DETAILS")
-public class UserDetails {
+@Entity(name = "TRACKER_BROWSER_DETAILS")
+public class BrowserDetails {
     @Id
     @GeneratedValue
     private Integer id;
@@ -46,10 +46,10 @@ public class UserDetails {
     /**
      * Used by Hibernate
      */
-    public UserDetails() {
+    public BrowserDetails() {
     }
 
-    public UserDetails(String sessionId, String cookieId, String userAgent, String language, String remoteAddr, String Referer) {
+    public BrowserDetails(String sessionId, String cookieId, String userAgent, String language, String remoteAddr, String Referer) {
         this.cookieId = cookieId;
         timeStamp = new Date();
         this.sessionId = sessionId;
@@ -107,7 +107,7 @@ public class UserDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        UserDetails that = (UserDetails) o;
+        BrowserDetails that = (BrowserDetails) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
 

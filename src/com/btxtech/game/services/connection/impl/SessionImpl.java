@@ -17,11 +17,12 @@ import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.itemTypeAccess.impl.UserItemTypeAccess;
 import com.btxtech.game.services.user.User;
-import com.btxtech.game.services.utg.UserDetails;
+import com.btxtech.game.services.utg.BrowserDetails;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.WebCommon;
 import java.io.Serializable;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -55,13 +56,20 @@ public class SessionImpl implements Session, Serializable {
     public void init() {
         sessionId = request.getSession().getId();
         userAgent = request.getHeader("user-agent");
-        UserDetails userDetails = new UserDetails(sessionId,
+        BrowserDetails browserDetails = new BrowserDetails(sessionId,
                 WebCommon.getCookieId(request.getCookies()),
                 userAgent,
                 request.getHeader("Accept-Language"),
                 request.getRemoteAddr(),
                 request.getHeader("Referer"));
-        userTrackingService.newSession(userDetails);
+        userTrackingService.newSession(browserDetails);
+    }
+
+    @PreDestroy
+    public void destroy() {
+        if (user != null) {
+            userTrackingService.onUserLoggedOut(user);
+        }
     }
 
     @Override

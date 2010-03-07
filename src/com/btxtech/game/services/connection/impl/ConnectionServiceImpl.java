@@ -19,18 +19,18 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.ClientLogEntry;
 import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.ConnectionStatistics;
 import com.btxtech.game.services.connection.Session;
+import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import org.apache.commons.logging.Log;
@@ -51,7 +51,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     @Autowired
     private Session session;
     @Autowired
-    private BaseService baseService;
+    private UserTrackingService userTrackingService;
     private Timer timer;
     private Log log = LogFactory.getLog(ConnectionServiceImpl.class);
     private HibernateTemplate hibernateTemplate;
@@ -123,6 +123,9 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
                 int tickCount = connection.resetAndGetTickCount();
                 if (connection.getNoTickCount() > MAX_NO_TICK_COUNT) {
                     log.info("User kicked due timeout: " + connection.getBase().getName());
+                    if (connection.getBase() != null && connection.getBase().getUser() != null) {
+                        userTrackingService.onUserLeftGame(connection.getBase().getUser());
+                    }
                     connection.setClosed();
                     it.remove();
                 } else {
@@ -162,6 +165,9 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         synchronized (onlineConnection) {
             onlineConnection.add(connection);
         }
+        if (base.getUser() != null) {
+            userTrackingService.onUserEnterGame(base.getUser());
+        }
     }
 
     @Override
@@ -170,6 +176,9 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         if (connection == null) {
             throw new IllegalStateException("Connection does not exist");
         }
+        if (connection.getBase() != null && connection.getBase().getUser() != null) {
+            userTrackingService.onUserLeftGame(connection.getBase().getUser());
+        }        
         connection.setClosed();
         session.setConnection(null);
         synchronized (onlineConnection) {
