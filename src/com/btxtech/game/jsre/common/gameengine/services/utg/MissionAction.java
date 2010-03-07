@@ -23,7 +23,9 @@ import java.util.Date;
  */
 public class MissionAction implements Serializable {
     public static final String MISSION_START = "MISSION_START";
+    public static final String MISSION_SKIPPED = "MISSION_SKIPPED";
     public static final String TASK_START = "TASK_START";
+    public static final String TASK_SKIPPED = "TASK_SKIPPED";
     public static final String MISSION_COMPLETED = "MISSION_COMPLETED";
 
     private String action;

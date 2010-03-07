@@ -14,9 +14,10 @@
 package com.btxtech.game.jsre.client.utg.missions.tasks;
 
 import com.btxtech.game.jsre.client.InfoPanel;
-import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.utg.SpeechBubble;
 import com.btxtech.game.jsre.client.utg.missions.HtmlConstants;
+import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -24,21 +25,21 @@ import com.google.gwt.user.client.ui.Widget;
  * Date: 17.02.2010
  * Time: 20:03:23
  */
-public class SelectProtagonistAndMoneyTask extends Task {
+public class CreateCommandTaskAndMoneyTask extends CreateCommandTask {
     private SpeechBubble moneySpeechBubble;
 
-    public SelectProtagonistAndMoneyTask(String html) {
-        super(html);
+    public CreateCommandTaskAndMoneyTask(String itemTypeName, Class<? extends BaseCommand> commandClass) throws NoSuchItemTypeException {
+        super(HtmlConstants.COLLECT_HTML3, itemTypeName, commandClass);
     }
 
     @Override
     public String getName() {
-        return "Select protagonist and money";
+        return super.getName() + " and money";
     }
 
     @Override
     public void run() {
-        setSpeechBubble(new SpeechBubble(getMission().getProtagonist(), getHtml(), false));
+        super.run();
         Widget w = InfoPanel.getInstance().getMoney();
         int x = w.getAbsoluteLeft() + w.getOffsetWidth() / 2;
         int y = w.getAbsoluteTop() + w.getOffsetHeight() / 2;
@@ -60,10 +61,5 @@ public class SelectProtagonistAndMoneyTask extends Task {
         if (moneySpeechBubble != null) {
             moneySpeechBubble.blink();
         }
-    }
-
-    @Override
-    public void onOwnSelectionChanged(Group selectedGroup) {
-        activateNextTask();
     }
 }

@@ -143,6 +143,10 @@ public class ClientUserTracker {
         missionActions.add(new MissionAction(MissionAction.TASK_START, mission.getName(), taskName));
     }
 
+    public void onSkipMissionTask(Mission mission, String taskName) {
+        missionActions.add(new MissionAction(MissionAction.TASK_SKIPPED, mission.getName(), taskName));
+    }
+
     public void onScrollHome() {
         UserAction userAction = new UserAction(UserAction.SCROLL_HOME_BUTTON, null);
         userActions.add(userAction);
@@ -175,7 +179,6 @@ public class ClientUserTracker {
     public void onRegisterDialogOpen() {
         userActions.add(new UserAction(UserAction.REGISTER_DIALOG_OPEN, null));
     }
-
 
     public void closeWindow() {
         UserAction userAction = new UserAction(UserAction.CLOSE_WINDOW, null);

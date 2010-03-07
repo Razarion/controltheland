@@ -69,6 +69,7 @@ public abstract class Mission {
 
     public void activateNextTask() {
         try {
+            closeTask();
             startNextTask();
         } catch (MissionAportedException e) {
             GwtCommon.handleException(e);
@@ -77,15 +78,19 @@ public abstract class Mission {
     }
 
     private void startNextTask() throws MissionAportedException {
-        closeTask();
         lastTaskChange = System.currentTimeMillis();
         if (tasks.isEmpty()) {
             currentTask = null;
             showCompletedMessage();
         } else {
             currentTask = tasks.remove(0);
-            currentTask.run();
-            ClientUserTracker.getInstance().onMissionTask(this, currentTask.getName());
+            if (currentTask.canSkip()) {
+                ClientUserTracker.getInstance().onSkipMissionTask(this, currentTask.getName());
+                startNextTask();
+            } else {
+                currentTask.run();
+                ClientUserTracker.getInstance().onMissionTask(this, currentTask.getName());
+            }
         }
     }
 
