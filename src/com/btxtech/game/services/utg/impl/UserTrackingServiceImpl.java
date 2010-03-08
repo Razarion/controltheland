@@ -25,6 +25,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.connection.Session;
+import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.utg.BrowserDetails;
 import com.btxtech.game.services.utg.DbMissionAction;
@@ -89,8 +90,12 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     public void gameStartup(GameStartupState state, Date timeStamp) {
-        GameStartup gameStartup = new GameStartup(session.getSessionId(), state, timeStamp, baseService.getBase().getName());
-        hibernateTemplate.saveOrUpdate(gameStartup);
+        try {
+            GameStartup gameStartup = new GameStartup(session.getSessionId(), state, timeStamp, baseService.getBase().getName());
+            hibernateTemplate.saveOrUpdate(gameStartup);
+        } catch (NoConnectionException e) {
+            log.error("Can not track game startup: " + e.getMessage());
+        }
     }
 
     @Override
