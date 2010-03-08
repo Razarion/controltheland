@@ -56,7 +56,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     private Log log = LogFactory.getLog(ConnectionServiceImpl.class);
     private HibernateTemplate hibernateTemplate;
     private final ArrayList<Connection> onlineConnection = new ArrayList<Connection>();
-    private static final int MAX_NO_TICK_COUNT = 50;
+    private static final int MAX_NO_TICK_COUNT = 40;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
