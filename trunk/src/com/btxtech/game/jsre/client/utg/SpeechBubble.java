@@ -58,16 +58,16 @@ public class SpeechBubble extends AbsolutePanel {
 
         switch (direction) {
             case BOTTOM:
-                setup(item.getRelativeMiddleX(), item.getRelativeMiddleY() - deltaY, html, htmlSize.getX(), htmlSize.getY());
+                setup(item.getRelativeMiddleX(), item.getRelativeMiddleY() - deltaY, html, htmlSize.getX(), htmlSize.getY(), direction);
                 break;
             case LEFT:
-                setup(item.getRelativeMiddleX() + deltaX, item.getRelativeMiddleY(), html, htmlSize.getX(), htmlSize.getY());
+                setup(item.getRelativeMiddleX() + deltaX, item.getRelativeMiddleY(), html, htmlSize.getX(), htmlSize.getY(), direction);
                 break;
             case RIGHT:
-                setup(item.getRelativeMiddleX() - deltaX, item.getRelativeMiddleY(), html, htmlSize.getX(), htmlSize.getY());
+                setup(item.getRelativeMiddleX() - deltaX, item.getRelativeMiddleY(), html, htmlSize.getX(), htmlSize.getY(), direction);
                 break;
             case TOP:
-                setup(item.getRelativeMiddleX(), item.getRelativeMiddleY() + deltaY, html, htmlSize.getX(), htmlSize.getY());
+                setup(item.getRelativeMiddleX(), item.getRelativeMiddleY() + deltaY, html, htmlSize.getX(), htmlSize.getY(), direction);
                 break;
         }
     }
@@ -75,7 +75,7 @@ public class SpeechBubble extends AbsolutePanel {
     public SpeechBubble(int beakRelX, int beakRelY, String html, boolean preventScroll) {
         this.preventScroll = preventScroll;
         Index htmlSize = getHtmlSize(html);
-        setup(beakRelX, beakRelY, html, htmlSize.getX(), htmlSize.getY());
+        setup(beakRelX, beakRelY, html, htmlSize.getX(), htmlSize.getY(), null);
     }
 
     private Index getHtmlSize(String html) {
@@ -103,8 +103,10 @@ public class SpeechBubble extends AbsolutePanel {
         return size;
     }
 
-    private void setup(int beakRelX, int beakRelY, String html, int htmlWidth, int htmlHeight) {
-        Direction direction = getBeakDirection(beakRelX, beakRelY, htmlWidth, htmlHeight);
+    private void setup(int beakRelX, int beakRelY, String html, int htmlWidth, int htmlHeight, Direction direction) {
+        if (direction == null) {
+            direction = getBeakDirection(beakRelX, beakRelY, htmlWidth, htmlHeight);
+        }
 
         int totalBubbleWidth = getBubbleSize(htmlWidth);
         int totalBubbleHeight = getBubbleSize(htmlHeight);
