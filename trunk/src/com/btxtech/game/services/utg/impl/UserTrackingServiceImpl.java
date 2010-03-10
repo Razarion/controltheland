@@ -79,13 +79,21 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     public void pageAccess(BasePage basePage) {
-        PageAccess pageAccess = new PageAccess(session.getSessionId(), basePage.getClass().getName(), basePage.getAdditionalPageInfo());
-        hibernateTemplate.saveOrUpdate(pageAccess);
+        try {
+            PageAccess pageAccess = new PageAccess(session.getSessionId(), basePage.getClass().getName(), basePage.getAdditionalPageInfo());
+            hibernateTemplate.saveOrUpdate(pageAccess);
+        } catch (NoConnectionException e) {
+            log.error("", e);
+        }
     }
 
     @Override
     public void newSession(BrowserDetails browserDetails) {
-        hibernateTemplate.saveOrUpdate(browserDetails);
+        try {
+            hibernateTemplate.saveOrUpdate(browserDetails);
+        } catch (NoConnectionException e) {
+            log.error("", e);
+        }
     }
 
     @Override
@@ -100,16 +108,20 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     public void saveUserActions(ArrayList<UserAction> userActions, ArrayList<MissionAction> missionActions) {
-        ArrayList<DbUserAction> dbUserActions = new ArrayList<DbUserAction>();
-        for (UserAction userAction : userActions) {
-            dbUserActions.add(new DbUserAction(userAction, session.getSessionId()));
+        try {
+            ArrayList<DbUserAction> dbUserActions = new ArrayList<DbUserAction>();
+            for (UserAction userAction : userActions) {
+                dbUserActions.add(new DbUserAction(userAction, session.getSessionId()));
+            }
+            hibernateTemplate.saveOrUpdateAll(dbUserActions);
+            ArrayList<DbMissionAction> dbMissionActions = new ArrayList<DbMissionAction>();
+            for (MissionAction missionAction : missionActions) {
+                dbMissionActions.add(new DbMissionAction(missionAction, session.getSessionId()));
+            }
+            hibernateTemplate.saveOrUpdateAll(dbMissionActions);
+        } catch (NoConnectionException e) {
+            log.error("", e);
         }
-        hibernateTemplate.saveOrUpdateAll(dbUserActions);
-        ArrayList<DbMissionAction> dbMissionActions = new ArrayList<DbMissionAction>();
-        for (MissionAction missionAction : missionActions) {
-            dbMissionActions.add(new DbMissionAction(missionAction, session.getSessionId()));
-        }
-        hibernateTemplate.saveOrUpdateAll(dbMissionActions);
     }
 
     @Override

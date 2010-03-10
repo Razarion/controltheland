@@ -92,11 +92,11 @@ public class Group {
 
     public boolean canMove() {
         for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
-            if (!clientSyncItem.getSyncBaseItem().hasSyncMovable()) {
-                return false;
+            if (clientSyncItem.getSyncBaseItem().hasSyncMovable()) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     public boolean onlyFactories() {
@@ -139,8 +139,18 @@ public class Group {
         return clientSyncItems;
     }
 
+    public Collection<ClientSyncBaseItemView> getMovableItems() {
+        ArrayList<ClientSyncBaseItemView> movables = new ArrayList<ClientSyncBaseItemView>();
+        for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
+            if (clientSyncItem.getSyncBaseItem().hasSyncMovable()) {
+                movables.add(clientSyncItem);
+            }
+        }
+        return movables;
+    }
+
     public ClientSyncBaseItemView getFirst() {
-         return clientSyncItems.iterator().next();
+        return clientSyncItems.iterator().next();
     }
 
     public int count() {
