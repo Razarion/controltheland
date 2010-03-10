@@ -169,6 +169,9 @@ public class ServerEnergyServiceImpl implements ServerEnergyService {
         synchronized (baseEntries) {
             BaseEnergy baseEnergy = baseEntries.get(simpleBase);
             if (baseEnergy == null) {
+                if (baseService.getBase(simpleBase) == null) {
+                    throw new IllegalStateException("There is no base for: " + simpleBase);
+                }
                 baseEnergy = new BaseEnergy(baseService, baseService.getBase(simpleBase), actionService);
                 baseEntries.put(simpleBase, baseEnergy);
             }

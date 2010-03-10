@@ -76,10 +76,16 @@ public class GroupSelectionFrame extends AbsolutePanel implements MouseMoveHandl
     @Override
     public void onMouseMove(MouseMoveEvent mouseMoveEvent) {
         int relX = mouseMoveEvent.getRelativeX(MapWindow.getAbsolutePanel().getElement());
+        if (relX < 0) {
+            relX = 0;
+        }
         int width = Math.abs(relX - originX);
         int x = Math.min(originX, relX);
 
         int relY = mouseMoveEvent.getRelativeY(MapWindow.getAbsolutePanel().getElement());
+        if (relY < 0) {
+            relY = 0;
+        }
         int height = Math.abs(relY - originY);
         int y = Math.min(originY, relY);
 
