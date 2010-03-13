@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.utg.impl;
 
+import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
@@ -22,14 +23,15 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderComman
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
-import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.connection.Session;
+import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.NoConnectionException;
+import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.utg.BrowserDetails;
 import com.btxtech.game.services.utg.DbMissionAction;
 import com.btxtech.game.services.utg.DbUserAction;
+import com.btxtech.game.services.utg.DbUserMessage;
 import com.btxtech.game.services.utg.GameStartup;
 import com.btxtech.game.services.utg.GameTrackingInfo;
 import com.btxtech.game.services.utg.PageAccess;
@@ -493,6 +495,15 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             UserHistory userHistory = new UserHistory(user);
             userHistory.setGameLeft();
             hibernateTemplate.saveOrUpdate(userHistory);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    public void trackUserMessage(UserMessage userMessage) {
+        try {
+            hibernateTemplate.saveOrUpdate(new DbUserMessage(userMessage));
         } catch (Throwable t) {
             log.error("", t);
         }

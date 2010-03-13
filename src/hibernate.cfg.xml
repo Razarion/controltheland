@@ -58,5 +58,6 @@
       <mapping class="com.btxtech.game.services.utg.DbMissionAction"/>
       <mapping class="com.btxtech.game.services.utg.UserCommand"/>
       <mapping class="com.btxtech.game.services.utg.UserHistory"/>
+      <mapping class="com.btxtech.game.services.utg.DbUserMessage"/>
   </session-factory>
 </hibernate-configuration>

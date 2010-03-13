@@ -16,7 +16,6 @@ package com.btxtech.game.jsre.client.terrain;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.InfoPanel;
-import com.btxtech.game.jsre.client.TopMapPanel;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.client.utg.SpeechBubble;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
@@ -172,13 +171,18 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
             if (w instanceof ClientSyncItemView) {
                 ClientSyncItemView clientSyncItemView = (ClientSyncItemView) w;
                 clientSyncItemView.setViewOrigin(left, top);
-            } else if (w != TerrainView.getInstance().getCanvas() &&
+            } else if(w instanceof SpeechBubble && !((SpeechBubble) w).isPreventScroll()) {
+                int newLeft = MapWindow.getAbsolutePanel().getWidgetLeft(w) - deltaLeft;
+                int newtop = MapWindow.getAbsolutePanel().getWidgetTop(w) - deltaTop;
+                MapWindow.getAbsolutePanel().setWidgetPosition(w, newLeft, newtop);
+            }
+            /* else if (w != TerrainView.getInstance().getCanvas() &&
                     !(w instanceof TopMapPanel) &&
                     !(w instanceof SpeechBubble && ((SpeechBubble) w).isPreventScroll())) {
                 int newLeft = MapWindow.getAbsolutePanel().getWidgetLeft(w) - deltaLeft;
                 int newtop = MapWindow.getAbsolutePanel().getWidgetTop(w) - deltaTop;
                 MapWindow.getAbsolutePanel().setWidgetPosition(w, newLeft, newtop);
-            }
+            }*/
         }
         ClientUserTracker.getInstance().scroll(left, top, width, height, deltaLeft, deltaTop);
     }

@@ -42,16 +42,14 @@ public class Game implements EntryPoint {
 
             RootPanel.get().add(MapWindow.getAbsolutePanel());
 
-            MapWindow.getAbsolutePanel().add(RadarPanel.getInstance(), 1, 30);
-            RadarPanel.getInstance().getElement().getStyle().setProperty("left", "");
-            RadarPanel.getInstance().getElement().getStyle().setProperty("right", "30px");
+            RadarPanel.getInstance().addToParent(MapWindow.getAbsolutePanel(), TopMapPanel.Direction.RIGHT_TOP, 30);
 
             cockpitPanel = new CockpitPanel();
-            MapWindow.getAbsolutePanel().add(cockpitPanel, 30, 200);
-            cockpitPanel.getElement().getStyle().setProperty("top", "");
-            cockpitPanel.getElement().getStyle().setProperty("bottom", "30px");
+            cockpitPanel.addToParent(MapWindow.getAbsolutePanel(), TopMapPanel.Direction.LEFT_BOTTOM, 30);
 
-            MapWindow.getAbsolutePanel().add(InfoPanel.getInstance(), 30, 30);
+            InfoPanel.getInstance().addToParent(MapWindow.getAbsolutePanel(), TopMapPanel.Direction.LEFT_TOP, 30);
+
+            OnlineBasePanel.getInstance().addToParent(MapWindow.getAbsolutePanel(), TopMapPanel.Direction.RIGHT_BOTTOM, 30);
 
             TerrainView.getInstance().addToParent(MapWindow.getAbsolutePanel());
             TerrainView.getInstance().getCanvas().getElement().getStyle().setZIndex(Constants.Z_INDEX_TERRAIN);

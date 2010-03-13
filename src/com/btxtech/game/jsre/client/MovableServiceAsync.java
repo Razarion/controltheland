@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.client.common.UserMessage;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.ArrayList;
 import java.util.Date;
@@ -49,4 +50,6 @@ public interface MovableServiceAsync {
     void createMissionMoney(Id harvester, AsyncCallback<Void> asyncCallback);
 
     void register(String userName, String password, String confirmPassword, AsyncCallback<Void> asyncCallback);
+
+    void sendUserMessage(UserMessage userMessage, AsyncCallback<Void> asyncCallback);
 }

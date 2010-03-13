@@ -157,39 +157,39 @@ td.box {
 }
 
 .topMapPanel .topCenter {
-    background: url(images/template/border/borderT.gif) repeat-X;
+    background: url(images/template/border/borderT.png) repeat-X;
     height: 20px;
 }
 
 .topMapPanel .bottomCenter {
-    background: url(images/template/border/borderB.gif) repeat-X;
+    background: url(images/template/border/borderB.png) repeat-X;
     height: 20px;
 }
 
 .topMapPanel .middleLeft {
-    background: url(images/template/border/borderL.gif) repeat-y;
+    background: url(images/template/border/borderL.png) repeat-y;
     width: 20px;
 }
 
 .topMapPanel .middleRight {
-    background: url(images/template/border/borderR.gif) repeat-y;
+    background: url(images/template/border/borderR.png) repeat-y;
     width: 20px;
 }
 
 .topMapPanel .topLeft {
-    background: url(images/template/border/cornerTL.gif) no-repeat;
+    background: url(images/template/border/cornerTL.png) no-repeat;
 }
 
 .topMapPanel .topRight {
-    background: url(images/template/border/cornerTR.gif) no-repeat;
+    background: url(images/template/border/cornerTR.png) no-repeat;
 }
 
 .topMapPanel .bottomLeft {
-    background: url(images/template/border/cornerBL.gif) no-repeat;
+    background: url(images/template/border/cornerBL.png) no-repeat;
 }
 
 .topMapPanel .bottomRight {
-    background: url(images/template/border/cornerBR.gif) no-repeat;
+    background: url(images/template/border/cornerBR.png) no-repeat;
 }
 
 .topMapPanel .topLeftInner,

@@ -23,9 +23,7 @@ import java.io.Serializable;
 public class Packet implements Serializable {
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        return true;
+        return this == o || !(o == null || getClass() != o.getClass());
     }
 
     @Override
