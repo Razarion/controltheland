@@ -13,6 +13,8 @@
 
 package com.btxtech.game.services.connection.impl;
 
+import com.btxtech.game.jsre.client.common.OnlineBaseUpdate;
+import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -97,6 +99,18 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         }
     }
 
+    @Override
+    public void sendPacket(Packet packet) {
+        synchronized (onlineConnection) {
+            for (Connection connection : onlineConnection) {
+                try {
+                    connection.sendPacket(packet);
+                } catch (Throwable t) {
+                    log.error("", t);
+                }
+            }
+        }
+    }
 
     @Override
     public void sendPacket(SimpleBase base, Packet packet) {
@@ -114,9 +128,15 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         }
     }
 
+    @Override
+    public void sendUserMessage(UserMessage userMessage) {
+        sendPacket(userMessage);
+        userTrackingService.trackUserMessage(userMessage);
+    }
 
     @Override
     public void run() {
+        boolean hasChanged = false;
         for (Iterator<Connection> it = onlineConnection.iterator(); it.hasNext();) {
             Connection connection = it.next();
             try {
@@ -128,6 +148,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
                     }
                     connection.setClosed();
                     it.remove();
+                    hasChanged = true;
                 } else {
                     double ticksPerSecond = (double) tickCount / (double) (USER_TRACKING_PERIODE / 1000);
                     if (!Double.isInfinite(ticksPerSecond) && !Double.isNaN(ticksPerSecond)) {
@@ -138,6 +159,9 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
             } catch (Throwable t) {
                 log.error("", t);
             }
+        }
+        if (hasChanged) {
+            sendOnlineBasesUpdate();
         }
     }
 
@@ -168,6 +192,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         if (base.getUser() != null) {
             userTrackingService.onUserEnterGame(base.getUser());
         }
+        sendOnlineBasesUpdate();
     }
 
     @Override
@@ -178,12 +203,13 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         }
         if (connection.getBase() != null && connection.getBase().getUser() != null) {
             userTrackingService.onUserLeftGame(connection.getBase().getUser());
-        }        
+        }
         connection.setClosed();
         session.setConnection(null);
         synchronized (onlineConnection) {
             onlineConnection.remove(connection);
         }
+        sendOnlineBasesUpdate();
     }
 
     @Override
@@ -204,10 +230,26 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         if (connection == null) {
             return false;
         }
-        if (connection.isClosed()) {
-            return false;
+        return !connection.isClosed();
+    }
+
+    private void sendOnlineBasesUpdate() {
+        sendPacket(getOnlineBaseUpdate());
+    }
+
+    @Override
+    public OnlineBaseUpdate getOnlineBaseUpdate() {
+        ArrayList<SimpleBase> simpleBases = new ArrayList<SimpleBase>();
+        synchronized (onlineConnection) {
+            for (Connection connection : onlineConnection) {
+                if (connection.getBase() != null) {
+                    simpleBases.add(connection.getBase().getSimpleBase());
+                }
+            }
         }
-        return true;
+        OnlineBaseUpdate onlineBaseUpdate = new OnlineBaseUpdate();
+        onlineBaseUpdate.setOnlineBases(simpleBases);
+        return onlineBaseUpdate;
     }
 
 }

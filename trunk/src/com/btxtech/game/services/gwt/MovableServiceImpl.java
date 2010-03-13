@@ -17,6 +17,7 @@ package com.btxtech.game.services.gwt;
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.GameInfo;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
+import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -148,6 +149,7 @@ public class MovableServiceImpl implements MovableService {
             gameInfo.setTerrainSettings(terrainService.getTerrainSettings());
             gameInfo.setTerrainImagePositions(terrainService.getTerrainImagePositions());
             gameInfo.setTerrainImages(terrainService.getTerrainImages());
+            gameInfo.setOnlineBaseUpdate(connectionService.getOnlineBaseUpdate());
             return gameInfo;
         } catch (com.btxtech.game.services.connection.NoConnectionException t) {
             log.error(t.getMessage() + " SessionId: " + t.getSessionId());
@@ -197,5 +199,14 @@ public class MovableServiceImpl implements MovableService {
             log.error("", t);
         }
 
+    }
+
+    @Override
+    public void sendUserMessage(UserMessage userMessage) {
+        try {
+            connectionService.sendUserMessage(userMessage);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
     }
 }

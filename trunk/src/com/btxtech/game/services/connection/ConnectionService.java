@@ -17,6 +17,8 @@ import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.client.common.UserMessage;
+import com.btxtech.game.jsre.client.common.OnlineBaseUpdate;
 import com.btxtech.game.services.base.Base;
 import java.util.Collection;
 import java.util.Date;
@@ -26,10 +28,10 @@ import java.util.Date;
  * Date: Jul 15, 2009
  * Time: 1:20:07 PM
  */
-public interface ConnectionService extends com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService{
+public interface ConnectionService extends com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService {
     void clientLog(String message, Date date);
 
-    boolean hasConnection();    
+    boolean hasConnection();
 
     Connection getConnection() throws NoConnectionException;
 
@@ -41,4 +43,9 @@ public interface ConnectionService extends com.btxtech.game.jsre.common.gameengi
 
     void sendSyncInfos(Collection<SyncBaseItem> syncItem);
 
+    void sendPacket(Packet packet);
+
+    void sendUserMessage(UserMessage userMessage);
+
+    OnlineBaseUpdate getOnlineBaseUpdate();
 }

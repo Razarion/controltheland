@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.base.Base;
@@ -60,4 +61,5 @@ public interface UserTrackingService {
 
     void onUserLeftGame(User user);
 
+    void trackUserMessage(UserMessage userMessage);
 }

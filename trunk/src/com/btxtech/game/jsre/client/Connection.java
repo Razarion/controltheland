@@ -20,6 +20,8 @@ import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.GameInfo;
 import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
+import com.btxtech.game.jsre.client.common.OnlineBaseUpdate;
+import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
@@ -92,12 +94,13 @@ public class Connection implements AsyncCallback<Void> {
         });
     }
 
-    private void setupGameStructure(final GameInfo gameInfo) {
+    private void setupGameStructure(GameInfo gameInfo) {
         ClientBase.getInstance().setBase(gameInfo.getBase());
         ClientBase.getInstance().setAccountBalance(gameInfo.getAccountBalance());
         InfoPanel.getInstance().setGameInfo(gameInfo);
         ClientItemTypeAccess.getInstance().setAllowedItemTypes(gameInfo.getAllowedItemTypes());
         RadarPanel.getInstance().updateEnergy(gameInfo.getEnergyGenerating(), gameInfo.getEnergyConsuming());
+        OnlineBasePanel.getInstance().setOnlineBases(gameInfo.getOnlineBaseUpdate());
         TerrainView.getInstance().setupTerrain(gameInfo.getTerrainSettings(),
                 gameInfo.getTerrainImagePositions(),
                 gameInfo.getTerrainImages());
@@ -208,6 +211,10 @@ public class Connection implements AsyncCallback<Void> {
                     EnergyPacket energyPacket = (EnergyPacket) packet;
                     InfoPanel.getInstance().updateEnergy(energyPacket.getGenerating(), energyPacket.getConsuming());
                     RadarPanel.getInstance().updateEnergy(energyPacket.getGenerating(), energyPacket.getConsuming());
+                } else if (packet instanceof UserMessage) {
+                    OnlineBasePanel.getInstance().onMessageReceived((UserMessage) packet);
+                } else if (packet instanceof OnlineBaseUpdate) {
+                    OnlineBasePanel.getInstance().setOnlineBases((OnlineBaseUpdate) packet);
                 } else {
                     throw new IllegalArgumentException(this + " unknwon packet: " + packet);
                 }
@@ -242,6 +249,14 @@ public class Connection implements AsyncCallback<Void> {
         }
     }
 
+    public void sendUserMessage(String text) {
+        if (movableServiceAsync != null) {
+            UserMessage userMessage = new UserMessage();
+            userMessage.setBaseName(ClientBase.getInstance().getSimpleBase().getName());
+            userMessage.setMessage(text);
+            movableServiceAsync.sendUserMessage(userMessage, this);
+        }
+    }
 
     public static MovableServiceAsync getMovableServiceAsync() {
         return INSTANCE.movableServiceAsync;

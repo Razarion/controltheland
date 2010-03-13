@@ -36,6 +36,7 @@ public class GameInfo implements Serializable{
     private Collection<TerrainImagePosition> terrainImagePositions;
     private Collection<TerrainImage> terrainImages;
     private boolean registered;
+    private OnlineBaseUpdate onlineBaseUpdate;
 
     public SimpleBase getBase() {
         return base;
@@ -115,5 +116,13 @@ public class GameInfo implements Serializable{
 
     public void setRegistered(boolean registered) {
         this.registered = registered;
+    }
+
+    public OnlineBaseUpdate getOnlineBaseUpdate() {
+        return onlineBaseUpdate;
+    }
+
+    public void setOnlineBaseUpdate(OnlineBaseUpdate onlineBaseUpdate) {
+        this.onlineBaseUpdate = onlineBaseUpdate;
     }
 }

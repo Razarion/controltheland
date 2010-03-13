@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.GameInfo;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
+import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -59,4 +60,6 @@ public interface MovableService extends RemoteService {
     void createMissionMoney(Id harvester);
 
     void register(String userName, String password, String confirmPassword) throws UserAlreadyExistsException, PasswordNotMatchException;
+
+    void sendUserMessage(UserMessage userMessage);
 }

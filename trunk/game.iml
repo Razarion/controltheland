@@ -223,7 +223,7 @@
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="file://$MODULE_DIR$/../../../tech/gwt-trunk/trunk/user/src" />
+          <root url="file://$MODULE_DIR$/../../../tech/gwt-2.0.0/source/user/src" />
         </SOURCES>
       </library>
     </orderEntry>
