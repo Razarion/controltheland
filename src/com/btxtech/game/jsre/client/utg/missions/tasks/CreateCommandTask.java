@@ -47,6 +47,7 @@ public class CreateCommandTask extends Task {
     @Override
     public void run() {
         Widget widget = null;
+        Game.cockpitPanel.expand();
         for (Map.Entry<ItemType, Widget> entry : Game.cockpitPanel.getBuildupItemPanel().getItemTypesToBuild().entrySet()) {
             if (entry.getKey().equals(itemType)) {
                 widget = entry.getValue();

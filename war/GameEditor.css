@@ -34,3 +34,7 @@ tr.mission {
 tr.missionFinished {
     background-color: #ccffcc;
 }
+
+tr.missionStopped {
+    background-color: #ccccff;
+}

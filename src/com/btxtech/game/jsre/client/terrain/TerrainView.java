@@ -245,6 +245,14 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         return viewHeight;
     }
 
+    public Index toAbsoluteIndex(Index relative) {
+        return relative.add(viewOriginLeft, viewOriginTop);
+    }
+
+    public Index toRelativeIndex(Index absolute) {
+        return absolute.sub(viewOriginLeft, viewOriginTop);
+    }
+
     public void moveToMiddle(ClientSyncItemView clientSyncItemView) {
         int left = clientSyncItemView.getSyncItem().getPosition().getX() - parent.getOffsetWidth() / 2 - viewOriginLeft;
         int top = clientSyncItemView.getSyncItem().getPosition().getY() - parent.getOffsetHeight() / 2 - viewOriginTop;

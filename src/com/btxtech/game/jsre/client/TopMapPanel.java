@@ -156,4 +156,8 @@ public abstract class TopMapPanel extends DecoratorPanel {
         setVisible(false);
         expandImage.setVisible(true);
     }
+
+    public boolean isExpanded() {
+        return isExpanded;
+    }
 }
