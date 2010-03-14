@@ -20,11 +20,15 @@ import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.widgetideas.graphics.client.Color;
-import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.widgetideas.graphics.client.Color;
 
 /**
  * User: beat
@@ -38,6 +42,7 @@ public class SpeechBubble extends AbsolutePanel {
     public static final int HTML_OFFSET = CURVE_SIZE / 4 + LINE_SIZE;
     public static final int BEAK_LENGTH = 20;
     public static final int BEAK_WIDTH = 10;
+    public static final String STOP_TEXT = "Stop tutorials. I know the game.";
     private ExtendedCanvas extendedCanvas;
     private boolean blink = false;
     private boolean preventScroll;
@@ -79,6 +84,7 @@ public class SpeechBubble extends AbsolutePanel {
     }
 
     private Index getHtmlSize(String html) {
+        html = html + "<hr>" + STOP_TEXT;
         AbsolutePanel absolutePanel = new AbsolutePanel();
         absolutePanel.setSize("100%", "100%");
         MapWindow.getAbsolutePanel().add(absolutePanel, 0, 0);
@@ -152,10 +158,21 @@ public class SpeechBubble extends AbsolutePanel {
         getElement().getStyle().setZIndex(Constants.Z_INDEX_SPEECH_BUBBLE);
         MapWindow.getAbsolutePanel().add(this, left, top);
         // HTML content
-        HTML content = new HTML(html);
-        content.getElement().getStyle().setZIndex(2);
-        content.setPixelSize(htmlWidth, htmlHeight);
-        content.addMouseDownHandler(new MouseDownHandler() {
+        VerticalPanel verticalPanel = new VerticalPanel();
+        HTML htmlContent = new HTML(html);
+        verticalPanel.add(htmlContent);
+        verticalPanel.add(new HTML("<hr>"));
+        Anchor anchor = new Anchor(STOP_TEXT);
+        anchor.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                ClientUserGuidance.getInstance().closeMissions();
+            }
+        });
+        verticalPanel.add(anchor);
+        verticalPanel.getElement().getStyle().setZIndex(2);
+        verticalPanel.setPixelSize(htmlWidth, htmlHeight);
+        htmlContent.addMouseDownHandler(new MouseDownHandler() {
             @Override
             public void onMouseDown(MouseDownEvent mouseDownEvent) {
                 ClientUserTracker.getInstance().clickSpeechBubble();
@@ -163,16 +180,16 @@ public class SpeechBubble extends AbsolutePanel {
         });
         switch (direction) {
             case BOTTOM:
-                add(content, HTML_OFFSET, HTML_OFFSET);
+                add(verticalPanel, HTML_OFFSET, HTML_OFFSET);
                 break;
             case LEFT:
-                add(content, HTML_OFFSET + BEAK_LENGTH, HTML_OFFSET);
+                add(verticalPanel, HTML_OFFSET + BEAK_LENGTH, HTML_OFFSET);
                 break;
             case RIGHT:
-                add(content, HTML_OFFSET, HTML_OFFSET);
+                add(verticalPanel, HTML_OFFSET, HTML_OFFSET);
                 break;
             case TOP:
-                add(content, HTML_OFFSET, HTML_OFFSET + BEAK_LENGTH);
+                add(verticalPanel, HTML_OFFSET, HTML_OFFSET + BEAK_LENGTH);
                 break;
         }
 

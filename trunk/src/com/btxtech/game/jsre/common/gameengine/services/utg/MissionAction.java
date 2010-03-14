@@ -27,6 +27,7 @@ public class MissionAction implements Serializable {
     public static final String TASK_START = "TASK_START";
     public static final String TASK_SKIPPED = "TASK_SKIPPED";
     public static final String MISSION_COMPLETED = "MISSION_COMPLETED";
+    public static final String MISSION_USER_STOPPED = "MISSION_USER_STOPPED";
 
     private String action;
     private String mission;

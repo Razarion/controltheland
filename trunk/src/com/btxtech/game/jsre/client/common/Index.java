@@ -200,6 +200,18 @@ public class Index implements Serializable {
         return new Index(newX, newY);
     }
 
+    public Index sub(int deltaX, int deltaY) {
+        int newX = x - deltaX;
+        int newY = y - deltaY;
+        if (newX < 0) {
+            newX = 0;
+        }
+        if (newY < 0) {
+            newY = 0;
+        }
+        return new Index(newX, newY);
+    }
+
     public boolean isBigger(Index point) {
         return x > point.x || y > point.y;
     }

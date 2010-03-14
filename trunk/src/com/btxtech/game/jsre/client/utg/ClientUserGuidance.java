@@ -185,7 +185,7 @@ public class ClientUserGuidance implements SelectionListener {
                 return;
             }
             currentMission = missions.remove(0);
-            if(currentMission.init()) {
+            if (currentMission.init()) {
                 break;
             } else {
                 ClientUserTracker.getInstance().onMissionAction(MissionAction.MISSION_SKIPPED, currentMission);
@@ -199,5 +199,19 @@ public class ClientUserGuidance implements SelectionListener {
             GwtCommon.handleException(e);
             startNextMission();
         }
+    }
+
+    public void closeMissions() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+        missions.clear();
+        if (currentMission != null) {
+            currentMission.close();
+            currentMission = null;
+        }
+        isRunning = false;
+        ClientUserTracker.getInstance().onMissionAction(MissionAction.MISSION_USER_STOPPED, null);
     }
 }

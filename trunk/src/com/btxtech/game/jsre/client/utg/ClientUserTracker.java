@@ -128,8 +128,12 @@ public class ClientUserTracker {
     }
 
     public void onMissionAction(String action, Mission mission) {
-        missionActions.add(new MissionAction(action, mission.getName(), null));
-        if (action.equals(MissionAction.MISSION_COMPLETED)) {
+        if (mission != null) {
+            missionActions.add(new MissionAction(action, mission.getName(), null));
+        } else {
+            missionActions.add(new MissionAction(action, "", null));
+        }
+        if (action.equals(MissionAction.MISSION_COMPLETED) || action.equals(MissionAction.MISSION_USER_STOPPED)) {
             sendUserActionsToServer();
         }
     }

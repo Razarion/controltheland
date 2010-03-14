@@ -13,17 +13,23 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.terrain;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Collection;
-import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.Game;
+import com.btxtech.game.jsre.client.InfoPanel;
+import com.btxtech.game.jsre.client.OnlineBasePanel;
+import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.terrain.TerrainListener;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
+import com.btxtech.game.jsre.client.terrain.TerrainListener;
+import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.google.gwt.user.client.Random;
+import com.google.gwt.user.client.ui.Widget;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
@@ -227,7 +233,7 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
         int x = posititon.getX() - itemType.getWidth() / 2;
         int y = posititon.getY() - itemType.getHeight() / 2;
 
-        if(x < 0 || y < 0) {
+        if (x < 0 || y < 0) {
             return false;
         }
 
@@ -271,9 +277,26 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
             if (!ItemContainer.getInstance().getItemsInRect(itemRectangle, false).isEmpty()) {
                 continue;
             }
+            if (isInTopMapPanel(point)) {
+                continue;
+            }
             return point;
         }
-        throw new IllegalStateException(this + " getAbsoluteFreeTerrainInRegion: Can not find free position");
+        throw new IllegalStateException(this + " getAbsoluteFreeTerrainInRegion: Can not find free position absolutePos: " + absolutePos + " targetMinRange: " + targetMinRange);
     }
+
+    public boolean isInTopMapPanel(Index absolutePoint) {
+        Index point = TerrainView.getInstance().toRelativeIndex(absolutePoint);
+
+        return Game.cockpitPanel.isExpanded() && getRectangle4Widget(Game.cockpitPanel).contains(point)
+                || InfoPanel.getInstance().isExpanded() && getRectangle4Widget(InfoPanel.getInstance()).contains(point)
+                || RadarPanel.getInstance().isExpanded() && getRectangle4Widget(RadarPanel.getInstance()).contains(point)
+                || OnlineBasePanel.getInstance().isExpanded() && getRectangle4Widget(OnlineBasePanel.getInstance()).contains(point);
+    }
+
+    public Rectangle getRectangle4Widget(Widget widget) {
+        return new Rectangle(widget.getAbsoluteLeft(), widget.getAbsoluteTop(), widget.getOffsetWidth(), widget.getOffsetHeight());
+    }
+
 
 }
