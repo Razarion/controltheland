@@ -15,7 +15,7 @@ package com.btxtech.game.services.collision;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
 import java.util.List;
 
 /**
@@ -23,12 +23,10 @@ import java.util.List;
  * Date: May 24, 2009
  * Time: 6:46:48 PM
  */
-public interface CollisionService {
+public interface CollisionService extends CommonCollisionService {
     List<PassableRectangle> getPassableRectangles();
 
     Index getFreeRandomPosition(ItemType itemType, int edgeLength);
-
-    Index getFreeRandomPosition(ItemType targetItemType, SyncItem attackerItem, int targetMinRange, int targetMaxRange);
 
     boolean[][] getPassableTerrain();
 

@@ -14,24 +14,15 @@
 package com.btxtech.game.jsre.common.ai;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.item.ItemContainer;
-import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
-import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Timer;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * User: beat
@@ -43,18 +34,7 @@ public class PlayerSimulation {
     private static final PlayerSimulation INSTANCE = new PlayerSimulation();
     private static boolean isActive = false;
     private boolean isRunning = false;
-    private ItemType cvType;
-    private ItemType factoryType;
-    private BaseItemType harvesterType;
-    private BaseItemType jeepType;
-    private ItemType money;
-    private static final ArrayList<ItemTypeBalance> itemTypeBalances = new ArrayList<ItemTypeBalance>();
-
-    static {
-        itemTypeBalances.add(new ItemTypeBalance(Constants.FACTORY, 1)); // First prio
-        itemTypeBalances.add(new ItemTypeBalance(Constants.HARVESTER, 3));// Second prio
-        itemTypeBalances.add(new ItemTypeBalance(Constants.JEEP, 30));// Third prio
-    }
+    private BaseBalancer baseBalancer;
 
     /**
      * Singleton
@@ -70,36 +50,32 @@ public class PlayerSimulation {
         if (!isActive) {
             return;
         }
+
+        ArrayList<ItemTypeBalance> itemTypeBalances = new ArrayList<ItemTypeBalance>();
+        itemTypeBalances.add(new ItemTypeBalance(Constants.FACTORY, 1)); // First prio
+        itemTypeBalances.add(new ItemTypeBalance(Constants.HARVESTER, 3));// Second prio
+        itemTypeBalances.add(new ItemTypeBalance(Constants.JEEP, 30));// Third prio
+        baseBalancer = new BaseBalancer(itemTypeBalances, ClientServices.getInstance(), ClientBase.getInstance().getSimpleBase());
+
         isRunning = true;
         try {
-            // ItemTypes
-            cvType = ItemContainer.getInstance().getItemType(Constants.CONSTRUCTION_VEHICLE);
-            factoryType = ItemContainer.getInstance().getItemType(Constants.FACTORY);
-            harvesterType = (BaseItemType) ItemContainer.getInstance().getItemType(Constants.HARVESTER);
-            jeepType = (BaseItemType) ItemContainer.getInstance().getItemType(Constants.JEEP);
-            money = ItemContainer.getInstance().getItemType(Constants.MONEY);
-
-            // Build Factory
-            /*List<SyncItem> syncItems = ItemContainer.getInstance().getItems(cvType, true);
-            if (!syncItems.isEmpty()) {
-                SyncItem cvItem = syncItems.iterator().next();
-                Index position = ItemContainer.getInstance().getFreeRandomPosition(factoryType, cvItem, 0, 200);
-                ActionHandler.getInstance().buildFactory((SyncBaseItem) cvItem, position, (BaseItemType) factoryType);
-            }*/
-            doBalance();
+            baseBalancer.doBalance();
             // Start all harvesters
-            doAllIdleHarvest();
-            doAllIdleAttackers();
+            baseBalancer.doAllIdleHarvest();
+            baseBalancer.doAllIdleAttackers();
         } catch (NoSuchItemTypeException e) {
             GwtCommon.handleException(e);
         }
         Timer timer = new Timer() {
             @Override
             public void run() {
-                doBalance();
-                // Start all harvesters
-                doAllIdleHarvest();
-                doAllIdleAttackers();
+                try {
+                    baseBalancer.doBalance();
+                    baseBalancer.doAllIdleHarvest();
+                    baseBalancer.doAllIdleAttackers();
+                } catch (Throwable throwable) {
+                    GwtCommon.handleException(throwable);
+                }
             }
         };
         timer.scheduleRepeating(TIME);
@@ -117,16 +93,14 @@ public class PlayerSimulation {
         if (!isRunning) {
             return;
         }
-        doBalance();
-        /* if (clientSyncBaseItemView.isMyOwnProperty() &&
-               clientSyncBaseItemView.getSyncBaseItem().getBaseItemType().getName().equals(Constants.FACTORY) &&
-               clientSyncBaseItemView.getSyncBaseItem().isReady()) {
-           //ActionHandler.getInstance().build(clientSyncBaseItemView.getSyncBaseItem(), harvesterType);
-           ActionHandler.getInstance().build(clientSyncBaseItemView.getSyncBaseItem(), jeepType);
-       } */
+        try {
+            baseBalancer.doBalance();
+        } catch (Throwable throwable) {
+            GwtCommon.handleException(throwable);
+        }
     }
 
-    public void onItemCreated(ClientSyncItemView clientSyncItemView) {
+    public void onItemCreated(ClientSyncItemView clientSyncItemView) throws NoSuchItemTypeException {
         if (!isRunning) {
             return;
         }
@@ -143,7 +117,7 @@ public class PlayerSimulation {
     }
 
 
-    public void onSyncItemDeactivated(SyncBaseItem activeItem) {
+    public void onSyncItemDeactivated(SyncBaseItem activeItem) throws NoSuchItemTypeException {
         if (!isRunning) {
             return;
         }
@@ -154,95 +128,17 @@ public class PlayerSimulation {
         doCommand(activeItem);
     }
 
-    private void doCommand(SyncBaseItem item) {
+    private void doCommand(SyncBaseItem item) throws NoSuchItemTypeException {
         if (item.getBaseItemType().getName().equals(Constants.HARVESTER)) {
-            doHarvest(item);
+            baseBalancer.doHarvest(item);
         } else if (item.getBaseItemType().getName().equals(Constants.FACTORY)) {
-            doBalance();
-            //    ActionHandler.getInstance().build(item, jeepType);
-        } else if (item.getBaseItemType().getName().equals(Constants.JEEP)) {
-            doAttack(item);
-        }
-    }
-
-    private void doHarvest(SyncBaseItem harvester) {
-        List<SyncItem> syncItems = ItemContainer.getInstance().getItems(money, false);
-        if (syncItems.isEmpty()) {
-            throw new IllegalStateException("No money item found");
-        }
-
-        SyncResourceItem moneyItem = (SyncResourceItem) syncItems.get(Random.nextInt(syncItems.size()));
-        ActionHandler.getInstance().collect(harvester, moneyItem);
-    }
-
-    private void doAllIdleHarvest() {
-        for (SyncItem syncItem : ItemContainer.getInstance().getItems(harvesterType, true)) {
-            SyncBaseItem harvester = (SyncBaseItem) syncItem;
-            if (harvester.getSyncHarvester().isActive()) {
-                continue;
-            }
-            doHarvest(harvester);
-        }
-    }
-
-    private void doAttack(SyncBaseItem attacker) {
-        List<ClientSyncBaseItemView> syncItems = ItemContainer.getInstance().getEnemyItems();
-        if (syncItems.isEmpty()) {
-            return;
-        }
-
-        ClientSyncBaseItemView target = syncItems.get(Random.nextInt(syncItems.size()));
-        ActionHandler.getInstance().attack(attacker, target.getSyncBaseItem());
-    }
-
-    private void doAllIdleAttackers() {
-        for (SyncItem syncItem : ItemContainer.getInstance().getItems(jeepType, true)) {
-            SyncBaseItem attacker = (SyncBaseItem) syncItem;
-            if (attacker.getSyncWaepon().isActive()) {
-                continue;
-            }
-            doAttack(attacker);
-        }
-    }
-
-
-    private void doBalance() {
-        Map<BaseItemType, List<SyncBaseItem>> items = ItemContainer.getInstance().getItems4Base(ClientBase.getInstance().getSimpleBase());
-        for (ItemTypeBalance itemTypeBalance : itemTypeBalances) {
             try {
-                BaseItemType itemTypeToBalance = (BaseItemType) ItemContainer.getInstance().getItemType(itemTypeBalance.getItemTypeName());
-                List<SyncBaseItem> syncBaseItems = items.get(itemTypeToBalance);
-                if (syncBaseItems == null || syncBaseItems.size() < itemTypeBalance.getCount()) {
-                    doBalanceItemType(items, itemTypeToBalance);
-                    return;
-                }
-            } catch (NoSuchItemTypeException e) {
-                GwtCommon.handleException(e);
+                baseBalancer.doBalance();
+            } catch (Throwable throwable) {
+                GwtCommon.handleException(throwable);
             }
+        } else if (item.getBaseItemType().getName().equals(Constants.JEEP)) {
+            baseBalancer.doAttack(item);
         }
     }
-
-    private void doBalanceItemType(Map<BaseItemType, List<SyncBaseItem>> items, BaseItemType itemTypeToBalance) {
-        List<BaseItemType> builderType = ItemContainer.getInstance().ableToBuild(itemTypeToBalance);
-        for (BaseItemType type : builderType) {
-            List<SyncBaseItem> buildeItems = items.get(type);
-            if (buildeItems != null) {
-                for (SyncBaseItem builder : buildeItems) {
-                    doBuild(itemTypeToBalance, builder);
-                }
-            }
-        }
-    }
-
-    private void doBuild(BaseItemType itemTypeToBuild, SyncBaseItem builder) {
-        if (builder.hasSyncBuilder()) {
-            Index position = ItemContainer.getInstance().getFreeRandomPosition(itemTypeToBuild, builder, 0, 200);
-            ActionHandler.getInstance().buildFactory(builder, position, itemTypeToBuild);
-        } else if (builder.hasSyncFactory()) {
-            ActionHandler.getInstance().build(builder, itemTypeToBuild);
-        } else {
-            throw new IllegalArgumentException(this + " " + builder + " don't know how to build: " + itemTypeToBuild);
-        }
-    }
-
 }

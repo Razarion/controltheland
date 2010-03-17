@@ -148,5 +148,10 @@ abstract public class AbstractItemService implements ItemService {
 
     abstract protected BaseService getBaseService();
 
+    public List<SyncItem> getItems(String itemTypeName, SimpleBase simpleBase) throws NoSuchItemTypeException {
+        return getItems(getItemType(itemTypeName), simpleBase);
+    }
+
+
 
 }

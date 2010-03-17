@@ -26,6 +26,8 @@ import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -41,6 +43,9 @@ public class OnlineBasePanel extends TopMapPanel {
     private TextArea receivedText;
     private int currentFlashingCount = 0;
     private Timer timer;
+    private ArrayList<Widget> flashBases = new ArrayList<Widget>();
+    private boolean flashReceivingText = false;
+    private OnlineBaseUpdate onlineBaseUpdate;
 
     public static OnlineBasePanel getInstance() {
         return INSTANCE;
@@ -65,18 +70,31 @@ public class OnlineBasePanel extends TopMapPanel {
     }
 
     public void setOnlineBases(OnlineBaseUpdate onlineBaseUpdate) {
+        flashBases.clear();
         while (flexTable.getRowCount() > 0) {
             flexTable.removeRow(0);
         }
+        Collection<SimpleBase> newBases = null;
+        if (this.onlineBaseUpdate != null) {
+            newBases = this.onlineBaseUpdate.getNewBases(onlineBaseUpdate);
+        }
         for (SimpleBase onlineBase : onlineBaseUpdate.getOnlineBases()) {
-            addOnlineBase(onlineBase);
+            Widget w = addOnlineBase(onlineBase);
+            if (newBases != null && newBases.contains(onlineBase)) {
+                flashBases.add(w);
+            }
+        }
+        this.onlineBaseUpdate = onlineBaseUpdate;
+        if (!flashBases.isEmpty()) {
+            startFlashing();
         }
     }
 
-    private void addOnlineBase(SimpleBase simpleBase) {
+    private Widget addOnlineBase(SimpleBase simpleBase) {
         InlineLabel label = new InlineLabel(simpleBase.getName());
         label.getElement().getStyle().setColor(simpleBase.getHtmlColor());
         flexTable.setWidget(flexTable.getRowCount() + 1, 0, label);
+        return label;
     }
 
     public void onMessageReceived(UserMessage userMessage) {
@@ -95,7 +113,8 @@ public class OnlineBasePanel extends TopMapPanel {
         buffer.append("\n");
         receivedText.setText(buffer.toString());
         receivedText.getElement().setScrollTop(receivedText.getElement().getScrollHeight());
-        flashReceivingText();
+        flashReceivingText = true;
+        startFlashing();
     }
 
     private void setupMessanger(VerticalPanel verticalPanel) {
@@ -129,22 +148,40 @@ public class OnlineBasePanel extends TopMapPanel {
         verticalPanel.add(button);
     }
 
-    private void flashReceivingText() {
+    private void startFlashing() {
         if (currentFlashingCount > 0) {
+            currentFlashingCount = FLASHING_COUNT;
             return;
         }
         timer = new Timer() {
             @Override
             public void run() {
                 if (currentFlashingCount <= 0) {
-                    receivedText.getElement().getStyle().setBackgroundColor("white");
+                    if (flashReceivingText) {
+                        receivedText.getElement().getStyle().setBackgroundColor("white");
+                    }
+                    for (Widget flashBase : flashBases) {
+                        flashBase.getElement().getStyle().setBackgroundColor("transparent");
+                    }
+                    flashBases.clear();
+                    flashReceivingText = false;
                     timer.cancel();
                 } else {
                     currentFlashingCount--;
-                    if(currentFlashingCount % 2 == 1) {
-                        receivedText.getElement().getStyle().setBackgroundColor("white");
-                    }   else {
-                        receivedText.getElement().getStyle().setBackgroundColor("red");
+                    if (currentFlashingCount % 2 == 1) {
+                        if (flashReceivingText) {
+                            receivedText.getElement().getStyle().setBackgroundColor("white");
+                        }
+                        for (Widget flashBase : flashBases) {
+                            flashBase.getElement().getStyle().setBackgroundColor("transparent");
+                        }
+                    } else {
+                        if (flashReceivingText) {
+                            receivedText.getElement().getStyle().setBackgroundColor("red");
+                        }
+                        for (Widget flashBase : flashBases) {
+                            flashBase.getElement().getStyle().setBackgroundColor("red");
+                        }
                     }
                 }
             }

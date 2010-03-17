@@ -94,10 +94,13 @@ public class SyncFactory extends SyncBaseAbility {
     }
 
     public void executeCommand(FactoryCommand factoryCommand) throws InsufficientFundsException, NoSuchItemTypeException {
+        if (!getSyncBaseItem().isReady()) {
+            return;
+        }
         if (!factoryType.isAbleToBuild(factoryCommand.getToBeBuilt())) {
             throw new IllegalArgumentException(this + " can not fabricate: " + factoryCommand.getToBeBuilt());
         }
-        if(!getServices().getItemTypeAccess().isAllowed(factoryCommand.getToBeBuilt())) {
+        if (!getSyncBaseItem().getBase().isBot() && !getServices().getItemTypeAccess().isAllowed(factoryCommand.getToBeBuilt())) {
             throw new IllegalArgumentException(this + " user is not allowed to fabricate: " + factoryCommand.getToBeBuilt());
         }
         if (toBeBuiltType == null) {

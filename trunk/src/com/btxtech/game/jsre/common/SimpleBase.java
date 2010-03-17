@@ -22,6 +22,7 @@ import java.io.Serializable;
  */
 public class SimpleBase implements Serializable {
     private String name;
+    private boolean bot;
     private String htmlColor;
 
     /**
@@ -30,9 +31,10 @@ public class SimpleBase implements Serializable {
     SimpleBase() {
     }
 
-    public SimpleBase(String name, String htmlColor) {
+    public SimpleBase(String name, String htmlColor, boolean bot) {
         this.htmlColor = htmlColor;
         this.name = name;
+        this.bot = bot;
     }
 
     public String getName() {
@@ -41,6 +43,10 @@ public class SimpleBase implements Serializable {
 
     public String getHtmlColor() {
         return htmlColor;
+    }
+
+    public boolean isBot() {
+        return bot;
     }
 
     @Override

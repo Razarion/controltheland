@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.base.Base;
+import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.connection.ClientLogEntry;
 import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.ConnectionService;
@@ -54,6 +55,8 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     private Session session;
     @Autowired
     private UserTrackingService userTrackingService;
+    @Autowired
+    private BotService botService;
     private Timer timer;
     private Log log = LogFactory.getLog(ConnectionServiceImpl.class);
     private HibernateTemplate hibernateTemplate;
@@ -233,7 +236,8 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         return !connection.isClosed();
     }
 
-    private void sendOnlineBasesUpdate() {
+    @Override
+    public void sendOnlineBasesUpdate() {
         sendPacket(getOnlineBaseUpdate());
     }
 
@@ -246,6 +250,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
                     simpleBases.add(connection.getBase().getSimpleBase());
                 }
             }
+            simpleBases.addAll(botService.getBotBases());
         }
         OnlineBaseUpdate onlineBaseUpdate = new OnlineBaseUpdate();
         onlineBaseUpdate.setOnlineBases(simpleBases);

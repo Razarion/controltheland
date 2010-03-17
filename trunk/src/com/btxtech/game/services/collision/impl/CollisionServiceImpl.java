@@ -245,7 +245,6 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
         return passableRectangles;
     }
 
-
     @Override
     public Index getFreeRandomPosition(ItemType itemType, int edgeLength) {
         Random random = new Random();

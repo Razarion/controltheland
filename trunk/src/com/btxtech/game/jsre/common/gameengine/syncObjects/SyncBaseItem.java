@@ -400,7 +400,7 @@ public class SyncBaseItem extends SyncItem {
     }
 
     public void setBuild(boolean isBuild) {
-        if(this.isBuild == isBuild) {
+        if (this.isBuild == isBuild) {
             return;
         }
 
@@ -411,7 +411,7 @@ public class SyncBaseItem extends SyncItem {
         if (syncGenerator != null) {
             syncGenerator.setGenerating(isBuild);
         }
-        fireItemChanged(SyncItemListener.Change.BUILD);        
+        fireItemChanged(SyncItemListener.Change.BUILD);
     }
 
     public BaseItemType getBaseItemType() {
@@ -432,7 +432,7 @@ public class SyncBaseItem extends SyncItem {
 
     @Override
     public String toString() {
-        if(hasSyncHarvester()) {
+        if (hasSyncHarvester()) {
             return super.toString() + " target: " + getSyncHarvester().getTarget();
         } else {
             return super.toString();

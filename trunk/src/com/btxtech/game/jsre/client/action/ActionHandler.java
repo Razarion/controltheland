@@ -26,6 +26,7 @@ import com.btxtech.game.jsre.common.RectangleFormation;
 import com.btxtech.game.jsre.common.ai.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -46,7 +47,7 @@ import java.util.Iterator;
  * Date: Aug 7, 2009
  * Time: 10:22:31 PM
  */
-public class ActionHandler {
+public class ActionHandler implements CommonActionService {
     private final static ActionHandler INSTANCE = new ActionHandler();
     private static final int TICK_INTERVALL = 60;
     private long lastTickTime = 0;
@@ -166,7 +167,7 @@ public class ActionHandler {
         }
     }
 
-
+    @Override
     public void buildFactory(SyncBaseItem syncItem, Index positionToBeBuild, BaseItemType toBeBuilt) {
         if (checkCommand(syncItem)) {
             return;
@@ -195,6 +196,7 @@ public class ActionHandler {
         }
     }
 
+    @Override
     public void build(SyncBaseItem factory, BaseItemType itemType) {
         if (checkCommand(factory) || !factory.isReady() || factory.getSyncFactory().isActive()) {
             return;
@@ -226,6 +228,7 @@ public class ActionHandler {
         }
     }
 
+    @Override
     public void attack(SyncBaseItem tank, SyncBaseItem target) {
         if (checkCommand(tank)) {
             return;
@@ -255,6 +258,7 @@ public class ActionHandler {
         }
     }
 
+    @Override
     public void collect(SyncBaseItem collector, SyncResourceItem money) {
         if (checkCommand(collector)) {
             return;

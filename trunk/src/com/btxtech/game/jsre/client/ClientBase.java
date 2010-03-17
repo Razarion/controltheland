@@ -65,7 +65,7 @@ public class ClientBase implements BaseService {
         if (this.simpleBase.equals(simpleBase)) {
             accountBalance += price;
             InfoPanel.getInstance().updateMoney();
-            if(depositResourceListener != null) {
+            if (depositResourceListener != null) {
                 depositResourceListener.onDeposit();
             }
         }
@@ -73,6 +73,9 @@ public class ClientBase implements BaseService {
 
     @Override
     public void withdrawalMoney(int price, SimpleBase simpleBase) throws InsufficientFundsException {
+        if (!this.simpleBase.equals(simpleBase)) {
+            return;
+        }
         if (price > accountBalance) {
             throw new InsufficientFundsException();
         } else {

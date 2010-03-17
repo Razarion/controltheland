@@ -116,14 +116,14 @@ public class SyncBuilder extends SyncBaseAbility {
             throw new IllegalArgumentException(this + " can not build: " + builderCommand.getToBeBuilt());
         }
 
-        if(!getServices().getItemTypeAccess().isAllowed(builderCommand.getToBeBuilt())) {
+        if(!getSyncBaseItem().getBase().isBot() && !getServices().getItemTypeAccess().isAllowed(builderCommand.getToBeBuilt())) {
             throw new IllegalArgumentException(this + " user is not allowed to build: " + builderCommand.getToBeBuilt());
         }
-        BaseItemType tmptoBeBuiltType = (BaseItemType) getServices().getItemService().getItemType(builderCommand.getToBeBuilt());
-        if (!getServices().getTerrainService().isFree(builderCommand.getPositionToBeBuilt(), tmptoBeBuiltType)) {
+        BaseItemType tmpToBeBuiltType = (BaseItemType) getServices().getItemService().getItemType(builderCommand.getToBeBuilt());
+        if (!getServices().getTerrainService().isFree(builderCommand.getPositionToBeBuilt(), tmpToBeBuiltType)) {
             throw new IllegalArgumentException(this + " can not build: " + builderCommand.getPositionToBeBuilt() + " on: " + builderCommand.getToBeBuilt());
         }
-        toBeBuiltType = tmptoBeBuiltType;
+        toBeBuiltType = tmpToBeBuiltType;
         toBeBuildPosition = builderCommand.getPositionToBeBuilt();
     }
 

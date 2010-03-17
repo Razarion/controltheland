@@ -39,6 +39,8 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
 
     List<SyncItem> getItemsCopyNoDummies();
 
+    List<SyncItem> getItemsCopyNoDummiesNoBots();    
+
     void restoreItems(Collection<SyncItem> syncItems);
 
     void saveDbItemTypes(Collection<DbItemType> itemTypes);

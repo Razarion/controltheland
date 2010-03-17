@@ -47,7 +47,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     @Override
     public void createMissionTraget(Id attacker) throws NoSuchItemTypeException, ItemDoesNotExistException {
         ItemType targetItemType = itemService.getItemType(Constants.JEEP);
-        SyncItem attackerItem = itemService.getItem(attacker);
+        SyncBaseItem attackerItem = (SyncBaseItem) itemService.getItem(attacker);
         Index targetPos = collisionService.getFreeRandomPosition(targetItemType, attackerItem, Constants.TARGET_MIN_RANGE, Constants.TARGET_MAX_RANGE);
         SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(targetItemType, targetPos, null, baseService.getDummyBase(), 0);
         syncBaseItem.setBuild(true);
@@ -57,7 +57,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     @Override
     public void createMissionMoney(Id harvester) throws NoSuchItemTypeException, ItemDoesNotExistException {
         ItemType moneyItemType = itemService.getItemType(Constants.MONEY);
-        SyncItem attackerItem = itemService.getItem(harvester);
+        SyncBaseItem attackerItem =(SyncBaseItem) itemService.getItem(harvester);
         Index targetPos = collisionService.getFreeRandomPosition(moneyItemType, attackerItem, Constants.TARGET_MIN_RANGE, Constants.TARGET_MAX_RANGE);
         SyncResourceItem syncBaseItem = (SyncResourceItem) itemService.createSyncObject(moneyItemType, targetPos, null, null, 0);
         syncBaseItem.setAmount(Constants.MISSON_MONEY);

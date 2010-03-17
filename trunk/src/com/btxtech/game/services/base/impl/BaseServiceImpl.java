@@ -45,6 +45,7 @@ import com.btxtech.game.services.itemTypeAccess.impl.UserItemTypeAccess;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.services.bot.BotService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -88,6 +89,8 @@ public class BaseServiceImpl implements BaseService {
     private ServerEnergyService serverEnergyService;
     @Autowired
     private UserTrackingService userTrackingService;
+    @Autowired
+    private BotService botService;
     private final HashMap<String, Base> bases = new HashMap<String, Base>();
     private HashSet<String> colorsUsed = new HashSet<String>();
     private HibernateTemplate hibernateTemplate;
@@ -151,6 +154,28 @@ public class BaseServiceImpl implements BaseService {
         syncBaseItem.setFullHealth();
         syncBaseItem.getSyncTurnable().setAngel(Math.PI / 4.0); // Cosmetis shows vehicle from side
         historyService.addHistoryElement(new UserEntered(base.getSimpleBase()));
+        botService.onHumanBaseCreated(base);
+    }
+
+    @Override
+    public Base createNewBotBase(SyncBaseItem origin, int targetMinRange, int targetMaxRange) throws NoSuchItemTypeException {
+        Base base;
+        ItemType constructionVehicle = itemService.getItemType(Constants.CONSTRUCTION_VEHICLE);
+        synchronized (bases) {
+            String name = getFreePlayerName();
+            BaseColor baseColor = getFreeColors(1).get(0);
+            base = new Base(name, baseColor, null);
+            base.setBot(true);
+            base.setAccountBalance(Constants.START_MONEY);
+            bases.put(name, base);
+            colorsUsed.add(baseColor.getHtmlColor());
+        }
+        Index startPoint = collisionService.getFreeRandomPosition(constructionVehicle,origin, targetMinRange, targetMaxRange);
+        log.info("Bot Base created: " + base + " startPoint: " + startPoint);
+        SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(constructionVehicle, startPoint, null, base.getSimpleBase(), 0);
+        syncBaseItem.setBuild(true);
+        syncBaseItem.setFullHealth();
+        return base;
     }
 
     @Override

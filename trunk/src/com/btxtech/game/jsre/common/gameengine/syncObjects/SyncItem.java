@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import java.util.ArrayList;
 
 /**
  * User: beat
@@ -32,7 +33,7 @@ public abstract class SyncItem {
     private ItemType itemType;
     private Index position;
     // Sync states
-    private SyncItemListener syncItemListener;
+    private final ArrayList<SyncItemListener> syncItemListeners = new ArrayList<SyncItemListener>();
 
     public SyncItem(Id id, Index position, ItemType itemType, Services services) {
         this.id = id;
@@ -83,13 +84,23 @@ public abstract class SyncItem {
         return itemType;
     }
 
-    public void setSyncItemListener(SyncItemListener syncItemListener) {
-        this.syncItemListener = syncItemListener;
+    public void addSyncItemListener(SyncItemListener syncItemListener) {
+        synchronized (syncItemListeners) {
+            syncItemListeners.add(syncItemListener);
+        }
+    }
+
+    public void removeSyncItemListener(SyncItemListener syncItemListener) {
+        synchronized (syncItemListeners) {
+            syncItemListeners.remove(syncItemListener);
+        }
     }
 
     public void fireItemChanged(SyncItemListener.Change change) {
-        if (syncItemListener != null) {
-            syncItemListener.onItemChanged(change, this);
+        synchronized (syncItemListeners) {
+            for (SyncItemListener syncItemListener : syncItemListeners) {
+                syncItemListener.onItemChanged(change, this);
+            }
         }
     }
 
