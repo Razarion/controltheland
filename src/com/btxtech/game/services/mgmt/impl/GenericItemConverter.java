@@ -61,7 +61,7 @@ public class GenericItemConverter {
 
     public BackupEntry generateBackupEntry() {
         backupEntry = new BackupEntry();
-        List<SyncItem> syncItems = itemService.getItemsCopyNoDummies();
+        List<SyncItem> syncItems = itemService.getItemsCopyNoDummiesNoBots();
         backupEntry.setTimeStamp(new Date());
 
         for (SyncItem item : syncItems) {

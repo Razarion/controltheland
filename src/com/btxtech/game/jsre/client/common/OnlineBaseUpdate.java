@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client.common;
 
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -31,5 +32,11 @@ public class OnlineBaseUpdate extends Packet {
 
     public void setOnlineBases(Collection<SimpleBase> onlineBases) {
         this.onlineBases = onlineBases;
+    }
+
+    public Collection<SimpleBase> getNewBases(OnlineBaseUpdate onlineBaseUpdate) {
+        ArrayList<SimpleBase> newBases = new ArrayList<SimpleBase>(onlineBaseUpdate.getOnlineBases());
+        newBases.removeAll(onlineBases);
+        return newBases;
     }
 }

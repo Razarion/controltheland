@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.items.impl.AbstractItemService;
@@ -37,16 +38,17 @@ import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
-import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbItemTypeData;
+import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.itemTypeAccess.ServerItemTypeAccessService;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -115,7 +117,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         if (syncItem instanceof SyncBaseItem) {
             historyService.addHistoryElement(new CreatedElement((SyncBaseItem) syncItem));
             actionService.addGuardingBaseItem((SyncBaseItem) syncItem);
-            syncItem.setSyncItemListener(actionService);
+            syncItem.addSyncItemListener(actionService);
             baseService.itemCreated((SyncBaseItem) syncItem);
             baseService.sendAccountBaseUpdate((SyncBaseItem) syncItem);
             actionService.interactionGuardingItems((SyncBaseItem) syncItem);
@@ -170,11 +172,11 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
     @Override
     public void killBaseSyncObject(SyncItem syncItem, SyncBaseItem actor, boolean force) {
-        if(force) {
-            if(syncItem instanceof SyncBaseItem) {
-                ((SyncBaseItem)syncItem).setHealth(0);
-            } else if(syncItem instanceof SyncResourceItem) {
-                ((SyncResourceItem)syncItem).setAmount(0);
+        if (force) {
+            if (syncItem instanceof SyncBaseItem) {
+                ((SyncBaseItem) syncItem).setHealth(0);
+            } else if (syncItem instanceof SyncResourceItem) {
+                ((SyncResourceItem) syncItem).setAmount(0);
             }
         }
 
@@ -265,6 +267,20 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
+    public List<SyncItem> getItemsCopyNoDummiesNoBots() {
+        List<SyncItem> syncItems = getItemsCopy();
+        SimpleBase dummy = baseService.getDummyBase();
+        for (Iterator<SyncItem> it = syncItems.iterator(); it.hasNext();) {
+            SyncItem syncItem = it.next();
+            if ((syncItem instanceof SyncBaseItem) && (dummy.equals(((SyncBaseItem) syncItem).getBase()) || ((SyncBaseItem) syncItem).getBase().isBot())) {
+                it.remove();
+            }
+        }
+        return syncItems;
+    }
+
+
+    @Override
     public void restoreItems(Collection<SyncItem> syncItems) {
         int lastId = 0;
         synchronized (items) {
@@ -272,7 +288,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             for (SyncItem syncItem : syncItems) {
                 items.put(syncItem.getId(), syncItem);
                 if (syncItem instanceof SyncBaseItem) {
-                    syncItem.setSyncItemListener(actionService);
+                    syncItem.addSyncItemListener(actionService);
                 }
                 if (syncItem.getId().isSynchronized()) {
                     int tmpId = syncItem.getId().getId();
@@ -444,5 +460,57 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             throw new IllegalArgumentException("Muzzle sound does not exist: " + itemTypeId);
         }
         return sound;
+    }
+
+    public List<SyncItem> getItems(ItemType itemType, SimpleBase simpleBase) {
+        ArrayList<SyncItem> syncItems = new ArrayList<SyncItem>();
+        synchronized (items) {
+            for (SyncItem syncItem : items.values()) {
+                if (!syncItem.getItemType().equals(itemType)) {
+                    continue;
+                }
+                if (simpleBase != null) {
+                    if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).getBase().equals(simpleBase)) {
+                        syncItems.add(syncItem);
+                    }
+                } else {
+                    syncItems.add(syncItem);
+                }
+
+            }
+        }
+        return syncItems;
+    }
+
+    @Override
+    public Map<BaseItemType, List<SyncBaseItem>> getItems4Base(SimpleBase simpleBase) {
+        Map<BaseItemType, List<SyncBaseItem>> result = new HashMap<BaseItemType, List<SyncBaseItem>>();
+        synchronized (items) {
+            for (SyncItem syncItem : items.values()) {
+                if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).getBase().equals(simpleBase)) {
+                    SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
+                    List<SyncBaseItem> syncBaseItems = result.get(syncBaseItem.getBaseItemType());
+                    if (syncBaseItems == null) {
+                        syncBaseItems = new ArrayList<SyncBaseItem>();
+                        result.put(syncBaseItem.getBaseItemType(), syncBaseItems);
+                    }
+                    syncBaseItems.add(syncBaseItem);
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public List<SyncBaseItem> getEnemyItems(SimpleBase simpleBase) {
+        ArrayList<SyncBaseItem> clientBaseItems = new ArrayList<SyncBaseItem>();
+        synchronized (items) {
+            for (SyncItem syncItem : items.values()) {
+                if (syncItem instanceof SyncBaseItem && !((SyncBaseItem) syncItem).getBase().equals(simpleBase)) {
+                    clientBaseItems.add((SyncBaseItem) syncItem);
+                }
+            }
+        }
+        return clientBaseItems;
     }
 }

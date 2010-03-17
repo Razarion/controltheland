@@ -13,13 +13,16 @@
 
 package com.btxtech.game.jsre.client;
 
+import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
-import com.btxtech.game.jsre.common.gameengine.services.energy.EnergyService;
+import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionService;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseService;
+import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService;
+import com.btxtech.game.jsre.common.gameengine.services.energy.EnergyService;
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccess;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
@@ -74,5 +77,15 @@ public class ClientServices implements Services {
     @Override
     public EnergyService getEnergyService() {
         return EnergyHandler.getInstance();
+    }
+
+    @Override
+    public CommonCollisionService getCollisionService() {
+        return ItemContainer.getInstance();
+    }
+
+    @Override
+    public CommonActionService getActionService() {
+        return ActionHandler.getInstance();
     }
 }

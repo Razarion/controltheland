@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -24,6 +25,10 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
@@ -68,7 +73,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
     private TerrainService terrainService;
     private final HashSet<SyncBaseItem> activeItems = new HashSet<SyncBaseItem>();
     private final HashSet<SyncBaseItem> guardingItems = new HashSet<SyncBaseItem>();
-    private ArrayList<SyncBaseItem> tmpActiveItems = new ArrayList<SyncBaseItem>();
+    private final ArrayList<SyncBaseItem> tmpActiveItems = new ArrayList<SyncBaseItem>();
     private Timer timer;
     private Log log = LogFactory.getLog(ActionServiceImpl.class);
     private long lastTickTime = 0;
@@ -135,8 +140,10 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
         }
         try {
             synchronized (activeItems) {
-                activeItems.addAll(tmpActiveItems);
-                tmpActiveItems.clear();
+                synchronized (tmpActiveItems) {
+                    activeItems.addAll(tmpActiveItems);
+                    tmpActiveItems.clear();
+                }
                 Iterator<SyncBaseItem> iterator = activeItems.iterator();
                 long time = System.currentTimeMillis();
                 double factor = calculateFactor(time);
@@ -145,6 +152,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
                     try {
                         if (!activeItem.tick(factor)) {
                             iterator.remove();
+                            activeItem.stop();
                             addGuardingBaseItem(activeItem);
                             connectionService.sendSyncInfo(activeItem);
                             if (activeItem.hasSyncHarvester()) {
@@ -224,7 +232,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
         if (target == null) {
             return false;
         }
-        AttackCommand attackCommand = createAttackCommand(target, guardingItem);
+        AttackCommand attackCommand = createAttackCommand(guardingItem, target);
         try {
             executeCommand(attackCommand, true);
         } catch (IllegalAccessException e) {
@@ -243,7 +251,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
             for (SyncBaseItem attacker : guardingItems) {
                 //TankSyncItem tank = (TankSyncItem) baseSyncItem;
                 if (attacker.isEnemy(target) && attacker.getSyncWaepon().inAttackRange(target)) {
-                    AttackCommand attackCommand = createAttackCommand(target, attacker);
+                    AttackCommand attackCommand = createAttackCommand(attacker, target);
                     cmds.add(attackCommand);
                     connectionService.sendSyncInfo(target);
                 }
@@ -261,7 +269,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
         }
     }
 
-    private AttackCommand createAttackCommand(SyncBaseItem target, SyncBaseItem attacker) {
+    private AttackCommand createAttackCommand(SyncBaseItem attacker, SyncBaseItem target) {
         AttackCommand attackCommand = new AttackCommand();
         attackCommand.setId(attacker.getId());
         attackCommand.setTimeStamp();
@@ -270,9 +278,85 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
         return attackCommand;
     }
 
+
+    @Override
+    public void buildFactory(SyncBaseItem builder, Index position, BaseItemType itemTypeToBuild) {
+        builder.stop();
+        BuilderCommand builderCommand = new BuilderCommand();
+        builderCommand.setId(builder.getId());
+        builderCommand.setTimeStamp();
+        builderCommand.setToBeBuilt(itemTypeToBuild.getId());
+        builderCommand.setPositionToBeBuilt(position);
+        try {
+            executeCommand(builderCommand, true);
+            log.info("Bot Execute Command: " + builderCommand);
+        } catch (Exception e) {
+            log.error("", e);
+        }
+    }
+
+    @Override
+    public void build(SyncBaseItem factory, BaseItemType itemType) {
+        FactoryCommand factoryCommand = new FactoryCommand();
+        factoryCommand.setId(factory.getId());
+        factoryCommand.setTimeStamp();
+        factoryCommand.setToBeBuilt(itemType.getId());
+        try {
+            executeCommand(factoryCommand, true);
+            log.info("Bot Execute Command: " + factoryCommand);
+        } catch (Exception e) {
+            log.error("", e);
+        }
+    }
+
+    @Override
+    public void collect(SyncBaseItem collector, SyncResourceItem money) {
+        collector.stop();
+        MoneyCollectCommand collectCommand = new MoneyCollectCommand();
+        collectCommand.setId(collector.getId());
+        collectCommand.setTimeStamp();
+        collectCommand.setTarget(money.getId());
+
+        try {
+            executeCommand(collectCommand, true);
+            log.info("Bot Execute Command: " + collectCommand);
+        } catch (Exception e) {
+            log.error("", e);
+        }
+    }
+
+    @Override
+    public void attack(SyncBaseItem tank, SyncBaseItem target) {
+        tank.stop();
+        AttackCommand attackCommand = createAttackCommand(tank, target);
+        attackCommand.setFollowTarget(true);
+
+        try {
+            executeCommand(attackCommand, true);
+            log.info("Bot Execute Command: " + attackCommand);
+        } catch (Exception e) {
+            log.error("", e);
+        }
+    }
+
+    @Override
+    public void move(SyncBaseItem syncItem, Index destination) {
+        syncItem.stop();
+        MoveCommand moveCommand = new MoveCommand();
+        moveCommand.setId(syncItem.getId());
+        moveCommand.setTimeStamp();
+        moveCommand.setDestination(destination);
+        try {
+            executeCommand(moveCommand, true);
+            log.info("Bot Execute Command: " + moveCommand);
+        } catch (Exception e) {
+            log.error("", e);
+        }
+    }
+
     @Override
     public void syncItemActivated(SyncBaseItem syncBaseItem) {
-        synchronized (activeItems) {
+        synchronized (tmpActiveItems) {
             tmpActiveItems.add(syncBaseItem);
         }
         addGuardingBaseItem(syncBaseItem);
@@ -306,7 +390,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
         try {
             syncItem.stop();
             syncItem.executeCommand(baseCommand);
-            finalizeCommand(syncItem, cmdFromSystem);
+            finalizeCommand(syncItem);
         } catch (ItemDoesNotExistException e) {
             log.info("Can not execute command. Item does no longer exist " + baseCommand);
             connectionService.sendSyncInfo(syncItem);
@@ -319,14 +403,10 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
         }
     }
 
-    private void finalizeCommand(SyncBaseItem syncItem, boolean cmdFromSystem) {
-        if (cmdFromSystem) {
-            tmpActiveItems.add(syncItem);
-        } else {
-            synchronized (activeItems) {
-                if (!activeItems.contains(syncItem)) {
-                    activeItems.add(syncItem);
-                }
+    private void finalizeCommand(SyncBaseItem syncItem) {
+        synchronized (tmpActiveItems) {
+            if (!activeItems.contains(syncItem)) {
+                tmpActiveItems.add(syncItem);
             }
         }
         removeGuardingBaseItem(syncItem);

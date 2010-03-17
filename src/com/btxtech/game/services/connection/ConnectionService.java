@@ -48,4 +48,6 @@ public interface ConnectionService extends com.btxtech.game.jsre.common.gameengi
     void sendUserMessage(UserMessage userMessage);
 
     OnlineBaseUpdate getOnlineBaseUpdate();
+
+    void sendOnlineBasesUpdate();
 }

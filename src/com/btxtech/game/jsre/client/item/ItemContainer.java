@@ -30,9 +30,10 @@ import com.btxtech.game.jsre.client.utg.ClientUserGuidance;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.ai.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseService;
+import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.items.impl.AbstractItemService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -55,14 +56,13 @@ import java.util.Map;
  * Date: Jul 4, 2009
  * Time: 12:26:56 PM
  */
-public class ItemContainer extends AbstractItemService {
+public class ItemContainer extends AbstractItemService implements CommonCollisionService {
     public static final int CLEANUP_INTERVALL = 3000;
     private static final ItemContainer INSATNCE = new ItemContainer();
     private HashMap<Id, ClientSyncItemView> items = new HashMap<Id, ClientSyncItemView>();
     private HashSet<ClientSyncBaseItemView> specialItems = new HashSet<ClientSyncBaseItemView>();
     private HashMap<Id, ClientSyncItemView> orphanItems = new HashMap<Id, ClientSyncItemView>();
     private HashMap<Id, ClientSyncItemView> deadItems = new HashMap<Id, ClientSyncItemView>();
-    private Object groupedItems;
 
     /**
      * Singleton
@@ -270,20 +270,20 @@ public class ItemContainer extends AbstractItemService {
         return clientBaseItems;
     }
 
-    public List<ClientSyncBaseItemView> getEnemyItems() {
-        ArrayList<ClientSyncBaseItemView> clientBaseItems = new ArrayList<ClientSyncBaseItemView>();
+    public List<SyncBaseItem> getEnemyItems(SimpleBase base) {
+        ArrayList<SyncBaseItem> clientBaseItems = new ArrayList<SyncBaseItem>();
         for (ClientSyncItemView clientBaseItem : items.values()) {
             if (clientBaseItem instanceof ClientSyncBaseItemView &&
-                    !((ClientSyncBaseItemView) clientBaseItem).isMyOwnProperty() &&
+                    !((ClientSyncBaseItemView) clientBaseItem).getSyncBaseItem().getBase().equals(base) &&
                     !orphanItems.containsKey(clientBaseItem.getSyncItem().getId()) &&
                     !deadItems.containsKey(clientBaseItem.getSyncItem().getId())) {
-                clientBaseItems.add((ClientSyncBaseItemView) clientBaseItem);
+                clientBaseItems.add(((ClientSyncBaseItemView) clientBaseItem).getSyncBaseItem());
             }
         }
         return clientBaseItems;
     }
 
-    public List<SyncItem> getItems(ItemType itemType, boolean own) {
+    public List<SyncItem> getItems(ItemType itemType, SimpleBase simpleBase) {
         ArrayList<SyncItem> syncItems = new ArrayList<SyncItem>();
         for (ClientSyncItemView clientBaseItem : items.values()) {
             SyncItem syncItem = clientBaseItem.getSyncItem();
@@ -295,8 +295,8 @@ public class ItemContainer extends AbstractItemService {
                 continue;
             }
 
-            if (own) {
-                if (clientBaseItem instanceof ClientSyncBaseItemView && ((ClientSyncBaseItemView) clientBaseItem).isMyOwnProperty()) {
+            if (simpleBase != null) {
+                if (clientBaseItem instanceof ClientSyncBaseItemView && ((ClientSyncBaseItemView) clientBaseItem).getSyncBaseItem().getBase().equals(simpleBase)) {
                     syncItems.add(syncItem);
                 }
             } else {
@@ -305,10 +305,6 @@ public class ItemContainer extends AbstractItemService {
         }
         return syncItems;
 
-    }
-
-    public List<SyncItem> getItems(String itemTypeName, boolean own) throws NoSuchItemTypeException {
-        return getItems(getItemType(itemTypeName), own);
     }
 
     public Index getFreeRandomPosition(ItemType itemType, SyncItem origin, int targetMinRange, int targetMaxRange) {
@@ -394,7 +390,6 @@ public class ItemContainer extends AbstractItemService {
         return false;
     }
 
-
     public Map<BaseItemType, List<SyncBaseItem>> getItems4Base(SimpleBase simpleBase) {
         Map<BaseItemType, List<SyncBaseItem>> result = new HashMap<BaseItemType, List<SyncBaseItem>>();
         for (ClientSyncItemView clientSyncItemView : items.values()) {
@@ -419,4 +414,5 @@ public class ItemContainer extends AbstractItemService {
         }
         return result;
     }
+
 }

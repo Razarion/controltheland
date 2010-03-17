@@ -13,7 +13,9 @@
 
 package com.btxtech.game.jsre.common.gameengine.services;
 
+import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionService;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseService;
+import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService;
 import com.btxtech.game.jsre.common.gameengine.services.energy.EnergyService;
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccess;
@@ -37,4 +39,8 @@ public interface Services {
     ItemTypeAccess getItemTypeAccess();
 
     EnergyService getEnergyService();
+
+    CommonCollisionService getCollisionService();
+
+    CommonActionService getActionService();
 }

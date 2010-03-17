@@ -13,18 +13,19 @@
 
 package com.btxtech.game.services.action;
 
+import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
+import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
-import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 
 /**
  * User: beat
  * Date: Jun 1, 2009
  * Time: 12:47:37 PM
  */
-public interface ActionService extends SyncItemListener {
+public interface ActionService extends CommonActionService, SyncItemListener {
     void executeCommand(BaseCommand baseCommand, boolean supressUserCheck) throws IllegalAccessException, ItemDoesNotExistException;
 
     void addGuardingBaseItem(SyncBaseItem syncItem);

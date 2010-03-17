@@ -60,6 +60,8 @@ public class Base implements Serializable {
     private int totalEarned;
     @Column(name = "abandoned", nullable = false, columnDefinition = "bit default b'1'")
     private boolean abandoned = false;
+    @Column(nullable = false, columnDefinition = "bit default b'0'")
+    private boolean bot = false;
     @Transient
     private final Object syncObject = new Object();
     @Transient
@@ -114,7 +116,7 @@ public class Base implements Serializable {
     }
 
     public SimpleBase getSimpleBase() {
-        return new SimpleBase(name, baseColor.getHtmlColor());
+        return new SimpleBase(name, baseColor.getHtmlColor(), bot);
     }
 
     public void depositMoney(int amount) {
@@ -199,6 +201,14 @@ public class Base implements Serializable {
 
     public void setUserItemTypeAccess(UserItemTypeAccess userItemTypeAccess) {
         this.userItemTypeAccess = userItemTypeAccess;
+    }
+
+    public boolean isBot() {
+        return bot;
+    }
+
+    public void setBot(boolean bot) {
+        this.bot = bot;
     }
 
     @Override

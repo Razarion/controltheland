@@ -13,13 +13,13 @@
 
 package com.btxtech.game.services.base;
 
-import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.Packet;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.btxtech.game.services.user.User;
-import com.btxtech.game.services.itemTypeAccess.impl.UserItemTypeAccess;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.energy.impl.BaseEnergy;
+import com.btxtech.game.services.itemTypeAccess.impl.UserItemTypeAccess;
+import com.btxtech.game.services.user.User;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,6 +32,8 @@ public interface BaseService extends com.btxtech.game.jsre.common.gameengine.ser
     void checkBaseAccess(SyncBaseItem item) throws IllegalAccessException;
 
     void createNewBase(String name, BaseColor baseColor) throws AlreadyUsedException, NoSuchItemTypeException;
+
+    Base createNewBotBase(SyncBaseItem origin, int targetMinRange, int targetMaxRange) throws NoSuchItemTypeException;
 
     void continueBase();
 

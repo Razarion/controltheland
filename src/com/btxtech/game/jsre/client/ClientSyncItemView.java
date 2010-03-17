@@ -43,7 +43,7 @@ public abstract class ClientSyncItemView extends AbsolutePanel implements MouseD
         sinkEvents(Event.ONMOUSEMOVE);
         addDomHandler(this, MouseDownEvent.getType());
         MapWindow.getAbsolutePanel().add(this, 0, 0);
-        syncItem.setSyncItemListener(this);
+        syncItem.addSyncItemListener(this);
     }
 
     public void setupImage() {
