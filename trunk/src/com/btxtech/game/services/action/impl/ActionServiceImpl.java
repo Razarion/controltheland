@@ -160,16 +160,16 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
                             }
                         }
                     } catch (InsufficientFundsException ife) {
+                        log.info("InsufficientFundsException " + activeItem);
                         activeItem.stop();
                         iterator.remove();
                         connectionService.sendSyncInfo(activeItem);
                         baseService.sendAccountBaseUpdate(activeItem);
-                        log.info("InsufficientFundsException " + activeItem);
                     } catch (Throwable t) {
+                        log.error("", t);
                         activeItem.stop();
                         iterator.remove();
                         connectionService.sendSyncInfo(activeItem);
-                        log.error("", t);
                     }
                 }
                 lastTickTime = time;
