@@ -27,6 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import javax.annotation.PreDestroy;
 
 /**
  * User: beat
@@ -61,6 +62,17 @@ public class BotServiceImpl implements BotService {
     @Override
     public void onConnectionClosed(Base base) {
         stopBotForEnemyBase(base);
+    }
+
+    @PreDestroy
+    public void cleanup() {
+       synchronized (bots) {
+           for (Bot bot : bots) {
+               bot.stop();
+           }
+           bots.clear();
+           botBases.clear();
+       }
     }
 
     private void stopBotForEnemyBase(Base humanBase) {
