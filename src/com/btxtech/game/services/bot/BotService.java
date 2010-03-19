@@ -27,7 +27,7 @@ public interface BotService {
 
     void onHumanBaseDefeated(Base base);
 
-    void onUserEnterBase(Base base);
-
     List<SimpleBase> getBotBases();
+
+    void onConnectionClosed(Base base);
 }

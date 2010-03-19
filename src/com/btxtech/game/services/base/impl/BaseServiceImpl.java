@@ -68,7 +68,7 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
  * Time: 8:15:53 PM
  */
 public class BaseServiceImpl implements BaseService {
-    public static final String DEFAULT_PLAYER_NAME_PREFIX = "Player ";
+    public static final String DEFAULT_BASE_NAME_PREFIX = "Base ";
     public static final int EDGE_LENGTH = 200;
     private Log log = LogFactory.getLog(BaseServiceImpl.class);
     @Autowired
@@ -291,7 +291,7 @@ public class BaseServiceImpl implements BaseService {
     @Override
     public String getFreePlayerName() {
         for (int i = 1; i < Integer.MAX_VALUE; i++) {
-            String name = DEFAULT_PLAYER_NAME_PREFIX + Integer.toString(i);
+            String name = DEFAULT_BASE_NAME_PREFIX + Integer.toString(i);
             if (!bases.containsKey(name)) {
                 return name;
             }
