@@ -61,7 +61,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     private Log log = LogFactory.getLog(ConnectionServiceImpl.class);
     private HibernateTemplate hibernateTemplate;
     private final ArrayList<Connection> onlineConnection = new ArrayList<Connection>();
-    private static final int MAX_NO_TICK_COUNT = 40;
+    private static final int MAX_NO_TICK_COUNT = 1;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -139,7 +139,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
 
     @Override
     public void run() {
-        boolean hasChanged = false;
+        ArrayList<Base> closedConnection = new ArrayList<Base>();
         for (Iterator<Connection> it = onlineConnection.iterator(); it.hasNext();) {
             Connection connection = it.next();
             try {
@@ -149,9 +149,9 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
                     if (connection.getBase() != null && connection.getBase().getUser() != null) {
                         userTrackingService.onUserLeftGame(connection.getBase().getUser());
                     }
+                    closedConnection.add(connection.getBase());
                     connection.setClosed();
                     it.remove();
-                    hasChanged = true;
                 } else {
                     double ticksPerSecond = (double) tickCount / (double) (USER_TRACKING_PERIODE / 1000);
                     if (!Double.isInfinite(ticksPerSecond) && !Double.isNaN(ticksPerSecond)) {
@@ -163,8 +163,11 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
                 log.error("", t);
             }
         }
-        if (hasChanged) {
+        if (!closedConnection.isEmpty()) {
             sendOnlineBasesUpdate();
+        }
+        for (Base base : closedConnection) {
+            botService.onConnectionClosed(base);
         }
     }
 
@@ -213,6 +216,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
             onlineConnection.remove(connection);
         }
         sendOnlineBasesUpdate();
+        botService.onConnectionClosed(connection.getBase());
     }
 
     @Override

@@ -39,21 +39,25 @@ public class Bot implements SyncItemListener {
     private Base humanBase;
     private Base botBase;
     private Services services;
+    private Thread thread;
     private BaseBalancer baseBalancer;
     private EnemyStatge enemyStatge = EnemyStatge.NOOB;
     private SyncBaseItem enemyTarget;
     private SyncBaseItem attacker;
     private boolean stopAttack = false;
+    private boolean running;
 
-    public Bot(Base botBase, Base humanBase, Services services) {
+    public Bot(Base botBase, Base humanBase, Services services, Thread thread) {
         this.humanBase = humanBase;
         this.botBase = botBase;
         this.services = services;
+        this.thread = thread;
         ArrayList<ItemTypeBalance> itemTypeBalances = new ArrayList<ItemTypeBalance>();
         itemTypeBalances.add(new ItemTypeBalance(Constants.FACTORY, 1)); // First prio
         itemTypeBalances.add(new ItemTypeBalance(Constants.HARVESTER, 1));// Second prio
         itemTypeBalances.add(new ItemTypeBalance(Constants.JEEP, 1));// Third prio
         baseBalancer = new BaseBalancer(itemTypeBalances, services, botBase.getSimpleBase());
+        running = true;
     }
 
     public void action() throws NoSuchItemTypeException {
@@ -69,8 +73,12 @@ public class Bot implements SyncItemListener {
         }
     }
 
-    public SimpleBase getSimpleBase() {
+    public SimpleBase getBotBase() {
         return botBase.getSimpleBase();
+    }
+
+    public SimpleBase getHumanBase() {
+        return humanBase.getSimpleBase();
     }
 
     private void runNoobState() {
@@ -144,4 +152,15 @@ public class Bot implements SyncItemListener {
         }
     }
 
+    public boolean isRunning() {
+        if (botBase.getItems().isEmpty() || humanBase.getItems().isEmpty()) {
+            running = false;
+        }
+        return running;
+    }
+
+    public void stop() {
+        running = false;
+        thread.interrupt();
+    }
 }
