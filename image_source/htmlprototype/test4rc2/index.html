@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+    <title>Control the Land</title>
+    <link rel="stylesheet" type="text/css" href="page.css">
+</head>
+<body>
+
+<script type="text/javascript" language="JavaScript">
+    <!--
+    start = new Image();
+    start.src = "start.png";
+    startH = new Image();
+    startH.src = "startH.png";
+    info = new Image();
+    info.src = "info.png";
+    infoH = new Image();
+    infoH.src = "infoH.png";
+
+    function highlight(imgID, imgObjName) {
+        document.images[imgID].src = eval(imgObjName + ".src")
+    }
+    //-->
+</script>
+
+
+<div id="StartBg">
+    <div id="StartContent">
+        <table width="100%" cellspacing="0" cellpadding="0" border="0">
+            <tbody>
+            <tr align="center">
+                <td><a href="fenster.htm"
+                       ONMOUSEOVER="highlight('startImg','startH');"
+                       ONMOUSEOUT="highlight('startImg','start');">
+                    <img name="startImg" src="start.png" border="0" alt="">
+                </a>
+                </td>
+                <td><a href="fenster.htm"
+                       ONMOUSEOVER="highlight('infoImg','infoH');"
+                       ONMOUSEOUT="highlight('infoImg','info');">
+                    <img name="infoImg" src="info.png" border="0" alt="">
+                </a></td>
+            </tr>
+            </tbody>
+        </table>
+        <table cellspacing="5" cellpadding="1" border="0" class="tablebg">
+            <tbody>
+            <tr>
+                <td class="main_title" colspan="2">
+                    <h4 style="color: #FFFFFF">The first browser based realtime strategy game. No download or
+                        installation needed. Play for free and without registration.</h4>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <table cellspacing="0" cellpadding="0" border="0" align="left" width="100%" class="home_text">
+                        <tbody>
+                        <tr>
+                            <td width="45"><img border="0" src="bagger.png">
+                            </td>
+                            <td><b>Build your base, explore new terretory, control the land</b></td>
+                        </tr>
+                        <tr>
+                            <td width="45"><img border="0" src="tank.png">
+                            </td>
+                            <td><b>Assault other bases with a variation of attacking units</b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="45"><img border="0" src="tesla.png">
+                            </td>
+                            <td><b>Protect your base with different defence buildings</b></td>
+                        </tr>
+                        <tr>
+                            <td width="45"><img border="0" src="trans.png">
+                            </td>
+                            <td><p><b>Gather resources and run the economy</b></p></td>
+                        </tr>
+                        <tr>
+                            <td width="45"><img border="0" src="factory.png"></td>
+                            <td><b>Unlock new buildings and vehicles</b></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="Logon">
+        <table>
+            <form wicket:id="loginForm">
+                <tr>
+                    <td><input type="text" size="10" wicket:id="loginName"/></td>
+                    <td><input type="password" size="10" wicket:id="loginPassowrd"/></td>
+                    <td><input type="submit" value="Login"/></td>
+                    <td colspan="3" align="right"><a href="LoginBox.html#" wicket:id="createAccountLink" class="account">Create account</a></td>
+                </tr>
+            </form>
+        </table>
+    </div>
+</div>
+</body>
+</html>
