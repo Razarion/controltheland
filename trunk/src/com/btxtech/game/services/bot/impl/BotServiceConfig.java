@@ -18,8 +18,8 @@ package com.btxtech.game.services.bot.impl;
  * Date: 15.03.2010
  * Time: 22:07:46
  */
-public class BotConfig {
-    private int botStartDelay = 10000;
+public class BotServiceConfig {
+    private int botStartDelay = 30000;
     private int botActionDelay = 5000;
 
     public int getBotStartDelay() {

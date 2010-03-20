@@ -22,7 +22,6 @@ import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeExce
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -32,19 +31,23 @@ import java.util.Map;
  * Time: 17:35:29
  */
 public class BaseBalancer {
-    private ArrayList<ItemTypeBalance> itemTypeBalances;
     private Services services;
     private SimpleBase simpleBase;
+    private BotLevel botLevel;
 
-    public BaseBalancer(ArrayList<ItemTypeBalance> itemTypeBalances, Services services, SimpleBase simpleBase) {
-        this.itemTypeBalances = itemTypeBalances;
+    public BaseBalancer(BotLevel botLevel, Services services, SimpleBase simpleBase) {
+        this.botLevel = botLevel;
         this.services = services;
         this.simpleBase = simpleBase;
     }
 
+    public void setBotLevel(BotLevel botLevel) {
+        this.botLevel = botLevel;
+    }
+
     public void doBalance() throws NoSuchItemTypeException {
         Map<BaseItemType, List<SyncBaseItem>> items = services.getItemService().getItems4Base(simpleBase);
-        for (ItemTypeBalance itemTypeBalance : itemTypeBalances) {
+        for (ItemTypeBalance itemTypeBalance : botLevel.getItemTypeBalances()) {
             BaseItemType itemTypeToBalance = (BaseItemType) services.getItemService().getItemType(itemTypeBalance.getItemTypeName());
             List<SyncBaseItem> syncBaseItems = items.get(itemTypeToBalance);
             if (syncBaseItems == null || syncBaseItems.size() < itemTypeBalance.getCount()) {

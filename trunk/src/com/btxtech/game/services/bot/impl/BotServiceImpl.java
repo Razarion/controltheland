@@ -46,8 +46,9 @@ public class BotServiceImpl implements BotService {
     private ConnectionService connectionService;
     private Log log = LogFactory.getLog(BotServiceImpl.class);
     private final ArrayList<Bot> bots = new ArrayList<Bot>();
-    private BotConfig botConfig = new BotConfig();
+    private BotServiceConfig botServiceConfig = new BotServiceConfig();
     private List<SimpleBase> botBases = new ArrayList<SimpleBase>();
+    private BotLevelFactory botLevelFactory = new BotLevelFactory();
 
     @Override
     public void onHumanBaseCreated(Base base) {
@@ -66,13 +67,13 @@ public class BotServiceImpl implements BotService {
 
     @PreDestroy
     public void cleanup() {
-       synchronized (bots) {
-           for (Bot bot : bots) {
-               bot.stop();
-           }
-           bots.clear();
-           botBases.clear();
-       }
+        synchronized (bots) {
+            for (Bot bot : bots) {
+                bot.stop();
+            }
+            bots.clear();
+            botBases.clear();
+        }
     }
 
     private void stopBotForEnemyBase(Base humanBase) {
@@ -83,7 +84,7 @@ public class BotServiceImpl implements BotService {
                     botBases.remove(bot.getBotBase());
                     it.remove();
                     bot.stop();
-                    connectionService.sendOnlineBasesUpdate();                    
+                    connectionService.sendOnlineBasesUpdate();
                     return;
                 }
             }
@@ -96,7 +97,7 @@ public class BotServiceImpl implements BotService {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(botConfig.getBotStartDelay());
+                    Thread.sleep(botServiceConfig.getBotStartDelay());
                     if (humanBase.isAbandoned()) {
                         return;
                     }
@@ -106,7 +107,7 @@ public class BotServiceImpl implements BotService {
                         return;
                     }
                     Base botBase = baseService.createNewBotBase(enemyItem, BASE_MIN_RANGE, BASE_MAX_RANGE);
-                    Bot bot = new Bot(botBase, humanBase, serverServices, this);
+                    Bot bot = new Bot(botBase, humanBase, serverServices, this, botLevelFactory);
                     synchronized (bots) {
                         bots.add(bot);
                         botBases.add(bot.getBotBase());
@@ -114,7 +115,7 @@ public class BotServiceImpl implements BotService {
                     connectionService.sendOnlineBasesUpdate();
                     while (bot.isRunning()) {
                         bot.action();
-                        Thread.sleep(botConfig.getBotActionDelay());
+                        Thread.sleep(botServiceConfig.getBotActionDelay());
                     }
                 } catch (InterruptedException ignore) {
                 } catch (Throwable t) {

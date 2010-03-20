@@ -13,18 +13,21 @@
 
 package com.btxtech.game.services.bot.impl;
 
-import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.ai.BaseBalancer;
-import com.btxtech.game.jsre.common.ai.ItemTypeBalance;
+import com.btxtech.game.jsre.common.ai.BotLevel;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.services.base.Base;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * User: beat
@@ -32,45 +35,42 @@ import java.util.ArrayList;
  * Time: 17:24:08
  */
 public class Bot implements SyncItemListener {
-    enum EnemyStatge {
-        NOOB
-    }
-
+    private Log log = LogFactory.getLog(Bot.class);
     private Base humanBase;
     private Base botBase;
     private Services services;
     private Thread thread;
+    private BotLevelFactory botLevelFactory;
     private BaseBalancer baseBalancer;
-    private EnemyStatge enemyStatge = EnemyStatge.NOOB;
     private SyncBaseItem enemyTarget;
     private SyncBaseItem attacker;
     private boolean stopAttack = false;
     private boolean running;
+    private int level = 0;
+    private long lastAttackTime;
 
-    public Bot(Base botBase, Base humanBase, Services services, Thread thread) {
+    public Bot(Base botBase, Base humanBase, Services services, Thread thread, BotLevelFactory botLevelFactory) {
         this.humanBase = humanBase;
         this.botBase = botBase;
         this.services = services;
         this.thread = thread;
-        ArrayList<ItemTypeBalance> itemTypeBalances = new ArrayList<ItemTypeBalance>();
-        itemTypeBalances.add(new ItemTypeBalance(Constants.FACTORY, 1)); // First prio
-        itemTypeBalances.add(new ItemTypeBalance(Constants.HARVESTER, 1));// Second prio
-        itemTypeBalances.add(new ItemTypeBalance(Constants.JEEP, 1));// Third prio
-        baseBalancer = new BaseBalancer(itemTypeBalances, services, botBase.getSimpleBase());
+        this.botLevelFactory = botLevelFactory;
+        baseBalancer = new BaseBalancer(botLevelFactory.getBotLevel(level), services, botBase.getSimpleBase());
         running = true;
     }
 
     public void action() throws NoSuchItemTypeException {
+        Map<BaseItemType, List<SyncBaseItem>> enemyItems = services.getItemService().getItems4Base(humanBase.getSimpleBase());
+        int level = botLevelFactory.getLevelForHumanBase(enemyItems);
+        level = Math.max(level, this.level);
+        if (level != this.level) {
+            this.level = level;
+            baseBalancer.setBotLevel(botLevelFactory.getBotLevel(level));
+            log.info("Bot '" + botBase + "' reached level: " + this.level);
+        }
         baseBalancer.doBalance();
         baseBalancer.doAllIdleHarvest();
-        // Handle attack
-        switch (enemyStatge) {
-            case NOOB:
-                runNoobState();
-                break;
-            default:
-                throw new IllegalStateException("Unknwon stage: " + enemyStatge);
-        }
+        runAttack();
     }
 
     public SimpleBase getBotBase() {
@@ -81,44 +81,64 @@ public class Bot implements SyncItemListener {
         return humanBase.getSimpleBase();
     }
 
-    private void runNoobState() {
+    private void runAttack() {
         if (stopAttack) {
-            stopAttack = false;
-            enemyTarget.removeSyncItemListener(this);
-            Index dest = services.getCollisionService().getFreeRandomPosition(attacker.getBaseItemType(), attacker, 200, 400);
-            services.getActionService().move(attacker, dest);
-            enemyTarget = null;
-            attacker = null;
+            stopAttack();
         } else {
-            boolean hasCahnged = false;
-
-            if (enemyTarget == null || !enemyTarget.isAlive()) {
-                enemyTarget = getEnemyNoobStage();
-                hasCahnged = true;
+            if (botLevelFactory.getBotLevel(level).getAttackPause() > 0) {
+                if (System.currentTimeMillis() > botLevelFactory.getBotLevel(level).getAttackPause() + lastAttackTime) {
+                    doAttack();
+                }
+            } else {
+                doAttack();
             }
-
-            if (enemyTarget == null) {
-                return;
-            }
-
-            if (attacker == null || !attacker.isAlive()) {
-                attacker = getAttacker();
-                hasCahnged = true;
-            }
-
-            if (attacker == null) {
-                return;
-            }
-
-            if (!hasCahnged) {
-                return;
-            }
-            enemyTarget.addSyncItemListener(this);
-            services.getActionService().attack(attacker, enemyTarget);
         }
     }
 
-    private SyncBaseItem getEnemyNoobStage() {
+    private void doAttack() {
+        boolean hasCahnged = false;
+
+        if (enemyTarget == null || !enemyTarget.isAlive()) {
+            enemyTarget = getEnemyTarget();
+            hasCahnged = true;
+        }
+
+        if (enemyTarget == null) {
+            return;
+        }
+
+        if (attacker == null || !attacker.isAlive()) {
+            attacker = getAttacker();
+            hasCahnged = true;
+        }
+
+        if (attacker == null) {
+            return;
+        }
+
+        if (!hasCahnged) {
+            return;
+        }
+        if (botLevelFactory.getBotLevel(level).getAttackPause() > 0) {
+            enemyTarget.addSyncItemListener(this);
+        }
+        services.getActionService().attack(attacker, enemyTarget);
+    }
+
+    private void stopAttack() {
+        BotLevel botLevel = botLevelFactory.getBotLevel(level);
+        if (botLevel.getAttackPauseMinDistance() > 0 && botLevel.getAttackPauseMaxDistance() > 0) {
+            Index dest = services.getCollisionService().getFreeRandomPosition(attacker.getBaseItemType(),
+                    attacker, botLevel.getAttackPauseMinDistance(), botLevel.getAttackPauseMaxDistance());
+            services.getActionService().move(attacker, dest);
+        }
+        enemyTarget.removeSyncItemListener(this);
+        enemyTarget = null;
+        attacker = null;
+        stopAttack = false;
+    }
+
+    private SyncBaseItem getEnemyTarget() {
         SyncBaseItem anyItem = null;
         for (SyncBaseItem syncBaseItem : humanBase.getItems()) {
             if (syncBaseItem.hasSyncFactory()) {
@@ -133,7 +153,8 @@ public class Bot implements SyncItemListener {
     }
 
     private boolean syncItemCanBeAttacked(SyncBaseItem syncBaseItem) {
-        return syncBaseItem.getHealth() > (double) syncBaseItem.getBaseItemType().getHealth() * 0.3;
+        double hold = botLevelFactory.getBotLevel(level).getAttackHold();
+        return hold <= 0.0 || syncBaseItem.getHealth() > (double) syncBaseItem.getBaseItemType().getHealth() * hold;
     }
 
     private SyncBaseItem getAttacker() {
@@ -149,6 +170,7 @@ public class Bot implements SyncItemListener {
     public void onItemChanged(Change change, SyncItem syncItem) {
         if (syncItem.equals(enemyTarget) && change == Change.HEALTH) {
             stopAttack = true;
+            lastAttackTime = System.currentTimeMillis();
         }
     }
 
