@@ -289,7 +289,6 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
         builderCommand.setPositionToBeBuilt(position);
         try {
             executeCommand(builderCommand, true);
-            log.info("Bot Execute Command: " + builderCommand);
         } catch (Exception e) {
             log.error("", e);
         }
@@ -303,7 +302,6 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
         factoryCommand.setToBeBuilt(itemType.getId());
         try {
             executeCommand(factoryCommand, true);
-            log.info("Bot Execute Command: " + factoryCommand);
         } catch (Exception e) {
             log.error("", e);
         }
@@ -319,7 +317,6 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
 
         try {
             executeCommand(collectCommand, true);
-            log.info("Bot Execute Command: " + collectCommand);
         } catch (Exception e) {
             log.error("", e);
         }
@@ -333,7 +330,6 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
 
         try {
             executeCommand(attackCommand, true);
-            log.info("Bot Execute Command: " + attackCommand);
         } catch (Exception e) {
             log.error("", e);
         }
@@ -348,7 +344,6 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
         moveCommand.setDestination(destination);
         try {
             executeCommand(moveCommand, true);
-            log.info("Bot Execute Command: " + moveCommand);
         } catch (Exception e) {
             log.error("", e);
         }

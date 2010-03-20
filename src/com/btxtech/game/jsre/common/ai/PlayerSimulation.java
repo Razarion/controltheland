@@ -22,7 +22,6 @@ import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.google.gwt.user.client.Timer;
-import java.util.ArrayList;
 
 /**
  * User: beat
@@ -50,12 +49,11 @@ public class PlayerSimulation {
         if (!isActive) {
             return;
         }
-
-        ArrayList<ItemTypeBalance> itemTypeBalances = new ArrayList<ItemTypeBalance>();
-        itemTypeBalances.add(new ItemTypeBalance(Constants.FACTORY, 1)); // First prio
-        itemTypeBalances.add(new ItemTypeBalance(Constants.HARVESTER, 3));// Second prio
-        itemTypeBalances.add(new ItemTypeBalance(Constants.JEEP, 30));// Third prio
-        baseBalancer = new BaseBalancer(itemTypeBalances, ClientServices.getInstance(), ClientBase.getInstance().getSimpleBase());
+        BotLevel botLevel = new BotLevel();
+        botLevel.addItemTypeBalance(Constants.FACTORY, 1);
+        botLevel.addItemTypeBalance(Constants.HARVESTER, 3);
+        botLevel.addItemTypeBalance(Constants.JEEP, 30);
+        baseBalancer = new BaseBalancer(botLevel, ClientServices.getInstance(), ClientBase.getInstance().getSimpleBase());
 
         isRunning = true;
         try {
