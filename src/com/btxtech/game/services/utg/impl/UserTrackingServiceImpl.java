@@ -90,6 +90,17 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
+    public void pageAccess(Class theClass) {
+        try {
+            PageAccess pageAccess = new PageAccess(session.getSessionId(), theClass.getName(), "");
+            hibernateTemplate.saveOrUpdate(pageAccess);
+        } catch (NoConnectionException e) {
+            log.error("", e);
+        }
+    }
+
+
+    @Override
     public void newSession(BrowserDetails browserDetails) {
         try {
             hibernateTemplate.saveOrUpdate(browserDetails);

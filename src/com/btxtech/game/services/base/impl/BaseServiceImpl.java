@@ -125,6 +125,13 @@ public class BaseServiceImpl implements BaseService {
     }
 
     @Override
+    public void createNewBase() throws AlreadyUsedException, NoSuchItemTypeException {
+        synchronized (bases) {
+            createNewBase(getFreePlayerName(), getFreeColors(1).get(0));
+        }
+    }
+
+    @Override
     public void createNewBase(String name, BaseColor baseColor) throws AlreadyUsedException, NoSuchItemTypeException {
         Base base;
         ItemType constructionVehicle = itemService.getItemType(Constants.CONSTRUCTION_VEHICLE);
@@ -170,7 +177,7 @@ public class BaseServiceImpl implements BaseService {
             bases.put(name, base);
             colorsUsed.add(baseColor.getHtmlColor());
         }
-        Index startPoint = collisionService.getFreeRandomPosition(constructionVehicle,origin, targetMinRange, targetMaxRange);
+        Index startPoint = collisionService.getFreeRandomPosition(constructionVehicle, origin, targetMinRange, targetMaxRange);
         log.info("Bot Base created: " + base + " startPoint: " + startPoint);
         SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(constructionVehicle, startPoint, null, base.getSimpleBase(), 0);
         syncBaseItem.setBuild(true);
