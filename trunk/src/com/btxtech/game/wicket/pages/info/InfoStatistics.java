@@ -11,28 +11,23 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.wicket.pages.home;
+package com.btxtech.game.wicket.pages.info;
 
 import com.btxtech.game.wicket.pages.BorderPanel;
-import com.btxtech.game.wicket.pages.entergame.EnterBasePanel;
-import org.apache.wicket.markup.html.form.Form;
+import com.btxtech.game.wicket.pages.statistics.BaseKills;
+import com.btxtech.game.wicket.pages.statistics.BaseSize;
+import com.btxtech.game.wicket.pages.statistics.BaseUpTime;
 
 /**
  * User: beat
  * Date: Oct 14, 2009
  * Time: 2:04:48 PM
  */
-public class HomeMainContent extends BorderPanel {
-    public HomeMainContent(String id) {
+public class InfoStatistics extends BorderPanel {
+    public InfoStatistics(String id) {
         super(id);
-        Form form = new Form("form") {
-            @Override
-            protected void onSubmit() {
-                setResponsePage(new EnterBasePanel());
-            }
-        };
-        add(form);
-
+        add(new BaseUpTime(5));
+        add(new BaseKills(5));
+        add(new BaseSize(5));
     }
-
 }

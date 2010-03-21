@@ -35,6 +35,8 @@ public interface UserTrackingService {
 
     void pageAccess(BasePage basePage);
 
+    void pageAccess(Class theClass);
+
     void gameStartup(GameStartupState server, Date timeStamp);
 
     void saveUserActions(ArrayList<UserAction> userActions, ArrayList<MissionAction> missionActions);

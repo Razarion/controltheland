@@ -15,6 +15,7 @@ package com.btxtech.game.wicket.pages.basepage;
 
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.wicket.pages.info.Info;
 import com.btxtech.game.wicket.pages.home.Home;
 import com.btxtech.game.wicket.pages.market.MarketPage;
 import com.btxtech.game.wicket.pages.statistics.StatisticsPage;
@@ -54,6 +55,7 @@ public class BasePage extends WebPage {
 
         ArrayList<MenuItem> menuItems = new ArrayList<MenuItem>();
         menuItems.add(new MenuItem("home", Home.class, this));
+        menuItems.add(new MenuItem("info", Info.class, this));
         menuItems.add(new MenuItem("market", MarketPage.class, this));
         menuItems.add(new MenuItem("users", UserListPage.class, this));
         menuItems.add(new MenuItem("statistics", StatisticsPage.class, this));
