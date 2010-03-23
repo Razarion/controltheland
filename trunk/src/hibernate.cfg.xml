@@ -29,6 +29,7 @@
       <mapping class="com.btxtech.game.services.terrain.DbTerrainImage"/>
       <mapping class="com.btxtech.game.services.terrain.DbTerrainSetting"/>
       <mapping class="com.btxtech.game.services.user.User"/>
+      <mapping class="com.btxtech.game.services.user.Arq"/>
       <mapping class="com.btxtech.game.services.mgmt.impl.BackupEntry"/>
       <mapping class="com.btxtech.game.services.mgmt.impl.GenericBaseItem"/>
       <mapping class="com.btxtech.game.services.mgmt.impl.GenericResourceItem"/>
@@ -59,5 +60,10 @@
       <mapping class="com.btxtech.game.services.utg.UserCommand"/>
       <mapping class="com.btxtech.game.services.utg.UserHistory"/>
       <mapping class="com.btxtech.game.services.utg.DbUserMessage"/>
+      <mapping class="com.btxtech.game.services.forum.AbstractForumEntry"/>
+      <mapping class="com.btxtech.game.services.forum.SubForum"/>
+      <mapping class="com.btxtech.game.services.forum.Category"/>
+      <mapping class="com.btxtech.game.services.forum.ForumThread"/>
+      <mapping class="com.btxtech.game.services.forum.Post"/>
   </session-factory>
 </hibernate-configuration>

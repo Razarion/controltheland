@@ -1,0 +1,180 @@
+/*
+ * Copyright (c) 2010.
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; version 2 of the License.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ */
+
+package com.btxtech.game.services.forum.impl;
+
+import com.btxtech.game.services.forum.AbstractForumEntry;
+import com.btxtech.game.services.forum.Category;
+import com.btxtech.game.services.forum.ForumService;
+import com.btxtech.game.services.forum.ForumThread;
+import com.btxtech.game.services.forum.Post;
+import com.btxtech.game.services.forum.SubForum;
+import java.sql.SQLException;
+import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate3.HibernateCallback;
+import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.stereotype.Component;
+
+/**
+ * User: beat
+ * Date: 21.03.2010
+ * Time: 17:05:26
+ */
+@Component("forumService")
+public class ForumServiceImpl implements ForumService {
+    private Log log = LogFactory.getLog(ForumServiceImpl.class);
+    private HibernateTemplate hibernateTemplate;
+
+    @Autowired
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        hibernateTemplate = new HibernateTemplate(sessionFactory);
+    }
+
+    @Override
+    public List<SubForum> getSubForums() {
+        return hibernateTemplate.loadAll(SubForum.class);
+    }
+
+    @Override
+    public Category getCategory(int categoryId) {
+        return (Category) hibernateTemplate.get(Category.class, categoryId);
+    }
+
+    @Override
+    public List<Category> getCategories(final SubForum subForumId) {
+        return hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(Category.class);
+                criteria.add(Restrictions.eq("subForum", subForumId));
+                List<Category> categories = criteria.list();
+                for (Category category : categories) {
+                    hibernateTemplate.initialize(category.getForumThreads());
+                }
+                return categories;
+            }
+        });
+    }
+
+    @Override
+    public ForumThread getForumThread(int forumThreadId) {
+        return (ForumThread) hibernateTemplate.get(ForumThread.class, forumThreadId);
+    }
+
+    @Override
+    public List<ForumThread> getForumThreads(final Category category) {
+        return hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(ForumThread.class);
+                criteria.add(Restrictions.eq("category", category));
+                List<ForumThread> forumThreads = criteria.list();
+                for (ForumThread forumThread : forumThreads) {
+                    hibernateTemplate.initialize(forumThread.getPosts());
+                }
+                return forumThreads;
+            }
+        });
+    }
+
+    @Override
+    public List<Post> getPosts(final ForumThread forumThread) {
+        return hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(Post.class);
+                criteria.add(Restrictions.eq("forumThread", forumThread));
+                return criteria.list();
+            }
+        });
+    }
+
+    @Override
+    public AbstractForumEntry createForumEntry(Class<? extends AbstractForumEntry> aClass) {
+        try {
+            return aClass.getConstructor().newInstance();
+        } catch (Exception e) {
+            log.error("", e);
+            return null;
+        }
+    }
+
+    @Override
+    public void insertForumEntry(final int parentId, final AbstractForumEntry abstractForumEntry) {
+        if (abstractForumEntry instanceof SubForum) {
+            abstractForumEntry.setDate();
+            hibernateTemplate.save(abstractForumEntry);
+        } else if (abstractForumEntry instanceof Category) {
+            hibernateTemplate.execute(new HibernateCallback() {
+                @Override
+                public Object doInHibernate(Session session) throws HibernateException, SQLException {
+                    Criteria criteria = session.createCriteria(SubForum.class);
+                    criteria.add(Restrictions.eq("id", parentId));
+                    List<SubForum> subForums = (List<SubForum>) criteria.list();
+                    if (subForums == null || subForums.isEmpty()) {
+                        throw new IllegalArgumentException("SubForum not found: " + parentId);
+                    }
+                    Category category = (Category) abstractForumEntry;
+                    SubForum subForum = subForums.get(0);
+                    subForum.addCategory(category);
+                    session.saveOrUpdate(subForum);
+                    return null;
+                }
+            });
+        } else if (abstractForumEntry instanceof ForumThread) {
+            hibernateTemplate.execute(new HibernateCallback() {
+                @Override
+                public Object doInHibernate(Session session) throws HibernateException, SQLException {
+                    Criteria criteria = session.createCriteria(Category.class);
+                    criteria.add(Restrictions.eq("id", parentId));
+                    List<Category> categories = (List<Category>) criteria.list();
+                    if (categories == null || categories.isEmpty()) {
+                        throw new IllegalArgumentException("Category not found: " + parentId);
+                    }
+                    ForumThread forumThread = (ForumThread) abstractForumEntry;
+                    Category category = categories.get(0);
+                    category.addForumThread(forumThread);
+                    session.saveOrUpdate(category);
+                    return null;
+                }
+            });
+        } else if (abstractForumEntry instanceof Post) {
+            hibernateTemplate.execute(new HibernateCallback() {
+                @Override
+                public Object doInHibernate(Session session) throws HibernateException, SQLException {
+                    Criteria criteria = session.createCriteria(ForumThread.class);
+                    criteria.add(Restrictions.eq("id", parentId));
+                    List<ForumThread> forumThreads = (List<ForumThread>) criteria.list();
+                    if (forumThreads == null || forumThreads.isEmpty()) {
+                        throw new IllegalArgumentException("ForumThread not found: " + parentId);
+                    }
+                    Post post = (Post) abstractForumEntry;
+                    ForumThread forumThread = forumThreads.get(0);
+                    forumThread.addPost(post);
+                    session.saveOrUpdate(forumThread);
+                    return null;
+                }
+            });
+        } else {
+            throw new IllegalArgumentException("Unknown abstractForumEntry: " + abstractForumEntry);
+        }
+    }
+}

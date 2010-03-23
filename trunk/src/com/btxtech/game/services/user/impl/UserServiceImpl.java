@@ -19,6 +19,8 @@ import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.itemTypeAccess.ServerItemTypeAccessService;
+import com.btxtech.game.services.user.Arq;
+import com.btxtech.game.services.user.ArqEnum;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
@@ -136,11 +138,23 @@ public class UserServiceImpl implements UserService {
         loginUser(user, true);
     }
 
+    @Override
+    public boolean isAuthorized(ArqEnum arq) {
+        User user = session.getUser();
+        return user != null && user.hasArq(getArq(arq));
+    }
+
+    @Override
+    public Arq getArq(ArqEnum arq) {
+        return (Arq) hibernateTemplate.get(Arq.class, arq.name());
+    }
+
     private User createAndSaveUser(String name, String password) {
         User user = new User();
         user.setName(name);
         user.setPassword(password);
         user.setRegisterDate(new Date());
+        user.addArq(getArq(ArqEnum.FORUM_POST));
         save(user);
         userTrackingService.onUserCreated(user);
         return user;

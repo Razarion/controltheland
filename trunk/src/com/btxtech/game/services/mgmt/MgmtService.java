@@ -42,4 +42,6 @@ public interface MgmtService {
 
     void restore(final Date date) throws NoSuchItemTypeException;
 
+    boolean isTestMode();
+
 }
