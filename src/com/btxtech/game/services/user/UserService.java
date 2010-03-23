@@ -35,4 +35,8 @@ public interface UserService {
     List<User> getAllUsers();
 
     void createUserAndLoggin(String name, String password, String confirmPassword) throws UserAlreadyExistsException, PasswordNotMatchException;
+
+    boolean isAuthorized(ArqEnum arq);
+
+    Arq getArq(ArqEnum arq);
 }

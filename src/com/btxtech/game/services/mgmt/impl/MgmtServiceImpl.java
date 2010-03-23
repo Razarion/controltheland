@@ -66,6 +66,7 @@ import org.springframework.stereotype.Component;
 public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     public static final String LOG_DIR_NAME = "logs";
     public static final File LOG_DIR;
+    public static final String TEST_MODE_PROPERTY = "testmode";
     private Date startTime = new Date();
     private JdbcTemplate readonlyJdbcTemplate;
     @Autowired
@@ -80,6 +81,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     private ServerEnergyService serverEnergyService;
     private static Log log = LogFactory.getLog(MgmtServiceImpl.class);
     private HibernateTemplate hibernateTemplate;
+    private Boolean testMode;
 
     @Override
     public Date getStartTime() {
@@ -279,6 +281,13 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         } catch (Throwable t) {
             log.error("", t);
         }
+    }
+
+    public boolean isTestMode() {
+        if (testMode == null) {
+            testMode = System.getProperty(TEST_MODE_PROPERTY) != null && Boolean.parseBoolean(System.getProperty(TEST_MODE_PROPERTY));
+        }
+        return testMode;
     }
 }
 

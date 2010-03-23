@@ -13,10 +13,12 @@
 
 package com.btxtech.game.wicket;
 
+import com.btxtech.game.services.mgmt.MgmtService;
+import com.btxtech.game.wicket.pages.home.Home;
 import org.apache.wicket.Application;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
-import com.btxtech.game.wicket.pages.home.Home;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * User: beat
@@ -24,6 +26,9 @@ import com.btxtech.game.wicket.pages.home.Home;
  * Time: 9:51:34 PM
  */
 public class WicketAplication extends WebApplication {
+    @Autowired
+    private MgmtService mgmtService;
+    private String configurationType;
 
     @Override
     protected void init() {
@@ -36,9 +41,13 @@ public class WicketAplication extends WebApplication {
 
     @Override
     public String getConfigurationType() {
-        return Application.DEPLOYMENT;
+        if (configurationType == null) {
+            if (mgmtService.isTestMode()) {
+                configurationType = Application.DEVELOPMENT;
+            } else {
+                configurationType = Application.DEPLOYMENT;
+            }
+        }
+        return configurationType;
     }
-
-    
-
 }

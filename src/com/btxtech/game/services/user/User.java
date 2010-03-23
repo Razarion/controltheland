@@ -16,11 +16,16 @@ package com.btxtech.game.services.user;
 import com.btxtech.game.services.itemTypeAccess.impl.UserItemTypeAccess;
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import java.util.Set;
+import java.util.HashSet;
 import javax.persistence.CascadeType;
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 
 @Entity(name = "USER")
 public class User implements Serializable {
@@ -31,6 +36,12 @@ public class User implements Serializable {
     private Date lastLoginDate;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private UserItemTypeAccess userItemTypeAccess;
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "USER_ARQ",
+            joinColumns = @JoinColumn(name = "user_name"),
+            inverseJoinColumns = @JoinColumn(name = "arq_name")
+    )
+    private Set<Arq> arqs;
 
     public String getName() {
         return name;
@@ -91,5 +102,16 @@ public class User implements Serializable {
 
     public void setUserItemTypeAccess(UserItemTypeAccess userItemTypeAccess) {
         this.userItemTypeAccess = userItemTypeAccess;
+    }
+
+    public boolean hasArq(Arq arq) {
+        return arqs != null && arqs.contains(arq);
+    }
+
+    public void addArq(Arq arq) {
+        if (arqs == null) {
+            arqs = new HashSet<Arq>();
+        }
+        arqs.add(arq);
     }
 }
