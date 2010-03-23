@@ -41,6 +41,7 @@ public class SubForumView extends Panel {
 
     public SubForumView(String id, final SubForum subForum) {
         super(id);
+        add( new SubForumField("subForum", subForum));
 
         ListView<Category> listView = new ListView<Category>("categories", new IModel<List<Category>>() {
             private List<Category> categories;
