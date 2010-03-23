@@ -12,19 +12,18 @@
   -->
 
 <wicket:extend>
-    <table>
-        <th>Thread</th>
-        <th>Last Post</th>
-        <th>Replies</th>
-        <th>Views</th>
+    <table class="helpT" width="100%">
+        <th class="helpBod">Thread</th>
+        <th class="helpBod">Last Post</th>
         <tr wicket:id="threads">
-            <td wicket:id="thread">forum</td>
-            <td wicket:id="lastPost">lastPost</td>
+            <td wicket:id="thread" class="helpBod">forum</td>
+            <td wicket:id="lastPost" class="helpBod" width="150px">lastPost</td>
         </tr>
     </table>
     <br>
     <br>
+
     <form wicket:id="addForumThread">
-        <input type="submit" value="Add Thread">
+        <input type="submit" value="New Thread">
     </form>
 </wicket:extend>

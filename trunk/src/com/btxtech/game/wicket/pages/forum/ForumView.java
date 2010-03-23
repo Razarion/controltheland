@@ -61,7 +61,6 @@ public class ForumView extends BasePage {
             @Override
             protected void populateItem(final ListItem<SubForum> listItem) {
                 SubForum subForum = listItem.getModelObject();
-                listItem.add( new SubForumField("title", subForum));
                 listItem.add(new SubForumView("subForum", subForum));
             }
         };

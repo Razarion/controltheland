@@ -10,15 +10,17 @@
   ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~   GNU General Public License for more details.
   -->
-
 <wicket:panel>
     <table class="helpT" width="100%">
-        <tr><td colspan="3" wicket:id="subForum"></td></tr>
-        <tr><th class="helpBod">Categories</th><th class="helpBod">Last Post</th><th class="helpBod">Posts</th></tr>
-        <tr wicket:id="categories">
-            <td class="helpBod" wicket:id="forumSubForum">forum</td>
-            <td class="helpBod" width="150px" wicket:id="lastPost">lastPost</td>
-            <td class="helpBod" width="50px" wicket:id="threads">threads</td>
+        <tr>
+            <td colspan="2" wicket:id="date" class="helpBod">date</td>
+        </tr>
+        <tr>
+            <td width="200px" rowspan="2" wicket:id="user" class="helpBod">user</td>
+            <td height="1em" wicket:id="title" class="helpBod">title</td>
+        </tr>
+        <tr>
+            <td height="200px" wicket:id="content" class="helpBod">content</td>
         </tr>
     </table>
 </wicket:panel>

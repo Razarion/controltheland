@@ -18,11 +18,8 @@ import com.btxtech.game.services.forum.ForumThread;
 import com.btxtech.game.services.forum.Post;
 import com.btxtech.game.services.user.ArqEnum;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
-import java.text.SimpleDateFormat;
 import java.util.List;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -35,7 +32,6 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Time: 22:42:26
  */
 public class ForumThreadView extends BasePage {
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(WebCommon.DATE_TIME_FORMAT_STRING);
     @SpringBean
     private ForumService forumService;
     @SpringBean
@@ -65,9 +61,7 @@ public class ForumThreadView extends BasePage {
         }) {
             @Override
             protected void populateItem(final ListItem<Post> listItem) {
-                listItem.add(new Label("time", simpleDateFormat.format(listItem.getModelObject().getDate().getTime())));
-                listItem.add(new Label("user", listItem.getModelObject().getUser()));
-                listItem.add(new Label("content", listItem.getModelObject().getContent()));
+                listItem.add(new PostField("post", listItem.getModelObject()));
             }
         };
         add(listView);
