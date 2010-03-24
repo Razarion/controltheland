@@ -50,8 +50,8 @@
         <tr>
             <th bgcolor="#dadada">ID</th>
             <th bgcolor="#dadada">Item Type</th>
+            <th bgcolor="#dadada">Health</th>
             <th bgcolor="#dadada">X Pos</th>
-
             <th bgcolor="#dadada">Y Pos</th>
             <th bgcolor="#dadada">Kill</th>
         </tr>
@@ -59,7 +59,9 @@
         <tr wicket:id="itemTypes">
             <td wicket:id="id" align="left" valign="center">712</td>
             <td wicket:id="itemType" align="left" valign="center">Jeep</td>
-
+            <td align="right" valign="center">
+                <input type="text" wicket:id="health" size="6" maxlength="15"/>
+            </td>
             <td align="right" valign="center">
                 <input type="text" wicket:id="xPos" size="6" maxlength="15"/>
             </td>

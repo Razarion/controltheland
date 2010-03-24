@@ -112,6 +112,22 @@ public class BaseEditor extends WebPage {
             protected void populateItem(final Item<SyncBaseItem> item) {
                 item.add(new Label("id", item.getModelObject().getId().toString()));
                 item.add(new Label("itemType", item.getModelObject().getItemType().getName()));
+                item.add(new TextField<String>("health", new IModel<String>() {
+                    @Override
+                    public String getObject() {
+                        return Integer.toString(item.getModelObject().getHealth());
+                    }
+
+                    @Override
+                    public void setObject(String health) {
+                        item.getModelObject().setHealth(Integer.parseInt(health));
+                    }
+
+                    @Override
+                    public void detach() {
+                    }
+                }));
+
                 item.add(new TextField<String>("xPos", new IModel<String>() {
                     @Override
                     public String getObject() {
