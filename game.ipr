@@ -106,8 +106,8 @@
       <entry name="?*.tld" />
       <entry name="?*.ftl" />
       <entry name="?*.mp3" />
-      <entry name="?*.js" />
       <entry name="?*.css" />
+      <entry name="?*.js" />
     </wildcardResourcePatterns>
   </component>
   <component name="CopyrightManager" default="">
