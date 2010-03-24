@@ -56,7 +56,11 @@ abstract public class AbstractForumEntry implements Serializable {
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        if (title != null) {
+            this.title = title;
+        } else {
+            this.title = "";
+        }
     }
 
     public String getContent() {
@@ -64,7 +68,11 @@ abstract public class AbstractForumEntry implements Serializable {
     }
 
     public void setContent(String content) {
-        this.content = content;
+        if (content != null) {
+            this.content = content;
+        } else {
+            this.content = "";
+        }
     }
 
     public void setUser(String user) {

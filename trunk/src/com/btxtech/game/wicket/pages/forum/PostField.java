@@ -32,6 +32,6 @@ public class PostField extends Panel {
         add(new Label("date", simpleDateFormat.format(category.getDate())));
         add(new Label("user", category.getUser()));
         add(new Label("title", category.getTitle()));
-        add(new Label("content", category.getTitle()));
+        add(new Label("content", category.getContent()).setEscapeModelStrings(false));
     }
 }

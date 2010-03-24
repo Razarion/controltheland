@@ -22,9 +22,12 @@ import com.btxtech.game.services.forum.SubForum;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import wicket.contrib.tinymce.TinyMceBehavior;
+import wicket.contrib.tinymce.settings.TinyMCESettings;
 
 /**
  * User: beat
@@ -34,21 +37,32 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 public class AddEntryForm extends BasePage {
     @SpringBean
     private ForumService forumService;
+    private Model<String> title = new Model<String>();
+    private Model<String> content = new Model<String>();
 
     public AddEntryForm(final AbstractForumEntry parent, Class<? extends AbstractForumEntry> aClass) {
         final AbstractForumEntry abstractForumEntry = forumService.createForumEntry(aClass);
-        Form<AbstractForumEntry> form = new Form<AbstractForumEntry>("forum", new CompoundPropertyModel<AbstractForumEntry>(abstractForumEntry));
-        form.add(new TextField<String>("title"));
-        form.add(new TextField<String>("content"));
+        Form form = new Form<AbstractForumEntry>("forum");
+        form.add(new TextField<String>("title", title));
+        TextArea<String> contentArea = new TextArea<String>("content", content);
+        TinyMCESettings tinyMCESettings = new TinyMCESettings();
+        tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.link, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after); // TODO does not work
+        tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.unlink, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after); // TODO does not work
+        contentArea.add(new TinyMceBehavior(tinyMCESettings));
+        form.add(contentArea);
+
+        // form.add(inPlaceEditComponent);
         form.add(new Button("post") {
             @Override
             public void onSubmit() {
+                abstractForumEntry.setTitle(title.getObject());
+                abstractForumEntry.setContent(content.getObject());
                 forumService.insertForumEntry(parent.getId(), abstractForumEntry);
                 if (abstractForumEntry instanceof Category || abstractForumEntry instanceof SubForum) {
                     setResponsePage(new ForumView());
                     return;
                 } else if (abstractForumEntry instanceof ForumThread) {
-                    setResponsePage(new CategoryView((Category)parent));
+                    setResponsePage(new CategoryView((Category) parent));
                     return;
                 } else if (abstractForumEntry instanceof Post) {
                     setResponsePage(new ForumThreadView((ForumThread) parent));
