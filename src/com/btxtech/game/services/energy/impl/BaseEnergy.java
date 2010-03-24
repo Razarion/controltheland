@@ -122,4 +122,9 @@ public class BaseEnergy {
     public int getConsuming() {
         return consuming;
     }
+
+    public void recalculate() {
+        recalculateConsumption();
+        recalculateGeneration();
+    }
 }

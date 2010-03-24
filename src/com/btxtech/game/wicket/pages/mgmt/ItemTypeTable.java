@@ -13,16 +13,17 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
+import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import java.util.Iterator;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
@@ -38,6 +39,8 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 public class ItemTypeTable extends WebPage {
     @SpringBean
     private ItemService itemService;
+    @SpringBean
+    private ServerEnergyService energyService;
 
     public ItemTypeTable() {
         Form form = new Form("itemTypeForm");
@@ -76,7 +79,9 @@ public class ItemTypeTable extends WebPage {
         form.add(new Button("activate") {
             @Override
             public void onSubmit() {
+                // TODO put to a service -> MGMT
                 itemService.loadItemType();
+                energyService.recalculateEnergy();
             }
         });
         form.add(new Button("addBaseItemType") {
