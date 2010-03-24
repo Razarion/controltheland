@@ -26,6 +26,7 @@ import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.wicket.PageParameters;
 import wicket.contrib.tinymce.TinyMceBehavior;
 import wicket.contrib.tinymce.settings.TinyMCESettings;
 
@@ -40,32 +41,37 @@ public class AddEntryForm extends BasePage {
     private Model<String> title = new Model<String>();
     private Model<String> content = new Model<String>();
 
-    public AddEntryForm(final AbstractForumEntry parent, Class<? extends AbstractForumEntry> aClass) {
+    public AddEntryForm(final AbstractForumEntry parent, Class<? extends AbstractForumEntry> aClass, boolean tinyMceEditor) {
         final AbstractForumEntry abstractForumEntry = forumService.createForumEntry(aClass);
         Form form = new Form<AbstractForumEntry>("forum");
         form.add(new TextField<String>("title", title));
         TextArea<String> contentArea = new TextArea<String>("content", content);
-        TinyMCESettings tinyMCESettings = new TinyMCESettings();
-        tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.link, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after); // TODO does not work
-        tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.unlink, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after); // TODO does not work
-        contentArea.add(new TinyMceBehavior(tinyMCESettings));
+        if (tinyMceEditor) {
+            TinyMCESettings tinyMCESettings = new TinyMCESettings();
+            tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.link, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after); // TODO does not work
+            tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.unlink, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after); // TODO does not work
+            contentArea.add(new TinyMceBehavior(tinyMCESettings));
+        }
         form.add(contentArea);
-
-        // form.add(inPlaceEditComponent);
         form.add(new Button("post") {
             @Override
             public void onSubmit() {
                 abstractForumEntry.setTitle(title.getObject());
                 abstractForumEntry.setContent(content.getObject());
-                forumService.insertForumEntry(parent.getId(), abstractForumEntry);
+                int parentid = parent != null ? parent.getId() : -1;
+                forumService.insertForumEntry(parentid, abstractForumEntry);
                 if (abstractForumEntry instanceof Category || abstractForumEntry instanceof SubForum) {
-                    setResponsePage(new ForumView());
+                    setResponsePage(ForumView.class);
                     return;
                 } else if (abstractForumEntry instanceof ForumThread) {
-                    setResponsePage(new CategoryView((Category) parent));
+                    PageParameters pageParameters = new PageParameters();
+                    pageParameters.add(CategoryView.ID, Integer.toString(abstractForumEntry.getId()));
+                    setResponsePage(ForumThreadView.class, pageParameters);
                     return;
                 } else if (abstractForumEntry instanceof Post) {
-                    setResponsePage(new ForumThreadView((ForumThread) parent));
+                    PageParameters pageParameters = new PageParameters();
+                    pageParameters.add(CategoryView.ID, Integer.toString(parentid));
+                    setResponsePage(ForumThreadView.class, pageParameters);
                     return;
                 }
                 throw new IllegalArgumentException("Unknwon: " + abstractForumEntry);

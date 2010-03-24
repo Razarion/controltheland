@@ -34,12 +34,12 @@ public class SubForumField extends Panel {
     public SubForumField(String id, final SubForum subForum) {
         super(id);
         add(new Label("title", subForum.getTitle()));
-        add(new Label("content", subForum.getContent()));
+        add(new Label("content", subForum.getContent()).setEscapeModelStrings(false));
         Form form = new Form("addCategoryForm") {
 
             @Override
             protected void onSubmit() {
-                setResponsePage(new AddEntryForm(subForum, Category.class));
+                setResponsePage(new AddEntryForm(subForum, Category.class, false));
             }
         };
         form.setVisible(userService.isAuthorized(ArqEnum.FORUM_ADMIN));

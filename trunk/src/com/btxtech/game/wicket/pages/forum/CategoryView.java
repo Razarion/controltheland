@@ -22,6 +22,7 @@ import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -35,19 +36,21 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Time: 22:42:26
  */
 public class CategoryView extends BasePage {
+    public static final String ID = "id";
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(WebCommon.DATE_TIME_FORMAT_STRING);
     @SpringBean
     private ForumService forumService;
     @SpringBean
     private UserService userService;
 
-    public CategoryView(final Category category) {
+    public CategoryView(final PageParameters pageParameters) {
         ListView<ForumThread> listView = new ListView<ForumThread>("threads", new IModel<List<ForumThread>>() {
             private List<ForumThread> forumThreads;
 
             @Override
             public List<ForumThread> getObject() {
                 if (forumThreads == null) {
+                    Category category = forumService.getCategory(pageParameters.getInt(ID));
                     forumThreads = forumService.getForumThreads(category);
                 }
                 return forumThreads;
@@ -75,7 +78,8 @@ public class CategoryView extends BasePage {
 
             @Override
             protected void onSubmit() {
-                setResponsePage(new AddEntryForm(category, ForumThread.class));
+                Category category = forumService.getCategory(pageParameters.getInt(ID));                
+                setResponsePage(new AddEntryForm(category, ForumThread.class, true));
             }
         };
         addForumThread.setVisible(userService.isAuthorized(ArqEnum.FORUM_POST));

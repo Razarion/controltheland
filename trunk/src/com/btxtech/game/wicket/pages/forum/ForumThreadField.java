@@ -17,6 +17,7 @@ import com.btxtech.game.services.forum.ForumThread;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.PageParameters;
 
 /**
  * User: beat
@@ -30,7 +31,9 @@ public class ForumThreadField extends Panel {
 
             @Override
             public void onClick() {
-                setResponsePage(new ForumThreadView(forumThread));
+                PageParameters pageParameters = new PageParameters();
+                pageParameters.add(CategoryView.ID, Integer.toString(forumThread.getId()));
+                setResponsePage(ForumThreadView.class, pageParameters);
             }
         };
         link.add(new Label("text", forumThread.getTitle()));

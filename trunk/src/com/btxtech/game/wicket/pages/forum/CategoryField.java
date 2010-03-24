@@ -17,6 +17,7 @@ import com.btxtech.game.services.forum.Category;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.PageParameters;
 
 /**
  * User: beat
@@ -30,7 +31,9 @@ public class CategoryField extends Panel {
 
             @Override
             public void onClick() {
-                setResponsePage(new CategoryView(category));
+                PageParameters pageParameters = new PageParameters();
+                pageParameters.add(CategoryView.ID, Integer.toString(category.getId()));
+                setResponsePage(CategoryView.class, pageParameters);
             }
         };
         link.add(new Label("text", category.getTitle()));
