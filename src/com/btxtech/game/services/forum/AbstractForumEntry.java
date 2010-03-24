@@ -13,15 +13,18 @@
 
 package com.btxtech.game.services.forum;
 
+import com.btxtech.game.services.user.User;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.GenerationType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 /**
  * User: beat
@@ -40,8 +43,9 @@ abstract public class AbstractForumEntry implements Serializable {
     private String title;
     @Column(nullable = false)
     private String content;
-    @Column(nullable = false)
-    private String user = "???";
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private User user;
 
     public Date getDate() {
         return date;
@@ -75,12 +79,12 @@ abstract public class AbstractForumEntry implements Serializable {
         }
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public User getUser() {
+        return user;
     }
 
-    public String getUser() {
-        return user;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public int getId() {

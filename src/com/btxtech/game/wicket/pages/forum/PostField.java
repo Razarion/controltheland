@@ -30,7 +30,7 @@ public class PostField extends Panel {
         super(id);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(WebCommon.DATE_TIME_FORMAT_STRING);
         add(new Label("date", simpleDateFormat.format(category.getDate())));
-        add(new Label("user", category.getUser()));
+        add(new Label("user", category.getUser().getName()));
         add(new Label("title", category.getTitle()));
         add(new Label("content", category.getContent()).setEscapeModelStrings(false));
     }
