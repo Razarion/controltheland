@@ -69,7 +69,7 @@ public class ForumView extends BasePage {
 
             @Override
             protected void onSubmit() {
-                setResponsePage(new AddEntryForm(null, SubForum.class));
+                setResponsePage(new AddEntryForm(null, SubForum.class, false));
             }
         };
         addSubForum.setVisible(userService.isAuthorized(ArqEnum.FORUM_ADMIN));

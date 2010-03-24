@@ -38,5 +38,7 @@ public interface UserService {
 
     boolean isAuthorized(ArqEnum arq);
 
+    void checkAuthorized(ArqEnum arq);
+
     Arq getArq(ArqEnum arq);
 }

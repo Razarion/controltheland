@@ -19,6 +19,8 @@ import com.btxtech.game.services.forum.ForumService;
 import com.btxtech.game.services.forum.ForumThread;
 import com.btxtech.game.services.forum.Post;
 import com.btxtech.game.services.forum.SubForum;
+import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.user.ArqEnum;
 import java.sql.SQLException;
 import java.util.List;
 import org.apache.commons.logging.Log;
@@ -42,6 +44,8 @@ import org.springframework.stereotype.Component;
 public class ForumServiceImpl implements ForumService {
     private Log log = LogFactory.getLog(ForumServiceImpl.class);
     private HibernateTemplate hibernateTemplate;
+    @Autowired
+    private UserService userService;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -120,9 +124,11 @@ public class ForumServiceImpl implements ForumService {
     @Override
     public void insertForumEntry(final int parentId, final AbstractForumEntry abstractForumEntry) {
         if (abstractForumEntry instanceof SubForum) {
+            userService.checkAuthorized(ArqEnum.FORUM_ADMIN);
             abstractForumEntry.setDate();
             hibernateTemplate.save(abstractForumEntry);
         } else if (abstractForumEntry instanceof Category) {
+            userService.checkAuthorized(ArqEnum.FORUM_ADMIN);
             hibernateTemplate.execute(new HibernateCallback() {
                 @Override
                 public Object doInHibernate(Session session) throws HibernateException, SQLException {
@@ -140,6 +146,7 @@ public class ForumServiceImpl implements ForumService {
                 }
             });
         } else if (abstractForumEntry instanceof ForumThread) {
+            userService.checkAuthorized(ArqEnum.FORUM_POST);
             hibernateTemplate.execute(new HibernateCallback() {
                 @Override
                 public Object doInHibernate(Session session) throws HibernateException, SQLException {
@@ -150,6 +157,12 @@ public class ForumServiceImpl implements ForumService {
                         throw new IllegalArgumentException("Category not found: " + parentId);
                     }
                     ForumThread forumThread = (ForumThread) abstractForumEntry;
+                    String content = forumThread.getContent();
+                    forumThread.setContent("");
+                    Post post = new Post();
+                    post.setTitle(forumThread.getTitle());
+                    post.setContent(content);
+                    forumThread.addPost(post);
                     Category category = categories.get(0);
                     category.addForumThread(forumThread);
                     session.saveOrUpdate(category);
@@ -157,6 +170,7 @@ public class ForumServiceImpl implements ForumService {
                 }
             });
         } else if (abstractForumEntry instanceof Post) {
+            userService.checkAuthorized(ArqEnum.FORUM_POST);
             hibernateTemplate.execute(new HibernateCallback() {
                 @Override
                 public Object doInHibernate(Session session) throws HibernateException, SQLException {

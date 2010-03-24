@@ -23,6 +23,7 @@ import com.btxtech.game.services.user.Arq;
 import com.btxtech.game.services.user.ArqEnum;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.user.AccessDeniedException;
 import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.Date;
 import java.util.List;
@@ -142,6 +143,13 @@ public class UserServiceImpl implements UserService {
     public boolean isAuthorized(ArqEnum arq) {
         User user = session.getUser();
         return user != null && user.hasArq(getArq(arq));
+    }
+
+    @Override
+    public void checkAuthorized(ArqEnum arq) {
+        if(!isAuthorized(arq)) {
+           throw new AccessDeniedException(session.getUser(), arq);  
+        }
     }
 
     @Override

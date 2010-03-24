@@ -25,6 +25,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.wicket.PageParameters;
 
 /**
  * User: beat
@@ -32,18 +33,20 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Time: 22:42:26
  */
 public class ForumThreadView extends BasePage {
+    public static final String ID = "id";
     @SpringBean
     private ForumService forumService;
     @SpringBean
     private UserService userService;
 
-    public ForumThreadView(final ForumThread forumThread) {
+    public ForumThreadView(final PageParameters pageParameters) {
         ListView<Post> listView = new ListView<Post>("posts", new IModel<List<Post>>() {
             private List<Post> posts;
 
             @Override
             public List<Post> getObject() {
                 if (posts == null) {
+                    ForumThread forumThread = forumService.getForumThread(pageParameters.getInt(ID));
                     posts = forumService.getPosts(forumThread);
                 }
                 return posts;
@@ -69,7 +72,8 @@ public class ForumThreadView extends BasePage {
 
             @Override
             protected void onSubmit() {
-                setResponsePage(new AddEntryForm(forumThread, Post.class));
+                ForumThread forumThread = forumService.getForumThread(pageParameters.getInt(ID));                
+                setResponsePage(new AddEntryForm(forumThread, Post.class, true));
             }
         };
         addPostForm.setVisible(userService.isAuthorized(ArqEnum.FORUM_POST));
