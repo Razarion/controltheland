@@ -37,4 +37,6 @@ public interface ServerEnergyService extends EnergyService {
     int getConsuming(SimpleBase simpleBase);
 
     int getGenerating(SimpleBase simpleBase);
+
+    void recalculateEnergy();
 }

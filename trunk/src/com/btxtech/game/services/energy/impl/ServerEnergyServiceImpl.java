@@ -179,4 +179,13 @@ public class ServerEnergyServiceImpl implements ServerEnergyService {
         }
     }
 
+    @Override
+    public void recalculateEnergy() {
+        synchronized (baseEntries) {
+            for (BaseEnergy baseEnergy : baseEntries.values()) {
+                baseEnergy.recalculate();
+            }
+        }
+    }
+
 }
