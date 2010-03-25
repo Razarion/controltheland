@@ -31,7 +31,7 @@ import java.util.List;
 public interface BaseService extends com.btxtech.game.jsre.common.gameengine.services.base.BaseService {
     void checkBaseAccess(SyncBaseItem item) throws IllegalAccessException;
 
-    void createNewBase() throws AlreadyUsedException, NoSuchItemTypeException;
+    void continueOrNewBase() throws AlreadyUsedException, NoSuchItemTypeException;
 
     void createNewBase(String name, BaseColor baseColor) throws AlreadyUsedException, NoSuchItemTypeException;
 
