@@ -91,7 +91,12 @@ public class OnlineBasePanel extends TopMapPanel {
     }
 
     private Widget addOnlineBase(SimpleBase simpleBase) {
-        InlineLabel label = new InlineLabel(simpleBase.getName());
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(simpleBase.getName());
+        if(simpleBase.isBot()) {
+            stringBuilder.append(" <bot>");
+        }
+        InlineLabel label = new InlineLabel(stringBuilder.toString());
         label.getElement().getStyle().setColor(simpleBase.getHtmlColor());
         flexTable.setWidget(flexTable.getRowCount() + 1, 0, label);
         return label;
