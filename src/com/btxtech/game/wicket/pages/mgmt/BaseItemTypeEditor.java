@@ -38,6 +38,7 @@ import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.HiddenField;
+import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
@@ -104,7 +105,9 @@ public class BaseItemTypeEditor extends WebPage {
         Form<BaseItemTypeEditor> form = new Form<BaseItemTypeEditor>("itemTypeForm", new CompoundPropertyModel<BaseItemTypeEditor>(this));
 
         form.add(new TextField<String>("name"));
-        form.add(new TextField<String>("description"));
+        form.add(new TextArea<String>("description"));
+        form.add(new TextArea<String>("proDescription"));
+        form.add(new TextArea<String>("contraDescription"));
         form.add(new TextField<String>("health"));
         form.add(new TextField<String>("price"));
         form.add(new CheckBox("turnable"));
@@ -303,7 +306,7 @@ public class BaseItemTypeEditor extends WebPage {
                 itemTypeImage.setData(weaponMuzzleImage.getBytes());
                 weaponType.setDbMuzzleImage(itemTypeImage);
             }
-            if(weaponSound != null) {
+            if (weaponSound != null) {
                 DbItemTypeData sound = new DbItemTypeData();
                 sound.setContentType(weaponSound.getContentType());
                 sound.setData(weaponSound.getBytes());
@@ -409,6 +412,22 @@ public class BaseItemTypeEditor extends WebPage {
 
     public void setDescription(String description) {
         dbBaseItemType.setDescription(description);
+    }
+
+    public String getProDescription() {
+        return dbBaseItemType.getProDescription();
+    }
+
+    public void setProDescription(String proDescription) {
+        dbBaseItemType.setProDescription(proDescription);
+    }
+
+    public String getContraDescription() {
+        return dbBaseItemType.getContraDescription();
+    }
+
+    public void setContraDescription(String contraDescription) {
+        dbBaseItemType.setContraDescription(contraDescription);
     }
 
     public int getHealth() {
