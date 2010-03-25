@@ -90,7 +90,6 @@ public class CockpitPanel extends TopMapPanel implements SelectionListener {
             } else {
                 setupDescrBox(selectedGroup.getFirst().getSyncItem().getItemType().getDescription());
             }
-            setupDescrBox(selectedGroup.getFirst().getSyncItem().getItemType().getDescription());
         } else if (selectedGroup.canAttack()) {
             setupDescrBox(selectedGroup.getFirst().getSyncItem().getItemType().getDescription());
         } else if (selectedGroup.canCollect()) {
