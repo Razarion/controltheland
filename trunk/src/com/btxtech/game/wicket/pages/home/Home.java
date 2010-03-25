@@ -58,7 +58,7 @@ public class Home extends WebPage {
             @Override
             public void onClick() {
                 try {
-                    baseService.createNewBase();
+                    baseService.continueOrNewBase();
                     setResponsePage(Game.class);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
