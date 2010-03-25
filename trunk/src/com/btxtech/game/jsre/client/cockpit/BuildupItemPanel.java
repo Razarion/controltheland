@@ -24,7 +24,6 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -33,8 +32,8 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import java.util.Collection;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: beat
@@ -78,13 +77,9 @@ public class BuildupItemPanel extends HorizontalPanel implements SelectionListen
         itemsToBuild.clear();
         try {
             if (selectedGroup.onlyConstructionVehicle()) {
-                setupDescrBox("<b>Select the Factory from the right</b>");
                 setupBuildupItemsCV(selectedGroup);
-
             } else if (selectedGroup.onlyFactories()) {
-                setupDescrBox("<b>Select an item from the right</b>");
                 setupBuildupItemsFactory(selectedGroup);
-
             }
         } catch (NoSuchItemTypeException e) {
             GwtCommon.handleException(e);
@@ -142,13 +137,6 @@ public class BuildupItemPanel extends HorizontalPanel implements SelectionListen
         
         return verticalPanel;
 
-    }
-
-    private void setupDescrBox(String descr) {
-        HTML label = new HTML(descr);
-        label.setWidth("100px");
-        label.getElement().getStyle().setColor("darkorange");
-        description.add(label);
     }
 
     public Map<ItemType, Widget> getItemTypesToBuild() {
