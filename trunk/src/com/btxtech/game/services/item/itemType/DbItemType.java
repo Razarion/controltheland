@@ -45,6 +45,8 @@ public abstract class DbItemType implements Serializable {
     private int width;
     private String name;
     private String description;
+    private String proDescription;
+    private String contraDescription;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "itemType")
     private Set<DbItemTypeImage> itemTypeImages;
 
@@ -92,6 +94,22 @@ public abstract class DbItemType implements Serializable {
         this.itemTypeImages = itemTypeImages;
     }
 
+    public String getProDescription() {
+        return proDescription;
+    }
+
+    public void setProDescription(String proDescription) {
+        this.proDescription = proDescription;
+    }
+
+    public String getContraDescription() {
+        return contraDescription;
+    }
+
+    public void setContraDescription(String contraDescription) {
+        this.contraDescription = contraDescription;
+    }
+
     public abstract ItemType createItemType();
 
     protected Collection<Integer> toInt(Collection<DbBaseItemType> items) {
@@ -106,6 +124,8 @@ public abstract class DbItemType implements Serializable {
         itemType.setId(id);
         itemType.setName(getName());
         itemType.setDescription(getDescription());
+        itemType.setContraDescription(getContraDescription());
+        itemType.setProDescription(getProDescription());
         itemType.setHeight(getHeight());
         itemType.setWidth(getWidth());
     }
