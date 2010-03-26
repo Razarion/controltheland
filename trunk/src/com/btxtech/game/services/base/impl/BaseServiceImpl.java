@@ -334,6 +334,7 @@ public class BaseServiceImpl implements BaseService {
                     userTrackingService.onBaseDefeated(base.getUser(), base);
                 }
                 deleteBase(base);
+                botService.onBaseDefeated(base);
             }
         }
     }

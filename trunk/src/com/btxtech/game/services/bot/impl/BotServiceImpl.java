@@ -56,8 +56,12 @@ public class BotServiceImpl implements BotService {
     }
 
     @Override
-    public void onHumanBaseDefeated(Base base) {
-        stopBotForEnemyBase(base);
+    public void onBaseDefeated(Base base) {
+        if (base.isBot()) {
+            stopBotBase(base);
+        } else {
+            stopBotForEnemyBase(base);
+        }
     }
 
     @Override
@@ -91,11 +95,28 @@ public class BotServiceImpl implements BotService {
         }
     }
 
+    private void stopBotBase(Base botBase) {
+        synchronized (bots) {
+            for (Iterator<Bot> it = bots.iterator(); it.hasNext();) {
+                Bot bot = it.next();
+                if (bot.getBotBase().equals(botBase.getSimpleBase())) {
+                    botBases.remove(bot.getBotBase());
+                    it.remove();
+                    bot.stop();
+                    connectionService.sendOnlineBasesUpdate();
+                    return;
+                }
+            }
+        }
+    }
+
+
     private void createBot(final Base humanBase) {
         Thread botThread = new Thread() {
 
             @Override
             public void run() {
+                Bot bot = null;
                 try {
                     Thread.sleep(botServiceConfig.getBotStartDelay());
                     if (humanBase.isAbandoned()) {
@@ -107,7 +128,7 @@ public class BotServiceImpl implements BotService {
                         return;
                     }
                     Base botBase = baseService.createNewBotBase(enemyItem, BASE_MIN_RANGE, BASE_MAX_RANGE);
-                    Bot bot = new Bot(botBase, humanBase, serverServices, this, botLevelFactory);
+                    bot = new Bot(botBase, humanBase, serverServices, this, botLevelFactory);
                     synchronized (bots) {
                         bots.add(bot);
                         botBases.add(bot.getBotBase());
@@ -120,6 +141,12 @@ public class BotServiceImpl implements BotService {
                 } catch (InterruptedException ignore) {
                 } catch (Throwable t) {
                     log.error("", t);
+                }
+                if (bot != null) {
+                    synchronized (bots) {
+                        bots.remove(bot);
+                    }
+                    connectionService.sendOnlineBasesUpdate();
                 }
             }
         };
