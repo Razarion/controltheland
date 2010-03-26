@@ -25,7 +25,7 @@ import java.util.List;
 public interface BotService {
     void onHumanBaseCreated(Base base);
 
-    void onHumanBaseDefeated(Base base);
+    void onBaseDefeated(Base base);
 
     List<SimpleBase> getBotBases();
 
