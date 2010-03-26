@@ -22,6 +22,8 @@ import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
+import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
@@ -36,8 +38,6 @@ import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.itemTypeAccess.ServerItemTypeAccessService;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
-import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.ArrayList;
@@ -191,9 +191,9 @@ public class MovableServiceImpl implements MovableService {
     public void register(String userName, String password, String confirmPassword) throws UserAlreadyExistsException, PasswordNotMatchException {
         try {
             userService.createUserAndLoggin(userName, password, confirmPassword);
-        } catch(UserAlreadyExistsException e){
+        } catch (UserAlreadyExistsException e) {
             throw e;
-        } catch(PasswordNotMatchException e){
+        } catch (PasswordNotMatchException e) {
             throw e;
         } catch (Throwable t) {
             log.error("", t);
@@ -205,6 +205,15 @@ public class MovableServiceImpl implements MovableService {
     public void sendUserMessage(UserMessage userMessage) {
         try {
             connectionService.sendUserMessage(userMessage);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    public void surrenderBase() {
+        try {
+            baseService.surrenderBase(baseService.getBaseForLoggedInUser());
         } catch (Throwable t) {
             log.error("", t);
         }

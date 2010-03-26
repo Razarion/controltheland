@@ -117,6 +117,7 @@ public class RegisterDialog extends Dialog {
             public void onSuccess(Void aVoid) {
                 ClientUserTracker.getInstance().onRegisterDialogCloseReg();
                 closeDialog();
+                Connection.getInstance().setRegistered(true);
             }
         });
     }

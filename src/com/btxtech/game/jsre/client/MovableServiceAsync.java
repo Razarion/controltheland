@@ -52,4 +52,6 @@ public interface MovableServiceAsync {
     void register(String userName, String password, String confirmPassword, AsyncCallback<Void> asyncCallback);
 
     void sendUserMessage(UserMessage userMessage, AsyncCallback<Void> asyncCallback);
+
+    void surrenderBase(AsyncCallback<Void> asyncCallback);
 }

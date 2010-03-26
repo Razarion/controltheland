@@ -30,11 +30,14 @@ import com.google.gwt.user.client.ui.Widget;
  * Time: 1:55:03 AM
  */
 public abstract class TopMapPanel extends DecoratorPanel {
+    private AbsolutePanel absolutePanel;
+
     public enum Direction {
         LEFT_TOP,
         RIGHT_TOP,
         LEFT_BOTTOM,
-        RIGHT_BOTTOM
+        RIGHT_BOTTOM,
+        CENTER
     }
 
     private boolean isExpanded = true;
@@ -83,6 +86,7 @@ public abstract class TopMapPanel extends DecoratorPanel {
     }
 
     public void addToParent(AbsolutePanel absolutePanel, Direction direction, int distance) {
+        this.absolutePanel = absolutePanel;
         switch (direction) {
             case LEFT_TOP:
                 addCollapseButton(direction);
@@ -124,17 +128,25 @@ public abstract class TopMapPanel extends DecoratorPanel {
                 expandImage.getElement().getStyle().setProperty("right", distance + "px");
                 expandImage.getElement().getStyle().setProperty("bottom", distance + "px");
                 break;
+            case CENTER:
+                absolutePanel.add(this, 1, 1);
+                int x = (absolutePanel.getOffsetWidth() - getOffsetWidth()) / 2;
+                int y = (absolutePanel.getOffsetHeight() - getOffsetHeight()) / 2;
+                absolutePanel.setWidgetPosition(this, x, y);
+                break;
             default:
                 throw new IllegalArgumentException(this + " unknwo direction: " + direction);
         }
-        expandImage.setVisible(!isExpanded);
-        expandImage.addMouseDownHandler(new MouseDownHandler() {
-            @Override
-            public void onMouseDown(MouseDownEvent event) {
-                expand();
-            }
-        });
-        expandImage.getElement().getStyle().setZIndex(Constants.Z_INDEX_TOP_MAP_PANEL);
+        if (expandImage != null) {
+            expandImage.setVisible(!isExpanded);
+            expandImage.addMouseDownHandler(new MouseDownHandler() {
+                @Override
+                public void onMouseDown(MouseDownEvent event) {
+                    expand();
+                }
+            });
+            expandImage.getElement().getStyle().setZIndex(Constants.Z_INDEX_TOP_MAP_PANEL);
+        }
     }
 
     protected abstract Widget createBody();
@@ -159,5 +171,14 @@ public abstract class TopMapPanel extends DecoratorPanel {
 
     public boolean isExpanded() {
         return isExpanded;
+    }
+
+    public void close() {
+        if (absolutePanel != null) {
+            absolutePanel.remove(this);
+            if (expandImage != null) {
+                absolutePanel.remove(expandImage);
+            }
+        }
     }
 }

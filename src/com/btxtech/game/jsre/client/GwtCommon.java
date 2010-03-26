@@ -97,7 +97,7 @@ public class GwtCommon {
 
     public static boolean isIe6() {
         if (isIe6 == null) {
-            isIe6 =  Window.Navigator.getUserAgent().contains("msie 6");
+            isIe6 = Window.Navigator.getUserAgent().contains("msie 6");
         }
         return isIe6;
     }
@@ -120,4 +120,8 @@ public class GwtCommon {
         event.stopPropagation();
         event.preventDefault();
     }
+
+    native public static void closeWindow()/*-{
+        $wnd.close(); 
+    }-*/;
 }
