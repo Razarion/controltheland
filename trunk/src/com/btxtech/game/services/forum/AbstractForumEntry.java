@@ -41,7 +41,7 @@ abstract public class AbstractForumEntry implements Serializable {
     private Date date;
     @Column(nullable = false)
     private String title;
-    @Column(nullable = false)
+    @Column(nullable = false, length = 5000)
     private String content;
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)

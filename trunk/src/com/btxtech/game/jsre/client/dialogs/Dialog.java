@@ -46,13 +46,17 @@ public abstract class Dialog extends DialogBox {
 
             closeButton.addClickHandler(new ClickHandler() {
                 public void onClick(ClickEvent event) {
-                    hide(true);
+                    close();
                 }
             });
             closeButton.setFocus(true);
         }
         center();
         getElement().getStyle().setZIndex(Constants.Z_INDEX_DIALOG);
+    }
+
+    public void close() {
+        hide(true);
     }
 
     abstract protected void setupPanel(VerticalPanel dialogVPanel);

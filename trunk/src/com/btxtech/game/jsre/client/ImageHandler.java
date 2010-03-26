@@ -35,6 +35,7 @@ public class ImageHandler {
     public static final String PNG_SUFFIX = ".png";
     public static final String IMAGES = "images";
     public static final String EXPLOSION = "effects";
+    public static final String ICONS = "icons";
     public static double ONE_RADIANT = 2.0 * Math.PI;
     public static double QUARTER_RADIANT = Math.PI / 2.0;
 
@@ -162,6 +163,10 @@ public class ImageHandler {
 
     public static String getExplosion() {
         return "/" + IMAGES + "/" + EXPLOSION + "/" + "ex4" + PNG_SUFFIX;
+    }
+
+    public static Image getIcon16(String icon) {
+        return createImageIE6TransparencyProblem("/" + IMAGES + "/" + ICONS + "/" + icon + PNG_SUFFIX, 16, 16);
     }
 
 

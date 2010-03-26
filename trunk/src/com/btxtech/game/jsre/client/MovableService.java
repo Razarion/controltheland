@@ -30,6 +30,7 @@ import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsEx
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.Collection;
 import java.util.Date;
 import java.util.ArrayList;
@@ -62,4 +63,6 @@ public interface MovableService extends RemoteService {
     void register(String userName, String password, String confirmPassword) throws UserAlreadyExistsException, PasswordNotMatchException;
 
     void sendUserMessage(UserMessage userMessage);
+
+    void surrenderBase();    
 }

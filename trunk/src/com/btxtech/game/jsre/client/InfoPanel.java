@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.GameInfo;
+import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.google.gwt.dom.client.Style;
@@ -100,6 +101,7 @@ public class InfoPanel extends TopMapPanel {
         // Move home button
         layout.getFlexCellFormatter().setColSpan(6, 1, 2);
         scrollHome = new Button("Scroll Home");
+        scrollHome.setWidth("100%");
         layout.setWidget(6, 1, scrollHome);
         scrollHome.addClickHandler(new ClickHandler() {
             @Override
@@ -109,12 +111,27 @@ public class InfoPanel extends TopMapPanel {
             }
         });
 
+        // Menu button
+        layout.getFlexCellFormatter().setColSpan(7, 1, 2);
+        Button menu = new Button("Options");
+        menu.setWidth("100%");
+        layout.setWidget(7, 1, menu);
+        menu.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                // TODO ClientUserTracker.getInstance().onScrollHome();
+                MenuPanel menuPanel = new MenuPanel();
+                menuPanel.addToParent(MapWindow.getAbsolutePanel(), Direction.CENTER, 0);
+            }
+        });
+
+
         // Debug
         if (Game.isDebug()) {
             // Cursor
-            layout.setHTML(7, 1, "Cursor");
+            layout.setHTML(8, 1, "Cursor");
             cursorPos = new Label("???");
-            layout.setWidget(7, 2, cursorPos);
+            layout.setWidget(8, 2, cursorPos);
         }
 
         return layout;

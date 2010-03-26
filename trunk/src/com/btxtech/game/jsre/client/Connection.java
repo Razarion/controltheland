@@ -56,6 +56,7 @@ public class Connection implements AsyncCallback<Void> {
     public static final int MIN_DELAY_BETWEEN_TICKS = 200;
     public static final int STATISTIC_DELAY = 10000;
     public static final Connection INSTANCE = new Connection();
+    private boolean isRegistered;
 
     private MovableServiceAsync movableServiceAsync = GWT.create(MovableService.class);
     private Timer timer;
@@ -95,6 +96,7 @@ public class Connection implements AsyncCallback<Void> {
     }
 
     private void setupGameStructure(GameInfo gameInfo) {
+        isRegistered = gameInfo.isRegistered();
         ClientBase.getInstance().setBase(gameInfo.getBase());
         ClientBase.getInstance().setAccountBalance(gameInfo.getAccountBalance());
         InfoPanel.getInstance().setGameInfo(gameInfo);
@@ -258,6 +260,12 @@ public class Connection implements AsyncCallback<Void> {
         }
     }
 
+    public void surrenderBase() {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.surrenderBase(this);
+        }
+    }
+
     public static MovableServiceAsync getMovableServiceAsync() {
         return INSTANCE.movableServiceAsync;
     }
@@ -287,4 +295,11 @@ public class Connection implements AsyncCallback<Void> {
         return INSTANCE.movableServiceAsync != null;
     }
 
+    public boolean isRegistered() {
+        return isRegistered;
+    }
+
+    public void setRegistered(boolean registered) {
+        isRegistered = registered;
+    }
 }
