@@ -4,7 +4,7 @@
     <facet type="web" name="game">
       <configuration>
         <descriptors>
-          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/war/WEB-INF/web.xml" optional="false" version="2.5" />
+          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/war/WEB-INF/web.xml" />
         </descriptors>
         <webroots>
           <root url="file://$MODULE_DIR$/war" relative="/" />
@@ -12,29 +12,14 @@
         <sourceRoots>
           <root url="file://$MODULE_DIR$/src" />
         </sourceRoots>
-        <building>
-          <setting name="EXPLODED_URL" value="file://$MODULE_DIR$/out/exploded/gameWeb2" />
-          <setting name="EXPLODED_ENABLED" value="true" />
-          <setting name="JAR_URL" value="file://$MODULE_DIR$/out/ROOT.war" />
-          <setting name="JAR_ENABLED" value="true" />
-          <setting name="EXCLUDE_EXPLODED_DIRECTORY" value="true" />
-        </building>
-        <packaging>
-          <containerElement type="module" name="game">
-            <attribute name="method" value="1" />
-            <attribute name="URI" value="/WEB-INF/classes" />
-          </containerElement>
-        </packaging>
+        <context-artifact name="game:game exploded" />
       </configuration>
     </facet>
     <facet type="gwt" name="GWT">
       <configuration>
-        <setting name="additionalCompilerParameters" value="" />
         <setting name="compilerMaxHeapSize" value="128" />
-        <setting name="compilerOutputPath" value="" />
         <setting name="gwtScriptOutputStyle" value="DETAILED" />
         <setting name="gwtSdkUrl" value="file://$MODULE_DIR$/../../tech/gwt-linux-1.6.4" />
-        <setting name="runGwtCompilerOnMake" value="false" />
         <setting name="webFacet" value="Web2" />
         <packaging>
           <module name="com.btxtech.game.jsre.Game" path="/com.btxtech.game.jsre.Game" />
@@ -51,18 +36,17 @@
           <unit-entry name="sessionFactory" value="c53dc93c-fd19-480e-83b1-419b429eda52" />
           <unit-entry name="src/hibernate.cfg.xml" />
         </datasource-map>
-        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/src/hibernate.cfg.xml" optional="false" version="3.0" />
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/src/hibernate.cfg.xml" />
       </configuration>
     </facet>
     <facet type="jpa" name="JPA">
       <configuration>
         <setting name="validation-enabled" value="true" />
         <setting name="provider-name" value="" />
-        <setting name="targe-facet" value="" />
         <datasource-mapping>
           <factory-entry name="punit" />
         </datasource-mapping>
-        <deploymentDescriptor name="persistence.xml" url="file://$MODULE_DIR$/src/persistence.xml" optional="false" version="1.0" />
+        <deploymentDescriptor name="persistence.xml" url="file://$MODULE_DIR$/src/persistence.xml" />
       </configuration>
     </facet>
   </component>
