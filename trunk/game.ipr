@@ -1,7 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project relativePaths="false" version="4">
+<project version="4">
   <component name="AntConfiguration">
     <defaultAnt bundledAnt="true" />
+  </component>
+  <component name="ArtifactManager">
+    <artifact type="exploded-war" name="game:game exploded">
+      <output-path>$PROJECT_DIR$/out/exploded/gameWeb2</output-path>
+      <root id="root">
+        <element id="javaee-facet-resources" facet="game/web/game" />
+        <element id="directory" name="WEB-INF">
+          <element id="directory" name="classes">
+            <element id="module-output" name="game" />
+          </element>
+        </element>
+      </root>
+    </artifact>
+    <artifact type="war" name="game:game">
+      <output-path>$PROJECT_DIR$/out</output-path>
+      <root id="archive" name="ROOT.war">
+        <element id="artifact" artifact-name="game:game exploded" />
+      </root>
+    </artifact>
   </component>
   <component name="BuildJarProjectSettings">
     <option name="BUILD_JARS_ON_MAKE" value="false" />
@@ -15,11 +34,11 @@
         </option>
         <option name="IMPORT_LAYOUT_TABLE">
           <value>
-            <package name="" withSubpackages="true" />
+            <package name="" withSubpackages="true" static="false" />
             <emptyLine />
+            <package name="" withSubpackages="true" static="true" />
           </value>
         </option>
-        <option name="OPTIMIZE_IMPORTS_ON_THE_FLY" value="true" />
         <ADDITIONAL_INDENT_OPTIONS fileType="groovy">
           <option name="INDENT_SIZE" value="2" />
           <option name="CONTINUATION_INDENT_SIZE" value="8" />
@@ -83,13 +102,21 @@
           <option name="LABEL_INDENT_SIZE" value="0" />
           <option name="LABEL_INDENT_ABSOLUTE" value="false" />
         </ADDITIONAL_INDENT_OPTIONS>
+        <ADDITIONAL_INDENT_OPTIONS fileType="yml">
+          <option name="INDENT_SIZE" value="2" />
+          <option name="CONTINUATION_INDENT_SIZE" value="8" />
+          <option name="TAB_SIZE" value="4" />
+          <option name="USE_TAB_CHARACTER" value="false" />
+          <option name="SMART_TABS" value="false" />
+          <option name="LABEL_INDENT_SIZE" value="0" />
+          <option name="LABEL_INDENT_ABSOLUTE" value="false" />
+        </ADDITIONAL_INDENT_OPTIONS>
       </value>
     </option>
     <option name="USE_PER_PROJECT_SETTINGS" value="true" />
   </component>
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
-    <option name="DEPLOY_AFTER_MAKE" value="2" />
     <resourceExtensions>
       <entry name=".+\.(properties|xml|html|dtd|tld)" />
       <entry name=".+\.(gif|png|jpeg|jpg)" />
@@ -109,11 +136,13 @@
       <entry name="?*.css" />
       <entry name="?*.js" />
     </wildcardResourcePatterns>
+    <annotationProcessing enabled="false" useClasspath="true" />
   </component>
   <component name="CopyrightManager" default="">
     <copyright>
       <option name="notice" value="Copyright (c) &amp;#36;today.year.&#10;&#10;  This program is free software; you can redistribute it and/or modify&#10;  it under the terms of the GNU General Public License as published by&#10;  the Free Software Foundation; version 2 of the License.&#10;&#10;  This program is distributed in the hope that it will be useful,&#10;  but WITHOUT ANY WARRANTY; without even the implied warranty of&#10;  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&#10;  GNU General Public License for more details." />
       <option name="keyword" value="Copyright" />
+      <option name="allowReplaceKeyword" value="" />
       <option name="myName" value="GPL 2" />
       <option name="myLocal" value="true" />
     </copyright>
@@ -126,11 +155,8 @@
     <option name="SKIP_IMPORT_STATEMENTS" value="false" />
   </component>
   <component name="EclipseCompilerSettings">
-    <option name="DEBUGGING_INFO" value="true" />
     <option name="GENERATE_NO_WARNINGS" value="true" />
     <option name="DEPRECATION" value="false" />
-    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
-    <option name="MAXIMUM_HEAP_SIZE" value="128" />
   </component>
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false" />
   <component name="EntryPointsManager">
@@ -193,14 +219,11 @@
   </component>
   <component name="IdProvider" IDEtalkID="8EE2E773CEF9D41E600A11327FF27889" />
   <component name="InspectionProjectProfileManager">
-    <option name="PROJECT_PROFILE" value="Project Default" />
-    <option name="USE_PROJECT_LEVEL_SETTINGS" value="false" />
-    <scopes />
     <profiles>
       <profile version="1.0" is_locked="false">
         <option name="myName" value="Project Default" />
         <option name="myLocal" value="false" />
-        <inspection_tool class="UNUSED_SYMBOL" level="WARNING" enabled="true">
+        <inspection_tool class="UNUSED_SYMBOL" enabled="true" level="WARNING" enabled_by_default="true">
           <option name="LOCAL_VARIABLE" value="true" />
           <option name="FIELD" value="true" />
           <option name="METHOD" value="true" />
@@ -217,14 +240,9 @@
         </inspection_tool>
       </profile>
     </profiles>
-    <list size="0" />
-  </component>
-  <component name="JavacSettings">
-    <option name="DEBUGGING_INFO" value="true" />
-    <option name="GENERATE_NO_WARNINGS" value="false" />
-    <option name="DEPRECATION" value="true" />
-    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
-    <option name="MAXIMUM_HEAP_SIZE" value="128" />
+    <option name="PROJECT_PROFILE" value="Project Default" />
+    <option name="USE_PROJECT_PROFILE" value="true" />
+    <version value="1.0" />
   </component>
   <component name="JavadocGenerationManager">
     <option name="OUTPUT_DIRECTORY" />
@@ -242,14 +260,6 @@
     <option name="HEAP_SIZE" />
     <option name="LOCALE" />
     <option name="OPEN_IN_BROWSER" value="true" />
-  </component>
-  <component name="JikesSettings">
-    <option name="JIKES_PATH" value="" />
-    <option name="DEBUGGING_INFO" value="true" />
-    <option name="DEPRECATION" value="true" />
-    <option name="GENERATE_NO_WARNINGS" value="false" />
-    <option name="IS_EMACS_ERRORS_MODE" value="true" />
-    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
   </component>
   <component name="Palette2">
     <group name="Swing">
@@ -391,7 +401,6 @@
       </entry>
     </default-configurations>
   </component>
-  <component name="ProjectFileVersion" converted="true" />
   <component name="ProjectKey">
     <option name="state" value="https://controltheland.googlecode.com/svn/trunk/game.ipr" />
   </component>
@@ -404,7 +413,9 @@
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="ProjectRunConfigurationManager">
-    <configuration default="false" name="RT GWT Client [Game]" type="Application" factoryName="Application" enabled="false" merge="false" sample_coverage="true" runner="emma">
+    <configuration default="false" name="RT GWT Client [Game]" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="emma" />
+      <extension name="snapshooter" />
       <option name="MAIN_CLASS_NAME" value="com.google.gwt.dev.DevMode" />
       <option name="VM_PARAMETERS" value="-Xmx128M" />
       <option name="PROGRAM_PARAMETERS" value="-noserver -war war -startupUrl http://localhost:8080 com.btxtech.game.jsre.Game" />
@@ -424,11 +435,11 @@
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Run" />
-      <method>
-        <option name="Make" value="true" />
-      </method>
+      <method />
     </configuration>
-    <configuration default="false" name="RT GWT Client [Map Editor]" type="Application" factoryName="Application" enabled="false" merge="false" sample_coverage="true" runner="emma">
+    <configuration default="false" name="RT GWT Client [Map Editor]" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="emma" />
+      <extension name="snapshooter" />
       <option name="MAIN_CLASS_NAME" value="com.google.gwt.dev.DevMode" />
       <option name="VM_PARAMETERS" value="-Xmx128M" />
       <option name="PROGRAM_PARAMETERS" value="-noserver -war war -startupUrl http://localhost:8080/?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.mgmt.MapEditor com.btxtech.game.jsre.MapEditor" />
@@ -448,11 +459,11 @@
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Run" />
-      <method>
-        <option name="Make" value="true" />
-      </method>
+      <method />
     </configuration>
-    <configuration default="false" name="RT GWT [Pathfinding]" type="Application" factoryName="Application" enabled="false" merge="false" sample_coverage="true" runner="emma">
+    <configuration default="false" name="RT GWT [Pathfinding]" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="emma" />
+      <extension name="snapshooter" />
       <option name="MAIN_CLASS_NAME" value="com.google.gwt.dev.DevMode" />
       <option name="VM_PARAMETERS" value="-Xmx128M" />
       <option name="PROGRAM_PARAMETERS" value="-noserver -war war -startupUrl http://localhost:8080/?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.mgmt.Pathfinding com.btxtech.game.jsre.Pathfinding" />
@@ -466,11 +477,11 @@
       <envs />
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Run" />
-      <method>
-        <option name="Make" value="true" />
-      </method>
+      <method />
     </configuration>
-    <configuration default="false" name="GWT Compiler [Game]" type="Application" factoryName="Application" enabled="false" merge="false" sample_coverage="true" runner="emma">
+    <configuration default="false" name="GWT Compiler [Game]" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="emma" />
+      <extension name="snapshooter" />
       <option name="MAIN_CLASS_NAME" value="com.google.gwt.dev.Compiler" />
       <option name="VM_PARAMETERS" value="-Xmx256M" />
       <option name="PROGRAM_PARAMETERS" value="-war &quot;war&quot; -style PRETTY com.btxtech.game.jsre.Game" />
@@ -490,11 +501,11 @@
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Run" />
-      <method>
-        <option name="Make" value="true" />
-      </method>
+      <method />
     </configuration>
-    <configuration default="false" name="GWT Compiler [Map Editor]" type="Application" factoryName="Application" enabled="false" merge="false" sample_coverage="true" runner="emma">
+    <configuration default="false" name="GWT Compiler [Map Editor]" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="emma" />
+      <extension name="snapshooter" />
       <option name="MAIN_CLASS_NAME" value="com.google.gwt.dev.Compiler" />
       <option name="VM_PARAMETERS" value="-Xmx256M" />
       <option name="PROGRAM_PARAMETERS" value="-war &quot;war&quot; -style PRETTY com.btxtech.game.jsre.MapEditor" />
@@ -514,11 +525,11 @@
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Run" />
-      <method>
-        <option name="Make" value="true" />
-      </method>
+      <method />
     </configuration>
-    <configuration default="false" name="GWT Compiler [Pathfinding]" type="Application" factoryName="Application" enabled="false" merge="false" sample_coverage="true" runner="emma">
+    <configuration default="false" name="GWT Compiler [Pathfinding]" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="emma" />
+      <extension name="snapshooter" />
       <option name="MAIN_CLASS_NAME" value="com.google.gwt.dev.Compiler" />
       <option name="VM_PARAMETERS" value="-Xmx256M" />
       <option name="PROGRAM_PARAMETERS" value="-war &quot;war&quot; -style PRETTY com.btxtech.game.jsre.Pathfinding" />
@@ -538,26 +549,24 @@
       <RunnerSettings RunnerId="Run" />
       <ConfigurationWrapper RunnerId="Debug" />
       <ConfigurationWrapper RunnerId="Run" />
-      <method>
-        <option name="Make" value="true" />
-      </method>
+      <method />
     </configuration>
     <configuration default="false" name="Tomcat" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 6">
       <option name="OPEN_IN_BROWSER" value="false" />
       <option name="OPEN_IN_BROWSER_URL" value="http://localhost:8080/" />
       <option name="BROWSER_ID" value="system" />
       <option name="COMMON_VM_ARGUMENTS" value="-Xmx1024M -Dtestmode=true" />
-      <option name="BUILD_ON_FRAME_DEACTIVATION" value="true" />
-      <JAVAEE_FACET FACET_ID="game/web/game" DEPLOYMENT_SOURCE_NAME="exploded">
-        <option name="CONTEXT_PATH" value="/" />
-        <option name="DEPLOY" value="true" />
-      </JAVAEE_FACET>
+      <deployment>
+        <artifact name="game:game exploded">
+          <settings>
+            <option name="CONTEXT_PATH" value="/" />
+          </settings>
+        </artifact>
+      </deployment>
       <server-settings>
         <option name="DEPLOY_TOMCAT_MANAGER" value="false" />
         <option name="BASE_DIRECTORY_NAME" value="Unnamed_gamea33f25891" />
       </server-settings>
-      <option name="DEPLOY_TOMCAT_MANAGER" value="false" />
-      <option name="BASE_DIRECTORY_NAME" value="Unnamed_gamea33f25891" />
       <log_file path="/home/beat/.IntelliJIdea8x/system/tomcat/Unnamed_gamea33f25891/logs/localhost*" checked="true" skipped="true" show_all="false" alias="Tomcat Log" />
       <RunnerSettings RunnerId="Debug">
         <option name="DEBUG_PORT" value="41495" />
@@ -601,7 +610,9 @@
         </EnvironmentVariables>
       </ConfigurationWrapper>
       <method>
-        <option name="Make" value="true" />
+        <option name="BuildArtifacts" enabled="true">
+          <artifact name="game:game exploded" />
+        </option>
       </method>
     </configuration>
   </component>
@@ -611,13 +622,6 @@
         <list size="0" />
       </value>
     </option>
-  </component>
-  <component name="RmicSettings">
-    <option name="IS_EANABLED" value="false" />
-    <option name="DEBUGGING_INFO" value="true" />
-    <option name="GENERATE_NO_WARNINGS" value="false" />
-    <option name="GENERATE_IIOP_STUBS" value="false" />
-    <option name="ADDITIONAL_OPTIONS_STRING" value="" />
   </component>
   <component name="SvnBranchConfigurationManager">
     <option name="myConfigurationMap">
