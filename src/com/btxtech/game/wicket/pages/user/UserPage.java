@@ -13,12 +13,11 @@
 
 package com.btxtech.game.wicket.pages.user;
 
-import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
-import com.btxtech.game.wicket.pages.entergame.EnterBasePanel;
+import com.btxtech.game.wicket.uiservices.GameControlService;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -35,7 +34,7 @@ public class UserPage extends BasePage {
     @SpringBean
     private UserService userService;
     @SpringBean
-    private BaseService baseService;
+    private GameControlService gameControlService;
     private User viewUser;
     private boolean canEditSite;
 
@@ -46,7 +45,7 @@ public class UserPage extends BasePage {
         Form form = new Form("enterForm") {
             @Override
             protected void onSubmit() {
-                setResponsePage(new EnterBasePanel());
+                setResponsePage(gameControlService.getEnterGamePage(canEditSite));
             }
 
             @Override
@@ -87,11 +86,11 @@ public class UserPage extends BasePage {
 
     @Override
     public String getAdditionalPageInfo() {
-       if(viewUser != null) {
-           return viewUser.getName();
-       } else {
-           return "???";
-       }
+        if (viewUser != null) {
+            return viewUser.getName();
+        } else {
+            return "???";
+        }
     }
-    
+
 }
