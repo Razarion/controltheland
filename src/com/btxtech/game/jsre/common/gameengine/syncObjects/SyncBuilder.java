@@ -59,7 +59,7 @@ public class SyncBuilder extends SyncBaseAbility {
                 createdChildCount++;
             }
             if (getServices().getItemService().baseObjectExists(currentBuildup)) {
-                currentBuildup.increaseHealth((int) (builderType.getProgress() * factor));
+                currentBuildup.increaseHealth(builderType.getProgress() * factor);
                 if (currentBuildup.isHealthy()) {
                     currentBuildup.setBuild(true);
                     stop();

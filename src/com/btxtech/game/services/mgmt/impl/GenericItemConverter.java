@@ -132,7 +132,7 @@ public class GenericItemConverter {
 
         fillGenericItem(item, genericItem);
 
-        genericItem.setHealth(item.getHealth());
+        genericItem.setHealth((int)item.getHealth());
         genericItem.setBuild(item.isReady());
         Base base = baseService.getBase(item.getBase());
         if (base == null) {
