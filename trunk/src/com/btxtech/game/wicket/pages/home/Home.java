@@ -13,14 +13,13 @@
 
 package com.btxtech.game.wicket.pages.home;
 
-import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.WebCommon;
-import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.info.Info;
 import com.btxtech.game.wicket.pages.user.LoggedinBox;
 import com.btxtech.game.wicket.pages.user.LoginBox;
+import com.btxtech.game.wicket.uiservices.GameControlService;
 import javax.servlet.http.Cookie;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.link.Link;
@@ -39,7 +38,7 @@ public class Home extends WebPage {
     @SpringBean
     private UserTrackingService userTrackingService;
     @SpringBean
-    private BaseService baseService;
+    private GameControlService gameControlService;
 
     public Home() {
         Cookie[] cookies = ((WebRequest) getRequestCycle().getRequest()).getCookies();
@@ -58,8 +57,7 @@ public class Home extends WebPage {
             @Override
             public void onClick() {
                 try {
-                    baseService.continueOrNewBase();
-                    setResponsePage(Game.class);
+                    setResponsePage(gameControlService.getEnterGamePage(false));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

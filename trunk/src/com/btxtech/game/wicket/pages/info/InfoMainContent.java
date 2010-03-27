@@ -14,8 +14,9 @@
 package com.btxtech.game.wicket.pages.info;
 
 import com.btxtech.game.wicket.pages.BorderPanel;
-import com.btxtech.game.wicket.pages.entergame.EnterBasePanel;
+import com.btxtech.game.wicket.uiservices.GameControlService;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
  * User: beat
@@ -23,12 +24,15 @@ import org.apache.wicket.markup.html.form.Form;
  * Time: 2:04:48 PM
  */
 public class InfoMainContent extends BorderPanel {
+    @SpringBean
+    private GameControlService gameControlService;
+
     public InfoMainContent(String id) {
         super(id);
         Form form = new Form("form") {
             @Override
             protected void onSubmit() {
-                setResponsePage(new EnterBasePanel());
+                setResponsePage(gameControlService.getEnterGamePage(false));
             }
         };
         add(form);

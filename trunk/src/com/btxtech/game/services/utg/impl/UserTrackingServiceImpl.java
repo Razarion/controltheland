@@ -42,7 +42,6 @@ import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.VisitorDetailInfo;
 import com.btxtech.game.services.utg.VisitorInfo;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
-import com.btxtech.game.wicket.pages.entergame.EnterBasePanel;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -147,27 +146,12 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             boolean cookie = datesAndHit[2] != null;
             String referer = (String) datesAndHit[3];
             int hits = ((Long) datesAndHit[4]).intValue();
-            int enterSetupHits = getHitsForPage(sessionId, EnterBasePanel.class);
             int enterGameHits = getHitsForGameStartup(sessionId);
             int commands = getUserCommandCount(sessionId, null, null, null);
             int completedMissions = getCompletedMissionCount(sessionId, null, null);
-            visitorInfos.add(new VisitorInfo(timeStamp, sessionId, hits, enterSetupHits, enterGameHits, commands, completedMissions, cookie, referer));
+            visitorInfos.add(new VisitorInfo(timeStamp, sessionId, hits, enterGameHits, commands, completedMissions, cookie, referer));
         }
         return visitorInfos;
-    }
-
-    private int getHitsForPage(final String sessionId, final Class<EnterBasePanel> enterBasePanelClass) {
-        List<Integer> list = (List<Integer>) hibernateTemplate.execute(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(PageAccess.class);
-                criteria.add(Restrictions.eq("sessionId", sessionId));
-                criteria.add(Restrictions.eq("page", enterBasePanelClass.getName()));
-                criteria.setProjection(Projections.rowCount());
-                return criteria.list();
-            }
-        });
-        return list.get(0);
     }
 
     private int getHitsForGameStartup(final String sessionId) {

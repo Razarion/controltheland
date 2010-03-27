@@ -124,7 +124,8 @@ public class BaseServiceImpl implements BaseService {
         }
     }
 
-    private void createNewBase() throws AlreadyUsedException, NoSuchItemTypeException {
+    @Override
+    public void createNewBase() throws AlreadyUsedException, NoSuchItemTypeException {
         synchronized (bases) {
             createNewBase(getFreePlayerName(), getFreeColors(1).get(0));
         }
@@ -191,15 +192,6 @@ public class BaseServiceImpl implements BaseService {
             throw new IllegalStateException("User does not have any running base");
         }
         connectionService.createConnection(base);
-    }
-
-    @Override
-    public void continueOrNewBase() throws AlreadyUsedException, NoSuchItemTypeException {
-        if(getBaseForLoggedInUser() != null) {
-            continueBase();
-        } else {
-            createNewBase();
-        }
     }
 
     private void deleteBase(Base base) {

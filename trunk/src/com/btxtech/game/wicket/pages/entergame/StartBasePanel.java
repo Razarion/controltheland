@@ -19,6 +19,7 @@ import com.btxtech.game.services.base.BaseColor;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.wicket.pages.BorderPanel;
 import com.btxtech.game.wicket.pages.Game;
+import com.btxtech.game.wicket.pages.basepage.BasePage;
 import java.util.List;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -39,15 +40,14 @@ import org.apache.commons.logging.LogFactory;
  * Date: Sep 12, 2009
  * Time: 1:14:52 PM
  */
-public class StartBasePanel extends BorderPanel {
+public class StartBasePanel extends BasePage {
     @SpringBean
     private BaseService baseService;
     private String playerName;
     private BaseColor baseColor;
     private Log log = LogFactory.getLog(StartBasePanel.class);
 
-    public StartBasePanel(String id) {
-        super(id);
+    public StartBasePanel() {
         FeedbackPanel feedbackPanel = new FeedbackPanel("msgs");
         add(feedbackPanel);
 

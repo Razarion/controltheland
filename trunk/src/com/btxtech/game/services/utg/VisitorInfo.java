@@ -25,7 +25,6 @@ public class VisitorInfo {
     private Date date;
     private String sessionId;
     private int pageHits;
-    private int enterSetupHits;
     private int enterGameHits;
     private int commands;
     private int missions;
@@ -35,7 +34,6 @@ public class VisitorInfo {
     public VisitorInfo(Date date,
                        String sessionId,
                        int pageHits,
-                       int enterSetupHits,
                        int enterGameHits,
                        int commands,
                        int missions,
@@ -44,7 +42,6 @@ public class VisitorInfo {
         this.date = date;
         this.sessionId = sessionId;
         this.pageHits = pageHits;
-        this.enterSetupHits = enterSetupHits;
         this.enterGameHits = enterGameHits;
         this.commands = commands;
         this.missions = missions;
@@ -66,10 +63,6 @@ public class VisitorInfo {
 
     public int getPageHits() {
         return pageHits;
-    }
-
-    public int getEnterSetupHits() {
-        return enterSetupHits;
     }
 
     public int getEnterGameHits() {
