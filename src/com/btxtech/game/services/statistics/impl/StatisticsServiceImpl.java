@@ -85,7 +85,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         ArrayList<BaseStatisticsDTO> dtos = new ArrayList<BaseStatisticsDTO>();
         int rank = 1;
         for (Base base : bases) {
-            BaseStatisticsDTO dto = new BaseStatisticsDTO(rank, base, "$" + Integer.toString(base.getAccountBalance()));
+            BaseStatisticsDTO dto = new BaseStatisticsDTO(rank, base, "$" + Integer.toString((int)base.getAccountBalance()));
             dtos.add(dto);
             rank++;
         }

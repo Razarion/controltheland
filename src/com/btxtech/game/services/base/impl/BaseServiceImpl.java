@@ -439,12 +439,12 @@ public class BaseServiceImpl implements BaseService {
     }
 
     @Override
-    public void depositResource(int price, SimpleBase simpleBase) {
+    public void depositResource(double price, SimpleBase simpleBase) {
         getBase(simpleBase).depositMoney(price);
     }
 
     @Override
-    public void withdrawalMoney(int price, SimpleBase simpleBase) throws InsufficientFundsException {
+    public void withdrawalMoney(double price, SimpleBase simpleBase) throws InsufficientFundsException {
         getBase(simpleBase).withdrawalMoney(price);
     }
 

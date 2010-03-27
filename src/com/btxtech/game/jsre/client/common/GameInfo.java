@@ -27,7 +27,7 @@ import java.util.Collection;
  */
 public class GameInfo implements Serializable{
     private SimpleBase base;
-    private int accountBalance;
+    private double accountBalance;
     private int xp;
     private Collection<Integer> allowedItemTypes;
     private int energyGenerating;
@@ -46,11 +46,11 @@ public class GameInfo implements Serializable{
         this.base = base;
     }
 
-    public int getAccountBalance() {
+    public double getAccountBalance() {
         return accountBalance;
     }
 
-    public void setAccountBalance(int accountBalance) {
+    public void setAccountBalance(double accountBalance) {
         this.accountBalance = accountBalance;
     }
 

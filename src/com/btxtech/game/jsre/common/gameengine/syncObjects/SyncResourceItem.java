@@ -25,7 +25,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInf
  * Time: 20:08:41
  */
 public class SyncResourceItem extends SyncItem {
-    private int amount;
+    private double amount;
     private boolean missionMoney = false;
 
     public SyncResourceItem(Id id, Index position, ResourceType resourceType, Services services) {
@@ -33,7 +33,7 @@ public class SyncResourceItem extends SyncItem {
         amount = resourceType.getAmount();
     }
 
-    public int harvest(int amount) {
+    public double harvest(double amount) {
         if (this.amount > amount) {
             this.amount -= amount;
             fireItemChanged(SyncItemListener.Change.RESOURCE);
@@ -64,11 +64,11 @@ public class SyncResourceItem extends SyncItem {
         return amount > 0;
     }
 
-    public int getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 

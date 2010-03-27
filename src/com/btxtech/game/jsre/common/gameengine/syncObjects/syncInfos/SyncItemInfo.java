@@ -40,7 +40,7 @@ public class SyncItemInfo extends Packet {
     private Id target;
     private Integer health;
     private Boolean isBuild;
-    private Integer amount;
+    private Double amount;
     private Boolean followTarget;
     private Boolean operationState;
     private double reloadProgress;
@@ -121,7 +121,7 @@ public class SyncItemInfo extends Packet {
         return isBuild;
     }
 
-    public Integer getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
@@ -165,7 +165,7 @@ public class SyncItemInfo extends Packet {
         isBuild = build;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 

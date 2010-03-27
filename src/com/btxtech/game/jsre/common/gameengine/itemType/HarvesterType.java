@@ -22,7 +22,7 @@ import java.io.Serializable;
  */
 public class HarvesterType implements Serializable {
     private int range;
-    private int progress;
+    private double progress;
 
     /**
      * Used by GWT
@@ -30,7 +30,7 @@ public class HarvesterType implements Serializable {
     HarvesterType() {
     }
 
-    public HarvesterType(int range, int progress) {
+    public HarvesterType(int range, double progress) {
         this.range = range;
         this.progress = progress;
     }
@@ -39,7 +39,7 @@ public class HarvesterType implements Serializable {
         return range;
     }
 
-    public int getProgress() {
+    public double getProgress() {
         return progress;
     }
 

@@ -24,7 +24,7 @@ import javax.persistence.DiscriminatorValue;
 @Entity
 @DiscriminatorValue("RESOURCE")
 public class GenericResourceItem extends GenericItem{
-    private int amount;
+    private double amount;
 
     /**
      * Used by hibernate
@@ -36,11 +36,11 @@ public class GenericResourceItem extends GenericItem{
         super(backupEntry);
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
-    public int getAmount() {
+    public double getAmount() {
         return amount;
     }
 }
