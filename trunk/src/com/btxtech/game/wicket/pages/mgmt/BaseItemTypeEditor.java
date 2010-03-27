@@ -76,7 +76,7 @@ public class BaseItemTypeEditor extends WebPage {
     private String factoryAbleToBuild;
     private boolean harvester;
     private int harvesterRange;
-    private int harvesterProgress;
+    private double harvesterProgress;
     private boolean builder;
     private int builderProgress;
     private int builderRange;

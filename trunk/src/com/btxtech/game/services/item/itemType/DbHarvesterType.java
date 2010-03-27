@@ -31,7 +31,7 @@ public class DbHarvesterType implements Serializable {
     private Integer id;
     @Column(name= "theRange")
     private int range;
-    private int progress;
+    private double progress;
 
     public int getRange() {
         return range;
@@ -41,11 +41,11 @@ public class DbHarvesterType implements Serializable {
         this.range = range;
     }
 
-    public int getProgress() {
+    public double getProgress() {
         return progress;
     }
 
-    public void setProgress(int progress) {
+    public void setProgress(double progress) {
         this.progress = progress;
     }
 

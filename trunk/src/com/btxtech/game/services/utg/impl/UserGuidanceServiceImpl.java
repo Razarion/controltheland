@@ -20,7 +20,6 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
@@ -60,7 +59,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         SyncBaseItem attackerItem =(SyncBaseItem) itemService.getItem(harvester);
         Index targetPos = collisionService.getFreeRandomPosition(moneyItemType, attackerItem, Constants.TARGET_MIN_RANGE, Constants.TARGET_MAX_RANGE);
         SyncResourceItem syncBaseItem = (SyncResourceItem) itemService.createSyncObject(moneyItemType, targetPos, null, null, 0);
-        syncBaseItem.setAmount(Constants.MISSON_MONEY);
+        syncBaseItem.setAmount(Constants.MISSION_MONEY);
         syncBaseItem.setMissionMoney(true);
     }
 }

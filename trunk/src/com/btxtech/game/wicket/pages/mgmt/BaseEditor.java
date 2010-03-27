@@ -76,12 +76,12 @@ public class BaseEditor extends WebPage {
         form.add(new TextField<String>("accountBalance", new IModel<String>() {
             @Override
             public String getObject() {
-                return Integer.toString(baseService.getBase(simpleBase).getAccountBalance());
+                return Double.toString(baseService.getBase(simpleBase).getAccountBalance());
             }
 
             @Override
             public void setObject(String s) {
-                baseService.getBase(simpleBase).setAccountBalance(Integer.parseInt(s));
+                baseService.getBase(simpleBase).setAccountBalance(Double.parseDouble(s));
             }
 
             @Override

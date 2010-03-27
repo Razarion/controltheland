@@ -71,5 +71,5 @@ public class Constants {
     // Missions
     public static final int TARGET_MAX_RANGE = 300;
     public static final int TARGET_MIN_RANGE = 150;
-    public static final int MISSON_MONEY = 5000;
+    public static final double MISSION_MONEY = 50.0;
 }

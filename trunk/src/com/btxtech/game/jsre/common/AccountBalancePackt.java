@@ -19,13 +19,13 @@ package com.btxtech.game.jsre.common;
  * Time: 11:35:20 AM
  */
 public class AccountBalancePackt extends Packet{
-    private int accountBalance;
+    private double accountBalance;
 
-    public int getAccountBalance() {
+    public double getAccountBalance() {
         return accountBalance;
     }
 
-    public void setAccountBalance(int accountBalance) {
+    public void setAccountBalance(double accountBalance) {
         this.accountBalance = accountBalance;
     }
 }

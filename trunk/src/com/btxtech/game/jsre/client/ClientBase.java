@@ -25,7 +25,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
  */
 public class ClientBase implements BaseService {
     private static final ClientBase INSTANCE = new ClientBase();
-    private int accountBalance;
+    private double accountBalance;
     private SimpleBase simpleBase;
     private DepositResourceListener depositResourceListener;
 
@@ -47,11 +47,11 @@ public class ClientBase implements BaseService {
         return simpleBase;
     }
 
-    public int getAccountBalance() {
+    public double getAccountBalance() {
         return accountBalance;
     }
 
-    public void setAccountBalance(int accountBalance) {
+    public void setAccountBalance(double accountBalance) {
         this.accountBalance = accountBalance;
         InfoPanel.getInstance().updateMoney();
     }
@@ -61,7 +61,7 @@ public class ClientBase implements BaseService {
     }
 
     @Override
-    public void depositResource(int price, SimpleBase simpleBase) {
+    public void depositResource(double price, SimpleBase simpleBase) {
         if (this.simpleBase.equals(simpleBase)) {
             accountBalance += price;
             InfoPanel.getInstance().updateMoney();
@@ -72,7 +72,7 @@ public class ClientBase implements BaseService {
     }
 
     @Override
-    public void withdrawalMoney(int price, SimpleBase simpleBase) throws InsufficientFundsException {
+    public void withdrawalMoney(double price, SimpleBase simpleBase) throws InsufficientFundsException {
         if (!this.simpleBase.equals(simpleBase)) {
             return;
         }

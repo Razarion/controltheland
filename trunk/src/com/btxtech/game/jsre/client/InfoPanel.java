@@ -144,14 +144,14 @@ public class InfoPanel extends TopMapPanel {
     public void setGameInfo(GameInfo gameInfo) {
         name.setText(gameInfo.getBase().getName());
         marker.getElement().getStyle().setBackgroundColor(gameInfo.getBase().getHtmlColor());
-        money.setText("$" + Integer.toString(gameInfo.getAccountBalance()));
+        money.setText("$" + Integer.toString((int)gameInfo.getAccountBalance()));
         xp.setText(Integer.toString(gameInfo.getXp()));
         updateEnergy(gameInfo.getEnergyGenerating(), gameInfo.getEnergyConsuming());
     }
 
     public void updateMoney() {
         if (money != null) {
-            money.setText(Integer.toString(ClientBase.getInstance().getAccountBalance()));
+            money.setText(Integer.toString((int)ClientBase.getInstance().getAccountBalance()));
         }
     }
 

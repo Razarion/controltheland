@@ -40,7 +40,7 @@ public class Base implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
-    private int accountBalance;
+    private double accountBalance;
     @OneToOne
     private User user;
     @OneToOne
@@ -55,9 +55,9 @@ public class Base implements Serializable {
     @Column(name = "lost", nullable = false, columnDefinition = "INT default '0'")
     private int lost;
     @Column(name = "totalSpent", nullable = false, columnDefinition = "INT default '0'")
-    private int totalSpent;
+    private double totalSpent;
     @Column(name = "totalEarned", nullable = false, columnDefinition = "INT default '0'")
-    private int totalEarned;
+    private double totalEarned;
     @Column(name = "abandoned", nullable = false, columnDefinition = "bit default b'1'")
     private boolean abandoned = false;
     @Column(nullable = false, columnDefinition = "bit default b'0'")
@@ -119,14 +119,14 @@ public class Base implements Serializable {
         return new SimpleBase(name, baseColor.getHtmlColor(), bot);
     }
 
-    public void depositMoney(int amount) {
+    public void depositMoney(double amount) {
         synchronized (syncObject) {
             accountBalance += amount;
             totalEarned += amount;
         }
     }
 
-    public void withdrawalMoney(int amount) throws InsufficientFundsException {
+    public void withdrawalMoney(double amount) throws InsufficientFundsException {
         synchronized (syncObject) {
             if (amount > accountBalance) {
                 throw new InsufficientFundsException();
@@ -137,11 +137,11 @@ public class Base implements Serializable {
         }
     }
 
-    public int getAccountBalance() {
+    public double getAccountBalance() {
         return accountBalance;
     }
 
-    public void setAccountBalance(int accountBalance) {
+    public void setAccountBalance(double accountBalance) {
         this.accountBalance = accountBalance;
     }
 

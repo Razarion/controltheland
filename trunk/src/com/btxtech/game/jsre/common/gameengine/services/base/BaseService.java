@@ -22,7 +22,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
  * Time: 14:02:40
  */
 public interface BaseService {
-    void depositResource(int price, SimpleBase simpleBase);
+    void depositResource(double price, SimpleBase simpleBase);
 
-    void withdrawalMoney(int price, SimpleBase simpleBase) throws InsufficientFundsException;
+    void withdrawalMoney(double price, SimpleBase simpleBase) throws InsufficientFundsException;
 }

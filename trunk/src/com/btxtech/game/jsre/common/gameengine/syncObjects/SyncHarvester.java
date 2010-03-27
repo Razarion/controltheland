@@ -14,16 +14,16 @@
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.itemType.HarvesterType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 
 /**
  * User: beat
  * Date: 22.11.2009
  * Time: 13:30:50
  */
-public class SyncHarvester extends SyncBaseAbility{
+public class SyncHarvester extends SyncBaseAbility {
     private HarvesterType harvesterType;
     private Id target;
 
@@ -39,15 +39,15 @@ public class SyncHarvester extends SyncBaseAbility{
     public boolean tick(double factor) throws ItemDoesNotExistException {
         if (!getSyncBaseItem().isAlive()) {
             return false;
-        }       
+        }
 
         try {
             SyncResourceItem resource = (SyncResourceItem) getServices().getItemService().getItem(target);
             if (isTargetInRange(resource.getPosition(), harvesterType.getRange())) {
-                if(getSyncBaseItem().hasSyncTurnable()) {
-                 getSyncBaseItem().getSyncTurnable().turnTo(resource.getPosition());   
+                if (getSyncBaseItem().hasSyncTurnable()) {
+                    getSyncBaseItem().getSyncTurnable().turnTo(resource.getPosition());
                 }
-                int money = resource.harvest(((int) (factor * harvesterType.getProgress())));
+                double money = resource.harvest(factor * harvesterType.getProgress());
                 getServices().getBaseService().depositResource(money, getSyncBaseItem().getBase());
             } else {
                 getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, harvesterType.getRange(), resource.getPosition());
