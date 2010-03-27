@@ -32,8 +32,6 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.energy.ServerEnergyService;
-import com.btxtech.game.services.history.CreatedElement;
-import com.btxtech.game.services.history.DestroyedElement;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
@@ -115,7 +113,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         }
 
         if (syncItem instanceof SyncBaseItem) {
-            historyService.addHistoryElement(new CreatedElement((SyncBaseItem) syncItem));
+            historyService.addItemCreatedEntry((SyncBaseItem) syncItem);
             actionService.addGuardingBaseItem((SyncBaseItem) syncItem);
             syncItem.addSyncItemListener(actionService);
             baseService.itemCreated((SyncBaseItem) syncItem);
@@ -195,7 +193,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         if (syncItem instanceof SyncBaseItem) {
             actionService.removeGuardingBaseItem((SyncBaseItem) syncItem);
             if (actor != null) {
-                historyService.addHistoryElement(new DestroyedElement(actor, (SyncBaseItem) syncItem));
+                historyService.addItemDestroyedEntry(actor, (SyncBaseItem) syncItem);
                 Base actorBase = baseService.getBase(actor);
                 actorBase.increaseKills();
                 serverItemTypeAccessService.increaseXp(actorBase, (SyncBaseItem) syncItem);

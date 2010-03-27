@@ -69,6 +69,8 @@ public interface BaseService extends com.btxtech.game.jsre.common.gameengine.ser
 
     Base getBase(SimpleBase simpleBase);
 
+    User getUser(SimpleBase simpleBase);
+
     void surrenderBase(Base base);
 
     List<Base> getBases();

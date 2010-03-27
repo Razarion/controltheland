@@ -15,7 +15,7 @@
         </element>
       </root>
     </artifact>
-    <artifact type="war" name="game:game">
+    <artifact type="war" build-on-make="true" name="game:game">
       <output-path>$PROJECT_DIR$/out</output-path>
       <root id="archive" name="ROOT.war">
         <element id="artifact" artifact-name="game:game exploded" />

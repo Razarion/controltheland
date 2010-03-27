@@ -10,16 +10,16 @@
   ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~   GNU General Public License for more details.
   -->
-
 <wicket:extend>
-    <div>
-        <form wicket:id="enterForm">
-            <input type="submit" value="Enter Game" style="font-size:18pt; cursor:pointer">
-        </form>
-    </div>
-
-
-    <div wicket:id="userInfo"/>
-    <div wicket:id="userBaseInfo"/>
-    <div wicket:id="historyPanel"/>
+<h2>History</h2>
+    <table class="helpT" width="100%">
+        <tr>
+            <th class="helpBod">Time</th>
+            <th class="helpBod">Action</th>
+        </tr>
+        <tr wicket:id="table">
+            <td class="helpBod" wicket:id="timeStamp"/>
+            <td class="helpBod" wicket:id="message"/>
+        </tr>
+    </table>
 </wicket:extend>
