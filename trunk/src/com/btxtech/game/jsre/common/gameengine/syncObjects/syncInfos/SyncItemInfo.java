@@ -38,7 +38,7 @@ public class SyncItemInfo extends Packet {
     private int createdChildCount;
     private int buildupProgress;
     private Id target;
-    private Integer health;
+    private Double health;
     private Boolean isBuild;
     private Double amount;
     private Boolean followTarget;
@@ -113,7 +113,7 @@ public class SyncItemInfo extends Packet {
         return target;
     }
 
-    public Integer getHealth() {
+    public Double getHealth() {
         return health;
     }
 
@@ -157,7 +157,7 @@ public class SyncItemInfo extends Packet {
         this.target = target;
     }
 
-    public void setHealth(int health) {
+    public void setHealth(Double health) {
         this.health = health;
     }
 

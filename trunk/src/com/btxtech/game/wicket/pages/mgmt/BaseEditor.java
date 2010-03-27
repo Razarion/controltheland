@@ -115,7 +115,7 @@ public class BaseEditor extends WebPage {
                 item.add(new TextField<String>("health", new IModel<String>() {
                     @Override
                     public String getObject() {
-                        return Integer.toString(item.getModelObject().getHealth());
+                        return Integer.toString((int)item.getModelObject().getHealth());
                     }
 
                     @Override

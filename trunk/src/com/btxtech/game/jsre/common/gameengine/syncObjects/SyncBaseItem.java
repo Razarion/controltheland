@@ -37,7 +37,7 @@ public class SyncBaseItem extends SyncItem {
     private BaseItemType baseItemType;
     private SimpleBase base;
     private boolean isBuild = false;
-    private int health;
+    private double health;
     private SyncMovable syncMovable;
     private SyncTurnable syncTurnable;
     private SyncWeapon syncWeapon;
@@ -370,7 +370,7 @@ public class SyncBaseItem extends SyncItem {
         return !getBase().equals(syncBaseItem.getBase());
     }
 
-    public void decreaseHealth(int progress, SyncBaseItem actor) {
+    public void decreaseHealth(double progress, SyncBaseItem actor) {
         health -= progress;
         fireItemChanged(SyncItemListener.Change.HEALTH);
         if (health <= 0) {
@@ -379,7 +379,7 @@ public class SyncBaseItem extends SyncItem {
         }
     }
 
-    public void increaseHealth(int progress) {
+    public void increaseHealth(double progress) {
         health += progress;
         if (health >= baseItemType.getHealth()) {
             health = baseItemType.getHealth();
@@ -418,11 +418,11 @@ public class SyncBaseItem extends SyncItem {
         return baseItemType;
     }
 
-    public int getHealth() {
+    public double getHealth() {
         return health;
     }
 
-    public void setHealth(int health) {
+    public void setHealth(double health) {
         this.health = health;
     }
 
