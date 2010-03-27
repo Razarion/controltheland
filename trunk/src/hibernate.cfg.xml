@@ -19,10 +19,7 @@
 
 <hibernate-configuration>
   <session-factory>
-      <mapping class="com.btxtech.game.services.history.CreatedElement"/>
-      <mapping class="com.btxtech.game.services.history.BaseHasBeenDefeated"/>
-      <mapping class="com.btxtech.game.services.history.DestroyedElement"/>
-      <mapping class="com.btxtech.game.services.history.UserEntered"/>
+      <mapping class="com.btxtech.game.services.history.HistoryElement"/>
       <mapping class="com.btxtech.game.services.connection.ConnectionStatistics"/>
       <mapping class="com.btxtech.game.services.connection.ClientLogEntry"/>
       <mapping class="com.btxtech.game.services.terrain.DbTerrainImagePosition"/>

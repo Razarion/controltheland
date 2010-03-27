@@ -17,6 +17,7 @@ import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
+import com.btxtech.game.wicket.pages.history.HistoryPanel;
 import com.btxtech.game.wicket.uiservices.GameControlService;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.form.Form;
@@ -58,6 +59,7 @@ public class UserPage extends BasePage {
 
         add(new UserInfo("userInfo", viewUser));
         add(new UserBaseInfo("userBaseInfo", viewUser));
+        add(new HistoryPanel("historyPanel", viewUser));
     }
 
     private void updateState() {

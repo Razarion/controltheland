@@ -13,6 +13,9 @@
 
 package com.btxtech.game.services.history;
 
+import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.services.user.User;
 import java.util.List;
 
 /**
@@ -21,7 +24,15 @@ import java.util.List;
  * Time: 7:27:16 PM
  */
 public interface HistoryService {
-    List<HistoryElement> getNewestHistoryElements(int count);
+    void addBaseStartEntry(SimpleBase simpleBase);
 
-    void addHistoryElement(HistoryElement historyElement);
+    void addBaseDefeatedEntry(SyncBaseItem actor, SimpleBase target);
+
+    void addBaseSurrenderedEntry(SimpleBase simpleBase);
+
+    void addItemCreatedEntry(SyncBaseItem syncBaseItem);
+
+    void addItemDestroyedEntry(SyncBaseItem actor, SyncBaseItem target);
+
+    List<DisplayHistoryElement> getNewestHistoryElements(User user, int count);
 }

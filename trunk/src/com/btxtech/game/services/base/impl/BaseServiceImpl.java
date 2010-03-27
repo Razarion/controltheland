@@ -29,6 +29,7 @@ import com.btxtech.game.services.base.AlreadyUsedException;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseColor;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.ConnectionService;
@@ -36,16 +37,13 @@ import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.energy.impl.BaseEnergy;
-import com.btxtech.game.services.history.BaseHasBeenDefeated;
 import com.btxtech.game.services.history.HistoryService;
-import com.btxtech.game.services.history.UserEntered;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.itemTypeAccess.ServerItemTypeAccessService;
 import com.btxtech.game.services.itemTypeAccess.impl.UserItemTypeAccess;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
-import com.btxtech.game.services.bot.BotService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -160,7 +158,7 @@ public class BaseServiceImpl implements BaseService {
         syncBaseItem.setBuild(true);
         syncBaseItem.setFullHealth();
         syncBaseItem.getSyncTurnable().setAngel(Math.PI / 4.0); // Cosmetis shows vehicle from side
-        historyService.addHistoryElement(new UserEntered(base.getSimpleBase()));
+        historyService.addBaseStartEntry(base.getSimpleBase());
         botService.onHumanBaseCreated(base);
     }
 
@@ -317,7 +315,7 @@ public class BaseServiceImpl implements BaseService {
         Base base = getBase(syncItem);
         base.removeItem(syncItem);
         if (!base.hasItems()) {
-            historyService.addHistoryElement(new BaseHasBeenDefeated(base.getSimpleBase()));
+            historyService.addBaseDefeatedEntry(actor, base.getSimpleBase());
             if (!base.getSimpleBase().equals(dummyBase.getSimpleBase())) {
                 if (actor != null) {
                     sendDefeatedMessage(syncItem, actor);
@@ -398,8 +396,15 @@ public class BaseServiceImpl implements BaseService {
     }
 
     @Override
+    public User getUser(SimpleBase simpleBase) {
+        Base base = getBase(simpleBase);
+        return base.getUser();
+    }
+
+    @Override
     public void surrenderBase(Base base) {
         if (base.getUser() != null) {
+            historyService.addBaseSurrenderedEntry(base.getSimpleBase());
             userTrackingService.onBaseSurrender(base.getUser(), base);
         }
         base.setUser(null);

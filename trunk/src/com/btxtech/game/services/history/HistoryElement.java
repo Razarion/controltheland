@@ -14,34 +14,49 @@
 package com.btxtech.game.services.history;
 
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.services.user.User;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
+import javax.persistence.ManyToOne;
 
 /**
  * User: beat
  * Date: Jul 5, 2009
  * Time: 7:28:46 PM
  */
-@Entity(name="HISTORY")
-@Inheritance(strategy= InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="HISTORY_TYPE", discriminatorType= DiscriminatorType.STRING)
-abstract public class HistoryElement implements Serializable{
+@Entity(name = "HISTORY")
+public class HistoryElement implements Serializable {
+   public enum Type {
+        BASE_STARTED,
+        BASE_DEFEATED,
+        BASE_SURRENDERED,
+        ITEM_CREATED,
+        ITEM_DESTROYED
+    }
+
     @Id
     @GeneratedValue
     private Integer id;
     @Column(nullable = false)
-    private String user;
-    @Column(nullable = false)
     private Date timeStamp;
+    private long timeStampMs;
+    @Column(nullable = false)
+    private Type type;
+    @Column(nullable = false)
+    private String baseName;
+    @ManyToOne()
+    private User user;
+    private String itemName;
+    private String targetBaseName;
+    @ManyToOne()
+    private User targetUser;
+    private String targetItemName;
+
 
     /**
      * Used by hibernate
@@ -49,12 +64,29 @@ abstract public class HistoryElement implements Serializable{
     protected HistoryElement() {
     }
 
-    public HistoryElement(SimpleBase simpleBase) {
-        user = simpleBase.getName();
+    public HistoryElement(Type type, SimpleBase base, User user, SyncBaseItem item, SimpleBase targetBase, User targetUser, SyncBaseItem targetItem) {
         timeStamp = new Date();
+        timeStampMs = timeStamp.getTime();
+        this.type = type;
+        baseName = base.getName();
+        this.user = user;
+        if (item != null) {
+            itemName = item.getBaseItemType().getName();
+        }
+        if (targetBase != null) {
+            targetBaseName = targetBase.getName();
+        }
+        this.targetUser = targetUser;
+        if (targetItem != null) {
+            targetItemName = targetItem.getBaseItemType().getName();
+        }
     }
 
-    public String getUser() {
+    public String getBaseName() {
+        return baseName;
+    }
+
+    public User getUser() {
         return user;
     }
 
@@ -62,7 +94,29 @@ abstract public class HistoryElement implements Serializable{
         return timeStamp;
     }
 
-    abstract public String getMessage();
+    public Type getType() {
+        return type;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public String getTargetBaseName() {
+        return targetBaseName;
+    }
+
+    public User getTargetUser() {
+        return targetUser;
+    }
+
+    public String getTargetItemName() {
+        return targetItemName;
+    }
+
+    public long getTimeStampMs() {
+        return timeStampMs;
+    }
 
     @Override
     public boolean equals(Object o) {
