@@ -82,7 +82,7 @@ public class CursorHandler implements TerrainMouseMoveListener {
         hasCollectCursor = false;
         for (ClientSyncItemView item : ItemContainer.getInstance().getItems()) {
             if (item.getSyncItem() instanceof SyncResourceItem) {
-                setCursor(item, CURSO_COLLECT, Style.Cursor.CROSSHAIR);
+                setCursor(item, null, Style.Cursor.POINTER);
             }
         }
     }
