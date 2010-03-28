@@ -16,7 +16,7 @@ package com.btxtech.game.wicket.uiservices.impl;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.pages.Game;
-import com.btxtech.game.wicket.pages.entergame.StartBasePanel;
+import com.btxtech.game.wicket.pages.entergame.StartGamePage;
 import com.btxtech.game.wicket.pages.user.UserPage;
 import com.btxtech.game.wicket.uiservices.GameControlService;
 import org.apache.commons.logging.Log;
@@ -46,7 +46,7 @@ public class GameControlServiceImpl implements GameControlService {
                         baseService.continueBase();
                         return Game.class;
                     } else {
-                        return StartBasePanel.class;
+                        return StartGamePage.class;
                     }
                 } else {
                     return UserPage.class;

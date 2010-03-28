@@ -19,7 +19,6 @@ import com.btxtech.game.services.base.BaseColor;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.wicket.pages.BorderPanel;
 import com.btxtech.game.wicket.pages.Game;
-import com.btxtech.game.wicket.pages.basepage.BasePage;
 import java.util.List;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -40,18 +39,19 @@ import org.apache.commons.logging.LogFactory;
  * Date: Sep 12, 2009
  * Time: 1:14:52 PM
  */
-public class StartBasePanel extends BasePage {
+public class NameColorPanel extends BorderPanel {
     @SpringBean
     private BaseService baseService;
     private String playerName;
     private BaseColor baseColor;
-    private Log log = LogFactory.getLog(StartBasePanel.class);
+    private Log log = LogFactory.getLog(NameColorPanel.class);
 
-    public StartBasePanel() {
+    public NameColorPanel(String id) {
+        super(id);
         FeedbackPanel feedbackPanel = new FeedbackPanel("msgs");
         add(feedbackPanel);
 
-        Form<StartBasePanel> form = new Form<StartBasePanel>("startForm", new CompoundPropertyModel<StartBasePanel>(this)) {
+        Form<NameColorPanel> form = new Form<NameColorPanel>("startForm", new CompoundPropertyModel<NameColorPanel>(this)) {
             @Override
             protected void onSubmit() {
                 try {
