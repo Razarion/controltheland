@@ -16,11 +16,13 @@ package com.btxtech.game.wicket.pages.forum;
 import com.btxtech.game.services.forum.Category;
 import com.btxtech.game.services.forum.ForumService;
 import com.btxtech.game.services.forum.ForumThread;
+import com.btxtech.game.services.forum.Post;
 import com.btxtech.game.services.user.ArqEnum;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
@@ -69,7 +71,13 @@ public class CategoryView extends BasePage {
             @Override
             protected void populateItem(final ListItem<ForumThread> listItem) {
                 listItem.add(new ForumThreadField("thread", listItem.getModelObject()));
-                listItem.add(new Label("lastPost", simpleDateFormat.format(listItem.getModelObject().getDate().getTime())));
+                if (listItem.getModelObject().getPosts().isEmpty()) {
+                    listItem.add(new Label("lastPost", "-"));
+                } else {
+                    Post post = listItem.getModelObject().getPosts().get(listItem.getModelObject().getPostCount() - 1);
+                    listItem.add(new Label("lastPost", simpleDateFormat.format(post.getDate())));
+                }
+                listItem.add(new Label("posts", Integer.toString(listItem.getModelObject().getPostCount())));
             }
         };
         add(listView);
@@ -78,7 +86,7 @@ public class CategoryView extends BasePage {
 
             @Override
             protected void onSubmit() {
-                Category category = forumService.getCategory(pageParameters.getInt(ID));                
+                Category category = forumService.getCategory(pageParameters.getInt(ID));
                 setResponsePage(new AddEntryForm(category, ForumThread.class, true));
             }
         };

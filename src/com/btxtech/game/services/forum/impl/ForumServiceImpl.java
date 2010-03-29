@@ -22,6 +22,7 @@ import com.btxtech.game.services.forum.SubForum;
 import com.btxtech.game.services.user.ArqEnum;
 import com.btxtech.game.services.user.UserService;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -58,7 +59,7 @@ public class ForumServiceImpl implements ForumService {
             @Override
             public Object doInHibernate(Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(SubForum.class);
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);                
+                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
                 return criteria.list();
             }
         });
@@ -114,7 +115,7 @@ public class ForumServiceImpl implements ForumService {
             @Override
             public Object doInHibernate(Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(Post.class);
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);                                
+                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
                 criteria.add(Restrictions.eq("forumThread", forumThread));
                 return criteria.list();
             }
@@ -202,5 +203,23 @@ public class ForumServiceImpl implements ForumService {
         } else {
             throw new IllegalArgumentException("Unknown abstractForumEntry: " + abstractForumEntry);
         }
+    }
+
+    @Override
+    public Date getLatestPost(Category category) {
+        List list = hibernateTemplate.find("SELECT MAX(p.date) FROM com.btxtech.game.services.forum.ForumThread t, com.btxtech.game.services.forum.Post p WHERE t = p.forumThread AND t.category = ?", category);
+        if (list.isEmpty()) {
+            return null;
+        }
+        return (Date) list.get(0);
+    }
+
+    @Override
+    public int getPostCount(Category category) {
+        List list = hibernateTemplate.find("SELECT COUNT(*) FROM com.btxtech.game.services.forum.ForumThread t, com.btxtech.game.services.forum.Post p WHERE t = p.forumThread AND t.category = ?", category);
+        if (list.isEmpty()) {
+            return 0;
+        }
+        return ((Long) list.get(0)).intValue();
     }
 }

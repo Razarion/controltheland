@@ -19,6 +19,7 @@ import com.btxtech.game.services.forum.SubForum;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.WebCommon;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -68,8 +69,13 @@ public class SubForumView extends Panel {
             protected void populateItem(final ListItem<Category> listItem) {
                 Category category = listItem.getModelObject();
                 listItem.add(new CategoryField("forumSubForum", category));
-                listItem.add(new Label("lastPost", simpleDateFormat.format(category.getDate().getTime())));
-                listItem.add(new Label("threads", Integer.toString(category.getThreadCount())));
+                Date lastPost = forumService.getLatestPost(category);
+                if (lastPost != null) {
+                    listItem.add(new Label("lastPost", simpleDateFormat.format(lastPost)));
+                } else {
+                    listItem.add(new Label("lastPost", "-"));
+                }
+                listItem.add(new Label("posts", Integer.toString(forumService.getPostCount(category))));
             }
         };
         add(listView);
