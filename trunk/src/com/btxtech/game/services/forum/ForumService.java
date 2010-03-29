@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.forum;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,4 +37,8 @@ public interface ForumService {
     AbstractForumEntry createForumEntry(Class<? extends AbstractForumEntry> aClass);
 
     void insertForumEntry(int parentId, AbstractForumEntry abstractForumEntry);
+
+    Date getLatestPost(Category category);
+
+    int getPostCount(Category category);
 }

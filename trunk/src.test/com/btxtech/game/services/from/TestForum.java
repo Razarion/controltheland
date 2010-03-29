@@ -17,6 +17,7 @@ import com.btxtech.game.services.forum.ForumService;
 import com.btxtech.game.services.forum.ForumThread;
 import com.btxtech.game.services.forum.Post;
 import com.btxtech.game.services.forum.SubForum;
+import java.util.Date;
 import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -91,7 +92,7 @@ public class TestForum {
                     forumThread.getPostCount();
                     forumThread.getViewCount();
                     for (Post post : forumThread.getPosts()) {
-                       post.getContent();
+                        post.getContent();
                         post.getDate();
                         post.getContent();
                     }
@@ -101,5 +102,18 @@ public class TestForum {
         }
     }
 
+    @Test
+    public void testCategoryLatestPost() {
+        List<SubForum> subForums = forumService.getSubForums();
+        for (SubForum subForum : subForums) {
+            for (Category category : forumService.getCategories(subForum)) {
+                Date date = forumService.getLatestPost(category);
+                System.out.println("Date: " + date);
+                int count = forumService.getPostCount(category);
+                System.out.println("Count: " + count);
+
+            }
+        }
+    }
 
 }
