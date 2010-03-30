@@ -13,11 +13,16 @@
 
 package com.btxtech.game.wicket.pages.forum;
 
+import com.btxtech.game.services.forum.ForumService;
 import com.btxtech.game.services.forum.Post;
+import com.btxtech.game.services.user.ArqEnum;
+import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.WebCommon;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.panel.Panel;
 import java.text.SimpleDateFormat;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
  * User: beat
@@ -25,13 +30,28 @@ import java.text.SimpleDateFormat;
  * Time: 13:15:19
  */
 public class PostField extends Panel {
+    @SpringBean
+    private ForumService forumService;
+    @SpringBean
+    private UserService userService;
 
-    public PostField(String id, Post category) {
+    public PostField(String id, final Post category) {
         super(id);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(WebCommon.DATE_TIME_FORMAT_STRING);
         add(new Label("date", simpleDateFormat.format(category.getDate())));
         add(new Label("user", category.getUser().getName()));
         add(new Label("title", category.getTitle()));
         add(new Label("content", category.getContent()).setEscapeModelStrings(false));
+        Form form = new Form("deletePostForm") {
+
+            @Override
+            protected void onSubmit() {
+                forumService.delete(category);
+            }
+        };
+        form.setVisible(userService.isAuthorized(ArqEnum.FORUM_ADMIN));
+        add(form);
+
+
     }
 }

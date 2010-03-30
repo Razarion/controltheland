@@ -116,4 +116,10 @@ public class TestForum {
         }
     }
 
+    @Test
+    public void testDelete() {
+        List<SubForum> subForums = forumService.getSubForums();
+        forumService.delete(subForums.get(0));
+    }
+
 }

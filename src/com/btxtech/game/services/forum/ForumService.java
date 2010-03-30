@@ -41,4 +41,6 @@ public interface ForumService {
     Date getLatestPost(Category category);
 
     int getPostCount(Category category);
+
+    void delete(AbstractForumEntry abstractForumEntry);    
 }

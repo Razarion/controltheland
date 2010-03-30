@@ -13,11 +13,16 @@
 
 package com.btxtech.game.wicket.pages.forum;
 
+import com.btxtech.game.services.forum.ForumService;
 import com.btxtech.game.services.forum.ForumThread;
+import com.btxtech.game.services.user.ArqEnum;
+import com.btxtech.game.services.user.UserService;
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.PageParameters;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
  * User: beat
@@ -25,6 +30,12 @@ import org.apache.wicket.PageParameters;
  * Time: 09:03:40
  */
 public class ForumThreadField extends Panel {
+    @SpringBean
+    private ForumService forumService;
+    @SpringBean
+    private UserService userService;
+
+
     public ForumThreadField(String id, final ForumThread forumThread) {
         super(id);
         Link link = new Link("link") {
@@ -38,5 +49,15 @@ public class ForumThreadField extends Panel {
         };
         link.add(new Label("text", forumThread.getTitle()));
         add(link);
+        Form form = new Form("deleteThreadForm") {
+
+            @Override
+            protected void onSubmit() {
+                forumService.delete(forumThread);
+            }
+        };
+        form.setVisible(userService.isAuthorized(ArqEnum.FORUM_ADMIN));
+        add(form);
+
     }
 }

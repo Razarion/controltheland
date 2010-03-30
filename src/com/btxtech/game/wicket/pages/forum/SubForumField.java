@@ -14,10 +14,12 @@
 package com.btxtech.game.wicket.pages.forum;
 
 import com.btxtech.game.services.forum.Category;
+import com.btxtech.game.services.forum.ForumService;
 import com.btxtech.game.services.forum.SubForum;
 import com.btxtech.game.services.user.ArqEnum;
 import com.btxtech.game.services.user.UserService;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -30,18 +32,27 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 public class SubForumField extends Panel {
     @SpringBean
     private UserService userService;
+    @SpringBean
+    private ForumService forumService;
 
     public SubForumField(String id, final SubForum subForum) {
         super(id);
         add(new Label("title", subForum.getTitle()));
         add(new Label("content", subForum.getContent()).setEscapeModelStrings(false));
-        Form form = new Form("addCategoryForm") {
-
+        Form form = new Form("categoryForm");
+        form.add(new Button("add") {
             @Override
-            protected void onSubmit() {
+            public void onSubmit() {
                 setResponsePage(new AddEntryForm(subForum, Category.class, false));
             }
-        };
+        });
+        form.add(new Button("delete") {
+            @Override
+            public void onSubmit() {
+                forumService.delete(subForum);
+            }
+        });
+
         form.setVisible(userService.isAuthorized(ArqEnum.FORUM_ADMIN));
         add(form);
     }
