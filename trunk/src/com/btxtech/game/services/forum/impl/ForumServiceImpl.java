@@ -32,6 +32,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
@@ -207,11 +208,16 @@ public class ForumServiceImpl implements ForumService {
 
     @Override
     public Date getLatestPost(Category category) {
-        List list = hibernateTemplate.find("SELECT MAX(p.date) FROM com.btxtech.game.services.forum.ForumThread t, com.btxtech.game.services.forum.Post p WHERE t = p.forumThread AND t.category = ?", category);
-        if (list.isEmpty()) {
-            return null;
+        try {
+            List list = hibernateTemplate.find("SELECT MAX(p.date) FROM com.btxtech.game.services.forum.ForumThread t, com.btxtech.game.services.forum.Post p WHERE t = p.forumThread AND t.category = ?", category);
+            if (list.isEmpty()) {
+                return null;
+            }
+            return (Date) list.get(0);
+        } catch (DataAccessException e) {
+            log.error("", e);
+            throw e;
         }
-        return (Date) list.get(0);
     }
 
     @Override
@@ -221,5 +227,15 @@ public class ForumServiceImpl implements ForumService {
             return 0;
         }
         return ((Long) list.get(0)).intValue();
+    }
+
+    @Override
+    public void delete(AbstractForumEntry abstractForumEntry) {
+        userService.checkAuthorized(ArqEnum.FORUM_ADMIN);
+        try {
+            hibernateTemplate.delete(abstractForumEntry);
+        } catch (DataAccessException e) {
+            log.error("", e);
+        }
     }
 }

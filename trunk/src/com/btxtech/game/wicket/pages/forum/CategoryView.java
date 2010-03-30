@@ -22,7 +22,6 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
@@ -46,6 +45,9 @@ public class CategoryView extends BasePage {
     private UserService userService;
 
     public CategoryView(final PageParameters pageParameters) {
+        Category category = forumService.getCategory(pageParameters.getInt(ID));
+
+        add(new Label("categoryTitle", category.getTitle()));
         ListView<ForumThread> listView = new ListView<ForumThread>("threads", new IModel<List<ForumThread>>() {
             private List<ForumThread> forumThreads;
 

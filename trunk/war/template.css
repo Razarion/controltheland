@@ -187,6 +187,12 @@ table.SubForumTitle {
     background: url(images/forum/subForumTitleBg.png);
 }
 
+tr.CategoryTitle {
+    height:40px;
+    background: url(images/forum/subForumTitleBg.png);
+}
+
+
 a.forumCategory {
     color: #000000;
 }

@@ -12,5 +12,14 @@
   -->
 
 <wicket:panel>
-    <a href="#" wicket:id="link" class="forumCategory"><span wicket:id="text"></span></a>
+    <table width="100%">
+        <tr>
+            <td width="100%"><a href="#" wicket:id="link" class="forumCategory"><span wicket:id="text"></span></a></td>
+            <td>
+                <form wicket:id="deleteThreadForm">
+                    <input type="submit" value="Delete thread">
+                </form>
+            </td>
+        </tr>
+    </table>
 </wicket:panel>
