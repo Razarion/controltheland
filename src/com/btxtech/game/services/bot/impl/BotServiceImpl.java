@@ -52,7 +52,7 @@ public class BotServiceImpl implements BotService {
 
     @Override
     public void onHumanBaseCreated(Base base) {
-        createBot(base);
+        //createBot(base);
     }
 
     @Override

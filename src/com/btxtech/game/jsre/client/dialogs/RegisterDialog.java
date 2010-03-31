@@ -15,14 +15,14 @@ package com.btxtech.game.jsre.client.dialogs;
 
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.utg.missions.HtmlConstants;
-import com.btxtech.game.jsre.client.utg.ClientUserGuidance;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
-import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
+import com.btxtech.game.jsre.client.utg.missions.HtmlConstants;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
+import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -124,11 +124,22 @@ public class RegisterDialog extends Dialog {
 
     private void closeDialog() {
         hide(true);
-        ClientUserGuidance.getInstance().setDialogOk();
     }
 
-    public static void showDialog() {
-        new RegisterDialog();
+    public static void showDialogWithDelay(int delay) {
+        if (Connection.getInstance().isRegistered()) {
+            return;
+        }
+
+        Timer timer = new Timer() {
+            @Override
+            public void run() {
+                if (!Connection.getInstance().isRegistered()) {
+                    new RegisterDialog();
+                }
+            }
+        };
+        timer.schedule(1000 * delay);
     }
 
 }

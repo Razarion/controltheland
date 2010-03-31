@@ -36,6 +36,7 @@ public class UserAction implements Serializable {
     public static final String REGISTER_DIALOG_CLOSE_REG = "REGISTER_DIALOG_CLOSE_REG";
     public static final String REGISTER_DIALOG_CLOSE_NO_REG = "REGISTER_DIALOG_CLOSE_NO_REG";
     public static final String CLOSE_WINDOW = "CLOSE_WINDOW";
+    public static final String STOP_COLLECTION = "STOP_COLLECTION";
     private Date timeStamp;
     private String type;
     private String additionalString;

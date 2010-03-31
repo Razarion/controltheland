@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client.utg;
 
 import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
+import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
@@ -51,8 +52,6 @@ public class ClientUserGuidance implements SelectionListener {
     private List<Mission> missions;
     private Timer timer;
     private boolean isRunning = false;
-    private boolean dialogOk = false;
-    private boolean startupOk = false;
 
     public static ClientUserGuidance getInstance() {
         return INSTANCE;
@@ -64,7 +63,7 @@ public class ClientUserGuidance implements SelectionListener {
     private ClientUserGuidance() {
     }
 
-    private void start() {
+    public void start() {
         try {
             setupMissions();
             startTimer();
@@ -77,20 +76,6 @@ public class ClientUserGuidance implements SelectionListener {
             isRunning = true;
         } catch (NoSuchItemTypeException e) {
             GwtCommon.handleException(e);
-        }
-    }
-
-    public void setDialogOk() {
-        dialogOk = true;
-        if (startupOk) {
-            start();
-        }
-    }
-
-    public void setStartupOk() {
-        startupOk = true;
-        if (dialogOk) {
-            start();
         }
     }
 
@@ -107,6 +92,10 @@ public class ClientUserGuidance implements SelectionListener {
                         }
                     } else {
                         currentMission.tick();
+                        if (System.currentTimeMillis() > currentMission.getLastTaskChangeTime() + Connection.getInstance().getGameInfo().getTutorialTimeout() * 1000) {
+                            stopMissions();
+                            ClientUserTracker.getInstance().onTutorialTimedOut();
+                        }
                     }
                 } else {
                     startNextMission();
@@ -202,6 +191,11 @@ public class ClientUserGuidance implements SelectionListener {
     }
 
     public void closeMissions() {
+        stopMissions();
+        ClientUserTracker.getInstance().onMissionAction(MissionAction.MISSION_USER_STOPPED, null);
+    }
+
+    private void stopMissions() {
         if (timer != null) {
             timer.cancel();
             timer = null;
@@ -212,6 +206,5 @@ public class ClientUserGuidance implements SelectionListener {
             currentMission = null;
         }
         isRunning = false;
-        ClientUserTracker.getInstance().onMissionAction(MissionAction.MISSION_USER_STOPPED, null);
     }
 }

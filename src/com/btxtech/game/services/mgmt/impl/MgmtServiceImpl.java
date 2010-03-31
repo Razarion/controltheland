@@ -17,11 +17,13 @@ import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeExce
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.ServerServices;
+import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.BackupSummary;
 import com.btxtech.game.services.mgmt.DbViewDTO;
 import com.btxtech.game.services.mgmt.MgmtService;
-import com.btxtech.game.services.energy.ServerEnergyService;
+import com.btxtech.game.services.mgmt.StartupData;
+import com.btxtech.game.wicket.pages.mgmt.Startup;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -34,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -82,6 +85,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     private static Log log = LogFactory.getLog(MgmtServiceImpl.class);
     private HibernateTemplate hibernateTemplate;
     private Boolean testMode;
+    private StartupData startupData;
 
     @Override
     public Date getStartTime() {
@@ -281,6 +285,42 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         } catch (Throwable t) {
             log.error("", t);
         }
+    }
+
+    @PostConstruct
+    public void startup() {
+        try {
+            getStartupData();
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    public StartupData getStartupData() {
+        if (startupData == null) {
+            List<StartupData> startups = hibernateTemplate.loadAll(StartupData.class);
+            if (startups.isEmpty()) {
+                log.info("Startup data does not exist. Create default.");
+                startupData = new StartupData();
+                startupData.setRegisterDialogDelay(2 * 60);
+                startupData.setStartMoney(1000);
+                startupData.setTutorialTimeout(3 * 60);
+                startupData.setUserActionCollectionTime(5 * 60);
+                saveStartupData(startupData);
+            } else if (startups.size() > 1) {
+                log.error("More than one startup data detected.");
+            } else {
+                startupData = startups.get(0);
+            }
+        }
+        return startupData;
+    }
+
+    @Override
+    public void saveStartupData(StartupData startupData) {
+        this.startupData = startupData;
+        hibernateTemplate.saveOrUpdate(startupData);
     }
 
     public boolean isTestMode() {

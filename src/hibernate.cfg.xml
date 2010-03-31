@@ -33,6 +33,7 @@
       <mapping class="com.btxtech.game.services.base.Base"/>
       <mapping class="com.btxtech.game.services.base.BaseColor"/>
       <mapping class="com.btxtech.game.services.mgmt.impl.SavedQuery"/>
+      <mapping class="com.btxtech.game.services.mgmt.StartupData"/>
       <mapping class="com.btxtech.game.services.item.itemType.DbResourceItemType"/>
       <mapping class="com.btxtech.game.services.item.itemType.DbBaseItemType"/>
       <mapping class="com.btxtech.game.services.item.itemType.DbBuilderType"/>

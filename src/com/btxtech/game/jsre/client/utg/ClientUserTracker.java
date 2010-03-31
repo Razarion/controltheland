@@ -42,6 +42,10 @@ public class ClientUserTracker {
     private static final ClientUserTracker INSTANCE = new ClientUserTracker();
     private ArrayList<UserAction> userActions = new ArrayList<UserAction>();
     private ArrayList<MissionAction> missionActions = new ArrayList<MissionAction>();
+    private boolean stopCollection = false;
+    private long timerStarted;
+    private int collectionTime;
+    private Timer timer;
 
     public static ClientUserTracker getInstance() {
         return INSTANCE;
@@ -57,13 +61,21 @@ public class ClientUserTracker {
                 closeWindow();
             }
         });
-        Timer timer = new Timer() {
+        timer = new Timer() {
             @Override
             public void run() {
-                sendUserActionsToServer();
+                if (System.currentTimeMillis() > timerStarted + collectionTime) {
+                    timer.cancel();
+                    sendUserAction(UserAction.STOP_COLLECTION, "");
+                    sendUserActionsToServer();
+                    stopCollection = true;
+                } else {
+                    sendUserActionsToServer();
+                }
             }
         };
         timer.scheduleRepeating(SEND_TIMEOUT);
+        timerStarted = System.currentTimeMillis();
     }
 
     public void sandGameStartupState(GameStartupState state) {
@@ -83,28 +95,23 @@ public class ClientUserTracker {
     }
 
     public void onMouseDownTerrain(int absoluteX, int absoluteY) {
-        UserAction userAction = new UserAction(UserAction.TERRAIN_MOUSE_DOWN, absoluteX + ":" + absoluteY);
-        userActions.add(userAction);
+        sendUserAction(UserAction.TERRAIN_MOUSE_DOWN, absoluteX + ":" + absoluteY);
     }
 
     public void onMouseUpTerrain(int absoluteX, int absoluteY) {
-        UserAction userAction = new UserAction(UserAction.TERRAIN_MOUSE_UP, absoluteX + ":" + absoluteY);
-        userActions.add(userAction);
+        sendUserAction(UserAction.TERRAIN_MOUSE_UP, absoluteX + ":" + absoluteY);
     }
 
     public void clickOwnItem(SyncBaseItem syncBaseItem) {
-        UserAction userAction = new UserAction(UserAction.OWN_ITEM_CLICKED, syncBaseItem.getBaseItemType().getName() + ":" + syncBaseItem.getId());
-        userActions.add(userAction);
+        sendUserAction(UserAction.OWN_ITEM_CLICKED, syncBaseItem.getBaseItemType().getName() + ":" + syncBaseItem.getId());
     }
 
     public void clickEnemyItem(SyncBaseItem syncBaseItem) {
-        UserAction userAction = new UserAction(UserAction.ENEMY_ITEM_CLICKED, syncBaseItem.getBaseItemType().getName() + ":" + syncBaseItem.getId());
-        userActions.add(userAction);
+        sendUserAction(UserAction.ENEMY_ITEM_CLICKED, syncBaseItem.getBaseItemType().getName() + ":" + syncBaseItem.getId());
     }
 
     public void clickResourceItem(SyncResourceItem syncResourceItem) {
-        UserAction userAction = new UserAction(UserAction.RESOURCE_CLICKED, syncResourceItem.getId().toString());
-        userActions.add(userAction);
+        sendUserAction(UserAction.RESOURCE_CLICKED, syncResourceItem.getId().toString());
     }
 
     public void onOwnItemSelectionChanged(Group selection) {
@@ -113,85 +120,94 @@ public class ClientUserTracker {
             buffer.append(clientSyncBaseItemView.getSyncItem().getId().toString());
             buffer.append(";");
         }
-        UserAction userAction = new UserAction(UserAction.OWN_ITEM_SELECTION_CHANGE, buffer.toString());
-        userActions.add(userAction);
+        sendUserAction(UserAction.OWN_ITEM_SELECTION_CHANGE, buffer.toString());
     }
 
     public void onTargetSelectionItemChanged(ClientSyncItemView selection) {
-        UserAction userAction = new UserAction(UserAction.TRAGET_SELECTION_CHANGED, selection.getSyncItem().getId().toString());
-        userActions.add(userAction);
+        sendUserAction(UserAction.TRAGET_SELECTION_CHANGED, selection.getSyncItem().getId().toString());
     }
 
     public void clickSpeechBubble() {
-        UserAction userAction = new UserAction(UserAction.SPEECH_BUBBLE_CLICKED, null);
-        userActions.add(userAction);
+        sendUserAction(UserAction.SPEECH_BUBBLE_CLICKED, null);
+    }
+
+    public void onScrollHome() {
+        sendUserAction(UserAction.SCROLL_HOME_BUTTON, null);
+    }
+
+    public void scroll(int left, int top, int width, int height, int deltaLeft, int deltaTop) {
+        if (userActions.isEmpty()) {
+            sendUserAction(UserAction.SCROLL, "Origin " + left + ":" + top + " width:" + width + " height:" + height + " deltaLeft:" + deltaLeft + " deltaTop:" + deltaTop);
+        } else {
+            UserAction prevAction = userActions.get(userActions.size() - 1);
+            if (prevAction.getType().equals(UserAction.SCROLL)) {
+                prevAction.repeat("Origin " + left + ":" + top + " width:" + width + " height:" + height + " deltaLeft:" + deltaLeft + " deltaTop:" + deltaTop);
+            } else {
+                sendUserAction(UserAction.SCROLL, "Origin " + left + ":" + top + " width:" + width + " height:" + height + " deltaLeft:" + deltaLeft + " deltaTop:" + deltaTop);
+            }
+        }
+    }
+
+    public void closeWindow() {
+        sendUserAction(UserAction.CLOSE_WINDOW, null);
+        sendUserActionsToServer();
+    }
+
+
+    public void onRegisterDialogCloseReg() {
+        sendUserAction(UserAction.REGISTER_DIALOG_CLOSE_REG, null);
+    }
+
+    public void onRegisterDialogCloseNoReg() {
+        sendUserAction(UserAction.REGISTER_DIALOG_CLOSE_NO_REG, null);
+    }
+
+    public void onRegisterDialogOpen() {
+        sendUserAction(UserAction.REGISTER_DIALOG_OPEN, null);
     }
 
     public void onMissionAction(String action, Mission mission) {
         if (mission != null) {
-            missionActions.add(new MissionAction(action, mission.getName(), null));
+            sendMissionAction(action, mission.getName(), null);
         } else {
-            missionActions.add(new MissionAction(action, "", null));
+            sendMissionAction(action, "", null);
         }
         if (action.equals(MissionAction.MISSION_COMPLETED) || action.equals(MissionAction.MISSION_USER_STOPPED)) {
             sendUserActionsToServer();
         }
     }
 
-    @Deprecated
-    public void onMissionTask(Mission mission, Enum theEnum) {
-        onMissionTask(mission, theEnum.name());
-    }
-
     public void onMissionTask(Mission mission, String taskName) {
-        missionActions.add(new MissionAction(MissionAction.TASK_START, mission.getName(), taskName));
+        sendMissionAction(MissionAction.TASK_START, mission.getName(), taskName);
     }
 
     public void onSkipMissionTask(Mission mission, String taskName) {
-        missionActions.add(new MissionAction(MissionAction.TASK_SKIPPED, mission.getName(), taskName));
+        sendMissionAction(MissionAction.TASK_SKIPPED, mission.getName(), taskName);
     }
 
-    public void onScrollHome() {
-        UserAction userAction = new UserAction(UserAction.SCROLL_HOME_BUTTON, null);
-        userActions.add(userAction);
+    public void onTutorialTimedOut() {
+        sendMissionAction(MissionAction.MISSION_TIMED_OUT, "", "");
     }
 
-    public void scroll(int left, int top, int width, int height, int deltaLeft, int deltaTop) {
-        if (userActions.isEmpty()) {
-            UserAction userAction = new UserAction(UserAction.SCROLL, "Origin " + left + ":" + top + " width:" + width + " height:" + height + " deltaLeft:" + deltaLeft + " deltaTop:" + deltaTop);
-            userActions.add(userAction);
-        } else {
-            UserAction prevAction = userActions.get(userActions.size() - 1);
-            if (prevAction.getType().equals(UserAction.SCROLL)) {
-                prevAction.repeat("Origin " + left + ":" + top + " width:" + width + " height:" + height + " deltaLeft:" + deltaLeft + " deltaTop:" + deltaTop);
-            } else {
-                UserAction userAction = new UserAction(UserAction.SCROLL, "Origin " + left + ":" + top + " width:" + width + " height:" + height + " deltaLeft:" + deltaLeft + " deltaTop:" + deltaTop);
-                userActions.add(userAction);
-            }
+    public void sendUserAction(String type, String details) {
+        if (stopCollection) {
+            return;
         }
-    }
-
-
-    public void onRegisterDialogCloseReg() {
-        userActions.add(new UserAction(UserAction.REGISTER_DIALOG_CLOSE_REG, null));
-    }
-
-    public void onRegisterDialogCloseNoReg() {
-        userActions.add(new UserAction(UserAction.REGISTER_DIALOG_CLOSE_NO_REG, null));
-    }
-
-    public void onRegisterDialogOpen() {
-        userActions.add(new UserAction(UserAction.REGISTER_DIALOG_OPEN, null));
-    }
-
-    public void closeWindow() {
-        UserAction userAction = new UserAction(UserAction.CLOSE_WINDOW, null);
+        UserAction userAction = new UserAction(type, details);
         userActions.add(userAction);
-        sendUserActionsToServer();
+    }
+
+    private void sendMissionAction(String action, String mission, String task) {
+        if (stopCollection) {
+            return;
+        }
+
+        MissionAction missionAction = new MissionAction(action, mission, task);
+        missionActions.add(missionAction);
     }
 
     private void sendUserActionsToServer() {
-        if (Connection.isConnected() && (!userActions.isEmpty() || !missionActions.isEmpty())) {
+        if (Connection.isConnected() && !stopCollection && (!userActions.isEmpty() || !missionActions.isEmpty())) {
             Connection.getMovableServiceAsync().sendUserActions(userActions, missionActions, new AsyncCallback<Void>() {
                 @Override
                 public void onFailure(Throwable throwable) {
@@ -203,9 +219,12 @@ public class ClientUserTracker {
                     // Ignore
                 }
             });
-            userActions = new ArrayList<UserAction>();
-            missionActions = new ArrayList<MissionAction>();
         }
+        userActions = new ArrayList<UserAction>();
+        missionActions = new ArrayList<MissionAction>();
+    }
 
+    public void setCollectionTime(int collectionTime) {
+        this.collectionTime = collectionTime * 1000;
     }
 }
