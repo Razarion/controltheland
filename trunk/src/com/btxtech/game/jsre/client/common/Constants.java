@@ -52,7 +52,6 @@ public class Constants {
     public static final int Z_INDEX_HIDDEN = 1;
 
     // Financial
-    public static final int START_MONEY = 500;
     public static final int MONEY_STACK_COUNT = 8;
 
     // Distances

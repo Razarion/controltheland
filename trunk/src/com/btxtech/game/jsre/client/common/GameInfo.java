@@ -37,6 +37,9 @@ public class GameInfo implements Serializable{
     private Collection<TerrainImage> terrainImages;
     private boolean registered;
     private OnlineBaseUpdate onlineBaseUpdate;
+    private int tutorialTimeout;
+    private int registerDialogDelay;
+    private int userActionCollectionTime;
 
     public SimpleBase getBase() {
         return base;
@@ -124,5 +127,29 @@ public class GameInfo implements Serializable{
 
     public void setOnlineBaseUpdate(OnlineBaseUpdate onlineBaseUpdate) {
         this.onlineBaseUpdate = onlineBaseUpdate;
+    }
+
+    public int getTutorialTimeout() {
+        return tutorialTimeout;
+    }
+
+    public void setTutorialTimeout(int tutorialTimeout) {
+        this.tutorialTimeout = tutorialTimeout;
+    }
+
+    public int getRegisterDialogDelay() {
+        return registerDialogDelay;
+    }
+
+    public void setRegisterDialogDelay(int registerDialogDelay) {
+        this.registerDialogDelay = registerDialogDelay;
+    }
+
+    public int getUserActionCollectionTime() {
+        return userActionCollectionTime;
+    }
+
+    public void setUserActionCollectionTime(int userActionCollectionTime) {
+        this.userActionCollectionTime = userActionCollectionTime;
     }
 }

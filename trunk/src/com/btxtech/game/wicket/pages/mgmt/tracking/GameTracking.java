@@ -199,7 +199,7 @@ public class GameTracking extends Panel {
     private void populateMission(ListItem<UserActionCommandMissions> listItem, DbMissionAction dbMissionAction) {
         if (dbMissionAction.getAction().equals(MissionAction.MISSION_COMPLETED) || dbMissionAction.getAction().equals(MissionAction.MISSION_SKIPPED)) {
             listItem.add(new AttributeModifier("class", true, new Model<String>("missionFinished")));
-        } else if (dbMissionAction.getAction().equals(MissionAction.MISSION_USER_STOPPED)) {
+        } else if (dbMissionAction.getAction().equals(MissionAction.MISSION_USER_STOPPED) || dbMissionAction.getAction().equals(MissionAction.MISSION_TIMED_OUT)) {
             listItem.add(new AttributeModifier("class", true, new Model<String>("missionStopped")));
         } else {
             listItem.add(new AttributeModifier("class", true, new Model<String>("mission")));

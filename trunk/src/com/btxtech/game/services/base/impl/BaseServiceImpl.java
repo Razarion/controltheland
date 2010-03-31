@@ -41,6 +41,7 @@ import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.itemTypeAccess.ServerItemTypeAccessService;
 import com.btxtech.game.services.itemTypeAccess.impl.UserItemTypeAccess;
+import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
@@ -89,6 +90,8 @@ public class BaseServiceImpl implements BaseService {
     private UserTrackingService userTrackingService;
     @Autowired
     private BotService botService;
+    @Autowired
+    private MgmtService mgmtService;
     private final HashMap<String, Base> bases = new HashMap<String, Base>();
     private HashSet<String> colorsUsed = new HashSet<String>();
     private HibernateTemplate hibernateTemplate;
@@ -143,7 +146,7 @@ public class BaseServiceImpl implements BaseService {
 
             base = new Base(name, baseColor, userService.getLoggedinUser());
             log.info("Base created: " + base);
-            base.setAccountBalance(Constants.START_MONEY);
+            base.setAccountBalance(mgmtService.getStartupData().getStartMoney());
             bases.put(name, base);
             colorsUsed.add(baseColor.getHtmlColor());
             if (userService.getLoggedinUser() != null) {
@@ -171,7 +174,7 @@ public class BaseServiceImpl implements BaseService {
             BaseColor baseColor = getFreeColors(1).get(0);
             base = new Base(name, baseColor, null);
             base.setBot(true);
-            base.setAccountBalance(Constants.START_MONEY);
+            base.setAccountBalance(mgmtService.getStartupData().getStartMoney());
             bases.put(name, base);
             colorsUsed.add(baseColor.getHtmlColor());
         }

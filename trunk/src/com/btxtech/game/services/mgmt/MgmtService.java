@@ -13,10 +13,10 @@
 
 package com.btxtech.game.services.mgmt;
 
+import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
-import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 
 /**
  * User: beat
@@ -43,5 +43,9 @@ public interface MgmtService {
     void restore(final Date date) throws NoSuchItemTypeException;
 
     boolean isTestMode();
+
+    StartupData getStartupData();
+
+    void saveStartupData(StartupData startupData);
 
 }

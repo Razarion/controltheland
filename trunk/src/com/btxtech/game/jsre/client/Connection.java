@@ -57,6 +57,7 @@ public class Connection implements AsyncCallback<Void> {
     public static final int STATISTIC_DELAY = 10000;
     public static final Connection INSTANCE = new Connection();
     private boolean isRegistered;
+    private GameInfo gameInfo;
 
     private MovableServiceAsync movableServiceAsync = GWT.create(MovableService.class);
     private Timer timer;
@@ -95,8 +96,9 @@ public class Connection implements AsyncCallback<Void> {
         });
     }
 
-    private void setupGameStructure(GameInfo gameInfo) {
+    private void setupGameStructure(final GameInfo gameInfo) {
         isRegistered = gameInfo.isRegistered();
+        this.gameInfo = gameInfo;
         ClientBase.getInstance().setBase(gameInfo.getBase());
         ClientBase.getInstance().setAccountBalance(gameInfo.getAccountBalance());
         InfoPanel.getInstance().setGameInfo(gameInfo);
@@ -106,13 +108,7 @@ public class Connection implements AsyncCallback<Void> {
         TerrainView.getInstance().setupTerrain(gameInfo.getTerrainSettings(),
                 gameInfo.getTerrainImagePositions(),
                 gameInfo.getTerrainImages());
-        if (!PlayerSimulation.isActive()) {
-            if (!gameInfo.isRegistered()) {
-                RegisterDialog.showDialog();
-            } else {
-                ClientUserGuidance.getInstance().setDialogOk();
-            }
-        }
+        ClientUserTracker.getInstance().setCollectionTime(gameInfo.getUserActionCollectionTime());
 
         movableServiceAsync.getItemTypes(new AsyncCallback<Collection<ItemType>>() {
             @Override
@@ -143,10 +139,9 @@ public class Connection implements AsyncCallback<Void> {
                         }
                         TerrainView.getInstance().moveToHome();
                         ClientUserTracker.getInstance().sandGameStartupState(GameStartupState.CLIENT_RUNNING);
-                        if (!PlayerSimulation.isActive()) {
-                            ClientUserGuidance.getInstance().setStartupOk();
-                        }
+                        ClientUserGuidance.getInstance().start();
                         PlayerSimulation.getInstance().start();
+                        RegisterDialog.showDialogWithDelay(gameInfo.getRegisterDialogDelay());
                         timer.schedule(MIN_DELAY_BETWEEN_TICKS);
                     }
                 });
@@ -301,5 +296,9 @@ public class Connection implements AsyncCallback<Void> {
 
     public void setRegistered(boolean registered) {
         isRegistered = registered;
+    }
+
+    public GameInfo getGameInfo() {
+        return gameInfo;
     }
 }
