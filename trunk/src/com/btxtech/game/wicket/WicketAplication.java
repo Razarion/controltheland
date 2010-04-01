@@ -15,8 +15,16 @@ package com.btxtech.game.wicket;
 
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.wicket.pages.home.Home;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.Application;
+import org.apache.wicket.Page;
+import org.apache.wicket.Request;
+import org.apache.wicket.RequestCycle;
+import org.apache.wicket.Response;
 import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.protocol.http.WebRequest;
+import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,6 +37,7 @@ public class WicketAplication extends WebApplication {
     @Autowired
     private MgmtService mgmtService;
     private String configurationType;
+    private Log log = LogFactory.getLog(WicketAplication.class);
 
     @Override
     protected void init() {
@@ -50,4 +59,23 @@ public class WicketAplication extends WebApplication {
         }
         return configurationType;
     }
+
+    public final RequestCycle newRequestCycle(final Request request, final Response response) {
+        return new MyRequestCycle(this, (WebRequest) request, response);
+    }
+
+    public final class MyRequestCycle extends WebRequestCycle {
+
+        public MyRequestCycle(final WebApplication application, final WebRequest request, final Response response) {
+            super(application, request, response);
+        }
+
+        @Override
+        public final Page onRuntimeException(final Page cause, final RuntimeException e) {
+            log.error("", e);
+            return new Home();
+        }
+    }
+
 }
+
