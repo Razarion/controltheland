@@ -116,7 +116,7 @@ public class MessengerServiceImpl implements MessengerService {
             strUser = strUser.trim();
             User user = userService.getUser(strUser);
             if (user == null) {
-                throw new InvalidFieldException("Unknwon user: " + strUser);
+                throw new InvalidFieldException("Unknown user: " + strUser);
             }
             users.add(user);
         }
