@@ -39,7 +39,7 @@ public class MenuPanel extends TopMapPanel {
         flexTable = new FlexTable();
         flexTable.setCellSpacing(6);
 
-        addRow("Markt", "box", "/?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.market.MarketPage");
+        addRow("Market", "box", "/?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.market.MarketPage");
         if (Connection.getInstance().isRegistered()) {
             addRow("User Page", "user", "/?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.user.UserPage");
         }
