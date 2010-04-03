@@ -73,11 +73,10 @@ public class CategoryView extends BasePage {
             @Override
             protected void populateItem(final ListItem<ForumThread> listItem) {
                 listItem.add(new ForumThreadField("thread", listItem.getModelObject()));
-                if (listItem.getModelObject().getPosts().isEmpty()) {
+                if (listItem.getModelObject().getLastPost() == null) {
                     listItem.add(new Label("lastPost", "-"));
                 } else {
-                    Post post = listItem.getModelObject().getPosts().get(listItem.getModelObject().getPostCount() - 1);
-                    listItem.add(new Label("lastPost", simpleDateFormat.format(post.getDate())));
+                    listItem.add(new Label("lastPost", simpleDateFormat.format(listItem.getModelObject().getLastPost())));
                 }
                 listItem.add(new Label("posts", Integer.toString(listItem.getModelObject().getPostCount())));
             }

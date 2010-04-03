@@ -25,6 +25,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 /**
  * User: beat
@@ -46,6 +47,8 @@ abstract public class AbstractForumEntry implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private User user;
+    @Transient
+    private Date lastPost;
 
     public Date getDate() {
         return date;
@@ -91,6 +94,14 @@ abstract public class AbstractForumEntry implements Serializable {
         return id;
     }
 
+    public Date getLastPost() {
+        return lastPost;
+    }
+
+    public void setLastPost(Date lastPost) {
+        this.lastPost = lastPost;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -106,4 +117,5 @@ abstract public class AbstractForumEntry implements Serializable {
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
+
 }

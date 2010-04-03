@@ -38,8 +38,6 @@ public interface ForumService {
 
     void insertForumEntry(int parentId, AbstractForumEntry abstractForumEntry);
 
-    Date getLatestPost(Category category);
-
     int getPostCount(Category category);
 
     void delete(AbstractForumEntry abstractForumEntry);    

@@ -14,13 +14,14 @@
 package com.btxtech.game.services.forum;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  * User: beat
@@ -67,5 +68,14 @@ public class ForumThread extends AbstractForumEntry {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    @Override
+    public Date getLastPost() {
+        if (posts.isEmpty()) {
+            return null;
+        } else {
+            return getPosts().get(getPostCount() - 1).getDate();
+        }
     }
 }
