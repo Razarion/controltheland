@@ -61,7 +61,11 @@ public class WicketAplication extends WebApplication {
     }
 
     public final RequestCycle newRequestCycle(final Request request, final Response response) {
-        return new MyRequestCycle(this, (WebRequest) request, response);
+        if (mgmtService.isTestMode()) {
+            return super.newRequestCycle(request, response);
+        } else {
+            return new MyRequestCycle(this, (WebRequest) request, response);
+        }
     }
 
     public final class MyRequestCycle extends WebRequestCycle {

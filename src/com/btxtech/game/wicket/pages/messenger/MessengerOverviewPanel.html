@@ -12,14 +12,9 @@
   -->
 
 <wicket:extend>
-    <div>
-        <form wicket:id="enterForm">
-            <input type="submit" value="Enter Game" style="font-size:18pt; cursor:pointer">
-        </form>
-    </div>
+    <span wicket:id="text" >You have 7 unread messages.</span>
 
-    <div wicket:id="messenger"/>
-    <div wicket:id="userInfo"/>
-    <div wicket:id="userBaseInfo"/>
-    <div wicket:id="historyPanel"/>
+    <form wicket:id="form">
+        <input type="submit" value="Open mailbox"/>
+    </form>
 </wicket:extend>

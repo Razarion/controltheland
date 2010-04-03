@@ -81,6 +81,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getLoggedinUserOrException() {
+        User user = getLoggedinUser();
+        if(user == null) {
+           throw new RuntimeException("User is not logged in");
+        }
+        return user;
+    }
+
+    @Override
     public void logout() {
         if (session.getUser() == null) {
             throw new IllegalStateException("The user is not logged in");
