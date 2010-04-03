@@ -74,7 +74,7 @@ public class AddEntryForm extends BasePage {
                     setResponsePage(ForumThreadView.class, pageParameters);
                     return;
                 }
-                throw new IllegalArgumentException("Unknwon: " + abstractForumEntry);
+                throw new IllegalArgumentException("Unknown: " + abstractForumEntry);
             }
         });
         add(form);

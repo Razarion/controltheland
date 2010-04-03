@@ -26,6 +26,8 @@ public interface UserService {
 
     User getLoggedinUser();
 
+    User getLoggedinUserOrException();
+
     void logout();
 
     User getUser(String name);

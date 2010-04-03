@@ -14,6 +14,7 @@
 package com.btxtech.game.wicket.pages.user;
 
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.wicket.pages.home.Home;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.Link;
@@ -36,6 +37,7 @@ public class LoggedinBox extends Panel {
             @Override
             protected void onSubmit() {
                 userService.logout();
+                setResponsePage(Home.class);
             }
         };
         add(form);

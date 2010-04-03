@@ -14,54 +14,55 @@
   -->
 
 <!DOCTYPE hibernate-configuration PUBLIC
- "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
- "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 
 <hibernate-configuration>
-  <session-factory>
-      <mapping class="com.btxtech.game.services.history.HistoryElement"/>
-      <mapping class="com.btxtech.game.services.connection.ConnectionStatistics"/>
-      <mapping class="com.btxtech.game.services.connection.ClientLogEntry"/>
-      <mapping class="com.btxtech.game.services.terrain.DbTerrainImagePosition"/>
-      <mapping class="com.btxtech.game.services.terrain.DbTerrainImage"/>
-      <mapping class="com.btxtech.game.services.terrain.DbTerrainSetting"/>
-      <mapping class="com.btxtech.game.services.user.User"/>
-      <mapping class="com.btxtech.game.services.user.Arq"/>
-      <mapping class="com.btxtech.game.services.mgmt.impl.BackupEntry"/>
-      <mapping class="com.btxtech.game.services.mgmt.impl.GenericBaseItem"/>
-      <mapping class="com.btxtech.game.services.mgmt.impl.GenericResourceItem"/>
-      <mapping class="com.btxtech.game.services.base.Base"/>
-      <mapping class="com.btxtech.game.services.base.BaseColor"/>
-      <mapping class="com.btxtech.game.services.mgmt.impl.SavedQuery"/>
-      <mapping class="com.btxtech.game.services.mgmt.StartupData"/>
-      <mapping class="com.btxtech.game.services.item.itemType.DbResourceItemType"/>
-      <mapping class="com.btxtech.game.services.item.itemType.DbBaseItemType"/>
-      <mapping class="com.btxtech.game.services.item.itemType.DbBuilderType"/>
-      <mapping class="com.btxtech.game.services.item.itemType.DbFactoryType"/>
-      <mapping class="com.btxtech.game.services.item.itemType.DbHarvesterType"/>
-      <mapping class="com.btxtech.game.services.item.itemType.DbMovableType"/>
-      <mapping class="com.btxtech.game.services.item.itemType.DbTurnableType"/>
-      <mapping class="com.btxtech.game.services.item.itemType.DbWeaponType"/>
-      <mapping class="com.btxtech.game.services.item.itemType.DbItemTypeImage"/>
-      <mapping class="com.btxtech.game.services.item.itemType.DbConsumerType"/>
-      <mapping class="com.btxtech.game.services.item.itemType.DbGeneratorType"/>
-      <mapping class="com.btxtech.game.services.item.itemType.DbSpecialType"/>
-      <mapping class="com.btxtech.game.services.item.itemType.DbItemTypeData"/>
-      <mapping class="com.btxtech.game.services.itemTypeAccess.ItemTypeAccessEntry"/>
-      <mapping class="com.btxtech.game.services.itemTypeAccess.impl.UserItemTypeAccess"/>
-      <mapping class="com.btxtech.game.services.itemTypeAccess.XpSettings"/>
-      <mapping class="com.btxtech.game.services.utg.PageAccess"/>
-      <mapping class="com.btxtech.game.services.utg.BrowserDetails"/>
-      <mapping class="com.btxtech.game.services.utg.GameStartup"/>
-      <mapping class="com.btxtech.game.services.utg.DbUserAction"/>
-      <mapping class="com.btxtech.game.services.utg.DbMissionAction"/>
-      <mapping class="com.btxtech.game.services.utg.UserCommand"/>
-      <mapping class="com.btxtech.game.services.utg.UserHistory"/>
-      <mapping class="com.btxtech.game.services.utg.DbUserMessage"/>
-      <mapping class="com.btxtech.game.services.forum.AbstractForumEntry"/>
-      <mapping class="com.btxtech.game.services.forum.SubForum"/>
-      <mapping class="com.btxtech.game.services.forum.Category"/>
-      <mapping class="com.btxtech.game.services.forum.ForumThread"/>
-      <mapping class="com.btxtech.game.services.forum.Post"/>
-  </session-factory>
+    <session-factory>
+        <mapping class="com.btxtech.game.services.history.HistoryElement"/>
+        <mapping class="com.btxtech.game.services.connection.ConnectionStatistics"/>
+        <mapping class="com.btxtech.game.services.connection.ClientLogEntry"/>
+        <mapping class="com.btxtech.game.services.terrain.DbTerrainImagePosition"/>
+        <mapping class="com.btxtech.game.services.terrain.DbTerrainImage"/>
+        <mapping class="com.btxtech.game.services.terrain.DbTerrainSetting"/>
+        <mapping class="com.btxtech.game.services.user.User"/>
+        <mapping class="com.btxtech.game.services.user.Arq"/>
+        <mapping class="com.btxtech.game.services.mgmt.impl.BackupEntry"/>
+        <mapping class="com.btxtech.game.services.mgmt.impl.GenericBaseItem"/>
+        <mapping class="com.btxtech.game.services.mgmt.impl.GenericResourceItem"/>
+        <mapping class="com.btxtech.game.services.base.Base"/>
+        <mapping class="com.btxtech.game.services.base.BaseColor"/>
+        <mapping class="com.btxtech.game.services.mgmt.impl.SavedQuery"/>
+        <mapping class="com.btxtech.game.services.mgmt.StartupData"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbResourceItemType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbBaseItemType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbBuilderType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbFactoryType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbHarvesterType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbMovableType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbTurnableType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbWeaponType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbItemTypeImage"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbConsumerType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbGeneratorType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbSpecialType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbItemTypeData"/>
+        <mapping class="com.btxtech.game.services.itemTypeAccess.ItemTypeAccessEntry"/>
+        <mapping class="com.btxtech.game.services.itemTypeAccess.impl.UserItemTypeAccess"/>
+        <mapping class="com.btxtech.game.services.itemTypeAccess.XpSettings"/>
+        <mapping class="com.btxtech.game.services.utg.PageAccess"/>
+        <mapping class="com.btxtech.game.services.utg.BrowserDetails"/>
+        <mapping class="com.btxtech.game.services.utg.GameStartup"/>
+        <mapping class="com.btxtech.game.services.utg.DbUserAction"/>
+        <mapping class="com.btxtech.game.services.utg.DbMissionAction"/>
+        <mapping class="com.btxtech.game.services.utg.UserCommand"/>
+        <mapping class="com.btxtech.game.services.utg.UserHistory"/>
+        <mapping class="com.btxtech.game.services.utg.DbUserMessage"/>
+        <mapping class="com.btxtech.game.services.forum.AbstractForumEntry"/>
+        <mapping class="com.btxtech.game.services.forum.SubForum"/>
+        <mapping class="com.btxtech.game.services.forum.Category"/>
+        <mapping class="com.btxtech.game.services.forum.ForumThread"/>
+        <mapping class="com.btxtech.game.services.forum.Post"/>
+        <mapping class="com.btxtech.game.services.messenger.Mail"/>
+    </session-factory>
 </hibernate-configuration>
