@@ -55,7 +55,7 @@ public class MenuPanel extends TopMapPanel {
             addRow("Surrender Base", "cross", new Runnable() {
                 @Override
                 public void run() {
-                    YesNoDialog.show("Surrender", "Do you really want to surrender and loser your base?", new Runnable() {
+                    YesNoDialog.show("Surrender", "Do you really want to surrender and lose your base?", new Runnable() {
 
                         @Override
                         public void run() {
