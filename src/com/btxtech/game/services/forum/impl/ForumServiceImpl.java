@@ -22,6 +22,7 @@ import com.btxtech.game.services.forum.SubForum;
 import com.btxtech.game.services.user.ArqEnum;
 import com.btxtech.game.services.user.UserService;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import org.apache.commons.logging.Log;
@@ -73,7 +74,7 @@ public class ForumServiceImpl implements ForumService {
 
     @Override
     public List<Category> getCategories(final SubForum subForumId) {
-        return hibernateTemplate.executeFind(new HibernateCallback() {
+        List<Category> categories = hibernateTemplate.executeFind(new HibernateCallback() {
             @Override
             public Object doInHibernate(Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(Category.class);
@@ -86,6 +87,11 @@ public class ForumServiceImpl implements ForumService {
                 return categories;
             }
         });
+        for (Category category : categories) {
+            category.setLastPost(getLatestPost(category));
+        }
+        Collections.sort(categories, new LastPostComparator());
+        return categories;
     }
 
     @Override
@@ -95,7 +101,7 @@ public class ForumServiceImpl implements ForumService {
 
     @Override
     public List<ForumThread> getForumThreads(final Category category) {
-        return hibernateTemplate.executeFind(new HibernateCallback() {
+        List<ForumThread> forumThreads = hibernateTemplate.executeFind(new HibernateCallback() {
             @Override
             public Object doInHibernate(Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(ForumThread.class);
@@ -108,6 +114,8 @@ public class ForumServiceImpl implements ForumService {
                 return forumThreads;
             }
         });
+        Collections.sort(forumThreads, new LastPostComparator());
+        return forumThreads;
     }
 
     @Override
@@ -206,8 +214,7 @@ public class ForumServiceImpl implements ForumService {
         }
     }
 
-    @Override
-    public Date getLatestPost(Category category) {
+    private Date getLatestPost(Category category) {
         try {
             List list = hibernateTemplate.find("SELECT MAX(p.date) FROM com.btxtech.game.services.forum.ForumThread t, com.btxtech.game.services.forum.Post p WHERE t = p.forumThread AND t.category = ?", category);
             if (list.isEmpty()) {

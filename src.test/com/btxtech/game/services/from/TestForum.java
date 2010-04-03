@@ -103,20 +103,6 @@ public class TestForum {
     }
 
     @Test
-    public void testCategoryLatestPost() {
-        List<SubForum> subForums = forumService.getSubForums();
-        for (SubForum subForum : subForums) {
-            for (Category category : forumService.getCategories(subForum)) {
-                Date date = forumService.getLatestPost(category);
-                System.out.println("Date: " + date);
-                int count = forumService.getPostCount(category);
-                System.out.println("Count: " + count);
-
-            }
-        }
-    }
-
-    @Test
     public void testDelete() {
         List<SubForum> subForums = forumService.getSubForums();
         forumService.delete(subForums.get(0));

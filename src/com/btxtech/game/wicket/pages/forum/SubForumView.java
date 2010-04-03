@@ -69,9 +69,8 @@ public class SubForumView extends Panel {
             protected void populateItem(final ListItem<Category> listItem) {
                 Category category = listItem.getModelObject();
                 listItem.add(new CategoryField("forumSubForum", category));
-                Date lastPost = forumService.getLatestPost(category);
-                if (lastPost != null) {
-                    listItem.add(new Label("lastPost", simpleDateFormat.format(lastPost)));
+                if (category.getLastPost() != null) {
+                    listItem.add(new Label("lastPost", simpleDateFormat.format(category.getLastPost())));
                 } else {
                     listItem.add(new Label("lastPost", "-"));
                 }
