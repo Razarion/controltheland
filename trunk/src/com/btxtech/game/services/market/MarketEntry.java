@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.itemTypeAccess;
+package com.btxtech.game.services.market;
 
 import com.btxtech.game.services.item.itemType.DbItemType;
 import javax.persistence.GeneratedValue;
@@ -26,7 +26,7 @@ import java.io.Serializable;
  * Time: 22:19:08
  */
 @Entity(name = "ITEM_TYPE_ACCESS_ENTRY")
-public class ItemTypeAccessEntry implements Serializable{
+public class MarketEntry implements Serializable{
     @Id
     @GeneratedValue
     private Integer id;
@@ -35,16 +35,19 @@ public class ItemTypeAccessEntry implements Serializable{
     private DbItemType itemType;
     private int price;
     @ManyToOne
-    private ItemTypeAccessEntry precondition;
+    private MarketEntry precondition;
+    @ManyToOne
+    private MarketFunction marketFunction;
+    @ManyToOne
+    private MarketCategory marketCategory;
 
-    
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ItemTypeAccessEntry that = (ItemTypeAccessEntry) o;
+        MarketEntry that = (MarketEntry) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
 
@@ -84,11 +87,27 @@ public class ItemTypeAccessEntry implements Serializable{
         this.price = price;
     }
 
-    public ItemTypeAccessEntry getPrecondition() {
+    public MarketEntry getPrecondition() {
         return precondition;
     }
 
-    public void setPrecondition(ItemTypeAccessEntry precondition) {
+    public void setPrecondition(MarketEntry precondition) {
         this.precondition = precondition;
+    }
+
+    public MarketFunction getMarketFunction() {
+        return marketFunction;
+    }
+
+    public void setMarketFunction(MarketFunction marketFunction) {
+        this.marketFunction = marketFunction;
+    }
+
+    public MarketCategory getMarketCategory() {
+        return marketCategory;
+    }
+
+    public void setMarketCategory(MarketCategory marketCategory) {
+        this.marketCategory = marketCategory;
     }
 }

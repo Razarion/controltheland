@@ -13,27 +13,16 @@
 
 package com.btxtech.game.wicket.pages.market;
 
-import com.btxtech.game.services.item.itemType.DbItemType;
-import com.btxtech.game.services.item.itemType.DbItemTypeImage;
-import com.btxtech.game.services.itemTypeAccess.ItemTypeAccessEntry;
-import com.btxtech.game.services.itemTypeAccess.ServerItemTypeAccessService;
-import com.btxtech.game.services.itemTypeAccess.impl.UserItemTypeAccess;
+import com.btxtech.game.services.market.MarketCategory;
+import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import com.btxtech.game.wicket.pages.user.NewUser;
-import java.util.Iterator;
-import java.util.Set;
-import org.apache.wicket.AttributeModifier;
+import java.util.List;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
-import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
-import org.apache.wicket.resource.ByteArrayResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -43,7 +32,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  */
 public class MarketPage extends BasePage {
     @SpringBean
-    private ServerItemTypeAccessService serverItemTypeAccessService;
+    private ServerMarketService serverMarketService;
 
     public MarketPage() {
         add(new Link("createAccountLink") {
@@ -53,85 +42,49 @@ public class MarketPage extends BasePage {
             }
         });
 
-        add(new Label("xp", Integer.toString(serverItemTypeAccessService.getXp())));
+        add(new Label("xp", new IModel<String>() {
+            @Override
+            public String getObject() {
+                return Integer.toString(serverMarketService.getXp());
+            }
 
-        Form form = new Form("marketForm");
-        add(form);
+            @Override
+            public void setObject(String s) {
+                // Ignore
+            }
 
-        final DataView<ItemTypeAccessEntry> entries = new DataView<ItemTypeAccessEntry>("itemTypeAccessEntries", new ItemTypeAccessEntryProvider()) {
-            protected void populateItem(final Item<ItemTypeAccessEntry> item) {
-                DbItemType itemType = item.getModelObject().getItemType();
-                // Name
-                item.add(new Label("name", itemType.getName()));
-                // image
-                Image image = new Image("image", new ByteArrayResource("", getImage(itemType)));
-                item.add(image);
-                // Description
-                item.add(new Label("description", itemType.getDescription()));
-                // XP
-                item.add(new Label("price", Integer.toString(item.getModelObject().getPrice())));
-                // Buy
-                Button button = new Button("buy") {
+            @Override
+            public void detach() {
+                // Ignore
+            }
+        }));
 
-                    @Override
-                    public void onSubmit() {
-                        serverItemTypeAccessService.buy(item.getModelObject());
-                    }
-                };
-                UserItemTypeAccess userItemTypeAccess = serverItemTypeAccessService.getUserItemTypeAccess();
-                boolean alreadyBought = userItemTypeAccess.contains(item.getModelObject());
-                if(alreadyBought) {
-                    button.setVisible(false);
-                    item.add(new Label("buyInfo", "Already bought"));
-                } else {
-                   if(item.getModelObject().getPrice() > userItemTypeAccess.getXp()) {
-                       button.setVisible(false);
-                       item.add(new Label("buyInfo", "Not enough XP"));
-                   } else {
-                       button.setVisible(true);
-                       Label label = new Label("buyInfo", "");
-                       label.setVisible(false);
-                       item.add(label);
-                   }
+        add(new ListView<MarketCategory>("categories", new IModel<List<MarketCategory>>() {
+            private List<MarketCategory> marketCategories;
+
+            @Override
+            public List<MarketCategory> getObject() {
+                if (marketCategories == null) {
+                    marketCategories = serverMarketService.getUsedMarketCategories();
                 }
-                item.add(button);
-                // alternating row color
-                item.add(new AttributeModifier("class", true, new Model<String>(item.getIndex() % 2 == 0 ? "even" : "odd")));
+                return marketCategories;
             }
-        };
-        form.add(entries);
 
-    }
-
-    private byte[] getImage(DbItemType itemType) {
-        Set<DbItemTypeImage> dbItemTypeImages = itemType.getItemTypeImages();
-        if (dbItemTypeImages == null || dbItemTypeImages.isEmpty()) {
-            return null;
-        }
-        return dbItemTypeImages.iterator().next().getData();
-    }
-
-    class ItemTypeAccessEntryProvider implements IDataProvider<ItemTypeAccessEntry> {
-        @Override
-        public Iterator<ItemTypeAccessEntry> iterator(int first, int count) {
-            if (first != 0 && count != serverItemTypeAccessService.getItemTypeAccessEntries().size()) {
-                throw new IllegalArgumentException("first: " + first + " count: " + count + " | " + serverItemTypeAccessService.getItemTypeAccessEntries().size());
+            @Override
+            public void setObject(List<MarketCategory> object) {
+                // Ignore
             }
-            return serverItemTypeAccessService.getItemTypeAccessEntries().iterator();
-        }
 
-        @Override
-        public int size() {
-            return serverItemTypeAccessService.getItemTypeAccessEntries().size();
-        }
-
-        @Override
-        public IModel<ItemTypeAccessEntry> model(ItemTypeAccessEntry itemTypeAccessEntry) {
-            return new Model<ItemTypeAccessEntry>(itemTypeAccessEntry);
-        }
-
-        @Override
-        public void detach() {
-        }
+            @Override
+            public void detach() {
+                marketCategories = null;
+            }
+        }) {
+            @Override
+            protected void populateItem(ListItem<MarketCategory> marketCategoryListItem) {
+                marketCategoryListItem.add(new MarketCategoryPanel("category", marketCategoryListItem.getModelObject()));
+            }
+        });
     }
+
 }

@@ -13,7 +13,7 @@
 
 package com.btxtech.game.services.user;
 
-import com.btxtech.game.services.itemTypeAccess.impl.UserItemTypeAccess;
+import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;

@@ -124,8 +124,6 @@ public abstract class DbItemType implements Serializable {
         itemType.setId(id);
         itemType.setName(getName());
         itemType.setDescription(getDescription());
-        itemType.setContraDescription(getContraDescription());
-        itemType.setProDescription(getProDescription());
         itemType.setHeight(getHeight());
         itemType.setWidth(getWidth());
     }

@@ -29,36 +29,16 @@
     </ul>
 
     <p><b>Please note:</b> you continue to get points while you are not logged in to the game. You can come
-        back to the game if you have a registered user. Please register <a href="" wicket:id="createAccountLink">here</a> if you don't have a user yet.</p>
+        back to the game if you have a registered user. Please register <a href=""
+                                                                           wicket:id="createAccountLink">here</a> if you
+        don't have a user yet.</p>
 
     <h3>Your current points: <span wicket:id="xp"/> Points.</h3>
 
-    <form wicket:id="marketForm">
-        <table class="helpT">
-            <tr>
-                <th class="helpBod">Name</th>
-                <th class="helpBod">Preview</th>
-                <th class="helpBod">Description</th>
-                <th class="helpBod">XP</th>
-                <th class="helpBod"></th>
-            </tr>
+    <table wicket:id="categories">
+        <tr>
+            <td wicket:id="category"/>
+        </tr>
+    </table>
 
-            <tr wicket:id="itemTypeAccessEntries">
-                <td class="helpBod" valign="top" wicket:id="name"/>
-                <td class="helpBod" valign="center">
-                    <img wicket:id="image"/>
-                </td>
-                <td class="helpBod" valign="top" wicket:id="description"/>
-                <td class="helpBod" valign="top" wicket:id="price"/>
-                <td class="helpBod" valign="center">
-                    <input type="submit" wicket:id="buy" value="buy"/>
-                    <span wicket:id="buyInfo"/>
-                </td>
-            </tr>
-        </table>
-        <br/>
-        <br/>
-        <br/>
-
-    </form>
 </wicket:extend>

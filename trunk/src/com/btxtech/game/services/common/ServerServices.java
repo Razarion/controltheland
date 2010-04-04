@@ -25,7 +25,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainS
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.energy.ServerEnergyService;
-import com.btxtech.game.services.itemTypeAccess.ServerItemTypeAccessService;
+import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.terrain.TerrainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -46,7 +46,7 @@ public class ServerServices implements Services {
     @Autowired
     private com.btxtech.game.services.connection.ConnectionService connectionService;
     @Autowired
-    private ServerItemTypeAccessService serverItemTypeAccessService;
+    private ServerMarketService serverMarketService;
     @Autowired
     private ServerEnergyService serverEnergyService;
     @Autowired
@@ -76,7 +76,7 @@ public class ServerServices implements Services {
 
     @Override
     public ItemTypeAccess getItemTypeAccess() {
-        return serverItemTypeAccessService;
+        return serverMarketService;
     }
 
     @Override

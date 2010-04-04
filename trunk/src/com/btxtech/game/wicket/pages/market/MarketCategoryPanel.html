@@ -1,0 +1,49 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<wicket:panel>
+    <h3 wicket:id="category"></h3>
+
+    <form wicket:id="marketForm">
+        <table class="helpT">
+            <tr>
+                <th class="helpBod">Name</th>
+                <th class="helpBod">Function</th>
+                <th class="helpBod">Preview</th>
+                <th class="helpBod">Description</th>
+                <th class="helpBod">Pro</th>
+                <th class="helpBod">Contra</th>
+                <th class="helpBod">XP</th>
+                <th class="helpBod"></th>
+            </tr>
+
+            <tr wicket:id="itemTypeAccessEntries">
+                <td class="helpBod" valign="top" wicket:id="name"/>
+                <td class="helpBod" valign="top" wicket:id="function"/>
+                <td class="helpBod" valign="center">
+                    <img wicket:id="image"/>
+                </td>
+                <td class="helpBod" valign="top" wicket:id="description"/>
+                <td class="helpBod" valign="top" wicket:id="pro"/>
+                <td class="helpBod" valign="top" wicket:id="contra"/>
+                <td class="helpBod" valign="top" wicket:id="price"/>
+                <td class="helpBod" valign="center">
+                    <input type="submit" wicket:id="buy" value="buy"/>
+                    <span wicket:id="buyInfo"/>
+                </td>
+            </tr>
+        </table>
+        <br/>
+        <br/>
+    </form>
+</wicket:panel>

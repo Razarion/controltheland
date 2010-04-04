@@ -38,7 +38,7 @@ import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeData;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
-import com.btxtech.game.services.itemTypeAccess.ServerItemTypeAccessService;
+import com.btxtech.game.services.market.ServerMarketService;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -76,7 +76,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     @Autowired
     private BaseService baseService;
     @Autowired
-    private ServerItemTypeAccessService serverItemTypeAccessService;
+    private ServerMarketService serverMarketService;
     @Autowired
     private ServerServices services;
     @Autowired
@@ -196,7 +196,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
                 historyService.addItemDestroyedEntry(actor, (SyncBaseItem) syncItem);
                 Base actorBase = baseService.getBase(actor);
                 actorBase.increaseKills();
-                serverItemTypeAccessService.increaseXp(actorBase, (SyncBaseItem) syncItem);
+                serverMarketService.increaseXp(actorBase, (SyncBaseItem) syncItem);
             }
             baseService.itemDeleted((SyncBaseItem) syncItem, actor);
             serverEnergyService.onBaseItemKilled((SyncBaseItem) syncItem);

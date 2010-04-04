@@ -39,8 +39,8 @@ import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.energy.impl.BaseEnergy;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.itemTypeAccess.ServerItemTypeAccessService;
-import com.btxtech.game.services.itemTypeAccess.impl.UserItemTypeAccess;
+import com.btxtech.game.services.market.ServerMarketService;
+import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
@@ -83,7 +83,7 @@ public class BaseServiceImpl implements BaseService {
     @Autowired
     private UserService userService;
     @Autowired
-    private ServerItemTypeAccessService serverItemTypeAccessService;
+    private ServerMarketService serverMarketService;
     @Autowired
     private ServerEnergyService serverEnergyService;
     @Autowired
@@ -155,7 +155,7 @@ public class BaseServiceImpl implements BaseService {
         }
         base.setUser(userService.getLoggedinUser());
         connectionService.createConnection(base);
-        base.setUserItemTypeAccess(serverItemTypeAccessService.getUserItemTypeAccess());
+        base.setUserItemTypeAccess(serverMarketService.getUserItemTypeAccess());
         Index startPoint = collisionService.getFreeRandomPosition(constructionVehicle, EDGE_LENGTH);
         SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(constructionVehicle, startPoint, null, base.getSimpleBase(), 0);
         syncBaseItem.setBuild(true);

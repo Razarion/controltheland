@@ -15,7 +15,7 @@ package com.btxtech.game.services.connection.impl;
 
 import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.Session;
-import com.btxtech.game.services.itemTypeAccess.impl.UserItemTypeAccess;
+import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.utg.BrowserDetails;
 import com.btxtech.game.services.utg.UserTrackingService;

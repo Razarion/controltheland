@@ -47,9 +47,11 @@
         <mapping class="com.btxtech.game.services.item.itemType.DbGeneratorType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbSpecialType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbItemTypeData"/>
-        <mapping class="com.btxtech.game.services.itemTypeAccess.ItemTypeAccessEntry"/>
-        <mapping class="com.btxtech.game.services.itemTypeAccess.impl.UserItemTypeAccess"/>
-        <mapping class="com.btxtech.game.services.itemTypeAccess.XpSettings"/>
+        <mapping class="com.btxtech.game.services.market.MarketEntry"/>
+        <mapping class="com.btxtech.game.services.market.impl.UserItemTypeAccess"/>
+        <mapping class="com.btxtech.game.services.market.XpSettings"/>
+        <mapping class="com.btxtech.game.services.market.MarketCategory"/>
+        <mapping class="com.btxtech.game.services.market.MarketFunction"/>
         <mapping class="com.btxtech.game.services.utg.PageAccess"/>
         <mapping class="com.btxtech.game.services.utg.BrowserDetails"/>
         <mapping class="com.btxtech.game.services.utg.GameStartup"/>
