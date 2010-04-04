@@ -26,8 +26,6 @@ public abstract class ItemType implements Serializable {
     private int width;
     private String name;
     private String description;
-    private String proDescription;
-    private String contraDescription;
 
     public int getId() {
         return id;
@@ -67,22 +65,6 @@ public abstract class ItemType implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getProDescription() {
-        return proDescription;
-    }
-
-    public void setProDescription(String proDescription) {
-        this.proDescription = proDescription;
-    }
-
-    public String getContraDescription() {
-        return contraDescription;
-    }
-
-    public void setContraDescription(String contraDescription) {
-        this.contraDescription = contraDescription;
     }
 
     @Override

@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.itemTypeAccess.impl;
+package com.btxtech.game.services.market.impl;
 
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccessSyncInfo;
@@ -22,9 +22,11 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.itemTypeAccess.ItemTypeAccessEntry;
-import com.btxtech.game.services.itemTypeAccess.ServerItemTypeAccessService;
-import com.btxtech.game.services.itemTypeAccess.XpSettings;
+import com.btxtech.game.services.market.MarketCategory;
+import com.btxtech.game.services.market.MarketEntry;
+import com.btxtech.game.services.market.MarketFunction;
+import com.btxtech.game.services.market.ServerMarketService;
+import com.btxtech.game.services.market.XpSettings;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import java.sql.SQLException;
@@ -52,7 +54,7 @@ import org.springframework.stereotype.Component;
  * Time: 21:11:36
  */
 @Component("serverItemTypeAccess")
-public class ServerItemTypeAccessServiceImpl implements ServerItemTypeAccessService {
+public class ServerMarketServiceImpl implements ServerMarketService {
     @Autowired
     private BaseService baseService;
     @Autowired
@@ -66,7 +68,7 @@ public class ServerItemTypeAccessServiceImpl implements ServerItemTypeAccessServ
     private HibernateTemplate hibernateTemplate;
     private Timer timer;
     private XpSettings xpSettings;
-    private Log log = LogFactory.getLog(ServerItemTypeAccessServiceImpl.class);
+    private Log log = LogFactory.getLog(ServerMarketServiceImpl.class);
 
     @PostConstruct
     public void start() {
@@ -120,9 +122,9 @@ public class ServerItemTypeAccessServiceImpl implements ServerItemTypeAccessServ
     }
 
     @Override
-    public void buy(ItemTypeAccessEntry itemTypeAccessEntry) {
+    public void buy(MarketEntry marketEntry) {
         UserItemTypeAccess userItemTypeAccess = getUserItemTypeAccess();
-        userItemTypeAccess.buy(itemTypeAccessEntry);
+        userItemTypeAccess.buy(marketEntry);
         if (connectionService.hasConnection()) {
             ItemTypeAccessSyncInfo itemTypeAccessSyncInfo = new ItemTypeAccessSyncInfo();
             itemTypeAccessSyncInfo.setAllowedItemTypes(userItemTypeAccess.getItemTypeIds());
@@ -167,11 +169,11 @@ public class ServerItemTypeAccessServiceImpl implements ServerItemTypeAccessServ
         return userItemTypeAccess;
     }
 
-    private Collection<ItemTypeAccessEntry> getAlwaysAllowed() {
-        return (Collection<ItemTypeAccessEntry>) hibernateTemplate.execute(new HibernateCallback() {
+    private Collection<MarketEntry> getAlwaysAllowed() {
+        return (Collection<MarketEntry>) hibernateTemplate.execute(new HibernateCallback() {
             @Override
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(ItemTypeAccessEntry.class);
+                Criteria criteria = session.createCriteria(MarketEntry.class);
                 criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
                 criteria.add(Restrictions.eq("alwaysAllowed", true));
                 return criteria.list();
@@ -180,11 +182,11 @@ public class ServerItemTypeAccessServiceImpl implements ServerItemTypeAccessServ
     }
 
     @Override
-    public Collection<ItemTypeAccessEntry> getItemTypeAccessEntries() {
-        return (Collection<ItemTypeAccessEntry>) hibernateTemplate.execute(new HibernateCallback() {
+    public List<MarketEntry> getItemTypeAccessEntries() {
+        return (List<MarketEntry>) hibernateTemplate.executeFind(new HibernateCallback() {
             @Override
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(ItemTypeAccessEntry.class);
+                Criteria criteria = session.createCriteria(MarketEntry.class);
                 criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
                 return criteria.list();
             }
@@ -192,18 +194,31 @@ public class ServerItemTypeAccessServiceImpl implements ServerItemTypeAccessServ
     }
 
     @Override
-    public void saveItemTypeAccessEntries(ArrayList<ItemTypeAccessEntry> itemTypeAccessEntries) {
-        hibernateTemplate.saveOrUpdateAll(itemTypeAccessEntries);
+    public List<MarketEntry> getMarketEntries(final MarketCategory marketCategory) {
+        return (List<MarketEntry>) hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(MarketEntry.class);
+                criteria.add(Restrictions.eq("marketCategory", marketCategory));
+                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                return criteria.list();
+            }
+        });
+    }
+
+    @Override
+    public void saveItemTypeAccessEntries(ArrayList<MarketEntry> marketEntries) {
+        hibernateTemplate.saveOrUpdateAll(marketEntries);
     }
 
     @Override
     public void createNewItemTypeAccessEntry() {
-        hibernateTemplate.saveOrUpdate(new ItemTypeAccessEntry());
+        hibernateTemplate.saveOrUpdate(new MarketEntry());
     }
 
     @Override
-    public void delteItemTypeAccessEntry(ItemTypeAccessEntry itemTypeAccessEntry) {
-        hibernateTemplate.delete(itemTypeAccessEntry);
+    public void deleteItemTypeAccessEntry(MarketEntry marketEntry) {
+        hibernateTemplate.delete(marketEntry);
     }
 
     public int getXp() {
@@ -269,6 +284,51 @@ public class ServerItemTypeAccessServiceImpl implements ServerItemTypeAccessServ
     public void saveXpPointSettings(XpSettings xpSettings) {
         hibernateTemplate.saveOrUpdate(xpSettings);
         start();
+    }
+
+    @Override
+    public void addMarketCategory() {
+        hibernateTemplate.save(new MarketCategory());
+    }
+
+    @Override
+    public void addMarketFunction() {
+        hibernateTemplate.save(new MarketFunction());
+    }
+
+    @Override
+    public List<MarketCategory> getMarketCategories() {
+        return hibernateTemplate.loadAll(MarketCategory.class);
+    }
+
+    @Override
+    public List<MarketFunction> getMarketFunctions() {
+        return hibernateTemplate.loadAll(MarketFunction.class);
+    }
+
+    @Override
+    public void deleteMarketCategory(MarketCategory category) {
+        hibernateTemplate.delete(category);
+    }
+
+    @Override
+    public void saveMarketCategories(ArrayList<MarketCategory> marketCategories) {
+        hibernateTemplate.saveOrUpdateAll(marketCategories);
+    }
+
+    @Override
+    public void deleteMarketFunction(MarketFunction marketFunction) {
+        hibernateTemplate.delete(marketFunction);
+    }
+
+    @Override
+    public void saveMarketFunctions(ArrayList<MarketFunction> marketFunctions) {
+        hibernateTemplate.saveOrUpdateAll(marketFunctions);
+    }
+
+    @Override
+    public List<MarketCategory> getUsedMarketCategories() {
+        return (List<MarketCategory>) hibernateTemplate.find("from com.btxtech.game.services.market.MarketCategory where exists (from com.btxtech.game.services.market.MarketEntry where marketCategory is not null)");
     }
 
     class XpPeriodTask extends TimerTask {

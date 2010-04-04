@@ -14,7 +14,7 @@
 package com.btxtech.game.services.connection;
 
 import com.btxtech.game.services.user.User;
-import com.btxtech.game.services.itemTypeAccess.impl.UserItemTypeAccess;
+import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 
 /**
  * User: beat

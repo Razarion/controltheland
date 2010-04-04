@@ -11,9 +11,9 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.itemTypeAccess.impl;
+package com.btxtech.game.services.market.impl;
 
-import com.btxtech.game.services.itemTypeAccess.ItemTypeAccessEntry;
+import com.btxtech.game.services.market.MarketEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -27,7 +27,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.Column;
 
 /**
  * User: beat
@@ -44,7 +43,7 @@ public class UserItemTypeAccess implements Serializable {
             joinColumns = @JoinColumn(name = "itemTypeAccessId"),
             inverseJoinColumns = @JoinColumn(name = "userItemTypeId")
     )
-    private Set<ItemTypeAccessEntry> allowedItemTypes;
+    private Set<MarketEntry> allowedItemTypes;
     private int xp = 0;
 
     /**
@@ -53,13 +52,13 @@ public class UserItemTypeAccess implements Serializable {
     public UserItemTypeAccess() {
     }
 
-    public UserItemTypeAccess(Collection<ItemTypeAccessEntry> allowedItemTypes) {
-        this.allowedItemTypes = new HashSet<ItemTypeAccessEntry>(allowedItemTypes);
+    public UserItemTypeAccess(Collection<MarketEntry> allowedItemTypes) {
+        this.allowedItemTypes = new HashSet<MarketEntry>(allowedItemTypes);
     }
 
     public Collection<Integer> getItemTypeIds() {
         ArrayList<Integer> list = new ArrayList<Integer>();
-        for (ItemTypeAccessEntry allowedItemType : allowedItemTypes) {
+        for (MarketEntry allowedItemType : allowedItemTypes) {
             if (allowedItemType.getItemType() != null) {
                 list.add(allowedItemType.getItemType().getId());
             }
@@ -68,7 +67,7 @@ public class UserItemTypeAccess implements Serializable {
     }
 
     public boolean contains(int itemTypeId) {
-        for (ItemTypeAccessEntry allowedItemType : allowedItemTypes) {
+        for (MarketEntry allowedItemType : allowedItemTypes) {
             if (allowedItemType.getItemType() != null) {
                 if (allowedItemType.getItemType().getId() == itemTypeId) {
                     return true;
@@ -78,11 +77,11 @@ public class UserItemTypeAccess implements Serializable {
         return false;
     }
 
-    public boolean contains(ItemTypeAccessEntry itemTypeAccessEntry) {
-        return allowedItemTypes.contains(itemTypeAccessEntry);
+    public boolean contains(MarketEntry marketEntry) {
+        return allowedItemTypes.contains(marketEntry);
     }
 
-    public Set<ItemTypeAccessEntry> getAllowedItemTypes() {
+    public Set<MarketEntry> getAllowedItemTypes() {
         return allowedItemTypes;
     }
 
@@ -94,12 +93,12 @@ public class UserItemTypeAccess implements Serializable {
         xp += value;
     }
 
-    public void buy(ItemTypeAccessEntry itemTypeAccessEntry) {
-        if (itemTypeAccessEntry.getPrice() > xp) {
-            throw new IllegalArgumentException("Not enough XP to buy: " + itemTypeAccessEntry);
+    public void buy(MarketEntry marketEntry) {
+        if (marketEntry.getPrice() > xp) {
+            throw new IllegalArgumentException("Not enough XP to buy: " + marketEntry);
         }
-        xp -= itemTypeAccessEntry.getPrice();
-        allowedItemTypes.add(itemTypeAccessEntry);
+        xp -= marketEntry.getPrice();
+        allowedItemTypes.add(marketEntry);
     }
 
     @Override

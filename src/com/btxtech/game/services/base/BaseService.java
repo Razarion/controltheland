@@ -18,7 +18,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.energy.impl.BaseEnergy;
-import com.btxtech.game.services.itemTypeAccess.impl.UserItemTypeAccess;
+import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.user.User;
 import java.util.Collection;
 import java.util.List;

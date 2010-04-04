@@ -35,7 +35,7 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.itemTypeAccess.ServerItemTypeAccessService;
+import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.terrain.TerrainService;
@@ -63,7 +63,7 @@ public class MovableServiceImpl implements MovableService {
     @Autowired
     private ConnectionService connectionService;
     @Autowired
-    private ServerItemTypeAccessService serverItemTypeAccessService;
+    private ServerMarketService serverMarketService;
     @Autowired
     private ServerEnergyService serverEnergyService;
     @Autowired
@@ -146,8 +146,8 @@ public class MovableServiceImpl implements MovableService {
             gameInfo.setBase(baseService.getBase().getSimpleBase());
             gameInfo.setRegistered(baseService.getBase().getUser() != null);
             gameInfo.setAccountBalance(baseService.getBase().getAccountBalance());
-            gameInfo.setAllowedItemTypes(serverItemTypeAccessService.getAllowedItemTypes());
-            gameInfo.setXp(serverItemTypeAccessService.getXp());
+            gameInfo.setAllowedItemTypes(serverMarketService.getAllowedItemTypes());
+            gameInfo.setXp(serverMarketService.getXp());
             gameInfo.setEnergyConsuming(serverEnergyService.getConsuming());
             gameInfo.setEnergyGenerating(serverEnergyService.getGenerating());
             gameInfo.setTerrainSettings(terrainService.getTerrainSettings());

@@ -11,30 +11,34 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.itemTypeAccess;
+package com.btxtech.game.services.market;
 
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccess;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.services.itemTypeAccess.impl.UserItemTypeAccess;
 import com.btxtech.game.services.base.Base;
-import java.util.Collection;
+import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
  * Date: 18.12.2009
  * Time: 21:07:42
  */
-public interface ServerItemTypeAccessService extends ItemTypeAccess {
+public interface ServerMarketService extends ItemTypeAccess {
     public Collection<Integer> getAllowedItemTypes();
 
-    Collection<ItemTypeAccessEntry> getItemTypeAccessEntries();
+    List<MarketEntry> getItemTypeAccessEntries();
+
+    List<MarketEntry> getMarketEntries(MarketCategory marketCategory);
 
     void createNewItemTypeAccessEntry();
 
-    void saveItemTypeAccessEntries(ArrayList<ItemTypeAccessEntry> itemTypeAccessEntries);
+    void saveItemTypeAccessEntries(ArrayList<MarketEntry> marketEntries);
 
-    void delteItemTypeAccessEntry(ItemTypeAccessEntry itemTypeAccessEntry);
+    void deleteItemTypeAccessEntry(MarketEntry marketEntry);
 
     UserItemTypeAccess getUserItemTypeAccess();
 
@@ -44,9 +48,27 @@ public interface ServerItemTypeAccessService extends ItemTypeAccess {
 
     int getXp();
 
-    void buy(ItemTypeAccessEntry itemTypeAccessEntry);
+    void buy(MarketEntry marketEntry);
 
     XpSettings getXpPointSettings();
 
     void saveXpPointSettings(XpSettings xpSettings);
+
+    void addMarketCategory();
+
+    void addMarketFunction();
+
+    List<MarketCategory> getUsedMarketCategories();         
+
+    List<MarketCategory> getMarketCategories();
+
+    List<MarketFunction> getMarketFunctions();
+
+    void deleteMarketCategory(MarketCategory category);
+
+    void saveMarketCategories(ArrayList<MarketCategory> marketCategories);
+
+    void deleteMarketFunction(MarketFunction marketFunction);
+
+    void saveMarketFunctions(ArrayList<MarketFunction> marketFunctions);
 }

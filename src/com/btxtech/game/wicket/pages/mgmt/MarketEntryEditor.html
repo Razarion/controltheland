@@ -16,14 +16,56 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="GameEditor.css">
-    <title>Item Type Access Entries</title>
+    <title>Market</title>
 </head>
 <body>
+<h1>Market</h1>
+<h2>Market categories</h2>
+<form wicket:id="categoryForm">
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Name</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
 
-<h1>Item Type Access Entries</h1>
+        <tr wicket:id="categories">
+            <td valign="center">
+                <input type="text" wicket:id="name"/>
+            </td>
+            <td valign="center">
+                <input type="submit" wicket:id="delete" value="Delete"/>
+            </td>
+        </tr>
+    </table>
+    <br/>
+    <input type="submit" wicket:id="save" value="Save">
+    <input type="submit" wicket:id="add" value="Add">
+</form>
+<br/>
+<h2>Market functions</h2>
+<form wicket:id="functionForm">
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Name</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
 
+        <tr wicket:id="functions">
+            <td valign="center">
+                <input type="text" wicket:id="name"/>
+            </td>
+            <td valign="center">
+                <input type="submit" wicket:id="delete" value="Delete"/>
+            </td>
+        </tr>
+    </table>
+    <br/>
+    <input type="submit" wicket:id="save" value="Save">
+    <input type="submit" wicket:id="add" value="Add">
+</form>
+<br/>
+<h2>Market Entries</h2>
 <form wicket:id="itemTypeAccessForm">
-
     <table cellpadding="1" cellspacing="1" border="0">
         <tr>
             <th bgcolor="#dadada">Id</th>
@@ -31,6 +73,8 @@
             <th bgcolor="#dadada">Item Type</th>
             <th bgcolor="#dadada">Price in XP</th>
             <th bgcolor="#dadada">Always Allowed</th>
+            <th bgcolor="#dadada">Category</th>
+            <th bgcolor="#dadada">Function</th>
             <th bgcolor="#dadada">Delete</th>
         </tr>
 
@@ -49,18 +93,19 @@
                 <input type="checkbox" wicket:id="alwaysAllowed"/>
             </td>
             <td valign="center">
+                <select wicket:id="category" name="top5" size="1"></select>
+            </td>
+            <td valign="center">
+                <select wicket:id="function" name="top5" size="1"></select>
+            </td>
+            <td valign="center">
                 <input type="submit" wicket:id="delete" value="Delete"/>
             </td>
         </tr>
     </table>
     <br/>
-    <br/>
-    <br/>
-
     <input type="submit" wicket:id="save" value="Save">
     <input type="submit" wicket:id="add" value="Add">
-
-
 </form>
 
 </body>

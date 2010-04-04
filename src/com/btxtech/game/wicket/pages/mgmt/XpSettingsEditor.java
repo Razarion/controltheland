@@ -13,8 +13,8 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.services.itemTypeAccess.ServerItemTypeAccessService;
-import com.btxtech.game.services.itemTypeAccess.XpSettings;
+import com.btxtech.game.services.market.ServerMarketService;
+import com.btxtech.game.services.market.XpSettings;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
@@ -28,13 +28,13 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  */
 public class XpSettingsEditor extends WebPage {
     @SpringBean
-    private ServerItemTypeAccessService serverItemTypeAccessService;
+    private ServerMarketService serverMarketService;
 
     public XpSettingsEditor() {
-        Form<XpSettings> form = new Form<XpSettings>("form", new CompoundPropertyModel<XpSettings>(serverItemTypeAccessService.getXpPointSettings())) {
+        Form<XpSettings> form = new Form<XpSettings>("form", new CompoundPropertyModel<XpSettings>(serverMarketService.getXpPointSettings())) {
             @Override
             protected void onSubmit() {
-                serverItemTypeAccessService.saveXpPointSettings(getModelObject());
+                serverMarketService.saveXpPointSettings(getModelObject());
             }
         };
         form.add(new TextField<String>("killPriceFactor"));

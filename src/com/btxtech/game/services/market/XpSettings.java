@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.itemTypeAccess;
+package com.btxtech.game.services.market;
 
 import java.io.Serializable;
 import javax.persistence.Entity;

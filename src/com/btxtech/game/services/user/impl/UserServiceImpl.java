@@ -18,7 +18,7 @@ import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsEx
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.NoConnectionException;
-import com.btxtech.game.services.itemTypeAccess.ServerItemTypeAccessService;
+import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.user.Arq;
 import com.btxtech.game.services.user.ArqEnum;
 import com.btxtech.game.services.user.User;
@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
     private com.btxtech.game.services.connection.Session session;
     private HibernateTemplate hibernateTemplate;
     @Autowired
-    private ServerItemTypeAccessService serverItemTypeAccessService;
+    private ServerMarketService serverMarketService;
     @Autowired
     private BaseService baseService;
     @Autowired
@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
             throw new IllegalStateException("The user is not logged in");
         }
         session.clearGame();
-        serverItemTypeAccessService.clearSession();
+        serverMarketService.clearSession();
         userTrackingService.onUserLoggedOut(session.getUser());
     }
 
@@ -183,13 +183,13 @@ public class UserServiceImpl implements UserService {
             try {
                 base = baseService.getBase();
                 base.setUser(user);
-                base.setUserItemTypeAccess(serverItemTypeAccessService.getUserItemTypeAccess());
+                base.setUserItemTypeAccess(serverMarketService.getUserItemTypeAccess());
             } catch (NoConnectionException e) {
                 // Ignore
             }
         } else {
             session.clearGame();
-            serverItemTypeAccessService.clearSession();
+            serverMarketService.clearSession();
         }
         session.setUser(user);
         user.setLastLoginDate(new Date());

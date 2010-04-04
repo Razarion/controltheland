@@ -78,15 +78,6 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$APPLICATION_HOME_DIR$/lib/javaee.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" exported="">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/war/WEB-INF/lib/geronimo-jta_1.1_spec-1.1.1.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -399,7 +390,9 @@
           <root url="jar://$MODULE_DIR$/war/WEB-INF/lib/wicket-1.4.6.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../../../tech/apache-wicket-1.4.6/src/wicket/src/main/java" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library">
