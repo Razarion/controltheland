@@ -23,11 +23,11 @@ import java.util.List;
  * Time: 17:17:01
  */
 public interface BotService {
-    void onHumanBaseCreated(Base base);
+    SimpleBase getOnlineBotBase();
 
-    void onBaseDefeated(Base base);
-
-    List<SimpleBase> getBotBases();
+    void start();
 
     void onConnectionClosed(Base base);
+
+    void onConnectionCreated(Base base);
 }

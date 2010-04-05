@@ -16,6 +16,7 @@ package com.btxtech.game.services.mgmt.impl;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
@@ -82,6 +83,8 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     private ActionService actionService;
     @Autowired
     private ServerEnergyService serverEnergyService;
+    @Autowired
+    private BotService botService;
     private static Log log = LogFactory.getLog(MgmtServiceImpl.class);
     private HibernateTemplate hibernateTemplate;
     private Boolean testMode;
@@ -271,6 +274,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
                 } else {
                     actionService.setupAllMoneyStacks();
                 }
+                botService.start();
             }
         } catch (Throwable t) {
             log.error("", t);

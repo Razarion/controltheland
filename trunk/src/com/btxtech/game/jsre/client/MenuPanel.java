@@ -48,6 +48,7 @@ public class MenuPanel extends TopMapPanel {
         addRow("Quit", "control-power", new Runnable() {
             @Override
             public void run() {
+                Connection.getInstance().closeConnection();
                 closeWindow();
             }
         });

@@ -20,7 +20,7 @@ import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.effects.AttackEffectHandler;
 import com.btxtech.game.jsre.client.utg.ClientUserGuidance;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
-import com.btxtech.game.jsre.common.ai.PlayerSimulation;
+import com.btxtech.game.jsre.common.bot.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.dom.client.Style;

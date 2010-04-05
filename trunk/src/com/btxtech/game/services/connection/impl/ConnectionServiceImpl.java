@@ -199,6 +199,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
             userTrackingService.onUserEnterGame(base.getUser());
         }
         sendOnlineBasesUpdate();
+        botService.onConnectionCreated(connection.getBase());
     }
 
     @Override
@@ -254,7 +255,10 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
                     simpleBases.add(connection.getBase().getSimpleBase());
                 }
             }
-            simpleBases.addAll(botService.getBotBases());
+            SimpleBase botBase = botService.getOnlineBotBase();
+            if (botBase != null) {
+                simpleBases.add(botBase);
+            }
         }
         OnlineBaseUpdate onlineBaseUpdate = new OnlineBaseUpdate();
         onlineBaseUpdate.setOnlineBases(simpleBases);

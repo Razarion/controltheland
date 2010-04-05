@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.common.ai;
+package com.btxtech.game.jsre.common.bot;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientServices;
@@ -59,8 +59,8 @@ public class PlayerSimulation {
         try {
             baseBalancer.doBalance();
             // Start all harvesters
-            baseBalancer.doAllIdleHarvest();
-            baseBalancer.doAllIdleAttackers();
+            baseBalancer.getBaseExecutor().doAllIdleHarvest();
+            baseBalancer.getBaseExecutor().doAllIdleAttackers();
         } catch (NoSuchItemTypeException e) {
             GwtCommon.handleException(e);
         }
@@ -69,8 +69,8 @@ public class PlayerSimulation {
             public void run() {
                 try {
                     baseBalancer.doBalance();
-                    baseBalancer.doAllIdleHarvest();
-                    baseBalancer.doAllIdleAttackers();
+                    baseBalancer.getBaseExecutor().doAllIdleHarvest();
+                    baseBalancer.getBaseExecutor().doAllIdleAttackers();
                 } catch (Throwable throwable) {
                     GwtCommon.handleException(throwable);
                 }
@@ -128,7 +128,7 @@ public class PlayerSimulation {
 
     private void doCommand(SyncBaseItem item) throws NoSuchItemTypeException {
         if (item.getBaseItemType().getName().equals(Constants.HARVESTER)) {
-            baseBalancer.doHarvest(item);
+            baseBalancer.getBaseExecutor().doHarvest(item);
         } else if (item.getBaseItemType().getName().equals(Constants.FACTORY)) {
             try {
                 baseBalancer.doBalance();
@@ -136,7 +136,7 @@ public class PlayerSimulation {
                 GwtCommon.handleException(throwable);
             }
         } else if (item.getBaseItemType().getName().equals(Constants.JEEP)) {
-            baseBalancer.doAttack(item);
+            baseBalancer.getBaseExecutor().doAttack(item);
         }
     }
 }

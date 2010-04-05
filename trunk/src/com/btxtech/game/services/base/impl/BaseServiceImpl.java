@@ -89,8 +89,6 @@ public class BaseServiceImpl implements BaseService {
     @Autowired
     private UserTrackingService userTrackingService;
     @Autowired
-    private BotService botService;
-    @Autowired
     private MgmtService mgmtService;
     private final HashMap<String, Base> bases = new HashMap<String, Base>();
     private HashSet<String> colorsUsed = new HashSet<String>();
@@ -162,7 +160,6 @@ public class BaseServiceImpl implements BaseService {
         syncBaseItem.setFullHealth();
         syncBaseItem.getSyncTurnable().setAngel(Math.PI / 4.0); // Cosmetis shows vehicle from side
         historyService.addBaseStartEntry(base.getSimpleBase());
-        botService.onHumanBaseCreated(base);
     }
 
     @Override
@@ -327,7 +324,6 @@ public class BaseServiceImpl implements BaseService {
                     userTrackingService.onBaseDefeated(base.getUser(), base);
                 }
                 deleteBase(base);
-                botService.onBaseDefeated(base);
             }
         }
     }

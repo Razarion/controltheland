@@ -14,20 +14,25 @@
 package com.btxtech.game.services.bot.impl;
 
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.bot.BaseExecutor;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
+import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.connection.ConnectionService;
+import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserService;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Iterator;
+import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import javax.annotation.PreDestroy;
 
 /**
  * User: beat
@@ -36,117 +41,87 @@ import javax.annotation.PreDestroy;
  */
 @Component(value = "botService")
 public class BotServiceImpl implements BotService {
-    public static final int BASE_MIN_RANGE = 300;
-    public static final int BASE_MAX_RANGE = 600;
     @Autowired
-    private BaseService baseService;
+    private UserService userService;
     @Autowired
     private ServerServices serverServices;
     @Autowired
+    private BaseService baseService;
+    @Autowired
+    private ItemService itemService;
+    @Autowired
     private ConnectionService connectionService;
+    private BaseBalance baseBalance;
+    private Thread botThread;
     private Log log = LogFactory.getLog(BotServiceImpl.class);
-    private final ArrayList<Bot> bots = new ArrayList<Bot>();
+    private BaseExecutor baseExecutor;
     private BotServiceConfig botServiceConfig = new BotServiceConfig();
-    private List<SimpleBase> botBases = new ArrayList<SimpleBase>();
-    private BotLevelFactory botLevelFactory = new BotLevelFactory();
+    private Base botBase;
+
+
+    public User getBotUser() {
+        User user = userService.getUser(botServiceConfig.getUserName());
+        if (user == null) {
+            throw new IllegalStateException("User does not exist: " + botServiceConfig.getUserName());
+        }
+        return user;
+    }
+
+    private Base getBotBase() {
+        Base base = baseService.getBase(getBotUser());
+        if (base == null) {
+            throw new IllegalStateException("Bot has no base");
+        }
+        return base;
+    }
 
     @Override
-    public void onHumanBaseCreated(Base base) {
-        //createBot(base);
-    }
-
-    @Override
-    public void onBaseDefeated(Base base) {
-        if (base.isBot()) {
-            stopBotBase(base);
-        } else {
-            stopBotForEnemyBase(base);
+    public void start() {
+        botBase = getBotBase();
+        botBase.setBot(true);
+        baseExecutor = new BaseExecutor(serverServices, botBase.getSimpleBase());
+        baseBalance = new BaseBalance(baseExecutor);
+        for (SyncBaseItem syncBaseItem : botBase.getItems()) {
+            baseBalance.addItemPosAndType(new ItemPosAndType(syncBaseItem));
         }
+        runBot();
+        connectionService.sendOnlineBasesUpdate();
     }
 
-    @Override
-    public void onConnectionClosed(Base base) {
-        stopBotForEnemyBase(base);
-    }
-
-    @PreDestroy
-    public void cleanup() {
-        synchronized (bots) {
-            for (Bot bot : bots) {
-                bot.stop();
-            }
-            bots.clear();
-            botBases.clear();
+    private void stop() {
+        if (botThread == null) {
+            throw new IllegalStateException("Bot thread is not running");
         }
+        Thread tmp = botThread;
+        botThread = null;
+        tmp.interrupt();
+        botBase.setBot(false);
+        connectionService.sendOnlineBasesUpdate();
     }
 
-    private void stopBotForEnemyBase(Base humanBase) {
-        synchronized (bots) {
-            for (Iterator<Bot> it = bots.iterator(); it.hasNext();) {
-                Bot bot = it.next();
-                if (bot.getHumanBase().equals(humanBase.getSimpleBase())) {
-                    botBases.remove(bot.getBotBase());
-                    it.remove();
-                    bot.stop();
-                    connectionService.sendOnlineBasesUpdate();
-                    return;
-                }
-            }
+    private void runBot() {
+        if (botThread != null) {
+            throw new IllegalStateException("Bot is already running");
         }
-    }
-
-    private void stopBotBase(Base botBase) {
-        synchronized (bots) {
-            for (Iterator<Bot> it = bots.iterator(); it.hasNext();) {
-                Bot bot = it.next();
-                if (bot.getBotBase().equals(botBase.getSimpleBase())) {
-                    botBases.remove(bot.getBotBase());
-                    it.remove();
-                    bot.stop();
-                    connectionService.sendOnlineBasesUpdate();
-                    return;
-                }
-            }
+        if (baseBalance.isEmpty()) {
+            throw new IllegalStateException("Base does not have any items");
         }
-    }
 
-
-    private void createBot(final Base humanBase) {
-        Thread botThread = new Thread() {
+        botThread = new Thread() {
 
             @Override
             public void run() {
-                Bot bot = null;
                 try {
-                    Thread.sleep(botServiceConfig.getBotStartDelay());
-                    if (humanBase.isAbandoned()) {
-                        return;
-                    }
-                    SyncBaseItem enemyItem = getEnemyItemToPlaceBotBase(humanBase);
-                    if (enemyItem == null) {
-                        log.error("Can not create bot. Enemy does not have enough items: " + humanBase);
-                        return;
-                    }
-                    Base botBase = baseService.createNewBotBase(enemyItem, BASE_MIN_RANGE, BASE_MAX_RANGE);
-                    bot = new Bot(botBase, humanBase, serverServices, this, botLevelFactory);
-                    synchronized (bots) {
-                        bots.add(bot);
-                        botBases.add(bot.getBotBase());
-                    }
-                    connectionService.sendOnlineBasesUpdate();
-                    while (bot.isRunning()) {
-                        bot.action();
+                    while (botThread != null) {
+                        doItemBalance();
+                        doMoneyBalance();
                         Thread.sleep(botServiceConfig.getBotActionDelay());
                     }
                 } catch (InterruptedException ignore) {
+                    botThread = null;
                 } catch (Throwable t) {
                     log.error("", t);
-                }
-                if (bot != null) {
-                    synchronized (bots) {
-                        bots.remove(bot);
-                    }
-                    connectionService.sendOnlineBasesUpdate();
+                    botThread = null;
                 }
             }
         };
@@ -154,21 +129,58 @@ public class BotServiceImpl implements BotService {
         botThread.start();
     }
 
-    @Override
-    public List<SimpleBase> getBotBases() {
-        return botBases;
+    private void doItemBalance() {
+        // Get Dead items
+        List<ItemPosAndType> deadItems = baseBalance.getDeadItems();
+        for (ItemPosAndType deadItem : deadItems) {
+            log.info("Bot: Killed item " + deadItem.getSyncBaseItem());
+        }
+
+        // Recreate dead items
+        Map<BaseItemType, List<SyncBaseItem>> availableItems = itemService.getItems4Base(botBase.getSimpleBase());
+        for (ItemPosAndType deadItem : deadItems) {
+            baseExecutor.doBalanceItemType(availableItems, deadItem.getBaseItemType(), deadItem.getPosition());
+        }
+
+        // Insert new items
+        List<SyncBaseItem> aliveItems = baseBalance.getAliveItems();
+        ArrayList<SyncBaseItem> newItems = new ArrayList<SyncBaseItem>(botBase.getItems());
+        newItems.removeAll(aliveItems);
+        baseBalance.addSyncBaseItems(newItems);
     }
 
-    private SyncBaseItem getEnemyItemToPlaceBotBase(Base humanBase) {
-        SyncBaseItem builder = null;
-        for (SyncBaseItem syncBaseItem : humanBase.getItems()) {
-            if (syncBaseItem.hasSyncFactory()) {
-                return syncBaseItem;
-            }
-            if (syncBaseItem.hasSyncBuilder()) {
-                builder = syncBaseItem;
+    private void doMoneyBalance() {
+        int money = (int) botBase.getAccountBalance();
+        if (money < botServiceConfig.getMinMoney()) {
+            try {
+                baseExecutor.doAllIdleHarvest();
+            } catch (NoSuchItemTypeException e) {
+                log.error("", e);
             }
         }
-        return builder;
+    }
+
+
+    @Override
+    public SimpleBase getOnlineBotBase() {
+        if (botThread != null) {
+            return botBase.getSimpleBase();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void onConnectionClosed(Base base) {
+        if (base.equals(botBase)) {
+            start();
+        }
+    }
+
+    @Override
+    public void onConnectionCreated(Base base) {
+        if (base.equals(botBase)) {
+            stop();
+        }
     }
 }

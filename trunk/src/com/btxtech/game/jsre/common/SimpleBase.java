@@ -49,6 +49,10 @@ public class SimpleBase implements Serializable {
         return bot;
     }
 
+    public void setBot(boolean bot) {
+        this.bot = bot;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

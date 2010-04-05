@@ -34,7 +34,7 @@ import com.btxtech.game.jsre.common.EnergyPacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.XpBalancePackt;
-import com.btxtech.game.jsre.common.ai.PlayerSimulation;
+import com.btxtech.game.jsre.common.bot.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccessSyncInfo;
 import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
@@ -258,6 +258,14 @@ public class Connection implements AsyncCallback<Void> {
     public void surrenderBase() {
         if (movableServiceAsync != null) {
             movableServiceAsync.surrenderBase(this);
+            movableServiceAsync = null;            
+        }
+    }
+
+    public void closeConnection() {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.closeConnection(this);
+            movableServiceAsync = null;
         }
     }
 
