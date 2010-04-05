@@ -54,4 +54,6 @@ public interface MovableServiceAsync {
     void sendUserMessage(UserMessage userMessage, AsyncCallback<Void> asyncCallback);
 
     void surrenderBase(AsyncCallback<Void> asyncCallback);
+
+    void closeConnection(AsyncCallback<Void> async);
 }

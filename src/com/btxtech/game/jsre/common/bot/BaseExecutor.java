@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.common.ai;
+package com.btxtech.game.jsre.common.bot;
 
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
@@ -27,64 +27,59 @@ import java.util.Map;
 
 /**
  * User: beat
- * Date: 14.03.2010
- * Time: 17:35:29
+ * Date: 05.04.2010
+ * Time: 15:10:47
  */
-public class BaseBalancer {
+public class BaseExecutor {
     private Services services;
     private SimpleBase simpleBase;
-    private BotLevel botLevel;
 
-    public BaseBalancer(BotLevel botLevel, Services services, SimpleBase simpleBase) {
-        this.botLevel = botLevel;
+    public BaseExecutor(Services services, SimpleBase simpleBase) {
         this.services = services;
         this.simpleBase = simpleBase;
     }
 
-    public void setBotLevel(BotLevel botLevel) {
-        this.botLevel = botLevel;
-    }
-
-    public void doBalance() throws NoSuchItemTypeException {
-        Map<BaseItemType, List<SyncBaseItem>> items = services.getItemService().getItems4Base(simpleBase);
-        for (ItemTypeBalance itemTypeBalance : botLevel.getItemTypeBalances()) {
-            BaseItemType itemTypeToBalance = (BaseItemType) services.getItemService().getItemType(itemTypeBalance.getItemTypeName());
-            List<SyncBaseItem> syncBaseItems = items.get(itemTypeToBalance);
-            if (syncBaseItems == null || syncBaseItems.size() < itemTypeBalance.getCount()) {
-                doBalanceItemType(items, itemTypeToBalance);
-                return;
-            }
-        }
-    }
-
-    private void doBalanceItemType(Map<BaseItemType, List<SyncBaseItem>> items, BaseItemType itemTypeToBalance) {
+    public void doBalanceItemType(Map<BaseItemType, List<SyncBaseItem>> items, BaseItemType itemTypeToBalance, Index hintPosition) {
         List<BaseItemType> baseItemTypes = services.getItemService().ableToBuild(itemTypeToBalance);
         for (BaseItemType type : baseItemTypes) {
-            List<SyncBaseItem> buildeItems = items.get(type);
-            if (buildeItems != null) {
-                for (SyncBaseItem builder : buildeItems) {
-                    doBuild(itemTypeToBalance, builder);
+            List<SyncBaseItem> builderItems = items.get(type);
+            if (builderItems != null) {
+                for (SyncBaseItem builder : builderItems) {
+                    boolean buildStarted = doBuild(itemTypeToBalance, builder, hintPosition);
+                    if (buildStarted) {
+                        return;
+                    }
                 }
             }
         }
     }
 
-    public void doBuild(BaseItemType itemTypeToBuild, SyncBaseItem builder) {
+    public boolean doBuild(BaseItemType itemTypeToBuild, SyncBaseItem builder, Index hintPosition) {
         if (builder.hasSyncBuilder()) {
             if (builder.getSyncBuilder().isActive()) {
-                return;
+                return false;
+            } else {
+                Index position;
+                if (hintPosition != null) {
+                    position = hintPosition;
+                } else {
+                    position = services.getCollisionService().getFreeRandomPosition(itemTypeToBuild, builder, 0, 200);
+                }
+                services.getActionService().buildFactory(builder, position, itemTypeToBuild);
+                return true;
             }
-            Index position = services.getCollisionService().getFreeRandomPosition(itemTypeToBuild, builder, 0, 200);
-            services.getActionService().buildFactory(builder, position, itemTypeToBuild);
         } else if (builder.hasSyncFactory()) {
             if (builder.getSyncFactory().isActive()) {
-                return;
+                return false;
+            } else {
+                services.getActionService().build(builder, itemTypeToBuild);
+                return true;
             }
-            services.getActionService().build(builder, itemTypeToBuild);
         } else {
             throw new IllegalArgumentException(this + " " + builder + " don't know how to build: " + itemTypeToBuild);
         }
     }
+
 
     public void doHarvest(SyncBaseItem harvester) throws NoSuchItemTypeException {
         List<SyncItem> syncItems = services.getItemService().getItems(Constants.MONEY, null);
@@ -125,5 +120,8 @@ public class BaseBalancer {
         }
     }
 
+    public void doMove(SyncBaseItem item, Index destination) {
+        services.getActionService().move(item, destination);
+    }
 
 }

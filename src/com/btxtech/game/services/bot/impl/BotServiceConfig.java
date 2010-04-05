@@ -19,14 +19,15 @@ package com.btxtech.game.services.bot.impl;
  * Time: 22:07:46
  */
 public class BotServiceConfig {
-    private int botStartDelay = 30000;
-    private int botActionDelay = 5000;
-
-    public int getBotStartDelay() {
-        return botStartDelay;
+    public int getBotActionDelay() {
+        return 10000;
     }
 
-    public int getBotActionDelay() {
-        return botActionDelay;
+    public String getUserName() {
+        return "EvilBot";
+    }
+
+    public int getMinMoney() {
+        return 1000;
     }
 }

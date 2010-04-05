@@ -222,8 +222,19 @@ public class MovableServiceImpl implements MovableService {
     public void surrenderBase() {
         try {
             baseService.surrenderBase(baseService.getBaseForLoggedInUser());
+            connectionService.closeConnection();            
         } catch (Throwable t) {
             log.error("", t);
         }
     }
+
+    @Override
+    public void closeConnection() {
+        try {
+            connectionService.closeConnection();
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
 }

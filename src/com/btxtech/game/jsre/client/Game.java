@@ -20,7 +20,7 @@ import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
-import com.btxtech.game.jsre.common.ai.PlayerSimulation;
+import com.btxtech.game.jsre.common.bot.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Window;

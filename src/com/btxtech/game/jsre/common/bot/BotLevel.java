@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.common.ai;
+package com.btxtech.game.jsre.common.bot;
 
 import java.util.ArrayList;
 

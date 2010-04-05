@@ -68,6 +68,8 @@ public class Base implements Serializable {
     private final HashSet<SyncBaseItem> items = new HashSet<SyncBaseItem>();
     @Transient
     private UserItemTypeAccess userItemTypeAccess;
+    @Transient
+    private SimpleBase simpleBase;
 
     /**
      * Used by hibernate
@@ -116,7 +118,10 @@ public class Base implements Serializable {
     }
 
     public SimpleBase getSimpleBase() {
-        return new SimpleBase(name, baseColor.getHtmlColor(), bot);
+        if (simpleBase == null) {
+            simpleBase = new SimpleBase(name, baseColor.getHtmlColor(), bot);
+        }
+        return simpleBase;
     }
 
     public void depositMoney(double amount) {
@@ -209,6 +214,7 @@ public class Base implements Serializable {
 
     public void setBot(boolean bot) {
         this.bot = bot;
+        getSimpleBase().setBot(bot);
     }
 
     @Override
