@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.cockpit.radar;
 
 import com.btxtech.game.jsre.client.TopMapPanel;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
@@ -32,6 +33,7 @@ public class RadarPanel extends TopMapPanel {
     private static final RadarPanel INSTANCE = new RadarPanel();
     private MiniTerrain miniTerrain;
     private RadarFrameView radarFrameView;
+    private RadarItemView radarItemView;
     private boolean hasRadar = false;
     private boolean hasEnergy = false;
     private HTML noRadaPanel;
@@ -67,9 +69,15 @@ public class RadarPanel extends TopMapPanel {
         miniTerrain.setVisible(state);
         absolutePanel.add(miniTerrain, 0, 0);
 
+        // Own item view
+        radarItemView = new RadarItemView(WIDTH, HEIGHT);
+        radarItemView.getElement().getStyle().setZIndex(2);
+        radarItemView.setVisible(true);
+        absolutePanel.add(radarItemView, 0, 0);
+
         // Frame view
         radarFrameView = new RadarFrameView(WIDTH, HEIGHT);
-        radarFrameView.getElement().getStyle().setZIndex(2);
+        radarFrameView.getElement().getStyle().setZIndex(3);
         radarFrameView.setVisible(state);
         absolutePanel.add(radarFrameView, 0, 0);
 
@@ -113,5 +121,10 @@ public class RadarPanel extends TopMapPanel {
         }
         hasEnergy = state;
         handleRadarState();
+    }
+
+    public void onTerrainSettings(TerrainSettings terrainSettings) {
+        radarFrameView.onTerrainSettings(terrainSettings);
+        radarItemView.onTerrainSettings(terrainSettings);
     }
 }

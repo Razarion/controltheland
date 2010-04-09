@@ -14,9 +14,9 @@
 package com.btxtech.game.jsre.client.cockpit.radar;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.client.terrain.TerrainScrollListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.widgetideas.graphics.client.Color;
@@ -26,14 +26,10 @@ import com.google.gwt.widgetideas.graphics.client.Color;
  * Date: 22.12.2009
  * Time: 21:52:27
  */
-public class RadarFrameView extends MiniMap implements TerrainScrollListener, TerrainListener, MouseDownHandler {
-    private double scaleX = 1.0;
-    private double scaleY = 1.0;
-
+public class RadarFrameView extends MiniMap implements TerrainScrollListener, MouseDownHandler {
     public RadarFrameView(int width, int height) {
         super(width, height);
         TerrainView.getInstance().addTerrainScrollListener(this);
-        TerrainView.getInstance().getTerrainHandler().addTerrainListener(this);
         addMouseDownHandler(this);
     }
 
@@ -46,13 +42,9 @@ public class RadarFrameView extends MiniMap implements TerrainScrollListener, Te
     }
 
     @Override
-    public void onTerrainChanged() {
-        scaleX = (double) getWidth() / (double) TerrainView.getInstance().getTerrainHandler().getTerrainSettings().getPlayFieldYSize();
-        scaleY = (double) getHeight() / (double) TerrainView.getInstance().getTerrainHandler().getTerrainSettings().getPlayFieldYSize();
-        resize(TerrainView.getInstance().getTerrainHandler().getTerrainSettings().getPlayFieldYSize(),
-                TerrainView.getInstance().getTerrainHandler().getTerrainSettings().getPlayFieldYSize());
-        scale(scaleX, scaleY);
-        setLineWidth(1.0 / scaleX);
+    public void onTerrainSettings(TerrainSettings terrainSettings) {
+        super.onTerrainSettings(terrainSettings);
+        setLineWidth(1.0 / getScaleX());
         setStrokeStyle(Color.LIGHTGREY);
         onScroll(TerrainView.getInstance().getViewOriginLeft(),
                 TerrainView.getInstance().getViewOriginTop(),
@@ -64,9 +56,8 @@ public class RadarFrameView extends MiniMap implements TerrainScrollListener, Te
 
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
-        int x = (int) ((double) mouseDownEvent.getRelativeX(this.getElement()) / scaleX);
-        int y = (int) ((double) mouseDownEvent.getRelativeY(this.getElement()) / scaleY);
+        int x = (int) ((double) mouseDownEvent.getRelativeX(this.getElement()) / getScaleX());
+        int y = (int) ((double) mouseDownEvent.getRelativeY(this.getElement()) / getScaleY());
         TerrainView.getInstance().moveToMiddle(new Index(x, y));
-
     }
 }
