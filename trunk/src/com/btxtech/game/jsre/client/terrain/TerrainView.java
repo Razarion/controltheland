@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.ExtendedCanvas;
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -78,6 +79,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         }
         terrainHandler.addTerrainListener(this);
         terrainHandler.setupTerrain(terrainSettings, terrainImagePositions, terrainImages);
+        RadarPanel.getInstance().onTerrainSettings(terrainSettings);
     }
 
     public static TerrainView getInstance() {
