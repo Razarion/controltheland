@@ -38,12 +38,16 @@ public abstract class ClientSyncItemView extends AbsolutePanel implements MouseD
         this.syncItem = syncItem;
         this.viewOriginLeft = TerrainView.getInstance().getViewOriginLeft();
         this.viewOriginTop = TerrainView.getInstance().getViewOriginTop();
-        setPixelSize(syncItem.getItemType().getWidth(), syncItem.getItemType().getHeight());
+        setupSize();
         setupImage();
         sinkEvents(Event.ONMOUSEMOVE);
         addDomHandler(this, MouseDownEvent.getType());
         MapWindow.getAbsolutePanel().add(this, 0, 0);
         syncItem.addSyncItemListener(this);
+    }
+
+    protected void setupSize() {
+        setPixelSize(syncItem.getItemType().getWidth(), syncItem.getItemType().getHeight());
     }
 
     public void setupImage() {

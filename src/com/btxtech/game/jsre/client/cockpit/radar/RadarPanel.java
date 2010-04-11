@@ -30,11 +30,13 @@ public class RadarPanel extends TopMapPanel {
     public static final int WIDTH = 200;
     public static final int HEIGHT = 200;
     public static final String RADAR_1 = "Radar 1";
+    public static final String RADAR_2 = "Radar 2";
     private static final RadarPanel INSTANCE = new RadarPanel();
     private MiniTerrain miniTerrain;
     private RadarFrameView radarFrameView;
     private RadarItemView radarItemView;
-    private boolean hasRadar = false;
+    private boolean hasRadar1 = false;
+    private boolean hasRadar2 = false;
     private boolean hasEnergy = false;
     private HTML noRadaPanel;
 
@@ -52,7 +54,7 @@ public class RadarPanel extends TopMapPanel {
     protected Widget createBody() {
         AbsolutePanel absolutePanel = new AbsolutePanel();
         absolutePanel.setPixelSize(WIDTH, HEIGHT);
-        boolean state = hasRadar && hasEnergy;
+        boolean state = (hasRadar1 || hasRadar2) && hasEnergy;
 
         // No radar Panel
         noRadaPanel = new HTML();
@@ -72,7 +74,7 @@ public class RadarPanel extends TopMapPanel {
         // Own item view
         radarItemView = new RadarItemView(WIDTH, HEIGHT);
         radarItemView.getElement().getStyle().setZIndex(2);
-        radarItemView.setVisible(true);
+        radarItemView.setVisible(hasRadar2 && state);
         absolutePanel.add(radarItemView, 0, 0);
 
         // Frame view
@@ -84,16 +86,24 @@ public class RadarPanel extends TopMapPanel {
         return absolutePanel;
     }
 
-    public void setRadarState(boolean state) {
-        if (hasRadar == state) {
+    public void setRadarState1(boolean state) {
+        if (hasRadar1 == state) {
             return;
         }
-        hasRadar = state;
+        hasRadar1 = state;
+        handleRadarState();
+    }
+
+    public void setRadarState2(boolean state) {
+        if (hasRadar2 == state) {
+            return;
+        }
+        hasRadar2 = state;
         handleRadarState();
     }
 
     private void handleRadarState() {
-        boolean state = hasRadar && hasEnergy;
+        boolean state = (hasRadar1 || hasRadar2) && hasEnergy;
 
         if (miniTerrain != null) {
             miniTerrain.setVisible(state);
@@ -101,13 +111,16 @@ public class RadarPanel extends TopMapPanel {
         if (radarFrameView != null) {
             radarFrameView.setVisible(state);
         }
+        if (radarItemView != null) {
+            radarItemView.setVisible(hasRadar2 && state);
+        }
         if (noRadaPanel != null) {
             if (state) {
                 noRadaPanel.setVisible(false);
-            } else if(!hasRadar)  {
+            } else if (!hasRadar1) {
                 noRadaPanel.setVisible(true);
                 noRadaPanel.setHTML(NO_RADAR);
-            } else if(!hasEnergy)  {
+            } else if (!hasEnergy) {
                 noRadaPanel.setVisible(true);
                 noRadaPanel.setHTML(NO_POWER);
             }

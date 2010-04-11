@@ -53,7 +53,7 @@ public class MapEditor implements EntryPoint {
         MapWindow.getAbsolutePanel().add(RadarPanel.getInstance(), 1, 30);
         RadarPanel.getInstance().getElement().getStyle().setProperty("left", "");
         RadarPanel.getInstance().getElement().getStyle().setProperty("right", "30px");
-        RadarPanel.getInstance().setRadarState(true);
+        RadarPanel.getInstance().setRadarState1(true);
         RadarPanel.getInstance().updateEnergy(1, 0);
 
         gameEditor.getTerrainInfo(new AsyncCallback<TerrainInfo>() {

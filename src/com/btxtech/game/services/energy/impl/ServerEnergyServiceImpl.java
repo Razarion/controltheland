@@ -188,4 +188,8 @@ public class ServerEnergyServiceImpl implements ServerEnergyService {
         }
     }
 
+    @Override
+    public void onItemTypeChanged(SyncBaseItem syncBaseItem) {
+        getBaseEnergy(syncBaseItem).onItemTypeChanged(syncBaseItem);
+    }
 }

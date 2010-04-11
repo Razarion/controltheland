@@ -26,6 +26,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderComman
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UpgradeCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 
 /**
@@ -34,7 +35,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInf
  * Time: 19:11:49
  */
 public class SyncBaseItem extends SyncItem {
-    private BaseItemType baseItemType;
     private SimpleBase base;
     private boolean isBuild = false;
     private double health;
@@ -47,49 +47,71 @@ public class SyncBaseItem extends SyncItem {
     private SyncGenerator syncGenerator;
     private SyncConsumer syncConsumer;
     private SyncSpecial syncSpecial;
+    private double upgradeProgress;
+    private boolean isUpgrading;
+    private BaseItemType upgradingItemType;
 
     public SyncBaseItem(Id id, Index position, BaseItemType baseItemType, Services services, SimpleBase base) {
         super(id, position, baseItemType, services);
-        this.baseItemType = baseItemType;
         this.base = base;
         setup();
     }
 
     private void setup() {
+        BaseItemType baseItemType = getBaseItemType();
+
         if (baseItemType.getMovableType() != null) {
             syncMovable = new SyncMovable(baseItemType.getMovableType(), this);
+        } else {
+            syncMovable = null;
         }
 
         if (baseItemType.getTurnableType() != null) {
             syncTurnable = new SyncTurnable(baseItemType.getTurnableType(), this);
+        } else {
+            syncTurnable = null;
         }
 
         if (baseItemType.getWeaponType() != null) {
             syncWeapon = new SyncWeapon(baseItemType.getWeaponType(), this);
+        } else {
+            syncWeapon = null;
         }
 
         if (baseItemType.getFactoryType() != null) {
             syncFactory = new SyncFactory(baseItemType.getFactoryType(), this);
+        } else {
+            syncFactory = null;
         }
 
         if (baseItemType.getBuilderType() != null) {
             syncBuilder = new SyncBuilder(baseItemType.getBuilderType(), this);
+        } else {
+            syncBuilder = null;
         }
 
         if (baseItemType.getHarvesterType() != null) {
             syncHarvester = new SyncHarvester(baseItemType.getHarvesterType(), this);
+        } else {
+            syncHarvester = null;
         }
 
         if (baseItemType.getGeneratorType() != null) {
             syncGenerator = new SyncGenerator(baseItemType.getGeneratorType(), this);
+        } else {
+            syncGenerator = null;
         }
 
         if (baseItemType.getConsumerType() != null) {
             syncConsumer = new SyncConsumer(baseItemType.getConsumerType(), this);
+        } else {
+            syncConsumer = null;
         }
 
         if (baseItemType.getSpecialType() != null) {
             syncSpecial = new SyncSpecial(baseItemType.getSpecialType(), this);
+        } else {
+            syncSpecial = null;
         }
     }
 
@@ -103,7 +125,7 @@ public class SyncBaseItem extends SyncItem {
         }
 
         if (!base.equals(syncBase)) {
-            throw new IllegalArgumentException(this + " bases do not macht: client: " + base + " sync: " + syncBase);
+            throw new IllegalArgumentException(this + " bases do not match: client: " + base + " sync: " + syncBase);
         }
     }
 
@@ -115,8 +137,20 @@ public class SyncBaseItem extends SyncItem {
     public void synchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException {
         checkBase(syncItemInfo.getBase());
         super.synchronize(syncItemInfo);
+        isUpgrading = syncItemInfo.isUpgrading();
+        if (isUpgrading) {
+            upgradingItemType = (BaseItemType) getServices().getItemService().getItemType(getBaseItemType().getUpgradeable());
+        } else {
+            upgradingItemType = null;
+        }
+        if (getItemType().getId() != syncItemInfo.getItemTypeId()) {
+            setItemType(getServices().getItemService().getItemType(syncItemInfo.getItemTypeId()));
+            fireItemChanged(SyncItemListener.Change.ITEM_TYPE_CHANGED);
+            setup();
+        }
         health = syncItemInfo.getHealth();
         setBuild(syncItemInfo.isBuild());
+        upgradeProgress = syncItemInfo.getUpgradeProgress();
 
         if (syncMovable != null) {
             syncMovable.synchronize(syncItemInfo);
@@ -153,6 +187,8 @@ public class SyncBaseItem extends SyncItem {
         syncItemInfo.setBase(base);
         syncItemInfo.setHealth(health);
         syncItemInfo.setBuild(isBuild);
+        syncItemInfo.setUpgrading(isUpgrading);
+        syncItemInfo.setUpgradeProgress(upgradeProgress);
         if (syncMovable != null) {
             syncMovable.fillSyncItemInfo(syncItemInfo);
         }
@@ -185,6 +221,22 @@ public class SyncBaseItem extends SyncItem {
     }
 
     public boolean tick(double factor) throws InsufficientFundsException, ItemDoesNotExistException, NoSuchItemTypeException {
+        if (isUpgrading) {
+            if (upgradeProgress >= upgradingItemType.getHealth()) {
+                setItemType(upgradingItemType);
+                upgradingItemType = null;
+                isUpgrading = false;
+                upgradeProgress = 0;
+                setup();
+                fireItemChanged(SyncItemListener.Change.ITEM_TYPE_CHANGED);
+                return false;
+            } else {
+                upgradeProgress += getBaseItemType().getUpgradeProgress() * factor;
+                fireItemChanged(SyncItemListener.Change.UPGRADE_PROGRESS_CHANGED);
+                return true;
+            }
+        }
+
         if (hasSyncConsumer() && !getSyncConsumer().isOperating()) {
             return false;
         }
@@ -255,6 +307,20 @@ public class SyncBaseItem extends SyncItem {
 
         if (baseCommand instanceof FactoryCommand) {
             getSyncFactory().executeCommand((FactoryCommand) baseCommand);
+            return;
+        }
+
+        if (baseCommand instanceof UpgradeCommand) {
+            if (getBaseItemType().getUpgradeable() == null) {
+                throw new IllegalArgumentException(this + " can not be upgraded");
+            }
+            if (!getServices().getItemTypeAccess().isAllowed(getBaseItemType().getUpgradeable())) {
+                throw new IllegalArgumentException(this + " user is not allowed to upgrade to: " + getBaseItemType().getUpgradeable());
+            }
+            BaseItemType tmpUpgradingItemType = (BaseItemType) getServices().getItemService().getItemType(getBaseItemType().getUpgradeable());
+            getServices().getBaseService().withdrawalMoney(tmpUpgradingItemType.getPrice(), getBase());
+            isUpgrading = true;
+            upgradingItemType = tmpUpgradingItemType;
             return;
         }
 
@@ -381,8 +447,8 @@ public class SyncBaseItem extends SyncItem {
 
     public void increaseHealth(double progress) {
         health += progress;
-        if (health >= baseItemType.getHealth()) {
-            health = baseItemType.getHealth();
+        if (health >= getBaseItemType().getHealth()) {
+            health = getBaseItemType().getHealth();
         }
         fireItemChanged(SyncItemListener.Change.HEALTH);
     }
@@ -396,7 +462,7 @@ public class SyncBaseItem extends SyncItem {
     }
 
     public boolean isHealthy() {
-        return health >= baseItemType.getHealth();
+        return health >= getBaseItemType().getHealth();
     }
 
     public void setBuild(boolean isBuild) {
@@ -415,7 +481,7 @@ public class SyncBaseItem extends SyncItem {
     }
 
     public BaseItemType getBaseItemType() {
-        return baseItemType;
+        return (BaseItemType) getItemType();
     }
 
     public double getHealth() {
@@ -427,7 +493,22 @@ public class SyncBaseItem extends SyncItem {
     }
 
     public void setFullHealth() {
-        health = baseItemType.getHealth();
+        health = getBaseItemType().getHealth();
+    }
+
+    public double getUpgradeProgress() {
+        return upgradeProgress;
+    }
+
+    public boolean isUpgrading() {
+        return isUpgrading;
+    }
+
+    public int getFullUpgradeProgress() {
+        if (upgradingItemType == null) {
+            throw new IllegalStateException(this + " can not be upgraded");
+        }
+        return upgradingItemType.getHealth();
     }
 
     @Override

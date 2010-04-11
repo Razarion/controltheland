@@ -11,25 +11,12 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.common.gameengine.syncObjects;
+package com.btxtech.game.jsre.common.gameengine.syncObjects.command;
 
 /**
  * User: beat
- * Date: 22.11.2009
- * Time: 22:21:39
+ * Date: 09.04.2010
+ * Time: 17:41:18
  */
-public interface SyncItemListener {
-    public enum Change {
-        ANGEL,
-        POSITION,
-        ON_ATTACK,
-        HEALTH,
-        FACTORY_PROGRESS,
-        RESOURCE,
-        BUILD,
-        ITEM_TYPE_CHANGED,
-        UPGRADE_PROGRESS_CHANGED
-    }
-
-    void onItemChanged(Change change, SyncItem syncItem);
+public class UpgradeCommand extends BaseCommand{
 }

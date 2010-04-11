@@ -37,6 +37,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderComman
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UpgradeCommand;
 import com.google.gwt.user.client.Timer;
 import java.util.Collection;
 import java.util.HashSet;
@@ -272,6 +273,27 @@ public class ActionHandler implements CommonActionService {
         try {
             collector.executeCommand(collectCommand);
             executeCommand(collector, collectCommand);
+        } catch (Exception e) {
+            GwtCommon.handleException(e);
+        }
+    }
+
+    @Override
+    public void upgrade(SyncBaseItem item) {
+        if (checkCommand(item)) {
+            return;
+        }
+        item.stop();
+        UpgradeCommand upgradeCommand = new UpgradeCommand();
+        upgradeCommand.setId(item.getId());
+        upgradeCommand.setTimeStamp();
+        try {
+            item.executeCommand(upgradeCommand);
+            executeCommand(item, upgradeCommand);
+        } catch (InsufficientFundsException e) {
+            if (!PlayerSimulation.isActive()) {
+                MessageDialog.show("Insufficient Money!", "You do not have enough money. You have to Collect more money");
+            }
         } catch (Exception e) {
             GwtCommon.handleException(e);
         }

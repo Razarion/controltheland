@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.common.gameengine.services.action;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
@@ -33,4 +34,6 @@ public interface CommonActionService {
     void collect(SyncBaseItem harvester, SyncResourceItem moneyItem);
 
     void attack(SyncBaseItem attacker, SyncBaseItem target);
+
+    void upgrade(SyncBaseItem item) throws InsufficientFundsException;
 }

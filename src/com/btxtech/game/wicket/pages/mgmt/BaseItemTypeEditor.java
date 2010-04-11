@@ -88,16 +88,18 @@ public class BaseItemTypeEditor extends WebPage {
     private boolean special;
     private String specialString;
     private String imageFileField;
-    private HashMap<Integer, DbItemType> itemTypes = new HashMap<Integer, DbItemType>();
+    private HashMap<Integer, DbBaseItemType> itemTypes = new HashMap<Integer, DbBaseItemType>();
 
 
     public BaseItemTypeEditor(DbBaseItemType dbBaseItemType) {
         // Prevent circular object from with same id -> Hibernate problem
         Collection<DbItemType> dbItemTypes = itemService.getDbItemTypes();
         for (DbItemType dbItemType : dbItemTypes) {
-            itemTypes.put(dbItemType.getId(), dbItemType);
+            if (dbItemType instanceof DbBaseItemType) {
+                itemTypes.put(dbItemType.getId(), (DbBaseItemType) dbItemType);
+            }
         }
-        this.dbBaseItemType = (DbBaseItemType) itemTypes.get(dbBaseItemType.getId());
+        this.dbBaseItemType = itemTypes.get(dbBaseItemType.getId());
 
         FeedbackPanel feedbackPanel = new FeedbackPanel("msgs");
         add(feedbackPanel);
@@ -110,6 +112,8 @@ public class BaseItemTypeEditor extends WebPage {
         form.add(new TextArea<String>("contraDescription"));
         form.add(new TextField<String>("health"));
         form.add(new TextField<String>("price"));
+        form.add(new TextField<String>("upgradeable"));
+        form.add(new TextField<String>("upgradeProgress"));
         form.add(new CheckBox("turnable"));
         form.add(new TextField("imageCount"));
         form.add(new CheckBox("movable"));
@@ -254,7 +258,7 @@ public class BaseItemTypeEditor extends WebPage {
         StringTokenizer st = new StringTokenizer(ableToBuild, ABLE_TO_BUILD_DELIIMITER);
         while (st.hasMoreTokens()) {
             int id = Integer.parseInt(st.nextToken());
-            reult.add((DbBaseItemType) itemTypes.get(id));
+            reult.add(itemTypes.get(id));
         }
         return reult;
     }
@@ -444,5 +448,33 @@ public class BaseItemTypeEditor extends WebPage {
 
     public void setPrice(int price) {
         dbBaseItemType.setPrice(price);
+    }
+
+    public void setUpgradeable(Integer id) {
+        if (id != null) {
+            DbBaseItemType upgradeable = itemTypes.get(id);
+            if (upgradeable == null) {
+                throw new IllegalArgumentException("Unknown id for upgradeable: " + id);
+            }
+            dbBaseItemType.setUpgradable(upgradeable);
+        } else {
+            dbBaseItemType.setUpgradable(null);
+        }
+    }
+
+    public Integer getUpgradeable() {
+        if (dbBaseItemType.getUpgradable() != null) {
+            return dbBaseItemType.getUpgradable().getId();
+        } else {
+            return null;
+        }
+    }
+
+    public void setUpgradeProgress(Integer progress) {
+        dbBaseItemType.setUpgradeProgress(progress);
+    }
+
+    public Integer getUpgradeProgress() {
+        return dbBaseItemType.getUpgradeProgress();
     }
 }

@@ -49,7 +49,6 @@ public abstract class SyncItem {
     public void synchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException {
         setPosition(syncItemInfo.getPosition());
         id.synchronize(syncItemInfo.getId());
-        checkItemType(syncItemInfo.getItemTypeId());
     }
 
     public SyncItemInfo getSyncInfo() {
@@ -59,12 +58,6 @@ public abstract class SyncItem {
         syncItemInfo.setItemTypeId(itemType.getId());
         syncItemInfo.setAlive(isAlive());
         return syncItemInfo;
-    }
-
-    private void checkItemType(int itemTypeId) {
-        if (itemType.getId() != itemTypeId) {
-            throw new IllegalArgumentException(this + " item type do not match client: " + itemType.getId() + " sync: " + itemTypeId);
-        }
     }
 
     public Index getPosition() {
@@ -82,6 +75,10 @@ public abstract class SyncItem {
 
     public ItemType getItemType() {
         return itemType;
+    }
+
+    protected void setItemType(ItemType itemType) {
+        this.itemType = itemType;
     }
 
     public void addSyncItemListener(SyncItemListener syncItemListener) {

@@ -13,11 +13,13 @@
 
 package com.btxtech.game.jsre.client;
 
+import com.btxtech.game.jsre.client.cockpit.BuildupItemPanel;
 import com.btxtech.game.jsre.client.cockpit.CursorHandler;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.effects.AttackEffectHandler;
+import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.utg.ClientUserGuidance;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.bot.PlayerSimulation;
@@ -37,7 +39,8 @@ import com.google.gwt.widgetideas.client.ProgressBar;
 public class ClientSyncBaseItemView extends ClientSyncItemView {
     private SyncBaseItem syncBaseItem;
     private ProgressBar healthBar;
-    private ProgressBar buildProgressBar;
+    private ProgressBar progressBar;
+    private SimplePanel marker;
 
     public ClientSyncBaseItemView(SyncBaseItem syncBaseItem) {
         super(syncBaseItem);
@@ -50,9 +53,7 @@ public class ClientSyncBaseItemView extends ClientSyncItemView {
     private void setupAbilities() {
         setupMarker();
         setupHealthBar();
-        if (syncBaseItem.hasSyncFactory()) {
-            setupFactoryProgressBar();
-        }
+        setupProgressBar();
     }
 
     private void setupHealthBar() {
@@ -62,32 +63,40 @@ public class ClientSyncBaseItemView extends ClientSyncItemView {
         healthBar.getElement().getStyle().setHeight(3, Style.Unit.PX);
         healthBar.getElement().getStyle().setFontSize(0, Style.Unit.PX);
         add(healthBar);
+        setupHealthBarPos();
+    }
+
+    private void setupHealthBarPos() {
         setWidgetPosition(healthBar, 0, syncBaseItem.getItemType().getHeight() - 3);
     }
 
     private void setupMarker() {
-        SimplePanel marker = new SimplePanel();
+        marker = new SimplePanel();
         add(marker);
         marker.setPixelSize(10, 10);
         marker.getElement().getStyle().setZIndex(2);
-        setWidgetPosition(marker, 0, syncBaseItem.getItemType().getHeight() - 13);
+        setupMarkerPos();
         DOM.setStyleAttribute(marker.getElement(), "background", syncBaseItem.getBase().getHtmlColor());
     }
 
-    private void setupFactoryProgressBar() {
-        buildProgressBar = new ProgressBar(0.0, 0.0);
-        buildProgressBar.setTextVisible(false);
-        buildProgressBar.setStyleName("gwt-DeviceBuildBar-shell");
-        buildProgressBar.getElement().getStyle().setZIndex(2);
-        buildProgressBar.getElement().getStyle().setHeight(4, Style.Unit.PX);
-        buildProgressBar.getElement().getStyle().setFontSize(0, Style.Unit.PX);
-        add(buildProgressBar);
-        setWidgetPosition(buildProgressBar, 0, 2);
+    private void setupMarkerPos() {
+        setWidgetPosition(marker, 0, syncBaseItem.getItemType().getHeight() - 13);
+    }
+
+    private void setupProgressBar() {
+        progressBar = new ProgressBar(0.0, 0.0);
+        progressBar.setTextVisible(false);
+        progressBar.setStyleName("gwt-DeviceBuildBar-shell");
+        progressBar.getElement().getStyle().setZIndex(2);
+        progressBar.getElement().getStyle().setHeight(4, Style.Unit.PX);
+        progressBar.getElement().getStyle().setFontSize(0, Style.Unit.PX);
+        add(progressBar);
+        setWidgetPosition(progressBar, 0, 2);
     }
 
     protected void setHealth() {
         if (!syncBaseItem.isReady() && !GwtCommon.isIe6()) {
-            double factor = (double) syncBaseItem.getHealth() / (double) syncBaseItem.getBaseItemType().getHealth();
+            double factor = syncBaseItem.getHealth() / (double) syncBaseItem.getBaseItemType().getHealth();
             int width = (int) (syncBaseItem.getItemType().getWidth() * factor);
             int height = (int) (syncBaseItem.getItemType().getHeight() * factor);
             getImage().setPixelSize(width, height);
@@ -102,16 +111,15 @@ public class ClientSyncBaseItemView extends ClientSyncItemView {
         healthBar.setProgress(syncBaseItem.getHealth());
     }
 
-    public void setFactoryProgress() {
-        if (buildProgressBar == null) {
-            throw new IllegalStateException(syncBaseItem + "does not have a buildProgressBar");
-        }
-
-        if (syncBaseItem.getSyncFactory().getToBeBuiltType() != null) {
-            buildProgressBar.setMaxProgress(syncBaseItem.getSyncFactory().getToBeBuiltType().getHealth());
-            buildProgressBar.setProgress(syncBaseItem.getSyncFactory().getBuildupProgress());
+    public void setProgress() {
+        if (syncBaseItem.hasSyncFactory() && syncBaseItem.getSyncFactory().getToBeBuiltType() != null) {
+            progressBar.setMaxProgress(syncBaseItem.getSyncFactory().getToBeBuiltType().getHealth());
+            progressBar.setProgress(syncBaseItem.getSyncFactory().getBuildupProgress());
+        } else if (syncBaseItem.isUpgrading()) {
+            progressBar.setMaxProgress(syncBaseItem.getFullUpgradeProgress());
+            progressBar.setProgress(syncBaseItem.getUpgradeProgress());
         } else {
-            buildProgressBar.setProgress(0);
+            progressBar.setProgress(0);
         }
     }
 
@@ -126,7 +134,7 @@ public class ClientSyncBaseItemView extends ClientSyncItemView {
                 setupImage();
                 break;
             case FACTORY_PROGRESS:
-                setFactoryProgress();
+                setProgress();
                 break;
             case HEALTH:
                 setHealth();
@@ -137,6 +145,18 @@ public class ClientSyncBaseItemView extends ClientSyncItemView {
             case ON_ATTACK:
                 AttackEffectHandler.getInstance().onAttack(this);
                 break;
+            case ITEM_TYPE_CHANGED:
+                setupSize();
+                setupMarkerPos();
+                setupHealthBarPos();
+                setProgress();
+                setupImage();                
+                SelectionHandler.getInstance().refresh();
+                ItemContainer.getInstance().handleSpecial(this);
+                break;
+            case UPGRADE_PROGRESS_CHANGED:
+                setProgress();                
+                break;
         }
     }
 
@@ -146,7 +166,7 @@ public class ClientSyncBaseItemView extends ClientSyncItemView {
         setHealth();
         setPosition();
         if (syncBaseItem.hasSyncFactory()) {
-            setFactoryProgress();
+            setProgress();
         }
     }
 
@@ -179,4 +199,5 @@ public class ClientSyncBaseItemView extends ClientSyncItemView {
     public SyncBaseItem getSyncBaseItem() {
         return syncBaseItem;
     }
+
 }
