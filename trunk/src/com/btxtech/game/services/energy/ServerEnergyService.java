@@ -39,4 +39,6 @@ public interface ServerEnergyService extends EnergyService {
     int getGenerating(SimpleBase simpleBase);
 
     void recalculateEnergy();
+
+    void onItemTypeChanged(SyncBaseItem syncBaseItem);
 }

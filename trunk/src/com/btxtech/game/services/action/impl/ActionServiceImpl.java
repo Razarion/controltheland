@@ -34,6 +34,7 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.collision.CollisionServiceChangedListener;
 import com.btxtech.game.services.connection.ConnectionService;
+import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.utg.UserTrackingService;
@@ -49,6 +50,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * User: beat
@@ -71,6 +73,8 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
     private CollisionService collisionService;
     @Autowired
     private TerrainService terrainService;
+    @Autowired
+    private ServerEnergyService energyService;
     private final HashSet<SyncBaseItem> activeItems = new HashSet<SyncBaseItem>();
     private final HashSet<SyncBaseItem> guardingItems = new HashSet<SyncBaseItem>();
     private final ArrayList<SyncBaseItem> tmpActiveItems = new ArrayList<SyncBaseItem>();
@@ -220,6 +224,9 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
                     interactionGuardingItems((SyncBaseItem) syncItem);
                 }
                 break;
+            case ITEM_TYPE_CHANGED:
+                energyService.onItemTypeChanged((SyncBaseItem)syncItem);
+                break;
         }
 
         if (change == Change.POSITION && syncItem instanceof SyncBaseItem) {
@@ -347,6 +354,11 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
         } catch (Exception e) {
             log.error("", e);
         }
+    }
+
+    @Override
+    public void upgrade(SyncBaseItem item) {
+        throw new NotImplementedException();
     }
 
     @Override

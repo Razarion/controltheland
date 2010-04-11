@@ -16,8 +16,8 @@ package com.btxtech.game.jsre.client.cockpit;
 import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.ClientSyncResourceItemView;
-import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.client.action.ActionHandler;
+import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import java.util.ArrayList;
@@ -54,16 +54,12 @@ public class SelectionHandler {
     }
 
     public void setTargetSelected(ClientSyncItemView selectedTargetClientSyncItem, MouseDownEvent event) {
-        if (selectedTargetClientSyncItem.equals(this.selectedTargetClientSyncItem)) {
-            return;
-        }
-
         if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
             if (selectedGroup != null) {
                 if (selectedGroup.canAttack() && selectedTargetClientSyncItem instanceof ClientSyncBaseItemView) {
-                    ActionHandler.getInstance().attack(selectedGroup.getItems(), ((ClientSyncBaseItemView)selectedTargetClientSyncItem).getSyncBaseItem());
+                    ActionHandler.getInstance().attack(selectedGroup.getItems(), ((ClientSyncBaseItemView) selectedTargetClientSyncItem).getSyncBaseItem());
                 } else if (selectedGroup.canCollect() && selectedTargetClientSyncItem instanceof ClientSyncResourceItemView) {
-                    ActionHandler.getInstance().collect(selectedGroup.getItems(), ((ClientSyncResourceItemView)selectedTargetClientSyncItem).getSyncResourceItem());
+                    ActionHandler.getInstance().collect(selectedGroup.getItems(), ((ClientSyncResourceItemView) selectedTargetClientSyncItem).getSyncResourceItem());
                 }
             } else {
                 this.selectedTargetClientSyncItem = selectedTargetClientSyncItem;
@@ -74,9 +70,6 @@ public class SelectionHandler {
 
     public void setItemGroupSelected(Group selectedGroup) {
         clearSelection();
-        if (selectedGroup.equals(this.selectedGroup)) {
-            return;
-        }
         selectedGroup.setSelected(true);
         this.selectedGroup = selectedGroup;
         onOwnItemSelectionChanged(selectedGroup);
@@ -128,6 +121,14 @@ public class SelectionHandler {
             } else {
                 onOwnItemSelectionChanged(selectedGroup);
             }
+        }
+    }
+
+    public void refresh() {
+        if (selectedGroup != null) {
+            setItemGroupSelected(selectedGroup);
+        } else if (selectedTargetClientSyncItem != null) {
+            onTargetSelectionItemChanged(selectedTargetClientSyncItem);
         }
     }
 

@@ -17,8 +17,8 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * User: beat
@@ -44,6 +44,8 @@ public class SyncItemInfo extends Packet {
     private Boolean followTarget;
     private Boolean operationState;
     private double reloadProgress;
+    private Boolean isUpgrading;
+    private Double upgradeProgress;
 
     public Id getId() {
         return id;
@@ -187,6 +189,22 @@ public class SyncItemInfo extends Packet {
 
     public void setReloadProgress(double reloadProgress) {
         this.reloadProgress = reloadProgress;
+    }
+
+    public Boolean isUpgrading() {
+        return isUpgrading;
+    }
+
+    public void setUpgrading(Boolean upgrading) {
+        isUpgrading = upgrading;
+    }
+
+    public Double getUpgradeProgress() {
+        return upgradeProgress;
+    }
+
+    public void setUpgradeProgress(Double upgradeProgress) {
+        this.upgradeProgress = upgradeProgress;
     }
 
     private String pathToDestinationAsString() {

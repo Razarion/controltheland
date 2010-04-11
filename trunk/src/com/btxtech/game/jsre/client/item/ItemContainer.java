@@ -343,7 +343,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
 
     private void checkSpecialItem(ClientSyncItemView clientSyncItemView) {
         if (isMySpecialItem(clientSyncItemView) != null) {
-            RadarPanel.getInstance().setRadarState(checkForSpecialItem(RadarPanel.RADAR_1));
+            checkForSpecialItems();           
         }
     }
 
@@ -352,9 +352,8 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         if (clientSyncBaseItemView == null) {
             return;
         }
-
         specialItems.add(clientSyncBaseItemView);
-        RadarPanel.getInstance().setRadarState(checkForSpecialItem(RadarPanel.RADAR_1));
+        checkForSpecialItems();
     }
 
     private void checkSpecialRemoved(ClientSyncItemView clientSyncItemView) {
@@ -363,7 +362,30 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
             return;
         }
         specialItems.remove(clientSyncBaseItemView);
-        RadarPanel.getInstance().setRadarState(checkForSpecialItem(RadarPanel.RADAR_1));
+        checkForSpecialItems();
+    }
+
+    private void checkForSpecialItems() {
+        RadarPanel.getInstance().setRadarState1(checkForSpecialItem(RadarPanel.RADAR_1));
+        RadarPanel.getInstance().setRadarState2(checkForSpecialItem(RadarPanel.RADAR_2));
+    }
+
+    public void handleSpecial(ClientSyncBaseItemView clientSyncBaseItemView) {
+        if (!clientSyncBaseItemView.isMyOwnProperty()) {
+            return;
+        }
+
+        if (specialItems.contains(clientSyncBaseItemView)) {
+            if (!clientSyncBaseItemView.getSyncBaseItem().hasSyncSpecial()) {
+                checkSpecialRemoved(clientSyncBaseItemView);
+            } else {
+                checkForSpecialItems();
+            }
+        } else {
+            if (clientSyncBaseItemView.getSyncBaseItem().hasSyncSpecial()) {
+                checkSpecialAdded(clientSyncBaseItemView);
+            }
+        }
     }
 
     private ClientSyncBaseItemView isMySpecialItem(ClientSyncItemView clientSyncItemView) {

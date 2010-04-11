@@ -25,6 +25,7 @@ import com.btxtech.game.jsre.common.XpBalancePackt;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.base.AlreadyUsedException;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseColor;

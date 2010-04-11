@@ -57,6 +57,9 @@ public class DbBaseItemType extends DbItemType {
     private DbGeneratorType dbGeneratorType;
     @OneToOne(cascade = CascadeType.ALL)
     private DbSpecialType dbSpecialType;
+    @OneToOne(cascade = CascadeType.ALL)
+    private DbBaseItemType upgradable;
+    private Integer upgradeProgress;
 
     public int getHealth() {
         return health;
@@ -146,6 +149,22 @@ public class DbBaseItemType extends DbItemType {
         this.dbSpecialType = dbSpecialType;
     }
 
+    public DbBaseItemType getUpgradable() {
+        return upgradable;
+    }
+
+    public void setUpgradable(DbBaseItemType upgradable) {
+        this.upgradable = upgradable;
+    }
+
+    public Integer getUpgradeProgress() {
+        return upgradeProgress;
+    }
+
+    public void setUpgradeProgress(Integer upgradeProgress) {
+        this.upgradeProgress = upgradeProgress;
+    }
+
     @Override
     public ItemType createItemType() {
         BaseItemType baseItemType = new BaseItemType();
@@ -187,6 +206,10 @@ public class DbBaseItemType extends DbItemType {
         }
         if (dbSpecialType != null) {
             baseItemType.setSpecialType(new SpecialType(dbSpecialType.getString()));
+        }
+        if (upgradable != null) {
+            baseItemType.setUpgradeable(upgradable.getId());
+            baseItemType.setUpgradeProgress(upgradeProgress);
         }
 
         return baseItemType;

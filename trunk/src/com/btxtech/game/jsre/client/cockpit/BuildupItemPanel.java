@@ -44,7 +44,6 @@ public class BuildupItemPanel extends HorizontalPanel implements SelectionListen
     private HorizontalPanel description;
     private HorizontalPanel itemsToBuild;
     private Map<ItemType, Widget> itemTypesToBuild = new HashMap<ItemType, Widget>();
-    public static BuildupItemPanel uglyWayToRefreshGui;
 
     public BuildupItemPanel() {
         setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
@@ -56,7 +55,6 @@ public class BuildupItemPanel extends HorizontalPanel implements SelectionListen
         add(itemsToBuild);
 
         SelectionHandler.getInstance().addSelectionListener(this);
-        uglyWayToRefreshGui = this;
     }
 
     @Override

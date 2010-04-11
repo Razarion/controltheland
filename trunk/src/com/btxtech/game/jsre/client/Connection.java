@@ -199,11 +199,7 @@ public class Connection implements AsyncCallback<Void> {
                 } else if (packet instanceof ItemTypeAccessSyncInfo) {
                     ItemTypeAccessSyncInfo itemTypeAccessSyncInfo = (ItemTypeAccessSyncInfo) packet;
                     ClientItemTypeAccess.getInstance().setAllowedItemTypes(itemTypeAccessSyncInfo.getAllowedItemTypes());
-                    // Ugly way to refresh the GUI
-                    Group group = SelectionHandler.getInstance().getOwnSelection();
-                    if (group != null && BuildupItemPanel.uglyWayToRefreshGui != null) {
-                        BuildupItemPanel.uglyWayToRefreshGui.onOwnSelectionChanged(group);
-                    }
+                    SelectionHandler.getInstance().refresh();
                 } else if (packet instanceof EnergyPacket) {
                     EnergyPacket energyPacket = (EnergyPacket) packet;
                     InfoPanel.getInstance().updateEnergy(energyPacket.getGenerating(), energyPacket.getConsuming());

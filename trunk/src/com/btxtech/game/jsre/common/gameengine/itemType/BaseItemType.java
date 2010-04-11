@@ -30,6 +30,8 @@ public class BaseItemType extends ItemType {
     private GeneratorType generatorType;
     private ConsumerType consumerType;
     private SpecialType specialType;
+    private Integer upgradeable;
+    private int upgradeProgress;
 
     public int getHealth() {
         return health;
@@ -119,13 +121,31 @@ public class BaseItemType extends ItemType {
         this.specialType = specialType;
     }
 
+    public Integer getUpgradeable() {
+        return upgradeable;
+    }
+
+    public void setUpgradeable(Integer upgradeable) {
+        this.upgradeable = upgradeable;
+    }
+
+    public double getUpgradeProgress() {
+        return upgradeProgress;
+    }
+
+    public void setUpgradeProgress(int upgradeProgress) {
+        this.upgradeProgress = upgradeProgress;
+    }
+
     @Override
     public void changeTo(ItemType itemType) {
         super.changeTo(itemType);
         BaseItemType baseItemType = (BaseItemType) itemType;
         health = baseItemType.health;
         price = baseItemType.price;
-
+        upgradeable = baseItemType.upgradeable;
+        upgradeProgress = baseItemType.upgradeProgress;
+        
         if (turnableType != null) {
             turnableType.changeTo(baseItemType.turnableType);
         }

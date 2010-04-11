@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.energy.impl;
 
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncConsumer;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncGenerator;
 import com.btxtech.game.services.action.ActionService;
@@ -126,5 +127,31 @@ public class BaseEnergy {
     public void recalculate() {
         recalculateConsumption();
         recalculateGeneration();
+    }
+
+    public void onItemTypeChanged(SyncBaseItem syncBaseItem) {
+        synchronized (syncObject) {
+            // Generators
+            for (SyncGenerator syncGenerator : syncGenerators) {
+                if (syncGenerator.getSyncBaseItem().equals(syncBaseItem)) {
+                    syncGenerators.remove(syncGenerator);
+                    break;
+                }
+            }
+            if (syncBaseItem.hasSyncGenerator()) {
+                syncGenerators.add(syncBaseItem.getSyncGenerator());
+            }
+            // Consumers
+            for (SyncConsumer syncConsumer : syncConsumers) {
+                if (syncConsumer.getSyncBaseItem().equals(syncBaseItem)) {
+                    syncConsumers.remove(syncConsumer);
+                    break;
+                }
+            }
+            if (syncBaseItem.hasSyncConsumer()) {
+                syncConsumers.add(syncBaseItem.getSyncConsumer());
+            }
+        }
+        recalculate();
     }
 }
