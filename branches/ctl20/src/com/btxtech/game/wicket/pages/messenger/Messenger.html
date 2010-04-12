@@ -1,0 +1,33 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+<wicket:extend>
+    <form wicket:id="newMail">
+        <input type="submit" value="New mail">
+    </form>
+    <br>
+    <table class="helpT">
+        <th class="helpBod"></th>
+        <th class="helpBod">Date</th>
+        <th class="helpBod">From</th>
+        <th class="helpBod">Subject</th>
+        <tr wicket:id="mails">
+            <td class="helpBod"><img wicket:id="read"/></td>
+            <td class="helpBod" wicket:id="date">date</td>
+            <td class="helpBod" wicket:id="from">from</td>
+            <td class="helpBod"><a href="#" wicket:id="subjectLink" style="color:black;"><span wicket:id="subject">subject</span></a></td>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <div wicket:id="readMail" />
+</wicket:extend>

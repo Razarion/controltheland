@@ -1,0 +1,133 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+<wicket:panel>
+    <hr>
+    <h2>Details</h2>
+
+    <h3>Overview</h3>
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Time in Game</td>
+            <td wicket:id="timeInGame"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Base Name</td>
+            <td wicket:id="baseName"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Move Commands</td>
+            <td wicket:id="moveCommands"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Build Commands</td>
+            <td wicket:id="builderCommands"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Factory Commands</td>
+            <td wicket:id="factoryCommands"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Collect Commands</td>
+            <td wicket:id="collectCommands"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Attack Commands</td>
+            <td wicket:id="attackCommands"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Completed Missions</td>
+            <td wicket:id="completedMissions"/>
+        </tr>
+    </table>
+    <h3>Startup</h3>
+    <table border="0">
+        <tr>
+            <th bgcolor="#dadada">State</th>
+            <th bgcolor="#dadada">Server Time</th>
+            <th bgcolor="#dadada">Server delta</th>
+            <th bgcolor="#dadada">Client Time</th>
+            <th bgcolor="#dadada">Client delta</th>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Server</td>
+            <td wicket:id="serverTimeServer"/>
+            <td align="center">-</td>
+            <td align="center">-</td>
+            <td align="center">-</td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Clinet start</td>
+            <td wicket:id="clientStartTimeServer"/>
+            <td align="center" wicket:id="clientStartDelteServer"/>
+            <td wicket:id="clientStartTimeClient"/>
+            <td align="center">-</td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Clinet running</td>
+            <td wicket:id="clientRunningTimeServer"/>
+            <td align="center" wicket:id="clientRunningDelteServer"/>
+            <td wicket:id="clientRunningTimeClient"/>
+            <td align="center" wicket:id="clientRunningTimeDelta"/>
+        </tr>
+
+        <tr>
+            <td bgcolor="#dadada">Map BG</td>
+            <td align="center">-</td>
+            <td align="center">-</td>
+            <td wicket:id="clientTimeMapBg"/>
+            <td align="center" wicket:id="clientDeltaMapBg"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Map Images</td>
+            <td align="center">-</td>
+            <td align="center">-</td>
+            <td wicket:id="clientTimeMapImages"/>
+            <td align="center" wicket:id="clientDeltaMapImages"/>
+        </tr>
+
+
+    </table>
+
+    <h3>User Action</h3>
+    <table border="0">
+        <tr>
+            <th bgcolor="#dadada">Client Time</th>
+            <th bgcolor="#dadada">Client delta</th>
+            <th bgcolor="#dadada">Type</th>
+            <th bgcolor="#dadada">Additional</th>
+            <th bgcolor="#dadada">Repeat</th>
+            <th bgcolor="#dadada">Last Time</th>
+            <th bgcolor="#dadada">Last Additional</th>
+        </tr>
+        <tr wicket:id="userActions">
+            <td wicket:id="clientTime"/>
+            <td align="center" wicket:id="clientTimeDelta"/>
+            <td wicket:id="type"/>
+            <td wicket:id="additional"/>
+            <td align="center" wicket:id="repeat"/>
+            <td wicket:id="lastTime"/>
+            <td wicket:id="lastAdditional"/>
+        </tr>
+    </table>
+
+</wicket:panel>
+</body>
+</html>
