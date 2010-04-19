@@ -96,19 +96,25 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         }
 
         for (SurfaceRect surfaceRect : surfaceRects) {
-            Index absolutePos = terrainHandler.getAbsolutIndexForTerrainTileIndex(surfaceRect.getTileIndex());
-            int relXStart = absolutePos.getX() - viewOriginLeft;
-            int relYStart = absolutePos.getY() - viewOriginTop;
+            Rectangle absolutePos = terrainHandler.convertToAbsolutePosition(surfaceRect.getTileRectangle());
             ImageElement imageElement = terrainHandler.getSurfaceImageElement(surfaceRect.getSurfaceImageId());
             if (imageElement == null) {
                 terrainHandler.loadSurfaceImagesAndDrawMap();
                 continue;
             }
             try {
-                canvas.drawImage(imageElement, relXStart, relYStart);
+                tilingSurface(imageElement, absolutePos);
             } catch (Throwable t) {
                 GwtCommon.handleException(t);
-                sendErrorInfoToServer("drawSurface", imageElement, relXStart, relYStart, 0, 0, 0, 0);
+                sendErrorInfoToServer("drawSurface", imageElement, absolutePos.getX(), absolutePos.getY(), 0, 0, 0, 0);
+            }
+        }
+    }
+
+    private void tilingSurface(ImageElement imageElement, Rectangle absolutePos) {
+        for (int x = absolutePos.getX() - viewOriginLeft; x < absolutePos.getEndX() - viewOriginLeft && x < viewWidth; x += imageElement.getWidth()) {
+            for (int y = absolutePos.getY() - viewOriginTop; y < absolutePos.getEndY() - viewOriginTop&& y <  viewHeight; y += imageElement.getHeight()) {
+                canvas.drawImage(imageElement, x, y);
             }
         }
     }
@@ -347,7 +353,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
 
     public void moveSurfaceRect(Rectangle rectangle, SurfaceRect surfaceRect) {
         rectangle.shift(viewOriginLeft, viewOriginTop);
-        terrainHandler.moveSurfaceRect(rectangle, surfaceRect);        
+        terrainHandler.moveSurfaceRect(rectangle, surfaceRect);
     }
 
     private void sendErrorInfoToServer(String method, ImageElement imageElement, int posX, int posY, int srcXStart, int srcXWidth, int srcYStart, int srcYWidth) {
