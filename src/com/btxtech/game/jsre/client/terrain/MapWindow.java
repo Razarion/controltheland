@@ -125,7 +125,7 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
         }
         if (terrainMouseMoveListener != null) {
             terrainMouseMoveListener.onMove(x + TerrainView.getInstance().getViewOriginLeft(), y + TerrainView.getInstance().getViewOriginTop(), x, y);
-    }
+        }
     }
 
     private void executeScrolling(ScrollDirection tmpScrollDirectionX, ScrollDirection tmpScrollDirectionY) {
@@ -171,7 +171,7 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
             if (w instanceof ClientSyncItemView) {
                 ClientSyncItemView clientSyncItemView = (ClientSyncItemView) w;
                 clientSyncItemView.setViewOrigin(left, top);
-            } else if(w instanceof SpeechBubble && !((SpeechBubble) w).isPreventScroll()) {
+            } else if (w instanceof SpeechBubble && !((SpeechBubble) w).isPreventScroll()) {
                 int newLeft = MapWindow.getAbsolutePanel().getWidgetLeft(w) - deltaLeft;
                 int newtop = MapWindow.getAbsolutePanel().getWidgetTop(w) - deltaTop;
                 MapWindow.getAbsolutePanel().setWidgetPosition(w, newLeft, newtop);

@@ -80,6 +80,7 @@ public class Rectangle implements Serializable {
      * The minLength specifeis how long min containg height of weight must be
      * 0 means only two corners adjoins
      */
+
     public boolean adjoins(Rectangle rectangle) {
         int startX = Math.max(start.getX(), rectangle.start.getX());
         int startY = Math.max(start.getY(), rectangle.start.getY());
@@ -133,6 +134,15 @@ public class Rectangle implements Serializable {
 
     public void growWest(int size) {
         start.setX(start.getX() - size);
+    }
+
+    public void shift(int deltaX, int deltaY) {
+        start = start.add(deltaX, deltaY);
+        end = end.add(deltaX, deltaY);
+    }
+
+    public Rectangle moveTo(int absX, int absY) {
+        return new Rectangle(absX, absY, getWidth(), getHeight());
     }
 
     @Override
@@ -253,5 +263,4 @@ public class Rectangle implements Serializable {
         end = end.getLargestPoint(point4);
         return new Rectangle(start, end);
     }
-
 }

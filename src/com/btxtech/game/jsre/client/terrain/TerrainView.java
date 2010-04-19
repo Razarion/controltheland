@@ -21,6 +21,8 @@ import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
@@ -72,13 +74,14 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
 
     public void setupTerrain(TerrainSettings terrainSettings,
                              Collection<TerrainImagePosition> terrainImagePositions,
+                             Collection<SurfaceImage> surfaceImages,
                              Collection<TerrainImage> terrainImages) {
         if (terrainSettings == null) {
             GwtCommon.sendLogToServer("Invalid terrain settings");
             return;
         }
         terrainHandler.addTerrainListener(this);
-        terrainHandler.setupTerrain(terrainSettings, terrainImagePositions, terrainImages);
+        terrainHandler.setupTerrain(terrainSettings, terrainImagePositions, surfaceImages, terrainImages);
         RadarPanel.getInstance().onTerrainSettings(terrainSettings);
     }
 
@@ -86,80 +89,33 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         return INSTANCE;
     }
 
-    private void drawBackground() {
-        ImageElement imageElement = terrainHandler.getBackgroundImage();
-        if (imageElement == null || terrainHandler.getTerrainImageElements().isEmpty()) {
+    private void drawSurface() {
+        List<SurfaceRect> surfaceRects = terrainHandler.getSurfaceRectsInRegion(new Rectangle(viewOriginLeft, viewOriginTop, viewWidth, viewHeight));
+        if (surfaceRects.isEmpty() || terrainHandler.getSurfaceImageElements().isEmpty()) {
             return;
         }
-        int bgTileXStart = viewOriginLeft / imageElement.getWidth();
-        int bgTileXEnd = (viewOriginLeft + viewWidth) / imageElement.getWidth();
-        int bgTileYStart = viewOriginTop / imageElement.getHeight();
-        int bgTileYEnd = (viewOriginTop + viewHeight) / imageElement.getHeight();
 
-        int bgTileLeftOffset = viewOriginLeft % imageElement.getWidth();
-        int bgTileRightOffset = (viewOriginLeft + viewWidth) % imageElement.getWidth();
-        int bgTileTopOffset = viewOriginTop % imageElement.getHeight();
-        int bgTileBottomOffset = (viewOriginTop + viewHeight) % imageElement.getHeight();
-
-        int posX = 0;
-        int posY;
-        for (int x = bgTileXStart; x <= bgTileXEnd; x++) {
-            posY = 0;
-            int srcXStart;
-            int srcXWidth;
-            if (x == bgTileXStart) {
-                // first column
-                srcXStart = bgTileLeftOffset;
-                srcXWidth = imageElement.getWidth() - bgTileLeftOffset;
-            } else if (x == bgTileXEnd) {
-                // last column
-                srcXStart = 0;
-                srcXWidth = bgTileRightOffset;
-            } else {
-                // middle
-                srcXStart = 0;
-                srcXWidth = imageElement.getWidth();
-            }
-            if (srcXWidth == 0) {
-                // Sould never happen but happens in opera
+        for (SurfaceRect surfaceRect : surfaceRects) {
+            Index absolutePos = terrainHandler.getAbsolutIndexForTerrainTileIndex(surfaceRect.getTileIndex());
+            int relXStart = absolutePos.getX() - viewOriginLeft;
+            int relYStart = absolutePos.getY() - viewOriginTop;
+            ImageElement imageElement = terrainHandler.getSurfaceImageElement(surfaceRect.getSurfaceImageId());
+            if (imageElement == null) {
+                terrainHandler.loadSurfaceImagesAndDrawMap();
                 continue;
             }
-            for (int y = bgTileYStart; y <= bgTileYEnd; y++) {
-                int srcYStart;
-                int srcYWidth;
-                if (y == bgTileYStart) {
-                    // first row
-                    srcYStart = bgTileTopOffset;
-                    srcYWidth = imageElement.getHeight() - bgTileTopOffset;
-                } else if (y == bgTileYEnd) {
-                    // last row
-                    srcYStart = 0;
-                    srcYWidth = bgTileBottomOffset;
-                } else {
-                    // middle
-                    srcYStart = 0;
-                    srcYWidth = imageElement.getHeight();
-                }
-                if (srcYWidth == 0) {
-                    // Sould never happen but happens in opera
-                    continue;
-                }
-
-                try {
-                    canvas.drawImage(imageElement, srcXStart, srcYStart, srcXWidth, srcYWidth, posX, posY, srcXWidth, srcYWidth);
-                } catch (Throwable t) {
-                    GwtCommon.handleException(t);
-                    sendErrorInfoToServer(imageElement, posX, posY, srcXStart, srcXWidth, srcYStart, srcYWidth);
-                }
-                posY += srcYWidth;
+            try {
+                canvas.drawImage(imageElement, relXStart, relYStart);
+            } catch (Throwable t) {
+                GwtCommon.handleException(t);
+                sendErrorInfoToServer("drawSurface", imageElement, relXStart, relYStart, 0, 0, 0, 0);
             }
-            posX += srcXWidth;
         }
     }
 
     private void drawImages() {
         List<TerrainImagePosition> terrainImagePositions = terrainHandler.getTerrainImagesInRegion(new Rectangle(viewOriginLeft, viewOriginTop, viewWidth, viewHeight));
-        if (terrainImagePositions.isEmpty() || terrainHandler.getTerrainImageElements().isEmpty() || terrainHandler.getBackgroundImage() == null) {
+        if (terrainImagePositions.isEmpty() || terrainHandler.getTerrainImageElements().isEmpty()) {
             return;
         }
 
@@ -167,7 +123,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
             Index absolutePos = terrainHandler.getAbsolutIndexForTerrainTileIndex(terrainImagePosition.getTileIndex());
             int relXStart = absolutePos.getX() - viewOriginLeft;
             int relYStart = absolutePos.getY() - viewOriginTop;
-            ImageElement imageElement = terrainHandler.getTileImageElement(terrainImagePosition.getImageId());
+            ImageElement imageElement = terrainHandler.getTerrainImageElement(terrainImagePosition.getImageId());
             if (imageElement == null) {
                 terrainHandler.loadImagesAndDrawMap();
                 continue;
@@ -176,7 +132,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
                 canvas.drawImage(imageElement, relXStart, relYStart);
             } catch (Throwable t) {
                 GwtCommon.handleException(t);
-                sendErrorInfoToServer(imageElement, relXStart, relYStart, 0, 0, 0, 0);
+                sendErrorInfoToServer("drawImages", imageElement, relXStart, relYStart, 0, 0, 0, 0);
             }
         }
     }
@@ -356,7 +312,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
     @Override
     public void onTerrainChanged() {
         canvas.clear();
-        drawBackground();
+        drawSurface();
         drawImages();
     }
 
@@ -367,6 +323,13 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         terrainHandler.addNewTerrainImage(absX, absY, terrainImage);
     }
 
+    public void addNewSurfaceRect(int relX, int relY, int width, int height, SurfaceImage surfaceImage) {
+        int absX = relX + viewOriginLeft;
+        int absY = relY + viewOriginTop;
+
+        terrainHandler.addNewSurfaceRect(absX, absY, width, height, surfaceImage);
+    }
+
     public void moveTerrainImagePosition(int relX, int relY, TerrainImagePosition terrainImagePosition) {
         int absX = relX + viewOriginLeft;
         int absY = relY + viewOriginTop;
@@ -374,8 +337,25 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         terrainHandler.moveTerrainImagePosition(absX, absY, terrainImagePosition);
     }
 
-    private void sendErrorInfoToServer(ImageElement imageElement, int posX, int posY, int srcXStart, int srcXWidth, int srcYStart, int srcYWidth) {
+
+    public void moveSurfaceRect(int relX, int relY, SurfaceRect surfaceRect) {
+        int absX = relX + viewOriginLeft;
+        int absY = relY + viewOriginTop;
+
+        terrainHandler.moveSurfaceRect(absX, absY, surfaceRect);
+    }
+
+    public void moveSurfaceRect(Rectangle rectangle, SurfaceRect surfaceRect) {
+        rectangle.shift(viewOriginLeft, viewOriginTop);
+        terrainHandler.moveSurfaceRect(rectangle, surfaceRect);        
+    }
+
+    private void sendErrorInfoToServer(String method, ImageElement imageElement, int posX, int posY, int srcXStart, int srcXWidth, int srcYStart, int srcYWidth) {
         StringBuilder builder = new StringBuilder();
+        builder.append("Method: ");
+        builder.append(method);
+        builder.append("\n");
+
         builder.append("imageElement: ");
         builder.append(imageElement);
         builder.append("\n");

@@ -15,7 +15,7 @@ package com.btxtech.game.services.gwt;
 
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
-import com.btxtech.game.jsre.mapeditor.GameEditor;
+import com.btxtech.game.jsre.mapeditor.TerrainEditor;
 import com.btxtech.game.services.terrain.TerrainService;
 import java.util.Collection;
 import org.apache.commons.logging.Log;
@@ -29,10 +29,10 @@ import org.springframework.stereotype.Component;
  * Time: 8:32:46 PM
  */
 @Component("terrainEditor")
-public class GameEditoImpl implements GameEditor {
+public class TerrainEditoImpl implements TerrainEditor {
     @Autowired
     private TerrainService terrainService;
-    private Log log = LogFactory.getLog(GameEditoImpl.class);
+    private Log log = LogFactory.getLog(TerrainEditoImpl.class);
 
     @Override
     public TerrainInfo getTerrainInfo() {
@@ -40,6 +40,7 @@ public class GameEditoImpl implements GameEditor {
             TerrainInfo terrainInfo = new TerrainInfo();
             terrainInfo.setTerrainSettings(terrainService.getTerrainSettings());
             terrainInfo.setTerrainImagePositions(terrainService.getTerrainImagePositions());
+            terrainInfo.setSurfaceImages(terrainService.getSurfaceImages());
             terrainInfo.setTerrainImages(terrainService.getTerrainImages());
             return terrainInfo;
         } catch (Throwable t) {

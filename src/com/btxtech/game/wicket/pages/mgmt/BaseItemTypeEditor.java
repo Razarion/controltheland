@@ -13,7 +13,7 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBuilderType;
@@ -282,7 +282,7 @@ public class BaseItemTypeEditor extends WebPage {
                 dbBaseItemType.setMovableType(movableType);
             }
             movableType.setSpeed(speed);
-            movableType.setTerrainType(TerrainType.LAND);
+            movableType.setTerrainType(SurfaceType.LAND);
         } else {
             dbBaseItemType.setMovableType(null);
         }

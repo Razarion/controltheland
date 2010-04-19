@@ -304,7 +304,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                         gameTrackingInfo.setClientRunningGameStartup(gameStartup);
                     }
                     break;
-                case CLIENT_MAP_BG_LOADED:
+                case CLIENT_MAP_SURFACE_IMAGES_LOADED:
                     if (gameTrackingInfo != null) {
                         gameTrackingInfo.setMapBgLoaded(gameStartup.getClientTimeStamp());
                     }

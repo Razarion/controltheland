@@ -26,32 +26,32 @@ import com.google.gwt.user.client.ui.Image;
  * Date: Sep 2, 2009
  * Time: 10:07:13 PM
  */
-public class TileSelectorItem extends FlowPanel implements MouseDownHandler {
+public class TerrainImageSelectorItem extends FlowPanel implements MouseDownHandler {
     private TerrainImage terrainImage;
-    private MapModifier mapModifier;
+    private TerrainImageModifier terrainImageModifier;
 
-    public TileSelectorItem(TerrainImage terrainImage, MapModifier mapModifier) {
+    public TerrainImageSelectorItem(TerrainImage terrainImage, TerrainImageModifier terrainImageModifier) {
         this.terrainImage = terrainImage;
-        this.mapModifier = mapModifier;
+        this.terrainImageModifier = terrainImageModifier;
         Image image = ImageHandler.getTerrainImage(terrainImage.getId());
         add(image);
         image.addMouseDownHandler(this);
         setSelected(false);
-        image.setPixelSize(100,100);
+        image.setPixelSize(100, 100);
     }
 
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
-       GwtCommon.preventImageDragging(mouseDownEvent); 
-       PlaceablePreviewTerrainImagePoition placeablePreview = new PlaceablePreviewTerrainImagePoition(terrainImage, mouseDownEvent, mapModifier);
-        mapModifier.setPlaceablePreview(placeablePreview);        
+        GwtCommon.preventImageDragging(mouseDownEvent);
+        PlaceablePreviewTerrainImagePoition placeablePreview = new PlaceablePreviewTerrainImagePoition(terrainImage, mouseDownEvent, terrainImageModifier);
+        terrainImageModifier.setPlaceablePreview(placeablePreview);
     }
 
     public void setSelected(boolean selected) {
-        if(selected) {
+        if (selected) {
             setStyleName("tile-selector-item-selected");
         } else {
             setStyleName("tile-selector-item-unselected");
         }
     }
-    }
+}

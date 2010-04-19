@@ -38,7 +38,9 @@ import java.util.Map;
  */
 public class AbstractTerrainServiceImpl implements AbstractTerrainService {
     private Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
+    private Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
     private Map<Integer, TerrainImage> terrainImages = new HashMap<Integer, TerrainImage>();
+    private Map<Integer, SurfaceImage> surfaceImages = new HashMap<Integer, SurfaceImage>();
     private ArrayList<TerrainListener> terrainListeners = new ArrayList<TerrainListener>();
     private TerrainSettings terrainSettings;
 
@@ -53,6 +55,18 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
 
     protected void addTerrainImagePosition(TerrainImagePosition terrainImagePosition) {
         terrainImagePositions.add(terrainImagePosition);
+    }
+
+    public Collection<SurfaceRect> getSurfaceRects() {
+        return surfaceRects;
+    }
+
+    public void setSurfaceRects(Collection<SurfaceRect> surfaceRects) {
+        this.surfaceRects = surfaceRects;
+    }
+
+    public void addSurfaceRect(SurfaceRect surfaceRect) {
+        surfaceRects.add(surfaceRect);
     }
 
     protected void removeTerrainImagePosition(TerrainImagePosition terrainImagePosition) {
@@ -79,7 +93,11 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
         }
     }
 
-    protected void setupTerrainImages(Collection<TerrainImage> terrainImages) {
+    protected void setupTerrainImages(Collection<SurfaceImage> surfaceImages, Collection<TerrainImage> terrainImages) {
+        clearSurfaceImages();
+        for (SurfaceImage surfaceImage : surfaceImages) {
+            putSurfaceImage(surfaceImage);
+        }
         clearTerrainImages();
         for (TerrainImage terrainImage : terrainImages) {
             putTerrainImage(terrainImage);
@@ -94,18 +112,31 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
         terrainImages.put(terrainImage.getId(), terrainImage);
     }
 
+    protected void clearSurfaceImages() {
+        surfaceImages.clear();
+    }
+
+    protected void putSurfaceImage(SurfaceImage surfaceImage) {
+        surfaceImages.put(surfaceImage.getImageId(), surfaceImage);
+    }
+
     @Override
     public Collection<TerrainImage> getTerrainImages() {
         return new ArrayList<TerrainImage>(terrainImages.values());
     }
 
     @Override
-    public List<TerrainImagePosition> getTerrainImagesInRegion(Rectangle absolutePxRectangle) {
+    public Collection<SurfaceImage> getSurfaceImages() {
+        return new ArrayList<SurfaceImage>(surfaceImages.values());
+    }
+
+    @Override
+    public List<TerrainImagePosition> getTerrainImagesInRegion(Rectangle absRectangle) {
         ArrayList<TerrainImagePosition> result = new ArrayList<TerrainImagePosition>();
         if (terrainSettings == null || terrainImagePositions == null) {
             return result;
         }
-        Rectangle tileRect = convertToTilePositionRoundUp(absolutePxRectangle);
+        Rectangle tileRect = convertToTilePositionRoundUp(absRectangle);
         for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
             if (tileRect.adjoinsEclusive(getTerrainImagePositionRectangle(terrainImagePosition))) {
                 result.add(terrainImagePosition);
@@ -145,6 +176,35 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
         }
         return terrainImage;
     }
+
+    @Override
+    public SurfaceRect getSurfaceRect(int absoluteX, int absoluteY) {
+        if (terrainSettings == null || surfaceRects == null) {
+            return null;
+        }
+        Index tileIndex = getTerrainTileIndexForAbsPosition(absoluteX, absoluteY);
+        for (SurfaceRect surfaceRect : surfaceRects) {
+            if (surfaceRect.getTileRectangle().containsExclusive(tileIndex)) {
+                return surfaceRect;
+            }
+        }
+        return null;
+    }
+
+    public List<SurfaceRect> getSurfaceRectsInRegion(Rectangle absRectangle) {
+        ArrayList<SurfaceRect> result = new ArrayList<SurfaceRect>();
+        if (terrainSettings == null || terrainImagePositions == null) {
+            return result;
+        }
+        Rectangle tileRect = convertToTilePositionRoundUp(absRectangle);
+        for (SurfaceRect surfaceRect : surfaceRects) {
+            if (tileRect.adjoinsEclusive(surfaceRect.getTileRectangle())) {
+                result.add(surfaceRect);
+            }
+        }
+        return result;
+    }
+
 
     @Override
     public Index getTerrainTileIndexForAbsPosition(int x, int y) {
