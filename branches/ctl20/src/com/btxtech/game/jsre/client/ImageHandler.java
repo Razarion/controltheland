@@ -133,7 +133,7 @@ public class ImageHandler {
         return url.toString();
     }
 
-    public static String getTerrainBackgroundUrl() {
+    public static String getTerrainImagesUrl() {
         StringBuilder url = new StringBuilder();
         url.append(Constants.TERRAIN_CONTROLLER_URL);
         url.append("?");

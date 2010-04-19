@@ -13,13 +13,33 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.terrain;
 
+import java.io.Serializable;
+
 /**
  * User: beat
- * Date: 18.11.2009
- * Time: 15:09:53
+ * Date: 14.04.2010
+ * Time: 11:29:22
  */
-@Deprecated
-public enum TerrainType {
-    WATER,
-    LAND
+public class SurfaceImage implements Serializable {
+    private SurfaceType surfaceType;
+    private int id;
+
+    /**
+     * Used by GWT
+     */
+    public SurfaceImage() {
+    }
+
+    public SurfaceImage(SurfaceType surfaceType, int id) {
+        this.surfaceType = surfaceType;
+        this.id = id;
+    }
+
+    public SurfaceType getSurfaceType() {
+        return surfaceType;
+    }
+
+    public int getImageId() {
+        return id;
+    }
 }

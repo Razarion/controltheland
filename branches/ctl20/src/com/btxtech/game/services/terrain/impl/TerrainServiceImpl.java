@@ -15,9 +15,11 @@ package com.btxtech.game.services.terrain.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainServiceImpl;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.services.collision.CollisionService;
-import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.services.terrain.DbTerrainImagePosition;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainService;
@@ -83,6 +85,12 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
             putTerrainImage(dbTerrainImage.createTerrainImage());
         }
 
+        // TODO*********
+        clearSurfaceImages();
+        putSurfaceImage(new SurfaceImage(SurfaceType.LAND, 12));
+        putSurfaceImage(new SurfaceImage(SurfaceType.WATER, 1));
+        //**************
+        
         fireTerrainChanged();
     }
 

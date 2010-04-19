@@ -13,8 +13,6 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.cockpit.BuildupItemPanel;
-import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.GameInfo;
@@ -107,6 +105,7 @@ public class Connection implements AsyncCallback<Void> {
         OnlineBasePanel.getInstance().setOnlineBases(gameInfo.getOnlineBaseUpdate());
         TerrainView.getInstance().setupTerrain(gameInfo.getTerrainSettings(),
                 gameInfo.getTerrainImagePositions(),
+                gameInfo.getSurfaceImages(),
                 gameInfo.getTerrainImages());
         ClientUserTracker.getInstance().setCollectionTime(gameInfo.getUserActionCollectionTime());
 
@@ -254,7 +253,7 @@ public class Connection implements AsyncCallback<Void> {
     public void surrenderBase() {
         if (movableServiceAsync != null) {
             movableServiceAsync.surrenderBase(this);
-            movableServiceAsync = null;            
+            movableServiceAsync = null;
         }
     }
 

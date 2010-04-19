@@ -31,13 +31,13 @@ import com.google.gwt.widgetideas.graphics.client.Color;
  * Date: Sep 3, 2009
  * Time: 6:26:18 PM
  */
-public class MapModifier implements TerrainMouseMoveListener, MouseDownHandler {
+public class TerrainImageModifier implements TerrainMouseMoveListener, MouseDownHandler {
     public static final int LINE_WIDTH = 2;
     private Cockpit cockpit;
     private ExtendedCanvas marker;
     private PlaceablePreviewTerrainImagePoition placeablePreview;
 
-    public MapModifier(Cockpit cockpit) {
+    public TerrainImageModifier(Cockpit cockpit) {
         this.cockpit = cockpit;
         marker = new ExtendedCanvas(100, 100);
         marker.getElement().getStyle().setZIndex(Constants.Z_INDEX_GROUP_SELECTION_FRAME);

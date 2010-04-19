@@ -32,18 +32,18 @@ import java.util.List;
 public class PlaceablePreviewTerrainImagePoition extends PlaceablePreviewWidget {
     private TerrainImage terrainImage;
     private TerrainImagePosition terrainImagePosition;
-    private MapModifier mapModifier;
+    private TerrainImageModifier terrainImageModifier;
 
-    public PlaceablePreviewTerrainImagePoition(TerrainImagePosition terrainImagePosition, MouseEvent mouseEvent, MapModifier mapModifier) {
+    public PlaceablePreviewTerrainImagePoition(TerrainImagePosition terrainImagePosition, MouseEvent mouseEvent, TerrainImageModifier terrainImageModifier) {
         super(ImageHandler.getTerrainImage(terrainImagePosition.getImageId()), mouseEvent);
         this.terrainImagePosition = terrainImagePosition;
-        this.mapModifier = mapModifier;
+        this.terrainImageModifier = terrainImageModifier;
     }
 
-    public PlaceablePreviewTerrainImagePoition(TerrainImage terrainImage, MouseDownEvent mouseDownEvent, MapModifier mapModifier) {
+    public PlaceablePreviewTerrainImagePoition(TerrainImage terrainImage, MouseDownEvent mouseDownEvent, TerrainImageModifier terrainImageModifier) {
         super(ImageHandler.getTerrainImage(terrainImage.getId()), mouseDownEvent);
         this.terrainImage = terrainImage;
-        this.mapModifier = mapModifier;
+        this.terrainImageModifier = terrainImageModifier;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class PlaceablePreviewTerrainImagePoition extends PlaceablePreviewWidget 
             TerrainView.getInstance().addNewTerrainImagePosition(relX, relY, terrainImage);
         }
 
-        mapModifier.setPlaceablePreview(null);
+        terrainImageModifier.setPlaceablePreview(null);
     }
 
     @Override

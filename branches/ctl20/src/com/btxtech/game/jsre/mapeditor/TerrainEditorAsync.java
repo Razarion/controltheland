@@ -25,7 +25,7 @@ import java.util.Collection;
  * Time: 8:18:09 PM
  */
 @RemoteServiceRelativePath("gwtrpc/TerrainServiceService")
-public interface GameEditorAsync extends RemoteService {
+public interface TerrainEditorAsync extends RemoteService {
     void getTerrainInfo(AsyncCallback<TerrainInfo> async);
 
     void saveTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions, AsyncCallback<Void> async);

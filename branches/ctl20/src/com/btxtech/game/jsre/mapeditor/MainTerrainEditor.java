@@ -28,14 +28,14 @@ import com.google.gwt.user.client.ui.RootPanel;
  * Date: Sep 2, 2009
  * Time: 6:51:16 PM
  */
-public class MapEditor implements EntryPoint {
+public class MainTerrainEditor implements EntryPoint {
 
     @Override
     public void onModuleLoad() {
         // Setup common
         GwtCommon.setUncaughtExceptionHandler();
         GwtCommon.disableBrowserContextMenuJSNI();
-        GameEditorAsync gameEditor = GWT.create(GameEditor.class);
+        TerrainEditorAsync terrainEditor = GWT.create(TerrainEditor.class);
 
         // Setup map
         RootPanel.get().add(MapWindow.getAbsolutePanel());
@@ -44,10 +44,8 @@ public class MapEditor implements EntryPoint {
         TerrainView.getInstance().addTerrainScrollListener(MapWindow.getInstance());
 
         // Setup editor
-        final Cockpit cockpit = new Cockpit(gameEditor);
+        final Cockpit cockpit = new Cockpit(terrainEditor);
         MapWindow.getAbsolutePanel().add(cockpit, 30, 30);
-        MapModifier mapModifier = new MapModifier(cockpit);
-        cockpit.setMapModifier(mapModifier);
 
         // Radar panel
         MapWindow.getAbsolutePanel().add(RadarPanel.getInstance(), 1, 30);
@@ -56,7 +54,7 @@ public class MapEditor implements EntryPoint {
         RadarPanel.getInstance().setRadarState1(true);
         RadarPanel.getInstance().updateEnergy(1, 0);
 
-        gameEditor.getTerrainInfo(new AsyncCallback<TerrainInfo>() {
+        terrainEditor.getTerrainInfo(new AsyncCallback<TerrainInfo>() {
             @Override
             public void onFailure(Throwable throwable) {
                 GwtCommon.handleException(throwable);
@@ -66,11 +64,12 @@ public class MapEditor implements EntryPoint {
             public void onSuccess(TerrainInfo terrainInfo) {
                 TerrainView.getInstance().setupTerrain(terrainInfo.getTerrainSettings(),
                         terrainInfo.getTerrainImagePositions(),
+                        terrainInfo.getSurfaceImages(),
                         terrainInfo.getTerrainImages());
-                cockpit.setupTerrainImages(terrainInfo.getTerrainImages());
+                cockpit.fillTerrainImages(terrainInfo.getTerrainImages());
+                cockpit.fillSurfaces(terrainInfo.getSurfaceImages());
             }
         });
 
-        MapWindow.getInstance().setTerrainMouseMoveListener(mapModifier);
     }
 }

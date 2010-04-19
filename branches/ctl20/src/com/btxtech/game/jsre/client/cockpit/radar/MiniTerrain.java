@@ -48,7 +48,7 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
         // Draw terrain
         for (TerrainImagePosition terrainImagePosition : TerrainView.getInstance().getTerrainHandler().getTerrainImagePositions()) {
             Index absolute = TerrainView.getInstance().getTerrainHandler().getAbsolutIndexForTerrainTileIndex(terrainImagePosition.getTileIndex());
-            ImageElement imageElement = TerrainView.getInstance().getTerrainHandler().getTileImageElement(terrainImagePosition.getImageId());
+            ImageElement imageElement = TerrainView.getInstance().getTerrainHandler().getTerrainImageElement(terrainImagePosition.getImageId());
             if (imageElement != null) {
                 drawImage(imageElement, absolute.getX(), absolute.getY());
             }

@@ -14,6 +14,7 @@
 package com.btxtech.game.services.terrain;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.services.terrain.impl.DbKey;
 import java.io.Serializable;

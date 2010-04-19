@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.common;
 
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
@@ -34,6 +35,7 @@ public class GameInfo implements Serializable{
     private int energyConsuming;
     private TerrainSettings terrainSettings;
     private Collection<TerrainImagePosition> terrainImagePositions;
+    private Collection<SurfaceImage> surfaceImages;
     private Collection<TerrainImage> terrainImages;
     private boolean registered;
     private OnlineBaseUpdate onlineBaseUpdate;
@@ -103,6 +105,14 @@ public class GameInfo implements Serializable{
 
     public void setTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions) {
         this.terrainImagePositions = terrainImagePositions;
+    }
+
+    public Collection<SurfaceImage> getSurfaceImages() {
+        return surfaceImages;
+    }
+
+    public void setSurfaceImages(Collection<SurfaceImage> surfaceImages) {
+        this.surfaceImages = surfaceImages;
     }
 
     public Collection<TerrainImage> getTerrainImages() {

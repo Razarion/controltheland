@@ -13,7 +13,7 @@
 
 package com.btxtech.game.services.item.itemType;
 
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -30,7 +30,7 @@ public class DbMovableType implements Serializable {
     @GeneratedValue
     private Integer id;
     private int speed;
-    private TerrainType terrainType;
+    private SurfaceType surfaceType;
 
     public int getSpeed() {
         return speed;
@@ -40,12 +40,12 @@ public class DbMovableType implements Serializable {
         this.speed = speed;
     }
 
-    public TerrainType getTerrainType() {
-        return terrainType;
+    public SurfaceType getTerrainType() {
+        return surfaceType;
     }
 
-    public void setTerrainType(TerrainType terrainType) {
-        this.terrainType = terrainType;
+    public void setTerrainType(SurfaceType surfaceType) {
+        this.surfaceType = surfaceType;
     }
 
     @Override

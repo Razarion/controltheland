@@ -11,17 +11,14 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.common.gameengine.services.utg;
+package com.btxtech.game.jsre.common.gameengine.services.terrain;
 
 /**
  * User: beat
-* Date: 13.01.2010
-* Time: 15:07:16
-*/
-public enum GameStartupState {
-    SERVER,
-    CLIENT_START,
-    CLIENT_RUNNING,
-    CLIENT_MAP_SURFACE_IMAGES_LOADED,
-    CLIENT_MAP_IMAGES_LOADED;
+ * Date: 18.11.2009
+ * Time: 15:09:53
+ */
+public enum SurfaceType {
+    WATER,
+    LAND
 }

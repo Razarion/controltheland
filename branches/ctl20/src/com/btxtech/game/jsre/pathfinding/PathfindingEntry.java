@@ -107,7 +107,7 @@ public class PathfindingEntry implements EntryPoint, MouseDownHandler {
             public void onTerrainChanged() {
                 for (TerrainImagePosition terrainImagePosition : terrainHandler.getTerrainImagePositions()) {
                     Index absolute = terrainHandler.getAbsolutIndexForTerrainTileIndex(terrainImagePosition.getTileIndex());
-                    ImageElement imageElement = terrainHandler.getTileImageElement(terrainImagePosition.getImageId());
+                    ImageElement imageElement = terrainHandler.getTerrainImageElement(terrainImagePosition.getImageId());
                     if (imageElement != null) {
                         extendedCanvas.drawImage(imageElement, absolute.getX(), absolute.getY());
                     }
@@ -116,6 +116,7 @@ public class PathfindingEntry implements EntryPoint, MouseDownHandler {
         });
         terrainHandler.setupTerrain(terrainInfo.getTerrainSettings(),
                 terrainInfo.getTerrainImagePositions(),
+                terrainInfo.getSurfaceImages(),
                 terrainInfo.getTerrainImages());
     }
 

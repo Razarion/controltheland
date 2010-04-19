@@ -15,14 +15,19 @@ package com.btxtech.game.jsre.mapeditor;
 
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.TopMapPanel;
+import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 import java.util.Collection;
@@ -33,22 +38,23 @@ import java.util.Collection;
  * Time: 9:30:48 PM
  */
 public class Cockpit extends TopMapPanel {
-    private TileSelectorItem selection;
-    private FlexTable tileSelector;
+    private TerrainImageSelectorItem selection;
+    private FlexTable terrainImageSelector;
+    private FlexTable surfaceSelector;
     private ToggleButton deleteButton;
-    private GameEditorAsync gameEditor;
-    private MapModifier mapModifier;
+    private TerrainEditorAsync terrainEditor;
+    private TerrainImageModifier terrainImageModifier;
+    private SurfaceModifier surfaceModifier;
 
-    public Cockpit(GameEditorAsync gameEditor) {
-        this.gameEditor = gameEditor;
-    }
-
-    public void setMapModifier(MapModifier mapModifier) {
-        this.mapModifier = mapModifier;
+    public Cockpit(TerrainEditorAsync terrainEditor) {
+        this.terrainEditor = terrainEditor;
     }
 
     @Override
     protected Widget createBody() {
+        terrainImageModifier = new TerrainImageModifier(this);
+        surfaceModifier = new SurfaceModifier(this);
+
         FlexTable controlPanel = new FlexTable();
         // Dele Button
         deleteButton = new ToggleButton("Delete");
@@ -59,7 +65,7 @@ public class Cockpit extends TopMapPanel {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 saveButton.setEnabled(false);
-                gameEditor.saveTerrainImagePositions(TerrainView.getInstance().getTerrainHandler().getTerrainImagePositions(), new AsyncCallback<Void>() {
+                terrainEditor.saveTerrainImagePositions(TerrainView.getInstance().getTerrainHandler().getTerrainImagePositions(), new AsyncCallback<Void>() {
                     @Override
                     public void onFailure(Throwable throwable) {
                         GwtCommon.handleException(throwable);
@@ -76,26 +82,75 @@ public class Cockpit extends TopMapPanel {
         });
         controlPanel.setWidget(1, 0, saveButton);
 
-        // Tile Panel
-        tileSelector = new FlexTable();
-        tileSelector.setCellSpacing(5);
-        tileSelector.setCellPadding(3);
-        tileSelector.addStyleName("tile-selector");
-        ScrollPanel scrollPanel = new ScrollPanel(tileSelector);
-        scrollPanel.setHeight("700px");
-        scrollPanel.setAlwaysShowScrollBars(true);
-        controlPanel.setWidget(2, 0, scrollPanel);
+        // Tab panel
+        TabPanel tp = new TabPanel();
+        tp.add(setupSurfaces(), "Surface");
+        tp.add(setupTerrainImages(), "Images");
+        tp.addSelectionHandler(new SelectionHandler<Integer>() {
+            @Override
+            public void onSelection(SelectionEvent<Integer> integerSelectionEvent) {
+                editModeChanged(integerSelectionEvent.getSelectedItem());
+            }
+        });
+        tp.selectTab(0);
+        // tp.setHeight("700px");
+        controlPanel.setWidget(2, 0, tp);
         return controlPanel;
     }
 
-    public void setupTerrainImages(Collection<TerrainImage> terrainImages) {
-        for (TerrainImage terrainImage : terrainImages) {
-            int numRows = tileSelector.getRowCount();
-            tileSelector.setWidget(numRows, 0, new TileSelectorItem(terrainImage, mapModifier));
+    private void editModeChanged(int mode) {
+
+        switch (mode) {
+            case 0:
+                // Surface
+                 MapWindow.getInstance().setTerrainMouseMoveListener(surfaceModifier);
+                break;
+            case 1:
+                // Terrain Images
+                MapWindow.getInstance().setTerrainMouseMoveListener(terrainImageModifier);
+                break;
+            case 2:
+                // Territory
+                break;
+
         }
     }
 
-    public void onSelectionChanged(TileSelectorItem newSelection) {
+    private Widget setupSurfaces() {
+        surfaceSelector = new FlexTable();
+        surfaceSelector.setCellSpacing(5);
+        surfaceSelector.setCellPadding(3);
+        surfaceSelector.addStyleName("tile-selector");
+        ScrollPanel scrollPanel = new ScrollPanel(surfaceSelector);
+        //scrollPanel.setHeight("100%");
+        scrollPanel.setAlwaysShowScrollBars(true);
+        return scrollPanel;
+    }
+
+    private Widget setupTerrainImages() {
+        terrainImageSelector = new FlexTable();
+        terrainImageSelector.setCellSpacing(5);
+        terrainImageSelector.setCellPadding(3);
+        terrainImageSelector.addStyleName("tile-selector");
+        ScrollPanel scrollPanel = new ScrollPanel(terrainImageSelector);
+        //scrollPanel.setHeight("100%");
+        scrollPanel.setAlwaysShowScrollBars(true);
+        return scrollPanel;
+    }
+
+    public void fillTerrainImages(Collection<TerrainImage> terrainImages) {
+        for (TerrainImage terrainImage : terrainImages) {
+            terrainImageSelector.setWidget(terrainImageSelector.getRowCount(), 0, new TerrainImageSelectorItem(terrainImage, terrainImageModifier));
+        }
+    }
+
+    public void fillSurfaces(Collection<SurfaceImage> surfaceImages) {
+        for (SurfaceImage surfaceImage : surfaceImages) {
+            surfaceSelector.setWidget(surfaceSelector.getRowCount(), 0, new SurfaceSelectorItem(surfaceImage, surfaceModifier));
+        }
+    }
+
+    public void onSelectionChanged(TerrainImageSelectorItem newSelection) {
         if (selection == newSelection) {
             return;
         }

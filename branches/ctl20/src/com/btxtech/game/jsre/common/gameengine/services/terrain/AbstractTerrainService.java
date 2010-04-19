@@ -17,8 +17,8 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import java.util.List;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * User: beat
@@ -40,11 +40,15 @@ public interface AbstractTerrainService {
 
     Collection<TerrainImage> getTerrainImages();
 
+    Collection<SurfaceImage> getSurfaceImages();
+
     Rectangle getTerrainImagePositionRectangle(TerrainImagePosition terrainImagePosition);
 
     TerrainImage getTerrainImage(TerrainImagePosition terrainImagePosition);
 
     TerrainImagePosition getTerrainImagePosition(int absoluteX, int absoluteY);
+
+    SurfaceRect getSurfaceRect(int absoluteX, int absoluteY);
 
     Index getTerrainTileIndexForAbsPosition(int x, int y);
 
