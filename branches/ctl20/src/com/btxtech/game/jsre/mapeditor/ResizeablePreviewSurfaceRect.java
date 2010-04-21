@@ -14,7 +14,6 @@
 package com.btxtech.game.jsre.mapeditor;
 
 import com.btxtech.game.jsre.client.ImageHandler;
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.ResizeablePreviewWidget;
@@ -27,18 +26,17 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
  */
 public class ResizeablePreviewSurfaceRect extends ResizeablePreviewWidget {
     private SurfaceRect surfaceRect;
-    private SurfaceModifier surfaceModifier;
 
-    public ResizeablePreviewSurfaceRect(SurfaceModifier surfaceModifier, SurfaceRect surfaceRect, Rectangle origin, Direction direction) {
-        super(ImageHandler.getSurfaceImage(surfaceRect.getSurfaceImageId()), origin, direction);
-        this.surfaceModifier = surfaceModifier;
+    public ResizeablePreviewSurfaceRect(SurfaceRect surfaceRect, Direction direction) {
+        super(ImageHandler.getSurfaceImage(surfaceRect.getSurfaceImageId()),
+                direction,
+                TerrainView.getInstance().getTerrainHandler().convertToAbsolutePosition(surfaceRect.getTileRectangle()));
         this.surfaceRect = surfaceRect;
     }
 
     @Override
     protected void execute(Rectangle rectangle) {
-        TerrainView.getInstance().moveSurfaceRect(rectangle, surfaceRect);
-        surfaceModifier.setPlaceablePreview(null);
+        TerrainView.getInstance().getTerrainHandler().moveSurfaceRect(rectangle, surfaceRect);
     }
 
     @Override
