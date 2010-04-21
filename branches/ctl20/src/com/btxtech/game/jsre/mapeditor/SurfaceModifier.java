@@ -61,6 +61,11 @@ public class SurfaceModifier implements TerrainMouseMoveListener, MouseDownHandl
             return;
         }
 
+        if (cockpit.isInside(relativeLeft, relativeTop)) {
+            marker.setVisible(false);
+            return;
+        }
+
         SurfaceRect surfaceRect = TerrainView.getInstance().getTerrainHandler().getSurfaceRect(absoluteLeft, absoluteTop);
         if (surfaceRect != null) {
             marker.setVisible(true);
@@ -121,8 +126,14 @@ public class SurfaceModifier implements TerrainMouseMoveListener, MouseDownHandl
 
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
-        int absoluteX = mouseDownEvent.getRelativeX(MapWindow.getAbsolutePanel().getElement()) + TerrainView.getInstance().getViewOriginLeft();
-        int absoluteY = mouseDownEvent.getRelativeY(MapWindow.getAbsolutePanel().getElement()) + TerrainView.getInstance().getViewOriginTop();
+        int relX = mouseDownEvent.getRelativeX(MapWindow.getAbsolutePanel().getElement());
+        int relY = mouseDownEvent.getRelativeY(MapWindow.getAbsolutePanel().getElement());
+        if (cockpit.isInside(relX, relY)) {
+            return;
+        }
+
+        int absoluteX = relX + TerrainView.getInstance().getViewOriginLeft();
+        int absoluteY = relY + TerrainView.getInstance().getViewOriginTop();
         GwtCommon.preventImageDragging(mouseDownEvent);
         SurfaceRect surfaceRect = TerrainView.getInstance().getTerrainHandler().getSurfaceRect(absoluteX, absoluteY);
         if (surfaceRect == null) {
@@ -155,7 +166,7 @@ public class SurfaceModifier implements TerrainMouseMoveListener, MouseDownHandl
         marker.setVisible(false);
 
         if (cockpit.isDeleteModus()) {
-            // TODO  TerrainView.getInstance().getTerrainHandler().removeTerrainImagePosition(terrainImagePosition);
+            TerrainView.getInstance().getTerrainHandler().removeSurfaceRect(surfaceRect);
         } else {
             placeablePreview = new PlaceablePreviewSurfaceRect(surfaceRect, mouseDownEvent, this);
         }

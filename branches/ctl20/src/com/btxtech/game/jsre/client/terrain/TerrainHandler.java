@@ -42,11 +42,13 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
 
     public void setupTerrain(TerrainSettings terrainSettings,
                              Collection<TerrainImagePosition> terrainImagePositions,
+                             Collection<SurfaceRect> surfaceRects,
                              Collection<SurfaceImage> surfaceImages,
                              Collection<TerrainImage> terrainImages) {
         setTerrainSettings(terrainSettings);
         setTerrainImagePositions(terrainImagePositions);
-        setupTerrainImages(surfaceImages, terrainImages);
+        setSurfaceRects(surfaceRects);
+        setupImages(surfaceImages, terrainImages);
         loadSurfaceImagesAndDrawMap();
         loadImagesAndDrawMap();
     }
@@ -150,6 +152,11 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
 
     public void removeTerrainImagePosition(TerrainImagePosition terrainImagePosition) {
         super.removeTerrainImagePosition(terrainImagePosition);
+        fireTerrainChanged();
+    }
+
+    public void removeSurfaceRect(SurfaceRect surfaceRect) {
+        super.removeSurfaceRect(surfaceRect);
         fireTerrainChanged();
     }
 

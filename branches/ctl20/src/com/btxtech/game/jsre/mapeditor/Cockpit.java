@@ -65,18 +65,20 @@ public class Cockpit extends TopMapPanel {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 saveButton.setEnabled(false);
-                terrainEditor.saveTerrainImagePositions(TerrainView.getInstance().getTerrainHandler().getTerrainImagePositions(), new AsyncCallback<Void>() {
-                    @Override
-                    public void onFailure(Throwable throwable) {
-                        GwtCommon.handleException(throwable);
-                        saveButton.setEnabled(true);
-                    }
+                terrainEditor.saveTerrainImagePositions(TerrainView.getInstance().getTerrainHandler().getTerrainImagePositions(),
+                        TerrainView.getInstance().getTerrainHandler().getSurfaceRects(),
+                        new AsyncCallback<Void>() {
+                            @Override
+                            public void onFailure(Throwable throwable) {
+                                GwtCommon.handleException(throwable);
+                                saveButton.setEnabled(true);
+                            }
 
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        saveButton.setEnabled(true);
-                    }
-                });
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                saveButton.setEnabled(true);
+                            }
+                        });
 
             }
         });
@@ -103,7 +105,7 @@ public class Cockpit extends TopMapPanel {
         switch (mode) {
             case 0:
                 // Surface
-                 MapWindow.getInstance().setTerrainMouseMoveListener(surfaceModifier);
+                MapWindow.getInstance().setTerrainMouseMoveListener(surfaceModifier);
                 break;
             case 1:
                 // Terrain Images

@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.mapeditor;
 
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import java.io.Serializable;
 import java.util.Collection;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
@@ -28,6 +29,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 public class TerrainInfo implements Serializable{
     private TerrainSettings terrainSettings;
     private Collection<TerrainImagePosition> terrainImagePositions;
+    private Collection<SurfaceRect> surfaceRects;
     private Collection<SurfaceImage> surfaceImages;
     private Collection<TerrainImage> terrainImages;
 
@@ -45,6 +47,14 @@ public class TerrainInfo implements Serializable{
 
     public void setTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions) {
         this.terrainImagePositions = terrainImagePositions;
+    }
+
+    public Collection<SurfaceRect> getSurfaceRects() {
+        return surfaceRects;
+    }
+
+    public void setSurfaceRects(Collection<SurfaceRect> surfaceRects) {
+        this.surfaceRects = surfaceRects;
     }
 
     public Collection<SurfaceImage> getSurfaceImages() {

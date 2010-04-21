@@ -105,6 +105,7 @@ public class Connection implements AsyncCallback<Void> {
         OnlineBasePanel.getInstance().setOnlineBases(gameInfo.getOnlineBaseUpdate());
         TerrainView.getInstance().setupTerrain(gameInfo.getTerrainSettings(),
                 gameInfo.getTerrainImagePositions(),
+                gameInfo.getSurfaceRects(),
                 gameInfo.getSurfaceImages(),
                 gameInfo.getTerrainImages());
         ClientUserTracker.getInstance().setCollectionTime(gameInfo.getUserActionCollectionTime());

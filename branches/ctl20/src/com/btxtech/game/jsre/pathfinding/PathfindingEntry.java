@@ -116,6 +116,7 @@ public class PathfindingEntry implements EntryPoint, MouseDownHandler {
         });
         terrainHandler.setupTerrain(terrainInfo.getTerrainSettings(),
                 terrainInfo.getTerrainImagePositions(),
+                terrainInfo.getSurfaceRects(), 
                 terrainInfo.getSurfaceImages(),
                 terrainInfo.getTerrainImages());
     }

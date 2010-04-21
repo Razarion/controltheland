@@ -15,9 +15,9 @@ package com.btxtech.game.services.terrain.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainServiceImpl;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
+import com.btxtech.game.services.terrain.DbSurfaceRect;
 import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.services.collision.CollisionService;
@@ -61,6 +61,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
 
 
     private void loadTerrain() {
+        // Terrain settings
         List<DbTerrainSetting> dbTerrainSettings = hibernateTemplate.loadAll(DbTerrainSetting.class);
         if (dbTerrainSettings.isEmpty()) {
             this.dbTerrainSettings = createDefaultTerrainSettings();
@@ -72,13 +73,21 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         }
         setTerrainSettings(this.dbTerrainSettings.createTerrainSettings());
 
+        // Terrain image position
         setTerrainImagePositions(new ArrayList<TerrainImagePosition>());
         List<DbTerrainImagePosition> dbTerrainImagePositions = hibernateTemplate.loadAll(DbTerrainImagePosition.class);
         for (DbTerrainImagePosition dbTerrainImagePosition : dbTerrainImagePositions) {
             addTerrainImagePosition(dbTerrainImagePosition.createTerrainImagePosition());
         }
 
+        // Surface rectangles
+        setSurfaceRects(new ArrayList<SurfaceRect>());
+        List<DbSurfaceRect> dbSurfaceRects = hibernateTemplate.loadAll(DbSurfaceRect.class);
+        for (DbSurfaceRect dbSurfaceRect : dbSurfaceRects) {
+            addSurfaceRect(dbSurfaceRect.createSurfaceRect());
+        }
 
+        // Terrain images
         List<DbTerrainImage> imageList = hibernateTemplate.loadAll(DbTerrainImage.class);
         clearTerrainImages();
         dbTerrainImages = new HashMap<Integer, DbTerrainImage>();
@@ -87,6 +96,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
             putTerrainImage(dbTerrainImage.createTerrainImage());
         }
 
+        // Surface images
         List<DbSurfaceImage> surfaceList = hibernateTemplate.loadAll(DbSurfaceImage.class);
         clearSurfaceImages();
         dbSurfaceImages = new HashMap<Integer, DbSurfaceImage>();
@@ -163,7 +173,8 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     }
 
     @Override
-    public void saveAndActivateTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions) {
+    public void saveAndActivateTerrain(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects) {
+        // Terrain Images
         List<DbTerrainImagePosition> dbTerrainImagePositions = hibernateTemplate.loadAll(DbTerrainImagePosition.class);
         hibernateTemplate.deleteAll(dbTerrainImagePositions);
         ArrayList<DbTerrainImagePosition> dbTerrainImagePositionsNew = new ArrayList<DbTerrainImagePosition>();
@@ -174,6 +185,19 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
             dbTerrainImagePositionsNew.add(dbTerrainImagePosition);
         }
         hibernateTemplate.saveOrUpdateAll(dbTerrainImagePositionsNew);
+        // Surface Rects
+        List<DbSurfaceRect> dbSurfaceRects = hibernateTemplate.loadAll(DbSurfaceRect.class);
+        hibernateTemplate.deleteAll(dbSurfaceRects);
+        ArrayList<DbSurfaceRect> dbSurfaceRectsNew = new ArrayList<DbSurfaceRect>();
+        for (SurfaceRect  surfaceRect: surfaceRects) {
+            DbSurfaceRect dbSurfaceRect = new DbSurfaceRect();
+            dbSurfaceRect.setRectangle(surfaceRect.getTileRectangle());
+            DbSurfaceImage dbSurfaceImage = getDbSurfaceImage(surfaceRect.getSurfaceImageId());
+            dbSurfaceRect.setDbSurfaceImage(dbSurfaceImage);
+            dbSurfaceRectsNew.add(dbSurfaceRect);
+        }
+        hibernateTemplate.saveOrUpdateAll(dbSurfaceRectsNew);
+
         loadTerrain();
     }
 
