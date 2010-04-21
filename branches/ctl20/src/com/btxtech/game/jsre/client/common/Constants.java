@@ -23,7 +23,7 @@ public class Constants {
     public static final int SCROLL_DISTANCE = 500;
     public static final String TERRAIN_CONTROLLER_URL = "/spring/terrain";
     public static final String TERRAIN_IMG_TYPE = "tp";
-    public static final String TERRAIN_IMG_TYPE_BACKGROUND = "bg";
+    public static final String TERRAIN_IMG_TYPE_SURFACE = "sf";
     public static final String TERRAIN_IMG_TYPE_FOREGROUND = "fg";
     public static final String TERRAIN_IMG_TYPE_IMG_ID = "id";
 

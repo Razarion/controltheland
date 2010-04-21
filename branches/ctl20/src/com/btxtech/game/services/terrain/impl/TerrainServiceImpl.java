@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.services.collision.CollisionService;
@@ -42,6 +43,7 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements TerrainService {
     private HibernateTemplate hibernateTemplate;
     private HashMap<Integer, DbTerrainImage> dbTerrainImages = new HashMap<Integer, DbTerrainImage>();
+    private HashMap<Integer, DbSurfaceImage> dbSurfaceImages = new HashMap<Integer, DbSurfaceImage>();
     private Log log = LogFactory.getLog(TerrainServiceImpl.class);
     private DbTerrainSetting dbTerrainSettings;
     @Autowired
@@ -85,12 +87,14 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
             putTerrainImage(dbTerrainImage.createTerrainImage());
         }
 
-        // TODO*********
+        List<DbSurfaceImage> surfaceList = hibernateTemplate.loadAll(DbSurfaceImage.class);
         clearSurfaceImages();
-        putSurfaceImage(new SurfaceImage(SurfaceType.LAND, 12));
-        putSurfaceImage(new SurfaceImage(SurfaceType.WATER, 1));
-        //**************
-        
+        dbSurfaceImages = new HashMap<Integer, DbSurfaceImage>();
+        for (DbSurfaceImage dbSurfaceImage : surfaceList) {
+            dbSurfaceImages.put(dbSurfaceImage.getId(), dbSurfaceImage);
+            putSurfaceImage(dbSurfaceImage.createSurfaceImage());
+        }
+
         fireTerrainChanged();
     }
 
@@ -119,21 +123,42 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     }
 
     @Override
+    public DbSurfaceImage getDbSurfaceImage(int id) {
+        DbSurfaceImage dbSurfaceImage = dbSurfaceImages.get(id);
+        if (dbSurfaceImage == null) {
+            throw new IllegalArgumentException("No terrain surface image for id: " + id);
+        }
+        return dbSurfaceImage;
+
+    }
+
+    @Override
     public List<DbTerrainImage> getDbTerrainImagesCopy() {
         return new ArrayList<DbTerrainImage>(dbTerrainImages.values());
     }
 
     @Override
-    public void saveAndActivateTerrainImages(List<DbTerrainImage> dbTerrainImages, byte[] bgImage, String bgImageType) {
-        dbTerrainSettings.setBgImageData(bgImage);
-        dbTerrainSettings.setBgContentType(bgImageType);
-        hibernateTemplate.saveOrUpdate(dbTerrainSettings);
+    public List<DbSurfaceImage> getDbSurfaceImagesCopy() {
+        return new ArrayList<DbSurfaceImage>(dbSurfaceImages.values());
+    }
+
+    @Override
+    public void saveAndActivateTerrainImages(List<DbTerrainImage> dbTerrainImages, List<DbSurfaceImage> dbSurfaceImages) {
+        // DbTerrainImage
         hibernateTemplate.saveOrUpdateAll(dbTerrainImages);
         ArrayList<DbTerrainImage> doBeDeleted = new ArrayList<DbTerrainImage>(this.dbTerrainImages.values());
         doBeDeleted.removeAll(dbTerrainImages);
         if (!doBeDeleted.isEmpty()) {
             hibernateTemplate.deleteAll(doBeDeleted);
         }
+        // DbSurfaceImage
+        hibernateTemplate.saveOrUpdateAll(dbSurfaceImages);
+        ArrayList<DbSurfaceImage> doBeDeletedSurface = new ArrayList<DbSurfaceImage>(this.dbSurfaceImages.values());
+        doBeDeletedSurface.removeAll(dbSurfaceImages);
+        if (!doBeDeletedSurface.isEmpty()) {
+            hibernateTemplate.deleteAll(doBeDeletedSurface);
+        }
+
         loadTerrain();
     }
 

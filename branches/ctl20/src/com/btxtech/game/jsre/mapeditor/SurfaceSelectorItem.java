@@ -33,7 +33,7 @@ public class SurfaceSelectorItem extends FlowPanel implements MouseDownHandler {
     public SurfaceSelectorItem(SurfaceImage surfaceImage, SurfaceModifier surfaceModifier) {
         this.surfaceImage = surfaceImage;
         this.surfaceModifier = surfaceModifier;
-        Image image = ImageHandler.getTerrainImage(surfaceImage.getImageId());
+        Image image = ImageHandler.getSurfaceImage(surfaceImage.getImageId());
         add(image);
         image.addMouseDownHandler(this);
         setSelected(false);
