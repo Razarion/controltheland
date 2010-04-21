@@ -33,13 +33,13 @@ public class PlaceablePreviewSurfaceRect extends PlaceablePreviewWidget {
     private SurfaceModifier surfaceModifier;
 
     public PlaceablePreviewSurfaceRect(SurfaceImage surfaceImage, MouseEvent mouseEvent, SurfaceModifier surfaceModifier) {
-        super(ImageHandler.getTerrainImage(surfaceImage.getImageId()), mouseEvent);
+        super(ImageHandler.getSurfaceImage(surfaceImage.getImageId()), mouseEvent);
         this.surfaceImage = surfaceImage;
         this.surfaceModifier = surfaceModifier;
     }
 
     public PlaceablePreviewSurfaceRect(SurfaceRect surfaceRect, MouseDownEvent mouseEvent, SurfaceModifier surfaceModifier) {
-        super(ImageHandler.getTerrainImage(surfaceRect.getSurfaceImageId()), mouseEvent);
+        super(ImageHandler.getSurfaceImage(surfaceRect.getSurfaceImageId()), mouseEvent);
         this.surfaceRect = surfaceRect;
         this.surfaceModifier = surfaceModifier;
     }

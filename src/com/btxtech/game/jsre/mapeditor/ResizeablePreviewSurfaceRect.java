@@ -30,7 +30,7 @@ public class ResizeablePreviewSurfaceRect extends ResizeablePreviewWidget {
     private SurfaceModifier surfaceModifier;
 
     public ResizeablePreviewSurfaceRect(SurfaceModifier surfaceModifier, SurfaceRect surfaceRect, Rectangle origin, Direction direction) {
-        super(ImageHandler.getTerrainImage(surfaceRect.getSurfaceImageId()), origin, direction);
+        super(ImageHandler.getSurfaceImage(surfaceRect.getSurfaceImageId()), origin, direction);
         this.surfaceModifier = surfaceModifier;
         this.surfaceRect = surfaceRect;
     }

@@ -33,9 +33,9 @@ public class DbTerrainSetting {
     private int tileYCount;
     private int tileHeight;
     private int tileWidth;
-    @Column(length = 500000)
-    private byte[] bgImageData;
-    private String bgContentType;
+    //@Column(length = 500000)
+    //private byte[] bgImageData;
+    //private String bgContentType;
 
     public Integer getId() {
         return id;
@@ -71,22 +71,6 @@ public class DbTerrainSetting {
 
     public void setTileWidth(int tileWidth) {
         this.tileWidth = tileWidth;
-    }
-
-    public byte[] getBgImageData() {
-        return bgImageData;
-    }
-
-    public void setBgImageData(byte[] bgImageData) {
-        this.bgImageData = bgImageData;
-    }
-
-    public String getBgContentType() {
-        return bgContentType;
-    }
-
-    public void setBgContentType(String bgContentType) {
-        this.bgContentType = bgContentType;
     }
 
     public int getPlayFieldXSize() {

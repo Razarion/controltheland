@@ -24,6 +24,7 @@
         <mapping class="com.btxtech.game.services.connection.ClientLogEntry"/>
         <mapping class="com.btxtech.game.services.terrain.DbTerrainImagePosition"/>
         <mapping class="com.btxtech.game.services.terrain.DbTerrainImage"/>
+        <mapping class="com.btxtech.game.services.terrain.DbSurfaceImage"/>
         <mapping class="com.btxtech.game.services.terrain.DbTerrainSetting"/>
         <mapping class="com.btxtech.game.services.user.User"/>
         <mapping class="com.btxtech.game.services.user.Arq"/>

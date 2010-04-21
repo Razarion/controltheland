@@ -13,15 +13,19 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.services.terrain.TerrainService;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.ImageIcon;
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.Resource;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
@@ -33,7 +37,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.resource.ByteArrayResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import javax.swing.ImageIcon;
 
 /**
  * User: beat
@@ -43,66 +46,100 @@ import javax.swing.ImageIcon;
 public class TerrainTileEditor extends WebPage {
     @SpringBean
     private TerrainService terrainService;
-    private byte[] bgImage;
-    private String bgImageType;
+    private TerrainImageProvider terrainImageProvider;
+    private SurfaceImageProvider surfaceImageProvider;
 
     public TerrainTileEditor() {
-        bgImage = terrainService.getDbTerrainSettings().getBgImageData();
-        bgImageType = terrainService.getDbTerrainSettings().getBgContentType();
         Form form = new Form("tileForm");
         add(form);
 
-        // Background image
-        Image wicketBgImage = new Image("bgImage") {
-            protected Resource getImageResource() {
-                if (bgImage != null && bgImageType != null) {
-                    return new ByteArrayResource(bgImageType, bgImage);
+        surfaceImagesTable(form);
+        terrainImagesTable(form);
+        form.add(new Button("save") {
+            @Override
+            public void onSubmit() {
+                terrainService.saveAndActivateTerrainImages(terrainImageProvider.getImages(), surfaceImageProvider.getImages());
+            }
+        });
+
+    }
+
+    private void surfaceImagesTable(Form form) {
+        surfaceImageProvider = new SurfaceImageProvider();
+        form.add(new DataView<DbSurfaceImage>("surfaceImages", surfaceImageProvider) {
+            protected void populateItem(final Item<DbSurfaceImage> item) {
+                // image
+                if (item.getModelObject().getImageData() != null && item.getModelObject().getImageData().length > 0) {
+                    Image image = new Image("image", new ByteArrayResource("", item.getModelObject().getImageData()));
+                    item.add(image);
                 } else {
-                    return null;
+                    Image noImage = new Image("image");
+                    noImage.setVisible(false);
+                    item.add(noImage);
                 }
-            }
-        };
-        form.add(wicketBgImage);
-        form.add(new FileUploadField("bgUpload", new IModel<FileUpload>() {
-            @Override
-            public FileUpload getObject() {
-                return null;
-            }
+                // upload
+                FileUploadField upload = new FileUploadField("upload", new IModel<FileUpload>() {
+                    @Override
+                    public FileUpload getObject() {
+                        return null;
+                    }
 
-            @Override
-            public void setObject(FileUpload fileUpload) {
-                bgImage = fileUpload.getBytes();
-                bgImageType = fileUpload.getContentType();
-            }
+                    @Override
+                    public void setObject(FileUpload fileUpload) {
+                        item.getModelObject().setImageData(fileUpload.getBytes());
+                        item.getModelObject().setContentType(fileUpload.getContentType());
+                    }
 
-            @Override
-            public void detach() {
-                //Ignored
-            }
-        }));
-        form.add(new Label("bgSize", new IModel<Double>() {
-            @Override
-            public Double getObject() {
-                if (bgImage != null) {
-                    return bgImage.length / 1000.0;
-                } else {
-                    return 0.0;
-                }
-            }
+                    @Override
+                    public void detach() {
+                        //Ignored
+                    }
+                });
+                item.add(upload);
+                // Size
+                double size = item.getModelObject().getImageData() != null ? item.getModelObject().getImageData().length / 1000.0 : 0;
+                item.add(new Label("size", Double.toString(size)));
+                // Surface type
+                IModel<SurfaceType> surfaceTypeIModel = new IModel<SurfaceType>() {
+                    @Override
+                    public SurfaceType getObject() {
+                        return item.getModelObject().getSurfaceType();
+                    }
 
-            @Override
-            public void setObject(Double aDouble) {
-                // Ignore
-            }
+                    @Override
+                    public void setObject(SurfaceType surfaceType) {
+                        item.getModelObject().setSurfaceType(surfaceType);
+                    }
 
-            @Override
-            public void detach() {
-                // Ignore
+                    @Override
+                    public void detach() {
+                        //Ignore
+                    }
+                };
+                item.add(new DropDownChoice<SurfaceType>("surfaceType", surfaceTypeIModel, Arrays.asList(SurfaceType.values())));
+                // Delete
+                Button delete = new Button("delete") {
+                    @Override
+                    public void onSubmit() {
+                        surfaceImageProvider.removeImage(item.getModelObject());
+                    }
+                };
+                item.add(delete);
+                // alternating row color
+                item.add(new AttributeModifier("class", true, new Model<String>(item.getIndex() % 2 == 0 ? "even" : "odd")));
             }
-        }));
+        });
+        form.add(new Button("addSurfaceImage") {
+            @Override
+            public void onSubmit() {
+                surfaceImageProvider.createImage();
+            }
+        });
+    }
 
-        // Image table
-        final DataView<DbTerrainImage> tileList = new DataView<DbTerrainImage>("tiles", new TileProvider()) {
+    private void terrainImagesTable(Form form) {
+        terrainImageProvider = new TerrainImageProvider();
+        final DataView<DbTerrainImage> tileList = new DataView<DbTerrainImage>("terrainImages", terrainImageProvider) {
             protected void populateItem(final Item<DbTerrainImage> item) {
                 // image
                 if (item.getModelObject().getImageData() != null && item.getModelObject().getImageData().length > 0) {
@@ -138,13 +175,11 @@ public class TerrainTileEditor extends WebPage {
                 // Size
                 double size = item.getModelObject().getImageData() != null ? item.getModelObject().getImageData().length / 1000.0 : 0;
                 item.add(new Label("size", Double.toString(size)));
-                // Allowed Item
                 // Delete
                 Button delete = new Button("delete") {
                     @Override
                     public void onSubmit() {
-                        TileProvider tileProvider = (TileProvider) getDataProvider();
-                        tileProvider.removeTile(item.getModelObject());
+                        terrainImageProvider.removeImage(item.getModelObject());
                     }
                 };
                 item.add(delete);
@@ -153,29 +188,18 @@ public class TerrainTileEditor extends WebPage {
             }
         };
         form.add(tileList);
-        form.add(new Button("save") {
+        form.add(new Button("addTerrainImage") {
             @Override
             public void onSubmit() {
-                TileProvider tileProvider = (TileProvider) tileList.getDataProvider();
-                terrainService.saveAndActivateTerrainImages(tileProvider.getTerrainImages(), bgImage, bgImageType);
-                    }
-        });
-
-        form.add(new Button("add") {
-            @Override
-            public void onSubmit() {
-                TileProvider tileProvider = (TileProvider) tileList.getDataProvider();
-                tileProvider.createTile();
+                surfaceImageProvider.createImage();
             }
         });
-
-
     }
 
-    class TileProvider implements IDataProvider<DbTerrainImage> {
+    class TerrainImageProvider implements IDataProvider<DbTerrainImage> {
         private List<DbTerrainImage> dbTerrainImages;
 
-        TileProvider() {
+        TerrainImageProvider() {
             dbTerrainImages = terrainService.getDbTerrainImagesCopy();
         }
 
@@ -201,17 +225,58 @@ public class TerrainTileEditor extends WebPage {
         public void detach() {
         }
 
-        public void createTile() {
+        public void createImage() {
             dbTerrainImages.add(new DbTerrainImage());
-    }
+        }
 
-        public void removeTile(DbTerrainImage dbTerrainImage) {
+        public void removeImage(DbTerrainImage dbTerrainImage) {
             dbTerrainImages.remove(dbTerrainImage);
-}
+        }
 
-        public List<DbTerrainImage> getTerrainImages() {
+        public List<DbTerrainImage> getImages() {
             return dbTerrainImages;
         }
     }
 
+    class SurfaceImageProvider implements IDataProvider<DbSurfaceImage> {
+        private List<DbSurfaceImage> dbSurfaceImages;
+
+        SurfaceImageProvider() {
+            dbSurfaceImages = terrainService.getDbSurfaceImagesCopy();
+        }
+
+        @Override
+        public Iterator<DbSurfaceImage> iterator(int first, int count) {
+            if (first != 0 && count != dbSurfaceImages.size()) {
+                throw new IllegalArgumentException("first: " + first + " count: " + count + " | " + dbSurfaceImages.size());
+            }
+            return dbSurfaceImages.iterator();
+        }
+
+        @Override
+        public int size() {
+            return dbSurfaceImages.size();
+        }
+
+        @Override
+        public IModel<DbSurfaceImage> model(DbSurfaceImage dbSurfaceImage) {
+            return new Model<DbSurfaceImage>(dbSurfaceImage);
+        }
+
+        @Override
+        public void detach() {
+        }
+
+        public void createImage() {
+            dbSurfaceImages.add(new DbSurfaceImage());
+        }
+
+        public void removeImage(DbSurfaceImage dbSurfaceImage) {
+            dbSurfaceImages.remove(dbSurfaceImage);
+        }
+
+        public List<DbSurfaceImage> getImages() {
+            return dbSurfaceImages;
+        }
+    }
 }

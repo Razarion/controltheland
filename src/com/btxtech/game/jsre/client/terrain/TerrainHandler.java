@@ -63,7 +63,7 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
         ArrayList<String> urls = new ArrayList<String>();
         final ArrayList<Integer> ids = new ArrayList<Integer>();
         for (SurfaceImage surfaceImage : getSurfaceImages()) {
-            urls.add(ImageHandler.getTerrainImageUrl(surfaceImage.getImageId()));
+            urls.add(ImageHandler.getSurfaceImagesUrl(surfaceImage.getImageId()));
             ids.add(surfaceImage.getImageId());
         }
 
