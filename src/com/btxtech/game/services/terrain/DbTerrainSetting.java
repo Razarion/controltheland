@@ -33,9 +33,6 @@ public class DbTerrainSetting {
     private int tileYCount;
     private int tileHeight;
     private int tileWidth;
-    //@Column(length = 500000)
-    //private byte[] bgImageData;
-    //private String bgContentType;
 
     public Integer getId() {
         return id;
