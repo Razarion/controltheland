@@ -135,20 +135,19 @@ public class Cockpit extends TopMapPanel {
         terrainImageSelector.setCellPadding(3);
         terrainImageSelector.addStyleName("tile-selector");
         ScrollPanel scrollPanel = new ScrollPanel(terrainImageSelector);
-        //scrollPanel.setHeight("100%");
         scrollPanel.setAlwaysShowScrollBars(true);
         return scrollPanel;
     }
 
     public void fillTerrainImages(Collection<TerrainImage> terrainImages) {
         for (TerrainImage terrainImage : terrainImages) {
-            terrainImageSelector.setWidget(terrainImageSelector.getRowCount(), 0, new TerrainImageSelectorItem(terrainImage, terrainImageModifier));
+            terrainImageSelector.setWidget(terrainImageSelector.getRowCount(), 0, new TerrainImageSelectorItem(terrainImage));
         }
     }
 
     public void fillSurfaces(Collection<SurfaceImage> surfaceImages) {
         for (SurfaceImage surfaceImage : surfaceImages) {
-            surfaceSelector.setWidget(surfaceSelector.getRowCount(), 0, new SurfaceSelectorItem(surfaceImage, surfaceModifier));
+            surfaceSelector.setWidget(surfaceSelector.getRowCount(), 0, new SurfaceSelectorItem(surfaceImage));
         }
     }
 

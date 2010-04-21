@@ -16,9 +16,9 @@ package com.btxtech.game.jsre.common;
 import com.btxtech.game.jsre.client.ExtendedCanvas;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
+import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -57,15 +57,19 @@ public abstract class ResizeablePreviewWidget extends AbsolutePanel implements M
     private boolean hasMoved = false;
     private Image image;
     private Direction direction;
+    private Rectangle absRectangle;
     private ExtendedCanvas marker;
     private FocusPanel focusPanel;
 
-    protected ResizeablePreviewWidget(Image image, Rectangle origin, Direction direction) {
+    protected ResizeablePreviewWidget(Image image, Direction direction, Rectangle absRectangle) {
         this.image = image;
         this.direction = direction;
+        this.absRectangle = absRectangle.copy();
         DOM.setCapture(getElement());
-        RootPanel.get().add(this, origin.getX(), origin.getY());
-        setPixelSize(origin.getWidth(), origin.getHeight());
+        Rectangle relRectangle = absRectangle.copy();
+        relRectangle.shift(-TerrainView.getInstance().getViewOriginLeft(), -TerrainView.getInstance().getViewOriginTop());
+        RootPanel.get().add(this, relRectangle.getX(), relRectangle.getY());
+        setPixelSize(relRectangle.getWidth(), relRectangle.getHeight());
         addMouseMoveHandler(this);
         addMouseUpHandler(this);
         addMouseDownHandler(this);
@@ -206,7 +210,40 @@ public abstract class ResizeablePreviewWidget extends AbsolutePanel implements M
         Rectangle rectangle = specialResize(new Rectangle(getAbsoluteLeft(), getAbsoluteTop(), getOffsetWidth(), getOffsetHeight()));
         if (hasMoved && allowedToPlace(rectangle)) {
             close();
-            execute(rectangle);
+            rectangle.shift(TerrainView.getInstance().getViewOriginLeft(), TerrainView.getInstance().getViewOriginTop());
+            switch (direction) {
+                case NORTH:
+                    absRectangle.setY(rectangle.getY());
+                    break;
+                case EAST:
+                    absRectangle.setEndX(rectangle.getEndX());
+                    break;
+                case SOUTH:
+                    absRectangle.setEndY(rectangle.getEndY());
+                    break;
+                case WEST:
+                    absRectangle.setX(rectangle.getX());
+                    break;
+                case NORTH_EAST:
+                    absRectangle.setEndX(rectangle.getEndX());
+                    absRectangle.setY(rectangle.getY());
+                    break;
+                case SOUTH_EAST:
+                    absRectangle.setEndX(rectangle.getEndX());
+                    absRectangle.setEndY(rectangle.getEndY());
+                    break;
+                case SOUTH_WEST:
+                    absRectangle.setX(rectangle.getX());
+                    absRectangle.setEndY(rectangle.getEndY());
+                    break;
+                case NORTH_WEST:
+                    absRectangle.setX(rectangle.getX());
+                    absRectangle.setY(rectangle.getY());
+                    break;
+                default:
+                    throw new IllegalArgumentException(this + " unknown direction " + direction);
+            }
+            execute(absRectangle);
         }
     }
 

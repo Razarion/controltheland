@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.mapeditor;
 
 import com.btxtech.game.jsre.client.ExtendedCanvas;
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
@@ -35,7 +36,6 @@ public class TerrainImageModifier implements TerrainMouseMoveListener, MouseDown
     public static final int LINE_WIDTH = 2;
     private Cockpit cockpit;
     private ExtendedCanvas marker;
-    private PlaceablePreviewTerrainImagePoition placeablePreview;
 
     public TerrainImageModifier(Cockpit cockpit) {
         this.cockpit = cockpit;
@@ -51,7 +51,7 @@ public class TerrainImageModifier implements TerrainMouseMoveListener, MouseDown
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
         int relX = mouseDownEvent.getRelativeX(MapWindow.getAbsolutePanel().getElement());
         int relY = mouseDownEvent.getRelativeY(MapWindow.getAbsolutePanel().getElement());
-        if (cockpit.isInside(relX, relY)) {
+        if (cockpit.isInside(relX, relY) || cockpit.isInside(relX, relY)) {
             return;
         }
 
@@ -67,17 +67,13 @@ public class TerrainImageModifier implements TerrainMouseMoveListener, MouseDown
         if (cockpit.isDeleteModus()) {
             TerrainView.getInstance().getTerrainHandler().removeTerrainImagePosition(terrainImagePosition);
         } else {
-            placeablePreview = new PlaceablePreviewTerrainImagePoition(terrainImagePosition, mouseDownEvent, this);
+            new PlaceablePreviewTerrainImagePoition(terrainImagePosition, mouseDownEvent);
         }
     }
 
     @Override
     public void onMove(int absoluteLeft, int absoluteTop, int relativeLeft, int relativeTop) {
-        if (placeablePreview != null) {
-            return;
-        }
-
-        if (cockpit.isInside(relativeLeft, relativeTop)) {
+        if (cockpit.isInside(relativeLeft, relativeTop) || RadarPanel.getInstance().isInside(relativeLeft, relativeTop)) {
             marker.setVisible(false);
             return;
         }
@@ -102,9 +98,5 @@ public class TerrainImageModifier implements TerrainMouseMoveListener, MouseDown
         } else {
             marker.setVisible(false);
         }
-    }
-
-    public void setPlaceablePreview(PlaceablePreviewTerrainImagePoition placeablePreview) {
-        this.placeablePreview = placeablePreview;
     }
 }

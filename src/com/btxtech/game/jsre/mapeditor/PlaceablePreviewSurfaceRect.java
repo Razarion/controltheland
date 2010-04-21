@@ -30,18 +30,15 @@ import com.google.gwt.event.dom.client.MouseEvent;
 public class PlaceablePreviewSurfaceRect extends PlaceablePreviewWidget {
     private SurfaceImage surfaceImage;
     private SurfaceRect surfaceRect;
-    private SurfaceModifier surfaceModifier;
 
-    public PlaceablePreviewSurfaceRect(SurfaceImage surfaceImage, MouseEvent mouseEvent, SurfaceModifier surfaceModifier) {
+    public PlaceablePreviewSurfaceRect(SurfaceImage surfaceImage, MouseEvent mouseEvent) {
         super(ImageHandler.getSurfaceImage(surfaceImage.getImageId()), mouseEvent);
         this.surfaceImage = surfaceImage;
-        this.surfaceModifier = surfaceModifier;
     }
 
-    public PlaceablePreviewSurfaceRect(SurfaceRect surfaceRect, MouseDownEvent mouseEvent, SurfaceModifier surfaceModifier) {
+    public PlaceablePreviewSurfaceRect(SurfaceRect surfaceRect, MouseDownEvent mouseEvent) {
         super(ImageHandler.getSurfaceImage(surfaceRect.getSurfaceImageId()), mouseEvent);
         this.surfaceRect = surfaceRect;
-        this.surfaceModifier = surfaceModifier;
     }
 
     @Override
@@ -56,7 +53,5 @@ public class PlaceablePreviewSurfaceRect extends PlaceablePreviewWidget {
         } else {
             TerrainView.getInstance().addNewSurfaceRect(relX, relY, 100, 100, surfaceImage); // TODO remove 100 100
         }
-
-        surfaceModifier.setPlaceablePreview(null);
     }
 }

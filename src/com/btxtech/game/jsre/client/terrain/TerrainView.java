@@ -376,11 +376,6 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         terrainHandler.moveSurfaceRect(absX, absY, surfaceRect);
     }
 
-    public void moveSurfaceRect(Rectangle rectangle, SurfaceRect surfaceRect) {
-        rectangle.shift(viewOriginLeft, viewOriginTop);
-        terrainHandler.moveSurfaceRect(rectangle, surfaceRect);
-    }
-
     private void sendErrorInfoToServer(String method, ImageElement imageElement, int posX, int posY, int srcXStart, int srcXWidth, int srcYStart, int srcYWidth) {
         StringBuilder builder = new StringBuilder();
         builder.append("Method: ");

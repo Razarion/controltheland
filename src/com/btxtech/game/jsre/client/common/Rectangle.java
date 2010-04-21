@@ -184,6 +184,14 @@ public class Rectangle implements Serializable {
         return start.getY();
     }
 
+    public void setX(int x) {
+        start.setX(x);
+    }
+
+    public void setY(int y) {
+        start.setY(y);
+    }
+
     public int getEndX() {
         return end.getX();
     }
@@ -192,6 +200,13 @@ public class Rectangle implements Serializable {
         return end.getY();
     }
 
+    public void setEndX(int x) {
+        end.setX(x);
+    }
+
+    public void setEndY(int y) {
+        end.setY(y);
+    }
 
     public Index getCenter() {
         int centerX = (end.getX() - start.getX()) / 2;
@@ -263,4 +278,5 @@ public class Rectangle implements Serializable {
         end = end.getLargestPoint(point4);
         return new Rectangle(start, end);
     }
+
 }
