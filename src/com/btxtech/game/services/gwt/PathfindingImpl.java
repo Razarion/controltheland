@@ -62,6 +62,8 @@ public class PathfindingImpl implements Pathfinding {
             terrainInfo.setTerrainSettings(terrainService.getTerrainSettings());
             terrainInfo.setTerrainImagePositions(terrainService.getTerrainImagePositions());
             terrainInfo.setTerrainImages(terrainService.getTerrainImages());
+            terrainInfo.setSurfaceImages(terrainService.getSurfaceImages());
+            terrainInfo.setSurfaceRects(terrainService.getSurfaceRects());
             return terrainInfo;
         } catch (Throwable t) {
             log.error("", t);

@@ -650,7 +650,9 @@
         <root url="jar://$PROJECT_DIR$/gwt-user.jar!/" />
       </CLASSES>
       <JAVADOC />
-      <SOURCES />
+      <SOURCES>
+        <root url="file://$PROJECT_DIR$/../../../../tech/gwt-2.0.0/source/user/src" />
+      </SOURCES>
     </library>
   </component>
 </project>

@@ -32,6 +32,8 @@ public interface AbstractTerrainService {
 
     Collection<TerrainImagePosition> getTerrainImagePositions();
 
+    Collection<SurfaceRect> getSurfaceRects();
+
     TerrainSettings getTerrainSettings();
 
     void addTerrainListener(TerrainListener terrainListener);

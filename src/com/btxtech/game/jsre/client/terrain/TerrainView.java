@@ -74,6 +74,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
 
     public void setupTerrain(TerrainSettings terrainSettings,
                              Collection<TerrainImagePosition> terrainImagePositions,
+                             Collection<SurfaceRect> surfaceRects,
                              Collection<SurfaceImage> surfaceImages,
                              Collection<TerrainImage> terrainImages) {
         if (terrainSettings == null) {
@@ -81,7 +82,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
             return;
         }
         terrainHandler.addTerrainListener(this);
-        terrainHandler.setupTerrain(terrainSettings, terrainImagePositions, surfaceImages, terrainImages);
+        terrainHandler.setupTerrain(terrainSettings, terrainImagePositions, surfaceRects, surfaceImages, terrainImages);
         RadarPanel.getInstance().onTerrainSettings(terrainSettings);
     }
 
@@ -102,19 +103,43 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
                 terrainHandler.loadSurfaceImagesAndDrawMap();
                 continue;
             }
-            try {
-                tilingSurface(imageElement, absolutePos);
-            } catch (Throwable t) {
-                GwtCommon.handleException(t);
-                sendErrorInfoToServer("drawSurface", imageElement, absolutePos.getX(), absolutePos.getY(), 0, 0, 0, 0);
-            }
+            tilingSurface(imageElement, absolutePos);
         }
     }
 
     private void tilingSurface(ImageElement imageElement, Rectangle absolutePos) {
-        for (int x = absolutePos.getX() - viewOriginLeft; x < absolutePos.getEndX() - viewOriginLeft && x < viewWidth; x += imageElement.getWidth()) {
-            for (int y = absolutePos.getY() - viewOriginTop; y < absolutePos.getEndY() - viewOriginTop&& y <  viewHeight; y += imageElement.getHeight()) {
-                canvas.drawImage(imageElement, x, y);
+        int endRectX = absolutePos.getEndX() - viewOriginLeft;
+        int endRectY = absolutePos.getEndY() - viewOriginTop;
+        for (int x = absolutePos.getX() - viewOriginLeft; x < endRectX && x < viewWidth; x += imageElement.getWidth()) {
+            int width;
+            if (x + imageElement.getWidth() > endRectX) {
+                width = endRectX - x;
+            } else {
+                width = imageElement.getWidth();
+            }
+            for (int y = absolutePos.getY() - viewOriginTop; y < endRectY && y < viewHeight; y += imageElement.getHeight()) {
+                int height;
+                if (y + imageElement.getWidth() > endRectY) {
+                    height = endRectY - y;
+                } else {
+                    height = imageElement.getWidth();
+                }
+                try {
+                    canvas.drawImage(imageElement,
+                            0, //the start X position in the source image
+                            0, //the start Y position in the source image
+                            width, //the width in the source image you want to sample
+                            height, //the height in the source image you want to sample
+                            x, //the start X position in the destination image
+                            y, //the start Y position in the destination image
+                            width, //the width of drawn image in the destination
+                            height // the height of the drawn image in the destination
+                    );
+                } catch (Throwable t) {
+                    GwtCommon.handleException(t);
+                    sendErrorInfoToServer("drawSurface", imageElement, x, y, 0, width, 0, height);
+                }
+
             }
         }
     }

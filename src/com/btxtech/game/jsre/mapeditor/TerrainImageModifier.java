@@ -49,9 +49,15 @@ public class TerrainImageModifier implements TerrainMouseMoveListener, MouseDown
 
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
+        int relX = mouseDownEvent.getRelativeX(MapWindow.getAbsolutePanel().getElement());
+        int relY = mouseDownEvent.getRelativeY(MapWindow.getAbsolutePanel().getElement());
+        if (cockpit.isInside(relX, relY)) {
+            return;
+        }
+
         marker.setVisible(false);
-        int absoluteX = mouseDownEvent.getRelativeX(MapWindow.getAbsolutePanel().getElement()) + TerrainView.getInstance().getViewOriginLeft();
-        int absoluteY = mouseDownEvent.getRelativeY(MapWindow.getAbsolutePanel().getElement()) + TerrainView.getInstance().getViewOriginTop();
+        int absoluteX = relX + TerrainView.getInstance().getViewOriginLeft();
+        int absoluteY = relY + TerrainView.getInstance().getViewOriginTop();
         TerrainImagePosition terrainImagePosition = TerrainView.getInstance().getTerrainHandler().getTerrainImagePosition(absoluteX, absoluteY);
         GwtCommon.preventImageDragging(mouseDownEvent);
         if (terrainImagePosition == null) {
@@ -68,6 +74,11 @@ public class TerrainImageModifier implements TerrainMouseMoveListener, MouseDown
     @Override
     public void onMove(int absoluteLeft, int absoluteTop, int relativeLeft, int relativeTop) {
         if (placeablePreview != null) {
+            return;
+        }
+
+        if (cockpit.isInside(relativeLeft, relativeTop)) {
+            marker.setVisible(false);
             return;
         }
 

@@ -64,6 +64,7 @@ public class MainTerrainEditor implements EntryPoint {
             public void onSuccess(TerrainInfo terrainInfo) {
                 TerrainView.getInstance().setupTerrain(terrainInfo.getTerrainSettings(),
                         terrainInfo.getTerrainImagePositions(),
+                        terrainInfo.getSurfaceRects(),
                         terrainInfo.getSurfaceImages(),
                         terrainInfo.getTerrainImages());
                 cockpit.fillTerrainImages(terrainInfo.getTerrainImages());

@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.gwt;
 
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.btxtech.game.jsre.mapeditor.TerrainEditor;
@@ -40,8 +41,9 @@ public class TerrainEditoImpl implements TerrainEditor {
             TerrainInfo terrainInfo = new TerrainInfo();
             terrainInfo.setTerrainSettings(terrainService.getTerrainSettings());
             terrainInfo.setTerrainImagePositions(terrainService.getTerrainImagePositions());
-            terrainInfo.setSurfaceImages(terrainService.getSurfaceImages());
             terrainInfo.setTerrainImages(terrainService.getTerrainImages());
+            terrainInfo.setSurfaceImages(terrainService.getSurfaceImages());
+            terrainInfo.setSurfaceRects(terrainService.getSurfaceRects());
             return terrainInfo;
         } catch (Throwable t) {
             log.error("", t);
@@ -50,9 +52,9 @@ public class TerrainEditoImpl implements TerrainEditor {
     }
 
     @Override
-    public void saveTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions) {
+    public void saveTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects) {
         try {
-            terrainService.saveAndActivateTerrainImagePositions(terrainImagePositions);
+            terrainService.saveAndActivateTerrain(terrainImagePositions, surfaceRects);
         } catch (Throwable t) {
             log.error("", t);
         }

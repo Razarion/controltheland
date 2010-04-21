@@ -153,6 +153,8 @@ public class MovableServiceImpl implements MovableService {
             gameInfo.setTerrainSettings(terrainService.getTerrainSettings());
             gameInfo.setTerrainImagePositions(terrainService.getTerrainImagePositions());
             gameInfo.setTerrainImages(terrainService.getTerrainImages());
+            gameInfo.setSurfaceRects(terrainService.getSurfaceRects());
+            gameInfo.setSurfaceImages(terrainService.getSurfaceImages());
             gameInfo.setOnlineBaseUpdate(connectionService.getOnlineBaseUpdate());
             StartupData startupData = mgmtService.getStartupData();
             gameInfo.setTutorialTimeout(startupData.getTutorialTimeout());

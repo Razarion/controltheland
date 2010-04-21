@@ -57,6 +57,7 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
         terrainImagePositions.add(terrainImagePosition);
     }
 
+    @Override
     public Collection<SurfaceRect> getSurfaceRects() {
         return surfaceRects;
     }
@@ -71,6 +72,10 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
 
     protected void removeTerrainImagePosition(TerrainImagePosition terrainImagePosition) {
         terrainImagePositions.remove(terrainImagePosition);
+    }
+
+    protected void removeSurfaceRect(SurfaceRect surfaceRect) {
+        surfaceRects.remove(surfaceRect);
     }
 
     public void setTerrainSettings(TerrainSettings terrainSettings) {
@@ -93,7 +98,7 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
         }
     }
 
-    protected void setupTerrainImages(Collection<SurfaceImage> surfaceImages, Collection<TerrainImage> terrainImages) {
+    protected void setupImages(Collection<SurfaceImage> surfaceImages, Collection<TerrainImage> terrainImages) {
         clearSurfaceImages();
         for (SurfaceImage surfaceImage : surfaceImages) {
             putSurfaceImage(surfaceImage);
