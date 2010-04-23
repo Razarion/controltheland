@@ -40,6 +40,8 @@ public interface AbstractTerrainService {
 
     List<TerrainImagePosition> getTerrainImagesInRegion(Rectangle absolutePxRectangle);
 
+    SurfaceImage getSurfaceImage(int id);
+
     Collection<TerrainImage> getTerrainImages();
 
     Collection<SurfaceImage> getSurfaceImages();

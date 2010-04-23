@@ -131,6 +131,11 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
     }
 
     @Override
+    public SurfaceImage getSurfaceImage(int id) {
+        return surfaceImages.get(id);
+    }
+
+    @Override
     public Collection<SurfaceImage> getSurfaceImages() {
         return new ArrayList<SurfaceImage>(surfaceImages.values());
     }

@@ -323,15 +323,6 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/war/WEB-INF/lib/gwt-incubator-20091216-r1739.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/spring-test.jar!/" />
         </CLASSES>
         <JAVADOC />
