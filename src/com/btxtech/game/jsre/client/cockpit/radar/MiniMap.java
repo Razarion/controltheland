@@ -14,9 +14,7 @@
 package com.btxtech.game.jsre.client.cockpit.radar;
 
 import com.btxtech.game.jsre.client.ExtendedCanvas;
-import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
-import com.google.gwt.widgetideas.graphics.client.Color;
 
 /**
  * User: beat
@@ -28,11 +26,11 @@ public class MiniMap extends ExtendedCanvas {
     private int width;
     private double scaleX = 1.0;
     private double scaleY = 1.0;
+    private TerrainSettings terrainSettings;
 
 
     public MiniMap(int width, int height) {
         super(width, height);
-        setPixelSize(width, height);
         this.height = height;
         this.width = width;
     }
@@ -54,10 +52,13 @@ public class MiniMap extends ExtendedCanvas {
     }
 
     public void onTerrainSettings(TerrainSettings terrainSettings) {
+        this.terrainSettings = terrainSettings;
         scaleX = (double) getWidth() / (double) terrainSettings.getPlayFieldYSize();
         scaleY = (double) getHeight() / (double) terrainSettings.getPlayFieldYSize();
-        resize(terrainSettings.getPlayFieldYSize(), terrainSettings.getPlayFieldYSize());
         scale(scaleX, scaleY);
     }
 
+    public TerrainSettings getTerrainSettings() {
+        return terrainSettings;
+    }
 }
