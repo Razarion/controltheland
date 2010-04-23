@@ -38,6 +38,7 @@ import java.util.Collection;
  * Time: 9:30:48 PM
  */
 public class Cockpit extends TopMapPanel {
+    public static final String HEIGHT = "600px";
     private TerrainImageSelectorItem selection;
     private FlexTable terrainImageSelector;
     private FlexTable surfaceSelector;
@@ -45,6 +46,8 @@ public class Cockpit extends TopMapPanel {
     private TerrainEditorAsync terrainEditor;
     private TerrainImageModifier terrainImageModifier;
     private SurfaceModifier surfaceModifier;
+    private ScrollPanel terrainImageScroll;
+    private ScrollPanel surfaceScroll;
 
     public Cockpit(TerrainEditorAsync terrainEditor) {
         this.terrainEditor = terrainEditor;
@@ -95,7 +98,6 @@ public class Cockpit extends TopMapPanel {
             }
         });
         tp.selectTab(0);
-        // tp.setHeight("700px");
         controlPanel.setWidget(2, 0, tp);
         return controlPanel;
     }
@@ -123,10 +125,9 @@ public class Cockpit extends TopMapPanel {
         surfaceSelector.setCellSpacing(5);
         surfaceSelector.setCellPadding(3);
         surfaceSelector.addStyleName("tile-selector");
-        ScrollPanel scrollPanel = new ScrollPanel(surfaceSelector);
-        //scrollPanel.setHeight("100%");
-        scrollPanel.setAlwaysShowScrollBars(true);
-        return scrollPanel;
+        surfaceScroll = new ScrollPanel(surfaceSelector);
+        surfaceScroll.setAlwaysShowScrollBars(true);
+        return surfaceScroll;
     }
 
     private Widget setupTerrainImages() {
@@ -134,21 +135,23 @@ public class Cockpit extends TopMapPanel {
         terrainImageSelector.setCellSpacing(5);
         terrainImageSelector.setCellPadding(3);
         terrainImageSelector.addStyleName("tile-selector");
-        ScrollPanel scrollPanel = new ScrollPanel(terrainImageSelector);
-        scrollPanel.setAlwaysShowScrollBars(true);
-        return scrollPanel;
+        terrainImageScroll = new ScrollPanel(terrainImageSelector);
+        terrainImageScroll.setAlwaysShowScrollBars(true);
+        return terrainImageScroll;
     }
 
     public void fillTerrainImages(Collection<TerrainImage> terrainImages) {
         for (TerrainImage terrainImage : terrainImages) {
             terrainImageSelector.setWidget(terrainImageSelector.getRowCount(), 0, new TerrainImageSelectorItem(terrainImage));
         }
+        terrainImageScroll.setHeight(HEIGHT);
     }
 
     public void fillSurfaces(Collection<SurfaceImage> surfaceImages) {
         for (SurfaceImage surfaceImage : surfaceImages) {
             surfaceSelector.setWidget(surfaceSelector.getRowCount(), 0, new SurfaceSelectorItem(surfaceImage));
         }
+        surfaceScroll.setHeight(HEIGHT);
     }
 
     public void onSelectionChanged(TerrainImageSelectorItem newSelection) {
