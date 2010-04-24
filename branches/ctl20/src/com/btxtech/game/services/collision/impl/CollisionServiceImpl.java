@@ -45,7 +45,6 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     private TerrainService terrainService;
     @Autowired
     private ItemService itemService;
-    private boolean[][] passableTerrain;
     private List<PassableRectangle> passableRectangles = new ArrayList<PassableRectangle>();
     private Log log = LogFactory.getLog(CollisionServiceImpl.class);
     private ArrayList<CollisionServiceChangedListener> collisionServiceChangedListeners = new ArrayList<CollisionServiceChangedListener>();
@@ -57,31 +56,50 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     }
 
     private void setupPassableTerrain() {
+        log.info("Starting setup collision service");
+        long time = System.currentTimeMillis();
+        boolean[][] passableTerrain = getPassableTerrainTiles();
+        setupPassableRectangles(passableTerrain);
+        log.info("Time needed to start up collision service: " + (System.currentTimeMillis() - time) + "ms");
+    }
+
+    private boolean[][] getPassableTerrainTiles() {
         DbTerrainSetting dbTerrainSetting = terrainService.getDbTerrainSettings();
-        passableTerrain = new boolean[dbTerrainSetting.getTileXCount()][dbTerrainSetting.getTileYCount()];
+        boolean[][] passableTerrain = new boolean[dbTerrainSetting.getTileXCount()][dbTerrainSetting.getTileYCount()];
         for (int x = 0; x < dbTerrainSetting.getTileXCount(); x++) {
             for (int y = 0; y < dbTerrainSetting.getTileYCount(); y++) {
                 Index absolute = terrainService.getAbsolutIndexForTerrainTileIndex(x, y);
-                passableTerrain[x][y] = terrainService.isTerrainPassable(absolute);
+                passableTerrain[x][y] = terrainService.isTerrainPassable(absolute); // TODO get terrain type
             }
         }
-
-        setupPassableRectangles();
+        return passableTerrain;
     }
 
-    private void setupPassableRectangles() {
-        Collection<Index> passableTiles = getPassableTiles();
+    private void setupPassableRectangles(boolean[][] passableTerrain) {
+        Collection<Index> passableTiles = getPassableTiles(passableTerrain);
         if (passableTiles.isEmpty()) {
             log.error("Terrain does not have any passable terrain tiles");
             return;
         }
 
         ArrayList<Rectangle> mapAsRectangles = separateIntoRectangles(passableTiles);
-
         buildPassableRectangleList(mapAsRectangles);
+
         for (CollisionServiceChangedListener collisionServiceChangedListener : collisionServiceChangedListeners) {
             collisionServiceChangedListener.collisionServiceChanged();
         }
+    }
+
+    private Collection<Index> getPassableTiles(boolean[][] passableTerrain) {
+        HashSet<Index> passableTiles = new HashSet<Index>();
+        for (int x = 0; x < passableTerrain.length; x++) {
+            for (int y = 0; y < passableTerrain[x].length; y++) {
+                if (passableTerrain[x][y]) {
+                    passableTiles.add(new Index(x, y));
+                }
+            }
+        }
+        return passableTiles;
     }
 
     private void buildPassableRectangleList(ArrayList<Rectangle> rectangles) {
@@ -131,19 +149,6 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
 
         Index newStart = remainingAtoms.iterator().next();
         removeRectangles(remainingAtoms, rectangles, newStart);
-    }
-
-
-    private Collection<Index> getPassableTiles() {
-        HashSet<Index> passableTiles = new HashSet<Index>();
-        for (int x = 0; x < passableTerrain.length; x++) {
-            for (int y = 0; y < passableTerrain[x].length; y++) {
-                if (passableTerrain[x][y]) {
-                    passableTiles.add(new Index(x, y));
-                }
-            }
-        }
-        return passableTiles;
     }
 
     private Rectangle getRectangles(int stratX, int startY, Collection<Index> passableMap) {
@@ -330,11 +335,6 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     }
 
     @Override
-    public boolean[][] getPassableTerrain() {
-        return passableTerrain;
-    }
-
-    @Override
     public void onTerrainChanged() {
         setupPassableTerrain();
     }
@@ -342,7 +342,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     @Override
     public void addCollisionServiceChangedListener(CollisionServiceChangedListener collisionServiceChangedListener) {
         collisionServiceChangedListeners.add(collisionServiceChangedListener);
-        if (passableTerrain != null) {
+        if (!passableRectangles.isEmpty()) {
             collisionServiceChangedListener.collisionServiceChanged();
         }
     }
