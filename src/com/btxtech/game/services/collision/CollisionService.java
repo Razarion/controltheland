@@ -28,8 +28,6 @@ public interface CollisionService extends CommonCollisionService {
 
     Index getFreeRandomPosition(ItemType itemType, int edgeLength);
 
-    boolean[][] getPassableTerrain();
-
     void addCollisionServiceChangedListener(CollisionServiceChangedListener collisionServiceChangedListener);
 
     void removeCollisionServiceChangedListener(CollisionServiceChangedListener collisionServiceChangedListener);
