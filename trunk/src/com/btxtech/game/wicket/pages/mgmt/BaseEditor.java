@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -54,6 +56,7 @@ public class BaseEditor extends WebPage {
     private ConnectionService connectionService;
     @SpringBean
     private ServerEnergyService energyService;
+    private Log log = LogFactory.getLog(BaseEditor.class);
 
     public BaseEditor(final SimpleBase simpleBase) {
         Form form = new Form("base");
@@ -110,17 +113,25 @@ public class BaseEditor extends WebPage {
 
             @Override
             protected void populateItem(final Item<SyncBaseItem> item) {
-                item.add(new Label("id", item.getModelObject().getId().toString()));
-                item.add(new Label("itemType", item.getModelObject().getItemType().getName()));
+                if (item.getModelObject() != null) {
+                    item.add(new Label("id", item.getModelObject().getId().toString()));
+                    item.add(new Label("itemType", item.getModelObject().getItemType().getName()));
+                } else {
+                    item.add(new Label("id", "?"));
+                    item.add(new Label("itemType", "?"));
+                }
+
                 item.add(new TextField<String>("health", new IModel<String>() {
                     @Override
                     public String getObject() {
-                        return Integer.toString((int)item.getModelObject().getHealth());
+                        return item.getModelObject() != null ? Integer.toString((int) item.getModelObject().getHealth()) : "?";
                     }
 
                     @Override
                     public void setObject(String health) {
-                        item.getModelObject().setHealth(Integer.parseInt(health));
+                        if (item.getModelObject() != null) {
+                            item.getModelObject().setHealth(Integer.parseInt(health));
+                        }
                     }
 
                     @Override
@@ -131,12 +142,14 @@ public class BaseEditor extends WebPage {
                 item.add(new TextField<String>("xPos", new IModel<String>() {
                     @Override
                     public String getObject() {
-                        return Integer.toString(item.getModelObject().getPosition().getX());
+                        return item.getModelObject() != null ? Integer.toString(item.getModelObject().getPosition().getX()) : "?";
                     }
 
                     @Override
                     public void setObject(String xPos) {
-                        item.getModelObject().setPosition(new Index(Integer.parseInt(xPos), item.getModelObject().getPosition().getY()));
+                        if (item.getModelObject() != null) {
+                            item.getModelObject().setPosition(new Index(Integer.parseInt(xPos), item.getModelObject().getPosition().getY()));
+                        }
                     }
 
                     @Override
@@ -146,12 +159,14 @@ public class BaseEditor extends WebPage {
                 item.add(new TextField<String>("yPos", new IModel<String>() {
                     @Override
                     public String getObject() {
-                        return Integer.toString(item.getModelObject().getPosition().getY());
+                        return item.getModelObject() != null ? Integer.toString(item.getModelObject().getPosition().getY()) : "?";
                     }
 
                     @Override
                     public void setObject(String yPos) {
-                        item.getModelObject().setPosition(new Index(item.getModelObject().getPosition().getX(), Integer.parseInt(yPos)));
+                        if (item.getModelObject() != null) {
+                            item.getModelObject().setPosition(new Index(item.getModelObject().getPosition().getX(), Integer.parseInt(yPos)));
+                        }
                     }
 
                     @Override
@@ -162,7 +177,9 @@ public class BaseEditor extends WebPage {
                 Button killButton = new Button("kill") {
                     @Override
                     public void onSubmit() {
-                        itemService.killBaseSyncObject(item.getModelObject(), null, true);
+                        if (item.getModelObject() != null) {
+                            itemService.killBaseSyncObject(item.getModelObject(), null, true);
+                        }
                     }
                 };
                 item.add(killButton);
@@ -219,7 +236,8 @@ public class BaseEditor extends WebPage {
                     try {
                         return (SyncBaseItem) itemService.getItem(id);
                     } catch (ItemDoesNotExistException e) {
-                        throw new RuntimeException(e);
+                        log.error("", e);
+                        return null;
                     }
                 }
             };
