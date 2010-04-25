@@ -191,7 +191,7 @@ public class TerrainTileEditor extends WebPage {
         form.add(new Button("addTerrainImage") {
             @Override
             public void onSubmit() {
-                surfaceImageProvider.createImage();
+                terrainImageProvider.createImage();
             }
         });
     }
