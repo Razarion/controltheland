@@ -18,9 +18,12 @@ import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.ClientSyncResourceItemView;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * User: beat
@@ -51,6 +54,14 @@ public class SelectionHandler {
 
     public Group getOwnSelection() {
         return selectedGroup;
+    }
+
+    public Collection<SurfaceType> getOwnSelectionSurfaceTypes() {
+        if (selectedGroup != null) {
+            return selectedGroup.getAllowedSurfaceTypes();
+        } else {
+            return new HashSet<SurfaceType>();
+        }
     }
 
     public void setTargetSelected(ClientSyncItemView selectedTargetClientSyncItem, MouseDownEvent event) {

@@ -520,8 +520,4 @@ public class SyncBaseItem extends SyncItem {
             return super.toString();
         }
     }
-
-    public TerrainType getTerrainType() {
-        return getBaseItemType().getTerrainType();
-    }
 }
