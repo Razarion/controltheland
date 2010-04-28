@@ -25,12 +25,10 @@ import com.btxtech.game.jsre.common.XpBalancePackt;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.base.AlreadyUsedException;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseColor;
 import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.ConnectionService;
@@ -155,33 +153,12 @@ public class BaseServiceImpl implements BaseService {
         base.setUser(userService.getLoggedinUser());
         connectionService.createConnection(base);
         base.setUserItemTypeAccess(serverMarketService.getUserItemTypeAccess());
-        Index startPoint = collisionService.getFreeRandomPosition(constructionVehicle, EDGE_LENGTH);
+        Index startPoint = collisionService.getStartRandomPosition(constructionVehicle, EDGE_LENGTH);
         SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(constructionVehicle, startPoint, null, base.getSimpleBase(), 0);
         syncBaseItem.setBuild(true);
         syncBaseItem.setFullHealth();
         syncBaseItem.getSyncTurnable().setAngel(Math.PI / 4.0); // Cosmetis shows vehicle from side
         historyService.addBaseStartEntry(base.getSimpleBase());
-    }
-
-    @Override
-    public Base createNewBotBase(SyncBaseItem origin, int targetMinRange, int targetMaxRange) throws NoSuchItemTypeException {
-        Base base;
-        ItemType constructionVehicle = itemService.getItemType(Constants.CONSTRUCTION_VEHICLE);
-        synchronized (bases) {
-            String name = getFreePlayerName();
-            BaseColor baseColor = getFreeColors(1).get(0);
-            base = new Base(name, baseColor, null);
-            base.setBot(true);
-            base.setAccountBalance(mgmtService.getStartupData().getStartMoney());
-            bases.put(name, base);
-            colorsUsed.add(baseColor.getHtmlColor());
-        }
-        Index startPoint = collisionService.getFreeRandomPosition(constructionVehicle, origin, targetMinRange, targetMaxRange);
-        log.info("Bot Base created: " + base + " startPoint: " + startPoint);
-        SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(constructionVehicle, startPoint, null, base.getSimpleBase(), 0);
-        syncBaseItem.setBuild(true);
-        syncBaseItem.setFullHealth();
-        return base;
     }
 
     @Override

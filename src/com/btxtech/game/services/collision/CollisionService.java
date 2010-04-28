@@ -30,6 +30,8 @@ public interface CollisionService extends CommonCollisionService {
 
     Index getFreeRandomPosition(ItemType itemType, int edgeLength);
 
+    Index getStartRandomPosition(ItemType itemType, int edgeLength);
+
     void addCollisionServiceChangedListener(CollisionServiceChangedListener collisionServiceChangedListener);
 
     void removeCollisionServiceChangedListener(CollisionServiceChangedListener collisionServiceChangedListener);

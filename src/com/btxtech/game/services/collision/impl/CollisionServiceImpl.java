@@ -25,6 +25,7 @@ import com.btxtech.game.services.collision.CollisionServiceChangedListener;
 import com.btxtech.game.services.collision.PassableRectangle;
 import com.btxtech.game.services.collision.Path;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainService;
 import java.util.ArrayList;
@@ -49,6 +50,8 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     private TerrainService terrainService;
     @Autowired
     private ItemService itemService;
+    @Autowired
+    private MgmtService mgmtService;
     private HashMap<TerrainType, List<PassableRectangle>> passableRectangles4TerrainType = new HashMap<TerrainType, List<PassableRectangle>>();
     private Log log = LogFactory.getLog(CollisionServiceImpl.class);
     private ArrayList<CollisionServiceChangedListener> collisionServiceChangedListeners = new ArrayList<CollisionServiceChangedListener>();
@@ -72,7 +75,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
         SurfaceType[][] surfaceTypeFiled = new SurfaceType[dbTerrainSetting.getTileXCount()][dbTerrainSetting.getTileYCount()];
         for (int x = 0; x < dbTerrainSetting.getTileXCount(); x++) {
             for (int y = 0; y < dbTerrainSetting.getTileYCount(); y++) {
-                surfaceTypeFiled[x][y] = terrainService.getSurfaceType(new Index(x,y));
+                surfaceTypeFiled[x][y] = terrainService.getSurfaceType(new Index(x, y));
             }
         }
         return surfaceTypeFiled;
@@ -271,6 +274,27 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
             int x = random.nextInt(terrainService.getDbTerrainSettings().getPlayFieldXSize() - 200) + 100;
             int y = random.nextInt(terrainService.getDbTerrainSettings().getPlayFieldYSize() - 200) + 100;
+            Index point = new Index(x, y);
+            if (!terrainService.isFree(point, itemType)) {
+                continue;
+            }
+            Index start = point.sub(new Index(edgeLength / 2, edgeLength / 2));
+            Rectangle rectangle = new Rectangle(start.getX(), start.getY(), edgeLength, edgeLength);
+            if (itemService.hasItemsInRectangle(rectangle)) {
+                continue;
+            }
+            return point;
+        }
+        throw new IllegalStateException("Can not find free position");
+    }
+
+    @Override
+    public Index getStartRandomPosition(ItemType itemType, int edgeLength) {
+        Rectangle startRect = mgmtService.getStartupData().getStartRectangle();
+        Random random = new Random();
+        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+            int x = random.nextInt(startRect.getWidth()) + startRect.getX();
+            int y = random.nextInt(startRect.getHeight()) + startRect.getY();
             Index point = new Index(x, y);
             if (!terrainService.isFree(point, itemType)) {
                 continue;

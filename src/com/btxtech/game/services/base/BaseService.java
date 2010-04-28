@@ -36,8 +36,6 @@ public interface BaseService extends com.btxtech.game.jsre.common.gameengine.ser
 
     void createNewBase(String name, BaseColor baseColor) throws AlreadyUsedException, NoSuchItemTypeException;
 
-    Base createNewBotBase(SyncBaseItem origin, int targetMinRange, int targetMaxRange) throws NoSuchItemTypeException;
-
     void continueBase();
 
     void checkCanBeAttack(SyncBaseItem victim);

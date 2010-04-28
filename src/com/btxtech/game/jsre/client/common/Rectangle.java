@@ -168,12 +168,20 @@ public class Rectangle implements Serializable {
         return "Start " + start + " End " + end;
     }
 
+    public int getWidth() {
+        return end.getX() - start.getX();
+    }
+
     public int getHeight() {
         return end.getY() - start.getY();
     }
 
-    public int getWidth() {
-        return end.getX() - start.getX();
+    public void setWidth(int width) {
+        end.setX(start.getX() + width);
+    }
+
+    public void setHeight(int height) {
+        end.setY(start.getY() + height);
     }
 
     public int getX() {
