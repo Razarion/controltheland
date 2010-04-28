@@ -13,10 +13,18 @@
 
 package com.btxtech.game.services.mgmt;
 
+import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.services.common.db.RectangleUserType;
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 /**
  * User: beat
@@ -24,7 +32,8 @@ import javax.persistence.Id;
  * Time: 13:54:45
  */
 @Entity(name = "MGMT_STARTUP")
-public class StartupData implements Serializable{
+@TypeDef(name = "rectangle", typeClass = RectangleUserType.class)
+public class StartupData implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
@@ -32,6 +41,10 @@ public class StartupData implements Serializable{
     private int tutorialTimeout;
     private int registerDialogDelay;
     private int userActionCollectionTime;
+    @Type(type = "rectangle")
+    @Columns(columns = {@Column(name = "startRectX"), @Column(name = "startRectY"), @Column(name = "startRectEndX"), @Column(name = "startRectEndY")})
+    private Rectangle startRectangle;
+    private static Log log = LogFactory.getLog(StartupData.class);
 
     public int getStartMoney() {
         return startMoney;
@@ -63,6 +76,18 @@ public class StartupData implements Serializable{
 
     public void setUserActionCollectionTime(int userActionCollectionTime) {
         this.userActionCollectionTime = userActionCollectionTime;
+    }
+
+    public Rectangle getStartRectangle() {
+        if (startRectangle == null) {
+            log.info("StartRectangle is null. Return a faked one.");
+            startRectangle = new Rectangle(0, 0, 1000, 1000);
+        }
+        return startRectangle;
+    }
+
+    public void setStartRectangle(Rectangle startRectangle) {
+        this.startRectangle = startRectangle;
     }
 
     @Override

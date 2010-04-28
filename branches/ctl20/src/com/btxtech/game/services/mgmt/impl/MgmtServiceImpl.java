@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.mgmt.impl;
 
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.BaseService;
@@ -24,7 +25,6 @@ import com.btxtech.game.services.mgmt.BackupSummary;
 import com.btxtech.game.services.mgmt.DbViewDTO;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
-import com.btxtech.game.wicket.pages.mgmt.Startup;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -311,6 +311,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
                 startupData.setStartMoney(1000);
                 startupData.setTutorialTimeout(3 * 60);
                 startupData.setUserActionCollectionTime(5 * 60);
+                startupData.setStartRectangle(new Rectangle(0, 0, 1000, 1000));
                 saveStartupData(startupData);
             } else if (startups.size() > 1) {
                 log.error("More than one startup data detected.");
