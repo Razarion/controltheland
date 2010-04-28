@@ -64,9 +64,11 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
     protected void loadSurfaceImagesAndDrawMap() {
         ArrayList<String> urls = new ArrayList<String>();
         final ArrayList<Integer> ids = new ArrayList<Integer>();
-        for (SurfaceImage surfaceImage : getSurfaceImages()) {
-            urls.add(ImageHandler.getSurfaceImagesUrl(surfaceImage.getImageId()));
-            ids.add(surfaceImage.getImageId());
+        for (SurfaceRect surfaceRect : getSurfaceRects()) {
+            if(!ids.contains(surfaceRect.getSurfaceImageId())) {
+                ids.add(surfaceRect.getSurfaceImageId());
+                urls.add(ImageHandler.getSurfaceImagesUrl(surfaceRect.getSurfaceImageId()));
+            }
         }
 
         ImageLoader.loadImages(urls.toArray(new String[urls.size()]), new ImageLoader.CallBack() {
@@ -93,9 +95,11 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
     public void loadImagesAndDrawMap() {
         ArrayList<String> urls = new ArrayList<String>();
         final ArrayList<Integer> ids = new ArrayList<Integer>();
-        for (TerrainImage terrainImage : getTerrainImages()) {
-            urls.add(ImageHandler.getTerrainImageUrl(terrainImage.getId()));
-            ids.add(terrainImage.getId());
+        for (TerrainImagePosition terrainImagePosition : getTerrainImagePositions()) {
+            if(!ids.contains(terrainImagePosition.getImageId())) {
+                ids.add(terrainImagePosition.getImageId());
+                urls.add(ImageHandler.getTerrainImageUrl(terrainImagePosition.getImageId()));
+            }
         }
         ImageLoader.loadImages(urls.toArray(new String[urls.size()]), new ImageLoader.CallBack() {
 
