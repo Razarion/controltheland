@@ -16,9 +16,11 @@ package com.btxtech.game.jsre.client.cockpit;
 import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -168,5 +170,13 @@ public class Group {
             collection.add(clientSyncItem);
         }
         return map;
+    }
+
+    public Collection<SurfaceType> getAllowedSurfaceTypes() {
+        HashSet<SurfaceType> result = new HashSet<SurfaceType>();
+        for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
+            result.addAll(clientSyncItem.getSyncBaseItem().getTerrainType().getSurfaceTypes());
+        }
+        return result;
     }
 }

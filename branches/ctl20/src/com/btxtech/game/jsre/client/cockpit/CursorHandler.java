@@ -22,10 +22,12 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainMouseMoveListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.widgetideas.graphics.client.GWTCanvas;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -157,7 +159,9 @@ public class CursorHandler implements TerrainMouseMoveListener {
 
     @Override
     public void onMove(int absoluteLeft, int absoluteTop, int relativeLeft, int relativeTop) {
-        boolean tmpIsMoveAllowed = TerrainView.getInstance().getTerrainHandler().isTerrainPassable(new Index(absoluteLeft, absoluteTop));
+        Collection<SurfaceType> allowedSurfaceTypes = SelectionHandler.getInstance().getOwnSelectionSurfaceTypes();
+        SurfaceType surfaceType = TerrainView.getInstance().getTerrainHandler().getSurfaceTypeAbsolute(new Index(absoluteLeft, absoluteTop));
+        boolean tmpIsMoveAllowed = allowedSurfaceTypes.contains(surfaceType);
         if (hasMoveCursor && tmpIsMoveAllowed != isMoveAllowed) {
             if (tmpIsMoveAllowed) {
                 setMoveCursor();

@@ -144,6 +144,19 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
         return new ArrayList<SurfaceImage>(surfaceImages.values());
     }
 
+    public Collection<SurfaceType> getSurfaceTypeTilesInRegion(Rectangle absRectangle) {
+        ArrayList<SurfaceType> surfaceTypes = new ArrayList<SurfaceType>();
+        Rectangle tileRect = convertToTilePositionRoundUp(absRectangle);
+
+        for (int x = tileRect.getX(); x < tileRect.getEndX(); x++) {
+            for (int y = tileRect.getY(); y < tileRect.getEndY(); y++) {
+                surfaceTypes.add(getSurfaceType(new Index(x, y)));
+            }
+
+        }
+        return surfaceTypes;
+    }
+
     @Override
     public List<TerrainImagePosition> getTerrainImagesInRegion(Rectangle absRectangle) {
         ArrayList<TerrainImagePosition> result = new ArrayList<TerrainImagePosition>();
@@ -321,8 +334,10 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
             return false;
         }
 
+        List<SurfaceType> allowedSurfaceTypes = itemType.getTerrainType().getSurfaceTypes();
         Rectangle rectangle = new Rectangle(x, y, itemType.getWidth(), itemType.getHeight());
-        return getTerrainImagesInRegion(rectangle).isEmpty();
+        Collection<SurfaceType> surfaceTypes = getSurfaceTypeTilesInRegion(rectangle);
+        return allowedSurfaceTypes.containsAll(surfaceTypes);
     }
 
     @Override
@@ -330,7 +345,11 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
     public boolean isTerrainPassable(Index posititon) {
         return posititon != null && !(posititon.getX() >= terrainSettings.getPlayFieldXSize() || posititon.getY() >= terrainSettings.getPlayFieldYSize())
                 && getTerrainImagePosition(posititon.getX(), posititon.getY()) == null;
+    }
 
+    public SurfaceType getSurfaceTypeAbsolute(Index absoluteIndex) {
+        Index tileIndex = getTerrainTileIndexForAbsPosition(absoluteIndex);
+        return getSurfaceType(tileIndex);
     }
 
     public SurfaceType getSurfaceType(Index tileIndex) {
@@ -347,7 +366,7 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
             if (surfaceRect != null) {
                 return getSurfaceImage(surfaceRect).getSurfaceType();
             } else {
-                return null;
+                return SurfaceType.NONE;
             }
         }
     }

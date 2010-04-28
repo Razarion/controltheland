@@ -34,7 +34,6 @@ public class BaseItemType extends ItemType {
     private SpecialType specialType;
     private Integer upgradeable;
     private int upgradeProgress;
-    private TerrainType terrainType;
 
     public int getHealth() {
         return health;
@@ -140,14 +139,6 @@ public class BaseItemType extends ItemType {
         this.upgradeProgress = upgradeProgress;
     }
 
-    public void setTerrainType(TerrainType terrainType) {
-        this.terrainType = terrainType;
-    }
-
-    public TerrainType getTerrainType() {
-        return terrainType;
-    }
-
     @Override
     public void changeTo(ItemType itemType) {
         super.changeTo(itemType);
@@ -156,8 +147,7 @@ public class BaseItemType extends ItemType {
         price = baseItemType.price;
         upgradeable = baseItemType.upgradeable;
         upgradeProgress = baseItemType.upgradeProgress;
-        terrainType =  baseItemType.terrainType;
-        
+
         if (turnableType != null) {
             turnableType.changeTo(baseItemType.turnableType);
         }
