@@ -17,6 +17,8 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.collision.CollisionServiceChangedListener;
@@ -27,8 +29,10 @@ import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainService;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
@@ -45,7 +49,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     private TerrainService terrainService;
     @Autowired
     private ItemService itemService;
-    private List<PassableRectangle> passableRectangles = new ArrayList<PassableRectangle>();
+    private HashMap<TerrainType, List<PassableRectangle>> passableRectangles4TerrainType = new HashMap<TerrainType, List<PassableRectangle>>();
     private Log log = LogFactory.getLog(CollisionServiceImpl.class);
     private ArrayList<CollisionServiceChangedListener> collisionServiceChangedListeners = new ArrayList<CollisionServiceChangedListener>();
 
@@ -58,52 +62,61 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     private void setupPassableTerrain() {
         log.info("Starting setup collision service");
         long time = System.currentTimeMillis();
-        boolean[][] passableTerrain = getPassableTerrainTiles();
-        setupPassableRectangles(passableTerrain);
+        SurfaceType[][] surfaceTypeField = getSurfaceTypeField();
+        setupPassableRectangles(surfaceTypeField);
         log.info("Time needed to start up collision service: " + (System.currentTimeMillis() - time) + "ms");
     }
 
-    private boolean[][] getPassableTerrainTiles() {
+    private SurfaceType[][] getSurfaceTypeField() {
         DbTerrainSetting dbTerrainSetting = terrainService.getDbTerrainSettings();
-        boolean[][] passableTerrain = new boolean[dbTerrainSetting.getTileXCount()][dbTerrainSetting.getTileYCount()];
+        SurfaceType[][] surfaceTypeFiled = new SurfaceType[dbTerrainSetting.getTileXCount()][dbTerrainSetting.getTileYCount()];
         for (int x = 0; x < dbTerrainSetting.getTileXCount(); x++) {
             for (int y = 0; y < dbTerrainSetting.getTileYCount(); y++) {
-                Index absolute = terrainService.getAbsolutIndexForTerrainTileIndex(x, y);
-                passableTerrain[x][y] = terrainService.isTerrainPassable(absolute); // TODO get terrain type
+                surfaceTypeFiled[x][y] = terrainService.getSurfaceType(new Index(x,y));
             }
         }
-        return passableTerrain;
+        return surfaceTypeFiled;
     }
 
-    private void setupPassableRectangles(boolean[][] passableTerrain) {
-        Collection<Index> passableTiles = getPassableTiles(passableTerrain);
-        if (passableTiles.isEmpty()) {
-            log.error("Terrain does not have any passable terrain tiles");
+    private void setupPassableRectangles(SurfaceType[][] surfaceTypeField) {
+        Map<TerrainType, Collection<Index>> tiles = separateIntoTerrainTypeTiles(surfaceTypeField);
+        if (tiles.isEmpty()) {
+            log.error("Terrain does not have any tiles");
             return;
         }
-
-        ArrayList<Rectangle> mapAsRectangles = separateIntoRectangles(passableTiles);
-        buildPassableRectangleList(mapAsRectangles);
+        for (Map.Entry<TerrainType, Collection<Index>> entry : tiles.entrySet()) {
+            ArrayList<Rectangle> mapAsRectangles = separateIntoRectangles(entry.getValue());
+            List<PassableRectangle> passableRectangles = buildPassableRectangleList(mapAsRectangles);
+            passableRectangles4TerrainType.put(entry.getKey(), passableRectangles);
+        }
 
         for (CollisionServiceChangedListener collisionServiceChangedListener : collisionServiceChangedListeners) {
             collisionServiceChangedListener.collisionServiceChanged();
         }
     }
 
-    private Collection<Index> getPassableTiles(boolean[][] passableTerrain) {
-        HashSet<Index> passableTiles = new HashSet<Index>();
-        for (int x = 0; x < passableTerrain.length; x++) {
-            for (int y = 0; y < passableTerrain[x].length; y++) {
-                if (passableTerrain[x][y]) {
-                    passableTiles.add(new Index(x, y));
+    private Map<TerrainType, Collection<Index>> separateIntoTerrainTypeTiles(SurfaceType[][] surfaceTypeField) {
+        Map<TerrainType, Collection<Index>> map = new HashMap<TerrainType, Collection<Index>>();
+        for (int x = 0; x < surfaceTypeField.length; x++) {
+            for (int y = 0; y < surfaceTypeField[x].length; y++) {
+                SurfaceType surfaceType = surfaceTypeField[x][y];
+                Collection<TerrainType> terrainTypes = TerrainType.getAllowedTerrainType(surfaceType);
+                for (TerrainType terrainType : terrainTypes) {
+                    Collection<Index> tiles = map.get(terrainType);
+                    if (tiles == null) {
+                        tiles = new ArrayList<Index>();
+                        map.put(terrainType, tiles);
+                    }
+                    tiles.add(new Index(x, y));
                 }
             }
         }
-        return passableTiles;
+        return map;
     }
 
-    private void buildPassableRectangleList(ArrayList<Rectangle> rectangles) {
-        passableRectangles.clear();
+    private List<PassableRectangle> buildPassableRectangleList(ArrayList<Rectangle> rectangles) {
+        List<PassableRectangle> passableRectangles = new ArrayList<PassableRectangle>();
+
         for (Rectangle rectangle : rectangles) {
             PassableRectangle passableRectangle = new PassableRectangle(rectangle);
             passableRectangles.add(passableRectangle);
@@ -119,6 +132,8 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
                 }
             }
         }
+
+        return passableRectangles;
     }
 
     private ArrayList<Rectangle> separateIntoRectangles(Collection<Index> passableTiles) {
@@ -246,8 +261,8 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     }
 
     @Override
-    public List<PassableRectangle> getPassableRectangles() {
-        return passableRectangles;
+    public Map<TerrainType, List<PassableRectangle>> getPassableRectangles() {
+        return passableRectangles4TerrainType;
     }
 
     @Override
@@ -278,11 +293,11 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
             int discance = targetMinRange + random.nextInt(targetMaxRange - targetMinRange);
             Index point = origin.getPosition().getPointFromAngelToNord(angel, discance);
 
-            if(point.getX() >= terrainService.getDbTerrainSettings().getPlayFieldXSize()) {
-               continue;
+            if (point.getX() >= terrainService.getDbTerrainSettings().getPlayFieldXSize()) {
+                continue;
             }
-            if(point.getY() >= terrainService.getDbTerrainSettings().getPlayFieldYSize()) {
-               continue;
+            if (point.getY() >= terrainService.getDbTerrainSettings().getPlayFieldYSize()) {
+                continue;
             }
 
             if (!terrainService.isFree(point, itemType)) {
@@ -313,7 +328,11 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
         return distance;
     }
 
-    private PassableRectangle getPassableRectangleOfAbsoluteIndex(Index absoluteIndex) {
+    private PassableRectangle getPassableRectangleOfAbsoluteIndex(Index absoluteIndex, TerrainType terrainType) {
+        List<PassableRectangle> passableRectangles = passableRectangles4TerrainType.get(terrainType);
+        if (passableRectangles == null) {
+            return null;
+        }
         for (PassableRectangle passableRectangle : passableRectangles) {
             if (passableRectangle.containAbsoluteIndex(absoluteIndex, terrainService.getDbTerrainSettings())) {
                 return passableRectangle;
@@ -342,7 +361,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     @Override
     public void addCollisionServiceChangedListener(CollisionServiceChangedListener collisionServiceChangedListener) {
         collisionServiceChangedListeners.add(collisionServiceChangedListener);
-        if (!passableRectangles.isEmpty()) {
+        if (!passableRectangles4TerrainType.isEmpty()) {
             collisionServiceChangedListener.collisionServiceChanged();
         }
     }
@@ -353,11 +372,11 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     }
 
     @Override
-    public List<Index> setupPathToDestination(Index start, Index destination) {
-        PassableRectangle atomStartRect = getPassableRectangleOfAbsoluteIndex(start);
-        PassableRectangle atomDestRect = getPassableRectangleOfAbsoluteIndex(destination);
+    public List<Index> setupPathToDestination(Index start, Index destination, TerrainType terrainType) {
+        PassableRectangle atomStartRect = getPassableRectangleOfAbsoluteIndex(start, terrainType);
+        PassableRectangle atomDestRect = getPassableRectangleOfAbsoluteIndex(destination, terrainType);
         if (atomStartRect == null || atomDestRect == null) {
-            throw new IllegalArgumentException("Illegal atomStartRect or absoluteDestionation. start: " + start + " destination: " + destination);
+            throw new IllegalArgumentException("Illegal atomStartRect or absoluteDestionation. start: " + start + " destination: " + destination + " terrainType: " + terrainType);
         }
 
         if (atomStartRect.equals(atomDestRect)) {

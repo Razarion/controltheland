@@ -26,9 +26,9 @@ import java.util.List;
  * Time: 14:23:09
  */
 public interface AbstractTerrainService {
-    List<Index> setupPathToDestination(Index target, Index destination, int range);
+    List<Index> setupPathToDestination(Index target, Index destination, int range, TerrainType terrainType);
 
-    List<Index> setupPathToDestination(Index start, Index destination);
+    List<Index> setupPathToDestination(Index start, Index destination, TerrainType terrainType);
 
     Collection<TerrainImagePosition> getTerrainImagePositions();
 
@@ -40,7 +40,7 @@ public interface AbstractTerrainService {
 
     List<TerrainImagePosition> getTerrainImagesInRegion(Rectangle absolutePxRectangle);
 
-    SurfaceImage getSurfaceImage(int id);
+    SurfaceImage getSurfaceImage(SurfaceRect surfaceRect);
 
     Collection<TerrainImage> getTerrainImages();
 
@@ -52,7 +52,11 @@ public interface AbstractTerrainService {
 
     TerrainImagePosition getTerrainImagePosition(int absoluteX, int absoluteY);
 
+    TerrainImagePosition getTerrainImagePosition(Index tileIndex);
+
     SurfaceRect getSurfaceRect(int absoluteX, int absoluteY);
+
+    SurfaceRect getSurfaceRect(Index tileIndex);
 
     Index getTerrainTileIndexForAbsPosition(int x, int y);
 
@@ -80,5 +84,8 @@ public interface AbstractTerrainService {
 
     boolean isFree(Index posititon, ItemType itemType);
 
+    @Deprecated
     boolean isTerrainPassable(Index posititon);
+
+    SurfaceType getSurfaceType(Index tileIndex);
 }

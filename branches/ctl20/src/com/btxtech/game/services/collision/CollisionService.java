@@ -16,7 +16,9 @@ package com.btxtech.game.services.collision;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
@@ -24,7 +26,7 @@ import java.util.List;
  * Time: 6:46:48 PM
  */
 public interface CollisionService extends CommonCollisionService {
-    List<PassableRectangle> getPassableRectangles();
+    Map<TerrainType, List<PassableRectangle>> getPassableRectangles();
 
     Index getFreeRandomPosition(ItemType itemType, int edgeLength);
 
@@ -32,5 +34,5 @@ public interface CollisionService extends CommonCollisionService {
 
     void removeCollisionServiceChangedListener(CollisionServiceChangedListener collisionServiceChangedListener);
 
-    List<Index> setupPathToDestination(Index start, Index destination);
+    List<Index> setupPathToDestination(Index start, Index destination, TerrainType terrainType);
 }

@@ -20,17 +20,19 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainHandler;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.ImageElement;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.Random;
 import com.google.gwt.widgetideas.graphics.client.Color;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseDownEvent;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
@@ -41,7 +43,7 @@ public class PathfindingEntry implements EntryPoint, MouseDownHandler {
     public static final int WIDTH = 800;
     public static final int HEIGHT = 800;
     private ExtendedCanvas extendedCanvas;
-    private List<Rectangle> passableRectangle;
+    private Map<TerrainType, List<Rectangle>> passableRectangle;
     private TerrainInfo terrainInfo;
     private Index start;
     private Index destination;
@@ -54,18 +56,19 @@ public class PathfindingEntry implements EntryPoint, MouseDownHandler {
         GwtCommon.disableBrowserContextMenuJSNI();
 
         pathfinding = GWT.create(Pathfinding.class);
-        pathfinding.getPassableRectangles(new AsyncCallback<List<Rectangle>>() {
+        pathfinding.getPassableRectangles(new AsyncCallback<Map<TerrainType, List<Rectangle>>>() {
             @Override
             public void onFailure(Throwable throwable) {
                 GwtCommon.handleException(throwable);
             }
 
             @Override
-            public void onSuccess(List<Rectangle> rectangles) {
-                passableRectangle = rectangles;
+            public void onSuccess(Map<TerrainType, List<Rectangle>> result) {
+                passableRectangle = result;
                 handleMap();
             }
         });
+
         pathfinding.getTerrainInfo(new AsyncCallback<TerrainInfo>() {
             @Override
             public void onFailure(Throwable throwable) {
@@ -94,10 +97,11 @@ public class PathfindingEntry implements EntryPoint, MouseDownHandler {
     }
 
     private void showPassableRectangles() {
-        for (Rectangle rectangle : passableRectangle) {
-            extendedCanvas.setFillStyle(new Color(Random.nextInt(255), Random.nextInt(255), Random.nextInt(255), (float) 0.5));
-            extendedCanvas.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
-        }
+        // TODO
+        // for (Rectangle rectangle : passableRectangle) {
+       //     extendedCanvas.setFillStyle(new Color(Random.nextInt(255), Random.nextInt(255), Random.nextInt(255), (float) 0.5));
+       //     extendedCanvas.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
+       // }
     }
 
     private void showMap() {
@@ -116,7 +120,7 @@ public class PathfindingEntry implements EntryPoint, MouseDownHandler {
         });
         terrainHandler.setupTerrain(terrainInfo.getTerrainSettings(),
                 terrainInfo.getTerrainImagePositions(),
-                terrainInfo.getSurfaceRects(), 
+                terrainInfo.getSurfaceRects(),
                 terrainInfo.getSurfaceImages(),
                 terrainInfo.getTerrainImages());
     }
@@ -135,7 +139,8 @@ public class PathfindingEntry implements EntryPoint, MouseDownHandler {
     }
 
     private void findPath(Index start, Index destination) {
-        System.out.println("toAbsIndex(start): " + toAbsIndex(start));
+        //TODO
+ /*       System.out.println("toAbsIndex(start): " + toAbsIndex(start));
         System.out.println("toAbsIndex(destination): " + toAbsIndex(destination));
         pathfinding.findPath(toAbsIndex(start), toAbsIndex(destination), new AsyncCallback<List<Index>>() {
             @Override
@@ -165,7 +170,7 @@ public class PathfindingEntry implements EntryPoint, MouseDownHandler {
                 }
                 extendedCanvas.stroke();
             }
-        });
+        }); */
     }
 
     private Index toAbsIndex(Index mapIndex) {

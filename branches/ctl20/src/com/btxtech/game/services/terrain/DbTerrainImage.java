@@ -13,12 +13,18 @@
 
 package com.btxtech.game.services.terrain;
 
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  * User: beat
@@ -26,15 +32,17 @@ import javax.persistence.Id;
  * Time: 22:09:11
  */
 @Entity(name = "TERRAIN_IMAGE")
-public class DbTerrainImage implements Serializable{
+public class DbTerrainImage implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
-    @Column(length = 500000)    
+    @Column(length = 500000)
     private byte[] imageData;
     private String contentType;
     private int tileWidth;
     private int tileHeight;
+    @OneToMany(mappedBy = "dbTerrainImage", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Collection<TerrainImageTileSurfaceType> surfaceTypes;
 
     public int getId() {
         return id;
@@ -56,11 +64,14 @@ public class DbTerrainImage implements Serializable{
         this.contentType = contentType;
     }
 
-    public void setTileWidth(int tileWidth) {
-        this.tileWidth = tileWidth;
-    }
 
-    public void setTileHeight(int tileHeight) {
+    public void setTiles(int tileWidth, int tileHeight) {
+        if (tileWidth != this.tileWidth || tileHeight != this.tileHeight) {
+            if (surfaceTypes != null) {
+                surfaceTypes.clear();
+            }
+        }
+        this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
     }
 
@@ -73,7 +84,41 @@ public class DbTerrainImage implements Serializable{
     }
 
     public TerrainImage createTerrainImage() {
-        return new TerrainImage(id, tileWidth, tileHeight);
+        SurfaceType[][] surfaceType = new SurfaceType[tileWidth][];
+        for (int x = 0; x < tileWidth; x++) {
+            surfaceType[x] = new SurfaceType[tileHeight];
+            for (int y = 0; y < tileHeight; y++) {
+                surfaceType[x][y] = getSurfaceType(x, y);
+            }
+        }
+        return new TerrainImage(id, tileWidth, tileHeight, surfaceType);
+    }
+
+    public void setSurfaceType(int tileX, int tileY, SurfaceType surfaceType) {
+        if (surfaceTypes == null) {
+            surfaceTypes = new ArrayList<TerrainImageTileSurfaceType>();
+        }
+
+        for (TerrainImageTileSurfaceType terrainImageTileSurfaceType : surfaceTypes) {
+            if (terrainImageTileSurfaceType.equalsTile(tileX, tileY)) {
+                terrainImageTileSurfaceType.setSurfaceType(surfaceType);
+                return;
+            }
+        }
+        surfaceTypes.add(new TerrainImageTileSurfaceType(this, tileX, tileY, surfaceType));
+    }
+
+    public SurfaceType getSurfaceType(int tileX, int tileY) {
+        if (surfaceTypes == null) {
+            return SurfaceType.NONE;
+        }
+
+        for (TerrainImageTileSurfaceType terrainImageTileSurfaceType : surfaceTypes) {
+            if (terrainImageTileSurfaceType.equalsTile(tileX, tileY)) {
+                return terrainImageTileSurfaceType.getSurfaceType();
+            }
+        }
+        return SurfaceType.NONE;
     }
 
     @Override
@@ -83,9 +128,7 @@ public class DbTerrainImage implements Serializable{
 
         DbTerrainImage that = (DbTerrainImage) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-
-        return true;
+        return !(id != null ? !id.equals(that.id) : that.id != null);
     }
 
     @Override

@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
@@ -518,5 +519,9 @@ public class SyncBaseItem extends SyncItem {
         } else {
             return super.toString();
         }
+    }
+
+    public TerrainType getTerrainType() {
+        return getBaseItemType().getTerrainType();
     }
 }

@@ -42,7 +42,7 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
         // Draw surface
         for (SurfaceRect surfaceRect : TerrainView.getInstance().getTerrainHandler().getSurfaceRects()) {
             Rectangle absolute = TerrainView.getInstance().getTerrainHandler().convertToAbsolutePosition(surfaceRect.getTileRectangle());
-            SurfaceImage surfaceImage = TerrainView.getInstance().getTerrainHandler().getSurfaceImage(surfaceRect.getSurfaceImageId());
+            SurfaceImage surfaceImage = TerrainView.getInstance().getTerrainHandler().getSurfaceImage(surfaceRect);
             if (surfaceImage != null) {
                 switch (surfaceImage.getSurfaceType()) {
                     case WATER:

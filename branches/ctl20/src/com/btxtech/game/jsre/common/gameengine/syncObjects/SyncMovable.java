@@ -103,11 +103,11 @@ public class SyncMovable extends SyncBaseAbility {
         if (pathToDestination != null && !pathToDestination.isEmpty()) {
             Index destination = pathToDestination.get(pathToDestination.size() - 1);
             if (!destination.isInRadius(target, range)) {
-                pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getPosition(), target, range);
+                pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getPosition(), target, range, getSyncBaseItem().getTerrainType());
                 getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
             }
         } else {
-            pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getPosition(), target, range);
+            pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getPosition(), target, range, getSyncBaseItem().getTerrainType());
             getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
         }
         tick(factor);
@@ -131,7 +131,7 @@ public class SyncMovable extends SyncBaseAbility {
         if (getSyncBaseItem().getPosition().equals(moveCommand.getDestination())) {
             return;
         }
-        pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getPosition(), moveCommand.getDestination());
+        pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getPosition(), moveCommand.getDestination(), getSyncBaseItem().getTerrainType());
     }
 
     public List<Index> getPathToDestination() {

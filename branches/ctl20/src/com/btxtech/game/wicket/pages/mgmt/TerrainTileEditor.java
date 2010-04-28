@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import javax.swing.ImageIcon;
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -30,6 +31,7 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
@@ -143,10 +145,16 @@ public class TerrainTileEditor extends WebPage {
             protected void populateItem(final Item<DbTerrainImage> item) {
                 // image
                 if (item.getModelObject().getImageData() != null && item.getModelObject().getImageData().length > 0) {
-                    Image image = new Image("image", new ByteArrayResource("", item.getModelObject().getImageData()));
-                    item.add(image);
+                    Link surfaceLink = new Link("surfaceLink") {
+                        @Override
+                        public void onClick() {
+                            setResponsePage(new TerrainImageSurfaceTypeEditor(TerrainTileEditor.this, item.getModelObject()));
+                        }
+                    };
+                    item.add(surfaceLink);
+                    surfaceLink.add(new Image("image", new ByteArrayResource("", item.getModelObject().getImageData())));
                 } else {
-                    Image noImage = new Image("image");
+                    WebComponent noImage = new WebComponent("surfaceLink");
                     noImage.setVisible(false);
                     item.add(noImage);
                 }
@@ -162,8 +170,8 @@ public class TerrainTileEditor extends WebPage {
                         ImageIcon image = new ImageIcon(fileUpload.getBytes());
                         item.getModelObject().setImageData(fileUpload.getBytes());
                         item.getModelObject().setContentType(fileUpload.getContentType());
-                        item.getModelObject().setTileWidth((int) Math.ceil(image.getIconWidth() / terrainService.getDbTerrainSettings().getTileWidth()));
-                        item.getModelObject().setTileHeight((int) Math.ceil(image.getIconHeight() / terrainService.getDbTerrainSettings().getTileHeight()));
+                        item.getModelObject().setTiles((int) Math.ceil(image.getIconWidth() / terrainService.getDbTerrainSettings().getTileWidth()),
+                                (int) Math.ceil(image.getIconHeight() / terrainService.getDbTerrainSettings().getTileHeight()));
                     }
 
                     @Override

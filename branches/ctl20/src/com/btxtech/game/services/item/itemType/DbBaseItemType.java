@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
 import com.btxtech.game.jsre.common.gameengine.itemType.SpecialType;
 import com.btxtech.game.jsre.common.gameengine.itemType.TurnableType;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -60,6 +61,7 @@ public class DbBaseItemType extends DbItemType {
     @OneToOne(cascade = CascadeType.ALL)
     private DbBaseItemType upgradable;
     private Integer upgradeProgress;
+    private TerrainType terrainType;
 
     public int getHealth() {
         return health;
@@ -165,12 +167,21 @@ public class DbBaseItemType extends DbItemType {
         this.upgradeProgress = upgradeProgress;
     }
 
+    public TerrainType getTerrainType() {
+        return terrainType;
+    }
+
+    public void setTerrainType(TerrainType terrainType) {
+        this.terrainType = terrainType;
+    }
+
     @Override
     public ItemType createItemType() {
         BaseItemType baseItemType = new BaseItemType();
         setupItemType(baseItemType);
         baseItemType.setPrice(price);
         baseItemType.setHealth(health);
+        baseItemType.setTerrainType(terrainType);
         if (dbTurnableType != null) {
             baseItemType.setTurnableType(new TurnableType(dbTurnableType.getImageCount()));
         }

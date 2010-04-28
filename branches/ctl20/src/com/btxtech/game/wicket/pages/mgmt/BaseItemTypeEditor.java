@@ -14,6 +14,7 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBuilderType;
@@ -27,6 +28,7 @@ import com.btxtech.game.services.item.itemType.DbMovableType;
 import com.btxtech.game.services.item.itemType.DbSpecialType;
 import com.btxtech.game.services.item.itemType.DbTurnableType;
 import com.btxtech.game.services.item.itemType.DbWeaponType;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,6 +38,7 @@ import javax.swing.ImageIcon;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextArea;
@@ -112,6 +115,7 @@ public class BaseItemTypeEditor extends WebPage {
         form.add(new TextArea<String>("contraDescription"));
         form.add(new TextField<String>("health"));
         form.add(new TextField<String>("price"));
+        form.add(new DropDownChoice<TerrainType>("terrainType", Arrays.asList(TerrainType.values())));
         form.add(new TextField<String>("upgradeable"));
         form.add(new TextField<String>("upgradeProgress"));
         form.add(new CheckBox("turnable"));
@@ -448,6 +452,14 @@ public class BaseItemTypeEditor extends WebPage {
 
     public void setPrice(int price) {
         dbBaseItemType.setPrice(price);
+    }
+
+    public TerrainType getTerrainType() {
+        return dbBaseItemType.getTerrainType();
+    }
+
+    public void setTerrainType(TerrainType terrainType) {
+        dbBaseItemType.setTerrainType(terrainType);
     }
 
     public void setUpgradeable(Integer id) {

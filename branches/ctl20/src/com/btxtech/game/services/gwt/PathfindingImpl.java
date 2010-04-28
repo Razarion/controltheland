@@ -15,13 +15,16 @@ package com.btxtech.game.services.gwt;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.btxtech.game.jsre.pathfinding.Pathfinding;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.collision.PassableRectangle;
 import com.btxtech.game.services.terrain.TerrainService;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,14 +44,18 @@ public class PathfindingImpl implements Pathfinding {
     private Log log = LogFactory.getLog(PathfindingImpl.class);
 
     @Override
-    public List<Rectangle> getPassableRectangles() {
+    public Map<TerrainType, List<Rectangle>> getPassableRectangles() {
         try {
-            ArrayList<Rectangle> rectangles = new ArrayList<Rectangle>();
-            List<PassableRectangle> passableRectangles = collisionService.getPassableRectangles();
-            for (PassableRectangle passableRectangle : passableRectangles) {
-                rectangles.add(passableRectangle.getPixelRectangle(terrainService.getDbTerrainSettings()));
+            Map<TerrainType, List<Rectangle>> result = new HashMap<TerrainType, List<Rectangle>>();
+            Map<TerrainType, List<PassableRectangle>> passableRectangles = collisionService.getPassableRectangles();
+            for (Map.Entry<TerrainType, List<PassableRectangle>> entry : passableRectangles.entrySet()) {
+                List<Rectangle> rectangles = new ArrayList<Rectangle>();
+                for (PassableRectangle passableRectangle : entry.getValue()) {
+                    rectangles.add(passableRectangle.getPixelRectangle(terrainService.getDbTerrainSettings()));
+                }
+                result.put(entry.getKey(), rectangles);
             }
-            return rectangles;
+            return result;
         } catch (Throwable t) {
             log.error("", t);
             return null;
@@ -72,9 +79,9 @@ public class PathfindingImpl implements Pathfinding {
     }
 
     @Override
-    public List<Index> findPath(Index start, Index destination) {
+    public List<Index> findPath(Index start, Index destination, TerrainType terrainType) {
         try {
-            return collisionService.setupPathToDestination(start, destination);
+            return collisionService.setupPathToDestination(start, destination, terrainType);
         } catch (Throwable t) {
             log.error("", t);
             return null;
