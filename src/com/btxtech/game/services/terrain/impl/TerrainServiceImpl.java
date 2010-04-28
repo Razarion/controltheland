@@ -16,6 +16,7 @@ package com.btxtech.game.services.terrain.impl;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbSurfaceRect;
 import com.btxtech.game.services.terrain.DbTerrainImage;
@@ -202,14 +203,14 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     }
 
     @Override
-    public List<Index> setupPathToDestination(Index absolutePosition, Index absoluteDestination, int maxRadius) {
+    public List<Index> setupPathToDestination(Index absolutePosition, Index absoluteDestination, int maxRadius, TerrainType terrainType) {
         if (absolutePosition.isInRadius(absoluteDestination, maxRadius)) {
             ArrayList<Index> singleIndex = new ArrayList<Index>();
             singleIndex.add(absolutePosition);
             return singleIndex;
         }
 
-        List<Index> path = setupPathToDestination(absolutePosition, absoluteDestination);
+        List<Index> path = setupPathToDestination(absolutePosition, absoluteDestination, terrainType);
         path.remove(path.size() - 1); // This will be replace
         Index secondLastPoint;
         if (path.isEmpty()) {
@@ -235,7 +236,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     }
 
     @Override
-    public List<Index> setupPathToDestination(Index start, Index destination) {
-        return collisionService.setupPathToDestination(start, destination);
+    public List<Index> setupPathToDestination(Index start, Index destination, TerrainType terrainType) {
+        return collisionService.setupPathToDestination(start, destination, terrainType);
     }
 }

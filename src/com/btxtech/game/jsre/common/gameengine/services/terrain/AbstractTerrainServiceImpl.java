@@ -131,8 +131,12 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
     }
 
     @Override
-    public SurfaceImage getSurfaceImage(int id) {
-        return surfaceImages.get(id);
+    public SurfaceImage getSurfaceImage(SurfaceRect surfaceRect) {
+        SurfaceImage getSurfaceImage = surfaceImages.get(surfaceRect.getSurfaceImageId());
+        if (getSurfaceImage == null) {
+            throw new IllegalArgumentException(this + " getSurfaceImage(): image id does not exit: " + surfaceRect.getSurfaceImageId());
+        }
+        return getSurfaceImage;
     }
 
     @Override
@@ -161,6 +165,11 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
             return null;
         }
         Index tileIndex = getTerrainTileIndexForAbsPosition(absoluteX, absoluteY);
+        return getTerrainImagePosition(tileIndex);
+    }
+
+    @Override
+    public TerrainImagePosition getTerrainImagePosition(Index tileIndex) {
         for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
             if (getTerrainImagePositionRectangle(terrainImagePosition).containsExclusive(tileIndex)) {
                 return terrainImagePosition;
@@ -193,6 +202,11 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
             return null;
         }
         Index tileIndex = getTerrainTileIndexForAbsPosition(absoluteX, absoluteY);
+        return getSurfaceRect(tileIndex);
+    }
+
+    @Override
+    public SurfaceRect getSurfaceRect(Index tileIndex) {
         for (SurfaceRect surfaceRect : surfaceRects) {
             if (surfaceRect.getTileRectangle().containsExclusive(tileIndex)) {
                 return surfaceRect;
@@ -284,7 +298,7 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
     }
 
     @Override
-    public List<Index> setupPathToDestination(Index start, Index destionation, int range) {
+    public List<Index> setupPathToDestination(Index start, Index destionation, int range, TerrainType terrainType) {
         Index destination = start.getPointWithDistance(range, destionation);
         ArrayList<Index> path = new ArrayList<Index>();
         path.add(destination);
@@ -292,7 +306,7 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
     }
 
     @Override
-    public List<Index> setupPathToDestination(Index start, Index destination) {
+    public List<Index> setupPathToDestination(Index start, Index destination, TerrainType terrainType) {
         ArrayList<Index> path = new ArrayList<Index>();
         path.add(destination);
         return path;
@@ -312,11 +326,32 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
     }
 
     @Override
+    @Deprecated
     public boolean isTerrainPassable(Index posititon) {
         return posititon != null && !(posititon.getX() >= terrainSettings.getPlayFieldXSize() || posititon.getY() >= terrainSettings.getPlayFieldYSize())
                 && getTerrainImagePosition(posititon.getX(), posititon.getY()) == null;
 
     }
+
+    public SurfaceType getSurfaceType(Index tileIndex) {
+        if (tileIndex == null || tileIndex.getX() >= terrainSettings.getPlayFieldXSize() || tileIndex.getY() >= terrainSettings.getPlayFieldYSize()) {
+            return null;
+        }
+        TerrainImagePosition terrainImagePosition = getTerrainImagePosition(tileIndex);
+        if (terrainImagePosition != null) {
+            TerrainImage terrainImage = getTerrainImage(terrainImagePosition);
+            Index imgPosIndex = tileIndex.sub(terrainImagePosition.getTileIndex());
+            return terrainImage.getSurfaceType(imgPosIndex.getX(), imgPosIndex.getY());
+        } else {
+            SurfaceRect surfaceRect = getSurfaceRect(tileIndex);
+            if (surfaceRect != null) {
+                return getSurfaceImage(surfaceRect).getSurfaceType();
+            } else {
+                return null;
+            }
+        }
+    }
+
 
     public Index getAbsoluteFreeTerrainInRegion(Index absolutePos, int targetMinRange, int targetMaxRange, int edgeLength) {
         for (int i = 0; i < Integer.MAX_VALUE; i++) {

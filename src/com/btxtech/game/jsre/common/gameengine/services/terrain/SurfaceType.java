@@ -19,6 +19,9 @@ package com.btxtech.game.jsre.common.gameengine.services.terrain;
  * Time: 15:09:53
  */
 public enum SurfaceType {
+    NONE,
     WATER,
-    LAND
+    LAND,
+    LAND_COAST,
+    WATER_COAST
 }

@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.terrain;
 
+import com.btxtech.game.jsre.client.common.Index;
 import java.io.Serializable;
 
 /**
@@ -24,6 +25,7 @@ public class TerrainImage implements Serializable {
     private int id;
     private int tileWidth;
     private int tileHeight;
+    private SurfaceType[][] surfaceTypes;
 
     /**
      * Used by GWT
@@ -31,10 +33,11 @@ public class TerrainImage implements Serializable {
     public TerrainImage() {
     }
 
-    public TerrainImage(int id, int tileWidth, int tileHeight) {
+    public TerrainImage(int id, int tileWidth, int tileHeight, SurfaceType[][] surfaceTypes) {
         this.id = id;
         this.tileWidth = tileWidth;
         this.tileHeight = tileHeight;
+        this.surfaceTypes = surfaceTypes;
     }
 
     public int getId() {
@@ -48,4 +51,9 @@ public class TerrainImage implements Serializable {
     public int getTileHeight() {
         return tileHeight;
     }
+
+    public SurfaceType getSurfaceType(int tileX, int tileY) {
+        return surfaceTypes[tileX][tileY];
+    }
+
 }
