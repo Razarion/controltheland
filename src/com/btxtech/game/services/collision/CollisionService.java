@@ -16,7 +16,9 @@ package com.btxtech.game.services.collision;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +31,8 @@ public interface CollisionService extends CommonCollisionService {
     Map<TerrainType, List<PassableRectangle>> getPassableRectangles();
 
     Index getFreeRandomPosition(ItemType itemType, int edgeLength);
+
+    Index getFreeRandomPosition(Index origin, int itemFreeWidth, int itemFreeHeight, Collection<SurfaceType> allowedSurfaces, int targetMinRange, int targetMaxRange);
 
     Index getStartRandomPosition(ItemType itemType, int edgeLength);
 

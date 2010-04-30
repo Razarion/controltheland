@@ -50,6 +50,18 @@ public enum TerrainType {
         return terrainTypes;
     }
 
+    public static Collection<SurfaceType> leastCommonMultiple(Collection<TerrainType> types) {
+        Collection<SurfaceType> lcm = null;
+        for (TerrainType type : types) {
+            if (lcm == null) {
+                lcm = new ArrayList<SurfaceType>(type.getSurfaceTypes());
+            } else {
+                lcm.retainAll(type.getSurfaceTypes());
+            }
+        }
+        return lcm;
+    }
+
     TerrainType(SurfaceType... surfaceTypes) {
         this.surfaceTypes = Arrays.asList(surfaceTypes);
     }
@@ -57,4 +69,5 @@ public enum TerrainType {
     public List<SurfaceType> getSurfaceTypes() {
         return surfaceTypes;
     }
+
 }

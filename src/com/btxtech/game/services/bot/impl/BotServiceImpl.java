@@ -77,15 +77,19 @@ public class BotServiceImpl implements BotService {
 
     @Override
     public void start() {
-        botBase = getBotBase();
-        botBase.setBot(true);
-        baseExecutor = new BaseExecutor(serverServices, botBase.getSimpleBase());
-        baseBalance = new BaseBalance(baseExecutor);
-        for (SyncBaseItem syncBaseItem : botBase.getItems()) {
-            baseBalance.addItemPosAndType(new ItemPosAndType(syncBaseItem));
+        try {
+            botBase = getBotBase();
+            botBase.setBot(true);
+            baseExecutor = new BaseExecutor(serverServices, botBase.getSimpleBase());
+            baseBalance = new BaseBalance(baseExecutor);
+            for (SyncBaseItem syncBaseItem : botBase.getItems()) {
+                baseBalance.addItemPosAndType(new ItemPosAndType(syncBaseItem));
+            }
+            runBot();
+            connectionService.sendOnlineBasesUpdate();
+        } catch (Throwable t) {
+            log.error("", t);
         }
-        runBot();
-        connectionService.sendOnlineBasesUpdate();
     }
 
     private void stop() {

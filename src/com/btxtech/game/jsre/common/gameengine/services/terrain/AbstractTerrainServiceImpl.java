@@ -326,18 +326,25 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
     }
 
     @Override
-    public boolean isFree(Index posititon, ItemType itemType) {
-        int x = posititon.getX() - itemType.getWidth() / 2;
-        int y = posititon.getY() - itemType.getHeight() / 2;
+    public boolean isFree(Index point, int width, int height, Collection<SurfaceType> allowedSurfaces) {
+        int x = point.getX() - width / 2;
+        int y = point.getY() - height / 2;
 
         if (x < 0 || y < 0) {
             return false;
         }
 
-        List<SurfaceType> allowedSurfaceTypes = itemType.getTerrainType().getSurfaceTypes();
-        Rectangle rectangle = new Rectangle(x, y, itemType.getWidth(), itemType.getHeight());
+        Rectangle rectangle = new Rectangle(x, y, width, height);
         Collection<SurfaceType> surfaceTypes = getSurfaceTypeTilesInRegion(rectangle);
-        return allowedSurfaceTypes.containsAll(surfaceTypes);
+        if (surfaceTypes.isEmpty()) {
+            return false;
+        }
+        return allowedSurfaces.containsAll(surfaceTypes);
+    }
+
+    @Override
+    public boolean isFree(Index posititon, ItemType itemType) {
+        return isFree(posititon, itemType.getWidth(), itemType.getHeight(), itemType.getTerrainType().getSurfaceTypes());
     }
 
     @Override

@@ -46,6 +46,7 @@ public class SyncItemInfo extends Packet {
     private double reloadProgress;
     private Boolean isUpgrading;
     private Double upgradeProgress;
+    private Index rallyPoint;
 
     public Id getId() {
         return id;
@@ -207,6 +208,14 @@ public class SyncItemInfo extends Packet {
         this.upgradeProgress = upgradeProgress;
     }
 
+    public Index getRallyPoint() {
+        return rallyPoint;
+    }
+
+    public void setRallyPoint(Index rallyPoint) {
+        this.rallyPoint = rallyPoint;
+    }
+
     private String pathToDestinationAsString() {
         StringBuilder builder = new StringBuilder();
         if (pathToDestination != null) {
@@ -259,6 +268,7 @@ public class SyncItemInfo extends Packet {
                 " amount:" + amount +
                 " followTarget:" + followTarget +
                 " operationState:" + operationState +
-                " reloadProgress:" + reloadProgress;
+                " reloadProgress:" + reloadProgress +
+                " rallyPoint:" + rallyPoint;
     }
 }
