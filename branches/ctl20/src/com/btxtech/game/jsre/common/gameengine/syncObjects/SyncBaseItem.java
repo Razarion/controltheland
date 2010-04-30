@@ -20,7 +20,6 @@ import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
@@ -52,13 +51,13 @@ public class SyncBaseItem extends SyncItem {
     private boolean isUpgrading;
     private BaseItemType upgradingItemType;
 
-    public SyncBaseItem(Id id, Index position, BaseItemType baseItemType, Services services, SimpleBase base) {
+    public SyncBaseItem(Id id, Index position, BaseItemType baseItemType, Services services, SimpleBase base) throws NoSuchItemTypeException {
         super(id, position, baseItemType, services);
         this.base = base;
         setup();
     }
 
-    private void setup() {
+    private void setup() throws NoSuchItemTypeException {
         BaseItemType baseItemType = getBaseItemType();
 
         if (baseItemType.getMovableType() != null) {

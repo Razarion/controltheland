@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.collision.CollisionServiceChangedListener;
@@ -311,11 +312,16 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
 
     @Override
     public Index getFreeRandomPosition(ItemType itemType, SyncItem origin, int targetMinRange, int targetMaxRange) {
+        return getFreeRandomPosition(origin.getPosition(), itemType.getWidth(), itemType.getHeight(), itemType.getTerrainType().getSurfaceTypes(), targetMinRange, targetMaxRange);
+    }
+
+    @Override
+    public Index getFreeRandomPosition(Index origin, int itemFreeWidth, int itemFreeHeight, Collection<SurfaceType> allowedSurfaces, int targetMinRange, int targetMaxRange) {
         Random random = new Random();
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
             double angel = random.nextDouble() * 2.0 * Math.PI;
             int discance = targetMinRange + random.nextInt(targetMaxRange - targetMinRange);
-            Index point = origin.getPosition().getPointFromAngelToNord(angel, discance);
+            Index point = origin.getPointFromAngelToNord(angel, discance);
 
             if (point.getX() >= terrainService.getDbTerrainSettings().getPlayFieldXSize()) {
                 continue;
@@ -324,21 +330,25 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
                 continue;
             }
 
-            if (!terrainService.isFree(point, itemType)) {
+            if (!terrainService.isFree(point, itemFreeWidth, itemFreeHeight, allowedSurfaces)) {
                 continue;
             }
-            Rectangle itemRectangle = new Rectangle(point.getX() - itemType.getWidth() / 2,
-                    point.getY() - itemType.getHeight() / 2,
-                    itemType.getWidth(),
-                    itemType.getHeight());
+            Rectangle itemRectangle = null;
+            if (itemFreeWidth > 0 || itemFreeHeight > 0) {
+                itemRectangle = new Rectangle(point.getX() - itemFreeWidth / 2,
+                        point.getY() - itemFreeHeight / 2,
+                        itemFreeWidth,
+                        itemFreeHeight);
 
-            if (itemService.hasItemsInRectangle(itemRectangle)) {
+            }
+            if (itemRectangle != null && itemService.hasItemsInRectangle(itemRectangle)) {
                 continue;
             }
             return point;
         }
         throw new IllegalStateException("Can not find free position");
     }
+
 
     private int getDistance(List<Index> indeces) {
         Index previous = null;
@@ -437,5 +447,8 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
         return bestSelection;
     }
 
-
+    @Override
+    public Index getRallyPoint(SyncBaseItem factory, Collection<SurfaceType> allowedSurfaces) {
+        return getFreeRandomPosition(factory.getPosition(), 0, 0, allowedSurfaces, factory.getItemType().getHeight() / 2, factory.getItemType().getHeight());
+    }
 }

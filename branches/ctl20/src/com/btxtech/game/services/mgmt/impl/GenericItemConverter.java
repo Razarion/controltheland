@@ -158,6 +158,7 @@ public class GenericItemConverter {
             }
             genericItem.setBuildupProgress(item.getSyncFactory().getBuildupProgress());
             genericItem.setCreatedChildCount(item.getSyncFactory().getCreatedChildCount());
+            genericItem.setRallyPoint(item.getSyncFactory().getRallyPoint());
         }
         if (item.hasSyncWaepon()) {
             genericItem.setFollowTarget(item.getSyncWaepon().isFollowTarget());
@@ -235,6 +236,7 @@ public class GenericItemConverter {
             }
             item.getSyncFactory().setBuildupProgress(genericItem.getBuildupProgress());
             item.getSyncFactory().setCreatedChildCount(genericItem.getCreatedChildCount());
+            item.getSyncFactory().setRallyPoint(genericItem.getRallyPoint());
         }
         if (item.hasSyncWaepon()) {
             item.getSyncWaepon().setFollowTarget(genericItem.isFollowTarget());

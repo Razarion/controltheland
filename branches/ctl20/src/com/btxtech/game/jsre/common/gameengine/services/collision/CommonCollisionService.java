@@ -15,7 +15,10 @@ package com.btxtech.game.jsre.common.gameengine.services.collision;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -24,4 +27,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
  */
 public interface CommonCollisionService {
     Index getFreeRandomPosition(ItemType itemTypeToBuild, SyncItem builder, int targetMinRange, int targetMaxRange);
+    
+    Index getRallyPoint(SyncBaseItem factory, Collection<SurfaceType> allowedSurfaces);
 }

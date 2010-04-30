@@ -128,6 +128,9 @@ public class ActionHandler implements CommonActionService {
                 Index pos = null;
                 while (pos == null) {
                     pos = rectangleFormation.calculateNextEntry();
+                    if(pos == null) {
+                        continue;
+                    }
                     SurfaceType surfaceType = TerrainView.getInstance().getTerrainHandler().getSurfaceTypeAbsolute(pos);
                     if(!clientSyncItem.getSyncBaseItem().getTerrainType().getSurfaceTypes().contains(surfaceType)) {
                         pos = null;

@@ -84,6 +84,8 @@ public interface AbstractTerrainService {
 
     boolean isFree(Index posititon, ItemType itemType);
 
+    boolean isFree(Index point, int itemFreeWidth, int itemFreeWidth1, Collection<SurfaceType> allowedSurfaces);
+
     @Deprecated
     boolean isTerrainPassable(Index posititon);
 

@@ -226,13 +226,13 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         for (int radius = maxRadius; radius > 0; radius -= getTerrainSettings().getTileHeight() / 10) {
             for (double testAngle = angle; testAngle < angle + 2 * Math.PI; testAngle += Math.PI / 50) {
                 Index newDestination = absoluteDestination.getPointFromAngelToNord(testAngle, maxRadius);
-                if (getTerrainImagePosition(newDestination.getX(), newDestination.getY()) == null) {
+                if(isFree(new Index(newDestination.getX(), newDestination.getY()),0,0, terrainType.getSurfaceTypes())) {
                     path.add(newDestination);
                     return path;
                 }
             }
         }
-        throw new IllegalStateException("Can not find position. Pos: " + absolutePosition + " dest: " + absoluteDestination + " maxRadius: " + maxRadius);
+        throw new IllegalStateException("Can not find position. Pos: " + absolutePosition + " dest: " + absoluteDestination + " maxRadius: " + maxRadius + " terrainType:" + terrainType);
     }
 
     @Override

@@ -23,3 +23,9 @@ DELETE FROM TRACKER_BROWSER_DETAILS WHERE timeStamp < '2010-04-01 00:00:00';
 ARQ
 ---
 INSERT INTO USER_ARQ (user_name, arq_name) SELECT u.name, a.name FROM USER u, ARQ a where a.name = "FORUM_POST"
+
+CTL 2.0
+-------
+RallyPoint
+SurfaceType
+TerrainType
