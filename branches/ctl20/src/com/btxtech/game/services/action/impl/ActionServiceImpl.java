@@ -225,7 +225,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
                 }
                 break;
             case ITEM_TYPE_CHANGED:
-                energyService.onItemTypeChanged((SyncBaseItem)syncItem);
+                energyService.onItemTypeChanged((SyncBaseItem) syncItem);
                 break;
         }
 
@@ -422,13 +422,17 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
 
     @Override
     public void setupAllMoneyStacks() {
-        for (SyncResourceItem money : moneys) {
-            if (!terrainService.isFree(money.getPosition(), money.getItemType())) {
-                log.error("Money has wrong position: " + money);
+        try {
+            for (SyncResourceItem money : moneys) {
+                if (!terrainService.isFree(money.getPosition(), money.getItemType())) {
+                    log.error("Money has wrong position: " + money);
+                }
             }
-        }
-        for (int i = moneys.size(); i < Constants.MONEY_STACK_COUNT; i++) {
-            addMoneyStack();
+            for (int i = moneys.size(); i < Constants.MONEY_STACK_COUNT; i++) {
+                addMoneyStack();
+            }
+        } catch (Throwable t) {
+            log.error("", t);
         }
     }
 

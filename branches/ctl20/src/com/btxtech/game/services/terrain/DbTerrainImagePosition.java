@@ -80,4 +80,9 @@ public class DbTerrainImagePosition implements Serializable {
     public int hashCode() {
         return dbKey != null ? dbKey.hashCode() : 0;
     }
+
+    @Override
+    public String toString() {
+        return getClass() + " " +  dbKey  + " " + dbTerrainImage;
+    }
 }
