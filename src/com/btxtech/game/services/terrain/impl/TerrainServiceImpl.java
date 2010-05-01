@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.services.forum.SubForum;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbSurfaceRect;
 import com.btxtech.game.services.terrain.DbTerrainImage;
@@ -25,6 +26,7 @@ import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.terrain.DbTerrainImagePosition;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainService;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -32,8 +34,12 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 /**
@@ -60,7 +66,6 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         loadTerrain();
     }
 
-
     private void loadTerrain() {
         // Terrain settings
         List<DbTerrainSetting> dbTerrainSettings = hibernateTemplate.loadAll(DbTerrainSetting.class);
@@ -76,7 +81,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
 
         // Terrain image position
         setTerrainImagePositions(new ArrayList<TerrainImagePosition>());
-        List<DbTerrainImagePosition> dbTerrainImagePositions = hibernateTemplate.loadAll(DbTerrainImagePosition.class);
+        List<DbTerrainImagePosition> dbTerrainImagePositions = loadDbTerrainImagePositions();
         for (DbTerrainImagePosition dbTerrainImagePosition : dbTerrainImagePositions) {
             addTerrainImagePosition(dbTerrainImagePosition.createTerrainImagePosition());
         }
@@ -117,6 +122,17 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         dbTerrainSetting.setTileYCount(50);
         hibernateTemplate.saveOrUpdate(dbTerrainSetting);
         return dbTerrainSetting;
+    }
+
+    private List<DbTerrainImagePosition> loadDbTerrainImagePositions() {
+        return hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbTerrainImagePosition.class);
+                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                return criteria.list();
+            }
+        });
     }
 
     @Override
@@ -176,7 +192,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     @Override
     public void saveAndActivateTerrain(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects) {
         // Terrain Images
-        List<DbTerrainImagePosition> dbTerrainImagePositions = hibernateTemplate.loadAll(DbTerrainImagePosition.class);
+        List<DbTerrainImagePosition> dbTerrainImagePositions = loadDbTerrainImagePositions();
         hibernateTemplate.deleteAll(dbTerrainImagePositions);
         ArrayList<DbTerrainImagePosition> dbTerrainImagePositionsNew = new ArrayList<DbTerrainImagePosition>();
         for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
