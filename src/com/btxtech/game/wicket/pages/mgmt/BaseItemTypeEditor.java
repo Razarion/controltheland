@@ -22,6 +22,7 @@ import com.btxtech.game.services.item.itemType.DbConsumerType;
 import com.btxtech.game.services.item.itemType.DbFactoryType;
 import com.btxtech.game.services.item.itemType.DbGeneratorType;
 import com.btxtech.game.services.item.itemType.DbHarvesterType;
+import com.btxtech.game.services.item.itemType.DbItemContainerType;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeData;
 import com.btxtech.game.services.item.itemType.DbMovableType;
@@ -88,6 +89,9 @@ public class BaseItemTypeEditor extends WebPage {
     private int consumerWattage;
     private boolean generator;
     private int generatorWattage;
+    private boolean itemContainer;
+    private String itemContainerAbleToContain;
+    private int itemContainerMaxCount;
     private boolean special;
     private String specialString;
     private String imageFileField;
@@ -147,6 +151,9 @@ public class BaseItemTypeEditor extends WebPage {
         form.add(new TextField("consumerWattage"));
         form.add(new CheckBox("generator"));
         form.add(new TextField("generatorWattage"));
+        form.add(new CheckBox("itemContainer"));
+        form.add(new TextField("itemContainerAbleToContain"));
+        form.add(new TextField("itemContainerMaxCount"));
         form.add(new CheckBox("special"));
         form.add(new TextField("specialString"));
         form.add(new HiddenField("imageFileField"));
@@ -235,6 +242,14 @@ public class BaseItemTypeEditor extends WebPage {
             generatorWattage = dbBaseItemType.getGeneratorType().getWattage();
         } else {
             generator = false;
+        }
+
+        if (dbBaseItemType.getDbItemContainerType() != null) {
+            itemContainer = true;
+            itemContainerAbleToContain = itemsToString(dbBaseItemType.getDbItemContainerType().getAbleToContain());
+            itemContainerMaxCount = dbBaseItemType.getDbItemContainerType().getMaxCount();
+        } else {
+            itemContainer = false;
         }
 
         if (dbBaseItemType.getSpecialType() != null) {
@@ -381,6 +396,18 @@ public class BaseItemTypeEditor extends WebPage {
             generatorType.setWattage(generatorWattage);
         } else {
             dbBaseItemType.setGeneratorType(null);
+        }
+
+        if (itemContainer) {
+            DbItemContainerType dbItemContainerType = dbBaseItemType.getDbItemContainerType();
+            if (dbItemContainerType == null) {
+                dbItemContainerType = new DbItemContainerType();
+                dbBaseItemType.setDbItemContainerType(dbItemContainerType);
+            }
+            dbItemContainerType.setAbleToContain(stringToItems(itemContainerAbleToContain));
+            dbItemContainerType.setMaxCount(itemContainerMaxCount);
+        } else {
+            dbBaseItemType.setDbItemContainerType(null);
         }
 
         if (special) {

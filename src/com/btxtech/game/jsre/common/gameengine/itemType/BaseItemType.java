@@ -13,8 +13,6 @@
 
 package com.btxtech.game.jsre.common.gameengine.itemType;
 
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
-
 /**
  * User: beat
  * Date: 04.12.2009
@@ -32,6 +30,7 @@ public class BaseItemType extends ItemType {
     private GeneratorType generatorType;
     private ConsumerType consumerType;
     private SpecialType specialType;
+    private ItemContainerType itemContainerType;
     private Integer upgradeable;
     private int upgradeProgress;
 
@@ -123,6 +122,14 @@ public class BaseItemType extends ItemType {
         this.specialType = specialType;
     }
 
+    public ItemContainerType getItemContainerType() {
+        return itemContainerType;
+    }
+
+    public void setItemContainerType(ItemContainerType itemContainerType) {
+        this.itemContainerType = itemContainerType;
+    }
+
     public Integer getUpgradeable() {
         return upgradeable;
     }
@@ -174,6 +181,9 @@ public class BaseItemType extends ItemType {
         }
         if (specialType != null) {
             specialType.changeTo(baseItemType.specialType);
+        }
+        if (itemContainerType != null) {
+            itemContainerType.changeTo(baseItemType.itemContainerType);
         }
     }
 }

@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -47,7 +48,7 @@ public class SyncResourceItem extends SyncItem {
     }
 
     @Override
-    public void synchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException {
+    public void synchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException, ItemDoesNotExistException {
         super.synchronize(syncItemInfo);
         amount = syncItemInfo.getAmount();
     }

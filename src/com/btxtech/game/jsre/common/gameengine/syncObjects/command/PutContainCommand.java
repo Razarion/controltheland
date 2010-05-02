@@ -11,27 +11,23 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.common.gameengine.syncObjects;
+package com.btxtech.game.jsre.common.gameengine.syncObjects.command;
+
+import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 
 /**
  * User: beat
- * Date: 22.11.2009
- * Time: 22:21:39
+ * Date: 01.05.2010
+ * Time: 12:42:05
  */
-public interface SyncItemListener {
-    public enum Change {
-        ANGEL,
-        POSITION,
-        ON_ATTACK,
-        HEALTH,
-        FACTORY_PROGRESS,
-        RESOURCE,
-        BUILD,
-        ITEM_TYPE_CHANGED,
-        UPGRADE_PROGRESS_CHANGED,
-        CONTAINED_IN_CHANGED,
-        CONTAINER_COUNT_CHANGED
+public class PutContainCommand extends BaseCommand {
+    private Id itemContainer;
+
+    public Id getItemContainer() {
+        return itemContainer;
     }
 
-    void onItemChanged(Change change, SyncItem syncItem);
+    public void setItemContainer(Id itemContainer) {
+        this.itemContainer = itemContainer;
+    }
 }

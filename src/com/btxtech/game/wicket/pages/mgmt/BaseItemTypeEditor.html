@@ -213,7 +213,7 @@
 </tr>
 <tr bgcolor="#DDDDDD">
     <td valign="top" width="20px">&nbsp;</td>
-    <td valign="top">Able to build</td>
+    <td valign="top">Able to build [;]</td>
     <td valign="top"><input wicket:id="factoryAbleToBuild" type="text" size="30" maxlength="40"></td>
 </tr>
 <tr>
@@ -250,7 +250,7 @@
 </tr>
 <tr bgcolor="#DDDDDD">
     <td valign="top" width="20px">&nbsp;</td>
-    <td valign="top">Able to build</td>
+    <td valign="top">Able to build [;]</td>
     <td valign="top"><input wicket:id="builderAbleToBuild" type="text" size="30" maxlength="40"></td>
 </tr>
 <tr>
@@ -279,6 +279,22 @@
     <td colspan="3" valign="top">&nbsp;</td>
 </tr>
 <tr bgcolor="#DDDDDD">
+    <td colspan="3" valign="top"><input type="checkbox" wicket:id="itemContainer">Item container</td>
+</tr>
+<tr bgcolor="#DDDDDD">
+    <td valign="top" width="20px">&nbsp;</td>
+    <td valign="top">Able to contain [;]</td>
+    <td valign="top"><input wicket:id="itemContainerAbleToContain" type="text" size="30" maxlength="40"></td>
+</tr>
+<tr bgcolor="#DDDDDD">
+    <td valign="top" width="20px">&nbsp;</td>
+    <td valign="top">Max count</td>
+    <td valign="top"><input wicket:id="itemContainerMaxCount" type="text" size="30" maxlength="40"></td>
+</tr>
+<tr>
+    <td colspan="3" valign="top">&nbsp;</td>
+</tr>
+<tr bgcolor="#DDDDDD">
     <td colspan="3" valign="top"><input type="checkbox" wicket:id="special">Special</td>
 </tr>
 <tr bgcolor="#DDDDDD">
@@ -286,8 +302,6 @@
     <td valign="top">String</td>
     <td valign="top"><input wicket:id="specialString" type="text" size="30" maxlength="40"></td>
 </tr>
-
-
 </table>
 <br>
 <input type="submit" wicket:id="save" value="Save">

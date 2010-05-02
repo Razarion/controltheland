@@ -56,6 +56,10 @@ public class SelectionHandler {
         return selectedGroup;
     }
 
+    public boolean hasOwnSelection() {
+        return selectedGroup != null && !selectedGroup.isEmpty();
+    }
+
     public Collection<SurfaceType> getOwnSelectionSurfaceTypes() {
         if (selectedGroup != null) {
             return selectedGroup.getAllowedSurfaceTypes();
@@ -80,10 +84,14 @@ public class SelectionHandler {
     }
 
     public void setItemGroupSelected(Group selectedGroup) {
-        clearSelection();
-        selectedGroup.setSelected(true);
-        this.selectedGroup = selectedGroup;
-        onOwnItemSelectionChanged(selectedGroup);
+        if (hasOwnSelection() && selectedGroup.getCount() == 1 && selectedGroup.getFirst().getSyncBaseItem().hasSyncItemContainer()) {
+            ActionHandler.getInstance().putToContainer(selectedGroup.getFirst(),this.selectedGroup.getItems());
+        } else {
+            clearSelection();
+            selectedGroup.setSelected(true);
+            this.selectedGroup = selectedGroup;
+            onOwnItemSelectionChanged(selectedGroup);
+        }
     }
 
     public void clearSelection() {

@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
@@ -42,7 +43,7 @@ public abstract class SyncBaseAbility {
         return syncBaseItem.getServices();
     }
 
-    public abstract void synchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException;
+    public abstract void synchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException, ItemDoesNotExistException;
 
     public abstract void fillSyncItemInfo(SyncItemInfo syncItemInfo);
 

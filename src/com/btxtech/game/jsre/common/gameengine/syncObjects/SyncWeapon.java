@@ -13,10 +13,11 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 
 /**
  * User: beat
@@ -124,7 +125,9 @@ public class SyncWeapon extends SyncBaseAbility {
     }
 
     public boolean inAttackRange(SyncItem target) {
-        return getSyncBaseItem().getPosition().isInRadius(target.getPosition(), weaponType.getRange());
+        Index pos = getSyncBaseItem().getPosition();
+        Index targetPos = target.getPosition();
+        return !(pos == null || targetPos == null) && pos.isInRadius(targetPos, weaponType.getRange());
     }
 
     public Id getTarget() {
