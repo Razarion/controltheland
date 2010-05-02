@@ -35,6 +35,10 @@ import java.util.Map;
 public interface ItemService {
     SyncItem getItem(Id id) throws ItemDoesNotExistException;
 
+    List<SyncBaseItem> getBaseItems(List<Id> baseItemsIds) throws ItemDoesNotExistException;
+
+    List<Id> getBaseItemIds(List<SyncBaseItem> baseItems);
+
     void killBaseSyncObject(SyncItem syncItem, SyncBaseItem actor, boolean force);
 
     SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws NoSuchItemTypeException;

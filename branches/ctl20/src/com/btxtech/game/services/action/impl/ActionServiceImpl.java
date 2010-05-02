@@ -225,7 +225,10 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
                 }
                 break;
             case ITEM_TYPE_CHANGED:
-                energyService.onItemTypeChanged((SyncBaseItem) syncItem);
+                energyService.onItemChanged((SyncBaseItem) syncItem);
+                break;
+            case CONTAINED_IN_CHANGED:
+                energyService.onItemChanged((SyncBaseItem) syncItem);                
                 break;
         }
 

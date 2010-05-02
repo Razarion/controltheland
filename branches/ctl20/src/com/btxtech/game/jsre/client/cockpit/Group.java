@@ -137,6 +137,10 @@ public class Group {
         return clientSyncItems.isEmpty();
     }
 
+    public int getCount() {
+        return clientSyncItems.size();
+    }
+
     public Collection<ClientSyncBaseItemView> getItems() {
         return clientSyncItems;
     }

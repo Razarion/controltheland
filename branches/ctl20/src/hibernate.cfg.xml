@@ -50,6 +50,7 @@
         <mapping class="com.btxtech.game.services.item.itemType.DbGeneratorType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbSpecialType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbItemTypeData"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbItemContainerType"/>
         <mapping class="com.btxtech.game.services.market.MarketEntry"/>
         <mapping class="com.btxtech.game.services.market.impl.UserItemTypeAccess"/>
         <mapping class="com.btxtech.game.services.market.XpSettings"/>

@@ -261,6 +261,10 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
     public void moveToHome() {
         ClientSyncBaseItemView scrollTo = null;
         for (ClientSyncBaseItemView itemView : ItemContainer.getInstance().getOwnItems()) {
+            if(itemView.getSyncBaseItem().isContainedIn()) {
+                continue;
+            }
+
             if (itemView.getSyncBaseItem().hasSyncFactory()) {
                 scrollTo = itemView;
                 break;

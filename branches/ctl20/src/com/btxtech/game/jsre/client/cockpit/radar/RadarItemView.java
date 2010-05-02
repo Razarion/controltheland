@@ -56,6 +56,9 @@ public class RadarItemView extends MiniMap {
             if (syncItemView instanceof ClientSyncBaseItemView) {
                 ClientSyncBaseItemView baseItemView = (ClientSyncBaseItemView) syncItemView;
                 Index pos = baseItemView.getSyncBaseItem().getPosition();
+                if(pos == null) {
+                    continue;
+                }
                 setStrokeStyle(new Color(baseItemView.getSyncBaseItem().getBase().getHtmlColor()));
                 strokeRect(pos.getX(), pos.getY(), BASE_ITEM_SIZE, BASE_ITEM_SIZE);
             } else if (syncItemView instanceof ClientSyncResourceItemView) {

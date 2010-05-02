@@ -38,6 +38,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderComman
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.PutContainCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UpgradeCommand;
 import com.google.gwt.user.client.Timer;
 import java.util.Collection;
@@ -128,11 +129,11 @@ public class ActionHandler implements CommonActionService {
                 Index pos = null;
                 while (pos == null) {
                     pos = rectangleFormation.calculateNextEntry();
-                    if(pos == null) {
+                    if (pos == null) {
                         continue;
                     }
                     SurfaceType surfaceType = TerrainView.getInstance().getTerrainHandler().getSurfaceTypeAbsolute(pos);
-                    if(!clientSyncItem.getSyncBaseItem().getTerrainType().getSurfaceTypes().contains(surfaceType)) {
+                    if (!clientSyncItem.getSyncBaseItem().getTerrainType().getSurfaceTypes().contains(surfaceType)) {
                         pos = null;
                     }
                 }
@@ -304,6 +305,42 @@ public class ActionHandler implements CommonActionService {
         }
     }
 
+    public void putToContainer(ClientSyncBaseItemView container, Collection<ClientSyncBaseItemView> items) {
+        if (!container.getSyncBaseItem().hasSyncItemContainer()) {
+            GwtCommon.sendLogToServer("ActionHandler.putToContainer(): can not cast to ItemContainer:" + container);
+            return;
+        }
+
+        for (ClientSyncBaseItemView item : items) {
+           if(item.getSyncBaseItem().hasSyncMovable()) {
+               putToContainer(container.getSyncBaseItem(), item.getSyncBaseItem());
+           }   else {
+               GwtCommon.sendLogToServer("ActionHandler.putToContainer(): has no movable:" + item);
+           }
+        }
+    }
+
+    private void putToContainer(SyncBaseItem container, SyncBaseItem item) {
+        if (checkCommand(item)) {
+            return;
+        }
+        if (checkCommand(container)) {
+            return;
+        }
+        container.stop();
+        PutContainCommand putContainCommand = new PutContainCommand();
+        putContainCommand.setId(item.getId());
+        putContainCommand.setTimeStamp();
+        putContainCommand.setItemContainer(container.getId());
+
+        try {
+            item.executeCommand(putContainCommand);
+            executeCommand(item, putContainCommand);
+        } catch (Exception e) {
+            GwtCommon.handleException(e);
+        }
+    }
+
     private boolean checkCommand(SyncItem syncItem) {
         Id id = syncItem.getId();
         if (id == null) {
@@ -316,7 +353,6 @@ public class ActionHandler implements CommonActionService {
         }
         return false;
     }
-
 
     private void executeCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
         Connection.getInstance().sendCommand(baseCommand);
@@ -331,5 +367,4 @@ public class ActionHandler implements CommonActionService {
             return 1.0;
         }
     }
-
 }

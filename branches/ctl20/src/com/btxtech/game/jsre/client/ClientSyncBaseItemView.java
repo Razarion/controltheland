@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.cockpit.BuildupItemPanel;
 import com.btxtech.game.jsre.client.cockpit.CursorHandler;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
@@ -150,12 +149,15 @@ public class ClientSyncBaseItemView extends ClientSyncItemView {
                 setupMarkerPos();
                 setupHealthBarPos();
                 setProgress();
-                setupImage();                
+                setupImage();
                 SelectionHandler.getInstance().refresh();
                 ItemContainer.getInstance().handleSpecial(this);
                 break;
             case UPGRADE_PROGRESS_CHANGED:
-                setProgress();                
+                setProgress();
+                break;
+            case CONTAINED_IN_CHANGED:
+                setVisible(!getSyncBaseItem().isContainedIn());
                 break;
         }
     }

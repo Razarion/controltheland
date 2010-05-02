@@ -69,6 +69,9 @@ public abstract class ClientSyncItemView extends AbsolutePanel implements MouseD
     }
 
     protected void setPosition() {
+        if (syncItem.getPosition() == null) {
+            return;
+        }
         int x = syncItem.getPosition().getX() - viewOriginLeft - (syncItem.getItemType().getWidth() / 2);
         int y = syncItem.getPosition().getY() - viewOriginTop - (syncItem.getItemType().getHeight() / 2);
         MapWindow.getAbsolutePanel().setWidgetPosition(this, x, y);

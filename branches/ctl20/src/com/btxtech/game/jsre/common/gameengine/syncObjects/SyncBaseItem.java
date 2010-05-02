@@ -26,6 +26,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderComman
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.PutContainCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UpgradeCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 
@@ -47,9 +48,11 @@ public class SyncBaseItem extends SyncItem {
     private SyncGenerator syncGenerator;
     private SyncConsumer syncConsumer;
     private SyncSpecial syncSpecial;
+    private SyncItemContainer syncItemContainer;
     private double upgradeProgress;
     private boolean isUpgrading;
     private BaseItemType upgradingItemType;
+    public SyncBaseItem containedIn;
 
     public SyncBaseItem(Id id, Index position, BaseItemType baseItemType, Services services, SimpleBase base) throws NoSuchItemTypeException {
         super(id, position, baseItemType, services);
@@ -113,6 +116,12 @@ public class SyncBaseItem extends SyncItem {
         } else {
             syncSpecial = null;
         }
+
+        if (baseItemType.getItemContainerType() != null) {
+            syncItemContainer = new SyncItemContainer(baseItemType.getItemContainerType(), this);
+        } else {
+            syncItemContainer = null;
+        }
     }
 
 
@@ -134,7 +143,7 @@ public class SyncBaseItem extends SyncItem {
     }
 
     @Override
-    public void synchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException {
+    public void synchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException, ItemDoesNotExistException {
         checkBase(syncItemInfo.getBase());
         super.synchronize(syncItemInfo);
         isUpgrading = syncItemInfo.isUpgrading();
@@ -151,6 +160,11 @@ public class SyncBaseItem extends SyncItem {
         health = syncItemInfo.getHealth();
         setBuild(syncItemInfo.isBuild());
         upgradeProgress = syncItemInfo.getUpgradeProgress();
+        if (syncItemInfo.getContainedIn() != null) {
+            containedIn = (SyncBaseItem) getServices().getItemService().getItem(syncItemInfo.getContainedIn());
+        } else {
+            containedIn = null;
+        }
 
         if (syncMovable != null) {
             syncMovable.synchronize(syncItemInfo);
@@ -179,6 +193,10 @@ public class SyncBaseItem extends SyncItem {
         if (syncConsumer != null) {
             syncConsumer.synchronize(syncItemInfo);
         }
+
+        if (syncItemContainer != null) {
+            syncItemContainer.synchronize(syncItemInfo);
+        }
     }
 
     @Override
@@ -189,6 +207,11 @@ public class SyncBaseItem extends SyncItem {
         syncItemInfo.setBuild(isBuild);
         syncItemInfo.setUpgrading(isUpgrading);
         syncItemInfo.setUpgradeProgress(upgradeProgress);
+        if (containedIn != null) {
+            syncItemInfo.setContainedIn(containedIn.getId());
+        } else {
+            syncItemInfo.setContainedIn(null);
+        }
         if (syncMovable != null) {
             syncMovable.fillSyncItemInfo(syncItemInfo);
         }
@@ -215,6 +238,10 @@ public class SyncBaseItem extends SyncItem {
 
         if (syncConsumer != null) {
             syncConsumer.fillSyncItemInfo(syncItemInfo);
+        }
+
+        if (syncItemContainer != null) {
+            syncItemContainer.fillSyncItemInfo(syncItemInfo);
         }
 
         return syncItemInfo;
@@ -321,6 +348,11 @@ public class SyncBaseItem extends SyncItem {
             getServices().getBaseService().withdrawalMoney(tmpUpgradingItemType.getPrice(), getBase());
             isUpgrading = true;
             upgradingItemType = tmpUpgradingItemType;
+            return;
+        }
+
+        if (baseCommand instanceof PutContainCommand) {
+            getSyncMovable().executeCommand((PutContainCommand) baseCommand);
             return;
         }
 
@@ -432,6 +464,17 @@ public class SyncBaseItem extends SyncItem {
         return syncSpecial;
     }
 
+    public boolean hasSyncItemContainer() {
+        return syncItemContainer != null;
+    }
+
+    public SyncItemContainer getSyncItemContainer() {
+        if (syncItemContainer == null) {
+            throw new IllegalStateException(this + " has no SyncItemContainer");
+        }
+        return syncItemContainer;
+    }
+
     public boolean isEnemy(SyncBaseItem syncBaseItem) {
         return !getBase().equals(syncBaseItem.getBase());
     }
@@ -502,6 +545,25 @@ public class SyncBaseItem extends SyncItem {
 
     public boolean isUpgrading() {
         return isUpgrading;
+    }
+
+    public void setContained(SyncBaseItem itemContainer) {
+        this.containedIn = itemContainer;
+        setPosition(null);
+        fireItemChanged(SyncItemListener.Change.CONTAINED_IN_CHANGED);
+        fireItemChanged(SyncItemListener.Change.POSITION);
+    }
+
+    public SyncBaseItem getContainedIn() {
+        return containedIn;
+    }
+
+    public void setContainedIn(SyncBaseItem containedIn) {
+        this.containedIn = containedIn;
+    }
+
+    public boolean isContainedIn() {
+        return containedIn != null;
     }
 
     public int getFullUpgradeProgress() {

@@ -129,7 +129,7 @@ public class BaseEnergy {
         recalculateGeneration();
     }
 
-    public void onItemTypeChanged(SyncBaseItem syncBaseItem) {
+    public void onItemChanged(SyncBaseItem syncBaseItem) {
         synchronized (syncObject) {
             // Generators
             for (SyncGenerator syncGenerator : syncGenerators) {
@@ -138,7 +138,7 @@ public class BaseEnergy {
                     break;
                 }
             }
-            if (syncBaseItem.hasSyncGenerator()) {
+            if (syncBaseItem.hasSyncGenerator() && !syncBaseItem.isContainedIn()) {
                 syncGenerators.add(syncBaseItem.getSyncGenerator());
             }
             // Consumers
@@ -148,7 +148,7 @@ public class BaseEnergy {
                     break;
                 }
             }
-            if (syncBaseItem.hasSyncConsumer()) {
+            if (syncBaseItem.hasSyncConsumer() && !syncBaseItem.isContainedIn()) {
                 syncConsumers.add(syncBaseItem.getSyncConsumer());
             }
         }
