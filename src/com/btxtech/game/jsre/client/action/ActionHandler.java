@@ -39,6 +39,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryComman
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.PutContainCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UnloadContainerCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UpgradeCommand;
 import com.google.gwt.user.client.Timer;
 import java.util.Collection;
@@ -312,13 +313,36 @@ public class ActionHandler implements CommonActionService {
         }
 
         for (ClientSyncBaseItemView item : items) {
-           if(item.getSyncBaseItem().hasSyncMovable()) {
-               putToContainer(container.getSyncBaseItem(), item.getSyncBaseItem());
-           }   else {
-               GwtCommon.sendLogToServer("ActionHandler.putToContainer(): has no movable:" + item);
-           }
+            if (item.getSyncBaseItem().hasSyncMovable()) {
+                putToContainer(container.getSyncBaseItem(), item.getSyncBaseItem());
+            } else {
+                GwtCommon.sendLogToServer("ActionHandler.putToContainer(): has no movable:" + item);
+            }
         }
     }
+
+    public void unloadContainer(SyncBaseItem container, Index unloadPos) {
+        if (checkCommand(container)) {
+            return;
+        }
+
+        if (!container.hasSyncItemContainer()) {
+            GwtCommon.sendLogToServer("ActionHandler.unloadContainer(): can not cast to ItemContainer:" + container);
+            return;
+        }
+        UnloadContainerCommand unloadContainerCommand = new UnloadContainerCommand();
+        unloadContainerCommand.setId(container.getId());
+        unloadContainerCommand.setTimeStamp();
+        unloadContainerCommand.setUnloadPos(unloadPos);
+
+        try {
+            container.executeCommand(unloadContainerCommand);
+            executeCommand(container, unloadContainerCommand);
+        } catch (Exception e) {
+            GwtCommon.handleException(e);
+        }
+    }
+
 
     private void putToContainer(SyncBaseItem container, SyncBaseItem item) {
         if (checkCommand(item)) {
@@ -327,6 +351,7 @@ public class ActionHandler implements CommonActionService {
         if (checkCommand(container)) {
             return;
         }
+
         container.stop();
         PutContainCommand putContainCommand = new PutContainCommand();
         putContainCommand.setId(item.getId());

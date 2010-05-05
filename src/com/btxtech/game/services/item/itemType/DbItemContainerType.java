@@ -17,6 +17,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -42,6 +43,8 @@ public class DbItemContainerType implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "itemTypeId")
     )
     private Set<DbBaseItemType> ableToContain;
+    @Column(name = "theRange")
+    private int range;
 
     public int getMaxCount() {
         return maxCount;
@@ -57,6 +60,14 @@ public class DbItemContainerType implements Serializable {
 
     public void setAbleToContain(Set<DbBaseItemType> ableToContain) {
         this.ableToContain = ableToContain;
+    }
+
+    public int getRange() {
+        return range;
+    }
+
+    public void setRange(int range) {
+        this.range = range;
     }
 
     @Override

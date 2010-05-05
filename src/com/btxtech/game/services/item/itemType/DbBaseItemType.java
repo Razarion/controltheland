@@ -230,7 +230,7 @@ public class DbBaseItemType extends DbItemType {
             baseItemType.setSpecialType(new SpecialType(dbSpecialType.getString()));
         }
         if (dbItemContainerType != null) {
-            baseItemType.setItemContainerType(new ItemContainerType(toInt(dbItemContainerType.getAbleToContain()), dbItemContainerType.getMaxCount()));
+            baseItemType.setItemContainerType(new ItemContainerType(toInt(dbItemContainerType.getAbleToContain()), dbItemContainerType.getMaxCount(), dbItemContainerType.getRange()));
         }
         if (upgradable != null) {
             baseItemType.setUpgradeable(upgradable.getId());
