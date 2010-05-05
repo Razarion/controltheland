@@ -192,6 +192,10 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
             return;
         }
 
+        if(syncItem.getPosition() == null) {
+            return;
+        }
+
         if (checkGuardingItemHasEnemiesInRange(syncItem)) {
             return;
         }

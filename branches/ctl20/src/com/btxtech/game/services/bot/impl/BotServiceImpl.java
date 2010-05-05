@@ -67,18 +67,14 @@ public class BotServiceImpl implements BotService {
         return user;
     }
 
-    private Base getBotBase() {
-        Base base = baseService.getBase(getBotUser());
-        if (base == null) {
-            throw new IllegalStateException("Bot has no base");
-        }
-        return base;
-    }
-
     @Override
     public void start() {
         try {
-            botBase = getBotBase();
+            botBase = baseService.getBase(getBotUser());
+            if(botBase == null) {
+                log.info("Can not start bot. No base found for " + getBotUser());
+                return;
+            }
             botBase.setBot(true);
             baseExecutor = new BaseExecutor(serverServices, botBase.getSimpleBase());
             baseBalance = new BaseBalance(baseExecutor);

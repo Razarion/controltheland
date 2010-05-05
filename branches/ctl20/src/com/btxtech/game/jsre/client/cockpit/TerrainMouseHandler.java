@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
+import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.TerrainMouseButtonListener;
@@ -28,7 +29,7 @@ import com.google.gwt.event.dom.client.MouseUpEvent;
  * Time: 9:40:11 PM
  */
 public class TerrainMouseHandler implements TerrainMouseButtonListener {
-    private final static TerrainMouseHandler INSATNCE = new TerrainMouseHandler();
+    private final static TerrainMouseHandler INSTANCE = new TerrainMouseHandler();
 
     /**
      * Singleton
@@ -51,8 +52,26 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
     public void onMouseUp(int absoluteX, int absoluteY, MouseUpEvent event) {
         ClientUserTracker.getInstance().onMouseUpTerrain(absoluteX, absoluteY);
         if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
-            executeMoveCommand(absoluteX, absoluteY);
+            if (Game.cockpitPanel.isSelectUnloadMode()) {
+                executeUnloadContainerCommand(absoluteX, absoluteY);
+                Game.cockpitPanel.clearSelectUnloadMode();
+            } else {
+                executeMoveCommand(absoluteX, absoluteY);
+            }
         }
+    }
+
+    private void executeUnloadContainerCommand(int absoluteX, int absoluteY) {
+        Group selection = SelectionHandler.getInstance().getOwnSelection();
+        if (selection == null) {
+            return;
+        }
+
+        if (selection.getCount() != 1) {
+            return;
+        }
+
+        ActionHandler.getInstance().unloadContainer(selection.getFirst().getSyncBaseItem(), new Index(absoluteX, absoluteY));
     }
 
     private void executeMoveCommand(int absoluteX, int absoluteY) {
@@ -69,7 +88,7 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
     }
 
     public static TerrainMouseHandler getInstance() {
-        return INSATNCE;
+        return INSTANCE;
     }
 
 }

@@ -46,6 +46,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Time: 21:35:44
  */
 public class BaseEditor extends WebPage {
+    public static final String NO_POS = "-";
     @SpringBean
     private ItemService itemService;
     @SpringBean
@@ -115,7 +116,7 @@ public class BaseEditor extends WebPage {
                 item.add(new TextField<String>("health", new IModel<String>() {
                     @Override
                     public String getObject() {
-                        return Integer.toString((int)item.getModelObject().getHealth());
+                        return Integer.toString((int) item.getModelObject().getHealth());
                     }
 
                     @Override
@@ -131,12 +132,19 @@ public class BaseEditor extends WebPage {
                 item.add(new TextField<String>("xPos", new IModel<String>() {
                     @Override
                     public String getObject() {
-                        return Integer.toString(item.getModelObject().getPosition().getX());
+                        Index pos = item.getModelObject().getPosition();
+                        if (pos != null) {
+                            return Integer.toString(pos.getX());
+                        } else {
+                            return NO_POS;
+                        }
                     }
 
                     @Override
                     public void setObject(String xPos) {
-                        item.getModelObject().setPosition(new Index(Integer.parseInt(xPos), item.getModelObject().getPosition().getY()));
+                        if (!NO_POS.equals(xPos)) {
+                            item.getModelObject().setPosition(new Index(Integer.parseInt(xPos), item.getModelObject().getPosition().getY()));
+                        }
                     }
 
                     @Override
@@ -146,12 +154,19 @@ public class BaseEditor extends WebPage {
                 item.add(new TextField<String>("yPos", new IModel<String>() {
                     @Override
                     public String getObject() {
-                        return Integer.toString(item.getModelObject().getPosition().getY());
+                        Index pos = item.getModelObject().getPosition();
+                        if (pos != null) {
+                            return Integer.toString(pos.getY());
+                        } else {
+                            return NO_POS;
+                        }
                     }
 
                     @Override
                     public void setObject(String yPos) {
-                        item.getModelObject().setPosition(new Index(item.getModelObject().getPosition().getX(), Integer.parseInt(yPos)));
+                        if (!NO_POS.equals(yPos)) {
+                            item.getModelObject().setPosition(new Index(item.getModelObject().getPosition().getX(), Integer.parseInt(yPos)));
+                        }
                     }
 
                     @Override

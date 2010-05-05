@@ -27,6 +27,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryComman
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.PutContainCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UnloadContainerCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UpgradeCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 
@@ -52,7 +53,7 @@ public class SyncBaseItem extends SyncItem {
     private double upgradeProgress;
     private boolean isUpgrading;
     private BaseItemType upgradingItemType;
-    public SyncBaseItem containedIn;
+    public Id containedIn;
 
     public SyncBaseItem(Id id, Index position, BaseItemType baseItemType, Services services, SimpleBase base) throws NoSuchItemTypeException {
         super(id, position, baseItemType, services);
@@ -160,11 +161,7 @@ public class SyncBaseItem extends SyncItem {
         health = syncItemInfo.getHealth();
         setBuild(syncItemInfo.isBuild());
         upgradeProgress = syncItemInfo.getUpgradeProgress();
-        if (syncItemInfo.getContainedIn() != null) {
-            containedIn = (SyncBaseItem) getServices().getItemService().getItem(syncItemInfo.getContainedIn());
-        } else {
-            containedIn = null;
-        }
+        containedIn = syncItemInfo.getContainedIn();
 
         if (syncMovable != null) {
             syncMovable.synchronize(syncItemInfo);
@@ -207,11 +204,8 @@ public class SyncBaseItem extends SyncItem {
         syncItemInfo.setBuild(isBuild);
         syncItemInfo.setUpgrading(isUpgrading);
         syncItemInfo.setUpgradeProgress(upgradeProgress);
-        if (containedIn != null) {
-            syncItemInfo.setContainedIn(containedIn.getId());
-        } else {
-            syncItemInfo.setContainedIn(null);
-        }
+        syncItemInfo.setContainedIn(containedIn);
+
         if (syncMovable != null) {
             syncMovable.fillSyncItemInfo(syncItemInfo);
         }
@@ -284,6 +278,10 @@ public class SyncBaseItem extends SyncItem {
             return syncHarvester.tick(factor);
         }
 
+        if (syncItemContainer != null && syncItemContainer.isActive()) {
+            return syncItemContainer.tick(factor);
+        }
+
         return syncMovable != null && syncMovable.isActive() && syncMovable.tick(factor);
     }
 
@@ -306,6 +304,10 @@ public class SyncBaseItem extends SyncItem {
 
         if (syncMovable != null) {
             syncMovable.stop();
+        }
+
+        if (syncItemContainer != null) {
+            syncItemContainer.stop();
         }
     }
 
@@ -353,6 +355,11 @@ public class SyncBaseItem extends SyncItem {
 
         if (baseCommand instanceof PutContainCommand) {
             getSyncMovable().executeCommand((PutContainCommand) baseCommand);
+            return;
+        }
+
+        if (baseCommand instanceof UnloadContainerCommand) {
+            getSyncItemContainer().executeCommand((UnloadContainerCommand) baseCommand);
             return;
         }
 
@@ -547,23 +554,32 @@ public class SyncBaseItem extends SyncItem {
         return isUpgrading;
     }
 
-    public void setContained(SyncBaseItem itemContainer) {
+    public void setContained(Id itemContainer) {
         this.containedIn = itemContainer;
         setPosition(null);
         fireItemChanged(SyncItemListener.Change.CONTAINED_IN_CHANGED);
-        fireItemChanged(SyncItemListener.Change.POSITION);
     }
 
-    public SyncBaseItem getContainedIn() {
+    public void clearContained(Index position) {
+        containedIn = null;
+        setPosition(position);
+        fireItemChanged(SyncItemListener.Change.CONTAINED_IN_CHANGED);
+    }
+
+    public Id getContainedIn() {
         return containedIn;
     }
 
-    public void setContainedIn(SyncBaseItem containedIn) {
+    public void setContainedIn(Id containedIn) {
         this.containedIn = containedIn;
     }
 
     public boolean isContainedIn() {
         return containedIn != null;
+    }
+
+    public boolean isUpgradeable() {
+        return upgradingItemType != null;
     }
 
     public int getFullUpgradeProgress() {

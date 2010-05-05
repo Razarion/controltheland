@@ -24,6 +24,7 @@ import java.util.Collection;
 public class ItemContainerType implements Serializable {
     private Collection<Integer> ableToContain;
     private int maxCount;
+    private int range;
 
     /**
      * Used by GWT
@@ -31,9 +32,10 @@ public class ItemContainerType implements Serializable {
     public ItemContainerType() {
     }
 
-    public ItemContainerType(Collection<Integer> ableToContain, int maxCount) {
+    public ItemContainerType(Collection<Integer> ableToContain, int maxCount, int range) {
         this.ableToContain = ableToContain;
         this.maxCount = maxCount;
+        this.range = range;
     }
 
     public Collection<Integer> getAbleToContain() {
@@ -44,7 +46,7 @@ public class ItemContainerType implements Serializable {
         return maxCount;
     }
 
-    public boolean isAbleToBuild(int itemTypeId) {
+    public boolean isAbleToContain(int itemTypeId) {
         return ableToContain.contains(itemTypeId);
     }
 
@@ -53,4 +55,7 @@ public class ItemContainerType implements Serializable {
         maxCount = itemContainerType.maxCount;
     }
 
+    public int getRange() {
+        return range;
+    }
 }

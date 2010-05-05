@@ -91,6 +91,7 @@ public class BaseItemTypeEditor extends WebPage {
     private int generatorWattage;
     private boolean itemContainer;
     private String itemContainerAbleToContain;
+    private int itemContainerRange;
     private int itemContainerMaxCount;
     private boolean special;
     private String specialString;
@@ -153,6 +154,7 @@ public class BaseItemTypeEditor extends WebPage {
         form.add(new TextField("generatorWattage"));
         form.add(new CheckBox("itemContainer"));
         form.add(new TextField("itemContainerAbleToContain"));
+        form.add(new TextField("itemContainerRange"));
         form.add(new TextField("itemContainerMaxCount"));
         form.add(new CheckBox("special"));
         form.add(new TextField("specialString"));
@@ -248,6 +250,7 @@ public class BaseItemTypeEditor extends WebPage {
             itemContainer = true;
             itemContainerAbleToContain = itemsToString(dbBaseItemType.getDbItemContainerType().getAbleToContain());
             itemContainerMaxCount = dbBaseItemType.getDbItemContainerType().getMaxCount();
+            itemContainerRange =   dbBaseItemType.getDbItemContainerType().getRange();
         } else {
             itemContainer = false;
         }
@@ -406,6 +409,7 @@ public class BaseItemTypeEditor extends WebPage {
             }
             dbItemContainerType.setAbleToContain(stringToItems(itemContainerAbleToContain));
             dbItemContainerType.setMaxCount(itemContainerMaxCount);
+            dbItemContainerType.setRange(itemContainerRange);
         } else {
             dbBaseItemType.setDbItemContainerType(null);
         }

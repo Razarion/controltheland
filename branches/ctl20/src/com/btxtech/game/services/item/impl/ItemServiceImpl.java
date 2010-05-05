@@ -211,6 +211,9 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     public boolean hasItemsInRectangle(Rectangle rectangle) {
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
+                if(syncItem.getPosition() == null) {
+                    continue;
+                }
                 if (rectangle.contains(syncItem.getPosition())) {
                     return true;
                 }
@@ -232,7 +235,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         Rectangle rectangle = new Rectangle(startX, startY, 2 * range, 2 * range);
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
-                if (rectangle.contains(syncItem.getPosition())
+                if (syncItem.getPosition() != null && rectangle.contains(syncItem.getPosition())
                         && syncItem instanceof SyncBaseItem
                         && baseSyncItem.isEnemy((SyncBaseItem) syncItem)
                         && syncItem.getPosition().getDistance(baseSyncItem.getPosition()) <= range) {
