@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -107,4 +108,8 @@ public abstract class ClientSyncItemView extends AbsolutePanel implements MouseD
     }
 
     public abstract void update();
+
+    public Id getId() {
+        return syncItem.getId();
+    }
 }

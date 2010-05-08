@@ -21,7 +21,6 @@ import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.TopMapPanel;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemContainer;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -40,7 +39,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class CockpitPanel extends TopMapPanel implements SelectionListener {
     private VerticalPanel detailPanel;
     private BuildupItemPanel buildupItemPanel;
-    private boolean selectUnloadMode = false;
+    private boolean unloadMode = false;
 
     @Override
     protected Widget createBody() {
@@ -92,22 +91,20 @@ public class CockpitPanel extends TopMapPanel implements SelectionListener {
 
     public void onOwnSelectionChanged(Group selectedGroup) {
         detailPanel.clear();
+        clearUnloadMode();
         if (selectedGroup.count() == 1) {
-            SyncItem syncItem = selectedGroup.getFirst().getSyncItem();
+            SyncBaseItem syncBaseItem = (SyncBaseItem) selectedGroup.getFirst().getSyncItem();
             SyncBaseItem upgradeable = null;
             SyncItemContainer syncItemContainer = null;
-            if (syncItem instanceof SyncBaseItem) {
-                SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
-                if (syncBaseItem.isUpgradeable()) {
-                    upgradeable = syncBaseItem;
-                }
-                if (syncBaseItem.hasSyncItemContainer()) {
-                    syncItemContainer = syncBaseItem.getSyncItemContainer();
-                }
+            if (syncBaseItem.isUpgradeable()) {
+                upgradeable = syncBaseItem;
             }
-            String descr = syncItem.getItemType().getDescription();
+            if (syncBaseItem.hasSyncItemContainer()) {
+                syncItemContainer = syncBaseItem.getSyncItemContainer();
+            }
+            String descr = syncBaseItem.getItemType().getDescription();
             if (Game.isDebug()) {
-                descr += "<br/>ID: " + syncItem.getId();
+                descr += "<br/>ID: " + syncBaseItem.getId();
             }
             setupDescrBox(descr, upgradeable, syncItemContainer);
         } else if (selectedGroup.canAttack()) {
@@ -142,7 +139,7 @@ public class CockpitPanel extends TopMapPanel implements SelectionListener {
             button.addClickHandler(new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
-                    selectUnloadMode = true;
+                    setUnloadMode();
                 }
             });
             detailPanel.add(button);
@@ -153,11 +150,22 @@ public class CockpitPanel extends TopMapPanel implements SelectionListener {
         return buildupItemPanel;
     }
 
-    public boolean isSelectUnloadMode() {
-        return selectUnloadMode;
+    public boolean isUnloadMode() {
+        return unloadMode;
     }
 
-    public void clearSelectUnloadMode() {
-        selectUnloadMode = false;
+    private void setUnloadMode() {
+        if (!unloadMode) {
+            unloadMode = true;
+            CursorHandler.getInstance().setUnloadContainer();
+        }
     }
+
+    public void clearUnloadMode() {
+        if (unloadMode) {
+            unloadMode = false;
+            CursorHandler.getInstance().clearUnloadContainer();
+        }
+    }
+
 }

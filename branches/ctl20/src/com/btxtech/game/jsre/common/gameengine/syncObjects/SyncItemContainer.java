@@ -17,9 +17,11 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemContainerType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UnloadContainerCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -55,7 +57,7 @@ public class SyncItemContainer extends SyncBaseAbility {
         }
     }
 
-    public void put(SyncBaseItem syncBaseItem) {
+    public void load(SyncBaseItem syncBaseItem) {
         if (getSyncBaseItem().equals(syncBaseItem)) {
             throw new IllegalArgumentException("Can not contain oneself: " + this);
         }
@@ -103,10 +105,14 @@ public class SyncItemContainer extends SyncBaseAbility {
     }
 
     private void unload() {
-        for (SyncBaseItem containedItem : containedItems) {
-            containedItem.clearContained(unloadPos);
+        SurfaceType surfaceType = getServices().getTerrainService().getSurfaceTypeAbsolute(unloadPos);
+        for (Iterator<SyncBaseItem> iterator = containedItems.iterator(); iterator.hasNext();) {
+            SyncBaseItem containedItem = iterator.next();
+            if (containedItem.getTerrainType().allowSurfaceType(surfaceType)) {
+                containedItem.clearContained(unloadPos);
+                iterator.remove();
+            }
         }
-        containedItems.clear();
         getSyncBaseItem().fireItemChanged(SyncItemListener.Change.CONTAINER_COUNT_CHANGED);
     }
 
@@ -123,5 +129,13 @@ public class SyncItemContainer extends SyncBaseAbility {
 
     public int getRange() {
         return itemContainerType.getRange();
+    }
+
+    public ItemContainerType getItemContainerType() {
+        return itemContainerType;
+    }
+
+    public List<SyncBaseItem> getContainedItems() {
+        return containedItems;
     }
 }

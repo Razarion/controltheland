@@ -200,6 +200,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             }
             baseService.itemDeleted((SyncBaseItem) syncItem, actor);
             serverEnergyService.onBaseItemKilled((SyncBaseItem) syncItem);
+            killContainedItems((SyncBaseItem) syncItem, actor);
         }
 
         if (syncItem instanceof SyncResourceItem) {
@@ -207,11 +208,20 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         }
     }
 
+    private void killContainedItems(SyncBaseItem syncBaseItem, SyncBaseItem actor) {
+        if (syncBaseItem.hasSyncItemContainer()) {
+            return;
+        }
+        for (SyncBaseItem baseItem : syncBaseItem.getSyncItemContainer().getContainedItems()) {
+            killBaseSyncObject(baseItem, actor, true);
+        }
+    }
+
     @Override
     public boolean hasItemsInRectangle(Rectangle rectangle) {
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
-                if(syncItem.getPosition() == null) {
+                if (syncItem.getPosition() == null) {
                     continue;
                 }
                 if (rectangle.contains(syncItem.getPosition())) {

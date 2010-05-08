@@ -28,6 +28,7 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.widgetideas.graphics.client.GWTCanvas;
 import java.util.Collection;
+import java.util.TreeSet;
 
 /**
  * User: beat
@@ -39,11 +40,16 @@ public class CursorHandler implements TerrainMouseMoveListener {
     public static final String CURSO_COLLECT = "/images/cursors/collect.cur";
     public static final String CURSO_GO = "/images/cursors/go.cur";
     public static final String CURSO_NOGO = "/images/cursors/nogo.cur";
+    public static final String CURSO_LOAD = "/images/cursors/load.cur";
+    public static final String CURSO_UNLOAD = "/images/cursors/unload.cur";
+    public static final String CURSO_NO_UNLOAD = "/images/cursors/nounload.cur";
     private static CursorHandler INSTANCE = new CursorHandler();
     private boolean hasAttackCursor = false;
     private boolean hasCollectCursor = false;
     private boolean isMoveAllowed = true;
+    // TODO Make enum for terrain cursors
     private boolean hasMoveCursor = false;
+    private boolean hasUnloadCursor = false;
 
     /**
      * Singleton
@@ -77,7 +83,6 @@ public class CursorHandler implements TerrainMouseMoveListener {
                 setCursor(item, CURSO_COLLECT, Style.Cursor.CROSSHAIR);
             }
         }
-
     }
 
     public void removeCollectCursor() {
@@ -87,6 +92,58 @@ public class CursorHandler implements TerrainMouseMoveListener {
                 setCursor(item, null, Style.Cursor.POINTER);
             }
         }
+    }
+
+    private void setLoadContainerCursor(Collection<ClientSyncBaseItemView> itemToLoad) {
+        TreeSet<Integer> ids = new TreeSet<Integer>();
+        for (ClientSyncBaseItemView baseItemView : itemToLoad) {
+            ids.add(baseItemView.getSyncBaseItem().getBaseItemType().getId());
+        }
+        for (ClientSyncItemView item : ItemContainer.getInstance().getItems()) {
+            if (item instanceof ClientSyncBaseItemView
+                    && ((ClientSyncBaseItemView) item).isMyOwnProperty()
+                    && ((ClientSyncBaseItemView) item).getSyncBaseItem().hasSyncItemContainer()
+                    && ((ClientSyncBaseItemView) item).getSyncBaseItem().getSyncItemContainer().getItemContainerType().isAbleToContainAtLeastOne(ids)
+                    && !((ClientSyncBaseItemView) item).getSyncBaseItem().equals(itemToLoad)) {
+                setCursor(item, CURSO_LOAD, Style.Cursor.S_RESIZE);
+            }
+        }
+    }
+
+    private void clearLoadContainerCursor() {
+        for (ClientSyncItemView item : ItemContainer.getInstance().getItems()) {
+            if (item instanceof ClientSyncBaseItemView
+                    && ((ClientSyncBaseItemView) item).isMyOwnProperty()
+                    && ((ClientSyncBaseItemView) item).getSyncBaseItem().hasSyncItemContainer()) {
+                setCursor(item, null, Style.Cursor.POINTER);
+            }
+        }
+    }
+
+    public void setUnloadContainer() {
+        setUnloadContainerCursor();
+        hasUnloadCursor = true;
+        hasMoveCursor = false;
+    }
+
+    public void clearUnloadContainer() {
+        clearUnloadContainerCursor();
+        hasUnloadCursor = false;
+    }
+
+    private void setUnloadContainerCursor() {
+        GWTCanvas terrain = TerrainView.getInstance().getCanvas();
+        setCursor(terrain, CURSO_UNLOAD, Style.Cursor.N_RESIZE);
+    }
+
+    private void setUnloadContainerForbiddenCursor() {
+        GWTCanvas terrain = TerrainView.getInstance().getCanvas();
+        setCursor(terrain, CURSO_NO_UNLOAD, Style.Cursor.N_RESIZE);
+    }
+
+    private void clearUnloadContainerCursor() {
+        GWTCanvas terrain = TerrainView.getInstance().getCanvas();
+        setCursor(terrain, null, Style.Cursor.POINTER);
     }
 
     public void handleCursorOnNewItems(ClientSyncItemView view) {
@@ -111,12 +168,14 @@ public class CursorHandler implements TerrainMouseMoveListener {
         GWTCanvas terrain = TerrainView.getInstance().getCanvas();
         setCursor(terrain, CURSO_GO, Style.Cursor.CROSSHAIR);
         hasMoveCursor = true;
+        hasUnloadCursor = false;
     }
 
     private void setMoveForbiddenCursor() {
         GWTCanvas terrain = TerrainView.getInstance().getCanvas();
         setCursor(terrain, CURSO_NOGO, Style.Cursor.POINTER);
         hasMoveCursor = true;
+        hasUnloadCursor = false;
     }
 
     public void removeMoveCursor() {
@@ -141,11 +200,13 @@ public class CursorHandler implements TerrainMouseMoveListener {
         removeMoveCursor();
         removeAttackCursor();
         removeCollectCursor();
+        clearLoadContainerCursor();
     }
 
     public void onOwnSelectionChanged(Group selection) {
         if (selection.canMove()) {
             setMoveCursor();
+            setLoadContainerCursor(selection.getMovableItems());
         }
 
         if (selection.canAttack()) {
@@ -162,11 +223,20 @@ public class CursorHandler implements TerrainMouseMoveListener {
         Collection<SurfaceType> allowedSurfaceTypes = SelectionHandler.getInstance().getOwnSelectionSurfaceTypes();
         SurfaceType surfaceType = TerrainView.getInstance().getTerrainHandler().getSurfaceTypeAbsolute(new Index(absoluteLeft, absoluteTop));
         boolean tmpIsMoveAllowed = allowedSurfaceTypes.contains(surfaceType);
-        if (hasMoveCursor && tmpIsMoveAllowed != isMoveAllowed) {
-            if (tmpIsMoveAllowed) {
-                setMoveCursor();
-            } else {
-                setMoveForbiddenCursor();
+        // TODO unload cursor also depends on the loaded items surface type
+        if (tmpIsMoveAllowed != isMoveAllowed) {
+            if (hasMoveCursor) {
+                if (tmpIsMoveAllowed) {
+                    setMoveCursor();
+                } else {
+                    setMoveForbiddenCursor();
+                }
+            } else if (hasUnloadCursor) {
+                if (tmpIsMoveAllowed) {
+                    setUnloadContainerCursor();
+                } else {
+                    setUnloadContainerForbiddenCursor();
+                }
             }
         }
         isMoveAllowed = tmpIsMoveAllowed;

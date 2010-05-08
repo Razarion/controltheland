@@ -70,4 +70,8 @@ public enum TerrainType {
         return surfaceTypes;
     }
 
+    public boolean allowSurfaceType(SurfaceType surfaceType) {
+        return surfaceTypes.contains(surfaceType);
+    }
+
 }

@@ -50,6 +50,15 @@ public class ItemContainerType implements Serializable {
         return ableToContain.contains(itemTypeId);
     }
 
+    public boolean isAbleToContainAtLeastOne(Collection<Integer> ids) {
+        for (Integer id : ids) {
+            if(ableToContain.contains(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void changeTo(ItemContainerType itemContainerType) {
         ableToContain = itemContainerType.ableToContain;
         maxCount = itemContainerType.maxCount;

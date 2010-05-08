@@ -85,7 +85,8 @@ public class SelectionHandler {
 
     public void setItemGroupSelected(Group selectedGroup) {
         if (hasOwnSelection() && selectedGroup.getCount() == 1 && selectedGroup.getFirst().getSyncBaseItem().hasSyncItemContainer()) {
-            ActionHandler.getInstance().putToContainer(selectedGroup.getFirst(),this.selectedGroup.getItems());
+            ActionHandler.getInstance().loadContainer(selectedGroup.getFirst(),this.selectedGroup.getItems());
+            clearSelection();
         } else {
             clearSelection();
             selectedGroup.setSelected(true);

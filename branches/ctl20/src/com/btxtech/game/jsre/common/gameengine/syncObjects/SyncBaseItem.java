@@ -24,9 +24,9 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.PutContainCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UnloadContainerCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UpgradeCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
@@ -353,8 +353,8 @@ public class SyncBaseItem extends SyncItem {
             return;
         }
 
-        if (baseCommand instanceof PutContainCommand) {
-            getSyncMovable().executeCommand((PutContainCommand) baseCommand);
+        if (baseCommand instanceof LoadContainCommand) {
+            getSyncMovable().executeCommand((LoadContainCommand) baseCommand);
             return;
         }
 

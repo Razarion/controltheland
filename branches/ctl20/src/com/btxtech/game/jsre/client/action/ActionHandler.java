@@ -38,7 +38,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderComman
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.PutContainCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UnloadContainerCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UpgradeCommand;
 import com.google.gwt.user.client.Timer;
@@ -306,9 +306,9 @@ public class ActionHandler implements CommonActionService {
         }
     }
 
-    public void putToContainer(ClientSyncBaseItemView container, Collection<ClientSyncBaseItemView> items) {
+    public void loadContainer(ClientSyncBaseItemView container, Collection<ClientSyncBaseItemView> items) {
         if (!container.getSyncBaseItem().hasSyncItemContainer()) {
-            GwtCommon.sendLogToServer("ActionHandler.putToContainer(): can not cast to ItemContainer:" + container);
+            GwtCommon.sendLogToServer("ActionHandler.loadContainer(): can not cast to ItemContainer:" + container);
             return;
         }
 
@@ -316,7 +316,7 @@ public class ActionHandler implements CommonActionService {
             if (item.getSyncBaseItem().hasSyncMovable()) {
                 putToContainer(container.getSyncBaseItem(), item.getSyncBaseItem());
             } else {
-                GwtCommon.sendLogToServer("ActionHandler.putToContainer(): has no movable:" + item);
+                GwtCommon.sendLogToServer("ActionHandler.loadContainer(): has no movable:" + item);
             }
         }
     }
@@ -353,14 +353,14 @@ public class ActionHandler implements CommonActionService {
         }
 
         container.stop();
-        PutContainCommand putContainCommand = new PutContainCommand();
-        putContainCommand.setId(item.getId());
-        putContainCommand.setTimeStamp();
-        putContainCommand.setItemContainer(container.getId());
+        LoadContainCommand loadContainCommand = new LoadContainCommand();
+        loadContainCommand.setId(item.getId());
+        loadContainCommand.setTimeStamp();
+        loadContainCommand.setItemContainer(container.getId());
 
         try {
-            item.executeCommand(putContainCommand);
-            executeCommand(item, putContainCommand);
+            item.executeCommand(loadContainCommand);
+            executeCommand(item, loadContainCommand);
         } catch (Exception e) {
             GwtCommon.handleException(e);
         }

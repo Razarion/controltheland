@@ -354,11 +354,13 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
                 && getTerrainImagePosition(posititon.getX(), posititon.getY()) == null;
     }
 
+    @Override
     public SurfaceType getSurfaceTypeAbsolute(Index absoluteIndex) {
         Index tileIndex = getTerrainTileIndexForAbsPosition(absoluteIndex);
         return getSurfaceType(tileIndex);
     }
 
+    @Override
     public SurfaceType getSurfaceType(Index tileIndex) {
         if (tileIndex == null || tileIndex.getX() >= terrainSettings.getPlayFieldXSize() || tileIndex.getY() >= terrainSettings.getPlayFieldYSize()) {
             return null;
@@ -377,7 +379,6 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
             }
         }
     }
-
 
     public Index getAbsoluteFreeTerrainInRegion(Index absolutePos, int targetMinRange, int targetMaxRange, int edgeLength) {
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
