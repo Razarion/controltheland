@@ -16,8 +16,8 @@ package com.btxtech.game.jsre.common.gameengine.syncObjects;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.PutContainCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import java.util.List;
 
@@ -100,7 +100,7 @@ public class SyncMovable extends SyncBaseAbility {
                 if (getSyncBaseItem().hasSyncTurnable()) {
                     getSyncBaseItem().getSyncTurnable().turnTo(syncItemContainer.getPosition());
                 }
-                syncItemContainer.getSyncItemContainer().put(getSyncBaseItem());
+                syncItemContainer.getSyncItemContainer().load(getSyncBaseItem());
                 stop();
                 return false;
             } else {
@@ -170,11 +170,11 @@ public class SyncMovable extends SyncBaseAbility {
         pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getPosition(), moveCommand.getDestination(), getSyncBaseItem().getTerrainType());
     }
 
-    public void executeCommand(PutContainCommand putContainCommand) {
-        if (putContainCommand.getId().equals(putContainCommand.getItemContainer())) {
+    public void executeCommand(LoadContainCommand loadContainCommand) {
+        if (loadContainCommand.getId().equals(loadContainCommand.getItemContainer())) {
             throw new IllegalArgumentException("Can not contain oneself: " + getSyncBaseItem());
         }
-        targetContainer = putContainCommand.getItemContainer();
+        targetContainer = loadContainCommand.getItemContainer();
     }
 
     public List<Index> getPathToDestination() {

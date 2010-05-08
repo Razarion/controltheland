@@ -90,4 +90,6 @@ public interface AbstractTerrainService {
     boolean isTerrainPassable(Index posititon);
 
     SurfaceType getSurfaceType(Index tileIndex);
+
+    SurfaceType getSurfaceTypeAbsolute(Index absoluteIndex);
 }

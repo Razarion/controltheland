@@ -201,5 +201,4 @@ public class ClientSyncBaseItemView extends ClientSyncItemView {
     public SyncBaseItem getSyncBaseItem() {
         return syncBaseItem;
     }
-
 }
