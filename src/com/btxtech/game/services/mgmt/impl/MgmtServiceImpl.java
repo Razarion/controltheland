@@ -25,6 +25,7 @@ import com.btxtech.game.services.mgmt.BackupSummary;
 import com.btxtech.game.services.mgmt.DbViewDTO;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
+import com.btxtech.game.services.resource.ResourceService;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -85,6 +86,8 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     private ServerEnergyService serverEnergyService;
     @Autowired
     private BotService botService;
+    @Autowired
+    private ResourceService resourceService;
     private static Log log = LogFactory.getLog(MgmtServiceImpl.class);
     private HibernateTemplate hibernateTemplate;
     private Boolean testMode;
@@ -271,9 +274,8 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
                 List<BackupSummary> backupSummaries = getBackupSummary();
                 if (!backupSummaries.isEmpty()) {
                     restore(backupSummaries.get(0).getDate());
-                } else {
-                    actionService.setupAllMoneyStacks();
                 }
+                resourceService.resetAllResources();
                 botService.start();
             }
         } catch (Throwable t) {
@@ -312,6 +314,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
                 startupData.setTutorialTimeout(3 * 60);
                 startupData.setUserActionCollectionTime(5 * 60);
                 startupData.setStartRectangle(new Rectangle(0, 0, 1000, 1000));
+                startupData.setStartItemFreeRange(200);
                 saveStartupData(startupData);
             } else if (startups.size() > 1) {
                 log.error("More than one startup data detected.");

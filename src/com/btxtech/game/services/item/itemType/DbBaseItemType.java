@@ -64,7 +64,6 @@ public class DbBaseItemType extends DbItemType {
     @OneToOne(cascade = CascadeType.ALL)
     private DbItemContainerType dbItemContainerType;
     private Integer upgradeProgress;
-    private TerrainType terrainType;
 
     public int getHealth() {
         return health;
@@ -178,21 +177,12 @@ public class DbBaseItemType extends DbItemType {
         this.upgradeProgress = upgradeProgress;
     }
 
-    public TerrainType getTerrainType() {
-        return terrainType;
-    }
-
-    public void setTerrainType(TerrainType terrainType) {
-        this.terrainType = terrainType;
-    }
-
     @Override
     public ItemType createItemType() {
         BaseItemType baseItemType = new BaseItemType();
         setupItemType(baseItemType);
         baseItemType.setPrice(price);
         baseItemType.setHealth(health);
-        baseItemType.setTerrainType(terrainType);
         if (dbTurnableType != null) {
             baseItemType.setTurnableType(new TurnableType(dbTurnableType.getImageCount()));
         }

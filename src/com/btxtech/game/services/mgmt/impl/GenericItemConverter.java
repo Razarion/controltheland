@@ -27,6 +27,7 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.resource.ResourceService;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;

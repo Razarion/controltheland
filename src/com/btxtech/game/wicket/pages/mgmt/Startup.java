@@ -52,6 +52,7 @@ public class Startup extends WebPage {
         form.add(new TextField<String>("startRectangle.y"));
         form.add(new TextField<String>("startRectangle.width"));
         form.add(new TextField<String>("startRectangle.height"));
+        form.add(new TextField<String>("startItemFreeRange"));
 
         add(form);
     }
