@@ -270,17 +270,17 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     }
 
     @Override
-    public Index getFreeRandomPosition(ItemType itemType, int edgeLength) {
+    public Index getFreeRandomPosition(ItemType itemType, Rectangle region, int itemFreeRange) {
         Random random = new Random();
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
-            int x = random.nextInt(terrainService.getDbTerrainSettings().getPlayFieldXSize() - 200) + 100;
-            int y = random.nextInt(terrainService.getDbTerrainSettings().getPlayFieldYSize() - 200) + 100;
+            int x = random.nextInt(region.getWidth()) + region.getX();
+            int y = random.nextInt(region.getHeight()) + region.getY();
             Index point = new Index(x, y);
             if (!terrainService.isFree(point, itemType)) {
                 continue;
             }
-            Index start = point.sub(new Index(edgeLength / 2, edgeLength / 2));
-            Rectangle rectangle = new Rectangle(start.getX(), start.getY(), edgeLength, edgeLength);
+            Index start = point.sub(new Index(itemFreeRange / 2, itemFreeRange / 2));
+            Rectangle rectangle = new Rectangle(start.getX(), start.getY(), itemFreeRange, itemFreeRange);
             if (itemService.hasItemsInRectangle(rectangle)) {
                 continue;
             }
@@ -290,24 +290,8 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     }
 
     @Override
-    public Index getStartRandomPosition(ItemType itemType, int edgeLength) {
-        Rectangle startRect = mgmtService.getStartupData().getStartRectangle();
-        Random random = new Random();
-        for (int i = 0; i < Integer.MAX_VALUE; i++) {
-            int x = random.nextInt(startRect.getWidth()) + startRect.getX();
-            int y = random.nextInt(startRect.getHeight()) + startRect.getY();
-            Index point = new Index(x, y);
-            if (!terrainService.isFree(point, itemType)) {
-                continue;
-            }
-            Index start = point.sub(new Index(edgeLength / 2, edgeLength / 2));
-            Rectangle rectangle = new Rectangle(start.getX(), start.getY(), edgeLength, edgeLength);
-            if (itemService.hasItemsInRectangle(rectangle)) {
-                continue;
-            }
-            return point;
-        }
-        throw new IllegalStateException("Can not find free position");
+    public Index getRallyPoint(SyncBaseItem factory, Collection<SurfaceType> allowedSurfaces) {
+        return getFreeRandomPosition(factory.getPosition(), 0, 0, allowedSurfaces, factory.getItemType().getHeight() / 2, factory.getItemType().getHeight());
     }
 
     @Override
@@ -445,10 +429,5 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
         }
         bestSelection.add(destination);
         return bestSelection;
-    }
-
-    @Override
-    public Index getRallyPoint(SyncBaseItem factory, Collection<SurfaceType> allowedSurfaces) {
-        return getFreeRandomPosition(factory.getPosition(), 0, 0, allowedSurfaces, factory.getItemType().getHeight() / 2, factory.getItemType().getHeight());
     }
 }

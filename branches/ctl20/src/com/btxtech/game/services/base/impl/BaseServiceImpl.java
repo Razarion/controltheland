@@ -41,6 +41,7 @@ import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.mgmt.MgmtService;
+import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
@@ -67,7 +68,6 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
  */
 public class BaseServiceImpl implements BaseService {
     public static final String DEFAULT_BASE_NAME_PREFIX = "Base ";
-    public static final int EDGE_LENGTH = 200;
     private Log log = LogFactory.getLog(BaseServiceImpl.class);
     @Autowired
     private Session session;
@@ -153,7 +153,8 @@ public class BaseServiceImpl implements BaseService {
         base.setUser(userService.getLoggedinUser());
         connectionService.createConnection(base);
         base.setUserItemTypeAccess(serverMarketService.getUserItemTypeAccess());
-        Index startPoint = collisionService.getStartRandomPosition(constructionVehicle, EDGE_LENGTH);
+        StartupData startupData = mgmtService.getStartupData();
+        Index startPoint = collisionService.getFreeRandomPosition(constructionVehicle,startupData.getStartRectangle(), startupData.getStartItemFreeRange());
         SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(constructionVehicle, startPoint, null, base.getSimpleBase(), 0);
         syncBaseItem.setBuild(true);
         syncBaseItem.setFullHealth();
@@ -212,8 +213,8 @@ public class BaseServiceImpl implements BaseService {
 
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<BaseColor> getFreeColors(final int maxCount) {
-
         return (List<BaseColor>) hibernateTemplate.execute(new HibernateCallback() {
             public Object doInHibernate(org.hibernate.Session session) {
                 Criteria criteria = session.createCriteria(BaseColor.class);

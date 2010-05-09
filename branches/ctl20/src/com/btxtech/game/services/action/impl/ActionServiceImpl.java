@@ -58,7 +58,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  * Time: 12:50:08 PM
  */
 @Component("actionService")
-public class ActionServiceImpl extends TimerTask implements ActionService, CollisionServiceChangedListener {
+public class ActionServiceImpl extends TimerTask implements ActionService {
     public static final int TICK_TIME_MILI_SECONDS = 100;
 
     @Autowired
@@ -81,14 +81,12 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
     private Timer timer;
     private Log log = LogFactory.getLog(ActionServiceImpl.class);
     private long lastTickTime = 0;
-    private final HashSet<SyncResourceItem> moneys = new HashSet<SyncResourceItem>();
     private boolean pause = false;
 
     @PostConstruct
     public void start() {
         timer = new Timer(getClass().getName(), true);
         timer.scheduleAtFixedRate(this, 0, TICK_TIME_MILI_SECONDS);
-        collisionService.addCollisionServiceChangedListener(this);
     }
 
     @PreDestroy
@@ -107,34 +105,21 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
     }
 
     @Override
-    public void moneyItemDeleted(SyncResourceItem moneyImpl) {
-        if (moneyImpl.isMissionMoney()) {
-            return;
-        }
-        synchronized (moneys) {
-            moneys.remove(moneyImpl);
-        }
-        setupAllMoneyStacks();
-    }
-
-    @Override
     public void reload() {
         synchronized (activeItems) {
             activeItems.clear();
             guardingItems.clear();
             tmpActiveItems.clear();
-            moneys.clear();
             Collection<SyncItem> syncItems = itemService.getItemsCopy();
             for (SyncItem syncItem : syncItems) {
-                if (syncItem instanceof SyncResourceItem) {
-                    moneys.add((SyncResourceItem) syncItem);
-                } else if (syncItem instanceof SyncBaseItem) {
+                if (syncItem instanceof SyncBaseItem) {
                     activeItems.add((SyncBaseItem) syncItem);
                 } else {
                     log.error("Unknwon entry during reload: " + syncItem);
                 }
             }
         }
+
     }
 
     @Override
@@ -192,7 +177,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
             return;
         }
 
-        if(syncItem.getPosition() == null) {
+        if (syncItem.getPosition() == null) {
             return;
         }
 
@@ -232,7 +217,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
                 energyService.onItemChanged((SyncBaseItem) syncItem);
                 break;
             case CONTAINED_IN_CHANGED:
-                energyService.onItemChanged((SyncBaseItem) syncItem);                
+                energyService.onItemChanged((SyncBaseItem) syncItem);
                 break;
         }
 
@@ -427,40 +412,4 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
         connectionService.sendSyncInfo(syncItem);
     }
 
-    @Override
-    public void setupAllMoneyStacks() {
-        try {
-            for (SyncResourceItem money : moneys) {
-                if (!terrainService.isFree(money.getPosition(), money.getItemType())) {
-                    log.error("Money has wrong position: " + money);
-                }
-            }
-            for (int i = moneys.size(); i < Constants.MONEY_STACK_COUNT; i++) {
-                addMoneyStack();
-            }
-        } catch (Throwable t) {
-            log.error("", t);
-        }
-    }
-
-    private void addMoneyStack() {
-        try {
-            ItemType itemType = itemService.getItemType(Constants.MONEY);
-            Index position = collisionService.getFreeRandomPosition(itemType, Constants.MIN_FREE_MONEY_DISTANCE);
-            SyncResourceItem money = (SyncResourceItem) itemService.createSyncObject(itemType, position, null, null, 0);
-            connectionService.sendSyncInfo(money);
-            synchronized (moneys) {
-                moneys.add(money);
-            }
-        } catch (NoSuchItemTypeException e) {
-            log.error("setupMoneyStack: " + e.getMessage());
-        }
-    }
-
-    @Override
-    public void collisionServiceChanged() {
-        if (itemService.areItemTypesLoaded()) {
-            setupAllMoneyStacks();
-        }
-    }
 }

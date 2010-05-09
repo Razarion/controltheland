@@ -14,6 +14,7 @@
 package com.btxtech.game.services.item.itemType;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,6 +50,7 @@ public abstract class DbItemType implements Serializable {
     private String contraDescription;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "itemType")
     private Set<DbItemTypeImage> itemTypeImages;
+    private TerrainType terrainType;
 
     public Integer getId() {
         return id;
@@ -110,6 +112,14 @@ public abstract class DbItemType implements Serializable {
         this.contraDescription = contraDescription;
     }
 
+    public TerrainType getTerrainType() {
+        return terrainType;
+    }
+
+    public void setTerrainType(TerrainType terrainType) {
+        this.terrainType = terrainType;
+    }
+
     public abstract ItemType createItemType();
 
     protected Collection<Integer> toInt(Collection<DbBaseItemType> items) {
@@ -126,6 +136,7 @@ public abstract class DbItemType implements Serializable {
         itemType.setDescription(getDescription());
         itemType.setHeight(getHeight());
         itemType.setWidth(getWidth());
+        itemType.setTerrainType(terrainType);
     }
 
     @Override

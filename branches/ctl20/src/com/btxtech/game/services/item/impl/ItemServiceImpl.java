@@ -39,6 +39,7 @@ import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeData;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.market.ServerMarketService;
+import com.btxtech.game.services.resource.ResourceService;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -81,6 +82,8 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     private ServerServices services;
     @Autowired
     private ServerEnergyService serverEnergyService;
+    @Autowired
+    private ResourceService resourceService;
     private HibernateTemplate hibernateTemplate;
     private int lastId = 0;
     private final HashMap<Id, SyncItem> items = new HashMap<Id, SyncItem>();
@@ -204,7 +207,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         }
 
         if (syncItem instanceof SyncResourceItem) {
-            actionService.moneyItemDeleted((SyncResourceItem) syncItem);
+            resourceService.resourceItemDeleted((SyncResourceItem) syncItem);
         }
     }
 
@@ -473,7 +476,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         return sound;
     }
 
-    public List<SyncItem> getItems(ItemType itemType, SimpleBase simpleBase) {
+    public List<? extends SyncItem> getItems(ItemType itemType, SimpleBase simpleBase) {
         ArrayList<SyncItem> syncItems = new ArrayList<SyncItem>();
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {

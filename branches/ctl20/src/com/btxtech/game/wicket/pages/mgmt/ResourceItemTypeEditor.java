@@ -13,13 +13,16 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
+import java.util.Arrays;
 import java.util.HashSet;
 import javax.swing.ImageIcon;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -48,6 +51,7 @@ public class ResourceItemTypeEditor extends WebPage {
         form.add(new TextField<String>("name"));
         form.add(new TextField<String>("description"));
         form.add(new TextField<String>("amount"));
+        form.add(new DropDownChoice<TerrainType>("terrainType", Arrays.asList(TerrainType.values())));        
         form.add(new FileUploadField("upload", new IModel<FileUpload>() {
 
             @Override

@@ -44,6 +44,7 @@ public class StartupData implements Serializable {
     @Type(type = "rectangle")
     @Columns(columns = {@Column(name = "startRectX"), @Column(name = "startRectY"), @Column(name = "startRectEndX"), @Column(name = "startRectEndY")})
     private Rectangle startRectangle;
+    private int startItemFreeRange;
     private static Log log = LogFactory.getLog(StartupData.class);
 
     public int getStartMoney() {
@@ -90,6 +91,14 @@ public class StartupData implements Serializable {
         this.startRectangle = startRectangle;
     }
 
+    public int getStartItemFreeRange() {
+        return startItemFreeRange;
+    }
+
+    public void setStartItemFreeRange(int startItemFreeRange) {
+        this.startItemFreeRange = startItemFreeRange;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -97,9 +106,8 @@ public class StartupData implements Serializable {
 
         StartupData that = (StartupData) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        return !(id != null ? !id.equals(that.id) : that.id != null);
 
-        return true;
     }
 
     @Override

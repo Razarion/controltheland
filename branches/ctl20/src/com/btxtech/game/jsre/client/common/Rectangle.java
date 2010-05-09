@@ -77,7 +77,7 @@ public class Rectangle implements Serializable {
 
     /*
      * Adjoin or contains
-     * The minLength specifeis how long min containg height of weight must be
+     * The minLength specifies how long min containg height of weight must be
      * 0 means only two corners adjoins
      */
 

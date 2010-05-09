@@ -288,7 +288,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         return clientBaseItems;
     }
 
-    public List<SyncItem> getItems(ItemType itemType, SimpleBase simpleBase) {
+    public List<? extends SyncItem> getItems(ItemType itemType, SimpleBase simpleBase) {
         ArrayList<SyncItem> syncItems = new ArrayList<SyncItem>();
         for (ClientSyncItemView clientBaseItem : items.values()) {
             SyncItem syncItem = clientBaseItem.getSyncItem();

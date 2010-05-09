@@ -70,5 +70,6 @@
         <mapping class="com.btxtech.game.services.forum.ForumThread"/>
         <mapping class="com.btxtech.game.services.forum.Post"/>
         <mapping class="com.btxtech.game.services.messenger.Mail"/>
+        <mapping class="com.btxtech.game.services.resource.DbRegionResource"/>
     </session-factory>
 </hibernate-configuration>

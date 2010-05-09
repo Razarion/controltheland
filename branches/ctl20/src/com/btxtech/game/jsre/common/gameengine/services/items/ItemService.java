@@ -61,9 +61,9 @@ public interface ItemService {
 
     Map<BaseItemType, List<SyncBaseItem>> getItems4Base(SimpleBase simpleBase);
 
-    List<SyncItem> getItems(ItemType itemType, SimpleBase simpleBase);
+    List<? extends SyncItem> getItems(ItemType itemType, SimpleBase simpleBase);
 
-    List<SyncItem> getItems(String itemTypeName, SimpleBase simpleBase) throws NoSuchItemTypeException;
+    List<? extends SyncItem> getItems(String itemTypeName, SimpleBase simpleBase) throws NoSuchItemTypeException;
 
     List<SyncBaseItem> getEnemyItems(SimpleBase base);
 }
