@@ -34,7 +34,7 @@ public interface UserGuidanceService {
 
     void addDbLevel();
 
-    void saveDbLevel(List<DbLevel> dbLevels);
+    void saveDbLevels(List<DbLevel> dbLevels);
 
     void moveUpDbLevel(DbLevel dbLevel);
 

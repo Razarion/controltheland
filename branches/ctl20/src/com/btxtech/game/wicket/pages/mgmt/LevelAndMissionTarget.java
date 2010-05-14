@@ -21,6 +21,7 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -69,6 +70,13 @@ public class LevelAndMissionTarget extends WebPage {
                         userGuidanceService.moveDownDbLevel(dbLevelItem.getModelObject());
                     }
                 });
+                dbLevelItem.add(new Link("missionTargetLink") {
+
+                    @Override
+                    public void onClick() {
+
+                    }
+                });
                 dbLevelItem.add(new Button("delete") {
 
                     @Override
@@ -90,7 +98,7 @@ public class LevelAndMissionTarget extends WebPage {
 
             @Override
             public void onSubmit() {
-                userGuidanceService.saveDbLevel(levelProvider.getLastModifiedList());
+                userGuidanceService.saveDbLevels(levelProvider.getLastModifiedList());
             }
         });
 

@@ -30,7 +30,9 @@ import java.sql.SQLException;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -122,18 +124,41 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     }
 
     @Override
-    public void saveDbLevel(List<DbLevel> dbLevels) {
+    public void saveDbLevels(List<DbLevel> dbLevels) {
         hibernateTemplate.saveOrUpdateAll(dbLevels);
     }
 
     @Override
     public void moveUpDbLevel(DbLevel dbLevel) {
         List<DbLevel> levels = getDbLevels();
-        //levels.indexOf()
+        int i = levels.indexOf(dbLevel);
+        if (i > 0) {
+            final DbLevel level1 = levels.get(i);
+            final DbLevel level2 = levels.get(i - 1);
+            int tmpRank = level1.getRank();
+            level1.setRank(level2.getRank());
+            level2.setRank(getHighestDbLevel() + 1); // Avoid unique constraint
+            hibernateTemplate.update(level2);
+            hibernateTemplate.update(level1);
+            level2.setRank(tmpRank);
+            hibernateTemplate.update(level2);
+        }
     }
 
     @Override
     public void moveDownDbLevel(DbLevel dbLevel) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        List<DbLevel> levels = getDbLevels();
+        int i = levels.indexOf(dbLevel);
+        if (levels.size() > i + 1) {
+            DbLevel level1 = levels.get(i);
+            DbLevel level2 = levels.get(i + 1);
+            int tmpRank = level1.getRank();
+            level1.setRank(level2.getRank());
+            level2.setRank(getHighestDbLevel() + 1); // Avoid unique constraint
+            hibernateTemplate.update(level2);
+            hibernateTemplate.update(level1);
+            level2.setRank(tmpRank);
+            hibernateTemplate.update(level2);
+        }
     }
 }
