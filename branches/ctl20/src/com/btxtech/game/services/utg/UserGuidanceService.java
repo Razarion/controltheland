@@ -16,6 +16,7 @@ package com.btxtech.game.services.utg;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
+import java.util.List;
 
 /**
  * User: beat
@@ -23,7 +24,19 @@ import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
  * Time: 22:02:57
  */
 public interface UserGuidanceService {
-    void createMissionTraget(Id attacker) throws NoSuchItemTypeException, ItemDoesNotExistException;
+    void createMissionTarget(Id attacker) throws NoSuchItemTypeException, ItemDoesNotExistException;
 
     void createMissionMoney(Id harvester) throws NoSuchItemTypeException, ItemDoesNotExistException;
+
+    List<DbLevel> getDbLevels();
+
+    void deleteDbLevel(DbLevel dbLevel);
+
+    void addDbLevel();
+
+    void saveDbLevel(List<DbLevel> dbLevels);
+
+    void moveUpDbLevel(DbLevel dbLevel);
+
+    void moveDownDbLevel(DbLevel dbLevel);
 }

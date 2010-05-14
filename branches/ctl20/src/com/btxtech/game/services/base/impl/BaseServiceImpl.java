@@ -16,12 +16,12 @@ package com.btxtech.game.services.base.impl;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Message;
-import com.btxtech.game.jsre.common.AccountBalancePackt;
+import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.EnergyPacket;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.XpBalancePackt;
+import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -327,16 +327,16 @@ public class BaseServiceImpl implements BaseService {
     @Override
     public void sendAccountBaseUpdate(SyncBaseItem syncItem) {
         Base base = getBase(syncItem);
-        AccountBalancePackt packt = new AccountBalancePackt();
-        packt.setAccountBalance(base.getAccountBalance());
-        connectionService.sendPacket(base.getSimpleBase(), packt);
+        AccountBalancePacket packet = new AccountBalancePacket();
+        packet.setAccountBalance(base.getAccountBalance());
+        connectionService.sendPacket(base.getSimpleBase(), packet);
     }
 
     @Override
     public void sendXpUpdate(UserItemTypeAccess userItemTypeAccess, Base base) {
-        XpBalancePackt packt = new XpBalancePackt();
-        packt.setXp(userItemTypeAccess.getXp());
-        connectionService.sendPacket(base.getSimpleBase(), packt);
+        XpBalancePacket packet = new XpBalancePacket();
+        packet.setXp(userItemTypeAccess.getXp());
+        connectionService.sendPacket(base.getSimpleBase(), packet);
     }
 
     @Override
@@ -371,6 +371,11 @@ public class BaseServiceImpl implements BaseService {
     @Override
     public SimpleBase getDummyBase() {
         return dummyBase.getSimpleBase();
+    }
+
+    @Override
+    public String getLevel() {
+        return "Noob";
     }
 
     @Override

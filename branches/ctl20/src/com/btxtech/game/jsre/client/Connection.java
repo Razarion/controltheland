@@ -27,11 +27,13 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientUserGuidance;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
-import com.btxtech.game.jsre.common.AccountBalancePackt;
+import com.btxtech.game.jsre.client.utg.MissionTarget;
+import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.EnergyPacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
-import com.btxtech.game.jsre.common.XpBalancePackt;
+import com.btxtech.game.jsre.common.LevelPacket;
+import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.bot.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccessSyncInfo;
@@ -109,6 +111,7 @@ public class Connection implements AsyncCallback<Void> {
                 gameInfo.getSurfaceImages(),
                 gameInfo.getTerrainImages());
         ClientUserTracker.getInstance().setCollectionTime(gameInfo.getUserActionCollectionTime());
+        MissionTarget.getInstance().setLevel(gameInfo.getLevel());
 
         movableServiceAsync.getItemTypes(new AsyncCallback<Collection<ItemType>>() {
             @Override
@@ -190,12 +193,12 @@ public class Connection implements AsyncCallback<Void> {
                         Message message = (Message) packet;
                         MessageDialog.show(message.getTitle(), "<h1>" + message.getMessage() + "</h1>");
                     }
-                } else if (packet instanceof AccountBalancePackt) {
-                    AccountBalancePackt balancePackt = (AccountBalancePackt) packet;
-                    ClientBase.getInstance().setAccountBalance(balancePackt.getAccountBalance());
-                } else if (packet instanceof XpBalancePackt) {
-                    XpBalancePackt xpBalancePackt = (XpBalancePackt) packet;
-                    InfoPanel.getInstance().updateXp(xpBalancePackt.getXp());
+                } else if (packet instanceof AccountBalancePacket) {
+                    AccountBalancePacket balancePacket = (AccountBalancePacket) packet;
+                    ClientBase.getInstance().setAccountBalance(balancePacket.getAccountBalance());
+                } else if (packet instanceof XpBalancePacket) {
+                    XpBalancePacket xpBalancePacket = (XpBalancePacket) packet;
+                    InfoPanel.getInstance().updateXp(xpBalancePacket.getXp());
                 } else if (packet instanceof ItemTypeAccessSyncInfo) {
                     ItemTypeAccessSyncInfo itemTypeAccessSyncInfo = (ItemTypeAccessSyncInfo) packet;
                     ClientItemTypeAccess.getInstance().setAllowedItemTypes(itemTypeAccessSyncInfo.getAllowedItemTypes());
@@ -208,8 +211,10 @@ public class Connection implements AsyncCallback<Void> {
                     OnlineBasePanel.getInstance().onMessageReceived((UserMessage) packet);
                 } else if (packet instanceof OnlineBaseUpdate) {
                     OnlineBasePanel.getInstance().setOnlineBases((OnlineBaseUpdate) packet);
+                } else if (packet instanceof LevelPacket) {
+                    MissionTarget.getInstance().onLevelChanged((LevelPacket)packet);
                 } else {
-                    throw new IllegalArgumentException(this + " unknwon packet: " + packet);
+                    throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }
             } catch (Throwable t) {
                 GwtCommon.handleException(t);
@@ -226,7 +231,7 @@ public class Connection implements AsyncCallback<Void> {
 
     public void createMissionTraget(SyncBaseItem syncBaseItem) {
         if (!syncBaseItem.getId().isSynchronized()) {
-            throw new IllegalStateException(this + " createMissionTraget: Item is not syncronized " + syncBaseItem);
+            throw new IllegalStateException(this + " createMissionTarget: Item is not syncronized " + syncBaseItem);
         }
         if (movableServiceAsync != null) {
             movableServiceAsync.createMissionTraget(syncBaseItem.getId(), this);
@@ -250,6 +255,24 @@ public class Connection implements AsyncCallback<Void> {
             movableServiceAsync.sendUserMessage(userMessage, this);
         }
     }
+
+    public void getMissionTarget(final MissionTarget missionTargetDialog) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.getMissionTarget(new AsyncCallback<String>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    missionTargetDialog.setNoConnection(caught);
+                }
+
+                @Override
+                public void onSuccess(String result) {
+                    missionTargetDialog.setMissionTarget(result);
+                }
+            });
+        } else {
+            missionTargetDialog.setNoConnection(null);
+        }
+    }    
 
     public void surrenderBase() {
         if (movableServiceAsync != null) {

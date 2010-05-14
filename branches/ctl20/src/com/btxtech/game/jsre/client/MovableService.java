@@ -66,4 +66,6 @@ public interface MovableService extends RemoteService {
     void surrenderBase();
 
     void closeConnection();
+
+    String getMissionTarget();
 }
