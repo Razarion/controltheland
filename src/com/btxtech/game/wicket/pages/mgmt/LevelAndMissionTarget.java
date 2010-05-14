@@ -74,7 +74,7 @@ public class LevelAndMissionTarget extends WebPage {
 
                     @Override
                     public void onClick() {
-
+                        setResponsePage(new MissionTarget(dbLevelItem.getModelObject()));
                     }
                 });
                 dbLevelItem.add(new Button("delete") {

@@ -30,9 +30,12 @@ public class DbLevel implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
+    @Column(unique = true)
     private String name;
     @Column(unique = true)
     private int rank;
+    private String missionTarget;
+
 
     public String getName() {
         return name;
@@ -48,6 +51,14 @@ public class DbLevel implements Serializable {
 
     public void setRank(int rank) {
         this.rank = rank;
+    }
+
+    public String getMissionTarget() {
+        return missionTarget;
+    }
+
+    public void setMissionTarget(String missionTarget) {
+        this.missionTarget = missionTarget;
     }
 
     @Override

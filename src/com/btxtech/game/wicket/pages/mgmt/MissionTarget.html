@@ -15,9 +15,28 @@
         "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-    <title></title>
+    <title>Mission Target</title>
 </head>
 <body>
+<h1>Mission Target</h1>
 
+<span wicket:id="msgs"/>
+
+<form wicket:id="form">
+    <table border="0" cellSpacing="1"
+           cellPadding="0">
+        <tr bgcolor="#DDDDDD">
+            <td colspan="3" valign="top"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Mission Target description</td>
+            <td><textarea wicket:id="missionTarget" rows="10" cols="60">content</textarea></td>
+        </tr>
+    </table>
+    <br>
+    <input type="submit" wicket:id="save" value="Save">
+    <input type="submit" wicket:id="cancel" value="Cancel">
+    <br>
+</form>
 </body>
 </html>

@@ -62,6 +62,7 @@ public class Base implements Serializable {
     private boolean abandoned = false;
     @Column(nullable = false, columnDefinition = "bit default b'0'")
     private boolean bot = false;
+    private String level;
     @Transient
     private final Object syncObject = new Object();
     @Transient
@@ -220,5 +221,13 @@ public class Base implements Serializable {
     @Override
     public String toString() {
         return getSimpleBase().toString();
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
     }
 }
