@@ -30,11 +30,10 @@ import java.sql.SQLException;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -94,6 +93,24 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         });
     }
 
+    @SuppressWarnings("unchecked")
+    public DbLevel getDbLevel(final String level) {
+        List<DbLevel> levels = hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbLevel.class);
+                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                criteria.add(Restrictions.eq("name", level));
+                return criteria.list();
+            }
+        });
+        if (levels.isEmpty()) {
+            throw new IllegalArgumentException("Unknown level: " + level);
+        }
+        return levels.get(0);
+    }
+
+
     private int getHighestDbLevel() {
         List result = (List) hibernateTemplate.execute(new HibernateCallback() {
             @Override
@@ -110,6 +127,46 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         }
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public DbLevel getLowestDbLevel() {
+        List<DbLevel> result = hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbLevel.class);
+                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                criteria.addOrder(Order.asc("rank"));
+                criteria.setFetchSize(1);
+                return criteria.list();
+            }
+        });
+        if (result.isEmpty()) {
+            throw new IllegalStateException("No levels found");
+        } else {
+            return result.get(0);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private DbLevel getNextDbLevel(final DbLevel dbLevel) {
+        List<DbLevel> result = hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbLevel.class);
+                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                criteria.add(Restrictions.gt("rank", dbLevel.getRank()));
+                criteria.addOrder(Order.asc("rank"));
+                criteria.setFetchSize(1);
+                return criteria.list();
+            }
+        });
+        if (result.isEmpty()) {
+            return null;
+        } else {
+            return result.get(0);
+        }
+
+    }
 
     @Override
     public void deleteDbLevel(DbLevel dbLevel) {
@@ -126,6 +183,11 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     @Override
     public void saveDbLevels(List<DbLevel> dbLevels) {
         hibernateTemplate.saveOrUpdateAll(dbLevels);
+    }
+
+    @Override
+    public void saveDbLevel(DbLevel dbLevel) {
+        hibernateTemplate.update(dbLevel);
     }
 
     @Override
@@ -160,5 +222,15 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
             level2.setRank(tmpRank);
             hibernateTemplate.update(level2);
         }
+    }
+
+    @Override
+    public String getMissionTarget4NextLevel() {
+        DbLevel dbLevel = getNextDbLevel(getDbLevel4Base());
+        return dbLevel.getMissionTarget();
+    }
+
+    private DbLevel getDbLevel4Base() {
+        return getDbLevel(baseService.getLevel());
     }
 }

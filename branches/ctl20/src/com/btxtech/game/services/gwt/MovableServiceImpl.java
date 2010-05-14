@@ -225,7 +225,7 @@ public class MovableServiceImpl implements MovableService {
     public void surrenderBase() {
         try {
             baseService.surrenderBase(baseService.getBaseForLoggedInUser());
-            connectionService.closeConnection();            
+            connectionService.closeConnection();
         } catch (Throwable t) {
             log.error("", t);
         }
@@ -242,7 +242,12 @@ public class MovableServiceImpl implements MovableService {
 
     @Override
     public String getMissionTarget() {
-        return "HHHHUUUURRRRAAAA";
+        try {
+            return userGuidanceService.getMissionTarget4NextLevel();
+        } catch (Throwable t) {
+            log.error("", t);
+            return t.toString();
+        }
     }
 
 }

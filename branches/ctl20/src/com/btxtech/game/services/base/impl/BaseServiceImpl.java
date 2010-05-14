@@ -44,6 +44,7 @@ import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -87,6 +88,8 @@ public class BaseServiceImpl implements BaseService {
     private ServerEnergyService serverEnergyService;
     @Autowired
     private UserTrackingService userTrackingService;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
     @Autowired
     private MgmtService mgmtService;
     private final HashMap<String, Base> bases = new HashMap<String, Base>();
@@ -150,6 +153,7 @@ public class BaseServiceImpl implements BaseService {
                 userTrackingService.onBaseCreated(userService.getLoggedinUser(), base);
             }
         }
+        base.setLevel(userGuidanceService.getLowestDbLevel().getName());
         base.setUser(userService.getLoggedinUser());
         connectionService.createConnection(base);
         base.setUserItemTypeAccess(serverMarketService.getUserItemTypeAccess());
@@ -375,7 +379,7 @@ public class BaseServiceImpl implements BaseService {
 
     @Override
     public String getLevel() {
-        return "Noob";
+        return getBase().getLevel();
     }
 
     @Override
