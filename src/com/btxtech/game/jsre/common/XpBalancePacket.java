@@ -18,14 +18,14 @@ package com.btxtech.game.jsre.common;
  * Date: Sep 10, 2009
  * Time: 11:35:20 AM
  */
-public class AccountBalancePackt extends Packet{
-    private double accountBalance;
+public class XpBalancePacket extends Packet{
+    private int xp;
 
-    public double getAccountBalance() {
-        return accountBalance;
+    public int getXp() {
+        return xp;
     }
 
-    public void setAccountBalance(double accountBalance) {
-        this.accountBalance = accountBalance;
+    public void setXp(int xp) {
+        this.xp = xp;
     }
 }

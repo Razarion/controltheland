@@ -160,6 +160,7 @@ public class MovableServiceImpl implements MovableService {
             gameInfo.setTutorialTimeout(startupData.getTutorialTimeout());
             gameInfo.setRegisterDialogDelay(startupData.getRegisterDialogDelay());
             gameInfo.setUserActionCollectionTime(startupData.getUserActionCollectionTime());
+            gameInfo.setLevel(baseService.getLevel());
             return gameInfo;
         } catch (com.btxtech.game.services.connection.NoConnectionException t) {
             log.error(t.getMessage() + " SessionId: " + t.getSessionId());
@@ -182,7 +183,7 @@ public class MovableServiceImpl implements MovableService {
     @Override
     public void createMissionTraget(Id attacker) {
         try {
-            userGuidanceService.createMissionTraget(attacker);
+            userGuidanceService.createMissionTarget(attacker);
         } catch (Throwable t) {
             log.error("", t);
         }
@@ -237,6 +238,11 @@ public class MovableServiceImpl implements MovableService {
         } catch (Throwable t) {
             log.error("", t);
         }
+    }
+
+    @Override
+    public String getMissionTarget() {
+        return "HHHHUUUURRRRAAAA";
     }
 
 }

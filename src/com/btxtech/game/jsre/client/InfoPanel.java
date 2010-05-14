@@ -17,9 +17,11 @@ import com.btxtech.game.jsre.client.common.GameInfo;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
+import com.btxtech.game.jsre.client.utg.MissionTarget;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -35,8 +37,8 @@ import com.google.gwt.widgetideas.client.ProgressBar;
  */
 public class InfoPanel extends TopMapPanel {
     private static final InfoPanel INSTANCE = new InfoPanel();
-
     public HorizontalPanel userIdentification;
+    private Label level;
     private Label money;
     private Label xp;
     private Label name;
@@ -46,6 +48,7 @@ public class InfoPanel extends TopMapPanel {
     private int generating;
     private int consuming;
     private Button scrollHome;
+    private Anchor missionTargetLink;
 
     /**
      * Simgleton
@@ -58,51 +61,66 @@ public class InfoPanel extends TopMapPanel {
     protected Widget createBody() {
         FlexTable layout = new FlexTable();
         layout.setStyleName("topMapPanelText");
-        layout.setCellSpacing(6);
+        layout.setCellSpacing(1);
+
+        // Mission Target
+        missionTargetLink = new Anchor("Mission Target");
+        missionTargetLink.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                MissionTarget.getInstance().showMissionTargetDialog();
+            }
+        });
+        layout.setWidget(0, 1, missionTargetLink);
+        layout.getFlexCellFormatter().setColSpan(0, 1, 2);
+
+        // Level
+        layout.setHTML(1, 1, "Level");
+        level = new Label();
+        level.setText("???");
+        layout.setWidget(1, 2, level);
 
         // Name
-        layout.setHTML(0, 1, "Name");
+        layout.setHTML(2, 1, "Name");
         name = new Label("???");
-        layout.setWidget(0, 2, name);
+        layout.setWidget(2, 2, name);
 
         // Color
-        layout.setHTML(1, 1, "Color");
+        layout.setHTML(3, 1, "Color");
         marker = new SimplePanel();
         marker.setPixelSize(30, 15);
-        layout.setWidget(1, 2, marker);
+        layout.setWidget(3, 2, marker);
 
         // Money
-        layout.setHTML(2, 1, "Money");
+        layout.setHTML(4, 1, "Money");
         money = new Label("???");
-        layout.setWidget(2, 2, money);
+        layout.setWidget(4, 2, money);
 
         // Xp
-        layout.setHTML(3, 1, "Xp");
+        layout.setHTML(5, 1, "Xp");
         xp = new Label("???");
-        layout.setWidget(3, 2, xp);
+        layout.setWidget(5, 2, xp);
 
         // Energy
-        layout.setHTML(4, 1, "Energy");
+        layout.setHTML(6, 1, "Energy");
+        layout.getFlexCellFormatter().setColSpan(6, 1, 2);
         energyBar = new ProgressBar(0, 0) {
             @Override
             protected String generateText(double curProgress) {
                 return Integer.toString(consuming) + "/" + Integer.toString(generating);
             }
         };
-
         energyBar.setStyleName("gwt-EnergyBar-shell");
         energyBar.getElement().getStyle().setHeight(15, Style.Unit.PX);
         energyBar.getElement().getStyle().setColor("#000000");
-
-        layout.getFlexCellFormatter().setColSpan(4, 1, 2);
-        layout.setWidget(5, 1, energyBar);
-        layout.getFlexCellFormatter().setColSpan(5, 1, 2);
+        layout.setWidget(7, 1, energyBar);
+        layout.getFlexCellFormatter().setColSpan(7, 1, 2);
 
         // Move home button
-        layout.getFlexCellFormatter().setColSpan(6, 1, 2);
+        layout.getFlexCellFormatter().setColSpan(8, 1, 2);
         scrollHome = new Button("Scroll Home");
         scrollHome.setWidth("100%");
-        layout.setWidget(6, 1, scrollHome);
+        layout.setWidget(8, 1, scrollHome);
         scrollHome.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
@@ -112,10 +130,10 @@ public class InfoPanel extends TopMapPanel {
         });
 
         // Menu button
-        layout.getFlexCellFormatter().setColSpan(7, 1, 2);
+        layout.getFlexCellFormatter().setColSpan(9, 1, 2);
         Button menu = new Button("Options");
         menu.setWidth("100%");
-        layout.setWidget(7, 1, menu);
+        layout.setWidget(9, 1, menu);
         menu.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
@@ -125,13 +143,12 @@ public class InfoPanel extends TopMapPanel {
             }
         });
 
-
         // Debug
         if (Game.isDebug()) {
             // Cursor
-            layout.setHTML(8, 1, "Cursor");
+            layout.setHTML(10, 1, "Cursor");
             cursorPos = new Label("???");
-            layout.setWidget(8, 2, cursorPos);
+            layout.setWidget(10, 2, cursorPos);
         }
 
         return layout;
@@ -144,14 +161,14 @@ public class InfoPanel extends TopMapPanel {
     public void setGameInfo(GameInfo gameInfo) {
         name.setText(gameInfo.getBase().getName());
         marker.getElement().getStyle().setBackgroundColor(gameInfo.getBase().getHtmlColor());
-        money.setText("$" + Integer.toString((int)gameInfo.getAccountBalance()));
+        money.setText("$" + Integer.toString((int) gameInfo.getAccountBalance()));
         xp.setText(Integer.toString(gameInfo.getXp()));
         updateEnergy(gameInfo.getEnergyGenerating(), gameInfo.getEnergyConsuming());
     }
 
     public void updateMoney() {
         if (money != null) {
-            money.setText(Integer.toString((int)ClientBase.getInstance().getAccountBalance()));
+            money.setText(Integer.toString((int) ClientBase.getInstance().getAccountBalance()));
         }
     }
 
@@ -186,4 +203,17 @@ public class InfoPanel extends TopMapPanel {
     public Label getMoney() {
         return money;
     }
+
+    public void setLevel(String level) {
+        this.level.setText(level);
+    }
+
+    public void setMissionargetColor(boolean highlight) {
+        if (highlight) {
+            missionTargetLink.getElement().getStyle().setColor("#FFFFFF");
+        } else {
+            missionTargetLink.getElement().getStyle().setColor("#000000");
+        }
+    }
+
 }
