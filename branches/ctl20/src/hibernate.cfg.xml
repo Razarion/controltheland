@@ -65,6 +65,7 @@
         <mapping class="com.btxtech.game.services.utg.UserHistory"/>
         <mapping class="com.btxtech.game.services.utg.DbUserMessage"/>
         <mapping class="com.btxtech.game.services.utg.DbLevel"/>
+        <mapping class="com.btxtech.game.services.utg.DbItemCount"/>
         <mapping class="com.btxtech.game.services.forum.AbstractForumEntry"/>
         <mapping class="com.btxtech.game.services.forum.SubForum"/>
         <mapping class="com.btxtech.game.services.forum.Category"/>

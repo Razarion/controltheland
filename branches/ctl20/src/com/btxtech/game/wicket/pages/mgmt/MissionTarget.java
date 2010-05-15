@@ -13,14 +13,27 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.utg.DbItemCount;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.wicket.uiservices.ListProvider;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import wicket.contrib.tinymce.TinyMceBehavior;
 import wicket.contrib.tinymce.settings.TinyMCESettings;
@@ -33,6 +46,9 @@ import wicket.contrib.tinymce.settings.TinyMCESettings;
 public class MissionTarget extends WebPage {
     @SpringBean
     private UserGuidanceService userGuidanceService;
+    @SpringBean
+    private ItemService itemService;
+    private Log log = LogFactory.getLog(MissionTarget.class);
 
     public MissionTarget(final DbLevel dbLevel) {
         add(new FeedbackPanel("msgs"));
@@ -43,6 +59,69 @@ public class MissionTarget extends WebPage {
         TinyMCESettings tinyMCESettings = new TinyMCESettings();
         contentArea.add(new TinyMceBehavior(tinyMCESettings));
         form.add(contentArea);
+
+        final ListProvider<DbItemCount> itemCounts = new ListProvider<DbItemCount>() {
+            @Override
+            protected List<DbItemCount> createList() {
+                return new ArrayList<DbItemCount>(dbLevel.getDbItemCounts());
+            }
+        };
+        form.add(new DataView<DbItemCount>("itemCounts", itemCounts) {
+
+            @Override
+            protected void populateItem(final Item<DbItemCount> dbLevelItem) {
+                dbLevelItem.add(new TextField<Integer>("itemType", new IModel<Integer>() {
+
+                    @Override
+                    public Integer getObject() {
+                        DbBaseItemType dbBaseItemType = dbLevelItem.getModelObject().getBaseItemType();
+                        if (dbBaseItemType != null) {
+                            return dbBaseItemType.getId();
+                        } else {
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    public void setObject(Integer id) {
+                        if (id != null) {
+                            try {
+                                DbBaseItemType baseItemType = (DbBaseItemType) itemService.getDbItemType(id);
+                                dbLevelItem.getModelObject().setBaseItemType(baseItemType);
+                            } catch (Throwable t) {
+                                log.error("", t);
+                                throw new RuntimeException(t);
+                            }
+                        } else {
+                            dbLevelItem.getModelObject().setBaseItemType(null);
+                        }
+                    }
+
+                    @Override
+                    public void detach() {
+                        //Ignore
+                    }
+                }, Integer.class));
+                dbLevelItem.add(new TextField<Integer>("count"));
+
+                dbLevelItem.add(new Button("delete") {
+
+                    @Override
+                    public void onSubmit() {
+                        dbLevel.removeDbItemCount(dbLevelItem.getModelObject());
+                    }
+                });
+            }
+        });
+        form.add(new Button("addItemCount") {
+            @Override
+            public void onSubmit() {
+                dbLevel.createDbItemCount();
+            }
+        });
+        form.add(new TextField<Integer>("minXp"));
+        form.add(new TextField<Integer>("minMoney"));
+
 
         form.add(new Button("save") {
             @Override

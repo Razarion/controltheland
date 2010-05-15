@@ -427,7 +427,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             }
         });
         if (list.isEmpty()) {
-            throw new IllegalArgumentException("No DB entry for: " + itemTypeId);
+            throw new IllegalArgumentException("Item type does not exist: " + itemTypeId);
         }
         if (list.size() > 1) {
             throw new IllegalArgumentException("More then one entry found: " + itemTypeId);
