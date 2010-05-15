@@ -14,11 +14,16 @@
 package com.btxtech.game.services.utg;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.OneToMany;
+import org.hibernate.annotations.Cascade;
 
 /**
  * User: beat
@@ -35,7 +40,11 @@ public class DbLevel implements Serializable {
     @Column(unique = true)
     private int rank;
     private String missionTarget;
-
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "dbLevel")
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    private Collection<DbItemCount> dbItemCounts;
+    private Integer minXp;
+    private Integer minMoney;
 
     public String getName() {
         return name;
@@ -59,6 +68,43 @@ public class DbLevel implements Serializable {
 
     public void setMissionTarget(String missionTarget) {
         this.missionTarget = missionTarget;
+    }
+
+    public Collection<DbItemCount> getDbItemCounts() {
+        return dbItemCounts;
+    }
+
+    public void setDbItemCounts(Collection<DbItemCount> dbItemCounts) {
+        this.dbItemCounts = dbItemCounts;
+    }
+
+    public void createDbItemCount() {
+        if (dbItemCounts == null) {
+            dbItemCounts = new ArrayList<DbItemCount>();
+        }
+        DbItemCount dbItemCount = new DbItemCount();
+        dbItemCount.setDbLevel(this);
+        dbItemCounts.add(dbItemCount);
+    }
+
+    public void removeDbItemCount(DbItemCount dbItemCount) {
+        dbItemCounts.remove(dbItemCount);
+    }
+
+    public Integer getMinXp() {
+        return minXp;
+    }
+
+    public void setMinXp(Integer minXp) {
+        this.minXp = minXp;
+    }
+
+    public Integer getMinMoney() {
+        return minMoney;
+    }
+
+    public void setMinMoney(Integer minMoney) {
+        this.minMoney = minMoney;
     }
 
     @Override

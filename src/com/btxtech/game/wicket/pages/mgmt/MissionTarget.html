@@ -26,12 +26,51 @@
     <table border="0" cellSpacing="1"
            cellPadding="0">
         <tr bgcolor="#DDDDDD">
-            <td colspan="3" valign="top"></td>
+            <td colspan="2" valign="top">Mission Target description</td>
+            <td><textarea wicket:id="missionTarget" rows="20" cols="60">content</textarea></td>
+        </tr>
+        <tr>
+            <td colspan="3" valign="top">&nbsp;</td>
         </tr>
         <tr bgcolor="#DDDDDD">
-            <td valign="top">Mission Target description</td>
-            <td><textarea wicket:id="missionTarget" rows="10" cols="60">content</textarea></td>
+            <td rowspan="3" valign="top">Condition</td>
+            <td valign="top">Items</td>
+            <td>
+                <table cellpadding="1" cellspacing="1" border="0">
+                    <tr>
+                        <th bgcolor="#cacaca">Item Type</th>
+                        <th bgcolor="#cacaca">Min Count</th>
+                        <th bgcolor="#cacaca">Delete</th>
+                    </tr>
+                    <tr wicket:id="itemCounts">
+                        <td valign="center">
+                            <input type="text" wicket:id="itemType"/>
+                        </td>
+                        <td valign="center">
+                            <input type="text" wicket:id="count"/>
+                        </td>
+                        <td valign="center">
+                            <input type="submit" wicket:id="delete" value="Delete"/>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+                <input type="submit" wicket:id="addItemCount" value="Add">
+            </td>
         </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Min XP</td>
+            <td>
+                <input type="text" wicket:id="minXp"/>
+            </td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Money</td>
+            <td>
+                <input type="text" wicket:id="minMoney"/>
+            </td>
+        </tr>
+
     </table>
     <br>
     <input type="submit" wicket:id="save" value="Save">
