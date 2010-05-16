@@ -13,6 +13,9 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.terrain;
 
+import java.util.Collection;
+import java.util.Iterator;
+
 /**
  * User: beat
  * Date: 18.11.2009
@@ -23,5 +26,19 @@ public enum SurfaceType {
     WATER,
     LAND,
     LAND_COAST,
-    WATER_COAST
+    WATER_COAST;
+
+    public static String toString(Collection<SurfaceType> surfaceTypes) {
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append("[");
+        for (Iterator<SurfaceType> iterator = surfaceTypes.iterator(); iterator.hasNext();) {
+            SurfaceType surfaceType = iterator.next();
+            stringBuffer.append(surfaceType.name());
+            if (iterator.hasNext()) {
+                stringBuffer.append(", ");
+            }
+        }
+        stringBuffer.append("]");
+        return stringBuffer.toString();
+    }
 }

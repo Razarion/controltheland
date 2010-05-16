@@ -27,7 +27,6 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.services.resource.ResourceService;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -83,15 +82,19 @@ public class GenericItemConverter {
         Collection<GenericItem> genericItems = backupEntry.getItems();
         Collection<Base> bases = new HashSet<Base>();
         for (GenericItem genericItem : genericItems) {
-            if (genericItem instanceof GenericBaseItem) {
-                SyncBaseItem syncItem = addSyncBaseItem((GenericBaseItem) genericItem);
-                Base base = ((GenericBaseItem) genericItem).getBase();
-                bases.add(base);
-                base.addItem(syncItem);
-            } else if (genericItem instanceof GenericResourceItem) {
-                addSyncItem((GenericResourceItem) genericItem);
-            } else {
-                log.error("restorBackup: unknwon type: " + genericItem);
+            try {
+                if (genericItem instanceof GenericBaseItem) {
+                    SyncBaseItem syncItem = addSyncBaseItem((GenericBaseItem) genericItem);
+                    Base base = ((GenericBaseItem) genericItem).getBase();
+                    bases.add(base);
+                    base.addItem(syncItem);
+                } else if (genericItem instanceof GenericResourceItem) {
+                    addSyncItem((GenericResourceItem) genericItem);
+                } else {
+                    log.error("restorBackup: unknwon type: " + genericItem);
+                }
+            } catch (Throwable t) {
+                log.error("Error restoring GenericItem: " + genericItem.getItemId(), t);
             }
         }
 
@@ -133,7 +136,7 @@ public class GenericItemConverter {
 
         fillGenericItem(item, genericItem);
 
-        genericItem.setHealth((int)item.getHealth());
+        genericItem.setHealth((int) item.getHealth());
         genericItem.setBuild(item.isReady());
         Base base = baseService.getBase(item.getBase());
         if (base == null) {
@@ -265,6 +268,10 @@ public class GenericItemConverter {
 
     private void checkSyncItemReference(GenericBaseItem genericItem) {
         SyncBaseItem syncItem = (SyncBaseItem) syncItems.get(genericItem.getItemId());
+        if (syncItem == null) {
+            log.error("Can not restore GenericBaseItem: " + genericItem.getItemId());
+            return;
+        }
         if (syncItem.hasSyncHarvester()) {
             if (genericItem.getBaseTarget() != null) {
                 SyncItem target = syncItems.get(genericItem.getBaseTarget().getItemId());

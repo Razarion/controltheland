@@ -47,6 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Time: 6:44:01 PM
  */
 public class CollisionServiceImpl implements CollisionService, TerrainListener {
+    public static final int MAX_TRIES = 1000000;
     @Autowired
     private TerrainService terrainService;
     @Autowired
@@ -272,7 +273,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     @Override
     public Index getFreeRandomPosition(ItemType itemType, Rectangle region, int itemFreeRange) {
         Random random = new Random();
-        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+        for (int i = 0; i < MAX_TRIES; i++) {
             int x = random.nextInt(region.getWidth()) + region.getX();
             int y = random.nextInt(region.getHeight()) + region.getY();
             Index point = new Index(x, y);
@@ -286,7 +287,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
             }
             return point;
         }
-        throw new IllegalStateException("Can not find free position");
+        throw new IllegalStateException("Can not find free position. itemType: " + itemType + " region: " + region + " itemFreeRange: " + itemFreeRange);
     }
 
     @Override
@@ -302,7 +303,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     @Override
     public Index getFreeRandomPosition(Index origin, int itemFreeWidth, int itemFreeHeight, Collection<SurfaceType> allowedSurfaces, int targetMinRange, int targetMaxRange) {
         Random random = new Random();
-        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+        for (int i = 0; i < MAX_TRIES; i++) {
             double angel = random.nextDouble() * 2.0 * Math.PI;
             int discance = targetMinRange + random.nextInt(targetMaxRange - targetMinRange);
             Index point = origin.getPointFromAngelToNord(angel, discance);
@@ -330,7 +331,13 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
             }
             return point;
         }
-        throw new IllegalStateException("Can not find free position");
+        throw new IllegalStateException("Can not find free position."
+                + "Origin: " + origin
+                + " itemFreeWidth: " + itemFreeWidth
+                + " itemFreeHeight: " + itemFreeHeight
+                + " allowedSurfaces: " + SurfaceType.toString(allowedSurfaces)
+                + " targetMinRange: " + targetMinRange
+                + " targetMaxRange: " + targetMaxRange);
     }
 
 

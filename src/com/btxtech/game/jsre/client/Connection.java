@@ -78,7 +78,7 @@ public class Connection implements AsyncCallback<Void> {
 
             @Override
             public void onFailure(Throwable caught) {
-                hanldeDisconnection(caught);
+                handleDisconnection(caught);
             }
 
             @Override
@@ -116,7 +116,7 @@ public class Connection implements AsyncCallback<Void> {
         movableServiceAsync.getItemTypes(new AsyncCallback<Collection<ItemType>>() {
             @Override
             public void onFailure(Throwable throwable) {
-                hanldeDisconnection(throwable);
+                handleDisconnection(throwable);
             }
 
             @Override
@@ -125,7 +125,7 @@ public class Connection implements AsyncCallback<Void> {
                 movableServiceAsync.getAllSyncInfo(new AsyncCallback<Collection<SyncItemInfo>>() {
                     @Override
                     public void onFailure(Throwable throwable) {
-                        hanldeDisconnection(throwable);
+                        handleDisconnection(throwable);
                     }
 
                     @Override
@@ -166,7 +166,7 @@ public class Connection implements AsyncCallback<Void> {
         movableServiceAsync.getSyncInfo(ClientBase.getInstance().getSimpleBase(), new AsyncCallback<Collection<Packet>>() {
             @Override
             public void onFailure(Throwable throwable) {
-                hanldeDisconnection(throwable);
+                handleDisconnection(throwable);
             }
 
             @Override
@@ -256,6 +256,12 @@ public class Connection implements AsyncCallback<Void> {
         }
     }
 
+    public void tutorialTerminated() {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.tutorialTerminated(this);
+        }
+    }
+
     public void getMissionTarget(final MissionTarget missionTargetDialog) {
         if (movableServiceAsync != null) {
             movableServiceAsync.getMissionTarget(new AsyncCallback<String>() {
@@ -294,7 +300,7 @@ public class Connection implements AsyncCallback<Void> {
 
     @Override
     public void onFailure(Throwable caught) {
-        hanldeDisconnection(caught);
+        handleDisconnection(caught);
     }
 
     @Override
@@ -302,7 +308,7 @@ public class Connection implements AsyncCallback<Void> {
         // Ignore
     }
 
-    private void hanldeDisconnection(Throwable throwable) {
+    private void handleDisconnection(Throwable throwable) {
         movableServiceAsync = null;
         if (throwable instanceof NotYourBaseException) {
             MessageDialog.show("Not your Base", "Most likely you start another<br />base in another browser window");

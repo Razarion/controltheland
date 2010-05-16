@@ -40,6 +40,7 @@ import com.btxtech.game.services.item.itemType.DbItemTypeData;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.resource.ResourceService;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -84,6 +85,8 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     private ServerEnergyService serverEnergyService;
     @Autowired
     private ResourceService resourceService;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
     private HibernateTemplate hibernateTemplate;
     private int lastId = 0;
     private final HashMap<Id, SyncItem> items = new HashMap<Id, SyncItem>();
@@ -122,6 +125,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             baseService.itemCreated((SyncBaseItem) syncItem);
             baseService.sendAccountBaseUpdate((SyncBaseItem) syncItem);
             actionService.interactionGuardingItems((SyncBaseItem) syncItem);
+            userGuidanceService.onSyncBaseItemCreated((SyncBaseItem) syncItem);
         }
         connectionService.sendSyncInfo(syncItem);
         log.info("CREATED: " + syncItem);

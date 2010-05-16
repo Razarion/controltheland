@@ -16,6 +16,8 @@ package com.btxtech.game.services.utg;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.services.base.Base;
 import java.util.List;
 
 /**
@@ -44,5 +46,11 @@ public interface UserGuidanceService {
 
     String getMissionTarget4NextLevel();
 
-    DbLevel getLowestDbLevel();
+    void onSyncBaseItemCreated(SyncBaseItem syncBaseItem);
+
+    void setupLevel4NewBase(Base base);
+
+    void tutorialTerminated();
+
+    void onIncreaseXp(Base base, int xp);
 }
