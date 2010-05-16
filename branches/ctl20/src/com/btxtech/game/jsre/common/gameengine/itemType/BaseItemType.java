@@ -182,7 +182,12 @@ public class BaseItemType extends ItemType {
         if (specialType != null) {
             specialType.changeTo(baseItemType.specialType);
         }
-        if (itemContainerType != null) {
+
+        // TODO make other abilities like this
+        if (baseItemType.itemContainerType == null && itemContainerType != null) {
+            // remove
+            itemContainerType = null;
+        } else if (itemContainerType != null) {
             itemContainerType.changeTo(baseItemType.itemContainerType);
         }
     }

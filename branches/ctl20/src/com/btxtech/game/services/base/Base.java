@@ -167,7 +167,7 @@ public class Base implements Serializable {
     public int getItemCount(ItemType itemType) {
         int count = 0;
         for (SyncItem item : items) {
-            if (item.getItemType() == itemType) {
+            if (item.getItemType().equals(itemType)) {
                 count++;
             }
         }

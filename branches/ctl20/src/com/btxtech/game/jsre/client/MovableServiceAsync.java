@@ -58,4 +58,6 @@ public interface MovableServiceAsync {
     void closeConnection(AsyncCallback<Void> async);
 
     void getMissionTarget(AsyncCallback<String> asyncCallback);
+
+    void tutorialTerminated(AsyncCallback<Void> async);
 }

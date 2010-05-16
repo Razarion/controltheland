@@ -68,4 +68,6 @@ public interface MovableService extends RemoteService {
     void closeConnection();
 
     String getMissionTarget();
+
+    void tutorialTerminated();
 }

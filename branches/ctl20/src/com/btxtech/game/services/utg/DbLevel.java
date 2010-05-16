@@ -39,10 +39,12 @@ public class DbLevel implements Serializable {
     private String name;
     @Column(unique = true)
     private int rank;
+    @Column(length = 50000)
     private String missionTarget;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "dbLevel")
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private Collection<DbItemCount> dbItemCounts;
+    private Boolean tutorialTermination;
     private Integer minXp;
     private Integer minMoney;
 
@@ -89,6 +91,14 @@ public class DbLevel implements Serializable {
 
     public void removeDbItemCount(DbItemCount dbItemCount) {
         dbItemCounts.remove(dbItemCount);
+    }
+
+    public Boolean isTutorialTermination() {
+        return tutorialTermination;
+    }
+
+    public void setTutorialTermination(Boolean tutorialTermination) {
+        this.tutorialTermination = tutorialTermination;
     }
 
     public Integer getMinXp() {

@@ -15,18 +15,25 @@ package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.LevelPacket;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
+import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
+import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.utg.DbItemCount;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -52,7 +59,10 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     private ItemService itemService;
     @Autowired
     private CollisionService collisionService;
+    @Autowired
+    private ConnectionService connectionService;
     private HibernateTemplate hibernateTemplate;
+    private HashMap<SimpleBase, PendingPromotion> pendingPromotions = new HashMap<SimpleBase, PendingPromotion>();
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -127,9 +137,8 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         }
     }
 
-    @Override
     @SuppressWarnings("unchecked")
-    public DbLevel getLowestDbLevel() {
+    private DbLevel getLowestDbLevel() {
         List<DbLevel> result = hibernateTemplate.executeFind(new HibernateCallback() {
             @Override
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
@@ -233,4 +242,92 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     private DbLevel getDbLevel4Base() {
         return getDbLevel(baseService.getLevel());
     }
+
+    @Override
+    public void setupLevel4NewBase(Base base) {
+        DbLevel dbLevel = getLowestDbLevel();
+        base.setLevel(dbLevel.getName());
+        prepareForNextPromotion(dbLevel, base.getSimpleBase());
+    }
+
+    @Override
+    public void tutorialTerminated() {
+        Base base = baseService.getBase();
+        PendingPromotion pendingPromotion = pendingPromotions.get(base.getSimpleBase());
+        if (pendingPromotion == null || pendingPromotion.getDbLevel().isTutorialTermination() == null || !pendingPromotion.getDbLevel().isTutorialTermination()) {
+            return;
+        }
+        pendingPromotion.setTutorialAchieved();
+        checkAndHandlePromotion(pendingPromotion, base);
+    }
+
+    @Override
+    public void onIncreaseXp(Base base, int xp) {
+        PendingPromotion pendingPromotion = pendingPromotions.get(base.getSimpleBase());
+        if (pendingPromotion == null || pendingPromotion.getDbLevel().getMinXp() == null) {
+            return;
+        }
+        if (xp >= pendingPromotion.getDbLevel().getMinXp()) {
+            pendingPromotion.setXpAchieved();
+            checkAndHandlePromotion(pendingPromotion, base);
+        }
+    }
+
+    @Override
+    public void onSyncBaseItemCreated(SyncBaseItem syncBaseItem) {
+        Base base = baseService.getBase(syncBaseItem);
+        PendingPromotion pendingPromotion = pendingPromotions.get(base.getSimpleBase());
+        if (pendingPromotion == null || pendingPromotion.getDbLevel().getDbItemCounts() == null || pendingPromotion.getDbLevel().getDbItemCounts().isEmpty()) {
+            return;
+        }
+        if (checkForItemsCondition(pendingPromotion.getDbLevel(), base)) {
+            pendingPromotion.setItemCountAchieved();
+            checkAndHandlePromotion(pendingPromotion, base);
+        }
+    }
+
+    private boolean checkForItemsCondition(DbLevel promotionLevel, Base base) {
+        Collection<DbItemCount> dbItemCounts = promotionLevel.getDbItemCounts();
+        if (dbItemCounts == null || dbItemCounts.isEmpty()) {
+            return true;
+        }
+
+        for (DbItemCount dbItemCount : dbItemCounts) {
+            int count = base.getItemCount(dbItemCount.getBaseItemType().createItemType());
+            if (count < dbItemCount.getCount()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void checkAndHandlePromotion(PendingPromotion pendingPromotion, Base base) {
+        if (!pendingPromotion.achieved()) {
+            return;
+        }
+        DbLevel achievedLevel = pendingPromotion.getDbLevel();
+        base.setLevel(achievedLevel.getName());
+        LevelPacket levelPacket = new LevelPacket();
+        levelPacket.setLevel(achievedLevel.getName());
+        connectionService.sendPacket(base.getSimpleBase(), levelPacket);
+
+        // Cleanup
+        pendingPromotions.remove(base.getSimpleBase());
+
+        // Prepare next promotion
+        prepareForNextPromotion(achievedLevel, base.getSimpleBase());
+    }
+
+    private void prepareForNextPromotion(DbLevel dbLevel, SimpleBase simpleBase) {
+        DbLevel nextDbLevel = getNextDbLevel(dbLevel);
+        if (nextDbLevel == null) {
+            return;
+        }
+
+        PendingPromotion pendingPromotion = new PendingPromotion(nextDbLevel);
+        pendingPromotions.put(simpleBase, pendingPromotion);
+    }
+
+    // TODO restore
+    // TODO Base killed
 }

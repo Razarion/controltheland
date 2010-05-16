@@ -153,12 +153,12 @@ public class BaseServiceImpl implements BaseService {
                 userTrackingService.onBaseCreated(userService.getLoggedinUser(), base);
             }
         }
-        base.setLevel(userGuidanceService.getLowestDbLevel().getName());
+        userGuidanceService.setupLevel4NewBase(base);        
         base.setUser(userService.getLoggedinUser());
         connectionService.createConnection(base);
         base.setUserItemTypeAccess(serverMarketService.getUserItemTypeAccess());
         StartupData startupData = mgmtService.getStartupData();
-        Index startPoint = collisionService.getFreeRandomPosition(constructionVehicle,startupData.getStartRectangle(), startupData.getStartItemFreeRange());
+        Index startPoint = collisionService.getFreeRandomPosition(constructionVehicle, startupData.getStartRectangle(), startupData.getStartItemFreeRange());
         SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(constructionVehicle, startPoint, null, base.getSimpleBase(), 0);
         syncBaseItem.setBuild(true);
         syncBaseItem.setFullHealth();
@@ -380,6 +380,15 @@ public class BaseServiceImpl implements BaseService {
     @Override
     public String getLevel() {
         return getBase().getLevel();
+    }
+
+    @Override
+    public String getLevel(SimpleBase simpleBase) {
+        Base base = getBase(simpleBase);
+        if (base == null) {
+            throw new IllegalArgumentException("Base does not exist: " + simpleBase);
+        }
+        return base.getLevel();
     }
 
     @Override

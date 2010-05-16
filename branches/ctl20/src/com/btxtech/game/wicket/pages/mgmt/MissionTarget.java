@@ -26,6 +26,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
@@ -119,6 +120,7 @@ public class MissionTarget extends WebPage {
                 dbLevel.createDbItemCount();
             }
         });
+        form.add(new CheckBox("tutorialTermination"));
         form.add(new TextField<Integer>("minXp"));
         form.add(new TextField<Integer>("minMoney"));
 
