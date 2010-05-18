@@ -44,7 +44,7 @@ public class GameInfo implements Serializable{
     private int tutorialTimeout;
     private int registerDialogDelay;
     private int userActionCollectionTime;
-    private String level;
+    private Level level;
 
     public SimpleBase getBase() {
         return base;
@@ -174,11 +174,11 @@ public class GameInfo implements Serializable{
         this.userActionCollectionTime = userActionCollectionTime;
     }
 
-    public String getLevel() {
+    public Level getLevel() {
         return level;
     }
 
-    public void setLevel(String level) {
+    public void setLevel(Level level) {
         this.level = level;
     }
 }

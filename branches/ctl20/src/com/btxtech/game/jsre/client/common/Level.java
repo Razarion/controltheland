@@ -11,23 +11,32 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.common;
+package com.btxtech.game.jsre.client.common;
 
-import com.btxtech.game.jsre.client.common.Level;
+import java.io.Serializable;
 
 /**
  * User: beat
- * Date: 12.05.2010
- * Time: 14:38:58
+ * Date: 17.05.2010
+ * Time: 18:48:18
  */
-public class LevelPacket extends Packet {
-    private Level level;
+public class Level implements Serializable {
+    private String name;
+    private boolean runTutorial = false;
 
-    public Level getLevel() {
-        return level;
+    public String getName() {
+        return name;
     }
 
-    public void setLevel(Level level) {
-        this.level = level;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isRunTutorial() {
+        return runTutorial;
+    }
+
+    public void setRunTutorial(boolean runTutorial) {
+        this.runTutorial = runTutorial;
     }
 }

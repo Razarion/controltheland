@@ -216,7 +216,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     private void killContainedItems(SyncBaseItem syncBaseItem, SyncBaseItem actor) {
-        if (syncBaseItem.hasSyncItemContainer()) {
+        if (!syncBaseItem.hasSyncItemContainer()) {
             return;
         }
         for (SyncBaseItem baseItem : syncBaseItem.getSyncItemContainer().getContainedItems()) {

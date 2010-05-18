@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.utg;
 
+import com.btxtech.game.jsre.client.common.Level;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -115,6 +116,12 @@ public class DbLevel implements Serializable {
 
     public void setMinMoney(Integer minMoney) {
         this.minMoney = minMoney;
+    }
+
+    public Level createLevel() {
+        Level level = new Level();
+        level.setName(name);
+        return level;
     }
 
     @Override

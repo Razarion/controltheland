@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.base;
 
+import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -80,7 +81,5 @@ public interface BaseService extends com.btxtech.game.jsre.common.gameengine.ser
 
     SimpleBase getDummyBase();
 
-    String getLevel();
-
-    String getLevel(SimpleBase simpleBase);
+    String getLevelString();
 }

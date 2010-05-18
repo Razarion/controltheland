@@ -27,6 +27,7 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,17 +47,19 @@ public class GenericItemConverter {
     private HashMap<Id, SyncItem> syncItems = new HashMap<Id, SyncItem>();
     private BaseService baseService;
     private ActionService actionService;
+    private UserGuidanceService userGuidanceService;
     private ServerEnergyService serverEnergyService;
     private ItemService itemService;
     private Services services;
     private Log log = LogFactory.getLog(GenericItemConverter.class);
 
-    public GenericItemConverter(BaseService baseService, ItemService itemService, Services services, ServerEnergyService serverEnergyService, ActionService actionService) {
+    public GenericItemConverter(BaseService baseService, ItemService itemService, Services services, ServerEnergyService serverEnergyService, ActionService actionService, UserGuidanceService userGuidanceService) {
         this.baseService = baseService;
         this.itemService = itemService;
         this.services = services;
         this.serverEnergyService = serverEnergyService;
         this.actionService = actionService;
+        this.userGuidanceService = userGuidanceService;
     }
 
     public BackupEntry generateBackupEntry() {
@@ -109,6 +112,7 @@ public class GenericItemConverter {
         itemService.restoreItems(syncItems.values());
         serverEnergyService.pauseService(false);
         serverEnergyService.restoreItems(syncItems.values());
+        userGuidanceService.restore(bases);
         actionService.pause(false);
     }
 
