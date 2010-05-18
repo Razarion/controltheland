@@ -20,8 +20,11 @@ package com.btxtech.game.jsre.client.utg;
 
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.InfoPanel;
+import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.dialogs.MissionTargetDialog;
 import com.btxtech.game.jsre.common.LevelPacket;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -33,6 +36,7 @@ public class MissionTarget {
     private boolean loadingRequired = true;
     private String missionTargetString;
     private Timer timer;
+    private Level level;
 
     public static MissionTarget getInstance() {
         return INSTANCE;
@@ -40,6 +44,14 @@ public class MissionTarget {
 
     private MissionTarget() {
         startBlink();
+        missionTargetDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> popupPanelCloseEvent) {
+                if (level.isRunTutorial()) {
+                    ClientUserGuidance.getInstance().startTutorial();
+                }
+            }
+        });
     }
 
     public void showMissionTargetDialog() {
@@ -76,13 +88,16 @@ public class MissionTarget {
         missionTargetDialog.setMissionTarget(missionTargetString);
     }
 
-    public void setLevel(String level) {
-        InfoPanel.getInstance().setLevel(level);
+    public void setLevel(Level level) {
+        this.level = level;
+        InfoPanel.getInstance().setLevel(level.getName());
     }
 
     public void onLevelChanged(LevelPacket levelPacket) {
         loadingRequired = true;
         setLevel(levelPacket.getLevel());
+        startBlink();
+        // TODO show promotion dialog
     }
 
     private void startBlink() {

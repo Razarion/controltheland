@@ -63,7 +63,7 @@ public class ClientUserGuidance implements SelectionListener {
     private ClientUserGuidance() {
     }
 
-    public void start() {
+    public void startTutorial() {
         try {
             setupMissions();
             startTimer();

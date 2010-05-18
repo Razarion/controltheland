@@ -15,6 +15,7 @@ package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
@@ -34,7 +35,11 @@ import com.btxtech.game.services.utg.UserGuidanceService;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import javax.annotation.PostConstruct;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
@@ -62,7 +67,14 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     @Autowired
     private ConnectionService connectionService;
     private HibernateTemplate hibernateTemplate;
-    private HashMap<SimpleBase, PendingPromotion> pendingPromotions = new HashMap<SimpleBase, PendingPromotion>();
+    final private HashMap<SimpleBase, PendingPromotion> pendingPromotions = new HashMap<SimpleBase, PendingPromotion>();
+    private HashMap<String, Level> levels = new HashMap<String, Level>();
+    private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
+
+    @PostConstruct
+    public void setup() {
+        updateLevels();
+    }
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -180,6 +192,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     @Override
     public void deleteDbLevel(DbLevel dbLevel) {
         hibernateTemplate.delete(dbLevel);
+        updateLevels();
     }
 
     @Override
@@ -187,16 +200,19 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         DbLevel dbLevel = new DbLevel();
         dbLevel.setRank(getHighestDbLevel() + 1);
         hibernateTemplate.save(dbLevel);
+        updateLevels();
     }
 
     @Override
     public void saveDbLevels(List<DbLevel> dbLevels) {
         hibernateTemplate.saveOrUpdateAll(dbLevels);
+        updateLevels();
     }
 
     @Override
     public void saveDbLevel(DbLevel dbLevel) {
         hibernateTemplate.update(dbLevel);
+        updateLevels();
     }
 
     @Override
@@ -213,6 +229,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
             hibernateTemplate.update(level1);
             level2.setRank(tmpRank);
             hibernateTemplate.update(level2);
+            updateLevels();
         }
     }
 
@@ -230,7 +247,37 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
             hibernateTemplate.update(level1);
             level2.setRank(tmpRank);
             hibernateTemplate.update(level2);
+            updateLevels();
         }
+    }
+
+    private void updateLevels() {
+        levels.clear();
+        for (Iterator<DbLevel> iterator = getDbLevels().iterator(); iterator.hasNext();) {
+            DbLevel dbLevel = iterator.next();
+            Level level = dbLevel.createLevel();
+            if (!iterator.hasNext()) {
+                level.setRunTutorial(true);
+            }
+            levels.put(level.getName(), level);
+        }
+    }
+
+    private Level getLevel(DbLevel dbLevel) {
+        return getLevel(dbLevel.getName());
+    }
+
+    private Level getLevel(String levelString) {
+        Level level = levels.get(levelString);
+        if (level == null) {
+            throw new IllegalArgumentException("Level does no exists: " + levelString);
+        }
+        return level;
+    }
+
+    @Override
+    public Level getLevel4Base() {
+        return getLevel(baseService.getBase().getLevel());
     }
 
     @Override
@@ -240,7 +287,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     }
 
     private DbLevel getDbLevel4Base() {
-        return getDbLevel(baseService.getLevel());
+        return getDbLevel(baseService.getBase().getLevel());
     }
 
     @Override
@@ -286,6 +333,11 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         }
     }
 
+    @Override
+    public void onBaseDeleted(Base base) {
+        pendingPromotions.remove(base.getSimpleBase());
+    }
+
     private boolean checkForItemsCondition(DbLevel promotionLevel, Base base) {
         Collection<DbItemCount> dbItemCounts = promotionLevel.getDbItemCounts();
         if (dbItemCounts == null || dbItemCounts.isEmpty()) {
@@ -308,7 +360,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         DbLevel achievedLevel = pendingPromotion.getDbLevel();
         base.setLevel(achievedLevel.getName());
         LevelPacket levelPacket = new LevelPacket();
-        levelPacket.setLevel(achievedLevel.getName());
+        levelPacket.setLevel(getLevel(achievedLevel));
         connectionService.sendPacket(base.getSimpleBase(), levelPacket);
 
         // Cleanup
@@ -328,6 +380,18 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         pendingPromotions.put(simpleBase, pendingPromotion);
     }
 
-    // TODO restore
-    // TODO Base killed
+    @Override
+    public void restore(Collection<Base> bases) {
+        synchronized (pendingPromotions) {
+            pendingPromotions.clear();
+            for (Base base : bases) {
+                try {
+                    prepareForNextPromotion(getDbLevel(base.getLevel()), base.getSimpleBase());
+                } catch (Throwable throwable) {
+                    log.error("", throwable);
+                }
+            }
+        }
+    }
+
 }

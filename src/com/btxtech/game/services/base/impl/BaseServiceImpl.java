@@ -186,6 +186,7 @@ public class BaseServiceImpl implements BaseService {
             }
             serverEnergyService.onBaseKilled(base);
         }
+        userGuidanceService.onBaseDeleted(base);
     }
 
     @Override
@@ -378,17 +379,8 @@ public class BaseServiceImpl implements BaseService {
     }
 
     @Override
-    public String getLevel() {
+    public String getLevelString() {
         return getBase().getLevel();
-    }
-
-    @Override
-    public String getLevel(SimpleBase simpleBase) {
-        Base base = getBase(simpleBase);
-        if (base == null) {
-            throw new IllegalArgumentException("Base does not exist: " + simpleBase);
-        }
-        return base.getLevel();
     }
 
     @Override

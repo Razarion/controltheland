@@ -142,7 +142,7 @@ public class Connection implements AsyncCallback<Void> {
                         }
                         TerrainView.getInstance().moveToHome();
                         ClientUserTracker.getInstance().sandGameStartupState(GameStartupState.CLIENT_RUNNING);
-                        ClientUserGuidance.getInstance().start();
+                        MissionTarget.getInstance().showMissionTargetDialog();
                         PlayerSimulation.getInstance().start();
                         RegisterDialog.showDialogWithDelay(gameInfo.getRegisterDialogDelay());
                         timer.schedule(MIN_DELAY_BETWEEN_TICKS);
