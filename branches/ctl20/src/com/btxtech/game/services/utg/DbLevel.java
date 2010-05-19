@@ -14,15 +14,21 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import org.hibernate.annotations.Cascade;
 
@@ -44,10 +50,16 @@ public class DbLevel implements Serializable {
     private String missionTarget;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "dbLevel")
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    private Collection<DbItemCount> dbItemCounts;
+    private Set<DbItemCount> dbItemCounts;
     private Boolean tutorialTermination;
     private Integer minXp;
     private Integer minMoney;
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "GUIDANCE_LEVEL_SKIP_IF_BOUGHT",
+            joinColumns = @JoinColumn(name = "dbLevelId"),
+            inverseJoinColumns = @JoinColumn(name = "itemTypeId")
+    )
+    private Set<DbBaseItemType> skipIfItemsBought;
 
     public String getName() {
         return name;
@@ -77,13 +89,9 @@ public class DbLevel implements Serializable {
         return dbItemCounts;
     }
 
-    public void setDbItemCounts(Collection<DbItemCount> dbItemCounts) {
-        this.dbItemCounts = dbItemCounts;
-    }
-
     public void createDbItemCount() {
         if (dbItemCounts == null) {
-            dbItemCounts = new ArrayList<DbItemCount>();
+            dbItemCounts = new HashSet<DbItemCount>();
         }
         DbItemCount dbItemCount = new DbItemCount();
         dbItemCount.setDbLevel(this);
@@ -116,6 +124,14 @@ public class DbLevel implements Serializable {
 
     public void setMinMoney(Integer minMoney) {
         this.minMoney = minMoney;
+    }
+
+    public Collection<DbBaseItemType> getSkipIfItemsBought() {
+        return skipIfItemsBought;
+    }
+
+    public void setSkipIfItemsBought(Set<DbBaseItemType> skipIfItemsBought) {
+        this.skipIfItemsBought = skipIfItemsBought;
     }
 
     public Level createLevel() {

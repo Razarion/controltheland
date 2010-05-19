@@ -25,7 +25,6 @@ import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
 import com.btxtech.game.jsre.common.gameengine.itemType.SpecialType;
 import com.btxtech.game.jsre.common.gameengine.itemType.TurnableType;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;

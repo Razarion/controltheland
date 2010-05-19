@@ -48,7 +48,7 @@ public interface UserGuidanceService {
 
     Level getLevel4Base();
 
-    String getMissionTarget4NextLevel();
+    String getMissionTarget4NextLevel(Base base);
 
     void onSyncBaseItemCreated(SyncBaseItem syncBaseItem);
 
