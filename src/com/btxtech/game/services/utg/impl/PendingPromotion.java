@@ -21,6 +21,9 @@ import com.btxtech.game.services.utg.DbLevel;
  * Time: 17:48:30
  */
 public class PendingPromotion {
+    public static final String INTERIM_PROMOTION_TUTORIAL = "TUTORIAL";
+    public static final String INTERIM_PROMOTION_XP = "XP";
+    public static final String INTERIM_PROMOTION_ITEMS = "ITEMS";
     private DbLevel dbLevel;
     private boolean xpAchieved = false;
     private boolean itemCountAchieved = false;

@@ -34,6 +34,7 @@ import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.utg.DbItemCount;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.UserTrackingService;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -70,6 +71,8 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     private ConnectionService connectionService;
     @Autowired
     private ServerMarketService serverMarketService;
+    @Autowired
+    private UserTrackingService userTrackingService;
     private HibernateTemplate hibernateTemplate;
     final private HashMap<SimpleBase, PendingPromotion> pendingPromotions = new HashMap<SimpleBase, PendingPromotion>();
     private HashMap<String, Level> levels = new HashMap<String, Level>();
@@ -300,6 +303,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         }
         base.setLevel(dbLevel.getName());
         prepareForNextPromotion(dbLevel, base);
+        userTrackingService.levelPromotion(base, null);
     }
 
     @Override
@@ -310,6 +314,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
             return;
         }
         pendingPromotion.setTutorialAchieved();
+        userTrackingService.levelInterimPromotion(base, pendingPromotion.getDbLevel().getName(), PendingPromotion.INTERIM_PROMOTION_TUTORIAL);
         checkAndHandlePromotion(pendingPromotion, base);
     }
 
@@ -321,6 +326,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         }
         if (xp >= pendingPromotion.getDbLevel().getMinXp()) {
             pendingPromotion.setXpAchieved();
+            userTrackingService.levelInterimPromotion(base, pendingPromotion.getDbLevel().getName(), PendingPromotion.INTERIM_PROMOTION_XP);
             checkAndHandlePromotion(pendingPromotion, base);
         }
     }
@@ -334,6 +340,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         }
         if (checkForItemsCondition(pendingPromotion.getDbLevel(), base)) {
             pendingPromotion.setItemCountAchieved();
+            userTrackingService.levelInterimPromotion(base, pendingPromotion.getDbLevel().getName(), PendingPromotion.INTERIM_PROMOTION_ITEMS);
             checkAndHandlePromotion(pendingPromotion, base);
         }
     }
@@ -362,12 +369,13 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         if (!pendingPromotion.achieved()) {
             return;
         }
+        String oldLevel = base.getLevel();
         DbLevel achievedLevel = pendingPromotion.getDbLevel();
         base.setLevel(achievedLevel.getName());
         LevelPacket levelPacket = new LevelPacket();
         levelPacket.setLevel(getLevel(achievedLevel));
         connectionService.sendPacket(base.getSimpleBase(), levelPacket);
-
+        userTrackingService.levelPromotion(base, oldLevel);
         // Cleanup
         pendingPromotions.remove(base.getSimpleBase());
 
@@ -415,7 +423,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
             return false;
         }
         for (DbBaseItemType dbBaseItemType : skipIfBought) {
-            if(!serverMarketService.isAllowed(dbBaseItemType.getId(), base)) {
+            if (!serverMarketService.isAllowed(dbBaseItemType.getId(), base)) {
                 return false;
             }
         }
