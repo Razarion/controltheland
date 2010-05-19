@@ -125,6 +125,16 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     }
 
     @Override
+    public boolean isAllowed(int itemTypeId, Base base) {
+        UserItemTypeAccess userItemTypeAccess = getUserItemTypeAccess(base);
+        if(userItemTypeAccess != null) {
+            return userItemTypeAccess.contains(itemTypeId);
+        }   else {
+            return false;
+        }
+    }
+
+    @Override
     public void buy(MarketEntry marketEntry) {
         UserItemTypeAccess userItemTypeAccess = getUserItemTypeAccess();
         userItemTypeAccess.buy(marketEntry);
@@ -150,6 +160,18 @@ public class ServerMarketServiceImpl implements ServerMarketService {
             hibernateTemplate.refresh(userItemTypeAccess);
         }
         return userItemTypeAccess;
+    }
+
+    @Override
+    public UserItemTypeAccess getUserItemTypeAccess(Base base) {
+        if (base.isAbandoned()) {
+            return null;
+        }
+        User user = baseService.getUser(base.getSimpleBase());
+        if (user != null) {
+            return createOrGetUserItemTypeAccess(user);
+        }
+        return getUserItemTypeAccess();
     }
 
     public UserItemTypeAccess createOrGetUserItemTypeAccess(User user) {

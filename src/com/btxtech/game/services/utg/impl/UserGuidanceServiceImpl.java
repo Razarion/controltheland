@@ -29,6 +29,8 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.utg.DbItemCount;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -66,6 +68,8 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     private CollisionService collisionService;
     @Autowired
     private ConnectionService connectionService;
+    @Autowired
+    private ServerMarketService serverMarketService;
     private HibernateTemplate hibernateTemplate;
     final private HashMap<SimpleBase, PendingPromotion> pendingPromotions = new HashMap<SimpleBase, PendingPromotion>();
     private HashMap<String, Level> levels = new HashMap<String, Level>();
@@ -281,20 +285,21 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     }
 
     @Override
-    public String getMissionTarget4NextLevel() {
-        DbLevel dbLevel = getNextDbLevel(getDbLevel4Base());
+    public String getMissionTarget4NextLevel(Base base) {
+        DbLevel dbLevel = getNextDbLevel(getDbLevel(base.getLevel()));
+        dbLevel = getUnskippable(dbLevel, base);
         return dbLevel.getMissionTarget();
-    }
-
-    private DbLevel getDbLevel4Base() {
-        return getDbLevel(baseService.getBase().getLevel());
     }
 
     @Override
     public void setupLevel4NewBase(Base base) {
         DbLevel dbLevel = getLowestDbLevel();
+        dbLevel = getUnskippable(dbLevel, base);
+        if (dbLevel == null) {
+            return;
+        }
         base.setLevel(dbLevel.getName());
-        prepareForNextPromotion(dbLevel, base.getSimpleBase());
+        prepareForNextPromotion(dbLevel, base);
     }
 
     @Override
@@ -367,17 +372,17 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         pendingPromotions.remove(base.getSimpleBase());
 
         // Prepare next promotion
-        prepareForNextPromotion(achievedLevel, base.getSimpleBase());
+        prepareForNextPromotion(achievedLevel, base);
     }
 
-    private void prepareForNextPromotion(DbLevel dbLevel, SimpleBase simpleBase) {
+    private void prepareForNextPromotion(DbLevel dbLevel, Base base) {
         DbLevel nextDbLevel = getNextDbLevel(dbLevel);
+        nextDbLevel = getUnskippable(nextDbLevel, base);
         if (nextDbLevel == null) {
             return;
         }
-
         PendingPromotion pendingPromotion = new PendingPromotion(nextDbLevel);
-        pendingPromotions.put(simpleBase, pendingPromotion);
+        pendingPromotions.put(base.getSimpleBase(), pendingPromotion);
     }
 
     @Override
@@ -386,7 +391,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
             pendingPromotions.clear();
             for (Base base : bases) {
                 try {
-                    prepareForNextPromotion(getDbLevel(base.getLevel()), base.getSimpleBase());
+                    prepareForNextPromotion(getDbLevel(base.getLevel()), base);
                 } catch (Throwable throwable) {
                     log.error("", throwable);
                 }
@@ -394,4 +399,26 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         }
     }
 
+    private DbLevel getUnskippable(DbLevel dbLevel, Base base) {
+        while (canBeSkippedIfBought(dbLevel, base)) {
+            dbLevel = getNextDbLevel(dbLevel);
+            if (dbLevel == null) {
+                return null;
+            }
+        }
+        return dbLevel;
+    }
+
+    private boolean canBeSkippedIfBought(DbLevel dbLevel, Base base) {
+        Collection<DbBaseItemType> skipIfBought = dbLevel.getSkipIfItemsBought();
+        if (skipIfBought == null || skipIfBought.isEmpty()) {
+            return false;
+        }
+        for (DbBaseItemType dbBaseItemType : skipIfBought) {
+            if(!serverMarketService.isAllowed(dbBaseItemType.getId(), base)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

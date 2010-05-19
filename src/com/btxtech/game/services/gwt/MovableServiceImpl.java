@@ -243,7 +243,7 @@ public class MovableServiceImpl implements MovableService {
     @Override
     public String getMissionTarget() {
         try {
-            return userGuidanceService.getMissionTarget4NextLevel();
+            return userGuidanceService.getMissionTarget4NextLevel(baseService.getBase());
         } catch (Throwable t) {
             log.error("", t);
             return t.toString();

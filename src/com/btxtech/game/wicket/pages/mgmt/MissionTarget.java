@@ -13,7 +13,6 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.utg.DbItemCount;
@@ -123,6 +122,23 @@ public class MissionTarget extends WebPage {
         form.add(new CheckBox("tutorialTermination"));
         form.add(new TextField<Integer>("minXp"));
         form.add(new TextField<Integer>("minMoney"));
+        form.add(new TextField<String>("skipItemsBought", new IModel<String>() {
+
+            @Override
+            public String getObject() {
+                return ItemsUtil.itemTypesToString(dbLevel.getSkipIfItemsBought());
+            }
+
+            @Override
+            public void setObject(String itemsString) {
+                dbLevel.setSkipIfItemsBought(ItemsUtil.stringToItemTypes(itemsString, itemService.getDbItemTypes()));
+            }
+
+            @Override
+            public void detach() {
+                // Ignore
+            }
+        }));
 
 
         form.add(new Button("save") {
