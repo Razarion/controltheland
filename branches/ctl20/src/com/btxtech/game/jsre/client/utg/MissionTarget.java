@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.InfoPanel;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.dialogs.MissionTargetDialog;
+import com.btxtech.game.jsre.client.dialogs.PromotionDialog;
 import com.btxtech.game.jsre.common.LevelPacket;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
@@ -95,9 +96,10 @@ public class MissionTarget {
 
     public void onLevelChanged(LevelPacket levelPacket) {
         loadingRequired = true;
+        String oldLevel = level.getName();
         setLevel(levelPacket.getLevel());
         startBlink();
-        // TODO show promotion dialog
+        PromotionDialog.showPromotion(oldLevel, level.getName());
     }
 
     private void startBlink() {
