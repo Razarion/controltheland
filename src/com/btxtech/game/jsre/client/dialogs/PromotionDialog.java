@@ -35,7 +35,7 @@ public class PromotionDialog extends PopupPanel {
         VerticalPanel verticalPanel = new VerticalPanel();
         HTML html = new HTML("<span style=\"color:rgb(200,0,200);font-size:300%\"><strong>You have been promoted!</strong></span>\n" +
                 "<center><span style=\"color:#CC0000;font-size:150%\">From <strong>" + oldLevel + "</strong> to <strong>" + newLevel + "</strong></span><br>\n" +
-                "<span style=\"color:blue\">You have new mission target</span></center>");
+                "<span style=\"color:blue\">Please check your new mission target</span></center>");
         html.setPixelSize(300, 200);
         verticalPanel.add(html);
         Button closeButton = new Button("Close");
