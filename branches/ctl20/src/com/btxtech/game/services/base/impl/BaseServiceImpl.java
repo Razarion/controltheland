@@ -153,7 +153,7 @@ public class BaseServiceImpl implements BaseService {
                 userTrackingService.onBaseCreated(userService.getLoggedinUser(), base);
             }
         }
-        userGuidanceService.setupLevel4NewBase(base);        
+        userGuidanceService.setupLevel4NewBase(base);
         base.setUser(userService.getLoggedinUser());
         connectionService.createConnection(base);
         base.setUserItemTypeAccess(serverMarketService.getUserItemTypeAccess());
@@ -428,12 +428,18 @@ public class BaseServiceImpl implements BaseService {
 
     @Override
     public void depositResource(double price, SimpleBase simpleBase) {
-        getBase(simpleBase).depositMoney(price);
+        Base base = getBase(simpleBase);
+        if (!base.isBot()) {
+            base.depositMoney(price);
+        }
     }
 
     @Override
     public void withdrawalMoney(double price, SimpleBase simpleBase) throws InsufficientFundsException {
-        getBase(simpleBase).withdrawalMoney(price);
+        Base base = getBase(simpleBase);
+        if (!base.isBot()) {
+            base.withdrawalMoney(price);
+        }
     }
 
 }

@@ -52,7 +52,7 @@ public class MgmtPage extends WebPage {
         ListView<LinkAndName> tools = new ListView<LinkAndName>("toolLinkList", toolPages) {
             @Override
             protected void populateItem(final ListItem<LinkAndName> listItem) {
-                Link link = new Link("toolLink"){
+                Link link = new Link("toolLink") {
 
                     @Override
                     public void onClick() {
@@ -100,6 +100,7 @@ public class MgmtPage extends WebPage {
         toolPages.add(new LinkAndName("Bases", BasesTable.class));
         toolPages.add(new LinkAndName("XP Settings", XpSettingsEditor.class));
         toolPages.add(new LinkAndName("Level and Mission Target", LevelAndMissionTarget.class));
+        toolPages.add(new LinkAndName("Bot editor", BotEditor.class));
 
     }
 }
