@@ -31,6 +31,7 @@ import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -175,7 +176,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     public void clientLog(String message, Date date) {
         try {
             ClientLogEntry clientLogEntry = new ClientLogEntry(message, date, session);
-            //           hibernateTemplate.saveOrUpdate(clientLogEntry);
+            // hibernateTemplate.saveOrUpdate(clientLogEntry);
             log.info(clientLogEntry.getFormatMessage());
         } catch (Throwable t) {
             log.error("", t);
@@ -248,17 +249,14 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
 
     @Override
     public OnlineBaseUpdate getOnlineBaseUpdate() {
-        ArrayList<SimpleBase> simpleBases = new ArrayList<SimpleBase>();
+        HashSet<SimpleBase> simpleBases = new HashSet<SimpleBase>();
         synchronized (onlineConnection) {
             for (Connection connection : onlineConnection) {
                 if (connection.getBase() != null) {
                     simpleBases.add(connection.getBase().getSimpleBase());
                 }
             }
-            SimpleBase botBase = botService.getOnlineBotBase();
-            if (botBase != null) {
-                simpleBases.add(botBase);
-            }
+            simpleBases.addAll(botService.getRunningBotBases());
         }
         OnlineBaseUpdate onlineBaseUpdate = new OnlineBaseUpdate();
         onlineBaseUpdate.setOnlineBases(simpleBases);
