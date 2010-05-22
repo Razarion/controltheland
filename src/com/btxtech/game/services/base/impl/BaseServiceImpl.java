@@ -29,6 +29,7 @@ import com.btxtech.game.services.base.AlreadyUsedException;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseColor;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.ConnectionService;
@@ -92,6 +93,8 @@ public class BaseServiceImpl implements BaseService {
     private UserGuidanceService userGuidanceService;
     @Autowired
     private MgmtService mgmtService;
+    @Autowired
+    private BotService botService;
     private final HashMap<String, Base> bases = new HashMap<String, Base>();
     private HashSet<String> colorsUsed = new HashSet<String>();
     private HibernateTemplate hibernateTemplate;
@@ -164,6 +167,7 @@ public class BaseServiceImpl implements BaseService {
         syncBaseItem.setFullHealth();
         syncBaseItem.getSyncTurnable().setAngel(Math.PI / 4.0); // Cosmetis shows vehicle from side
         historyService.addBaseStartEntry(base.getSimpleBase());
+        botService.onBaseCreated(base);
     }
 
     @Override

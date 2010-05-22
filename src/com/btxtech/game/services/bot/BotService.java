@@ -13,9 +13,9 @@
 
 package com.btxtech.game.services.bot;
 
-import com.btxtech.game.services.base.Base;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.base.Base;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -25,17 +25,20 @@ import java.util.List;
  */
 public interface BotService {
     void addDbBotConfig();
+
     void removeDbBotConfig(DbBotConfig dbBotConfig);
+
     void saveDbBotConfig(List<DbBotConfig> dbLevels);
+
     List<DbBotConfig> getDbBotConfigs();
 
-
-
-    SimpleBase getOnlineBotBase();
+    Collection<SimpleBase> getRunningBotBases();
 
     void start();
 
     void onConnectionClosed(Base base);
 
     void onConnectionCreated(Base base);
+
+    void onBaseCreated(Base base);
 }
