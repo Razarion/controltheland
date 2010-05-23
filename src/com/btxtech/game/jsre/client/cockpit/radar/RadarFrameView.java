@@ -44,7 +44,7 @@ public class RadarFrameView extends MiniMap implements TerrainScrollListener, Mo
     @Override
     public void onTerrainSettings(TerrainSettings terrainSettings) {
         super.onTerrainSettings(terrainSettings);
-        setLineWidth(1.0 / getScaleX());
+        setLineWidth(1.0 / getScale());
         setStrokeStyle(Color.LIGHTGREY);
         onScroll(TerrainView.getInstance().getViewOriginLeft(),
                 TerrainView.getInstance().getViewOriginTop(),
@@ -56,8 +56,8 @@ public class RadarFrameView extends MiniMap implements TerrainScrollListener, Mo
 
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
-        int x = (int) ((double) mouseDownEvent.getRelativeX(this.getElement()) / getScaleX());
-        int y = (int) ((double) mouseDownEvent.getRelativeY(this.getElement()) / getScaleY());
+        int x = (int) ((double) mouseDownEvent.getRelativeX(this.getElement()) / getScale());
+        int y = (int) ((double) mouseDownEvent.getRelativeY(this.getElement()) / getScale());
         TerrainView.getInstance().moveToMiddle(new Index(x, y));
     }
 }
