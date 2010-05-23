@@ -39,7 +39,7 @@ public class RadarItemView extends MiniMap {
     @Override
     public void onTerrainSettings(TerrainSettings terrainSettings) {
         super.onTerrainSettings(terrainSettings);
-        setLineWidth(2.0 / getScaleX());
+        setLineWidth(2.0 / getScale());
         Timer timer = new Timer() {
 
             @Override

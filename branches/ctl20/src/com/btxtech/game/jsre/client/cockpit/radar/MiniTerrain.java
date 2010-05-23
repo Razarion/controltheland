@@ -46,10 +46,10 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
             if (surfaceImage != null) {
                 switch (surfaceImage.getSurfaceType()) {
                     case WATER:
-                        setFillStyle(Color.DARK_BLUE);
+                        setFillStyle(new Color(12, 40, 60));
                         break;
                     case LAND:
-                        setFillStyle(new Color(30, 100, 0));
+                        setFillStyle(new Color(49, 60, 20));
                         break;
                     default:
                         throw new IllegalArgumentException(this + " unknwon surface type: " + surfaceImage.getSurfaceType());
@@ -67,5 +67,4 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
             }
         }
     }
-
 }

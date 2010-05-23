@@ -73,7 +73,7 @@ public class Cockpit extends TopMapPanel {
                         new AsyncCallback<Void>() {
                             @Override
                             public void onFailure(Throwable throwable) {
-                                GwtCommon.handleException(throwable);
+                                GwtCommon.handleException(throwable, true);
                                 saveButton.setEnabled(true);
                             }
 

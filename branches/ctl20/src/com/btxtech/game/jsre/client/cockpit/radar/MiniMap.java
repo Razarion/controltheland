@@ -24,38 +24,25 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 public class MiniMap extends ExtendedCanvas {
     private int height;
     private int width;
-    private double scaleX = 1.0;
-    private double scaleY = 1.0;
+    private double scale = 1.0;
     private TerrainSettings terrainSettings;
-
 
     public MiniMap(int width, int height) {
         super(width, height);
         this.height = height;
         this.width = width;
+
     }
 
-    public int getHeight() {
-        return height;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public double getScaleX() {
-        return scaleX;
-    }
-
-    public double getScaleY() {
-        return scaleY;
+    public double getScale() {
+        return scale;
     }
 
     public void onTerrainSettings(TerrainSettings terrainSettings) {
         this.terrainSettings = terrainSettings;
-        scaleX = (double) getWidth() / (double) terrainSettings.getPlayFieldYSize();
-        scaleY = (double) getHeight() / (double) terrainSettings.getPlayFieldYSize();
-        scale(scaleX, scaleY);
+        scale = Math.min((double) width / (double) terrainSettings.getPlayFieldXSize(),
+                (double) height / (double) terrainSettings.getPlayFieldYSize());
+        scale(scale, scale);
     }
 
     public TerrainSettings getTerrainSettings() {
