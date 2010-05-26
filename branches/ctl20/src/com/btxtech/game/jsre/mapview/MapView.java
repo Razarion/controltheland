@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.TopMapPanel;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniTerrain;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.mapeditor.TerrainEditor;
 import com.btxtech.game.jsre.mapeditor.TerrainEditorAsync;
@@ -37,6 +38,7 @@ import java.util.Collection;
  * Time: 15:13:09
  */
 public class MapView implements EntryPoint {
+
     @Override
     public void onModuleLoad() {
         // Setup common
@@ -79,6 +81,7 @@ public class MapView implements EntryPoint {
                 miniTerrain.onTerrainSettings(terrainInfo.getTerrainSettings());
                 miniTerritoryView.onTerrainSettings(terrainInfo.getTerrainSettings());
                 territoryEditModel.setTerrainSettings(terrainInfo.getTerrainSettings());
+                miniTerritoryView.drawTiles();
             }
         });
         terrainEditor.getTerritories(new AsyncCallback<Collection<Territory>>() {
@@ -89,6 +92,7 @@ public class MapView implements EntryPoint {
 
             @Override
             public void onSuccess(Collection<Territory> territories) {
+                ClientTerritoryService.getInstance().setTerritories(territories);
                 territoryEditModel.setTerritories(territories);
             }
         });

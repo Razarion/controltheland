@@ -11,26 +11,17 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.common.gameengine.services.territory.impl;
+package com.btxtech.game.jsre.common.gameengine.services.territory;
 
 import com.btxtech.game.jsre.common.Territory;
-import com.btxtech.game.jsre.common.gameengine.services.territory.CommonTerritoryService;
 import java.util.Collection;
 
 /**
  * User: beat
  * Date: 26.05.2010
- * Time: 13:37:42
+ * Time: 13:36:56
  */
-public class CommonTerritoryServiceImpl implements CommonTerritoryService {
-    private Collection<Territory> territories;
+public interface AbstractTerritoryService {
+    Collection<Territory> getTerritories();
 
-    @Override
-    public Collection<Territory> getTerritories() {
-        return territories;
-    }
-
-    public void setTerritories(Collection<Territory> territories) {
-        this.territories = territories;
-    }
 }

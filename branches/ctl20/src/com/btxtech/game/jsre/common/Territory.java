@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import java.io.Serializable;
 import java.util.Collection;
@@ -24,7 +25,7 @@ import java.util.Collection;
  */
 public class Territory implements Serializable {
     private String name;
-    private Collection<Rectangle> territoryRegions;
+    private Collection<Rectangle> territoryTileRegions;
 
     public String getName() {
         return name;
@@ -34,11 +35,37 @@ public class Territory implements Serializable {
         this.name = name;
     }
 
-    public Collection<Rectangle> getTerritoryRegions() {
-        return territoryRegions;
+    public Collection<Rectangle> getTerritoryTileRegions() {
+        return territoryTileRegions;
     }
 
-    public void setTerritoryRegions(Collection<Rectangle> territoryRegions) {
-        this.territoryRegions = territoryRegions;
+    public void setTerritoryTileRegions(Collection<Rectangle> territoryTileRegions) {
+        this.territoryTileRegions = territoryTileRegions;
+    }
+
+    public boolean contains(Index tile) {
+        for (Rectangle rectangle : territoryTileRegions) {
+            if(rectangle.containsExclusive(tile)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Territory)) return false;
+
+        Territory territory = (Territory) o;
+
+        if (name != null ? !name.equals(territory.name) : territory.name != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return name != null ? name.hashCode() : 0;
     }
 }

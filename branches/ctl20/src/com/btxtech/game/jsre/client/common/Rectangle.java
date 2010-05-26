@@ -14,6 +14,8 @@
 package com.btxtech.game.jsre.client.common;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -250,6 +252,28 @@ public class Rectangle implements Serializable {
 
     public boolean hasMinSize(int minSize) {
         return getHeight() >= minSize || getWidth() >= minSize;
+    }
+
+    public Collection<Rectangle> split(int width, int height) {
+        ArrayList<Rectangle> split = new ArrayList<Rectangle>();
+        int xCount = (int) Math.ceil((double) getWidth() / (double) width);
+        int yCount = (int) Math.ceil((double) getHeight() / (double) height);
+        for (int x = 0; x < xCount; x++) {
+            int tmpWidth = width;
+            if (x == xCount - 1) {
+                // Last one
+                tmpWidth = width - getWidth() % width;
+            }
+            for (int y = 0; y < yCount; y++) {
+                int tmpHeight = height;
+                if (y == yCount - 1) {
+                    // Last one
+                    tmpHeight = height - getHeight() % height;
+                }
+                split.add(new Rectangle(getStart().getX() + x * width, getStart().getY() + y * height, tmpWidth, tmpHeight));
+            }
+        }
+        return split;
     }
 
     /**

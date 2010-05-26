@@ -14,7 +14,9 @@
 package com.btxtech.game.services.territory.impl;
 
 import com.btxtech.game.jsre.common.Territory;
-import com.btxtech.game.jsre.common.gameengine.services.territory.impl.CommonTerritoryServiceImpl;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
+import com.btxtech.game.jsre.common.gameengine.services.territory.impl.AbstractTerritoryServiceImpl;
+import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.DbTerritory;
 import com.btxtech.game.services.territory.TerritoryService;
 import java.sql.SQLException;
@@ -38,7 +40,9 @@ import org.springframework.stereotype.Component;
  * Time: 15:00:03
  */
 @Component(value = "territoryService")
-public class TerritoryServiceImpl extends CommonTerritoryServiceImpl implements TerritoryService {
+public class TerritoryServiceImpl extends AbstractTerritoryServiceImpl implements TerritoryService {
+    @Autowired
+    private TerrainService terrainService;
     private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(TerritoryServiceImpl.class);
 
@@ -122,8 +126,13 @@ public class TerritoryServiceImpl extends CommonTerritoryServiceImpl implements 
     @Override
     public void saveTerritory(Territory territory) {
         DbTerritory dbTerritory = getDbTerritory(territory.getName());
-        dbTerritory.createDbTerritoryRegion(territory.getTerritoryRegions());
+        dbTerritory.createDbTerritoryRegion(territory.getTerritoryTileRegions());
         hibernateTemplate.update(dbTerritory);
         updateTerritories();
+    }
+
+    @Override
+    protected AbstractTerrainService getTerrainService() {
+        return terrainService;
     }
 }

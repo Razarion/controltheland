@@ -41,7 +41,7 @@ public class TerritoryEditModel {
         territoryCockpit.disableSaveButton();
         miniTerritoryView.getTiles();
         ArrayList<Rectangle> territoryRectangles = GeometricalUtil.separateIntoRectangles(miniTerritoryView.getTiles(), terrainSettings);
-        territory.setTerritoryRegions(territoryRectangles);
+        territory.setTerritoryTileRegions(territoryRectangles);
         terrainEditor.saveTerritory(territory, new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable caught) {
@@ -73,17 +73,18 @@ public class TerritoryEditModel {
     }
 
     public void setTerritories(Collection<Territory> territories) {
+        territoryCockpit.setTerritoryName("???");
         String territoryName = Window.Location.getParameter(TERRITORY_TO_EDIT);
         if (territoryName == null || territoryName.trim().isEmpty()) {
             return;
         }
         for (Territory territory : territories) {
-            if(territory.getName().equals(territoryName)) {
+            if (territory.getName().equals(territoryName)) {
                 this.territory = territory;
                 territoryCockpit.setTerritoryName(territory.getName());
-                return;
+                break;
             }
         }
-        territoryCockpit.setTerritoryName("???");
+        miniTerritoryView.setTerritory(territory);
     }
 }

@@ -40,7 +40,7 @@ public class DbTerritoryRegion implements Serializable {
     private DbTerritory dbTerritory;
     @Type(type = "rectangle")
     @Columns(columns = {@Column(name = "x"), @Column(name = "y"), @Column(name = "width"), @Column(name = "height")})
-    private Rectangle rectangle;
+    private Rectangle tileRectangle;
 
     public DbTerritory getDbTerritory() {
         return dbTerritory;
@@ -50,12 +50,12 @@ public class DbTerritoryRegion implements Serializable {
         this.dbTerritory = dbTerritory;
     }
 
-    public Rectangle getRectangle() {
-        return rectangle;
+    public Rectangle getTileRectangle() {
+        return tileRectangle;
     }
 
-    public void setRectangle(Rectangle rectangle) {
-        this.rectangle = rectangle;
+    public void setTileRectangle(Rectangle tileRectangle) {
+        this.tileRectangle = tileRectangle;
     }
 
     @Override
@@ -69,11 +69,11 @@ public class DbTerritoryRegion implements Serializable {
             return id.equals(that.id);
         }
 
-        if (rectangle == null) {
-            return that.rectangle == null;
+        if (tileRectangle == null) {
+            return that.tileRectangle == null;
         }
 
-        return rectangle.equals(that.rectangle);
+        return tileRectangle.equals(that.tileRectangle);
     }
 
     @Override
@@ -81,8 +81,8 @@ public class DbTerritoryRegion implements Serializable {
         if (id != null) {
             return id.hashCode();
         } else {
-            if (rectangle != null) {
-                return rectangle.hashCode();
+            if (tileRectangle != null) {
+                return tileRectangle.hashCode();
             } else {
                 return 0;
             }
