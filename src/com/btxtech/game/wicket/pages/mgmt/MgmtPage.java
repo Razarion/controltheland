@@ -101,6 +101,7 @@ public class MgmtPage extends WebPage {
         toolPages.add(new LinkAndName("XP Settings", XpSettingsEditor.class));
         toolPages.add(new LinkAndName("Level and Mission Target", LevelAndMissionTarget.class));
         toolPages.add(new LinkAndName("Bot editor", BotEditor.class));
+        toolPages.add(new LinkAndName("TerritoryEditor", TerritoryEditor.class));
 
     }
 }
