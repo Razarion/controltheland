@@ -74,9 +74,9 @@ public class DbTerritory implements Serializable {
         territory.setName(name);
         ArrayList<Rectangle> rectangles = new ArrayList<Rectangle>();
         for (DbTerritoryRegion dbTerritoryRegion : dbTerritoryRegions) {
-            rectangles.add(dbTerritoryRegion.getRectangle());
+            rectangles.add(dbTerritoryRegion.getTileRectangle());
         }
-        territory.setTerritoryRegions(rectangles);
+        territory.setTerritoryTileRegions(rectangles);
         return territory;
     }
 
@@ -89,7 +89,7 @@ public class DbTerritory implements Serializable {
         for (Rectangle rectangle : territoryRegions) {
             DbTerritoryRegion dbTerritoryRegion = new DbTerritoryRegion();
             dbTerritoryRegion.setDbTerritory(this);
-            dbTerritoryRegion.setRectangle(rectangle);
+            dbTerritoryRegion.setTileRectangle(rectangle);
             dbTerritoryRegions.add(dbTerritoryRegion);
         }
     }
