@@ -75,5 +75,7 @@
         <mapping class="com.btxtech.game.services.messenger.Mail"/>
         <mapping class="com.btxtech.game.services.resource.DbRegionResource"/>
         <mapping class="com.btxtech.game.services.bot.DbBotConfig"/>
+        <mapping class="com.btxtech.game.services.territory.DbTerritory"/>
+        <mapping class="com.btxtech.game.services.territory.DbTerritoryRegion"/>
     </session-factory>
 </hibernate-configuration>

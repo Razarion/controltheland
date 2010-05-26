@@ -13,8 +13,10 @@
 
 package com.btxtech.game.jsre.mapeditor;
 
+import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import java.util.Collection;
@@ -29,5 +31,9 @@ public interface TerrainEditor extends RemoteService {
     TerrainInfo getTerrainInfo();
    
     void saveTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects);
+
+    void saveTerritory(Territory territory);
+
+    Collection<Territory> getTerritories();
 
 }

@@ -59,7 +59,7 @@ public class Cockpit extends TopMapPanel {
         surfaceModifier = new SurfaceModifier(this);
 
         FlexTable controlPanel = new FlexTable();
-        // Dele Button
+        // Delete Button
         deleteButton = new ToggleButton("Delete");
         controlPanel.setWidget(0, 0, deleteButton);
         // Save Button
@@ -114,7 +114,7 @@ public class Cockpit extends TopMapPanel {
                 MapWindow.getInstance().setTerrainMouseMoveListener(terrainImageModifier);
                 break;
             case 2:
-                // Territory
+                // TerritoryEditor
                 break;
 
         }

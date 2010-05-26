@@ -42,7 +42,7 @@ public class StartupData implements Serializable {
     private int registerDialogDelay;
     private int userActionCollectionTime;
     @Type(type = "rectangle")
-    @Columns(columns = {@Column(name = "startRectX"), @Column(name = "startRectY"), @Column(name = "startRectEndX"), @Column(name = "startRectEndY")})
+    @Columns(columns = {@Column(name = "startRectX"), @Column(name = "startRectY"), @Column(name = "startRectWidth"), @Column(name = "startRectHeight")})
     private Rectangle startRectangle;
     private int startItemFreeRange;
     private static Log log = LogFactory.getLog(StartupData.class);

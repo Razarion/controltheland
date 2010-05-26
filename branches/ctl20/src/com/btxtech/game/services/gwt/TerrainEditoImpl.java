@@ -13,11 +13,13 @@
 
 package com.btxtech.game.services.gwt;
 
+import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
-import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.btxtech.game.jsre.mapeditor.TerrainEditor;
+import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.btxtech.game.services.terrain.TerrainService;
+import com.btxtech.game.services.territory.TerritoryService;
 import java.util.Collection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,6 +35,8 @@ import org.springframework.stereotype.Component;
 public class TerrainEditoImpl implements TerrainEditor {
     @Autowired
     private TerrainService terrainService;
+    @Autowired
+    private TerritoryService territoryService;
     private Log log = LogFactory.getLog(TerrainEditoImpl.class);
 
     @Override
@@ -57,6 +61,25 @@ public class TerrainEditoImpl implements TerrainEditor {
             terrainService.saveAndActivateTerrain(terrainImagePositions, surfaceRects);
         } catch (Throwable t) {
             log.error("", t);
+        }
+    }
+
+    @Override
+    public void saveTerritory(Territory territory) {
+        try {
+            territoryService.saveTerritory(territory);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    public Collection<Territory> getTerritories() {
+        try {
+            return territoryService.getTerritories();
+        } catch (Throwable t) {
+            log.error("", t);
+            return null;
         }
     }
 }

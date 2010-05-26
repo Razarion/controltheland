@@ -18,7 +18,6 @@ import com.btxtech.game.jsre.client.terrain.TerrainScrollListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.widgetideas.graphics.client.Color;
 
 /**
@@ -26,11 +25,11 @@ import com.google.gwt.widgetideas.graphics.client.Color;
  * Date: 22.12.2009
  * Time: 21:52:27
  */
-public class RadarFrameView extends MiniMap implements TerrainScrollListener, MouseDownHandler {
+public class RadarFrameView extends MiniMap implements TerrainScrollListener, MiniMapMouseDownListener {
     public RadarFrameView(int width, int height) {
         super(width, height);
         TerrainView.getInstance().addTerrainScrollListener(this);
-        addMouseDownHandler(this);
+        addMouseDownListener(this);
     }
 
     @Override
@@ -55,9 +54,7 @@ public class RadarFrameView extends MiniMap implements TerrainScrollListener, Mo
     }
 
     @Override
-    public void onMouseDown(MouseDownEvent mouseDownEvent) {
-        int x = (int) ((double) mouseDownEvent.getRelativeX(this.getElement()) / getScale());
-        int y = (int) ((double) mouseDownEvent.getRelativeY(this.getElement()) / getScale());
-        TerrainView.getInstance().moveToMiddle(new Index(x, y));
+    public void onMouseDown(int absX, int absY, MouseDownEvent mouseDownEvent) {
+        TerrainView.getInstance().moveToMiddle(new Index(absX, absY));
     }
 }

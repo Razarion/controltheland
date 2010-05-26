@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.mapview.common.GeometricalUtil;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.collision.CollisionServiceChangedListener;
 import com.btxtech.game.services.collision.PassableRectangle;
@@ -90,7 +91,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
             return;
         }
         for (Map.Entry<TerrainType, Collection<Index>> entry : tiles.entrySet()) {
-            ArrayList<Rectangle> mapAsRectangles = separateIntoRectangles(entry.getValue());
+            ArrayList<Rectangle> mapAsRectangles = GeometricalUtil.separateIntoRectangles(entry.getValue(), terrainService.getTerrainSettings());
             List<PassableRectangle> passableRectangles = buildPassableRectangleList(mapAsRectangles);
             passableRectangles4TerrainType.put(entry.getKey(), passableRectangles);
         }
@@ -139,130 +140,6 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
         }
 
         return passableRectangles;
-    }
-
-    private ArrayList<Rectangle> separateIntoRectangles(Collection<Index> passableTiles) {
-        ArrayList<Rectangle> rectangles = new ArrayList<Rectangle>();
-        Collection<Index> remainingTiles = new HashSet<Index>(passableTiles);
-        removeRectangles(remainingTiles, rectangles, passableTiles.iterator().next());
-        return rectangles;
-    }
-
-    private void removeRectangles(Collection<Index> remainingAtoms, ArrayList<Rectangle> rectangles, Index start) {
-        Rectangle rectangle = getRectangles(start.getX(), start.getY(), remainingAtoms);
-        rectangles.add(rectangle);
-
-        // remove used atoms
-        for (int x = rectangle.getStart().getX(); x <= rectangle.getEnd().getX(); x++) {
-            for (int y = rectangle.getStart().getY(); y <= rectangle.getEnd().getY(); y++) {
-                Index indexToRemove = new Index(x, y);
-                remainingAtoms.remove(indexToRemove);
-            }
-        }
-        // Make inclusive
-        rectangle.growEast(1);
-        rectangle.growSouth(1);
-
-        if (remainingAtoms.isEmpty()) {
-            return;
-        }
-
-        Index newStart = remainingAtoms.iterator().next();
-        removeRectangles(remainingAtoms, rectangles, newStart);
-    }
-
-    private Rectangle getRectangles(int stratX, int startY, Collection<Index> passableMap) {
-        Index index = new Index(stratX, startY);
-        if (!passableMap.contains(index)) {
-            throw new IllegalArgumentException("Invalid start point");
-        }
-
-        Rectangle rectangle = new Rectangle(index, index);
-        boolean canGrowNorth = true;
-        boolean canGrowEast = true;
-        boolean canGrowSouth = true;
-        boolean canGrowWest = true;
-
-        while (canGrowNorth | canGrowEast | canGrowSouth | canGrowWest) {
-            if (rectangle.getStart().getY() == 0) {
-                canGrowNorth = false;
-            }
-
-            if (rectangle.getEnd().getX() == terrainService.getDbTerrainSettings().getPlayFieldXSize() - 1) {
-                canGrowEast = false;
-            }
-
-            if (rectangle.getEnd().getY() == terrainService.getDbTerrainSettings().getPlayFieldYSize() - 1) {
-                canGrowSouth = false;
-            }
-
-            if (rectangle.getStart().getX() == 0) {
-                canGrowWest = false;
-            }
-
-            if (canGrowNorth) {
-                Rectangle newRectangle = rectangle.copy();
-                newRectangle.growNorth(1);
-                int size = Math.abs(newRectangle.getStart().getX() - newRectangle.getEnd().getX());
-                if (checkPassableAtomsHorizontal(newRectangle.getStart().getX(), newRectangle.getStart().getY(), size, passableMap)) {
-                    rectangle = newRectangle;
-                } else {
-                    canGrowNorth = false;
-                }
-            }
-            if (canGrowEast) {
-                Rectangle newRectangle = rectangle.copy();
-                newRectangle.growEast(1);
-                int size = Math.abs(newRectangle.getStart().getY() - newRectangle.getEnd().getY());
-                if (checkPassableAtomsVertial(newRectangle.getEnd().getX(), newRectangle.getStart().getY(), size, passableMap)) {
-                    rectangle = newRectangle;
-                } else {
-                    canGrowEast = false;
-                }
-            }
-            if (canGrowSouth) {
-                Rectangle newRectangle = rectangle.copy();
-                newRectangle.growSouth(1);
-                int size = Math.abs(newRectangle.getStart().getX() - newRectangle.getEnd().getX());
-                if (checkPassableAtomsHorizontal(newRectangle.getStart().getX(), newRectangle.getEnd().getY(), size, passableMap)) {
-                    rectangle = newRectangle;
-                } else {
-                    canGrowSouth = false;
-                }
-            }
-            if (canGrowWest) {
-                Rectangle newRectangle = rectangle.copy();
-                newRectangle.growWest(1);
-                int size = Math.abs(newRectangle.getStart().getY() - newRectangle.getEnd().getY());
-                if (checkPassableAtomsVertial(newRectangle.getStart().getX(), newRectangle.getStart().getY(), size, passableMap)) {
-                    rectangle = newRectangle;
-                } else {
-                    canGrowWest = false;
-                }
-            }
-        }
-        return rectangle;
-    }
-
-    private boolean checkPassableAtomsVertial(int startX, int startY, int length, Collection<Index> passableMap) {
-        for (int y = startY; y <= (startY + length); y++) {
-            Index index = new Index(startX, y);
-            if (!passableMap.contains(index)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-
-    private boolean checkPassableAtomsHorizontal(int startX, int startY, int length, Collection<Index> passableMap) {
-        for (int x = startX; x <= (startX + length); x++) {
-            Index index = new Index(x, startY);
-            if (!passableMap.contains(index)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     @Override

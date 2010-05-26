@@ -11,14 +11,17 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.wicket.pages.mgmt;
+package com.btxtech.game.jsre.common.gameengine.services.territory;
 
-import org.apache.wicket.markup.html.WebPage;
+import com.btxtech.game.jsre.common.Territory;
+import java.util.Collection;
 
 /**
  * User: beat
- * Date: 22.05.2010
- * Time: 15:22:28
+ * Date: 26.05.2010
+ * Time: 13:36:56
  */
-public class TerrainDesigner extends WebPage {
+public interface CommonTerritoryService {
+    Collection<Territory> getTerritories();
+
 }

@@ -479,12 +479,12 @@
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="RT GWT [Terrain Designer]" type="Application" factoryName="Application">
+    <configuration default="false" name="RT GWT [Territory Designer]" type="Application" factoryName="Application">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="emma" />
       <extension name="snapshooter" />
       <option name="MAIN_CLASS_NAME" value="com.google.gwt.dev.DevMode" />
       <option name="VM_PARAMETERS" value="-Xmx128M" />
-      <option name="PROGRAM_PARAMETERS" value="-noserver -war war -startupUrl http://localhost:8080/?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.mgmt.TerrainDesigner com.btxtech.game.jsre.MapView" />
+      <option name="PROGRAM_PARAMETERS" value="-noserver -war war -startupUrl http://localhost:8080/?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.mgmt.TerritoryDesigner com.btxtech.game.jsre.MapView" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
@@ -575,7 +575,7 @@
       <ConfigurationWrapper RunnerId="Run" />
       <method />
     </configuration>
-    <configuration default="false" name="GWT Compiler [Terrain Designer]" type="Application" factoryName="Application">
+    <configuration default="false" name="GWT Compiler [Territory Designer]" type="Application" factoryName="Application">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="emma" />
       <extension name="snapshooter" />
       <option name="MAIN_CLASS_NAME" value="com.google.gwt.dev.Compiler" />
