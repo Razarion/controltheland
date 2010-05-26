@@ -14,13 +14,18 @@
 package com.btxtech.game.services.resource;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.services.common.db.RectangleUserType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 /**
  * User: beat
@@ -28,12 +33,15 @@ import javax.persistence.ManyToOne;
  * Time: 22:07:56
  */
 @Entity(name = "RESOURCE_REGION_RESOURCE")
+@TypeDef(name = "rectangle", typeClass = RectangleUserType.class)
 public class DbRegionResource implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
     private int count;
     private int minDistanceToItems;
+    @Type(type = "rectangle")
+    @Columns(columns = {@Column(name = "x"), @Column(name = "y"), @Column(name = "width"), @Column(name = "height")})    
     private Rectangle region;
     private String name;
     @ManyToOne(optional = true, fetch = FetchType.EAGER)

@@ -152,4 +152,15 @@ public class GeometricalUtil {
         }
         return true;
     }
+
+    public static Collection<Index> splitIntoTiles(Collection<Rectangle> tileRectangle) {
+        ArrayList<Index> tiles = new ArrayList<Index>();
+        for (Rectangle rectangle : tileRectangle) {
+            Collection<Rectangle> tileRectangles = rectangle.split(1, 1);
+            for (Rectangle tileRect : tileRectangles) {
+                tiles.add(new Index(tileRect.getX(), tileRect.getY()));
+            }
+        }
+        return tiles;
+    }
 }

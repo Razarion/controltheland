@@ -18,7 +18,11 @@ import com.btxtech.game.jsre.client.cockpit.radar.MiniMapMouseDownListener;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniMapMouseMoveListener;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniMapMouseUpListener;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
+import com.btxtech.game.jsre.common.Territory;
+import com.btxtech.game.jsre.mapview.common.GeometricalUtil;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseUpEvent;
@@ -35,6 +39,7 @@ public class MiniTerritoryView extends MiniMap implements MiniMapMouseMoveListen
     private HashSet<Index> tiles = new HashSet<Index>();
     private boolean drawMode = false;
     private boolean eraseMode = false;
+    private Territory territory;
 
     public MiniTerritoryView(int width, int height) {
         super(width, height);
@@ -61,7 +66,10 @@ public class MiniTerritoryView extends MiniMap implements MiniMapMouseMoveListen
                     newY = 0;
                 }
                 if (drawMode) {
-                    tiles.add(new Index(newX, newY));
+                    Territory territory = ClientTerritoryService.getInstance().getTerritoryTile(newX, newY);
+                    if (territory == null || territory.equals(this.territory)) {
+                        tiles.add(new Index(newX, newY));
+                    }
                 } else if (eraseMode) {
                     tiles.remove(new Index(newX, newY));
                 }
@@ -92,16 +100,35 @@ public class MiniTerritoryView extends MiniMap implements MiniMapMouseMoveListen
         eraseMode = false;
     }
 
-    private void drawTiles() {
+    public void drawTiles() {
+        if (ClientTerritoryService.getInstance().getTerritories() == null || getTerrainSettings() == null) {
+            return;
+        }
+
         clear(getTerrainSettings().getPlayFieldXSize(), getTerrainSettings().getPlayFieldYSize());
         setFillStyle(Color.ALPHA_RED);
         for (Index index : tiles) {
             Index absIndex = TerrainView.getInstance().getTerrainHandler().getAbsolutIndexForTerrainTileIndex(index);
             fillRect(absIndex.getX(), absIndex.getY(), getTerrainSettings().getTileWidth(), getTerrainSettings().getTileHeight());
         }
+        setFillStyle(Color.ALPHA_GREY);
+        for (Territory territory : ClientTerritoryService.getInstance().getTerritories()) {
+            if (!territory.equals(this.territory)) {
+                for (Rectangle rectangle : territory.getTerritoryTileRegions()) {
+                    Rectangle absRect = TerrainView.getInstance().getTerrainHandler().convertToAbsolutePosition(rectangle);
+                    fillRect(absRect.getX(), absRect.getY(), absRect.getWidth(), absRect.getHeight());
+                }
+            }
+        }
     }
 
     public HashSet<Index> getTiles() {
         return tiles;
+    }
+
+    public void setTerritory(Territory territory) {
+        this.territory = territory;
+        tiles = new HashSet<Index>(GeometricalUtil.splitIntoTiles(territory.getTerritoryTileRegions()));
+        drawTiles();
     }
 }
