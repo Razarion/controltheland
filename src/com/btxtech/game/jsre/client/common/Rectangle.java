@@ -45,6 +45,10 @@ public class Rectangle implements Serializable {
         this.end = new Index(xStart + width, yStart + height);
     }
 
+    public void replace(Rectangle target) {
+        start = target.start.getCopy();
+        end = target.end.getCopy(); 
+    }
 
     public Index getStart() {
         return start.getCopy();

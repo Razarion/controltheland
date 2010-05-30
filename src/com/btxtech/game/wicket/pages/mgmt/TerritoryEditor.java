@@ -14,19 +14,30 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.jsre.mapview.territory.TerritoryEditModel;
+import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.territory.DbTerritory;
 import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.wicket.uiservices.ListProvider;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.HeadersToolbar;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.NoRecordsToolbar;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -37,10 +48,17 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 public class TerritoryEditor extends WebPage {
     @SpringBean
     private TerritoryService territoryService;
+    @SpringBean
+    private ItemService itemService;
 
     public TerritoryEditor() {
         add(new FeedbackPanel("msgs"));
 
+        setupTerritories();
+        setupMatrix();
+    }
+
+    private void setupTerritories() {
         Form form = new Form("territoryForm");
         add(form);
 
@@ -89,6 +107,49 @@ public class TerritoryEditor extends WebPage {
                 territoryService.addDbTerritory();
             }
         });
+    }
 
+    private void setupMatrix() {
+        ArrayList<IColumn<DbTerritory>> columnList = new ArrayList<IColumn<DbTerritory>>();
+        columnList.add(new AbstractColumn<DbTerritory>(new Model<String>("")) {
+
+            @Override
+            public void populateItem(Item<ICellPopulator<DbTerritory>> cellItem, String componentId, IModel<DbTerritory> rowModel) {
+                cellItem.add(new Label(componentId, rowModel.getObject().getName()));
+            }
+        });
+
+        for (final DbBaseItemType baseItemType : itemService.getDbBaseItemTypes()) {
+            columnList.add(new AbstractColumn<DbTerritory>(new Model<String>(baseItemType.getName())) {
+
+                @Override
+                public void populateItem(Item<ICellPopulator<DbTerritory>> cellItem, String componentId, IModel<DbTerritory> rowModel) {
+                    cellItem.add(new TerritoryAssignment(componentId, baseItemType, rowModel.getObject()));
+                }
+            });
+        }
+
+        @SuppressWarnings("unchecked")
+        IColumn<DbTerritory>[] columnArray = (IColumn<DbTerritory>[]) columnList.toArray(new IColumn[columnList.size()]);
+        final ListProvider<DbTerritory> territoryProvider = new ListProvider<DbTerritory>() {
+            @Override
+            protected List<DbTerritory> createList() {
+                return territoryService.getDbTerritories();
+            }
+        };
+
+        Form form = new Form("matrixForm") {
+
+            protected void onSubmit() {
+                territoryService.saveDbTerritory(territoryProvider.getLastModifiedList());
+            }
+        };
+        add(form);
+        
+
+        DataTable<DbTerritory> dataTable = new DataTable<DbTerritory>("dataTable", columnArray, territoryProvider, Integer.MAX_VALUE);
+        dataTable.addTopToolbar(new HeadersToolbar(dataTable, null));
+        dataTable.addBottomToolbar(new NoRecordsToolbar(dataTable, new Model<String>("No ARQ")));
+        form.add(dataTable);
     }
 }

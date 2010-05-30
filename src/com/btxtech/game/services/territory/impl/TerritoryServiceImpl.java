@@ -74,7 +74,9 @@ public class TerritoryServiceImpl extends AbstractTerritoryServiceImpl implement
 
     @Override
     public void saveDbTerritory(List<DbTerritory> dbTerritories) {
-        hibernateTemplate.saveOrUpdateAll(dbTerritories);
+        for (DbTerritory dbTerritory : dbTerritories) {
+            hibernateTemplate.merge(dbTerritory);
+        }
         updateTerritories();
     }
 

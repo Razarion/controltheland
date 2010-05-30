@@ -108,7 +108,7 @@ public class RectangleUserType implements UserType {
     }
 
     @Override
-    public Object replace(Object o, Object o1, Object o2) throws HibernateException {
-        throw new NotImplementedException();
+    public Object replace(Object original, Object target, Object owner) throws HibernateException {
+        return ((Rectangle) original).copy();
     }
 }
