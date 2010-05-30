@@ -63,6 +63,12 @@ public class SyncWeapon extends SyncBaseAbility {
                 if (getSyncBaseItem().hasSyncTurnable()) {
                     getSyncBaseItem().getSyncTurnable().turnTo(targetItem.getPosition());
                 }
+                if (!getServices().getTerritoryService().isAllowed(targetItem.getPosition(), getSyncBaseItem())) {
+                    throw new IllegalArgumentException(this + " Weapon not allowed to attack item on territory: " + targetItem.getPosition() + "  " + getSyncBaseItem());
+                }
+                if (!getServices().getTerritoryService().isAllowed(getSyncBaseItem().getPosition(), getSyncBaseItem())) {
+                    throw new IllegalArgumentException(this + " Weapon not allowed to attack on territory: " + targetItem.getPosition() + "  " + getSyncBaseItem());
+                }
                 if (reloadProgress >= weaponType.getReloadTime()) {
                     handleAttackState();
                     targetItem.decreaseHealth(weaponType.getDemage() * reloadProgress / weaponType.getReloadTime(), getSyncBaseItem());
@@ -118,6 +124,10 @@ public class SyncWeapon extends SyncBaseAbility {
         SyncBaseItem target = (SyncBaseItem) getServices().getItemService().getItem(attackCommand.getTarget());
         if (!getSyncBaseItem().isEnemy(target)) {
             throw new IllegalArgumentException(this + " can not attack own base");
+        }
+
+        if (!getServices().getTerritoryService().isAllowed(target.getPosition(), getSyncBaseItem())) {
+            throw new IllegalArgumentException(this + " Weapon not allowed to attack item on territory: " + target.getPosition() + "  " + getSyncBaseItem());
         }
 
         this.target = attackCommand.getTarget();

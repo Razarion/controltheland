@@ -26,6 +26,7 @@ import java.util.Collection;
 public class Territory implements Serializable {
     private String name;
     private Collection<Rectangle> territoryTileRegions;
+    private Collection<Integer> allowedItemTypes;
 
     public String getName() {
         return name;
@@ -50,6 +51,14 @@ public class Territory implements Serializable {
             }
         }
         return false;
+    }
+
+    public void setAllowedItemTypes(Collection<Integer> allowedItemTypes) {
+        this.allowedItemTypes = allowedItemTypes;
+    }
+
+    public boolean isItemAllowed(int itemTypeId) {
+        return allowedItemTypes.contains(itemTypeId);
     }
 
     @Override

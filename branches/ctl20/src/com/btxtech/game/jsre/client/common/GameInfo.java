@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.common;
 
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
@@ -45,6 +46,8 @@ public class GameInfo implements Serializable{
     private int registerDialogDelay;
     private int userActionCollectionTime;
     private Level level;
+    private Collection<Territory> territories;
+
 
     public SimpleBase getBase() {
         return base;
@@ -180,5 +183,13 @@ public class GameInfo implements Serializable{
 
     public void setLevel(Level level) {
         this.level = level;
+    }
+
+    public Collection<Territory> getTerritories() {
+        return territories;
+    }
+
+    public void setTerritories(Collection<Territory> territories) {
+        this.territories = territories;
     }
 }

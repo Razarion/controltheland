@@ -39,6 +39,7 @@ import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.terrain.TerrainService;
+import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
@@ -74,6 +75,8 @@ public class MovableServiceImpl implements MovableService {
     private UserService userService;
     @Autowired
     private MgmtService mgmtService;
+    @Autowired
+    private TerritoryService territoryService;
 
     private Log log = LogFactory.getLog(MovableServiceImpl.class);
 
@@ -161,6 +164,7 @@ public class MovableServiceImpl implements MovableService {
             gameInfo.setRegisterDialogDelay(startupData.getRegisterDialogDelay());
             gameInfo.setUserActionCollectionTime(startupData.getUserActionCollectionTime());
             gameInfo.setLevel(userGuidanceService.getLevel4Base());
+            gameInfo.setTerritories(territoryService.getTerritories());
             return gameInfo;
         } catch (com.btxtech.game.services.connection.NoConnectionException t) {
             log.error(t.getMessage() + " SessionId: " + t.getSessionId());

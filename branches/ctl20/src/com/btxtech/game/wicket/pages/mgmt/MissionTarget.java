@@ -131,7 +131,7 @@ public class MissionTarget extends WebPage {
 
             @Override
             public void setObject(String itemsString) {
-                dbLevel.setSkipIfItemsBought(ItemsUtil.stringToItemTypes(itemsString, itemService.getDbItemTypes()));
+                dbLevel.setSkipIfItemsBought(ItemsUtil.stringToItemTypes(itemsString, itemService.getDbBaseItemTypes()));
             }
 
             @Override
