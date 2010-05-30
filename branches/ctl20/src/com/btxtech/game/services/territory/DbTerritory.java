@@ -15,6 +15,7 @@ package com.btxtech.game.services.territory;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.Territory;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,6 +27,9 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import org.hibernate.annotations.Cascade;
 
@@ -41,9 +45,15 @@ public class DbTerritory implements Serializable {
     private Integer id;
     @Column(unique = true)
     private String name;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "dbTerritory")    
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "dbTerritory")
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private Set<DbTerritoryRegion> dbTerritoryRegions;
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "TERRITORY_TERRITORY_ALLOWED_ITEMS",
+            joinColumns = @JoinColumn(name = "territoryId"),
+            inverseJoinColumns = @JoinColumn(name = "itemTypeId")
+    )
+    private Set<DbBaseItemType> allowedItems;
 
     public String getName() {
         return name;
@@ -91,6 +101,21 @@ public class DbTerritory implements Serializable {
             dbTerritoryRegion.setDbTerritory(this);
             dbTerritoryRegion.setTileRectangle(rectangle);
             dbTerritoryRegions.add(dbTerritoryRegion);
+        }
+    }
+
+    public Boolean isItemAllowed(DbBaseItemType dbBaseItemType) {
+        return allowedItems != null && allowedItems.contains(dbBaseItemType);
+    }
+
+    public void setItemAllowed(DbBaseItemType dbBaseItemType, boolean allowed) {
+        if (allowedItems == null) {
+            allowedItems = new HashSet<DbBaseItemType>();
+        }
+        if (allowed) {
+            allowedItems.add(dbBaseItemType);
+        } else {
+            allowedItems.remove(dbBaseItemType);
         }
     }
 }

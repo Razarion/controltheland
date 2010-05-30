@@ -337,10 +337,22 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
     @Override
     public Collection<DbItemType> getDbItemTypes() {
-        return (Collection<DbItemType>) hibernateTemplate.execute(new HibernateCallback() {
+        return hibernateTemplate.executeFind(new HibernateCallback() {
             @Override
             public Object doInHibernate(Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(DbItemType.class);
+                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                return criteria.list();
+            }
+        });
+    }
+
+    @Override
+    public Collection<DbBaseItemType> getDbBaseItemTypes() {
+        return hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbBaseItemType.class);
                 criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
                 return criteria.list();
             }
