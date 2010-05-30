@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionService;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseService;
@@ -26,6 +27,7 @@ import com.btxtech.game.jsre.common.gameengine.services.energy.EnergyService;
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccess;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
+import com.btxtech.game.jsre.common.gameengine.services.territory.AbstractTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 /**
@@ -87,5 +89,10 @@ public class ClientServices implements Services {
     @Override
     public CommonActionService getActionService() {
         return ActionHandler.getInstance();
+    }
+
+    @Override
+    public AbstractTerritoryService getTerritoryService() {
+        return ClientTerritoryService.getInstance();
     }
 }

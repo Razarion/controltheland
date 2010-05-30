@@ -120,7 +120,7 @@ public class TerritoryServiceImpl extends AbstractTerritoryServiceImpl implement
             if (dbTerritory.getName() == null || dbTerritory.getName().trim().isEmpty()) {
                 continue;
             }
-            territories.add(dbTerritory.creatTerritory());
+            territories.add(dbTerritory.createTerritory());
         }
         setTerritories(territories);
     }
@@ -128,7 +128,7 @@ public class TerritoryServiceImpl extends AbstractTerritoryServiceImpl implement
     @Override
     public void saveTerritory(Territory territory) {
         DbTerritory dbTerritory = getDbTerritory(territory.getName());
-        dbTerritory.createDbTerritoryRegion(territory.getTerritoryTileRegions());
+        dbTerritory.addDbTerritoryRegion(territory.getTerritoryTileRegions());
         hibernateTemplate.update(dbTerritory);
         updateTerritories();
     }

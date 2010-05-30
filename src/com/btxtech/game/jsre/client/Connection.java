@@ -25,14 +25,14 @@ import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.client.utg.ClientUserGuidance;
+import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.client.utg.MissionTarget;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.EnergyPacket;
+import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
-import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.bot.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -112,6 +112,7 @@ public class Connection implements AsyncCallback<Void> {
                 gameInfo.getTerrainImages());
         ClientUserTracker.getInstance().setCollectionTime(gameInfo.getUserActionCollectionTime());
         MissionTarget.getInstance().setLevel(gameInfo.getLevel());
+        ClientTerritoryService.getInstance().setTerritories(gameInfo.getTerritories());
 
         movableServiceAsync.getItemTypes(new AsyncCallback<Collection<ItemType>>() {
             @Override
@@ -212,7 +213,7 @@ public class Connection implements AsyncCallback<Void> {
                 } else if (packet instanceof OnlineBaseUpdate) {
                     OnlineBasePanel.getInstance().setOnlineBases((OnlineBaseUpdate) packet);
                 } else if (packet instanceof LevelPacket) {
-                    MissionTarget.getInstance().onLevelChanged((LevelPacket)packet);
+                    MissionTarget.getInstance().onLevelChanged((LevelPacket) packet);
                 } else {
                     throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }
@@ -278,7 +279,7 @@ public class Connection implements AsyncCallback<Void> {
         } else {
             missionTargetDialog.setNoConnection(null);
         }
-    }    
+    }
 
     public void surrenderBase() {
         if (movableServiceAsync != null) {

@@ -40,7 +40,7 @@ public class ItemsUtil {
         return stringBuilder.toString();
     }
 
-    public static Set<DbBaseItemType> stringToItemTypes(String itemsString, Collection<DbItemType> dbBaseItemTypes) {
+    public static Set<DbBaseItemType> stringToItemTypes(String itemsString, Collection<DbBaseItemType> dbBaseItemTypes) {
         if (itemsString == null) {
             return null;
         }
@@ -53,10 +53,10 @@ public class ItemsUtil {
         return result;
     }
 
-    public static DbBaseItemType getItemType4Id(int id, Collection<DbItemType> dbBaseItemTypes) {
-        for (DbItemType dbItemType : dbBaseItemTypes) {
-            if (dbItemType.getId() == id) {
-                return (DbBaseItemType) dbItemType;
+    public static DbBaseItemType getItemType4Id(int id, Collection<DbBaseItemType> dbBaseItemTypes) {
+        for (DbBaseItemType dbBaseItemType : dbBaseItemTypes) {
+            if (dbBaseItemType.getId() == id) {
+                return dbBaseItemType;
             }
         }
         throw new IllegalArgumentException("Item type does not exist: " + id);

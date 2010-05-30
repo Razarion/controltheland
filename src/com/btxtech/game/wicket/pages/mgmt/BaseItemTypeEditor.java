@@ -23,13 +23,11 @@ import com.btxtech.game.services.item.itemType.DbFactoryType;
 import com.btxtech.game.services.item.itemType.DbGeneratorType;
 import com.btxtech.game.services.item.itemType.DbHarvesterType;
 import com.btxtech.game.services.item.itemType.DbItemContainerType;
-import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeData;
 import com.btxtech.game.services.item.itemType.DbMovableType;
 import com.btxtech.game.services.item.itemType.DbSpecialType;
 import com.btxtech.game.services.item.itemType.DbTurnableType;
 import com.btxtech.game.services.item.itemType.DbWeaponType;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import javax.swing.ImageIcon;
@@ -92,12 +90,13 @@ public class BaseItemTypeEditor extends WebPage {
     private boolean special;
     private String specialString;
     private String imageFileField;
-    private Collection<DbItemType> itemTypes = new ArrayList<DbItemType>();
+    private Collection<DbBaseItemType> itemTypes;
 
 
     public BaseItemTypeEditor(DbBaseItemType dbBaseItemType) {
         // Prevent circular object from with same id -> Hibernate problem
-        this.dbBaseItemType = ItemsUtil.getItemType4Id(dbBaseItemType.getId(), itemService.getDbItemTypes());
+        itemTypes = itemService.getDbBaseItemTypes();
+        this.dbBaseItemType = ItemsUtil.getItemType4Id(dbBaseItemType.getId(), itemTypes);
 
         FeedbackPanel feedbackPanel = new FeedbackPanel("msgs");
         add(feedbackPanel);

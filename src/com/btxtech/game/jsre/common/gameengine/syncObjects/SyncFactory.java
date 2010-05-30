@@ -112,6 +112,12 @@ public class SyncFactory extends SyncBaseAbility {
         if (!getSyncBaseItem().getBase().isBot() && !getServices().getItemTypeAccess().isAllowed(factoryCommand.getToBeBuilt())) {
             throw new IllegalArgumentException(this + " user is not allowed to fabricate: " + factoryCommand.getToBeBuilt());
         }
+        if (!getServices().getTerritoryService().isAllowed(getSyncBaseItem().getPosition(), getSyncBaseItem())) {
+            throw new IllegalArgumentException(this + " Factory not allowed to build on territory: " + getSyncBaseItem().getPosition() + "  " + getSyncBaseItem());
+        }
+        if (!getServices().getTerritoryService().isAllowed(getSyncBaseItem().getPosition(), factoryCommand.getToBeBuilt())) {
+            throw new IllegalArgumentException(this + " Item can not be built on territory: " + getSyncBaseItem().getPosition() + "  " + factoryCommand.getToBeBuilt());
+        }
         if (toBeBuiltType == null) {
             BaseItemType tmpToBeBuiltType = (BaseItemType) getServices().getItemService().getItemType(factoryCommand.getToBeBuilt());
             getServices().getBaseService().withdrawalMoney(tmpToBeBuiltType.getPrice(), getSyncBaseItem().getBase());

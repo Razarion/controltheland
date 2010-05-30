@@ -66,6 +66,10 @@ public class SyncItemContainer extends SyncBaseAbility {
             throw new IllegalArgumentException("Container " + getSyncBaseItem() + " is not able to contain: " + syncBaseItem);
         }
 
+        if (!getServices().getTerritoryService().isAllowed(getSyncBaseItem().getPosition(), getSyncBaseItem())) {
+            throw new IllegalArgumentException(this + " Container not allowed to load on territory: " + getSyncBaseItem().getPosition() + "  " + getSyncBaseItem());
+        }
+
         if (containedItems.size() < itemContainerType.getMaxCount()) {
             containedItems.add(syncBaseItem);
             syncBaseItem.setContained(getSyncBaseItem().getId());
@@ -78,6 +82,10 @@ public class SyncItemContainer extends SyncBaseAbility {
             throw new IllegalStateException("No items in item container: " + getSyncBaseItem());
         }
 
+        if (!getServices().getTerritoryService().isAllowed(unloadContainerCommand.getUnloadPos(), getSyncBaseItem())) {
+            throw new IllegalArgumentException(this + " Container not allowed to unload on territory: " + unloadContainerCommand.getUnloadPos() + "  " + getSyncBaseItem());
+        }
+        
         unloadPos = unloadContainerCommand.getUnloadPos();
     }
 

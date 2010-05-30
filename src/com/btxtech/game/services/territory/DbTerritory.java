@@ -49,11 +49,11 @@ public class DbTerritory implements Serializable {
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private Set<DbTerritoryRegion> dbTerritoryRegions;
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "TERRITORY_TERRITORY_ALLOWED_ITEMS",
+    @JoinTable(name = "TERRITORY_TERRITORY_ALLOWED_ITEM_TYPES",
             joinColumns = @JoinColumn(name = "territoryId"),
             inverseJoinColumns = @JoinColumn(name = "itemTypeId")
     )
-    private Set<DbBaseItemType> allowedItems;
+    private Set<DbBaseItemType> allowedItemTypes;
 
     public String getName() {
         return name;
@@ -79,7 +79,7 @@ public class DbTerritory implements Serializable {
         return id != null ? id.hashCode() : 0;
     }
 
-    public Territory creatTerritory() {
+    public Territory createTerritory() {
         Territory territory = new Territory();
         territory.setName(name);
         ArrayList<Rectangle> rectangles = new ArrayList<Rectangle>();
@@ -87,10 +87,15 @@ public class DbTerritory implements Serializable {
             rectangles.add(dbTerritoryRegion.getTileRectangle());
         }
         territory.setTerritoryTileRegions(rectangles);
+        HashSet<Integer> allowedItemTypes = new HashSet<Integer>();
+        for (DbBaseItemType dbBaseItemType : this.allowedItemTypes) {
+            allowedItemTypes.add(dbBaseItemType.getId());
+        }
+        territory.setAllowedItemTypes(allowedItemTypes);
         return territory;
     }
 
-    public void createDbTerritoryRegion(Collection<Rectangle> territoryRegions) {
+    public void addDbTerritoryRegion(Collection<Rectangle> territoryRegions) {
         if (dbTerritoryRegions == null) {
             dbTerritoryRegions = new HashSet<DbTerritoryRegion>();
         } else {
@@ -105,17 +110,17 @@ public class DbTerritory implements Serializable {
     }
 
     public Boolean isItemAllowed(DbBaseItemType dbBaseItemType) {
-        return allowedItems != null && allowedItems.contains(dbBaseItemType);
+        return allowedItemTypes != null && allowedItemTypes.contains(dbBaseItemType);
     }
 
     public void setItemAllowed(DbBaseItemType dbBaseItemType, boolean allowed) {
-        if (allowedItems == null) {
-            allowedItems = new HashSet<DbBaseItemType>();
+        if (allowedItemTypes == null) {
+            allowedItemTypes = new HashSet<DbBaseItemType>();
         }
         if (allowed) {
-            allowedItems.add(dbBaseItemType);
+            allowedItemTypes.add(dbBaseItemType);
         } else {
-            allowedItems.remove(dbBaseItemType);
+            allowedItemTypes.remove(dbBaseItemType);
         }
     }
 }
