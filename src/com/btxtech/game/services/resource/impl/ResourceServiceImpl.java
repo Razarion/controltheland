@@ -87,7 +87,8 @@ public class ResourceServiceImpl implements ResourceService, CollisionServiceCha
 
     private void loadDbRegionResources() {
         regionResources.clear();
-        @SuppressWarnings("unchecked") List<DbRegionResource> dbRegionResources = getDbRegionResources();
+        @SuppressWarnings("unchecked")
+        List<DbRegionResource> dbRegionResources = getDbRegionResources();
         if (dbRegionResources.isEmpty()) {
             log.info("No DbRegionResource specified");
             return;
