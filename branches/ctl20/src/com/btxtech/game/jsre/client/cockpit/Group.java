@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -143,6 +144,14 @@ public class Group {
 
     public Collection<ClientSyncBaseItemView> getItems() {
         return clientSyncItems;
+    }
+
+    public Collection<SyncBaseItem> getSyncBaseItems() {
+        ArrayList<SyncBaseItem> syncBaseItems = new ArrayList<SyncBaseItem>();
+        for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
+            syncBaseItems.add(clientSyncItem.getSyncBaseItem());
+        }
+        return syncBaseItems;
     }
 
     public Collection<ClientSyncBaseItemView> getMovableItems() {
