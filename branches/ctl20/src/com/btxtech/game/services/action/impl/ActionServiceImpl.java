@@ -37,6 +37,7 @@ import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.terrain.TerrainService;
+import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -75,6 +76,8 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
     private TerrainService terrainService;
     @Autowired
     private ServerEnergyService energyService;
+    @Autowired
+    private TerritoryService territoryService;
     private final HashSet<SyncBaseItem> activeItems = new HashSet<SyncBaseItem>();
     private final HashSet<SyncBaseItem> guardingItems = new HashSet<SyncBaseItem>();
     private final ArrayList<SyncBaseItem> tmpActiveItems = new ArrayList<SyncBaseItem>();
@@ -178,6 +181,10 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
         }
 
         if (syncItem.getPosition() == null) {
+            return;
+        }
+
+        if(!territoryService.isAllowed(syncItem.getPosition(), syncItem)) {
             return;
         }
 
