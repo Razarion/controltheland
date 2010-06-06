@@ -339,7 +339,11 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
         if (surfaceTypes.isEmpty()) {
             return false;
         }
-        return allowedSurfaces.containsAll(surfaceTypes);
+        if (allowedSurfaces != null) {
+            return allowedSurfaces.containsAll(surfaceTypes);
+        } else {
+            return true; // TODO is this correct?
+        }
     }
 
     @Override

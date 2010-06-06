@@ -18,7 +18,9 @@ import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.TerrainMouseButtonListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseUpEvent;
@@ -71,7 +73,13 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
             return;
         }
 
-        ActionHandler.getInstance().unloadContainer(selection.getFirst().getSyncBaseItem(), new Index(absoluteX, absoluteY));
+        SyncBaseItem syncBaseItem = selection.getFirst().getSyncBaseItem();
+        Index position = new Index(absoluteX, absoluteY);
+        if (!ClientTerritoryService.getInstance().isAllowed(position, syncBaseItem)) {
+            return;
+        }
+
+        ActionHandler.getInstance().unloadContainer(syncBaseItem, position);
     }
 
     private void executeMoveCommand(int absoluteX, int absoluteY) {
