@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
+import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -106,7 +107,7 @@ public class BuildupItemPanel extends HorizontalPanel implements SelectionListen
         itemTypesToBuild.clear();
         for (Integer itemTypeID : itemTypeIDs) {
             final BaseItemType itemType = (BaseItemType) ClientServices.getInstance().getItemService().getItemType(itemTypeID);
-            boolean enabled = ClientItemTypeAccess.getInstance().isAllowed(itemTypeID);
+            boolean enabled = ClientItemTypeAccess.getInstance().isAllowed(itemTypeID) && ClientTerritoryService.getInstance().isAllowed(factories.getFirst().getSyncBaseItem().getPosition(), itemTypeID);
             itemsToBuild.add(setupBuildupBlock(itemType, enabled, new MouseDownHandler() {
                 @Override
                 public void onMouseDown(MouseDownEvent event) {
@@ -132,7 +133,7 @@ public class BuildupItemPanel extends HorizontalPanel implements SelectionListen
         if (enabled) {
             itemTypesToBuild.put(itemType, button);
         }
-        
+
         return verticalPanel;
 
     }

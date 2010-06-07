@@ -21,7 +21,7 @@ import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.TopMapPanel;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemContainer;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -39,6 +39,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class CockpitPanel extends TopMapPanel implements SelectionListener {
     private VerticalPanel detailPanel;
     private BuildupItemPanel buildupItemPanel;
+    private boolean unloadMode = false;
 
     @Override
     protected Widget createBody() {
@@ -75,12 +76,12 @@ public class CockpitPanel extends TopMapPanel implements SelectionListener {
                 builder.append("<br/>ID: ");
                 builder.append(selection.getSyncItem().getId());
             }
-            setupDescrBox(builder.toString(), null);
+            setupDescrBox(builder.toString(), null, null);
         } else if (selection instanceof ClientSyncResourceItemView) {
             if (Game.isDebug()) {
-                setupDescrBox(selection.getSyncItem().getItemType().getDescription() + "<br/>ID: " + selection.getSyncItem().getId(), null);
+                setupDescrBox(selection.getSyncItem().getItemType().getDescription() + "<br/>ID: " + selection.getSyncItem().getId(), null, null);
             } else {
-                setupDescrBox(selection.getSyncItem().getItemType().getDescription(), null);
+                setupDescrBox(selection.getSyncItem().getItemType().getDescription(), null, null);
             }
         } else {
             throw new IllegalArgumentException(this + " can not set details for: " + selection);
@@ -90,26 +91,31 @@ public class CockpitPanel extends TopMapPanel implements SelectionListener {
 
     public void onOwnSelectionChanged(Group selectedGroup) {
         detailPanel.clear();
+        clearUnloadMode();
         if (selectedGroup.count() == 1) {
-            SyncItem syncItem = selectedGroup.getFirst().getSyncItem();
+            SyncBaseItem syncBaseItem = (SyncBaseItem) selectedGroup.getFirst().getSyncItem();
             SyncBaseItem upgradeable = null;
-            if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).getBaseItemType().getUpgradeable() != null) {
-                upgradeable = (SyncBaseItem) syncItem;
+            SyncItemContainer syncItemContainer = null;
+            if (syncBaseItem.isUpgradeable()) {
+                upgradeable = syncBaseItem;
             }
+            if (syncBaseItem.hasSyncItemContainer()) {
+                syncItemContainer = syncBaseItem.getSyncItemContainer();
+            }
+            String descr = syncBaseItem.getItemType().getDescription();
             if (Game.isDebug()) {
-                setupDescrBox(syncItem.getItemType().getDescription() + "<br/>ID: " + syncItem.getId(), upgradeable);
-            } else {
-                setupDescrBox(syncItem.getItemType().getDescription(), upgradeable);
+                descr += "<br/>ID: " + syncBaseItem.getId();
             }
+            setupDescrBox(descr, upgradeable, syncItemContainer);
         } else if (selectedGroup.canAttack()) {
-            setupDescrBox(selectedGroup.getFirst().getSyncItem().getItemType().getDescription(), null);
+            setupDescrBox(selectedGroup.getFirst().getSyncItem().getItemType().getDescription(), null, null);
         } else if (selectedGroup.canCollect()) {
-            setupDescrBox(selectedGroup.getFirst().getSyncItem().getItemType().getDescription(), null);
+            setupDescrBox(selectedGroup.getFirst().getSyncItem().getItemType().getDescription(), null, null);
         }
         setVisible(true);
     }
 
-    private void setupDescrBox(String descr, final SyncBaseItem upgradeable) {
+    private void setupDescrBox(String descr, final SyncBaseItem upgradeable, SyncItemContainer syncItemContainer) {
         HTML label = new HTML(descr);
         label.setWidth("100px");
         label.getElement().getStyle().setColor("darkorange");
@@ -126,9 +132,40 @@ public class CockpitPanel extends TopMapPanel implements SelectionListener {
             button.setEnabled(ClientServices.getInstance().getItemTypeAccess().isAllowed(upgradeable.getBaseItemType().getUpgradeable()));
             detailPanel.add(button);
         }
+
+        if (syncItemContainer != null) {
+            detailPanel.add(new HTML("<br>"));
+            Button button = new Button("Unload");
+            button.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    setUnloadMode();
+                }
+            });
+            detailPanel.add(button);
+        }
     }
 
     public BuildupItemPanel getBuildupItemPanel() {
         return buildupItemPanel;
     }
+
+    public boolean isUnloadMode() {
+        return unloadMode;
+    }
+
+    private void setUnloadMode() {
+        if (!unloadMode) {
+            unloadMode = true;
+            CursorHandler.getInstance().setUnloadContainer();
+        }
+    }
+
+    public void clearUnloadMode() {
+        if (unloadMode) {
+            unloadMode = false;
+            CursorHandler.getInstance().clearUnloadContainer();
+        }
+    }
+
 }

@@ -13,12 +13,17 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.FactoryType;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -30,10 +35,12 @@ public class SyncFactory extends SyncBaseAbility {
     private BaseItemType toBeBuiltType;
     private int buildupProgress;
     private int createdChildCount;
+    private Index rallyPoint;
 
-    public SyncFactory(FactoryType factoryType, SyncBaseItem syncBaseItem) {
+    public SyncFactory(FactoryType factoryType, SyncBaseItem syncBaseItem) throws NoSuchItemTypeException {
         super(syncBaseItem);
         this.factoryType = factoryType;
+        calculateRallyPoint();
     }
 
     public boolean isActive() {
@@ -47,7 +54,7 @@ public class SyncFactory extends SyncBaseAbility {
 
         buildupProgress += (factoryType.getProgress() * factor);
         if (buildupProgress >= toBeBuiltType.getHealth()) {
-            SyncBaseItem item = (SyncBaseItem) getServices().getItemService().createSyncObject(toBeBuiltType, getSyncBaseItem().getPosition(), getSyncBaseItem(), getSyncBaseItem().getBase(), createdChildCount);
+            SyncBaseItem item = (SyncBaseItem) getServices().getItemService().createSyncObject(toBeBuiltType, rallyPoint, getSyncBaseItem(), getSyncBaseItem().getBase(), createdChildCount);
             item.setFullHealth();
             item.setBuild(true);
             createdChildCount++;
@@ -77,6 +84,7 @@ public class SyncFactory extends SyncBaseAbility {
         }
         buildupProgress = syncItemInfo.getBuildupProgress();
         createdChildCount = syncItemInfo.getCreatedChildCount();
+        rallyPoint = syncItemInfo.getRallyPoint();
     }
 
     @Override
@@ -86,6 +94,7 @@ public class SyncFactory extends SyncBaseAbility {
         }
         syncItemInfo.setBuildupProgress(buildupProgress);
         syncItemInfo.setCreatedChildCount(createdChildCount);
+        syncItemInfo.setRallyPoint(rallyPoint);
     }
 
     public void stop() {
@@ -102,6 +111,12 @@ public class SyncFactory extends SyncBaseAbility {
         }
         if (!getSyncBaseItem().getBase().isBot() && !getServices().getItemTypeAccess().isAllowed(factoryCommand.getToBeBuilt())) {
             throw new IllegalArgumentException(this + " user is not allowed to fabricate: " + factoryCommand.getToBeBuilt());
+        }
+        if (!getServices().getTerritoryService().isAllowed(getSyncBaseItem().getPosition(), getSyncBaseItem())) {
+            throw new IllegalArgumentException(this + " Factory not allowed to build on territory: " + getSyncBaseItem().getPosition() + "  " + getSyncBaseItem());
+        }
+        if (!getServices().getTerritoryService().isAllowed(getSyncBaseItem().getPosition(), factoryCommand.getToBeBuilt())) {
+            throw new IllegalArgumentException(this + " Item can not be built on territory: " + getSyncBaseItem().getPosition() + "  " + factoryCommand.getToBeBuilt());
         }
         if (toBeBuiltType == null) {
             BaseItemType tmpToBeBuiltType = (BaseItemType) getServices().getItemService().getItemType(factoryCommand.getToBeBuilt());
@@ -124,5 +139,22 @@ public class SyncFactory extends SyncBaseAbility {
 
     public void setCreatedChildCount(int createdChildCount) {
         this.createdChildCount = createdChildCount;
+    }
+
+    public Index getRallyPoint() {
+        return rallyPoint;
+    }
+
+    public void setRallyPoint(Index rallyPoint) {
+        this.rallyPoint = rallyPoint;
+    }
+
+    private void calculateRallyPoint() throws NoSuchItemTypeException {
+        Collection<TerrainType> types = new ArrayList<TerrainType>();
+        for (int id : factoryType.getAbleToBuild()) {
+            ItemType itemType = getServices().getItemService().getItemType(id);
+            types.add(itemType.getTerrainType());
+        }
+        rallyPoint = getServices().getCollisionService().getRallyPoint(getSyncBaseItem(), TerrainType.leastCommonMultiple(types));
     }
 }

@@ -15,12 +15,13 @@ package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.Game;
-import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.PlaceablePreviewWidget;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.google.gwt.event.dom.client.MouseEvent;
@@ -73,11 +74,7 @@ public class PlaceablePreviewSyncItem extends PlaceablePreviewWidget {
     @Override
     protected boolean allowedToPlace(int relX, int relY) {
         // Check if over cockpit
-        Rectangle rectangle = new Rectangle(Game.cockpitPanel.getAbsoluteLeft(),
-                Game.cockpitPanel.getAbsoluteTop(),
-                Game.cockpitPanel.getOffsetWidth(),
-                Game.cockpitPanel.getOffsetHeight());
-        if (rectangle.contains(new Index(relX + itemTypeToBuilt.getHeight() / 2, relY + itemTypeToBuilt.getWidth() / 2))) {
+        if (Game.cockpitPanel.isInside(relX + itemTypeToBuilt.getHeight() / 2, relY + itemTypeToBuilt.getWidth() / 2)) {
             return false;
         }
 
@@ -87,9 +84,20 @@ public class PlaceablePreviewSyncItem extends PlaceablePreviewWidget {
         if (absX < 0 || absY < 0) {
             return false;
         }
+        Index absIndex = new Index(absX, absY);
+
         int terrainX = absX + itemTypeToBuilt.getWidth() / 2;
-        int terrainY =absY + itemTypeToBuilt.getHeight() / 2;
+        int terrainY = absY + itemTypeToBuilt.getHeight() / 2;
         if (!ClientServices.getInstance().getTerrainService().isFree(new Index(terrainX, terrainY), itemTypeToBuilt)) {
+            return false;
+        }
+
+        // Check territory
+        if (!ClientTerritoryService.getInstance().isAllowed(absIndex, itemTypeToBuilt)) {
+            return false;
+        }
+
+        if (!ClientTerritoryService.getInstance().isAtLeastOneAllowed(absIndex, group.getSyncBaseItems())) {
             return false;
         }
 

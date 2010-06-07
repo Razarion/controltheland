@@ -14,6 +14,9 @@
 package com.btxtech.game.jsre.client.common;
 
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.Territory;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
@@ -34,12 +37,17 @@ public class GameInfo implements Serializable{
     private int energyConsuming;
     private TerrainSettings terrainSettings;
     private Collection<TerrainImagePosition> terrainImagePositions;
+    private Collection<SurfaceRect> surfaceRects;
+    private Collection<SurfaceImage> surfaceImages;
     private Collection<TerrainImage> terrainImages;
     private boolean registered;
     private OnlineBaseUpdate onlineBaseUpdate;
     private int tutorialTimeout;
     private int registerDialogDelay;
     private int userActionCollectionTime;
+    private Level level;
+    private Collection<Territory> territories;
+
 
     public SimpleBase getBase() {
         return base;
@@ -105,6 +113,22 @@ public class GameInfo implements Serializable{
         this.terrainImagePositions = terrainImagePositions;
     }
 
+    public Collection<SurfaceRect> getSurfaceRects() {
+        return surfaceRects;
+    }
+
+    public void setSurfaceRects(Collection<SurfaceRect> surfaceRects) {
+        this.surfaceRects = surfaceRects;
+    }
+
+    public Collection<SurfaceImage> getSurfaceImages() {
+        return surfaceImages;
+    }
+
+    public void setSurfaceImages(Collection<SurfaceImage> surfaceImages) {
+        this.surfaceImages = surfaceImages;
+    }
+
     public Collection<TerrainImage> getTerrainImages() {
         return terrainImages;
     }
@@ -151,5 +175,21 @@ public class GameInfo implements Serializable{
 
     public void setUserActionCollectionTime(int userActionCollectionTime) {
         this.userActionCollectionTime = userActionCollectionTime;
+    }
+
+    public Level getLevel() {
+        return level;
+    }
+
+    public void setLevel(Level level) {
+        this.level = level;
+    }
+
+    public Collection<Territory> getTerritories() {
+        return territories;
+    }
+
+    public void setTerritories(Collection<Territory> territories) {
+        this.territories = territories;
     }
 }

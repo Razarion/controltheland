@@ -23,7 +23,10 @@
         <mapping class="com.btxtech.game.services.connection.ConnectionStatistics"/>
         <mapping class="com.btxtech.game.services.connection.ClientLogEntry"/>
         <mapping class="com.btxtech.game.services.terrain.DbTerrainImagePosition"/>
+        <mapping class="com.btxtech.game.services.terrain.DbSurfaceRect"/>
         <mapping class="com.btxtech.game.services.terrain.DbTerrainImage"/>
+        <mapping class="com.btxtech.game.services.terrain.TerrainImageTileSurfaceType"/>
+        <mapping class="com.btxtech.game.services.terrain.DbSurfaceImage"/>
         <mapping class="com.btxtech.game.services.terrain.DbTerrainSetting"/>
         <mapping class="com.btxtech.game.services.user.User"/>
         <mapping class="com.btxtech.game.services.user.Arq"/>
@@ -47,6 +50,7 @@
         <mapping class="com.btxtech.game.services.item.itemType.DbGeneratorType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbSpecialType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbItemTypeData"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbItemContainerType"/>
         <mapping class="com.btxtech.game.services.market.MarketEntry"/>
         <mapping class="com.btxtech.game.services.market.impl.UserItemTypeAccess"/>
         <mapping class="com.btxtech.game.services.market.XpSettings"/>
@@ -60,11 +64,18 @@
         <mapping class="com.btxtech.game.services.utg.UserCommand"/>
         <mapping class="com.btxtech.game.services.utg.UserHistory"/>
         <mapping class="com.btxtech.game.services.utg.DbUserMessage"/>
+        <mapping class="com.btxtech.game.services.utg.DbLevel"/>
+        <mapping class="com.btxtech.game.services.utg.DbItemCount"/>
+        <mapping class="com.btxtech.game.services.utg.DbLevelPromotion"/>
         <mapping class="com.btxtech.game.services.forum.AbstractForumEntry"/>
         <mapping class="com.btxtech.game.services.forum.SubForum"/>
         <mapping class="com.btxtech.game.services.forum.Category"/>
         <mapping class="com.btxtech.game.services.forum.ForumThread"/>
         <mapping class="com.btxtech.game.services.forum.Post"/>
         <mapping class="com.btxtech.game.services.messenger.Mail"/>
+        <mapping class="com.btxtech.game.services.resource.DbRegionResource"/>
+        <mapping class="com.btxtech.game.services.bot.DbBotConfig"/>
+        <mapping class="com.btxtech.game.services.territory.DbTerritory"/>
+        <mapping class="com.btxtech.game.services.territory.DbTerritoryRegion"/>
     </session-factory>
 </hibernate-configuration>

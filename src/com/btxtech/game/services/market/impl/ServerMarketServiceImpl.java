@@ -29,6 +29,7 @@ import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.market.XpSettings;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -65,6 +66,8 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     private UserService userService;
     @Autowired
     private ConnectionService connectionService;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
     private HibernateTemplate hibernateTemplate;
     private Timer timer;
     private XpSettings xpSettings;
@@ -122,6 +125,16 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     }
 
     @Override
+    public boolean isAllowed(int itemTypeId, Base base) {
+        UserItemTypeAccess userItemTypeAccess = getUserItemTypeAccess(base);
+        if(userItemTypeAccess != null) {
+            return userItemTypeAccess.contains(itemTypeId);
+        }   else {
+            return false;
+        }
+    }
+
+    @Override
     public void buy(MarketEntry marketEntry) {
         UserItemTypeAccess userItemTypeAccess = getUserItemTypeAccess();
         userItemTypeAccess.buy(marketEntry);
@@ -147,6 +160,18 @@ public class ServerMarketServiceImpl implements ServerMarketService {
             hibernateTemplate.refresh(userItemTypeAccess);
         }
         return userItemTypeAccess;
+    }
+
+    @Override
+    public UserItemTypeAccess getUserItemTypeAccess(Base base) {
+        if (base.isAbandoned()) {
+            return null;
+        }
+        User user = baseService.getUser(base.getSimpleBase());
+        if (user != null) {
+            return createOrGetUserItemTypeAccess(user);
+        }
+        return getUserItemTypeAccess();
     }
 
     public UserItemTypeAccess createOrGetUserItemTypeAccess(User user) {
@@ -244,6 +269,7 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     private void increaseXp(int amount, UserItemTypeAccess userItemTypeAccess, Base base) {
         userItemTypeAccess.increaseXp(amount);
         baseService.sendXpUpdate(userItemTypeAccess, base);
+        userGuidanceService.onIncreaseXp(base, userItemTypeAccess.getXp());
         if (userItemTypeAccess.isPersistent()) {
             hibernateTemplate.saveOrUpdate(userItemTypeAccess);
         }

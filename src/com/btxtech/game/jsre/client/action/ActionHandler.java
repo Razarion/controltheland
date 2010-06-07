@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.client.utg.ClientUserGuidance;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.RectangleFormation;
@@ -27,6 +28,7 @@ import com.btxtech.game.jsre.common.bot.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionService;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -35,8 +37,10 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UnloadContainerCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UpgradeCommand;
 import com.google.gwt.user.client.Timer;
 import java.util.Collection;
@@ -50,10 +54,10 @@ import java.util.Iterator;
  */
 public class ActionHandler implements CommonActionService {
     private final static ActionHandler INSTANCE = new ActionHandler();
-    private static final int TICK_INTERVALL = 60;
+    private static final int TICK_INTERVAL = 60;
     private long lastTickTime = 0;
     private final HashSet<SyncBaseItem> activeItems = new HashSet<SyncBaseItem>();
-    private HashSet<SyncBaseItem> tmpAddactiveItems = new HashSet<SyncBaseItem>();
+    private HashSet<SyncBaseItem> tmpAddActiveItems = new HashSet<SyncBaseItem>();
     private HashSet<SyncBaseItem> tmpRemoveActiveItems = new HashSet<SyncBaseItem>();
 
     public static ActionHandler getInstance() {
@@ -70,13 +74,13 @@ public class ActionHandler implements CommonActionService {
                 tick();
             }
         };
-        timer.scheduleRepeating(TICK_INTERVALL);
+        timer.scheduleRepeating(TICK_INTERVAL);
     }
 
     private void tick() {
         synchronized (activeItems) {
-            activeItems.addAll(tmpAddactiveItems);
-            tmpAddactiveItems.clear();
+            activeItems.addAll(tmpAddActiveItems);
+            tmpAddActiveItems.clear();
             activeItems.removeAll(tmpRemoveActiveItems);
             tmpRemoveActiveItems.clear();
             long time = System.currentTimeMillis();
@@ -110,7 +114,7 @@ public class ActionHandler implements CommonActionService {
     }
 
     public void addActiveItem(SyncBaseItem syncItem) {
-        tmpAddactiveItems.add(syncItem);
+        tmpAddActiveItems.add(syncItem);
     }
 
     public void removeActiveItem(SyncBaseItem baseSyncItem) {
@@ -127,7 +131,11 @@ public class ActionHandler implements CommonActionService {
                 Index pos = null;
                 while (pos == null) {
                     pos = rectangleFormation.calculateNextEntry();
-                    if (!TerrainView.getInstance().getTerrainHandler().isTerrainPassable(pos)) {
+                    if (pos == null) {
+                        continue;
+                    }
+                    SurfaceType surfaceType = TerrainView.getInstance().getTerrainHandler().getSurfaceTypeAbsolute(pos);
+                    if (!clientSyncItem.getSyncBaseItem().getTerrainType().getSurfaceTypes().contains(surfaceType)) {
                         pos = null;
                     }
                 }
@@ -158,14 +166,20 @@ public class ActionHandler implements CommonActionService {
     public void buildFactory(Collection<ClientSyncBaseItemView> clientSyncItems, Index positionToBeBuild, BaseItemType toBeBuilt) {
         for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncBuilder()) {
-                buildFactory(clientSyncItem.getSyncBaseItem(), positionToBeBuild, toBeBuilt);
-                // Just get the first CV to build the building
-                // Prevent to build multiple buildings
-                return;
+                if (ClientTerritoryService.getInstance().isAllowed(positionToBeBuild, clientSyncItem.getSyncBaseItem())
+                        && ClientTerritoryService.getInstance().isAllowed(positionToBeBuild, toBeBuilt)) {
+
+                    buildFactory(clientSyncItem.getSyncBaseItem(), positionToBeBuild, toBeBuilt);
+                    // Just get the first CV to build the building
+                    // Prevent to build multiple buildings
+                    return;
+                }
             } else {
                 GwtCommon.sendLogToServer("ActionHandler.buildFactory(): can not cast to ConstructionVehicleSyncItem:" + clientSyncItem);
+                return;
             }
         }
+        GwtCommon.sendLogToServer("ActionHandler.buildFactory(): can not build on territory: " + clientSyncItems + " " + positionToBeBuild + " " + toBeBuilt);
     }
 
     @Override
@@ -187,10 +201,13 @@ public class ActionHandler implements CommonActionService {
         }
     }
 
-    public void build(Collection<ClientSyncBaseItemView> clientSyncItems, BaseItemType itemType) {
+    public void build(Collection<ClientSyncBaseItemView> clientSyncItems, BaseItemType itemTypeToBuild) {
         for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncFactory()) {
-                build(clientSyncItem.getSyncBaseItem(), itemType);
+                if (ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getPosition(), clientSyncItem.getSyncBaseItem())
+                        && ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getPosition(), itemTypeToBuild)) {
+                    build(clientSyncItem.getSyncBaseItem(), itemTypeToBuild);
+                }
             } else {
                 GwtCommon.sendLogToServer("ActionHandler.build(): can not cast to FactorySyncItem:" + clientSyncItem);
             }
@@ -222,7 +239,11 @@ public class ActionHandler implements CommonActionService {
     public void attack(Collection<ClientSyncBaseItemView> clientSyncItems, SyncBaseItem target) {
         for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncWaepon()) {
-                attack(clientSyncItem.getSyncBaseItem(), target);
+                if (ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getPosition(), clientSyncItem.getSyncBaseItem())
+                        && ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getPosition(), target)
+                        && clientSyncItem.getSyncBaseItem().getSyncWaepon().isItemTypeAllowed(target)) {
+                    attack(clientSyncItem.getSyncBaseItem(), target);
+                }
             } else {
                 GwtCommon.sendLogToServer("ActionHandler.attack(): can not cast to TankSyncItem:" + clientSyncItem);
             }
@@ -252,7 +273,9 @@ public class ActionHandler implements CommonActionService {
     public void collect(Collection<ClientSyncBaseItemView> clientSyncItems, SyncResourceItem money) {
         for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncHarvester()) {
-                collect(clientSyncItem.getSyncBaseItem(), money);
+                if (ClientTerritoryService.getInstance().isAllowed(money.getPosition(), clientSyncItem.getSyncBaseItem())) {
+                    collect(clientSyncItem.getSyncBaseItem(), money);
+                }
             } else {
                 GwtCommon.sendLogToServer("ActionHandler.collect(): can not cast to MoneyCollectorSyncItem:" + clientSyncItem);
             }
@@ -299,6 +322,73 @@ public class ActionHandler implements CommonActionService {
         }
     }
 
+    public void loadContainer(ClientSyncBaseItemView container, Collection<ClientSyncBaseItemView> items) {
+        if (!container.getSyncBaseItem().hasSyncItemContainer()) {
+            GwtCommon.sendLogToServer("ActionHandler.loadContainer(): can not cast to ItemContainer:" + container);
+            return;
+        }
+
+        for (ClientSyncBaseItemView item : items) {
+            if (item.getSyncBaseItem().hasSyncMovable()) {
+                if (ClientTerritoryService.getInstance().isAllowed(container.getSyncBaseItem().getPosition(), container.getSyncBaseItem())) {
+                    putToContainer(container.getSyncBaseItem(), item.getSyncBaseItem());
+                }
+            } else {
+                GwtCommon.sendLogToServer("ActionHandler.loadContainer(): has no movable:" + item);
+            }
+        }
+    }
+
+    private void putToContainer(SyncBaseItem container, SyncBaseItem item) {
+        if (checkCommand(item)) {
+            return;
+        }
+        if (checkCommand(container)) {
+            return;
+        }
+
+        container.stop();
+        LoadContainCommand loadContainCommand = new LoadContainCommand();
+        loadContainCommand.setId(item.getId());
+        loadContainCommand.setTimeStamp();
+        loadContainCommand.setItemContainer(container.getId());
+
+        try {
+            item.executeCommand(loadContainCommand);
+            executeCommand(item, loadContainCommand);
+        } catch (Exception e) {
+            GwtCommon.handleException(e);
+        }
+    }
+
+    public void unloadContainer(SyncBaseItem container, Index unloadPos) {
+        if (checkCommand(container)) {
+            return;
+        }
+
+        if (!container.hasSyncItemContainer()) {
+            GwtCommon.sendLogToServer("ActionHandler.unloadContainer(): can not cast to ItemContainer:" + container);
+            return;
+        }
+
+        if (!ClientTerritoryService.getInstance().isAllowed(unloadPos, container)) {
+            GwtCommon.sendLogToServer("ActionHandler.unloadContainer(): can not unload on territory:" + unloadPos);
+            return;
+        }
+
+        UnloadContainerCommand unloadContainerCommand = new UnloadContainerCommand();
+        unloadContainerCommand.setId(container.getId());
+        unloadContainerCommand.setTimeStamp();
+        unloadContainerCommand.setUnloadPos(unloadPos);
+
+        try {
+            container.executeCommand(unloadContainerCommand);
+            executeCommand(container, unloadContainerCommand);
+        } catch (Exception e) {
+            GwtCommon.handleException(e);
+        }
+    }
+
     private boolean checkCommand(SyncItem syncItem) {
         Id id = syncItem.getId();
         if (id == null) {
@@ -306,12 +396,11 @@ public class ActionHandler implements CommonActionService {
             return true;
         }
         if (!id.isSynchronized()) {
-            GwtCommon.sendLogToServer("Can not send comman: Id is not synchronized: " + id);
+            GwtCommon.sendLogToServer("Can not send command: Id is not synchronized: " + id);
             return true;
         }
         return false;
     }
-
 
     private void executeCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
         Connection.getInstance().sendCommand(baseCommand);
@@ -326,5 +415,4 @@ public class ActionHandler implements CommonActionService {
             return 1.0;
         }
     }
-
 }

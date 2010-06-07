@@ -14,6 +14,8 @@
 package com.btxtech.game.jsre.client.common;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -43,6 +45,10 @@ public class Rectangle implements Serializable {
         this.end = new Index(xStart + width, yStart + height);
     }
 
+    public void replace(Rectangle target) {
+        start = target.start.getCopy();
+        end = target.end.getCopy(); 
+    }
 
     public Index getStart() {
         return start.getCopy();
@@ -77,9 +83,10 @@ public class Rectangle implements Serializable {
 
     /*
      * Adjoin or contains
-     * The minLength specifeis how long min containg height of weight must be
+     * The minLength specifies how long min containg height of weight must be
      * 0 means only two corners adjoins
      */
+
     public boolean adjoins(Rectangle rectangle) {
         int startX = Math.max(start.getX(), rectangle.start.getX());
         int startY = Math.max(start.getY(), rectangle.start.getY());
@@ -135,6 +142,15 @@ public class Rectangle implements Serializable {
         start.setX(start.getX() - size);
     }
 
+    public void shift(int deltaX, int deltaY) {
+        start = start.add(deltaX, deltaY);
+        end = end.add(deltaX, deltaY);
+    }
+
+    public Rectangle moveTo(int absX, int absY) {
+        return new Rectangle(absX, absY, getWidth(), getHeight());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -158,12 +174,20 @@ public class Rectangle implements Serializable {
         return "Start " + start + " End " + end;
     }
 
+    public int getWidth() {
+        return end.getX() - start.getX();
+    }
+
     public int getHeight() {
         return end.getY() - start.getY();
     }
 
-    public int getWidth() {
-        return end.getX() - start.getX();
+    public void setWidth(int width) {
+        end.setX(start.getX() + width);
+    }
+
+    public void setHeight(int height) {
+        end.setY(start.getY() + height);
     }
 
     public int getX() {
@@ -174,6 +198,14 @@ public class Rectangle implements Serializable {
         return start.getY();
     }
 
+    public void setX(int x) {
+        start.setX(x);
+    }
+
+    public void setY(int y) {
+        start.setY(y);
+    }
+
     public int getEndX() {
         return end.getX();
     }
@@ -182,6 +214,13 @@ public class Rectangle implements Serializable {
         return end.getY();
     }
 
+    public void setEndX(int x) {
+        end.setX(x);
+    }
+
+    public void setEndY(int y) {
+        end.setY(y);
+    }
 
     public Index getCenter() {
         int centerX = (end.getX() - start.getX()) / 2;
@@ -217,6 +256,28 @@ public class Rectangle implements Serializable {
 
     public boolean hasMinSize(int minSize) {
         return getHeight() >= minSize || getWidth() >= minSize;
+    }
+
+    public Collection<Rectangle> split(int width, int height) {
+        ArrayList<Rectangle> split = new ArrayList<Rectangle>();
+        int xCount = (int) Math.ceil((double) getWidth() / (double) width);
+        int yCount = (int) Math.ceil((double) getHeight() / (double) height);
+        for (int x = 0; x < xCount; x++) {
+            int tmpWidth = width;
+            if (x == xCount - 1) {
+                // Last one
+                tmpWidth = width - getWidth() % width;
+            }
+            for (int y = 0; y < yCount; y++) {
+                int tmpHeight = height;
+                if (y == yCount - 1) {
+                    // Last one
+                    tmpHeight = height - getHeight() % height;
+                }
+                split.add(new Rectangle(getStart().getX() + x * width, getStart().getY() + y * height, tmpWidth, tmpHeight));
+            }
+        }
+        return split;
     }
 
     /**

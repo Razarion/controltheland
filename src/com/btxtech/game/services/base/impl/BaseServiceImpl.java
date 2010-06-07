@@ -16,16 +16,15 @@ package com.btxtech.game.services.base.impl;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Message;
-import com.btxtech.game.jsre.common.AccountBalancePackt;
+import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.EnergyPacket;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.XpBalancePackt;
+import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.base.AlreadyUsedException;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseColor;
@@ -43,8 +42,10 @@ import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.mgmt.MgmtService;
+import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -69,7 +70,6 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
  */
 public class BaseServiceImpl implements BaseService {
     public static final String DEFAULT_BASE_NAME_PREFIX = "Base ";
-    public static final int EDGE_LENGTH = 200;
     private Log log = LogFactory.getLog(BaseServiceImpl.class);
     @Autowired
     private Session session;
@@ -90,7 +90,11 @@ public class BaseServiceImpl implements BaseService {
     @Autowired
     private UserTrackingService userTrackingService;
     @Autowired
+    private UserGuidanceService userGuidanceService;
+    @Autowired
     private MgmtService mgmtService;
+    @Autowired
+    private BotService botService;
     private final HashMap<String, Base> bases = new HashMap<String, Base>();
     private HashSet<String> colorsUsed = new HashSet<String>();
     private HibernateTemplate hibernateTemplate;
@@ -152,36 +156,18 @@ public class BaseServiceImpl implements BaseService {
                 userTrackingService.onBaseCreated(userService.getLoggedinUser(), base);
             }
         }
+        userGuidanceService.setupLevel4NewBase(base);
         base.setUser(userService.getLoggedinUser());
         connectionService.createConnection(base);
         base.setUserItemTypeAccess(serverMarketService.getUserItemTypeAccess());
-        Index startPoint = collisionService.getFreeRandomPosition(constructionVehicle, EDGE_LENGTH);
+        StartupData startupData = mgmtService.getStartupData();
+        Index startPoint = collisionService.getFreeRandomPosition(constructionVehicle, startupData.getStartRectangle(), startupData.getStartItemFreeRange());
         SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(constructionVehicle, startPoint, null, base.getSimpleBase(), 0);
         syncBaseItem.setBuild(true);
         syncBaseItem.setFullHealth();
         syncBaseItem.getSyncTurnable().setAngel(Math.PI / 4.0); // Cosmetis shows vehicle from side
         historyService.addBaseStartEntry(base.getSimpleBase());
-    }
-
-    @Override
-    public Base createNewBotBase(SyncBaseItem origin, int targetMinRange, int targetMaxRange) throws NoSuchItemTypeException {
-        Base base;
-        ItemType constructionVehicle = itemService.getItemType(Constants.CONSTRUCTION_VEHICLE);
-        synchronized (bases) {
-            String name = getFreePlayerName();
-            BaseColor baseColor = getFreeColors(1).get(0);
-            base = new Base(name, baseColor, null);
-            base.setBot(true);
-            base.setAccountBalance(mgmtService.getStartupData().getStartMoney());
-            bases.put(name, base);
-            colorsUsed.add(baseColor.getHtmlColor());
-        }
-        Index startPoint = collisionService.getFreeRandomPosition(constructionVehicle, origin, targetMinRange, targetMaxRange);
-        log.info("Bot Base created: " + base + " startPoint: " + startPoint);
-        SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(constructionVehicle, startPoint, null, base.getSimpleBase(), 0);
-        syncBaseItem.setBuild(true);
-        syncBaseItem.setFullHealth();
-        return base;
+        botService.onBaseCreated(base);
     }
 
     @Override
@@ -204,6 +190,7 @@ public class BaseServiceImpl implements BaseService {
             }
             serverEnergyService.onBaseKilled(base);
         }
+        userGuidanceService.onBaseDeleted(base);
     }
 
     @Override
@@ -235,8 +222,8 @@ public class BaseServiceImpl implements BaseService {
 
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<BaseColor> getFreeColors(final int maxCount) {
-
         return (List<BaseColor>) hibernateTemplate.execute(new HibernateCallback() {
             public Object doInHibernate(org.hibernate.Session session) {
                 Criteria criteria = session.createCriteria(BaseColor.class);
@@ -349,16 +336,16 @@ public class BaseServiceImpl implements BaseService {
     @Override
     public void sendAccountBaseUpdate(SyncBaseItem syncItem) {
         Base base = getBase(syncItem);
-        AccountBalancePackt packt = new AccountBalancePackt();
-        packt.setAccountBalance(base.getAccountBalance());
-        connectionService.sendPacket(base.getSimpleBase(), packt);
+        AccountBalancePacket packet = new AccountBalancePacket();
+        packet.setAccountBalance(base.getAccountBalance());
+        connectionService.sendPacket(base.getSimpleBase(), packet);
     }
 
     @Override
     public void sendXpUpdate(UserItemTypeAccess userItemTypeAccess, Base base) {
-        XpBalancePackt packt = new XpBalancePackt();
-        packt.setXp(userItemTypeAccess.getXp());
-        connectionService.sendPacket(base.getSimpleBase(), packt);
+        XpBalancePacket packet = new XpBalancePacket();
+        packet.setXp(userItemTypeAccess.getXp());
+        connectionService.sendPacket(base.getSimpleBase(), packet);
     }
 
     @Override
@@ -393,6 +380,11 @@ public class BaseServiceImpl implements BaseService {
     @Override
     public SimpleBase getDummyBase() {
         return dummyBase.getSimpleBase();
+    }
+
+    @Override
+    public String getLevelString() {
+        return getBase().getLevel();
     }
 
     @Override
@@ -440,12 +432,18 @@ public class BaseServiceImpl implements BaseService {
 
     @Override
     public void depositResource(double price, SimpleBase simpleBase) {
-        getBase(simpleBase).depositMoney(price);
+        Base base = getBase(simpleBase);
+        if (!base.isBot()) {
+            base.depositMoney(price);
+        }
     }
 
     @Override
     public void withdrawalMoney(double price, SimpleBase simpleBase) throws InsufficientFundsException {
-        getBase(simpleBase).withdrawalMoney(price);
+        Base base = getBase(simpleBase);
+        if (!base.isBot()) {
+            base.withdrawalMoney(price);
+        }
     }
 
 }

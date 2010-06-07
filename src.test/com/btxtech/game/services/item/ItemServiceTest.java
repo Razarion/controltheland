@@ -13,7 +13,7 @@
 
 package com.btxtech.game.services.item;
 
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBuilderType;
 import com.btxtech.game.services.item.itemType.DbFactoryType;
@@ -59,7 +59,7 @@ public class ItemServiceTest {
         cv.setHealth(1000);
         DbMovableType dbMovableType = new DbMovableType();
         dbMovableType.setSpeed(100);
-        dbMovableType.setTerrainType(TerrainType.LAND);
+        dbMovableType.setTerrainType(SurfaceType.LAND);
         cv.setMovableType(dbMovableType);
         itemTypes.add(cv);
         // Factroy
@@ -81,7 +81,7 @@ public class ItemServiceTest {
         tank.setHealth(1000);
         dbMovableType = new DbMovableType();
         dbMovableType.setSpeed(200);
-        dbMovableType.setTerrainType(TerrainType.LAND);
+        dbMovableType.setTerrainType(SurfaceType.LAND);
         tank.setMovableType(dbMovableType);
         DbWeaponType weaponType = new DbWeaponType();
         weaponType.setDamage(100);
@@ -98,7 +98,7 @@ public class ItemServiceTest {
         harvester.setHealth(1000);
         dbMovableType = new DbMovableType();
         dbMovableType.setSpeed(200);
-        dbMovableType.setTerrainType(TerrainType.LAND);
+        dbMovableType.setTerrainType(SurfaceType.LAND);
         harvester.setMovableType(dbMovableType);
         DbHarvesterType harvesterType = new DbHarvesterType();
         harvesterType.setProgress(150);

@@ -17,18 +17,25 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.mapview.common.GeometricalUtil;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.collision.CollisionServiceChangedListener;
 import com.btxtech.game.services.collision.PassableRectangle;
 import com.btxtech.game.services.collision.Path;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainService;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
@@ -41,12 +48,14 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Time: 6:44:01 PM
  */
 public class CollisionServiceImpl implements CollisionService, TerrainListener {
+    public static final int MAX_TRIES = 1000000;
     @Autowired
     private TerrainService terrainService;
     @Autowired
     private ItemService itemService;
-    private boolean[][] passableTerrain;
-    private List<PassableRectangle> passableRectangles = new ArrayList<PassableRectangle>();
+    @Autowired
+    private MgmtService mgmtService;
+    private HashMap<TerrainType, List<PassableRectangle>> passableRectangles4TerrainType = new HashMap<TerrainType, List<PassableRectangle>>();
     private Log log = LogFactory.getLog(CollisionServiceImpl.class);
     private ArrayList<CollisionServiceChangedListener> collisionServiceChangedListeners = new ArrayList<CollisionServiceChangedListener>();
 
@@ -57,35 +66,63 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     }
 
     private void setupPassableTerrain() {
-        DbTerrainSetting dbTerrainSetting = terrainService.getDbTerrainSettings();
-        passableTerrain = new boolean[dbTerrainSetting.getTileXCount()][dbTerrainSetting.getTileYCount()];
-        for (int x = 0; x < dbTerrainSetting.getTileXCount(); x++) {
-            for (int y = 0; y < dbTerrainSetting.getTileYCount(); y++) {
-                Index absolute = terrainService.getAbsolutIndexForTerrainTileIndex(x, y);
-                passableTerrain[x][y] = terrainService.isTerrainPassable(absolute);
-            }
-        }
-
-        setupPassableRectangles();
+        log.info("Starting setup collision service");
+        long time = System.currentTimeMillis();
+        SurfaceType[][] surfaceTypeField = getSurfaceTypeField();
+        setupPassableRectangles(surfaceTypeField);
+        log.info("Time needed to start up collision service: " + (System.currentTimeMillis() - time) + "ms");
     }
 
-    private void setupPassableRectangles() {
-        Collection<Index> passableTiles = getPassableTiles();
-        if (passableTiles.isEmpty()) {
-            log.error("Terrain does not have any passable terrain tiles");
+    private SurfaceType[][] getSurfaceTypeField() {
+        DbTerrainSetting dbTerrainSetting = terrainService.getDbTerrainSettings();
+        SurfaceType[][] surfaceTypeFiled = new SurfaceType[dbTerrainSetting.getTileXCount()][dbTerrainSetting.getTileYCount()];
+        for (int x = 0; x < dbTerrainSetting.getTileXCount(); x++) {
+            for (int y = 0; y < dbTerrainSetting.getTileYCount(); y++) {
+                surfaceTypeFiled[x][y] = terrainService.getSurfaceType(new Index(x, y));
+            }
+        }
+        return surfaceTypeFiled;
+    }
+
+    private void setupPassableRectangles(SurfaceType[][] surfaceTypeField) {
+        Map<TerrainType, Collection<Index>> tiles = separateIntoTerrainTypeTiles(surfaceTypeField);
+        if (tiles.isEmpty()) {
+            log.error("Terrain does not have any tiles");
             return;
         }
+        for (Map.Entry<TerrainType, Collection<Index>> entry : tiles.entrySet()) {
+            ArrayList<Rectangle> mapAsRectangles = GeometricalUtil.separateIntoRectangles(entry.getValue(), terrainService.getTerrainSettings());
+            List<PassableRectangle> passableRectangles = buildPassableRectangleList(mapAsRectangles);
+            passableRectangles4TerrainType.put(entry.getKey(), passableRectangles);
+        }
 
-        ArrayList<Rectangle> mapAsRectangles = separateIntoRectangles(passableTiles);
-
-        buildPassableRectangleList(mapAsRectangles);
         for (CollisionServiceChangedListener collisionServiceChangedListener : collisionServiceChangedListeners) {
             collisionServiceChangedListener.collisionServiceChanged();
         }
     }
 
-    private void buildPassableRectangleList(ArrayList<Rectangle> rectangles) {
-        passableRectangles.clear();
+    private Map<TerrainType, Collection<Index>> separateIntoTerrainTypeTiles(SurfaceType[][] surfaceTypeField) {
+        Map<TerrainType, Collection<Index>> map = new HashMap<TerrainType, Collection<Index>>();
+        for (int x = 0; x < surfaceTypeField.length; x++) {
+            for (int y = 0; y < surfaceTypeField[x].length; y++) {
+                SurfaceType surfaceType = surfaceTypeField[x][y];
+                Collection<TerrainType> terrainTypes = TerrainType.getAllowedTerrainType(surfaceType);
+                for (TerrainType terrainType : terrainTypes) {
+                    Collection<Index> tiles = map.get(terrainType);
+                    if (tiles == null) {
+                        tiles = new ArrayList<Index>();
+                        map.put(terrainType, tiles);
+                    }
+                    tiles.add(new Index(x, y));
+                }
+            }
+        }
+        return map;
+    }
+
+    private List<PassableRectangle> buildPassableRectangleList(ArrayList<Rectangle> rectangles) {
+        List<PassableRectangle> passableRectangles = new ArrayList<PassableRectangle>();
+
         for (Rectangle rectangle : rectangles) {
             PassableRectangle passableRectangle = new PassableRectangle(rectangle);
             passableRectangles.add(passableRectangle);
@@ -101,200 +138,85 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
                 }
             }
         }
-    }
 
-    private ArrayList<Rectangle> separateIntoRectangles(Collection<Index> passableTiles) {
-        ArrayList<Rectangle> rectangles = new ArrayList<Rectangle>();
-        Collection<Index> remainingTiles = new HashSet<Index>(passableTiles);
-        removeRectangles(remainingTiles, rectangles, passableTiles.iterator().next());
-        return rectangles;
-    }
-
-    private void removeRectangles(Collection<Index> remainingAtoms, ArrayList<Rectangle> rectangles, Index start) {
-        Rectangle rectangle = getRectangles(start.getX(), start.getY(), remainingAtoms);
-        rectangles.add(rectangle);
-
-        // remove used atoms
-        for (int x = rectangle.getStart().getX(); x <= rectangle.getEnd().getX(); x++) {
-            for (int y = rectangle.getStart().getY(); y <= rectangle.getEnd().getY(); y++) {
-                Index indexToRemove = new Index(x, y);
-                remainingAtoms.remove(indexToRemove);
-            }
-        }
-        // Make inclusive
-        rectangle.growEast(1);
-        rectangle.growSouth(1);
-
-        if (remainingAtoms.isEmpty()) {
-            return;
-        }
-
-        Index newStart = remainingAtoms.iterator().next();
-        removeRectangles(remainingAtoms, rectangles, newStart);
-    }
-
-
-    private Collection<Index> getPassableTiles() {
-        HashSet<Index> passableTiles = new HashSet<Index>();
-        for (int x = 0; x < passableTerrain.length; x++) {
-            for (int y = 0; y < passableTerrain[x].length; y++) {
-                if (passableTerrain[x][y]) {
-                    passableTiles.add(new Index(x, y));
-                }
-            }
-        }
-        return passableTiles;
-    }
-
-    private Rectangle getRectangles(int stratX, int startY, Collection<Index> passableMap) {
-        Index index = new Index(stratX, startY);
-        if (!passableMap.contains(index)) {
-            throw new IllegalArgumentException("Invalid start point");
-        }
-
-        Rectangle rectangle = new Rectangle(index, index);
-        boolean canGrowNorth = true;
-        boolean canGrowEast = true;
-        boolean canGrowSouth = true;
-        boolean canGrowWest = true;
-
-        while (canGrowNorth | canGrowEast | canGrowSouth | canGrowWest) {
-            if (rectangle.getStart().getY() == 0) {
-                canGrowNorth = false;
-            }
-
-            if (rectangle.getEnd().getX() == terrainService.getDbTerrainSettings().getPlayFieldXSize() - 1) {
-                canGrowEast = false;
-            }
-
-            if (rectangle.getEnd().getY() == terrainService.getDbTerrainSettings().getPlayFieldYSize() - 1) {
-                canGrowSouth = false;
-            }
-
-            if (rectangle.getStart().getX() == 0) {
-                canGrowWest = false;
-            }
-
-            if (canGrowNorth) {
-                Rectangle newRectangle = rectangle.copy();
-                newRectangle.growNorth(1);
-                int size = Math.abs(newRectangle.getStart().getX() - newRectangle.getEnd().getX());
-                if (checkPassableAtomsHorizontal(newRectangle.getStart().getX(), newRectangle.getStart().getY(), size, passableMap)) {
-                    rectangle = newRectangle;
-                } else {
-                    canGrowNorth = false;
-                }
-            }
-            if (canGrowEast) {
-                Rectangle newRectangle = rectangle.copy();
-                newRectangle.growEast(1);
-                int size = Math.abs(newRectangle.getStart().getY() - newRectangle.getEnd().getY());
-                if (checkPassableAtomsVertial(newRectangle.getEnd().getX(), newRectangle.getStart().getY(), size, passableMap)) {
-                    rectangle = newRectangle;
-                } else {
-                    canGrowEast = false;
-                }
-            }
-            if (canGrowSouth) {
-                Rectangle newRectangle = rectangle.copy();
-                newRectangle.growSouth(1);
-                int size = Math.abs(newRectangle.getStart().getX() - newRectangle.getEnd().getX());
-                if (checkPassableAtomsHorizontal(newRectangle.getStart().getX(), newRectangle.getEnd().getY(), size, passableMap)) {
-                    rectangle = newRectangle;
-                } else {
-                    canGrowSouth = false;
-                }
-            }
-            if (canGrowWest) {
-                Rectangle newRectangle = rectangle.copy();
-                newRectangle.growWest(1);
-                int size = Math.abs(newRectangle.getStart().getY() - newRectangle.getEnd().getY());
-                if (checkPassableAtomsVertial(newRectangle.getStart().getX(), newRectangle.getStart().getY(), size, passableMap)) {
-                    rectangle = newRectangle;
-                } else {
-                    canGrowWest = false;
-                }
-            }
-        }
-        return rectangle;
-    }
-
-    private boolean checkPassableAtomsVertial(int startX, int startY, int length, Collection<Index> passableMap) {
-        for (int y = startY; y <= (startY + length); y++) {
-            Index index = new Index(startX, y);
-            if (!passableMap.contains(index)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-
-    private boolean checkPassableAtomsHorizontal(int startX, int startY, int length, Collection<Index> passableMap) {
-        for (int x = startX; x <= (startX + length); x++) {
-            Index index = new Index(x, startY);
-            if (!passableMap.contains(index)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public List<PassableRectangle> getPassableRectangles() {
         return passableRectangles;
     }
 
     @Override
-    public Index getFreeRandomPosition(ItemType itemType, int edgeLength) {
+    public Map<TerrainType, List<PassableRectangle>> getPassableRectangles() {
+        return passableRectangles4TerrainType;
+    }
+
+    @Override
+    public Index getFreeRandomPosition(ItemType itemType, Rectangle region, int itemFreeRange) {
         Random random = new Random();
-        for (int i = 0; i < Integer.MAX_VALUE; i++) {
-            int x = random.nextInt(terrainService.getDbTerrainSettings().getPlayFieldXSize() - 200) + 100;
-            int y = random.nextInt(terrainService.getDbTerrainSettings().getPlayFieldYSize() - 200) + 100;
+        for (int i = 0; i < MAX_TRIES; i++) {
+            int x = random.nextInt(region.getWidth()) + region.getX();
+            int y = random.nextInt(region.getHeight()) + region.getY();
             Index point = new Index(x, y);
             if (!terrainService.isFree(point, itemType)) {
                 continue;
             }
-            Index start = point.sub(new Index(edgeLength / 2, edgeLength / 2));
-            Rectangle rectangle = new Rectangle(start.getX(), start.getY(), edgeLength, edgeLength);
+            Index start = point.sub(new Index(itemFreeRange / 2, itemFreeRange / 2));
+            Rectangle rectangle = new Rectangle(start.getX(), start.getY(), itemFreeRange, itemFreeRange);
             if (itemService.hasItemsInRectangle(rectangle)) {
                 continue;
             }
             return point;
         }
-        throw new IllegalStateException("Can not find free position");
+        throw new IllegalStateException("Can not find free position. itemType: " + itemType + " region: " + region + " itemFreeRange: " + itemFreeRange);
+    }
+
+    @Override
+    public Index getRallyPoint(SyncBaseItem factory, Collection<SurfaceType> allowedSurfaces) {
+        return getFreeRandomPosition(factory.getPosition(), 0, 0, allowedSurfaces, factory.getItemType().getHeight() / 2, factory.getItemType().getHeight());
     }
 
     @Override
     public Index getFreeRandomPosition(ItemType itemType, SyncItem origin, int targetMinRange, int targetMaxRange) {
+        return getFreeRandomPosition(origin.getPosition(), itemType.getWidth(), itemType.getHeight(), itemType.getTerrainType().getSurfaceTypes(), targetMinRange, targetMaxRange);
+    }
+
+    @Override
+    public Index getFreeRandomPosition(Index origin, int itemFreeWidth, int itemFreeHeight, Collection<SurfaceType> allowedSurfaces, int targetMinRange, int targetMaxRange) {
         Random random = new Random();
-        for (int i = 0; i < Integer.MAX_VALUE; i++) {
+        for (int i = 0; i < MAX_TRIES; i++) {
             double angel = random.nextDouble() * 2.0 * Math.PI;
             int discance = targetMinRange + random.nextInt(targetMaxRange - targetMinRange);
-            Index point = origin.getPosition().getPointFromAngelToNord(angel, discance);
+            Index point = origin.getPointFromAngelToNord(angel, discance);
 
-            if(point.getX() >= terrainService.getDbTerrainSettings().getPlayFieldXSize()) {
-               continue;
-            }
-            if(point.getY() >= terrainService.getDbTerrainSettings().getPlayFieldYSize()) {
-               continue;
-            }
-
-            if (!terrainService.isFree(point, itemType)) {
+            if (point.getX() >= terrainService.getDbTerrainSettings().getPlayFieldXSize()) {
                 continue;
             }
-            Rectangle itemRectangle = new Rectangle(point.getX() - itemType.getWidth() / 2,
-                    point.getY() - itemType.getHeight() / 2,
-                    itemType.getWidth(),
-                    itemType.getHeight());
+            if (point.getY() >= terrainService.getDbTerrainSettings().getPlayFieldYSize()) {
+                continue;
+            }
 
-            if (itemService.hasItemsInRectangle(itemRectangle)) {
+            if (!terrainService.isFree(point, itemFreeWidth, itemFreeHeight, allowedSurfaces)) {
+                continue;
+            }
+            Rectangle itemRectangle = null;
+            if (itemFreeWidth > 0 || itemFreeHeight > 0) {
+                itemRectangle = new Rectangle(point.getX() - itemFreeWidth / 2,
+                        point.getY() - itemFreeHeight / 2,
+                        itemFreeWidth,
+                        itemFreeHeight);
+
+            }
+            if (itemRectangle != null && itemService.hasItemsInRectangle(itemRectangle)) {
                 continue;
             }
             return point;
         }
-        throw new IllegalStateException("Can not find free position");
+        throw new IllegalStateException("Can not find free position."
+                + "Origin: " + origin
+                + " itemFreeWidth: " + itemFreeWidth
+                + " itemFreeHeight: " + itemFreeHeight
+                + " allowedSurfaces: " + SurfaceType.toString(allowedSurfaces)
+                + " targetMinRange: " + targetMinRange
+                + " targetMaxRange: " + targetMaxRange);
     }
+
 
     private int getDistance(List<Index> indeces) {
         Index previous = null;
@@ -308,7 +230,11 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
         return distance;
     }
 
-    private PassableRectangle getPassableRectangleOfAbsoluteIndex(Index absoluteIndex) {
+    private PassableRectangle getPassableRectangleOfAbsoluteIndex(Index absoluteIndex, TerrainType terrainType) {
+        List<PassableRectangle> passableRectangles = passableRectangles4TerrainType.get(terrainType);
+        if (passableRectangles == null) {
+            return null;
+        }
         for (PassableRectangle passableRectangle : passableRectangles) {
             if (passableRectangle.containAbsoluteIndex(absoluteIndex, terrainService.getDbTerrainSettings())) {
                 return passableRectangle;
@@ -330,11 +256,6 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     }
 
     @Override
-    public boolean[][] getPassableTerrain() {
-        return passableTerrain;
-    }
-
-    @Override
     public void onTerrainChanged() {
         setupPassableTerrain();
     }
@@ -342,7 +263,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     @Override
     public void addCollisionServiceChangedListener(CollisionServiceChangedListener collisionServiceChangedListener) {
         collisionServiceChangedListeners.add(collisionServiceChangedListener);
-        if (passableTerrain != null) {
+        if (!passableRectangles4TerrainType.isEmpty()) {
             collisionServiceChangedListener.collisionServiceChanged();
         }
     }
@@ -353,11 +274,11 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     }
 
     @Override
-    public List<Index> setupPathToDestination(Index start, Index destination) {
-        PassableRectangle atomStartRect = getPassableRectangleOfAbsoluteIndex(start);
-        PassableRectangle atomDestRect = getPassableRectangleOfAbsoluteIndex(destination);
+    public List<Index> setupPathToDestination(Index start, Index destination, TerrainType terrainType) {
+        PassableRectangle atomStartRect = getPassableRectangleOfAbsoluteIndex(start, terrainType);
+        PassableRectangle atomDestRect = getPassableRectangleOfAbsoluteIndex(destination, terrainType);
         if (atomStartRect == null || atomDestRect == null) {
-            throw new IllegalArgumentException("Illegal atomStartRect or absoluteDestionation. start: " + start + " destination: " + destination);
+            throw new IllegalArgumentException("Illegal atomStartRect or absoluteDestionation. start: " + start + " destination: " + destination + " terrainType: " + terrainType);
         }
 
         if (atomStartRect.equals(atomDestRect)) {
@@ -393,6 +314,4 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
         bestSelection.add(destination);
         return bestSelection;
     }
-
-
 }

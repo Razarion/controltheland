@@ -13,7 +13,10 @@
 
 package com.btxtech.game.services.terrain;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import java.util.Collection;
 import java.util.List;
@@ -28,9 +31,13 @@ public interface TerrainService extends AbstractTerrainService {
 
     DbTerrainImage getDbTerrainImage(int id);
 
+    DbSurfaceImage getDbSurfaceImage(int id);
+
     List<DbTerrainImage> getDbTerrainImagesCopy();
 
-    void saveAndActivateTerrainImages(List<DbTerrainImage> dbTerrainImages, byte[] bgImage, String bgImageType);
+    List<DbSurfaceImage> getDbSurfaceImagesCopy();
 
-    void saveAndActivateTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions);
+    void saveAndActivateTerrainImages(List<DbTerrainImage> dbTerrainImages, List<DbSurfaceImage> dbSurfaceImages);
+
+    void saveAndActivateTerrain(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects);
 }

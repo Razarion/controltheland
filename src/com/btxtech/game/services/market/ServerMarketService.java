@@ -20,7 +20,6 @@ import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * User: beat
@@ -28,6 +27,8 @@ import java.util.Map;
  * Time: 21:07:42
  */
 public interface ServerMarketService extends ItemTypeAccess {
+    boolean isAllowed(int itemTypeId, Base base);
+
     public Collection<Integer> getAllowedItemTypes();
 
     List<MarketEntry> getItemTypeAccessEntries();
@@ -41,6 +42,8 @@ public interface ServerMarketService extends ItemTypeAccess {
     void deleteItemTypeAccessEntry(MarketEntry marketEntry);
 
     UserItemTypeAccess getUserItemTypeAccess();
+
+    UserItemTypeAccess getUserItemTypeAccess(Base base);
 
     void increaseXp(Base actorBase, SyncBaseItem syncBaseItem);
 
@@ -58,7 +61,7 @@ public interface ServerMarketService extends ItemTypeAccess {
 
     void addMarketFunction();
 
-    List<MarketCategory> getUsedMarketCategories();         
+    List<MarketCategory> getUsedMarketCategories();
 
     List<MarketCategory> getMarketCategories();
 

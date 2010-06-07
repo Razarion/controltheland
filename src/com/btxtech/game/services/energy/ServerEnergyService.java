@@ -40,5 +40,5 @@ public interface ServerEnergyService extends EnergyService {
 
     void recalculateEnergy();
 
-    void onItemTypeChanged(SyncBaseItem syncBaseItem);
+    void onItemChanged(SyncBaseItem syncBaseItem);
 }

@@ -14,6 +14,8 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.user.client.DOM;
@@ -180,5 +182,10 @@ public abstract class TopMapPanel extends DecoratorPanel {
                 absolutePanel.remove(expandImage);
             }
         }
+    }
+
+    public boolean isInside(int relX, int relY) {
+        Rectangle rectangle = new Rectangle(getAbsoluteLeft(), getAbsoluteTop(), getOffsetWidth(), getOffsetHeight());
+        return rectangle.contains(new Index(relX, relY));
     }
 }

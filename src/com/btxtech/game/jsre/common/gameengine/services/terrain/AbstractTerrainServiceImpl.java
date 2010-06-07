@@ -38,7 +38,9 @@ import java.util.Map;
  */
 public class AbstractTerrainServiceImpl implements AbstractTerrainService {
     private Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
+    private Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
     private Map<Integer, TerrainImage> terrainImages = new HashMap<Integer, TerrainImage>();
+    private Map<Integer, SurfaceImage> surfaceImages = new HashMap<Integer, SurfaceImage>();
     private ArrayList<TerrainListener> terrainListeners = new ArrayList<TerrainListener>();
     private TerrainSettings terrainSettings;
 
@@ -55,8 +57,25 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
         terrainImagePositions.add(terrainImagePosition);
     }
 
+    @Override
+    public Collection<SurfaceRect> getSurfaceRects() {
+        return surfaceRects;
+    }
+
+    public void setSurfaceRects(Collection<SurfaceRect> surfaceRects) {
+        this.surfaceRects = surfaceRects;
+    }
+
+    public void addSurfaceRect(SurfaceRect surfaceRect) {
+        surfaceRects.add(surfaceRect);
+    }
+
     protected void removeTerrainImagePosition(TerrainImagePosition terrainImagePosition) {
         terrainImagePositions.remove(terrainImagePosition);
+    }
+
+    protected void removeSurfaceRect(SurfaceRect surfaceRect) {
+        surfaceRects.remove(surfaceRect);
     }
 
     public void setTerrainSettings(TerrainSettings terrainSettings) {
@@ -79,7 +98,11 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
         }
     }
 
-    protected void setupTerrainImages(Collection<TerrainImage> terrainImages) {
+    protected void setupImages(Collection<SurfaceImage> surfaceImages, Collection<TerrainImage> terrainImages) {
+        clearSurfaceImages();
+        for (SurfaceImage surfaceImage : surfaceImages) {
+            putSurfaceImage(surfaceImage);
+        }
         clearTerrainImages();
         for (TerrainImage terrainImage : terrainImages) {
             putTerrainImage(terrainImage);
@@ -94,18 +117,53 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
         terrainImages.put(terrainImage.getId(), terrainImage);
     }
 
+    protected void clearSurfaceImages() {
+        surfaceImages.clear();
+    }
+
+    protected void putSurfaceImage(SurfaceImage surfaceImage) {
+        surfaceImages.put(surfaceImage.getImageId(), surfaceImage);
+    }
+
     @Override
     public Collection<TerrainImage> getTerrainImages() {
         return new ArrayList<TerrainImage>(terrainImages.values());
     }
 
     @Override
-    public List<TerrainImagePosition> getTerrainImagesInRegion(Rectangle absolutePxRectangle) {
+    public SurfaceImage getSurfaceImage(SurfaceRect surfaceRect) {
+        SurfaceImage getSurfaceImage = surfaceImages.get(surfaceRect.getSurfaceImageId());
+        if (getSurfaceImage == null) {
+            throw new IllegalArgumentException(this + " getSurfaceImage(): image id does not exit: " + surfaceRect.getSurfaceImageId());
+        }
+        return getSurfaceImage;
+    }
+
+    @Override
+    public Collection<SurfaceImage> getSurfaceImages() {
+        return new ArrayList<SurfaceImage>(surfaceImages.values());
+    }
+
+    public Collection<SurfaceType> getSurfaceTypeTilesInRegion(Rectangle absRectangle) {
+        ArrayList<SurfaceType> surfaceTypes = new ArrayList<SurfaceType>();
+        Rectangle tileRect = convertToTilePositionRoundUp(absRectangle);
+
+        for (int x = tileRect.getX(); x < tileRect.getEndX(); x++) {
+            for (int y = tileRect.getY(); y < tileRect.getEndY(); y++) {
+                surfaceTypes.add(getSurfaceType(new Index(x, y)));
+            }
+
+        }
+        return surfaceTypes;
+    }
+
+    @Override
+    public List<TerrainImagePosition> getTerrainImagesInRegion(Rectangle absRectangle) {
         ArrayList<TerrainImagePosition> result = new ArrayList<TerrainImagePosition>();
         if (terrainSettings == null || terrainImagePositions == null) {
             return result;
         }
-        Rectangle tileRect = convertToTilePositionRoundUp(absolutePxRectangle);
+        Rectangle tileRect = convertToTilePositionRoundUp(absRectangle);
         for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
             if (tileRect.adjoinsEclusive(getTerrainImagePositionRectangle(terrainImagePosition))) {
                 result.add(terrainImagePosition);
@@ -120,6 +178,11 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
             return null;
         }
         Index tileIndex = getTerrainTileIndexForAbsPosition(absoluteX, absoluteY);
+        return getTerrainImagePosition(tileIndex);
+    }
+
+    @Override
+    public TerrainImagePosition getTerrainImagePosition(Index tileIndex) {
         for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
             if (getTerrainImagePositionRectangle(terrainImagePosition).containsExclusive(tileIndex)) {
                 return terrainImagePosition;
@@ -145,6 +208,40 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
         }
         return terrainImage;
     }
+
+    @Override
+    public SurfaceRect getSurfaceRect(int absoluteX, int absoluteY) {
+        if (terrainSettings == null || surfaceRects == null) {
+            return null;
+        }
+        Index tileIndex = getTerrainTileIndexForAbsPosition(absoluteX, absoluteY);
+        return getSurfaceRect(tileIndex);
+    }
+
+    @Override
+    public SurfaceRect getSurfaceRect(Index tileIndex) {
+        for (SurfaceRect surfaceRect : surfaceRects) {
+            if (surfaceRect.getTileRectangle().containsExclusive(tileIndex)) {
+                return surfaceRect;
+            }
+        }
+        return null;
+    }
+
+    public List<SurfaceRect> getSurfaceRectsInRegion(Rectangle absRectangle) {
+        ArrayList<SurfaceRect> result = new ArrayList<SurfaceRect>();
+        if (terrainSettings == null || terrainImagePositions == null) {
+            return result;
+        }
+        Rectangle tileRect = convertToTilePositionRoundUp(absRectangle);
+        for (SurfaceRect surfaceRect : surfaceRects) {
+            if (tileRect.adjoinsEclusive(surfaceRect.getTileRectangle())) {
+                result.add(surfaceRect);
+            }
+        }
+        return result;
+    }
+
 
     @Override
     public Index getTerrainTileIndexForAbsPosition(int x, int y) {
@@ -214,7 +311,7 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
     }
 
     @Override
-    public List<Index> setupPathToDestination(Index start, Index destionation, int range) {
+    public List<Index> setupPathToDestination(Index start, Index destionation, int range, TerrainType terrainType) {
         Index destination = start.getPointWithDistance(range, destionation);
         ArrayList<Index> path = new ArrayList<Index>();
         path.add(destination);
@@ -222,30 +319,69 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
     }
 
     @Override
-    public List<Index> setupPathToDestination(Index start, Index destination) {
+    public List<Index> setupPathToDestination(Index start, Index destination, TerrainType terrainType) {
         ArrayList<Index> path = new ArrayList<Index>();
         path.add(destination);
         return path;
     }
 
     @Override
-    public boolean isFree(Index posititon, ItemType itemType) {
-        int x = posititon.getX() - itemType.getWidth() / 2;
-        int y = posititon.getY() - itemType.getHeight() / 2;
+    public boolean isFree(Index point, int width, int height, Collection<SurfaceType> allowedSurfaces) {
+        int x = point.getX() - width / 2;
+        int y = point.getY() - height / 2;
 
         if (x < 0 || y < 0) {
             return false;
         }
 
-        Rectangle rectangle = new Rectangle(x, y, itemType.getWidth(), itemType.getHeight());
-        return getTerrainImagesInRegion(rectangle).isEmpty();
+        Rectangle rectangle = new Rectangle(x, y, width, height);
+        Collection<SurfaceType> surfaceTypes = getSurfaceTypeTilesInRegion(rectangle);
+        if (surfaceTypes.isEmpty()) {
+            return false;
+        }
+        if (allowedSurfaces != null) {
+            return allowedSurfaces.containsAll(surfaceTypes);
+        } else {
+            return true; // TODO is this correct?
+        }
     }
 
     @Override
+    public boolean isFree(Index posititon, ItemType itemType) {
+        return isFree(posititon, itemType.getWidth(), itemType.getHeight(), itemType.getTerrainType().getSurfaceTypes());
+    }
+
+    @Override
+    @Deprecated
     public boolean isTerrainPassable(Index posititon) {
         return posititon != null && !(posititon.getX() >= terrainSettings.getPlayFieldXSize() || posititon.getY() >= terrainSettings.getPlayFieldYSize())
                 && getTerrainImagePosition(posititon.getX(), posititon.getY()) == null;
+    }
 
+    @Override
+    public SurfaceType getSurfaceTypeAbsolute(Index absoluteIndex) {
+        Index tileIndex = getTerrainTileIndexForAbsPosition(absoluteIndex);
+        return getSurfaceType(tileIndex);
+    }
+
+    @Override
+    public SurfaceType getSurfaceType(Index tileIndex) {
+        if (tileIndex == null || tileIndex.getX() >= terrainSettings.getPlayFieldXSize() || tileIndex.getY() >= terrainSettings.getPlayFieldYSize()) {
+            return null;
+        }
+        TerrainImagePosition terrainImagePosition = getTerrainImagePosition(tileIndex);
+        if (terrainImagePosition != null) {
+            TerrainImage terrainImage = getTerrainImage(terrainImagePosition);
+            Index imgPosIndex = tileIndex.sub(terrainImagePosition.getTileIndex());
+            return terrainImage.getSurfaceType(imgPosIndex.getX(), imgPosIndex.getY());
+        } else {
+            SurfaceRect surfaceRect = getSurfaceRect(tileIndex);
+            if (surfaceRect != null) {
+                return getSurfaceImage(surfaceRect).getSurfaceType();
+            } else {
+                return SurfaceType.NONE;
+            }
+        }
     }
 
     public Index getAbsoluteFreeTerrainInRegion(Index absolutePos, int targetMinRange, int targetMaxRange, int edgeLength) {

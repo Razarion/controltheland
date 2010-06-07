@@ -74,4 +74,9 @@ public class DbKey implements Serializable{
         result = 31 * result + indexY;
         return result;
     }
+
+    @Override
+    public String toString() {
+        return getClass() + " indexX: " + indexX + " indexY: " + indexY;
+    }
 }

@@ -13,8 +13,6 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.cockpit.BuildupItemPanel;
-import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.GameInfo;
@@ -27,13 +25,15 @@ import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.client.utg.ClientUserGuidance;
+import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
-import com.btxtech.game.jsre.common.AccountBalancePackt;
+import com.btxtech.game.jsre.client.utg.MissionTarget;
+import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.EnergyPacket;
+import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
-import com.btxtech.game.jsre.common.XpBalancePackt;
+import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.bot.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccessSyncInfo;
@@ -78,7 +78,7 @@ public class Connection implements AsyncCallback<Void> {
 
             @Override
             public void onFailure(Throwable caught) {
-                hanldeDisconnection(caught);
+                handleDisconnection(caught);
             }
 
             @Override
@@ -107,13 +107,17 @@ public class Connection implements AsyncCallback<Void> {
         OnlineBasePanel.getInstance().setOnlineBases(gameInfo.getOnlineBaseUpdate());
         TerrainView.getInstance().setupTerrain(gameInfo.getTerrainSettings(),
                 gameInfo.getTerrainImagePositions(),
+                gameInfo.getSurfaceRects(),
+                gameInfo.getSurfaceImages(),
                 gameInfo.getTerrainImages());
         ClientUserTracker.getInstance().setCollectionTime(gameInfo.getUserActionCollectionTime());
+        MissionTarget.getInstance().setLevel(gameInfo.getLevel());
+        ClientTerritoryService.getInstance().setTerritories(gameInfo.getTerritories());
 
         movableServiceAsync.getItemTypes(new AsyncCallback<Collection<ItemType>>() {
             @Override
             public void onFailure(Throwable throwable) {
-                hanldeDisconnection(throwable);
+                handleDisconnection(throwable);
             }
 
             @Override
@@ -122,7 +126,7 @@ public class Connection implements AsyncCallback<Void> {
                 movableServiceAsync.getAllSyncInfo(new AsyncCallback<Collection<SyncItemInfo>>() {
                     @Override
                     public void onFailure(Throwable throwable) {
-                        hanldeDisconnection(throwable);
+                        handleDisconnection(throwable);
                     }
 
                     @Override
@@ -139,7 +143,7 @@ public class Connection implements AsyncCallback<Void> {
                         }
                         TerrainView.getInstance().moveToHome();
                         ClientUserTracker.getInstance().sandGameStartupState(GameStartupState.CLIENT_RUNNING);
-                        ClientUserGuidance.getInstance().start();
+                        MissionTarget.getInstance().showMissionTargetDialog();
                         PlayerSimulation.getInstance().start();
                         RegisterDialog.showDialogWithDelay(gameInfo.getRegisterDialogDelay());
                         timer.schedule(MIN_DELAY_BETWEEN_TICKS);
@@ -163,7 +167,7 @@ public class Connection implements AsyncCallback<Void> {
         movableServiceAsync.getSyncInfo(ClientBase.getInstance().getSimpleBase(), new AsyncCallback<Collection<Packet>>() {
             @Override
             public void onFailure(Throwable throwable) {
-                hanldeDisconnection(throwable);
+                handleDisconnection(throwable);
             }
 
             @Override
@@ -190,12 +194,12 @@ public class Connection implements AsyncCallback<Void> {
                         Message message = (Message) packet;
                         MessageDialog.show(message.getTitle(), "<h1>" + message.getMessage() + "</h1>");
                     }
-                } else if (packet instanceof AccountBalancePackt) {
-                    AccountBalancePackt balancePackt = (AccountBalancePackt) packet;
-                    ClientBase.getInstance().setAccountBalance(balancePackt.getAccountBalance());
-                } else if (packet instanceof XpBalancePackt) {
-                    XpBalancePackt xpBalancePackt = (XpBalancePackt) packet;
-                    InfoPanel.getInstance().updateXp(xpBalancePackt.getXp());
+                } else if (packet instanceof AccountBalancePacket) {
+                    AccountBalancePacket balancePacket = (AccountBalancePacket) packet;
+                    ClientBase.getInstance().setAccountBalance(balancePacket.getAccountBalance());
+                } else if (packet instanceof XpBalancePacket) {
+                    XpBalancePacket xpBalancePacket = (XpBalancePacket) packet;
+                    InfoPanel.getInstance().updateXp(xpBalancePacket.getXp());
                 } else if (packet instanceof ItemTypeAccessSyncInfo) {
                     ItemTypeAccessSyncInfo itemTypeAccessSyncInfo = (ItemTypeAccessSyncInfo) packet;
                     ClientItemTypeAccess.getInstance().setAllowedItemTypes(itemTypeAccessSyncInfo.getAllowedItemTypes());
@@ -208,8 +212,10 @@ public class Connection implements AsyncCallback<Void> {
                     OnlineBasePanel.getInstance().onMessageReceived((UserMessage) packet);
                 } else if (packet instanceof OnlineBaseUpdate) {
                     OnlineBasePanel.getInstance().setOnlineBases((OnlineBaseUpdate) packet);
+                } else if (packet instanceof LevelPacket) {
+                    MissionTarget.getInstance().onLevelChanged((LevelPacket) packet);
                 } else {
-                    throw new IllegalArgumentException(this + " unknwon packet: " + packet);
+                    throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }
             } catch (Throwable t) {
                 GwtCommon.handleException(t);
@@ -226,7 +232,7 @@ public class Connection implements AsyncCallback<Void> {
 
     public void createMissionTraget(SyncBaseItem syncBaseItem) {
         if (!syncBaseItem.getId().isSynchronized()) {
-            throw new IllegalStateException(this + " createMissionTraget: Item is not syncronized " + syncBaseItem);
+            throw new IllegalStateException(this + " createMissionTarget: Item is not syncronized " + syncBaseItem);
         }
         if (movableServiceAsync != null) {
             movableServiceAsync.createMissionTraget(syncBaseItem.getId(), this);
@@ -251,10 +257,34 @@ public class Connection implements AsyncCallback<Void> {
         }
     }
 
+    public void tutorialTerminated() {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.tutorialTerminated(this);
+        }
+    }
+
+    public void getMissionTarget(final MissionTarget missionTargetDialog) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.getMissionTarget(new AsyncCallback<String>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    missionTargetDialog.setNoConnection(caught);
+                }
+
+                @Override
+                public void onSuccess(String result) {
+                    missionTargetDialog.setMissionTarget(result);
+                }
+            });
+        } else {
+            missionTargetDialog.setNoConnection(null);
+        }
+    }
+
     public void surrenderBase() {
         if (movableServiceAsync != null) {
             movableServiceAsync.surrenderBase(this);
-            movableServiceAsync = null;            
+            movableServiceAsync = null;
         }
     }
 
@@ -271,7 +301,7 @@ public class Connection implements AsyncCallback<Void> {
 
     @Override
     public void onFailure(Throwable caught) {
-        hanldeDisconnection(caught);
+        handleDisconnection(caught);
     }
 
     @Override
@@ -279,7 +309,7 @@ public class Connection implements AsyncCallback<Void> {
         // Ignore
     }
 
-    private void hanldeDisconnection(Throwable throwable) {
+    private void handleDisconnection(Throwable throwable) {
         movableServiceAsync = null;
         if (throwable instanceof NotYourBaseException) {
             MessageDialog.show("Not your Base", "Most likely you start another<br />base in another browser window");

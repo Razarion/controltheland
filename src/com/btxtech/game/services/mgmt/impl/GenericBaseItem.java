@@ -58,6 +58,10 @@ public class GenericBaseItem extends GenericItem {
     private Base base;
     private boolean build;
     private double angel;
+    @Type(type = "index")
+    @Columns(columns = {@Column(name = "xPosRallyPoint"), @Column(name = "yPosRallyPoint")})
+    private Index rallyPoint;
+
 
     /**
      * Used by hibernate
@@ -172,5 +176,13 @@ public class GenericBaseItem extends GenericItem {
 
     public void setReloadProgress(double reloadProgress) {
         this.reloadProgress = reloadProgress;
+    }
+
+    public Index getRallyPoint() {
+        return rallyPoint;
+    }
+
+    public void setRallyPoint(Index rallyPoint) {
+        this.rallyPoint = rallyPoint;
     }
 }

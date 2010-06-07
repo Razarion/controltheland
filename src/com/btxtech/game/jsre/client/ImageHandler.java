@@ -133,13 +133,17 @@ public class ImageHandler {
         return url.toString();
     }
 
-    public static String getTerrainBackgroundUrl() {
+    public static String getSurfaceImagesUrl(int id) {
         StringBuilder url = new StringBuilder();
         url.append(Constants.TERRAIN_CONTROLLER_URL);
         url.append("?");
         url.append(Constants.TERRAIN_IMG_TYPE);
         url.append("=");
-        url.append(Constants.TERRAIN_IMG_TYPE_BACKGROUND);
+        url.append(Constants.TERRAIN_IMG_TYPE_SURFACE);
+        url.append("&");
+        url.append(Constants.TERRAIN_IMG_TYPE_IMG_ID);
+        url.append("=");
+        url.append(Integer.toString(id));
         return url.toString();
     }
 
@@ -159,6 +163,10 @@ public class ImageHandler {
 
     public static Image getTerrainImage(int id) {
         return new Image(getTerrainImageUrl(id));
+    }
+
+    public static Image getSurfaceImage(int id) {
+        return new Image(getSurfaceImagesUrl(id));
     }
 
     public static String getExplosion() {

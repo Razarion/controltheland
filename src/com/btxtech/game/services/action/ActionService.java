@@ -34,14 +34,9 @@ public interface ActionService extends CommonActionService, SyncItemListener {
 
     void removeGuardingBaseItem(SyncBaseItem syncItem);
 
-    void moneyItemDeleted(SyncResourceItem moneyImpl);
-
     void reload();
-
-    void setupAllMoneyStacks();
 
     void syncItemActivated(SyncBaseItem syncBaseItem);
 
     void pause(boolean pause);
-
 }

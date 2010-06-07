@@ -13,13 +13,14 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.cockpit.BuildupItemPanel;
 import com.btxtech.game.jsre.client.cockpit.CursorHandler;
+import com.btxtech.game.jsre.client.cockpit.CursorItemState;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.effects.AttackEffectHandler;
 import com.btxtech.game.jsre.client.item.ItemContainer;
+import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.client.utg.ClientUserGuidance;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.bot.PlayerSimulation;
@@ -47,7 +48,19 @@ public class ClientSyncBaseItemView extends ClientSyncItemView {
         this.syncBaseItem = syncBaseItem;
         setupAbilities();
         setZIndex();
-        CursorHandler.getInstance().handleCursorOnNewItems(this);
+        setupCursorState();
+    }
+
+    private void setupCursorState() {
+        CursorItemState cursorItemState = new CursorItemState();
+        if (isMyOwnProperty()) {
+            if (syncBaseItem.hasSyncItemContainer()) {
+                cursorItemState.setLoadTarget();
+            }
+        } else {
+            cursorItemState.setAttackTarget();
+        }
+        setCursorItemState(cursorItemState);
     }
 
     private void setupAbilities() {
@@ -150,12 +163,15 @@ public class ClientSyncBaseItemView extends ClientSyncItemView {
                 setupMarkerPos();
                 setupHealthBarPos();
                 setProgress();
-                setupImage();                
+                setupImage();
                 SelectionHandler.getInstance().refresh();
                 ItemContainer.getInstance().handleSpecial(this);
                 break;
             case UPGRADE_PROGRESS_CHANGED:
-                setProgress();                
+                setProgress();
+                break;
+            case CONTAINED_IN_CHANGED:
+                setVisible(!getSyncBaseItem().isContainedIn());
                 break;
         }
     }
@@ -199,5 +215,4 @@ public class ClientSyncBaseItemView extends ClientSyncItemView {
     public SyncBaseItem getSyncBaseItem() {
         return syncBaseItem;
     }
-
 }

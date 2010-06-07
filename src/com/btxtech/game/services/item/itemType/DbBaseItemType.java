@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ConsumerType;
 import com.btxtech.game.jsre.common.gameengine.itemType.FactoryType;
 import com.btxtech.game.jsre.common.gameengine.itemType.GeneratorType;
 import com.btxtech.game.jsre.common.gameengine.itemType.HarvesterType;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemContainerType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
 import com.btxtech.game.jsre.common.gameengine.itemType.SpecialType;
@@ -59,6 +60,8 @@ public class DbBaseItemType extends DbItemType {
     private DbSpecialType dbSpecialType;
     @OneToOne(cascade = CascadeType.ALL)
     private DbBaseItemType upgradable;
+    @OneToOne(cascade = CascadeType.ALL)
+    private DbItemContainerType dbItemContainerType;
     private Integer upgradeProgress;
 
     public int getHealth() {
@@ -149,6 +152,14 @@ public class DbBaseItemType extends DbItemType {
         this.dbSpecialType = dbSpecialType;
     }
 
+    public DbItemContainerType getDbItemContainerType() {
+        return dbItemContainerType;
+    }
+
+    public void setDbItemContainerType(DbItemContainerType dbItemContainerType) {
+        this.dbItemContainerType = dbItemContainerType;
+    }
+
     public DbBaseItemType getUpgradable() {
         return upgradable;
     }
@@ -187,7 +198,8 @@ public class DbBaseItemType extends DbItemType {
                     dbWeaponType.getMuzzlePointY_90(),
                     dbWeaponType.getMuzzleFlashWidth(),
                     dbWeaponType.getMuzzleFlashLength(),
-                    dbWeaponType.isStretchMuzzleFlashToTarget()));
+                    dbWeaponType.isStretchMuzzleFlashToTarget(),
+                    toInt(dbWeaponType.getAllowedItemTypes())));
         }
         if (dbFactoryType != null) {
             baseItemType.setFactoryType(new FactoryType(dbFactoryType.getProgress(), toInt(dbFactoryType.getAbleToBuild())));
@@ -206,6 +218,9 @@ public class DbBaseItemType extends DbItemType {
         }
         if (dbSpecialType != null) {
             baseItemType.setSpecialType(new SpecialType(dbSpecialType.getString()));
+        }
+        if (dbItemContainerType != null) {
+            baseItemType.setItemContainerType(new ItemContainerType(toInt(dbItemContainerType.getAbleToContain()), dbItemContainerType.getMaxCount(), dbItemContainerType.getRange()));
         }
         if (upgradable != null) {
             baseItemType.setUpgradeable(upgradable.getId());

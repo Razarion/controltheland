@@ -46,6 +46,11 @@ public class SyncItemInfo extends Packet {
     private double reloadProgress;
     private Boolean isUpgrading;
     private Double upgradeProgress;
+    private Index rallyPoint;
+    private List<Id> containedItems;
+    private Id targetContainer;
+    private Id containedIn;
+
 
     public Id getId() {
         return id;
@@ -207,9 +212,42 @@ public class SyncItemInfo extends Packet {
         this.upgradeProgress = upgradeProgress;
     }
 
+    public Index getRallyPoint() {
+        return rallyPoint;
+    }
+
+    public void setRallyPoint(Index rallyPoint) {
+        this.rallyPoint = rallyPoint;
+    }
+
+    public List<Id> getContainedItems() {
+        return containedItems;
+    }
+
+    public void setContainedItems(List<Id> containedItems) {
+        this.containedItems = containedItems;
+    }
+
+    public Id getTargetContainer() {
+        return targetContainer;
+    }
+
+    public void setTargetContainer(Id targetContainer) {
+        this.targetContainer = targetContainer;
+    }
+
+    public Id getContainedIn() {
+        return containedIn;
+    }
+
+    public void setContainedIn(Id containedIn) {
+        this.containedIn = containedIn;
+    }
+
     private String pathToDestinationAsString() {
         StringBuilder builder = new StringBuilder();
         if (pathToDestination != null) {
+            builder.append("{");
             Iterator<Index> iterator = pathToDestination.iterator();
             while (iterator.hasNext()) {
                 Index index = iterator.next();
@@ -218,8 +256,28 @@ public class SyncItemInfo extends Packet {
                     builder.append(", ");
                 }
             }
+            builder.append("}");
         } else {
-            builder.append("-");
+            builder.append("{-}");
+        }
+        return builder.toString();
+    }
+
+    private String intCollectionAsString() {
+        StringBuilder builder = new StringBuilder();
+        if (containedItems != null) {
+            builder.append("{");
+            Iterator<Id> iterator = containedItems.iterator();
+            while (iterator.hasNext()) {
+                Id id = iterator.next();
+                builder.append(id.toString());
+                if (iterator.hasNext()) {
+                    builder.append(", ");
+                }
+            }
+            builder.append("}");
+        } else {
+            builder.append("{-}");
         }
         return builder.toString();
     }
@@ -259,6 +317,10 @@ public class SyncItemInfo extends Packet {
                 " amount:" + amount +
                 " followTarget:" + followTarget +
                 " operationState:" + operationState +
-                " reloadProgress:" + reloadProgress;
+                " reloadProgress:" + reloadProgress +
+                " rallyPoint:" + rallyPoint +
+                " containedItems:" + intCollectionAsString() +
+                " targetContainer:" + targetContainer +
+                " containedIn:" + containedIn;
     }
 }

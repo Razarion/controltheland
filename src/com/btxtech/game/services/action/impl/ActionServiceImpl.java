@@ -37,6 +37,7 @@ import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.terrain.TerrainService;
+import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,7 +59,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  * Time: 12:50:08 PM
  */
 @Component("actionService")
-public class ActionServiceImpl extends TimerTask implements ActionService, CollisionServiceChangedListener {
+public class ActionServiceImpl extends TimerTask implements ActionService {
     public static final int TICK_TIME_MILI_SECONDS = 100;
 
     @Autowired
@@ -75,20 +76,20 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
     private TerrainService terrainService;
     @Autowired
     private ServerEnergyService energyService;
+    @Autowired
+    private TerritoryService territoryService;
     private final HashSet<SyncBaseItem> activeItems = new HashSet<SyncBaseItem>();
     private final HashSet<SyncBaseItem> guardingItems = new HashSet<SyncBaseItem>();
     private final ArrayList<SyncBaseItem> tmpActiveItems = new ArrayList<SyncBaseItem>();
     private Timer timer;
     private Log log = LogFactory.getLog(ActionServiceImpl.class);
     private long lastTickTime = 0;
-    private final HashSet<SyncResourceItem> moneys = new HashSet<SyncResourceItem>();
     private boolean pause = false;
 
     @PostConstruct
     public void start() {
         timer = new Timer(getClass().getName(), true);
         timer.scheduleAtFixedRate(this, 0, TICK_TIME_MILI_SECONDS);
-        collisionService.addCollisionServiceChangedListener(this);
     }
 
     @PreDestroy
@@ -107,34 +108,21 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
     }
 
     @Override
-    public void moneyItemDeleted(SyncResourceItem moneyImpl) {
-        if (moneyImpl.isMissionMoney()) {
-            return;
-        }
-        synchronized (moneys) {
-            moneys.remove(moneyImpl);
-        }
-        setupAllMoneyStacks();
-    }
-
-    @Override
     public void reload() {
         synchronized (activeItems) {
             activeItems.clear();
             guardingItems.clear();
             tmpActiveItems.clear();
-            moneys.clear();
             Collection<SyncItem> syncItems = itemService.getItemsCopy();
             for (SyncItem syncItem : syncItems) {
-                if (syncItem instanceof SyncResourceItem) {
-                    moneys.add((SyncResourceItem) syncItem);
-                } else if (syncItem instanceof SyncBaseItem) {
+                if (syncItem instanceof SyncBaseItem) {
                     activeItems.add((SyncBaseItem) syncItem);
                 } else {
                     log.error("Unknwon entry during reload: " + syncItem);
                 }
             }
         }
+
     }
 
     @Override
@@ -192,6 +180,14 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
             return;
         }
 
+        if (syncItem.getPosition() == null) {
+            return;
+        }
+
+        if(!territoryService.isAllowed(syncItem.getPosition(), syncItem)) {
+            return;
+        }
+
         if (checkGuardingItemHasEnemiesInRange(syncItem)) {
             return;
         }
@@ -225,7 +221,10 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
                 }
                 break;
             case ITEM_TYPE_CHANGED:
-                energyService.onItemTypeChanged((SyncBaseItem)syncItem);
+                energyService.onItemChanged((SyncBaseItem) syncItem);
+                break;
+            case CONTAINED_IN_CHANGED:
+                energyService.onItemChanged((SyncBaseItem) syncItem);
                 break;
         }
 
@@ -235,7 +234,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
     }
 
     private boolean checkGuardingItemHasEnemiesInRange(SyncBaseItem guardingItem) {
-        SyncBaseItem target = itemService.getFirstEnemyItemInRange(guardingItem, guardingItem.getSyncWaepon().getWeaponType().getRange());
+        SyncBaseItem target = itemService.getFirstEnemyItemInRange(guardingItem);
         if (target == null) {
             return false;
         }
@@ -257,7 +256,9 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
         synchronized (guardingItems) {
             for (SyncBaseItem attacker : guardingItems) {
                 //TankSyncItem tank = (TankSyncItem) baseSyncItem;
-                if (attacker.isEnemy(target) && attacker.getSyncWaepon().inAttackRange(target)) {
+                if (attacker.isEnemy(target)
+                        && attacker.getSyncWaepon().inAttackRange(target)
+                        && attacker.getSyncWaepon().isItemTypeAllowed(target)) {
                     AttackCommand attackCommand = createAttackCommand(attacker, target);
                     cmds.add(attackCommand);
                     connectionService.sendSyncInfo(target);
@@ -420,36 +421,4 @@ public class ActionServiceImpl extends TimerTask implements ActionService, Colli
         connectionService.sendSyncInfo(syncItem);
     }
 
-    @Override
-    public void setupAllMoneyStacks() {
-        for (SyncResourceItem money : moneys) {
-            if (!terrainService.isFree(money.getPosition(), money.getItemType())) {
-                log.error("Money has wrong position: " + money);
-            }
-        }
-        for (int i = moneys.size(); i < Constants.MONEY_STACK_COUNT; i++) {
-            addMoneyStack();
-        }
-    }
-
-    private void addMoneyStack() {
-        try {
-            ItemType itemType = itemService.getItemType(Constants.MONEY);
-            Index position = collisionService.getFreeRandomPosition(itemType, Constants.MIN_FREE_MONEY_DISTANCE);
-            SyncResourceItem money = (SyncResourceItem) itemService.createSyncObject(itemType, position, null, null, 0);
-            connectionService.sendSyncInfo(money);
-            synchronized (moneys) {
-                moneys.add(money);
-            }
-        } catch (NoSuchItemTypeException e) {
-            log.error("setupMoneyStack: " + e.getMessage());
-        }
-    }
-
-    @Override
-    public void collisionServiceChanged() {
-        if (itemService.areItemTypesLoaded()) {
-            setupAllMoneyStacks();
-        }
-    }
 }

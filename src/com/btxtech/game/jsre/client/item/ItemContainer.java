@@ -36,6 +36,7 @@ import com.btxtech.game.jsre.common.gameengine.services.base.BaseService;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.items.impl.AbstractItemService;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -95,7 +96,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         timer.scheduleRepeating(CLEANUP_INTERVALL);
     }
 
-    public void sychronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException {
+    public void sychronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException, ItemDoesNotExistException {
         ClientSyncItemView clientSyncItemView = items.get(syncItemInfo.getId());
 
         boolean isCreated = false;
@@ -106,9 +107,13 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
                 checkSpecialAdded(clientSyncItemView);
             } else {
                 // Check for  Teleportation effect
-                int distance = clientSyncItemView.getSyncItem().getPosition().getDistance(syncItemInfo.getPosition());
-                if (distance > 200) {
-                    GwtCommon.sendLogToServer("Teleportation detected. Distance: " + distance + " Info:" + syncItemInfo + " | Item:" + clientSyncItemView.getSyncItem());
+                Index localPos = clientSyncItemView.getSyncItem().getPosition();
+                Index syncPos = syncItemInfo.getPosition();
+                if (localPos != null && syncPos != null) {
+                    int distance = localPos.getDistance(syncPos);
+                    if (distance > 200) {
+                        GwtCommon.sendLogToServer("Teleportation detected. Distance: " + distance + " Info:" + syncItemInfo + " | Item:" + clientSyncItemView.getSyncItem());
+                    }
                 }
                 ClientSyncItemView orphanItem = orphanItems.remove(clientSyncItemView.getSyncItem().getId());
                 if (orphanItem != null) {
@@ -283,7 +288,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         return clientBaseItems;
     }
 
-    public List<SyncItem> getItems(ItemType itemType, SimpleBase simpleBase) {
+    public List<? extends SyncItem> getItems(ItemType itemType, SimpleBase simpleBase) {
         ArrayList<SyncItem> syncItems = new ArrayList<SyncItem>();
         for (ClientSyncItemView clientBaseItem : items.values()) {
             SyncItem syncItem = clientBaseItem.getSyncItem();
@@ -343,7 +348,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
 
     private void checkSpecialItem(ClientSyncItemView clientSyncItemView) {
         if (isMySpecialItem(clientSyncItemView) != null) {
-            checkForSpecialItems();           
+            checkForSpecialItems();
         }
     }
 
@@ -437,4 +442,8 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         return result;
     }
 
+    @Override
+    public Index getRallyPoint(SyncBaseItem factory, Collection<SurfaceType> allowedSurfaces) {
+        return null;
+    }
 }

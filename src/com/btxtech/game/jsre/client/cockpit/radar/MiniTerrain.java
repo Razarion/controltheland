@@ -14,8 +14,11 @@
 package com.btxtech.game.jsre.client.cockpit.radar;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.widgetideas.graphics.client.Color;
@@ -34,25 +37,34 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
 
     @Override
     public void onTerrainChanged() {
-        int playFieldXSize = TerrainView.getInstance().getTerrainHandler().getTerrainSettings().getPlayFieldXSize();
-        int playFieldYSize = TerrainView.getInstance().getTerrainHandler().getTerrainSettings().getPlayFieldYSize();
-        double scaleX = (double) getWidth() / (double) playFieldXSize;
-        double scaleY = (double) getHeight() / (double) playFieldYSize;
-        resize(playFieldXSize, playFieldYSize);
-        scale(scaleX, scaleY);
-        clear();
+        clear(getTerrainSettings().getPlayFieldXSize(), getTerrainSettings().getPlayFieldYSize());
 
-        // Draw terrain background
-        setBackgroundColor(new Color(30, 100, 0));
+        // Draw surface
+        for (SurfaceRect surfaceRect : TerrainView.getInstance().getTerrainHandler().getSurfaceRects()) {
+            Rectangle absolute = TerrainView.getInstance().getTerrainHandler().convertToAbsolutePosition(surfaceRect.getTileRectangle());
+            SurfaceImage surfaceImage = TerrainView.getInstance().getTerrainHandler().getSurfaceImage(surfaceRect);
+            if (surfaceImage != null) {
+                switch (surfaceImage.getSurfaceType()) {
+                    case WATER:
+                        setFillStyle(new Color(12, 40, 60));
+                        break;
+                    case LAND:
+                        setFillStyle(new Color(49, 60, 20));
+                        break;
+                    default:
+                        throw new IllegalArgumentException(this + " unknwon surface type: " + surfaceImage.getSurfaceType());
+                }
+                fillRect(absolute.getX(), absolute.getY(), absolute.getWidth(), absolute.getHeight());
+            }
+        }
 
         // Draw terrain
         for (TerrainImagePosition terrainImagePosition : TerrainView.getInstance().getTerrainHandler().getTerrainImagePositions()) {
             Index absolute = TerrainView.getInstance().getTerrainHandler().getAbsolutIndexForTerrainTileIndex(terrainImagePosition.getTileIndex());
-            ImageElement imageElement = TerrainView.getInstance().getTerrainHandler().getTileImageElement(terrainImagePosition.getImageId());
+            ImageElement imageElement = TerrainView.getInstance().getTerrainHandler().getTerrainImageElement(terrainImagePosition.getImageId());
             if (imageElement != null) {
                 drawImage(imageElement, absolute.getX(), absolute.getY());
             }
         }
     }
-
 }

@@ -16,9 +16,12 @@ package com.btxtech.game.jsre.client.cockpit;
 import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -135,8 +138,20 @@ public class Group {
         return clientSyncItems.isEmpty();
     }
 
+    public int getCount() {
+        return clientSyncItems.size();
+    }
+
     public Collection<ClientSyncBaseItemView> getItems() {
         return clientSyncItems;
+    }
+
+    public Collection<SyncBaseItem> getSyncBaseItems() {
+        ArrayList<SyncBaseItem> syncBaseItems = new ArrayList<SyncBaseItem>();
+        for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
+            syncBaseItems.add(clientSyncItem.getSyncBaseItem());
+        }
+        return syncBaseItems;
     }
 
     public Collection<ClientSyncBaseItemView> getMovableItems() {
@@ -169,4 +184,23 @@ public class Group {
         }
         return map;
     }
+
+    public Collection<SurfaceType> getAllowedSurfaceTypes() {
+        HashSet<SurfaceType> result = new HashSet<SurfaceType>();
+        for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
+            result.addAll(clientSyncItem.getSyncBaseItem().getTerrainType().getSurfaceTypes());
+        }
+        return result;
+    }
+
+
+    public boolean atLeastOneItemTypeAllowed2Attack(SyncBaseItem syncBaseItem) {
+        for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
+            if (clientSyncItem.getSyncBaseItem().hasSyncWaepon() && clientSyncItem.getSyncBaseItem().getSyncWaepon().isItemTypeAllowed(syncBaseItem)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

@@ -137,6 +137,7 @@ public class RadarPanel extends TopMapPanel {
     }
 
     public void onTerrainSettings(TerrainSettings terrainSettings) {
+        miniTerrain.onTerrainSettings(terrainSettings);
         radarFrameView.onTerrainSettings(terrainSettings);
         radarItemView.onTerrainSettings(terrainSettings);
     }
