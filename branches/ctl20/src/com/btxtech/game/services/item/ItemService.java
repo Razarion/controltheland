@@ -14,13 +14,13 @@
 package com.btxtech.game.services.item;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
-import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbItemTypeData;
+import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import java.util.Collection;
 import java.util.List;
 
@@ -34,17 +34,19 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
 
     boolean hasItemsInRectangle(Rectangle rectangle);
 
-    SyncBaseItem getFirstEnemyItemInRange(SyncBaseItem baseSyncItem, int range);
+    SyncBaseItem getFirstEnemyItemInRange(SyncBaseItem baseSyncItem);
 
     List<SyncItem> getItemsCopy();
 
     List<SyncItem> getItemsCopyNoDummies();
 
-    List<SyncItem> getItemsCopyNoDummiesNoBots();    
+    List<SyncItem> getItemsCopyNoDummiesNoBots();
 
     void restoreItems(Collection<SyncItem> syncItems);
 
     void saveDbItemTypes(Collection<DbItemType> itemTypes);
+
+    void saveAttackMatrix(Collection<DbBaseItemType> dbBaseItemTypes);
 
     void saveDbItemType(DbItemType dBItemType);
 
@@ -52,11 +54,13 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
 
     Collection<DbBaseItemType> getDbBaseItemTypes();
 
+    Collection<DbBaseItemType> getWeaponDbBaseItemTypes();
+
     void loadItemType();
 
     DbItemType getDbItemType(int itemTypeId);
 
-    void delteItemType(DbItemType dbItemType);
+    void deleteItemType(DbItemType dbItemType);
 
     void removeItemTypeImages(DbItemType dbItemType);
 

@@ -240,7 +240,8 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public SyncBaseItem getFirstEnemyItemInRange(SyncBaseItem baseSyncItem, int range) {
+    public SyncBaseItem getFirstEnemyItemInRange(SyncBaseItem baseSyncItem) {
+        int range = baseSyncItem.getSyncWaepon().getWeaponType().getRange();
         int startX = baseSyncItem.getPosition().getX() - range;
         if (startX < 0) {
             startX = 0;
@@ -255,7 +256,8 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
                 if (syncItem.getPosition() != null && rectangle.contains(syncItem.getPosition())
                         && syncItem instanceof SyncBaseItem
                         && baseSyncItem.isEnemy((SyncBaseItem) syncItem)
-                        && syncItem.getPosition().getDistance(baseSyncItem.getPosition()) <= range) {
+                        && syncItem.getPosition().getDistance(baseSyncItem.getPosition()) <= range
+                        && baseSyncItem.getSyncWaepon().isItemTypeAllowed((SyncBaseItem) syncItem)) {
                     return (SyncBaseItem) syncItem;
                 }
             }
@@ -331,6 +333,13 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
+    public void saveAttackMatrix(Collection<DbBaseItemType> weaponDbItemTypes) {
+        for (DbBaseItemType weaponDbItemType : weaponDbItemTypes) {
+            hibernateTemplate.merge(weaponDbItemType);
+        }
+    }
+
+    @Override
     public void saveDbItemType(DbItemType dbItemType) {
         hibernateTemplate.saveOrUpdate(dbItemType);
     }
@@ -353,6 +362,19 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             @Override
             public Object doInHibernate(Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(DbBaseItemType.class);
+                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                return criteria.list();
+            }
+        });
+    }
+
+    @Override
+    public Collection<DbBaseItemType> getWeaponDbBaseItemTypes() {
+        return hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbBaseItemType.class);
+                criteria.add(Restrictions.isNotNull("dbWeaponType"));
                 criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
                 return criteria.list();
             }
@@ -452,7 +474,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public void delteItemType(DbItemType dbItemType) {
+    public void deleteItemType(DbItemType dbItemType) {
         hibernateTemplate.delete(dbItemType);
     }
 

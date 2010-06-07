@@ -198,7 +198,8 @@ public class DbBaseItemType extends DbItemType {
                     dbWeaponType.getMuzzlePointY_90(),
                     dbWeaponType.getMuzzleFlashWidth(),
                     dbWeaponType.getMuzzleFlashLength(),
-                    dbWeaponType.isStretchMuzzleFlashToTarget()));
+                    dbWeaponType.isStretchMuzzleFlashToTarget(),
+                    toInt(dbWeaponType.getAllowedItemTypes())));
         }
         if (dbFactoryType != null) {
             baseItemType.setFactoryType(new FactoryType(dbFactoryType.getProgress(), toInt(dbFactoryType.getAbleToBuild())));
