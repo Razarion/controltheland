@@ -192,4 +192,15 @@ public class Group {
         }
         return result;
     }
+
+
+    public boolean atLeastOneItemTypeAllowed2Attack(SyncBaseItem syncBaseItem) {
+        for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
+            if (clientSyncItem.getSyncBaseItem().hasSyncWaepon() && clientSyncItem.getSyncBaseItem().getSyncWaepon().isItemTypeAllowed(syncBaseItem)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

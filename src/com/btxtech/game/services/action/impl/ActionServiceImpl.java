@@ -234,7 +234,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
     }
 
     private boolean checkGuardingItemHasEnemiesInRange(SyncBaseItem guardingItem) {
-        SyncBaseItem target = itemService.getFirstEnemyItemInRange(guardingItem, guardingItem.getSyncWaepon().getWeaponType().getRange());
+        SyncBaseItem target = itemService.getFirstEnemyItemInRange(guardingItem);
         if (target == null) {
             return false;
         }
@@ -256,7 +256,9 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
         synchronized (guardingItems) {
             for (SyncBaseItem attacker : guardingItems) {
                 //TankSyncItem tank = (TankSyncItem) baseSyncItem;
-                if (attacker.isEnemy(target) && attacker.getSyncWaepon().inAttackRange(target)) {
+                if (attacker.isEnemy(target)
+                        && attacker.getSyncWaepon().inAttackRange(target)
+                        && attacker.getSyncWaepon().isItemTypeAllowed(target)) {
                     AttackCommand attackCommand = createAttackCommand(attacker, target);
                     cmds.add(attackCommand);
                     connectionService.sendSyncInfo(target);

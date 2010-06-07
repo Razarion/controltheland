@@ -51,7 +51,7 @@ public class SyncWeapon extends SyncBaseAbility {
         if (target != null) {
             return tickAttack(factor);
         } else {
-            return retrunFalseIfReloaded();
+            return returnFalseIfReloaded();
         }
 
     }
@@ -79,18 +79,18 @@ public class SyncWeapon extends SyncBaseAbility {
                     getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, weaponType.getRange(), targetItem.getPosition());
                 } else {
                     stop();
-                    return retrunFalseIfReloaded();
+                    return returnFalseIfReloaded();
                 }
             }
             return true;
         } catch (ItemDoesNotExistException ignore) {
             // It has may be killed
             stop();
-            return retrunFalseIfReloaded();
+            return returnFalseIfReloaded();
         }
     }
 
-    private boolean retrunFalseIfReloaded() {
+    private boolean returnFalseIfReloaded() {
         return reloadProgress < weaponType.getReloadTime();
 
     }
@@ -126,12 +126,20 @@ public class SyncWeapon extends SyncBaseAbility {
             throw new IllegalArgumentException(this + " can not attack own base");
         }
 
+        if (!isItemTypeAllowed(target)) {
+            throw new IllegalArgumentException(this + " Weapon not allowed to attack item type: " + target);
+        }
+
         if (!getServices().getTerritoryService().isAllowed(target.getPosition(), getSyncBaseItem())) {
             throw new IllegalArgumentException(this + " Weapon not allowed to attack item on territory: " + target.getPosition() + "  " + getSyncBaseItem());
         }
 
         this.target = attackCommand.getTarget();
         followTarget = attackCommand.isFollowTarget();
+    }
+
+    public boolean isItemTypeAllowed(SyncBaseItem target) {
+        return weaponType.isItemTypeAllowed(target.getBaseItemType().getId());
     }
 
     public boolean inAttackRange(SyncItem target) {

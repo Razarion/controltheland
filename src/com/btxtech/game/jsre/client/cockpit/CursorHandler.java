@@ -97,15 +97,15 @@ public class CursorHandler implements TerrainMouseMoveListener {
     }
 
     public void setItemCursor(ClientSyncItemView clientSyncItemView, CursorItemState cursorItemState, Index position) {
-        if(cursorState == null) {
+        if (cursorState == null) {
             setCursor(clientSyncItemView, null, false);
             return;
         }
         if (cursorState.isCanAttack() && cursorItemState.isAttackTarget()) {
-            setCursor(clientSyncItemView, CursorType.ATTACK, SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection(position));
+            setCursor(clientSyncItemView, CursorType.ATTACK, SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection(position) && SelectionHandler.getInstance().atLeastOneItemTypeAllowed2Attack4Selection(((ClientSyncBaseItemView) clientSyncItemView).getSyncBaseItem()));
         } else if (cursorState.isCanCollect() && cursorItemState.isCollectTarget()) {
             setCursor(clientSyncItemView, CursorType.COLLECT, SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection(position));
-        } else if (cursorState.isCanLoad() &&cursorItemState.isLoadTarget()) {
+        } else if (cursorState.isCanLoad() && cursorItemState.isLoadTarget()) {
             setCursor(clientSyncItemView, CursorType.LOAD, ClientTerritoryService.getInstance().isAllowed(position, ((ClientSyncBaseItemView) clientSyncItemView).getSyncBaseItem()));
         }
     }
@@ -116,8 +116,8 @@ public class CursorHandler implements TerrainMouseMoveListener {
     }
 
     private void setCursor(Widget widget, CursorType cursorType, boolean allowed) {
-        if(cursorType == null) {
-            widget.getElement().getStyle().setCursor(Style.Cursor.POINTER);            
+        if (cursorType == null) {
+            widget.getElement().getStyle().setCursor(Style.Cursor.POINTER);
             return;
         }
 

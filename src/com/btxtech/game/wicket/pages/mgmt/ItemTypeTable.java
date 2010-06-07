@@ -69,7 +69,7 @@ public class ItemTypeTable extends WebPage {
                 Button delete = new Button("delete") {
                     @Override
                     public void onSubmit() {
-                        itemService.delteItemType(item.getModelObject());
+                        itemService.deleteItemType(item.getModelObject());
                     }
                 };
                 item.add(delete);

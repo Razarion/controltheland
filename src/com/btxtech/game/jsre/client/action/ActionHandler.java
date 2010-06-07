@@ -54,10 +54,10 @@ import java.util.Iterator;
  */
 public class ActionHandler implements CommonActionService {
     private final static ActionHandler INSTANCE = new ActionHandler();
-    private static final int TICK_INTERVALL = 60;
+    private static final int TICK_INTERVAL = 60;
     private long lastTickTime = 0;
     private final HashSet<SyncBaseItem> activeItems = new HashSet<SyncBaseItem>();
-    private HashSet<SyncBaseItem> tmpAddactiveItems = new HashSet<SyncBaseItem>();
+    private HashSet<SyncBaseItem> tmpAddActiveItems = new HashSet<SyncBaseItem>();
     private HashSet<SyncBaseItem> tmpRemoveActiveItems = new HashSet<SyncBaseItem>();
 
     public static ActionHandler getInstance() {
@@ -74,13 +74,13 @@ public class ActionHandler implements CommonActionService {
                 tick();
             }
         };
-        timer.scheduleRepeating(TICK_INTERVALL);
+        timer.scheduleRepeating(TICK_INTERVAL);
     }
 
     private void tick() {
         synchronized (activeItems) {
-            activeItems.addAll(tmpAddactiveItems);
-            tmpAddactiveItems.clear();
+            activeItems.addAll(tmpAddActiveItems);
+            tmpAddActiveItems.clear();
             activeItems.removeAll(tmpRemoveActiveItems);
             tmpRemoveActiveItems.clear();
             long time = System.currentTimeMillis();
@@ -114,7 +114,7 @@ public class ActionHandler implements CommonActionService {
     }
 
     public void addActiveItem(SyncBaseItem syncItem) {
-        tmpAddactiveItems.add(syncItem);
+        tmpAddActiveItems.add(syncItem);
     }
 
     public void removeActiveItem(SyncBaseItem baseSyncItem) {
@@ -240,7 +240,8 @@ public class ActionHandler implements CommonActionService {
         for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncWaepon()) {
                 if (ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getPosition(), clientSyncItem.getSyncBaseItem())
-                        && ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getPosition(), target)) {
+                        && ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getPosition(), target)
+                        && clientSyncItem.getSyncBaseItem().getSyncWaepon().isItemTypeAllowed(target)) {
                     attack(clientSyncItem.getSyncBaseItem(), target);
                 }
             } else {
