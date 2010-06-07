@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.mgmt.impl;
 
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.BaseService;
@@ -24,7 +25,8 @@ import com.btxtech.game.services.mgmt.BackupSummary;
 import com.btxtech.game.services.mgmt.DbViewDTO;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
-import com.btxtech.game.wicket.pages.mgmt.Startup;
+import com.btxtech.game.services.resource.ResourceService;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -85,6 +87,10 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     private ServerEnergyService serverEnergyService;
     @Autowired
     private BotService botService;
+    @Autowired
+    private ResourceService resourceService;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
     private static Log log = LogFactory.getLog(MgmtServiceImpl.class);
     private HibernateTemplate hibernateTemplate;
     private Boolean testMode;
@@ -181,7 +187,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
 
     @Override
     public void backup() {
-        GenericItemConverter converter = new GenericItemConverter(baseService, itemService, services, null, actionService);
+        GenericItemConverter converter = new GenericItemConverter(baseService, itemService, services, null, actionService, null);
         final BackupEntry backupEntry = converter.generateBackupEntry();
         // Save to db
         hibernateTemplate.execute(new HibernateCallback() {
@@ -228,7 +234,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         if (list.isEmpty()) {
             throw new IllegalArgumentException("No entry for " + date);
         }
-        GenericItemConverter converter = new GenericItemConverter(baseService, itemService, services, serverEnergyService, actionService);
+        GenericItemConverter converter = new GenericItemConverter(baseService, itemService, services, serverEnergyService, actionService, userGuidanceService);
         converter.restorBackup(list.get(0));
         log.info("Restored to: " + date);
     }
@@ -271,9 +277,8 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
                 List<BackupSummary> backupSummaries = getBackupSummary();
                 if (!backupSummaries.isEmpty()) {
                     restore(backupSummaries.get(0).getDate());
-                } else {
-                    actionService.setupAllMoneyStacks();
                 }
+                resourceService.resetAllResources();
                 botService.start();
             }
         } catch (Throwable t) {
@@ -311,6 +316,8 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
                 startupData.setStartMoney(1000);
                 startupData.setTutorialTimeout(3 * 60);
                 startupData.setUserActionCollectionTime(5 * 60);
+                startupData.setStartRectangle(new Rectangle(0, 0, 1000, 1000));
+                startupData.setStartItemFreeRange(200);
                 saveStartupData(startupData);
             } else if (startups.size() > 1) {
                 log.error("More than one startup data detected.");

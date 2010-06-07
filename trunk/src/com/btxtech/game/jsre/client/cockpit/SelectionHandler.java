@@ -17,10 +17,17 @@ import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.ClientSyncResourceItemView;
 import com.btxtech.game.jsre.client.action.ActionHandler;
+import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.user.client.ui.Widget;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * User: beat
@@ -53,6 +60,26 @@ public class SelectionHandler {
         return selectedGroup;
     }
 
+    public boolean hasOwnSelection() {
+        return selectedGroup != null && !selectedGroup.isEmpty();
+    }
+
+    public Collection<SurfaceType> getOwnSelectionSurfaceTypes() {
+        if (selectedGroup != null) {
+            return selectedGroup.getAllowedSurfaceTypes();
+        } else {
+            return new HashSet<SurfaceType>();
+        }
+    }
+
+    public boolean atLeastOneAllowedOnTerrain4Selection(Index position) {
+        return selectedGroup == null || ClientTerritoryService.getInstance().isAtLeastOneAllowed(position, selectedGroup.getSyncBaseItems());
+    }
+
+    public boolean atLeastOneItemTypeAllowed2Attack4Selection(SyncBaseItem syncBaseItem) {
+        return selectedGroup == null || selectedGroup.atLeastOneItemTypeAllowed2Attack(syncBaseItem);
+    }
+
     public void setTargetSelected(ClientSyncItemView selectedTargetClientSyncItem, MouseDownEvent event) {
         if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
             if (selectedGroup != null) {
@@ -69,10 +96,15 @@ public class SelectionHandler {
     }
 
     public void setItemGroupSelected(Group selectedGroup) {
-        clearSelection();
-        selectedGroup.setSelected(true);
-        this.selectedGroup = selectedGroup;
-        onOwnItemSelectionChanged(selectedGroup);
+        if (hasOwnSelection() && selectedGroup.getCount() == 1 && selectedGroup.getFirst().getSyncBaseItem().hasSyncItemContainer()) {
+            ActionHandler.getInstance().loadContainer(selectedGroup.getFirst(),this.selectedGroup.getItems());
+            clearSelection();
+        } else {
+            clearSelection();
+            selectedGroup.setSelected(true);
+            this.selectedGroup = selectedGroup;
+            onOwnItemSelectionChanged(selectedGroup);
+        }
     }
 
     public void clearSelection() {
@@ -131,5 +163,4 @@ public class SelectionHandler {
             onTargetSelectionItemChanged(selectedTargetClientSyncItem);
         }
     }
-
 }

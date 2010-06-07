@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.itemType;
 
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import java.io.Serializable;
 
 /**
@@ -26,6 +27,7 @@ public abstract class ItemType implements Serializable {
     private int width;
     private String name;
     private String description;
+    private TerrainType terrainType;
 
     public int getId() {
         return id;
@@ -67,6 +69,14 @@ public abstract class ItemType implements Serializable {
         this.name = name;
     }
 
+    public void setTerrainType(TerrainType terrainType) {
+        this.terrainType = terrainType;
+    }
+
+    public TerrainType getTerrainType() {
+        return terrainType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -92,6 +102,7 @@ public abstract class ItemType implements Serializable {
         width = itemType.width;
         name = itemType.name;
         description = itemType.description;
+        terrainType =  itemType.terrainType;
     }
 
     @Override

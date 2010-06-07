@@ -15,9 +15,11 @@ package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import java.util.ArrayList;
 
@@ -46,7 +48,7 @@ public abstract class SyncItem {
         return id;
     }
 
-    public void synchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException {
+    public void synchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException, ItemDoesNotExistException {
         setPosition(syncItemInfo.getPosition());
         id.synchronize(syncItemInfo.getId());
     }
@@ -116,6 +118,10 @@ public abstract class SyncItem {
                 position.getY() - itemType.getHeight() / 2,
                 itemType.getWidth(),
                 itemType.getHeight());
+    }
+
+    public TerrainType getTerrainType() {
+        return itemType.getTerrainType();
     }
 
     @Override

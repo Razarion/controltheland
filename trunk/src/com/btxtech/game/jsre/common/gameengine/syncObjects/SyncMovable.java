@@ -13,10 +13,12 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
-import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
+import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import java.util.List;
 
 /**
@@ -27,6 +29,7 @@ import java.util.List;
 public class SyncMovable extends SyncBaseAbility {
     private MovableType movableType;
     private List<Index> pathToDestination;
+    private Id targetContainer;
 
     public SyncMovable(MovableType movableType, SyncBaseItem syncBaseItem) {
         super(syncBaseItem);
@@ -34,10 +37,18 @@ public class SyncMovable extends SyncBaseAbility {
     }
 
     public boolean isActive() {
-        return pathToDestination != null && !pathToDestination.isEmpty();
+        return targetContainer != null || (pathToDestination != null && !pathToDestination.isEmpty());
     }
 
     public boolean tick(double factor) {
+        if (targetContainer != null) {
+            return tickMoveToContainer(factor);
+        } else {
+            return tickMove(factor);
+        }
+    }
+
+    private boolean tickMove(double factor) {
         if (pathToDestination == null || pathToDestination.isEmpty()) {
             pathToDestination = null;
             // no new destination
@@ -65,6 +76,42 @@ public class SyncMovable extends SyncBaseAbility {
         }
         getSyncBaseItem().setPosition(pos);
         return !destinationReached;
+    }
+
+    public void tickMoveToTarget(double factor, int range, Index target) {
+        if (pathToDestination != null && !pathToDestination.isEmpty()) {
+            Index destination = pathToDestination.get(pathToDestination.size() - 1);
+            if (!destination.isInRadius(target, range)) {
+                pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getPosition(), target, range, getSyncBaseItem().getTerrainType());
+                getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+            }
+        } else {
+            pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getPosition(), target, range, getSyncBaseItem().getTerrainType());
+            getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+        }
+        tickMove(factor);
+    }
+
+
+    private boolean tickMoveToContainer(double factor) {
+        try {
+            SyncBaseItem syncItemContainer = (SyncBaseItem) getServices().getItemService().getItem(targetContainer);
+            if (isTargetInRange(syncItemContainer.getPosition(), syncItemContainer.getSyncItemContainer().getRange())) {
+                if (getSyncBaseItem().hasSyncTurnable()) {
+                    getSyncBaseItem().getSyncTurnable().turnTo(syncItemContainer.getPosition());
+                }
+                syncItemContainer.getSyncItemContainer().load(getSyncBaseItem());
+                stop();
+                return false;
+            } else {
+                tickMoveToTarget(factor, syncItemContainer.getSyncItemContainer().getRange(), syncItemContainer.getPosition());
+                return true;
+            }
+        } catch (ItemDoesNotExistException ignore) {
+            // Item container may be killed
+            stop();
+            return false;
+        }
     }
 
     private Index getStepToDestination(double factor, Index destination) {
@@ -99,39 +146,35 @@ public class SyncMovable extends SyncBaseAbility {
         return (int) Math.round(movableType.getSpeed() * factor);
     }
 
-    public void tickMoveToTarget(double factor, int range, Index target) {
-        if (pathToDestination != null && !pathToDestination.isEmpty()) {
-            Index destination = pathToDestination.get(pathToDestination.size() - 1);
-            if (!destination.isInRadius(target, range)) {
-                pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getPosition(), target, range);
-                getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
-            }
-        } else {
-            pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getPosition(), target, range);
-            getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
-        }
-        tick(factor);
-    }
-
     @Override
     public void synchronize(SyncItemInfo syncItemInfo) {
         pathToDestination = syncItemInfo.getPathToDestination();
+        targetContainer = syncItemInfo.getTargetContainer();
     }
 
     @Override
     public void fillSyncItemInfo(SyncItemInfo syncItemInfo) {
         syncItemInfo.setPathToDestination(pathToDestination);
+        syncItemInfo.setTargetContainer(targetContainer);
     }
 
     public void stop() {
         pathToDestination = null;
+        targetContainer = null;
     }
 
     public void executeCommand(MoveCommand moveCommand) {
         if (getSyncBaseItem().getPosition().equals(moveCommand.getDestination())) {
             return;
         }
-        pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getPosition(), moveCommand.getDestination());
+        pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getPosition(), moveCommand.getDestination(), getSyncBaseItem().getTerrainType());
+    }
+
+    public void executeCommand(LoadContainCommand loadContainCommand) {
+        if (loadContainCommand.getId().equals(loadContainCommand.getItemContainer())) {
+            throw new IllegalArgumentException("Can not contain oneself: " + getSyncBaseItem());
+        }
+        targetContainer = loadContainCommand.getItemContainer();
     }
 
     public List<Index> getPathToDestination() {

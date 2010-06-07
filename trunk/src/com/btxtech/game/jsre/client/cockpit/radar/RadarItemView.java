@@ -39,7 +39,7 @@ public class RadarItemView extends MiniMap {
     @Override
     public void onTerrainSettings(TerrainSettings terrainSettings) {
         super.onTerrainSettings(terrainSettings);
-        setLineWidth(2.0 / getScaleX());
+        setLineWidth(2.0 / getScale());
         Timer timer = new Timer() {
 
             @Override
@@ -56,6 +56,9 @@ public class RadarItemView extends MiniMap {
             if (syncItemView instanceof ClientSyncBaseItemView) {
                 ClientSyncBaseItemView baseItemView = (ClientSyncBaseItemView) syncItemView;
                 Index pos = baseItemView.getSyncBaseItem().getPosition();
+                if(pos == null) {
+                    continue;
+                }
                 setStrokeStyle(new Color(baseItemView.getSyncBaseItem().getBase().getHtmlColor()));
                 strokeRect(pos.getX(), pos.getY(), BASE_ITEM_SIZE, BASE_ITEM_SIZE);
             } else if (syncItemView instanceof ClientSyncResourceItemView) {

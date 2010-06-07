@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client;
 
+import com.btxtech.game.jsre.client.dialogs.ExceptionDialog;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.MouseEvent;
 import com.google.gwt.user.client.Window;
@@ -20,7 +21,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.Date;
 
 public class GwtCommon {
-    //private static ExceptionDialog exceptionDialog;
+    private static ExceptionDialog exceptionDialog;
     private static Boolean isIe6;
     private static Boolean isOpera;
 
@@ -33,14 +34,20 @@ public class GwtCommon {
     }
 
     public static void handleException(Throwable t) {
-        t.printStackTrace();
-        /*if (exceptionDialog != null) {
-            exceptionDialog.hide(true);
-        }
-        exceptionDialog = new ExceptionDialog(t);*/
+        handleException(t, false);
+    }
 
+    public static void handleException(Throwable t, boolean showDialog) {
+        t.printStackTrace();
+        if (showDialog) {
+            if (exceptionDialog != null) {
+                exceptionDialog.hide(true);
+            }
+            exceptionDialog = new ExceptionDialog(t);
+        }
         sendExceptionToServer(t);
     }
+
 
     private static void sendExceptionToServer(Throwable throwable) {
         try {

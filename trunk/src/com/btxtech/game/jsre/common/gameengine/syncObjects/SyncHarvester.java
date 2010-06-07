@@ -77,6 +77,11 @@ public class SyncHarvester extends SyncBaseAbility {
 
     public void executeCommand(MoneyCollectCommand attackCommand) throws ItemDoesNotExistException {
         SyncResourceItem resource = (SyncResourceItem) getServices().getItemService().getItem(attackCommand.getTarget());
+
+        if (!getServices().getTerritoryService().isAllowed(resource.getPosition(), getSyncBaseItem())) {
+            throw new IllegalArgumentException(this + " Collector not allowed to collect on territory: " + resource.getPosition() + "  " + getSyncBaseItem());
+        }
+
         this.target = resource.getId();
     }
 

@@ -23,10 +23,33 @@
 <h1>Tile Editor</h1>
 
 <form wicket:id="tileForm">
-    <h2>Background Image</h2>
-    <img border="1" wicket:id="bgImage"/><br/>
-    <input type="file" wicket:id="bgUpload" /><br/>
-    Size:<span wicket:id="bgSize"/>K
+    <h2>Surface Images</h2>
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Image</th>
+            <th bgcolor="#dadada">Upload</th>
+            <th bgcolor="#dadada">Size in K</th>
+            <th bgcolor="#dadada">Surface type</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+
+        <tr wicket:id="surfaceImages">
+            <td valign="center">
+                <img border="1" wicket:id="image"/>
+            </td>
+            <td valign="center">
+                <input type="file" wicket:id="upload" />
+            </td>
+            <td wicket:id="size" align="right" valign="center"/>
+            <td valign="center">
+                <select wicket:id="surfaceType" size="1"></select>
+            </td>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" wicket:id="addSurfaceImage" value="Add">
 
     <h2>Terrain Images</h2>
     <table cellpadding="1" cellspacing="1" border="0">
@@ -37,9 +60,9 @@
             <th bgcolor="#dadada">Delete</th>
         </tr>
 
-        <tr wicket:id="tiles">
+        <tr wicket:id="terrainImages">
             <td valign="center">
-                <img border="1" wicket:id="image"/>
+                <a href="#" wicket:id="surfaceLink"><img border="1" wicket:id="image"/></a>
             </td>
             <td valign="center">
                 <input type="file" wicket:id="upload" />
@@ -50,12 +73,12 @@
             </td>
         </tr>
     </table>
+    <input type="submit" wicket:id="addTerrainImage" value="Add">
     <br/>
     <br/>
     <br/>
 
     <input type="submit" wicket:id="save" value="Save">
-    <input type="submit" wicket:id="add" value="Add">
 
 
 </form>

@@ -39,6 +39,8 @@ import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeData;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.market.ServerMarketService;
+import com.btxtech.game.services.resource.ResourceService;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -81,6 +83,10 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     private ServerServices services;
     @Autowired
     private ServerEnergyService serverEnergyService;
+    @Autowired
+    private ResourceService resourceService;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
     private HibernateTemplate hibernateTemplate;
     private int lastId = 0;
     private final HashMap<Id, SyncItem> items = new HashMap<Id, SyncItem>();
@@ -119,6 +125,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             baseService.itemCreated((SyncBaseItem) syncItem);
             baseService.sendAccountBaseUpdate((SyncBaseItem) syncItem);
             actionService.interactionGuardingItems((SyncBaseItem) syncItem);
+            userGuidanceService.onSyncBaseItemCreated((SyncBaseItem) syncItem);
         }
         connectionService.sendSyncInfo(syncItem);
         log.info("CREATED: " + syncItem);
@@ -200,10 +207,20 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             }
             baseService.itemDeleted((SyncBaseItem) syncItem, actor);
             serverEnergyService.onBaseItemKilled((SyncBaseItem) syncItem);
+            killContainedItems((SyncBaseItem) syncItem, actor);
         }
 
         if (syncItem instanceof SyncResourceItem) {
-            actionService.moneyItemDeleted((SyncResourceItem) syncItem);
+            resourceService.resourceItemDeleted((SyncResourceItem) syncItem);
+        }
+    }
+
+    private void killContainedItems(SyncBaseItem syncBaseItem, SyncBaseItem actor) {
+        if (!syncBaseItem.hasSyncItemContainer()) {
+            return;
+        }
+        for (SyncBaseItem baseItem : syncBaseItem.getSyncItemContainer().getContainedItems()) {
+            killBaseSyncObject(baseItem, actor, true);
         }
     }
 
@@ -211,6 +228,9 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     public boolean hasItemsInRectangle(Rectangle rectangle) {
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
+                if (syncItem.getPosition() == null) {
+                    continue;
+                }
                 if (rectangle.contains(syncItem.getPosition())) {
                     return true;
                 }
@@ -220,7 +240,8 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public SyncBaseItem getFirstEnemyItemInRange(SyncBaseItem baseSyncItem, int range) {
+    public SyncBaseItem getFirstEnemyItemInRange(SyncBaseItem baseSyncItem) {
+        int range = baseSyncItem.getSyncWaepon().getWeaponType().getRange();
         int startX = baseSyncItem.getPosition().getX() - range;
         if (startX < 0) {
             startX = 0;
@@ -232,10 +253,11 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         Rectangle rectangle = new Rectangle(startX, startY, 2 * range, 2 * range);
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
-                if (rectangle.contains(syncItem.getPosition())
+                if (syncItem.getPosition() != null && rectangle.contains(syncItem.getPosition())
                         && syncItem instanceof SyncBaseItem
                         && baseSyncItem.isEnemy((SyncBaseItem) syncItem)
-                        && syncItem.getPosition().getDistance(baseSyncItem.getPosition()) <= range) {
+                        && syncItem.getPosition().getDistance(baseSyncItem.getPosition()) <= range
+                        && baseSyncItem.getSyncWaepon().isItemTypeAllowed((SyncBaseItem) syncItem)) {
                     return (SyncBaseItem) syncItem;
                 }
             }
@@ -311,16 +333,48 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
+    public void saveAttackMatrix(Collection<DbBaseItemType> weaponDbItemTypes) {
+        for (DbBaseItemType weaponDbItemType : weaponDbItemTypes) {
+            hibernateTemplate.merge(weaponDbItemType);
+        }
+    }
+
+    @Override
     public void saveDbItemType(DbItemType dbItemType) {
         hibernateTemplate.saveOrUpdate(dbItemType);
     }
 
     @Override
     public Collection<DbItemType> getDbItemTypes() {
-        return (Collection<DbItemType>) hibernateTemplate.execute(new HibernateCallback() {
+        return hibernateTemplate.executeFind(new HibernateCallback() {
             @Override
             public Object doInHibernate(Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(DbItemType.class);
+                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                return criteria.list();
+            }
+        });
+    }
+
+    @Override
+    public Collection<DbBaseItemType> getDbBaseItemTypes() {
+        return hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbBaseItemType.class);
+                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                return criteria.list();
+            }
+        });
+    }
+
+    @Override
+    public Collection<DbBaseItemType> getWeaponDbBaseItemTypes() {
+        return hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbBaseItemType.class);
+                criteria.add(Restrictions.isNotNull("dbWeaponType"));
                 criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
                 return criteria.list();
             }
@@ -411,7 +465,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             }
         });
         if (list.isEmpty()) {
-            throw new IllegalArgumentException("No DB entry for: " + itemTypeId);
+            throw new IllegalArgumentException("Item type does not exist: " + itemTypeId);
         }
         if (list.size() > 1) {
             throw new IllegalArgumentException("More then one entry found: " + itemTypeId);
@@ -420,7 +474,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public void delteItemType(DbItemType dbItemType) {
+    public void deleteItemType(DbItemType dbItemType) {
         hibernateTemplate.delete(dbItemType);
     }
 
@@ -460,7 +514,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         return sound;
     }
 
-    public List<SyncItem> getItems(ItemType itemType, SimpleBase simpleBase) {
+    public List<? extends SyncItem> getItems(ItemType itemType, SimpleBase simpleBase) {
         ArrayList<SyncItem> syncItems = new ArrayList<SyncItem>();
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {

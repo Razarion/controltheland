@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.base;
 
+import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -35,8 +36,6 @@ public interface BaseService extends com.btxtech.game.jsre.common.gameengine.ser
     void createNewBase() throws AlreadyUsedException, NoSuchItemTypeException;
 
     void createNewBase(String name, BaseColor baseColor) throws AlreadyUsedException, NoSuchItemTypeException;
-
-    Base createNewBotBase(SyncBaseItem origin, int targetMinRange, int targetMaxRange) throws NoSuchItemTypeException;
 
     void continueBase();
 
@@ -81,4 +80,6 @@ public interface BaseService extends com.btxtech.game.jsre.common.gameengine.ser
     void restoreBases(Collection<Base> bases);
 
     SimpleBase getDummyBase();
+
+    String getLevelString();
 }

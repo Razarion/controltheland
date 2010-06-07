@@ -36,6 +36,11 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
     public static final int AUTO_SCROLL_DETECTION_WIDTH = 40;
     public static final int SCROLL_SPEED = 50;
     public static final int SCROLL_DISTANCE = 50;
+    private static final MapWindow INSTANCE = new MapWindow();
+    private ExtendedAbsolutePanel mapWindow;
+    private ScrollDirection scrollDirectionX;
+    private ScrollDirection scrollDirectionY;
+    private TerrainMouseMoveListener terrainMouseMoveListener;
 
     private enum ScrollDirection {
         NORTH,
@@ -44,13 +49,23 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
         EAST;
     }
 
-    private TerrainMouseMoveListener terrainMouseMoveListener;
     private Timer timer = new Timer() {
         @Override
         public void run() {
             scroll();
         }
     };
+
+    class ExtendedAbsolutePanel extends AbsolutePanel {
+        public HandlerRegistration addMouseMoveHandler(MouseMoveHandler handler) {
+            return addDomHandler(handler, MouseMoveEvent.getType());
+        }
+
+        public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
+            return addDomHandler(handler, MouseOutEvent.getType());
+        }
+    }
+
 
     private void scroll() {
         int scrollX = 0;
@@ -68,22 +83,6 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
         }
 
         TerrainView.getInstance().move(scrollX, scrollY);
-    }
-
-
-    private static final MapWindow INSTANCE = new MapWindow();
-    private ExtendedAbsolutePanel mapWindow;
-    private ScrollDirection scrollDirectionX;
-    private ScrollDirection scrollDirectionY;
-
-    class ExtendedAbsolutePanel extends AbsolutePanel {
-        public HandlerRegistration addMouseMoveHandler(MouseMoveHandler handler) {
-            return addDomHandler(handler, MouseMoveEvent.getType());
-        }
-
-        public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
-            return addDomHandler(handler, MouseOutEvent.getType());
-        }
     }
 
     /**
@@ -125,7 +124,7 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
         }
         if (terrainMouseMoveListener != null) {
             terrainMouseMoveListener.onMove(x + TerrainView.getInstance().getViewOriginLeft(), y + TerrainView.getInstance().getViewOriginTop(), x, y);
-    }
+        }
     }
 
     private void executeScrolling(ScrollDirection tmpScrollDirectionX, ScrollDirection tmpScrollDirectionY) {
@@ -171,7 +170,7 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
             if (w instanceof ClientSyncItemView) {
                 ClientSyncItemView clientSyncItemView = (ClientSyncItemView) w;
                 clientSyncItemView.setViewOrigin(left, top);
-            } else if(w instanceof SpeechBubble && !((SpeechBubble) w).isPreventScroll()) {
+            } else if (w instanceof SpeechBubble && !((SpeechBubble) w).isPreventScroll()) {
                 int newLeft = MapWindow.getAbsolutePanel().getWidgetLeft(w) - deltaLeft;
                 int newtop = MapWindow.getAbsolutePanel().getWidgetTop(w) - deltaTop;
                 MapWindow.getAbsolutePanel().setWidgetPosition(w, newLeft, newtop);

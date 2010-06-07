@@ -82,8 +82,8 @@ public class SyncBuilder extends SyncBaseAbility {
     }
 
     public void stop() {
-        if(currentBuildup != null) {
-           getServices().getConnectionService().sendSyncInfo(currentBuildup); 
+        if (currentBuildup != null) {
+            getServices().getConnectionService().sendSyncInfo(currentBuildup);
         }
         currentBuildup = null;
         toBeBuiltType = null;
@@ -116,13 +116,23 @@ public class SyncBuilder extends SyncBaseAbility {
             throw new IllegalArgumentException(this + " can not build: " + builderCommand.getToBeBuilt());
         }
 
-        if(!getSyncBaseItem().getBase().isBot() && !getServices().getItemTypeAccess().isAllowed(builderCommand.getToBeBuilt())) {
+        if (!getSyncBaseItem().getBase().isBot() && !getServices().getItemTypeAccess().isAllowed(builderCommand.getToBeBuilt())) {
             throw new IllegalArgumentException(this + " user is not allowed to build: " + builderCommand.getToBeBuilt());
         }
+
         BaseItemType tmpToBeBuiltType = (BaseItemType) getServices().getItemService().getItemType(builderCommand.getToBeBuilt());
         if (!getServices().getTerrainService().isFree(builderCommand.getPositionToBeBuilt(), tmpToBeBuiltType)) {
-            throw new IllegalArgumentException(this + " can not build: " + builderCommand.getPositionToBeBuilt() + " on: " + builderCommand.getToBeBuilt());
+            throw new IllegalArgumentException(this + " Terrain is not free. Can not build: " + builderCommand.getPositionToBeBuilt() + " on: " + builderCommand.getToBeBuilt());
         }
+
+        if (!getServices().getTerritoryService().isAllowed(builderCommand.getPositionToBeBuilt(), getSyncBaseItem())) {
+            throw new IllegalArgumentException(this + " Builder not allowed to build on territory: " + builderCommand.getPositionToBeBuilt() + "  " + getSyncBaseItem());
+        }
+
+        if (!getServices().getTerritoryService().isAllowed(builderCommand.getPositionToBeBuilt(), builderCommand.getToBeBuilt())) {
+            throw new IllegalArgumentException(this + " Item can not be built on territory: " + builderCommand.getPositionToBeBuilt() + "  " + builderCommand.getToBeBuilt());
+        }
+
         toBeBuiltType = tmpToBeBuiltType;
         toBeBuildPosition = builderCommand.getPositionToBeBuilt();
     }

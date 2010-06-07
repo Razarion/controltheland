@@ -34,5 +34,5 @@
     <!-- Other module inherits                                      -->
 
     <!-- Specify the app entry point class.                         -->
-    <entry-point class='com.btxtech.game.jsre.mapeditor.MapEditor'/>
+    <entry-point class='com.btxtech.game.jsre.mapeditor.MainTerrainEditor'/>
 </module>

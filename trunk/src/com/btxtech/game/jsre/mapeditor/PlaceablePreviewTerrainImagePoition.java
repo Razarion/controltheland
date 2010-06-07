@@ -32,18 +32,15 @@ import java.util.List;
 public class PlaceablePreviewTerrainImagePoition extends PlaceablePreviewWidget {
     private TerrainImage terrainImage;
     private TerrainImagePosition terrainImagePosition;
-    private MapModifier mapModifier;
 
-    public PlaceablePreviewTerrainImagePoition(TerrainImagePosition terrainImagePosition, MouseEvent mouseEvent, MapModifier mapModifier) {
+    public PlaceablePreviewTerrainImagePoition(TerrainImagePosition terrainImagePosition, MouseEvent mouseEvent) {
         super(ImageHandler.getTerrainImage(terrainImagePosition.getImageId()), mouseEvent);
         this.terrainImagePosition = terrainImagePosition;
-        this.mapModifier = mapModifier;
     }
 
-    public PlaceablePreviewTerrainImagePoition(TerrainImage terrainImage, MouseDownEvent mouseDownEvent, MapModifier mapModifier) {
+    public PlaceablePreviewTerrainImagePoition(TerrainImage terrainImage, MouseDownEvent mouseDownEvent) {
         super(ImageHandler.getTerrainImage(terrainImage.getId()), mouseDownEvent);
         this.terrainImage = terrainImage;
-        this.mapModifier = mapModifier;
     }
 
     @Override
@@ -58,8 +55,6 @@ public class PlaceablePreviewTerrainImagePoition extends PlaceablePreviewWidget 
         } else {
             TerrainView.getInstance().addNewTerrainImagePosition(relX, relY, terrainImage);
         }
-
-        mapModifier.setPlaceablePreview(null);
     }
 
     @Override
@@ -92,13 +87,7 @@ public class PlaceablePreviewTerrainImagePoition extends PlaceablePreviewWidget 
         Rectangle rectangle = new Rectangle(tileX, tileY, tmpTerrainImage.getTileWidth(), tmpTerrainImage.getTileHeight());
         rectangle = TerrainView.getInstance().getTerrainHandler().convertToAbsolutePosition(rectangle);
         List<TerrainImagePosition> terrainImagePositions = TerrainView.getInstance().getTerrainHandler().getTerrainImagesInRegion(rectangle);
-        if (terrainImagePositions.isEmpty()) {
-            return true;
-        } else if (terrainImagePositions.size() == 1) {
-            return terrainImagePositions.get(0).equals(this.terrainImagePosition);
-        } else {
-            return false;
-        }
+        return terrainImagePositions.isEmpty() || terrainImagePositions.size() == 1 && terrainImagePositions.get(0).equals(this.terrainImagePosition);
     }
 
 }

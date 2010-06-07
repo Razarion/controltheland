@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.common.gameengine.services.energy.EnergyService;
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccess;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
+import com.btxtech.game.jsre.common.gameengine.services.territory.AbstractTerritoryService;
 
 /**
  * User: beat
@@ -43,4 +44,6 @@ public interface Services {
     CommonCollisionService getCollisionService();
 
     CommonActionService getActionService();
+
+    AbstractTerritoryService getTerritoryService();
 }

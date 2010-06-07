@@ -52,7 +52,7 @@ public class MgmtPage extends WebPage {
         ListView<LinkAndName> tools = new ListView<LinkAndName>("toolLinkList", toolPages) {
             @Override
             protected void populateItem(final ListItem<LinkAndName> listItem) {
-                Link link = new Link("toolLink"){
+                Link link = new Link("toolLink") {
 
                     @Override
                     public void onClick() {
@@ -93,10 +93,16 @@ public class MgmtPage extends WebPage {
         toolPages.add(new LinkAndName("Terrain Tile Editor", TerrainTileEditor.class));
         toolPages.add(new LinkAndName("Backup/Restore", BackupRestore.class));
         toolPages.add(new LinkAndName("Item Type Editpr", ItemTypeTable.class));
+        toolPages.add(new LinkAndName("Attack Matrix", AttackMatrix.class));
+        toolPages.add(new LinkAndName("Resource", ResourceEditor.class));
         toolPages.add(new LinkAndName("Market", MarketEntryEditor.class));
         toolPages.add(new LinkAndName("User Tracking", UserTracking.class));
         toolPages.add(new LinkAndName("Pathfinding", Pathfinding.class));
         toolPages.add(new LinkAndName("Bases", BasesTable.class));
         toolPages.add(new LinkAndName("XP Settings", XpSettingsEditor.class));
+        toolPages.add(new LinkAndName("Level and Mission Target", LevelAndMissionTarget.class));
+        toolPages.add(new LinkAndName("Bot editor", BotEditor.class));
+        toolPages.add(new LinkAndName("TerritoryEditor", TerritoryEditor.class));
+
     }
 }

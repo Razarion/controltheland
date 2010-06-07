@@ -13,13 +13,21 @@
 
 package com.btxtech.game.services.item.itemType;
 
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Column;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.CascadeType;
-import java.io.Serializable;
+import org.hibernate.annotations.Cascade;
 
 /**
  * User: beat
@@ -51,8 +59,14 @@ public class DbWeaponType implements Serializable {
     private int muzzleFlashWidth;
     @Column(nullable = false, columnDefinition = "INT default '0'")
     private int muzzleFlashLength;
-    @Column(nullable = false, columnDefinition = "bit default b'0'")    
+    @Column(nullable = false, columnDefinition = "bit default b'0'")
     private boolean stretchMuzzleFlashToTarget;
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "ITEM_WEAPON_TYPE_ALLOWED_ITEM_TYPE",
+            joinColumns = @JoinColumn(name = "weaponItemTypeId"),
+            inverseJoinColumns = @JoinColumn(name = "allowedItemTypeId")
+    )
+    private Set<DbBaseItemType> allowedItemTypes;
 
     public int getRange() {
         return range;
@@ -166,4 +180,22 @@ public class DbWeaponType implements Serializable {
         return id != null ? id.hashCode() : 0;
     }
 
+    public Collection<DbBaseItemType> getAllowedItemTypes() {
+        if (allowedItemTypes == null) {
+            allowedItemTypes = new HashSet<DbBaseItemType>();
+        }
+        return allowedItemTypes;
+    }
+
+    public Boolean isItemTypeAllowed(DbBaseItemType dbBaseItemType) {
+        return getAllowedItemTypes().contains(dbBaseItemType);
+    }
+
+    public void setItemTypeAllowed(DbBaseItemType dbBaseItemType, boolean allowed) {
+        if (allowed) {
+            getAllowedItemTypes().add(dbBaseItemType);
+        } else {
+            getAllowedItemTypes().remove(dbBaseItemType);
+        }
+    }
 }

@@ -28,7 +28,9 @@ public interface SyncItemListener {
         RESOURCE,
         BUILD,
         ITEM_TYPE_CHANGED,
-        UPGRADE_PROGRESS_CHANGED
+        UPGRADE_PROGRESS_CHANGED,
+        CONTAINED_IN_CHANGED,
+        CONTAINER_COUNT_CHANGED
     }
 
     void onItemChanged(Change change, SyncItem syncItem);

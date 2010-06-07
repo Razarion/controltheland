@@ -13,6 +13,7 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
@@ -21,21 +22,19 @@ import com.btxtech.game.services.item.itemType.DbConsumerType;
 import com.btxtech.game.services.item.itemType.DbFactoryType;
 import com.btxtech.game.services.item.itemType.DbGeneratorType;
 import com.btxtech.game.services.item.itemType.DbHarvesterType;
-import com.btxtech.game.services.item.itemType.DbItemType;
+import com.btxtech.game.services.item.itemType.DbItemContainerType;
 import com.btxtech.game.services.item.itemType.DbItemTypeData;
 import com.btxtech.game.services.item.itemType.DbMovableType;
 import com.btxtech.game.services.item.itemType.DbSpecialType;
 import com.btxtech.game.services.item.itemType.DbTurnableType;
 import com.btxtech.game.services.item.itemType.DbWeaponType;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.StringTokenizer;
 import javax.swing.ImageIcon;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.form.TextArea;
@@ -52,7 +51,6 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Time: 10:35:35 PM
  */
 public class BaseItemTypeEditor extends WebPage {
-    public static final String ABLE_TO_BUILD_DELIIMITER = ";";
     @SpringBean
     private ItemService itemService;
     private DbBaseItemType dbBaseItemType;
@@ -85,21 +83,20 @@ public class BaseItemTypeEditor extends WebPage {
     private int consumerWattage;
     private boolean generator;
     private int generatorWattage;
+    private boolean itemContainer;
+    private String itemContainerAbleToContain;
+    private int itemContainerRange;
+    private int itemContainerMaxCount;
     private boolean special;
     private String specialString;
     private String imageFileField;
-    private HashMap<Integer, DbBaseItemType> itemTypes = new HashMap<Integer, DbBaseItemType>();
+    private Collection<DbBaseItemType> itemTypes;
 
 
     public BaseItemTypeEditor(DbBaseItemType dbBaseItemType) {
         // Prevent circular object from with same id -> Hibernate problem
-        Collection<DbItemType> dbItemTypes = itemService.getDbItemTypes();
-        for (DbItemType dbItemType : dbItemTypes) {
-            if (dbItemType instanceof DbBaseItemType) {
-                itemTypes.put(dbItemType.getId(), (DbBaseItemType) dbItemType);
-            }
-        }
-        this.dbBaseItemType = itemTypes.get(dbBaseItemType.getId());
+        itemTypes = itemService.getDbBaseItemTypes();
+        this.dbBaseItemType = ItemsUtil.getItemType4Id(dbBaseItemType.getId(), itemTypes);
 
         FeedbackPanel feedbackPanel = new FeedbackPanel("msgs");
         add(feedbackPanel);
@@ -112,6 +109,7 @@ public class BaseItemTypeEditor extends WebPage {
         form.add(new TextArea<String>("contraDescription"));
         form.add(new TextField<String>("health"));
         form.add(new TextField<String>("price"));
+        form.add(new DropDownChoice<TerrainType>("terrainType", Arrays.asList(TerrainType.values())));
         form.add(new TextField<String>("upgradeable"));
         form.add(new TextField<String>("upgradeProgress"));
         form.add(new CheckBox("turnable"));
@@ -143,6 +141,10 @@ public class BaseItemTypeEditor extends WebPage {
         form.add(new TextField("consumerWattage"));
         form.add(new CheckBox("generator"));
         form.add(new TextField("generatorWattage"));
+        form.add(new CheckBox("itemContainer"));
+        form.add(new TextField("itemContainerAbleToContain"));
+        form.add(new TextField("itemContainerRange"));
+        form.add(new TextField("itemContainerMaxCount"));
         form.add(new CheckBox("special"));
         form.add(new TextField("specialString"));
         form.add(new HiddenField("imageFileField"));
@@ -197,7 +199,7 @@ public class BaseItemTypeEditor extends WebPage {
         if (dbBaseItemType.getFactoryType() != null) {
             factory = true;
             factoryProgress = dbBaseItemType.getFactoryType().getProgress();
-            factoryAbleToBuild = itemsToString(dbBaseItemType.getFactoryType().getAbleToBuild());
+            factoryAbleToBuild = ItemsUtil.itemTypesToString(dbBaseItemType.getFactoryType().getAbleToBuild());
         } else {
             factory = false;
         }
@@ -214,7 +216,7 @@ public class BaseItemTypeEditor extends WebPage {
             builder = true;
             builderProgress = dbBaseItemType.getBuilderType().getProgress();
             builderRange = dbBaseItemType.getBuilderType().getRange();
-            builderAbleToBuild = itemsToString(dbBaseItemType.getBuilderType().getAbleToBuild());
+            builderAbleToBuild = ItemsUtil.itemTypesToString(dbBaseItemType.getBuilderType().getAbleToBuild());
         } else {
             builder = false;
         }
@@ -233,34 +235,21 @@ public class BaseItemTypeEditor extends WebPage {
             generator = false;
         }
 
+        if (dbBaseItemType.getDbItemContainerType() != null) {
+            itemContainer = true;
+            itemContainerAbleToContain = ItemsUtil.itemTypesToString(dbBaseItemType.getDbItemContainerType().getAbleToContain());
+            itemContainerMaxCount = dbBaseItemType.getDbItemContainerType().getMaxCount();
+            itemContainerRange = dbBaseItemType.getDbItemContainerType().getRange();
+        } else {
+            itemContainer = false;
+        }
+
         if (dbBaseItemType.getSpecialType() != null) {
             special = true;
             specialString = dbBaseItemType.getSpecialType().getString();
         } else {
             special = false;
         }
-    }
-
-    private String itemsToString(Collection<DbBaseItemType> ableToBuild) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (DbBaseItemType baseItemType : ableToBuild) {
-            stringBuilder.append(baseItemType.getId());
-            stringBuilder.append(ABLE_TO_BUILD_DELIIMITER);
-        }
-        return stringBuilder.toString();
-    }
-
-    private Set<DbBaseItemType> stringToItems(String ableToBuild) {
-        if (ableToBuild == null) {
-            return null;
-        }
-        HashSet<DbBaseItemType> reult = new HashSet<DbBaseItemType>();
-        StringTokenizer st = new StringTokenizer(ableToBuild, ABLE_TO_BUILD_DELIIMITER);
-        while (st.hasMoreTokens()) {
-            int id = Integer.parseInt(st.nextToken());
-            reult.add(itemTypes.get(id));
-        }
-        return reult;
     }
 
     private void save() {
@@ -282,7 +271,7 @@ public class BaseItemTypeEditor extends WebPage {
                 dbBaseItemType.setMovableType(movableType);
             }
             movableType.setSpeed(speed);
-            movableType.setTerrainType(TerrainType.LAND);
+            movableType.setTerrainType(SurfaceType.LAND);
         } else {
             dbBaseItemType.setMovableType(null);
         }
@@ -326,7 +315,7 @@ public class BaseItemTypeEditor extends WebPage {
                 factoryType = new DbFactoryType();
                 dbBaseItemType.setFactoryType(factoryType);
             }
-            factoryType.setAbleToBuild(stringToItems(factoryAbleToBuild));
+            factoryType.setAbleToBuild(ItemsUtil.stringToItemTypes(factoryAbleToBuild, itemTypes));
             factoryType.setProgress(factoryProgress);
         } else {
             dbBaseItemType.setFactoryType(null);
@@ -363,7 +352,7 @@ public class BaseItemTypeEditor extends WebPage {
             }
             builderType.setProgress(builderProgress);
             builderType.setRange(builderRange);
-            builderType.setAbleToBuild(stringToItems(builderAbleToBuild));
+            builderType.setAbleToBuild(ItemsUtil.stringToItemTypes(builderAbleToBuild, itemTypes));
         } else {
             dbBaseItemType.setBuilderType(null);
         }
@@ -377,6 +366,19 @@ public class BaseItemTypeEditor extends WebPage {
             generatorType.setWattage(generatorWattage);
         } else {
             dbBaseItemType.setGeneratorType(null);
+        }
+
+        if (itemContainer) {
+            DbItemContainerType dbItemContainerType = dbBaseItemType.getDbItemContainerType();
+            if (dbItemContainerType == null) {
+                dbItemContainerType = new DbItemContainerType();
+                dbBaseItemType.setDbItemContainerType(dbItemContainerType);
+            }
+            dbItemContainerType.setAbleToContain(ItemsUtil.stringToItemTypes(itemContainerAbleToContain, itemTypes));
+            dbItemContainerType.setMaxCount(itemContainerMaxCount);
+            dbItemContainerType.setRange(itemContainerRange);
+        } else {
+            dbBaseItemType.setDbItemContainerType(null);
         }
 
         if (special) {
@@ -450,12 +452,17 @@ public class BaseItemTypeEditor extends WebPage {
         dbBaseItemType.setPrice(price);
     }
 
+    public TerrainType getTerrainType() {
+        return dbBaseItemType.getTerrainType();
+    }
+
+    public void setTerrainType(TerrainType terrainType) {
+        dbBaseItemType.setTerrainType(terrainType);
+    }
+
     public void setUpgradeable(Integer id) {
         if (id != null) {
-            DbBaseItemType upgradeable = itemTypes.get(id);
-            if (upgradeable == null) {
-                throw new IllegalArgumentException("Unknown id for upgradeable: " + id);
-            }
+            DbBaseItemType upgradeable = ItemsUtil.getItemType4Id(id, itemTypes);
             dbBaseItemType.setUpgradable(upgradeable);
         } else {
             dbBaseItemType.setUpgradable(null);

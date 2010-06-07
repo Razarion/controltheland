@@ -17,8 +17,8 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import java.util.List;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * User: beat
@@ -26,11 +26,13 @@ import java.util.Collection;
  * Time: 14:23:09
  */
 public interface AbstractTerrainService {
-    List<Index> setupPathToDestination(Index target, Index destination, int range);
+    List<Index> setupPathToDestination(Index target, Index destination, int range, TerrainType terrainType);
 
-    List<Index> setupPathToDestination(Index start, Index destination);
+    List<Index> setupPathToDestination(Index start, Index destination, TerrainType terrainType);
 
     Collection<TerrainImagePosition> getTerrainImagePositions();
+
+    Collection<SurfaceRect> getSurfaceRects();
 
     TerrainSettings getTerrainSettings();
 
@@ -38,13 +40,23 @@ public interface AbstractTerrainService {
 
     List<TerrainImagePosition> getTerrainImagesInRegion(Rectangle absolutePxRectangle);
 
+    SurfaceImage getSurfaceImage(SurfaceRect surfaceRect);
+
     Collection<TerrainImage> getTerrainImages();
+
+    Collection<SurfaceImage> getSurfaceImages();
 
     Rectangle getTerrainImagePositionRectangle(TerrainImagePosition terrainImagePosition);
 
     TerrainImage getTerrainImage(TerrainImagePosition terrainImagePosition);
 
     TerrainImagePosition getTerrainImagePosition(int absoluteX, int absoluteY);
+
+    TerrainImagePosition getTerrainImagePosition(Index tileIndex);
+
+    SurfaceRect getSurfaceRect(int absoluteX, int absoluteY);
+
+    SurfaceRect getSurfaceRect(Index tileIndex);
 
     Index getTerrainTileIndexForAbsPosition(int x, int y);
 
@@ -72,5 +84,12 @@ public interface AbstractTerrainService {
 
     boolean isFree(Index posititon, ItemType itemType);
 
+    boolean isFree(Index point, int itemFreeWidth, int itemFreeWidth1, Collection<SurfaceType> allowedSurfaces);
+
+    @Deprecated
     boolean isTerrainPassable(Index posititon);
+
+    SurfaceType getSurfaceType(Index tileIndex);
+
+    SurfaceType getSurfaceTypeAbsolute(Index absoluteIndex);
 }

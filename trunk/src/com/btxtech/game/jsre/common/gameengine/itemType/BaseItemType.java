@@ -30,6 +30,7 @@ public class BaseItemType extends ItemType {
     private GeneratorType generatorType;
     private ConsumerType consumerType;
     private SpecialType specialType;
+    private ItemContainerType itemContainerType;
     private Integer upgradeable;
     private int upgradeProgress;
 
@@ -121,6 +122,14 @@ public class BaseItemType extends ItemType {
         this.specialType = specialType;
     }
 
+    public ItemContainerType getItemContainerType() {
+        return itemContainerType;
+    }
+
+    public void setItemContainerType(ItemContainerType itemContainerType) {
+        this.itemContainerType = itemContainerType;
+    }
+
     public Integer getUpgradeable() {
         return upgradeable;
     }
@@ -145,7 +154,7 @@ public class BaseItemType extends ItemType {
         price = baseItemType.price;
         upgradeable = baseItemType.upgradeable;
         upgradeProgress = baseItemType.upgradeProgress;
-        
+
         if (turnableType != null) {
             turnableType.changeTo(baseItemType.turnableType);
         }
@@ -172,6 +181,14 @@ public class BaseItemType extends ItemType {
         }
         if (specialType != null) {
             specialType.changeTo(baseItemType.specialType);
+        }
+
+        // TODO make other abilities like this
+        if (baseItemType.itemContainerType == null && itemContainerType != null) {
+            // remove
+            itemContainerType = null;
+        } else if (itemContainerType != null) {
+            itemContainerType.changeTo(baseItemType.itemContainerType);
         }
     }
 }

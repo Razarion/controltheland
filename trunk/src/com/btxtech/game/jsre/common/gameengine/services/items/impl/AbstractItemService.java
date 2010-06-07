@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.common.gameengine.services.items.impl;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
@@ -148,10 +149,27 @@ abstract public class AbstractItemService implements ItemService {
 
     abstract protected BaseService getBaseService();
 
-    public List<SyncItem> getItems(String itemTypeName, SimpleBase simpleBase) throws NoSuchItemTypeException {
+    public List<? extends SyncItem> getItems(String itemTypeName, SimpleBase simpleBase) throws NoSuchItemTypeException {
         return getItems(getItemType(itemTypeName), simpleBase);
     }
 
 
+    @Override
+    public List<SyncBaseItem> getBaseItems(List<Id> baseItemsIds) throws ItemDoesNotExistException {
+        ArrayList<SyncBaseItem> syncBaseItems = new ArrayList<SyncBaseItem>();
+        for (Id baseItemsId : baseItemsIds) {
+            syncBaseItems.add((SyncBaseItem) getItem(baseItemsId));
+        }
+        return syncBaseItems;
+    }
+
+    @Override
+    public List<Id> getBaseItemIds(List<SyncBaseItem> baseItems) {
+        ArrayList<Id> syncBaseItemIds = new ArrayList<Id>();
+        for (SyncBaseItem baseItem : baseItems) {
+            syncBaseItemIds.add(baseItem.getId());
+        }
+        return syncBaseItemIds;
+    }
 
 }

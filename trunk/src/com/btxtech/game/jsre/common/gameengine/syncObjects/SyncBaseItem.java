@@ -24,8 +24,10 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UnloadContainerCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UpgradeCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 
@@ -47,17 +49,19 @@ public class SyncBaseItem extends SyncItem {
     private SyncGenerator syncGenerator;
     private SyncConsumer syncConsumer;
     private SyncSpecial syncSpecial;
+    private SyncItemContainer syncItemContainer;
     private double upgradeProgress;
     private boolean isUpgrading;
     private BaseItemType upgradingItemType;
+    public Id containedIn;
 
-    public SyncBaseItem(Id id, Index position, BaseItemType baseItemType, Services services, SimpleBase base) {
+    public SyncBaseItem(Id id, Index position, BaseItemType baseItemType, Services services, SimpleBase base) throws NoSuchItemTypeException {
         super(id, position, baseItemType, services);
         this.base = base;
         setup();
     }
 
-    private void setup() {
+    private void setup() throws NoSuchItemTypeException {
         BaseItemType baseItemType = getBaseItemType();
 
         if (baseItemType.getMovableType() != null) {
@@ -113,6 +117,12 @@ public class SyncBaseItem extends SyncItem {
         } else {
             syncSpecial = null;
         }
+
+        if (baseItemType.getItemContainerType() != null) {
+            syncItemContainer = new SyncItemContainer(baseItemType.getItemContainerType(), this);
+        } else {
+            syncItemContainer = null;
+        }
     }
 
 
@@ -134,7 +144,7 @@ public class SyncBaseItem extends SyncItem {
     }
 
     @Override
-    public void synchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException {
+    public void synchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException, ItemDoesNotExistException {
         checkBase(syncItemInfo.getBase());
         super.synchronize(syncItemInfo);
         isUpgrading = syncItemInfo.isUpgrading();
@@ -151,6 +161,7 @@ public class SyncBaseItem extends SyncItem {
         health = syncItemInfo.getHealth();
         setBuild(syncItemInfo.isBuild());
         upgradeProgress = syncItemInfo.getUpgradeProgress();
+        containedIn = syncItemInfo.getContainedIn();
 
         if (syncMovable != null) {
             syncMovable.synchronize(syncItemInfo);
@@ -179,6 +190,10 @@ public class SyncBaseItem extends SyncItem {
         if (syncConsumer != null) {
             syncConsumer.synchronize(syncItemInfo);
         }
+
+        if (syncItemContainer != null) {
+            syncItemContainer.synchronize(syncItemInfo);
+        }
     }
 
     @Override
@@ -189,6 +204,8 @@ public class SyncBaseItem extends SyncItem {
         syncItemInfo.setBuild(isBuild);
         syncItemInfo.setUpgrading(isUpgrading);
         syncItemInfo.setUpgradeProgress(upgradeProgress);
+        syncItemInfo.setContainedIn(containedIn);
+
         if (syncMovable != null) {
             syncMovable.fillSyncItemInfo(syncItemInfo);
         }
@@ -215,6 +232,10 @@ public class SyncBaseItem extends SyncItem {
 
         if (syncConsumer != null) {
             syncConsumer.fillSyncItemInfo(syncItemInfo);
+        }
+
+        if (syncItemContainer != null) {
+            syncItemContainer.fillSyncItemInfo(syncItemInfo);
         }
 
         return syncItemInfo;
@@ -257,6 +278,10 @@ public class SyncBaseItem extends SyncItem {
             return syncHarvester.tick(factor);
         }
 
+        if (syncItemContainer != null && syncItemContainer.isActive()) {
+            return syncItemContainer.tick(factor);
+        }
+
         return syncMovable != null && syncMovable.isActive() && syncMovable.tick(factor);
     }
 
@@ -279,6 +304,10 @@ public class SyncBaseItem extends SyncItem {
 
         if (syncMovable != null) {
             syncMovable.stop();
+        }
+
+        if (syncItemContainer != null) {
+            syncItemContainer.stop();
         }
     }
 
@@ -321,6 +350,16 @@ public class SyncBaseItem extends SyncItem {
             getServices().getBaseService().withdrawalMoney(tmpUpgradingItemType.getPrice(), getBase());
             isUpgrading = true;
             upgradingItemType = tmpUpgradingItemType;
+            return;
+        }
+
+        if (baseCommand instanceof LoadContainCommand) {
+            getSyncMovable().executeCommand((LoadContainCommand) baseCommand);
+            return;
+        }
+
+        if (baseCommand instanceof UnloadContainerCommand) {
+            getSyncItemContainer().executeCommand((UnloadContainerCommand) baseCommand);
             return;
         }
 
@@ -432,6 +471,17 @@ public class SyncBaseItem extends SyncItem {
         return syncSpecial;
     }
 
+    public boolean hasSyncItemContainer() {
+        return syncItemContainer != null;
+    }
+
+    public SyncItemContainer getSyncItemContainer() {
+        if (syncItemContainer == null) {
+            throw new IllegalStateException(this + " has no SyncItemContainer");
+        }
+        return syncItemContainer;
+    }
+
     public boolean isEnemy(SyncBaseItem syncBaseItem) {
         return !getBase().equals(syncBaseItem.getBase());
     }
@@ -502,6 +552,34 @@ public class SyncBaseItem extends SyncItem {
 
     public boolean isUpgrading() {
         return isUpgrading;
+    }
+
+    public void setContained(Id itemContainer) {
+        this.containedIn = itemContainer;
+        setPosition(null);
+        fireItemChanged(SyncItemListener.Change.CONTAINED_IN_CHANGED);
+    }
+
+    public void clearContained(Index position) {
+        containedIn = null;
+        setPosition(position);
+        fireItemChanged(SyncItemListener.Change.CONTAINED_IN_CHANGED);
+    }
+
+    public Id getContainedIn() {
+        return containedIn;
+    }
+
+    public void setContainedIn(Id containedIn) {
+        this.containedIn = containedIn;
+    }
+
+    public boolean isContainedIn() {
+        return containedIn != null;
+    }
+
+    public boolean isUpgradeable() {
+        return upgradingItemType != null;
     }
 
     public int getFullUpgradeProgress() {

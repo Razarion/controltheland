@@ -14,24 +14,26 @@
 package com.btxtech.game.services.bot.impl;
 
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.bot.BaseExecutor;
-import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
-import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
-import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.BotService;
-import com.btxtech.game.services.common.ServerServices;
-import com.btxtech.game.services.connection.ConnectionService;
+import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.user.User;
-import com.btxtech.game.services.user.UserService;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.orm.hibernate3.HibernateCallback;
+import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
 
 /**
@@ -42,145 +44,183 @@ import org.springframework.stereotype.Component;
 @Component(value = "botService")
 public class BotServiceImpl implements BotService {
     @Autowired
-    private UserService userService;
-    @Autowired
-    private ServerServices serverServices;
-    @Autowired
     private BaseService baseService;
     @Autowired
-    private ItemService itemService;
-    @Autowired
-    private ConnectionService connectionService;
-    private BaseBalance baseBalance;
-    private Thread botThread;
+    private ApplicationContext applicationContext;
+    private HibernateTemplate hibernateTemplate;
+    final private Map<DbBotConfig, BotRunner> botRunners = new HashMap<DbBotConfig, BotRunner>();
+    private Collection<SimpleBase> simpleBases = new ArrayList<SimpleBase>();
     private Log log = LogFactory.getLog(BotServiceImpl.class);
-    private BaseExecutor baseExecutor;
-    private BotServiceConfig botServiceConfig = new BotServiceConfig();
-    private Base botBase;
 
-
-    public User getBotUser() {
-        User user = userService.getUser(botServiceConfig.getUserName());
-        if (user == null) {
-            throw new IllegalStateException("User does not exist: " + botServiceConfig.getUserName());
-        }
-        return user;
-    }
-
-    private Base getBotBase() {
-        Base base = baseService.getBase(getBotUser());
-        if (base == null) {
-            throw new IllegalStateException("Bot has no base");
-        }
-        return base;
-    }
-
-    @Override
     public void start() {
-        botBase = getBotBase();
-        botBase.setBot(true);
-        baseExecutor = new BaseExecutor(serverServices, botBase.getSimpleBase());
-        baseBalance = new BaseBalance(baseExecutor);
-        for (SyncBaseItem syncBaseItem : botBase.getItems()) {
-            baseBalance.addItemPosAndType(new ItemPosAndType(syncBaseItem));
-        }
-        runBot();
-        connectionService.sendOnlineBasesUpdate();
-    }
-
-    private void stop() {
-        if (botThread == null) {
-            throw new IllegalStateException("Bot thread is not running");
-        }
-        Thread tmp = botThread;
-        botThread = null;
-        tmp.interrupt();
-        botBase.setBot(false);
-        connectionService.sendOnlineBasesUpdate();
-    }
-
-    private void runBot() {
-        if (botThread != null) {
-            throw new IllegalStateException("Bot is already running");
-        }
-        if (baseBalance.isEmpty()) {
-            throw new IllegalStateException("Base does not have any items");
-        }
-
-        botThread = new Thread() {
-
-            @Override
-            public void run() {
-                try {
-                    while (botThread != null) {
-                        doItemBalance();
-                        doMoneyBalance();
-                        Thread.sleep(botServiceConfig.getBotActionDelay());
-                    }
-                } catch (InterruptedException ignore) {
-                    botThread = null;
-                } catch (Throwable t) {
-                    log.error("", t);
-                    botThread = null;
-                }
-            }
-        };
-        botThread.setDaemon(true);
-        botThread.start();
-    }
-
-    private void doItemBalance() {
-        // Get Dead items
-        List<ItemPosAndType> deadItems = baseBalance.getDeadItems();
-        for (ItemPosAndType deadItem : deadItems) {
-            log.info("Bot: Killed item " + deadItem.getSyncBaseItem());
-        }
-
-        // Recreate dead items
-        Map<BaseItemType, List<SyncBaseItem>> availableItems = itemService.getItems4Base(botBase.getSimpleBase());
-        for (ItemPosAndType deadItem : deadItems) {
-            baseExecutor.doBalanceItemType(availableItems, deadItem.getBaseItemType(), deadItem.getPosition());
-        }
-
-        // Insert new items
-        List<SyncBaseItem> aliveItems = baseBalance.getAliveItems();
-        ArrayList<SyncBaseItem> newItems = new ArrayList<SyncBaseItem>(botBase.getItems());
-        newItems.removeAll(aliveItems);
-        baseBalance.addSyncBaseItems(newItems);
-    }
-
-    private void doMoneyBalance() {
-        int money = (int) botBase.getAccountBalance();
-        if (money < botServiceConfig.getMinMoney()) {
+        List<DbBotConfig> dbBotConfigs = getDbBotConfigs();
+        for (DbBotConfig botConfig : dbBotConfigs) {
             try {
-                baseExecutor.doAllIdleHarvest();
-            } catch (NoSuchItemTypeException e) {
+                startBot(botConfig);
+            } catch (Exception e) {
                 log.error("", e);
             }
         }
     }
 
+    @Autowired
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        hibernateTemplate = new HibernateTemplate(sessionFactory);
+    }
 
     @Override
-    public SimpleBase getOnlineBotBase() {
-        if (botThread != null) {
-            return botBase.getSimpleBase();
-        } else {
-            return null;
+    public void addDbBotConfig() {
+        DbBotConfig dbBotConfig = new DbBotConfig();
+        dbBotConfig.setActionDelay(3000);
+        hibernateTemplate.save(dbBotConfig);
+    }
+
+    @Override
+    public void saveDbBotConfig(List<DbBotConfig> dbLevels) {
+        hibernateTemplate.saveOrUpdateAll(dbLevels);
+        refreshBotRunners();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<DbBotConfig> getDbBotConfigs() {
+        return (List<DbBotConfig>) hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbBotConfig.class);
+                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                return criteria.list();
+            }
+        });
+    }
+
+    @Override
+    public void removeDbBotConfig(DbBotConfig dbBotConfig) {
+        hibernateTemplate.delete(dbBotConfig);
+        stopBot(dbBotConfig);
+    }
+
+    private void startBot(DbBotConfig botConfig) {
+        if (botConfig.getUser() == null) {
+            return;
+        }
+        Base base = baseService.getBase(botConfig.getUser());
+        if (base == null) {
+            log.info("Can not start bot. No base found for " + botConfig.getUser().getName());
+            return;
+        }
+        base.setBot(true);
+        BotRunner botRunner = (BotRunner) applicationContext.getBean("botRunner");
+        botRunner.setBase(base);
+        botRunner.setBotConfig(botConfig);
+        botRunner.start();
+        synchronized (botRunners) {
+            botRunners.put(botConfig, botRunner);
+            simpleBases.add(base.getSimpleBase());
+        }
+    }
+
+    private void stopBot(DbBotConfig botConfig) {
+        if (botConfig.getUser() == null) {
+            return;
+        }
+        BotRunner botRunner;
+        synchronized (botRunners) {
+            botRunner = botRunners.remove(botConfig);
+
+        }
+        if (botRunner == null) {
+            throw new IllegalArgumentException("Can not stop bot. No such bot " + botConfig.getUser().getName());
+        }
+        simpleBases.remove(botRunner.getBase().getSimpleBase());
+
+        botRunner.stop();
+        botRunner.getBase().setBot(false);
+    }
+
+    private void refreshBotRunners() {
+        List<DbBotConfig> newDbBotConfigs = new ArrayList<DbBotConfig>();
+        List<DbBotConfig> dbBotConfigs = getDbBotConfigs();
+        for (DbBotConfig botConfig : dbBotConfigs) {
+            BotRunner botRunner = botRunners.get(botConfig);
+            if (botRunner != null) {
+                botRunner.synchronize(botConfig);
+            } else {
+                newDbBotConfigs.add(botConfig);
+            }
+        }
+
+        // Start new bots
+        for (DbBotConfig botConfig : newDbBotConfigs) {
+            try {
+                startBot(botConfig);
+            } catch (Exception e) {
+                log.error("", e);
+            }
+        }
+
+        // Remove old bots
+        List<DbBotConfig> oldDbBotConfigs = new ArrayList<DbBotConfig>(botRunners.keySet());
+        oldDbBotConfigs.removeAll(dbBotConfigs);
+        for (DbBotConfig botConfig : oldDbBotConfigs) {
+            stopBot(botConfig);
         }
     }
 
     @Override
+    public Collection<SimpleBase> getRunningBotBases() {
+        return simpleBases;
+    }
+
+    @Override
     public void onConnectionClosed(Base base) {
-        if (base.equals(botBase)) {
-            start();
+        BotRunner botRunner = getBotRunner(base);
+        if (botRunner != null) {
+            botRunner.pause(false);
         }
     }
 
     @Override
     public void onConnectionCreated(Base base) {
-        if (base.equals(botBase)) {
-            stop();
+        BotRunner botRunner = getBotRunner(base);
+        if (botRunner != null) {
+            botRunner.pause(true);
         }
+    }
+
+    @Override
+    public void onBaseCreated(Base base) {
+        if (simpleBases.contains(base.getSimpleBase())) {
+            return;
+        }
+        User user = base.getUser();
+        if (user == null) {
+            return;
+        }
+        List<DbBotConfig> dbBotConfigs = getDbBotConfigs();
+        for (DbBotConfig dbBotConfig : dbBotConfigs) {
+            if (user.equals(dbBotConfig.getUser())) {
+                try {
+                    startBot(dbBotConfig);
+                    return;
+                } catch (Exception e) {
+                    log.error("", e);
+                }
+            }
+        }
+    }
+
+    private BotRunner getBotRunner(Base base) {
+        if (!simpleBases.contains(base.getSimpleBase())) {
+            return null;
+        }
+        synchronized (botRunners) {
+            for (BotRunner botRunner : botRunners.values()) {
+                if (botRunner.getBase().equals(base)) {
+                    return botRunner;
+                }
+            }
+        }
+        return null;
     }
 }

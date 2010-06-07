@@ -82,7 +82,7 @@ public class BaseExecutor {
 
 
     public void doHarvest(SyncBaseItem harvester) throws NoSuchItemTypeException {
-        List<SyncItem> syncItems = services.getItemService().getItems(Constants.MONEY, null);
+        List<? extends SyncItem> syncItems = services.getItemService().getItems(Constants.MONEY, null);
         if (syncItems.isEmpty()) {
             throw new IllegalStateException("No money item found");
         }

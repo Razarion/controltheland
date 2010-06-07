@@ -14,6 +14,7 @@
 package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.client.common.UserMessage;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
@@ -29,6 +30,8 @@ import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.utg.BrowserDetails;
+import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.DbLevelPromotion;
 import com.btxtech.game.services.utg.DbMissionAction;
 import com.btxtech.game.services.utg.DbUserAction;
 import com.btxtech.game.services.utg.DbUserMessage;
@@ -304,7 +307,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                         gameTrackingInfo.setClientRunningGameStartup(gameStartup);
                     }
                     break;
-                case CLIENT_MAP_BG_LOADED:
+                case CLIENT_MAP_SURFACE_IMAGES_LOADED:
                     if (gameTrackingInfo != null) {
                         gameTrackingInfo.setMapBgLoaded(gameStartup.getClientTimeStamp());
                     }
@@ -504,4 +507,35 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         }
     }
 
+    @Override
+    public void levelPromotion(Base base, String oldLevel) {
+        try {
+            String sessionId = null;
+            try {
+                sessionId = session.getSessionId();
+            }   catch(Throwable t) {
+                log.error("", t);
+            }
+            DbLevelPromotion dbLevelPromotion = new DbLevelPromotion(sessionId, base, oldLevel);
+            hibernateTemplate.saveOrUpdate(dbLevelPromotion);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    public void levelInterimPromotion(Base base, String targetLevel, String interimPromotion) {
+        try {
+            String sessionId = null;
+            try {
+                sessionId = session.getSessionId();
+            }   catch(Throwable t) {
+                log.error("", t);
+            }
+            DbLevelPromotion dbLevelPromotion = new DbLevelPromotion(sessionId, base, targetLevel, interimPromotion);
+            hibernateTemplate.saveOrUpdate(dbLevelPromotion);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
 }

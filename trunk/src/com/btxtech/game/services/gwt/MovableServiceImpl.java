@@ -39,6 +39,7 @@ import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.terrain.TerrainService;
+import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
@@ -74,6 +75,8 @@ public class MovableServiceImpl implements MovableService {
     private UserService userService;
     @Autowired
     private MgmtService mgmtService;
+    @Autowired
+    private TerritoryService territoryService;
 
     private Log log = LogFactory.getLog(MovableServiceImpl.class);
 
@@ -153,11 +156,15 @@ public class MovableServiceImpl implements MovableService {
             gameInfo.setTerrainSettings(terrainService.getTerrainSettings());
             gameInfo.setTerrainImagePositions(terrainService.getTerrainImagePositions());
             gameInfo.setTerrainImages(terrainService.getTerrainImages());
+            gameInfo.setSurfaceRects(terrainService.getSurfaceRects());
+            gameInfo.setSurfaceImages(terrainService.getSurfaceImages());
             gameInfo.setOnlineBaseUpdate(connectionService.getOnlineBaseUpdate());
             StartupData startupData = mgmtService.getStartupData();
             gameInfo.setTutorialTimeout(startupData.getTutorialTimeout());
             gameInfo.setRegisterDialogDelay(startupData.getRegisterDialogDelay());
             gameInfo.setUserActionCollectionTime(startupData.getUserActionCollectionTime());
+            gameInfo.setLevel(userGuidanceService.getLevel4Base());
+            gameInfo.setTerritories(territoryService.getTerritories());
             return gameInfo;
         } catch (com.btxtech.game.services.connection.NoConnectionException t) {
             log.error(t.getMessage() + " SessionId: " + t.getSessionId());
@@ -180,7 +187,7 @@ public class MovableServiceImpl implements MovableService {
     @Override
     public void createMissionTraget(Id attacker) {
         try {
-            userGuidanceService.createMissionTraget(attacker);
+            userGuidanceService.createMissionTarget(attacker);
         } catch (Throwable t) {
             log.error("", t);
         }
@@ -222,7 +229,7 @@ public class MovableServiceImpl implements MovableService {
     public void surrenderBase() {
         try {
             baseService.surrenderBase(baseService.getBaseForLoggedInUser());
-            connectionService.closeConnection();            
+            connectionService.closeConnection();
         } catch (Throwable t) {
             log.error("", t);
         }
@@ -237,4 +244,22 @@ public class MovableServiceImpl implements MovableService {
         }
     }
 
+    @Override
+    public String getMissionTarget() {
+        try {
+            return userGuidanceService.getMissionTarget4NextLevel(baseService.getBase());
+        } catch (Throwable t) {
+            log.error("", t);
+            return t.toString();
+        }
+    }
+
+    @Override
+    public void tutorialTerminated() {
+        try {
+            userGuidanceService.tutorialTerminated();
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
 }

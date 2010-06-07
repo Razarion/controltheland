@@ -13,9 +13,14 @@
 
 package com.btxtech.game.services.utg;
 
+import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
-import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.services.base.Base;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * User: beat
@@ -23,7 +28,37 @@ import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
  * Time: 22:02:57
  */
 public interface UserGuidanceService {
-    void createMissionTraget(Id attacker) throws NoSuchItemTypeException, ItemDoesNotExistException;
+    void createMissionTarget(Id attacker) throws NoSuchItemTypeException, ItemDoesNotExistException;
 
     void createMissionMoney(Id harvester) throws NoSuchItemTypeException, ItemDoesNotExistException;
+
+    List<DbLevel> getDbLevels();
+
+    void deleteDbLevel(DbLevel dbLevel);
+
+    void addDbLevel();
+
+    void saveDbLevels(List<DbLevel> dbLevels);
+
+    void saveDbLevel(DbLevel dbLevel);
+
+    void moveUpDbLevel(DbLevel dbLevel);
+
+    void moveDownDbLevel(DbLevel dbLevel);
+
+    Level getLevel4Base();
+
+    String getMissionTarget4NextLevel(Base base);
+
+    void onSyncBaseItemCreated(SyncBaseItem syncBaseItem);
+
+    void setupLevel4NewBase(Base base);
+
+    void tutorialTerminated();
+
+    void onIncreaseXp(Base base, int xp);
+
+    void onBaseDeleted(Base base);
+
+    void restore(Collection<Base> bases);
 }

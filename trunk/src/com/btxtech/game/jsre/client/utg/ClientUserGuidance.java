@@ -47,7 +47,7 @@ import java.util.List;
 public class ClientUserGuidance implements SelectionListener {
     private static final ClientUserGuidance INSTANCE = new ClientUserGuidance();
     private Mission currentMission;
-    private static final int TICK_INTERVALL = 500;
+    private static final int TICK_INTERVAL = 500;
     private static final int APPLAUSE_TIME = 2000;
     private List<Mission> missions;
     private Timer timer;
@@ -63,7 +63,7 @@ public class ClientUserGuidance implements SelectionListener {
     private ClientUserGuidance() {
     }
 
-    public void start() {
+    public void startTutorial() {
         try {
             setupMissions();
             startTimer();
@@ -93,6 +93,7 @@ public class ClientUserGuidance implements SelectionListener {
                     } else {
                         currentMission.tick();
                         if (System.currentTimeMillis() > currentMission.getLastTaskChangeTime() + Connection.getInstance().getGameInfo().getTutorialTimeout() * 1000) {
+                            // Timed out
                             stopMissions();
                             ClientUserTracker.getInstance().onTutorialTimedOut();
                         }
@@ -101,12 +102,12 @@ public class ClientUserGuidance implements SelectionListener {
                     startNextMission();
                     if (currentMission == null) {
                         // no more missions
-                        timer.cancel();
+                        stopMissions();
                     }
                 }
             }
         };
-        timer.scheduleRepeating(TICK_INTERVALL);
+        timer.scheduleRepeating(TICK_INTERVAL);
     }
 
     private void setupMissions() throws NoSuchItemTypeException {
@@ -206,5 +207,6 @@ public class ClientUserGuidance implements SelectionListener {
             currentMission = null;
         }
         isRunning = false;
+        Connection.getInstance().tutorialTerminated();
     }
 }

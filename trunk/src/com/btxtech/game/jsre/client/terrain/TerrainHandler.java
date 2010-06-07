@@ -15,9 +15,12 @@ package com.btxtech.game.jsre.client.terrain;
 
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
-import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainServiceImpl;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
@@ -34,36 +37,54 @@ import java.util.HashMap;
  * Time: 22:58:26
  */
 public class TerrainHandler extends AbstractTerrainServiceImpl {
-    private HashMap<Integer, ImageElement> terrainTileImageElements = new HashMap<Integer, ImageElement>();
-    private ImageElement backgroundImage;
+    private HashMap<Integer, ImageElement> terrainImageElements = new HashMap<Integer, ImageElement>();
+    private HashMap<Integer, ImageElement> surfaceImageElements = new HashMap<Integer, ImageElement>();
 
     public void setupTerrain(TerrainSettings terrainSettings,
                              Collection<TerrainImagePosition> terrainImagePositions,
+                             Collection<SurfaceRect> surfaceRects,
+                             Collection<SurfaceImage> surfaceImages,
                              Collection<TerrainImage> terrainImages) {
         setTerrainSettings(terrainSettings);
         setTerrainImagePositions(terrainImagePositions);
-        setupTerrainImages(terrainImages);
-        loadBackgroundAndDrawMap();
+        setSurfaceRects(surfaceRects);
+        setupImages(surfaceImages, terrainImages);
+        loadSurfaceImagesAndDrawMap();
         loadImagesAndDrawMap();
     }
 
-    public ImageElement getTileImageElement(int tileId) {
-        return terrainTileImageElements.get(tileId);
+    public ImageElement getTerrainImageElement(int tileId) {
+        return terrainImageElements.get(tileId);
     }
 
-    public ImageElement getBackgroundImage() {
-        return backgroundImage;
+    public ImageElement getSurfaceImageElement(int tileId) {
+        return surfaceImageElements.get(tileId);
     }
 
-    private void loadBackgroundAndDrawMap() {
-        ImageLoader.loadImages(new String[]{ImageHandler.getTerrainBackgroundUrl()}, new ImageLoader.CallBack() {
+    protected void loadSurfaceImagesAndDrawMap() {
+        ArrayList<String> urls = new ArrayList<String>();
+        final ArrayList<Integer> ids = new ArrayList<Integer>();
+        for (SurfaceRect surfaceRect : getSurfaceRects()) {
+            if(!ids.contains(surfaceRect.getSurfaceImageId())) {
+                ids.add(surfaceRect.getSurfaceImageId());
+                urls.add(ImageHandler.getSurfaceImagesUrl(surfaceRect.getSurfaceImageId()));
+            }
+        }
+
+        ImageLoader.loadImages(urls.toArray(new String[urls.size()]), new ImageLoader.CallBack() {
 
             @Override
             public void onImagesLoaded(ImageElement[] imageElements) {
+                surfaceImageElements.clear();
+
                 try {
-                    backgroundImage = imageElements[0];
-                    fireTerrainChanged();
-                    ClientUserTracker.getInstance().sandGameStartupState(GameStartupState.CLIENT_MAP_BG_LOADED);
+                    for (int i = 0; i < imageElements.length; i++) {
+                        surfaceImageElements.put(ids.get(i), imageElements[i]);
+                    }
+                    if (!terrainImageElements.isEmpty()) {
+                        fireTerrainChanged();
+                    }
+                    ClientUserTracker.getInstance().sandGameStartupState(GameStartupState.CLIENT_MAP_SURFACE_IMAGES_LOADED);
                 } catch (Throwable throwable) {
                     GwtCommon.handleException(throwable);
                 }
@@ -75,19 +96,21 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
         ArrayList<String> urls = new ArrayList<String>();
         final ArrayList<Integer> ids = new ArrayList<Integer>();
         for (TerrainImagePosition terrainImagePosition : getTerrainImagePositions()) {
-            urls.add(ImageHandler.getTerrainImageUrl(terrainImagePosition.getImageId()));
-            ids.add(terrainImagePosition.getImageId());
+            if(!ids.contains(terrainImagePosition.getImageId())) {
+                ids.add(terrainImagePosition.getImageId());
+                urls.add(ImageHandler.getTerrainImageUrl(terrainImagePosition.getImageId()));
+            }
         }
         ImageLoader.loadImages(urls.toArray(new String[urls.size()]), new ImageLoader.CallBack() {
 
             @Override
             public void onImagesLoaded(ImageElement[] imageElements) {
-                terrainTileImageElements.clear();
+                terrainImageElements.clear();
                 try {
                     for (int i = 0; i < imageElements.length; i++) {
-                        terrainTileImageElements.put(ids.get(i), imageElements[i]);
+                        terrainImageElements.put(ids.get(i), imageElements[i]);
                     }
-                    if (backgroundImage != null) {
+                    if (!surfaceImageElements.isEmpty()) {
                         fireTerrainChanged();
                     }
                     ClientUserTracker.getInstance().sandGameStartupState(GameStartupState.CLIENT_MAP_IMAGES_LOADED);
@@ -104,9 +127,30 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
         fireTerrainChanged();
     }
 
+    public void addNewSurfaceRect(int relX, int relY, int width, int height, SurfaceImage surfaceImage) {
+        Rectangle tileRect = convertToTilePosition(new Rectangle(relX, relY, width, height));
+        addSurfaceRect(new SurfaceRect(tileRect, surfaceImage.getImageId()));
+        fireTerrainChanged();
+    }
+
     public void moveTerrainImagePosition(int absX, int absY, TerrainImagePosition terrainImagePosition) {
         Index index = getTerrainTileIndexForAbsPosition(absX, absY);
         terrainImagePosition.setTileIndex(index);
+        fireTerrainChanged();
+    }
+
+
+    public void moveSurfaceRect(int absX, int absY, SurfaceRect surfaceRect) {
+        Index index = getTerrainTileIndexForAbsPosition(absX, absY);
+        Rectangle rectangle = surfaceRect.getTileRectangle().moveTo(index.getX(), index.getY());
+        surfaceRect.setTileRectangle(rectangle);
+        fireTerrainChanged();
+    }
+
+
+    public void moveSurfaceRect(Rectangle rectangle, SurfaceRect surfaceRect) {
+        Rectangle tileRect = convertToTilePosition(rectangle);
+        surfaceRect.setTileRectangle(tileRect);
         fireTerrainChanged();
     }
 
@@ -115,7 +159,17 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
         fireTerrainChanged();
     }
 
+    public void removeSurfaceRect(SurfaceRect surfaceRect) {
+        super.removeSurfaceRect(surfaceRect);
+        fireTerrainChanged();
+    }
+
     public HashMap<Integer, ImageElement> getTerrainImageElements() {
-        return terrainTileImageElements;
+        return terrainImageElements;
+    }
+
+
+    public HashMap<Integer, ImageElement> getSurfaceImageElements() {
+        return surfaceImageElements;
     }
 }
