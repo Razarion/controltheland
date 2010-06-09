@@ -25,18 +25,15 @@ import com.google.gwt.user.client.ui.Widget;
  * Time: 12:26:58
  */
 public class RadarPanel extends TopMapPanel {
-    public static final String NO_RADAR = "<br/>You do not have a running Radar. Get one from <a href=\"?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.market.MarketPage\" target=\"_blank\">Market</a> and build it with your construction vehicle.";
     public static final String NO_POWER = "<br/>You do not have a enough energy. Get a Power Plant from <a href=\"?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.market.MarketPage\" target=\"_blank\">Market</a> and build it with your construction vehicle.";
     public static final int WIDTH = 200;
     public static final int HEIGHT = 200;
     public static final String RADAR_1 = "Radar 1";
-    public static final String RADAR_2 = "Radar 2";
     private static final RadarPanel INSTANCE = new RadarPanel();
     private MiniTerrain miniTerrain;
     private RadarFrameView radarFrameView;
     private RadarItemView radarItemView;
     private boolean hasRadar1 = false;
-    private boolean hasRadar2 = false;
     private boolean hasEnergy = false;
     private HTML noRadaPanel;
 
@@ -54,14 +51,14 @@ public class RadarPanel extends TopMapPanel {
     protected Widget createBody() {
         AbsolutePanel absolutePanel = new AbsolutePanel();
         absolutePanel.setPixelSize(WIDTH, HEIGHT);
-        boolean state = (hasRadar1 || hasRadar2) && hasEnergy;
+        boolean state = !hasRadar1 || hasEnergy;
 
         // No radar Panel
         noRadaPanel = new HTML();
-        noRadaPanel.setHTML(NO_RADAR);
         noRadaPanel.setSize("100%", "100%");
         noRadaPanel.getElement().getStyle().setColor("#FFFFFF");
         noRadaPanel.getElement().getStyle().setBackgroundColor("#000000");
+        noRadaPanel.setHTML(NO_POWER);
         noRadaPanel.setVisible(!state);
         absolutePanel.add(noRadaPanel, 0, 0);
 
@@ -74,7 +71,7 @@ public class RadarPanel extends TopMapPanel {
         // Own item view
         radarItemView = new RadarItemView(WIDTH, HEIGHT);
         radarItemView.getElement().getStyle().setZIndex(2);
-        radarItemView.setVisible(hasRadar2 && state);
+        radarItemView.setVisible(hasRadar1 && hasEnergy);
         absolutePanel.add(radarItemView, 0, 0);
 
         // Frame view
@@ -94,16 +91,8 @@ public class RadarPanel extends TopMapPanel {
         handleRadarState();
     }
 
-    public void setRadarState2(boolean state) {
-        if (hasRadar2 == state) {
-            return;
-        }
-        hasRadar2 = state;
-        handleRadarState();
-    }
-
     private void handleRadarState() {
-        boolean state = (hasRadar1 || hasRadar2) && hasEnergy;
+        boolean state = !hasRadar1 || hasEnergy;
 
         if (miniTerrain != null) {
             miniTerrain.setVisible(state);
@@ -112,15 +101,10 @@ public class RadarPanel extends TopMapPanel {
             radarFrameView.setVisible(state);
         }
         if (radarItemView != null) {
-            radarItemView.setVisible(hasRadar2 && state);
+            radarItemView.setVisible(hasRadar1 && hasEnergy);
         }
         if (noRadaPanel != null) {
-            if (state) {
-                noRadaPanel.setVisible(false);
-            } else if (!hasRadar1) {
-                noRadaPanel.setVisible(true);
-                noRadaPanel.setHTML(NO_RADAR);
-            } else if (!hasEnergy) {
+            if (hasRadar1 && !hasEnergy) {
                 noRadaPanel.setVisible(true);
                 noRadaPanel.setHTML(NO_POWER);
             }

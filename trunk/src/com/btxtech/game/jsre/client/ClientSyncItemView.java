@@ -120,7 +120,7 @@ public abstract class ClientSyncItemView extends AbsolutePanel implements MouseD
     }
 
     public void onMouseOver(MouseOverEvent event) {
-        CursorHandler.getInstance().setItemCursor(this, cursorItemState, syncItem.getPosition());
+        CursorHandler.getInstance().setItemCursor(this, cursorItemState);
     }
 
     public void setCursorItemState(CursorItemState cursorItemState) {

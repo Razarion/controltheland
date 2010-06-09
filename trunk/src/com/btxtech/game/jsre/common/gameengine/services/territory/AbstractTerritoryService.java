@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.territory;
 
-import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -36,4 +35,5 @@ public interface AbstractTerritoryService {
 
     boolean isAtLeastOneAllowed(Index absIndex, Collection<SyncBaseItem> items);
 
+    boolean isAtLeastOneAllowed(Collection<SyncBaseItem> items);
 }

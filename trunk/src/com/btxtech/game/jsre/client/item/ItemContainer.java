@@ -372,7 +372,6 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
 
     private void checkForSpecialItems() {
         RadarPanel.getInstance().setRadarState1(checkForSpecialItem(RadarPanel.RADAR_1));
-        RadarPanel.getInstance().setRadarState2(checkForSpecialItem(RadarPanel.RADAR_2));
     }
 
     public void handleSpecial(ClientSyncBaseItemView clientSyncBaseItemView) {
