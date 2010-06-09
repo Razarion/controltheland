@@ -86,5 +86,16 @@ public abstract class AbstractTerritoryServiceImpl implements AbstractTerritoryS
         return false;
     }
 
+    @Override
+    public boolean isAtLeastOneAllowed(Collection<SyncBaseItem> items) {
+        for (SyncBaseItem item : items) {
+            if (isAllowed(item.getPosition(), item)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     protected abstract AbstractTerrainService getTerrainService();
 }

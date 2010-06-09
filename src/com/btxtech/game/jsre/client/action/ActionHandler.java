@@ -240,7 +240,7 @@ public class ActionHandler implements CommonActionService {
         for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncWaepon()) {
                 if (ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getPosition(), clientSyncItem.getSyncBaseItem())
-                        && ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getPosition(), target)
+                        && ClientTerritoryService.getInstance().isAllowed(target.getPosition(), clientSyncItem.getSyncBaseItem())
                         && clientSyncItem.getSyncBaseItem().getSyncWaepon().isItemTypeAllowed(target)) {
                     attack(clientSyncItem.getSyncBaseItem(), target);
                 }

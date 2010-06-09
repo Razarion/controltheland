@@ -96,13 +96,17 @@ public class CursorHandler implements TerrainMouseMoveListener {
         }
     }
 
-    public void setItemCursor(ClientSyncItemView clientSyncItemView, CursorItemState cursorItemState, Index position) {
+    public void setItemCursor(ClientSyncItemView clientSyncItemView, CursorItemState cursorItemState) {
         if (cursorState == null) {
             setCursor(clientSyncItemView, null, false);
             return;
         }
+        Index position = clientSyncItemView.getSyncItem().getPosition();
         if (cursorState.isCanAttack() && cursorItemState.isAttackTarget()) {
-            setCursor(clientSyncItemView, CursorType.ATTACK, SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection(position) && SelectionHandler.getInstance().atLeastOneItemTypeAllowed2Attack4Selection(((ClientSyncBaseItemView) clientSyncItemView).getSyncBaseItem()));
+            setCursor(clientSyncItemView, CursorType.ATTACK,
+                    SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection() 
+                            && SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection(position)
+                            && SelectionHandler.getInstance().atLeastOneItemTypeAllowed2Attack4Selection(((ClientSyncBaseItemView) clientSyncItemView).getSyncBaseItem()));
         } else if (cursorState.isCanCollect() && cursorItemState.isCollectTarget()) {
             setCursor(clientSyncItemView, CursorType.COLLECT, SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection(position));
         } else if (cursorState.isCanLoad() && cursorItemState.isLoadTarget()) {

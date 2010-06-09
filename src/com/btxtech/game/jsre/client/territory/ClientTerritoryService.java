@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.territory.impl.AbstractTerritoryServiceImpl;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import java.util.Collection;
 
 public class ClientTerritoryService extends AbstractTerritoryServiceImpl {
@@ -40,5 +41,4 @@ public class ClientTerritoryService extends AbstractTerritoryServiceImpl {
     protected AbstractTerrainService getTerrainService() {
         return TerrainView.getInstance().getTerrainHandler();
     }
-
 }

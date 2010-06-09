@@ -51,19 +51,19 @@ public class RadarItemView extends MiniMap {
     }
 
     private void refreshItems() {
-        clear();
+        clear(getTerrainSettings().getPlayFieldXSize(), getTerrainSettings().getPlayFieldYSize());
         for (ClientSyncItemView syncItemView : ItemContainer.getInstance().getItems()) {
             if (syncItemView instanceof ClientSyncBaseItemView) {
                 ClientSyncBaseItemView baseItemView = (ClientSyncBaseItemView) syncItemView;
                 Index pos = baseItemView.getSyncBaseItem().getPosition();
-                if(pos == null) {
+                if (pos == null) {
                     continue;
                 }
                 setStrokeStyle(new Color(baseItemView.getSyncBaseItem().getBase().getHtmlColor()));
                 strokeRect(pos.getX(), pos.getY(), BASE_ITEM_SIZE, BASE_ITEM_SIZE);
             } else if (syncItemView instanceof ClientSyncResourceItemView) {
                 Index pos = syncItemView.getSyncItem().getPosition();
-                setStrokeStyle(Color.WHITE);                
+                setStrokeStyle(Color.WHITE);
                 strokeRect(pos.getX(), pos.getY(), RESOURCE_ITEM_SIZE, RESOURCE_ITEM_SIZE);
             }
         }
