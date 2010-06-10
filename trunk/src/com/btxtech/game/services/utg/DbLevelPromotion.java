@@ -33,7 +33,6 @@ public class DbLevelPromotion {
     @Column(nullable = false)
     private Date niceTimeStamp;
     private long timeStamp;
-    @Column(nullable = false)
     private String sessionId;
     private String level;
     private String targetLevel;

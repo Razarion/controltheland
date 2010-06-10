@@ -14,7 +14,6 @@
 package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.client.common.UserMessage;
-import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
@@ -30,7 +29,6 @@ import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.utg.BrowserDetails;
-import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelPromotion;
 import com.btxtech.game.services.utg.DbMissionAction;
 import com.btxtech.game.services.utg.DbUserAction;
@@ -514,7 +512,9 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             try {
                 sessionId = session.getSessionId();
             }   catch(Throwable t) {
-                log.error("", t);
+                // Ignore
+                // Error creating bean with name 'scopedTarget.user': Scope 'session' is not active for the current thread
+                // This happens when the methode is called from the server side (e.g. XP increase timer)
             }
             DbLevelPromotion dbLevelPromotion = new DbLevelPromotion(sessionId, base, oldLevel);
             hibernateTemplate.saveOrUpdate(dbLevelPromotion);
@@ -530,7 +530,9 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             try {
                 sessionId = session.getSessionId();
             }   catch(Throwable t) {
-                log.error("", t);
+                // Ignore
+                // Error creating bean with name 'scopedTarget.user': Scope 'session' is not active for the current thread
+                // This happens when the methode is called from the server side (e.g. XP increase timer)
             }
             DbLevelPromotion dbLevelPromotion = new DbLevelPromotion(sessionId, base, targetLevel, interimPromotion);
             hibernateTemplate.saveOrUpdate(dbLevelPromotion);
