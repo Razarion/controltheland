@@ -25,11 +25,12 @@ import com.btxtech.game.wicket.pages.user.LoginBox;
 import com.btxtech.game.wicket.pages.user.UserListPage;
 import java.io.Serializable;
 import java.util.ArrayList;
+import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -72,13 +73,7 @@ public class BasePage extends WebPage {
     private void buildMenu(ArrayList<MenuItem> menuItems) {
         ListView<MenuItem> history = new ListView<MenuItem>("menu", menuItems) {
             protected void populateItem(final ListItem<MenuItem> linkItem) {
-                Link link = new Link("link") {
-
-                    @Override
-                    public void onClick() {
-                        setResponsePage(linkItem.getModelObject().destination);
-                    }
-                };
+                BookmarkablePageLink<WebPage> link = new BookmarkablePageLink<WebPage>("link",linkItem.getModelObject().destination);
                 if (linkItem.getModelObject().isSelected()) {
                     SimpleAttributeModifier classModifier = new SimpleAttributeModifier("class", "menuItemSelected");
                     linkItem.add(classModifier);
@@ -111,17 +106,17 @@ public class BasePage extends WebPage {
     }
 
     class MenuItem implements Serializable {
-        private Class destination;
+        private Class<? extends Page> destination;
         private String name;
         private boolean isSelected;
 
-        MenuItem(String name, Class destination, Object thisObject) {
+        MenuItem(String name, Class<? extends Page> destination, Object thisObject) {
             this.destination = destination;
             this.name = name;
             isSelected = destination.equals(thisObject.getClass());
         }
 
-        public Class getDestination() {
+        public Class<? extends Page> getDestination() {
             return destination;
         }
 
