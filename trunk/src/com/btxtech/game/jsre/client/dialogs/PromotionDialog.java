@@ -14,14 +14,12 @@
 package com.btxtech.game.jsre.client.dialogs;
 
 import com.btxtech.game.jsre.client.common.Constants;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
  * User: beat
@@ -32,22 +30,20 @@ public class PromotionDialog extends PopupPanel {
 
     private PromotionDialog(String oldLevel, String newLevel) {
         setAnimationEnabled(true);
-        VerticalPanel verticalPanel = new VerticalPanel();
-        HTML html = new HTML("<span style=\"color:rgb(200,0,200);font-size:300%\"><strong>You have been promoted!</strong></span>\n" +
-                "<center><span style=\"color:#CC0000;font-size:150%\">From <strong>" + oldLevel + "</strong> to <strong>" + newLevel + "</strong></span><br>\n" +
-                "<span style=\"color:blue\">Please check your new mission target</span></center>");
-        html.setPixelSize(300, 200);
-        verticalPanel.add(html);
-        Button closeButton = new Button("Close");
-        closeButton.addClickHandler(new ClickHandler() {
+        setPixelSize(400, 560);
+        getElement().getStyle().setBackgroundImage("url(images/promotion_bg.jpg)");
+        getElement().getStyle().setCursor(Style.Cursor.POINTER);
+        HTML html = new HTML("<center><br><br><br><br><br><br><br><br><br><br><span style=\"color:rgb(0,0,0);font-size:150%\">You have been promoted " +
+                "from<br><strong>" + oldLevel + "</strong><br>to<br><strong>" + newLevel + "</strong></span></center>\n");
+        setWidget(html);
+        addDomHandler(new MouseDownHandler() {
+
             @Override
-            public void onClick(ClickEvent event) {
+            public void onMouseDown(MouseDownEvent event) {
                 hide();
             }
-        });
-        verticalPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-        verticalPanel.add(closeButton);
-        setWidget(verticalPanel);
+        }, MouseDownEvent.getType());
+
         getElement().getStyle().setZIndex(Constants.Z_INDEX_DIALOG);
     }
 
