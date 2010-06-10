@@ -154,7 +154,11 @@ public class BaseEditor extends WebPage {
                     @Override
                     public void setObject(String xPos) {
                         if (!NO_POS.equals(xPos)) {
-                            item.getModelObject().setPosition(new Index(Integer.parseInt(xPos), item.getModelObject().getPosition().getY()));
+                            if (item.getModelObject().getPosition() != null) {
+                                item.getModelObject().setPosition(new Index(Integer.parseInt(xPos), item.getModelObject().getPosition().getY()));
+                            } else {
+                                item.getModelObject().setPosition(new Index(Integer.parseInt(xPos), 0));
+                            }
                         }
                     }
 
@@ -176,7 +180,11 @@ public class BaseEditor extends WebPage {
                     @Override
                     public void setObject(String yPos) {
                         if (!NO_POS.equals(yPos)) {
-                            item.getModelObject().setPosition(new Index(item.getModelObject().getPosition().getX(), Integer.parseInt(yPos)));
+                            if (item.getModelObject().getPosition() != null) {
+                                item.getModelObject().setPosition(new Index(item.getModelObject().getPosition().getX(), Integer.parseInt(yPos)));
+                            } else {
+                                item.getModelObject().setPosition(new Index(0, Integer.parseInt(yPos)));
+                            }
                         }
                     }
 
