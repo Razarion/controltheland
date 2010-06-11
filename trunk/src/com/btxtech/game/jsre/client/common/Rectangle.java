@@ -59,7 +59,7 @@ public class Rectangle implements Serializable {
     }
 
     public boolean contains(Index position) {
-        return position.getX() >= start.getX() && position.getY() >= start.getY() && position.getX() <= end.getX() && position.getY() <= end.getY();
+        return position != null && position.getX() >= start.getX() && position.getY() >= start.getY() && position.getX() <= end.getX() && position.getY() <= end.getY();
     }
 
     public boolean containsExclusive(Index position) {
