@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeA
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
+import com.btxtech.game.services.user.User;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -74,4 +75,6 @@ public interface ServerMarketService extends ItemTypeAccess {
     void deleteMarketFunction(MarketFunction marketFunction);
 
     void saveMarketFunctions(ArrayList<MarketFunction> marketFunctions);
+
+    void setUserItemTypeAccess(User user, UserItemTypeAccess userItemTypeAccess);
 }

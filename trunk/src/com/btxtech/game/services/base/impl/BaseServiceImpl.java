@@ -177,6 +177,7 @@ public class BaseServiceImpl implements BaseService {
             throw new IllegalStateException("User does not have any running base");
         }
         connectionService.createConnection(base);
+        base.setUserItemTypeAccess(serverMarketService.getUserItemTypeAccess());        
     }
 
     private void deleteBase(Base base) {
