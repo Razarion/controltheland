@@ -188,10 +188,14 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     private UserItemTypeAccess createUserItemTypeAccess(User user) {
         UserItemTypeAccess userItemTypeAccess = new UserItemTypeAccess(getAlwaysAllowed());
         if (user != null) {
-            user.setUserItemTypeAccess(userItemTypeAccess);
-            userService.save(user);
+            setUserItemTypeAccess(user, userItemTypeAccess);
         }
         return userItemTypeAccess;
+    }
+
+    public void setUserItemTypeAccess(User user, UserItemTypeAccess userItemTypeAccess) {
+        user.setUserItemTypeAccess(userItemTypeAccess);
+        userService.save(user);
     }
 
     private Collection<MarketEntry> getAlwaysAllowed() {

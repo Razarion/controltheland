@@ -183,7 +183,7 @@ public class UserServiceImpl implements UserService {
             try {
                 base = baseService.getBase();
                 base.setUser(user);
-                base.setUserItemTypeAccess(serverMarketService.getUserItemTypeAccess());
+                serverMarketService.setUserItemTypeAccess(user, serverMarketService.getUserItemTypeAccess());
             } catch (NoConnectionException e) {
                 // Ignore
             }
