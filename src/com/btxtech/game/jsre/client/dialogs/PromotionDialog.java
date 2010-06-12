@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 public class PromotionDialog extends PopupPanel {
 
     private PromotionDialog(String oldLevel, String newLevel) {
+        super(true);
         setAnimationEnabled(true);
         setPixelSize(400, 560);
         getElement().getStyle().setBackgroundImage("url(images/promotion_bg.jpg)");
