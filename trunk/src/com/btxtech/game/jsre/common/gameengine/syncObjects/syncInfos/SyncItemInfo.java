@@ -50,6 +50,7 @@ public class SyncItemInfo extends Packet {
     private List<Id> containedItems;
     private Id targetContainer;
     private Id containedIn;
+    private Index unloadPos;
 
 
     public Id getId() {
@@ -244,6 +245,14 @@ public class SyncItemInfo extends Packet {
         this.containedIn = containedIn;
     }
 
+    public Index getUnloadPos() {
+        return unloadPos;
+    }
+
+    public void setUnloadPos(Index unloadPos) {
+        this.unloadPos = unloadPos;
+    }
+
     private String pathToDestinationAsString() {
         StringBuilder builder = new StringBuilder();
         if (pathToDestination != null) {
@@ -321,6 +330,8 @@ public class SyncItemInfo extends Packet {
                 " rallyPoint:" + rallyPoint +
                 " containedItems:" + intCollectionAsString() +
                 " targetContainer:" + targetContainer +
-                " containedIn:" + containedIn;
+                " containedIn:" + containedIn +
+                " unloadPos:" + unloadPos;
     }
+
 }

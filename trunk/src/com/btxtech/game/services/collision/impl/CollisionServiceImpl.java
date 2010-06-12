@@ -48,7 +48,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Time: 6:44:01 PM
  */
 public class CollisionServiceImpl implements CollisionService, TerrainListener {
-    public static final int MAX_TRIES = 1000000;
     @Autowired
     private TerrainService terrainService;
     @Autowired
@@ -277,8 +276,11 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     public List<Index> setupPathToDestination(Index start, Index destination, TerrainType terrainType) {
         PassableRectangle atomStartRect = getPassableRectangleOfAbsoluteIndex(start, terrainType);
         PassableRectangle atomDestRect = getPassableRectangleOfAbsoluteIndex(destination, terrainType);
+        if(atomDestRect == null) {
+          // Zhe destination is may
+        }
         if (atomStartRect == null || atomDestRect == null) {
-            throw new IllegalArgumentException("Illegal atomStartRect or absoluteDestionation. start: " + start + " destination: " + destination + " terrainType: " + terrainType);
+            throw new IllegalArgumentException("Illegal atomStartRect or atomDestRect. start: " + start + " destination: " + destination + " terrainType: " + terrainType);
         }
 
         if (atomStartRect.equals(atomDestRect)) {

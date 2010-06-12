@@ -22,6 +22,8 @@ import com.btxtech.game.jsre.client.terrain.TerrainMouseMoveListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemContainer;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.widgetideas.graphics.client.GWTCanvas;
@@ -84,16 +86,27 @@ public class CursorHandler implements TerrainMouseMoveListener {
             return;
         }
         Index position = new Index(absoluteLeft, absoluteTop);
-        Collection<SurfaceType> allowedSurfaceTypes = SelectionHandler.getInstance().getOwnSelectionSurfaceTypes();
-        SurfaceType surfaceType = TerrainView.getInstance().getTerrainHandler().getSurfaceTypeAbsolute(position);
-        boolean tmpIsMoveAllowed = allowedSurfaceTypes.contains(surfaceType);
 
         if (cursorState.isCanUnload()) {
-            // TODO unload cursor also depends on the loaded items surface type
-            setTerrainCursor(CursorType.UNLOAD, SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection(position) && tmpIsMoveAllowed);
+            setTerrainCursor(CursorType.UNLOAD, SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection(position) && atLeastOnAllowedForUnload(position));
         } else if (cursorState.isCanMove()) {
+            Collection<SurfaceType> allowedSurfaceTypes = SelectionHandler.getInstance().getOwnSelectionSurfaceTypes();
+            SurfaceType surfaceType = TerrainView.getInstance().getTerrainHandler().getSurfaceTypeAbsolute(position);
+            boolean tmpIsMoveAllowed = allowedSurfaceTypes.contains(surfaceType);
             setTerrainCursor(CursorType.GO, tmpIsMoveAllowed);
         }
+    }
+
+    private boolean atLeastOnAllowedForUnload(Index position) {
+        for (SyncBaseItem syncBaseItem : SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems()) {
+            if (syncBaseItem.hasSyncItemContainer()) {
+                SyncItemContainer syncItemContainer = syncBaseItem.getSyncItemContainer();
+                if (syncItemContainer.atLeastOneAllowedToUnload(position) && syncItemContainer.isUnloadPosReachable(position)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public void setItemCursor(ClientSyncItemView clientSyncItemView, CursorItemState cursorItemState) {
@@ -104,14 +117,27 @@ public class CursorHandler implements TerrainMouseMoveListener {
         Index position = clientSyncItemView.getSyncItem().getPosition();
         if (cursorState.isCanAttack() && cursorItemState.isAttackTarget()) {
             setCursor(clientSyncItemView, CursorType.ATTACK,
-                    SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection() 
+                    SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection()
                             && SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection(position)
                             && SelectionHandler.getInstance().atLeastOneItemTypeAllowed2Attack4Selection(((ClientSyncBaseItemView) clientSyncItemView).getSyncBaseItem()));
         } else if (cursorState.isCanCollect() && cursorItemState.isCollectTarget()) {
             setCursor(clientSyncItemView, CursorType.COLLECT, SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection(position));
         } else if (cursorState.isCanLoad() && cursorItemState.isLoadTarget()) {
-            setCursor(clientSyncItemView, CursorType.LOAD, ClientTerritoryService.getInstance().isAllowed(position, ((ClientSyncBaseItemView) clientSyncItemView).getSyncBaseItem()));
+            SyncItemContainer syncItemContainer = ((ClientSyncBaseItemView) clientSyncItemView).getSyncBaseItem().getSyncItemContainer();
+            boolean allowed = ClientTerritoryService.getInstance().isAllowed(position, ((ClientSyncBaseItemView) clientSyncItemView).getSyncBaseItem())
+                    && syncItemContainer.isAbleToContainAtLeastOne(SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems())
+                    && atLeastOneLoadPosReachable(SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems(), syncItemContainer);
+            setCursor(clientSyncItemView, CursorType.LOAD, allowed);
         }
+    }
+
+    private boolean atLeastOneLoadPosReachable(Collection<SyncBaseItem> syncBaseItems, SyncItemContainer syncItemContainer) {
+        for (SyncBaseItem syncBaseItem : syncBaseItems) {
+            if (syncBaseItem.hasSyncMovable() && syncBaseItem.getSyncMovable().isLoadPosReachable(syncItemContainer)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void setTerrainCursor(CursorType cursorType, boolean allowed) {

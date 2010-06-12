@@ -79,6 +79,10 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
             return;
         }
 
+        if(!syncBaseItem.getSyncItemContainer().isUnloadPosReachable(position)) {
+            return;
+        }
+
         ActionHandler.getInstance().unloadContainer(syncBaseItem, position);
     }
 

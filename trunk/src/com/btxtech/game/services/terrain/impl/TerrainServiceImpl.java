@@ -16,13 +16,13 @@ package com.btxtech.game.services.terrain.impl;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
-import com.btxtech.game.services.forum.SubForum;
+import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbSurfaceRect;
 import com.btxtech.game.services.terrain.DbTerrainImage;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
-import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.terrain.DbTerrainImagePosition;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainService;
@@ -206,7 +206,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         List<DbSurfaceRect> dbSurfaceRects = hibernateTemplate.loadAll(DbSurfaceRect.class);
         hibernateTemplate.deleteAll(dbSurfaceRects);
         ArrayList<DbSurfaceRect> dbSurfaceRectsNew = new ArrayList<DbSurfaceRect>();
-        for (SurfaceRect  surfaceRect: surfaceRects) {
+        for (SurfaceRect surfaceRect : surfaceRects) {
             DbSurfaceRect dbSurfaceRect = new DbSurfaceRect();
             dbSurfaceRect.setRectangle(surfaceRect.getTileRectangle());
             DbSurfaceImage dbSurfaceImage = getDbSurfaceImage(surfaceRect.getSurfaceImageId());
@@ -226,29 +226,36 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
             return singleIndex;
         }
 
-        List<Index> path = setupPathToDestination(absolutePosition, absoluteDestination, terrainType);
-        path.remove(path.size() - 1); // This will be replace
-        Index secondLastPoint;
-        if (path.isEmpty()) {
-            // Start and destination are in the same passable rectangle
-            secondLastPoint = absolutePosition;
+        SurfaceType destSurfaceType = getSurfaceTypeAbsolute(absoluteDestination);
+        if (!terrainType.allowSurfaceType(destSurfaceType)) {
+            // Destination is has a different surface type
+            absoluteDestination = getNearestPoint(terrainType, absoluteDestination, maxRadius);
+            return setupPathToDestination(absolutePosition, absoluteDestination, terrainType);
         } else {
-            secondLastPoint = path.get(path.size() - 1);
-        }
-        double angle = 0;
-        if (!absoluteDestination.equals(secondLastPoint)) {
-            angle = absoluteDestination.getAngleToNord(secondLastPoint);
-        }
-        for (int radius = maxRadius; radius > 0; radius -= getTerrainSettings().getTileHeight() / 10) {
-            for (double testAngle = angle; testAngle < angle + 2 * Math.PI; testAngle += Math.PI / 50) {
-                Index newDestination = absoluteDestination.getPointFromAngelToNord(testAngle, maxRadius);
-                if(isFree(new Index(newDestination.getX(), newDestination.getY()),0,0, terrainType.getSurfaceTypes())) {
-                    path.add(newDestination);
-                    return path;
+            List<Index> path = setupPathToDestination(absolutePosition, absoluteDestination, terrainType);
+            path.remove(path.size() - 1); // This will be replace
+            Index secondLastPoint;
+            if (path.isEmpty()) {
+                // Start and destination are in the same passable rectangle
+                secondLastPoint = absolutePosition;
+            } else {
+                secondLastPoint = path.get(path.size() - 1);
+            }
+            double angle = 0;
+            if (!absoluteDestination.equals(secondLastPoint)) {
+                angle = absoluteDestination.getAngleToNord(secondLastPoint);
+            }
+            for (int radius = maxRadius; radius > 0; radius -= getTerrainSettings().getTileHeight() / 10) {
+                for (double testAngle = angle; testAngle < angle + 2 * Math.PI; testAngle += Math.PI / 50) {
+                    Index newDestination = absoluteDestination.getPointFromAngelToNord(testAngle, maxRadius);
+                    if (isFree(new Index(newDestination.getX(), newDestination.getY()), 0, 0, terrainType.getSurfaceTypes())) {
+                        path.add(newDestination);
+                        return path;
+                    }
                 }
             }
+            throw new IllegalStateException("Can not find position. Pos: " + absolutePosition + " dest: " + absoluteDestination + " maxRadius: " + maxRadius + " terrainType:" + terrainType);
         }
-        throw new IllegalStateException("Can not find position. Pos: " + absolutePosition + " dest: " + absoluteDestination + " maxRadius: " + maxRadius + " terrainType:" + terrainType);
     }
 
     @Override

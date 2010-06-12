@@ -184,6 +184,7 @@ public class ClientSyncBaseItemView extends ClientSyncItemView {
         if (syncBaseItem.hasSyncFactory()) {
             setProgress();
         }
+        setVisible(!getSyncBaseItem().isContainedIn());
     }
 
     private void setZIndex() {

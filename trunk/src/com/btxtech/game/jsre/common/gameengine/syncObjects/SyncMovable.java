@@ -184,4 +184,15 @@ public class SyncMovable extends SyncBaseAbility {
     public void setPathToDestination(List<Index> pathToDestination) {
         this.pathToDestination = pathToDestination;
     }
+
+    public boolean isLoadPosReachable(SyncItemContainer syncItemContainer) {
+        try {
+            getServices().getTerrainService().getNearestPoint(getSyncBaseItem().getTerrainType(),
+                    syncItemContainer.getSyncBaseItem().getPosition(),
+                    syncItemContainer.getItemContainerType().getRange());
+            return true;
+        } catch (IllegalArgumentException ignore) {
+            return false;
+        }
+    }
 }

@@ -352,6 +352,25 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
     }
 
     @Override
+    public Index getNearestPoint(TerrainType allowedTerrainType, Index absoluteDestination, int maxRadius) {
+        SurfaceType destSurfaceType = getSurfaceTypeAbsolute(absoluteDestination);
+        if (allowedTerrainType.allowSurfaceType(destSurfaceType)) {
+            return absoluteDestination;
+        }
+        int CIRCLE_PARTS = 36;
+        int RADIUS_STEPS = 10;
+        for (int radius = maxRadius; radius > 0; radius -= maxRadius / RADIUS_STEPS) {
+            for (double angel = 0; angel < (2 * Math.PI); angel += 2 * Math.PI / CIRCLE_PARTS) {
+                 Index newDestination = absoluteDestination.getPointFromAngelToNord(angel, radius);
+                if(isFree(new Index(newDestination.getX(), newDestination.getY()),0,0, allowedTerrainType.getSurfaceTypes())) {
+                    return newDestination;
+                }
+            }
+        }
+        throw new IllegalArgumentException(this + " Can not find position on surface. allowedTerrainType: " + allowedTerrainType + " absoluteDestination: " + absoluteDestination);
+    }
+
+    @Override
     @Deprecated
     public boolean isTerrainPassable(Index posititon) {
         return posititon != null && !(posititon.getX() >= terrainSettings.getPlayFieldXSize() || posititon.getY() >= terrainSettings.getPlayFieldYSize())
