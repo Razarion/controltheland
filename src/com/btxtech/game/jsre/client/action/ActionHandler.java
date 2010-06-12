@@ -330,7 +330,9 @@ public class ActionHandler implements CommonActionService {
 
         for (ClientSyncBaseItemView item : items) {
             if (item.getSyncBaseItem().hasSyncMovable()) {
-                if (ClientTerritoryService.getInstance().isAllowed(container.getSyncBaseItem().getPosition(), container.getSyncBaseItem())) {
+                if (ClientTerritoryService.getInstance().isAllowed(container.getSyncBaseItem().getPosition(), container.getSyncBaseItem())
+                        && container.getSyncBaseItem().getSyncItemContainer().isAbleToContain(item.getSyncBaseItem())
+                        && item.getSyncBaseItem().getSyncMovable().isLoadPosReachable(container.getSyncBaseItem().getSyncItemContainer())) {
                     putToContainer(container.getSyncBaseItem(), item.getSyncBaseItem());
                 }
             } else {

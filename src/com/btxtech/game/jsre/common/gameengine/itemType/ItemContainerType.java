@@ -62,6 +62,7 @@ public class ItemContainerType implements Serializable {
     public void changeTo(ItemContainerType itemContainerType) {
         ableToContain = itemContainerType.ableToContain;
         maxCount = itemContainerType.maxCount;
+        range = itemContainerType.range;
     }
 
     public int getRange() {

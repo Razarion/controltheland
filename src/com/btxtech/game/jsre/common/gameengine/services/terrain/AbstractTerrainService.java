@@ -92,4 +92,6 @@ public interface AbstractTerrainService {
     SurfaceType getSurfaceType(Index tileIndex);
 
     SurfaceType getSurfaceTypeAbsolute(Index absoluteIndex);
+
+    Index getNearestPoint(TerrainType allowedTerrainType, Index absoluteDestination, int maxRadius);    
 }

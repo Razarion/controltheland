@@ -61,7 +61,6 @@
       <excludeFolder url="file://$MODULE_DIR$/src.test/com/btxtech/game/services/history" />
       <excludeFolder url="file://$MODULE_DIR$/src.test/com/btxtech/game/services/mgmt" />
       <excludeFolder url="file://$MODULE_DIR$/src.test/com/btxtech/game/services/overall" />
-      <excludeFolder url="file://$MODULE_DIR$/src.test/com/btxtech/game/services/terrain" />
       <excludeFolder url="file://$MODULE_DIR$/src.test/com/btxtech/game/services/user" />
     </content>
     <orderEntry type="inheritedJdk" />

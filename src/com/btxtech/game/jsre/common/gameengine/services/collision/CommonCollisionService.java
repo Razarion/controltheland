@@ -26,6 +26,8 @@ import java.util.Collection;
  * Time: 19:46:17
  */
 public interface CommonCollisionService {
+    static final int MAX_TRIES = 1000000;
+
     Index getFreeRandomPosition(ItemType itemTypeToBuild, SyncItem builder, int targetMinRange, int targetMaxRange);
     
     Index getRallyPoint(SyncBaseItem factory, Collection<SurfaceType> allowedSurfaces);
