@@ -137,7 +137,7 @@ public abstract class TopMapPanel extends DecoratorPanel {
                 absolutePanel.setWidgetPosition(this, x, y);
                 break;
             default:
-                throw new IllegalArgumentException(this + " unknwo direction: " + direction);
+                throw new IllegalArgumentException(this + " unknown direction: " + direction);
         }
         if (expandImage != null) {
             expandImage.setVisible(!isExpanded);

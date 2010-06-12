@@ -26,7 +26,6 @@ import com.btxtech.game.jsre.client.dialogs.PromotionDialog;
 import com.btxtech.game.jsre.common.LevelPacket;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.PopupPanel;
 
@@ -36,7 +35,6 @@ public class MissionTarget {
     private MissionTargetDialog missionTargetDialog = new MissionTargetDialog();
     private boolean loadingRequired = true;
     private String missionTargetString;
-    private Timer timer;
     private Level level;
 
     public static MissionTarget getInstance() {
@@ -44,7 +42,6 @@ public class MissionTarget {
     }
 
     private MissionTarget() {
-        startBlink();
         missionTargetDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override
             public void onClose(CloseEvent<PopupPanel> popupPanelCloseEvent) {
@@ -63,7 +60,6 @@ public class MissionTarget {
                 missionTargetDialog.setPopupPosition(left, top);
             }
         });
-        stopBlink();
 
         if (loadingRequired) {
             Connection.getInstance().getMissionTarget(this);
@@ -98,30 +94,12 @@ public class MissionTarget {
         loadingRequired = true;
         String oldLevel = level.getName();
         setLevel(levelPacket.getLevel());
-        startBlink();
-        PromotionDialog.showPromotion(oldLevel, level.getName());
-    }
-
-    private void startBlink() {
-        if (timer == null) {
-            timer = new Timer() {
-                boolean highlight;
-
-                @Override
-                public void run() {
-                    InfoPanel.getInstance().setMissionargetColor(highlight);
-                    highlight = !highlight;
-                }
-            };
-            timer.scheduleRepeating(BLINK_DELAY);
-        }
-    }
-
-    private void stopBlink() {
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-            InfoPanel.getInstance().setMissionargetColor(false);
-        }
+        PromotionDialog promotionDialog = PromotionDialog.showPromotion(oldLevel, level.getName());
+        promotionDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> popupPanelCloseEvent) {
+                showMissionTargetDialog();
+            }
+        });
     }
 }

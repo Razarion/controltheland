@@ -48,7 +48,6 @@ public class InfoPanel extends TopMapPanel {
     private int generating;
     private int consuming;
     private Button scrollHome;
-    private Anchor missionTargetLink;
 
     /**
      * Simgleton
@@ -64,7 +63,8 @@ public class InfoPanel extends TopMapPanel {
         layout.setCellSpacing(1);
 
         // Mission Target
-        missionTargetLink = new Anchor("Mission Target");
+        Anchor missionTargetLink = new Anchor("Mission Target");
+        missionTargetLink.getElement().getStyle().setColor("darkorange");
         missionTargetLink.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
@@ -207,13 +207,4 @@ public class InfoPanel extends TopMapPanel {
     public void setLevel(String level) {
         this.level.setText(level);
     }
-
-    public void setMissionargetColor(boolean highlight) {
-        if (highlight) {
-            missionTargetLink.getElement().getStyle().setColor("#FFFFFF");
-        } else {
-            missionTargetLink.getElement().getStyle().setColor("#000000");
-        }
-    }
-
 }

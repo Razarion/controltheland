@@ -48,7 +48,7 @@ public class PromotionDialog extends PopupPanel {
         getElement().getStyle().setZIndex(Constants.Z_INDEX_DIALOG);
     }
 
-    public static void showPromotion(String oldLevel, String newLevel) {
+    public static PromotionDialog showPromotion(String oldLevel, String newLevel) {
         final PromotionDialog promotionDialog = new PromotionDialog(oldLevel, newLevel);
         promotionDialog.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
             public void setPosition(int offsetWidth, int offsetHeight) {
@@ -57,7 +57,7 @@ public class PromotionDialog extends PopupPanel {
                 promotionDialog.setPopupPosition(left, top);
             }
         });
-
+        return promotionDialog;
     }
 
 }
