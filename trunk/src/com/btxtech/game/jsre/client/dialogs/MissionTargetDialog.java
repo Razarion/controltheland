@@ -14,13 +14,11 @@
 package com.btxtech.game.jsre.client.dialogs;
 
 import com.btxtech.game.jsre.client.common.Constants;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
  * User: beat
@@ -32,25 +30,26 @@ public class MissionTargetDialog extends PopupPanel {
 
     public MissionTargetDialog() {
         super(true);
-        VerticalPanel verticalPanel = new VerticalPanel();
-        html = new HTML();
-        html.setPixelSize(500, 400);
-        verticalPanel.add(html);
-        Button closeButton = new Button("Close");
-        closeButton.addClickHandler(new ClickHandler() {
+        setAnimationEnabled(true);
+        setPixelSize(500, 600);
+        getElement().getStyle().setBackgroundImage("url(images/missiontarget_bg.jpg)");
+        getElement().getStyle().setCursor(Style.Cursor.POINTER);
+
+        addDomHandler(new MouseDownHandler() {
+
             @Override
-            public void onClick(ClickEvent event) {
+            public void onMouseDown(MouseDownEvent event) {
                 hide();
             }
-        });
-        verticalPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-        verticalPanel.add(closeButton);
-        setWidget(verticalPanel);
+        }, MouseDownEvent.getType());
+
         getElement().getStyle().setZIndex(Constants.Z_INDEX_DIALOG);
+        html = new HTML();
+        setWidget(html);
     }
 
     public void setMissionTarget(String htmlString) {
-        html.setHTML(htmlString);
+        html.setHTML("<br><br><br><br><br>" + htmlString);
     }
 
 }
