@@ -18,7 +18,6 @@ import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
-import com.btxtech.game.services.user.User;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,8 +52,7 @@ public class BotServiceImpl implements BotService {
     private Log log = LogFactory.getLog(BotServiceImpl.class);
 
     public void start() {
-        List<DbBotConfig> dbBotConfigs = getDbBotConfigs();
-        for (DbBotConfig botConfig : dbBotConfigs) {
+        for (DbBotConfig botConfig : getDbBotConfigs()) {
             try {
                 startBot(botConfig);
             } catch (Exception e) {
@@ -127,7 +125,6 @@ public class BotServiceImpl implements BotService {
         BotRunner botRunner;
         synchronized (botRunners) {
             botRunner = botRunners.remove(botConfig);
-
         }
         if (botRunner == null) {
             throw new IllegalArgumentException("Can not stop bot. No such bot " + botConfig.getUser().getName());
@@ -185,28 +182,6 @@ public class BotServiceImpl implements BotService {
         BotRunner botRunner = getBotRunner(base);
         if (botRunner != null) {
             botRunner.pause(true);
-        }
-    }
-
-    @Override
-    public void onBaseCreated(Base base) {
-        if (simpleBases.contains(base.getSimpleBase())) {
-            return;
-        }
-        User user = base.getUser();
-        if (user == null) {
-            return;
-        }
-        List<DbBotConfig> dbBotConfigs = getDbBotConfigs();
-        for (DbBotConfig dbBotConfig : dbBotConfigs) {
-            if (user.equals(dbBotConfig.getUser())) {
-                try {
-                    startBot(dbBotConfig);
-                    return;
-                } catch (Exception e) {
-                    log.error("", e);
-                }
-            }
         }
     }
 

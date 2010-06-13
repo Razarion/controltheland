@@ -27,6 +27,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 /**
@@ -35,6 +36,7 @@ import org.springframework.stereotype.Component;
  * Time: 21:51:58
  */
 @Component(value = "botRunner")
+@Scope("prototype")
 public class BotRunner {
     @Autowired
     private ServerServices serverServices;
@@ -61,11 +63,16 @@ public class BotRunner {
     public void start() {
         baseExecutor = new BaseExecutor(serverServices, base.getSimpleBase());
         baseBalance = new BaseBalance(baseExecutor);
+        fillBotItems();
+        runBot();
+        connectionService.sendOnlineBasesUpdate();
+    }
+
+    private void fillBotItems() {
+        baseBalance.clear();
         for (SyncBaseItem syncBaseItem : base.getItems()) {
             baseBalance.addItemPosAndType(new ItemPosAndType(syncBaseItem));
         }
-        runBot();
-        connectionService.sendOnlineBasesUpdate();
     }
 
     public void stop() {
@@ -79,16 +86,18 @@ public class BotRunner {
     }
 
     public void pause(boolean pause) {
+        if (!pause) {
+            fillBotItems();
+        }
         this.pause = pause;
     }
 
     public void synchronize(DbBotConfig botConfig) {
-        //To change body of created methods use File | Settings | File Templates.
+        this.botConfig = botConfig;
     }
 
     public Base getBase() {
-        //To change body of created methods use File | Settings | File Templates.        
-        return null;
+        return base;
     }
 
     private void runBot() {
