@@ -46,11 +46,11 @@ public class BaseBalance {
                         baseExecutor.doMove(newItem, deadType.getPosition());
                         break;
                     } else {
-                       if(deadType.getPosition().equals(newItem.getPosition())) {
-                           deadType.setSyncBaseItem(newItem);
-                           dead.remove(deadType);
-                           break;
-                       }
+                        if (deadType.getPosition().equals(newItem.getPosition())) {
+                            deadType.setSyncBaseItem(newItem);
+                            dead.remove(deadType);
+                            break;
+                        }
                     }
                 }
             }
@@ -79,5 +79,9 @@ public class BaseBalance {
             }
         }
         return items;
+    }
+
+    public void clear() {
+        itemPosAndTypes.clear();
     }
 }

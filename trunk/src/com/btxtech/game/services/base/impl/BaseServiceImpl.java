@@ -167,7 +167,6 @@ public class BaseServiceImpl implements BaseService {
         syncBaseItem.setFullHealth();
         syncBaseItem.getSyncTurnable().setAngel(Math.PI / 4.0); // Cosmetis shows vehicle from side
         historyService.addBaseStartEntry(base.getSimpleBase());
-        botService.onBaseCreated(base);
     }
 
     @Override

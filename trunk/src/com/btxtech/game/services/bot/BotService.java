@@ -39,6 +39,4 @@ public interface BotService {
     void onConnectionClosed(Base base);
 
     void onConnectionCreated(Base base);
-
-    void onBaseCreated(Base base);
 }

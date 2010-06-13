@@ -58,9 +58,8 @@ public class DbBotConfig implements Serializable {
 
         DbBotConfig dbBotConfig = (DbBotConfig) o;
 
-        if (id != null ? !id.equals(dbBotConfig.id) : dbBotConfig.id != null) return false;
+        return !(id != null ? !id.equals(dbBotConfig.id) : dbBotConfig.id != null);
 
-        return true;
     }
 
     @Override
