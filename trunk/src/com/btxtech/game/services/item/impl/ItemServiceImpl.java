@@ -287,20 +287,6 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public List<SyncItem> getItemsCopyNoDummiesNoBots() {
-        List<SyncItem> syncItems = getItemsCopy();
-        SimpleBase dummy = baseService.getDummyBase();
-        for (Iterator<SyncItem> it = syncItems.iterator(); it.hasNext();) {
-            SyncItem syncItem = it.next();
-            if ((syncItem instanceof SyncBaseItem) && (dummy.equals(((SyncBaseItem) syncItem).getBase()))) {
-                it.remove();
-            }
-        }
-        return syncItems;
-    }
-
-
-    @Override
     public void restoreItems(Collection<SyncItem> syncItems) {
         int lastId = 0;
         synchronized (items) {

@@ -111,6 +111,9 @@ public class SyncItemContainer extends SyncBaseAbility {
         if (!getSyncBaseItem().isAlive()) {
             return false;
         }
+        if (!isActive()) {
+            return false;
+        }
         if (isTargetInRange(unloadPos, itemContainerType.getRange())) {
             if (getSyncBaseItem().hasSyncTurnable()) {
                 getSyncBaseItem().getSyncTurnable().turnTo(unloadPos);
@@ -136,6 +139,7 @@ public class SyncItemContainer extends SyncBaseAbility {
             SyncBaseItem containedItem = iterator.next();
             if (allowedUnload(surfaceType, containedItem)) {
                 containedItem.clearContained(unloadPos);
+                getServices().getConnectionService().sendSyncInfo(containedItem);
                 iterator.remove();
             }
         }
@@ -147,6 +151,14 @@ public class SyncItemContainer extends SyncBaseAbility {
         if (getSyncBaseItem().hasSyncMovable()) {
             getSyncBaseItem().getSyncMovable().stop();
         }
+    }
+
+    public Index getUnloadPos() {
+        return unloadPos;
+    }
+
+    public void setUnloadPos(Index unloadPos) {
+        this.unloadPos = unloadPos;
     }
 
     public boolean isActive() {
@@ -163,6 +175,10 @@ public class SyncItemContainer extends SyncBaseAbility {
 
     public List<SyncBaseItem> getContainedItems() {
         return containedItems;
+    }
+
+    public void setContainedItems(List<SyncBaseItem> containedItems) {
+        this.containedItems = containedItems;
     }
 
     public boolean isAbleToContainAtLeastOne(Collection<SyncBaseItem> syncBaseItems) {

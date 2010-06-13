@@ -87,7 +87,7 @@ abstract public class AbstractItemService implements ItemService {
     }
 
     @Override
-    public Collection<ItemType> getItemTypes() {
+    public List<ItemType> getItemTypes() {
         return new ArrayList<ItemType>(itemTypes.values());
     }
 

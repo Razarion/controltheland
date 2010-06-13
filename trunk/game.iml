@@ -59,7 +59,6 @@
       <excludeFolder url="file://$MODULE_DIR$/src.test/com/btxtech/game/services/collision" />
       <excludeFolder url="file://$MODULE_DIR$/src.test/com/btxtech/game/services/debug" />
       <excludeFolder url="file://$MODULE_DIR$/src.test/com/btxtech/game/services/history" />
-      <excludeFolder url="file://$MODULE_DIR$/src.test/com/btxtech/game/services/mgmt" />
       <excludeFolder url="file://$MODULE_DIR$/src.test/com/btxtech/game/services/overall" />
       <excludeFolder url="file://$MODULE_DIR$/src.test/com/btxtech/game/services/user" />
     </content>

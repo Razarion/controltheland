@@ -53,7 +53,7 @@ public class SyncBaseItem extends SyncItem {
     private double upgradeProgress;
     private boolean isUpgrading;
     private BaseItemType upgradingItemType;
-    public Id containedIn;
+    private Id containedIn;
 
     public SyncBaseItem(Id id, Index position, BaseItemType baseItemType, Services services, SimpleBase base) throws NoSuchItemTypeException {
         super(id, position, baseItemType, services);
@@ -550,8 +550,16 @@ public class SyncBaseItem extends SyncItem {
         return upgradeProgress;
     }
 
+    public void setUpgradeProgress(double upgradeProgress) {
+        this.upgradeProgress = upgradeProgress;
+    }
+
     public boolean isUpgrading() {
         return isUpgrading;
+    }
+
+    public void setUpgrading(boolean upgrading) {
+        isUpgrading = upgrading;
     }
 
     public void setContained(Id itemContainer) {
@@ -570,10 +578,6 @@ public class SyncBaseItem extends SyncItem {
         return containedIn;
     }
 
-    public void setContainedIn(Id containedIn) {
-        this.containedIn = containedIn;
-    }
-
     public boolean isContainedIn() {
         return containedIn != null;
     }
@@ -587,6 +591,14 @@ public class SyncBaseItem extends SyncItem {
             throw new IllegalStateException(this + " can not be upgraded");
         }
         return upgradingItemType.getHealth();
+    }
+
+    public BaseItemType getUpgradingItemType() {
+        return upgradingItemType;
+    }
+
+    public void setUpgradingItemType(BaseItemType upgradingItemType) {
+        this.upgradingItemType = upgradingItemType;
     }
 
     @Override

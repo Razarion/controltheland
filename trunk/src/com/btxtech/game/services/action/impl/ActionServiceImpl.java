@@ -118,7 +118,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
                 if (syncItem instanceof SyncBaseItem) {
                     activeItems.add((SyncBaseItem) syncItem);
                 } else {
-                    log.error("Unknwon entry during reload: " + syncItem);
+                    log.error("Unknown entry during reload: " + syncItem);
                 }
             }
         }
