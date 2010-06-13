@@ -195,4 +195,12 @@ public class SyncMovable extends SyncBaseAbility {
             return false;
         }
     }
+
+    public Id getTargetContainer() {
+        return targetContainer;
+    }
+
+    public void setTargetContainer(Id targetContainer) {
+        this.targetContainer = targetContainer;
+    }
 }

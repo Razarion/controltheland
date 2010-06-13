@@ -21,7 +21,7 @@ public class TestTerrainService {
 
     @Test
     public void testLoadItemType() {
-       Index position = terrainService.getNearestPoint(TerrainType.LAND, new Index(4415, 361), 200);
+       terrainService.getNearestPoint(TerrainType.LAND, new Index(4415, 361), 200);
     }
 
 

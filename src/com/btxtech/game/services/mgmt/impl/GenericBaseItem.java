@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -24,6 +25,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
@@ -61,6 +63,19 @@ public class GenericBaseItem extends GenericItem {
     @Type(type = "index")
     @Columns(columns = {@Column(name = "xPosRallyPoint"), @Column(name = "yPosRallyPoint")})
     private Index rallyPoint;
+    private Boolean isUpgrading;
+    private Double upgradeProgress;
+    @OneToOne
+    private DbBaseItemType upgradingItemType;
+    @ManyToOne
+    private GenericBaseItem containedIn;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "containedIn")
+    private Set<GenericBaseItem> containedItems;
+    @OneToOne
+    private GenericBaseItem targetContainer;
+    @Type(type = "index")
+    @Columns(columns = {@Column(name = "xUnloadPos"), @Column(name = "yUnloadPos")})
+    private Index unloadPos;
 
 
     /**
@@ -184,5 +199,57 @@ public class GenericBaseItem extends GenericItem {
 
     public void setRallyPoint(Index rallyPoint) {
         this.rallyPoint = rallyPoint;
+    }
+
+    public boolean isUpgrading() {
+        return isUpgrading != null && isUpgrading;
+    }
+
+    public void setUpgrading(boolean upgrading) {
+        isUpgrading = upgrading;
+    }
+
+    public Double getUpgradeProgress() {
+        return upgradeProgress != null ? upgradeProgress : 0.0;
+    }
+
+    public void setUpgradeProgress(Double upgradeProgress) {
+        this.upgradeProgress = upgradeProgress;
+    }
+
+    public DbBaseItemType getUpgradingItemType() {
+        return upgradingItemType;
+    }
+
+    public void setUpgradingItemType(DbBaseItemType upgradingItemType) {
+        this.upgradingItemType = upgradingItemType;
+    }
+
+    public GenericBaseItem getContainedIn() {
+        return containedIn;
+    }
+
+    public void setContainedIn(GenericBaseItem containedIn) {
+        this.containedIn = containedIn;
+    }
+
+    public Set<GenericBaseItem> getContainedItems() {
+        return containedItems;
+    }
+
+    public Index getUnloadPos() {
+        return unloadPos;
+    }
+
+    public void setUnloadPos(Index unloadPos) {
+        this.unloadPos = unloadPos;
+    }
+
+    public GenericBaseItem getTargetContainer() {
+        return targetContainer;
+    }
+
+    public void setTargetContainer(GenericBaseItem targetContainer) {
+        this.targetContainer = targetContainer;
     }
 }

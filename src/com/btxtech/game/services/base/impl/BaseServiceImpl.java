@@ -410,6 +410,13 @@ public class BaseServiceImpl implements BaseService {
     }
 
     @Override
+    public List<Base> getBasesNoDummy() {
+        ArrayList<Base> result = new ArrayList<Base>(bases.values());
+        result.remove(dummyBase);
+        return result;
+    }
+
+    @Override
     public List<SimpleBase> getSimpleBases() {
         ArrayList<SimpleBase> simpleBases = new ArrayList<SimpleBase>();
         for (Base base : bases.values()) {

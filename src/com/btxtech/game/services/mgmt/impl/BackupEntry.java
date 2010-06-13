@@ -13,8 +13,10 @@
 
 package com.btxtech.game.services.mgmt.impl;
 
+import com.btxtech.game.services.base.Base;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -43,9 +45,7 @@ public class BackupEntry {
 
         BackupEntry that = (BackupEntry) o;
 
-        if (!id.equals(that.id)) return false;
-
-        return true;
+        return id.equals(that.id);
     }
 
     @Override
@@ -67,5 +67,27 @@ public class BackupEntry {
 
     public void setTimeStamp(Date timeStamp) {
         this.timeStamp = timeStamp;
+    }
+
+    public int getItemCount() {
+        if (items != null) {
+            return items.size();
+        } else {
+            return 0;
+        }
+    }
+
+    public int getBaseCount() {
+        if (items != null) {
+            HashSet<Base> bases = new HashSet<Base>();
+            for (GenericItem item : items) {
+                if (item instanceof GenericBaseItem) {
+                    bases.add(((GenericBaseItem) item).getBase());
+                }
+            }
+            return bases.size();
+        } else {
+            return 0;
+        }
     }
 }

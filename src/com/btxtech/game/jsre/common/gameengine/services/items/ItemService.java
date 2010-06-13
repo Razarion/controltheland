@@ -51,7 +51,7 @@ public interface ItemService {
 
     ItemType getItemType(String name) throws NoSuchItemTypeException;
 
-    Collection<ItemType> getItemTypes();
+    List<ItemType> getItemTypes();
 
     boolean areItemTypesLoaded();
 

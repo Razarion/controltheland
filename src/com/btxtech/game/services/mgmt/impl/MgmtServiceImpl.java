@@ -53,6 +53,7 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -91,6 +92,10 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     private ResourceService resourceService;
     @Autowired
     private UserGuidanceService userGuidanceService;
+    @Autowired
+    private ApplicationContext applicationContext;
+    @Autowired
+    private GenericItemConverter genericItemConverter;
     private static Log log = LogFactory.getLog(MgmtServiceImpl.class);
     private HibernateTemplate hibernateTemplate;
     private Boolean testMode;
@@ -187,8 +192,9 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
 
     @Override
     public void backup() {
-        GenericItemConverter converter = new GenericItemConverter(baseService, itemService, services, null, actionService, null);
-        final BackupEntry backupEntry = converter.generateBackupEntry();
+        long time = System.currentTimeMillis();
+        final BackupEntry backupEntry = genericItemConverter.generateBackupEntry();
+
         // Save to db
         hibernateTemplate.execute(new HibernateCallback() {
             public Object doInHibernate(Session session) {
@@ -196,6 +202,8 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
                 return null;
             }
         });
+        log.info("Time used for backup: " + (System.currentTimeMillis() - time) + "ms. Items: " + backupEntry.getItemCount() + " Bases: " + backupEntry.getBaseCount());
+        genericItemConverter.clear();
     }
 
     @Override
@@ -224,6 +232,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
 
     @Override
     public void restore(final Date date) throws NoSuchItemTypeException {
+        long time = System.currentTimeMillis();
         List<BackupEntry> list = (List<BackupEntry>) hibernateTemplate.execute(new HibernateCallback() {
             public Object doInHibernate(Session session) {
                 Criteria criteria = session.createCriteria(BackupEntry.class);
@@ -234,9 +243,11 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         if (list.isEmpty()) {
             throw new IllegalArgumentException("No entry for " + date);
         }
-        GenericItemConverter converter = new GenericItemConverter(baseService, itemService, services, serverEnergyService, actionService, userGuidanceService);
-        converter.restorBackup(list.get(0));
+        BackupEntry backupEntry = list.get(0);
+        genericItemConverter.restoreBackup(backupEntry);
         log.info("Restored to: " + date);
+        log.info("Time used for restore: " + (System.currentTimeMillis() - time) + "ms. Items: " + backupEntry.getItemCount() + " Bases: " + backupEntry.getBaseCount());
+        genericItemConverter.clear();
     }
 
     public String getLogFile(String name) {

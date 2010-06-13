@@ -71,11 +71,11 @@ public abstract class GenericItem {
         this.backupEntry = backupEntry;
     }
 
-    public DbItemType getItemTyp() {
+    public DbItemType getDbItemTyp() {
         return itemType;
     }
 
-    public void setItemTypeId(DbItemType itemType) {
+    public void setDbItemType(DbItemType itemType) {
         this.itemType = itemType;
     }
 
