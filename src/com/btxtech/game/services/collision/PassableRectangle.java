@@ -109,7 +109,7 @@ public class PassableRectangle {
             allPaths.add(path);
         }
 
-        // Check level 
+        // Check level
         for (int i = 0; i < maxDepth; i++) {
             checkIfPathIsDest(allPaths, destinationRect, successfulPaths);
             if (!successfulPaths.isEmpty()) {
@@ -129,7 +129,7 @@ public class PassableRectangle {
         HashSet<Path> allPaths = new HashSet<Path>();
         for (Path path : paths) {
             for (PassableRectangle neighbor : path.getTail().neighbors.keySet()) {
-                if(path.contains(neighbor)) {
+                if (containsPassableRectangle(paths, neighbor)) {
                     continue;
                 }
                 Path newPath = path.createSubPath();
@@ -138,6 +138,15 @@ public class PassableRectangle {
             }
         }
         return allPaths;
+    }
+
+    private boolean containsPassableRectangle(Set<Path> paths, PassableRectangle passableRectangle) {
+        for (Path path : paths) {
+            if (path.contains(passableRectangle)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void checkIfPathIsDest(Set<Path> pathsToCheck, PassableRectangle destinationRect, List<Path> successfulPaths) {

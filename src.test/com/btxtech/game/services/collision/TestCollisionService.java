@@ -1,8 +1,7 @@
 package com.btxtech.game.services.collision;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.services.AwtMapFrame;
-import com.btxtech.game.services.terrain.TerrainService;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,21 +18,19 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class TestCollisionService {
     @Autowired
     private CollisionService collisionService;
-    @Autowired
-    private TerrainService terrainService;
 
-
-    //@Test
-    public void testGetPath() {
-        Index start = new Index(740, 465);
-        Index end = new Index(894, 543);
-        collisionService.getPath(start, end);
+    @Test
+    public void testPathfinder1() {
+        Index start = new Index(439, 412);
+        Index end = new Index(19497, 1597);
+        collisionService.setupPathToDestination(start,end, TerrainType.LAND);
     }
 
     @Test
-    public void testFindPath() throws Exception {
-        AwtMapFrame mapFrame = new AwtMapFrame(collisionService, terrainService);
-        Thread.sleep(Integer.MAX_VALUE);
+    public void testPathfinder2() {
+        Index start = new Index(7481, 20);
+        Index end = new Index(19380, 19946);
+        collisionService.setupPathToDestination(start,end, TerrainType.LAND);
     }
 
 }
