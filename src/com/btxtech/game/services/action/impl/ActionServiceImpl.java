@@ -13,13 +13,10 @@
 
 package com.btxtech.game.services.action.impl;
 
-import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
@@ -32,7 +29,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
-import com.btxtech.game.services.collision.CollisionServiceChangedListener;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
@@ -117,8 +113,6 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
             for (SyncItem syncItem : syncItems) {
                 if (syncItem instanceof SyncBaseItem) {
                     activeItems.add((SyncBaseItem) syncItem);
-                } else {
-                    log.error("Unknown entry during reload: " + syncItem);
                 }
             }
         }
@@ -184,7 +178,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
             return;
         }
 
-        if(!territoryService.isAllowed(syncItem.getPosition(), syncItem)) {
+        if (!territoryService.isAllowed(syncItem.getPosition(), syncItem)) {
             return;
         }
 
