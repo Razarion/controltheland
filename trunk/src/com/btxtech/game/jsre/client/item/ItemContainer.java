@@ -162,7 +162,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         } else if (syncItem instanceof SyncResourceItem) {
             itemView = new ClientSyncResourceItemView((SyncResourceItem) syncItem);
         } else {
-            throw new IllegalArgumentException(this + " unknwon SyncItem: " + syncItem);
+            throw new IllegalArgumentException(this + " unknown SyncItem: " + syncItem);
         }
         items.put(id, itemView);
         return itemView;

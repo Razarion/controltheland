@@ -61,6 +61,7 @@ import org.springframework.stereotype.Component;
  */
 @Component("userGuidanceService")
 public class UserGuidanceServiceImpl implements UserGuidanceService {
+    public static final String NO_MISSION_TARGET = "<center>There are no new mission targets.<br><h1>Please check back later</h1></center>";
     @Autowired
     private BaseService baseService;
     @Autowired
@@ -290,7 +291,13 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     @Override
     public String getMissionTarget4NextLevel(Base base) {
         DbLevel dbLevel = getNextDbLevel(getDbLevel(base.getLevel()));
+        if(dbLevel == null) {
+            return NO_MISSION_TARGET;
+        }
         dbLevel = getUnskippable(dbLevel, base);
+        if(dbLevel == null) {
+            return NO_MISSION_TARGET;
+        }
         return dbLevel.getMissionTarget();
     }
 
@@ -385,6 +392,9 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
     private void prepareForNextPromotion(DbLevel dbLevel, Base base) {
         DbLevel nextDbLevel = getNextDbLevel(dbLevel);
+        if(nextDbLevel == null) {
+            return;
+        }
         nextDbLevel = getUnskippable(nextDbLevel, base);
         if (nextDbLevel == null) {
             return;
