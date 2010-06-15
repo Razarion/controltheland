@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.services.terrain.TerrainService;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -140,6 +141,23 @@ public class TerrainTileEditor extends WebPage {
     }
 
     private void terrainImagesTable(Form form) {
+        form.add(new Label("totalSize", new IModel<String>(){
+
+            @Override
+            public String getObject() {
+                return Double.toString(terrainService.getDbTerrainImagesBitSize() / 1000.0);
+            }
+
+            @Override
+            public void setObject(String s) {
+                // Ignore
+            }
+
+            @Override
+            public void detach() {
+                // Ignore
+            }
+        }));
         terrainImageProvider = new TerrainImageProvider();
         final DataView<DbTerrainImage> tileList = new DataView<DbTerrainImage>("terrainImages", terrainImageProvider) {
             protected void populateItem(final Item<DbTerrainImage> item) {
