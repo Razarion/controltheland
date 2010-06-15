@@ -40,7 +40,7 @@ public class SurfaceSelectorItem extends FlowPanel implements MouseDownHandler {
 
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
-        GwtCommon.preventImageDragging(mouseDownEvent);
+        GwtCommon.preventDefault(mouseDownEvent);
         new PlaceablePreviewSurfaceRect(surfaceImage, mouseDownEvent);
     }
 

@@ -40,7 +40,7 @@ public class TerrainImageSelectorItem extends FlowPanel implements MouseDownHand
 
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
-        GwtCommon.preventImageDragging(mouseDownEvent);
+        GwtCommon.preventDefault(mouseDownEvent);
         new PlaceablePreviewTerrainImagePoition(terrainImage, mouseDownEvent);
     }
 
