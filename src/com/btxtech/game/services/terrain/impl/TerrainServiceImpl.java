@@ -165,6 +165,17 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     }
 
     @Override
+    public int getDbTerrainImagesBitSize() {
+        int size = 0;
+        for (DbTerrainImage dbTerrainImage : dbTerrainImages.values()) {
+            if (dbTerrainImage.getImageData() != null) {
+                size += dbTerrainImage.getImageData().length;
+            }
+        }
+        return size;
+    }
+
+    @Override
     public List<DbSurfaceImage> getDbSurfaceImagesCopy() {
         return new ArrayList<DbSurfaceImage>(dbSurfaceImages.values());
     }
