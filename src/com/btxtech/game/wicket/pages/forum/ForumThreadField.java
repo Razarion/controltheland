@@ -17,10 +17,9 @@ import com.btxtech.game.services.forum.ForumService;
 import com.btxtech.game.services.forum.ForumThread;
 import com.btxtech.game.services.user.ArqEnum;
 import com.btxtech.game.services.user.UserService;
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
@@ -38,17 +37,10 @@ public class ForumThreadField extends Panel {
 
     public ForumThreadField(String id, final ForumThread forumThread) {
         super(id);
-        Link link = new Link("link") {
-
-            @Override
-            public void onClick() {
-                PageParameters pageParameters = new PageParameters();
-                pageParameters.add(CategoryView.ID, Integer.toString(forumThread.getId()));
-                setResponsePage(ForumThreadView.class, pageParameters);
-            }
-        };
-        link.add(new Label("text", forumThread.getTitle()));
+        BookmarkablePageLink<ForumThreadView> link = new BookmarkablePageLink<ForumThreadView>("link", ForumThreadView.class);
+        link.setParameter(ForumThreadView.ID, Integer.toString(forumThread.getId()));
         add(link);
+        link.add(new Label("text", forumThread.getTitle()));
         Form form = new Form("deleteThreadForm") {
 
             @Override

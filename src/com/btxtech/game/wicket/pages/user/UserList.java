@@ -16,9 +16,8 @@ package com.btxtech.game.wicket.pages.user;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.pages.BorderPanel;
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -37,15 +36,8 @@ public class UserList extends BorderPanel {
         ListView userList = new ListView<User>("userTable", userService.getAllUsers()) {
             @Override
             protected void populateItem(final ListItem<User> listItem) {
-                Link link = new Link("userLink") {
-                    @Override
-                    public void onClick() {
-                        PageParameters pageParemeter = new PageParameters();
-                        pageParemeter.add(UserPage.KEY_VIEW_USER_NAME, listItem.getModelObject().getName());
-                        setResponsePage(UserPage.class, pageParemeter);
-                    }
-
-                };
+                BookmarkablePageLink<UserPage> link = new BookmarkablePageLink<UserPage>("userLink", UserPage.class);
+                link.setParameter(UserPage.KEY_VIEW_USER_NAME, listItem.getModelObject().getName());
                 listItem.add(link);
                 link.add(new Label("userName", listItem.getModelObject().getName()));
             }

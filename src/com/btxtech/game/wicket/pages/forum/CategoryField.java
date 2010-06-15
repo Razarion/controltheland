@@ -15,9 +15,8 @@ package com.btxtech.game.wicket.pages.forum;
 
 import com.btxtech.game.services.forum.Category;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.PageParameters;
 
 /**
  * User: beat
@@ -27,15 +26,8 @@ import org.apache.wicket.PageParameters;
 public class CategoryField extends Panel {
     public CategoryField(String id, final Category category) {
         super(id);
-        Link link = new Link("link") {
-
-            @Override
-            public void onClick() {
-                PageParameters pageParameters = new PageParameters();
-                pageParameters.add(CategoryView.ID, Integer.toString(category.getId()));
-                setResponsePage(CategoryView.class, pageParameters);
-            }
-        };
+        BookmarkablePageLink<CategoryView> link = new BookmarkablePageLink<CategoryView>("link", CategoryView.class);
+        link.setParameter(CategoryView.ID, Integer.toString(category.getId()));
         link.add(new Label("text", category.getTitle()));
         add(link);
     }
