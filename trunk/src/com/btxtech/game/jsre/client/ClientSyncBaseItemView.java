@@ -13,14 +13,12 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.cockpit.CursorHandler;
 import com.btxtech.game.jsre.client.cockpit.CursorItemState;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.effects.AttackEffectHandler;
 import com.btxtech.game.jsre.client.item.ItemContainer;
-import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.client.utg.ClientUserGuidance;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.bot.PlayerSimulation;
@@ -210,7 +208,7 @@ public class ClientSyncBaseItemView extends ClientSyncItemView {
             SelectionHandler.getInstance().setTargetSelected(this, event);
             ClientUserTracker.getInstance().clickEnemyItem(syncBaseItem);
         }
-        GwtCommon.preventImageDragging(event);
+        GwtCommon.preventDefault(event);
     }
 
     public SyncBaseItem getSyncBaseItem() {

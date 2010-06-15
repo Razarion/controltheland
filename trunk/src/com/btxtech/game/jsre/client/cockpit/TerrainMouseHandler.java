@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.Game;
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.TerrainMouseButtonListener;
@@ -48,6 +49,7 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
         } else if (mouseDownEvent.getNativeButton() == NativeEvent.BUTTON_RIGHT) {
             SelectionHandler.getInstance().clearSelection();
         }
+        GwtCommon.preventDefault(mouseDownEvent);        
     }
 
     @Override
