@@ -59,7 +59,7 @@ public class TerrainImageModifier implements TerrainMouseMoveListener, MouseDown
         int absoluteX = relX + TerrainView.getInstance().getViewOriginLeft();
         int absoluteY = relY + TerrainView.getInstance().getViewOriginTop();
         TerrainImagePosition terrainImagePosition = TerrainView.getInstance().getTerrainHandler().getTerrainImagePosition(absoluteX, absoluteY);
-        GwtCommon.preventImageDragging(mouseDownEvent);
+        GwtCommon.preventDefault(mouseDownEvent);
         if (terrainImagePosition == null) {
             return;
         }

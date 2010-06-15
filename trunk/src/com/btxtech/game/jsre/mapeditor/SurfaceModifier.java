@@ -128,7 +128,7 @@ public class SurfaceModifier implements TerrainMouseMoveListener, MouseDownHandl
 
         int absoluteX = relX + TerrainView.getInstance().getViewOriginLeft();
         int absoluteY = relY + TerrainView.getInstance().getViewOriginTop();
-        GwtCommon.preventImageDragging(mouseDownEvent);
+        GwtCommon.preventDefault(mouseDownEvent);
         SurfaceRect surfaceRect = TerrainView.getInstance().getTerrainHandler().getSurfaceRect(absoluteX, absoluteY);
         if (surfaceRect == null) {
             return;
