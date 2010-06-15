@@ -121,9 +121,9 @@ public class GwtCommon {
     }-*/;
 
     /*
-     * Just to prevent image dragging
+     * Just to prevent image dragging and selection
      */
-    public static void preventImageDragging(MouseEvent event) {
+    public static void preventDefault(MouseEvent event) {
         event.stopPropagation();
         event.preventDefault();
     }

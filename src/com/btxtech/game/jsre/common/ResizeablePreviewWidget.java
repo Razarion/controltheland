@@ -249,7 +249,7 @@ public abstract class ResizeablePreviewWidget extends AbsolutePanel implements M
 
     @Override
     public void onMouseDown(MouseDownEvent event) {
-        GwtCommon.preventImageDragging(event);
+        GwtCommon.preventDefault(event);
     }
 
     protected abstract void execute(Rectangle rectangle);

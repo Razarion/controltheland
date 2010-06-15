@@ -49,7 +49,7 @@ public class ClientSyncResourceItemView extends ClientSyncItemView {
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
         SelectionHandler.getInstance().setTargetSelected(this, mouseDownEvent);
-        GwtCommon.preventImageDragging(mouseDownEvent);
+        GwtCommon.preventDefault(mouseDownEvent);
         ClientUserTracker.getInstance().clickResourceItem(syncResourceItem);        
     }
 
