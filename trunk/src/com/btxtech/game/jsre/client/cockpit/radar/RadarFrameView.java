@@ -34,6 +34,9 @@ public class RadarFrameView extends MiniMap implements TerrainScrollListener, Mi
 
     @Override
     public void onScroll(int left, int top, int width, int height, int deltaLeft, int deltaTop) {
+        if(getTerrainSettings() == null) {
+            return;
+        }
         clear(getTerrainSettings().getPlayFieldXSize(), getTerrainSettings().getPlayFieldYSize());
         beginPath();
         rect(left, top, width, height);
