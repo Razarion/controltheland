@@ -508,7 +508,7 @@
       <extension name="snapshooter" />
       <option name="MAIN_CLASS_NAME" value="com.google.gwt.dev.Compiler" />
       <option name="VM_PARAMETERS" value="-Xmx256M" />
-      <option name="PROGRAM_PARAMETERS" value="-war &quot;war&quot; -style PRETTY com.btxtech.game.jsre.Game" />
+      <option name="PROGRAM_PARAMETERS" value="-war &quot;war&quot; com.btxtech.game.jsre.Game" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
@@ -532,7 +532,7 @@
       <extension name="snapshooter" />
       <option name="MAIN_CLASS_NAME" value="com.google.gwt.dev.Compiler" />
       <option name="VM_PARAMETERS" value="-Xmx256M" />
-      <option name="PROGRAM_PARAMETERS" value="-war &quot;war&quot; -style PRETTY com.btxtech.game.jsre.MapEditor" />
+      <option name="PROGRAM_PARAMETERS" value="-war &quot;war&quot; com.btxtech.game.jsre.MapEditor" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
@@ -556,7 +556,7 @@
       <extension name="snapshooter" />
       <option name="MAIN_CLASS_NAME" value="com.google.gwt.dev.Compiler" />
       <option name="VM_PARAMETERS" value="-Xmx256M" />
-      <option name="PROGRAM_PARAMETERS" value="-war &quot;war&quot; -style PRETTY com.btxtech.game.jsre.Pathfinding" />
+      <option name="PROGRAM_PARAMETERS" value="-war &quot;war&quot; com.btxtech.game.jsre.Pathfinding" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
@@ -580,7 +580,7 @@
       <extension name="snapshooter" />
       <option name="MAIN_CLASS_NAME" value="com.google.gwt.dev.Compiler" />
       <option name="VM_PARAMETERS" value="-Xmx256M" />
-      <option name="PROGRAM_PARAMETERS" value="-war &quot;war&quot; -style PRETTY com.btxtech.game.jsre.MapView" />
+      <option name="PROGRAM_PARAMETERS" value="-war &quot;war&quot; com.btxtech.game.jsre.MapView" />
       <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" value="" />
