@@ -126,7 +126,7 @@ public class RegisterDialog extends Dialog {
         hide(true);
     }
 
-    public static void showDialogWithDelay(int delay) {
+    public static void showDialogWithDelay() {
         if (Connection.getInstance().isRegistered()) {
             return;
         }
@@ -139,7 +139,7 @@ public class RegisterDialog extends Dialog {
                 }
             }
         };
-        timer.schedule(1000 * delay);
+        timer.schedule(1000 * Connection.getInstance().getGameInfo().getRegisterDialogDelay());
     }
 
 }

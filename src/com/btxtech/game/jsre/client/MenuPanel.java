@@ -67,6 +67,13 @@ public class MenuPanel extends TopMapPanel {
                 }
             });
         }
+        addRow("Startup screen", "clock-select", new Runnable(){
+
+            @Override
+            public void run() {
+                StartupProbe.getInstance().showStartScreen();
+            }
+        });
         flexTable.getFlexCellFormatter().setColSpan(6, 0, 2);
         flexTable.getFlexCellFormatter().setAlignment(6, 0, HasHorizontalAlignment.ALIGN_CENTER, HasVerticalAlignment.ALIGN_MIDDLE);
         Button button = new Button("Close");

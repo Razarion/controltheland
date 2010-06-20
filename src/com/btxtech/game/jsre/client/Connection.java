@@ -21,7 +21,6 @@ import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.OnlineBaseUpdate;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
-import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -37,7 +36,6 @@ import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.bot.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccessSyncInfo;
-import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
@@ -74,15 +72,19 @@ public class Connection implements AsyncCallback<Void> {
     }
 
     public void start() {
+        StartupProbe.getInstance().taskSwitch(StartupTask.INIT_GUI, StartupTask.DOWNLOAD_GAME_INFO);
+
         movableServiceAsync.getGameInfo(new AsyncCallback<GameInfo>() {
 
             @Override
             public void onFailure(Throwable caught) {
                 handleDisconnection(caught);
+                StartupProbe.getInstance().taskFailed(StartupTask.DOWNLOAD_GAME_INFO, caught);
             }
 
             @Override
             public void onSuccess(GameInfo gameInfo) {
+                StartupProbe.getInstance().taskSwitch(StartupTask.DOWNLOAD_GAME_INFO, StartupTask.INIT_GAME);
                 try {
                     if (gameInfo != null) {
                         setupGameStructure(gameInfo);
@@ -91,6 +93,7 @@ public class Connection implements AsyncCallback<Void> {
                     }
                 } catch (Throwable throwable) {
                     GwtCommon.handleException(throwable);
+                    StartupProbe.getInstance().taskFailed(StartupTask.INIT_GAME, throwable);
                 }
             }
         });
@@ -114,39 +117,49 @@ public class Connection implements AsyncCallback<Void> {
         MissionTarget.getInstance().setLevel(gameInfo.getLevel());
         ClientTerritoryService.getInstance().setTerritories(gameInfo.getTerritories());
 
+        StartupProbe.getInstance().taskSwitch(StartupTask.INIT_GAME, StartupTask.LOAD_UNIT_INFOS);
         movableServiceAsync.getItemTypes(new AsyncCallback<Collection<ItemType>>() {
             @Override
             public void onFailure(Throwable throwable) {
+                StartupProbe.getInstance().taskFailed(StartupTask.LOAD_UNIT_INFOS, throwable);
                 handleDisconnection(throwable);
             }
 
             @Override
             public void onSuccess(Collection<ItemType> itemTypes) {
                 ItemContainer.getInstance().setItemTypes(itemTypes);
+                StartupProbe.getInstance().taskSwitch(StartupTask.LOAD_UNIT_INFOS, StartupTask.LOAD_UNITS);
                 movableServiceAsync.getAllSyncInfo(new AsyncCallback<Collection<SyncItemInfo>>() {
                     @Override
                     public void onFailure(Throwable throwable) {
                         handleDisconnection(throwable);
+                        StartupProbe.getInstance().taskFailed(StartupTask.LOAD_UNITS, throwable);
                     }
 
                     @Override
                     public void onSuccess(Collection<SyncItemInfo> syncInfos) {
-                        if (syncInfos == null) {
-                            return;
-                        }
-                        for (SyncItemInfo syncInfo : syncInfos) {
-                            try {
-                                ItemContainer.getInstance().sychronize(syncInfo);
-                            } catch (Throwable t) {
-                                GwtCommon.handleException(t);
+                        try {
+                            StartupProbe.getInstance().taskSwitch(StartupTask.LOAD_UNITS, StartupTask.START_ACTION_HANDLER);
+                            if (syncInfos == null) {
+                                StartupProbe.getInstance().taskFailed(StartupTask.START_ACTION_HANDLER, "No synchronization information received");
+                                return;
                             }
+                            for (SyncItemInfo syncInfo : syncInfos) {
+                                try {
+                                    ItemContainer.getInstance().sychronize(syncInfo);
+                                } catch (Throwable t) {
+                                    GwtCommon.handleException(t);
+                                }
+                            }
+                            TerrainView.getInstance().moveToHome();
+                            PlayerSimulation.getInstance().start();
+                            timer.schedule(MIN_DELAY_BETWEEN_TICKS);
+                            StartupProbe.getInstance().taskFinished(StartupTask.START_ACTION_HANDLER);
+                        } catch (Throwable t) {
+                            GwtCommon.handleException(t);
+                            StartupProbe.getInstance().taskFailed(StartupTask.START_ACTION_HANDLER, t);
                         }
-                        TerrainView.getInstance().moveToHome();
-                        ClientUserTracker.getInstance().sandGameStartupState(GameStartupState.CLIENT_RUNNING);
-                        MissionTarget.getInstance().showMissionTargetDialog();
-                        PlayerSimulation.getInstance().start();
-                        RegisterDialog.showDialogWithDelay(gameInfo.getRegisterDialogDelay());
-                        timer.schedule(MIN_DELAY_BETWEEN_TICKS);
+
                     }
                 });
             }

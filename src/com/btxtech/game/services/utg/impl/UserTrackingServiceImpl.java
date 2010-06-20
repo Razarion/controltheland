@@ -13,8 +13,8 @@
 
 package com.btxtech.game.services.utg.impl;
 
+import com.btxtech.game.jsre.client.StartupTask;
 import com.btxtech.game.jsre.client.common.UserMessage;
-import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
@@ -36,7 +36,6 @@ import com.btxtech.game.services.utg.DbUserMessage;
 import com.btxtech.game.services.utg.GameStartup;
 import com.btxtech.game.services.utg.GameTrackingInfo;
 import com.btxtech.game.services.utg.PageAccess;
-import com.btxtech.game.services.utg.UserActionCommandMissions;
 import com.btxtech.game.services.utg.UserCommand;
 import com.btxtech.game.services.utg.UserHistory;
 import com.btxtech.game.services.utg.UserTrackingService;
@@ -110,9 +109,19 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public void gameStartup(GameStartupState state, Date timeStamp) {
+    public void startUpTaskFinished(StartupTask state, long duration) {
         try {
-            GameStartup gameStartup = new GameStartup(session.getSessionId(), state, timeStamp, baseService.getBase().getName());
+            GameStartup gameStartup = new GameStartup(GameStartup.FINISHED, state, duration, null, baseService.getBase().getName(), session.getUser(), session.getSessionId());
+            hibernateTemplate.saveOrUpdate(gameStartup);
+        } catch (NoConnectionException e) {
+            log.error("Can not track game startup: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void startUpTaskFailed(StartupTask state, long duration, String failureText) {
+        try {
+            GameStartup gameStartup = new GameStartup(GameStartup.FAILED, state, duration, failureText, baseService.getBase().getName(), session.getUser(), session.getSessionId());
             hibernateTemplate.saveOrUpdate(gameStartup);
         } catch (NoConnectionException e) {
             log.error("Can not track game startup: " + e.getMessage());
@@ -161,7 +170,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(GameStartup.class);
                 criteria.add(Restrictions.eq("sessionId", sessionId));
-                criteria.add(Restrictions.eq("state", GameStartupState.SERVER));
+                // criteria.add(Restrictions.eq("state", GameStartupState.SERVER));  // TODO
                 criteria.setProjection(Projections.rowCount());
                 return criteria.list();
             }
@@ -272,6 +281,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     private List<GameTrackingInfo> getGameTrackingInfos(final String sessionId) {
         ArrayList<GameTrackingInfo> gameTrackingInfos = new ArrayList<GameTrackingInfo>();
+        /*
         // Get all game startups
         List<GameStartup> list = (List<GameStartup>) hibernateTemplate.execute(new HibernateCallback() {
             @Override
@@ -353,7 +363,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 trackingInfo.setEnd(actions.get(actions.size() - 1).getClientTimeStamp());
             }
         }
-
+        */
         return gameTrackingInfos;
     }
 
@@ -511,7 +521,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             String sessionId = null;
             try {
                 sessionId = session.getSessionId();
-            }   catch(Throwable t) {
+            } catch (Throwable t) {
                 // Ignore
                 // Error creating bean with name 'scopedTarget.user': Scope 'session' is not active for the current thread
                 // This happens when the methode is called from the server side (e.g. XP increase timer)
@@ -529,7 +539,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             String sessionId = null;
             try {
                 sessionId = session.getSessionId();
-            }   catch(Throwable t) {
+            } catch (Throwable t) {
                 // Ignore
                 // Error creating bean with name 'scopedTarget.user': Scope 'session' is not active for the current thread
                 // This happens when the methode is called from the server side (e.g. XP increase timer)

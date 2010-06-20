@@ -17,9 +17,9 @@ import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.StartupTask;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.utg.missions.Mission;
-import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -30,7 +30,6 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * User: beat
@@ -78,9 +77,9 @@ public class ClientUserTracker {
         timerStarted = System.currentTimeMillis();
     }
 
-    public void sandGameStartupState(GameStartupState state) {
+    public void sandStartUpTaskFinished(StartupTask state, long duration) {
         if (Connection.isConnected()) {
-            Connection.getMovableServiceAsync().gameStartupState(state, new Date(), new AsyncCallback<Void>() {
+            Connection.getMovableServiceAsync().startUpTaskFinished(state, duration, new AsyncCallback<Void>() {
                 @Override
                 public void onFailure(Throwable throwable) {
                     GwtCommon.handleException(throwable);
@@ -93,6 +92,23 @@ public class ClientUserTracker {
             });
         }
     }
+
+    public void sandStartUpTaskFailed(StartupTask state, long duration, String failureText) {
+        if (Connection.isConnected()) {
+            Connection.getMovableServiceAsync().startUpTaskFailed(state, duration, failureText, new AsyncCallback<Void>() {
+                @Override
+                public void onFailure(Throwable throwable) {
+                    GwtCommon.handleException(throwable);
+                }
+
+                @Override
+                public void onSuccess(Void aVoid) {
+                    // Ignore
+                }
+            });
+        }
+    }
+
 
     public void onMouseDownTerrain(int absoluteX, int absoluteY) {
         sendUserAction(UserAction.TERRAIN_MOUSE_DOWN, absoluteX + ":" + absoluteY);

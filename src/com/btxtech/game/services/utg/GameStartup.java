@@ -13,13 +13,14 @@
 
 package com.btxtech.game.services.utg;
 
-import java.util.Date;
+import com.btxtech.game.jsre.client.StartupTask;
+import com.btxtech.game.services.user.User;
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 
 /**
  * User: beat
@@ -28,17 +29,26 @@ import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
  */
 @Entity(name = "TRACKER_GAME_STARTUP")
 public class GameStartup implements Serializable {
+    public static final String FINISHED = "FINISHED";
+    public static final String FAILED = "FAILED";
     @Id
     @GeneratedValue
     private Integer id;
     @Column(nullable = false)
-    private Date timeStamp;
+    private Date niceTimeStamp;
+    @Column(nullable = false)
+    private long timeStamp;
     @Column(nullable = false)
     private String sessionId;
     @Column(nullable = false)
-    private GameStartupState state;
-    private Date clientTimeStamp;
+    private String state;
+    private long duration;
+    private String failureText;
+    @Column(nullable = false)
+    private String type;
+    @Column(nullable = false)
     private String baseName;
+    private String userName;
 
     /**
      * Used by Hibernate
@@ -46,15 +56,21 @@ public class GameStartup implements Serializable {
     public GameStartup() {
     }
 
-    public GameStartup(String sessionId, GameStartupState state, Date timeStamp, String baseName) {
-        this.baseName = baseName;
-        this.timeStamp = new Date();
+    public GameStartup(String type, StartupTask state, long duration, String failureText, String baseName, User user, String sessionId) {
+        this.type = type;
+        niceTimeStamp = new Date();
+        timeStamp = niceTimeStamp.getTime();
         this.sessionId = sessionId;
-        this.state = state;
-        clientTimeStamp = timeStamp;
+        this.state = state.getNiceText();
+        this.duration = duration;
+        this.failureText = failureText;
+        this.baseName = baseName;
+        if (user != null) {
+            userName = user.getName();
+        }
     }
 
-    public Date getTimeStamp() {
+    public long getTimeStamp() {
         return timeStamp;
     }
 
@@ -62,16 +78,24 @@ public class GameStartup implements Serializable {
         return sessionId;
     }
 
-    public GameStartupState getState() {
+    public String getState() {
         return state;
-    }
-
-    public Date getClientTimeStamp() {
-        return clientTimeStamp;
     }
 
     public String getBaseName() {
         return baseName;
+    }
+
+    public long getDuration() {
+        return duration;
+    }
+
+    public String getFailureText() {
+        return failureText;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 
     @Override
@@ -81,9 +105,8 @@ public class GameStartup implements Serializable {
 
         GameStartup that = (GameStartup) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        return !(id != null ? !id.equals(that.id) : that.id != null);
 
-        return true;
     }
 
     @Override
