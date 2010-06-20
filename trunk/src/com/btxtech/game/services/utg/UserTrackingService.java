@@ -13,8 +13,8 @@
 
 package com.btxtech.game.services.utg;
 
+import com.btxtech.game.jsre.client.StartupTask;
 import com.btxtech.game.jsre.client.common.UserMessage;
-import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
@@ -22,7 +22,6 @@ import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,8 +35,6 @@ public interface UserTrackingService {
     void pageAccess(BasePage basePage);
 
     void pageAccess(Class theClass);
-
-    void gameStartup(GameStartupState server, Date timeStamp);
 
     void saveUserActions(ArrayList<UserAction> userActions, ArrayList<MissionAction> missionActions);
 
@@ -68,4 +65,8 @@ public interface UserTrackingService {
     void levelPromotion(Base base, String oldLevel);
 
     void levelInterimPromotion(Base base, String targetLevel, String interimPromotion);
+
+    void startUpTaskFinished(StartupTask state, long duration);
+
+    void startUpTaskFailed(StartupTask state, long duration, String failureText);
 }

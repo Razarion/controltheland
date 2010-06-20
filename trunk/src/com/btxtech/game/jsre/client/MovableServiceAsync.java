@@ -14,7 +14,6 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -28,9 +27,6 @@ import java.util.Date;
  * The async counterpart of <code>MovableService</code>.
  */
 public interface MovableServiceAsync {
-
-    void gameStartupState(GameStartupState state, Date timeStamp, AsyncCallback<Void> async);
-
     void getGameInfo(AsyncCallback async);
 
     void log(String message, Date date, AsyncCallback async);
@@ -60,4 +56,8 @@ public interface MovableServiceAsync {
     void getMissionTarget(AsyncCallback<String> asyncCallback);
 
     void tutorialTerminated(AsyncCallback<Void> async);
+
+    void startUpTaskFinished(StartupTask state, long duration, AsyncCallback<Void> asyncCallback);
+
+    void startUpTaskFailed(StartupTask state, long duration, String failureText, AsyncCallback<Void> asyncCallback);
 }

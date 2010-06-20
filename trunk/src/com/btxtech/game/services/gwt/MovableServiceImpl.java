@@ -15,6 +15,7 @@ package com.btxtech.game.services.gwt;
 
 
 import com.btxtech.game.jsre.client.MovableService;
+import com.btxtech.game.jsre.client.StartupTask;
 import com.btxtech.game.jsre.client.common.GameInfo;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.UserMessage;
@@ -24,7 +25,6 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
-import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -125,9 +125,18 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public void gameStartupState(GameStartupState state, Date timeStamp) {
+    public void startUpTaskFinished(StartupTask state, long duration) {
         try {
-            userTrackingService.gameStartup(state, timeStamp);
+            userTrackingService.startUpTaskFinished(state, duration);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    public void startUpTaskFailed(StartupTask state, long duration, String failureText) {
+        try {
+            userTrackingService.startUpTaskFailed(state, duration, failureText);
         } catch (Throwable t) {
             log.error("", t);
         }

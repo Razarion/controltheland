@@ -22,7 +22,6 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
-import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -39,8 +38,6 @@ import java.util.Date;
  */
 @RemoteServiceRelativePath("gwtrpc/movableService")
 public interface MovableService extends RemoteService {
-    void gameStartupState(GameStartupState state, Date timeStamp);
-
     GameInfo getGameInfo();
 
     void log(String message, Date date);
@@ -70,4 +67,9 @@ public interface MovableService extends RemoteService {
     String getMissionTarget();
 
     void tutorialTerminated();
+
+    void startUpTaskFinished(StartupTask state, long duration);
+
+    void startUpTaskFailed(StartupTask state, long duration, String failureText);
+
 }

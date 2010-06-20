@@ -76,11 +76,11 @@ public class GameTracking extends Panel {
         if (clientStart != null) {
             add(new Label("clientStartTimeServer", simpleDateFormat.format(clientStart.getTimeStamp())));
             if (server != null) {
-                add(new Label("clientStartDelteServer", WebCommon.getTimeDiff(server.getTimeStamp(), clientStart.getTimeStamp())));
+                add(new Label("clientStartDelteServer", "WebCommon.getTimeDiff(server.getTimeStamp(), clientStart.getTimeStamp())")); // TODO
             } else {
                 add(new Label("clientStartDelteServer", "?"));
             }
-            add(new Label("clientStartTimeClient", simpleDateFormat.format(clientStart.getClientTimeStamp())));
+            add(new Label("clientStartTimeClient", "simpleDateFormat.format(clientStart.getClientTimeStamp())")); // TODO
         } else {
             add(new Label("clientStartTimeServer", "?"));
             add(new Label("clientStartDelteServer", "?"));
@@ -90,13 +90,13 @@ public class GameTracking extends Panel {
         if (clientRunning != null) {
             add(new Label("clientRunningTimeServer", simpleDateFormat.format(clientRunning.getTimeStamp())));
             if (clientStart != null) {
-                add(new Label("clientRunningDelteServer", WebCommon.getTimeDiff(clientStart.getTimeStamp(), clientRunning.getTimeStamp())));
-                add(new Label("clientRunningTimeDelta", WebCommon.getTimeDiff(clientStart.getClientTimeStamp(), clientRunning.getClientTimeStamp())));
+                add(new Label("clientRunningDelteServer", "WebCommon.getTimeDiff(clientStart.getTimeStamp(), clientRunning.getTimeStamp())"));  // TODO
+                add(new Label("clientRunningTimeDelta", "WebCommon.getTimeDiff(clientStart.getClientTimeStamp(), clientRunning.getClientTimeStamp())")); // TODO
             } else {
                 add(new Label("clientRunningDelteServer", "?"));
                 add(new Label("clientRunningTimeDelta", "?"));
             }
-            add(new Label("clientRunningTimeClient", simpleDateFormat.format(clientRunning.getClientTimeStamp())));
+            add(new Label("clientRunningTimeClient", "simpleDateFormat.format(clientRunning.getClientTimeStamp())"));// TODO
         } else {
             add(new Label("clientRunningTimeServer", "?"));
             add(new Label("clientRunningDelteServer", "?"));
@@ -112,7 +112,7 @@ public class GameTracking extends Panel {
         }
 
         if (mapBgLoaded != null && clientStart != null) {
-            add(new Label("clientDeltaMapBg", WebCommon.getTimeDiff(clientStart.getClientTimeStamp(), mapBgLoaded)));
+            add(new Label("clientDeltaMapBg", "WebCommon.getTimeDiff(clientStart.getClientTimeStamp(), mapBgLoaded)"));// TODO
         } else {
             add(new Label("clientDeltaMapBg", "?"));
         }
@@ -125,7 +125,7 @@ public class GameTracking extends Panel {
         }
 
         if (mapBgImages != null && clientStart != null) {
-            add(new Label("clientDeltaMapImages", WebCommon.getTimeDiff(clientStart.getClientTimeStamp(), mapBgImages)));
+            add(new Label("clientDeltaMapImages", "WebCommon.getTimeDiff(clientStart.getClientTimeStamp(), mapBgImages)"));// TODO
         } else {
             add(new Label("clientDeltaMapImages", "?"));
         }

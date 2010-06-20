@@ -100,7 +100,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
             Rectangle absolutePos = terrainHandler.convertToAbsolutePosition(surfaceRect.getTileRectangle());
             ImageElement imageElement = terrainHandler.getSurfaceImageElement(surfaceRect.getSurfaceImageId());
             if (imageElement == null) {
-                terrainHandler.loadSurfaceImagesAndDrawMap();
+                terrainHandler.loadImagesAndDrawMap();
                 continue;
             }
             tilingSurface(imageElement, absolutePos);

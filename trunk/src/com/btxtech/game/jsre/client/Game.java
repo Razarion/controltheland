@@ -19,9 +19,7 @@ import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.bot.PlayerSimulation;
-import com.btxtech.game.jsre.common.gameengine.services.utg.GameStartupState;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -33,7 +31,8 @@ public class Game implements EntryPoint {
     public void onModuleLoad() {
         try {
             GwtCommon.setUncaughtExceptionHandler();
-            ClientUserTracker.getInstance().sandGameStartupState(GameStartupState.CLIENT_START);
+
+            StartupProbe.getInstance().taskSwitch(StartupTask.getFirstTask(), StartupTask.INIT_GUI);
 
             isDebug = Boolean.parseBoolean(Window.Location.getParameter("debug"));
             PlayerSimulation.setActive(Boolean.parseBoolean(Window.Location.getParameter("simulate")));
