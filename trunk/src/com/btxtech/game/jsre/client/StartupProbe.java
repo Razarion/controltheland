@@ -185,6 +185,7 @@ public class StartupProbe {
         });
         // connect the foreign element to the GWT event dispatcher
         DOM.sinkEvents(closeButtonElement, Event.ONCLICK);
+        closeButtonElement.getStyle().setVisibility(Style.Visibility.VISIBLE);
     }
 
     private void displayTaskRunning(StartupTask startupTask) {

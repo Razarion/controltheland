@@ -67,15 +67,22 @@ public class MenuPanel extends TopMapPanel {
                 }
             });
         }
-        addRow("Startup screen", "clock-select", new Runnable(){
+        addRow("Startup screen", "clock-select", new Runnable() {
 
             @Override
             public void run() {
                 StartupProbe.getInstance().showStartScreen();
             }
         });
-        flexTable.getFlexCellFormatter().setColSpan(6, 0, 2);
-        flexTable.getFlexCellFormatter().setAlignment(6, 0, HasHorizontalAlignment.ALIGN_CENTER, HasVerticalAlignment.ALIGN_MIDDLE);
+        addCloseButton();
+        flexTable.getElement().getStyle().setColor("orange");
+        return flexTable;
+    }
+
+    private void addCloseButton() {
+        int row = flexTable.getRowCount();
+        flexTable.getFlexCellFormatter().setColSpan(row, 0, 2);
+        flexTable.getFlexCellFormatter().setAlignment(row, 0, HasHorizontalAlignment.ALIGN_CENTER, HasVerticalAlignment.ALIGN_MIDDLE);
         Button button = new Button("Close");
         button.addClickHandler(new ClickHandler() {
             @Override
@@ -83,9 +90,7 @@ public class MenuPanel extends TopMapPanel {
                 close();
             }
         });
-        flexTable.setWidget(6, 0, button);
-        flexTable.getElement().getStyle().setColor("orange");
-        return flexTable;
+        flexTable.setWidget(row, 0, button);
     }
 
     private void closeWindow() {

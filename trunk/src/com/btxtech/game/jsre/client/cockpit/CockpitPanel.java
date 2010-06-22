@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -134,6 +135,10 @@ public class CockpitPanel extends TopMapPanel implements SelectionListener {
         }
 
         if (syncItemContainer != null) {
+            Label containedItems = new Label("Contained item: " + syncItemContainer.getContainedItems().size());
+            containedItems.getElement().getStyle().setColor("darkorange");
+            detailPanel.add(containedItems);
+
             detailPanel.add(new HTML("<br>"));
             Button button = new Button("Unload");
             button.addClickHandler(new ClickHandler() {
