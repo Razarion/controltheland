@@ -19,6 +19,45 @@
     <link type="text/css" rel="stylesheet" href="Game.css">
     <title>Control the Land</title>
     <script type="text/javascript" language="javascript" src="game/game.nocache.js"></script>
+    <style type="text/css">
+        table.stats {
+            font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+            font-weight: normal;
+            font-size: 13px;
+            color: #fff;
+            width: 280px;
+            background-color: #666;
+            border: 0;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+        table.stats td {
+            background-color: #CCC;
+            color: #000;
+            text-align: left;
+            border: 1px #fff solid;
+            height: 24px;
+        }
+
+        table.stats td.time {
+            background-color: #CCC;
+            color: #000;
+            border: 1px #fff solid;
+            height: 24px;
+            text-align: right;
+        }
+
+        table.stats td.hed {
+            background-color: #666;
+            color: #fff;
+            padding: 4px;
+            text-align: left;
+            border-bottom: 2px #fff solid;
+            font-size: 15px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 
 <body style="height: 100%;">
@@ -28,19 +67,28 @@
 <iframe src="javascript:''" id="__gwt_historyFrame" tabIndex='-1'
         style="position:absolute;width:0;height:0;border:0"></iframe>
 
-<div style="position:static;height:100%;width:100%;background-color:#FFFFFF" id="startScreen">
-    <table border="1" cellpadding="0" cellspacing="0">
-        <tr>
-            <td colspan="3">Start game engine</td>
-        </tr>
-        <tr wicket:id="tasks">
-            <td height="24" width="24"><img wicket:id="taskImageLoad"/><img wicket:id="taskImageDone"/><img
-                    wicket:id="taskImageFailed"/></td>
-            <td wicket:id="taskName"></td>
-            <td wicket:id="taskTime" align="right"></td>
+<div style="height:100%;width:100%;position:fixed;z-index:100;background-color:#FFFFFF" id="startScreen">
+    <table style="height:100%;width:100%">
+        <tr align="center">
+            <td valign="middle">
+                <table class="stats">
+                    <tr>
+                        <td class="hed" colspan="3">Start game engine</td>
+                    </tr>
+                    <tr wicket:id="tasks">
+                        <td height="24" width="24"><img wicket:id="taskImageLoad"/><img wicket:id="taskImageDone"/><img
+                                wicket:id="taskImageFailed"/></td>
+                        <td wicket:id="taskName"></td>
+                        <td class="time" wicket:id="taskTime" align="right"></td>
+                    </tr>
+                </table>
+                <label>
+                    <input type="button" name="Text 2" value="Close" id="startScreenClose" disabled="true"
+                           style="visibility:hidden;">
+                </label>
+            </td>
         </tr>
     </table>
-    <input type="button" name="Text 2" value="Close" id="startScreenClose" disabled="true" >
 </div>
 
 </body>

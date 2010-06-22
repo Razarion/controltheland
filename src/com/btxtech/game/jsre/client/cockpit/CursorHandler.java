@@ -122,13 +122,23 @@ public class CursorHandler implements TerrainMouseMoveListener {
                             && SelectionHandler.getInstance().atLeastOneItemTypeAllowed2Attack4Selection(((ClientSyncBaseItemView) clientSyncItemView).getSyncBaseItem()));
         } else if (cursorState.isCanCollect() && cursorItemState.isCollectTarget()) {
             setCursor(clientSyncItemView, CursorType.COLLECT, SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection(position));
-        } else if (cursorState.isCanLoad() && cursorItemState.isLoadTarget()) {
+        } else if (cursorState.isCanLoad() && cursorItemState.isLoadTarget() && isNotMyself(clientSyncItemView)) {
             SyncItemContainer syncItemContainer = ((ClientSyncBaseItemView) clientSyncItemView).getSyncBaseItem().getSyncItemContainer();
             boolean allowed = ClientTerritoryService.getInstance().isAllowed(position, ((ClientSyncBaseItemView) clientSyncItemView).getSyncBaseItem())
                     && syncItemContainer.isAbleToContainAtLeastOne(SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems())
                     && atLeastOneLoadPosReachable(SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems(), syncItemContainer);
             setCursor(clientSyncItemView, CursorType.LOAD, allowed);
         }
+    }
+
+    private boolean isNotMyself(ClientSyncItemView clientSyncItemView) {
+        SyncBaseItem my = ((ClientSyncBaseItemView) clientSyncItemView).getSyncBaseItem();
+        for (SyncBaseItem syncBaseItem : SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems()) {
+            if (syncBaseItem.equals(my)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private boolean atLeastOneLoadPosReachable(Collection<SyncBaseItem> syncBaseItems, SyncItemContainer syncItemContainer) {

@@ -37,6 +37,7 @@ public class Constants {
     public static final String ITEM_IMAGE_INDEX = "ix";
 
     // zIndex
+    public static final int Z_INDEX_STARTUP_SCREEN = 100; // Fix coded in Game.html
     public static final int Z_INDEX_DIALOG = 13;
     public static final int Z_INDEX_GROUP_SELECTION_FRAME = 12;
     public static final int Z_INDEX_SPEECH_BUBBLE = 11;
