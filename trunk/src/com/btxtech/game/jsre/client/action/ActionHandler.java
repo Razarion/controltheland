@@ -144,6 +144,7 @@ public class ActionHandler implements CommonActionService {
                 GwtCommon.sendLogToServer("ActionHandler.move(): can not cast to MovableSyncItem:" + clientSyncItem);
             }
         }
+        Connection.getInstance().sendCommandQueue();
     }
 
     public void move(SyncBaseItem syncItem, Index destination) {
@@ -172,6 +173,7 @@ public class ActionHandler implements CommonActionService {
                     buildFactory(clientSyncItem.getSyncBaseItem(), positionToBeBuild, toBeBuilt);
                     // Just get the first CV to build the building
                     // Prevent to build multiple buildings
+                    Connection.getInstance().sendCommandQueue();
                     return;
                 }
             } else {
@@ -212,6 +214,7 @@ public class ActionHandler implements CommonActionService {
                 GwtCommon.sendLogToServer("ActionHandler.build(): can not cast to FactorySyncItem:" + clientSyncItem);
             }
         }
+        Connection.getInstance().sendCommandQueue();
     }
 
     @Override
@@ -248,6 +251,7 @@ public class ActionHandler implements CommonActionService {
                 GwtCommon.sendLogToServer("ActionHandler.attack(): can not cast to TankSyncItem:" + clientSyncItem);
             }
         }
+        Connection.getInstance().sendCommandQueue();
     }
 
     @Override
@@ -280,6 +284,7 @@ public class ActionHandler implements CommonActionService {
                 GwtCommon.sendLogToServer("ActionHandler.collect(): can not cast to MoneyCollectorSyncItem:" + clientSyncItem);
             }
         }
+        Connection.getInstance().sendCommandQueue();
     }
 
     @Override
@@ -313,6 +318,7 @@ public class ActionHandler implements CommonActionService {
         try {
             item.executeCommand(upgradeCommand);
             executeCommand(item, upgradeCommand);
+            Connection.getInstance().sendCommandQueue();
         } catch (InsufficientFundsException e) {
             if (!PlayerSimulation.isActive()) {
                 MessageDialog.show("Insufficient Money!", "You do not have enough money. You have to Collect more money");
@@ -339,6 +345,7 @@ public class ActionHandler implements CommonActionService {
                 GwtCommon.sendLogToServer("ActionHandler.loadContainer(): has no movable:" + item);
             }
         }
+        Connection.getInstance().sendCommandQueue();
     }
 
     private void putToContainer(SyncBaseItem container, SyncBaseItem item) {
@@ -386,6 +393,7 @@ public class ActionHandler implements CommonActionService {
         try {
             container.executeCommand(unloadContainerCommand);
             executeCommand(container, unloadContainerCommand);
+            Connection.getInstance().sendCommandQueue();            
         } catch (Exception e) {
             GwtCommon.handleException(e);
         }
@@ -405,7 +413,7 @@ public class ActionHandler implements CommonActionService {
     }
 
     private void executeCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
-        Connection.getInstance().sendCommand(baseCommand);
+        Connection.getInstance().addCommandToQueue(baseCommand);
         ClientUserGuidance.getInstance().onExecuteCommand(syncItem, baseCommand);
         addActiveItem(syncItem);
     }

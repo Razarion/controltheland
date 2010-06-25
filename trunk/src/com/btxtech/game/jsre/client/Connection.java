@@ -43,6 +43,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -56,6 +57,7 @@ public class Connection implements AsyncCallback<Void> {
     public static final Connection INSTANCE = new Connection();
     private boolean isRegistered;
     private GameInfo gameInfo;
+    private ArrayList<BaseCommand> commandQueue = new ArrayList<BaseCommand>();
 
     private MovableServiceAsync movableServiceAsync = GWT.create(MovableService.class);
     private Timer timer;
@@ -237,10 +239,17 @@ public class Connection implements AsyncCallback<Void> {
     }
 
 
-    public void sendCommand(BaseCommand baseCommand) {
+    public void addCommandToQueue(BaseCommand baseCommand) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.sendCommand(baseCommand, this);
+            commandQueue.add(baseCommand);
         }
+    }
+
+    public void sendCommandQueue() {
+        if (movableServiceAsync != null && !commandQueue.isEmpty()) {
+            movableServiceAsync.sendCommands(commandQueue, this);
+        }
+        commandQueue.clear();
     }
 
     public void createMissionTraget(SyncBaseItem syncBaseItem) {

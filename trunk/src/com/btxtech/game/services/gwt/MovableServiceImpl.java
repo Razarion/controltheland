@@ -46,6 +46,7 @@ import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,9 +82,9 @@ public class MovableServiceImpl implements MovableService {
     private Log log = LogFactory.getLog(MovableServiceImpl.class);
 
     @Override
-    public void sendCommand(BaseCommand baseCommand) {
+    public void sendCommands(List<BaseCommand> baseCommands) {
         try {
-            actionService.executeCommand(baseCommand, false);
+            actionService.executeCommands(baseCommands);
         } catch (Throwable t) {
             log.error("", t);
         }
