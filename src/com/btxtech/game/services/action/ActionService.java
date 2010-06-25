@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import java.util.List;
 
 /**
  * User: beat
@@ -27,6 +28,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
  */
 public interface ActionService extends CommonActionService, SyncItemListener {
     void executeCommand(BaseCommand baseCommand, boolean supressUserCheck) throws IllegalAccessException, ItemDoesNotExistException;
+
+    void executeCommands(List<BaseCommand> baseCommands);
 
     void addGuardingBaseItem(SyncBaseItem syncItem);
 

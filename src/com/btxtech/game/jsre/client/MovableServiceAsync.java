@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.client.common.UserMessage;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * The async counterpart of <code>MovableService</code>.
@@ -31,7 +32,7 @@ public interface MovableServiceAsync {
 
     void log(String message, Date date, AsyncCallback async);
 
-    void sendCommand(BaseCommand baseCommand, AsyncCallback async);
+    void sendCommands(List<BaseCommand> baseCommands, AsyncCallback async);
 
     void getSyncInfo(SimpleBase simpleBase, AsyncCallback async);
 

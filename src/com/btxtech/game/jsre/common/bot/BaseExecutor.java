@@ -65,6 +65,7 @@ public class BaseExecutor {
                 } else {
                     position = services.getCollisionService().getFreeRandomPosition(itemTypeToBuild, builder, 0, 200);
                 }
+                // TODO Client: command will not be send, only added to the queue
                 services.getActionService().buildFactory(builder, position, itemTypeToBuild);
                 return true;
             }
@@ -72,6 +73,7 @@ public class BaseExecutor {
             if (builder.getSyncFactory().isActive()) {
                 return false;
             } else {
+                // TODO Client: command will not be send, only added to the queue
                 services.getActionService().build(builder, itemTypeToBuild);
                 return true;
             }
@@ -87,6 +89,7 @@ public class BaseExecutor {
             throw new IllegalStateException("No money item found");
         }
         SyncResourceItem moneyItem = (SyncResourceItem) syncItems.get((int) (Math.random() * (double) syncItems.size()));
+        // TODO Client: command will not be send, only added to the queue
         services.getActionService().collect(harvester, moneyItem);
     }
 
@@ -107,6 +110,7 @@ public class BaseExecutor {
         }
 
         SyncBaseItem target = syncItems.get((int) (Math.random() * (double) syncItems.size()));
+        // TODO Client: command will not be send, only added to the queue
         services.getActionService().attack(attacker, target);
     }
 
@@ -121,6 +125,7 @@ public class BaseExecutor {
     }
 
     public void doMove(SyncBaseItem item, Index destination) {
+        // TODO Client: command will not be send, only added to the queue
         services.getActionService().move(item, destination);
     }
 

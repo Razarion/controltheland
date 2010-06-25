@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.annotation.PostConstruct;
@@ -402,6 +403,17 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
         } catch (Exception e) {
             log.error("", e);
             connectionService.sendSyncInfo(syncItem);
+        }
+    }
+
+    @Override
+    public void executeCommands(List<BaseCommand> baseCommands) {
+        for (BaseCommand baseCommand : baseCommands) {
+            try {
+                executeCommand(baseCommand, false);
+            } catch (Throwable t) {
+                log.debug(" ", t);
+            }
         }
     }
 

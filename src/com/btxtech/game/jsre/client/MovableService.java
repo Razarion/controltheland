@@ -32,6 +32,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * The client side stub for the RPC service.
@@ -42,7 +43,7 @@ public interface MovableService extends RemoteService {
 
     void log(String message, Date date);
 
-    void sendCommand(BaseCommand baseCommand);
+    void sendCommands(List<BaseCommand> baseCommands);
 
     Collection<Packet> getSyncInfo(SimpleBase simpleBase) throws NotYourBaseException, NoConnectionException;
 
