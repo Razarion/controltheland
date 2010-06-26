@@ -30,6 +30,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * User: beat
@@ -77,9 +78,9 @@ public class ClientUserTracker {
         timerStarted = System.currentTimeMillis();
     }
 
-    public void sandStartUpTaskFinished(StartupTask state, long duration) {
+    public void sandStartUpTaskFinished(StartupTask state, Date timeStamp, long duration) {
         if (Connection.isConnected()) {
-            Connection.getMovableServiceAsync().startUpTaskFinished(state, duration, new AsyncCallback<Void>() {
+            Connection.getMovableServiceAsync().startUpTaskFinished(state, timeStamp, duration, new AsyncCallback<Void>() {
                 @Override
                 public void onFailure(Throwable throwable) {
                     GwtCommon.handleException(throwable);
@@ -93,9 +94,9 @@ public class ClientUserTracker {
         }
     }
 
-    public void sandStartUpTaskFailed(StartupTask state, long duration, String failureText) {
+    public void sandStartUpTaskFailed(StartupTask state, Date timeStamp, long duration, String failureText) {
         if (Connection.isConnected()) {
-            Connection.getMovableServiceAsync().startUpTaskFailed(state, duration, failureText, new AsyncCallback<Void>() {
+            Connection.getMovableServiceAsync().startUpTaskFailed(state, timeStamp, duration, failureText, new AsyncCallback<Void>() {
                 @Override
                 public void onFailure(Throwable throwable) {
                     GwtCommon.handleException(throwable);

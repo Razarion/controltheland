@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.utg;
 
+import com.btxtech.game.jsre.client.StartupTask;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,29 +27,31 @@ import java.util.List;
  */
 public class GameTrackingInfo implements Serializable {
     private Date start;
-    private Date end;
     private int attackCommandCount;
     private int moveCommandCount;
     private int builderCommandCount;
     private int factoryCommandCount;
     private int moneyCollectCommandCount;
     private int completedMissionCount;
-    private GameStartup serverGameStartup;
-    private GameStartup clientStartGameStartup;
-    private GameStartup clientRunningGameStartup;
+    private List<GameStartup> gameStartups = new ArrayList<GameStartup>();
     private List<DbUserAction> userActions = new ArrayList<DbUserAction>();
     private List<UserCommand> userCommands = new ArrayList<UserCommand>();
     private List<DbMissionAction> missionActions = new ArrayList<DbMissionAction>();
     private Date mapBgLoaded;
     private Date mapImagesLoaded;
     private String baseName;
+    private Date end;
+
+    public GameTrackingInfo(GameStartup gameStartup) {
+        gameStartups.add(gameStartup);
+        if (!StartupTask.isFirstTask(gameStartup.getState())) {
+            throw new IllegalArgumentException("gameStartup must be first task");
+        }
+        start = gameStartup.getClientTimeStamp();
+    }
 
     public Date getStart() {
         return start;
-    }
-
-    public Date getEnd() {
-        return end;
     }
 
     public void setStart(Date start) {
@@ -59,38 +62,12 @@ public class GameTrackingInfo implements Serializable {
         this.end = end;
     }
 
-    public long getInGameMilliS() {
-        if (start == null) {
-            return 0;
-        }
-        if (end == null) {
-            return -1;
-        }
-        return end.getTime() - start.getTime();
+    public Date getEnd() {
+        return end;
     }
 
-    public void setServerGameStartup(GameStartup serverGameStartup) {
-        this.serverGameStartup = serverGameStartup;
-    }
-
-    public void setClientStartGameStartup(GameStartup clientStartGameStartup) {
-        this.clientStartGameStartup = clientStartGameStartup;
-    }
-
-    public void setClientRunningGameStartup(GameStartup clientRunningGameStartup) {
-        this.clientRunningGameStartup = clientRunningGameStartup;
-    }
-
-    public GameStartup getServerGameStartup() {
-        return serverGameStartup;
-    }
-
-    public GameStartup getClientStartGameStartup() {
-        return clientStartGameStartup;
-    }
-
-    public GameStartup getClientRunningGameStartup() {
-        return clientRunningGameStartup;
+    public List<GameStartup> getGameStartups() {
+        return gameStartups;
     }
 
     public void setUserActions(List<DbUserAction> userActions) {
@@ -192,5 +169,14 @@ public class GameTrackingInfo implements Serializable {
 
     public void setBaseName(String baseName) {
         this.baseName = baseName;
+    }
+
+    public boolean hasDuration() {
+        return end != null && start != null;
+    }
+
+
+    public long getDuration() {
+        return end.getTime() - start.getTime();
     }
 }

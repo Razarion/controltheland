@@ -25,7 +25,7 @@ import javax.persistence.Id;
  * Date: 19.05.2010
  * Time: 15:07:20
  */
-@Entity(name = "TRACKING_LEVEL_PROMOTION")
+@Entity(name = "TRACKER_LEVEL_PROMOTION")
 public class DbLevelPromotion {
     @Id
     @GeneratedValue

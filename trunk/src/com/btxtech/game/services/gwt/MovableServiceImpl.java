@@ -126,18 +126,18 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public void startUpTaskFinished(StartupTask state, long duration) {
+    public void startUpTaskFinished(StartupTask state, Date clientTimeStamp, long duration) {
         try {
-            userTrackingService.startUpTaskFinished(state, duration);
+            userTrackingService.startUpTaskFinished(state, clientTimeStamp, duration);
         } catch (Throwable t) {
             log.error("", t);
         }
     }
 
     @Override
-    public void startUpTaskFailed(StartupTask state, long duration, String failureText) {
+    public void startUpTaskFailed(StartupTask state, Date clientTimeStamp, long duration, String failureText) {
         try {
-            userTrackingService.startUpTaskFailed(state, duration, failureText);
+            userTrackingService.startUpTaskFailed(state, clientTimeStamp, duration, failureText);
         } catch (Throwable t) {
             log.error("", t);
         }

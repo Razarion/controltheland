@@ -48,10 +48,10 @@ public class GameTracking extends Panel {
     }
 
     private void overview(GameTrackingInfo gameTrackingInfo) {
-        if (gameTrackingInfo.getInGameMilliS() < 0) {
-            add(new Label("timeInGame", "???"));
+        if (gameTrackingInfo.hasDuration()) {
+            add(new Label("timeInGame", WebCommon.formatDuration(gameTrackingInfo.getDuration())));
         } else {
-            add(new Label("timeInGame", WebCommon.formatDuration(gameTrackingInfo.getInGameMilliS())));
+            add(new Label("timeInGame", "???"));
         }
         add(new Label("baseName", gameTrackingInfo.getBaseName()));
         add(new Label("moveCommands", Integer.toString(gameTrackingInfo.getMoveCommandCount())));
@@ -64,71 +64,13 @@ public class GameTracking extends Panel {
 
     private void gameStartup(GameTrackingInfo gameTrackingInfo) {
         // Startup
-        GameStartup server = gameTrackingInfo.getServerGameStartup();
-        GameStartup clientStart = gameTrackingInfo.getClientStartGameStartup();
-        GameStartup clientRunning = gameTrackingInfo.getClientRunningGameStartup();
-
-        if (server != null) {
-            add(new Label("serverTimeServer", simpleDateFormat.format(server.getTimeStamp())));
-        } else {
-            add(new Label("serverTimeServer", "?"));
-        }
-        if (clientStart != null) {
-            add(new Label("clientStartTimeServer", simpleDateFormat.format(clientStart.getTimeStamp())));
-            if (server != null) {
-                add(new Label("clientStartDelteServer", "WebCommon.getTimeDiff(server.getTimeStamp(), clientStart.getTimeStamp())")); // TODO
-            } else {
-                add(new Label("clientStartDelteServer", "?"));
+        add(new ListView<GameStartup>("gameStartup", gameTrackingInfo.getGameStartups()) {
+            @Override
+            protected void populateItem(ListItem<GameStartup> gameStartupListItem) {
+                gameStartupListItem.add(new Label("task", gameStartupListItem.getModelObject().getState().getNiceText()));
+                gameStartupListItem.add(new Label("time",WebCommon.formatDurationMilis(gameStartupListItem.getModelObject().getDuration())));
             }
-            add(new Label("clientStartTimeClient", "simpleDateFormat.format(clientStart.getClientTimeStamp())")); // TODO
-        } else {
-            add(new Label("clientStartTimeServer", "?"));
-            add(new Label("clientStartDelteServer", "?"));
-            add(new Label("clientStartTimeClient", "?"));
-        }
-
-        if (clientRunning != null) {
-            add(new Label("clientRunningTimeServer", simpleDateFormat.format(clientRunning.getTimeStamp())));
-            if (clientStart != null) {
-                add(new Label("clientRunningDelteServer", "WebCommon.getTimeDiff(clientStart.getTimeStamp(), clientRunning.getTimeStamp())"));  // TODO
-                add(new Label("clientRunningTimeDelta", "WebCommon.getTimeDiff(clientStart.getClientTimeStamp(), clientRunning.getClientTimeStamp())")); // TODO
-            } else {
-                add(new Label("clientRunningDelteServer", "?"));
-                add(new Label("clientRunningTimeDelta", "?"));
-            }
-            add(new Label("clientRunningTimeClient", "simpleDateFormat.format(clientRunning.getClientTimeStamp())"));// TODO
-        } else {
-            add(new Label("clientRunningTimeServer", "?"));
-            add(new Label("clientRunningDelteServer", "?"));
-            add(new Label("clientRunningTimeClient", "?"));
-            add(new Label("clientRunningTimeDelta", "?"));
-        }
-
-        Date mapBgLoaded = gameTrackingInfo.getMapBgLoaded();
-        if (mapBgLoaded != null) {
-            add(new Label("clientTimeMapBg", simpleDateFormat.format(mapBgLoaded)));
-        } else {
-            add(new Label("clientTimeMapBg", "?"));
-        }
-
-        if (mapBgLoaded != null && clientStart != null) {
-            add(new Label("clientDeltaMapBg", "WebCommon.getTimeDiff(clientStart.getClientTimeStamp(), mapBgLoaded)"));// TODO
-        } else {
-            add(new Label("clientDeltaMapBg", "?"));
-        }
-
-        Date mapBgImages = gameTrackingInfo.getMapImagesLoaded();
-        if (mapBgImages != null) {
-            add(new Label("clientTimeMapImages", simpleDateFormat.format(mapBgImages)));
-        } else {
-            add(new Label("clientTimeMapImages", "?"));
-        }
-
-        if (mapBgImages != null && clientStart != null) {
-            add(new Label("clientDeltaMapImages", "WebCommon.getTimeDiff(clientStart.getClientTimeStamp(), mapBgImages)"));// TODO
-        } else {
-            add(new Label("clientDeltaMapImages", "?"));
-        }
+        });
     }
 
     private void userActions(List<UserActionCommandMissions> userActions) {

@@ -101,7 +101,7 @@ public class CursorHandler implements TerrainMouseMoveListener {
         for (SyncBaseItem syncBaseItem : SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems()) {
             if (syncBaseItem.hasSyncItemContainer()) {
                 SyncItemContainer syncItemContainer = syncBaseItem.getSyncItemContainer();
-                if (syncItemContainer.atLeastOneAllowedToUnload(position) && syncItemContainer.isUnloadPosReachable(position)) {
+                if (syncItemContainer.atLeastOneAllowedToUnload(position)) {
                     return true;
                 }
             }

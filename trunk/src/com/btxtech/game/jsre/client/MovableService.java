@@ -69,8 +69,8 @@ public interface MovableService extends RemoteService {
 
     void tutorialTerminated();
 
-    void startUpTaskFinished(StartupTask state, long duration);
+    void startUpTaskFinished(StartupTask state, Date clientTimeStamp, long duration);
 
-    void startUpTaskFailed(StartupTask state, long duration, String failureText);
+    void startUpTaskFailed(StartupTask state, Date clientTimeStamp, long duration, String failureText);
 
 }

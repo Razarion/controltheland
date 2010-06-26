@@ -13,8 +13,8 @@
 
 package com.btxtech.game.services.utg;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: beat
@@ -32,6 +32,7 @@ public class VisitorDetailInfo {
     private int factoryCommands;
     private int moneyCollectCommands;
     private int completedMissionCount;
+    private int gameAttempts;
 
     public VisitorDetailInfo(BrowserDetails browserDetails) {
         this.browserDetails = browserDetails;
@@ -49,12 +50,18 @@ public class VisitorDetailInfo {
         this.gameTrackingInfos = gameTrackingInfos;
         totalTime = 0;
         for (GameTrackingInfo gameTrackingInfo : gameTrackingInfos) {
-            totalTime += gameTrackingInfo.getInGameMilliS();
+            if (gameTrackingInfo.hasDuration()) {
+                totalTime += gameTrackingInfo.getDuration();
+            }
         }
     }
 
-    public int getGameAttemps() {
-        return gameTrackingInfos.size();
+    public void setGameAttempts(int gameAttempts) {
+        this.gameAttempts = gameAttempts;
+    }
+
+    public int getGameAttempts() {
+        return gameAttempts;
     }
 
     public void setPageAccessHistory(List<PageAccess> pageAccessHistory) {
@@ -67,10 +74,6 @@ public class VisitorDetailInfo {
 
     public long getTotalTime() {
         return totalTime;
-    }
-
-    public void setTotalTime(long totalTime) {
-        this.totalTime = totalTime;
     }
 
     public int getAttackCommands() {
