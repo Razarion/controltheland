@@ -60,50 +60,13 @@
     <h3>Startup</h3>
     <table border="0">
         <tr>
-            <th bgcolor="#dadada">State</th>
-            <th bgcolor="#dadada">Server Time</th>
-            <th bgcolor="#dadada">Server delta</th>
-            <th bgcolor="#dadada">Client Time</th>
-            <th bgcolor="#dadada">Client delta</th>
+            <th bgcolor="#dadada">Task</th>
+            <th bgcolor="#dadada">Time [s]</th>
         </tr>
-        <tr>
-            <td bgcolor="#dadada">Server</td>
-            <td wicket:id="serverTimeServer"/>
-            <td align="center">-</td>
-            <td align="center">-</td>
-            <td align="center">-</td>
+        <tr wicket:id="gameStartup">
+            <td wicket:id="task"/>
+            <td wicket:id="time" align="right"/>
         </tr>
-        <tr>
-            <td bgcolor="#dadada">Clinet start</td>
-            <td wicket:id="clientStartTimeServer"/>
-            <td align="center" wicket:id="clientStartDelteServer"/>
-            <td wicket:id="clientStartTimeClient"/>
-            <td align="center">-</td>
-        </tr>
-        <tr>
-            <td bgcolor="#dadada">Clinet running</td>
-            <td wicket:id="clientRunningTimeServer"/>
-            <td align="center" wicket:id="clientRunningDelteServer"/>
-            <td wicket:id="clientRunningTimeClient"/>
-            <td align="center" wicket:id="clientRunningTimeDelta"/>
-        </tr>
-
-        <tr>
-            <td bgcolor="#dadada">Map BG</td>
-            <td align="center">-</td>
-            <td align="center">-</td>
-            <td wicket:id="clientTimeMapBg"/>
-            <td align="center" wicket:id="clientDeltaMapBg"/>
-        </tr>
-        <tr>
-            <td bgcolor="#dadada">Map Images</td>
-            <td align="center">-</td>
-            <td align="center">-</td>
-            <td wicket:id="clientTimeMapImages"/>
-            <td align="center" wicket:id="clientDeltaMapImages"/>
-        </tr>
-
-
     </table>
 
     <h3>User Action</h3>

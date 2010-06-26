@@ -23,6 +23,7 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -55,6 +56,10 @@ public class StartupProbe {
 
         public void setStartTime(long startTime) {
             this.startTime = startTime;
+        }
+
+        public Date getStartTime() {
+            return new Date(startTime);
         }
 
         public void finished() {
@@ -136,7 +141,7 @@ public class StartupProbe {
         }
         task.finished();
         displayTaskFinished(task);
-        ClientUserTracker.getInstance().sandStartUpTaskFinished(task.getTask(), task.getDuration());
+        ClientUserTracker.getInstance().sandStartUpTaskFinished(task.getTask(), task.getStartTime(), task.getDuration());
         checkForCompletion();
     }
 
@@ -148,7 +153,7 @@ public class StartupProbe {
         task.failed(text);
         displayTaskFailed(task);
 
-        ClientUserTracker.getInstance().sandStartUpTaskFailed(task.getTask(), task.getDuration(), task.getFailureText());
+        ClientUserTracker.getInstance().sandStartUpTaskFailed(task.getTask(), task.getStartTime(), task.getDuration(), task.getFailureText());
         checkForCompletion();
     }
 

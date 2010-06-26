@@ -36,14 +36,18 @@ import com.btxtech.game.services.utg.DbUserMessage;
 import com.btxtech.game.services.utg.GameStartup;
 import com.btxtech.game.services.utg.GameTrackingInfo;
 import com.btxtech.game.services.utg.PageAccess;
+import com.btxtech.game.services.utg.UserActionCommandMissions;
 import com.btxtech.game.services.utg.UserCommand;
 import com.btxtech.game.services.utg.UserHistory;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.VisitorDetailInfo;
 import com.btxtech.game.services.utg.VisitorInfo;
+import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import org.apache.commons.logging.Log;
@@ -109,9 +113,9 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public void startUpTaskFinished(StartupTask state, long duration) {
+    public void startUpTaskFinished(StartupTask state, Date clientTimeStamp, long duration) {
         try {
-            GameStartup gameStartup = new GameStartup(GameStartup.FINISHED, state, duration, null, baseService.getBase().getName(), session.getUser(), session.getSessionId());
+            GameStartup gameStartup = new GameStartup(clientTimeStamp, GameStartup.FINISHED, state, duration, null, baseService.getBase().getName(), session.getUser(), session.getSessionId());
             hibernateTemplate.saveOrUpdate(gameStartup);
         } catch (NoConnectionException e) {
             log.error("Can not track game startup: " + e.getMessage());
@@ -119,9 +123,9 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public void startUpTaskFailed(StartupTask state, long duration, String failureText) {
+    public void startUpTaskFailed(StartupTask state, Date clientTimeStamp, long duration, String failureText) {
         try {
-            GameStartup gameStartup = new GameStartup(GameStartup.FAILED, state, duration, failureText, baseService.getBase().getName(), session.getUser(), session.getSessionId());
+            GameStartup gameStartup = new GameStartup(clientTimeStamp, GameStartup.FAILED, state, duration, failureText, baseService.getBase().getName(), session.getUser(), session.getSessionId());
             hibernateTemplate.saveOrUpdate(gameStartup);
         } catch (NoConnectionException e) {
             log.error("Can not track game startup: " + e.getMessage());
@@ -149,6 +153,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     @Override
     public List<VisitorInfo> getVisitorInfos() {
         ArrayList<VisitorInfo> visitorInfos = new ArrayList<VisitorInfo>();
+        @SuppressWarnings("unchecked")
         List<Object[]> datesAndHits = (List<Object[]>) hibernateTemplate.find("select u.timeStamp, u.sessionId, u.cookieId, u.referer ,count(p) from com.btxtech.game.services.utg.BrowserDetails u, com.btxtech.game.services.utg.PageAccess p where u.sessionId = p.sessionId and u.isCrawler = false group by u.sessionId order by u.timeStamp desc");
         for (Object[] datesAndHit : datesAndHits) {
             Date timeStamp = (Date) datesAndHit[0];
@@ -156,7 +161,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             boolean cookie = datesAndHit[2] != null;
             String referer = (String) datesAndHit[3];
             int hits = ((Long) datesAndHit[4]).intValue();
-            int enterGameHits = getHitsForGameStartup(sessionId);
+            int enterGameHits = getGameAttempts(sessionId);
             int commands = getUserCommandCount(sessionId, null, null, null);
             int completedMissions = getCompletedMissionCount(sessionId, null, null);
             visitorInfos.add(new VisitorInfo(timeStamp, sessionId, hits, enterGameHits, commands, completedMissions, cookie, referer));
@@ -164,13 +169,14 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         return visitorInfos;
     }
 
-    private int getHitsForGameStartup(final String sessionId) {
+    private int getGameAttempts(final String sessionId) {
+        @SuppressWarnings("unchecked")
         List<Integer> list = (List<Integer>) hibernateTemplate.execute(new HibernateCallback() {
             @Override
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(GameStartup.class);
+                Criteria criteria = session.createCriteria(PageAccess.class);
                 criteria.add(Restrictions.eq("sessionId", sessionId));
-                // criteria.add(Restrictions.eq("state", GameStartupState.SERVER));  // TODO
+                criteria.add(Restrictions.eq("page", Game.class.getName()));
                 criteria.setProjection(Projections.rowCount());
                 return criteria.list();
             }
@@ -179,6 +185,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     private int getUserCommandCount(final String sessionId, final Class<? extends BaseCommand> command, final Date from, final Date to) {
+        @SuppressWarnings("unchecked")
         List<Integer> list = (List<Integer>) hibernateTemplate.execute(new HibernateCallback() {
             @Override
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
@@ -200,8 +207,9 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         return list.get(0);
     }
 
+    @SuppressWarnings("unchecked")
     private List<UserCommand> getUserCommands(final String sessionId, final Date from, final Date to) {
-        List<UserCommand> list = (List<UserCommand>) hibernateTemplate.execute(new HibernateCallback() {
+        return (List<UserCommand>) hibernateTemplate.execute(new HibernateCallback() {
             @Override
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(UserCommand.class);
@@ -214,10 +222,10 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 return criteria.list();
             }
         });
-        return list;
     }
 
     private int getCompletedMissionCount(final String sessionId, final Date from, final Date to) {
+        @SuppressWarnings("unchecked")
         List<Integer> list = (List<Integer>) hibernateTemplate.execute(new HibernateCallback() {
             @Override
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
@@ -237,8 +245,9 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         return list.get(0);
     }
 
+    @SuppressWarnings("unchecked")
     private List<DbMissionAction> getMissionActions(final String sessionId, final Date from, final Date to) {
-        List<DbMissionAction> list = (List<DbMissionAction>) hibernateTemplate.execute(new HibernateCallback() {
+        return (List<DbMissionAction>) hibernateTemplate.execute(new HibernateCallback() {
             @Override
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(DbMissionAction.class);
@@ -251,11 +260,11 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 return criteria.list();
             }
         });
-        return list;
     }
 
     @Override
     public VisitorDetailInfo getVisitorDetails(final String sessionId) {
+        @SuppressWarnings("unchecked")
         List<BrowserDetails> list = (List<BrowserDetails>) hibernateTemplate.execute(new HibernateCallback() {
             @Override
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
@@ -276,78 +285,44 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         visitorDetailInfo.setFactoryCommands(getUserCommandCount(sessionId, FactoryCommand.class, null, null));
         visitorDetailInfo.setMoneyCollectCommands(getUserCommandCount(sessionId, MoneyCollectCommand.class, null, null));
         visitorDetailInfo.setCompletedMissionCount(getCompletedMissionCount(sessionId, null, null));
+        visitorDetailInfo.setGameAttempts(getGameAttempts(sessionId));
         return visitorDetailInfo;
     }
 
     private List<GameTrackingInfo> getGameTrackingInfos(final String sessionId) {
-        ArrayList<GameTrackingInfo> gameTrackingInfos = new ArrayList<GameTrackingInfo>();
-        /*
         // Get all game startups
-        List<GameStartup> list = (List<GameStartup>) hibernateTemplate.execute(new HibernateCallback() {
+        @SuppressWarnings("unchecked")
+        List<GameStartup> gameStartups = (List<GameStartup>) hibernateTemplate.execute(new HibernateCallback() {
             @Override
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(GameStartup.class);
                 criteria.add(Restrictions.eq("sessionId", sessionId));
-                criteria.addOrder(Order.asc("timeStamp"));
+                criteria.addOrder(Order.asc("clientTimeStamp"));
                 return criteria.list();
             }
         });
-        // Sort game startups
+        ArrayList<GameTrackingInfo> gameTrackingInfos = new ArrayList<GameTrackingInfo>();
         GameTrackingInfo gameTrackingInfo = null;
-        for (GameStartup gameStartup : list) {
-            switch (gameStartup.getState()) {
-                case SERVER:
-                    gameTrackingInfo = new GameTrackingInfo();
-                    gameTrackingInfos.add(gameTrackingInfo);
-                    gameTrackingInfo.setServerGameStartup(gameStartup);
-                    gameTrackingInfo.setBaseName(gameStartup.getBaseName());
-                    break;
-                case CLIENT_START:
-                    if (gameTrackingInfo == null) {
-                        // Browser did not reload the page
-                        gameTrackingInfo = new GameTrackingInfo();
-                        gameTrackingInfos.add(gameTrackingInfo);
-                    }
-                    gameTrackingInfo.setClientStartGameStartup(gameStartup);
-                    break;
-                case CLIENT_RUNNING:
-                    if (gameTrackingInfo != null) {
-                        gameTrackingInfo.setClientRunningGameStartup(gameStartup);
-                    }
-                    break;
-                case CLIENT_MAP_SURFACE_IMAGES_LOADED:
-                    if (gameTrackingInfo != null) {
-                        gameTrackingInfo.setMapBgLoaded(gameStartup.getClientTimeStamp());
-                    }
-                    break;
-                case CLIENT_MAP_IMAGES_LOADED:
-                    if (gameTrackingInfo != null) {
-                        gameTrackingInfo.setMapImagesLoaded(gameStartup.getClientTimeStamp());
-                    }
-                    break;
-            }
-        }
-
-        // Get game start and end
-        for (int i = 0; i < gameTrackingInfos.size(); i++) {
-            GameTrackingInfo trackingInfo = gameTrackingInfos.get(i);
-            if (trackingInfo.getClientStartGameStartup() == null) {
-                continue;
-            }
-            trackingInfo.setStart(trackingInfo.getClientStartGameStartup().getClientTimeStamp());
-            if (i + 1 < gameTrackingInfos.size()) {
-                GameTrackingInfo trackingInfoNext = gameTrackingInfos.get(i + 1);
-                if (trackingInfoNext.getClientStartGameStartup() != null) {
-                    trackingInfo.setEnd(trackingInfoNext.getServerGameStartup().getClientTimeStamp());
+        for (GameStartup gameStartup : gameStartups) {
+            if (StartupTask.isFirstTask(gameStartup.getState())) {
+                gameTrackingInfo = new GameTrackingInfo(gameStartup);
+                gameTrackingInfos.add(gameTrackingInfo);
+            } else {
+                if (gameTrackingInfo == null) {
+                    log.error("gameTrackingInfo == null");
+                    continue;
                 }
+                gameTrackingInfo.getGameStartups().add(gameStartup);
             }
         }
-
         // Fill the overview data and user commands
-        for (GameTrackingInfo trackingInfo : gameTrackingInfos) {
-            if (trackingInfo.getStart() == null) {
-                continue;
+        for (int i1 = 0, gameTrackingInfosSize = gameTrackingInfos.size(); i1 < gameTrackingInfosSize; i1++) {
+            GameTrackingInfo trackingInfo = gameTrackingInfos.get(i1);
+            if (i1 + 1 < gameTrackingInfosSize) {
+                GameTrackingInfo nextTrackingInfo = gameTrackingInfos.get(i1 + 1);
+                trackingInfo.setEnd(nextTrackingInfo.getStart());
             }
+
             trackingInfo.setAttackCommandCount(getUserCommandCount(sessionId, AttackCommand.class, trackingInfo.getStart(), trackingInfo.getEnd()));
             trackingInfo.setMoveCommandCount(getUserCommandCount(sessionId, MoveCommand.class, trackingInfo.getStart(), trackingInfo.getEnd()));
             trackingInfo.setBuilderCommandCount(getUserCommandCount(sessionId, BuilderCommand.class, trackingInfo.getStart(), trackingInfo.getEnd()));
@@ -357,18 +332,32 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             trackingInfo.setUserActions(getUserActions(sessionId, trackingInfo.getStart(), trackingInfo.getEnd()));
             trackingInfo.setUserCommands(getUserCommands(sessionId, trackingInfo.getStart(), trackingInfo.getEnd()));
             trackingInfo.setMissionActions(getMissionActions(sessionId, trackingInfo.getStart(), trackingInfo.getEnd()));
-            // Fix end if not set
-            if (trackingInfo.getEnd() == null && !trackingInfo.getUserActionCommand().isEmpty()) {
-                List<UserActionCommandMissions> actions = trackingInfo.getUserActionCommand();
-                trackingInfo.setEnd(actions.get(actions.size() - 1).getClientTimeStamp());
+            // Sort GameStartups
+            Collections.sort(trackingInfo.getGameStartups(), new Comparator<GameStartup>() {
+                @Override
+                public int compare(GameStartup g1, GameStartup g2) {
+                    return g1.getState().compareTo(g2.getState());
+                }
+            });
+
+        }
+
+        // Fix end of last GameTrackingInfo
+        if (!gameTrackingInfos.isEmpty()) {
+            GameTrackingInfo last = gameTrackingInfos.get(gameTrackingInfos.size() - 1);
+            if (last.getEnd() == null) {
+                List<UserActionCommandMissions> actions = last.getUserActionCommand();
+                if (!actions.isEmpty()) {
+                    last.setEnd(actions.get(actions.size() - 1).getClientTimeStamp());
+                }
             }
         }
-        */
         return gameTrackingInfos;
     }
 
+    @SuppressWarnings("unchecked")
     private List<DbUserAction> getUserActions(final String sessionId, final Date from, final Date to) {
-        List<DbUserAction> list = (List<DbUserAction>) hibernateTemplate.execute(new HibernateCallback() {
+        return (List<DbUserAction>) hibernateTemplate.execute(new HibernateCallback() {
             @Override
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(DbUserAction.class);
@@ -381,11 +370,11 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 return criteria.list();
             }
         });
-        return list;
     }
 
+    @SuppressWarnings("unchecked")
     private List<PageAccess> getPageAccessHistory(final String sessionId) {
-        List<PageAccess> list = (List<PageAccess>) hibernateTemplate.execute(new HibernateCallback() {
+        return (List<PageAccess>) hibernateTemplate.execute(new HibernateCallback() {
             @Override
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(PageAccess.class);
@@ -394,7 +383,6 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 return criteria.list();
             }
         });
-        return list;
     }
 
     @Override

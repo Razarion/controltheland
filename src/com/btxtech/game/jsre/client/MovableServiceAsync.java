@@ -58,7 +58,7 @@ public interface MovableServiceAsync {
 
     void tutorialTerminated(AsyncCallback<Void> async);
 
-    void startUpTaskFinished(StartupTask state, long duration, AsyncCallback<Void> asyncCallback);
+    void startUpTaskFinished(StartupTask state, Date clientTimeStamp, long duration, AsyncCallback<Void> asyncCallback);
 
-    void startUpTaskFailed(StartupTask state, long duration, String failureText, AsyncCallback<Void> asyncCallback);
+    void startUpTaskFailed(StartupTask state, Date clientTimeStamp, long duration, String failureText, AsyncCallback<Void> asyncCallback);
 }

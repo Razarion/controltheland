@@ -28,9 +28,23 @@ public class WebCommon {
     public static final String DATE_FORMAT_STRING = "dd.MM.yyyy";
     public static final String COOKIE_ID = "cookieId";
 
+    /**
+     *
+     * @param duration time in ms
+     * @return String representing time h:mm:ss
+     */
     static public String formatDuration(long duration) {
         duration = duration / 1000;
         return String.format("%d:%02d:%02d", duration / 3600, (duration % 3600) / 60, (duration % 60));
+    }
+
+    /**
+     *
+     * @param duration time in ms
+     * @return String representing time s:ms
+     */
+    static public String formatDurationMilis(long duration) {
+        return String.format("%.2f", duration / 1000.0);
     }
 
     public static String getTimeDiff(Date start, Date end) {

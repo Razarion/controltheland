@@ -39,9 +39,11 @@ public class GameStartup implements Serializable {
     @Column(nullable = false)
     private long timeStamp;
     @Column(nullable = false)
+    private long clientTimeStamp;
+    @Column(nullable = false)
     private String sessionId;
     @Column(nullable = false)
-    private String state;
+    private StartupTask state;
     private long duration;
     private String failureText;
     @Column(nullable = false)
@@ -56,18 +58,23 @@ public class GameStartup implements Serializable {
     public GameStartup() {
     }
 
-    public GameStartup(String type, StartupTask state, long duration, String failureText, String baseName, User user, String sessionId) {
+    public GameStartup(Date clientTimeStamp, String type, StartupTask state, long duration, String failureText, String baseName, User user, String sessionId) {
+        this.clientTimeStamp = clientTimeStamp.getTime();
         this.type = type;
         niceTimeStamp = new Date();
         timeStamp = niceTimeStamp.getTime();
         this.sessionId = sessionId;
-        this.state = state.getNiceText();
+        this.state = state;
         this.duration = duration;
         this.failureText = failureText;
         this.baseName = baseName;
         if (user != null) {
             userName = user.getName();
         }
+    }
+
+    public Date getClientTimeStamp() {
+        return new Date(clientTimeStamp);
     }
 
     public long getTimeStamp() {
@@ -78,7 +85,7 @@ public class GameStartup implements Serializable {
         return sessionId;
     }
 
-    public String getState() {
+    public StartupTask getState() {
         return state;
     }
 

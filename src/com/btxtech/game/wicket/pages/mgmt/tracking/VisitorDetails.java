@@ -94,7 +94,7 @@ public class VisitorDetails extends WebPage {
 
     private void gameOverview(VisitorDetailInfo visitorDetailInfo) {
         add(new Label("totalTime", WebCommon.formatDuration(visitorDetailInfo.getTotalTime())));
-        add(new Label("gameAttempts", Integer.toString(visitorDetailInfo.getGameAttemps())));
+        add(new Label("gameAttempts", Integer.toString(visitorDetailInfo.getGameAttempts())));
         add(new Label("moveCommands", Integer.toString(visitorDetailInfo.getMoveCommands())));
         add(new Label("builderCommands", Integer.toString(visitorDetailInfo.getBuilderCommands())));
         add(new Label("factoryCommands", Integer.toString(visitorDetailInfo.getFactoryCommands())));

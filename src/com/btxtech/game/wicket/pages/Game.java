@@ -82,4 +82,11 @@ public class Game extends WebPage {
 
         linkItem.add(working);
     }
+
+    @Override
+    protected void onBeforeRender() {
+        super.onBeforeRender();
+        userTrackingService.pageAccess(getClass());
+    }
+
 }

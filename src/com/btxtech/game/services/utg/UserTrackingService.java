@@ -22,6 +22,7 @@ import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -66,7 +67,7 @@ public interface UserTrackingService {
 
     void levelInterimPromotion(Base base, String targetLevel, String interimPromotion);
 
-    void startUpTaskFinished(StartupTask state, long duration);
+    void startUpTaskFinished(StartupTask state, Date clientTimeStamp, long duration);
 
-    void startUpTaskFailed(StartupTask state, long duration, String failureText);
+    void startUpTaskFailed(StartupTask state, Date clientTimeStamp, long duration, String failureText);
 }
