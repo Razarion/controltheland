@@ -303,9 +303,9 @@ public class BaseServiceImpl implements BaseService {
         Base base = getBase(syncItem);
         base.removeItem(syncItem);
         if (!base.hasItems()) {
-            historyService.addBaseDefeatedEntry(actor, base.getSimpleBase());
             if (!base.getSimpleBase().equals(dummyBase.getSimpleBase())) {
                 if (actor != null) {
+                    historyService.addBaseDefeatedEntry(actor, base.getSimpleBase());
                     sendDefeatedMessage(syncItem, actor);
                 }
                 if (base.getUser() != null) {

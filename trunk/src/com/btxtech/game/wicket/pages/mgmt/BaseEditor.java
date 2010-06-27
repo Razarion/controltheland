@@ -199,6 +199,10 @@ public class BaseEditor extends WebPage {
                         if (item.getModelObject() != null) {
                             itemService.killBaseSyncObject(item.getModelObject(), null, true);
                         }
+                        if (baseService.getBase(simpleBase) == null) {
+                            setResponsePage(BasesTable.class);
+                        }
+
                     }
                 };
                 item.add(killButton);
