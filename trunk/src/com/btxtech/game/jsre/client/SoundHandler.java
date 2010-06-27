@@ -27,7 +27,7 @@ import java.util.HashMap;
 public class SoundHandler {
     private static final SoundHandler INSTANCE = new SoundHandler();
     private SoundController soundController = new SoundController();
-    private HashMap<String, Sound>  sounds = new HashMap<String, Sound>();
+    private HashMap<BaseItemType, Sound>  sounds = new HashMap<BaseItemType, Sound>();
 
     /**
      * Singleton
@@ -35,16 +35,20 @@ public class SoundHandler {
     private SoundHandler() {
     }
 
-    public void playSound(String url) {
-        Sound sound = sounds.get(url);
+    public void playSound(BaseItemType baseItemType) {
+        Sound sound = sounds.get(baseItemType);
         if(sound == null) {
-            sound = soundController.createSound(Sound.MIME_TYPE_AUDIO_MPEG, url);
-            sounds.put(url, sound);
+            sound = soundController.createSound(Sound.MIME_TYPE_AUDIO_MPEG, buildUrl(baseItemType));
+            sounds.put(baseItemType, sound);
         }
         sound.play();
     }
 
     public static void playMuzzleFlashSound(BaseItemType baseItemType) {
+        INSTANCE.playSound(baseItemType);
+    }
+
+    private static String buildUrl(BaseItemType baseItemType) {
         StringBuilder url = new StringBuilder();
         url.append(Constants.MUZZLE_ITEM_IMAGE_URL);
         url.append("?");
@@ -55,7 +59,7 @@ public class SoundHandler {
         url.append(Constants.TYPE);
         url.append("=");
         url.append(Constants.TYPE_SOUND);
-        INSTANCE.playSound(url.toString());
+        return url.toString();
     }
 
 
