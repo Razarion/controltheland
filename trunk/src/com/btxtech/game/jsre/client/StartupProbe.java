@@ -112,6 +112,10 @@ public class StartupProbe {
      */
     private StartupProbe() {
         startScreen = DOM.getElementById("startScreen");
+        if(startScreen == null) {
+            GwtCommon.sendLogToServer("StartupProbe is disabled");
+            return;
+        }
         parent = startScreen.getParentElement();
 
         // Add first task

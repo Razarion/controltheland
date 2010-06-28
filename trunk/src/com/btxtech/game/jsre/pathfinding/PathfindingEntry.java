@@ -13,61 +13,40 @@
 
 package com.btxtech.game.jsre.pathfinding;
 
-import com.btxtech.game.jsre.client.ExtendedCanvas;
 import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.terrain.TerrainHandler;
-import com.btxtech.game.jsre.client.terrain.TerrainListener;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.client.cockpit.radar.MiniTerrain;
+import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.ImageElement;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.widgetideas.graphics.client.Color;
-import java.util.List;
-import java.util.Map;
 
 /**
  * User: beat
  * Date: Sep 2, 2009
  * Time: 6:51:16 PM
  */
-public class PathfindingEntry implements EntryPoint, MouseDownHandler {
-    public static final int WIDTH = 800;
-    public static final int HEIGHT = 800;
-    private ExtendedCanvas extendedCanvas;
-    private Map<TerrainType, List<Rectangle>> passableRectangle;
-    private TerrainInfo terrainInfo;
-    private Index start;
-    private Index destination;
-    private PathfindingAsync pathfinding;
-
+public class PathfindingEntry implements EntryPoint {
     @Override
     public void onModuleLoad() {
         // Setup common
         GwtCommon.setUncaughtExceptionHandler();
         GwtCommon.disableBrowserContextMenuJSNI();
 
-        pathfinding = GWT.create(Pathfinding.class);
-        pathfinding.getPassableRectangles(new AsyncCallback<Map<TerrainType, List<Rectangle>>>() {
-            @Override
-            public void onFailure(Throwable throwable) {
-                GwtCommon.handleException(throwable);
-            }
+        AbsolutePanel absolutePanel = new AbsolutePanel();
+        absolutePanel.setSize("100%", "100%");
+        RootPanel.get().add(absolutePanel);
 
-            @Override
-            public void onSuccess(Map<TerrainType, List<Rectangle>> result) {
-                passableRectangle = result;
-                handleMap();
-            }
-        });
+        final MiniTerrain miniTerrain = new MiniTerrain(RootPanel.get().getOffsetWidth(), RootPanel.get().getOffsetHeight());
+        miniTerrain.getElement().getStyle().setZIndex(1);
+        absolutePanel.add(miniTerrain, 0, 0);
+
+        PathfindingAsync pathfinding = GWT.create(Pathfinding.class);
+        final PathMiniMap pathMiniMap = new PathMiniMap(RootPanel.get().getOffsetWidth(), RootPanel.get().getOffsetHeight(), pathfinding);
+        pathMiniMap.getElement().getStyle().setZIndex(2);
+        absolutePanel.add(pathMiniMap, 0, 0);
 
         pathfinding.getTerrainInfo(new AsyncCallback<TerrainInfo>() {
             @Override
@@ -77,106 +56,15 @@ public class PathfindingEntry implements EntryPoint, MouseDownHandler {
 
             @Override
             public void onSuccess(TerrainInfo terrainInfo) {
-                PathfindingEntry.this.terrainInfo = terrainInfo;
-                handleMap();
+                TerrainView.getInstance().setupTerrain(terrainInfo.getTerrainSettings(),
+                        terrainInfo.getTerrainImagePositions(),
+                        terrainInfo.getSurfaceRects(),
+                        terrainInfo.getSurfaceImages(),
+                        terrainInfo.getTerrainImages());
+                miniTerrain.onTerrainSettings(terrainInfo.getTerrainSettings());
+                pathMiniMap.onTerrainSettings(terrainInfo.getTerrainSettings());
             }
         });
-    }
-
-    private void handleMap() {
-        if (terrainInfo != null && passableRectangle != null) {
-            extendedCanvas = new ExtendedCanvas(WIDTH, HEIGHT);
-            extendedCanvas.resize(terrainInfo.getTerrainSettings().getPlayFieldXSize(), terrainInfo.getTerrainSettings().getPlayFieldYSize());
-            extendedCanvas.scale((double) WIDTH / (double) terrainInfo.getTerrainSettings().getPlayFieldXSize(),
-                    (double) HEIGHT / (double) terrainInfo.getTerrainSettings().getPlayFieldYSize());
-            RootPanel.get().add(extendedCanvas);
-            extendedCanvas.addMouseDownHandler(this);
-            showPassableRectangles();
-            showMap();
-        }
-    }
-
-    private void showPassableRectangles() {
-        // TODO
-        // for (Rectangle rectangle : passableRectangle) {
-       //     extendedCanvas.setFillStyle(new Color(Random.nextInt(255), Random.nextInt(255), Random.nextInt(255), (float) 0.5));
-       //     extendedCanvas.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
-       // }
-    }
-
-    private void showMap() {
-        final TerrainHandler terrainHandler = new TerrainHandler();
-        terrainHandler.addTerrainListener(new TerrainListener() {
-            @Override
-            public void onTerrainChanged() {
-                for (TerrainImagePosition terrainImagePosition : terrainHandler.getTerrainImagePositions()) {
-                    Index absolute = terrainHandler.getAbsolutIndexForTerrainTileIndex(terrainImagePosition.getTileIndex());
-                    ImageElement imageElement = terrainHandler.getTerrainImageElement(terrainImagePosition.getImageId());
-                    if (imageElement != null) {
-                        extendedCanvas.drawImage(imageElement, absolute.getX(), absolute.getY());
-                    }
-                }
-            }
-        });
-        terrainHandler.setupTerrain(terrainInfo.getTerrainSettings(),
-                terrainInfo.getTerrainImagePositions(),
-                terrainInfo.getSurfaceRects(),
-                terrainInfo.getSurfaceImages(),
-                terrainInfo.getTerrainImages());
-    }
-
-
-    @Override
-    public void onMouseDown(MouseDownEvent mouseDownEvent) {
-        if (start == null) {
-            start = new Index(mouseDownEvent.getClientX(), mouseDownEvent.getClientY());
-        } else {
-            destination = new Index(mouseDownEvent.getClientX(), mouseDownEvent.getClientY());
-            findPath(start, destination);
-            start = null;
-            destination = null;
-        }
-    }
-
-    private void findPath(Index start, Index destination) {
-        //TODO
- /*       System.out.println("toAbsIndex(start): " + toAbsIndex(start));
-        System.out.println("toAbsIndex(destination): " + toAbsIndex(destination));
-        pathfinding.findPath(toAbsIndex(start), toAbsIndex(destination), new AsyncCallback<List<Index>>() {
-            @Override
-            public void onFailure(Throwable throwable) {
-                GwtCommon.handleException(throwable);
-            }
-
-            @Override
-            public void onSuccess(List<Index> indexes) {
-                if (indexes == null) {
-                    System.out.println("Error on server");
-                    return;
-                }
-                extendedCanvas.setStrokeStyle(Color.BLACK);
-                extendedCanvas.setLineWidth(50);
-
-                extendedCanvas.beginPath();
-                boolean first = true;
-                for (Index index : indexes) {
-                    System.out.println(index);
-                    if (first) {
-                        first = false;
-                        extendedCanvas.moveTo(index.getX(), index.getY());
-                    } else {
-                        extendedCanvas.lineTo(index.getX(), index.getY());
-                    }
-                }
-                extendedCanvas.stroke();
-            }
-        }); */
-    }
-
-    private Index toAbsIndex(Index mapIndex) {
-        double factorX = (double) terrainInfo.getTerrainSettings().getPlayFieldXSize() / (double) WIDTH;
-        double factorY = (double) terrainInfo.getTerrainSettings().getPlayFieldYSize() / (double) HEIGHT;
-        return new Index((int) (mapIndex.getX() * factorX), (int) (mapIndex.getY() * factorY));
     }
 
 }
