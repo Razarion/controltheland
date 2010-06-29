@@ -135,7 +135,7 @@ public class BotRunner {
         // Get Dead items
         List<ItemPosAndType> deadItems = baseBalance.getDeadItems();
         for (ItemPosAndType deadItem : deadItems) {
-            log.info("Bot: Killed item " + deadItem.getSyncBaseItem());
+            log.info("Bot " + botConfig.getUser().getName() + ": Killed item " + deadItem.getSyncBaseItem());
         }
 
         // Recreate dead items
