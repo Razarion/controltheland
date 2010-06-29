@@ -32,6 +32,7 @@ public class Game implements EntryPoint {
         try {
             GwtCommon.setUncaughtExceptionHandler();
 
+            StartupProbe.getInstance().init();
             StartupProbe.getInstance().taskSwitch(StartupTask.getFirstTask(), StartupTask.INIT_GUI);
 
             isDebug = Boolean.parseBoolean(Window.Location.getParameter("debug"));

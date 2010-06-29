@@ -101,8 +101,8 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
                     fireTerrainChanged();
                     StartupProbe.getInstance().taskFinished(StartupTask.LOAD_MAP_IMAGES);
                 } catch (Throwable throwable) {
-                    StartupProbe.getInstance().taskFailed(StartupTask.LOAD_MAP_IMAGES, throwable);
                     GwtCommon.handleException(throwable);
+                    StartupProbe.getInstance().taskFailed(StartupTask.LOAD_MAP_IMAGES, throwable);
                 }
             }
         });
