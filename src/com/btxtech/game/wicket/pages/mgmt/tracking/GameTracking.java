@@ -53,6 +53,7 @@ public class GameTracking extends Panel {
         } else {
             add(new Label("timeInGame", "???"));
         }
+        add(new Label("userName", gameTrackingInfo.getUserName()));
         add(new Label("baseName", gameTrackingInfo.getBaseName()));
         add(new Label("moveCommands", Integer.toString(gameTrackingInfo.getMoveCommandCount())));
         add(new Label("builderCommands", Integer.toString(gameTrackingInfo.getBuilderCommandCount())));

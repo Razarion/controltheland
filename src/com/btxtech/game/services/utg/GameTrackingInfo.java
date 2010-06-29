@@ -39,7 +39,6 @@ public class GameTrackingInfo implements Serializable {
     private List<DbMissionAction> missionActions = new ArrayList<DbMissionAction>();
     private Date mapBgLoaded;
     private Date mapImagesLoaded;
-    private String baseName;
     private Date end;
 
     public GameTrackingInfo(GameStartup gameStartup) {
@@ -164,11 +163,23 @@ public class GameTrackingInfo implements Serializable {
     }
 
     public String getBaseName() {
-        return baseName;
+        if (gameStartups.isEmpty()) {
+            return "???";
+        } else {
+            return gameStartups.get(0).getBaseName();
+        }
     }
 
-    public void setBaseName(String baseName) {
-        this.baseName = baseName;
+    public String getUserName() {
+        if (gameStartups.isEmpty()) {
+            return "???";
+        } else {
+            if (gameStartups.get(0).getUserName() != null) {
+                return gameStartups.get(0).getUserName();
+            } else {
+                return "not registered";
+            }
+        }
     }
 
     public boolean hasDuration() {
