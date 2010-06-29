@@ -111,11 +111,10 @@ public class StartupProbe {
      * Singleton
      */
     private StartupProbe() {
+    }
+
+    public void init() {
         startScreen = DOM.getElementById("startScreen");
-        if(startScreen == null) {
-            GwtCommon.sendLogToServer("StartupProbe is disabled");
-            return;
-        }
         parent = startScreen.getParentElement();
 
         // Add first task
@@ -125,20 +124,29 @@ public class StartupProbe {
     }
 
     public void taskSwitch(StartupTask finishedTask, StartupTask newTask) {
+        if(startScreen == null) {
+            return;
+        }
         taskFinished(finishedTask);
         newTask(newTask);
     }
 
     public void newTask(StartupTask startupTask) {
+        if(startScreen == null) {
+            return;
+        }
         Task task = tasks.get(startupTask);
         if (task != null) {
-            throw new IllegalStateException("Task has already been started: " + task);
+            throw new IllegalStateException("Task has already been started: " + startupTask);
         }
         tasks.put(startupTask, new Task(startupTask));
         displayTaskRunning(startupTask);
     }
 
     public void taskFinished(StartupTask startupTask) {
+        if(startScreen == null) {
+            return;
+        }
         Task task = tasks.get(startupTask);
         if (task == null) {
             throw new IllegalStateException("Task has never been started: " + task);
@@ -150,6 +158,9 @@ public class StartupProbe {
     }
 
     public void taskFailed(StartupTask startupTask, String text) {
+        if(startScreen == null) {
+            return;
+        }
         Task task = tasks.remove(startupTask);
         if (task == null) {
             throw new IllegalStateException("Task failed: " + task);
