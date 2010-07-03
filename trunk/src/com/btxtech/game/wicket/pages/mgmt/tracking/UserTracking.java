@@ -13,16 +13,21 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tracking;
 
+import com.btxtech.game.services.utg.UserTrackingFilter;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.VisitorInfo;
 import com.btxtech.game.wicket.WebCommon;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.RadioChoice;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
@@ -34,16 +39,31 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 public class UserTracking extends WebPage {
     @SpringBean
     private UserTrackingService userTrackingService;
+    private UserTrackingFilter userTrackingFilter;
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(WebCommon.DATE_TIME_FORMAT_STRING);
 
     public UserTracking() {
+        userTrackingFilter = UserTrackingFilter.newDefaultFilter();
+        filter();
+        resultTable();
+    }
+
+    private void filter() {
+        add(new FeedbackPanel("msgs"));
+
+        Form<UserTrackingFilter> form = new Form<UserTrackingFilter>("filterForm", new CompoundPropertyModel<UserTrackingFilter>(userTrackingFilter));
+        add(form);
+        form.add(new RadioChoice<UserTrackingFilter>("jsEnabled", UserTrackingFilter.JS_ENABLED_CHOICES));
+    }
+
+    private void resultTable() {
         ListView<VisitorInfo> listView = new ListView<VisitorInfo>("visits", new IModel<List<VisitorInfo>>() {
             private List<VisitorInfo> visitorInfos;
 
             @Override
             public List<VisitorInfo> getObject() {
                 if (visitorInfos == null) {
-                    visitorInfos = userTrackingService.getVisitorInfos();
+                    visitorInfos = userTrackingService.getVisitorInfos(userTrackingFilter);
                 }
                 return visitorInfos;
             }
@@ -75,7 +95,7 @@ public class UserTracking extends WebPage {
                 };
                 link.add(new Label("sessionId", listItem.getModelObject().getSessionId()));
                 listItem.add(link);
-                listItem.add(new Label("referer", listItem.getModelObject().getReferer()));                
+                listItem.add(new Label("referer", listItem.getModelObject().getReferer()));
             }
         };
         add(listView);

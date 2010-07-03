@@ -20,6 +20,27 @@
 <body>
 <h1>User Tracking</h1>
 
+<h2>Filter</h2>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="filterForm">
+    <table style="border: 2px dotted #000000; width: 400px; padding: 5px;">
+        <tr>
+            <td valign="top">JavaScript enabled</td>
+            <td>
+              <span valign="top" wicket:id="jsEnabled"></span>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center">
+                <input type="submit" value="Search"/>
+            </td>
+        </tr>
+    </table>
+</form>
+
+<h2>History</h2>
 <table border="0">
     <tr>
         <th bgcolor="#dadada">Date</th>

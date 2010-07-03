@@ -39,7 +39,7 @@ public interface UserTrackingService {
 
     void saveUserActions(ArrayList<UserAction> userActions, ArrayList<MissionAction> missionActions);
 
-    List<VisitorInfo> getVisitorInfos();
+    List<VisitorInfo> getVisitorInfos(UserTrackingFilter filter);
 
     VisitorDetailInfo getVisitorDetails(String sessionId);
 
