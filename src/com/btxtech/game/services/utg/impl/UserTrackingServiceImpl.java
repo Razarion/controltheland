@@ -104,7 +104,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
 
     @Override
-    public void newSession(BrowserDetails browserDetails) {
+    public void saveBrowserDetails(BrowserDetails browserDetails) {
         try {
             hibernateTemplate.saveOrUpdate(browserDetails);
         } catch (NoConnectionException e) {
@@ -154,7 +154,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     public List<VisitorInfo> getVisitorInfos() {
         ArrayList<VisitorInfo> visitorInfos = new ArrayList<VisitorInfo>();
         @SuppressWarnings("unchecked")
-        List<Object[]> datesAndHits = (List<Object[]>) hibernateTemplate.find("select u.timeStamp, u.sessionId, u.cookieId, u.referer ,count(p) from com.btxtech.game.services.utg.BrowserDetails u, com.btxtech.game.services.utg.PageAccess p where u.sessionId = p.sessionId and u.isCrawler = false group by u.sessionId order by u.timeStamp desc");
+        List<Object[]> datesAndHits = (List<Object[]>) hibernateTemplate.find("select u.timeStamp, u.sessionId, u.cookieId, u.referer ,count(p) from com.btxtech.game.services.utg.BrowserDetails u, com.btxtech.game.services.utg.PageAccess p where u.sessionId = p.sessionId group by u.sessionId order by u.timeStamp desc");
         for (Object[] datesAndHit : datesAndHits) {
             Date timeStamp = (Date) datesAndHit[0];
             String sessionId = (String) datesAndHit[1];
@@ -538,4 +538,15 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             log.error("", t);
         }
     }
+
+    @Override
+    public void onJavaScriptDetected() {
+        session.onJavaScriptDetected();
+    }
+
+    @Override
+    public boolean isJavaScriptDetected() {
+        return session.isJavaScriptDetected();
+    }
+
 }

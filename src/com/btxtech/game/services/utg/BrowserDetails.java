@@ -39,9 +39,10 @@ public class BrowserDetails {
     private String language;
     private String remoteHost;
     private String remoteAddr;
-    private boolean isCrawler;
     private String cookieId;
     private String referer;
+    private boolean javaScriptDetected = false;
+
 
     /**
      * Used by Hibernate
@@ -63,7 +64,6 @@ public class BrowserDetails {
             remoteHost = "???";
         }
         referer = Referer;
-        isCrawler = CrawlerDetection.isCrawler(userAgent, remoteHost);
     }
 
     public Date getTimeStamp() {
@@ -90,16 +90,20 @@ public class BrowserDetails {
         return remoteAddr;
     }
 
-    public boolean isCrawler() {
-        return isCrawler;
-    }
-
     public String getCookieId() {
         return cookieId;
     }
 
     public String getReferer() {
         return referer;
+    }
+
+    public void setJavaScriptDetected() {
+        javaScriptDetected = true;
+    }
+
+    public boolean isJavaScriptDetected() {
+        return javaScriptDetected;
     }
 
     @Override
@@ -109,9 +113,8 @@ public class BrowserDetails {
 
         BrowserDetails that = (BrowserDetails) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        return !(id != null ? !id.equals(that.id) : that.id != null);
 
-        return true;
     }
 
     @Override

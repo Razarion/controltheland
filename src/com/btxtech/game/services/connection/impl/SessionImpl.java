@@ -42,6 +42,8 @@ public class SessionImpl implements Session, Serializable {
     private String userAgent;
     private User user;
     private UserItemTypeAccess userItemTypeAccess;
+    private boolean javaScriptDetected = false;
+    private BrowserDetails browserDetails;
 
     @Override
     public Connection getConnection() {
@@ -58,13 +60,13 @@ public class SessionImpl implements Session, Serializable {
         sessionId = request.getSession().getId();
         userAgent = request.getHeader("user-agent");
         cookieId = WebCommon.getCookieId(request.getCookies());
-        BrowserDetails browserDetails = new BrowserDetails(sessionId,
+        browserDetails = new BrowserDetails(sessionId,
                 cookieId,
                 userAgent,
                 request.getHeader("Accept-Language"),
                 request.getRemoteAddr(),
                 request.getHeader("Referer"));
-        userTrackingService.newSession(browserDetails);
+        userTrackingService.saveBrowserDetails(browserDetails);
     }
 
     @PreDestroy
@@ -119,5 +121,21 @@ public class SessionImpl implements Session, Serializable {
         connection = null;
         user = null;
         userItemTypeAccess = null;
+    }
+
+    @Override
+    public void onJavaScriptDetected() {
+        if (javaScriptDetected) {
+            return;
+        }
+        javaScriptDetected = true;
+        browserDetails.setJavaScriptDetected();
+        userTrackingService.saveBrowserDetails(browserDetails);
+
+    }
+
+    @Override
+    public boolean isJavaScriptDetected() {
+        return javaScriptDetected;
     }
 }

@@ -88,7 +88,7 @@ public class VisitorDetails extends WebPage {
         add(new Label("remoteHost", browserDetails.getRemoteHost()));
         add(new Label("remoteAddr", browserDetails.getRemoteAddr()));
         add(new Label("cookieId", browserDetails.getCookieId()));
-        add(new Label("crawler", browserDetails.isCrawler() ? "Yes" : "No"));
+        add(new Label("javaScriptDetected", browserDetails.isJavaScriptDetected() ? "Yes" : "No"));
         add(new Label("referer", browserDetails.getReferer()));
     }
 

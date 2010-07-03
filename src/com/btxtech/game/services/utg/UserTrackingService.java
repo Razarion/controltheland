@@ -31,7 +31,7 @@ import java.util.List;
  * Time: 22:04:31
  */
 public interface UserTrackingService {
-    void newSession(BrowserDetails browserDetails);
+    void saveBrowserDetails(BrowserDetails browserDetails);
 
     void pageAccess(BasePage basePage);
 
@@ -70,4 +70,8 @@ public interface UserTrackingService {
     void startUpTaskFinished(StartupTask state, Date clientTimeStamp, long duration);
 
     void startUpTaskFailed(StartupTask state, Date clientTimeStamp, long duration, String failureText);
+
+    void onJavaScriptDetected();
+
+    boolean isJavaScriptDetected();
 }

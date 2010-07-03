@@ -39,6 +39,7 @@
                 <prop key="terrain">terrainImageController</prop>
                 <prop key="item">itemImageController</prop>
                 <prop key="muzzle">muzzleFlashController</prop>
+                <prop key="statJS">statisticsController</prop>
             </props>
         </property>
     </bean>
