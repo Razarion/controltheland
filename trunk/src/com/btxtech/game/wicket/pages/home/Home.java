@@ -16,11 +16,14 @@ package com.btxtech.game.wicket.pages.home;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.WebCommon;
+import com.btxtech.game.wicket.pages.basepage.BasePage;
 import com.btxtech.game.wicket.pages.info.Info;
 import com.btxtech.game.wicket.pages.user.LoggedinBox;
 import com.btxtech.game.wicket.pages.user.LoginBox;
 import com.btxtech.game.wicket.uiservices.GameControlService;
 import javax.servlet.http.Cookie;
+import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.protocol.http.WebRequest;
@@ -32,7 +35,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: May 31, 2009
  * Time: 9:53:21 PM
  */
-public class Home extends WebPage {
+public class Home extends WebPage implements IHeaderContributor {
     @SpringBean
     private UserService userService;
     @SpringBean
@@ -86,4 +89,10 @@ public class Home extends WebPage {
         super.onBeforeRender();
     }
 
+    @Override
+    public void renderHead(IHeaderResponse iHeaderResponse) {
+        if (!userTrackingService.isJavaScriptDetected()) {
+            iHeaderResponse.renderJavascript(BasePage.JAVA_SCRIPT_DETECTION, null);
+        }
+    }
 }

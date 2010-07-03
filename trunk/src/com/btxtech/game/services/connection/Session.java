@@ -13,8 +13,8 @@
 
 package com.btxtech.game.services.connection;
 
-import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
+import com.btxtech.game.services.user.User;
 
 /**
  * User: beat
@@ -41,4 +41,8 @@ public interface Session {
     void setUserItemTypeAccess(UserItemTypeAccess userItemTypeAccess);
 
     void clearGame();
+
+    void onJavaScriptDetected();
+
+    boolean isJavaScriptDetected();
 }

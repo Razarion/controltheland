@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -40,7 +42,12 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: Sep 13, 2009
  * Time: 10:05:20 PM
  */
-public class BasePage extends WebPage {
+public class BasePage extends WebPage implements IHeaderContributor {
+    public static final String JAVA_SCRIPT_DETECTION = "var f = document.createElement('script');\n" +
+            "f.setAttribute(\"type\", \"text/javascript\");\n" +
+            "f.setAttribute(\"src\", \"/spring/statJS\");\n" +
+            "document.getElementsByTagName(\"head\")[0].appendChild(f)";
+
     @SpringBean
     private UserService userService;
     @SpringBean
@@ -73,11 +80,11 @@ public class BasePage extends WebPage {
     private void buildMenu(ArrayList<MenuItem> menuItems) {
         ListView<MenuItem> history = new ListView<MenuItem>("menu", menuItems) {
             protected void populateItem(final ListItem<MenuItem> linkItem) {
-                BookmarkablePageLink<WebPage> link = new BookmarkablePageLink<WebPage>("link",linkItem.getModelObject().destination);
+                BookmarkablePageLink<WebPage> link = new BookmarkablePageLink<WebPage>("link", linkItem.getModelObject().destination);
                 if (linkItem.getModelObject().isSelected()) {
                     SimpleAttributeModifier classModifier = new SimpleAttributeModifier("class", "menuItemSelected");
                     linkItem.add(classModifier);
-                } 
+                }
                 link.add(new Label("linkName", linkItem.getModelObject().getName()));
                 linkItem.add(link);
             }
@@ -103,6 +110,13 @@ public class BasePage extends WebPage {
 
     public String getAdditionalPageInfo() {
         return null;
+    }
+
+    @Override
+    public void renderHead(IHeaderResponse iHeaderResponse) {
+        if (!userTrackingService.isJavaScriptDetected()) {
+            iHeaderResponse.renderJavascript(JAVA_SCRIPT_DETECTION, null);
+        }
     }
 
     class MenuItem implements Serializable {
