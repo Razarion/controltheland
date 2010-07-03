@@ -39,6 +39,7 @@ import com.btxtech.game.services.utg.PageAccess;
 import com.btxtech.game.services.utg.UserActionCommandMissions;
 import com.btxtech.game.services.utg.UserCommand;
 import com.btxtech.game.services.utg.UserHistory;
+import com.btxtech.game.services.utg.UserTrackingFilter;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.VisitorDetailInfo;
 import com.btxtech.game.services.utg.VisitorInfo;
@@ -151,10 +152,21 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public List<VisitorInfo> getVisitorInfos() {
+    public List<VisitorInfo> getVisitorInfos(UserTrackingFilter filter) {
         ArrayList<VisitorInfo> visitorInfos = new ArrayList<VisitorInfo>();
+        String sql;
+        if (filter.getJsEnabled().equals(UserTrackingFilter.ENABLED)) {
+            sql=("select u.timeStamp, u.sessionId, u.cookieId, u.referer ,count(p) from com.btxtech.game.services.utg.BrowserDetails u, com.btxtech.game.services.utg.PageAccess p where u.sessionId = p.sessionId and u.javaScriptDetected = true group by u.sessionId order by u.timeStamp desc");
+        } else if (filter.getJsEnabled().equals(UserTrackingFilter.DISABLED)) {
+            sql=("select u.timeStamp, u.sessionId, u.cookieId, u.referer ,count(p) from com.btxtech.game.services.utg.BrowserDetails u, com.btxtech.game.services.utg.PageAccess p where u.sessionId = p.sessionId and u.javaScriptDetected = false group by u.sessionId order by u.timeStamp desc");
+        } else if (filter.getJsEnabled().equals(UserTrackingFilter.BOTH)) {
+            sql=("select u.timeStamp, u.sessionId, u.cookieId, u.referer ,count(p) from com.btxtech.game.services.utg.BrowserDetails u, com.btxtech.game.services.utg.PageAccess p where u.sessionId = p.sessionId group by u.sessionId order by u.timeStamp desc");
+        } else {
+            throw new IllegalArgumentException("Unknown JS enabled state: " + filter.getJsEnabled());
+        }
+
         @SuppressWarnings("unchecked")
-        List<Object[]> datesAndHits = (List<Object[]>) hibernateTemplate.find("select u.timeStamp, u.sessionId, u.cookieId, u.referer ,count(p) from com.btxtech.game.services.utg.BrowserDetails u, com.btxtech.game.services.utg.PageAccess p where u.sessionId = p.sessionId group by u.sessionId order by u.timeStamp desc");
+        List<Object[]> datesAndHits = (List<Object[]>) hibernateTemplate.find(sql);
         for (Object[] datesAndHit : datesAndHits) {
             Date timeStamp = (Date) datesAndHit[0];
             String sessionId = (String) datesAndHit[1];
