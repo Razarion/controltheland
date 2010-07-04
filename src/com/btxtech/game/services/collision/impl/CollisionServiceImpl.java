@@ -122,7 +122,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
         List<PassableRectangle> passableRectangles = new ArrayList<PassableRectangle>();
 
         for (Rectangle rectangle : rectangles) {
-            PassableRectangle passableRectangle = new PassableRectangle(rectangle);
+            PassableRectangle passableRectangle = new PassableRectangle(rectangle, terrainService);
             passableRectangles.add(passableRectangle);
         }
 
@@ -216,18 +216,6 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     }
 
 
-    private int getDistance(List<Index> indeces) {
-        Index previous = null;
-        int distance = 0;
-        for (Index index : indeces) {
-            if (previous != null) {
-                distance += previous.getDistance(index);
-            }
-            previous = index;
-        }
-        return distance;
-    }
-
     private PassableRectangle getPassableRectangleOfAbsoluteIndex(Index absoluteIndex, TerrainType terrainType) {
         List<PassableRectangle> passableRectangles = passableRectangles4TerrainType.get(terrainType);
         if (passableRectangles == null) {
@@ -286,30 +274,16 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
         }
 
         long time = System.currentTimeMillis();
-        List<Index> bestSelection = null;
+        List<Index> positions = null;
         try {
-            List<Path> allPaths = atomStartRect.findAllPossiblePassableRectanglePaths(atomDestRect, 1000);
-            int minDistance = Integer.MAX_VALUE;
-            for (Path path : allPaths) {
-                List<Rectangle> borders = path.getAllPassableBorders();
-                List<Index> indeces = getShortestPath(start, borders);
-                ArrayList<Index> totalIndeces = new ArrayList<Index>(indeces);
-                totalIndeces.add(0, start);
-                totalIndeces.add(destination);
-                int distance = getDistance(totalIndeces);
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    bestSelection = indeces;
-                }
-            }
-
-            if (bestSelection == null) {
-                throw new IllegalArgumentException("Unable get best way: start: " + start + " destination: " + destination);
-            }
-            bestSelection.add(destination);
-            return bestSelection;
+            Path path = atomStartRect.findAllPossiblePassableRectanglePaths(atomDestRect, destination);
+            List<Rectangle> borders = path.getAllPassableBorders();
+            positions = getShortestPath(start, borders);
+            positions.add(0, start);
+            positions.add(destination);
+            return positions;
         } finally {
-            if (System.currentTimeMillis() - time > 200 || bestSelection == null) {
+            if (System.currentTimeMillis() - time > 200 || positions == null) {
                 log.fatal("Pathfinding took: " + (System.currentTimeMillis() - time) + "ms start: " + start + " destination: " + destination);
             }
         }

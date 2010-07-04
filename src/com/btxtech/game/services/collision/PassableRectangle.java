@@ -16,11 +16,11 @@ package com.btxtech.game.services.collision;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
+import com.btxtech.game.services.terrain.TerrainService;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * User: beat
@@ -30,6 +30,7 @@ import java.util.Set;
 public class PassableRectangle {
     private HashMap<PassableRectangle, Neighbor> neighbors = new HashMap<PassableRectangle, Neighbor>();
     private Rectangle rectangle;
+    private TerrainService terrainService;
 
     private class Neighbor {
         private PassableRectangle passableRectangle;
@@ -68,8 +69,9 @@ public class PassableRectangle {
         }
     }
 
-    public PassableRectangle(Rectangle rectangle) {
+    public PassableRectangle(Rectangle rectangle, TerrainService terrainService) {
         this.rectangle = rectangle;
+        this.terrainService = terrainService;
     }
 
     public Rectangle getRectangle() {
@@ -95,69 +97,71 @@ public class PassableRectangle {
         return new Rectangle(x, y, width, height);
     }
 
-    public boolean containAbsoluteIndex(Index absolueIndex, DbTerrainSetting dbTerrainSetting) {
-        return getPixelRectangle(dbTerrainSetting).contains(absolueIndex);
+    public boolean containAbsoluteIndex(Index absoluteIndex, DbTerrainSetting dbTerrainSetting) {
+        return getPixelRectangle(dbTerrainSetting).contains(absoluteIndex);
     }
 
-    public List<Path> findAllPossiblePassableRectanglePaths(PassableRectangle destinationRect, int maxDepth) {
-        ArrayList<Path> successfulPaths = new ArrayList<Path>();
-        Set<Path> allPaths = new HashSet<Path>();
-        for (PassableRectangle passableRectangle : neighbors.keySet()) {
-            Path path = new Path();
-            path.add(this);
-            path.add(passableRectangle);
-            allPaths.add(path);
-        }
+    public Path findAllPossiblePassableRectanglePaths(PassableRectangle destinationRect, Index absDestination) {
+        Path path = new Path(this);
 
         // Check level
-        for (int i = 0; i < maxDepth; i++) {
-            checkIfPathIsDest(allPaths, destinationRect, successfulPaths);
-            if (!successfulPaths.isEmpty()) {
-                return successfulPaths;
+        for (int tries = 0; tries < 1000; tries++) {
+            PathElement next = getBestSuitable(path, absDestination, 0);
+            if (next == null) {
+                next = backtracking(path, absDestination);
             }
-            allPaths = getAllNeighbors(allPaths);
+            if (path.containsPassableRectangle(next)) {
+                // prevent Loop
+                next = backtracking(path, absDestination);
+            }
+            path.add(next);
+            if (next.equalsTo(destinationRect)) {
+                return path;
+            }
+
         }
 
-
-        if (successfulPaths.isEmpty()) {
-            throw new IllegalStateException("Path can not be found");
-        }
-        return successfulPaths;
+        throw new IllegalStateException("Path can not be found. Max tries exceeded");
     }
 
-    private Set<Path> getAllNeighbors(Set<Path> paths) {
-        HashSet<Path> allPaths = new HashSet<Path>();
-        for (Path path : paths) {
-            for (PassableRectangle neighbor : path.getTail().neighbors.keySet()) {
-                if (containsPassableRectangle(paths, neighbor)) {
-                    continue;
-                }
-                Path newPath = path.createSubPath();
-                newPath.add(neighbor);
-                allPaths.add(newPath);
-            }
-        }
-        return allPaths;
-    }
-
-    private boolean containsPassableRectangle(Set<Path> paths, PassableRectangle passableRectangle) {
-        for (Path path : paths) {
-            if (path.contains(passableRectangle)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void checkIfPathIsDest(Set<Path> pathsToCheck, PassableRectangle destinationRect, List<Path> successfulPaths) {
-        for (Path path : pathsToCheck) {
-            if (destinationRect.equals(path.getTail())) {
-                successfulPaths.add(path);
-                return;
-            }
+    private PathElement backtracking(Path path, Index absDestination) {
+        int oldRank = path.backToElementWithAlternatives();
+        PathElement alternativeNext = getBestSuitable(path, absDestination, oldRank + 1);
+        if (alternativeNext != null) {
+            return alternativeNext;
+        } else {
+            return backtracking(path, absDestination);
         }
     }
 
+    private PathElement getBestSuitable(Path path, Index absDestination, int rank) {
+        PassableRectangle secondLast = path.getSecondLastPassableRectangle();
+        List<PathElement> allNeighbors = new ArrayList<PathElement>();
+        for (PassableRectangle neighbor : path.getLast().getPassableRectangle().neighbors.keySet()) {
+            if (neighbor.equals(secondLast)) {
+                // Don't go back
+                continue;
+            }
+            Rectangle absRectNeighbor = terrainService.convertToAbsolutePosition(neighbor.getRectangle());
+            int d;
+            if (absRectNeighbor.contains(absDestination)) {
+                d = 0;
+            } else {
+                d = absRectNeighbor.getNearestPoint(absDestination).getDistance(absDestination);
+            }
+            allNeighbors.add(new PathElement(neighbor, d));
+        }
+
+        if (allNeighbors.size() <= rank) {
+            return null;
+        }
+
+        Collections.sort(allNeighbors, PathElement.createDistanceComparator());
+        PathElement result = allNeighbors.get(rank);
+        result.setRank(rank);
+        result.setHasAlternatives(allNeighbors.size() + 1 > rank);
+        return result;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -181,6 +185,6 @@ public class PassableRectangle {
 
     @Override
     public String toString() {
-        return rectangle.toString();
+        return getClass() + " " + rectangle.toString();
     }
 }

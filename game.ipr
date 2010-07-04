@@ -385,6 +385,14 @@
   <component name="ProjectDetails">
     <option name="projectName" value="game" />
   </component>
+  <component name="ProjectDictionaryState">
+    <dictionary name="beat">
+      <words>
+        <w>mgmt</w>
+        <w>rect</w>
+      </words>
+    </dictionary>
+  </component>
   <component name="ProjectFacetManager">
     <default-configurations>
       <entry facet-type="gwt">
