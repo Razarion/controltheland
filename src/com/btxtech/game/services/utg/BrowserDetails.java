@@ -40,6 +40,7 @@ public class BrowserDetails {
     private String remoteHost;
     private String remoteAddr;
     private String cookieId;
+    @Column(length = 50000)    
     private String referer;
     private boolean javaScriptDetected = false;
 
