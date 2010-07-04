@@ -108,8 +108,8 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     public void saveBrowserDetails(BrowserDetails browserDetails) {
         try {
             hibernateTemplate.saveOrUpdate(browserDetails);
-        } catch (NoConnectionException e) {
-            log.error("", e);
+        } catch (Throwable t) {
+            log.error("", t);
         }
     }
 
