@@ -17,7 +17,7 @@ import com.btxtech.game.services.statistics.BaseStatisticsDTO;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.wicket.pages.entergame.ColorField;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -46,13 +46,7 @@ public class BaseUpTime extends Panel {
             }
         };
         add(tileList);
-        Link link = new Link("link") {
-
-            @Override
-            public void onClick() {
-                setResponsePage(StatisticsPage.class);
-            }
-        };
+        BookmarkablePageLink<StatisticsPage> link = new BookmarkablePageLink<StatisticsPage>("link", StatisticsPage.class);
         link.setVisible(count != 0);
         add(link);
     }
