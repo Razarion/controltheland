@@ -87,6 +87,7 @@ public class MgmtPage extends WebPage {
     static {
         toolPages = new ArrayList<LinkAndName>();
         toolPages.add(new LinkAndName("Startup", Startup.class));
+        toolPages.add(new LinkAndName("CMS", CmsEditor.class));
         toolPages.add(new LinkAndName("DB View", DbView.class));
         toolPages.add(new LinkAndName("Log View", LogView.class));
         toolPages.add(new LinkAndName("Map Editor", TerrainFieldEditor.class));

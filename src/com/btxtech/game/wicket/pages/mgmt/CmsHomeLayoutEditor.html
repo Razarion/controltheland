@@ -1,0 +1,82 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+<h1>Home Layout Editor</h1>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="form">
+    <table border="0" cellSpacing="1" cellPadding="0">
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Background Color</td>
+            <td valign="top"><input wicket:id="bodyBackgroundColor" type="text" size="30" maxlength="100"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Background Image</td>
+            <td valign="top"><input type="file" wicket:id="bgImage"/></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Text Color</td>
+            <td valign="top"><input wicket:id="textColor" type="text" size="10" maxlength="10"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Text left</td>
+            <td valign="top"><input wicket:id="textLeft" type="text" size="5" maxlength="5"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Text right</td>
+            <td valign="top"><input wicket:id="textRight" type="text" size="5" maxlength="5"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Text top</td>
+            <td valign="top"><input wicket:id="textTop" type="text" size="5" maxlength="5"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Start Link Image</td>
+            <td valign="top"><input type="file" wicket:id="startImage"/></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Start Link left</td>
+            <td valign="top"><input wicket:id="startLinkLeft" type="text" size="5" maxlength="5"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Start Link top</td>
+            <td valign="top"><input wicket:id="startLinkTop" type="text" size="5" maxlength="5"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Info Link Image</td>
+            <td valign="top"><input type="file" wicket:id="infoImage"/></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Info Link left</td>
+            <td valign="top"><input wicket:id="infoLinkLeft" type="text" size="5" maxlength="5"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">Info Link top</td>
+            <td valign="top"><input wicket:id="infoLinkTop" type="text" size="5" maxlength="5"></td>
+        </tr>
+
+    </table>
+    <br>
+    <input type="submit" value="Save"/>
+</form>
+
+</body>
+</html>
