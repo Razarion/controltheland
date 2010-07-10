@@ -257,7 +257,8 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     private void increaseXpPerItem(SyncBaseItem syncBaseItem) {
         SimpleBase simpleBase = syncBaseItem.getBase();
         Base base = baseService.getBase(simpleBase);
-        if (base.isAbandoned()) {
+        if (base == null || base.isAbandoned()) {
+            // Base is may be killed in the mean time
             return;
         }
 
