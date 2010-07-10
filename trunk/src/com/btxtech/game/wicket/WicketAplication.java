@@ -14,7 +14,7 @@
 package com.btxtech.game.wicket;
 
 import com.btxtech.game.services.mgmt.MgmtService;
-import com.btxtech.game.wicket.pages.home.Home;
+import com.btxtech.game.wicket.pages.cms.Home;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.Application;

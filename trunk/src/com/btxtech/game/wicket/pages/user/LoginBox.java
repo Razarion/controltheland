@@ -19,7 +19,7 @@ import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -52,13 +52,7 @@ public class LoginBox extends Panel {
 
         form.add(new TextField<String>("loginName"));
         form.add(new PasswordTextField("loginPassowrd"));
-        form.add(new Link("createAccountLink") {
-
-            @Override
-            public void onClick() {
-                setResponsePage(NewUser.class);
-            }
-        });
+        form.add(new BookmarkablePageLink<NewUser>("createAccountLink", NewUser.class));
         add(form);
     }
 

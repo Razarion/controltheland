@@ -369,8 +369,7 @@
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="file://C:/tech/apache-wicket-1.4.6/src/wicket/src/main/java" />
-          <root url="file://C:/tech/apache-wicket-1.4.6/src/wicket/src/main/java" />
+          <root url="file://$MODULE_DIR$/../../../tech/apache-wicket-1.4.6/src/wicket/src/main/java" />
         </SOURCES>
       </library>
     </orderEntry>
