@@ -14,6 +14,7 @@
 package com.btxtech.game.wicket.uiservices.impl;
 
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.base.GameFullException;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.entergame.StartGamePage;
@@ -38,7 +39,7 @@ public class GameControlServiceImpl implements GameControlService {
     private UserService userService;
 
     @Override
-    public Class<? extends org.apache.wicket.Page> getEnterGamePage(boolean isInUserPage) {
+    public Class<? extends org.apache.wicket.Page> getEnterGamePage(boolean isInUserPage) throws GameFullException {
         try {
             if (userService.isLoggedin()) {
                 if (isInUserPage) {
@@ -55,6 +56,9 @@ public class GameControlServiceImpl implements GameControlService {
                 baseService.createNewBase();
                 return Game.class;
             }
+        } catch (GameFullException e) {
+            log.error("", e);
+            throw e;
         } catch (Throwable t) {
             log.error("", t);
             throw new RuntimeException(t);

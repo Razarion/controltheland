@@ -13,6 +13,7 @@
 
 package com.btxtech.game.wicket.pages.cms;
 
+import com.btxtech.game.services.base.GameFullException;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
@@ -23,12 +24,14 @@ import com.btxtech.game.wicket.pages.user.LoggedinBox;
 import com.btxtech.game.wicket.pages.user.LoginBox;
 import com.btxtech.game.wicket.uiservices.GameControlService;
 import javax.servlet.http.Cookie;
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.WebRequest;
@@ -61,13 +64,26 @@ public class Home extends WebPage implements IHeaderContributor {
             add(new LoggedinBox());
         } else {
             add(new LoginBox());
-        } 
+        }
 
         ///////////////////////////////
         add(new Label("style", new PropertyModel(cmsService.getHomeCmsInfo(), "style")));
         add(new Label("text", new PropertyModel(cmsService.getHomeCmsInfo(), "text")).setEscapeModelStrings(false));
 
-        BookmarkablePageLink<WebPage> startLink = new BookmarkablePageLink<WebPage>("startLink", gameControlService.getEnterGamePage(false));
+        // TODO bookmark able link not possible. Base is created if home is shown -> fix
+        Link startLink = new Link("startLink") {
+
+            @Override
+            public void onClick() {
+                try {
+                    setResponsePage(gameControlService.getEnterGamePage(false));
+                } catch (GameFullException e) {
+                    PageParameters parameters = new PageParameters();
+                    parameters.add(com.btxtech.game.wicket.pages.Info.KEY_MESSAGE, "The game is full. Please come back later.");
+                    setResponsePage(com.btxtech.game.wicket.pages.Info.class, parameters);
+                }
+            }
+        };
         add(startLink);
         startLink.add(new Image("startImage", new IModel<ByteArrayResource>() {
 

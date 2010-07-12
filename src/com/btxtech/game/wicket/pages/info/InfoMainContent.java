@@ -13,8 +13,11 @@
 
 package com.btxtech.game.wicket.pages.info;
 
-import com.btxtech.game.wicket.pages.BorderPanel;
+import com.btxtech.game.services.base.GameFullException;
+import com.btxtech.game.wicket.pages.*;
+import com.btxtech.game.wicket.pages.Info;
 import com.btxtech.game.wicket.uiservices.GameControlService;
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
@@ -32,7 +35,13 @@ public class InfoMainContent extends BorderPanel {
         Form form = new Form("form") {
             @Override
             protected void onSubmit() {
-                setResponsePage(gameControlService.getEnterGamePage(false));
+                try {
+                    setResponsePage(gameControlService.getEnterGamePage(false));
+                } catch (GameFullException e) {
+                    PageParameters parameters = new PageParameters();
+                    parameters.add(Info.KEY_MESSAGE, "The game is full. Please come back later.");
+                    setResponsePage(Info.class, parameters);
+                }
             }
         };
         add(form);

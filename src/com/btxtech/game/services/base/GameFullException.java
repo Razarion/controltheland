@@ -11,15 +11,12 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.wicket.uiservices;
-
-import com.btxtech.game.services.base.GameFullException;
+package com.btxtech.game.services.base;
 
 /**
  * User: beat
- * Date: 26.03.2010
- * Time: 23:56:59
+ * Date: 12.07.2010
+ * Time: 17:52:08
  */
-public interface GameControlService {
-    Class<? extends org.apache.wicket.Page> getEnterGamePage(boolean isInUserPage) throws GameFullException;
+public class GameFullException extends Exception {
 }

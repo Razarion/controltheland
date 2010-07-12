@@ -29,6 +29,7 @@ import com.btxtech.game.services.base.AlreadyUsedException;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseColor;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.base.GameFullException;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.connection.Connection;
@@ -129,9 +130,13 @@ public class BaseServiceImpl implements BaseService {
     }
 
     @Override
-    public void createNewBase() throws AlreadyUsedException, NoSuchItemTypeException {
+    public void createNewBase() throws AlreadyUsedException, NoSuchItemTypeException, GameFullException {
         synchronized (bases) {
-            createNewBase(getFreePlayerName(), getFreeColors(1).get(0));
+            List<BaseColor> baseColors = getFreeColors(1);
+            if(baseColors.isEmpty()) {
+                throw new GameFullException(); 
+            }
+            createNewBase(getFreePlayerName(), baseColors.get(0));
         }
     }
 
