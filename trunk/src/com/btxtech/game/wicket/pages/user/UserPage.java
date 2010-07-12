@@ -13,9 +13,11 @@
 
 package com.btxtech.game.wicket.pages.user;
 
+import com.btxtech.game.services.base.GameFullException;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.wicket.pages.Info;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import com.btxtech.game.wicket.pages.history.HistoryPanel;
 import com.btxtech.game.wicket.pages.messenger.MessengerOverviewPanel;
@@ -48,7 +50,13 @@ public class UserPage extends BasePage {
         Form form = new Form("enterForm") {
             @Override
             protected void onSubmit() {
-                setResponsePage(gameControlService.getEnterGamePage(canEditSite));
+                try {
+                    setResponsePage(gameControlService.getEnterGamePage(canEditSite));
+                } catch (GameFullException e) {
+                    PageParameters parameters = new PageParameters();
+                    parameters.add(Info.KEY_MESSAGE, "The game is full. Please come back later.");
+                    setResponsePage(Info.class, parameters);
+                }
             }
 
             @Override
