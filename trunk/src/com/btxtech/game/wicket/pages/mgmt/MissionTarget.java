@@ -122,6 +122,8 @@ public class MissionTarget extends WebPage {
         form.add(new CheckBox("tutorialTermination"));
         form.add(new TextField<Integer>("minXp"));
         form.add(new TextField<Integer>("minMoney"));
+        form.add(new TextField<Integer>("deltaMoney"));
+        form.add(new TextField<Integer>("deltaKills"));
         form.add(new TextField<String>("skipItemsBought", new IModel<String>() {
 
             @Override

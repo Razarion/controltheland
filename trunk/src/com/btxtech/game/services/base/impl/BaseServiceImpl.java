@@ -181,7 +181,7 @@ public class BaseServiceImpl implements BaseService {
             throw new IllegalStateException("User does not have any running base");
         }
         connectionService.createConnection(base);
-        base.setUserItemTypeAccess(serverMarketService.getUserItemTypeAccess());        
+        base.setUserItemTypeAccess(serverMarketService.getUserItemTypeAccess());
     }
 
     private void deleteBase(Base base) {
@@ -388,11 +388,6 @@ public class BaseServiceImpl implements BaseService {
     }
 
     @Override
-    public String getLevelString() {
-        return getBase().getLevel();
-    }
-
-    @Override
     public User getUser(SimpleBase simpleBase) {
         Base base = getBase(simpleBase);
         return base.getUser();
@@ -447,6 +442,7 @@ public class BaseServiceImpl implements BaseService {
         Base base = getBase(simpleBase);
         if (!base.isBot()) {
             base.depositMoney(price);
+            userGuidanceService.onMoneyIncrease(base);
         }
     }
 

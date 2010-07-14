@@ -24,10 +24,16 @@ public class PendingPromotion {
     public static final String INTERIM_PROMOTION_TUTORIAL = "TUTORIAL";
     public static final String INTERIM_PROMOTION_XP = "XP";
     public static final String INTERIM_PROMOTION_ITEMS = "ITEMS";
+    public static final String INTERIM_PROMOTION_MIN_MONEY = "MIN MONEY";
+    public static final String INTERIM_PROMOTION_DELTA_MONEY = "DELTA MONEY";
+    public static final String INTERIM_PROMOTION_DELTA_KILLS = "DELTA KILLS";
     private DbLevel dbLevel;
     private boolean xpAchieved = false;
     private boolean itemCountAchieved = false;
     private boolean tutorialAchieved = false;
+    private boolean minMoneyAchieved = false;
+    private boolean deltaMoneyAchieved = false;
+    private boolean deltaKillsAchieved = false;
 
     public PendingPromotion(DbLevel dbLevel) {
         this.dbLevel = dbLevel;
@@ -49,6 +55,18 @@ public class PendingPromotion {
         tutorialAchieved = true;
     }
 
+    public void setMinMoneyAchieved() {
+        minMoneyAchieved = true;
+    }
+
+    public void setDeltaMoneyAchieved() {
+        deltaMoneyAchieved = true;
+    }
+
+    public void setDeltaKillsAchieved() {
+        deltaKillsAchieved = true;
+    }
+
     public boolean achieved() {
         if (dbLevel.isTutorialTermination()) {
             if (!tutorialAchieved) {
@@ -64,6 +82,24 @@ public class PendingPromotion {
 
         if (dbLevel.getDbItemCounts() != null && !dbLevel.getDbItemCounts().isEmpty()) {
             if (!itemCountAchieved) {
+                return false;
+            }
+        }
+
+        if (dbLevel.getMinMoney() != null) {
+            if (!minMoneyAchieved) {
+                return false;
+            }
+        }
+
+        if (dbLevel.getDeltaMoney() != null) {
+            if (!deltaMoneyAchieved) {
+                return false;
+            }
+        }
+
+        if (dbLevel.getDeltaKills() != null) {
+            if (!deltaKillsAchieved) {
                 return false;
             }
         }

@@ -63,7 +63,7 @@ public interface UserTrackingService {
 
     void trackUserMessage(UserMessage userMessage);
 
-    void levelPromotion(Base base, String oldLevel);
+    void levelPromotion(Base base, DbLevel oldLevel);
 
     void levelInterimPromotion(Base base, String targetLevel, String interimPromotion);
 

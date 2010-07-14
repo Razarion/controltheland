@@ -16,7 +16,6 @@ package com.btxtech.game.services.utg;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -54,12 +53,15 @@ public class DbLevel implements Serializable {
     private Boolean tutorialTermination;
     private Integer minXp;
     private Integer minMoney;
+    private Integer deltaMoney;
+    private Integer deltaKills;
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "GUIDANCE_LEVEL_SKIP_IF_BOUGHT",
             joinColumns = @JoinColumn(name = "dbLevelId"),
             inverseJoinColumns = @JoinColumn(name = "itemTypeId")
     )
     private Set<DbBaseItemType> skipIfItemsBought;
+
 
     public String getName() {
         return name;
@@ -126,6 +128,22 @@ public class DbLevel implements Serializable {
         this.minMoney = minMoney;
     }
 
+    public Integer getDeltaMoney() {
+        return deltaMoney;
+    }
+
+    public void setDeltaMoney(Integer deltaMoney) {
+        this.deltaMoney = deltaMoney;
+    }
+
+    public Integer getDeltaKills() {
+        return deltaKills;
+    }
+
+    public void setDeltaKills(Integer deltaKills) {
+        this.deltaKills = deltaKills;
+    }
+
     public Collection<DbBaseItemType> getSkipIfItemsBought() {
         return skipIfItemsBought;
     }
@@ -137,6 +155,7 @@ public class DbLevel implements Serializable {
     public Level createLevel() {
         Level level = new Level();
         level.setName(name);
+        level.setRunTutorial(tutorialTermination);
         return level;
     }
 

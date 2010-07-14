@@ -41,6 +41,7 @@ import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.resource.ResourceService;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.UserTrackingService;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -204,6 +205,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
                 Base actorBase = baseService.getBase(actor);
                 actorBase.increaseKills();
                 serverMarketService.increaseXp(actorBase, (SyncBaseItem) syncItem);
+                userGuidanceService.onItemKilled(actorBase);
             }
             baseService.itemDeleted((SyncBaseItem) syncItem, actor);
             serverEnergyService.onBaseItemKilled((SyncBaseItem) syncItem);

@@ -20,9 +20,11 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.utg.BaseLevelStatus;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -62,6 +64,9 @@ public class Base implements Serializable {
     private boolean abandoned = false;
     @Column(nullable = false, columnDefinition = "bit default b'0'")
     private boolean bot = false;
+    @OneToOne(cascade = CascadeType.ALL)
+    private BaseLevelStatus baseLevelStatus;
+    @Deprecated
     private String level;
     @Transient
     private final Object syncObject = new Object();
@@ -176,6 +181,9 @@ public class Base implements Serializable {
 
     public void clearId() {
         id = null;
+        if(baseLevelStatus != null) {
+            baseLevelStatus.clearId();
+        }
     }
 
     public void increaseKills() {
@@ -223,11 +231,16 @@ public class Base implements Serializable {
         return getSimpleBase().toString();
     }
 
-    public String getLevel() {
-        return level;
+    public BaseLevelStatus getBaseLevelStatus() {
+        return baseLevelStatus;
     }
 
-    public void setLevel(String level) {
-        this.level = level;
+    public void setBaseLevelStatus(BaseLevelStatus baseLevelStatus) {
+        this.baseLevelStatus = baseLevelStatus;
+    }
+
+    @Deprecated
+    public String getLevel() {
+        return level;
     }
 }
