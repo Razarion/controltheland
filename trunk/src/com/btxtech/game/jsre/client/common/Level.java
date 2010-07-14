@@ -22,7 +22,6 @@ import java.io.Serializable;
  */
 public class Level implements Serializable {
     private String name;
-    private boolean runTutorial = false;
 
     public String getName() {
         return name;
@@ -32,11 +31,20 @@ public class Level implements Serializable {
         this.name = name;
     }
 
-    public boolean isRunTutorial() {
-        return runTutorial;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Level)) return false;
+
+        Level level = (Level) o;
+
+        if (name != null ? !name.equals(level.name) : level.name != null) return false;
+
+        return true;
     }
 
-    public void setRunTutorial(boolean runTutorial) {
-        this.runTutorial = runTutorial;
+    @Override
+    public int hashCode() {
+        return name != null ? name.hashCode() : 0;
     }
 }

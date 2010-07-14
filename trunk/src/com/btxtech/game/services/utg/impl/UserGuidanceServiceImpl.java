@@ -285,6 +285,17 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     }
 
     @Override
+    public Level getLevelToRunMissionTarget() {
+        Base base = baseService.getBase();
+        PendingPromotion pendingPromotion = pendingPromotions.get(base.getSimpleBase());
+        if (pendingPromotion != null && pendingPromotion.getDbLevel().isTutorialTermination() != null && pendingPromotion.getDbLevel().isTutorialTermination()) {
+            return getLevel4Base();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public void onTutorialTerminated() {
         Base base = baseService.getBase();
         PendingPromotion pendingPromotion = pendingPromotions.get(base.getSimpleBase());

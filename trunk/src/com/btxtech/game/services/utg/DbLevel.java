@@ -155,7 +155,6 @@ public class DbLevel implements Serializable {
     public Level createLevel() {
         Level level = new Level();
         level.setName(name);
-        level.setRunTutorial(tutorialTermination);
         return level;
     }
 

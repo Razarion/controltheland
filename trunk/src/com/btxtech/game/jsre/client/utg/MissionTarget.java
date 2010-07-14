@@ -45,7 +45,7 @@ public class MissionTarget {
         missionTargetDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
             @Override
             public void onClose(CloseEvent<PopupPanel> popupPanelCloseEvent) {
-                if (level.isRunTutorial()) {
+                if (level.equals(Connection.getInstance().getGameInfo().getLevelToRunMissionTarget())) {
                     ClientUserGuidance.getInstance().startTutorial();
                 }
             }

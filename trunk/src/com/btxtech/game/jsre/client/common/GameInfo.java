@@ -47,6 +47,7 @@ public class GameInfo implements Serializable{
     private int userActionCollectionTime;
     private Level level;
     private Collection<Territory> territories;
+    private Level levelToRunMissionTarget;
 
 
     public SimpleBase getBase() {
@@ -191,5 +192,13 @@ public class GameInfo implements Serializable{
 
     public void setTerritories(Collection<Territory> territories) {
         this.territories = territories;
+    }
+
+    public Level getLevelToRunMissionTarget() {
+        return levelToRunMissionTarget;
+    }
+
+    public void setLevelToRunMissionTarget(Level levelToRunMissionTarget) {
+        this.levelToRunMissionTarget = levelToRunMissionTarget;
     }
 }

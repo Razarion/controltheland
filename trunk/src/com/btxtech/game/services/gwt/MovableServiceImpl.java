@@ -175,6 +175,7 @@ public class MovableServiceImpl implements MovableService {
             gameInfo.setUserActionCollectionTime(startupData.getUserActionCollectionTime());
             gameInfo.setLevel(userGuidanceService.getLevel4Base());
             gameInfo.setTerritories(territoryService.getTerritories());
+            gameInfo.setLevelToRunMissionTarget(userGuidanceService.getLevelToRunMissionTarget());
             return gameInfo;
         } catch (com.btxtech.game.services.connection.NoConnectionException t) {
             log.error(t.getMessage() + " SessionId: " + t.getSessionId());
