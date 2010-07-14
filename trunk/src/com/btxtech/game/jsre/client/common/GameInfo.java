@@ -161,8 +161,8 @@ public class GameInfo implements Serializable{
         this.tutorialTimeout = tutorialTimeout;
     }
 
-    public int getRegisterDialogDelay() {
-        return registerDialogDelay;
+    public int getRegisterDialogDelayInS() {
+        return registerDialogDelay * 1000;
     }
 
     public void setRegisterDialogDelay(int registerDialogDelay) {
