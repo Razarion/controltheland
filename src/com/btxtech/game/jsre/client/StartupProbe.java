@@ -190,7 +190,7 @@ public class StartupProbe {
 
     private void startGame() {
         MissionTarget.getInstance().showMissionTargetDialog();
-        RegisterDialog.showDialogWithDelay();
+        RegisterDialog.showDialogRepeating();
     }
 
     private void enableCloseButton() {

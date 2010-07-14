@@ -18,11 +18,13 @@ import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.InfoPanel;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.client.utg.SpeechBubble;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -36,6 +38,7 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
     public static final int AUTO_SCROLL_DETECTION_WIDTH = 40;
     public static final int SCROLL_SPEED = 50;
     public static final int SCROLL_DISTANCE = 50;
+    public static final int SCROLL_DISTANCE_KEY = 205; // 5 is to avoid the effect that it seem not to move on key-down-repeat
     private static final MapWindow INSTANCE = new MapWindow();
     private ExtendedAbsolutePanel mapWindow;
     private ScrollDirection scrollDirectionX;
@@ -92,14 +95,40 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
         mapWindow = new ExtendedAbsolutePanel();
         mapWindow.setSize("100%", "100%");
         mapWindow.addMouseMoveHandler(this);
-        mapWindow.addMouseOutHandler(this);
+        // TODO mapWindow.addMouseOutHandler(this);
+        Event.addNativePreviewHandler(new Event.NativePreviewHandler() {
+            @Override
+            public void onPreviewNativeEvent(Event.NativePreviewEvent event) {
+                //System.out.println("***: " + event.getTypeInt());
+                if (event.getTypeInt() == Event.ONKEYDOWN) {
+                    switch (event.getNativeEvent().getKeyCode()) {
+                        case KeyCodes.KEY_LEFT: {
+                            TerrainView.getInstance().move(-SCROLL_DISTANCE_KEY, 0);
+                            break;
+                        }
+                        case KeyCodes.KEY_RIGHT: {
+                            TerrainView.getInstance().move(SCROLL_DISTANCE_KEY, 0);
+                            break;
+                        }
+                        case KeyCodes.KEY_UP: {
+                            TerrainView.getInstance().move(0, -SCROLL_DISTANCE_KEY);
+                            break;
+                        }
+                        case KeyCodes.KEY_DOWN: {
+                            TerrainView.getInstance().move(0, SCROLL_DISTANCE_KEY);
+                            break;
+                        }
+                    }
+                }
+            }
+        });
     }
 
     @Override
     public void onMouseMove(MouseMoveEvent event) {
         int x = event.getRelativeX(mapWindow.getElement());
         int y = event.getRelativeY(mapWindow.getElement());
-        int height = mapWindow.getOffsetHeight();
+        /* int height = mapWindow.getOffsetHeight();
         int width = mapWindow.getOffsetWidth();
 
         ScrollDirection tmpScrollDirectionX = null;
@@ -118,7 +147,7 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
         }
 
         executeScrolling(tmpScrollDirectionX, tmpScrollDirectionY);
-
+        */
         if (Game.isDebug()) {
             InfoPanel.getInstance().setAbsoluteCureserPos(x + TerrainView.getInstance().getViewOriginLeft(), y + TerrainView.getInstance().getViewOriginTop());
         }

@@ -117,8 +117,8 @@ public class ClientUserGuidance implements SelectionListener {
         missions.add(new CreateJeepMission());
         missions.add(new AttackMission());
         missions.add(new CollectMission());
-        missions.add(new ScrollMission());
-        missions.add(new FinishedMission());
+        //missions.add(new ScrollMission());
+        //missions.add(new FinishedMission());
     }
 
     @Override

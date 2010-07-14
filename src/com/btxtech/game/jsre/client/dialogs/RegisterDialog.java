@@ -42,6 +42,7 @@ public class RegisterDialog extends Dialog {
     private TextBox userName;
     private PasswordTextBox password;
     private PasswordTextBox confirmPassword;
+   static private Timer timer;
 
     public RegisterDialog() {
         setShowCloseButton(false);
@@ -116,22 +117,25 @@ public class RegisterDialog extends Dialog {
             @Override
             public void onSuccess(Void aVoid) {
                 ClientUserTracker.getInstance().onRegisterDialogCloseReg();
-                closeDialog();
                 Connection.getInstance().setRegistered(true);
+                closeDialog();
             }
         });
     }
 
     private void closeDialog() {
         hide(true);
+        if (!Connection.getInstance().isRegistered()) {
+            timer.schedule(Connection.getInstance().getGameInfo().getRegisterDialogDelayInS());
+        }
     }
 
-    public static void showDialogWithDelay() {
+    public static void showDialogRepeating() {
         if (Connection.getInstance().isRegistered()) {
             return;
         }
 
-        Timer timer = new Timer() {
+         timer = new Timer() {
             @Override
             public void run() {
                 if (!Connection.getInstance().isRegistered()) {
@@ -139,7 +143,7 @@ public class RegisterDialog extends Dialog {
                 }
             }
         };
-        timer.schedule(1000 * Connection.getInstance().getGameInfo().getRegisterDialogDelay());
+        timer.schedule(Connection.getInstance().getGameInfo().getRegisterDialogDelayInS());
     }
 
 }
