@@ -54,6 +54,8 @@ public interface UserGuidanceService {
 
     void setupLevel4NewBase(Base base);
 
+    Level getLevelToRunMissionTarget();
+
     void onTutorialTerminated();
 
     void onIncreaseXp(Base base, int xp);
