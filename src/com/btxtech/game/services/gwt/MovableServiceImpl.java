@@ -267,7 +267,7 @@ public class MovableServiceImpl implements MovableService {
     @Override
     public void tutorialTerminated() {
         try {
-            userGuidanceService.tutorialTerminated();
+            userGuidanceService.onTutorialTerminated();
         } catch (Throwable t) {
             log.error("", t);
         }

@@ -54,11 +54,15 @@ public interface UserGuidanceService {
 
     void setupLevel4NewBase(Base base);
 
-    void tutorialTerminated();
+    void onTutorialTerminated();
 
     void onIncreaseXp(Base base, int xp);
 
     void onBaseDeleted(Base base);
+
+    void onMoneyIncrease(Base base);    
+
+    void onItemKilled(Base actorBase);
 
     void restore(Collection<Base> bases);
 }

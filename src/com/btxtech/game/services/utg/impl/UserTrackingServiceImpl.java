@@ -29,6 +29,7 @@ import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.utg.BrowserDetails;
+import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelPromotion;
 import com.btxtech.game.services.utg.DbMissionAction;
 import com.btxtech.game.services.utg.DbUserAction;
@@ -516,7 +517,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public void levelPromotion(Base base, String oldLevel) {
+    public void levelPromotion(Base base, DbLevel oldLevel) {
         try {
             String sessionId = null;
             try {

@@ -31,6 +31,7 @@ import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.market.ServerMarketService;
+import com.btxtech.game.services.utg.BaseLevelStatus;
 import com.btxtech.game.services.utg.DbItemCount;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -38,9 +39,7 @@ import com.btxtech.game.services.utg.UserTrackingService;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -76,13 +75,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     private UserTrackingService userTrackingService;
     private HibernateTemplate hibernateTemplate;
     final private HashMap<SimpleBase, PendingPromotion> pendingPromotions = new HashMap<SimpleBase, PendingPromotion>();
-    private HashMap<String, Level> levels = new HashMap<String, Level>();
     private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
-
-    @PostConstruct
-    public void setup() {
-        updateLevels();
-    }
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -122,24 +115,6 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
             }
         });
     }
-
-    @SuppressWarnings("unchecked")
-    public DbLevel getDbLevel(final String level) {
-        List<DbLevel> levels = hibernateTemplate.executeFind(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbLevel.class);
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                criteria.add(Restrictions.eq("name", level));
-                return criteria.list();
-            }
-        });
-        if (levels.isEmpty()) {
-            throw new IllegalArgumentException("Unknown level: " + level);
-        }
-        return levels.get(0);
-    }
-
 
     private int getHighestDbLevel() {
         List result = (List) hibernateTemplate.execute(new HibernateCallback() {
@@ -197,10 +172,33 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
     }
 
+    @Deprecated
+    @SuppressWarnings("unchecked")
+    private DbLevel getDbLevel(final String level) {
+        List<DbLevel> levels = hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbLevel.class);
+                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                criteria.add(Restrictions.eq("name", level));
+                return criteria.list();
+            }
+        });
+        if (levels.isEmpty()) {
+            throw new IllegalArgumentException("Unknown level: " + level);
+        }
+        return levels.get(0);
+    }
+
     @Override
     public void deleteDbLevel(DbLevel dbLevel) {
+        for (Base base : baseService.getBases()) {
+            BaseLevelStatus baseLevelStatus = base.getBaseLevelStatus();
+            if (baseLevelStatus.getCurrentLevel().equals(dbLevel)) {
+                throw new IllegalStateException("Can not delete level. It is used in base: " + base);
+            }
+        }
         hibernateTemplate.delete(dbLevel);
-        updateLevels();
     }
 
     @Override
@@ -208,19 +206,16 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         DbLevel dbLevel = new DbLevel();
         dbLevel.setRank(getHighestDbLevel() + 1);
         hibernateTemplate.save(dbLevel);
-        updateLevels();
     }
 
     @Override
     public void saveDbLevels(List<DbLevel> dbLevels) {
         hibernateTemplate.saveOrUpdateAll(dbLevels);
-        updateLevels();
     }
 
     @Override
     public void saveDbLevel(DbLevel dbLevel) {
         hibernateTemplate.update(dbLevel);
-        updateLevels();
     }
 
     @Override
@@ -237,7 +232,6 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
             hibernateTemplate.update(level1);
             level2.setRank(tmpRank);
             hibernateTemplate.update(level2);
-            updateLevels();
         }
     }
 
@@ -255,47 +249,22 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
             hibernateTemplate.update(level1);
             level2.setRank(tmpRank);
             hibernateTemplate.update(level2);
-            updateLevels();
         }
-    }
-
-    private void updateLevels() {
-        levels.clear();
-        for (Iterator<DbLevel> iterator = getDbLevels().iterator(); iterator.hasNext();) {
-            DbLevel dbLevel = iterator.next();
-            Level level = dbLevel.createLevel();
-            if (!iterator.hasNext()) {
-                level.setRunTutorial(true);
-            }
-            levels.put(level.getName(), level);
-        }
-    }
-
-    private Level getLevel(DbLevel dbLevel) {
-        return getLevel(dbLevel.getName());
-    }
-
-    private Level getLevel(String levelString) {
-        Level level = levels.get(levelString);
-        if (level == null) {
-            throw new IllegalArgumentException("Level does no exists: " + levelString);
-        }
-        return level;
     }
 
     @Override
     public Level getLevel4Base() {
-        return getLevel(baseService.getBase().getLevel());
+        return baseService.getBase().getBaseLevelStatus().getCurrentLevel().createLevel();
     }
 
     @Override
     public String getMissionTarget4NextLevel(Base base) {
-        DbLevel dbLevel = getNextDbLevel(getDbLevel(base.getLevel()));
-        if(dbLevel == null) {
+        DbLevel dbLevel = getNextDbLevel(base.getBaseLevelStatus().getCurrentLevel());
+        if (dbLevel == null) {
             return NO_MISSION_TARGET;
         }
         dbLevel = getUnskippable(dbLevel, base);
-        if(dbLevel == null) {
+        if (dbLevel == null) {
             return NO_MISSION_TARGET;
         }
         return dbLevel.getMissionTarget();
@@ -308,13 +277,15 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         if (dbLevel == null) {
             return;
         }
-        base.setLevel(dbLevel.getName());
-        prepareForNextPromotion(dbLevel, base);
+        BaseLevelStatus baseLevelStatus = new BaseLevelStatus();
+        baseLevelStatus.setCurrentLevel(dbLevel);
+        base.setBaseLevelStatus(baseLevelStatus);
+        prepareForNextPromotion(base, true);
         userTrackingService.levelPromotion(base, null);
     }
 
     @Override
-    public void tutorialTerminated() {
+    public void onTutorialTerminated() {
         Base base = baseService.getBase();
         PendingPromotion pendingPromotion = pendingPromotions.get(base.getSimpleBase());
         if (pendingPromotion == null || pendingPromotion.getDbLevel().isTutorialTermination() == null || !pendingPromotion.getDbLevel().isTutorialTermination()) {
@@ -339,6 +310,34 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     }
 
     @Override
+    public void onMoneyIncrease(Base base) {
+        PendingPromotion pendingPromotion = pendingPromotions.get(base.getSimpleBase());
+        if (pendingPromotion == null || (pendingPromotion.getDbLevel().getMinMoney() == null && pendingPromotion.getDbLevel().getDeltaMoney() == null)) {
+            return;
+        }
+
+        if (pendingPromotion.getDbLevel().getMinMoney() != null) {
+            int minMoney = pendingPromotion.getDbLevel().getMinMoney();
+            if (minMoney >= base.getAccountBalance()) {
+                pendingPromotion.setMinMoneyAchieved();
+                userTrackingService.levelInterimPromotion(base, pendingPromotion.getDbLevel().getName(), PendingPromotion.INTERIM_PROMOTION_MIN_MONEY);
+                checkAndHandlePromotion(pendingPromotion, base);
+            }
+        } else {
+            int deltaMoney = pendingPromotion.getDbLevel().getDeltaMoney();
+            Integer beginningMoney = base.getBaseLevelStatus().getBeginningMoney();
+            if (beginningMoney == null) {
+                throw new IllegalArgumentException("beginningMoney == null " + base);
+            }
+            if (base.getAccountBalance() - beginningMoney > deltaMoney) {
+                pendingPromotion.setDeltaMoneyAchieved();
+                userTrackingService.levelInterimPromotion(base, pendingPromotion.getDbLevel().getName(), PendingPromotion.INTERIM_PROMOTION_DELTA_MONEY);
+                checkAndHandlePromotion(pendingPromotion, base);
+            }
+        }
+    }
+
+    @Override
     public void onSyncBaseItemCreated(SyncBaseItem syncBaseItem) {
         Base base = baseService.getBase(syncBaseItem);
         PendingPromotion pendingPromotion = pendingPromotions.get(base.getSimpleBase());
@@ -349,6 +348,24 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
             pendingPromotion.setItemCountAchieved();
             userTrackingService.levelInterimPromotion(base, pendingPromotion.getDbLevel().getName(), PendingPromotion.INTERIM_PROMOTION_ITEMS);
             checkAndHandlePromotion(pendingPromotion, base);
+        }
+    }
+
+    @Override
+    public void onItemKilled(Base actorBase) {
+        PendingPromotion pendingPromotion = pendingPromotions.get(actorBase.getSimpleBase());
+        if (pendingPromotion == null || pendingPromotion.getDbLevel().getDeltaKills() == null) {
+            return;
+        }
+        Integer beginningKills = actorBase.getBaseLevelStatus().getBeginningKills();
+        if (beginningKills == null) {
+            throw new IllegalArgumentException("beginningKills == null " + actorBase);
+        }
+
+        if (actorBase.getKills() - beginningKills >= pendingPromotion.getDbLevel().getDeltaKills()) {
+            pendingPromotion.setDeltaKillsAchieved();
+            userTrackingService.levelInterimPromotion(actorBase, pendingPromotion.getDbLevel().getName(), PendingPromotion.INTERIM_PROMOTION_DELTA_KILLS);
+            checkAndHandlePromotion(pendingPromotion, actorBase);
         }
     }
 
@@ -376,28 +393,33 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         if (!pendingPromotion.achieved()) {
             return;
         }
-        String oldLevel = base.getLevel();
+        BaseLevelStatus baseLevelStatus = base.getBaseLevelStatus();
+        DbLevel oldLevel = baseLevelStatus.getCurrentLevel();
         DbLevel achievedLevel = pendingPromotion.getDbLevel();
-        base.setLevel(achievedLevel.getName());
+        baseLevelStatus.setCurrentLevel(achievedLevel);
         LevelPacket levelPacket = new LevelPacket();
-        levelPacket.setLevel(getLevel(achievedLevel));
+        levelPacket.setLevel(achievedLevel.createLevel());
         connectionService.sendPacket(base.getSimpleBase(), levelPacket);
         userTrackingService.levelPromotion(base, oldLevel);
         // Cleanup
         pendingPromotions.remove(base.getSimpleBase());
 
         // Prepare next promotion
-        prepareForNextPromotion(achievedLevel, base);
+        prepareForNextPromotion(base, true);
     }
 
-    private void prepareForNextPromotion(DbLevel dbLevel, Base base) {
-        DbLevel nextDbLevel = getNextDbLevel(dbLevel);
-        if(nextDbLevel == null) {
+    private void prepareForNextPromotion(Base base, boolean setDeltas) {
+        BaseLevelStatus baseLevelStatus = base.getBaseLevelStatus();
+        DbLevel nextDbLevel = getNextDbLevel(baseLevelStatus.getCurrentLevel());
+        if (nextDbLevel == null) {
             return;
         }
         nextDbLevel = getUnskippable(nextDbLevel, base);
         if (nextDbLevel == null) {
             return;
+        }
+        if (setDeltas) {
+            baseLevelStatus.setDeltas(base, nextDbLevel);
         }
         PendingPromotion pendingPromotion = new PendingPromotion(nextDbLevel);
         pendingPromotions.put(base.getSimpleBase(), pendingPromotion);
@@ -409,12 +431,25 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
             pendingPromotions.clear();
             for (Base base : bases) {
                 try {
-                    prepareForNextPromotion(getDbLevel(base.getLevel()), base);
+                    migrateDb(base);
+                    prepareForNextPromotion(base, false);
                 } catch (Throwable throwable) {
                     log.error("", throwable);
                 }
             }
         }
+    }
+
+    @Deprecated
+    private void migrateDb(Base base) {
+        if (base.getBaseLevelStatus() != null) {
+            return;
+        }
+        String levelName = base.getLevel();
+        DbLevel dbLevel = getDbLevel(levelName);
+        BaseLevelStatus baseLevelStatus = new BaseLevelStatus();
+        baseLevelStatus.setCurrentLevel(dbLevel);
+        base.setBaseLevelStatus(baseLevelStatus);
     }
 
     private DbLevel getUnskippable(DbLevel dbLevel, Base base) {
