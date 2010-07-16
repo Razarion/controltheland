@@ -45,6 +45,7 @@ public class GameStartup implements Serializable {
     @Column(nullable = false)
     private StartupTask state;
     private long duration;
+    @Column(length = 50000)    
     private String failureText;
     @Column(nullable = false)
     private String type;
