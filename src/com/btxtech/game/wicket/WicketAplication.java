@@ -13,6 +13,7 @@
 
 package com.btxtech.game.wicket;
 
+import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.wicket.pages.cms.Home;
 import org.apache.commons.logging.Log;
@@ -22,6 +23,7 @@ import org.apache.wicket.Page;
 import org.apache.wicket.Request;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Response;
+import org.apache.wicket.protocol.http.PageExpiredException;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebRequestCycle;
@@ -34,6 +36,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Time: 9:51:34 PM
  */
 public class WicketAplication extends WebApplication {
+    @Autowired
+    private Session session;
     @Autowired
     private MgmtService mgmtService;
     private String configurationType;
@@ -76,7 +80,17 @@ public class WicketAplication extends WebApplication {
 
         @Override
         public final Page onRuntimeException(final Page cause, final RuntimeException e) {
-            log.error("", e);
+            if (e instanceof PageExpiredException) {
+                log.error("------------------PageExpiredException---------------------------------");
+                log.error(e.getMessage());
+                log.error("URL: " + getRequest().getURL());
+                log.error("Page: " + cause);
+                log.error("User Agent: " + session.getUserAgent());
+                log.error("User: " + session.getUser());
+                log.error("Session Id: " + session.getSessionId());
+            } else {
+                log.error("", e);
+            }
             return new Home();
         }
     }
