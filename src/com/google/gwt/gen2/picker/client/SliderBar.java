@@ -425,7 +425,7 @@ public class SliderBar extends FocusPanel implements ResizableWidget,
   }
 
   /**
-   * Listen for events that will move the knob.
+   * Listen for events that will moveDelta the knob.
    * 
    * @param event the event that occurred
    */

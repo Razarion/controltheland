@@ -107,7 +107,7 @@ class ImageBundleBuilder {
       final int colH = first.getHeight();
 
       for (int i = 1, n = rectsOrderedByHeight.size(); i < n; i++) {
-        // If this ImageRect has been positioned already, move on.
+        // If this ImageRect has been positioned already, moveDelta on.
         if (rectsOrderedByHeight.get(i).hasBeenPositioned()) {
           continue;
         }
@@ -145,7 +145,7 @@ class ImageBundleBuilder {
           arrangeColumn(rectsInColumn, rectsOrderedByWidth);
         }
 
-        // We're done with that column, so move the horizontal accumulator by
+        // We're done with that column, so moveDelta the horizontal accumulator by
         // the
         // width of the column we just finished.
         curX += colW;

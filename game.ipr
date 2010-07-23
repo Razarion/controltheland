@@ -389,6 +389,7 @@
     <dictionary name="beat">
       <words>
         <w>mgmt</w>
+        <w>online</w>
         <w>rect</w>
       </words>
     </dictionary>

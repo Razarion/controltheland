@@ -491,7 +491,7 @@ public class SyncBaseItem extends SyncItem {
         fireItemChanged(SyncItemListener.Change.HEALTH);
         if (health <= 0) {
             health = 0;
-            getServices().getItemService().killBaseSyncObject(this, actor, false);
+            getServices().getItemService().killSyncItem(this, actor, false);
         }
     }
 
@@ -540,10 +540,11 @@ public class SyncBaseItem extends SyncItem {
 
     public void setHealth(double health) {
         this.health = health;
+        fireItemChanged(SyncItemListener.Change.HEALTH);
     }
 
     public void setFullHealth() {
-        health = getBaseItemType().getHealth();
+        setHealth(getBaseItemType().getHealth());
     }
 
     public double getUpgradeProgress() {

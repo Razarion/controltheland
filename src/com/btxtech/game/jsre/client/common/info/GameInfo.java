@@ -11,10 +11,13 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.client.common;
+package com.btxtech.game.jsre.client.common.info;
 
+import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.client.common.OnlineBaseUpdate;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.Territory;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
@@ -28,75 +31,23 @@ import java.util.Collection;
  * Date: Jun 5, 2009
  * Time: 8:19:05 PM
  */
-public class GameInfo implements Serializable{
-    private SimpleBase base;
-    private double accountBalance;
-    private int xp;
-    private Collection<Integer> allowedItemTypes;
-    private int energyGenerating;
-    private int energyConsuming;
+public abstract class GameInfo implements Serializable{
     private TerrainSettings terrainSettings;
     private Collection<TerrainImagePosition> terrainImagePositions;
     private Collection<SurfaceRect> surfaceRects;
     private Collection<SurfaceImage> surfaceImages;
     private Collection<TerrainImage> terrainImages;
     private boolean registered;
-    private OnlineBaseUpdate onlineBaseUpdate;
+    @Deprecated
     private int tutorialTimeout;
     private int registerDialogDelay;
+    @Deprecated
     private int userActionCollectionTime;
-    private Level level;
     private Collection<Territory> territories;
+    @Deprecated
     private Level levelToRunMissionTarget;
+    private Collection<ItemType> itemTypes;
 
-
-    public SimpleBase getBase() {
-        return base;
-    }
-
-    public void setBase(SimpleBase base) {
-        this.base = base;
-    }
-
-    public double getAccountBalance() {
-        return accountBalance;
-    }
-
-    public void setAccountBalance(double accountBalance) {
-        this.accountBalance = accountBalance;
-    }
-
-    public Collection<Integer> getAllowedItemTypes() {
-        return allowedItemTypes;
-    }
-
-    public void setAllowedItemTypes(Collection<Integer> allowedItemTypes) {
-        this.allowedItemTypes = allowedItemTypes;
-    }
-
-    public int getXp() {
-        return xp;
-    }
-
-    public void setXp(int xp) {
-        this.xp = xp;
-    }
-
-    public int getEnergyGenerating() {
-        return energyGenerating;
-    }
-
-    public void setEnergyGenerating(int energyGenerating) {
-        this.energyGenerating = energyGenerating;
-    }
-
-    public int getEnergyConsuming() {
-        return energyConsuming;
-    }
-
-    public void setEnergyConsuming(int energyConsuming) {
-        this.energyConsuming = energyConsuming;
-    }
 
     public TerrainSettings getTerrainSettings() {
         return terrainSettings;
@@ -138,26 +89,12 @@ public class GameInfo implements Serializable{
         this.terrainImages = terrainImages;
     }
 
-    public boolean isRegistered() {
-        return registered;
-    }
-
-    public void setRegistered(boolean registered) {
-        this.registered = registered;
-    }
-
-    public OnlineBaseUpdate getOnlineBaseUpdate() {
-        return onlineBaseUpdate;
-    }
-
-    public void setOnlineBaseUpdate(OnlineBaseUpdate onlineBaseUpdate) {
-        this.onlineBaseUpdate = onlineBaseUpdate;
-    }
-
+    @Deprecated
     public int getTutorialTimeout() {
         return tutorialTimeout;
     }
 
+    @Deprecated
     public void setTutorialTimeout(int tutorialTimeout) {
         this.tutorialTimeout = tutorialTimeout;
     }
@@ -170,21 +107,34 @@ public class GameInfo implements Serializable{
         this.registerDialogDelay = registerDialogDelay;
     }
 
+    @Deprecated
     public int getUserActionCollectionTime() {
         return userActionCollectionTime;
     }
 
+    @Deprecated
     public void setUserActionCollectionTime(int userActionCollectionTime) {
         this.userActionCollectionTime = userActionCollectionTime;
     }
 
-    public Level getLevel() {
-        return level;
+    @Deprecated
+    public Level getLevelToRunMissionTarget() {
+        return levelToRunMissionTarget;
     }
 
-    public void setLevel(Level level) {
-        this.level = level;
+    @Deprecated
+    public void setLevelToRunMissionTarget(Level levelToRunMissionTarget) {
+        this.levelToRunMissionTarget = levelToRunMissionTarget;
     }
+
+    public boolean isRegistered() {
+        return registered;
+    }
+
+    public void setRegistered(boolean registered) {
+        this.registered = registered;
+    }
+
 
     public Collection<Territory> getTerritories() {
         return territories;
@@ -194,11 +144,15 @@ public class GameInfo implements Serializable{
         this.territories = territories;
     }
 
-    public Level getLevelToRunMissionTarget() {
-        return levelToRunMissionTarget;
+    public Collection<ItemType> getItemTypes() {
+        return itemTypes;
     }
 
-    public void setLevelToRunMissionTarget(Level levelToRunMissionTarget) {
-        this.levelToRunMissionTarget = levelToRunMissionTarget;
+    public void setItemTypes(Collection<ItemType> itemTypes) {
+        this.itemTypes = itemTypes;
     }
+
+    public abstract boolean showMissionTargetDialog();
+
+    public abstract boolean hasServerCommunication();
 }

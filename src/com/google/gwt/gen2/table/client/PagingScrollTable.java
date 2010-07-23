@@ -830,7 +830,7 @@ public class PagingScrollTable<RowType> extends AbstractScrollTable implements
   /**
    * Enable or disable cross page selection. When enabled, row value selections
    * are maintained across page loads. Selections are remembered by type (not by
-   * row index), so row values can move around and still maintain their
+   * row index), so row values can moveDelta around and still maintain their
    * selection.
    * 
    * @param enabled true to enable, false to disable

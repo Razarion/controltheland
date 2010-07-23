@@ -27,7 +27,7 @@ public interface HasMouseMoveHandlers {
   /**
    * Adds a {@link MouseMoveEvent} handler.
    * 
-   * @param handler the mouse move handler
+   * @param handler the mouse moveDelta handler
    * @return {@link HandlerRegistration} used to remove this handler
    */
   HandlerRegistration addMouseMoveHandler(MouseMoveHandler handler);

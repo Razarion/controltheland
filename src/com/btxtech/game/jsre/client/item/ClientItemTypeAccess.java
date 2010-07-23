@@ -15,7 +15,9 @@ package com.btxtech.game.jsre.client.item;
 
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccess;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * User: beat
@@ -24,7 +26,7 @@ import java.util.HashSet;
  */
 public class ClientItemTypeAccess implements ItemTypeAccess {
     private static final ClientItemTypeAccess INSTANCE = new ClientItemTypeAccess();
-    private HashSet<Integer> allowedItemTypes = new HashSet<Integer>();
+    private Set<Integer> allowedItemTypes = Collections.emptySet();
 
     /**
      * Singleton
@@ -47,7 +49,11 @@ public class ClientItemTypeAccess implements ItemTypeAccess {
     }
 
     public void setAllowedItemTypes(Collection<Integer> allowedItemTypes) {
-        this.allowedItemTypes = new HashSet<Integer>(allowedItemTypes);
+        if (allowedItemTypes != null) {
+            this.allowedItemTypes = new HashSet<Integer>(allowedItemTypes);
+        } else {
+            this.allowedItemTypes = Collections.emptySet();
+        }
     }
 
 }

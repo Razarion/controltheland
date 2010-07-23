@@ -269,7 +269,7 @@ public class SortableGrid extends SelectionGrid {
   /**
    * Move a row up (relative to the screen) one index to a lesser index.
    * 
-   * @param row the row index to move
+   * @param row the row index to moveDelta
    * @throws IndexOutOfBoundsException
    */
   public void moveRowDown(int row) {
@@ -279,7 +279,7 @@ public class SortableGrid extends SelectionGrid {
   /**
    * Move a row down (relative to the screen) one index to a greater index.
    * 
-   * @param row the row index to move
+   * @param row the row index to moveDelta
    * @throws IndexOutOfBoundsException
    */
   public void moveRowUp(int row) {
@@ -437,13 +437,13 @@ public class SortableGrid extends SelectionGrid {
   protected void swapRowsRaw(int row1, int row2) {
     Element tbody = getBodyElement();
     if (row1 == row2 + 1) {
-      // Just move row1 up one
+      // Just moveDelta row1 up one
       Element tr = getSelectionGridRowFormatter().getRawElement(row1);
       int index = OverrideDOM.getRowIndex(tr);
       DOM.removeChild(tbody, tr);
       DOM.insertChild(tbody, tr, index - 1);
     } else if (row2 == row1 + 1) {
-      // Just move row2 up one
+      // Just moveDelta row2 up one
       Element tr = getSelectionGridRowFormatter().getRawElement(row2);
       int index = OverrideDOM.getRowIndex(tr);
       DOM.removeChild(tbody, tr);

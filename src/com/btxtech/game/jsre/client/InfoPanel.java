@@ -13,7 +13,8 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.common.GameInfo;
+import com.btxtech.game.jsre.client.common.info.GameInfo;
+import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
@@ -158,12 +159,12 @@ public class InfoPanel extends TopMapPanel {
         return INSTANCE;
     }
 
-    public void setGameInfo(GameInfo gameInfo) {
-        name.setText(gameInfo.getBase().getName());
-        marker.getElement().getStyle().setBackgroundColor(gameInfo.getBase().getHtmlColor());
-        money.setText("$" + Integer.toString((int) gameInfo.getAccountBalance()));
-        xp.setText(Integer.toString(gameInfo.getXp()));
-        updateEnergy(gameInfo.getEnergyGenerating(), gameInfo.getEnergyConsuming());
+    public void setGameInfo(RealityInfo realityInfo) {
+        name.setText(realityInfo.getBase().getName());
+        marker.getElement().getStyle().setBackgroundColor(realityInfo.getBase().getHtmlColor());
+        money.setText("$" + Integer.toString((int) realityInfo.getAccountBalance()));
+        xp.setText(Integer.toString(realityInfo.getXp()));
+        updateEnergy(realityInfo.getEnergyGenerating(), realityInfo.getEnergyConsuming());
     }
 
     public void updateMoney() {

@@ -72,6 +72,7 @@ public class GameTracking extends Panel {
                 gameStartupListItem.add(new Label("time",WebCommon.formatDurationMilis(gameStartupListItem.getModelObject().getDuration())));
             }
         });
+        add(new Label("totalGameStartup", WebCommon.formatDurationMilis(gameTrackingInfo.getTotalGameStartup())));
     }
 
     private void userActions(List<UserActionCommandMissions> userActions) {

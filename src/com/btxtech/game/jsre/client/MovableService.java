@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.common.GameInfo;
+import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.NoConnectionException;
@@ -48,8 +48,6 @@ public interface MovableService extends RemoteService {
     Collection<Packet> getSyncInfo(SimpleBase simpleBase) throws NotYourBaseException, NoConnectionException;
 
     Collection<SyncItemInfo> getAllSyncInfo();
-
-    Collection<ItemType> getItemTypes();
 
     void sendUserActions(ArrayList<UserAction> userActions, ArrayList<MissionAction> missionActions);
 

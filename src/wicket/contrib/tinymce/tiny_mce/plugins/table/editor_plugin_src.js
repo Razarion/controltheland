@@ -466,7 +466,7 @@
 				});
 			};
 
-			// Get selected rows and move selection out of scope
+			// Get selected rows and moveDelta selection out of scope
 			rows = getSelectedRows();
 
 			// Delete all selected rows

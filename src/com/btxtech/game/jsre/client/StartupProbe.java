@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
+import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.client.utg.MissionTarget;
 import com.google.gwt.dom.client.ButtonElement;
@@ -124,7 +125,7 @@ public class StartupProbe {
     }
 
     public void taskSwitch(StartupTask finishedTask, StartupTask newTask) {
-        if(startScreen == null) {
+        if (startScreen == null) {
             return;
         }
         taskFinished(finishedTask);
@@ -132,7 +133,7 @@ public class StartupProbe {
     }
 
     public void newTask(StartupTask startupTask) {
-        if(startScreen == null) {
+        if (startScreen == null) {
             return;
         }
         Task task = tasks.get(startupTask);
@@ -144,7 +145,7 @@ public class StartupProbe {
     }
 
     public void taskFinished(StartupTask startupTask) {
-        if(startScreen == null) {
+        if (startScreen == null) {
             return;
         }
         Task task = tasks.get(startupTask);
@@ -158,7 +159,7 @@ public class StartupProbe {
     }
 
     public void taskFailed(StartupTask startupTask, String text) {
-        if(startScreen == null) {
+        if (startScreen == null) {
             return;
         }
         Task task = tasks.remove(startupTask);
@@ -189,8 +190,11 @@ public class StartupProbe {
     }
 
     private void startGame() {
-        MissionTarget.getInstance().showMissionTargetDialog();
+        if (Connection.getInstance().getGameInfo().showMissionTargetDialog()) {
+            MissionTarget.getInstance().showMissionTargetDialog();
+        }
         RegisterDialog.showDialogRepeating();
+        Simulation.getInstance().start();
     }
 
     private void enableCloseButton() {

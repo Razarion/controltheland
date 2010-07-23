@@ -26,7 +26,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemContainer;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.widgetideas.graphics.client.GWTCanvas;
 import java.util.Collection;
 
 /**
@@ -77,6 +76,7 @@ public class CursorHandler implements TerrainMouseMoveListener {
 
     public void onSelectionCleared() {
         cursorState = null;
+        setTerrainCursor(null, false);
     }
 
     @Override
@@ -151,8 +151,7 @@ public class CursorHandler implements TerrainMouseMoveListener {
     }
 
     private void setTerrainCursor(CursorType cursorType, boolean allowed) {
-        GWTCanvas terrain = TerrainView.getInstance().getCanvas();
-        setCursor(terrain, cursorType, allowed);
+        setCursor(MapWindow.getAbsolutePanel(), cursorType, allowed);
     }
 
     private void setCursor(Widget widget, CursorType cursorType, boolean allowed) {

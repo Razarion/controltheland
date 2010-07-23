@@ -39,7 +39,7 @@ public interface ItemService {
 
     List<Id> getBaseItemIds(List<SyncBaseItem> baseItems);
 
-    void killBaseSyncObject(SyncItem syncItem, SyncBaseItem actor, boolean force);
+    void killSyncItem(SyncItem killedItem, SyncBaseItem actor, boolean force);
 
     SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws NoSuchItemTypeException;
 

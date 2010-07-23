@@ -36,19 +36,27 @@ public class Constants {
     public static final String ITEM_IMAGE_ID = "id";
     public static final String ITEM_IMAGE_INDEX = "ix";
 
+    // Tutorial
+    //public static final String TUTORIAL_IMAGE_URL = "/spring/tutorial";
+    public static final String TUTORIAL_RESOURCE_URL = "/spring/tutorial";
+    public static final String TUTORIAL_RESOURCE_ID = "id";
+
+
     // zIndex
     public static final int Z_INDEX_STARTUP_SCREEN = 100; // Fix coded in Game.html
-    public static final int Z_INDEX_DIALOG = 13;
-    public static final int Z_INDEX_GROUP_SELECTION_FRAME = 12;
-    public static final int Z_INDEX_SPEECH_BUBBLE = 11;
-    public static final int Z_INDEX_PLACEABLE_PREVIEW = 10;
-    public static final int Z_INDEX_TOP_MAP_PANEL = 9;
-    public static final int Z_INDEX_EXPLOSION = 8;
-    public static final int Z_INDEX_MUZZLE_FLASH = 7;
-    public static final int Z_INDEX_MACHINE_GUN_ATTACK = 6;
-    public static final int Z_INDEX_MOVABLE = 5;
-    public static final int Z_INDEX_MONEY = 4;
-    public static final int Z_INDEX_BUILDING = 3;
+    public static final int Z_INDEX_DIALOG = 15;
+    public static final int Z_INDEX_GROUP_SELECTION_FRAME = 14;
+    public static final int Z_INDEX_SPEECH_BUBBLE = 13;
+    public static final int Z_INDEX_PLACEABLE_PREVIEW = 12;
+    public static final int Z_INDEX_TOP_MAP_PANEL = 11;
+    public static final int Z_INDEX_EXPLOSION = 10;
+    public static final int Z_INDEX_MUZZLE_FLASH = 9;
+    public static final int Z_INDEX_MACHINE_GUN_ATTACK = 8;
+    public static final int Z_INDEX_ABOVE_MOVABLE = 7;
+    public static final int Z_INDEX_MOVABLE = 6;
+    public static final int Z_INDEX_MONEY = 5;
+    public static final int Z_INDEX_BUILDING = 4;
+    public static final int Z_INDEX_BELOW_BUILDING = 3;
     public static final int Z_INDEX_TERRAIN = 2;
     public static final int Z_INDEX_HIDDEN = 1;
 

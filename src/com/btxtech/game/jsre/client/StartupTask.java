@@ -23,7 +23,6 @@ public enum StartupTask {
     INIT_GUI("Start engine"),
     DOWNLOAD_GAME_INFO("Load game information"),
     INIT_GAME("Initialize engine"),
-    LOAD_UNIT_INFOS("Load unit types"),
     LOAD_UNITS("Load units"),
     START_ACTION_HANDLER("Initialize units"),
     LOAD_MAP_IMAGES("Load map");

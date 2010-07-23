@@ -627,7 +627,7 @@ public class FastTree extends Panel implements HasWidgets, HasFocus,
   /**
    * Moves the selection bar around the given {@link FastTreeItem}.
    * 
-   * @param item the item to move selection bar to
+   * @param item the item to moveDelta selection bar to
    */
   protected void moveSelectionBar(FastTreeItem item) {
     if (item == null || item.isShowing() == false) {
@@ -673,7 +673,7 @@ public class FastTree extends Panel implements HasWidgets, HasFocus,
       if (moveFocus) {
         moveFocus(curSelection);
       } else {
-        // Move highlight even if we do no not need to move focus.
+        // Move highlight even if we do no not need to moveDelta focus.
         moveSelectionBar(curSelection);
       }
 

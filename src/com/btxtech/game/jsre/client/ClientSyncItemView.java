@@ -24,6 +24,8 @@ import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
@@ -49,7 +51,14 @@ public abstract class ClientSyncItemView extends AbsolutePanel implements MouseD
         sinkEvents(Event.ONMOUSEMOVE);
         addDomHandler(this, MouseDownEvent.getType());
         addDomHandler(this, MouseOverEvent.getType());
+        addDomHandler(new MouseUpHandler() {
+            @Override
+            public void onMouseUp(MouseUpEvent event) {
+                GwtCommon.preventDefault(event);
+            }
+        }, MouseUpEvent.getType());
         MapWindow.getAbsolutePanel().add(this, 0, 0);
+        setPosition();
         syncItem.addSyncItemListener(this);
     }
 
@@ -121,6 +130,7 @@ public abstract class ClientSyncItemView extends AbsolutePanel implements MouseD
 
     public void onMouseOver(MouseOverEvent event) {
         CursorHandler.getInstance().setItemCursor(this, cursorItemState);
+        GwtCommon.preventDefault(event);
     }
 
     public void setCursorItemState(CursorItemState cursorItemState) {

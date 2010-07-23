@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
+import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.client.utg.ClientUserGuidance;
@@ -92,6 +93,7 @@ public class ActionHandler implements CommonActionService {
                     if (!activeItem.tick(factor)) {
                         ClientUserGuidance.getInstance().onSyncItemDeactivated(activeItem);
                         PlayerSimulation.getInstance().onSyncItemDeactivated(activeItem);
+                        Simulation.getInstance().onSyncItemDeactivated(activeItem);
                         iterator.remove();
                     }
                 } catch (ItemDoesNotExistException ife) {
@@ -141,7 +143,7 @@ public class ActionHandler implements CommonActionService {
                 }
                 move(clientSyncItem.getSyncBaseItem(), pos);
             } else {
-                GwtCommon.sendLogToServer("ActionHandler.move(): can not cast to MovableSyncItem:" + clientSyncItem);
+                GwtCommon.sendLogToServer("ActionHandler.moveDelta(): can not cast to MovableSyncItem:" + clientSyncItem);
             }
         }
         Connection.getInstance().sendCommandQueue();
@@ -393,7 +395,7 @@ public class ActionHandler implements CommonActionService {
         try {
             container.executeCommand(unloadContainerCommand);
             executeCommand(container, unloadContainerCommand);
-            Connection.getInstance().sendCommandQueue();            
+            Connection.getInstance().sendCommandQueue();
         } catch (Exception e) {
             GwtCommon.handleException(e);
         }
@@ -415,6 +417,7 @@ public class ActionHandler implements CommonActionService {
     private void executeCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
         Connection.getInstance().addCommandToQueue(baseCommand);
         ClientUserGuidance.getInstance().onExecuteCommand(syncItem, baseCommand);
+        Simulation.getInstance().onSendCommand(syncItem, baseCommand);
         addActiveItem(syncItem);
     }
 
@@ -424,5 +427,10 @@ public class ActionHandler implements CommonActionService {
         } else {
             return 1.0;
         }
+    }
+
+    public void clear() {
+        tmpAddActiveItems.clear();
+        tmpRemoveActiveItems.addAll(activeItems);
     }
 }

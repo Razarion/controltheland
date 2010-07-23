@@ -42,7 +42,7 @@ import java.util.NoSuchElementException;
  * The pre cache and post cache refers to the number of rows to request in
  * addition to the actual request. Pre cache refers to rows before the request,
  * and post cache refers to rows after the request. For example, in applications
- * where you expect the user to move forward quickly, you would want a large
+ * where you expect the user to moveDelta forward quickly, you would want a large
  * post cache.
  * </p>
  * <p>

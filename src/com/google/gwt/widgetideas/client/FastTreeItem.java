@@ -38,7 +38,7 @@ import java.util.List;
 public class FastTreeItem extends UIObject implements HasHTML, HasFastTreeItems {
   private static final String STYLENAME_SELECTED = "selected";
 
-  // TODO(ECC) change states to enums and move style names to FastTree where
+  // TODO(ECC) change states to enums and moveDelta style names to FastTree where
   // they below.
   private static final int TREE_NODE_LEAF = 1;
   private static final int TREE_NODE_INTERIOR_NEVER_OPENED = 2;

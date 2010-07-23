@@ -190,4 +190,12 @@ public class GameTrackingInfo implements Serializable {
     public long getDuration() {
         return end.getTime() - start.getTime();
     }
+
+    public long getTotalGameStartup() {
+        long totalGameStartup = 0;
+        for (GameStartup gameStartup : gameStartups) {
+            totalGameStartup += gameStartup.getDuration();
+        }
+        return totalGameStartup;
+    }
 }
