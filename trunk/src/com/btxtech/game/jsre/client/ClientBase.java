@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client;
 
+import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseService;
@@ -65,6 +66,7 @@ public class ClientBase implements BaseService {
         if (this.simpleBase.equals(simpleBase)) {
             accountBalance += price;
             InfoPanel.getInstance().updateMoney();
+            Simulation.getInstance().onDeposit();
             if (depositResourceListener != null) {
                 depositResourceListener.onDeposit();
             }

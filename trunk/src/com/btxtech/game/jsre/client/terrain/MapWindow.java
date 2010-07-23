@@ -19,10 +19,14 @@ import com.btxtech.game.jsre.client.InfoPanel;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.client.utg.SpeechBubble;
 import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
@@ -38,12 +42,13 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
     public static final int AUTO_SCROLL_DETECTION_WIDTH = 40;
     public static final int SCROLL_SPEED = 50;
     public static final int SCROLL_DISTANCE = 50;
-    public static final int SCROLL_DISTANCE_KEY = 205; // 5 is to avoid the effect that it seem not to move on key-down-repeat
+    public static final int SCROLL_DISTANCE_KEY = 205; // 5 is to avoid the effect that it seem not to moveDelta on key-down-repeat
     private static final MapWindow INSTANCE = new MapWindow();
     private ExtendedAbsolutePanel mapWindow;
     private ScrollDirection scrollDirectionX;
     private ScrollDirection scrollDirectionY;
     private TerrainMouseMoveListener terrainMouseMoveListener;
+    private boolean scrollingAllowed = true;
 
     private enum ScrollDirection {
         NORTH,
@@ -60,12 +65,20 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
     };
 
     class ExtendedAbsolutePanel extends AbsolutePanel {
-        public HandlerRegistration addMouseMoveHandler(MouseMoveHandler handler) {
-            return addDomHandler(handler, MouseMoveEvent.getType());
+        public HandlerRegistration addMouseDownHandler(MouseDownHandler handler) {
+            return addDomHandler(handler, MouseDownEvent.getType());
         }
 
         public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
             return addDomHandler(handler, MouseOutEvent.getType());
+        }
+
+        public HandlerRegistration addMouseUpHandler(MouseUpHandler handler) {
+            return addDomHandler(handler, MouseUpEvent.getType());
+        }
+
+        public HandlerRegistration addMouseMoveHandler(MouseMoveHandler handler) {
+            return addDomHandler(handler, MouseMoveEvent.getType());
         }
     }
 
@@ -85,7 +98,7 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
             scrollY = -SCROLL_DISTANCE;
         }
 
-        TerrainView.getInstance().move(scrollX, scrollY);
+        TerrainView.getInstance().moveDelta(scrollX, scrollY);
     }
 
     /**
@@ -93,29 +106,43 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
      */
     private MapWindow() {
         mapWindow = new ExtendedAbsolutePanel();
-        mapWindow.setSize("100%", "100%");
+        mapWindow.setHeight("100%");
         mapWindow.addMouseMoveHandler(this);
+        mapWindow.addMouseDownHandler(new MouseDownHandler() {
+            @Override
+            public void onMouseDown(MouseDownEvent event) {
+                TerrainView.getInstance().onMouseDown(event);
+            }
+        });
+        mapWindow.addMouseUpHandler(new MouseUpHandler() {
+            @Override
+            public void onMouseUp(MouseUpEvent event) {
+                TerrainView.getInstance().onMouseUp(event);
+            }
+        });
+
+
         // TODO mapWindow.addMouseOutHandler(this);
         Event.addNativePreviewHandler(new Event.NativePreviewHandler() {
             @Override
             public void onPreviewNativeEvent(Event.NativePreviewEvent event) {
                 //System.out.println("***: " + event.getTypeInt());
-                if (event.getTypeInt() == Event.ONKEYDOWN) {
+                if (event.getTypeInt() == Event.ONKEYDOWN && scrollingAllowed) {
                     switch (event.getNativeEvent().getKeyCode()) {
                         case KeyCodes.KEY_LEFT: {
-                            TerrainView.getInstance().move(-SCROLL_DISTANCE_KEY, 0);
+                            TerrainView.getInstance().moveDelta(-SCROLL_DISTANCE_KEY, 0);
                             break;
                         }
                         case KeyCodes.KEY_RIGHT: {
-                            TerrainView.getInstance().move(SCROLL_DISTANCE_KEY, 0);
+                            TerrainView.getInstance().moveDelta(SCROLL_DISTANCE_KEY, 0);
                             break;
                         }
                         case KeyCodes.KEY_UP: {
-                            TerrainView.getInstance().move(0, -SCROLL_DISTANCE_KEY);
+                            TerrainView.getInstance().moveDelta(0, -SCROLL_DISTANCE_KEY);
                             break;
                         }
                         case KeyCodes.KEY_DOWN: {
-                            TerrainView.getInstance().move(0, SCROLL_DISTANCE_KEY);
+                            TerrainView.getInstance().moveDelta(0, SCROLL_DISTANCE_KEY);
                             break;
                         }
                     }
@@ -145,7 +172,7 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
         } else if (y > height - AUTO_SCROLL_DETECTION_WIDTH) {
             tmpScrollDirectionY = ScrollDirection.SOUTH;
         }
-
+        scrollingAllowed
         executeScrolling(tmpScrollDirectionX, tmpScrollDirectionY);
         */
         if (Game.isDebug()) {
@@ -214,5 +241,10 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
         }
         ClientUserTracker.getInstance().scroll(left, top, width, height, deltaLeft, deltaTop);
     }
+
+    public void setScrollingAllowed(boolean scrollingAllowed) {
+        this.scrollingAllowed = scrollingAllowed;
+    }
+
 
 }

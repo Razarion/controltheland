@@ -41,7 +41,6 @@ import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.resource.ResourceService;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import com.btxtech.game.services.utg.UserTrackingService;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -177,43 +176,43 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public void killBaseSyncObject(SyncItem syncItem, SyncBaseItem actor, boolean force) {
+    public void killSyncItem(SyncItem killedItem, SyncBaseItem actor, boolean force) {
         if (force) {
-            if (syncItem instanceof SyncBaseItem) {
-                ((SyncBaseItem) syncItem).setHealth(0);
-            } else if (syncItem instanceof SyncResourceItem) {
-                ((SyncResourceItem) syncItem).setAmount(0);
+            if (killedItem instanceof SyncBaseItem) {
+                ((SyncBaseItem) killedItem).setHealth(0);
+            } else if (killedItem instanceof SyncResourceItem) {
+                ((SyncResourceItem) killedItem).setAmount(0);
             }
         }
 
-        if (syncItem.isAlive()) {
-            throw new IllegalStateException("SyncItem is still alive: " + syncItem);
+        if (killedItem.isAlive()) {
+            throw new IllegalStateException("SyncItem is still alive: " + killedItem);
         }
 
         synchronized (items) {
-            if (items.remove(syncItem.getId()) == null) {
-                throw new IllegalStateException("Id does not exist: " + syncItem);
+            if (items.remove(killedItem.getId()) == null) {
+                throw new IllegalStateException("Id does not exist: " + killedItem);
             }
         }
-        log.info("DELETED: " + syncItem);
-        connectionService.sendSyncInfo(syncItem);
+        log.info("DELETED: " + killedItem);
+        connectionService.sendSyncInfo(killedItem);
 
-        if (syncItem instanceof SyncBaseItem) {
-            actionService.removeGuardingBaseItem((SyncBaseItem) syncItem);
+        if (killedItem instanceof SyncBaseItem) {
+            actionService.removeGuardingBaseItem((SyncBaseItem) killedItem);
             if (actor != null) {
-                historyService.addItemDestroyedEntry(actor, (SyncBaseItem) syncItem);
+                historyService.addItemDestroyedEntry(actor, (SyncBaseItem) killedItem);
                 Base actorBase = baseService.getBase(actor);
                 actorBase.increaseKills();
-                serverMarketService.increaseXp(actorBase, (SyncBaseItem) syncItem);
+                serverMarketService.increaseXp(actorBase, (SyncBaseItem) killedItem);
                 userGuidanceService.onItemKilled(actorBase);
             }
-            baseService.itemDeleted((SyncBaseItem) syncItem, actor);
-            serverEnergyService.onBaseItemKilled((SyncBaseItem) syncItem);
-            killContainedItems((SyncBaseItem) syncItem, actor);
+            baseService.itemDeleted((SyncBaseItem) killedItem, actor);
+            serverEnergyService.onBaseItemKilled((SyncBaseItem) killedItem);
+            killContainedItems((SyncBaseItem) killedItem, actor);
         }
 
-        if (syncItem instanceof SyncResourceItem) {
-            resourceService.resourceItemDeleted((SyncResourceItem) syncItem);
+        if (killedItem instanceof SyncResourceItem) {
+            resourceService.resourceItemDeleted((SyncResourceItem) killedItem);
         }
     }
 
@@ -222,7 +221,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             return;
         }
         for (SyncBaseItem baseItem : syncBaseItem.getSyncItemContainer().getContainedItems()) {
-            killBaseSyncObject(baseItem, actor, true);
+            killSyncItem(baseItem, actor, true);
         }
     }
 

@@ -33,7 +33,7 @@ import java.util.Collection;
 public class SyncFactory extends SyncBaseAbility {
     private FactoryType factoryType;
     private BaseItemType toBeBuiltType;
-    private int buildupProgress;
+    private double buildupProgress;
     private int createdChildCount;
     private Index rallyPoint;
 
@@ -52,7 +52,7 @@ public class SyncFactory extends SyncBaseAbility {
             return false;
         }
 
-        buildupProgress += (factoryType.getProgress() * factor);
+        buildupProgress += ((double)factoryType.getProgress() * factor);
         if (buildupProgress >= toBeBuiltType.getHealth()) {
             SyncBaseItem item = (SyncBaseItem) getServices().getItemService().createSyncObject(toBeBuiltType, rallyPoint, getSyncBaseItem(), getSyncBaseItem().getBase(), createdChildCount);
             item.setFullHealth();
@@ -67,7 +67,7 @@ public class SyncFactory extends SyncBaseAbility {
         return true;
     }
 
-    public int getBuildupProgress() {
+    public double getBuildupProgress() {
         return buildupProgress;
     }
 
@@ -133,7 +133,7 @@ public class SyncFactory extends SyncBaseAbility {
         this.toBeBuiltType = toBeBuiltType;
     }
 
-    public void setBuildupProgress(int buildupProgress) {
+    public void setBuildupProgress(double buildupProgress) {
         this.buildupProgress = buildupProgress;
     }
 

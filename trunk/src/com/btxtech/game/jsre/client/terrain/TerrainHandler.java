@@ -84,6 +84,10 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
                 urls.add(ImageHandler.getTerrainImageUrl(terrainImagePosition.getImageId()));
             }
         }
+        if(urls.isEmpty()) {
+            StartupProbe.getInstance().taskFinished(StartupTask.LOAD_MAP_IMAGES);
+            return;
+        }
         ImageLoader.loadImages(urls.toArray(new String[urls.size()]), new ImageLoader.CallBack() {
 
             @Override

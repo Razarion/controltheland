@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainS
 import com.btxtech.game.jsre.common.gameengine.services.territory.AbstractTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * User: beat
@@ -27,7 +28,7 @@ import java.util.Collection;
  * Time: 13:37:42
  */
 public abstract class AbstractTerritoryServiceImpl implements AbstractTerritoryService {
-    private Collection<Territory> territories;
+    private Collection<Territory> territories = Collections.emptyList();
 
     @Override
     public Collection<Territory> getTerritories() {

@@ -56,7 +56,6 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Accessibility;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.WidgetAdaptorImpl;
@@ -562,7 +561,7 @@ public class FastTree extends Panel implements HasClickHandlers,
   /**
    * Moves the selection bar around the given {@link FastTreeItem}.
    * 
-   * @param item the item to move selection bar to
+   * @param item the item to moveDelta selection bar to
    * @deprecated as of April 16, 2009. use
    *             {@link #onSelection(FastTreeItem, boolean, boolean)} instead
    */
@@ -625,7 +624,7 @@ public class FastTree extends Panel implements HasClickHandlers,
    * 
    * @param item the selected item
    * @param fireEvents true to fire events to handles
-   * @param moveFocus true to move focus to the Tree
+   * @param moveFocus true to moveDelta focus to the Tree
    */
   protected void onSelection(FastTreeItem item, boolean fireEvents,
       boolean moveFocus) {
@@ -862,7 +861,7 @@ public class FastTree extends Panel implements HasClickHandlers,
   /**
    * Moves the selection bar around the given {@link FastTreeItem}.
    * 
-   * @param item the item to move selection bar to
+   * @param item the item to moveDelta selection bar to
    * @param target the element to target
    */
   private void moveFocusable(FastTreeItem item, Element target) {
@@ -891,7 +890,7 @@ public class FastTree extends Panel implements HasClickHandlers,
    * 
    * @param item the selected item
    * @param fireEvents true to fire events to handles
-   * @param moveFocus true to move focus to the Tree
+   * @param moveFocus true to moveDelta focus to the Tree
    * @param targetElem the element that was actually targeted
    */
   private void onSelection(FastTreeItem item, boolean fireEvents,
@@ -902,7 +901,7 @@ public class FastTree extends Panel implements HasClickHandlers,
       return;
     }
 
-    // Don't fire events if the selection hasn't changed, but do move the
+    // Don't fire events if the selection hasn't changed, but do moveDelta the
     // focusable element to the new target.
     if (curSelection == item) {
       moveFocusable(curSelection, targetElem);
@@ -926,7 +925,7 @@ public class FastTree extends Panel implements HasClickHandlers,
       if (moveFocus) {
         moveFocus(curSelection, targetElem);
       } else {
-        // Move highlight even if we do no not need to move focus.
+        // Move highlight even if we do no not need to moveDelta focus.
         moveFocusable(curSelection, targetElem);
       }
 

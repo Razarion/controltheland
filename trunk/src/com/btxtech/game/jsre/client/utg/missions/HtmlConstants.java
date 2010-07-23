@@ -23,14 +23,14 @@ public class HtmlConstants {
     public static final long AUTO_TASK_CHANGE = 6000;
 
     public static final String MOVE_HTML1 = "<h3>This is your construction vehicle</h3>Click the left mouse button to select it.";
-    public static final String MOVE_HTML2 = "If you see the move cursor you can move your vehicle around by a left mouse button click on the terrain. Click here to move the construction vehicle to here.";
+    public static final String MOVE_HTML2 = "If you see the moveDelta cursor you can moveDelta your vehicle around by a left mouse button click on the terrain. Click here to moveDelta the construction vehicle to here.";
     public static final String MOVE_HTML3 = "<h3>Very Good!</h3>";
 
     public static final String BUILD_HTML1 = "Click on your contruction vehicle with the left mouse button.";
     public static final String BUILD_HTML2 = "Now its time to buildup your base. The first step is to build a factory. A factory allows you to build other vehicles. Drag the factory to the terrain.";
     public static final String BUILD_HTML3 = "<h3>Congratulations!</h3>";
 
-    public static final String SCROLL_HTML1 = "To <b>scroll</b> move the cursor to here.";
+    public static final String SCROLL_HTML1 = "To <b>scroll</b> moveDelta the cursor to here.";
     public static final String SCROLL_HTML2 = "If you get lost, just press the <b>Scroll Home</b> button.";
 
     public static final String CREATE_JEEP_HTML1 = "Click on your factory whit the left mouse button.";

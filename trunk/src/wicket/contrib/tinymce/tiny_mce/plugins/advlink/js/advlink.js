@@ -411,7 +411,7 @@ function insertAction() {
 	} else
 		setAllAttribs(elm);
 
-	// Don't move caret if selection was image
+	// Don't moveDelta caret if selection was image
 	if (elm.childNodes.length != 1 || elm.firstChild.nodeName != 'IMG') {
 		inst.focus();
 		inst.selection.select(elm);

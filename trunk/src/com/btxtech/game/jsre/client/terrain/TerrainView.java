@@ -66,9 +66,9 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
      * Singleton
      */
     private TerrainView() {
-        canvas.addMouseDownHandler(this);
+        //canvas.addMouseDownHandler(this);
         canvas.addMouseOutHandler(this);
-        canvas.addMouseUpHandler(this);
+        //canvas.addMouseUpHandler(this);
         canvas.sinkEvents(Event.ONMOUSEMOVE);
     }
 
@@ -169,7 +169,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
     }
 
 
-    public void move(int left, int top) {
+    public void moveDelta(int left, int top) {
         if (terrainHandler.getTerrainSettings() == null) {
             return;
         }
@@ -210,7 +210,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         }
 
         if (orgViewOriginLeft == viewOriginLeft && orgViewOriginTop == viewOriginTop) {
-            // No move
+            // No moveDelta
             return;
         }
 
@@ -245,13 +245,19 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
     public void moveToMiddle(ClientSyncItemView clientSyncItemView) {
         int left = clientSyncItemView.getSyncItem().getPosition().getX() - parent.getOffsetWidth() / 2 - viewOriginLeft;
         int top = clientSyncItemView.getSyncItem().getPosition().getY() - parent.getOffsetHeight() / 2 - viewOriginTop;
-        move(left, top);
+        moveDelta(left, top);
     }
 
     public void moveToMiddle(Index startPoint) {
         int left = startPoint.getX() - parent.getOffsetWidth() / 2 - viewOriginLeft;
         int top = startPoint.getY() - parent.getOffsetHeight() / 2 - viewOriginTop;
-        move(left, top);
+        moveDelta(left, top);
+    }
+
+    public void moveAbsolute(Index topLeftCorner) {
+        int left = topLeftCorner.getX() - viewOriginLeft;
+        int top = topLeftCorner.getY() - viewOriginTop;
+        moveDelta(left, top);
     }
 
     public GWTCanvas getCanvas() {
@@ -261,7 +267,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
     public void moveToHome() {
         ClientSyncBaseItemView scrollTo = null;
         for (ClientSyncBaseItemView itemView : ItemContainer.getInstance().getOwnItems()) {
-            if(itemView.getSyncBaseItem().isContainedIn()) {
+            if (itemView.getSyncBaseItem().isContainedIn()) {
                 continue;
             }
 

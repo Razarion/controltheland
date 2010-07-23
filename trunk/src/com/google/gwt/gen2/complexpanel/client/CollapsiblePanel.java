@@ -444,7 +444,7 @@ public class CollapsiblePanel extends Composite implements HasWidgets {
 
   /**
    * Uses the given toggle button to control whether the panel is collapsed or
-   * not. Note, does not move the control toggle, so it is up to the user to
+   * not. Note, does not moveDelta the control toggle, so it is up to the user to
    * place the toggle in the desired location.
    */
   public void hookupControlToggle(ToggleButton button) {

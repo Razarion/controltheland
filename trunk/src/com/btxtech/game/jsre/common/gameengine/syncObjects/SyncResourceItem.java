@@ -42,7 +42,7 @@ public class SyncResourceItem extends SyncItem {
         } else {
             amount = this.amount;
             this.amount = 0;
-            getServices().getItemService().killBaseSyncObject(this, null, false);
+            getServices().getItemService().killSyncItem(this, null, false);
             return amount;
         }
     }

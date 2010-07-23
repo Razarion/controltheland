@@ -375,7 +375,7 @@
 				ph = new Element('mcePlaceHolder');
 			};
 
-			// Handle mouse move/drag
+			// Handle mouse moveDelta/drag
 			mm = Event.add(d, 'mousemove', function(e) {
 				var x, y, v;
 

@@ -18,7 +18,7 @@ package com.google.gwt.gen2.event.dom.client;
 import com.google.gwt.user.client.Event;
 
 /**
- * Represents a native mouse move event.
+ * Represents a native mouse moveDelta event.
  * 
  * @deprecated use the com.google.gwt.event.dom.client classes instead
  */
@@ -26,7 +26,7 @@ import com.google.gwt.user.client.Event;
 public class MouseMoveEvent extends MouseEvent {
 
   /**
-   * Event type for mouse move events. Represents the meta-data associated with
+   * Event type for mouse moveDelta events. Represents the meta-data associated with
    * this event.
    */
   public static final Type<MouseMoveEvent, MouseMoveHandler> TYPE = new Type<MouseMoveEvent, MouseMoveHandler>(

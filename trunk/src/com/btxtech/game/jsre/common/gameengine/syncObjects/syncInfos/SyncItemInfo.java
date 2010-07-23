@@ -36,7 +36,7 @@ public class SyncItemInfo extends Packet {
     private Index toBeBuildPosition;
     private Integer toBeBuiltTypeId;
     private int createdChildCount;
-    private int buildupProgress;
+    private Double buildupProgress;
     private Id target;
     private Double health;
     private Boolean isBuild;
@@ -113,7 +113,7 @@ public class SyncItemInfo extends Packet {
         return createdChildCount;
     }
 
-    public int getBuildupProgress() {
+    public Double getBuildupProgress() {
         return buildupProgress;
     }
 
@@ -157,7 +157,7 @@ public class SyncItemInfo extends Packet {
         this.createdChildCount = createdChildCount;
     }
 
-    public void setBuildupProgress(int buildupProgress) {
+    public void setBuildupProgress(Double buildupProgress) {
         this.buildupProgress = buildupProgress;
     }
 

@@ -16,20 +16,41 @@ package com.btxtech.game.services.gwt;
 
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.StartupTask;
-import com.btxtech.game.jsre.client.common.GameInfo;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.UserMessage;
+import com.btxtech.game.jsre.client.common.info.GameInfo;
+import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.tutorial.GraphicHintConfig;
+import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
+import com.btxtech.game.jsre.common.tutorial.Preparation;
+import com.btxtech.game.jsre.common.tutorial.StepConfig;
+import com.btxtech.game.jsre.common.tutorial.TaskConfig;
+import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
+import com.btxtech.game.jsre.common.tutorial.condition.HarvestConditionConfig;
+import com.btxtech.game.jsre.common.tutorial.condition.ItemBuiltConditionConfig;
+import com.btxtech.game.jsre.common.tutorial.condition.ItemsKilledConditionConfig;
+import com.btxtech.game.jsre.common.tutorial.condition.ItemsPositionReachedConditionConfig;
+import com.btxtech.game.jsre.common.tutorial.condition.SelectionConditionConfig;
+import com.btxtech.game.jsre.common.tutorial.condition.SendCommandConditionConfig;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.ConnectionService;
@@ -44,6 +65,7 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -116,16 +138,6 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public Collection<ItemType> getItemTypes() {
-        try {
-            return itemService.getItemTypes();
-        } catch (Throwable t) {
-            log.error("", t);
-            return null;
-        }
-    }
-
-    @Override
     public void startUpTaskFinished(StartupTask state, Date clientTimeStamp, long duration) {
         try {
             userTrackingService.startUpTaskFinished(state, clientTimeStamp, duration);
@@ -155,28 +167,32 @@ public class MovableServiceImpl implements MovableService {
     @Override
     public GameInfo getGameInfo() {
         try {
-            GameInfo gameInfo = new GameInfo();
-            gameInfo.setBase(baseService.getBase().getSimpleBase());
-            gameInfo.setRegistered(baseService.getBase().getUser() != null);
-            gameInfo.setAccountBalance(baseService.getBase().getAccountBalance());
-            gameInfo.setAllowedItemTypes(serverMarketService.getAllowedItemTypes());
-            gameInfo.setXp(serverMarketService.getXp());
-            gameInfo.setEnergyConsuming(serverEnergyService.getConsuming());
-            gameInfo.setEnergyGenerating(serverEnergyService.getGenerating());
-            gameInfo.setTerrainSettings(terrainService.getTerrainSettings());
-            gameInfo.setTerrainImagePositions(terrainService.getTerrainImagePositions());
-            gameInfo.setTerrainImages(terrainService.getTerrainImages());
-            gameInfo.setSurfaceRects(terrainService.getSurfaceRects());
-            gameInfo.setSurfaceImages(terrainService.getSurfaceImages());
-            gameInfo.setOnlineBaseUpdate(connectionService.getOnlineBaseUpdate());
+            SimulationInfo simulationInfo = new SimulationInfo();
+            // Common
+            simulationInfo.setRegistered(baseService.getBase().getUser() != null);
+            simulationInfo.setTerrainSettings(new TerrainSettings(20, 10, 100, 100)); // TODO
+            Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>(); // TODO
+            simulationInfo.setTerrainImagePositions(terrainImagePositions);
+            simulationInfo.setTerrainImages(terrainService.getTerrainImages());
+            Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>(); // TODO
+            surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 2000, 1000), 1));
+            simulationInfo.setSurfaceRects(surfaceRects);
+            simulationInfo.setSurfaceImages(terrainService.getSurfaceImages());
+            simulationInfo.setItemTypes(itemService.getItemTypes());
             StartupData startupData = mgmtService.getStartupData();
-            gameInfo.setTutorialTimeout(startupData.getTutorialTimeout());
-            gameInfo.setRegisterDialogDelay(startupData.getRegisterDialogDelay());
-            gameInfo.setUserActionCollectionTime(startupData.getUserActionCollectionTime());
-            gameInfo.setLevel(userGuidanceService.getLevel4Base());
-            gameInfo.setTerritories(territoryService.getTerritories());
-            gameInfo.setLevelToRunMissionTarget(userGuidanceService.getLevelToRunMissionTarget());
-            return gameInfo;
+            simulationInfo.setRegisterDialogDelay(startupData.getRegisterDialogDelay());
+            // Simulation
+            SimpleBase simBase = new SimpleBase("Your Base", "#0000FF", false);
+            List<TaskConfig> taskConfigs = new ArrayList<TaskConfig>();
+            addSingleMoveTask(taskConfigs, simBase);
+            addMultiMoveTask(taskConfigs, simBase);
+            //addAttackRestartTask(taskConfigs, simBase);
+            addAttackTask(taskConfigs, simBase);
+            addBuildFactoryTask(taskConfigs, simBase);
+            addBuildTankTask(taskConfigs, simBase);
+            addEarnMoneyTask(taskConfigs, simBase);
+            simulationInfo.setTutorialConfig(new TutorialConfig(taskConfigs, simBase, "Thanks Commander for taking time to do the tutorial"));
+            return simulationInfo;
         } catch (com.btxtech.game.services.connection.NoConnectionException t) {
             log.error(t.getMessage() + " SessionId: " + t.getSessionId());
         } catch (Throwable t) {
@@ -185,6 +201,137 @@ public class MovableServiceImpl implements MovableService {
         return null;
     }
 
+    @Deprecated
+    private void addSingleMoveTask(List<TaskConfig> taskConfigs, SimpleBase simBase) {
+        Collection<ItemTypeAndPosition> itemTypeAndPositions = new ArrayList<ItemTypeAndPosition>();
+        itemTypeAndPositions.add(new ItemTypeAndPosition(simBase, 1, 1, new Index(400, 600)));
+        ArrayList<StepConfig> stepConfigs = new ArrayList<StepConfig>();
+        stepConfigs.add(new StepConfig(new SelectionConditionConfig(Arrays.asList(1)), new GraphicHintConfig(new Index(400, 600), 1),"Select your CV by clicking on it"));
+        stepConfigs.add(new StepConfig(new SendCommandConditionConfig(MoveCommand.class), null, "Move your cursor to the market box and press the left mouse button"));
+        taskConfigs.add(new TaskConfig(new Preparation(true, itemTypeAndPositions, false, false, false, new Index(0, 0)),
+                stepConfigs,
+                new ItemsPositionReachedConditionConfig(Arrays.asList(1), new Rectangle(100, 100, 100, 100)),
+                new GraphicHintConfig(new Index(100, 100), 1),
+                null,
+                0,
+                null,
+                "Here you will learn how to command your troops"));
+    }
+
+    @Deprecated
+    private void addMultiMoveTask(List<TaskConfig> taskConfigs, SimpleBase simBase) {
+        Collection<ItemTypeAndPosition> itemTypeAndPositions = new ArrayList<ItemTypeAndPosition>();
+        itemTypeAndPositions.add(new ItemTypeAndPosition(simBase, 1, 1, new Index(400, 600)));
+        itemTypeAndPositions.add(new ItemTypeAndPosition(simBase, 2, 1, new Index(450, 600)));
+        itemTypeAndPositions.add(new ItemTypeAndPosition(simBase, 3, 1, new Index(500, 600)));
+        ArrayList<StepConfig> stepConfigs = new ArrayList<StepConfig>();
+        stepConfigs.add(new StepConfig(new SelectionConditionConfig(Arrays.asList(1, 2, 3)), new GraphicHintConfig(new Index(450, 600), 1),"Stop 1"));
+        stepConfigs.add(new StepConfig(new SendCommandConditionConfig(MoveCommand.class), null, "Move your cursor"));
+        taskConfigs.add(new TaskConfig(new Preparation(true, itemTypeAndPositions, false, false, false, new Index(0, 0)),
+                stepConfigs,
+                new ItemsPositionReachedConditionConfig(Arrays.asList(1, 2, 3), new Rectangle(100, 100, 100, 100)),
+                new GraphicHintConfig(new Index(100, 100), 1),
+                null,
+                0,
+                null,
+                "Task"));
+    }
+
+    @Deprecated
+    private void addAttackRestartTask(List<TaskConfig> taskConfigs, SimpleBase simBase) {
+        Collection<ItemTypeAndPosition> itemTypeAndPositions = new ArrayList<ItemTypeAndPosition>();
+        itemTypeAndPositions.add(new ItemTypeAndPosition(simBase, 1, 1, new Index(200, 300)));
+        SimpleBase simpleBase = new SimpleBase("Enemy", "#FF0000", false);
+        itemTypeAndPositions.add(new ItemTypeAndPosition(simpleBase, 2, 1, new Index(190, 100)));
+        itemTypeAndPositions.add(new ItemTypeAndPosition(simpleBase, 3, 1, new Index(193, 100)));
+        itemTypeAndPositions.add(new ItemTypeAndPosition(simpleBase, 4, 1, new Index(196, 100)));
+        itemTypeAndPositions.add(new ItemTypeAndPosition(simpleBase, 5, 1, new Index(199, 100)));
+        itemTypeAndPositions.add(new ItemTypeAndPosition(simpleBase, 6, 1, new Index(202, 100)));
+        itemTypeAndPositions.add(new ItemTypeAndPosition(simpleBase, 7, 1, new Index(205, 100)));
+        ArrayList<StepConfig> stepConfigs = new ArrayList<StepConfig>();
+        stepConfigs.add(new StepConfig(new SelectionConditionConfig(Arrays.asList(1, 2, 3)), null, "Stop 1"));
+        stepConfigs.add(new StepConfig(new SendCommandConditionConfig(AttackCommand.class), null, "Stop 2"));
+        taskConfigs.add(new TaskConfig(new Preparation(true, itemTypeAndPositions, false, false, false, new Index(0, 0)),
+                stepConfigs,
+                new ItemsKilledConditionConfig(Arrays.asList(2,3,4,5,6,7)),
+                new GraphicHintConfig(new Index(250, 100), 1),
+                null,
+                0,
+                new ItemsKilledConditionConfig(Arrays.asList(1)),
+                "Task"));
+    }
+
+    @Deprecated
+    private void addAttackTask(List<TaskConfig> taskConfigs, SimpleBase simBase) {
+        Collection<ItemTypeAndPosition> itemTypeAndPositions = new ArrayList<ItemTypeAndPosition>();
+        itemTypeAndPositions.add(new ItemTypeAndPosition(simBase, 1, 1, new Index(200, 300)));
+        itemTypeAndPositions.add(new ItemTypeAndPosition(simBase, 2, 1, new Index(250, 300)));
+        itemTypeAndPositions.add(new ItemTypeAndPosition(simBase, 3, 1, new Index(300, 300)));
+        itemTypeAndPositions.add(new ItemTypeAndPosition(new SimpleBase("Enemy", "#FF0000", false), 4, 1, new Index(250, 100)));
+        ArrayList<StepConfig> stepConfigs = new ArrayList<StepConfig>();
+        stepConfigs.add(new StepConfig(new SelectionConditionConfig(Arrays.asList(1, 2, 3)), null, "Stop 1"));
+        stepConfigs.add(new StepConfig(new SendCommandConditionConfig(AttackCommand.class), null, "Stop 2"));
+        taskConfigs.add(new TaskConfig(new Preparation(true, itemTypeAndPositions, false, false, false, new Index(0, 0)),
+                stepConfigs,
+                new ItemsKilledConditionConfig(Arrays.asList(4)),
+                new GraphicHintConfig(new Index(250, 100), 1),
+                null,
+                0,
+                null,
+                "Task"));
+    }
+
+    @Deprecated
+    private void addBuildFactoryTask(List<TaskConfig> taskConfigs, SimpleBase simBase) {
+        Collection<ItemTypeAndPosition> itemTypeAndPositions = new ArrayList<ItemTypeAndPosition>();
+        itemTypeAndPositions.add(new ItemTypeAndPosition(simBase, 1, 4, new Index(200, 300)));
+        ArrayList<StepConfig> stepConfigs = new ArrayList<StepConfig>();
+        stepConfigs.add(new StepConfig(new SelectionConditionConfig(Arrays.asList(1)), null, "Stop 1"));
+        stepConfigs.add(new StepConfig(new SendCommandConditionConfig(BuilderCommand.class), null, "Stop 2"));
+        taskConfigs.add(new TaskConfig(new Preparation(true, itemTypeAndPositions, false, false, true, new Index(0, 0)),
+                stepConfigs,
+                new ItemBuiltConditionConfig(3),
+                new GraphicHintConfig(new Index(250, 100), 1),
+                Arrays.asList(3),
+                300,
+                null,
+                "Task"));
+    }
+
+    @Deprecated
+    private void addBuildTankTask(List<TaskConfig> taskConfigs, SimpleBase simBase) {
+        Collection<ItemTypeAndPosition> itemTypeAndPositions = new ArrayList<ItemTypeAndPosition>();
+        itemTypeAndPositions.add(new ItemTypeAndPosition(simBase, 1, 3, new Index(200, 300)));
+        ArrayList<StepConfig> stepConfigs = new ArrayList<StepConfig>();
+        stepConfigs.add(new StepConfig(new SelectionConditionConfig(Arrays.asList(1)), null, "Stop 1"));
+        stepConfigs.add(new StepConfig(new SendCommandConditionConfig(BuilderCommand.class), null, "Stop 2"));
+        taskConfigs.add(new TaskConfig(new Preparation(true, itemTypeAndPositions, false, false, true, new Index(0, 0)),
+                stepConfigs,
+                new ItemBuiltConditionConfig(1),
+                new GraphicHintConfig(new Index(250, 100), 1),
+                Arrays.asList(1),
+                300,
+                null,
+                "Task"));
+    }
+
+    @Deprecated
+    private void addEarnMoneyTask(List<TaskConfig> taskConfigs, SimpleBase simBase) {
+        Collection<ItemTypeAndPosition> itemTypeAndPositions = new ArrayList<ItemTypeAndPosition>();
+        itemTypeAndPositions.add(new ItemTypeAndPosition(simBase, 1, 2, new Index(300, 600)));
+        itemTypeAndPositions.add(new ItemTypeAndPosition(null, 2, 5, new Index(300, 200)));
+        ArrayList<StepConfig> stepConfigs = new ArrayList<StepConfig>();
+        stepConfigs.add(new StepConfig(new SelectionConditionConfig(Arrays.asList(1)), null, "Stop 1"));
+        stepConfigs.add(new StepConfig(new SendCommandConditionConfig(MoneyCollectCommand.class), null, "Stop 2"));
+        taskConfigs.add(new TaskConfig(new Preparation(true, itemTypeAndPositions, false, false, true, new Index(0, 0)),
+                stepConfigs,
+                new HarvestConditionConfig(10),
+                new GraphicHintConfig(new Index(250, 100), 1),
+                Arrays.asList(1),
+                300,
+                null,
+                "Task"));
+    }
 
     @Override
     public void log(String message, Date date) {

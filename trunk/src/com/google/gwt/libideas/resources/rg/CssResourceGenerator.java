@@ -221,7 +221,7 @@ public class CssResourceGenerator extends AbstractResourceGenerator {
 
           /*
            * If the deferred binding property's value is in the list of values
-           * in the @if rule, move the rules into the @if's context.
+           * in the @if rule, moveDelta the rules into the @if's context.
            */
           if (Arrays.asList(x.getPropertyValues()).contains(propValue)
               ^ x.isNegated()) {
@@ -229,7 +229,7 @@ public class CssResourceGenerator extends AbstractResourceGenerator {
               ctx.insertBefore(n);
             }
           } else {
-            // Otherwise, move the else block into the if statement's position
+            // Otherwise, moveDelta the else block into the if statement's position
             for (CssNode n : x.getElseNodes()) {
               ctx.insertBefore(n);
             }

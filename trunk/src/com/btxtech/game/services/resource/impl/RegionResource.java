@@ -91,7 +91,7 @@ public class RegionResource {
         for (int i = 0; i < count; i++) {
             SyncResourceItem syncResourceItem = syncResourceItems.get(0);
             // Will be removed from syncResourceItems via resourceItemDeleted callback
-            itemService.killBaseSyncObject(syncResourceItem, null, true);
+            itemService.killSyncItem(syncResourceItem, null, true);
         }
     }
 
@@ -111,7 +111,7 @@ public class RegionResource {
             ArrayList<SyncResourceItem> copy = new ArrayList<SyncResourceItem>(syncResourceItems);
             for (SyncResourceItem syncResourceItem : copy) {
                 if (!terrainService.isFree(syncResourceItem.getPosition(), resourceType)) {
-                    itemService.killBaseSyncObject(syncResourceItem, null, true);
+                    itemService.killSyncItem(syncResourceItem, null, true);
                 }
             }
         }

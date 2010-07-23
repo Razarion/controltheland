@@ -2451,7 +2451,7 @@ tinymce.create('static tinymce.util.XHR', {
 						return;
 
 					if (node.nodeType == 1) {
-						// If the only child is a bookmark then move it up
+						// If the only child is a bookmark then moveDelta it up
 						children = node.childNodes;
 						if (children.length == 1 && children[0] && children[0].nodeType == 1 && children[0].getAttribute('_mce_type') == 'bookmark')
 							node.parentNode.insertBefore(children[0], node);
@@ -3394,7 +3394,7 @@ tinymce.create('static tinymce.util.XHR', {
 			eo = rng.endOffset;
 			ieRng = body.createTextRange();
 
-			// If document selection move caret to first node in document
+			// If document selection moveDelta caret to first node in document
 			if (sc == doc || ec == doc) {
 				ieRng = body.createTextRange();
 				ieRng.collapse();
@@ -3413,7 +3413,7 @@ tinymce.create('static tinymce.util.XHR', {
 				} else
 					sc = sc.childNodes[so];
 
-				// Child was text node then move offset to start of it
+				// Child was text node then moveDelta offset to start of it
 				if (sc.nodeType == 3)
 					so = 0;
 			}
@@ -3428,7 +3428,7 @@ tinymce.create('static tinymce.util.XHR', {
 				} else {
 					ec = ec.childNodes[Math.min(lastIndex, eo - 1)];
 
-					// Child was text node then move offset to end of text node
+					// Child was text node then moveDelta offset to end of text node
 					if (ec.nodeType == 3)
 						eo = ec.nodeValue.length;
 				}
@@ -3489,7 +3489,7 @@ tinymce.create('static tinymce.util.XHR', {
 					ieRng.collapse(FALSE);
 			}
 
-			// If same text container then we can do a more simple move
+			// If same text container then we can do a more simple moveDelta
 			if (sc == ec && sc.nodeType == 3) {
 				ieRng.moveEnd('character', eo - so);
 				ieRng.select();
@@ -3503,7 +3503,7 @@ tinymce.create('static tinymce.util.XHR', {
 				// Insert marker after/before startContainer
 				ec.parentNode.insertBefore(marker, ec);
 
-				// Move selection to end marker and move caret to end offset
+				// Move selection to end marker and moveDelta caret to end offset
 				ieRng2.moveToElementText(marker);
 				marker.parentNode.removeChild(marker);
 				ieRng2.move('character', eo);
@@ -3536,7 +3536,7 @@ tinymce.create('static tinymce.util.XHR', {
 			lastIERng = range = null;
 		};
 
-		// IE has an issue where you can't select/move the caret by clicking outside the body if the document is in standards mode
+		// IE has an issue where you can't select/moveDelta the caret by clicking outside the body if the document is in standards mode
 		if (selection.dom.boxModel) {
 			(function() {
 				var doc = dom.doc, body = doc.body, started, startRng;
@@ -4566,7 +4566,7 @@ var posProcess = function(selector, context){
 		root = context.nodeType ? [context] : context;
 
 	// Position selectors must be done after the filter
-	// And so must :not(positional) so we move all PSEUDOs to the end
+	// And so must :not(positional) so we moveDelta all PSEUDOs to the end
 	while ( (match = Expr.match.PSEUDO.exec( selector )) ) {
 		later += match[0];
 		selector = selector.replace( Expr.match.PSEUDO, "" );
@@ -9318,7 +9318,7 @@ tinymce.create('tinymce.ui.Toolbar:tinymce.ui.Container', {
 			}
 
 			t.onExecCommand.add(function(ed, c) {
-				// Don't refresh the select lists until caret move
+				// Don't refresh the select lists until caret moveDelta
 				if (!/^(FontName|FontSize)$/.test(c))
 					t.nodeChanged();
 			});
@@ -9747,7 +9747,7 @@ tinymce.create('tinymce.ui.Toolbar:tinymce.ui.Container', {
 
 			if (isGecko) {
 				// Fix gecko link bug, when a link is placed at the end of block elements there is
-				// no way to move the caret behind the link. This fix adds a bogus br element after the link
+				// no way to moveDelta the caret behind the link. This fix adds a bogus br element after the link
 				function fixLinks(ed, o) {
 					each(ed.dom.select('a'), function(n) {
 						var pn = n.parentNode;
@@ -11499,7 +11499,7 @@ tinymce.create('tinymce.ui.Toolbar:tinymce.ui.Container', {
 					rng.setEndAfter(br);
 					selection.setRng(rng);
 
-					// Could not place caret after BR then insert an nbsp entity and move the caret
+					// Could not place caret after BR then insert an nbsp entity and moveDelta the caret
 					if (selection.getSel().focusNode == br.previousSibling) {
 						selection.select(dom.insertAfter(dom.doc.createTextNode('\u00a0'), br));
 						selection.collapse(TRUE);
@@ -11728,14 +11728,14 @@ tinymce.create('tinymce.ui.Toolbar:tinymce.ui.Container', {
 			// Setup before range
 			rb = d.createRange();
 
-			// If is before the first block element and in body, then move it into first block element
+			// If is before the first block element and in body, then moveDelta it into first block element
 			rb.setStart(s.anchorNode, s.anchorOffset);
 			rb.collapse(TRUE);
 
 			// Setup after range
 			ra = d.createRange();
 
-			// If is before the first block element and in body, then move it into first block element
+			// If is before the first block element and in body, then moveDelta it into first block element
 			ra.setStart(s.focusNode, s.focusOffset);
 			ra.collapse(TRUE);
 
@@ -11771,7 +11771,7 @@ tinymce.create('tinymce.ui.Toolbar:tinymce.ui.Container', {
 				return FALSE;
 			}
 
-			// If the caret is in an invalid location in FF we need to move it into the first block
+			// If the caret is in an invalid location in FF we need to moveDelta it into the first block
 			if (sn == b && en == b && b.firstChild && ed.dom.isBlock(b.firstChild)) {
 				sn = en = sn.firstChild;
 				so = eo = 0;
@@ -11923,10 +11923,10 @@ tinymce.create('tinymce.ui.Toolbar:tinymce.ui.Container', {
 						nn = nn.appendChild(nl[i]);
 
 					// Padd most inner style element
-					nl[0].innerHTML = isOpera ? '&nbsp;' : '<br />'; // Extra space for Opera so that the caret can move there
+					nl[0].innerHTML = isOpera ? '&nbsp;' : '<br />'; // Extra space for Opera so that the caret can moveDelta there
 					return nl[0]; // Move caret to most inner element
 				} else
-					e.innerHTML = isOpera ? '&nbsp;' : '<br />'; // Extra space for Opera so that the caret can move there
+					e.innerHTML = isOpera ? '&nbsp;' : '<br />'; // Extra space for Opera so that the caret can moveDelta there
 			};
 
 			// Fill empty afterblook with current style
@@ -12806,7 +12806,7 @@ tinymce.create('tinymce.ui.Toolbar:tinymce.ui.Container', {
 
 						// Remove/merge children
 						each(formatList, function(format) {
-							// Merge all children of similar type will move styles from child to parent
+							// Merge all children of similar type will moveDelta styles from child to parent
 							// this: <span style="color:red"><b><span style="color:red; font-size:10px">text</span></b></span>
 							// will become: <span style="color:red"><b><span style="font-size:10px">text</span></b></span>
 							each(dom.select(format.inline, node), function(child) {
@@ -13228,7 +13228,7 @@ tinymce.create('tinymce.ui.Toolbar:tinymce.ui.Container', {
 				root = root || dom.getRoot();
 
 				for (;;) {
-					// Check if we can move up are we at root level or body level
+					// Check if we can moveDelta up are we at root level or body level
 					parent = container.parentNode;
 
 					// Stop expanding on block elements or root depending on format

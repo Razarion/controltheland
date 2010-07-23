@@ -16,8 +16,11 @@ package com.btxtech.game.jsre.client;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
@@ -54,6 +57,30 @@ public abstract class TopMapPanel extends DecoratorPanel {
         setWidget(content);
         getElement().getStyle().setZIndex(Constants.Z_INDEX_TOP_MAP_PANEL);
 
+        preventEvents();
+    }
+
+    private void preventEvents() {
+        getElement().getStyle().setCursor(Style.Cursor.DEFAULT);
+        addDomHandler(new MouseUpHandler() {
+            @Override
+            public void onMouseUp(MouseUpEvent event) {
+                GwtCommon.preventDefault(event);
+            }
+        }, MouseUpEvent.getType());
+
+        addDomHandler(new MouseDownHandler() {
+            @Override
+            public void onMouseDown(MouseDownEvent event) {
+                GwtCommon.preventDefault(event);
+            }
+        }, MouseDownEvent.getType());
+        addDomHandler(new MouseDownHandler() {
+            @Override
+            public void onMouseDown(MouseDownEvent event) {
+                GwtCommon.preventDefault(event);
+            }
+        }, MouseDownEvent.getType());
     }
 
     private void addCollapseButton(Direction direction) {

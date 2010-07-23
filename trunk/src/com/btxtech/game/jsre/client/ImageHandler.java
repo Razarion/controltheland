@@ -84,6 +84,7 @@ public class ImageHandler {
     /*
     * Always starts with 0
     */
+
     public static int angleToNumber(double angle, int resolution) {
         angle = normalizeAngel(angle);
 
@@ -175,6 +176,19 @@ public class ImageHandler {
 
     public static Image getIcon16(String icon) {
         return createImageIE6TransparencyProblem("/" + IMAGES + "/" + ICONS + "/" + icon + PNG_SUFFIX, 16, 16);
+    }
+
+    public static Image getTutorialImage(int id) {
+        StringBuilder url = new StringBuilder();
+        url.append(Constants.TUTORIAL_RESOURCE_URL);
+        url.append("?");
+        url.append(Constants.TUTORIAL_RESOURCE_ID);
+        url.append("=");
+        url.append(id);
+        String urlStr = url.toString();
+        loadImage(urlStr);
+        //return new Image(urlStr);
+        return new Image("/images/effects/ex4.png");
     }
 
 

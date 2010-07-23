@@ -197,7 +197,7 @@ public class BaseEditor extends WebPage {
                     @Override
                     public void onSubmit() {
                         if (item.getModelObject() != null) {
-                            itemService.killBaseSyncObject(item.getModelObject(), null, true);
+                            itemService.killSyncItem(item.getModelObject(), null, true);
                         }
                         if (baseService.getBase(simpleBase) == null) {
                             setResponsePage(BasesTable.class);

@@ -184,7 +184,7 @@ public class GenericItemConverter {
             if (item.getSyncFactory().getToBeBuiltType() != null) {
                 genericItem.setToBeBuilt((DbBaseItemType) dbItemTypeCache.get(item.getSyncFactory().getToBeBuiltType().getId()));
             }
-            genericItem.setBuildupProgress(item.getSyncFactory().getBuildupProgress());
+            genericItem.setBuildupProgress((int)item.getSyncFactory().getBuildupProgress());
             genericItem.setCreatedChildCount(item.getSyncFactory().getCreatedChildCount());
             genericItem.setRallyPoint(item.getSyncFactory().getRallyPoint());
         }
