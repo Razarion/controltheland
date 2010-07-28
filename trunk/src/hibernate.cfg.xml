@@ -80,5 +80,16 @@
         <mapping class="com.btxtech.game.services.territory.DbTerritoryRegion"/>
         <mapping class="com.btxtech.game.services.cms.DbCmsHomeText"/>
         <mapping class="com.btxtech.game.services.cms.DbCmsHomeLayout"/>
+        <mapping class="com.btxtech.game.services.tutorial.DbTutorialConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.DbTaskConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.DbItemTypeAndPosition"/>
+        <mapping class="com.btxtech.game.services.tutorial.DbStepConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.condition.DbHarvestConditionConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.condition.DbItemBuiltConditionConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.condition.DbItemsKilledConditionConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.condition.DbItemsPositionReachedConditionConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.condition.DbSelectionConditionConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.condition.DbSendCommandConditionConfig"/>
+
     </session-factory>
 </hibernate-configuration>

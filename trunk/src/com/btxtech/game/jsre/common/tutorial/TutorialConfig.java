@@ -25,7 +25,6 @@ import java.util.List;
 public class TutorialConfig implements Serializable {
     private List<TaskConfig> taskConfigs;
     private SimpleBase ownBase;
-    private String description;
 
     /**
      * Used by GWT
@@ -33,10 +32,9 @@ public class TutorialConfig implements Serializable {
     public TutorialConfig() {
     }
 
-    public TutorialConfig(List<TaskConfig> taskConfigs, SimpleBase ownBase, String description) {
+    public TutorialConfig(List<TaskConfig> taskConfigs, SimpleBase ownBase) {
         this.taskConfigs = taskConfigs;
         this.ownBase = ownBase;
-        this.description = description;
     }
 
     public List<TaskConfig> getTasks() {
@@ -45,9 +43,5 @@ public class TutorialConfig implements Serializable {
 
     public SimpleBase getOwnBase() {
         return ownBase;
-    }
-
-    public String getDescription() {
-        return description;
     }
 }

@@ -36,7 +36,6 @@ public class Task {
     private GraphicHint stepGraphicHint;
     private GraphicHint taskGraphicHint;
     private AbstractCondition completionCondition;
-    private AbstractCondition restartCondition;
 
     public Task(TaskConfig taskConfig, TutorialGui tutorialGui) {
         this.taskConfig = taskConfig;
@@ -52,7 +51,6 @@ public class Task {
             taskGraphicHint = new GraphicHint(taskConfig.getGraphicHintConfig());
         }
         completionCondition = ConditionFactory.createCondition(taskConfig.getCompletionConditionConfig());
-        restartCondition = ConditionFactory.createCondition(taskConfig.getRestartConditionConfig());
         runNextStep();
     }
 
@@ -68,9 +66,6 @@ public class Task {
         if (completionCondition != null && completionCondition.isFulfilledSelection(selectedGroup)) {
             taskFinished();
         }
-        if (restartCondition != null && restartCondition.isFulfilledSelection(selectedGroup)) {
-            restartTask();
-        }
     }
 
     public void onSendCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
@@ -80,9 +75,6 @@ public class Task {
         }
         if (completionCondition != null && completionCondition.isFulfilledSendCommand(syncItem, baseCommand)) {
             taskFinished();
-        }
-        if (restartCondition != null && restartCondition.isFulfilledSendCommand(syncItem, baseCommand)) {
-            restartTask();
         }
     }
 
@@ -94,9 +86,6 @@ public class Task {
         if (completionCondition != null && completionCondition.isFulfilledSyncItemDeactivated(deactivatedItem)) {
             taskFinished();
         }
-        if (restartCondition != null && restartCondition.isFulfilledSyncItemDeactivated(deactivatedItem)) {
-            restartTask();
-        }
     }
 
     public void onSyncItemKilled(SyncItem killedItem, SyncBaseItem actor) {
@@ -106,9 +95,6 @@ public class Task {
         }
         if (completionCondition != null && completionCondition.isFulfilledItemsKilled(killedItem, actor)) {
             taskFinished();
-        }
-        if (restartCondition != null && restartCondition.isFulfilledItemsKilled(killedItem, actor)) {
-            restartTask();
         }
     }
 
@@ -120,9 +106,6 @@ public class Task {
         if (completionCondition != null && completionCondition.isFulfilledItemBuilt(syncBaseItem)) {
             taskFinished();
         }
-        if (restartCondition != null && restartCondition.isFulfilledItemBuilt(syncBaseItem)) {
-            restartTask();
-        }
     }
 
     public void onDeposit() {
@@ -132,9 +115,6 @@ public class Task {
         }
         if (completionCondition != null && completionCondition.isFulfilledHarvest()) {
             taskFinished();
-        }
-        if (restartCondition != null && restartCondition.isFulfilledHarvest()) {
-            restartTask();
         }
     }
 
@@ -195,12 +175,6 @@ public class Task {
             stepGraphicHint.dispose();
         }
         activeStep = null;
-    }
-
-    private void restartTask() {
-        System.out.println("*** Task restart");
-        cleanup();
-        start();
     }
 
     public boolean isFulFilled() {

@@ -15,7 +15,6 @@ package com.btxtech.game.jsre.common.tutorial;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import java.io.Serializable;
 
 /**

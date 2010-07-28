@@ -39,9 +39,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderComman
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
-import com.btxtech.game.jsre.common.tutorial.GraphicHintConfig;
+import com.btxtech.game.jsre.common.tutorial.ResourceHintConfig;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
-import com.btxtech.game.jsre.common.tutorial.Preparation;
 import com.btxtech.game.jsre.common.tutorial.StepConfig;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
@@ -191,7 +190,7 @@ public class MovableServiceImpl implements MovableService {
             addBuildFactoryTask(taskConfigs, simBase);
             addBuildTankTask(taskConfigs, simBase);
             addEarnMoneyTask(taskConfigs, simBase);
-            simulationInfo.setTutorialConfig(new TutorialConfig(taskConfigs, simBase, "Thanks Commander for taking time to do the tutorial"));
+            simulationInfo.setTutorialConfig(new TutorialConfig(taskConfigs, simBase));
             return simulationInfo;
         } catch (com.btxtech.game.services.connection.NoConnectionException t) {
             log.error(t.getMessage() + " SessionId: " + t.getSessionId());
@@ -206,15 +205,19 @@ public class MovableServiceImpl implements MovableService {
         Collection<ItemTypeAndPosition> itemTypeAndPositions = new ArrayList<ItemTypeAndPosition>();
         itemTypeAndPositions.add(new ItemTypeAndPosition(simBase, 1, 1, new Index(400, 600)));
         ArrayList<StepConfig> stepConfigs = new ArrayList<StepConfig>();
-        stepConfigs.add(new StepConfig(new SelectionConditionConfig(Arrays.asList(1)), new GraphicHintConfig(new Index(400, 600), 1),"Select your CV by clicking on it"));
-        stepConfigs.add(new StepConfig(new SendCommandConditionConfig(MoveCommand.class), null, "Move your cursor to the market box and press the left mouse button"));
-        taskConfigs.add(new TaskConfig(new Preparation(true, itemTypeAndPositions, false, false, false, new Index(0, 0)),
+        stepConfigs.add(new StepConfig(new SelectionConditionConfig(Arrays.asList(1)), new ResourceHintConfig(new Index(400, 600), 1), "Select your CV by clicking on it"));
+        stepConfigs.add(new StepConfig(new SendCommandConditionConfig(MoveCommand.class.getName()), null, "Move your cursor to the market box and press the left mouse button"));
+        taskConfigs.add(new TaskConfig(true,
+                itemTypeAndPositions,
+                false,
+                false,
+                false,
+                new Index(0, 0),
                 stepConfigs,
                 new ItemsPositionReachedConditionConfig(Arrays.asList(1), new Rectangle(100, 100, 100, 100)),
-                new GraphicHintConfig(new Index(100, 100), 1),
+                new ResourceHintConfig(new Index(100, 100), 1),
                 null,
                 0,
-                null,
                 "Here you will learn how to command your troops"));
     }
 
@@ -225,15 +228,19 @@ public class MovableServiceImpl implements MovableService {
         itemTypeAndPositions.add(new ItemTypeAndPosition(simBase, 2, 1, new Index(450, 600)));
         itemTypeAndPositions.add(new ItemTypeAndPosition(simBase, 3, 1, new Index(500, 600)));
         ArrayList<StepConfig> stepConfigs = new ArrayList<StepConfig>();
-        stepConfigs.add(new StepConfig(new SelectionConditionConfig(Arrays.asList(1, 2, 3)), new GraphicHintConfig(new Index(450, 600), 1),"Stop 1"));
-        stepConfigs.add(new StepConfig(new SendCommandConditionConfig(MoveCommand.class), null, "Move your cursor"));
-        taskConfigs.add(new TaskConfig(new Preparation(true, itemTypeAndPositions, false, false, false, new Index(0, 0)),
+        stepConfigs.add(new StepConfig(new SelectionConditionConfig(Arrays.asList(1, 2, 3)), new ResourceHintConfig(new Index(450, 600), 1), "Stop 1"));
+        stepConfigs.add(new StepConfig(new SendCommandConditionConfig(MoveCommand.class.getName()), null, "Move your cursor"));
+        taskConfigs.add(new TaskConfig(true,
+                itemTypeAndPositions,
+                false,
+                false,
+                false,
+                new Index(0, 0),
                 stepConfigs,
                 new ItemsPositionReachedConditionConfig(Arrays.asList(1, 2, 3), new Rectangle(100, 100, 100, 100)),
-                new GraphicHintConfig(new Index(100, 100), 1),
+                new ResourceHintConfig(new Index(100, 100), 1),
                 null,
                 0,
-                null,
                 "Task"));
     }
 
@@ -250,14 +257,19 @@ public class MovableServiceImpl implements MovableService {
         itemTypeAndPositions.add(new ItemTypeAndPosition(simpleBase, 7, 1, new Index(205, 100)));
         ArrayList<StepConfig> stepConfigs = new ArrayList<StepConfig>();
         stepConfigs.add(new StepConfig(new SelectionConditionConfig(Arrays.asList(1, 2, 3)), null, "Stop 1"));
-        stepConfigs.add(new StepConfig(new SendCommandConditionConfig(AttackCommand.class), null, "Stop 2"));
-        taskConfigs.add(new TaskConfig(new Preparation(true, itemTypeAndPositions, false, false, false, new Index(0, 0)),
+        stepConfigs.add(new StepConfig(new SendCommandConditionConfig(AttackCommand.class.getName()), null, "Stop 2"));
+        taskConfigs.add(new TaskConfig(true,
+                itemTypeAndPositions,
+                false,
+                false,
+                false,
+                new Index(0, 0),
                 stepConfigs,
-                new ItemsKilledConditionConfig(Arrays.asList(2,3,4,5,6,7)),
-                new GraphicHintConfig(new Index(250, 100), 1),
+                new ItemsKilledConditionConfig(Arrays.asList(2, 3, 4, 5, 6, 7)),
+                new ResourceHintConfig(new Index(250, 100), 1),
                 null,
                 0,
-                new ItemsKilledConditionConfig(Arrays.asList(1)),
+                //new ItemsKilledConditionConfig(Arrays.asList(1)),
                 "Task"));
     }
 
@@ -270,14 +282,18 @@ public class MovableServiceImpl implements MovableService {
         itemTypeAndPositions.add(new ItemTypeAndPosition(new SimpleBase("Enemy", "#FF0000", false), 4, 1, new Index(250, 100)));
         ArrayList<StepConfig> stepConfigs = new ArrayList<StepConfig>();
         stepConfigs.add(new StepConfig(new SelectionConditionConfig(Arrays.asList(1, 2, 3)), null, "Stop 1"));
-        stepConfigs.add(new StepConfig(new SendCommandConditionConfig(AttackCommand.class), null, "Stop 2"));
-        taskConfigs.add(new TaskConfig(new Preparation(true, itemTypeAndPositions, false, false, false, new Index(0, 0)),
+        stepConfigs.add(new StepConfig(new SendCommandConditionConfig(AttackCommand.class.getName()), null, "Stop 2"));
+        taskConfigs.add(new TaskConfig(true,
+                itemTypeAndPositions,
+                false,
+                false,
+                false,
+                new Index(0, 0),
                 stepConfigs,
                 new ItemsKilledConditionConfig(Arrays.asList(4)),
-                new GraphicHintConfig(new Index(250, 100), 1),
+                new ResourceHintConfig(new Index(250, 100), 1),
                 null,
                 0,
-                null,
                 "Task"));
     }
 
@@ -287,14 +303,18 @@ public class MovableServiceImpl implements MovableService {
         itemTypeAndPositions.add(new ItemTypeAndPosition(simBase, 1, 4, new Index(200, 300)));
         ArrayList<StepConfig> stepConfigs = new ArrayList<StepConfig>();
         stepConfigs.add(new StepConfig(new SelectionConditionConfig(Arrays.asList(1)), null, "Stop 1"));
-        stepConfigs.add(new StepConfig(new SendCommandConditionConfig(BuilderCommand.class), null, "Stop 2"));
-        taskConfigs.add(new TaskConfig(new Preparation(true, itemTypeAndPositions, false, false, true, new Index(0, 0)),
+        stepConfigs.add(new StepConfig(new SendCommandConditionConfig(BuilderCommand.class.getName()), null, "Stop 2"));
+        taskConfigs.add(new TaskConfig(true,
+                itemTypeAndPositions,
+                false,
+                false,
+                true,
+                new Index(0, 0),
                 stepConfigs,
                 new ItemBuiltConditionConfig(3),
-                new GraphicHintConfig(new Index(250, 100), 1),
+                new ResourceHintConfig(new Index(250, 100), 1),
                 Arrays.asList(3),
                 300,
-                null,
                 "Task"));
     }
 
@@ -304,14 +324,18 @@ public class MovableServiceImpl implements MovableService {
         itemTypeAndPositions.add(new ItemTypeAndPosition(simBase, 1, 3, new Index(200, 300)));
         ArrayList<StepConfig> stepConfigs = new ArrayList<StepConfig>();
         stepConfigs.add(new StepConfig(new SelectionConditionConfig(Arrays.asList(1)), null, "Stop 1"));
-        stepConfigs.add(new StepConfig(new SendCommandConditionConfig(BuilderCommand.class), null, "Stop 2"));
-        taskConfigs.add(new TaskConfig(new Preparation(true, itemTypeAndPositions, false, false, true, new Index(0, 0)),
+        stepConfigs.add(new StepConfig(new SendCommandConditionConfig(BuilderCommand.class.getName()), null, "Stop 2"));
+        taskConfigs.add(new TaskConfig(true,
+                itemTypeAndPositions,
+                false,
+                false,
+                true,
+                new Index(0, 0),
                 stepConfigs,
                 new ItemBuiltConditionConfig(1),
-                new GraphicHintConfig(new Index(250, 100), 1),
+                new ResourceHintConfig(new Index(250, 100), 1),
                 Arrays.asList(1),
                 300,
-                null,
                 "Task"));
     }
 
@@ -322,14 +346,18 @@ public class MovableServiceImpl implements MovableService {
         itemTypeAndPositions.add(new ItemTypeAndPosition(null, 2, 5, new Index(300, 200)));
         ArrayList<StepConfig> stepConfigs = new ArrayList<StepConfig>();
         stepConfigs.add(new StepConfig(new SelectionConditionConfig(Arrays.asList(1)), null, "Stop 1"));
-        stepConfigs.add(new StepConfig(new SendCommandConditionConfig(MoneyCollectCommand.class), null, "Stop 2"));
-        taskConfigs.add(new TaskConfig(new Preparation(true, itemTypeAndPositions, false, false, true, new Index(0, 0)),
+        stepConfigs.add(new StepConfig(new SendCommandConditionConfig(MoneyCollectCommand.class.getName()), null, "Stop 2"));
+        taskConfigs.add(new TaskConfig(true,
+                itemTypeAndPositions,
+                false,
+                false,
+                true,
+                new Index(0, 0),
                 stepConfigs,
                 new HarvestConditionConfig(10),
-                new GraphicHintConfig(new Index(250, 100), 1),
+                new ResourceHintConfig(new Index(250, 100), 1),
                 Arrays.asList(1),
                 300,
-                null,
                 "Task"));
     }
 

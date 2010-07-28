@@ -21,18 +21,26 @@ import java.io.Serializable;
  * Date: 18.07.2010
  * Time: 22:28:34
  */
-public class GraphicHintConfig implements Serializable {
+public class ResourceHintConfig implements Serializable {
     private Index position;
     private int imageId;
 
     /**
      * Used by GWT
      */
-    public GraphicHintConfig() {
+    public ResourceHintConfig() {
     }
 
-    public GraphicHintConfig(Index position, int imageId) {
+    public ResourceHintConfig(Index position) {
         this.position = position;
+    }
+
+    @Deprecated
+    public ResourceHintConfig(Index index, int i) {
+        //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public void setImageId(int imageId) {
         this.imageId = imageId;
     }
 

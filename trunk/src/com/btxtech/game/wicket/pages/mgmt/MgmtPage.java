@@ -16,6 +16,7 @@ package com.btxtech.game.wicket.pages.mgmt;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.mgmt.tracking.UserTracking;
+import com.btxtech.game.wicket.pages.mgmt.tutorial.TutorialTable;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -104,6 +105,7 @@ public class MgmtPage extends WebPage {
         toolPages.add(new LinkAndName("Level and Mission Target", LevelAndMissionTarget.class));
         toolPages.add(new LinkAndName("Bot editor", BotEditor.class));
         toolPages.add(new LinkAndName("TerritoryEditor", TerritoryEditor.class));
+        toolPages.add(new LinkAndName("Tutorial", TutorialTable.class));
 
     }
 }

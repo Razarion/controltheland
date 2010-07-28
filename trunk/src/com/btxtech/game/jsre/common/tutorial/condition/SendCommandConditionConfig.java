@@ -29,8 +29,8 @@ public class SendCommandConditionConfig extends AbstractConditionConfig {
     public SendCommandConditionConfig() {
     }
 
-    public SendCommandConditionConfig(Class<? extends BaseCommand> commandClass) {
-        this.commandClass = commandClass.getName();
+    public SendCommandConditionConfig(String commandClass) {
+        this.commandClass = commandClass;
     }
 
     public String getCommandClass() {

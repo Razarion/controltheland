@@ -1,0 +1,131 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Tutorial Editor</title>
+</head>
+<body>
+<h1>Task Config</h1>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="taskForm">
+    <h2>General</h2>
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Clear Game</td>
+            <td><input wicket:id="clearGame" type="checkbox"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Allow Scroll [Minimap Box visible]</td>
+            <td><input wicket:id="isScrollingAllowed" type="checkbox"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Online Box visible</td>
+            <td><input wicket:id="isOnlineBoxVisible" type="checkbox"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Info Box visible</td>
+            <td><input wicket:id="isInfoBoxVisible" type="checkbox"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Scroll X</td>
+            <td><input wicket:id="scroll.x" type="text" size="6"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Scroll Y</td>
+            <td><input wicket:id="scroll.y" type="text" size="6"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Completion Condition</td>
+            <td wicket:id="completionConditionConfig"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Graphical hint</td>
+            <td wicket:id="resourceHint"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Allowed Item Ids (Factory, Builder) [;]</td>
+            <td><input wicket:id="allowedItemTypeIds" type="text" size="10"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Money</td>
+            <td><input wicket:id="accountBalance" type="text" size="10"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Description</td>
+            <td><textarea wicket:id="description" rows="10" cols="30"></textarea></td>
+        </tr>
+    </table>
+    <h2>Items</h2>
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Item Type</th>
+            <th bgcolor="#dadada">Id (Engine)</th>
+            <th bgcolor="#dadada">X Pos</th>
+            <th bgcolor="#dadada">Y Pos</th>
+            <th bgcolor="#dadada">Base Name</th>
+            <th bgcolor="#dadada">Base HTML Color</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+        <tr wicket:id="itemTable">
+            <td><input type="text" wicket:id="itemTypeId" size="6"></td>
+            <td><input type="text" wicket:id="syncItemId" size="6"></td>
+            <td><input type="text" wicket:id="position.x" size="6"/></td>
+            <td><input type="text" wicket:id="position.y" size="6"/></td>
+            <td><input type="text" wicket:id="base.name"></td>
+            <td><input type="text" wicket:id="base.htmlColor"></td>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" wicket:id="createItem" value="Create">
+
+    <h2>Steps</h2>
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Name [Internal]</th>
+            <th bgcolor="#dadada">Up</th>
+            <th bgcolor="#dadada">Down</th>
+            <th bgcolor="#dadada">Edit</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+        <tr wicket:id="stepTable">
+            <td><input type="text" wicket:id="name"></td>
+            <td valign="center">
+                <input type="submit" value="Up" wicket:id="up"/>
+            </td>
+            <td valign="center">
+                <input type="submit" value="Down" wicket:id="down"/>
+            </td>
+            <td valign="center">
+                <input type="submit" value="Edit" wicket:id="edit"/>
+            </td>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" wicket:id="createStep" value="Create">
+    <br>
+    <br>
+    <input type="submit" wicket:id="save" value="Save">
+    <input type="submit" wicket:id="back" value="Back">
+</form>
+
+</body>
+</html>
