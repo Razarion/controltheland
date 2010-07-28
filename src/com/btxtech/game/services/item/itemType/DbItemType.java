@@ -147,7 +147,6 @@ public abstract class DbItemType implements Serializable {
         DbItemType that = (DbItemType) o;
 
         return !(id != null ? !id.equals(that.id) : that.id != null);
-
     }
 
     @Override

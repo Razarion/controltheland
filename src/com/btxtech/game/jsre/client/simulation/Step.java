@@ -19,10 +19,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.tutorial.StepConfig;
-import com.btxtech.game.jsre.common.tutorial.condition.AbstractConditionConfig;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * User: beat
@@ -31,15 +27,12 @@ import java.util.Iterator;
  */
 public class Step {
     private StepConfig stepConfig;
-    private TutorialGui tutorialGui;
-    private Collection<AbstractCondition> conditions = new ArrayList<AbstractCondition>();
+    private AbstractCondition condition;
 
     public Step(StepConfig stepConfig, TutorialGui tutorialGui) {
         this.stepConfig = stepConfig;
         tutorialGui.setStepText(stepConfig.getDescription());
-        for (AbstractConditionConfig abstractConditionConfig : stepConfig.getConditions()) {
-            conditions.add(ConditionFactory.createCondition(abstractConditionConfig));
-        }
+        condition = ConditionFactory.createCondition(stepConfig.getAbstractConditionConfig());
     }
 
     public StepConfig getStepConfig() {
@@ -47,68 +40,43 @@ public class Step {
     }
 
     public void onOwnSelectionChanged(Group selectedGroup) {
-        for (Iterator<AbstractCondition> iterator = conditions.iterator(); iterator.hasNext();) {
-            AbstractCondition condition = iterator.next();
-            if (condition.isFulfilledSelection(selectedGroup)) {
-                iterator.remove();
-                return;
-            }
+        if (condition != null && condition.isFulfilledSelection(selectedGroup)) {
+            condition = null;
         }
-
     }
 
     public void onSendCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
-        for (Iterator<AbstractCondition> iterator = conditions.iterator(); iterator.hasNext();) {
-            AbstractCondition condition = iterator.next();
-            if (condition.isFulfilledSendCommand(syncItem, baseCommand)) {
-                iterator.remove();
-                return;
-            }
+        if (condition != null && condition.isFulfilledSendCommand(syncItem, baseCommand)) {
+            condition = null;
         }
     }
 
     public void onSyncItemDeactivated(SyncBaseItem deactivatedItem) {
-        for (Iterator<AbstractCondition> iterator = conditions.iterator(); iterator.hasNext();) {
-            AbstractCondition condition = iterator.next();
-            if (condition.isFulfilledSyncItemDeactivated(deactivatedItem)) {
-                iterator.remove();
-                return;
-            }
+        if (condition != null && condition.isFulfilledSyncItemDeactivated(deactivatedItem)) {
+            condition = null;
         }
     }
 
 
     public void onSyncItemKilled(SyncItem killedItem, SyncBaseItem actor) {
-        for (Iterator<AbstractCondition> iterator = conditions.iterator(); iterator.hasNext();) {
-            AbstractCondition condition = iterator.next();
-            if (condition.isFulfilledItemsKilled(killedItem, actor)) {
-                iterator.remove();
-                return;
-            }
+        if (condition != null && condition.isFulfilledItemsKilled(killedItem, actor)) {
+            condition = null;
         }
     }
 
     public void onItemBuilt(SyncBaseItem syncBaseItem) {
-        for (Iterator<AbstractCondition> iterator = conditions.iterator(); iterator.hasNext();) {
-            AbstractCondition condition = iterator.next();
-            if (condition.isFulfilledItemBuilt(syncBaseItem)) {
-                iterator.remove();
-                return;
-            }
+        if (condition != null && condition.isFulfilledItemBuilt(syncBaseItem)) {
+            condition = null;
         }
     }
 
     public void onDeposit() {
-        for (Iterator<AbstractCondition> iterator = conditions.iterator(); iterator.hasNext();) {
-            AbstractCondition condition = iterator.next();
-            if (condition.isFulfilledHarvest()) {
-                iterator.remove();
-                return;
-            }
+        if (condition != null && condition.isFulfilledHarvest()) {
+            condition = null;
         }
     }
 
     public boolean isFulFilled() {
-        return conditions.isEmpty();
+        return condition == null;
     }
 }

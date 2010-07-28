@@ -15,8 +15,6 @@ package com.btxtech.game.jsre.common.tutorial;
 
 import com.btxtech.game.jsre.common.tutorial.condition.AbstractConditionConfig;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * User: beat
@@ -24,8 +22,8 @@ import java.util.Collection;
  * Time: 15:11:11
  */
 public class StepConfig implements Serializable {
-    private Collection<AbstractConditionConfig> abstractConditionConfigs;
-    private GraphicHintConfig graphicHintConfig;
+    private AbstractConditionConfig abstractConditionConfig;
+    private ResourceHintConfig resourceHintConfig;
     private String description;
 
     /**
@@ -34,25 +32,18 @@ public class StepConfig implements Serializable {
     public StepConfig() {
     }
 
-    public StepConfig(AbstractConditionConfig abstractConditionConfig, GraphicHintConfig graphicHintConfig, String description) {
+    public StepConfig(AbstractConditionConfig abstractConditionConfig, ResourceHintConfig resourceHintConfig, String description) {
         this.description = description;
-        abstractConditionConfigs = new ArrayList<AbstractConditionConfig>();
-        abstractConditionConfigs.add(abstractConditionConfig);
-        this.graphicHintConfig = graphicHintConfig;
+        this.abstractConditionConfig = abstractConditionConfig;
+        this.resourceHintConfig = resourceHintConfig;
     }
 
-    public StepConfig(Collection<AbstractConditionConfig> abstractConditionConfigs, GraphicHintConfig graphicHintConfig, String description) {
-        this.abstractConditionConfigs = abstractConditionConfigs;
-        this.graphicHintConfig = graphicHintConfig;
-        this.description = description;
+    public AbstractConditionConfig getAbstractConditionConfig() {
+        return abstractConditionConfig;
     }
 
-    public Collection<AbstractConditionConfig> getConditions() {
-        return abstractConditionConfigs;
-    }
-
-    public GraphicHintConfig getGraphicHintConfig() {
-        return graphicHintConfig;
+    public ResourceHintConfig getGraphicHintConfig() {
+        return resourceHintConfig;
     }
 
     public String getDescription() {

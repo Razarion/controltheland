@@ -33,7 +33,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
-import com.btxtech.game.jsre.common.tutorial.Preparation;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import java.util.List;
@@ -73,17 +72,17 @@ public class Simulation implements SelectionListener {
         }
     }
 
-    private void processPreparation(Preparation preparation) {
-        if (preparation.isClearGame()) {
+    private void processPreparation(TaskConfig taskConfig) {
+        if (taskConfig.isClearGame()) {
             clearGame();
         }
 
-        OnlineBasePanel.getInstance().setVisible(preparation.isOnlineBoxVisible());
-        InfoPanel.getInstance().setVisible(preparation.isInfoBoxVisible());
-        RadarPanel.getInstance().setVisible(preparation.isScrollingAllowed());
-        MapWindow.getInstance().setScrollingAllowed(preparation.isScrollingAllowed());
+        OnlineBasePanel.getInstance().setVisible(taskConfig.isOnlineBoxVisible());
+        InfoPanel.getInstance().setVisible(taskConfig.isInfoBoxVisible());
+        RadarPanel.getInstance().setVisible(taskConfig.isScrollingAllowed());
+        MapWindow.getInstance().setScrollingAllowed(taskConfig.isScrollingAllowed());
 
-        for (ItemTypeAndPosition itemTypeAndPosition : preparation.getOwnItems()) {
+        for (ItemTypeAndPosition itemTypeAndPosition : taskConfig.getOwnItems()) {
             try {
                 ItemContainer.getInstance().createSimulationSyncObject(itemTypeAndPosition);
             } catch (NoSuchItemTypeException e) {
@@ -91,8 +90,8 @@ public class Simulation implements SelectionListener {
             }
         }
 
-        if (preparation.getScroll() != null) {
-            TerrainView.getInstance().moveAbsolute(preparation.getScroll());
+        if (taskConfig.getScroll() != null) {
+            TerrainView.getInstance().moveAbsolute(taskConfig.getScroll());
         }
     }
 
@@ -123,7 +122,7 @@ public class Simulation implements SelectionListener {
         }
         System.out.println("*** Next Task started");
         activeTask = null;
-        processPreparation(taskConfig.getPreparation());
+        processPreparation(taskConfig);
         activeTask = new Task(taskConfig, tutorialGui);
     }
 

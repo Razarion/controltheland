@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.tutorial;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.tutorial.condition.AbstractConditionConfig;
 import java.io.Serializable;
 import java.util.Collection;
@@ -24,13 +25,17 @@ import java.util.List;
  * Time: 17:25:27
  */
 public class TaskConfig implements Serializable {
-    private Preparation preparation;
+    private boolean clearGame;
+    private Collection<ItemTypeAndPosition> ownItems;
+    private boolean isScrollingAllowed;
+    private boolean isOnlineBoxVisible;
+    private boolean isInfoBoxVisible;
+    private Index scroll;
     private List<StepConfig> stepConfigs;
     private AbstractConditionConfig completionConditionConfig;
-    private GraphicHintConfig graphicHintConfig;
+    private ResourceHintConfig resourceHintConfig;
     private Collection<Integer> allowedItemTypes;
     private int accountBalance;
-    private AbstractConditionConfig restartConditionConfig;
     private String description;
 
     /**
@@ -39,27 +44,51 @@ public class TaskConfig implements Serializable {
     public TaskConfig() {
     }
 
-    public TaskConfig(Preparation preparation, List<StepConfig> stepConfigs, AbstractConditionConfig completionConditionConfig, GraphicHintConfig graphicHintConfig, Collection<Integer> allowedItemTypes, int accountBalance,AbstractConditionConfig restartConditionConfig, String description) {
-        this.preparation = preparation;
+    public TaskConfig(boolean clearGame, Collection<ItemTypeAndPosition> ownItems, boolean scrollingAllowed, boolean onlineBoxVisible, boolean infoBoxVisible, Index scroll, List<StepConfig> stepConfigs, AbstractConditionConfig completionConditionConfig, ResourceHintConfig resourceHintConfig, Collection<Integer> allowedItemTypes, int accountBalance, String description) {
+        this.clearGame = clearGame;
+        this.ownItems = ownItems;
+        isScrollingAllowed = scrollingAllowed;
+        isOnlineBoxVisible = onlineBoxVisible;
+        isInfoBoxVisible = infoBoxVisible;
+        this.scroll = scroll;
         this.stepConfigs = stepConfigs;
         this.completionConditionConfig = completionConditionConfig;
-        this.graphicHintConfig = graphicHintConfig;
+        this.resourceHintConfig = resourceHintConfig;
         this.allowedItemTypes = allowedItemTypes;
         this.accountBalance = accountBalance;
-        this.restartConditionConfig = restartConditionConfig;
         this.description = description;
     }
 
-    public Preparation getPreparation() {
-        return preparation;
+    public boolean isClearGame() {
+        return clearGame;
+    }
+
+    public Collection<ItemTypeAndPosition> getOwnItems() {
+        return ownItems;
+    }
+
+    public boolean isScrollingAllowed() {
+        return isScrollingAllowed;
+    }
+
+    public boolean isOnlineBoxVisible() {
+        return isOnlineBoxVisible;
+    }
+
+    public boolean isInfoBoxVisible() {
+        return isInfoBoxVisible;
+    }
+
+    public Index getScroll() {
+        return scroll;
     }
 
     public List<StepConfig> getStepConfigs() {
         return stepConfigs;
     }
 
-    public GraphicHintConfig getGraphicHintConfig() {
-        return graphicHintConfig;
+    public ResourceHintConfig getGraphicHintConfig() {
+        return resourceHintConfig;
     }
 
     public AbstractConditionConfig getCompletionConditionConfig() {
@@ -72,10 +101,6 @@ public class TaskConfig implements Serializable {
 
     public int getAccountBalance() {
         return accountBalance;
-    }
-
-    public AbstractConditionConfig getRestartConditionConfig() {
-        return restartConditionConfig;
     }
 
     public String getDescription() {

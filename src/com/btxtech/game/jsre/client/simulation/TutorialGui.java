@@ -30,17 +30,19 @@ public class TutorialGui {
 
     public TutorialGui() {
         absolutePanel = new AbsolutePanel();
-        absolutePanel.setSize("300px", "100%");
-        absolutePanel.getElement().getStyle().setBackgroundColor("#FF0000");
+        absolutePanel.setSize("350px", "100%");
+        //absolutePanel.getElement().getStyle().setBackgroundColor("#FF0000");
         absolutePanel.getElement().getStyle().setProperty("right", "0");
         absolutePanel.getElement().getStyle().setProperty("top", "0");
         RootPanel.get().add(absolutePanel);
         absolutePanel.getElement().getStyle().setProperty("position", "absolute");
-        absolutePanel.getElement().getStyle().setProperty("background", " #FFFFFF url(images/tutorial.jpg) no-repeat");
+        absolutePanel.getElement().getStyle().setProperty("background", "url(images/tutorial.jpg) no-repeat");
+       // absolutePanel.getElement().getStyle().setProperty("background", " #FFFFFF url(images/tutorial.jpg) no-repeat");
 
         html = new HTML();
-        absolutePanel.add(html, 14, 120);
-        html.setPixelSize(240, 240);
+        absolutePanel.add(html, 60, 150);
+        html.setPixelSize(250, 220);
+        //html.getElement().getStyle().setBackgroundColor("#FF0000");
     }
 
     public void setTaskText(String text) {
@@ -64,7 +66,7 @@ public class TutorialGui {
         builder.append(stepText);
         html.setHTML(builder.toString());
         html.getElement().getStyle().setProperty("fontFamily","Impact,Charcoal,sans-serif");
-        html.getElement().getStyle().setColor("#00E000");
+        html.getElement().getStyle().setColor("#FFFFFF");
     }
 
 }

@@ -16,7 +16,7 @@ package com.btxtech.game.jsre.client.simulation;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
-import com.btxtech.game.jsre.common.tutorial.GraphicHintConfig;
+import com.btxtech.game.jsre.common.tutorial.ResourceHintConfig;
 import com.google.gwt.user.client.ui.Image;
 
 /**
@@ -27,10 +27,10 @@ import com.google.gwt.user.client.ui.Image;
 public class GraphicHint {
     private Image image;
 
-    public GraphicHint(GraphicHintConfig graphicHintConfig) {
-        image = ImageHandler.getTutorialImage(graphicHintConfig.getImageId());
+    public GraphicHint(ResourceHintConfig resourceHintConfig) {
+        image = ImageHandler.getTutorialImage(resourceHintConfig.getImageId());
         image.getElement().getStyle().setZIndex(Constants.Z_INDEX_BELOW_BUILDING);
-        MapWindow.getAbsolutePanel().add(image, graphicHintConfig.getPosition().getX(), graphicHintConfig.getPosition().getY());
+        MapWindow.getAbsolutePanel().add(image, resourceHintConfig.getPosition().getX(), resourceHintConfig.getPosition().getY());
     }
 
     public void dispose() {
