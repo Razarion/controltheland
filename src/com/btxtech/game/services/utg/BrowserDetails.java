@@ -35,6 +35,7 @@ public class BrowserDetails {
     private Date timeStamp;
     @Column(nullable = false)
     private String sessionId;
+    @Column(length = 10000)        
     private String userAgent;
     private String language;
     private String remoteHost;
