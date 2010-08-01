@@ -13,10 +13,8 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tutorial;
 
-import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.tutorial.DbResourceHintConfig;
-import java.util.HashSet;
-import javax.swing.ImageIcon;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
@@ -52,5 +50,21 @@ public class ResourceHintPanel extends Panel {
             public void detach() {
             }
         }));
+        add(new Button("delete") {
+
+            @Override
+            public void onSubmit() {
+                dbResourceHintConfig.setData(null);
+                dbResourceHintConfig.setContentType(null);
+            }
+
+            @Override
+            public boolean isVisible() {
+                return dbResourceHintConfig.getData() != null
+                        && dbResourceHintConfig.getData().length > 0
+                        && dbResourceHintConfig.getContentType() != null
+                        && !dbResourceHintConfig.getContentType().trim().isEmpty();
+            }
+        });
     }
 }

@@ -35,6 +35,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
+import com.google.gwt.user.client.Timer;
 import java.util.List;
 
 /**
@@ -68,7 +69,7 @@ public class Simulation implements SelectionListener {
             }
             tutorialGui = new TutorialGui();
             ClientBase.getInstance().setBase(tutorialConfig.getOwnBase());
-            runNextTask();
+            runNextTask(activeTask);
         }
     }
 
@@ -101,15 +102,15 @@ public class Simulation implements SelectionListener {
         SelectionHandler.getInstance().clearSelection();
     }
 
-    private void runNextTask() {
+    private void runNextTask(Task closedTask) {
         TaskConfig taskConfig;
         List<TaskConfig> tasks = simulationInfo.getTutorialConfig().getTasks();
         if (tasks.isEmpty()) {
             tutorialFinished();
             return;
         }
-        if (activeTask != null) {
-            int index = tasks.indexOf(activeTask.getTaskConfig());
+        if (closedTask != null) {
+            int index = tasks.indexOf(closedTask.getTaskConfig());
             index++;
             if (tasks.size() > index) {
                 taskConfig = tasks.get(index);
@@ -121,7 +122,6 @@ public class Simulation implements SelectionListener {
             taskConfig = tasks.get(0);
         }
         System.out.println("*** Next Task started");
-        activeTask = null;
         processPreparation(taskConfig);
         activeTask = new Task(taskConfig, tutorialGui);
     }
@@ -135,8 +135,24 @@ public class Simulation implements SelectionListener {
 
     private void checkForTaskCompletion() {
         if (activeTask.isFulFilled()) {
-            runNextTask();
+            if (activeTask.getTaskConfig().getFinishedText() == null
+                    || activeTask.getTaskConfig().getFinishedText().isEmpty()
+                    || activeTask.getTaskConfig().getFinishedTextDuration() <= 0) {
+                runNextTask(activeTask);
+            } else {
+                final Task closedTask = activeTask;
+                activeTask = null;
+                tutorialGui.showFinishedText(closedTask.getTaskConfig().getFinishedText());
+                Timer timer = new Timer() {
+                    @Override
+                    public void run() {
+                        runNextTask(closedTask);
+                    }
+                };
+                timer.schedule(closedTask.getTaskConfig().getFinishedTextDuration());
+            }
         }
+
     }
 
     @Override

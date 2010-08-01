@@ -88,7 +88,7 @@ public class CursorHandler implements TerrainMouseMoveListener {
         Index position = new Index(absoluteLeft, absoluteTop);
 
         if (cursorState.isCanUnload()) {
-            setTerrainCursor(CursorType.UNLOAD, SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection(position) && atLeastOnAllowedForUnload(position));
+            setTerrainCursor(CursorType.UNLOAD, SelectionHandler.getInstance().atLeastOneAllowedOnTerritory4Selection(position) && atLeastOnAllowedForUnload(position));
         } else if (cursorState.isCanMove()) {
             Collection<SurfaceType> allowedSurfaceTypes = SelectionHandler.getInstance().getOwnSelectionSurfaceTypes();
             SurfaceType surfaceType = TerrainView.getInstance().getTerrainHandler().getSurfaceTypeAbsolute(position);
@@ -118,10 +118,10 @@ public class CursorHandler implements TerrainMouseMoveListener {
         if (cursorState.isCanAttack() && cursorItemState.isAttackTarget()) {
             setCursor(clientSyncItemView, CursorType.ATTACK,
                     SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection()
-                            && SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection(position)
+                            && SelectionHandler.getInstance().atLeastOneAllowedOnTerritory4Selection(position)
                             && SelectionHandler.getInstance().atLeastOneItemTypeAllowed2Attack4Selection(((ClientSyncBaseItemView) clientSyncItemView).getSyncBaseItem()));
         } else if (cursorState.isCanCollect() && cursorItemState.isCollectTarget()) {
-            setCursor(clientSyncItemView, CursorType.COLLECT, SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection(position));
+            setCursor(clientSyncItemView, CursorType.COLLECT, SelectionHandler.getInstance().atLeastOneAllowedOnTerritory4Selection(position));
         } else if (cursorState.isCanLoad() && cursorItemState.isLoadTarget() && isNotMyself(clientSyncItemView)) {
             SyncItemContainer syncItemContainer = ((ClientSyncBaseItemView) clientSyncItemView).getSyncBaseItem().getSyncItemContainer();
             boolean allowed = ClientTerritoryService.getInstance().isAllowed(position, ((ClientSyncBaseItemView) clientSyncItemView).getSyncBaseItem())

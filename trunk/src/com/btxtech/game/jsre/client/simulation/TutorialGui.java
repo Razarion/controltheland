@@ -31,18 +31,16 @@ public class TutorialGui {
     public TutorialGui() {
         absolutePanel = new AbsolutePanel();
         absolutePanel.setSize("350px", "100%");
-        //absolutePanel.getElement().getStyle().setBackgroundColor("#FF0000");
         absolutePanel.getElement().getStyle().setProperty("right", "0");
         absolutePanel.getElement().getStyle().setProperty("top", "0");
         RootPanel.get().add(absolutePanel);
         absolutePanel.getElement().getStyle().setProperty("position", "absolute");
         absolutePanel.getElement().getStyle().setProperty("background", "url(images/tutorial.jpg) no-repeat");
-       // absolutePanel.getElement().getStyle().setProperty("background", " #FFFFFF url(images/tutorial.jpg) no-repeat");
+        // absolutePanel.getElement().getStyle().setProperty("background", " #FFFFFF url(images/tutorial.jpg) no-repeat");
 
         html = new HTML();
         absolutePanel.add(html, 60, 150);
         html.setPixelSize(250, 220);
-        //html.getElement().getStyle().setBackgroundColor("#FF0000");
     }
 
     public void setTaskText(String text) {
@@ -55,17 +53,25 @@ public class TutorialGui {
         setupHtmlText();
     }
 
+    public void showFinishedText(String text) {
+        taskText = text;
+        stepText = null;
+        setupHtmlText();
+    }
+
     private void setupHtmlText() {
         StringBuilder builder = new StringBuilder();
         builder.append("<br>");
         builder.append("<font size='+1'>");
         builder.append(taskText);
         builder.append("</font>");
-        builder.append("<br>");
-        builder.append("<br>");
-        builder.append(stepText);
+        if(stepText != null) {
+            builder.append("<br>");
+            builder.append("<br>");            
+            builder.append(stepText);
+        }
         html.setHTML(builder.toString());
-        html.getElement().getStyle().setProperty("fontFamily","Impact,Charcoal,sans-serif");
+        html.getElement().getStyle().setProperty("fontFamily", "Impact,Charcoal,sans-serif");
         html.getElement().getStyle().setColor("#FFFFFF");
     }
 

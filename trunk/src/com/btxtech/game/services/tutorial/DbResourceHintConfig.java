@@ -63,7 +63,11 @@ public class DbResourceHintConfig implements Serializable {
         this.data = data;
     }
 
-    public ResourceHintConfig createResourceHintConfig() {
-        return new ResourceHintConfig(position);
+    public ResourceHintConfig createResourceHintConfig(ResourceHintManager resourceHintManager) {
+        if(data == null || data.length == 0 || contentType == null) {
+            return null;
+        }
+        int id = resourceHintManager.addResource(this);
+        return new ResourceHintConfig(position, id);
     }
 }

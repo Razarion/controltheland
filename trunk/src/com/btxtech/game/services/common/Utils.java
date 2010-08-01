@@ -15,6 +15,7 @@ package com.btxtech.game.services.common;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.StringTokenizer;
 
 /**
@@ -26,6 +27,9 @@ public class Utils {
     public static final String DELIMITER = ";";
 
     public static Collection<Integer> stringToIntegers(String s) {
+        if(s == null) {
+            return Collections.emptyList();
+        }
         Collection<Integer> result = new ArrayList<Integer>();
         StringTokenizer st = new StringTokenizer(s, DELIMITER);
         while (st.hasMoreTokens()) {

@@ -13,13 +13,14 @@
 
 package com.btxtech.game.services.utg;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Column;
-import java.util.Date;
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 /**
  * User: beat
@@ -27,7 +28,7 @@ import java.net.UnknownHostException;
  * Time: 22:45:47
  */
 @Entity(name = "TRACKER_BROWSER_DETAILS")
-public class BrowserDetails {
+public class BrowserDetails implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
@@ -35,13 +36,13 @@ public class BrowserDetails {
     private Date timeStamp;
     @Column(nullable = false)
     private String sessionId;
-    @Column(length = 10000)        
+    @Column(length = 10000)
     private String userAgent;
     private String language;
     private String remoteHost;
     private String remoteAddr;
     private String cookieId;
-    @Column(length = 50000)    
+    @Column(length = 50000)
     private String referer;
     private boolean javaScriptDetected = false;
 

@@ -34,14 +34,14 @@ import org.apache.wicket.model.IModel;
  */
 public class SendCommandConditionConfigPanel extends Panel {
     public static final String[] ALL_COMMANDS = {
-            AttackCommand.class.toString(),
-            BuilderCommand.class.toString(),
-            FactoryCommand.class.toString(),
-            LoadContainCommand.class.toString(),
-            MoneyCollectCommand.class.toString(),
-            MoveCommand.class.toString(),
-            UnloadContainerCommand.class.toString(),
-            UpgradeCommand.class.toString(),
+            AttackCommand.class.getName(),
+            BuilderCommand.class.getName(),
+            FactoryCommand.class.getName(),
+            LoadContainCommand.class.getName(),
+            MoneyCollectCommand.class.getName(),
+            MoveCommand.class.getName(),
+            UnloadContainerCommand.class.getName(),
+            UpgradeCommand.class.getName(),
     };
     private ConditionWrapperPanel conditionWrapperPanel;
 

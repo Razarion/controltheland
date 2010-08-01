@@ -37,10 +37,8 @@ public class Constants {
     public static final String ITEM_IMAGE_INDEX = "ix";
 
     // Tutorial
-    //public static final String TUTORIAL_IMAGE_URL = "/spring/tutorial";
     public static final String TUTORIAL_RESOURCE_URL = "/spring/tutorial";
     public static final String TUTORIAL_RESOURCE_ID = "id";
-
 
     // zIndex
     public static final int Z_INDEX_STARTUP_SCREEN = 100; // Fix coded in Game.html
