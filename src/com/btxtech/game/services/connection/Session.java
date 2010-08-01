@@ -45,4 +45,8 @@ public interface Session {
     void onJavaScriptDetected();
 
     boolean isJavaScriptDetected();
+
+    boolean isTutorialFinished();
+
+    void setTutorialFinished();
 }

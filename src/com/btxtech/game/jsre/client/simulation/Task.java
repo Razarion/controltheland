@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.simulation.condition.AbstractCondition;
+import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
@@ -36,7 +37,7 @@ public class Task {
     private GraphicHint stepGraphicHint;
     private GraphicHint taskGraphicHint;
     private AbstractCondition completionCondition;
-
+    private long stepTime;
 
     public Task(TaskConfig taskConfig, TutorialGui tutorialGui) {
         this.taskConfig = taskConfig;
@@ -152,15 +153,16 @@ public class Task {
     }
 
     private void runNextStep(StepConfig stepConfig) {
-        System.out.println("*** Next Step started");
         if (stepConfig.getGraphicHintConfig() != null) {
             stepGraphicHint = new GraphicHint(stepConfig.getGraphicHintConfig());
         }
+        stepTime = System.currentTimeMillis();
         activeStep = new Step(stepConfig, tutorialGui);
     }
 
     private void checkForCompletion() {
         if (activeStep.isFulFilled()) {
+            ClientUserTracker.getInstance().onStepFinished(activeStep, System.currentTimeMillis() - stepTime);
             runNextStep();
         }
     }

@@ -25,6 +25,7 @@ public class StepConfig implements Serializable {
     private AbstractConditionConfig abstractConditionConfig;
     private ResourceHintConfig resourceHintConfig;
     private String description;
+    private String name;
 
     /**
      * Used by GWT
@@ -32,10 +33,11 @@ public class StepConfig implements Serializable {
     public StepConfig() {
     }
 
-    public StepConfig(AbstractConditionConfig abstractConditionConfig, ResourceHintConfig resourceHintConfig, String description) {
+    public StepConfig(AbstractConditionConfig abstractConditionConfig, ResourceHintConfig resourceHintConfig, String description, String name) {
         this.description = description;
         this.abstractConditionConfig = abstractConditionConfig;
         this.resourceHintConfig = resourceHintConfig;
+        this.name = name;
     }
 
     public AbstractConditionConfig getAbstractConditionConfig() {
@@ -48,5 +50,9 @@ public class StepConfig implements Serializable {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getName() {
+        return name;
     }
 }

@@ -39,6 +39,7 @@ public class TaskConfig implements Serializable {
     private String description;
     private String finishedText;
     private int finishedTextDuration;
+    private String name;
 
     /**
      * Used by GWT
@@ -46,7 +47,7 @@ public class TaskConfig implements Serializable {
     public TaskConfig() {
     }
 
-    public TaskConfig(boolean clearGame, Collection<ItemTypeAndPosition> ownItems, boolean scrollingAllowed, boolean onlineBoxVisible, boolean infoBoxVisible, Index scroll, List<StepConfig> stepConfigs, AbstractConditionConfig completionConditionConfig, ResourceHintConfig resourceHintConfig, Collection<Integer> allowedItemTypes, int accountBalance, String description, String finishedText, int finishedTextDuration) {
+    public TaskConfig(boolean clearGame, Collection<ItemTypeAndPosition> ownItems, boolean scrollingAllowed, boolean onlineBoxVisible, boolean infoBoxVisible, Index scroll, List<StepConfig> stepConfigs, AbstractConditionConfig completionConditionConfig, ResourceHintConfig resourceHintConfig, Collection<Integer> allowedItemTypes, int accountBalance, String description, String finishedText, int finishedTextDuration, String name) {
         this.clearGame = clearGame;
         this.ownItems = ownItems;
         isScrollingAllowed = scrollingAllowed;
@@ -61,6 +62,7 @@ public class TaskConfig implements Serializable {
         this.description = description;
         this.finishedText = finishedText;
         this.finishedTextDuration = finishedTextDuration;
+        this.name = name;
     }
 
     public boolean isClearGame() {
@@ -117,5 +119,9 @@ public class TaskConfig implements Serializable {
 
     public int getFinishedTextDuration() {
         return finishedTextDuration;
+    }
+
+    public String getName() {
+        return name;
     }
 }

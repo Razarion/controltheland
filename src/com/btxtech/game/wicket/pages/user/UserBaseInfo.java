@@ -20,7 +20,7 @@ import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.BorderPanel;
-import com.btxtech.game.wicket.pages.entergame.ColorField;
+import com.btxtech.game.wicket.uiservices.ColorField;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.wicket.markup.html.basic.Label;

@@ -129,19 +129,29 @@ public class BaseServiceImpl implements BaseService {
         }
     }
 
-    @Override
-    public void createNewBase() throws AlreadyUsedException, NoSuchItemTypeException, GameFullException {
+    private Base createNewBase() throws AlreadyUsedException, NoSuchItemTypeException, GameFullException {
         synchronized (bases) {
             List<BaseColor> baseColors = getFreeColors(1);
-            if(baseColors.isEmpty()) {
-                throw new GameFullException(); 
+            if (baseColors.isEmpty()) {
+                throw new GameFullException();
             }
-            createNewBase(getFreePlayerName(), baseColors.get(0));
+            return createNewBase(getFreePlayerName(), baseColors.get(0));
         }
     }
 
     @Override
-    public void createNewBase(String name, BaseColor baseColor) throws AlreadyUsedException, NoSuchItemTypeException {
+    public Base continueOrCreateBase() throws AlreadyUsedException, NoSuchItemTypeException, GameFullException {
+        if (userService.isLoggedin()) {
+            Base base = getBaseForLoggedInUser();
+            if (base != null) {
+                continueBase();
+                return base;
+            }
+        }
+        return createNewBase();
+    }
+
+    private Base createNewBase(String name, BaseColor baseColor) throws AlreadyUsedException, NoSuchItemTypeException {
         Base base;
         ItemType constructionVehicle = itemService.getItemType(Constants.CONSTRUCTION_VEHICLE);
         synchronized (bases) {
@@ -172,10 +182,10 @@ public class BaseServiceImpl implements BaseService {
         syncBaseItem.setFullHealth();
         syncBaseItem.getSyncTurnable().setAngel(Math.PI / 4.0); // Cosmetis shows vehicle from side
         historyService.addBaseStartEntry(base.getSimpleBase());
+        return base;
     }
 
-    @Override
-    public void continueBase() {
+    private void continueBase() {
         Base base = getBaseForLoggedInUser();
         if (base == null) {
             throw new IllegalStateException("User does not have any running base");

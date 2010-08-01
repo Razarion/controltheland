@@ -267,7 +267,8 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild {
                 accountBalance,
                 description,
                 finishedText,
-                finishedTestDuration * 1000);
+                finishedTestDuration * 1000,
+                name);
     }
 
     public CrudServiceHelper<DbItemTypeAndPosition> getItemCrudServiceHelper() {

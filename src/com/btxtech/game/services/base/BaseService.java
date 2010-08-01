@@ -31,12 +31,6 @@ import java.util.List;
 public interface BaseService extends com.btxtech.game.jsre.common.gameengine.services.base.BaseService {
     void checkBaseAccess(SyncBaseItem item) throws IllegalAccessException;
 
-    void createNewBase() throws AlreadyUsedException, NoSuchItemTypeException, GameFullException;
-
-    void createNewBase(String name, BaseColor baseColor) throws AlreadyUsedException, NoSuchItemTypeException;
-
-    void continueBase();
-
     void checkCanBeAttack(SyncBaseItem victim);
 
     List<BaseColor> getFreeColors(int maxCount);
@@ -63,6 +57,8 @@ public interface BaseService extends com.btxtech.game.jsre.common.gameengine.ser
 
     Base getBase();
 
+    Base continueOrCreateBase() throws AlreadyUsedException, NoSuchItemTypeException, GameFullException;
+
     Base getBase(SyncBaseItem baseSyncItem);
 
     Base getBase(SimpleBase simpleBase);
@@ -80,4 +76,5 @@ public interface BaseService extends com.btxtech.game.jsre.common.gameengine.ser
     void restoreBases(Collection<Base> bases);
 
     SimpleBase getDummyBase();
+
 }

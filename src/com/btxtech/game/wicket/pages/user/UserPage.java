@@ -13,15 +13,13 @@
 
 package com.btxtech.game.wicket.pages.user;
 
-import com.btxtech.game.services.base.GameFullException;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.wicket.pages.Info;
+import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import com.btxtech.game.wicket.pages.history.HistoryPanel;
 import com.btxtech.game.wicket.pages.messenger.MessengerOverviewPanel;
-import com.btxtech.game.wicket.uiservices.GameControlService;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -38,8 +36,6 @@ public class UserPage extends BasePage {
     private HistoryService historyService;
     @SpringBean
     private UserService userService;
-    @SpringBean
-    private GameControlService gameControlService;
     private User viewUser;
     private boolean canEditSite;
 
@@ -50,13 +46,7 @@ public class UserPage extends BasePage {
         Form form = new Form("enterForm") {
             @Override
             protected void onSubmit() {
-                try {
-                    setResponsePage(gameControlService.getEnterGamePage(canEditSite));
-                } catch (GameFullException e) {
-                    PageParameters parameters = new PageParameters();
-                    parameters.add(Info.KEY_MESSAGE, "The game is full. Please come back later.");
-                    setResponsePage(Info.class, parameters);
-                }
+                setResponsePage(Game.class);
             }
 
             @Override

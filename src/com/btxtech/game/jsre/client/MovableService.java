@@ -27,6 +27,7 @@ import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import java.util.ArrayList;
@@ -71,4 +72,5 @@ public interface MovableService extends RemoteService {
 
     void startUpTaskFailed(StartupTask state, Date clientTimeStamp, long duration, String failureText);
 
+    void sendTutorialProgress(TutorialConfig.TYPE type, String name, long duration);
 }

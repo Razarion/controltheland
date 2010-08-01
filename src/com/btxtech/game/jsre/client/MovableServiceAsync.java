@@ -13,12 +13,13 @@
 
 package com.btxtech.game.jsre.client;
 
+import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
-import com.btxtech.game.jsre.client.common.UserMessage;
+import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.ArrayList;
 import java.util.Date;
@@ -59,4 +60,6 @@ public interface MovableServiceAsync {
     void startUpTaskFinished(StartupTask state, Date clientTimeStamp, long duration, AsyncCallback<Void> asyncCallback);
 
     void startUpTaskFailed(StartupTask state, Date clientTimeStamp, long duration, String failureText, AsyncCallback<Void> asyncCallback);
+
+    void sendTutorialProgress(TutorialConfig.TYPE type, String name, long duration, AsyncCallback<Void> asyncCallback);
 }

@@ -28,6 +28,7 @@ import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.connection.ConnectionService;
+import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.market.ServerMarketService;
@@ -73,6 +74,8 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     private ServerMarketService serverMarketService;
     @Autowired
     private UserTrackingService userTrackingService;
+    @Autowired
+    private Session session;
     private HibernateTemplate hibernateTemplate;
     final private HashMap<SimpleBase, PendingPromotion> pendingPromotions = new HashMap<SimpleBase, PendingPromotion>();
     private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
@@ -484,5 +487,15 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
             }
         }
         return true;
+    }
+
+    @Override
+    public boolean isTutorialRequired() {
+        return baseService.getBaseForLoggedInUser() == null && !session.isTutorialFinished();
+    }
+
+    @Override
+    public void onTutorialFinished() {
+        session.setTutorialFinished();
     }
 }

@@ -44,6 +44,7 @@ public class SessionImpl implements Session, Serializable {
     private UserItemTypeAccess userItemTypeAccess;
     private boolean javaScriptDetected = false;
     private BrowserDetails browserDetails;
+    private boolean tutorialFinished = false;
 
     @Override
     public Connection getConnection() {
@@ -137,5 +138,15 @@ public class SessionImpl implements Session, Serializable {
     @Override
     public boolean isJavaScriptDetected() {
         return javaScriptDetected;
+    }
+
+    @Override
+    public boolean isTutorialFinished() {
+        return tutorialFinished;
+    }
+
+    @Override
+    public void setTutorialFinished() {
+        tutorialFinished = true;
     }
 }

@@ -15,7 +15,7 @@ package com.btxtech.game.wicket.pages.statistics;
 
 import com.btxtech.game.services.statistics.BaseStatisticsDTO;
 import com.btxtech.game.services.statistics.StatisticsService;
-import com.btxtech.game.wicket.pages.entergame.ColorField;
+import com.btxtech.game.wicket.uiservices.ColorField;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.Panel;
