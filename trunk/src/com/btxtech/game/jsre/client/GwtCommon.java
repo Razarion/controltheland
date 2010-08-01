@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.dialogs.ExceptionDialog;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.MouseEvent;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -123,7 +124,7 @@ public class GwtCommon {
     /*
      * Just to prevent image dragging and selection
      */
-    public static void preventDefault(MouseEvent event) {
+    public static void preventDefault(DomEvent event) {
         event.stopPropagation();
         event.preventDefault();
     }

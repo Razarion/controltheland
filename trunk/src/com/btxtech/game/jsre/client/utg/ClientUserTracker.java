@@ -19,11 +19,14 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.StartupTask;
 import com.btxtech.game.jsre.client.cockpit.Group;
+import com.btxtech.game.jsre.client.simulation.Step;
+import com.btxtech.game.jsre.client.simulation.Task;
 import com.btxtech.game.jsre.client.utg.missions.Mission;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
+import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.Timer;
@@ -243,5 +246,17 @@ public class ClientUserTracker {
 
     public void setCollectionTime(int collectionTime) {
         this.collectionTime = collectionTime * 1000;
+    }
+
+    public void onTutorialFinished(long duration) {
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, null, duration);
+    }
+
+    public void onTaskFinished(Task task, long duration) {
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TASK, task.getTaskConfig().getName(), duration);
+    }
+
+    public void onStepFinished(Step step, long duration) {
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.STEP, step.getStepConfig().getName(), duration);
     }
 }

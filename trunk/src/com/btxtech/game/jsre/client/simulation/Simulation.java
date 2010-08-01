@@ -28,6 +28,7 @@ import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -35,7 +36,9 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import java.util.List;
 
 /**
@@ -48,6 +51,8 @@ public class Simulation implements SelectionListener {
     private SimulationInfo simulationInfo;
     private Task activeTask;
     private TutorialGui tutorialGui;
+    private long taskTime;
+    private long tutorialTime;
 
     /**
      * Singleton
@@ -69,6 +74,7 @@ public class Simulation implements SelectionListener {
             }
             tutorialGui = new TutorialGui();
             ClientBase.getInstance().setBase(tutorialConfig.getOwnBase());
+            tutorialTime = System.currentTimeMillis();
             runNextTask(activeTask);
         }
     }
@@ -122,20 +128,21 @@ public class Simulation implements SelectionListener {
         } else {
             taskConfig = tasks.get(0);
         }
-        System.out.println("*** Next Task started");
         processPreparation(taskConfig);
+        taskTime = System.currentTimeMillis();
         activeTask = new Task(taskConfig, tutorialGui);
     }
 
     private void tutorialFinished() {
-        // TODO
-        System.out.println("*** Tutorial finished");
         activeTask = null;
+        ClientUserTracker.getInstance().onTutorialFinished(System.currentTimeMillis() - tutorialTime);
+        Window.Location.reload();
     }
 
 
     private void checkForTaskCompletion() {
         if (activeTask.isFulFilled()) {
+            ClientUserTracker.getInstance().onTaskFinished(activeTask, System.currentTimeMillis() - taskTime);
             if (activeTask.getTaskConfig().getFinishedText() == null
                     || activeTask.getTaskConfig().getFinishedText().isEmpty()
                     || activeTask.getTaskConfig().getFinishedTextDuration() <= 0) {

@@ -68,6 +68,7 @@
         <mapping class="com.btxtech.game.services.utg.DbItemCount"/>
         <mapping class="com.btxtech.game.services.utg.DbLevelPromotion"/>
         <mapping class="com.btxtech.game.services.utg.BaseLevelStatus"/>
+        <mapping class="com.btxtech.game.services.utg.DbTutorialProgress"/>
         <mapping class="com.btxtech.game.services.forum.AbstractForumEntry"/>
         <mapping class="com.btxtech.game.services.forum.SubForum"/>
         <mapping class="com.btxtech.game.services.forum.Category"/>

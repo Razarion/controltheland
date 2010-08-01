@@ -40,6 +40,7 @@ import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeA
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -252,6 +253,12 @@ public class Connection implements AsyncCallback<Void> {
             movableServiceAsync.sendCommands(commandQueue, this);
         }
         commandQueue.clear();
+    }
+
+    public void sendTutorialProgress(TutorialConfig.TYPE type, String name, long duration) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.sendTutorialProgress(type, name, duration, this);
+        }
     }
 
     public void createMissionTraget(SyncBaseItem syncBaseItem) {

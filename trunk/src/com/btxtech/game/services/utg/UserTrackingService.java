@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
@@ -74,4 +75,6 @@ public interface UserTrackingService {
     void onJavaScriptDetected();
 
     boolean isJavaScriptDetected();
+
+    void onTutorialProgressChanged(TutorialConfig.TYPE type, String name, long duration);
 }

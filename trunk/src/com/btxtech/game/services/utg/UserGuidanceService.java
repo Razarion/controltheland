@@ -67,4 +67,8 @@ public interface UserGuidanceService {
     void onItemKilled(Base actorBase);
 
     void restore(Collection<Base> bases);
+
+    boolean isTutorialRequired();
+
+    void onTutorialFinished();
 }

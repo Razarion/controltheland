@@ -118,6 +118,6 @@ public class DbStepConfig implements Serializable, CrudChild {
         if (abstractConditionConfig == null) {
             throw new IllegalStateException("No condition set in step: " + name);
         }
-        return new StepConfig(abstractConditionConfig.createConditionConfig(), resourceHintConfig, description);
+        return new StepConfig(abstractConditionConfig.createConditionConfig(), resourceHintConfig, description, name);
     }
 }

@@ -23,8 +23,10 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderComman
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
+import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.user.User;
@@ -32,6 +34,7 @@ import com.btxtech.game.services.utg.BrowserDetails;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelPromotion;
 import com.btxtech.game.services.utg.DbMissionAction;
+import com.btxtech.game.services.utg.DbTutorialProgress;
 import com.btxtech.game.services.utg.DbUserAction;
 import com.btxtech.game.services.utg.DbUserMessage;
 import com.btxtech.game.services.utg.GameStartup;
@@ -39,6 +42,7 @@ import com.btxtech.game.services.utg.GameTrackingInfo;
 import com.btxtech.game.services.utg.PageAccess;
 import com.btxtech.game.services.utg.UserActionCommandMissions;
 import com.btxtech.game.services.utg.UserCommand;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserHistory;
 import com.btxtech.game.services.utg.UserTrackingFilter;
 import com.btxtech.game.services.utg.UserTrackingService;
@@ -76,6 +80,10 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     private Session session;
     @Autowired
     private BaseService baseService;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
+    @Autowired
+    private ConnectionService connectionService;
     private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(UserTrackingServiceImpl.class);
 
@@ -116,22 +124,24 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     public void startUpTaskFinished(StartupTask state, Date clientTimeStamp, long duration) {
-        try {
-            GameStartup gameStartup = new GameStartup(clientTimeStamp, GameStartup.FINISHED, state, duration, null, baseService.getBase().getName(), session.getUser(), session.getSessionId());
-            hibernateTemplate.saveOrUpdate(gameStartup);
-        } catch (NoConnectionException e) {
-            log.error("Can not track game startup: " + e.getMessage());
+        GameStartup gameStartup;
+        if (connectionService.hasConnection()) {
+            gameStartup = new GameStartup(clientTimeStamp, GameStartup.FINISHED, state, duration, null, baseService.getBase().getName(), session.getUser(), session.getSessionId());
+        } else {
+            gameStartup = new GameStartup(clientTimeStamp, GameStartup.FINISHED, state, duration, null, "<Tutorial>", session.getUser(), session.getSessionId());
         }
+        hibernateTemplate.saveOrUpdate(gameStartup);
     }
 
     @Override
     public void startUpTaskFailed(StartupTask state, Date clientTimeStamp, long duration, String failureText) {
-        try {
-            GameStartup gameStartup = new GameStartup(clientTimeStamp, GameStartup.FAILED, state, duration, failureText, baseService.getBase().getName(), session.getUser(), session.getSessionId());
-            hibernateTemplate.saveOrUpdate(gameStartup);
-        } catch (NoConnectionException e) {
-            log.error("Can not track game startup: " + e.getMessage());
+        GameStartup gameStartup;
+        if (connectionService.hasConnection()) {
+            gameStartup = new GameStartup(clientTimeStamp, GameStartup.FAILED, state, duration, failureText, baseService.getBase().getName(), session.getUser(), session.getSessionId());
+        } else {
+            gameStartup = new GameStartup(clientTimeStamp, GameStartup.FAILED, state, duration, failureText, "<Tutorial>", session.getUser(), session.getSessionId());
         }
+        hibernateTemplate.saveOrUpdate(gameStartup);
     }
 
     @Override
@@ -157,11 +167,11 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         ArrayList<VisitorInfo> visitorInfos = new ArrayList<VisitorInfo>();
         String sql;
         if (filter.getJsEnabled().equals(UserTrackingFilter.ENABLED)) {
-            sql=("select u.timeStamp, u.sessionId, u.cookieId, u.referer ,count(p) from com.btxtech.game.services.utg.BrowserDetails u, com.btxtech.game.services.utg.PageAccess p where u.sessionId = p.sessionId and u.javaScriptDetected = true group by u.sessionId order by u.timeStamp desc");
+            sql = ("select u.timeStamp, u.sessionId, u.cookieId, u.referer ,count(p) from com.btxtech.game.services.utg.BrowserDetails u, com.btxtech.game.services.utg.PageAccess p where u.sessionId = p.sessionId and u.javaScriptDetected = true group by u.sessionId order by u.timeStamp desc");
         } else if (filter.getJsEnabled().equals(UserTrackingFilter.DISABLED)) {
-            sql=("select u.timeStamp, u.sessionId, u.cookieId, u.referer ,count(p) from com.btxtech.game.services.utg.BrowserDetails u, com.btxtech.game.services.utg.PageAccess p where u.sessionId = p.sessionId and u.javaScriptDetected = false group by u.sessionId order by u.timeStamp desc");
+            sql = ("select u.timeStamp, u.sessionId, u.cookieId, u.referer ,count(p) from com.btxtech.game.services.utg.BrowserDetails u, com.btxtech.game.services.utg.PageAccess p where u.sessionId = p.sessionId and u.javaScriptDetected = false group by u.sessionId order by u.timeStamp desc");
         } else if (filter.getJsEnabled().equals(UserTrackingFilter.BOTH)) {
-            sql=("select u.timeStamp, u.sessionId, u.cookieId, u.referer ,count(p) from com.btxtech.game.services.utg.BrowserDetails u, com.btxtech.game.services.utg.PageAccess p where u.sessionId = p.sessionId group by u.sessionId order by u.timeStamp desc");
+            sql = ("select u.timeStamp, u.sessionId, u.cookieId, u.referer ,count(p) from com.btxtech.game.services.utg.BrowserDetails u, com.btxtech.game.services.utg.PageAccess p where u.sessionId = p.sessionId group by u.sessionId order by u.timeStamp desc");
         } else {
             throw new IllegalArgumentException("Unknown JS enabled state: " + filter.getJsEnabled());
         }
@@ -562,4 +572,15 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         return session.isJavaScriptDetected();
     }
 
+    @Override
+    public void onTutorialProgressChanged(TutorialConfig.TYPE type, String name, long duration) {
+        try {
+            if (type == TutorialConfig.TYPE.TUTORIAL) {
+                userGuidanceService.onTutorialFinished();
+            }
+            hibernateTemplate.saveOrUpdate(new DbTutorialProgress(session.getSessionId(), type.name(), name, duration));
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
 }

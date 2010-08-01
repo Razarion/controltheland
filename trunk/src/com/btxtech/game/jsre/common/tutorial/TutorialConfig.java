@@ -23,6 +23,11 @@ import java.util.List;
  * Time: 23:25:25
  */
 public class TutorialConfig implements Serializable {
+    public static enum TYPE{
+        TUTORIAL,
+        TASK,
+        STEP
+    }
     private List<TaskConfig> taskConfigs;
     private SimpleBase ownBase;
 
