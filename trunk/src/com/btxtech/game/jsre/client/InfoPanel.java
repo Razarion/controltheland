@@ -78,12 +78,12 @@ public class InfoPanel extends TopMapPanel {
         // Level
         layout.setHTML(1, 1, "Level");
         level = new Label();
-        level.setText("???");
+        level.setText("");
         layout.setWidget(1, 2, level);
 
         // Name
         layout.setHTML(2, 1, "Name");
-        name = new Label("???");
+        name = new Label("");
         layout.setWidget(2, 2, name);
 
         // Color
@@ -94,12 +94,12 @@ public class InfoPanel extends TopMapPanel {
 
         // Money
         layout.setHTML(4, 1, "Money");
-        money = new Label("???");
+        money = new Label("");
         layout.setWidget(4, 2, money);
 
         // Xp
         layout.setHTML(5, 1, "Xp");
-        xp = new Label("???");
+        xp = new Label("");
         layout.setWidget(5, 2, xp);
 
         // Energy
@@ -148,7 +148,7 @@ public class InfoPanel extends TopMapPanel {
         if (Game.isDebug()) {
             // Cursor
             layout.setHTML(10, 1, "Cursor");
-            cursorPos = new Label("???");
+            cursorPos = new Label("");
             layout.setWidget(10, 2, cursorPos);
         }
 
