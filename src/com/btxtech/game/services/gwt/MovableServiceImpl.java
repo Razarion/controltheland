@@ -39,11 +39,10 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderComman
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
-import com.btxtech.game.jsre.common.tutorial.ResourceHintConfig;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
+import com.btxtech.game.jsre.common.tutorial.ResourceHintConfig;
 import com.btxtech.game.jsre.common.tutorial.StepConfig;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
-import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.tutorial.condition.HarvestConditionConfig;
 import com.btxtech.game.jsre.common.tutorial.condition.ItemBuiltConditionConfig;
 import com.btxtech.game.jsre.common.tutorial.condition.ItemsKilledConditionConfig;
@@ -60,6 +59,7 @@ import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.TerritoryService;
+import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
@@ -99,6 +99,8 @@ public class MovableServiceImpl implements MovableService {
     private MgmtService mgmtService;
     @Autowired
     private TerritoryService territoryService;
+    @Autowired
+    private TutorialService tutorialService;
 
     private Log log = LogFactory.getLog(MovableServiceImpl.class);
 
@@ -169,28 +171,31 @@ public class MovableServiceImpl implements MovableService {
             SimulationInfo simulationInfo = new SimulationInfo();
             // Common
             simulationInfo.setRegistered(baseService.getBase().getUser() != null);
-            simulationInfo.setTerrainSettings(new TerrainSettings(20, 10, 100, 100)); // TODO
-            Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>(); // TODO
-            simulationInfo.setTerrainImagePositions(terrainImagePositions);
-            simulationInfo.setTerrainImages(terrainService.getTerrainImages());
-            Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>(); // TODO
-            surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 2000, 1000), 1));
-            simulationInfo.setSurfaceRects(surfaceRects);
-            simulationInfo.setSurfaceImages(terrainService.getSurfaceImages());
             simulationInfo.setItemTypes(itemService.getItemTypes());
             StartupData startupData = mgmtService.getStartupData();
             simulationInfo.setRegisterDialogDelay(startupData.getRegisterDialogDelay());
+            simulationInfo.setTutorialConfig(tutorialService.getTutorialConfig());
+            // Terrain
+            simulationInfo.setTerrainSettings(new TerrainSettings(20, 10, 100, 100));
+            Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
+            simulationInfo.setTerrainImagePositions(terrainImagePositions);
+            simulationInfo.setTerrainImages(terrainService.getTerrainImages());
+            Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
+            surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 2000, 1000), 1));
+            simulationInfo.setSurfaceRects(surfaceRects);
+            simulationInfo.setSurfaceImages(terrainService.getSurfaceImages());
+
             // Simulation
-            SimpleBase simBase = new SimpleBase("Your Base", "#0000FF", false);
-            List<TaskConfig> taskConfigs = new ArrayList<TaskConfig>();
-            addSingleMoveTask(taskConfigs, simBase);
-            addMultiMoveTask(taskConfigs, simBase);
+            //SimpleBase simBase = new SimpleBase("Your Base", "#0000FF", false);
+            //List<TaskConfig> taskConfigs = new ArrayList<TaskConfig>();
+            //addSingleMoveTask(taskConfigs, simBase);
+            //addMultiMoveTask(taskConfigs, simBase);
             //addAttackRestartTask(taskConfigs, simBase);
-            addAttackTask(taskConfigs, simBase);
-            addBuildFactoryTask(taskConfigs, simBase);
-            addBuildTankTask(taskConfigs, simBase);
-            addEarnMoneyTask(taskConfigs, simBase);
-            simulationInfo.setTutorialConfig(new TutorialConfig(taskConfigs, simBase));
+            //addAttackTask(taskConfigs, simBase);
+            //addBuildFactoryTask(taskConfigs, simBase);
+            // addBuildTankTask(taskConfigs, simBase);
+            //addEarnMoneyTask(taskConfigs, simBase);
+            //simulationInfo.setTutorialConfig(new TutorialConfig(taskConfigs, simBase));
             return simulationInfo;
         } catch (com.btxtech.game.services.connection.NoConnectionException t) {
             log.error(t.getMessage() + " SessionId: " + t.getSessionId());
@@ -200,7 +205,7 @@ public class MovableServiceImpl implements MovableService {
         return null;
     }
 
-    @Deprecated
+/*    @Deprecated
     private void addSingleMoveTask(List<TaskConfig> taskConfigs, SimpleBase simBase) {
         Collection<ItemTypeAndPosition> itemTypeAndPositions = new ArrayList<ItemTypeAndPosition>();
         itemTypeAndPositions.add(new ItemTypeAndPosition(simBase, 1, 1, new Index(400, 600)));
@@ -218,7 +223,7 @@ public class MovableServiceImpl implements MovableService {
                 new ResourceHintConfig(new Index(100, 100), 1),
                 null,
                 0,
-                "Here you will learn how to command your troops"));
+                "Here you will learn how to command your troops", finishedText));
     }
 
     @Deprecated
@@ -241,7 +246,7 @@ public class MovableServiceImpl implements MovableService {
                 new ResourceHintConfig(new Index(100, 100), 1),
                 null,
                 0,
-                "Task"));
+                "Task", finishedText));
     }
 
     @Deprecated
@@ -270,7 +275,7 @@ public class MovableServiceImpl implements MovableService {
                 null,
                 0,
                 //new ItemsKilledConditionConfig(Arrays.asList(1)),
-                "Task"));
+                "Task", finishedText));
     }
 
     @Deprecated
@@ -294,7 +299,7 @@ public class MovableServiceImpl implements MovableService {
                 new ResourceHintConfig(new Index(250, 100), 1),
                 null,
                 0,
-                "Task"));
+                "Task", finishedText));
     }
 
     @Deprecated
@@ -315,7 +320,7 @@ public class MovableServiceImpl implements MovableService {
                 new ResourceHintConfig(new Index(250, 100), 1),
                 Arrays.asList(3),
                 300,
-                "Task"));
+                "Task", finishedText));
     }
 
     @Deprecated
@@ -336,7 +341,7 @@ public class MovableServiceImpl implements MovableService {
                 new ResourceHintConfig(new Index(250, 100), 1),
                 Arrays.asList(1),
                 300,
-                "Task"));
+                "Task", finishedText));
     }
 
     @Deprecated
@@ -358,8 +363,8 @@ public class MovableServiceImpl implements MovableService {
                 new ResourceHintConfig(new Index(250, 100), 1),
                 Arrays.asList(1),
                 300,
-                "Task"));
-    }
+                "Task", finishedText));
+    }  */
 
     @Override
     public void log(String message, Date date) {

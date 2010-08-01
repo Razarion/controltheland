@@ -187,8 +187,7 @@ public class ImageHandler {
         url.append(id);
         String urlStr = url.toString();
         loadImage(urlStr);
-        //return new Image(urlStr);
-        return new Image("/images/effects/ex4.png");
+        return new Image(urlStr);
     }
 
 

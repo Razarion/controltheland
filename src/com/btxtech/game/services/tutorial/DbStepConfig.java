@@ -110,10 +110,13 @@ public class DbStepConfig implements Serializable, CrudChild {
         return id != null ? id.hashCode() : 0;
     }
 
-    public StepConfig createStepConfig() {
+    public StepConfig createStepConfig(ResourceHintManager resourceHintManager) {
         ResourceHintConfig resourceHintConfig = null;
         if (dbResourceHintConfig.getData() != null) {
-            resourceHintConfig = dbResourceHintConfig.createResourceHintConfig();
+            resourceHintConfig = dbResourceHintConfig.createResourceHintConfig(resourceHintManager);
+        }
+        if (abstractConditionConfig == null) {
+            throw new IllegalStateException("No condition set in step: " + name);
         }
         return new StepConfig(abstractConditionConfig.createConditionConfig(), resourceHintConfig, description);
     }

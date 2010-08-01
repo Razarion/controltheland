@@ -13,20 +13,11 @@
 
 package com.btxtech.game.services.tutorial;
 
-import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
-import com.btxtech.game.services.common.CrudServiceHelper;
-
 /**
  * User: beat
- * Date: 24.07.2010
- * Time: 11:32:53
+ * Date: 28.07.2010
+ * Time: 17:08:29
  */
-public interface TutorialService {
-    CrudServiceHelper<DbTutorialConfig> getDbTutorialCrudServiceHelper();
-
-    void activate();
-
-    TutorialConfig getTutorialConfig();
-
-    DbResourceHintConfig getDbResourceHintConfig(int id);
+public interface ResourceHintManager {
+    int addResource(DbResourceHintConfig dbResourceHintConfig);
 }

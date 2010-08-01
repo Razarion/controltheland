@@ -31,13 +31,9 @@ public class ResourceHintConfig implements Serializable {
     public ResourceHintConfig() {
     }
 
-    public ResourceHintConfig(Index position) {
+    public ResourceHintConfig(Index position, int imageId) {
         this.position = position;
-    }
-
-    @Deprecated
-    public ResourceHintConfig(Index index, int i) {
-        //To change body of created methods use File | Settings | File Templates.
+        this.imageId = imageId;
     }
 
     public void setImageId(int imageId) {

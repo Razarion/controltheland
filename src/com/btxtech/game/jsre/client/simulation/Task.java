@@ -37,6 +37,7 @@ public class Task {
     private GraphicHint taskGraphicHint;
     private AbstractCondition completionCondition;
 
+
     public Task(TaskConfig taskConfig, TutorialGui tutorialGui) {
         this.taskConfig = taskConfig;
         this.tutorialGui = tutorialGui;
@@ -129,6 +130,7 @@ public class Task {
             if (completionCondition == null) {
                 taskFinished();
             }
+            activeStep = null;
             return;
         }
         if (activeStep != null) {
@@ -140,6 +142,7 @@ public class Task {
                 if (completionCondition == null) {
                     taskFinished();
                 }
+                activeStep = null;
                 return;
             }
         } else {
@@ -163,7 +166,6 @@ public class Task {
     }
 
     private void taskFinished() {
-        System.out.println("*** Task finished");
         cleanup();
     }
 
@@ -175,9 +177,10 @@ public class Task {
             stepGraphicHint.dispose();
         }
         activeStep = null;
+        completionCondition = null;
     }
 
     public boolean isFulFilled() {
-        return activeStep == null;
+        return activeStep == null && completionCondition == null;
     }
 }

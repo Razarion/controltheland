@@ -78,10 +78,10 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
         this.ownBase = ownBase;
     }
 
-    public TutorialConfig createTutorialConfig() {
+    public TutorialConfig createTutorialConfig(ResourceHintManager resourceHintManager) {
         ArrayList<TaskConfig> taskConfigs = new ArrayList<TaskConfig>();
         for (DbTaskConfig dbTaskConfig : dbTaskConfigs) {
-            taskConfigs.add(dbTaskConfig.createTaskConfig());
+            taskConfigs.add(dbTaskConfig.createTaskConfig(resourceHintManager));
         }
         return new TutorialConfig(taskConfigs, ownBase);
     }
@@ -128,7 +128,7 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
 
     public void moveTaskDown(DbTaskConfig task) {
         int i = dbTaskConfigs.indexOf(task);
-        if (i + 2 < dbTaskConfigs.size()) {
+        if (i + 1 < dbTaskConfigs.size()) {
             DbTaskConfig old = dbTaskConfigs.set(i + 1, task);
             dbTaskConfigs.set(i, old);
         }

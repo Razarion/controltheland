@@ -126,6 +126,9 @@ public class DbItemTypeAndPosition implements Serializable, CrudChild {
     }
 
     public ItemTypeAndPosition createItemTypeAndPosition() {
+        if (itemType == null || position == null) {
+            return null;
+        }
         return new ItemTypeAndPosition(base, syncItemId, itemType.getId(), position);
     }
 }

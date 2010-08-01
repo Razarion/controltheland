@@ -37,6 +37,8 @@ public class TaskConfig implements Serializable {
     private Collection<Integer> allowedItemTypes;
     private int accountBalance;
     private String description;
+    private String finishedText;
+    private int finishedTextDuration;
 
     /**
      * Used by GWT
@@ -44,7 +46,7 @@ public class TaskConfig implements Serializable {
     public TaskConfig() {
     }
 
-    public TaskConfig(boolean clearGame, Collection<ItemTypeAndPosition> ownItems, boolean scrollingAllowed, boolean onlineBoxVisible, boolean infoBoxVisible, Index scroll, List<StepConfig> stepConfigs, AbstractConditionConfig completionConditionConfig, ResourceHintConfig resourceHintConfig, Collection<Integer> allowedItemTypes, int accountBalance, String description) {
+    public TaskConfig(boolean clearGame, Collection<ItemTypeAndPosition> ownItems, boolean scrollingAllowed, boolean onlineBoxVisible, boolean infoBoxVisible, Index scroll, List<StepConfig> stepConfigs, AbstractConditionConfig completionConditionConfig, ResourceHintConfig resourceHintConfig, Collection<Integer> allowedItemTypes, int accountBalance, String description, String finishedText, int finishedTextDuration) {
         this.clearGame = clearGame;
         this.ownItems = ownItems;
         isScrollingAllowed = scrollingAllowed;
@@ -57,6 +59,8 @@ public class TaskConfig implements Serializable {
         this.allowedItemTypes = allowedItemTypes;
         this.accountBalance = accountBalance;
         this.description = description;
+        this.finishedText = finishedText;
+        this.finishedTextDuration = finishedTextDuration;
     }
 
     public boolean isClearGame() {
@@ -105,5 +109,13 @@ public class TaskConfig implements Serializable {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getFinishedText() {
+        return finishedText;
+    }
+
+    public int getFinishedTextDuration() {
+        return finishedTextDuration;
     }
 }

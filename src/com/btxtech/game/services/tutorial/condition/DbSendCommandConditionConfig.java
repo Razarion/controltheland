@@ -27,7 +27,7 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("SEND_COMMAND")
 public class DbSendCommandConditionConfig extends DbAbstractConditionConfig {
-    private String commandClass = AttackCommand.class.toString();
+    private String commandClass = AttackCommand.class.getName();
 
     public String getCommandClass() {
         return commandClass;

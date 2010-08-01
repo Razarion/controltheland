@@ -13,6 +13,7 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tutorial;
 
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
@@ -88,6 +89,8 @@ public class TaskEditor extends WebPage {
         }));
         form.add(new TextField("accountBalance"));
         form.add(new TextArea("description"));
+        form.add(new TextArea("finishedText"));
+        form.add(new TextField("finishedTestDuration"));
 
 
         new CrudTableHelper<DbItemTypeAndPosition>("itemTable", null, "createItem", false, form) {
@@ -115,8 +118,7 @@ public class TaskEditor extends WebPage {
                     public void setObject(Integer id) {
                         if (id != null) {
                             try {
-                                DbBaseItemType baseItemType = (DbBaseItemType) itemService.getDbItemType(id);
-                                dbTaskConfigItem.getModelObject().setItemType(baseItemType);
+                                dbTaskConfigItem.getModelObject().setItemType(itemService.getDbItemType(id));
                             } catch (Throwable t) {
                                 log.error("", t);
                                 error(t.getMessage());
@@ -134,8 +136,65 @@ public class TaskEditor extends WebPage {
                 dbTaskConfigItem.add(new TextField("syncItemId"));
                 dbTaskConfigItem.add(new TextField("position.x"));
                 dbTaskConfigItem.add(new TextField("position.y"));
-                dbTaskConfigItem.add(new TextField("base.name"));
-                dbTaskConfigItem.add(new TextField("base.htmlColor"));
+                dbTaskConfigItem.add(new TextField<String>("base.name", new IModel<String>() {
+
+                    @Override
+                    public String getObject() {
+                        SimpleBase simpleBase = dbTaskConfigItem.getModelObject().getBase();
+                        if (simpleBase != null) {
+                            return simpleBase.getName();
+                        } else {
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    public void setObject(String value) {
+                        SimpleBase simpleBase = dbTaskConfigItem.getModelObject().getBase();
+                        if (simpleBase != null && value != null) {
+                            dbTaskConfigItem.getModelObject().setBase(new SimpleBase(value, dbTaskConfigItem.getModelObject().getBase().getHtmlColor(), false));
+                        } else if (simpleBase == null && value != null) {
+                            dbTaskConfigItem.getModelObject().setBase(new SimpleBase(value, "#FFFFFF", false));
+                        } else if (simpleBase != null) {
+                            dbTaskConfigItem.getModelObject().setBase(null);
+                        }
+                    }
+
+                    @Override
+                    public void detach() {
+                        // Ignore
+                    }
+                }));
+                dbTaskConfigItem.add(new TextField<String>("base.htmlColor", new IModel<String>() {
+
+                    @Override
+                    public String getObject() {
+                        SimpleBase simpleBase = dbTaskConfigItem.getModelObject().getBase();
+                        if (simpleBase != null) {
+                            return simpleBase.getHtmlColor();
+                        } else {
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    public void setObject(String value) {
+                        SimpleBase simpleBase = dbTaskConfigItem.getModelObject().getBase();
+                        if (simpleBase != null && value != null) {
+                            dbTaskConfigItem.getModelObject().setBase(new SimpleBase(dbTaskConfigItem.getModelObject().getBase().getName(), value, false));
+                        } else if (simpleBase == null && value != null) {
+                            dbTaskConfigItem.getModelObject().setBase(new SimpleBase("Base", value, false));
+                        } else if (simpleBase != null) {
+                            dbTaskConfigItem.getModelObject().setBase(null);
+                        }
+                    }
+
+                    @Override
+                    public void detach() {
+                        // Ignore
+                    }
+                }));
+
 
             }
         };

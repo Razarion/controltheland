@@ -96,6 +96,8 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild {
     @ManyToOne(optional = false)
     @JoinColumn(name = "dbTutorialConfig", insertable = false, updatable = false, nullable = false)
     private DbTutorialConfig dbTutorialConfig;
+    private String finishedText;
+    private int finishedTestDuration;
     @Transient
     private CrudServiceHelper<DbItemTypeAndPosition> itemTypeAndPositionCrudHelper;
     @Transient
@@ -211,24 +213,46 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild {
         this.completionConditionConfig = completionConditionConfig;
     }
 
+    public String getFinishedText() {
+        return finishedText;
+    }
+
+    public void setFinishedText(String finishedText) {
+        this.finishedText = finishedText;
+    }
+
+    public int getFinishedTestDuration() {
+        return finishedTestDuration;
+    }
+
+    public void setFinishedTestDuration(int finishedTestDuration) {
+        this.finishedTestDuration = finishedTestDuration;
+    }
+
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
 
-    public TaskConfig createTaskConfig() {
+    public TaskConfig createTaskConfig(ResourceHintManager resourceHintManager) {
+        if (completionConditionConfig == null) {
+            throw new IllegalStateException("No condition set in task: " + name);
+        }
         ArrayList<StepConfig> stepConfigs = new ArrayList<StepConfig>();
         for (DbStepConfig dBstepConfig : this.stepConfigs) {
-            stepConfigs.add(dBstepConfig.createStepConfig());
+            stepConfigs.add(dBstepConfig.createStepConfig(resourceHintManager));
         }
 
         ArrayList<ItemTypeAndPosition> itemTypeAndPositions = new ArrayList<ItemTypeAndPosition>();
         for (DbItemTypeAndPosition dbItemTypeAndPosition : items) {
-            itemTypeAndPositions.add(dbItemTypeAndPosition.createItemTypeAndPosition());
+            ItemTypeAndPosition itemTypeAndPosition = dbItemTypeAndPosition.createItemTypeAndPosition();
+            if (itemTypeAndPosition != null) {
+                itemTypeAndPositions.add(itemTypeAndPosition);
+            }
         }
         ResourceHintConfig resourceHintConfig = null;
         if (dbResourceHintConfig.getData() != null) {
-            resourceHintConfig = dbResourceHintConfig.createResourceHintConfig();
+            resourceHintConfig = dbResourceHintConfig.createResourceHintConfig(resourceHintManager);
         }
         return new TaskConfig(clearGame,
                 itemTypeAndPositions,
@@ -241,7 +265,9 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild {
                 resourceHintConfig,
                 ItemsUtil.itemTypesToCollection(allowedItems),
                 accountBalance,
-                description);
+                description,
+                finishedText,
+                finishedTestDuration * 1000);
     }
 
     public CrudServiceHelper<DbItemTypeAndPosition> getItemCrudServiceHelper() {

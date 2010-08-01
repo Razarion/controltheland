@@ -76,7 +76,7 @@ public class SelectionHandler {
         return selectedGroup == null || ClientTerritoryService.getInstance().isAtLeastOneAllowed(selectedGroup.getSyncBaseItems());
     }
 
-    public boolean atLeastOneAllowedOnTerrain4Selection(Index position) {
+    public boolean atLeastOneAllowedOnTerritory4Selection(Index position) {
         return selectedGroup == null || ClientTerritoryService.getInstance().isAtLeastOneAllowed(position, selectedGroup.getSyncBaseItems());
     }
 

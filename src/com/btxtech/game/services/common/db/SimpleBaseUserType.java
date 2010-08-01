@@ -73,12 +73,15 @@ public class SimpleBaseUserType implements UserType {
     @Override
     public void nullSafeSet(PreparedStatement statement, Object o, int columnIndex) throws HibernateException, SQLException {
         SimpleBase simpleBase = (SimpleBase) o;
-        if(simpleBase == null) {
-            return;
+        if (simpleBase != null) {
+            statement.setString(columnIndex, simpleBase.getName());
+            statement.setString(columnIndex + 1, simpleBase.getHtmlColor());
+            statement.setBoolean(columnIndex + 2, simpleBase.isBot());
+        } else {
+            statement.setNull(columnIndex, Types.VARCHAR);
+            statement.setNull(columnIndex + 1, Types.VARCHAR);
+            statement.setNull(columnIndex + 2, Types.BIT);
         }
-        statement.setString(columnIndex, simpleBase.getName());
-        statement.setString(columnIndex + 1, simpleBase.getHtmlColor());
-        statement.setBoolean(columnIndex + 2, simpleBase.isBot());
     }
 
     @Override
