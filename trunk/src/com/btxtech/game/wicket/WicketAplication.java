@@ -15,6 +15,7 @@ package com.btxtech.game.wicket;
 
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.mgmt.MgmtService;
+import com.btxtech.game.wicket.pages.PageExpired;
 import com.btxtech.game.wicket.pages.cms.Home;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -88,10 +89,11 @@ public class WicketAplication extends WebApplication {
                 log.error("User Agent: " + session.getUserAgent());
                 log.error("User: " + session.getUser());
                 log.error("Session Id: " + session.getSessionId());
+                return new PageExpired();                
             } else {
                 log.error("", e);
+                return new Home();                
             }
-            return new Home();
         }
     }
 
