@@ -36,6 +36,7 @@ public class DbTutorialProgress {
     private long duration;
     private String type;
     private String name;
+    private String parent;
 
     /**
      * Used by Hibernate
@@ -43,12 +44,13 @@ public class DbTutorialProgress {
     public DbTutorialProgress() {
     }
 
-    public DbTutorialProgress(String sessionId, String type, String name, long duration) {
+    public DbTutorialProgress(String sessionId, String type, String name, String parent, long duration) {
         this.sessionId = sessionId;
         niceTimeStamp = new Date();
         timeStamp = niceTimeStamp.getTime();
         this.type = type;
         this.name = name;
+        this.parent = parent;
         this.duration = duration;
     }
 
@@ -59,9 +61,8 @@ public class DbTutorialProgress {
 
         DbTutorialProgress that = (DbTutorialProgress) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        return !(id != null ? !id.equals(that.id) : that.id != null);
 
-        return true;
     }
 
     @Override

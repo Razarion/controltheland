@@ -13,13 +13,12 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.UserMessage;
+import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
@@ -72,5 +71,5 @@ public interface MovableService extends RemoteService {
 
     void startUpTaskFailed(StartupTask state, Date clientTimeStamp, long duration, String failureText);
 
-    void sendTutorialProgress(TutorialConfig.TYPE type, String name, long duration);
+    void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration);
 }

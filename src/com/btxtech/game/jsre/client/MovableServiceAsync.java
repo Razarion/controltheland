@@ -61,5 +61,5 @@ public interface MovableServiceAsync {
 
     void startUpTaskFailed(StartupTask state, Date clientTimeStamp, long duration, String failureText, AsyncCallback<Void> asyncCallback);
 
-    void sendTutorialProgress(TutorialConfig.TYPE type, String name, long duration, AsyncCallback<Void> asyncCallback);
+    void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, AsyncCallback<Void> asyncCallback);
 }
