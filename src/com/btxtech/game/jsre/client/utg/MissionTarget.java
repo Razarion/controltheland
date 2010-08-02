@@ -46,7 +46,7 @@ public class MissionTarget {
             @Override
             public void onClose(CloseEvent<PopupPanel> popupPanelCloseEvent) {
                 if (level.equals(Connection.getInstance().getGameInfo().getLevelToRunMissionTarget())) {
-                    ClientUserGuidance.getInstance().startTutorial();
+                    //ClientUserGuidance.getInstance().startTutorial();
                 }
             }
         });

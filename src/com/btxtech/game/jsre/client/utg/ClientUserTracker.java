@@ -45,7 +45,7 @@ public class ClientUserTracker {
     private static final ClientUserTracker INSTANCE = new ClientUserTracker();
     private ArrayList<UserAction> userActions = new ArrayList<UserAction>();
     private ArrayList<MissionAction> missionActions = new ArrayList<MissionAction>();
-    private boolean stopCollection = false;
+    private boolean stopCollection = true;
     private long timerStarted;
     private int collectionTime;
     private Timer timer;
@@ -77,7 +77,7 @@ public class ClientUserTracker {
                 }
             }
         };
-        timer.scheduleRepeating(SEND_TIMEOUT);
+        //timer.scheduleRepeating(SEND_TIMEOUT);
         timerStarted = System.currentTimeMillis();
     }
 
@@ -169,8 +169,21 @@ public class ClientUserTracker {
     }
 
     public void closeWindow() {
-        sendUserAction(UserAction.CLOSE_WINDOW, null);
-        sendUserActionsToServer();
+        ArrayList<UserAction> userActions = new ArrayList<UserAction>();
+        userActions.add(new UserAction(UserAction.CLOSE_WINDOW, null));
+        Connection.getMovableServiceAsync().sendUserActions(userActions, missionActions, new AsyncCallback<Void>() {
+            @Override
+            public void onFailure(Throwable throwable) {
+                GwtCommon.handleException(throwable);
+            }
+
+            @Override
+            public void onSuccess(Void aVoid) {
+                // Ignore
+            }
+        });
+        //sendUserAction(UserAction.CLOSE_WINDOW, null);
+        //sendUserActionsToServer();
     }
 
 
