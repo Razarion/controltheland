@@ -78,4 +78,8 @@ public class Constants {
     public static final int TARGET_MAX_RANGE = 300;
     public static final int TARGET_MIN_RANGE = 150;
     public static final double MISSION_MONEY = 50.0;
+
+    // Error
+    public static final String ERROR_KEY = "e";
+
 }

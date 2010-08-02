@@ -42,6 +42,7 @@
                 <prop key="statJS">statisticsController</prop>
                 <prop key="cms">cmsImageController</prop>
                 <prop key="tutorial">tutorialResourceHintController</prop>
+                <prop key="lsc">loadScriptCommunicationController</prop>
             </props>
         </property>
     </bean>

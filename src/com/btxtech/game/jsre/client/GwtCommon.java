@@ -13,10 +13,12 @@
 
 package com.btxtech.game.jsre.client;
 
+import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.dialogs.ExceptionDialog;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.ScriptElement;
 import com.google.gwt.event.dom.client.DomEvent;
-import com.google.gwt.event.dom.client.MouseEvent;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.Date;
@@ -84,10 +86,19 @@ public class GwtCommon {
                         //Ignore
                     }
                 });
+                return;
             }
         } catch (Throwable ignore) {
             // Ignore
         }
+        sendLogViaLoadScriptCommunication(logMessage);
+    }
+
+    private static void sendLogViaLoadScriptCommunication(String logMessage) {
+        ScriptElement scriptElement = Document.get().createScriptElement();
+        scriptElement.setType("text/javascript");
+        scriptElement.setSrc("/spring/lsc?" + Constants.ERROR_KEY + "=" + logMessage);
+        Document.get().getElementsByTagName("head").getItem(0).appendChild(scriptElement);
     }
 
     private static void setupStackTrace(StringBuilder builder, Throwable throwable, boolean isCause) {
