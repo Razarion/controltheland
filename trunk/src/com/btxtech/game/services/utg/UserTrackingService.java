@@ -76,5 +76,5 @@ public interface UserTrackingService {
 
     boolean isJavaScriptDetected();
 
-    void onTutorialProgressChanged(TutorialConfig.TYPE type, String name, long duration);
+    void onTutorialProgressChanged(TutorialConfig.TYPE type, String name, String parent, long duration);
 }

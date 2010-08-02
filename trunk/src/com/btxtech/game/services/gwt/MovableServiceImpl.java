@@ -309,9 +309,9 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public void sendTutorialProgress(TutorialConfig.TYPE type, String name, long duration) {
+    public void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration) {
         try {
-            userTrackingService.onTutorialProgressChanged(type, name, duration);
+            userTrackingService.onTutorialProgressChanged(type, name, parent, duration);
         } catch (Throwable t) {
             log.error("", t);
         }

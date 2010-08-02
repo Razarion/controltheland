@@ -255,9 +255,9 @@ public class Connection implements AsyncCallback<Void> {
         commandQueue.clear();
     }
 
-    public void sendTutorialProgress(TutorialConfig.TYPE type, String name, long duration) {
+    public void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.sendTutorialProgress(type, name, duration, this);
+            movableServiceAsync.sendTutorialProgress(type, name, parent, duration, this);
         }
     }
 

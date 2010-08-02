@@ -249,14 +249,14 @@ public class ClientUserTracker {
     }
 
     public void onTutorialFinished(long duration) {
-        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, null, duration);
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, null, null, duration);
     }
 
     public void onTaskFinished(Task task, long duration) {
-        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TASK, task.getTaskConfig().getName(), duration);
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TASK, task.getTaskConfig().getName(), null, duration);
     }
 
-    public void onStepFinished(Step step, long duration) {
-        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.STEP, step.getStepConfig().getName(), duration);
+    public void onStepFinished(Step step, Task task, long duration) {
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.STEP, step.getStepConfig().getName(), task.getTaskConfig().getName(), duration);
     }
 }

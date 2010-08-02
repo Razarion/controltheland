@@ -573,12 +573,12 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public void onTutorialProgressChanged(TutorialConfig.TYPE type, String name, long duration) {
+    public void onTutorialProgressChanged(TutorialConfig.TYPE type, String name, String parent, long duration) {
         try {
             if (type == TutorialConfig.TYPE.TUTORIAL) {
                 userGuidanceService.onTutorialFinished();
             }
-            hibernateTemplate.saveOrUpdate(new DbTutorialProgress(session.getSessionId(), type.name(), name, duration));
+            hibernateTemplate.saveOrUpdate(new DbTutorialProgress(session.getSessionId(), type.name(), name, parent, duration));
         } catch (Throwable t) {
             log.error("", t);
         }
