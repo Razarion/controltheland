@@ -21,7 +21,10 @@ import com.btxtech.game.jsre.client.StartupTask;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.simulation.Step;
 import com.btxtech.game.jsre.client.simulation.Task;
+import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.utg.missions.Mission;
+import com.btxtech.game.jsre.common.EventTrackingItem;
+import com.btxtech.game.jsre.common.EventTrackingStart;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -34,6 +37,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * User: beat
@@ -45,6 +49,7 @@ public class ClientUserTracker {
     private static final ClientUserTracker INSTANCE = new ClientUserTracker();
     private ArrayList<UserAction> userActions = new ArrayList<UserAction>();
     private ArrayList<MissionAction> missionActions = new ArrayList<MissionAction>();
+    private List<EventTrackingItem> eventTrackingItems = new ArrayList<EventTrackingItem>();
     private boolean stopCollection = true;
     private long timerStarted;
     private int collectionTime;
@@ -61,7 +66,8 @@ public class ClientUserTracker {
         Window.addCloseHandler(new CloseHandler<Window>() {
             @Override
             public void onClose(CloseEvent<Window> windowCloseEvent) {
-                closeWindow();
+                sendEventTrackerItems();
+                sendCloseWindowUserAction();
             }
         });
         timer = new Timer() {
@@ -168,7 +174,7 @@ public class ClientUserTracker {
         }
     }
 
-    public void closeWindow() {
+    public void sendCloseWindowUserAction() {
         ArrayList<UserAction> userActions = new ArrayList<UserAction>();
         userActions.add(new UserAction(UserAction.CLOSE_WINDOW, null));
         Connection.getMovableServiceAsync().sendUserActions(userActions, missionActions, new AsyncCallback<Void>() {
@@ -271,5 +277,31 @@ public class ClientUserTracker {
 
     public void onStepFinished(Step step, Task task, long duration) {
         Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.STEP, step.getStepConfig().getName(), task.getTaskConfig().getName(), duration);
+    }
+
+    ////////////////////////////////// Event Tracking //////////////////////////////////
+
+    public void startEventTracking() {
+        Timer timer = new Timer() {
+            @Override
+            public void run() {
+                sendEventTrackerItems();
+            }
+        };
+        timer.scheduleRepeating(SEND_TIMEOUT);
+        MapWindow.getInstance().setTrackingEvents();
+        Connection.getInstance().sendEventTrackingStart(new EventTrackingStart(Window.getClientWidth(), Window.getClientHeight()));
+    }
+
+    public void addEventTrackingItem(int xPos, int yPos, int eventType) {
+        eventTrackingItems.add(new EventTrackingItem(xPos, yPos, eventType));
+    }
+
+    private void sendEventTrackerItems() {
+        if (eventTrackingItems.isEmpty()) {
+            return;
+        }
+        Connection.getInstance().sendEventTrackerItems(eventTrackingItems);
+        eventTrackingItems = new ArrayList<EventTrackingItem>();
     }
 }

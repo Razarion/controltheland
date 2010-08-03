@@ -15,6 +15,8 @@ package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.StartupTask;
 import com.btxtech.game.jsre.client.common.UserMessage;
+import com.btxtech.game.jsre.common.EventTrackingItem;
+import com.btxtech.game.jsre.common.EventTrackingStart;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
@@ -77,4 +79,8 @@ public interface UserTrackingService {
     boolean isJavaScriptDetected();
 
     void onTutorialProgressChanged(TutorialConfig.TYPE type, String name, String parent, long duration);
+
+    void onEventTrackingStart(EventTrackingStart eventTrackingStart);
+
+    void onEventTrackerItems(List<EventTrackingItem> eventTrackingItems);
 }

@@ -31,6 +31,8 @@ import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.client.utg.MissionTarget;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.EnergyPacket;
+import com.btxtech.game.jsre.common.EventTrackingItem;
+import com.btxtech.game.jsre.common.EventTrackingStart;
 import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
@@ -46,6 +48,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * User: beat
@@ -285,6 +288,18 @@ public class Connection implements AsyncCallback<Void> {
             userMessage.setBaseName(ClientBase.getInstance().getSimpleBase().getName());
             userMessage.setMessage(text);
             movableServiceAsync.sendUserMessage(userMessage, this);
+        }
+    }
+
+    public void sendEventTrackingStart(EventTrackingStart eventTrackingStart) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.sendEventTrackingStart(eventTrackingStart, this);
+        }
+    }
+
+    public void sendEventTrackerItems(List<EventTrackingItem> eventTrackingItems) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.sendEventTrackerItems(eventTrackingItems, this);
         }
     }
 

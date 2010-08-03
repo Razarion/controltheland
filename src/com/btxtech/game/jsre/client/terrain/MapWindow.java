@@ -49,6 +49,7 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
     private ScrollDirection scrollDirectionY;
     private TerrainMouseMoveListener terrainMouseMoveListener;
     private boolean scrollingAllowed = true;
+    private boolean isTrackingEvents = false;
 
     private enum ScrollDirection {
         NORTH,
@@ -146,9 +147,18 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
                             break;
                         }
                     }
+                } else if ((event.getTypeInt() & Event.MOUSEEVENTS) != 0 && isTrackingEvents) {
+                    System.out.println(event.getNativeEvent().getClientX() + "x" + event.getNativeEvent().getClientY());
+                    ClientUserTracker.getInstance().addEventTrackingItem(event.getNativeEvent().getClientX(),
+                            event.getNativeEvent().getClientY(),
+                            event.getTypeInt());
                 }
             }
         });
+    }
+
+    public void setTrackingEvents() {
+        isTrackingEvents = true;
     }
 
     @Override
