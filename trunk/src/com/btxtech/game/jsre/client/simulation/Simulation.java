@@ -75,6 +75,7 @@ public class Simulation implements SelectionListener {
             tutorialGui = new TutorialGui();
             ClientBase.getInstance().setBase(tutorialConfig.getOwnBase());
             tutorialTime = System.currentTimeMillis();
+            ClientUserTracker.getInstance().startEventTracking();
             runNextTask(activeTask);
         }
     }

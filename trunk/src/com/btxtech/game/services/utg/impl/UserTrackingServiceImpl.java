@@ -15,6 +15,8 @@ package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.client.StartupTask;
 import com.btxtech.game.jsre.client.common.UserMessage;
+import com.btxtech.game.jsre.common.EventTrackingItem;
+import com.btxtech.game.jsre.common.EventTrackingStart;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
@@ -31,6 +33,8 @@ import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.utg.BrowserDetails;
+import com.btxtech.game.services.utg.DbEventTrackingItem;
+import com.btxtech.game.services.utg.DbEventTrackingStart;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelPromotion;
 import com.btxtech.game.services.utg.DbMissionAction;
@@ -582,5 +586,19 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         } catch (Throwable t) {
             log.error("", t);
         }
+    }
+
+    @Override
+    public void onEventTrackingStart(EventTrackingStart eventTrackingStart) {
+        hibernateTemplate.save(new DbEventTrackingStart(eventTrackingStart, session.getSessionId()));
+    }
+
+    @Override
+    public void onEventTrackerItems(List<EventTrackingItem> eventTrackingItems) {
+        ArrayList<DbEventTrackingItem> dbEventTrackingItems = new ArrayList<DbEventTrackingItem>();
+        for (EventTrackingItem eventTrackingItem : eventTrackingItems) {
+            dbEventTrackingItems.add(new DbEventTrackingItem(eventTrackingItem, session.getSessionId()));
+        }
+        hibernateTemplate.saveOrUpdateAll(dbEventTrackingItems);
     }
 }

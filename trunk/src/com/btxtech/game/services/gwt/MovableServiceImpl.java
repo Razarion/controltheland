@@ -22,6 +22,8 @@ import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
+import com.btxtech.game.jsre.common.EventTrackingItem;
+import com.btxtech.game.jsre.common.EventTrackingStart;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -312,6 +314,24 @@ public class MovableServiceImpl implements MovableService {
     public void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration) {
         try {
             userTrackingService.onTutorialProgressChanged(type, name, parent, duration);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    public void sendEventTrackingStart(EventTrackingStart eventTrackingStart) {
+        try {
+            userTrackingService.onEventTrackingStart(eventTrackingStart);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    public void sendEventTrackerItems(List<EventTrackingItem> eventTrackingItems) {
+        try {
+            userTrackingService.onEventTrackerItems(eventTrackingItems);
         } catch (Throwable t) {
             log.error("", t);
         }

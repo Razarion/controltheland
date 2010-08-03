@@ -14,6 +14,8 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.UserMessage;
+import com.btxtech.game.jsre.common.EventTrackingItem;
+import com.btxtech.game.jsre.common.EventTrackingStart;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
@@ -62,4 +64,8 @@ public interface MovableServiceAsync {
     void startUpTaskFailed(StartupTask state, Date clientTimeStamp, long duration, String failureText, AsyncCallback<Void> asyncCallback);
 
     void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, AsyncCallback<Void> asyncCallback);
+
+    void sendEventTrackingStart(EventTrackingStart eventTrackingStart, AsyncCallback<Void> asyncCallback);
+
+    void sendEventTrackerItems(List<EventTrackingItem> eventTrackingItems, AsyncCallback<Void> asyncCallback);
 }

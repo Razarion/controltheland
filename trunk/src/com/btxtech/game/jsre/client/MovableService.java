@@ -16,6 +16,8 @@ package com.btxtech.game.jsre.client;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
+import com.btxtech.game.jsre.common.EventTrackingItem;
+import com.btxtech.game.jsre.common.EventTrackingStart;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -72,4 +74,8 @@ public interface MovableService extends RemoteService {
     void startUpTaskFailed(StartupTask state, Date clientTimeStamp, long duration, String failureText);
 
     void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration);
+
+    void sendEventTrackingStart(EventTrackingStart eventTrackingStart);
+
+    void sendEventTrackerItems(List<EventTrackingItem> eventTrackingItems);
 }
