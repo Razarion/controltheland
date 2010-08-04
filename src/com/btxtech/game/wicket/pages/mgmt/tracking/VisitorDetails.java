@@ -13,16 +13,19 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tracking;
 
+import com.btxtech.game.services.utg.BrowserDetails;
+import com.btxtech.game.services.utg.DbEventTrackingStart;
 import com.btxtech.game.services.utg.GameTrackingInfo;
 import com.btxtech.game.services.utg.PageAccess;
-import com.btxtech.game.services.utg.BrowserDetails;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.VisitorDetailInfo;
 import com.btxtech.game.wicket.WebCommon;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -40,6 +43,8 @@ public class VisitorDetails extends WebPage {
     public VisitorDetails(String sessionId) {
         VisitorDetailInfo visitorDetailInfo = userTrackingService.getVisitorDetails(sessionId);
 
+        eventTracking(visitorDetailInfo.getDbEventTrackingStart());
+
         userInfo(sessionId, visitorDetailInfo);
 
         gameOverview(visitorDetailInfo);
@@ -47,6 +52,22 @@ public class VisitorDetails extends WebPage {
         pageHostory(visitorDetailInfo);
 
         gameInfo(visitorDetailInfo);
+    }
+
+    private void eventTracking(List<DbEventTrackingStart> dbEventTrackingStart) {
+        ListView<DbEventTrackingStart> listView = new ListView<DbEventTrackingStart>("eventTracking", dbEventTrackingStart) {
+            @Override
+            protected void populateItem(ListItem<DbEventTrackingStart> listItem) {
+                Link link = new Link("link") {
+                    @Override
+                    public void onClick() {
+                        // TODO
+                    }
+                };
+                listItem.add(link);
+            }
+        };
+        add(listView);
     }
 
     private void pageHostory(final VisitorDetailInfo visitorDetailInfo) {
@@ -101,5 +122,7 @@ public class VisitorDetails extends WebPage {
         add(new Label("collectCommands", Integer.toString(visitorDetailInfo.getMoneyCollectCommands())));
         add(new Label("attackCommands", Integer.toString(visitorDetailInfo.getAttackCommands())));
         add(new Label("completedMissions", Integer.toString(visitorDetailInfo.getCompletedMissionCount())));
+
+
     }
 }

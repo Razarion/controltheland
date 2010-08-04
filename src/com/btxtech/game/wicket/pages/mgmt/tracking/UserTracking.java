@@ -23,6 +23,7 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RadioChoice;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -54,6 +55,7 @@ public class UserTracking extends WebPage {
         Form<UserTrackingFilter> form = new Form<UserTrackingFilter>("filterForm", new CompoundPropertyModel<UserTrackingFilter>(userTrackingFilter));
         add(form);
         form.add(new RadioChoice<UserTrackingFilter>("jsEnabled", UserTrackingFilter.JS_ENABLED_CHOICES));
+        form.add(new TextField<UserTrackingFilter>("days"));
     }
 
     private void resultTable() {
@@ -84,7 +86,7 @@ public class UserTracking extends WebPage {
                 listItem.add(new Label("pageHits", Integer.toString(listItem.getModelObject().getPageHits())));
                 listItem.add(new Label("enterGame", Integer.toString(listItem.getModelObject().getEnterGameHits())));
                 listItem.add(new Label("commands", Integer.toString(listItem.getModelObject().getCommands())));
-                listItem.add(new Label("missions", Integer.toString(listItem.getModelObject().getMissions())));
+                listItem.add(new Label("tasks", Integer.toString(listItem.getModelObject().getTasks())));
                 listItem.add(new Label("cookie", listItem.getModelObject().isCookie() ? "Yes" : ""));
                 Link link = new Link("visitorLink") {
 

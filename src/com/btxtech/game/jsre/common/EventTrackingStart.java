@@ -37,6 +37,12 @@ public class EventTrackingStart implements Serializable {
         clientTimeStamp = System.currentTimeMillis();
     }
 
+    public EventTrackingStart(int xResolution, int yResolution, long clientTimeStamp) {
+        this.xResolution = xResolution;
+        this.yResolution = yResolution;
+        this.clientTimeStamp = clientTimeStamp;
+    }
+
     public int getXResolution() {
         return xResolution;
     }

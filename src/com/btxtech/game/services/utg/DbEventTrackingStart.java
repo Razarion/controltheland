@@ -53,6 +53,26 @@ public class DbEventTrackingStart implements Serializable {
         yResolution = eventTrackingStart.getYResolution();
     }
 
+    public Date getTimeStamp() {
+        return timeStamp;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public long getClientTimeStamp() {
+        return clientTimeStamp;
+    }
+
+    public int getxResolution() {
+        return xResolution;
+    }
+
+    public int getyResolution() {
+        return yResolution;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -60,13 +80,15 @@ public class DbEventTrackingStart implements Serializable {
 
         DbEventTrackingStart that = (DbEventTrackingStart) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-
-        return true;
+        return !(id != null ? !id.equals(that.id) : that.id != null);
     }
 
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
+    }
+
+    public EventTrackingStart createEventTrackingStart() {
+        return new EventTrackingStart(xResolution, yResolution, clientTimeStamp);
     }
 }

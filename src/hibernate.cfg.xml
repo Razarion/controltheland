@@ -71,6 +71,8 @@
         <mapping class="com.btxtech.game.services.utg.DbTutorialProgress"/>
         <mapping class="com.btxtech.game.services.utg.DbEventTrackingStart"/>
         <mapping class="com.btxtech.game.services.utg.DbEventTrackingItem"/>
+        <mapping class="com.btxtech.game.services.utg.DbTotalStartupTime"/>
+        <mapping class="com.btxtech.game.services.utg.DbCloseWindow"/>
         <mapping class="com.btxtech.game.services.forum.AbstractForumEntry"/>
         <mapping class="com.btxtech.game.services.forum.SubForum"/>
         <mapping class="com.btxtech.game.services.forum.Category"/>

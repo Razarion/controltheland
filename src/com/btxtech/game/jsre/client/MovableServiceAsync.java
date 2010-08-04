@@ -41,6 +41,7 @@ public interface MovableServiceAsync {
 
     void getAllSyncInfo(AsyncCallback async);
 
+    @Deprecated
     void sendUserActions(ArrayList<UserAction> userActions, ArrayList<MissionAction> missionActions, AsyncCallback<Void> asyncCallback);
 
     void createMissionTraget(Id attacker, AsyncCallback<Void> asyncCallback);
@@ -68,4 +69,8 @@ public interface MovableServiceAsync {
     void sendEventTrackingStart(EventTrackingStart eventTrackingStart, AsyncCallback<Void> asyncCallback);
 
     void sendEventTrackerItems(List<EventTrackingItem> eventTrackingItems, AsyncCallback<Void> asyncCallback);
+
+    void sendTotalStartupTime(long totalStartupTime, AsyncCallback<Void> asyncCallback);
+
+    void sendCloseWindow(long totalRunningTime, AsyncCallback<Void> asyncCallback);
 }

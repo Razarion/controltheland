@@ -13,8 +13,6 @@
 
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.common.EventTrackingItem;
-import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,11 +21,11 @@ import javax.persistence.Id;
 
 /**
  * User: beat
- * Date: 03.08.2010
- * Time: 15:55:52
+ * Date: 04.08.2010
+ * Time: 20:05:41
  */
-@Entity(name = "TRACKER_EVENT_ITEM")
-public class DbEventTrackingItem implements Serializable {
+@Entity(name = "TRACKER_CLOSE_WINDOW")
+public class DbCloseWindow {
     @Id
     @GeneratedValue
     private Integer id;
@@ -35,44 +33,44 @@ public class DbEventTrackingItem implements Serializable {
     private Date timeStamp;
     @Column(nullable = false)
     private String sessionId;
-    private long clientTimeStamp;
-    private int xPos;
-    private int yPos;
-    private int eventType;
+    private long runningGameDuration;
 
     /**
      * Used by Hibernate
      */
-    public DbEventTrackingItem() {
+    public DbCloseWindow() {
     }
 
-    public DbEventTrackingItem(EventTrackingItem eventTrackingItem, String sessionId) {
-        timeStamp = new Date();
+    public DbCloseWindow(long runningGameDuration, String sessionId) {
         this.sessionId = sessionId;
-        clientTimeStamp = eventTrackingItem.getClientTimeStamp();
-        xPos = eventTrackingItem.getXPos();
-        yPos = eventTrackingItem.getYPos();
-        eventType = eventTrackingItem.getEventType();
+        this.runningGameDuration = runningGameDuration;
+        timeStamp = new Date();
+    }
+
+    public Date getTimeStamp() {
+        return timeStamp;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public long getRunningGameDuration() {
+        return runningGameDuration;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DbEventTrackingItem)) return false;
+        if (!(o instanceof DbCloseWindow)) return false;
 
-        DbEventTrackingItem that = (DbEventTrackingItem) o;
+        DbCloseWindow that = (DbCloseWindow) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-
-        return true;
+        return !(id != null ? !id.equals(that.id) : that.id != null);
     }
 
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
-    }
-
-    public EventTrackingItem createEventTrackingItem() {
-        return new EventTrackingItem(xPos, yPos, eventType, clientTimeStamp);
     }
 }

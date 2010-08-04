@@ -60,7 +60,6 @@ public class GameTracking extends Panel {
         add(new Label("factoryCommands", Integer.toString(gameTrackingInfo.getFactoryCommandCount())));
         add(new Label("collectCommands", Integer.toString(gameTrackingInfo.getMoneyCollectCommandCount())));
         add(new Label("attackCommands", Integer.toString(gameTrackingInfo.getAttackCommandCount())));
-        add(new Label("completedMissions", Integer.toString(gameTrackingInfo.getCompletedMissionCount())));
     }
 
     private void gameStartup(GameTrackingInfo gameTrackingInfo) {
@@ -69,10 +68,14 @@ public class GameTracking extends Panel {
             @Override
             protected void populateItem(ListItem<GameStartup> gameStartupListItem) {
                 gameStartupListItem.add(new Label("task", gameStartupListItem.getModelObject().getState().getNiceText()));
-                gameStartupListItem.add(new Label("time",WebCommon.formatDurationMilis(gameStartupListItem.getModelObject().getDuration())));
+                gameStartupListItem.add(new Label("time", WebCommon.formatDurationMilis(gameStartupListItem.getModelObject().getDuration())));
             }
         });
-        add(new Label("totalGameStartup", WebCommon.formatDurationMilis(gameTrackingInfo.getTotalGameStartup())));
+        if (gameTrackingInfo.hasTotalStartup()) {
+            add(new Label("totalGameStartup", WebCommon.formatDurationMilis(gameTrackingInfo.getStartupDuration())));
+        } else {
+            add(new Label("totalGameStartup", "???"));
+        }
     }
 
     private void userActions(List<UserActionCommandMissions> userActions) {
