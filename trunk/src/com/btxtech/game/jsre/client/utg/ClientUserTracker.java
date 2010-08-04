@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.StartupProbe;
 import com.btxtech.game.jsre.client.StartupTask;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.simulation.Step;
@@ -67,7 +68,7 @@ public class ClientUserTracker {
             @Override
             public void onClose(CloseEvent<Window> windowCloseEvent) {
                 sendEventTrackerItems();
-                sendCloseWindowUserAction();
+                Connection.getInstance().sendCloseWindow(System.currentTimeMillis() - StartupProbe.getInstance().getRunningTimeStamp());
             }
         });
         timer = new Timer() {
@@ -118,7 +119,6 @@ public class ClientUserTracker {
             });
         }
     }
-
 
     public void onMouseDownTerrain(int absoluteX, int absoluteY) {
         sendUserAction(UserAction.TERRAIN_MOUSE_DOWN, absoluteX + ":" + absoluteY);
@@ -173,25 +173,6 @@ public class ClientUserTracker {
             }
         }
     }
-
-    public void sendCloseWindowUserAction() {
-        ArrayList<UserAction> userActions = new ArrayList<UserAction>();
-        userActions.add(new UserAction(UserAction.CLOSE_WINDOW, null));
-        Connection.getMovableServiceAsync().sendUserActions(userActions, missionActions, new AsyncCallback<Void>() {
-            @Override
-            public void onFailure(Throwable throwable) {
-                GwtCommon.handleException(throwable);
-            }
-
-            @Override
-            public void onSuccess(Void aVoid) {
-                // Ignore
-            }
-        });
-        //sendUserAction(UserAction.CLOSE_WINDOW, null);
-        //sendUserActionsToServer();
-    }
-
 
     public void onRegisterDialogCloseReg() {
         sendUserAction(UserAction.REGISTER_DIALOG_CLOSE_REG, null);

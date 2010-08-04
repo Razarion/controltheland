@@ -34,6 +34,8 @@ import java.util.HashMap;
  */
 public class StartupProbe {
     private final static StartupProbe INSTANCE = new StartupProbe();
+    private long startTimeStamp;
+    private long runningTimeStamp;
 
     public static StartupProbe getInstance() {
         return INSTANCE;
@@ -120,7 +122,8 @@ public class StartupProbe {
 
         // Add first task
         Task nativeTask = new Task(StartupTask.getFirstTask());
-        nativeTask.setStartTime((long) getNativeCtlStartTime());
+        startTimeStamp = (long) getNativeCtlStartTime();
+        nativeTask.setStartTime(startTimeStamp);
         tasks.put(StartupTask.getFirstTask(), nativeTask);
     }
 
@@ -184,6 +187,8 @@ public class StartupProbe {
                 return;
             }
         }
+        runningTimeStamp = System.currentTimeMillis();        
+        Connection.getInstance().sendTotalStartupTime(System.currentTimeMillis() - startTimeStamp);
         enableCloseButton();
         hideStartScreen();
         startGame();
@@ -268,6 +273,10 @@ public class StartupProbe {
 
     public void showStartScreen() {
         parent.insertFirst(startScreen);
+    }
+
+    public long getRunningTimeStamp() {
+        return runningTimeStamp;
     }
 
     private native double getNativeCtlStartTime() /*-{

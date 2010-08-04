@@ -27,19 +27,19 @@ import java.util.List;
  */
 public class GameTrackingInfo implements Serializable {
     private Date start;
+    private Long duration;
     private int attackCommandCount;
     private int moveCommandCount;
     private int builderCommandCount;
     private int factoryCommandCount;
     private int moneyCollectCommandCount;
-    private int completedMissionCount;
     private List<GameStartup> gameStartups = new ArrayList<GameStartup>();
     private List<DbUserAction> userActions = new ArrayList<DbUserAction>();
     private List<UserCommand> userCommands = new ArrayList<UserCommand>();
     private List<DbMissionAction> missionActions = new ArrayList<DbMissionAction>();
     private Date mapBgLoaded;
     private Date mapImagesLoaded;
-    private Date end;
+    private Long startupDuration;
 
     public GameTrackingInfo(GameStartup gameStartup) {
         gameStartups.add(gameStartup);
@@ -57,13 +57,6 @@ public class GameTrackingInfo implements Serializable {
         this.start = start;
     }
 
-    public void setEnd(Date end) {
-        this.end = end;
-    }
-
-    public Date getEnd() {
-        return end;
-    }
 
     public List<GameStartup> getGameStartups() {
         return gameStartups;
@@ -138,14 +131,6 @@ public class GameTrackingInfo implements Serializable {
         return userActionCommands;
     }
 
-    public void setCompletedMissionCount(int completedMissionCount) {
-        this.completedMissionCount = completedMissionCount;
-    }
-
-    public int getCompletedMissionCount() {
-        return completedMissionCount;
-    }
-
     public Date getMapBgLoaded() {
         return mapBgLoaded;
     }
@@ -183,19 +168,26 @@ public class GameTrackingInfo implements Serializable {
     }
 
     public boolean hasDuration() {
-        return end != null && start != null;
+        return duration != null;
     }
-
 
     public long getDuration() {
-        return end.getTime() - start.getTime();
+        return duration;
     }
 
-    public long getTotalGameStartup() {
-        long totalGameStartup = 0;
-        for (GameStartup gameStartup : gameStartups) {
-            totalGameStartup += gameStartup.getDuration();
-        }
-        return totalGameStartup;
+    public void setDuration(Long duration) {
+        this.duration = duration;
+    }
+
+    public boolean hasTotalStartup() {
+        return startupDuration != null;
+    }
+
+    public void setTotalStartup(long startupDuration) {
+        this.startupDuration = startupDuration;
+    }
+
+    public long getStartupDuration() {
+        return startupDuration;
     }
 }

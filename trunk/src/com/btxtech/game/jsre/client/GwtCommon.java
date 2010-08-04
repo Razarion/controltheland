@@ -94,17 +94,23 @@ public class GwtCommon {
         sendLogViaLoadScriptCommunication(logMessage);
     }
 
-    private static void sendLogViaLoadScriptCommunication(String logMessage) {
-        ScriptElement scriptElement = Document.get().createScriptElement();
-        scriptElement.setType("text/javascript");
-        scriptElement.setSrc("/spring/lsc?" + Constants.ERROR_KEY + "=" + logMessage);
-        Document.get().getElementsByTagName("head").getItem(0).appendChild(scriptElement);
+    public static void sendLogViaLoadScriptCommunication(String logMessage) {
+        try {
+            ScriptElement scriptElement = Document.get().createScriptElement();
+            scriptElement.setType("text/javascript");
+            scriptElement.setSrc("/spring/lsc?" + Constants.ERROR_KEY + "=" + logMessage);
+            Document.get().getElementsByTagName("head").getItem(0).appendChild(scriptElement);
+        } catch (Throwable ignore) {
+            // Ignore
+        }
     }
 
     private static void setupStackTrace(StringBuilder builder, Throwable throwable, boolean isCause) {
         if (isCause) {
             builder.append("Caused by: ");
         }
+        builder.append(throwable.getMessage());
+        builder.append("\n");
         builder.append(throwable.toString());
         builder.append("\n");
         for (Object element : throwable.getStackTrace()) {

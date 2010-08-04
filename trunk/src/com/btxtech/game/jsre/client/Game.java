@@ -29,6 +29,7 @@ public class Game implements EntryPoint {
     static public CockpitPanel cockpitPanel;
 
     public void onModuleLoad() {
+        GwtCommon.sendLogViaLoadScriptCommunication("START");
         try {
             GwtCommon.setUncaughtExceptionHandler();
 

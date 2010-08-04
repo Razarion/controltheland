@@ -69,9 +69,9 @@ public class MgmtPage extends WebPage {
 
     static class LinkAndName implements Serializable {
         private String name;
-        private Class clazz;
+        private Class<? extends WebPage> clazz;
 
-        LinkAndName(String name, Class clazz) {
+        LinkAndName(String name, Class<? extends WebPage> clazz) {
             this.name = name;
             this.clazz = clazz;
         }
@@ -80,7 +80,7 @@ public class MgmtPage extends WebPage {
             return name;
         }
 
-        public Class getClazz() {
+        public Class<? extends WebPage> getClazz() {
             return clazz;
         }
     }
@@ -106,6 +106,7 @@ public class MgmtPage extends WebPage {
         toolPages.add(new LinkAndName("Bot editor", BotEditor.class));
         toolPages.add(new LinkAndName("TerritoryEditor", TerritoryEditor.class));
         toolPages.add(new LinkAndName("Tutorial", TutorialTable.class));
+        toolPages.add(new LinkAndName("Playback", PlaybackPage.class));
 
     }
 }

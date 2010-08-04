@@ -14,6 +14,7 @@
 package com.btxtech.game.services.utg;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -33,6 +34,7 @@ public class VisitorDetailInfo {
     private int moneyCollectCommands;
     private int completedMissionCount;
     private int gameAttempts;
+    private List<DbEventTrackingStart> dbEventTrackingStart = Collections.emptyList();
 
     public VisitorDetailInfo(BrowserDetails browserDetails) {
         this.browserDetails = browserDetails;
@@ -122,5 +124,13 @@ public class VisitorDetailInfo {
 
     public int getCompletedMissionCount() {
         return completedMissionCount;
+    }
+
+    public void setDbEventTrackingStart(List<DbEventTrackingStart> dbEventTrackingStart) {
+        this.dbEventTrackingStart = dbEventTrackingStart;
+    }
+
+    public List<DbEventTrackingStart> getDbEventTrackingStart() {
+        return dbEventTrackingStart;
     }
 }

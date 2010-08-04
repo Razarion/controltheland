@@ -28,10 +28,12 @@ public class UserTrackingFilter implements Serializable {
     public static final String BOTH = "Both";
     public static final List JS_ENABLED_CHOICES = Arrays.asList(ENABLED, DISABLED, BOTH);
     private String jsEnabled;
+    private int days;
 
     public static UserTrackingFilter newDefaultFilter() {
-        UserTrackingFilter userTrackingFilter =  new UserTrackingFilter();
+        UserTrackingFilter userTrackingFilter = new UserTrackingFilter();
         userTrackingFilter.setJsEnabled(ENABLED);
+        userTrackingFilter.setDays(1);
         return userTrackingFilter;
     }
 
@@ -41,5 +43,13 @@ public class UserTrackingFilter implements Serializable {
 
     public void setJsEnabled(String jsEnabled) {
         this.jsEnabled = jsEnabled;
+    }
+
+    public int getDays() {
+        return days;
+    }
+
+    public void setDays(int days) {
+        this.days = days;
     }
 }

@@ -27,7 +27,7 @@ public class VisitorInfo {
     private int pageHits;
     private int enterGameHits;
     private int commands;
-    private int missions;
+    private int tasks;
     private boolean cookie;
     private String referer;
 
@@ -36,7 +36,7 @@ public class VisitorInfo {
                        int pageHits,
                        int enterGameHits,
                        int commands,
-                       int missions,
+                       int tasks,
                        boolean cookie,
                        String referer) {
         this.date = date;
@@ -44,7 +44,7 @@ public class VisitorInfo {
         this.pageHits = pageHits;
         this.enterGameHits = enterGameHits;
         this.commands = commands;
-        this.missions = missions;
+        this.tasks = tasks;
         this.cookie = cookie;
         if (referer != null && referer.length() > MAX_REFERER_LENGTH) {
             this.referer = referer.substring(0, MAX_REFERER_LENGTH);
@@ -73,15 +73,15 @@ public class VisitorInfo {
         return commands;
     }
 
-    public int getMissions() {
-        return missions;
-    }
-
     public boolean isCookie() {
         return cookie;
     }
 
     public String getReferer() {
         return referer;
+    }
+
+    public int getTasks() {
+        return tasks;
     }
 }

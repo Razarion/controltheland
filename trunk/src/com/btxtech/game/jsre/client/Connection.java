@@ -341,6 +341,18 @@ public class Connection implements AsyncCallback<Void> {
         }
     }
 
+    public void sendTotalStartupTime(long totalStartupTime) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.sendTotalStartupTime(totalStartupTime, this);
+        }
+    }
+
+    public void sendCloseWindow(long totalRunningTime) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.sendCloseWindow(totalRunningTime, this);
+        }
+    }
+
     public static MovableServiceAsync getMovableServiceAsync() {
         return INSTANCE.movableServiceAsync;
     }

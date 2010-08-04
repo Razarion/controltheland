@@ -29,6 +29,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import java.util.ArrayList;
@@ -51,6 +52,7 @@ public interface MovableService extends RemoteService {
 
     Collection<SyncItemInfo> getAllSyncInfo();
 
+    @Deprecated
     void sendUserActions(ArrayList<UserAction> userActions, ArrayList<MissionAction> missionActions);
 
     void createMissionTraget(Id attacker);
@@ -78,4 +80,8 @@ public interface MovableService extends RemoteService {
     void sendEventTrackingStart(EventTrackingStart eventTrackingStart);
 
     void sendEventTrackerItems(List<EventTrackingItem> eventTrackingItems);
+
+    void sendTotalStartupTime(long totalStartupTime);
+
+    void sendCloseWindow(long totalRunningTime);
 }

@@ -22,7 +22,7 @@ import java.io.Serializable;
  */
 public class EventTrackingItem implements Serializable {
     private int xPos;
-    private int screenY;
+    private int yPos;
     private int eventType;
     private long clientTimeStamp;
 
@@ -34,17 +34,24 @@ public class EventTrackingItem implements Serializable {
 
     public EventTrackingItem(int xPos, int yPos, int eventType) {
         this.xPos = xPos;
-        this.screenY = yPos;
+        this.yPos = yPos;
         this.eventType = eventType;
         clientTimeStamp = System.currentTimeMillis();
     }
 
-    public int getxPos() {
+    public EventTrackingItem(int xPos, int yPos, int eventType, long clientTimeStamp) {
+        this.xPos = xPos;
+        this.yPos = yPos;
+        this.eventType = eventType;
+        this.clientTimeStamp = clientTimeStamp;
+    }
+
+    public int getXPos() {
         return xPos;
     }
 
-    public int getScreenY() {
-        return screenY;
+    public int getYPos() {
+        return yPos;
     }
 
     public int getEventType() {
