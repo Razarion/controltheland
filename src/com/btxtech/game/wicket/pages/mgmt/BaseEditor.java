@@ -59,6 +59,12 @@ public class BaseEditor extends WebPage {
     private ServerEnergyService energyService;
     private Log log = LogFactory.getLog(BaseEditor.class);
 
+    public static TextField<String> createReadonlyTextFiled(String id) {
+        TextField<String> field = new TextField<String>(id);
+        field.setEnabled(false);
+        return field;
+    }
+
     public BaseEditor(final SimpleBase simpleBase) {
         Form form = new Form("base");
 
@@ -114,114 +120,141 @@ public class BaseEditor extends WebPage {
 
             @Override
             protected void populateItem(final Item<SyncBaseItem> item) {
-                if (item.getModelObject() != null) {
-                    item.add(new Label("id", item.getModelObject().getId().toString()));
-                    item.add(new Label("itemType", item.getModelObject().getItemType().getName()));
-                } else {
-                    item.add(new Label("id", "?"));
-                    item.add(new Label("itemType", "?"));
+                try {
+                    if (item.getModelObject() != null) {
+                        item.add(new Label("id", item.getModelObject().getId().toString()));
+                        item.add(new Label("itemType", item.getModelObject().getItemType().getName()));
+                    } else {
+                        item.add(new Label("id", "?"));
+                        item.add(new Label("itemType", "?"));
+                    }
+
+                    item.add(new TextField<String>("health", new IModel<String>() {
+                        @Override
+                        public String getObject() {
+                            return Integer.toString((int) item.getModelObject().getHealth());
+                        }
+
+                        @Override
+                        public void setObject(String health) {
+                            if (item.getModelObject() != null) {
+                                item.getModelObject().setHealth(Integer.parseInt(health));
+                            }
+                        }
+
+                        @Override
+                        public void detach() {
+                        }
+                    }));
+
+                    item.add(new TextField<String>("xPos", new IModel<String>() {
+                        @Override
+                        public String getObject() {
+                            Index pos = item.getModelObject().getPosition();
+                            if (pos != null) {
+                                return Integer.toString(pos.getX());
+                            } else {
+                                return NO_POS;
+                            }
+                        }
+
+                        @Override
+                        public void setObject(String xPos) {
+                            if (!NO_POS.equals(xPos)) {
+                                if (item.getModelObject().getPosition() != null) {
+                                    item.getModelObject().setPosition(new Index(Integer.parseInt(xPos), item.getModelObject().getPosition().getY()));
+                                } else {
+                                    item.getModelObject().setPosition(new Index(Integer.parseInt(xPos), 0));
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void detach() {
+                        }
+                    }));
+                    item.add(new TextField<String>("yPos", new IModel<String>() {
+                        @Override
+                        public String getObject() {
+                            Index pos = item.getModelObject().getPosition();
+                            if (pos != null) {
+                                return Integer.toString(pos.getY());
+                            } else {
+                                return NO_POS;
+                            }
+                        }
+
+                        @Override
+                        public void setObject(String yPos) {
+                            if (!NO_POS.equals(yPos)) {
+                                if (item.getModelObject().getPosition() != null) {
+                                    item.getModelObject().setPosition(new Index(item.getModelObject().getPosition().getX(), Integer.parseInt(yPos)));
+                                } else {
+                                    item.getModelObject().setPosition(new Index(0, Integer.parseInt(yPos)));
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void detach() {
+                        }
+                    }));
+                    // Kill button
+                    Button killButton = new Button("kill") {
+                        @Override
+                        public void onSubmit() {
+                            if (item.getModelObject() != null) {
+                                itemService.killSyncItem(item.getModelObject(), null, true);
+                            }
+                            if (baseService.getBase(simpleBase) == null) {
+                                setResponsePage(BasesTable.class);
+                            }
+
+                        }
+                    };
+                    item.add(killButton);
+                    // alternating row color
+                    item.add(new AttributeModifier("class", true, new Model<String>(item.getIndex() % 2 == 0 ? "even" : "odd")));
+
+                } catch (RuntimeException e) {
+                    if (e.getCause() instanceof ItemDoesNotExistException) {
+                        item.add(new Label("id", ((ItemDoesNotExistException) e.getCause()).getId().toString()));
+                        item.add(new Label("itemType", "Dead"));
+                        item.add(createReadonlyTextFiled("health"));
+                        item.add(createReadonlyTextFiled("xPos"));
+                        item.add(createReadonlyTextFiled("yPos"));
+                        Button killButton = new Button("kill") {
+                            @Override
+                            public void onSubmit() {
+                            }
+                        };
+                        killButton.setEnabled(false);
+                        item.add(killButton);
+                        // alternating row color
+                        item.add(new AttributeModifier("class", true, new Model<String>(item.getIndex() % 2 == 0 ? "even" : "odd")));
+                    } else {
+                        throw e;
+                    }
                 }
-
-                item.add(new TextField<String>("health", new IModel<String>() {
-                    @Override
-                    public String getObject() {
-                        return Integer.toString((int) item.getModelObject().getHealth());
-                    }
-
-                    @Override
-                    public void setObject(String health) {
-                        if (item.getModelObject() != null) {
-                            item.getModelObject().setHealth(Integer.parseInt(health));
-                        }
-                    }
-
-                    @Override
-                    public void detach() {
-                    }
-                }));
-
-                item.add(new TextField<String>("xPos", new IModel<String>() {
-                    @Override
-                    public String getObject() {
-                        Index pos = item.getModelObject().getPosition();
-                        if (pos != null) {
-                            return Integer.toString(pos.getX());
-                        } else {
-                            return NO_POS;
-                        }
-                    }
-
-                    @Override
-                    public void setObject(String xPos) {
-                        if (!NO_POS.equals(xPos)) {
-                            if (item.getModelObject().getPosition() != null) {
-                                item.getModelObject().setPosition(new Index(Integer.parseInt(xPos), item.getModelObject().getPosition().getY()));
-                            } else {
-                                item.getModelObject().setPosition(new Index(Integer.parseInt(xPos), 0));
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void detach() {
-                    }
-                }));
-                item.add(new TextField<String>("yPos", new IModel<String>() {
-                    @Override
-                    public String getObject() {
-                        Index pos = item.getModelObject().getPosition();
-                        if (pos != null) {
-                            return Integer.toString(pos.getY());
-                        } else {
-                            return NO_POS;
-                        }
-                    }
-
-                    @Override
-                    public void setObject(String yPos) {
-                        if (!NO_POS.equals(yPos)) {
-                            if (item.getModelObject().getPosition() != null) {
-                                item.getModelObject().setPosition(new Index(item.getModelObject().getPosition().getX(), Integer.parseInt(yPos)));
-                            } else {
-                                item.getModelObject().setPosition(new Index(0, Integer.parseInt(yPos)));
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void detach() {
-                    }
-                }));
-                // Kill button
-                Button killButton = new Button("kill") {
-                    @Override
-                    public void onSubmit() {
-                        if (item.getModelObject() != null) {
-                            itemService.killSyncItem(item.getModelObject(), null, true);
-                        }
-                        if (baseService.getBase(simpleBase) == null) {
-                            setResponsePage(BasesTable.class);
-                        }
-
-                    }
-                };
-                item.add(killButton);
-                // alternating row color
-                item.add(new AttributeModifier("class", true, new Model<String>(item.getIndex() % 2 == 0 ? "even" : "odd")));
-
             }
         };
         form.add(itemDataView);
-        form.add(new Button("apply") {
-            @Override
-            public void onSubmit() {
-                HashSet<SyncBaseItem> syncBaseItems = baseService.getBase(simpleBase).getItems();
-                if (!syncBaseItems.isEmpty()) {
-                    baseService.sendAccountBaseUpdate(syncBaseItems.iterator().next());
-                    connectionService.sendSyncInfos(syncBaseItems);
+        form.add(new
+
+                Button("apply") {
+                    @Override
+                    public void onSubmit
+                            () {
+                        HashSet<SyncBaseItem> syncBaseItems = baseService.getBase(simpleBase).getItems();
+                        if (!syncBaseItems.isEmpty()) {
+                            baseService.sendAccountBaseUpdate(syncBaseItems.iterator().next());
+                            connectionService.sendSyncInfos(syncBaseItems);
+                        }
+                    }
                 }
-            }
-        });
+
+        );
+
         add(form);
     }
 
@@ -259,8 +292,7 @@ public class BaseEditor extends WebPage {
                     try {
                         return (SyncBaseItem) itemService.getItem(id);
                     } catch (ItemDoesNotExistException e) {
-                        log.error("", e);
-                        return null;
+                        throw new RuntimeException(e);
                     }
                 }
             };
