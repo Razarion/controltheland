@@ -21,7 +21,14 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
  * Time: 19:48:26
  */
 public class ItemDoesNotExistException extends Exception {
+    private Id id;
+
     public ItemDoesNotExistException(Id id) {
         super("Item does not exist: " + id);
+        this.id = id;
+    }
+
+    public Id getId() {
+        return id;
     }
 }
