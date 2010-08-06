@@ -65,20 +65,20 @@ public abstract class TopMapPanel extends DecoratorPanel {
         addDomHandler(new MouseUpHandler() {
             @Override
             public void onMouseUp(MouseUpEvent event) {
-                GwtCommon.preventDefault(event);
+                event.stopPropagation();
             }
         }, MouseUpEvent.getType());
 
         addDomHandler(new MouseDownHandler() {
             @Override
             public void onMouseDown(MouseDownEvent event) {
-                GwtCommon.preventDefault(event);
+                event.stopPropagation();
             }
         }, MouseDownEvent.getType());
         addDomHandler(new MouseDownHandler() {
             @Override
             public void onMouseDown(MouseDownEvent event) {
-                GwtCommon.preventDefault(event);
+                event.stopPropagation();
             }
         }, MouseDownEvent.getType());
     }
