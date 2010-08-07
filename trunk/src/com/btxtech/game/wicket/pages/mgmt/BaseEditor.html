@@ -54,6 +54,7 @@
             <th bgcolor="#dadada">X Pos</th>
             <th bgcolor="#dadada">Y Pos</th>
             <th bgcolor="#dadada">Kill</th>
+            <th bgcolor="#dadada">Select</th>
         </tr>
 
         <tr wicket:id="itemTypes">
@@ -71,9 +72,16 @@
             <td valign="center">
                 <input type="submit" wicket:id="kill" value="Kill"/>
             </td>
+            <td valign="center">
+                <input wicket:id="select" type="checkbox">
+            </td>
+
 
         </tr>
     </table>
+    <br/>
+    <input type="submit" wicket:id="killSelected" value="Kill Selected"/>
+    <br/>
     <br/>
     <input type="submit" wicket:id="apply" value="Apply"/>
     <br/>

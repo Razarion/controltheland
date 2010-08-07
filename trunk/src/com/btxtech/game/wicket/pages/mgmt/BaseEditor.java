@@ -26,12 +26,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.repeater.Item;
@@ -57,7 +56,7 @@ public class BaseEditor extends WebPage {
     private ConnectionService connectionService;
     @SpringBean
     private ServerEnergyService energyService;
-    private Log log = LogFactory.getLog(BaseEditor.class);
+    private HashSet<Id> itemsToKill = new HashSet<Id>();
 
     public static TextField<String> createReadonlyTextFiled(String id) {
         TextField<String> field = new TextField<String>(id);
@@ -121,13 +120,8 @@ public class BaseEditor extends WebPage {
             @Override
             protected void populateItem(final Item<SyncBaseItem> item) {
                 try {
-                    if (item.getModelObject() != null) {
-                        item.add(new Label("id", item.getModelObject().getId().toString()));
-                        item.add(new Label("itemType", item.getModelObject().getItemType().getName()));
-                    } else {
-                        item.add(new Label("id", "?"));
-                        item.add(new Label("itemType", "?"));
-                    }
+                    item.add(new Label("id", item.getModelObject().getId().toString()));
+                    item.add(new Label("itemType", item.getModelObject().getItemType().getName()));
 
                     item.add(new TextField<String>("health", new IModel<String>() {
                         @Override
@@ -137,9 +131,7 @@ public class BaseEditor extends WebPage {
 
                         @Override
                         public void setObject(String health) {
-                            if (item.getModelObject() != null) {
-                                item.getModelObject().setHealth(Integer.parseInt(health));
-                            }
+                            item.getModelObject().setHealth(Integer.parseInt(health));
                         }
 
                         @Override
@@ -203,9 +195,7 @@ public class BaseEditor extends WebPage {
                     Button killButton = new Button("kill") {
                         @Override
                         public void onSubmit() {
-                            if (item.getModelObject() != null) {
-                                itemService.killSyncItem(item.getModelObject(), null, true);
-                            }
+                            itemService.killSyncItem(item.getModelObject(), null, true);
                             if (baseService.getBase(simpleBase) == null) {
                                 setResponsePage(BasesTable.class);
                             }
@@ -213,6 +203,24 @@ public class BaseEditor extends WebPage {
                         }
                     };
                     item.add(killButton);
+                    item.add(new CheckBox("select", new IModel<Boolean>() {
+
+                        @Override
+                        public Boolean getObject() {
+                            return itemsToKill.contains(item.getModelObject().getId());
+                        }
+
+                        @Override
+                        public void setObject(Boolean allowed) {
+                            itemsToKill.add(item.getModelObject().getId());
+                        }
+
+                        @Override
+                        public void detach() {
+                            // Ignore
+                        }
+                    }));
+
                     // alternating row color
                     item.add(new AttributeModifier("class", true, new Model<String>(item.getIndex() % 2 == 0 ? "even" : "odd")));
 
@@ -230,6 +238,8 @@ public class BaseEditor extends WebPage {
                         };
                         killButton.setEnabled(false);
                         item.add(killButton);
+                        CheckBox checkBox = new CheckBox("select", new Model<Boolean>(false));
+                        item.add(checkBox);
                         // alternating row color
                         item.add(new AttributeModifier("class", true, new Model<String>(item.getIndex() % 2 == 0 ? "even" : "odd")));
                     } else {
@@ -239,21 +249,33 @@ public class BaseEditor extends WebPage {
             }
         };
         form.add(itemDataView);
-        form.add(new
+        form.add(new Button("killSelected") {
+            @Override
+            public void onSubmit() {
+                for (Id id : itemsToKill) {
+                    try {
+                        itemService.killSyncItem(itemService.getItem(id), null, true);
 
-                Button("apply") {
-                    @Override
-                    public void onSubmit
-                            () {
-                        HashSet<SyncBaseItem> syncBaseItems = baseService.getBase(simpleBase).getItems();
-                        if (!syncBaseItems.isEmpty()) {
-                            baseService.sendAccountBaseUpdate(syncBaseItems.iterator().next());
-                            connectionService.sendSyncInfos(syncBaseItems);
-                        }
+                    } catch (Exception e) {
+                        // Ignore
                     }
                 }
+                if (baseService.getBase(simpleBase) == null) {
+                    setResponsePage(BasesTable.class);
+                }
+            }
+        });
 
-        );
+        form.add(new Button("apply") {
+            @Override
+            public void onSubmit() {
+                HashSet<SyncBaseItem> syncBaseItems = baseService.getBase(simpleBase).getItems();
+                if (!syncBaseItems.isEmpty()) {
+                    baseService.sendAccountBaseUpdate(syncBaseItems.iterator().next());
+                    connectionService.sendSyncInfos(syncBaseItems);
+                }
+            }
+        });
 
         add(form);
     }
