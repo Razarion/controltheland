@@ -179,10 +179,10 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         Object[] values;
         if (filter.getJsEnabled().equals(UserTrackingFilter.BOTH)) {
             values = new Object[]{gregorianCalendar.getTime()};
-            sql = ("select u.timeStamp, u.sessionId, u.cookieId, u.referer ,count(distinct p), count(distinct a), count(distinct s) from com.btxtech.game.services.utg.BrowserDetails u, com.btxtech.game.services.utg.PageAccess p, com.btxtech.game.services.utg.GameStartup a, com.btxtech.game.services.utg.DbTotalStartupTime s where u.sessionId = p.sessionId and u.sessionId = a.sessionId and u.sessionId = s.sessionId and u.timeStamp > ? group by u.sessionId order by u.timeStamp desc");
+            sql = ("select u.timeStamp, u.sessionId, u.cookieId, u.referer from com.btxtech.game.services.utg.BrowserDetails u where u.timeStamp > ? group by u.sessionId order by u.timeStamp desc");
         } else {
             values = new Object[]{filter.getJsEnabled().equals(UserTrackingFilter.ENABLED), gregorianCalendar.getTime()};
-            sql = ("select u.timeStamp, u.sessionId, u.cookieId, u.referer ,count(distinct p), count(distinct a), count(distinct s) from com.btxtech.game.services.utg.BrowserDetails u, com.btxtech.game.services.utg.PageAccess p, com.btxtech.game.services.utg.GameStartup a, com.btxtech.game.services.utg.DbTotalStartupTime s where u.sessionId = p.sessionId and u.sessionId = a.sessionId and  u.sessionId = s.sessionId and u.javaScriptDetected = ? and u.timeStamp > ? group by u.sessionId order by u.timeStamp desc");
+            sql = ("select u.timeStamp, u.sessionId, u.cookieId, u.referer from com.btxtech.game.services.utg.BrowserDetails u where  u.javaScriptDetected = ? and u.timeStamp > ? group by u.sessionId order by u.timeStamp desc");
         }
 
         @SuppressWarnings("unchecked")
@@ -192,15 +192,57 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             String sessionId = (String) datesAndHit[1];
             boolean cookie = datesAndHit[2] != null;
             String referer = (String) datesAndHit[3];
-            int hits = ((Long) datesAndHit[4]).intValue();
-            int startStates = ((Long) datesAndHit[5]).intValue();
-            int successfulStarts = ((Long) datesAndHit[6]).intValue();
+            int hits = getPageHits(sessionId);
+            int startStates = getStartStates(sessionId);
+            int successfulStarts = getSuccessfulStarts(sessionId);
             int enterGameHits = getGameAttempts(sessionId);
             int commands = getUserCommandCount(sessionId, null, null, null);
             int tasks = getTaskCount(sessionId);
             visitorInfos.add(new VisitorInfo(timeStamp, sessionId, hits, enterGameHits, startStates, successfulStarts, commands, tasks, cookie, referer));
         }
         return visitorInfos;
+    }
+
+    private int getSuccessfulStarts(final String sessionId) {
+        @SuppressWarnings("unchecked")
+        List<Integer> list = (List<Integer>) hibernateTemplate.execute(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbTotalStartupTime.class);
+                criteria.add(Restrictions.eq("sessionId", sessionId));
+                criteria.setProjection(Projections.rowCount());
+                return criteria.list();
+            }
+        });
+        return list.get(0);
+    }
+
+    private int getStartStates(final String sessionId) {
+        @SuppressWarnings("unchecked")
+        List<Integer> list = (List<Integer>) hibernateTemplate.execute(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(GameStartup.class);
+                criteria.add(Restrictions.eq("sessionId", sessionId));
+                criteria.setProjection(Projections.rowCount());
+                return criteria.list();
+            }
+        });
+        return list.get(0);
+    }
+
+    private int getPageHits(final String sessionId) {
+        @SuppressWarnings("unchecked")
+        List<Integer> list = (List<Integer>) hibernateTemplate.execute(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(PageAccess.class);
+                criteria.add(Restrictions.eq("sessionId", sessionId));
+                criteria.setProjection(Projections.rowCount());
+                return criteria.list();
+            }
+        });
+        return list.get(0);
     }
 
     private int getGameAttempts(final String sessionId) {
