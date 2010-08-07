@@ -176,28 +176,29 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         gregorianCalendar.add(GregorianCalendar.DAY_OF_YEAR, -filter.getDays());
 
         String sql;
-        if (filter.getJsEnabled().equals(UserTrackingFilter.ENABLED)) {
-            sql = ("select u.timeStamp, u.sessionId, u.cookieId, u.referer ,count(p) from com.btxtech.game.services.utg.BrowserDetails u, com.btxtech.game.services.utg.PageAccess p where u.sessionId = p.sessionId and u.javaScriptDetected = true and u.timeStamp > ? group by u.sessionId order by u.timeStamp desc");
-        } else if (filter.getJsEnabled().equals(UserTrackingFilter.DISABLED)) {
-            sql = ("select u.timeStamp, u.sessionId, u.cookieId, u.referer ,count(p) from com.btxtech.game.services.utg.BrowserDetails u, com.btxtech.game.services.utg.PageAccess p where u.sessionId = p.sessionId and u.javaScriptDetected = false and u.timeStamp > ? group by u.sessionId order by u.timeStamp desc");
-        } else if (filter.getJsEnabled().equals(UserTrackingFilter.BOTH)) {
-            sql = ("select u.timeStamp, u.sessionId, u.cookieId, u.referer ,count(p) from com.btxtech.game.services.utg.BrowserDetails u, com.btxtech.game.services.utg.PageAccess p where u.sessionId = p.sessionId and u.timeStamp > ? group by u.sessionId order by u.timeStamp desc");
+        Object[] values;
+        if (filter.getJsEnabled().equals(UserTrackingFilter.BOTH)) {
+            values = new Object[]{gregorianCalendar.getTime()};
+            sql = ("select u.timeStamp, u.sessionId, u.cookieId, u.referer ,count(distinct p), count(distinct a), count(distinct s) from com.btxtech.game.services.utg.BrowserDetails u, com.btxtech.game.services.utg.PageAccess p, com.btxtech.game.services.utg.GameStartup a, com.btxtech.game.services.utg.DbTotalStartupTime s where u.sessionId = p.sessionId and u.sessionId = a.sessionId and u.sessionId = s.sessionId and u.timeStamp > ? group by u.sessionId order by u.timeStamp desc");
         } else {
-            throw new IllegalArgumentException("Unknown JS enabled state: " + filter.getJsEnabled());
+            values = new Object[]{filter.getJsEnabled().equals(UserTrackingFilter.ENABLED), gregorianCalendar.getTime()};
+            sql = ("select u.timeStamp, u.sessionId, u.cookieId, u.referer ,count(distinct p), count(distinct a), count(distinct s) from com.btxtech.game.services.utg.BrowserDetails u, com.btxtech.game.services.utg.PageAccess p, com.btxtech.game.services.utg.GameStartup a, com.btxtech.game.services.utg.DbTotalStartupTime s where u.sessionId = p.sessionId and u.sessionId = a.sessionId and  u.sessionId = s.sessionId and u.javaScriptDetected = ? and u.timeStamp > ? group by u.sessionId order by u.timeStamp desc");
         }
 
         @SuppressWarnings("unchecked")
-        List<Object[]> datesAndHits = (List<Object[]>) hibernateTemplate.find(sql, gregorianCalendar.getTime());
+        List<Object[]> datesAndHits = (List<Object[]>) hibernateTemplate.find(sql, values);
         for (Object[] datesAndHit : datesAndHits) {
             Date timeStamp = (Date) datesAndHit[0];
             String sessionId = (String) datesAndHit[1];
             boolean cookie = datesAndHit[2] != null;
             String referer = (String) datesAndHit[3];
             int hits = ((Long) datesAndHit[4]).intValue();
+            int startStates = ((Long) datesAndHit[5]).intValue();
+            int successfulStarts = ((Long) datesAndHit[6]).intValue();
             int enterGameHits = getGameAttempts(sessionId);
             int commands = getUserCommandCount(sessionId, null, null, null);
             int tasks = getTaskCount(sessionId);
-            visitorInfos.add(new VisitorInfo(timeStamp, sessionId, hits, enterGameHits, commands, tasks, cookie, referer));
+            visitorInfos.add(new VisitorInfo(timeStamp, sessionId, hits, enterGameHits, startStates, successfulStarts, commands, tasks, cookie, referer));
         }
         return visitorInfos;
     }

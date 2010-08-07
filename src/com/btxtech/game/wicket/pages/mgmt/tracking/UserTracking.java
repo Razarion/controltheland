@@ -85,6 +85,8 @@ public class UserTracking extends WebPage {
                 listItem.add(new Label("date", simpleDateFormat.format(listItem.getModelObject().getDate())));
                 listItem.add(new Label("pageHits", Integer.toString(listItem.getModelObject().getPageHits())));
                 listItem.add(new Label("enterGame", Integer.toString(listItem.getModelObject().getEnterGameHits())));
+                listItem.add(new Label("startStates", Integer.toString(listItem.getModelObject().getStartStates())));
+                listItem.add(new Label("successfulStarts", Integer.toString(listItem.getModelObject().getSuccessfulStarts())));
                 listItem.add(new Label("commands", Integer.toString(listItem.getModelObject().getCommands())));
                 listItem.add(new Label("tasks", Integer.toString(listItem.getModelObject().getTasks())));
                 listItem.add(new Label("cookie", listItem.getModelObject().isCookie() ? "Yes" : ""));
