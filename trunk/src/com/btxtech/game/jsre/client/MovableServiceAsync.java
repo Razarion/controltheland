@@ -41,9 +41,6 @@ public interface MovableServiceAsync {
 
     void getAllSyncInfo(AsyncCallback async);
 
-    @Deprecated
-    void sendUserActions(ArrayList<UserAction> userActions, ArrayList<MissionAction> missionActions, AsyncCallback<Void> asyncCallback);
-
     void createMissionTraget(Id attacker, AsyncCallback<Void> asyncCallback);
 
     void createMissionMoney(Id harvester, AsyncCallback<Void> asyncCallback);

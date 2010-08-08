@@ -145,16 +145,6 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    @Deprecated
-    public void sendUserActions(ArrayList<UserAction> userActions, ArrayList<MissionAction> missionActions) {
-        try {
-            userTrackingService.saveUserActions(userActions, missionActions);
-        } catch (Throwable t) {
-            log.error("", t);
-        }
-    }
-
-    @Override
     public void sendTotalStartupTime(long totalStartupTime) {
         try {
             userTrackingService.onTotalStartupTime(totalStartupTime);

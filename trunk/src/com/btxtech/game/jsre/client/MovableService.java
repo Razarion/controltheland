@@ -52,9 +52,6 @@ public interface MovableService extends RemoteService {
 
     Collection<SyncItemInfo> getAllSyncInfo();
 
-    @Deprecated
-    void sendUserActions(ArrayList<UserAction> userActions, ArrayList<MissionAction> missionActions);
-
     void createMissionTraget(Id attacker);
 
     void createMissionMoney(Id harvester);

@@ -71,20 +71,6 @@ public class ClientUserTracker {
                 Connection.getInstance().sendCloseWindow(System.currentTimeMillis() - StartupProbe.getInstance().getRunningTimeStamp());
             }
         });
-        timer = new Timer() {
-            @Override
-            public void run() {
-                if (System.currentTimeMillis() > timerStarted + collectionTime) {
-                    timer.cancel();
-                    sendUserAction(UserAction.STOP_COLLECTION, "");
-                    sendUserActionsToServer();
-                    stopCollection = true;
-                } else {
-                    sendUserActionsToServer();
-                }
-            }
-        };
-        //timer.scheduleRepeating(SEND_TIMEOUT);
         timerStarted = System.currentTimeMillis();
     }
 
@@ -186,15 +172,8 @@ public class ClientUserTracker {
         sendUserAction(UserAction.REGISTER_DIALOG_OPEN, null);
     }
 
+    @Deprecated
     public void onMissionAction(String action, Mission mission) {
-        if (mission != null) {
-            sendMissionAction(action, mission.getName(), null);
-        } else {
-            sendMissionAction(action, "", null);
-        }
-        if (action.equals(MissionAction.MISSION_COMPLETED) || action.equals(MissionAction.MISSION_USER_STOPPED)) {
-            sendUserActionsToServer();
-        }
     }
 
     public void onMissionTask(Mission mission, String taskName) {
@@ -224,24 +203,6 @@ public class ClientUserTracker {
 
         MissionAction missionAction = new MissionAction(action, mission, task);
         missionActions.add(missionAction);
-    }
-
-    private void sendUserActionsToServer() {
-        if (Connection.isConnected() && !stopCollection && (!userActions.isEmpty() || !missionActions.isEmpty())) {
-            Connection.getMovableServiceAsync().sendUserActions(userActions, missionActions, new AsyncCallback<Void>() {
-                @Override
-                public void onFailure(Throwable throwable) {
-                    GwtCommon.handleException(throwable);
-                }
-
-                @Override
-                public void onSuccess(Void aVoid) {
-                    // Ignore
-                }
-            });
-        }
-        userActions = new ArrayList<UserAction>();
-        missionActions = new ArrayList<MissionAction>();
     }
 
     public void setCollectionTime(int collectionTime) {

@@ -13,23 +13,16 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tracking;
 
-import com.btxtech.game.jsre.playback.PlaybackEntry;
 import com.btxtech.game.services.utg.BrowserDetails;
-import com.btxtech.game.services.utg.DbEventTrackingStart;
-import com.btxtech.game.services.utg.GameTrackingInfo;
+import com.btxtech.game.services.utg.LifecycleTrackingInfo;
 import com.btxtech.game.services.utg.PageAccess;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.VisitorDetailInfo;
 import com.btxtech.game.wicket.WebCommon;
-import com.btxtech.game.wicket.pages.mgmt.PlaybackPage;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.BookmarkablePageLink;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -47,29 +40,13 @@ public class VisitorDetails extends WebPage {
     public VisitorDetails(String sessionId) {
         VisitorDetailInfo visitorDetailInfo = userTrackingService.getVisitorDetails(sessionId);
 
-        eventTracking(visitorDetailInfo.getDbEventTrackingStart());
-
         userInfo(sessionId, visitorDetailInfo);
 
         gameOverview(visitorDetailInfo);
 
         pageHostory(visitorDetailInfo);
 
-        gameInfo(visitorDetailInfo);
-    }
-
-    private void eventTracking(List<DbEventTrackingStart> dbEventTrackingStart) {
-        ListView<DbEventTrackingStart> listView = new ListView<DbEventTrackingStart>("eventTracking", dbEventTrackingStart) {
-            @Override
-            protected void populateItem(ListItem<DbEventTrackingStart> listItem) {
-                PageParameters  pageParameters = new PageParameters();
-                pageParameters.add(PlaybackEntry.SESSION_ID, listItem.getModelObject().getSessionId());
-                pageParameters.add(PlaybackEntry.START_TIME, Long.toString(listItem.getModelObject().getClientTimeStamp()));
-                BookmarkablePageLink<PlaybackPage> pageLink = new BookmarkablePageLink<PlaybackPage>("link", PlaybackPage.class, pageParameters);
-                listItem.add(pageLink);
-            }
-        };
-        add(listView);
+        detailTrackingInfo(visitorDetailInfo);
     }
 
     private void pageHostory(final VisitorDetailInfo visitorDetailInfo) {
@@ -92,11 +69,15 @@ public class VisitorDetails extends WebPage {
         add(pageAccessHistory);
     }
 
-    private void gameInfo(final VisitorDetailInfo visitorDetailInfo) {
-        ListView<GameTrackingInfo> gameTrackingInfoList = new ListView<GameTrackingInfo>("gameTrackings", visitorDetailInfo.getGameTrackingInfos()) {
+    private void detailTrackingInfo(final VisitorDetailInfo visitorDetailInfo) {
+        ListView<LifecycleTrackingInfo> gameTrackingInfoList = new ListView<LifecycleTrackingInfo>("detailTrackings", visitorDetailInfo.getLifecycleTrackingInfos()) {
             @Override
-            protected void populateItem(ListItem<GameTrackingInfo> listItem) {
-                listItem.add(new GameTracking("gameTracking", listItem.getModelObject()));
+            protected void populateItem(ListItem<LifecycleTrackingInfo> listItem) {
+                if (listItem.getModelObject().isTutorial()) {
+                    listItem.add(new TutorialTracking("detailTracking", listItem.getModelObject()));
+                } else {
+                    listItem.add(new GameTracking("detailTracking", listItem.getModelObject()));
+                }
             }
         };
         add(gameTrackingInfoList);
@@ -123,8 +104,6 @@ public class VisitorDetails extends WebPage {
         add(new Label("factoryCommands", Integer.toString(visitorDetailInfo.getFactoryCommands())));
         add(new Label("collectCommands", Integer.toString(visitorDetailInfo.getMoneyCollectCommands())));
         add(new Label("attackCommands", Integer.toString(visitorDetailInfo.getAttackCommands())));
-        add(new Label("completedMissions", Integer.toString(visitorDetailInfo.getCompletedMissionCount())));
-
-
+        add(new Label("tutorialTasks", Integer.toString(visitorDetailInfo.getTasks())));
     }
 }

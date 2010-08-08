@@ -26,6 +26,7 @@ import javax.persistence.Id;
  * Date: 14.01.2010
  * Time: 18:17:24
  */
+@Deprecated
 @Entity(name = "TRACKER_USER_ACTION")
 public class DbUserAction implements Serializable {
     @Id

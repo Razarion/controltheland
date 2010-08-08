@@ -20,22 +20,12 @@
 <body>
 <wicket:panel>
     <hr>
-    <h2>Details</h2>
+    <h2>Real Details</h2>
+
+    <span wicket:id="lifecycle"></span>
 
     <h3>Overview</h3>
     <table border="0">
-        <tr>
-            <td bgcolor="#dadada">Time in Game</td>
-            <td wicket:id="timeInGame"/>
-        </tr>
-        <tr>
-            <td bgcolor="#dadada">User Name</td>
-            <td wicket:id="userName"/>
-        </tr>
-        <tr>
-            <td bgcolor="#dadada">Base Name</td>
-            <td wicket:id="baseName"/>
-        </tr>
         <tr>
             <td bgcolor="#dadada">Move Commands</td>
             <td wicket:id="moveCommands"/>
@@ -55,21 +45,6 @@
         <tr>
             <td bgcolor="#dadada">Attack Commands</td>
             <td wicket:id="attackCommands"/>
-        </tr>
-    </table>
-    <h3>Startup</h3>
-    <table border="0">
-        <tr>
-            <th bgcolor="#dadada">Task</th>
-            <th bgcolor="#dadada">Time [s]</th>
-        </tr>
-        <tr wicket:id="gameStartup">
-            <td wicket:id="task"/>
-            <td wicket:id="time" align="right"/>
-        </tr>
-        <tr>
-            <td><b>Total</b></td>
-            <td wicket:id="totalGameStartup" align="right"/>
         </tr>
     </table>
 

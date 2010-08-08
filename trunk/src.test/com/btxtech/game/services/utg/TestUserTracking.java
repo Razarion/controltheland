@@ -46,7 +46,6 @@ public class TestUserTracking {
             stringBuilder.append("x");
         }
         userActions.add(new UserAction("XXXX", stringBuilder.toString()));
-        userTrackingService.saveUserActions(userActions, new ArrayList<MissionAction>());
     }
 
 }
