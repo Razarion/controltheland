@@ -88,7 +88,7 @@ public interface UserTrackingService {
 
     List<DbEventTrackingItem> getDbEventTrackingItem(DbEventTrackingStart begin, DbEventTrackingStart end);
 
-    void sendTotalStartupTime(long totalStartupTime);
+    void onTotalStartupTime(long totalStartupTime);
 
-    void sendCloseWindow(long totalRunningTime);
+    void onCloseWindow(long totalRunningTime);
 }

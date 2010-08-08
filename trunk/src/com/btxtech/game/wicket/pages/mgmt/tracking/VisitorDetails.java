@@ -13,6 +13,7 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tracking;
 
+import com.btxtech.game.jsre.playback.PlaybackEntry;
 import com.btxtech.game.services.utg.BrowserDetails;
 import com.btxtech.game.services.utg.DbEventTrackingStart;
 import com.btxtech.game.services.utg.GameTrackingInfo;
@@ -20,11 +21,14 @@ import com.btxtech.game.services.utg.PageAccess;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.VisitorDetailInfo;
 import com.btxtech.game.wicket.WebCommon;
+import com.btxtech.game.wicket.pages.mgmt.PlaybackPage;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -58,13 +62,11 @@ public class VisitorDetails extends WebPage {
         ListView<DbEventTrackingStart> listView = new ListView<DbEventTrackingStart>("eventTracking", dbEventTrackingStart) {
             @Override
             protected void populateItem(ListItem<DbEventTrackingStart> listItem) {
-                Link link = new Link("link") {
-                    @Override
-                    public void onClick() {
-                        // TODO
-                    }
-                };
-                listItem.add(link);
+                PageParameters  pageParameters = new PageParameters();
+                pageParameters.add(PlaybackEntry.SESSION_ID, listItem.getModelObject().getSessionId());
+                pageParameters.add(PlaybackEntry.START_TIME, Long.toString(listItem.getModelObject().getClientTimeStamp()));
+                BookmarkablePageLink<PlaybackPage> pageLink = new BookmarkablePageLink<PlaybackPage>("link", PlaybackPage.class, pageParameters);
+                listItem.add(pageLink);
             }
         };
         add(listView);

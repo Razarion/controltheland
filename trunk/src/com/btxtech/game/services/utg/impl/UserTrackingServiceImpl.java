@@ -655,12 +655,12 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public void sendTotalStartupTime(long totalStartupTime) {
+    public void onTotalStartupTime(long totalStartupTime) {
         hibernateTemplate.save(new DbTotalStartupTime(totalStartupTime, session.getSessionId()));
     }
 
     @Override
-    public void sendCloseWindow(long totalRunningTime) {
+    public void onCloseWindow(long totalRunningTime) {
         hibernateTemplate.save(new DbCloseWindow(totalRunningTime, session.getSessionId()));
     }
 
