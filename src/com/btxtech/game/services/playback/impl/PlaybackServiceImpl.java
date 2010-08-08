@@ -35,26 +35,34 @@ public class PlaybackServiceImpl implements PlaybackService {
     private UserTrackingService userTrackingService;
 
     @Override
-    public PlaybackInfo getPlaybackInfo() {
-        ///////
-        String sessionId = "DEB6CE8EA52C1AA76B3F4A21B981D909";
-        int index = 0;
-        ///////
+    public PlaybackInfo getPlaybackInfo(String sessionId, long startTime) {
         PlaybackInfo playbackInfo = new PlaybackInfo();
 
+        DbEventTrackingStart start = null;
+        DbEventTrackingStart next = null;
         List<DbEventTrackingStart> dbEventTrackingStarts = userTrackingService.getDbEventTrackingStart(sessionId);
-        DbEventTrackingStart begin = dbEventTrackingStarts.get(index);
-        DbEventTrackingStart end = null;
-        if (dbEventTrackingStarts.size() > index + 1) {
-            end = dbEventTrackingStarts.get(index + 1);
+        for (int i = 0, dbEventTrackingStartsSize = dbEventTrackingStarts.size(); i < dbEventTrackingStartsSize; i++) {
+            DbEventTrackingStart dbEventTrackingStart = dbEventTrackingStarts.get(i);
+            if (dbEventTrackingStart.getClientTimeStamp() == startTime) {
+                start = dbEventTrackingStart;
+                i++;
+                if (i < dbEventTrackingStartsSize) {
+                    next = dbEventTrackingStarts.get(i);
+                }
+                break;
+            }
+        }
+        if (start == null) {
+            return playbackInfo;
         }
 
+
         ArrayList<EventTrackingItem> eventTrackingItems = new ArrayList<EventTrackingItem>();
-        for (DbEventTrackingItem dbEventTrackingItem : userTrackingService.getDbEventTrackingItem(begin, end)) {
+        for (DbEventTrackingItem dbEventTrackingItem : userTrackingService.getDbEventTrackingItem(start, next)) {
             eventTrackingItems.add(dbEventTrackingItem.createEventTrackingItem());
         }
         playbackInfo.setEventTrackingItems(eventTrackingItems);
-        playbackInfo.setEventTrackingStart(begin.createEventTrackingStart());
+        playbackInfo.setEventTrackingStart(start.createEventTrackingStart());
         return playbackInfo;
     }
 }

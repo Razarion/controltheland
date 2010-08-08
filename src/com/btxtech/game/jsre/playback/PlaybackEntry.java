@@ -15,15 +15,16 @@ package com.btxtech.game.jsre.playback;
 
 import com.btxtech.game.jsre.client.ExtendedCanvas;
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.TopMapPanel;
 import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.widgetideas.graphics.client.Color;
-import java.util.List;
 
 /**
  * User: beat
@@ -31,17 +32,27 @@ import java.util.List;
  * Time: 10:53:54
  */
 public class PlaybackEntry implements EntryPoint {
+    public static final String SESSION_ID = "sessionId";
+    public static final String START_TIME = "start";
     private Timer timer;
     private EventTrackingItem eventTrackingItem;
     private ExtendedCanvas extendedCanvas;
     private int currentItem = 0;
-    private List<EventTrackingItem> eventTrackingItems;
+    private PlaybackInfo playbackInfo;
+    private PlaybackControlPanel playbackControlPanel;
 
     @Override
     public void onModuleLoad() {
         GwtCommon.setUncaughtExceptionHandler();
+
+        String sessionId = Window.Location.getParameter(SESSION_ID);
+        long timeStamp = Long.parseLong(Window.Location.getParameter(START_TIME));
+
+        playbackControlPanel = new PlaybackControlPanel(this);
+        playbackControlPanel.addToParent(RootPanel.get(), TopMapPanel.Direction.RIGHT_TOP, 10);
+
         PlaybackAsync playbackAsync = GWT.create(Playback.class);
-        playbackAsync.getPlaybackInfo(new AsyncCallback<PlaybackInfo>() {
+        playbackAsync.getPlaybackInfo(sessionId, timeStamp, new AsyncCallback<PlaybackInfo>() {
             @Override
             public void onFailure(Throwable caught) {
                 GwtCommon.handleException(caught, true);
@@ -52,26 +63,30 @@ public class PlaybackEntry implements EntryPoint {
                 extendedCanvas = new ExtendedCanvas(playbackInfo.getEventTrackingStart().getXResolution(), playbackInfo.getEventTrackingStart().getYResolution());
                 extendedCanvas.getElement().getStyle().setBackgroundColor("#000000");
                 RootPanel.get().add(extendedCanvas);
-                eventTrackingItems = playbackInfo.getEventTrackingItems();
-                play(playbackInfo.getEventTrackingStart().getClientTimeStamp());
+                PlaybackEntry.this.playbackInfo = playbackInfo;
+                play();
             }
         });
 
     }
 
-    private void play(long startTime) {
+    private void play() {
         timer = new Timer() {
             @Override
             public void run() {
                 displayItem();
             }
         };
-        EventTrackingItem eventTrackingItem = eventTrackingItems.get(0);
-        long sleepTime = eventTrackingItem.getClientTimeStamp() - startTime;
+        extendedCanvas.clear();
+        extendedCanvas.beginPath();
+        currentItem = 0;
+        EventTrackingItem eventTrackingItem = playbackInfo.getEventTrackingItems().get(0);
+        long sleepTime = eventTrackingItem.getClientTimeStamp() - playbackInfo.getEventTrackingStart().getClientTimeStamp();
         extendedCanvas.setLineWidth(1);
         extendedCanvas.setStrokeStyle(Color.WHITE);
         extendedCanvas.moveTo(eventTrackingItem.getYPos(), eventTrackingItem.getYPos());
         prepareNextItem(sleepTime, eventTrackingItem);
+        playbackControlPanel.setState("Play");
     }
 
     private void prepareNextItem(long sleepTime, EventTrackingItem eventTrackingItem) {
@@ -84,13 +99,13 @@ public class PlaybackEntry implements EntryPoint {
     }
 
     private void loadNextItem() {
-        EventTrackingItem oldEventTrackingItem = eventTrackingItems.get(currentItem);
+        EventTrackingItem oldEventTrackingItem = playbackInfo.getEventTrackingItems().get(currentItem);
         currentItem++;
-        if (currentItem >= eventTrackingItems.size()) {
-            // Playing finished
+        if (currentItem >= playbackInfo.getEventTrackingItems().size()) {
+            playbackControlPanel.setState("Finished");
             return;
         }
-        EventTrackingItem newEventTrackingItem = eventTrackingItems.get(currentItem);
+        EventTrackingItem newEventTrackingItem = playbackInfo.getEventTrackingItems().get(currentItem);
         long sleepTime = newEventTrackingItem.getClientTimeStamp() - oldEventTrackingItem.getClientTimeStamp();
         prepareNextItem(sleepTime, newEventTrackingItem);
     }
@@ -114,6 +129,15 @@ public class PlaybackEntry implements EntryPoint {
                 break;
             }
         }
+        playbackControlPanel.setTime(eventTrackingItem.getClientTimeStamp() - playbackInfo.getEventTrackingStart().getClientTimeStamp());
         loadNextItem();
+    }
+
+    public void replay() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+        play();
     }
 }

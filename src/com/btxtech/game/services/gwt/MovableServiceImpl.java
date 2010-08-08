@@ -157,7 +157,7 @@ public class MovableServiceImpl implements MovableService {
     @Override
     public void sendTotalStartupTime(long totalStartupTime) {
         try {
-            userTrackingService.sendTotalStartupTime(totalStartupTime);
+            userTrackingService.onTotalStartupTime(totalStartupTime);
         } catch (Throwable t) {
             log.error("", t);
         }
@@ -166,7 +166,7 @@ public class MovableServiceImpl implements MovableService {
     @Override
     public void sendCloseWindow(long totalRunningTime) {
         try {
-            userTrackingService.sendCloseWindow(totalRunningTime);
+            userTrackingService.onCloseWindow(totalRunningTime);
         } catch (Throwable t) {
             log.error("", t);
         }
