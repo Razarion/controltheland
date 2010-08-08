@@ -21,6 +21,7 @@ import java.util.Date;
  * Date: 13.01.2010
  * Time: 22:04:47
  */
+@Deprecated
 public class UserAction implements Serializable {
     public static final String TERRAIN_MOUSE_DOWN = "TERRAIN_MOUSE_DOWN";
     public static final String TERRAIN_MOUSE_UP = "TERRAIN_MOUSE_UP";

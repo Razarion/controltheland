@@ -26,41 +26,13 @@ import java.util.List;
  * Time: 13:15:17
  */
 public class GameTrackingInfo implements Serializable {
-    private Date start;
-    private Long duration;
     private int attackCommandCount;
     private int moveCommandCount;
     private int builderCommandCount;
     private int factoryCommandCount;
     private int moneyCollectCommandCount;
-    private List<GameStartup> gameStartups = new ArrayList<GameStartup>();
     private List<DbUserAction> userActions = new ArrayList<DbUserAction>();
     private List<UserCommand> userCommands = new ArrayList<UserCommand>();
-    private List<DbMissionAction> missionActions = new ArrayList<DbMissionAction>();
-    private Date mapBgLoaded;
-    private Date mapImagesLoaded;
-    private Long startupDuration;
-
-    public GameTrackingInfo(GameStartup gameStartup) {
-        gameStartups.add(gameStartup);
-        if (!StartupTask.isFirstTask(gameStartup.getState())) {
-            throw new IllegalArgumentException("gameStartup must be first task");
-        }
-        start = gameStartup.getClientTimeStamp();
-    }
-
-    public Date getStart() {
-        return start;
-    }
-
-    public void setStart(Date start) {
-        this.start = start;
-    }
-
-
-    public List<GameStartup> getGameStartups() {
-        return gameStartups;
-    }
 
     public void setUserActions(List<DbUserAction> userActions) {
         this.userActions = userActions;
@@ -68,10 +40,6 @@ public class GameTrackingInfo implements Serializable {
 
     public void setUserCommands(List<UserCommand> userCommands) {
         this.userCommands = userCommands;
-    }
-
-    public void setMissionActions(List<DbMissionAction> missionActions) {
-        this.missionActions = missionActions;
     }
 
     public void setAttackCommandCount(int attackCommandCount) {
@@ -122,72 +90,9 @@ public class GameTrackingInfo implements Serializable {
         for (UserCommand userCommand : userCommands) {
             userActionCommands.add(new UserActionCommandMissions(userCommand));
         }
-        for (DbMissionAction missionAction : missionActions) {
-            userActionCommands.add(new UserActionCommandMissions(missionAction));
-        }
-
         Collections.sort(userActionCommands);
 
         return userActionCommands;
     }
 
-    public Date getMapBgLoaded() {
-        return mapBgLoaded;
-    }
-
-    public void setMapBgLoaded(Date mapBgLoaded) {
-        this.mapBgLoaded = mapBgLoaded;
-    }
-
-    public Date getMapImagesLoaded() {
-        return mapImagesLoaded;
-    }
-
-    public void setMapImagesLoaded(Date mapImagesLoaded) {
-        this.mapImagesLoaded = mapImagesLoaded;
-    }
-
-    public String getBaseName() {
-        if (gameStartups.isEmpty()) {
-            return "???";
-        } else {
-            return gameStartups.get(0).getBaseName();
-        }
-    }
-
-    public String getUserName() {
-        if (gameStartups.isEmpty()) {
-            return "???";
-        } else {
-            if (gameStartups.get(0).getUserName() != null) {
-                return gameStartups.get(0).getUserName();
-            } else {
-                return "not registered";
-            }
-        }
-    }
-
-    public boolean hasDuration() {
-        return duration != null;
-    }
-
-    public long getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Long duration) {
-        this.duration = duration;
-    }
-
-    public boolean hasTotalStartup() {
-        return startupDuration != null;
-    }
-
-    public void setTotalStartup(long startupDuration) {
-        this.startupDuration = startupDuration;
-    }
-
-    public long getStartupDuration() {
-        return startupDuration;
-    }
 }

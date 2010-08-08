@@ -27,6 +27,7 @@ import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
  * Time: 15:55:52
  */
 @Entity(name = "TRACKER_MISSION_ACTION")
+@Deprecated
 public class DbMissionAction implements Serializable {
     @Id
     @GeneratedValue

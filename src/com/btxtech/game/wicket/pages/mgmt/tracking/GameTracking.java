@@ -13,13 +13,12 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tracking;
 
-import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
-import com.btxtech.game.services.utg.DbMissionAction;
 import com.btxtech.game.services.utg.DbUserAction;
-import com.btxtech.game.services.utg.GameStartup;
 import com.btxtech.game.services.utg.GameTrackingInfo;
+import com.btxtech.game.services.utg.LifecycleTrackingInfo;
 import com.btxtech.game.services.utg.UserActionCommandMissions;
 import com.btxtech.game.services.utg.UserCommand;
+import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.WebCommon;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,6 +30,8 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * User: beat
@@ -38,44 +39,24 @@ import org.apache.wicket.model.Model;
  * Time: 13:11:15
  */
 public class GameTracking extends Panel {
+    @SpringBean
+    UserTrackingService userTrackingService;
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(WebCommon.DATE_TIME_FORMAT_STRING);
 
-    public GameTracking(String id, GameTrackingInfo gameTrackingInfo) {
+    public GameTracking(String id, LifecycleTrackingInfo lifecycleTrackingInfo) {
         super(id);
+        add(new LifecyclePanel("lifecycle", lifecycleTrackingInfo));
+        GameTrackingInfo gameTrackingInfo = userTrackingService.getGameTracking(lifecycleTrackingInfo);
         overview(gameTrackingInfo);
-        gameStartup(gameTrackingInfo);
         userActions(gameTrackingInfo.getUserActionCommand());
     }
 
     private void overview(GameTrackingInfo gameTrackingInfo) {
-        if (gameTrackingInfo.hasDuration()) {
-            add(new Label("timeInGame", WebCommon.formatDuration(gameTrackingInfo.getDuration())));
-        } else {
-            add(new Label("timeInGame", "???"));
-        }
-        add(new Label("userName", gameTrackingInfo.getUserName()));
-        add(new Label("baseName", gameTrackingInfo.getBaseName()));
         add(new Label("moveCommands", Integer.toString(gameTrackingInfo.getMoveCommandCount())));
         add(new Label("builderCommands", Integer.toString(gameTrackingInfo.getBuilderCommandCount())));
         add(new Label("factoryCommands", Integer.toString(gameTrackingInfo.getFactoryCommandCount())));
         add(new Label("collectCommands", Integer.toString(gameTrackingInfo.getMoneyCollectCommandCount())));
         add(new Label("attackCommands", Integer.toString(gameTrackingInfo.getAttackCommandCount())));
-    }
-
-    private void gameStartup(GameTrackingInfo gameTrackingInfo) {
-        // Startup
-        add(new ListView<GameStartup>("gameStartup", gameTrackingInfo.getGameStartups()) {
-            @Override
-            protected void populateItem(ListItem<GameStartup> gameStartupListItem) {
-                gameStartupListItem.add(new Label("task", gameStartupListItem.getModelObject().getState().getNiceText()));
-                gameStartupListItem.add(new Label("time", WebCommon.formatDurationMilis(gameStartupListItem.getModelObject().getDuration())));
-            }
-        });
-        if (gameTrackingInfo.hasTotalStartup()) {
-            add(new Label("totalGameStartup", WebCommon.formatDurationMilis(gameTrackingInfo.getStartupDuration())));
-        } else {
-            add(new Label("totalGameStartup", "???"));
-        }
     }
 
     private void userActions(List<UserActionCommandMissions> userActions) {
@@ -98,7 +79,7 @@ public class GameTracking extends Panel {
                 } else if (listItem.getModelObject().getUserCommand() != null) {
                     populateCommand(listItem, listItem.getModelObject().getUserCommand());
                 } else {
-                    populateMission(listItem, listItem.getModelObject().getDbMissionAction());
+                    throw new IllegalArgumentException();
                 }
             }
         };
@@ -134,35 +115,6 @@ public class GameTracking extends Panel {
         label.setVisible(false);
         listItem.add(label);
 
-        label = new Label("lastTime", "");
-        label.setVisible(false);
-        listItem.add(label);
-
-        label = new Label("lastAdditional", "");
-        label.setVisible(false);
-        listItem.add(label);
-    }
-
-    private void populateMission(ListItem<UserActionCommandMissions> listItem, DbMissionAction dbMissionAction) {
-        if (dbMissionAction.getAction().equals(MissionAction.MISSION_COMPLETED) || dbMissionAction.getAction().equals(MissionAction.MISSION_SKIPPED)) {
-            listItem.add(new AttributeModifier("class", true, new Model<String>("missionFinished")));
-        } else if (dbMissionAction.getAction().equals(MissionAction.MISSION_USER_STOPPED) || dbMissionAction.getAction().equals(MissionAction.MISSION_TIMED_OUT)) {
-            listItem.add(new AttributeModifier("class", true, new Model<String>("missionStopped")));
-        } else {
-            listItem.add(new AttributeModifier("class", true, new Model<String>("mission")));
-        }
-
-        Label label = new Label("type", dbMissionAction.getAction());
-        listItem.add(label);
-
-        label = new Label("additional", dbMissionAction.getMission());
-        listItem.add(label);
-
-        label = new Label("repeat", dbMissionAction.getTask());
-        label.add(new AttributeAppender("colspan", new Model<String>("3"), " "));
-        listItem.add(label);
-
-        // Blank out the other colums
         label = new Label("lastTime", "");
         label.setVisible(false);
         listItem.add(label);

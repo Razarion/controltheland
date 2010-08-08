@@ -17,8 +17,6 @@ import com.btxtech.game.jsre.client.StartupTask;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.btxtech.game.jsre.common.EventTrackingStart;
-import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
-import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
@@ -38,14 +36,15 @@ import com.btxtech.game.services.utg.DbEventTrackingItem;
 import com.btxtech.game.services.utg.DbEventTrackingStart;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelPromotion;
-import com.btxtech.game.services.utg.DbMissionAction;
 import com.btxtech.game.services.utg.DbTotalStartupTime;
 import com.btxtech.game.services.utg.DbTutorialProgress;
 import com.btxtech.game.services.utg.DbUserAction;
 import com.btxtech.game.services.utg.DbUserMessage;
 import com.btxtech.game.services.utg.GameStartup;
 import com.btxtech.game.services.utg.GameTrackingInfo;
+import com.btxtech.game.services.utg.LifecycleTrackingInfo;
 import com.btxtech.game.services.utg.PageAccess;
+import com.btxtech.game.services.utg.TutorialTrackingInfo;
 import com.btxtech.game.services.utg.UserCommand;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserHistory;
@@ -134,7 +133,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         if (connectionService.hasConnection()) {
             gameStartup = new GameStartup(clientTimeStamp, GameStartup.FINISHED, state, duration, null, baseService.getBase().getName(), session.getUser(), session.getSessionId());
         } else {
-            gameStartup = new GameStartup(clientTimeStamp, GameStartup.FINISHED, state, duration, null, "<Tutorial>", session.getUser(), session.getSessionId());
+            gameStartup = new GameStartup(clientTimeStamp, GameStartup.FINISHED, state, duration, null, TUTORIAL_MARKER, session.getUser(), session.getSessionId());
         }
         hibernateTemplate.saveOrUpdate(gameStartup);
     }
@@ -145,27 +144,9 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         if (connectionService.hasConnection()) {
             gameStartup = new GameStartup(clientTimeStamp, GameStartup.FAILED, state, duration, failureText, baseService.getBase().getName(), session.getUser(), session.getSessionId());
         } else {
-            gameStartup = new GameStartup(clientTimeStamp, GameStartup.FAILED, state, duration, failureText, "<Tutorial>", session.getUser(), session.getSessionId());
+            gameStartup = new GameStartup(clientTimeStamp, GameStartup.FAILED, state, duration, failureText, TUTORIAL_MARKER, session.getUser(), session.getSessionId());
         }
         hibernateTemplate.saveOrUpdate(gameStartup);
-    }
-
-    @Override
-    public void saveUserActions(ArrayList<UserAction> userActions, ArrayList<MissionAction> missionActions) {
-        try {
-            ArrayList<DbUserAction> dbUserActions = new ArrayList<DbUserAction>();
-            for (UserAction userAction : userActions) {
-                dbUserActions.add(new DbUserAction(userAction, session.getSessionId()));
-            }
-            hibernateTemplate.saveOrUpdateAll(dbUserActions);
-            ArrayList<DbMissionAction> dbMissionActions = new ArrayList<DbMissionAction>();
-            for (MissionAction missionAction : missionActions) {
-                dbMissionActions.add(new DbMissionAction(missionAction, session.getSessionId()));
-            }
-            hibernateTemplate.saveOrUpdateAll(dbMissionActions);
-        } catch (NoConnectionException e) {
-            log.error("", e);
-        }
     }
 
     @Override
@@ -197,7 +178,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             int successfulStarts = getSuccessfulStarts(sessionId);
             int enterGameHits = getGameAttempts(sessionId);
             int commands = getUserCommandCount(sessionId, null, null, null);
-            int tasks = getTaskCount(sessionId);
+            int tasks = getTaskCount(sessionId, null, null);
             visitorInfos.add(new VisitorInfo(timeStamp, sessionId, hits, enterGameHits, startStates, successfulStarts, commands, tasks, cookie, referer));
         }
         return visitorInfos;
@@ -300,23 +281,6 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         });
     }
 
-    @SuppressWarnings("unchecked")
-    private List<DbMissionAction> getMissionActions(final String sessionId, final Date from, final Date to) {
-        return (List<DbMissionAction>) hibernateTemplate.execute(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbMissionAction.class);
-                criteria.add(Restrictions.eq("sessionId", sessionId));
-                criteria.add(Restrictions.ge("clientTimeStamp", from));
-                if (to != null) {
-                    criteria.add(Restrictions.lt("clientTimeStamp", to));
-                }
-                criteria.addOrder(Order.asc("clientTimeStamp"));
-                return criteria.list();
-            }
-        });
-    }
-
     @Override
     public VisitorDetailInfo getVisitorDetails(final String sessionId) {
         @SuppressWarnings("unchecked")
@@ -332,21 +296,19 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             throw new IllegalStateException("Only 1 BrowserDetails expected: " + list.size());
         }
         VisitorDetailInfo visitorDetailInfo = new VisitorDetailInfo(list.get(0));
-        visitorDetailInfo.setGameTrackingInfos(getGameTrackingInfos(sessionId));
+        visitorDetailInfo.setLifecycleTrackingInfos(getLifecycleTrackingInfos(sessionId));
         visitorDetailInfo.setPageAccessHistory(getPageAccessHistory(sessionId));
         visitorDetailInfo.setAttackCommands(getUserCommandCount(sessionId, AttackCommand.class, null, null));
         visitorDetailInfo.setMoveCommands(getUserCommandCount(sessionId, MoveCommand.class, null, null));
         visitorDetailInfo.setBuilderCommands(getUserCommandCount(sessionId, BuilderCommand.class, null, null));
         visitorDetailInfo.setFactoryCommands(getUserCommandCount(sessionId, FactoryCommand.class, null, null));
         visitorDetailInfo.setMoneyCollectCommands(getUserCommandCount(sessionId, MoneyCollectCommand.class, null, null));
-        visitorDetailInfo.setCompletedMissionCount(getTaskCount(sessionId));
+        visitorDetailInfo.setTasks(getTaskCount(sessionId, null, null));
         visitorDetailInfo.setGameAttempts(getGameAttempts(sessionId));
-        visitorDetailInfo.setDbEventTrackingStart(getDbEventTrackingStart(sessionId));
         return visitorDetailInfo;
     }
 
-    private List<GameTrackingInfo> getGameTrackingInfos(final String sessionId) {
-        // Get all game startups
+    private List<LifecycleTrackingInfo> getLifecycleTrackingInfos(final String sessionId) {
         @SuppressWarnings("unchecked")
         List<GameStartup> gameStartups = (List<GameStartup>) hibernateTemplate.execute(new HibernateCallback() {
             @Override
@@ -357,18 +319,18 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 return criteria.list();
             }
         });
-        ArrayList<GameTrackingInfo> gameTrackingInfos = new ArrayList<GameTrackingInfo>();
-        GameTrackingInfo gameTrackingInfo = null;
+        ArrayList<LifecycleTrackingInfo> lifecycleTrackingInfos = new ArrayList<LifecycleTrackingInfo>();
+        LifecycleTrackingInfo lifecycleTrackingInfo = null;
         for (GameStartup gameStartup : gameStartups) {
             if (StartupTask.isFirstTask(gameStartup.getState())) {
-                gameTrackingInfo = new GameTrackingInfo(gameStartup);
-                gameTrackingInfos.add(gameTrackingInfo);
+                lifecycleTrackingInfo = new LifecycleTrackingInfo(sessionId, gameStartup);
+                lifecycleTrackingInfos.add(lifecycleTrackingInfo);
             } else {
-                if (gameTrackingInfo == null) {
-                    log.error("gameTrackingInfo == null");
+                if (lifecycleTrackingInfo == null) {
+                    log.error("lifecycleTrackingInfo == null");
                     continue;
                 }
-                gameTrackingInfo.getGameStartups().add(gameStartup);
+                lifecycleTrackingInfo.getGameStartups().add(gameStartup);
             }
         }
 
@@ -394,28 +356,16 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             }
         });
 
-        for (int index = 0, gameTrackingInfosSize = gameTrackingInfos.size(); index < gameTrackingInfosSize; index++) {
-            GameTrackingInfo trackingInfo = gameTrackingInfos.get(index);
+        for (int index = 0, lifecycleTrackingInfosSize = lifecycleTrackingInfos.size(); index < lifecycleTrackingInfosSize; index++) {
+            LifecycleTrackingInfo trackingInfo = lifecycleTrackingInfos.get(index);
             if (dbTotalStartupTimes.size() > index) {
-                trackingInfo.setTotalStartup(dbTotalStartupTimes.get(index).getStartupDuration());
+                trackingInfo.setStartupDuration(dbTotalStartupTimes.get(index).getStartupDuration());
             }
 
-            Date toDate = null;
             if (dbCloseWindows.size() > index) {
-                DbCloseWindow dbCloseWindow = dbCloseWindows.get(index);
-                trackingInfo.setDuration(dbCloseWindow.getRunningGameDuration());
-                toDate = new Date(dbCloseWindow.getRunningGameDuration() + trackingInfo.getStart().getTime());
+                trackingInfo.setDuration(dbCloseWindows.get(index).getRunningGameDuration());
             }
 
-            trackingInfo.setAttackCommandCount(getUserCommandCount(sessionId, AttackCommand.class, trackingInfo.getStart(), toDate));
-            trackingInfo.setMoveCommandCount(getUserCommandCount(sessionId, MoveCommand.class, trackingInfo.getStart(), toDate));
-            trackingInfo.setBuilderCommandCount(getUserCommandCount(sessionId, BuilderCommand.class, trackingInfo.getStart(), toDate));
-            trackingInfo.setFactoryCommandCount(getUserCommandCount(sessionId, FactoryCommand.class, trackingInfo.getStart(), toDate));
-            trackingInfo.setMoneyCollectCommandCount(getUserCommandCount(sessionId, MoneyCollectCommand.class, trackingInfo.getStart(), toDate));
-            trackingInfo.setUserActions(getUserActions(sessionId, trackingInfo.getStart(), toDate));
-            trackingInfo.setUserCommands(getUserCommands(sessionId, trackingInfo.getStart(), toDate));
-            trackingInfo.setMissionActions(getMissionActions(sessionId, trackingInfo.getStart(), toDate));
-            // Sort GameStartups
             Collections.sort(trackingInfo.getGameStartups(), new Comparator<GameStartup>() {
                 @Override
                 public int compare(GameStartup g1, GameStartup g2) {
@@ -423,9 +373,54 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 }
             });
 
+            trackingInfo.handleTutorial();
         }
 
-        return gameTrackingInfos;
+        return lifecycleTrackingInfos;
+    }
+
+    @Override
+    public GameTrackingInfo getGameTracking(LifecycleTrackingInfo lifecycleTrackingInfo) {
+        GameTrackingInfo trackingInfo = new GameTrackingInfo();
+        trackingInfo.setAttackCommandCount(getUserCommandCount(lifecycleTrackingInfo.getSessionId(), AttackCommand.class, lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
+        trackingInfo.setMoveCommandCount(getUserCommandCount(lifecycleTrackingInfo.getSessionId(), MoveCommand.class, lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
+        trackingInfo.setBuilderCommandCount(getUserCommandCount(lifecycleTrackingInfo.getSessionId(), BuilderCommand.class, lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
+        trackingInfo.setFactoryCommandCount(getUserCommandCount(lifecycleTrackingInfo.getSessionId(), FactoryCommand.class, lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
+        trackingInfo.setMoneyCollectCommandCount(getUserCommandCount(lifecycleTrackingInfo.getSessionId(), MoneyCollectCommand.class, lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
+        trackingInfo.setUserActions(getUserActions(lifecycleTrackingInfo.getSessionId(), lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
+        trackingInfo.setUserCommands(getUserCommands(lifecycleTrackingInfo.getSessionId(), lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
+        return trackingInfo;
+    }
+
+    @Override
+    public TutorialTrackingInfo getTutorialTrackingInfo(LifecycleTrackingInfo lifecycleTrackingInfo) {
+        TutorialTrackingInfo tutorialTrackingInfo = new TutorialTrackingInfo();
+        Date serverBegin = new Date(lifecycleTrackingInfo.getGameStartups().get(0).getTimeStamp());
+        Date serverEnd = null;
+        if (lifecycleTrackingInfo.hasDuration()) {
+            serverEnd = new Date(lifecycleTrackingInfo.getGameStartups().get(0).getTimeStamp() + lifecycleTrackingInfo.getDuration());
+        }
+        tutorialTrackingInfo.setTaskCount(getTaskCount(lifecycleTrackingInfo.getSessionId(), serverBegin, serverEnd));
+        tutorialTrackingInfo.setDbEventTrackingStart(getDbEventTrackingStart(lifecycleTrackingInfo.getSessionId(), lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
+        tutorialTrackingInfo.setDbTutorialProgresss(getDbTutorialProgresses(lifecycleTrackingInfo.getSessionId(), serverBegin, serverEnd));
+        return tutorialTrackingInfo;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<DbTutorialProgress> getDbTutorialProgresses(final String sessionId, final Date begin, final Date end) {
+        return hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbTutorialProgress.class);
+                criteria.add(Restrictions.eq("sessionId", sessionId));
+                criteria.add(Restrictions.ge("timeStamp", begin.getTime()));
+                if (end != null) {
+                    criteria.add(Restrictions.lt("timeStamp", end.getTime()));
+                }
+                criteria.addOrder(Order.asc("timeStamp"));
+                return criteria.list();
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -634,7 +629,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         }
     }
 
-    private int getTaskCount(final String sessionId) {
+    private int getTaskCount(final String sessionId, final Date from, final Date to) {
         @SuppressWarnings("unchecked")
         List<Integer> list = (List<Integer>) hibernateTemplate.execute(new HibernateCallback() {
             @Override
@@ -642,6 +637,12 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 Criteria criteria = session.createCriteria(DbTutorialProgress.class);
                 criteria.add(Restrictions.eq("sessionId", sessionId));
                 criteria.add(Restrictions.eq("type", TutorialConfig.TYPE.TASK.name()));
+                if (from != null) {
+                    criteria.add(Restrictions.ge("timeStamp", from.getTime()));
+                }
+                if (to != null) {
+                    criteria.add(Restrictions.lt("timeStamp", to.getTime()));
+                }
                 criteria.setProjection(Projections.rowCount());
                 return criteria.list();
             }
@@ -686,6 +687,30 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             }
         });
     }
+
+
+    private DbEventTrackingStart getDbEventTrackingStart(final String sessionId, final Date begin, final Date end) {
+        @SuppressWarnings("unchecked")
+        List<DbEventTrackingStart> dbEventTrackingStarts = hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbEventTrackingStart.class);
+                criteria.add(Restrictions.eq("sessionId", sessionId));
+                criteria.add(Restrictions.ge("clientTimeStamp", begin.getTime()));
+                if (end != null) {
+                    criteria.add(Restrictions.lt("clientTimeStamp", end.getTime()));
+                }
+                criteria.addOrder(Order.asc("clientTimeStamp"));
+                return criteria.list();
+            }
+        });
+        if (dbEventTrackingStarts.isEmpty()) {
+            return null;
+        } else {
+            return dbEventTrackingStarts.get(0);
+        }
+    }
+
 
     @Override
     @SuppressWarnings("unchecked")

@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.utg;
 
+import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +26,7 @@ import javax.persistence.Id;
  * Time: 17:07:20
  */
 @Entity(name = "TRACKER_TUTORIAL")
-public class DbTutorialProgress {
+public class DbTutorialProgress implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
@@ -52,6 +53,34 @@ public class DbTutorialProgress {
         this.name = name;
         this.parent = parent;
         this.duration = duration;
+    }
+
+    public Date getNiceTimeStamp() {
+        return niceTimeStamp;
+    }
+
+    public long getTimeStamp() {
+        return timeStamp;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public long getDuration() {
+        return duration;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getParent() {
+        return parent;
     }
 
     @Override

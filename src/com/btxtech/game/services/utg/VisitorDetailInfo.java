@@ -24,7 +24,6 @@ import java.util.List;
  */
 public class VisitorDetailInfo {
     private BrowserDetails browserDetails;
-    private List<GameTrackingInfo> gameTrackingInfos = new ArrayList<GameTrackingInfo>();
     private List<PageAccess> pageAccessHistory;
     private long totalTime;
     private int attackCommands;
@@ -32,9 +31,9 @@ public class VisitorDetailInfo {
     private int builderCommands;
     private int factoryCommands;
     private int moneyCollectCommands;
-    private int completedMissionCount;
     private int gameAttempts;
-    private List<DbEventTrackingStart> dbEventTrackingStart = Collections.emptyList();
+    private int tasks;
+    private List<LifecycleTrackingInfo> lifecycleTrackingInfos = new ArrayList<LifecycleTrackingInfo>();
 
     public VisitorDetailInfo(BrowserDetails browserDetails) {
         this.browserDetails = browserDetails;
@@ -42,20 +41,6 @@ public class VisitorDetailInfo {
 
     public BrowserDetails getUserDetails() {
         return browserDetails;
-    }
-
-    public List<GameTrackingInfo> getGameTrackingInfos() {
-        return gameTrackingInfos;
-    }
-
-    public void setGameTrackingInfos(List<GameTrackingInfo> gameTrackingInfos) {
-        this.gameTrackingInfos = gameTrackingInfos;
-        totalTime = 0;
-        for (GameTrackingInfo gameTrackingInfo : gameTrackingInfos) {
-            if (gameTrackingInfo.hasDuration()) {
-                totalTime += gameTrackingInfo.getDuration();
-            }
-        }
     }
 
     public void setGameAttempts(int gameAttempts) {
@@ -118,19 +103,25 @@ public class VisitorDetailInfo {
         this.moneyCollectCommands = moneyCollectCommands;
     }
 
-    public void setCompletedMissionCount(int completedMissionCount) {
-        this.completedMissionCount = completedMissionCount;
+    public int getTasks() {
+        return tasks;
     }
 
-    public int getCompletedMissionCount() {
-        return completedMissionCount;
+    public void setTasks(int tasks) {
+        this.tasks = tasks;
     }
 
-    public void setDbEventTrackingStart(List<DbEventTrackingStart> dbEventTrackingStart) {
-        this.dbEventTrackingStart = dbEventTrackingStart;
+    public void setLifecycleTrackingInfos(List<LifecycleTrackingInfo> lifecycleTrackingInfos) {
+        this.lifecycleTrackingInfos = lifecycleTrackingInfos;
+        totalTime = 0;
+        for (LifecycleTrackingInfo lifecycleTrackingInfo : lifecycleTrackingInfos) {
+            if (lifecycleTrackingInfo.hasDuration()) {
+                totalTime += lifecycleTrackingInfo.getDuration();
+            }
+        }
     }
 
-    public List<DbEventTrackingStart> getDbEventTrackingStart() {
-        return dbEventTrackingStart;
+    public List<LifecycleTrackingInfo> getLifecycleTrackingInfos() {
+        return lifecycleTrackingInfos;
     }
 }
