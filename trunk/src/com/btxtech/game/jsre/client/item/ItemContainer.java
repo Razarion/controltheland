@@ -28,7 +28,6 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.effects.ExplosionHandler;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.client.utg.ClientUserGuidance;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.bot.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
@@ -127,7 +126,6 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
             }
             clientSyncItemView.getSyncItem().synchronize(syncItemInfo);
             if (isCreated) {
-                ClientUserGuidance.getInstance().onItemCreated(clientSyncItemView);
                 PlayerSimulation.getInstance().onItemCreated(clientSyncItemView);
             }
             clientSyncItemView.update();
@@ -233,7 +231,6 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         checkSpecialRemoved(itemView);
         seeminglyDeadItems.remove(itemView.getSyncItem().getId());
         SelectionHandler.getInstance().itemKilled(itemView);
-        ClientUserGuidance.getInstance().onItemDeleted(itemView);
 
         if (itemView instanceof ClientSyncBaseItemView) {
             ClientSyncBaseItemView clientSyncBaseItemView = (ClientSyncBaseItemView) itemView;

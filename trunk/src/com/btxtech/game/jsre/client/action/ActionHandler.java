@@ -22,7 +22,7 @@ import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
-import com.btxtech.game.jsre.client.utg.ClientUserGuidance;
+import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.RectangleFormation;
 import com.btxtech.game.jsre.common.bot.PlayerSimulation;
@@ -91,7 +91,6 @@ public class ActionHandler implements CommonActionService {
                 SyncBaseItem activeItem = iterator.next();
                 try {
                     if (!activeItem.tick(factor)) {
-                        ClientUserGuidance.getInstance().onSyncItemDeactivated(activeItem);
                         PlayerSimulation.getInstance().onSyncItemDeactivated(activeItem);
                         Simulation.getInstance().onSyncItemDeactivated(activeItem);
                         iterator.remove();
@@ -416,7 +415,7 @@ public class ActionHandler implements CommonActionService {
 
     private void executeCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
         Connection.getInstance().addCommandToQueue(baseCommand);
-        ClientUserGuidance.getInstance().onExecuteCommand(syncItem, baseCommand);
+        ClientUserTracker.getInstance().onExecuteCommand(baseCommand);
         Simulation.getInstance().onSendCommand(syncItem, baseCommand);
         addActiveItem(syncItem);
     }

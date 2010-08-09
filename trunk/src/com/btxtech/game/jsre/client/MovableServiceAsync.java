@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.btxtech.game.jsre.common.EventTrackingStart;
+import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
@@ -24,6 +25,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -65,7 +67,7 @@ public interface MovableServiceAsync {
 
     void sendEventTrackingStart(EventTrackingStart eventTrackingStart, AsyncCallback<Void> asyncCallback);
 
-    void sendEventTrackerItems(List<EventTrackingItem> eventTrackingItems, AsyncCallback<Void> asyncCallback);
+    void sendEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems,Collection<BaseCommand> baseCommands,Collection<SelectionTrackingItem> selectionTrackingItems, AsyncCallback<Void> asyncCallback);
 
     void sendTotalStartupTime(long totalStartupTime, AsyncCallback<Void> asyncCallback);
 

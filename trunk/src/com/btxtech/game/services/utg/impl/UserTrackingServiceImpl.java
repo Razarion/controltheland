@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.StartupTask;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.btxtech.game.jsre.common.EventTrackingStart;
+import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
@@ -32,10 +33,12 @@ import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.utg.BrowserDetails;
 import com.btxtech.game.services.utg.DbCloseWindow;
+import com.btxtech.game.services.utg.DbCommand;
 import com.btxtech.game.services.utg.DbEventTrackingItem;
 import com.btxtech.game.services.utg.DbEventTrackingStart;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelPromotion;
+import com.btxtech.game.services.utg.DbSelectionTrackingItem;
 import com.btxtech.game.services.utg.DbTotalStartupTime;
 import com.btxtech.game.services.utg.DbTutorialProgress;
 import com.btxtech.game.services.utg.DbUserAction;
@@ -56,6 +59,7 @@ import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -656,6 +660,37 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
+    public void onEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<BaseCommand> baseCommands, Collection<SelectionTrackingItem> selectionTrackingItems) {
+        onEventTrackerItems(eventTrackingItems);
+        saveCommand(baseCommands);
+        saveSelections(selectionTrackingItems);
+    }
+
+    private void onEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems) {
+        ArrayList<DbEventTrackingItem> dbEventTrackingItems = new ArrayList<DbEventTrackingItem>();
+        for (EventTrackingItem eventTrackingItem : eventTrackingItems) {
+            dbEventTrackingItems.add(new DbEventTrackingItem(eventTrackingItem, session.getSessionId()));
+        }
+        hibernateTemplate.saveOrUpdateAll(dbEventTrackingItems);
+    }
+
+    private void saveCommand(Collection<BaseCommand> baseCommand) {
+        ArrayList<DbCommand> dbCommands = new ArrayList<DbCommand>();
+        for (BaseCommand command : baseCommand) {
+            dbCommands.add(new DbCommand(command, session.getSessionId()));
+        }
+        hibernateTemplate.saveOrUpdateAll(dbCommands);
+    }
+
+    private void saveSelections(Collection<SelectionTrackingItem> selectionTrackingItems) {
+        ArrayList<DbSelectionTrackingItem> dbSelectionTrackingItems = new ArrayList<DbSelectionTrackingItem>();
+        for (SelectionTrackingItem command : selectionTrackingItems) {
+            dbSelectionTrackingItems.add(new DbSelectionTrackingItem(command, session.getSessionId()));
+        }
+        hibernateTemplate.saveOrUpdateAll(dbSelectionTrackingItems);
+    }
+
+    @Override
     public void onTotalStartupTime(long totalStartupTime) {
         hibernateTemplate.save(new DbTotalStartupTime(totalStartupTime, session.getSessionId()));
     }
@@ -663,15 +698,6 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     @Override
     public void onCloseWindow(long totalRunningTime) {
         hibernateTemplate.save(new DbCloseWindow(totalRunningTime, session.getSessionId()));
-    }
-
-    @Override
-    public void onEventTrackerItems(List<EventTrackingItem> eventTrackingItems) {
-        ArrayList<DbEventTrackingItem> dbEventTrackingItems = new ArrayList<DbEventTrackingItem>();
-        for (EventTrackingItem eventTrackingItem : eventTrackingItems) {
-            dbEventTrackingItems.add(new DbEventTrackingItem(eventTrackingItem, session.getSessionId()));
-        }
-        hibernateTemplate.saveOrUpdateAll(dbEventTrackingItems);
     }
 
     @Override

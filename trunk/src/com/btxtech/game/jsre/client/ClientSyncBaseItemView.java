@@ -20,7 +20,6 @@ import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.effects.AttackEffectHandler;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
-import com.btxtech.game.jsre.client.utg.ClientUserGuidance;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.bot.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -28,7 +27,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.widgetideas.client.ProgressBar;
 
@@ -141,7 +139,6 @@ public class ClientSyncBaseItemView extends ClientSyncItemView {
     public void onItemChanged(Change change, SyncItem syncItem) {
         switch (change) {
             case BUILD:
-                ClientUserGuidance.getInstance().onItemBuilt(this);
                 PlayerSimulation.getInstance().onItemBuilt(this);
                 Simulation.getInstance().onItemBuilt(getSyncBaseItem());
                 break;
