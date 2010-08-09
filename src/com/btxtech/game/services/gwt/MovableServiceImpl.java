@@ -26,6 +26,7 @@ import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.btxtech.game.jsre.common.EventTrackingStart;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
+import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
@@ -338,9 +339,9 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public void sendEventTrackerItems(List<EventTrackingItem> eventTrackingItems) {
+    public void sendEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<BaseCommand> baseCommands, Collection<SelectionTrackingItem> selectionTrackingItems) {
         try {
-            userTrackingService.onEventTrackerItems(eventTrackingItems);
+            userTrackingService.onEventTrackerItems(eventTrackingItems, baseCommands, selectionTrackingItems);
         } catch (Throwable t) {
             log.error("", t);
         }

@@ -127,7 +127,6 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
         Event.addNativePreviewHandler(new Event.NativePreviewHandler() {
             @Override
             public void onPreviewNativeEvent(Event.NativePreviewEvent event) {
-                //System.out.println("***: " + event.getTypeInt());
                 if (event.getTypeInt() == Event.ONKEYDOWN && scrollingAllowed) {
                     switch (event.getNativeEvent().getKeyCode()) {
                         case KeyCodes.KEY_LEFT: {
@@ -148,7 +147,6 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
                         }
                     }
                 } else if ((event.getTypeInt() & Event.MOUSEEVENTS) != 0 && isTrackingEvents) {
-                    System.out.println(event.getNativeEvent().getClientX() + "x" + event.getNativeEvent().getClientY());
                     ClientUserTracker.getInstance().addEventTrackingItem(event.getNativeEvent().getClientX(),
                             event.getNativeEvent().getClientY(),
                             event.getTypeInt());

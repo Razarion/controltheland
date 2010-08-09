@@ -36,6 +36,7 @@ import com.btxtech.game.jsre.common.EventTrackingStart;
 import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
+import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.bot.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccessSyncInfo;
@@ -115,8 +116,6 @@ public class Connection implements AsyncCallback<Void> {
                 gameInfo.getSurfaceRects(),
                 gameInfo.getSurfaceImages(),
                 gameInfo.getTerrainImages());
-
-        ClientUserTracker.getInstance().setCollectionTime(gameInfo.getUserActionCollectionTime());
         ItemContainer.getInstance().setItemTypes(gameInfo.getItemTypes());
     }
 
@@ -297,9 +296,9 @@ public class Connection implements AsyncCallback<Void> {
         }
     }
 
-    public void sendEventTrackerItems(List<EventTrackingItem> eventTrackingItems) {
+    public void sendEventTrackerItems(List<EventTrackingItem> eventTrackingItems, List<BaseCommand> baseCommands, List<SelectionTrackingItem> selectionTrackingItems) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.sendEventTrackerItems(eventTrackingItems, this);
+            movableServiceAsync.sendEventTrackerItems(eventTrackingItems, baseCommands, selectionTrackingItems, this);
         }
     }
 

@@ -21,6 +21,7 @@ import java.util.Date;
  * Date: 31.01.2010
  * Time: 15:18:45
  */
+@Deprecated
 public class MissionAction implements Serializable {
     public static final String MISSION_START = "MISSION_START";
     public static final String MISSION_SKIPPED = "MISSION_SKIPPED";

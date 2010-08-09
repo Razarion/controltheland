@@ -166,7 +166,6 @@ public class SpeechBubble extends AbsolutePanel {
         anchor.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                ClientUserGuidance.getInstance().closeMissions();
                 GwtCommon.preventDefault(event);
             }
         });

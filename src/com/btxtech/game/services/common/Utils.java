@@ -16,6 +16,7 @@ package com.btxtech.game.services.common;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 
 /**
@@ -27,7 +28,7 @@ public class Utils {
     public static final String DELIMITER = ";";
 
     public static Collection<Integer> stringToIntegers(String s) {
-        if(s == null) {
+        if (s == null) {
             return Collections.emptyList();
         }
         Collection<Integer> result = new ArrayList<Integer>();
@@ -38,4 +39,20 @@ public class Utils {
         }
         return result;
     }
+
+    public static String integerToSting(Collection<Integer> integers) {
+        if (integers == null || integers.isEmpty()) {
+            return "";
+        }
+        StringBuilder builder = new StringBuilder();
+        for (Iterator<Integer> iterator = integers.iterator(); iterator.hasNext();) {
+            Integer integer = iterator.next();
+            builder.append(integer);
+            if (iterator.hasNext()) {
+                builder.append(DELIMITER);
+            }
+        }
+        return builder.toString();
+    }
+
 }
