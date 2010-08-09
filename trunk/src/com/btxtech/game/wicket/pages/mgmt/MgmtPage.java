@@ -106,6 +106,7 @@ public class MgmtPage extends WebPage {
         toolPages.add(new LinkAndName("Bot editor", BotEditor.class));
         toolPages.add(new LinkAndName("TerritoryEditor", TerritoryEditor.class));
         toolPages.add(new LinkAndName("Tutorial", TutorialTable.class));
+        toolPages.add(new LinkAndName("User", UserTable.class));
 
     }
 }
