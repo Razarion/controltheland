@@ -38,10 +38,12 @@
         </tr>
         <tr>
             <td bgcolor="#dadada">Energy</td>
-            <td wicket:id="energy" />
+            <td wicket:id="energy"/>
         </tr>
-
-
+        <tr>
+            <td bgcolor="#dadada">Item Count</td>
+            <td wicket:id="itemCount"/>
+        </tr>
     </table>
 
 
@@ -75,8 +77,6 @@
             <td valign="center">
                 <input wicket:id="select" type="checkbox">
             </td>
-
-
         </tr>
     </table>
     <br/>
@@ -86,6 +86,38 @@
     <input type="submit" wicket:id="apply" value="Apply"/>
     <br/>
     <br/>
+</form>
+
+<h3>Rectangle Selection</h3>
+
+<form wicket:id="selection">
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <td>Count</td>
+            <td wicket:id="count"/>
+        </tr>
+        <tr>
+            <td>Start X</td>
+            <td><input type="text" wicket:id="x" size="6" maxlength="15"/></td>
+        </tr>
+        <tr>
+            <td>Start Y</td>
+            <td><input type="text" wicket:id="y" size="6" maxlength="15"/></td>
+        </tr>
+        <tr>
+            <td>Width</td>
+            <td><input type="text" wicket:id="width" size="6" maxlength="15"/></td>
+        </tr>
+        <tr>
+            <td>Height</td>
+            <td><input type="text" wicket:id="height" size="6" maxlength="15"/></td>
+        </tr>
+        <tr>
+            <td valign="left " colspan="2">
+                <input type="submit" value="Select"/>
+            </td>
+        </tr>
+    </table>
 </form>
 
 </body>

@@ -14,6 +14,7 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -36,6 +37,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
+import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -57,6 +59,8 @@ public class BaseEditor extends WebPage {
     @SpringBean
     private ServerEnergyService energyService;
     private HashSet<Id> itemsToKill = new HashSet<Id>();
+    private Rectangle selection = new Rectangle(0, 0, 0, 0);
+    private SimpleBase simpleBase;
 
     public static TextField<String> createReadonlyTextFiled(String id) {
         TextField<String> field = new TextField<String>(id);
@@ -65,6 +69,50 @@ public class BaseEditor extends WebPage {
     }
 
     public BaseEditor(final SimpleBase simpleBase) {
+        this.simpleBase = simpleBase;
+        createBaseItems();
+        createSelectionHelper();
+    }
+
+    private void createSelectionHelper() {
+        Form<Rectangle> form = new Form<Rectangle>("selection", new CompoundPropertyModel<Rectangle>(selection)) {
+            @Override
+            protected void onSubmit() {
+                itemsToKill.clear();
+                for (SyncBaseItem syncBaseItem : baseService.getBase(simpleBase).getItems()) {
+                    if (selection.contains(syncBaseItem.getPosition())) {
+                        itemsToKill.add(syncBaseItem.getId());
+                    }
+                }
+            }
+        };
+        form.add(new TextField<Integer>("x"));
+        form.add(new TextField<Integer>("y"));
+        form.add(new TextField<Integer>("width"));
+        form.add(new TextField<Integer>("height"));
+        form.add(new Label("count", new IModel<Integer>() {
+
+            @Override
+            public Integer getObject() {
+                return itemsToKill.size();
+            }
+
+            @Override
+            public void setObject(Integer object) {
+                // Ignore
+            }
+
+            @Override
+            public void detach() {
+                // Ignore
+            }
+        }));
+        add(form);
+
+    }
+
+
+    private void createBaseItems() {
         Form form = new Form("base");
 
         // General
@@ -113,6 +161,23 @@ public class BaseEditor extends WebPage {
                 // Ignore
             }
         }));
+        form.add(new Label("itemCount", new IModel<Integer>() {
+            @Override
+            public Integer getObject() {
+                return baseService.getBase(simpleBase).getItems().size();
+            }
+
+            @Override
+            public void setObject(Integer object) {
+                // Ignore
+            }
+
+            @Override
+            public void detach() {
+                // Ignore
+            }
+        }));
+
 
         // Items
         final DataView<SyncBaseItem> itemDataView = new DataView<SyncBaseItem>("itemTypes", new SyncBaseItemProvider(simpleBase)) {
