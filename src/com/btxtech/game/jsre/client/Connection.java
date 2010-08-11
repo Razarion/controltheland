@@ -27,7 +27,6 @@ import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
-import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.client.utg.MissionTarget;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.EnergyPacket;
@@ -49,6 +48,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -308,6 +308,18 @@ public class Connection implements AsyncCallback<Void> {
         }
     }
 
+    public void sandStartUpTaskFinished(StartupTask state, Date timeStamp, long duration) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.startUpTaskFinished(state, timeStamp, duration, this);
+        }
+    }
+
+    public void sandStartUpTaskFailed(StartupTask state, Date timeStamp, long duration, String failureText) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.startUpTaskFailed(state, timeStamp, duration, failureText, this);
+        }
+    }
+
     public void getMissionTarget(final MissionTarget missionTargetDialog) {
         if (movableServiceAsync != null) {
             movableServiceAsync.getMissionTarget(new AsyncCallback<String>() {
@@ -349,6 +361,12 @@ public class Connection implements AsyncCallback<Void> {
     public void sendCloseWindow(long totalRunningTime) {
         if (movableServiceAsync != null) {
             movableServiceAsync.sendCloseWindow(totalRunningTime, this);
+        }
+    }
+
+    public void log(String logMessage, Date date) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.log(logMessage, date, this);
         }
     }
 

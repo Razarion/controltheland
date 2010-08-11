@@ -20,7 +20,6 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.TerrainMouseButtonListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
-import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -43,18 +42,16 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
 
     @Override
     public void onMouseDown(int absoluteX, int absoluteY, MouseDownEvent mouseDownEvent) {
-        ClientUserTracker.getInstance().onMouseDownTerrain(absoluteX, absoluteY);
         if (mouseDownEvent.getNativeButton() == NativeEvent.BUTTON_LEFT) {
             new GroupSelectionFrame(mouseDownEvent.getX(), mouseDownEvent.getY(), this);
         } else if (mouseDownEvent.getNativeButton() == NativeEvent.BUTTON_RIGHT) {
             SelectionHandler.getInstance().clearSelection();
         }
-        GwtCommon.preventDefault(mouseDownEvent);        
+        GwtCommon.preventDefault(mouseDownEvent);
     }
 
     @Override
     public void onMouseUp(int absoluteX, int absoluteY, MouseUpEvent event) {
-        ClientUserTracker.getInstance().onMouseUpTerrain(absoluteX, absoluteY);
         if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
             if (Game.cockpitPanel.isUnloadMode()) {
                 executeUnloadContainerCommand(absoluteX, absoluteY);
@@ -81,7 +78,7 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
             return;
         }
 
-        if(!syncBaseItem.getSyncItemContainer().isUnloadPosReachable(position)) {
+        if (!syncBaseItem.getSyncItemContainer().isUnloadPosReachable(position)) {
             return;
         }
 

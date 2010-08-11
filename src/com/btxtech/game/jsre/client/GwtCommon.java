@@ -20,7 +20,6 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.ScriptElement;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.Date;
 
 public class GwtCommon {
@@ -73,19 +72,10 @@ public class GwtCommon {
 
     public static void sendLogToServer(String logMessage) {
         System.out.println(logMessage);
+        Connection.getInstance().log(logMessage, new Date());
         try {
             if (Connection.isConnected()) {
-                Connection.getMovableServiceAsync().log(logMessage, new Date(), new AsyncCallback() {
-                    @Override
-                    public void onFailure(Throwable caught) {
-                        //Ignore
-                    }
-
-                    @Override
-                    public void onSuccess(Object result) {
-                        //Ignore
-                    }
-                });
+                Connection.getInstance().log(logMessage, new Date());
                 return;
             }
         } catch (Throwable ignore) {

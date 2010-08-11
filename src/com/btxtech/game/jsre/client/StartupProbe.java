@@ -15,7 +15,6 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
 import com.btxtech.game.jsre.client.simulation.Simulation;
-import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.client.utg.MissionTarget;
 import com.google.gwt.dom.client.ButtonElement;
 import com.google.gwt.dom.client.Element;
@@ -157,7 +156,7 @@ public class StartupProbe {
         }
         task.finished();
         displayTaskFinished(task);
-        ClientUserTracker.getInstance().sandStartUpTaskFinished(task.getTask(), task.getStartTime(), task.getDuration());
+        Connection.getInstance().sandStartUpTaskFinished(task.getTask(), task.getStartTime(), task.getDuration());
         checkForCompletion();
     }
 
@@ -172,7 +171,7 @@ public class StartupProbe {
         task.failed(text);
         displayTaskFailed(task);
 
-        ClientUserTracker.getInstance().sandStartUpTaskFailed(task.getTask(), task.getStartTime(), task.getDuration(), task.getFailureText());
+        Connection.getInstance().sandStartUpTaskFailed(task.getTask(), task.getStartTime(), task.getDuration(), task.getFailureText());
         checkForCompletion();
     }
 
@@ -187,7 +186,7 @@ public class StartupProbe {
                 return;
             }
         }
-        runningTimeStamp = System.currentTimeMillis();        
+        runningTimeStamp = System.currentTimeMillis();
         Connection.getInstance().sendTotalStartupTime(System.currentTimeMillis() - startTimeStamp);
         enableCloseButton();
         hideStartScreen();
