@@ -242,24 +242,6 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public void createMissionTraget(Id attacker) {
-        try {
-            userGuidanceService.createMissionTarget(attacker);
-        } catch (Throwable t) {
-            log.error("", t);
-        }
-    }
-
-    @Override
-    public void createMissionMoney(Id harvester) {
-        try {
-            userGuidanceService.createMissionMoney(harvester);
-        } catch (Throwable t) {
-            log.error("", t);
-        }
-    }
-
-    @Override
     public void register(String userName, String password, String confirmPassword) throws UserAlreadyExistsException, PasswordNotMatchException {
         try {
             userService.createUserAndLoggin(userName, password, confirmPassword);
