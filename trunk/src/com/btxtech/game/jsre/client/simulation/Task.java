@@ -162,7 +162,8 @@ public class Task {
 
     private void checkForCompletion() {
         if (activeStep.isFulFilled()) {
-            ClientUserTracker.getInstance().onStepFinished(activeStep, this, System.currentTimeMillis() - stepTime);
+            long time = System.currentTimeMillis();
+            ClientUserTracker.getInstance().onStepFinished(activeStep, this, time - stepTime, time);
             runNextStep();
         }
     }

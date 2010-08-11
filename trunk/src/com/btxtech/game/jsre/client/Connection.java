@@ -256,9 +256,9 @@ public class Connection implements AsyncCallback<Void> {
         commandQueue.clear();
     }
 
-    public void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration) {
+    public void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.sendTutorialProgress(type, name, parent, duration, this);
+            movableServiceAsync.sendTutorialProgress(type, name, parent, duration, clientTimeStamp, this);
         }
     }
 
@@ -333,15 +333,15 @@ public class Connection implements AsyncCallback<Void> {
         }
     }
 
-    public void sendTotalStartupTime(long totalStartupTime) {
+    public void sendTotalStartupTime(long totalStartupTime, long clientTimeStamp) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.sendTotalStartupTime(totalStartupTime, this);
+            movableServiceAsync.sendTotalStartupTime(totalStartupTime, clientTimeStamp, this);
         }
     }
 
-    public void sendCloseWindow(long totalRunningTime) {
+    public void sendCloseWindow(long totalRunningTime, long clientTimeStamp) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.sendCloseWindow(totalRunningTime, this);
+            movableServiceAsync.sendCloseWindow(totalRunningTime, clientTimeStamp, this);
         }
     }
 

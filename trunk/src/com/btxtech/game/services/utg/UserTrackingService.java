@@ -80,7 +80,7 @@ public interface UserTrackingService {
 
     boolean isJavaScriptDetected();
 
-    void onTutorialProgressChanged(TutorialConfig.TYPE type, String name, String parent, long duration);
+    void onTutorialProgressChanged(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp);
 
     void onEventTrackingStart(EventTrackingStart eventTrackingStart);
 
@@ -90,9 +90,9 @@ public interface UserTrackingService {
 
     List<DbEventTrackingItem> getDbEventTrackingItem(DbEventTrackingStart begin, DbEventTrackingStart end);
 
-    void onTotalStartupTime(long totalStartupTime);
+    void onTotalStartupTime(long totalStartupTime, long clientTimeStamp);
 
-    void onCloseWindow(long totalRunningTime);
+    void onCloseWindow(long totalRunningTime, long clientTimeStamp);
 
     GameTrackingInfo getGameTracking(LifecycleTrackingInfo lifecycleTrackingInfo);
 

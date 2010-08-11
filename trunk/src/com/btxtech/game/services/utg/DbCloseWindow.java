@@ -31,6 +31,7 @@ public class DbCloseWindow {
     private Integer id;
     @Column(nullable = false)
     private Date timeStamp;
+    private long clientTimeStamp;
     @Column(nullable = false)
     private String sessionId;
     private long runningGameDuration;
@@ -41,7 +42,8 @@ public class DbCloseWindow {
     public DbCloseWindow() {
     }
 
-    public DbCloseWindow(long runningGameDuration, String sessionId) {
+    public DbCloseWindow(long runningGameDuration, long clientTimeStamp, String sessionId) {
+        this.clientTimeStamp = clientTimeStamp;
         this.sessionId = sessionId;
         this.runningGameDuration = runningGameDuration;
         timeStamp = new Date();
@@ -57,6 +59,10 @@ public class DbCloseWindow {
 
     public long getRunningGameDuration() {
         return runningGameDuration;
+    }
+
+    public long getClientTimeStamp() {
+        return clientTimeStamp;
     }
 
     @Override

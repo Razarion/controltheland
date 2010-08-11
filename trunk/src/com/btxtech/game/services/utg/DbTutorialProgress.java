@@ -33,6 +33,7 @@ public class DbTutorialProgress implements Serializable {
     @Column(nullable = false)
     private Date niceTimeStamp;
     private long timeStamp;
+    private long clientTimeStamp;
     private String sessionId;
     private long duration;
     private String type;
@@ -45,8 +46,9 @@ public class DbTutorialProgress implements Serializable {
     public DbTutorialProgress() {
     }
 
-    public DbTutorialProgress(String sessionId, String type, String name, String parent, long duration) {
+    public DbTutorialProgress(String sessionId, String type, String name, String parent, long duration, long clientTimeStamp) {
         this.sessionId = sessionId;
+        this.clientTimeStamp = clientTimeStamp;
         niceTimeStamp = new Date();
         timeStamp = niceTimeStamp.getTime();
         this.type = type;
@@ -81,6 +83,10 @@ public class DbTutorialProgress implements Serializable {
 
     public String getParent() {
         return parent;
+    }
+
+    public long getClientTimeStamp() {
+        return clientTimeStamp;
     }
 
     @Override
