@@ -107,7 +107,7 @@ public class Connection implements AsyncCallback<Void> {
         });
     }
 
-    private void setupGameStructure(GameInfo gameInfo) {
+    public void setupGameStructure(GameInfo gameInfo) {
         this.gameInfo = gameInfo;
         isRegistered = gameInfo.isRegistered();
         TerrainView.getInstance().setupTerrain(gameInfo.getTerrainSettings(),

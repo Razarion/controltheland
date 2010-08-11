@@ -39,28 +39,32 @@ public class Game implements EntryPoint {
             isDebug = Boolean.parseBoolean(Window.Location.getParameter("debug"));
             PlayerSimulation.setActive(Boolean.parseBoolean(Window.Location.getParameter("simulate")));
 
-            GwtCommon.disableBrowserContextMenuJSNI();
-
-            RootPanel.get().add(MapWindow.getAbsolutePanel());
-
-            RadarPanel.getInstance().addToParent(MapWindow.getAbsolutePanel(), TopMapPanel.Direction.RIGHT_TOP, 30);
-
-            cockpitPanel = new CockpitPanel();
-            cockpitPanel.addToParent(MapWindow.getAbsolutePanel(), TopMapPanel.Direction.LEFT_BOTTOM, 30);
-
-            InfoPanel.getInstance().addToParent(MapWindow.getAbsolutePanel(), TopMapPanel.Direction.LEFT_TOP, 30);
-
-            OnlineBasePanel.getInstance().addToParent(MapWindow.getAbsolutePanel(), TopMapPanel.Direction.RIGHT_BOTTOM, 30);
-
-            TerrainView.getInstance().addToParent(MapWindow.getAbsolutePanel());
-            TerrainView.getInstance().getCanvas().getElement().getStyle().setZIndex(Constants.Z_INDEX_TERRAIN);
-            TerrainView.getInstance().addTerrainScrollListener(MapWindow.getInstance());
-
-            TerrainMouseHandler.getInstance(); // Just for activation
-            Connection.INSTANCE.start();
+            init();
+            Connection.INSTANCE.start();            
         } catch (Throwable t) {
             GwtCommon.handleException(t);
         }
+    }
+
+    public void init() {
+        GwtCommon.disableBrowserContextMenuJSNI();
+
+        RootPanel.get().add(MapWindow.getAbsolutePanel());
+
+        RadarPanel.getInstance().addToParent(MapWindow.getAbsolutePanel(), TopMapPanel.Direction.RIGHT_TOP, 30);
+
+        cockpitPanel = new CockpitPanel();
+        cockpitPanel.addToParent(MapWindow.getAbsolutePanel(), TopMapPanel.Direction.LEFT_BOTTOM, 30);
+
+        InfoPanel.getInstance().addToParent(MapWindow.getAbsolutePanel(), TopMapPanel.Direction.LEFT_TOP, 30);
+
+        OnlineBasePanel.getInstance().addToParent(MapWindow.getAbsolutePanel(), TopMapPanel.Direction.RIGHT_BOTTOM, 30);
+
+        TerrainView.getInstance().addToParent(MapWindow.getAbsolutePanel());
+        TerrainView.getInstance().getCanvas().getElement().getStyle().setZIndex(Constants.Z_INDEX_TERRAIN);
+        TerrainView.getInstance().addTerrainScrollListener(MapWindow.getInstance());
+
+        TerrainMouseHandler.getInstance(); // Just for activation
     }
 
     public static boolean isDebug() {

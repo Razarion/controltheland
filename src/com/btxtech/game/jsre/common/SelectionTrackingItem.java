@@ -48,6 +48,12 @@ public class SelectionTrackingItem implements Serializable {
         own = true;
     }
 
+    public SelectionTrackingItem(Collection<Integer> selectedIds, long timeStamp, Boolean own) {
+        this.selectedIds = selectedIds;
+        this.timeStamp = timeStamp;
+        this.own = own;
+    }
+
     public Collection<Integer> getSelectedIds() {
         return selectedIds;
     }

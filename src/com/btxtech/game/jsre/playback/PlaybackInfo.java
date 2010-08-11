@@ -13,9 +13,12 @@
 
 package com.btxtech.game.jsre.playback;
 
+import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.btxtech.game.jsre.common.EventTrackingStart;
-import java.io.Serializable;
+import com.btxtech.game.jsre.common.SelectionTrackingItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,9 +26,11 @@ import java.util.List;
  * Date: 04.08.2010
  * Time: 11:15:58
  */
-public class PlaybackInfo implements Serializable {
+public class PlaybackInfo extends SimulationInfo {
     private EventTrackingStart eventTrackingStart;
     private List<EventTrackingItem> eventTrackingItems;
+    private List<SelectionTrackingItem> selectionTrackingItems;
+    private ArrayList<BaseCommand> baseCommands;
 
     public EventTrackingStart getEventTrackingStart() {
         return eventTrackingStart;
@@ -41,5 +46,21 @@ public class PlaybackInfo implements Serializable {
 
     public void setEventTrackingItems(List<EventTrackingItem> eventTrackingItems) {
         this.eventTrackingItems = eventTrackingItems;
+    }
+
+    public List<SelectionTrackingItem> getSelectionTrackingItems() {
+        return selectionTrackingItems;
+    }
+
+    public void setSelectionTrackingItems(List<SelectionTrackingItem> selectionTrackingItems) {
+        this.selectionTrackingItems = selectionTrackingItems;
+    }
+
+    public void setCommands(ArrayList<BaseCommand> baseCommands) {
+        this.baseCommands = baseCommands;
+    }
+
+    public ArrayList<BaseCommand> getBaseCommands() {
+        return baseCommands;
     }
 }
