@@ -187,7 +187,7 @@ public class StartupProbe {
             }
         }
         runningTimeStamp = System.currentTimeMillis();
-        Connection.getInstance().sendTotalStartupTime(System.currentTimeMillis() - startTimeStamp);
+        Connection.getInstance().sendTotalStartupTime(runningTimeStamp - startTimeStamp, runningTimeStamp);
         enableCloseButton();
         hideStartScreen();
         startGame();

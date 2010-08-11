@@ -59,13 +59,13 @@ public interface MovableServiceAsync {
 
     void startUpTaskFailed(StartupTask state, Date clientTimeStamp, long duration, String failureText, AsyncCallback<Void> asyncCallback);
 
-    void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, AsyncCallback<Void> asyncCallback);
+    void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp, AsyncCallback<Void> asyncCallback);
 
     void sendEventTrackingStart(EventTrackingStart eventTrackingStart, AsyncCallback<Void> asyncCallback);
 
     void sendEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems,Collection<BaseCommand> baseCommands,Collection<SelectionTrackingItem> selectionTrackingItems, AsyncCallback<Void> asyncCallback);
 
-    void sendTotalStartupTime(long totalStartupTime, AsyncCallback<Void> asyncCallback);
+    void sendTotalStartupTime(long totalStartupTime, long clientTimeStamp, AsyncCallback<Void> asyncCallback);
 
-    void sendCloseWindow(long totalRunningTime, AsyncCallback<Void> asyncCallback);
+    void sendCloseWindow(long totalRunningTime, long clientTimeStamp, AsyncCallback<Void> asyncCallback);
 }

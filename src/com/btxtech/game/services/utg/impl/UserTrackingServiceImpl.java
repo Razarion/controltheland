@@ -344,7 +344,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(DbTotalStartupTime.class);
                 criteria.add(Restrictions.eq("sessionId", sessionId));
-                criteria.addOrder(Order.asc("timeStamp"));
+                criteria.addOrder(Order.asc("clientTimeStamp"));
                 return criteria.list();
             }
         });
@@ -355,7 +355,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(DbCloseWindow.class);
                 criteria.add(Restrictions.eq("sessionId", sessionId));
-                criteria.addOrder(Order.asc("timeStamp"));
+                criteria.addOrder(Order.asc("clientTimeStamp"));
                 return criteria.list();
             }
         });
@@ -399,14 +399,9 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     @Override
     public TutorialTrackingInfo getTutorialTrackingInfo(LifecycleTrackingInfo lifecycleTrackingInfo) {
         TutorialTrackingInfo tutorialTrackingInfo = new TutorialTrackingInfo();
-        Date serverBegin = new Date(lifecycleTrackingInfo.getGameStartups().get(0).getTimeStamp());
-        Date serverEnd = null;
-        if (lifecycleTrackingInfo.hasDuration()) {
-            serverEnd = new Date(lifecycleTrackingInfo.getGameStartups().get(0).getTimeStamp() + lifecycleTrackingInfo.getDuration());
-        }
-        tutorialTrackingInfo.setTaskCount(getTaskCount(lifecycleTrackingInfo.getSessionId(), serverBegin, serverEnd));
+        tutorialTrackingInfo.setTaskCount(getTaskCount(lifecycleTrackingInfo.getSessionId(), lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
         tutorialTrackingInfo.setDbEventTrackingStart(getDbEventTrackingStart(lifecycleTrackingInfo.getSessionId(), lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
-        tutorialTrackingInfo.setDbTutorialProgresss(getDbTutorialProgresses(lifecycleTrackingInfo.getSessionId(), serverBegin, serverEnd));
+        tutorialTrackingInfo.setDbTutorialProgresss(getDbTutorialProgresses(lifecycleTrackingInfo.getSessionId(), lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
         return tutorialTrackingInfo;
     }
 
@@ -417,11 +412,11 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(DbTutorialProgress.class);
                 criteria.add(Restrictions.eq("sessionId", sessionId));
-                criteria.add(Restrictions.ge("timeStamp", begin.getTime()));
+                criteria.add(Restrictions.ge("clientTimeStamp", begin.getTime()));
                 if (end != null) {
-                    criteria.add(Restrictions.lt("timeStamp", end.getTime()));
+                    criteria.add(Restrictions.lt("clientTimeStamp", end.getTime()));
                 }
-                criteria.addOrder(Order.asc("timeStamp"));
+                criteria.addOrder(Order.asc("clientTimeStamp"));
                 return criteria.list();
             }
         });
@@ -622,12 +617,12 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public void onTutorialProgressChanged(TutorialConfig.TYPE type, String name, String parent, long duration) {
+    public void onTutorialProgressChanged(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp) {
         try {
             if (type == TutorialConfig.TYPE.TUTORIAL) {
                 userGuidanceService.onTutorialFinished();
             }
-            hibernateTemplate.saveOrUpdate(new DbTutorialProgress(session.getSessionId(), type.name(), name, parent, duration));
+            hibernateTemplate.saveOrUpdate(new DbTutorialProgress(session.getSessionId(), type.name(), name, parent, duration, clientTimeStamp));
         } catch (Throwable t) {
             log.error("", t);
         }
@@ -642,10 +637,10 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 criteria.add(Restrictions.eq("sessionId", sessionId));
                 criteria.add(Restrictions.eq("type", TutorialConfig.TYPE.TASK.name()));
                 if (from != null) {
-                    criteria.add(Restrictions.ge("timeStamp", from.getTime()));
+                    criteria.add(Restrictions.ge("clientTimeStamp", from.getTime()));
                 }
                 if (to != null) {
-                    criteria.add(Restrictions.lt("timeStamp", to.getTime()));
+                    criteria.add(Restrictions.lt("clientTimeStamp", to.getTime()));
                 }
                 criteria.setProjection(Projections.rowCount());
                 return criteria.list();
@@ -691,13 +686,13 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public void onTotalStartupTime(long totalStartupTime) {
-        hibernateTemplate.save(new DbTotalStartupTime(totalStartupTime, session.getSessionId()));
+    public void onTotalStartupTime(long totalStartupTime, long clientTimeStamp) {
+        hibernateTemplate.save(new DbTotalStartupTime(totalStartupTime, clientTimeStamp, session.getSessionId()));
     }
 
     @Override
-    public void onCloseWindow(long totalRunningTime) {
-        hibernateTemplate.save(new DbCloseWindow(totalRunningTime, session.getSessionId()));
+    public void onCloseWindow(long totalRunningTime, long clientTimeStamp) {
+        hibernateTemplate.save(new DbCloseWindow(totalRunningTime, clientTimeStamp, session.getSessionId()));
     }
 
     @Override

@@ -15,9 +15,7 @@ package com.btxtech.game.jsre.client.utg;
 
 import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.Connection;
-import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.StartupProbe;
-import com.btxtech.game.jsre.client.StartupTask;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
@@ -33,9 +31,7 @@ import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -62,21 +58,22 @@ public class ClientUserTracker implements SelectionListener {
             @Override
             public void onClose(CloseEvent<Window> windowCloseEvent) {
                 sendEventTrackerItems();
-                Connection.getInstance().sendCloseWindow(System.currentTimeMillis() - StartupProbe.getInstance().getRunningTimeStamp());
+                long time = System.currentTimeMillis();
+                Connection.getInstance().sendCloseWindow(time - StartupProbe.getInstance().getRunningTimeStamp(), time);
             }
         });
     }
 
-    public void onTutorialFinished(long duration) {
-        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, null, null, duration);
+    public void onTutorialFinished(long duration, long clientTimeStamp) {
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, null, null, duration, clientTimeStamp);
     }
 
-    public void onTaskFinished(Task task, long duration) {
-        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TASK, task.getTaskConfig().getName(), null, duration);
+    public void onTaskFinished(Task task, long duration, long clientTimeStamp) {
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TASK, task.getTaskConfig().getName(), null, duration, clientTimeStamp);
     }
 
-    public void onStepFinished(Step step, Task task, long duration) {
-        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.STEP, step.getStepConfig().getName(), task.getTaskConfig().getName(), duration);
+    public void onStepFinished(Step step, Task task, long duration, long clientTimeStamp) {
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.STEP, step.getStepConfig().getName(), task.getTaskConfig().getName(), duration, clientTimeStamp);
     }
 
     public void startEventTracking() {

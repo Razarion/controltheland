@@ -146,18 +146,18 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public void sendTotalStartupTime(long totalStartupTime) {
+    public void sendTotalStartupTime(long totalStartupTime, long clientTimeStamp) {
         try {
-            userTrackingService.onTotalStartupTime(totalStartupTime);
+            userTrackingService.onTotalStartupTime(totalStartupTime, clientTimeStamp);
         } catch (Throwable t) {
             log.error("", t);
         }
     }
 
     @Override
-    public void sendCloseWindow(long totalRunningTime) {
+    public void sendCloseWindow(long totalRunningTime, long clientTimeStamp) {
         try {
-            userTrackingService.onCloseWindow(totalRunningTime);
+            userTrackingService.onCloseWindow(totalRunningTime, clientTimeStamp);
         } catch (Throwable t) {
             log.error("", t);
         }
@@ -303,9 +303,9 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration) {
+    public void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp) {
         try {
-            userTrackingService.onTutorialProgressChanged(type, name, parent, duration);
+            userTrackingService.onTutorialProgressChanged(type, name, parent, duration, clientTimeStamp);
         } catch (Throwable t) {
             log.error("", t);
         }

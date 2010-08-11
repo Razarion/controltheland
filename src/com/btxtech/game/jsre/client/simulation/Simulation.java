@@ -135,14 +135,16 @@ public class Simulation implements SelectionListener {
 
     private void tutorialFinished() {
         activeTask = null;
-        ClientUserTracker.getInstance().onTutorialFinished(System.currentTimeMillis() - tutorialTime);
+        long time = System.currentTimeMillis();
+        ClientUserTracker.getInstance().onTutorialFinished(time - tutorialTime, time);
         Window.Location.reload();
     }
 
 
     private void checkForTaskCompletion() {
         if (activeTask.isFulFilled()) {
-            ClientUserTracker.getInstance().onTaskFinished(activeTask, System.currentTimeMillis() - taskTime);
+            long time = System.currentTimeMillis();
+            ClientUserTracker.getInstance().onTaskFinished(activeTask, time - taskTime, time);
             if (activeTask.getTaskConfig().getFinishedText() == null
                     || activeTask.getTaskConfig().getFinishedText().isEmpty()
                     || activeTask.getTaskConfig().getFinishedTextDuration() <= 0) {

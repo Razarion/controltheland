@@ -34,6 +34,7 @@ public class DbTotalStartupTime {
     @Column(nullable = false)
     private String sessionId;
     private long startupDuration;
+    private long clientTimeStamp;
 
     /**
      * Used by Hibernate
@@ -41,7 +42,8 @@ public class DbTotalStartupTime {
     public DbTotalStartupTime() {
     }
 
-    public DbTotalStartupTime(long startupDuration, String sessionId) {
+    public DbTotalStartupTime(long startupDuration, long clientTimeStamp, String sessionId) {
+        this.clientTimeStamp = clientTimeStamp;
         this.sessionId = sessionId;
         this.startupDuration = startupDuration;
         timeStamp = new Date();
