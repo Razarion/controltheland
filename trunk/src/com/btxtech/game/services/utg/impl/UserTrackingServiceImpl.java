@@ -752,7 +752,41 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 return criteria.list();
             }
         });
-
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<DbSelectionTrackingItem> getDbSelectionTrackingItems(final String sessionId, final long startTime, final Long endTime) {
+        return hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbSelectionTrackingItem.class);
+                criteria.add(Restrictions.eq("sessionId", sessionId));
+                criteria.add(Restrictions.ge("clientTimeStamp", startTime));
+                if (endTime != null) {
+                    criteria.add(Restrictions.lt("clientTimeStamp", endTime));
+                }
+                criteria.addOrder(Order.asc("clientTimeStamp"));
+                return criteria.list();
+            }
+        });
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<DbCommand> getDbCommands(final String sessionId, final long startTime, final Long endTime) {
+        return hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbCommand.class);
+                criteria.add(Restrictions.eq("sessionId", sessionId));
+                criteria.add(Restrictions.ge("clientTimeStamp", startTime));
+                if (endTime != null) {
+                    criteria.add(Restrictions.lt("clientTimeStamp", endTime));
+                }
+                criteria.addOrder(Order.asc("clientTimeStamp"));
+                return criteria.list();
+            }
+        });
+    }
 }

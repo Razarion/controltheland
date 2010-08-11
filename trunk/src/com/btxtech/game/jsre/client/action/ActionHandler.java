@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
+import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
@@ -418,6 +419,17 @@ public class ActionHandler implements CommonActionService {
         ClientUserTracker.getInstance().onExecuteCommand(baseCommand);
         Simulation.getInstance().onSendCommand(syncItem, baseCommand);
         addActiveItem(syncItem);
+    }
+
+    public void injectCommand(BaseCommand baseCommand) {
+        try {
+            SyncBaseItem syncBaseItem = (SyncBaseItem) ItemContainer.getInstance().getItem(baseCommand.getId());
+            syncBaseItem.executeCommand(baseCommand);
+            executeCommand(syncBaseItem, baseCommand);
+            Connection.getInstance().sendCommandQueue();
+        } catch (Exception e) {
+            GwtCommon.handleException(e);
+        }
     }
 
     private double calculateFactor(long time) {

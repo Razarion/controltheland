@@ -51,7 +51,7 @@ public class PlaybackControlPanel extends TopMapPanel {
         verticalPanel.add(new Button("Replay", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                playbackEntry.replay();
+                playbackEntry.play();
             }
         }));
 

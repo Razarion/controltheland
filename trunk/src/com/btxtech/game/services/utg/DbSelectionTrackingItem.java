@@ -56,6 +56,10 @@ public class DbSelectionTrackingItem implements Serializable {
         own = selectionTrackingItem.isOwn();
     }
 
+    public SelectionTrackingItem createSelectionTrackingItem() {
+        return new SelectionTrackingItem(Utils.stringToIntegers(selectedItems), clientTimeStamp, own);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -71,5 +75,4 @@ public class DbSelectionTrackingItem implements Serializable {
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
-
 }

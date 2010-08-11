@@ -178,6 +178,15 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         return createSimulationId(intId);
     }
 
+    public ClientSyncItemView getSimulationItem(int intId) {
+        for (Map.Entry<Id, ClientSyncItemView> entry: items.entrySet()) {
+            if (entry.getKey().getId() == intId) {
+                return entry.getValue();
+            }
+        }
+        throw new IllegalArgumentException(this + " getSimulationItem(): no ClientSyncItemView for id: " + intId);
+    }
+
     public SyncItem createSimulationSyncObject(ItemTypeAndPosition itemTypeAndPosition) throws NoSuchItemTypeException {
         Id id = createSimulationId(itemTypeAndPosition.getId());
         if (items.containsKey(id)) {

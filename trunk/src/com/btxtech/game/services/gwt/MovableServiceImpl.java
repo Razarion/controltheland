@@ -33,9 +33,6 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosi
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
-import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
-import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
@@ -175,7 +172,7 @@ public class MovableServiceImpl implements MovableService {
     private GameInfo createRealInfo() {
         try {
             RealityInfo realityInfo = new RealityInfo();
-            setCommonInfo(realityInfo);
+            setCommonInfo(realityInfo, userService, itemService, mgmtService);
             realityInfo.setBase(baseService.continueOrCreateBase().getSimpleBase());
             realityInfo.setAccountBalance(baseService.getBase().getAccountBalance());
             realityInfo.setAllowedItemTypes(serverMarketService.getAllowedItemTypes());
@@ -207,17 +204,10 @@ public class MovableServiceImpl implements MovableService {
         try {
             SimulationInfo simulationInfo = new SimulationInfo();
             // Common
-            setCommonInfo(simulationInfo);
+            setCommonInfo(simulationInfo, userService, itemService, mgmtService);
             simulationInfo.setTutorialConfig(tutorialService.getTutorialConfig());
             // Terrain
-            simulationInfo.setTerrainSettings(new TerrainSettings(20, 10, 100, 100));
-            Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
-            simulationInfo.setTerrainImagePositions(terrainImagePositions);
-            simulationInfo.setTerrainImages(terrainService.getTerrainImages());
-            Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
-            surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 2000, 1000), 1));
-            simulationInfo.setSurfaceRects(surfaceRects);
-            simulationInfo.setSurfaceImages(terrainService.getSurfaceImages());
+            setupTerrain(simulationInfo, terrainService);
             return simulationInfo;
         } catch (Throwable t) {
             log.error("", t);
@@ -225,7 +215,18 @@ public class MovableServiceImpl implements MovableService {
         return null;
     }
 
-    private void setCommonInfo(GameInfo gameInfo) {
+    public static void setupTerrain(SimulationInfo simulationInfo, TerrainService terrainService) {
+        simulationInfo.setTerrainSettings(new TerrainSettings(20, 10, 100, 100));
+        Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
+        simulationInfo.setTerrainImagePositions(terrainImagePositions);
+        simulationInfo.setTerrainImages(terrainService.getTerrainImages());
+        Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
+        surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 2000, 1000), 1));
+        simulationInfo.setSurfaceRects(surfaceRects);
+        simulationInfo.setSurfaceImages(terrainService.getSurfaceImages());
+    }
+
+    public static void setCommonInfo(GameInfo gameInfo, UserService userService, ItemService itemService, MgmtService mgmtService) {
         gameInfo.setRegistered(userService.isLoggedin());
         gameInfo.setItemTypes(itemService.getItemTypes());
         StartupData startupData = mgmtService.getStartupData();

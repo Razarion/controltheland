@@ -18,7 +18,9 @@ import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.ClientSyncResourceItemView;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
+import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.google.gwt.dom.client.NativeEvent;
@@ -160,6 +162,23 @@ public class SelectionHandler {
         if (selectedGroup != null) {
             setItemGroupSelected(selectedGroup);
         } else if (selectedTargetClientSyncItem != null) {
+            onTargetSelectionItemChanged(selectedTargetClientSyncItem);
+        }
+    }
+
+    public void inject(SelectionTrackingItem selectionTrackingItem) {
+        Boolean own = selectionTrackingItem.isOwn();
+        if (own == null) {
+            clearSelection();
+        } else if (own) {
+            Group group = new Group();
+            for (int id :  selectionTrackingItem.getSelectedIds()) {
+                group.addItem((ClientSyncBaseItemView) ItemContainer.getInstance().getSimulationItem(id));
+            }
+            setItemGroupSelected(group);
+        } else {
+            int id = selectionTrackingItem.getSelectedIds().iterator().next();
+            selectedTargetClientSyncItem = ItemContainer.getInstance().getSimulationItem(id);
             onTargetSelectionItemChanged(selectedTargetClientSyncItem);
         }
     }

@@ -53,6 +53,22 @@ public class DbCommand implements Serializable {
         this.baseCommand = baseCommand;
     }
 
+    public Date getNiceTimeStamp() {
+        return niceTimeStamp;
+    }
+
+    public long getClientTimeStamp() {
+        return clientTimeStamp;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public BaseCommand getBaseCommand() {
+        return baseCommand;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -68,5 +84,4 @@ public class DbCommand implements Serializable {
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
     }
-
 }

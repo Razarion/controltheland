@@ -13,14 +13,17 @@
 
 package com.btxtech.game.jsre.playback;
 
+import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ExtendedCanvas;
+import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.TopMapPanel;
+import com.btxtech.game.jsre.client.simulation.Simulation;
+import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -34,12 +37,8 @@ import com.google.gwt.widgetideas.graphics.client.Color;
 public class PlaybackEntry implements EntryPoint {
     public static final String SESSION_ID = "sessionId";
     public static final String START_TIME = "start";
-    private Timer timer;
-    private EventTrackingItem eventTrackingItem;
     private ExtendedCanvas extendedCanvas;
-    private int currentItem = 0;
-    private PlaybackInfo playbackInfo;
-    private PlaybackControlPanel playbackControlPanel;
+    private Player player;
 
     @Override
     public void onModuleLoad() {
@@ -48,8 +47,9 @@ public class PlaybackEntry implements EntryPoint {
         String sessionId = Window.Location.getParameter(SESSION_ID);
         long timeStamp = Long.parseLong(Window.Location.getParameter(START_TIME));
 
-        playbackControlPanel = new PlaybackControlPanel(this);
+        PlaybackControlPanel playbackControlPanel = new PlaybackControlPanel(this);
         playbackControlPanel.addToParent(RootPanel.get(), TopMapPanel.Direction.RIGHT_TOP, 10);
+        player = new Player(playbackControlPanel, this);
 
         PlaybackAsync playbackAsync = GWT.create(Playback.class);
         playbackAsync.getPlaybackInfo(sessionId, timeStamp, new AsyncCallback<PlaybackInfo>() {
@@ -60,57 +60,33 @@ public class PlaybackEntry implements EntryPoint {
 
             @Override
             public void onSuccess(PlaybackInfo playbackInfo) {
+                Game game = new Game();
+                player.init(playbackInfo);
+                RootPanel.get().add(MapWindow.getAbsolutePanel(), 0, 0);
+                MapWindow.getAbsolutePanel().getElement().getStyle().setZIndex(1);
+                MapWindow.getAbsolutePanel().setPixelSize(playbackInfo.getEventTrackingStart().getXResolution(), playbackInfo.getEventTrackingStart().getYResolution());
                 extendedCanvas = new ExtendedCanvas(playbackInfo.getEventTrackingStart().getXResolution(), playbackInfo.getEventTrackingStart().getYResolution());
-                extendedCanvas.getElement().getStyle().setBackgroundColor("#000000");
-                RootPanel.get().add(extendedCanvas);
-                PlaybackEntry.this.playbackInfo = playbackInfo;
+                RootPanel.get().add(extendedCanvas, 0, 0);
+                extendedCanvas.getElement().getStyle().setZIndex(100);
+                game.init();
+                Connection.getInstance().setupGameStructure(playbackInfo);
+                Simulation.getInstance().start();
                 play();
             }
         });
 
     }
 
-    private void play() {
-        timer = new Timer() {
-            @Override
-            public void run() {
-                displayItem();
-            }
-        };
+    public void play() {
         extendedCanvas.clear();
         extendedCanvas.beginPath();
-        currentItem = 0;
-        EventTrackingItem eventTrackingItem = playbackInfo.getEventTrackingItems().get(0);
-        long sleepTime = eventTrackingItem.getClientTimeStamp() - playbackInfo.getEventTrackingStart().getClientTimeStamp();
         extendedCanvas.setLineWidth(1);
         extendedCanvas.setStrokeStyle(Color.WHITE);
-        extendedCanvas.moveTo(eventTrackingItem.getYPos(), eventTrackingItem.getYPos());
-        prepareNextItem(sleepTime, eventTrackingItem);
-        playbackControlPanel.setState("Play");
+        //extendedCanvas.moveTo(eventTrackingItem.getYPos(), eventTrackingItem.getYPos());
+        player.play();
     }
 
-    private void prepareNextItem(long sleepTime, EventTrackingItem eventTrackingItem) {
-        this.eventTrackingItem = eventTrackingItem;
-        if (sleepTime == 0) {
-            displayItem();
-        } else {
-            timer.schedule((int) sleepTime);
-        }
-    }
-
-    private void loadNextItem() {
-        EventTrackingItem oldEventTrackingItem = playbackInfo.getEventTrackingItems().get(currentItem);
-        currentItem++;
-        if (currentItem >= playbackInfo.getEventTrackingItems().size()) {
-            playbackControlPanel.setState("Finished");
-            return;
-        }
-        EventTrackingItem newEventTrackingItem = playbackInfo.getEventTrackingItems().get(currentItem);
-        long sleepTime = newEventTrackingItem.getClientTimeStamp() - oldEventTrackingItem.getClientTimeStamp();
-        prepareNextItem(sleepTime, newEventTrackingItem);
-    }
-
-    private void displayItem() {
+    public void displayMouseTracking(EventTrackingItem eventTrackingItem) {
         switch (eventTrackingItem.getEventType()) {
             case Event.ONMOUSEMOVE: {
                 extendedCanvas.lineTo(eventTrackingItem.getXPos(), eventTrackingItem.getYPos());
@@ -129,15 +105,6 @@ public class PlaybackEntry implements EntryPoint {
                 break;
             }
         }
-        playbackControlPanel.setTime(eventTrackingItem.getClientTimeStamp() - playbackInfo.getEventTrackingStart().getClientTimeStamp());
-        loadNextItem();
     }
 
-    public void replay() {
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-        play();
-    }
 }

@@ -97,4 +97,8 @@ public interface UserTrackingService {
     GameTrackingInfo getGameTracking(LifecycleTrackingInfo lifecycleTrackingInfo);
 
     TutorialTrackingInfo getTutorialTrackingInfo(LifecycleTrackingInfo lifecycleTrackingInfo);
+
+    List<DbSelectionTrackingItem> getDbSelectionTrackingItems(String sessionId, long startTime, Long endTime);
+
+    List<DbCommand> getDbCommands(String sessionId, long startTime, Long endTime);
 }
