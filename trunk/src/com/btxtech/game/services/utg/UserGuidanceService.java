@@ -28,10 +28,6 @@ import java.util.List;
  * Time: 22:02:57
  */
 public interface UserGuidanceService {
-    void createMissionTarget(Id attacker) throws NoSuchItemTypeException, ItemDoesNotExistException;
-
-    void createMissionMoney(Id harvester) throws NoSuchItemTypeException, ItemDoesNotExistException;
-
     List<DbLevel> getDbLevels();
 
     void deleteDbLevel(DbLevel dbLevel);

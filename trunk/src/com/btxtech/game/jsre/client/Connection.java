@@ -39,7 +39,6 @@ import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.bot.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccessSyncInfo;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
@@ -260,24 +259,6 @@ public class Connection implements AsyncCallback<Void> {
     public void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration) {
         if (movableServiceAsync != null) {
             movableServiceAsync.sendTutorialProgress(type, name, parent, duration, this);
-        }
-    }
-
-    public void createMissionTraget(SyncBaseItem syncBaseItem) {
-        if (!syncBaseItem.getId().isSynchronized()) {
-            throw new IllegalStateException(this + " createMissionTarget: Item is not syncronized " + syncBaseItem);
-        }
-        if (movableServiceAsync != null) {
-            movableServiceAsync.createMissionTraget(syncBaseItem.getId(), this);
-        }
-    }
-
-    public void createMissionMoney(SyncBaseItem syncBaseItem) {
-        if (!syncBaseItem.getId().isSynchronized()) {
-            throw new IllegalStateException(this + " createMissionMoney: Item is not syncronized " + syncBaseItem);
-        }
-        if (movableServiceAsync != null) {
-            movableServiceAsync.createMissionMoney(syncBaseItem.getId(), this);
         }
     }
 

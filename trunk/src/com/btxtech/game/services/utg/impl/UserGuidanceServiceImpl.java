@@ -86,26 +86,6 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     }
 
     @Override
-    public void createMissionTarget(Id attacker) throws NoSuchItemTypeException, ItemDoesNotExistException {
-        ItemType targetItemType = itemService.getItemType(Constants.JEEP);
-        SyncBaseItem attackerItem = (SyncBaseItem) itemService.getItem(attacker);
-        Index targetPos = collisionService.getFreeRandomPosition(targetItemType, attackerItem, Constants.TARGET_MIN_RANGE, Constants.TARGET_MAX_RANGE);
-        SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(targetItemType, targetPos, null, baseService.getDummyBase(), 0);
-        syncBaseItem.setBuild(true);
-        syncBaseItem.setFullHealth();
-    }
-
-    @Override
-    public void createMissionMoney(Id harvester) throws NoSuchItemTypeException, ItemDoesNotExistException {
-        ItemType moneyItemType = itemService.getItemType(Constants.MONEY);
-        SyncBaseItem attackerItem = (SyncBaseItem) itemService.getItem(harvester);
-        Index targetPos = collisionService.getFreeRandomPosition(moneyItemType, attackerItem, Constants.TARGET_MIN_RANGE, Constants.TARGET_MAX_RANGE);
-        SyncResourceItem syncBaseItem = (SyncResourceItem) itemService.createSyncObject(moneyItemType, targetPos, null, null, 0);
-        syncBaseItem.setAmount(Constants.MISSION_MONEY);
-        syncBaseItem.setMissionMoney(true);
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public List<DbLevel> getDbLevels() {
         return (List<DbLevel>) hibernateTemplate.executeFind(new HibernateCallback() {

@@ -49,10 +49,6 @@ public interface MovableService extends RemoteService {
 
     Collection<SyncItemInfo> getAllSyncInfo();
 
-    void createMissionTraget(Id attacker);
-
-    void createMissionMoney(Id harvester);
-
     void register(String userName, String password, String confirmPassword) throws UserAlreadyExistsException, PasswordNotMatchException;
 
     void sendUserMessage(UserMessage userMessage);
