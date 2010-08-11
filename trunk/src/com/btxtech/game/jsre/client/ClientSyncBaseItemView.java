@@ -20,7 +20,6 @@ import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.effects.AttackEffectHandler;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
-import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.bot.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -204,10 +203,8 @@ public class ClientSyncBaseItemView extends ClientSyncItemView {
             Group group = new Group();
             group.addItem(this);
             SelectionHandler.getInstance().setItemGroupSelected(group);
-            ClientUserTracker.getInstance().clickOwnItem(syncBaseItem);
         } else {
             SelectionHandler.getInstance().setTargetSelected(this, event);
-            ClientUserTracker.getInstance().clickEnemyItem(syncBaseItem);
         }
         GwtCommon.preventDefault(event);
     }

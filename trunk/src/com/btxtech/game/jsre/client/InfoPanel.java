@@ -13,11 +13,9 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.client.utg.MissionTarget;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -126,7 +124,6 @@ public class InfoPanel extends TopMapPanel {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 TerrainView.getInstance().moveToHome();
-                ClientUserTracker.getInstance().onScrollHome();
             }
         });
 

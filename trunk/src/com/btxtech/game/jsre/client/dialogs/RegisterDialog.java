@@ -15,8 +15,6 @@ package com.btxtech.game.jsre.client.dialogs;
 
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.utg.ClientUserTracker;
-import com.btxtech.game.jsre.client.utg.missions.HtmlConstants;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.google.gwt.dom.client.Style;
@@ -39,10 +37,15 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * Time: 18:36:49
  */
 public class RegisterDialog extends Dialog {
+    private static final String REGISTRATION_DIALOG = "<b>Attention:</b> if you continue without registration you will not be able to return to your base after you leave the game.";
+    private static final String REGISTRATION_FAILED = "Registration failed";
+    private static final String REGISTRATION_FILLED = "All fields must be filled in";
+    private static final String REGISTRATION_MATCH = "Password and confirm password do not match";
+    private static final String REGISTRATION_EXISTS = "The user already exists";
+    private static Timer timer;
     private TextBox userName;
     private PasswordTextBox password;
     private PasswordTextBox confirmPassword;
-   static private Timer timer;
 
     public RegisterDialog() {
         setShowCloseButton(false);
@@ -53,7 +56,7 @@ public class RegisterDialog extends Dialog {
     @Override
     protected void setupPanel(VerticalPanel dialogVPanel) {
         // Text
-        dialogVPanel.add(new HTML(HtmlConstants.REGISTRATION_DIALOG));
+        dialogVPanel.add(new HTML(REGISTRATION_DIALOG));
 
         FlexTable grid = new FlexTable();
         Button skip = new Button("Skip");
@@ -61,7 +64,6 @@ public class RegisterDialog extends Dialog {
         skip.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                ClientUserTracker.getInstance().onRegisterDialogCloseNoReg();
                 closeDialog();
             }
         });
@@ -88,17 +90,16 @@ public class RegisterDialog extends Dialog {
         grid.getFlexCellFormatter().setColSpan(5, 0, 2);
         grid.getFlexCellFormatter().setHorizontalAlignment(5, 0, HasHorizontalAlignment.ALIGN_CENTER);
         dialogVPanel.add(grid);
-        ClientUserTracker.getInstance().onRegisterDialogOpen();
     }
 
     private void register() {
         if (userName.getText().isEmpty() || password.getText().isEmpty() || confirmPassword.getText().isEmpty()) {
-            MessageDialog.show(HtmlConstants.REGISTRATION_FAILED, HtmlConstants.REGISTRATION_FILLED);
+            MessageDialog.show(REGISTRATION_FAILED, REGISTRATION_FILLED);
             return;
         }
 
         if (!password.getText().equals(confirmPassword.getText())) {
-            MessageDialog.show(HtmlConstants.REGISTRATION_FAILED, HtmlConstants.REGISTRATION_MATCH);
+            MessageDialog.show(REGISTRATION_FAILED, REGISTRATION_MATCH);
             return;
         }
 
@@ -106,9 +107,9 @@ public class RegisterDialog extends Dialog {
             @Override
             public void onFailure(Throwable throwable) {
                 if (throwable instanceof UserAlreadyExistsException) {
-                    MessageDialog.show(HtmlConstants.REGISTRATION_FAILED, HtmlConstants.REGISTRATION_EXISTS);
+                    MessageDialog.show(REGISTRATION_FAILED, REGISTRATION_EXISTS);
                 } else if (throwable instanceof PasswordNotMatchException) {
-                    MessageDialog.show(HtmlConstants.REGISTRATION_FAILED, HtmlConstants.REGISTRATION_MATCH);
+                    MessageDialog.show(REGISTRATION_FAILED, REGISTRATION_MATCH);
                 } else {
                     GwtCommon.handleException(throwable);
                 }
@@ -116,7 +117,6 @@ public class RegisterDialog extends Dialog {
 
             @Override
             public void onSuccess(Void aVoid) {
-                ClientUserTracker.getInstance().onRegisterDialogCloseReg();
                 Connection.getInstance().setRegistered(true);
                 closeDialog();
             }
@@ -135,7 +135,7 @@ public class RegisterDialog extends Dialog {
             return;
         }
 
-         timer = new Timer() {
+        timer = new Timer() {
             @Override
             public void run() {
                 if (!Connection.getInstance().isRegistered()) {

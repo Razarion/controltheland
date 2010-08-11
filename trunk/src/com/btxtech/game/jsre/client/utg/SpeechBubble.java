@@ -20,10 +20,8 @@ import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HTML;
@@ -172,12 +170,6 @@ public class SpeechBubble extends AbsolutePanel {
         verticalPanel.add(anchor);
         verticalPanel.getElement().getStyle().setZIndex(2);
         verticalPanel.setPixelSize(htmlWidth, htmlHeight);
-        htmlContent.addMouseDownHandler(new MouseDownHandler() {
-            @Override
-            public void onMouseDown(MouseDownEvent mouseDownEvent) {
-                ClientUserTracker.getInstance().clickSpeechBubble();
-            }
-        });
         switch (direction) {
             case BOTTOM:
                 add(verticalPanel, HTML_OFFSET, HTML_OFFSET);
@@ -286,12 +278,6 @@ public class SpeechBubble extends AbsolutePanel {
         extendedCanvas.stroke();
         extendedCanvas.setFillStyle(Color.WHITE);
         extendedCanvas.fill();
-        extendedCanvas.addMouseDownHandler(new MouseDownHandler() {
-            @Override
-            public void onMouseDown(MouseDownEvent mouseDownEvent) {
-                ClientUserTracker.getInstance().clickSpeechBubble();
-            }
-        });
     }
 
     private void bottomBeakOrLine(boolean makeBeak, int beakLeft, int beakTop, int bodyLeft, int bodyRight, int bodyBottom) {
