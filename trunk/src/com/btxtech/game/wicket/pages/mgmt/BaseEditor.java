@@ -277,7 +277,11 @@ public class BaseEditor extends WebPage {
 
                         @Override
                         public void setObject(Boolean allowed) {
-                            itemsToKill.add(item.getModelObject().getId());
+                            if (allowed) {
+                                itemsToKill.add(item.getModelObject().getId());
+                            } else {
+                                itemsToKill.remove(item.getModelObject().getId());
+                            }
                         }
 
                         @Override
