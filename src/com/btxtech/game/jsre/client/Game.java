@@ -40,7 +40,7 @@ public class Game implements EntryPoint {
             PlayerSimulation.setActive(Boolean.parseBoolean(Window.Location.getParameter("simulate")));
 
             init();
-            Connection.INSTANCE.start();            
+            Connection.INSTANCE.start();
         } catch (Throwable t) {
             GwtCommon.handleException(t);
         }
@@ -49,7 +49,7 @@ public class Game implements EntryPoint {
     public void init() {
         GwtCommon.disableBrowserContextMenuJSNI();
 
-        RootPanel.get().add(MapWindow.getAbsolutePanel());
+        RootPanel.get().add(MapWindow.getAbsolutePanel(), 0, 0);
 
         RadarPanel.getInstance().addToParent(MapWindow.getAbsolutePanel(), TopMapPanel.Direction.RIGHT_TOP, 30);
 

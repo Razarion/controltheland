@@ -62,7 +62,7 @@ public class PlaybackEntry implements EntryPoint {
             public void onSuccess(PlaybackInfo playbackInfo) {
                 Game game = new Game();
                 player.init(playbackInfo);
-                RootPanel.get().add(MapWindow.getAbsolutePanel(), 0, 0);
+                //RootPanel.get().add(MapWindow.getAbsolutePanel(), 0, 0);
                 MapWindow.getAbsolutePanel().getElement().getStyle().setZIndex(1);
                 MapWindow.getAbsolutePanel().setPixelSize(playbackInfo.getEventTrackingStart().getXResolution(), playbackInfo.getEventTrackingStart().getYResolution());
                 extendedCanvas = new ExtendedCanvas(playbackInfo.getEventTrackingStart().getXResolution(), playbackInfo.getEventTrackingStart().getYResolution());
@@ -82,7 +82,6 @@ public class PlaybackEntry implements EntryPoint {
         extendedCanvas.beginPath();
         extendedCanvas.setLineWidth(1);
         extendedCanvas.setStrokeStyle(Color.WHITE);
-        //extendedCanvas.moveTo(eventTrackingItem.getYPos(), eventTrackingItem.getYPos());
         player.play();
     }
 
@@ -93,7 +92,6 @@ public class PlaybackEntry implements EntryPoint {
                 extendedCanvas.stroke();
                 break;
             }
-
             case Event.ONMOUSEDOWN: {
                 extendedCanvas.setFillStyle(Color.RED);
                 extendedCanvas.fillRect(eventTrackingItem.getXPos(), eventTrackingItem.getYPos(), 10, 10);
