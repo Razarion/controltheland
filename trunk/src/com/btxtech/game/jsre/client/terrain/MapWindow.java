@@ -108,6 +108,7 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
     private MapWindow() {
         mapWindow = new ExtendedAbsolutePanel();
         mapWindow.setHeight("100%");
+        mapWindow.setWidth("100%");
         mapWindow.addMouseMoveHandler(this);
         mapWindow.addMouseDownHandler(new MouseDownHandler() {
             @Override

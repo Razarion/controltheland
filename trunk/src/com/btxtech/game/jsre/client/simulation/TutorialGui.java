@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.simulation;
 
+import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -23,20 +24,18 @@ import com.google.gwt.user.client.ui.RootPanel;
  * Time: 20:26:29
  */
 public class TutorialGui {
-    private AbsolutePanel absolutePanel;
     private HTML html;
     private String taskText;
     private String stepText;
 
     public TutorialGui() {
-        absolutePanel = new AbsolutePanel();
+        AbsolutePanel absolutePanel = new AbsolutePanel();
         absolutePanel.setSize("350px", "100%");
         absolutePanel.getElement().getStyle().setProperty("right", "0");
         absolutePanel.getElement().getStyle().setProperty("top", "0");
-        RootPanel.get().add(absolutePanel);
+        MapWindow.getAbsolutePanel().add(absolutePanel);
         absolutePanel.getElement().getStyle().setProperty("position", "absolute");
         absolutePanel.getElement().getStyle().setProperty("background", "url(images/tutorial.jpg) no-repeat");
-        // absolutePanel.getElement().getStyle().setProperty("background", " #FFFFFF url(images/tutorial.jpg) no-repeat");
 
         html = new HTML();
         absolutePanel.add(html, 60, 150);
