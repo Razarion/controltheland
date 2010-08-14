@@ -47,6 +47,10 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Time: 6:44:01 PM
  */
 public class CollisionServiceImpl implements CollisionService, TerrainListener {
+    private static final int MAX_RANGE_RALLY_POINT = 300;
+    private static final int STEPS_ANGEL = 30;
+    private static final int STEPS_DISTANCE = 50;
+
     @Autowired
     private TerrainService terrainService;
     @Autowired
@@ -167,7 +171,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
 
     @Override
     public Index getRallyPoint(SyncBaseItem factory, Collection<SurfaceType> allowedSurfaces) {
-        return getFreeRandomPosition(factory.getPosition(), 0, 0, allowedSurfaces, factory.getItemType().getHeight() / 2, factory.getItemType().getHeight());
+        return getFreeRandomPosition(factory.getPosition(), 0, 0, allowedSurfaces, factory.getItemType().getHeight() / 2, MAX_RANGE_RALLY_POINT);
     }
 
     @Override
@@ -177,35 +181,37 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
 
     @Override
     public Index getFreeRandomPosition(Index origin, int itemFreeWidth, int itemFreeHeight, Collection<SurfaceType> allowedSurfaces, int targetMinRange, int targetMaxRange) {
-        Random random = new Random();
-        for (int i = 0; i < MAX_TRIES; i++) {
-            double angel = random.nextDouble() * 2.0 * Math.PI;
-            int discance = targetMinRange + random.nextInt(targetMaxRange - targetMinRange);
-            Index point = origin.getPointFromAngelToNord(angel, discance);
+        int delta = (targetMaxRange - targetMinRange) / STEPS_DISTANCE;
+        for (int distance = 0; distance < (targetMaxRange - targetMinRange); distance += delta) {
+            for (double angel = 0.0; angel < 2.0 * Math.PI; angel += (2.0 * Math.PI / STEPS_ANGEL)) {
+                Index point = origin.getPointFromAngelToNord(angel, distance + targetMinRange);
 
-            if (point.getX() >= terrainService.getDbTerrainSettings().getPlayFieldXSize()) {
-                continue;
-            }
-            if (point.getY() >= terrainService.getDbTerrainSettings().getPlayFieldYSize()) {
-                continue;
-            }
+                if (point.getX() >= terrainService.getDbTerrainSettings().getPlayFieldXSize()) {
+                    continue;
+                }
+                if (point.getY() >= terrainService.getDbTerrainSettings().getPlayFieldYSize()) {
+                    continue;
+                }
 
-            if (!terrainService.isFree(point, itemFreeWidth, itemFreeHeight, allowedSurfaces)) {
-                continue;
-            }
-            Rectangle itemRectangle = null;
-            if (itemFreeWidth > 0 || itemFreeHeight > 0) {
-                itemRectangle = new Rectangle(point.getX() - itemFreeWidth / 2,
-                        point.getY() - itemFreeHeight / 2,
-                        itemFreeWidth,
-                        itemFreeHeight);
+                if (!terrainService.isFree(point, itemFreeWidth, itemFreeHeight, allowedSurfaces)) {
+                    continue;
+                }
+                Rectangle itemRectangle = null;
+                if (itemFreeWidth > 0 || itemFreeHeight > 0) {
+                    itemRectangle = new Rectangle(point.getX() - itemFreeWidth / 2,
+                            point.getY() - itemFreeHeight / 2,
+                            itemFreeWidth,
+                            itemFreeHeight);
 
+                }
+                if (itemRectangle != null && itemService.hasItemsInRectangle(itemRectangle)) {
+                    continue;
+                }
+                return point;
             }
-            if (itemRectangle != null && itemService.hasItemsInRectangle(itemRectangle)) {
-                continue;
-            }
-            return point;
         }
+
+
         throw new IllegalStateException("Can not find free position."
                 + "Origin: " + origin
                 + " itemFreeWidth: " + itemFreeWidth
