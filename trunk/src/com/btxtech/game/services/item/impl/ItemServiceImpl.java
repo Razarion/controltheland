@@ -128,7 +128,9 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             userGuidanceService.onSyncBaseItemCreated((SyncBaseItem) syncItem);
         }
         connectionService.sendSyncInfo(syncItem);
-        log.info("CREATED: " + syncItem);
+        if (log.isInfoEnabled()) {
+            log.info("CREATED: " + syncItem);
+        }
         return syncItem;
     }
 
@@ -194,7 +196,9 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
                 throw new IllegalStateException("Id does not exist: " + killedItem);
             }
         }
-        log.info("DELETED: " + killedItem);
+        if (log.isInfoEnabled()) {
+            log.info("DELETED: " + killedItem);
+        }
         connectionService.sendSyncInfo(killedItem);
 
         if (killedItem instanceof SyncBaseItem) {
