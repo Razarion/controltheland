@@ -383,7 +383,9 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
         try {
             syncItem = (SyncBaseItem) itemService.getItem(baseCommand.getId());
         } catch (ItemDoesNotExistException e) {
-            log.debug("Can not execute command. Item does no longer exist " + baseCommand);
+            if (log.isDebugEnabled()) {
+                log.debug("Can not execute command. Item does no longer exist " + baseCommand);
+            }
             return;
         }
         if (!cmdFromSystem) {
@@ -395,7 +397,9 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
             syncItem.executeCommand(baseCommand);
             finalizeCommand(syncItem);
         } catch (ItemDoesNotExistException e) {
-            log.debug("Can not execute command. Item does no longer exist " + baseCommand);
+            if (log.isDebugEnabled()) {
+                log.debug("Can not execute command. Item does no longer exist " + baseCommand);
+            }
             connectionService.sendSyncInfo(syncItem);
         } catch (InsufficientFundsException e) {
             connectionService.sendSyncInfo(syncItem);
