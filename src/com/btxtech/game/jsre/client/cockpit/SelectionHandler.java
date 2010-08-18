@@ -13,9 +13,8 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
-import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
+import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
-import com.btxtech.game.jsre.client.ClientSyncResourceItemView;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -38,7 +37,7 @@ public class SelectionHandler {
     private final static SelectionHandler INSTANCE = new SelectionHandler();
 
     private Group selectedGroup; // Always my property
-    private ClientSyncItemView selectedTargetClientSyncItem; // Not my property
+    private ClientSyncItem selectedTargetClientSyncItem; // Not my property
     private ArrayList<SelectionListener> listeners = new ArrayList<SelectionListener>();
 
     public static SelectionHandler getInstance() {
@@ -87,14 +86,14 @@ public class SelectionHandler {
     public void setTargetSelected(ClientSyncItemView selectedTargetClientSyncItem, MouseDownEvent event) {
         if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
             if (selectedGroup != null) {
-                if (selectedGroup.canAttack() && selectedTargetClientSyncItem instanceof ClientSyncBaseItemView) {
-                    ActionHandler.getInstance().attack(selectedGroup.getItems(), ((ClientSyncBaseItemView) selectedTargetClientSyncItem).getSyncBaseItem());
-                } else if (selectedGroup.canCollect() && selectedTargetClientSyncItem instanceof ClientSyncResourceItemView) {
-                    ActionHandler.getInstance().collect(selectedGroup.getItems(), ((ClientSyncResourceItemView) selectedTargetClientSyncItem).getSyncResourceItem());
+                if (selectedGroup.canAttack() && selectedTargetClientSyncItem.getClientSyncItem().isSyncBaseItem()) {
+                    ActionHandler.getInstance().attack(selectedGroup.getItems(), selectedTargetClientSyncItem.getClientSyncItem().getSyncBaseItem());
+                } else if (selectedGroup.canCollect() && selectedTargetClientSyncItem.getClientSyncItem().isSyncResourceItem()) {
+                    ActionHandler.getInstance().collect(selectedGroup.getItems(), selectedTargetClientSyncItem.getClientSyncItem().getSyncResourceItem());
                 }
             } else {
-                this.selectedTargetClientSyncItem = selectedTargetClientSyncItem;
-                onTargetSelectionItemChanged(selectedTargetClientSyncItem);
+                this.selectedTargetClientSyncItem = selectedTargetClientSyncItem.getClientSyncItem();
+                onTargetSelectionItemChanged(this.selectedTargetClientSyncItem);
             }
         }
     }
@@ -128,7 +127,7 @@ public class SelectionHandler {
         CursorHandler.getInstance().onSelectionCleared();
     }
 
-    private void onTargetSelectionItemChanged(ClientSyncItemView selection) {
+    private void onTargetSelectionItemChanged(ClientSyncItem selection) {
         for (SelectionListener listener : listeners) {
             listener.onTargetSelectionChanged(selection);
         }
@@ -143,13 +142,13 @@ public class SelectionHandler {
     }
 
 
-    public void itemKilled(ClientSyncItemView clientSyncItemView) {
-        if (clientSyncItemView.equals(selectedTargetClientSyncItem)) {
+    public void itemKilled(ClientSyncItem clientSyncItem) {
+        if (clientSyncItem.equals(selectedTargetClientSyncItem)) {
             clearSelection();
         }
 
-        if (selectedGroup != null && selectedGroup.contains(clientSyncItemView)) {
-            selectedGroup.remove(clientSyncItemView);
+        if (selectedGroup != null && selectedGroup.contains(clientSyncItem)) {
+            selectedGroup.remove(clientSyncItem);
             if (selectedGroup.isEmpty()) {
                 clearSelection();
             } else {
@@ -172,8 +171,8 @@ public class SelectionHandler {
             clearSelection();
         } else if (own) {
             Group group = new Group();
-            for (int id :  selectionTrackingItem.getSelectedIds()) {
-                group.addItem((ClientSyncBaseItemView) ItemContainer.getInstance().getSimulationItem(id));
+            for (int id : selectionTrackingItem.getSelectedIds()) {
+                group.addItem(ItemContainer.getInstance().getSimulationItem(id));
             }
             setItemGroupSelected(group);
         } else {

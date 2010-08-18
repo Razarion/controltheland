@@ -13,8 +13,7 @@
 
 package com.btxtech.game.jsre.client.terrain;
 
-import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
-import com.btxtech.game.jsre.client.ClientSyncItemView;
+import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.ExtendedCanvas;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
@@ -26,6 +25,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -234,6 +234,14 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         return viewHeight;
     }
 
+    public Rectangle getViewRect() {
+        return new Rectangle(viewOriginLeft, viewOriginTop, viewWidth, viewHeight);
+    }
+
+    public boolean isItemVisible(SyncItem syncItem) {
+        return getViewRect().adjoins(syncItem.getRectangle());
+    }
+
     public Index toAbsoluteIndex(Index relative) {
         return relative.add(viewOriginLeft, viewOriginTop);
     }
@@ -242,9 +250,9 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         return absolute.sub(viewOriginLeft, viewOriginTop);
     }
 
-    public void moveToMiddle(ClientSyncItemView clientSyncItemView) {
-        int left = clientSyncItemView.getSyncItem().getPosition().getX() - parent.getOffsetWidth() / 2 - viewOriginLeft;
-        int top = clientSyncItemView.getSyncItem().getPosition().getY() - parent.getOffsetHeight() / 2 - viewOriginTop;
+    public void moveToMiddle(ClientSyncItem clientSyncItem) {
+        int left = clientSyncItem.getSyncItem().getPosition().getX() - parent.getOffsetWidth() / 2 - viewOriginLeft;
+        int top = clientSyncItem.getSyncItem().getPosition().getY() - parent.getOffsetHeight() / 2 - viewOriginTop;
         moveDelta(left, top);
     }
 
@@ -265,8 +273,8 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
     }
 
     public void moveToHome() {
-        ClientSyncBaseItemView scrollTo = null;
-        for (ClientSyncBaseItemView itemView : ItemContainer.getInstance().getOwnItems()) {
+        ClientSyncItem scrollTo = null;
+        for (ClientSyncItem itemView : ItemContainer.getInstance().getOwnItems()) {
             if (itemView.getSyncBaseItem().isContainedIn()) {
                 continue;
             }

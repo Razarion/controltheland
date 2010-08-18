@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
-import com.btxtech.game.jsre.client.ClientSyncItemView;
+import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -35,7 +35,7 @@ public class SelectionPanel extends HorizontalPanel implements SelectionListener
     }
 
     @Override
-    public void onTargetSelectionChanged(ClientSyncItemView selection) {
+    public void onTargetSelectionChanged(ClientSyncItem selection) {
         clear();
         addSelectedImage(selection.getSyncItem().getItemType(), 1);
     }
@@ -48,7 +48,7 @@ public class SelectionPanel extends HorizontalPanel implements SelectionListener
     @Override
     public void onOwnSelectionChanged(Group selectedGroup) {
         clear();
-        for (Map.Entry<ItemType, Collection<ClientSyncItemView>> itemTypeCollectionEntry : selectedGroup.getGroupedItems().entrySet()) {
+        for (Map.Entry<ItemType, Collection<ClientSyncItem>> itemTypeCollectionEntry : selectedGroup.getGroupedItems().entrySet()) {
             addSelectedImage(itemTypeCollectionEntry.getKey(), itemTypeCollectionEntry.getValue().size());
         }
     }

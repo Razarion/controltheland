@@ -15,7 +15,6 @@ package com.btxtech.game.jsre.common.bot;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientServices;
-import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Constants;
@@ -86,8 +85,9 @@ public class PlayerSimulation {
     public static void setActive(boolean active) {
         isActive = active;
     }
-
-    public void onItemBuilt(ClientSyncBaseItemView clientSyncBaseItemView) {
+    
+    // TODO
+ /*   public void onItemBuilt(ClientSyncBaseItemView clientSyncBaseItemView) {
         if (!isRunning) {
             return;
         }
@@ -96,10 +96,11 @@ public class PlayerSimulation {
         } catch (Throwable throwable) {
             GwtCommon.handleException(throwable);
         }
-    }
+    } */
 
     public void onItemCreated(ClientSyncItemView clientSyncItemView) throws NoSuchItemTypeException {
-        if (!isRunning) {
+        // TODO
+        /*  if (!isRunning) {
             return;
         }
 
@@ -111,7 +112,7 @@ public class PlayerSimulation {
         if (!clientSyncBaseItemView.isMyOwnProperty()) {
             return;
         }
-        doCommand(clientSyncBaseItemView.getSyncBaseItem());
+        doCommand(clientSyncBaseItemView.getSyncBaseItem());*/
     }
 
 

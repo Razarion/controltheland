@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.common;
 
-import com.btxtech.game.jsre.client.ClientSyncItemView;
+import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import java.io.Serializable;
@@ -30,9 +30,9 @@ public class SelectionTrackingItem implements Serializable {
     private long timeStamp = System.currentTimeMillis();
     private Boolean own;
 
-    public SelectionTrackingItem(ClientSyncItemView selection) {
+    public SelectionTrackingItem(ClientSyncItem selection) {
         selectedIds = new ArrayList<Integer>();
-        selectedIds.add(selection.getId().getId());
+        selectedIds.add(selection.getSyncItem().getId().getId());
         own = false;
     }
 

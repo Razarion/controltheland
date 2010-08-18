@@ -224,8 +224,13 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         if (!syncBaseItem.hasSyncItemContainer()) {
             return;
         }
-        for (SyncBaseItem baseItem : syncBaseItem.getSyncItemContainer().getContainedItems()) {
-            killSyncItem(baseItem, actor, true);
+        for (Id id : syncBaseItem.getSyncItemContainer().getContainedItems()) {
+            try {
+                SyncBaseItem baseItem = (SyncBaseItem) getItem(id);
+                killSyncItem(baseItem, actor, true);
+            } catch (ItemDoesNotExistException e) {
+                log.error("", e);
+            }
         }
     }
 

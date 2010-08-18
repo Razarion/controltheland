@@ -14,9 +14,7 @@
 package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.ClientServices;
-import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
-import com.btxtech.game.jsre.client.ClientSyncItemView;
-import com.btxtech.game.jsre.client.ClientSyncResourceItemView;
+import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.TopMapPanel;
 import com.btxtech.game.jsre.client.action.ActionHandler;
@@ -66,19 +64,19 @@ public class CockpitPanel extends TopMapPanel implements SelectionListener {
         setVisible(false);
     }
 
-    public void onTargetSelectionChanged(ClientSyncItemView selection) {
+    public void onTargetSelectionChanged(ClientSyncItem selection) {
         detailPanel.clear();
-        if (selection instanceof ClientSyncBaseItemView) {
+        if (selection.isSyncBaseItem()) {
             StringBuilder builder = new StringBuilder();
             builder.append("This item belongs to <b>");
-            builder.append(((ClientSyncBaseItemView) selection).getSyncBaseItem().getBase().getName());
+            builder.append(selection.getSyncBaseItem().getBase().getName());
             builder.append("</b>. This is your enemy!<br/></b>Attack it!</b>");
             if (Game.isDebug()) {
                 builder.append("<br/>ID: ");
                 builder.append(selection.getSyncItem().getId());
             }
             setupDescrBox(builder.toString(), null, null);
-        } else if (selection instanceof ClientSyncResourceItemView) {
+        } else if (selection.isSyncResourceItem()) {
             if (Game.isDebug()) {
                 setupDescrBox(selection.getSyncItem().getItemType().getDescription() + "<br/>ID: " + selection.getSyncItem().getId(), null, null);
             } else {

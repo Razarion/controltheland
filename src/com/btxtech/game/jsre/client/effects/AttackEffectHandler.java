@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.client.effects;
 
-import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
+import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.google.gwt.user.client.Timer;
 import java.util.HashSet;
@@ -57,9 +57,12 @@ public class AttackEffectHandler {
     }
 
 
-    public void onAttack(ClientSyncBaseItemView clientSyncBaseItemView) {
+    public void onAttack(ClientSyncItem clientSyncItem) {
+        if (!clientSyncItem.isVisible()) {
+            return;
+        }
         try {
-            attacks.add(new MuzzleFlash(clientSyncBaseItemView));
+            attacks.add(new MuzzleFlash(clientSyncItem));
         } catch (Exception e) {
             GwtCommon.handleException(e);
         }

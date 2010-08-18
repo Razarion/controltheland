@@ -45,6 +45,8 @@ import javax.annotation.Resource;
 import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -98,7 +100,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     private GenericItemConverter genericItemConverter;
     private static Log log = LogFactory.getLog(MgmtServiceImpl.class);
     private HibernateTemplate hibernateTemplate;
-    private Boolean testMode;
+    private boolean testMode;
     private StartupData startupData;
 
     @Override
@@ -310,6 +312,10 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     @PostConstruct
     public void startup() {
         try {
+            testMode = System.getProperty(TEST_MODE_PROPERTY) != null && Boolean.parseBoolean(System.getProperty(TEST_MODE_PROPERTY));
+            if (!testMode) {
+                LogManager.getLogger("com.btxtech").setLevel(Level.INFO);
+            }
             getStartupData();
         } catch (Throwable t) {
             log.error("", t);
@@ -346,9 +352,6 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     }
 
     public boolean isTestMode() {
-        if (testMode == null) {
-            testMode = System.getProperty(TEST_MODE_PROPERTY) != null && Boolean.parseBoolean(System.getProperty(TEST_MODE_PROPERTY));
-        }
         return testMode;
     }
 }

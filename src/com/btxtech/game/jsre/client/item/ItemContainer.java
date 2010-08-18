@@ -15,9 +15,7 @@ package com.btxtech.game.jsre.client.item;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientServices;
-import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
-import com.btxtech.game.jsre.client.ClientSyncItemView;
-import com.btxtech.game.jsre.client.ClientSyncResourceItemView;
+import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.action.ActionHandler;
@@ -29,7 +27,6 @@ import com.btxtech.game.jsre.client.effects.ExplosionHandler;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.bot.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -42,7 +39,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.google.gwt.user.client.Random;
@@ -63,10 +59,10 @@ import java.util.Map;
 public class ItemContainer extends AbstractItemService implements CommonCollisionService {
     public static final int CLEANUP_INTERVALL = 3000;
     private static final ItemContainer INSATNCE = new ItemContainer();
-    private HashMap<Id, ClientSyncItemView> items = new HashMap<Id, ClientSyncItemView>();
-    private HashSet<ClientSyncBaseItemView> specialItems = new HashSet<ClientSyncBaseItemView>();
-    private HashMap<Id, ClientSyncItemView> orphanItems = new HashMap<Id, ClientSyncItemView>();
-    private HashMap<Id, ClientSyncItemView> seeminglyDeadItems = new HashMap<Id, ClientSyncItemView>();
+    private HashMap<Id, ClientSyncItem> items = new HashMap<Id, ClientSyncItem>();
+    private HashSet<ClientSyncItem> specialItems = new HashSet<ClientSyncItem>();
+    private HashMap<Id, ClientSyncItem> orphanItems = new HashMap<Id, ClientSyncItem>();
+    private HashMap<Id, ClientSyncItem> seeminglyDeadItems = new HashMap<Id, ClientSyncItem>();
 
     /**
      * Singleton
@@ -75,18 +71,17 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         Timer timer = new Timer() {
             @Override
             public void run() {
-                for (Iterator<Map.Entry<Id, ClientSyncItemView>> it = orphanItems.entrySet().iterator(); it.hasNext();) {
-                    Map.Entry<Id, ClientSyncItemView> entry = it.next();
+                for (Iterator<Map.Entry<Id, ClientSyncItem>> it = orphanItems.entrySet().iterator(); it.hasNext();) {
+                    Map.Entry<Id, ClientSyncItem> entry = it.next();
                     long insertTime = entry.getKey().getUserTimeStamp();
                     if (insertTime + CLEANUP_INTERVALL < System.currentTimeMillis()) {
                         it.remove();
                         items.remove(entry.getKey());
                         GwtCommon.sendLogToServer("Orphan item removed due timeout: " + entry.getValue().getSyncItem());
-                        entry.getValue().dispose();
                     }
                 }
-                for (Iterator<Map.Entry<Id, ClientSyncItemView>> it = seeminglyDeadItems.entrySet().iterator(); it.hasNext();) {
-                    Map.Entry<Id, ClientSyncItemView> entry = it.next();
+                for (Iterator<Map.Entry<Id, ClientSyncItem>> it = seeminglyDeadItems.entrySet().iterator(); it.hasNext();) {
+                    Map.Entry<Id, ClientSyncItem> entry = it.next();
                     long insertTime = entry.getKey().getUserTimeStamp();
                     if (insertTime + CLEANUP_INTERVALL < System.currentTimeMillis()) {
                         it.remove();
@@ -100,43 +95,44 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
     }
 
     public void sychronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException, ItemDoesNotExistException {
-        ClientSyncItemView clientSyncItemView = items.get(syncItemInfo.getId());
+        ClientSyncItem clientSyncItem = items.get(syncItemInfo.getId());
 
         boolean isCreated = false;
         if (syncItemInfo.isAlive()) {
-            if (clientSyncItemView == null) {
-                clientSyncItemView = createAndAddItem(syncItemInfo.getId(), syncItemInfo.getPosition(), syncItemInfo.getItemTypeId(), syncItemInfo.getBase());
+            if (clientSyncItem == null) {
+                clientSyncItem = createAndAddItem(syncItemInfo.getId(), syncItemInfo.getPosition(), syncItemInfo.getItemTypeId(), syncItemInfo.getBase());
                 isCreated = true;
-                checkSpecialAdded(clientSyncItemView);
+                checkSpecialAdded(clientSyncItem);
             } else {
                 // Check for  Teleportation effect
-                Index localPos = clientSyncItemView.getSyncItem().getPosition();
+                Index localPos = clientSyncItem.getSyncItem().getPosition();
                 Index syncPos = syncItemInfo.getPosition();
                 if (localPos != null && syncPos != null) {
                     int distance = localPos.getDistance(syncPos);
                     if (distance > 200) {
-                        GwtCommon.sendLogToServer("Teleportation detected. Distance: " + distance + " Info:" + syncItemInfo + " | Item:" + clientSyncItemView.getSyncItem());
+                        GwtCommon.sendLogToServer("Teleportation detected. Distance: " + distance + " Info:" + syncItemInfo + " | Item:" + clientSyncItem.getSyncItem());
                     }
                 }
-                ClientSyncItemView orphanItem = orphanItems.remove(clientSyncItemView.getSyncItem().getId());
+                ClientSyncItem orphanItem = orphanItems.remove(clientSyncItem.getSyncItem().getId());
                 if (orphanItem != null) {
-                    orphanItem.setVisible(true);
+                    orphanItem.setHidden(false);
                     isCreated = true;
-                    checkSpecialAdded(clientSyncItemView);
+                    checkSpecialAdded(clientSyncItem);
                 }
             }
-            clientSyncItemView.getSyncItem().synchronize(syncItemInfo);
+            clientSyncItem.getSyncItem().synchronize(syncItemInfo);
             if (isCreated) {
-                PlayerSimulation.getInstance().onItemCreated(clientSyncItemView);
+                // TODO PlayerSimulation.getInstance().onItemCreated(clientSyncItem);
             }
-            clientSyncItemView.update();
-            checkSpecialItem(clientSyncItemView);
-            if (clientSyncItemView instanceof ClientSyncBaseItemView) {
-                ActionHandler.getInstance().addActiveItem(((ClientSyncBaseItemView) clientSyncItemView).getSyncBaseItem());
+            clientSyncItem.checkVisibility();
+            clientSyncItem.update();
+            checkSpecialItem(clientSyncItem);
+            if (clientSyncItem.isSyncBaseItem()) {
+                ActionHandler.getInstance().addActiveItem(clientSyncItem.getSyncBaseItem());
             }
         } else {
-            if (clientSyncItemView != null) {
-                definitelyKillItem(clientSyncItemView);
+            if (clientSyncItem != null) {
+                definitelyKillItem(clientSyncItem);
             }
 
         }
@@ -144,7 +140,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
 
     @Override
     public SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws NoSuchItemTypeException {
-        ClientSyncItemView itemView;
+        ClientSyncItem itemView;
         if (Connection.getInstance().getGameInfo().hasServerCommunication()) {
             Id id = new Id(creator.getId().getId(), createdChildCount);
             itemView = items.get(id);
@@ -154,13 +150,15 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
             itemView = createAndAddItem(id, position, toBeBuilt.getId(), base);
             id.setUserTimeStamp(System.currentTimeMillis());
             orphanItems.put(id, itemView);
-            itemView.setVisible(false);
+            itemView.setHidden(true);
         } else {
             Id id = createSimulationId();
             itemView = createAndAddItem(id, position, toBeBuilt.getId(), base);
-            itemView.setVisible(true);
+            itemView.setHidden(false);
             id.setUserTimeStamp(System.currentTimeMillis());
         }
+        itemView.checkVisibility();
+        itemView.update();
         return itemView.getSyncItem();
     }
 
@@ -179,13 +177,13 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         return createSimulationId(intId);
     }
 
-    public ClientSyncItemView getSimulationItem(int intId) {
-        for (Map.Entry<Id, ClientSyncItemView> entry : items.entrySet()) {
+    public ClientSyncItem getSimulationItem(int intId) {
+        for (Map.Entry<Id, ClientSyncItem> entry : items.entrySet()) {
             if (entry.getKey().getId() == intId) {
                 return entry.getValue();
             }
         }
-        throw new IllegalArgumentException(this + " getSimulationItem(): no ClientSyncItemView for id: " + intId);
+        throw new IllegalArgumentException(this + " getSimulationItem(): no ClientSyncItem for id: " + intId);
     }
 
     public SyncItem createSimulationSyncObject(ItemTypeAndPosition itemTypeAndPosition) throws NoSuchItemTypeException {
@@ -193,7 +191,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         if (items.containsKey(id)) {
             throw new IllegalStateException(this + " simulated id is already used: " + id);
         }
-        ClientSyncItemView itemView = createAndAddItem(id, itemTypeAndPosition.getPosition(), itemTypeAndPosition.getItemTypeId(), itemTypeAndPosition.getBase());
+        ClientSyncItem itemView = createAndAddItem(id, itemTypeAndPosition.getPosition(), itemTypeAndPosition.getItemTypeId(), itemTypeAndPosition.getBase());
         id.setUserTimeStamp(System.currentTimeMillis());
         if (itemView.getSyncItem() instanceof SyncBaseItem) {
             SyncBaseItem syncBaseItem = (SyncBaseItem) itemView.getSyncItem();
@@ -204,52 +202,46 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
                 syncBaseItem.fireItemChanged(SyncItemListener.Change.ANGEL);
             }
         }
+        itemView.checkVisibility();
+        itemView.update();
         return itemView.getSyncItem();
     }
 
-    private ClientSyncItemView createAndAddItem(Id id, Index position, int itemTypeId, SimpleBase base) throws NoSuchItemTypeException {
+    private ClientSyncItem createAndAddItem(Id id, Index position, int itemTypeId, SimpleBase base) throws NoSuchItemTypeException {
         SyncItem syncItem = newSyncItem(id, position, itemTypeId, base, ClientServices.getInstance());
-        ClientSyncItemView itemView;
-        if (syncItem instanceof SyncBaseItem) {
-            itemView = new ClientSyncBaseItemView((SyncBaseItem) syncItem);
-        } else if (syncItem instanceof SyncResourceItem) {
-            itemView = new ClientSyncResourceItemView((SyncResourceItem) syncItem);
-        } else {
-            throw new IllegalArgumentException(this + " unknown SyncItem: " + syncItem);
-        }
+        ClientSyncItem itemView = new ClientSyncItem(syncItem);
         items.put(id, itemView);
         return itemView;
     }
 
     @Override
     public void killSyncItem(SyncItem killedItem, SyncBaseItem actor, boolean force) {
-        ClientSyncItemView clientSyncItemView = items.get(killedItem.getId());
+        ClientSyncItem ClientSyncItem = items.get(killedItem.getId());
         if (Connection.getInstance().getGameInfo().hasServerCommunication()) {
-            makeItemSeeminglyDead(killedItem, actor, clientSyncItemView);
+            makeItemSeeminglyDead(killedItem, actor, ClientSyncItem);
         } else {
-            definitelyKillItem(clientSyncItemView);
+            definitelyKillItem(ClientSyncItem);
         }
         Simulation.getInstance().onSyncItemKilled(killedItem, actor);
     }
 
-    private void makeItemSeeminglyDead(SyncItem syncItem, SyncBaseItem actor, ClientSyncItemView clientSyncItemView) {
+    private void makeItemSeeminglyDead(SyncItem syncItem, SyncBaseItem actor, ClientSyncItem ClientSyncItem) {
         if (items.containsKey(syncItem.getId())) {
             syncItem.getId().setUserTimeStamp(System.currentTimeMillis());
-            seeminglyDeadItems.put(syncItem.getId(), clientSyncItemView);
+            seeminglyDeadItems.put(syncItem.getId(), ClientSyncItem);
         } else {
             GwtCommon.sendLogToServer("This should never happen: ItemContainer.killSyncItem() syncItem:" + syncItem + " actor:" + actor);
         }
     }
 
-    private void definitelyKillItem(ClientSyncItemView itemView) {
+    private void definitelyKillItem(ClientSyncItem itemView) {
         items.remove(itemView.getSyncItem().getId());
         checkSpecialRemoved(itemView);
         seeminglyDeadItems.remove(itemView.getSyncItem().getId());
         SelectionHandler.getInstance().itemKilled(itemView);
 
-        if (itemView instanceof ClientSyncBaseItemView) {
-            ClientSyncBaseItemView clientSyncBaseItemView = (ClientSyncBaseItemView) itemView;
-            ActionHandler.getInstance().removeActiveItem(clientSyncBaseItemView.getSyncBaseItem());
+        if (itemView.isSyncBaseItem()) {
+            ActionHandler.getInstance().removeActiveItem(itemView.getSyncBaseItem());
             ExplosionHandler.getInstance().terminateWithExplosion(itemView);
         } else {
             itemView.dispose();
@@ -262,42 +254,42 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
 
     @Override
     public SyncItem getItem(Id id) throws ItemDoesNotExistException {
-        ClientSyncItemView clientSyncItemView = items.get(id);
-        if (clientSyncItemView == null) {
+        ClientSyncItem ClientSyncItem = items.get(id);
+        if (ClientSyncItem == null) {
             throw new ItemDoesNotExistException(id);
         }
-        return clientSyncItemView.getSyncItem();
+        return ClientSyncItem.getSyncItem();
     }
 
     public static ItemContainer getInstance() {
         return INSATNCE;
     }
 
-    public Collection<ClientSyncItemView> getItems() {
+    public Collection<ClientSyncItem> getItems() {
         return items.values();
     }
 
-    public Collection<ClientSyncBaseItemView> getItemsInRect(Rectangle rectangle, boolean onlyOwnItems) {
-        ArrayList<ClientSyncBaseItemView> clientBaseItems = new ArrayList<ClientSyncBaseItemView>();
-        for (ClientSyncItemView clientBaseItem : items.values()) {
-            if (clientBaseItem instanceof ClientSyncBaseItemView &&
-                    !orphanItems.containsKey(clientBaseItem.getSyncItem().getId()) &&
-                    !seeminglyDeadItems.containsKey(clientBaseItem.getSyncItem().getId()) &&
-                    rectangle.contains(clientBaseItem.getSyncItem().getPosition())) {
+    public Collection<ClientSyncItem> getItemsInRect(Rectangle rectangle, boolean onlyOwnItems) {
+        ArrayList<ClientSyncItem> clientBaseItems = new ArrayList<ClientSyncItem>();
+        for (ClientSyncItem clientSyncItem : items.values()) {
+            if (clientSyncItem.isSyncBaseItem() &&
+                    !orphanItems.containsKey(clientSyncItem.getSyncItem().getId()) &&
+                    !seeminglyDeadItems.containsKey(clientSyncItem.getSyncItem().getId()) &&
+                    rectangle.contains(clientSyncItem.getSyncItem().getPosition())) {
                 if (onlyOwnItems) {
-                    if (((ClientSyncBaseItemView) clientBaseItem).isMyOwnProperty()) {
-                        clientBaseItems.add((ClientSyncBaseItemView) clientBaseItem);
+                    if (clientSyncItem.isMyOwnProperty()) {
+                        clientBaseItems.add(clientSyncItem);
                     }
                 } else {
-                    clientBaseItems.add((ClientSyncBaseItemView) clientBaseItem);
+                    clientBaseItems.add(clientSyncItem);
                 }
             }
         }
         return clientBaseItems;
     }
 
-    public ClientSyncItemView getFirstItemInRange(ItemType itemType, Index origin, int maxRange) {
-        for (ClientSyncItemView syncItemView : items.values()) {
+    public ClientSyncItem getFirstItemInRange(ItemType itemType, Index origin, int maxRange) {
+        for (ClientSyncItem syncItemView : items.values()) {
             if (syncItemView.getSyncItem().getItemType().equals(itemType) &&
                     !orphanItems.containsKey(syncItemView.getSyncItem().getId()) &&
                     !seeminglyDeadItems.containsKey(syncItemView.getSyncItem().getId()) &&
@@ -309,12 +301,12 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
     }
 
     public boolean hasBuildingsInRect(Rectangle rectangle) {
-        for (ClientSyncItemView syncItemView : items.values()) {
-            if (syncItemView instanceof ClientSyncBaseItemView &&
-                    !orphanItems.containsKey(syncItemView.getSyncItem().getId()) &&
-                    !seeminglyDeadItems.containsKey(syncItemView.getSyncItem().getId()) &&
-                    !((ClientSyncBaseItemView) syncItemView).getSyncBaseItem().hasSyncMovable() &&
-                    rectangle.adjoins(syncItemView.getSyncItem().getRectangle())) {
+        for (ClientSyncItem clientSyncItem : items.values()) {
+            if (clientSyncItem.isSyncBaseItem() &&
+                    !orphanItems.containsKey(clientSyncItem.getSyncItem().getId()) &&
+                    !seeminglyDeadItems.containsKey(clientSyncItem.getSyncItem().getId()) &&
+                    !(clientSyncItem.getSyncBaseItem()).hasSyncMovable() &&
+                    rectangle.adjoins(clientSyncItem.getSyncItem().getRectangle())) {
                 return false;
             }
         }
@@ -322,14 +314,14 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
     }
 
 
-    public Collection<ClientSyncBaseItemView> getOwnItems() {
-        ArrayList<ClientSyncBaseItemView> clientBaseItems = new ArrayList<ClientSyncBaseItemView>();
-        for (ClientSyncItemView clientBaseItem : items.values()) {
-            if (clientBaseItem instanceof ClientSyncBaseItemView &&
-                    ((ClientSyncBaseItemView) clientBaseItem).isMyOwnProperty() &&
-                    !orphanItems.containsKey(clientBaseItem.getSyncItem().getId()) &&
-                    !seeminglyDeadItems.containsKey(clientBaseItem.getSyncItem().getId())) {
-                clientBaseItems.add((ClientSyncBaseItemView) clientBaseItem);
+    public Collection<ClientSyncItem> getOwnItems() {
+        ArrayList<ClientSyncItem> clientBaseItems = new ArrayList<ClientSyncItem>();
+        for (ClientSyncItem clientSyncItem : items.values()) {
+            if (clientSyncItem.isSyncBaseItem() &&
+                    clientSyncItem.isMyOwnProperty() &&
+                    !orphanItems.containsKey(clientSyncItem.getSyncItem().getId()) &&
+                    !seeminglyDeadItems.containsKey(clientSyncItem.getSyncItem().getId())) {
+                clientBaseItems.add(clientSyncItem);
             }
         }
         return clientBaseItems;
@@ -337,12 +329,12 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
 
     public List<SyncBaseItem> getEnemyItems(SimpleBase base) {
         ArrayList<SyncBaseItem> clientBaseItems = new ArrayList<SyncBaseItem>();
-        for (ClientSyncItemView clientBaseItem : items.values()) {
-            if (clientBaseItem instanceof ClientSyncBaseItemView &&
-                    !((ClientSyncBaseItemView) clientBaseItem).getSyncBaseItem().getBase().equals(base) &&
-                    !orphanItems.containsKey(clientBaseItem.getSyncItem().getId()) &&
-                    !seeminglyDeadItems.containsKey(clientBaseItem.getSyncItem().getId())) {
-                clientBaseItems.add(((ClientSyncBaseItemView) clientBaseItem).getSyncBaseItem());
+        for (ClientSyncItem clientSyncItem : items.values()) {
+            if (clientSyncItem.isSyncBaseItem() &&
+                    !clientSyncItem.getSyncBaseItem().getBase().equals(base) &&
+                    !orphanItems.containsKey(clientSyncItem.getSyncItem().getId()) &&
+                    !seeminglyDeadItems.containsKey(clientSyncItem.getSyncItem().getId())) {
+                clientBaseItems.add(clientSyncItem.getSyncBaseItem());
             }
         }
         return clientBaseItems;
@@ -350,8 +342,8 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
 
     public List<? extends SyncItem> getItems(ItemType itemType, SimpleBase simpleBase) {
         ArrayList<SyncItem> syncItems = new ArrayList<SyncItem>();
-        for (ClientSyncItemView clientBaseItem : items.values()) {
-            SyncItem syncItem = clientBaseItem.getSyncItem();
+        for (ClientSyncItem clientSyncItem : items.values()) {
+            SyncItem syncItem = clientSyncItem.getSyncItem();
             if (orphanItems.containsKey(syncItem.getId()) || seeminglyDeadItems.containsKey(syncItem.getId())) {
                 continue;
             }
@@ -361,7 +353,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
             }
 
             if (simpleBase != null) {
-                if (clientBaseItem instanceof ClientSyncBaseItemView && ((ClientSyncBaseItemView) clientBaseItem).getSyncBaseItem().getBase().equals(simpleBase)) {
+                if (syncItem instanceof SyncBaseItem && clientSyncItem.getSyncBaseItem().getBase().equals(simpleBase)) {
                     syncItems.add(syncItem);
                 }
             } else {
@@ -406,27 +398,27 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         return ClientBase.getInstance();
     }
 
-    private void checkSpecialItem(ClientSyncItemView clientSyncItemView) {
-        if (isMySpecialItem(clientSyncItemView) != null) {
+    private void checkSpecialItem(ClientSyncItem ClientSyncItem) {
+        if (isMySpecialItem(ClientSyncItem) != null) {
             checkForSpecialItems();
         }
     }
 
-    private void checkSpecialAdded(ClientSyncItemView clientSyncItemView) {
-        ClientSyncBaseItemView clientSyncBaseItemView = isMySpecialItem(clientSyncItemView);
-        if (clientSyncBaseItemView == null) {
+    private void checkSpecialAdded(ClientSyncItem clientSyncItem) {
+        ClientSyncItem specialClientSyncItem = isMySpecialItem(clientSyncItem);
+        if (specialClientSyncItem == null) {
             return;
         }
-        specialItems.add(clientSyncBaseItemView);
+        specialItems.add(specialClientSyncItem);
         checkForSpecialItems();
     }
 
-    private void checkSpecialRemoved(ClientSyncItemView clientSyncItemView) {
-        ClientSyncBaseItemView clientSyncBaseItemView = isMySpecialItem(clientSyncItemView);
-        if (clientSyncBaseItemView == null) {
+    private void checkSpecialRemoved(ClientSyncItem ClientSyncItem) {
+        ClientSyncItem specialClientSyncItem = isMySpecialItem(ClientSyncItem);
+        if (specialClientSyncItem == null) {
             return;
         }
-        specialItems.remove(clientSyncBaseItemView);
+        specialItems.remove(specialClientSyncItem);
         checkForSpecialItems();
     }
 
@@ -434,42 +426,43 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         RadarPanel.getInstance().setRadarState1(checkForSpecialItem(RadarPanel.RADAR_1));
     }
 
-    public void handleSpecial(ClientSyncBaseItemView clientSyncBaseItemView) {
-        if (!clientSyncBaseItemView.isMyOwnProperty()) {
+    public void handleSpecial(ClientSyncItem clientSyncItem) {
+        if (!clientSyncItem.isMyOwnProperty() || !clientSyncItem.isSyncBaseItem()) {
             return;
         }
 
-        if (specialItems.contains(clientSyncBaseItemView)) {
-            if (!clientSyncBaseItemView.getSyncBaseItem().hasSyncSpecial()) {
-                checkSpecialRemoved(clientSyncBaseItemView);
+        if (specialItems.contains(clientSyncItem)) {
+            if (!clientSyncItem.getSyncBaseItem().hasSyncSpecial()) {
+                checkSpecialRemoved(clientSyncItem);
             } else {
                 checkForSpecialItems();
             }
         } else {
-            if (clientSyncBaseItemView.getSyncBaseItem().hasSyncSpecial()) {
-                checkSpecialAdded(clientSyncBaseItemView);
+            if (clientSyncItem.getSyncBaseItem().hasSyncSpecial()) {
+                checkSpecialAdded(clientSyncItem);
             }
         }
     }
 
-    private ClientSyncBaseItemView isMySpecialItem(ClientSyncItemView clientSyncItemView) {
-        if (!(clientSyncItemView instanceof ClientSyncBaseItemView)) {
-            return null;
-        }
-        ClientSyncBaseItemView clientSyncBaseItemView = (ClientSyncBaseItemView) clientSyncItemView;
-        if (!clientSyncBaseItemView.isMyOwnProperty()) {
+    private ClientSyncItem isMySpecialItem(ClientSyncItem clientSyncItem) {
+        if (!clientSyncItem.isMyOwnProperty()) {
             return null;
         }
 
-        if (!clientSyncBaseItemView.getSyncBaseItem().hasSyncSpecial()) {
+        if (!clientSyncItem.isSyncBaseItem()) {
             return null;
         }
-        return clientSyncBaseItemView;
+
+        if (!clientSyncItem.getSyncBaseItem().hasSyncSpecial()) {
+            return null;
+        }
+        return clientSyncItem;
     }
 
     private boolean checkForSpecialItem(String string) {
-        for (ClientSyncBaseItemView specialItem : specialItems) {
-            if (specialItem.getSyncBaseItem().getSyncSpecial().getString().equals(string) && specialItem.getSyncBaseItem().isReady()) {
+        for (ClientSyncItem specialItem : specialItems) {
+            SyncBaseItem syncBaseItem = specialItem.getSyncBaseItem();
+            if (syncBaseItem.getSyncSpecial().getString().equals(string) && syncBaseItem.isReady()) {
                 return true;
             }
         }
@@ -477,28 +470,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
     }
 
     public Map<BaseItemType, List<SyncBaseItem>> getItems4Base(SimpleBase simpleBase) {
-        Map<BaseItemType, List<SyncBaseItem>> result = new HashMap<BaseItemType, List<SyncBaseItem>>();
-        for (ClientSyncItemView clientSyncItemView : items.values()) {
-            if (orphanItems.containsKey(clientSyncItemView.getSyncItem().getId()) ||
-                    seeminglyDeadItems.containsKey(clientSyncItemView.getSyncItem().getId())) {
-                continue;
-            }
-
-            if (!(clientSyncItemView instanceof ClientSyncBaseItemView)) {
-                continue;
-            }
-            SyncBaseItem syncBaseItem = ((ClientSyncBaseItemView) clientSyncItemView).getSyncBaseItem();
-            if (!syncBaseItem.getBase().equals(simpleBase)) {
-                continue;
-            }
-            List<SyncBaseItem> syncBaseItems = result.get(syncBaseItem.getBaseItemType());
-            if (syncBaseItems == null) {
-                syncBaseItems = new ArrayList<SyncBaseItem>();
-                result.put(syncBaseItem.getBaseItemType(), syncBaseItems);
-            }
-            syncBaseItems.add(syncBaseItem);
-        }
-        return result;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -507,8 +479,8 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
     }
 
     public void clear() {
-        for (ClientSyncItemView clientSyncItemView : items.values()) {
-            clientSyncItemView.dispose();
+        for (ClientSyncItem ClientSyncItem : items.values()) {
+            ClientSyncItem.dispose();
         }
         items.clear();
         specialItems.clear();

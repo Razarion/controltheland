@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.effects;
 
+import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.google.gwt.user.client.Timer;
@@ -70,8 +71,11 @@ public class ExplosionHandler {
         }
     }
 
-    public void terminateWithExplosion(ClientSyncItemView clientSyncItemView) {
-        ExplosionFrame explosionFrame = new ExplosionFrame(clientSyncItemView);
+    public void terminateWithExplosion(ClientSyncItem clientSyncItem) {
+        if(!clientSyncItem.isVisible()) {
+            return;
+        }
+        ExplosionFrame explosionFrame = new ExplosionFrame(clientSyncItem);
 
         synchronized (explosionFrames) {
             explosionFrames.add(explosionFrame);

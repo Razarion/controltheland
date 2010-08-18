@@ -18,14 +18,9 @@
  */
 package com.btxtech.game.jsre.client.territory;
 
-import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.territory.impl.AbstractTerritoryServiceImpl;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import java.util.Collection;
 
 public class ClientTerritoryService extends AbstractTerritoryServiceImpl {
     private static final ClientTerritoryService INSTANCE = new ClientTerritoryService();

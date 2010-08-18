@@ -13,11 +13,13 @@
 
 package com.btxtech.game.jsre.client.terrain;
 
+import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.InfoPanel;
+import com.btxtech.game.jsre.client.item.ItemContainer;
+import com.btxtech.game.jsre.client.item.ItemViewContainer;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
-import com.btxtech.game.jsre.client.utg.SpeechBubble;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -31,7 +33,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * User: beat
@@ -229,24 +230,15 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
 
     @Override
     public void onScroll(int left, int top, int width, int height, int deltaLeft, int deltaTop) {
-        int count = mapWindow.getWidgetCount();
-        for (int i = 0; i < count; i++) {
-            Widget w = mapWindow.getWidget(i);
-            if (w instanceof ClientSyncItemView) {
-                ClientSyncItemView clientSyncItemView = (ClientSyncItemView) w;
-                clientSyncItemView.setViewOrigin(left, top);
-            } else if (w instanceof SpeechBubble && !((SpeechBubble) w).isPreventScroll()) {
-                int newLeft = MapWindow.getAbsolutePanel().getWidgetLeft(w) - deltaLeft;
-                int newtop = MapWindow.getAbsolutePanel().getWidgetTop(w) - deltaTop;
-                MapWindow.getAbsolutePanel().setWidgetPosition(w, newLeft, newtop);
-            }
-            /* else if (w != TerrainView.getInstance().getCanvas() &&
-                    !(w instanceof TopMapPanel) &&
-                    !(w instanceof SpeechBubble && ((SpeechBubble) w).isPreventScroll())) {
-                int newLeft = MapWindow.getAbsolutePanel().getWidgetLeft(w) - deltaLeft;
-                int newtop = MapWindow.getAbsolutePanel().getWidgetTop(w) - deltaTop;
-                MapWindow.getAbsolutePanel().setWidgetPosition(w, newLeft, newtop);
-            }*/
+        displayVisibleItems();
+    }
+
+    public void displayVisibleItems() {
+        for (ClientSyncItem clientSyncItem : ItemContainer.getInstance().getItems()) {
+            clientSyncItem.onScroll();
+        }
+        for (ClientSyncItemView clientSyncItemView : ItemViewContainer.getInstance().getVisibleItems()) {
+            clientSyncItemView.setPosition();
         }
     }
 

@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.utg;
 
+import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.StartupProbe;
@@ -108,7 +109,7 @@ public class ClientUserTracker implements SelectionListener {
     }
 
     @Override
-    public void onTargetSelectionChanged(ClientSyncItemView selection) {
+    public void onTargetSelectionChanged(ClientSyncItem selection) {
         selectionTrackingItems.add(new SelectionTrackingItem(selection));
     }
 

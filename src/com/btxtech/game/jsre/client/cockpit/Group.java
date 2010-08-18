@@ -13,8 +13,7 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
-import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
-import com.btxtech.game.jsre.client.ClientSyncItemView;
+import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -30,10 +29,13 @@ import java.util.Map;
  * Time: 23:05:45
  */
 public class Group {
-    private Collection<ClientSyncBaseItemView> clientSyncItems = new ArrayList<ClientSyncBaseItemView>();
+    private Collection<ClientSyncItem> clientSyncItems = new ArrayList<ClientSyncItem>();
 
-    public void addItem(ClientSyncBaseItemView clientSyncItemView) {
-        clientSyncItems.add(clientSyncItemView);
+    public void addItem(ClientSyncItem clientSyncItem) {
+        if (!clientSyncItem.isSyncBaseItem()) {
+            throw new IllegalArgumentException(this + " ClientSyncItem must have a SyncBaseItem: " + clientSyncItem);
+        }
+        clientSyncItems.add(clientSyncItem);
     }
 
     @Override
@@ -41,7 +43,7 @@ public class Group {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Collection<ClientSyncBaseItemView> otherClientSyncItems = ((Group) o).clientSyncItems;
+        Collection<ClientSyncItem> otherClientSyncItems = ((Group) o).clientSyncItems;
 
         if (clientSyncItems == null) {
             return otherClientSyncItems == null;
@@ -54,9 +56,9 @@ public class Group {
         if (clientSyncItems.size() != otherClientSyncItems.size()) {
             return false;
         }
-        for (ClientSyncItemView item1 : clientSyncItems) {
+        for (ClientSyncItem item1 : clientSyncItems) {
             boolean found = false;
-            for (ClientSyncItemView item2 : otherClientSyncItems) {
+            for (ClientSyncItem item2 : otherClientSyncItems) {
                 if (item1.equals(item2)) {
                     found = true;
                     break;
@@ -76,7 +78,7 @@ public class Group {
     }
 
     public boolean canAttack() {
-        for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
+        for (ClientSyncItem clientSyncItem : clientSyncItems) {
             if (!clientSyncItem.getSyncBaseItem().hasSyncWaepon()) {
                 return false;
             }
@@ -85,7 +87,7 @@ public class Group {
     }
 
     public boolean canCollect() {
-        for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
+        for (ClientSyncItem clientSyncItem : clientSyncItems) {
             if (!clientSyncItem.getSyncBaseItem().hasSyncHarvester()) {
                 return false;
             }
@@ -94,7 +96,7 @@ public class Group {
     }
 
     public boolean canMove() {
-        for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
+        for (ClientSyncItem clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncMovable()) {
                 return true;
             }
@@ -103,7 +105,7 @@ public class Group {
     }
 
     public boolean onlyFactories() {
-        for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
+        for (ClientSyncItem clientSyncItem : clientSyncItems) {
             if (!clientSyncItem.getSyncBaseItem().hasSyncFactory()) {
                 return false;
             }
@@ -112,7 +114,7 @@ public class Group {
     }
 
     public boolean onlyConstructionVehicle() {
-        for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
+        for (ClientSyncItem clientSyncItem : clientSyncItems) {
             if (!clientSyncItem.getSyncBaseItem().hasSyncBuilder()) {
                 return false;
             }
@@ -121,16 +123,16 @@ public class Group {
     }
 
     public void setSelected(boolean selected) {
-        for (ClientSyncItemView clientSyncItem : clientSyncItems) {
+        for (ClientSyncItem clientSyncItem : clientSyncItems) {
             clientSyncItem.setSelected(selected);
         }
     }
 
-    public boolean contains(ClientSyncItemView clientSyncItemView) {
+    public boolean contains(ClientSyncItem clientSyncItemView) {
         return clientSyncItems.contains(clientSyncItemView);
     }
 
-    public void remove(ClientSyncItemView clientSyncItemView) {
+    public void remove(ClientSyncItem clientSyncItemView) {
         clientSyncItems.remove(clientSyncItemView);
     }
 
@@ -142,21 +144,21 @@ public class Group {
         return clientSyncItems.size();
     }
 
-    public Collection<ClientSyncBaseItemView> getItems() {
+    public Collection<ClientSyncItem> getItems() {
         return clientSyncItems;
     }
 
     public Collection<SyncBaseItem> getSyncBaseItems() {
         ArrayList<SyncBaseItem> syncBaseItems = new ArrayList<SyncBaseItem>();
-        for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
+        for (ClientSyncItem clientSyncItem : clientSyncItems) {
             syncBaseItems.add(clientSyncItem.getSyncBaseItem());
         }
         return syncBaseItems;
     }
 
-    public Collection<ClientSyncBaseItemView> getMovableItems() {
-        ArrayList<ClientSyncBaseItemView> movables = new ArrayList<ClientSyncBaseItemView>();
-        for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
+    public Collection<ClientSyncItem> getMovableItems() {
+        ArrayList<ClientSyncItem> movables = new ArrayList<ClientSyncItem>();
+        for (ClientSyncItem clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncMovable()) {
                 movables.add(clientSyncItem);
             }
@@ -164,7 +166,7 @@ public class Group {
         return movables;
     }
 
-    public ClientSyncBaseItemView getFirst() {
+    public ClientSyncItem getFirst() {
         return clientSyncItems.iterator().next();
     }
 
@@ -172,12 +174,12 @@ public class Group {
         return clientSyncItems.size();
     }
 
-    public Map<ItemType, Collection<ClientSyncItemView>> getGroupedItems() {
-        HashMap<ItemType, Collection<ClientSyncItemView>> map = new HashMap<ItemType, Collection<ClientSyncItemView>>();
-        for (ClientSyncItemView clientSyncItem : clientSyncItems) {
-            Collection<ClientSyncItemView> collection = map.get(clientSyncItem.getSyncItem().getItemType());
+    public Map<ItemType, Collection<ClientSyncItem>> getGroupedItems() {
+        HashMap<ItemType, Collection<ClientSyncItem>> map = new HashMap<ItemType, Collection<ClientSyncItem>>();
+        for (ClientSyncItem clientSyncItem : clientSyncItems) {
+            Collection<ClientSyncItem> collection = map.get(clientSyncItem.getSyncItem().getItemType());
             if (collection == null) {
-                collection = new ArrayList<ClientSyncItemView>();
+                collection = new ArrayList<ClientSyncItem>();
                 map.put(clientSyncItem.getSyncItem().getItemType(), collection);
             }
             collection.add(clientSyncItem);
@@ -187,7 +189,7 @@ public class Group {
 
     public Collection<SurfaceType> getAllowedSurfaceTypes() {
         HashSet<SurfaceType> result = new HashSet<SurfaceType>();
-        for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
+        for (ClientSyncItem clientSyncItem : clientSyncItems) {
             result.addAll(clientSyncItem.getSyncBaseItem().getTerrainType().getSurfaceTypes());
         }
         return result;
@@ -195,7 +197,7 @@ public class Group {
 
 
     public boolean atLeastOneItemTypeAllowed2Attack(SyncBaseItem syncBaseItem) {
-        for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
+        for (ClientSyncItem clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncWaepon() && clientSyncItem.getSyncBaseItem().getSyncWaepon().isItemTypeAllowed(syncBaseItem)) {
                 return true;
             }

@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
-import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
@@ -21,6 +20,7 @@ import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainMouseMoveListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
+import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemContainer;
@@ -101,8 +101,12 @@ public class CursorHandler implements TerrainMouseMoveListener {
         for (SyncBaseItem syncBaseItem : SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems()) {
             if (syncBaseItem.hasSyncItemContainer()) {
                 SyncItemContainer syncItemContainer = syncBaseItem.getSyncItemContainer();
-                if (syncItemContainer.atLeastOneAllowedToUnload(position)) {
-                    return true;
+                try {
+                    if (syncItemContainer.atLeastOneAllowedToUnload(position)) {
+                        return true;
+                    }
+                } catch (ItemDoesNotExistException e) {
+                    GwtCommon.handleException(e);
                 }
             }
         }
@@ -114,17 +118,17 @@ public class CursorHandler implements TerrainMouseMoveListener {
             setCursor(clientSyncItemView, null, false);
             return;
         }
-        Index position = clientSyncItemView.getSyncItem().getPosition();
+        Index position = clientSyncItemView.getClientSyncItem().getSyncItem().getPosition();
         if (cursorState.isCanAttack() && cursorItemState.isAttackTarget()) {
             setCursor(clientSyncItemView, CursorType.ATTACK,
                     SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection()
                             && SelectionHandler.getInstance().atLeastOneAllowedOnTerritory4Selection(position)
-                            && SelectionHandler.getInstance().atLeastOneItemTypeAllowed2Attack4Selection(((ClientSyncBaseItemView) clientSyncItemView).getSyncBaseItem()));
+                            && SelectionHandler.getInstance().atLeastOneItemTypeAllowed2Attack4Selection((clientSyncItemView).getClientSyncItem().getSyncBaseItem()));
         } else if (cursorState.isCanCollect() && cursorItemState.isCollectTarget()) {
             setCursor(clientSyncItemView, CursorType.COLLECT, SelectionHandler.getInstance().atLeastOneAllowedOnTerritory4Selection(position));
         } else if (cursorState.isCanLoad() && cursorItemState.isLoadTarget() && isNotMyself(clientSyncItemView)) {
-            SyncItemContainer syncItemContainer = ((ClientSyncBaseItemView) clientSyncItemView).getSyncBaseItem().getSyncItemContainer();
-            boolean allowed = ClientTerritoryService.getInstance().isAllowed(position, ((ClientSyncBaseItemView) clientSyncItemView).getSyncBaseItem())
+            SyncItemContainer syncItemContainer = clientSyncItemView.getClientSyncItem().getSyncBaseItem().getSyncItemContainer();
+            boolean allowed = ClientTerritoryService.getInstance().isAllowed(position, clientSyncItemView.getClientSyncItem().getSyncBaseItem())
                     && syncItemContainer.isAbleToContainAtLeastOne(SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems())
                     && atLeastOneLoadPosReachable(SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems(), syncItemContainer);
             setCursor(clientSyncItemView, CursorType.LOAD, allowed);
@@ -132,7 +136,7 @@ public class CursorHandler implements TerrainMouseMoveListener {
     }
 
     private boolean isNotMyself(ClientSyncItemView clientSyncItemView) {
-        SyncBaseItem my = ((ClientSyncBaseItemView) clientSyncItemView).getSyncBaseItem();
+        SyncBaseItem my = clientSyncItemView.getClientSyncItem().getSyncBaseItem();
         for (SyncBaseItem syncBaseItem : SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems()) {
             if (syncBaseItem.equals(my)) {
                 return false;

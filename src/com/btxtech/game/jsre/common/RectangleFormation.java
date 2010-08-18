@@ -13,8 +13,7 @@
 
 package com.btxtech.game.jsre.common;
 
-import com.btxtech.game.jsre.client.ClientSyncItemView;
-import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
+import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.common.Index;
 import java.util.Collection;
 
@@ -34,11 +33,11 @@ public class RectangleFormation {
     private int linePartCount = 1;
     private int currentLinePartCount = 0;
 
-    public RectangleFormation(Index origin, Collection<ClientSyncBaseItemView> clientSyncItems) {
+    public RectangleFormation(Index origin, Collection<ClientSyncItem> clientSyncItems) {
         this.origin = origin;
-        ClientSyncItemView clientSyncItemView = clientSyncItems.iterator().next();
-        this.distanceX = clientSyncItemView.getSyncItem().getItemType().getWidth();
-        this.distanceY = clientSyncItemView.getSyncItem().getItemType().getHeight();
+        ClientSyncItem clientSyncItem = clientSyncItems.iterator().next();
+        this.distanceX = clientSyncItem.getSyncItem().getItemType().getWidth();
+        this.distanceY = clientSyncItem.getSyncItem().getItemType().getHeight();
     }
 
     public Index calculateNextEntry() {

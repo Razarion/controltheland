@@ -128,4 +128,20 @@ public abstract class SyncItem {
     public String toString() {
         return "SyncItem: " + id + " " + itemType + " pos: " + position;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SyncItem)) return false;
+
+        SyncItem syncItem = (SyncItem) o;
+
+        return id.equals(syncItem.id);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

@@ -14,7 +14,7 @@
 package com.btxtech.game.jsre.client.action;
 
 import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
+import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
@@ -123,12 +123,12 @@ public class ActionHandler implements CommonActionService {
         tmpRemoveActiveItems.add(baseSyncItem);
     }
 
-    public void move(Collection<ClientSyncBaseItemView> clientSyncItems, Index destination) {
+    public void move(Collection<ClientSyncItem> clientSyncItems, Index destination) {
         if (clientSyncItems.isEmpty()) {
             return;
         }
         RectangleFormation rectangleFormation = new RectangleFormation(destination, clientSyncItems);
-        for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
+        for (ClientSyncItem clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncMovable()) {
                 Index pos = null;
                 while (pos == null) {
@@ -166,8 +166,8 @@ public class ActionHandler implements CommonActionService {
         }
     }
 
-    public void buildFactory(Collection<ClientSyncBaseItemView> clientSyncItems, Index positionToBeBuild, BaseItemType toBeBuilt) {
-        for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
+    public void buildFactory(Collection<ClientSyncItem> clientSyncItems, Index positionToBeBuild, BaseItemType toBeBuilt) {
+        for (ClientSyncItem clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncBuilder()) {
                 if (ClientTerritoryService.getInstance().isAllowed(positionToBeBuild, clientSyncItem.getSyncBaseItem())
                         && ClientTerritoryService.getInstance().isAllowed(positionToBeBuild, toBeBuilt)) {
@@ -205,8 +205,8 @@ public class ActionHandler implements CommonActionService {
         }
     }
 
-    public void build(Collection<ClientSyncBaseItemView> clientSyncItems, BaseItemType itemTypeToBuild) {
-        for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
+    public void build(Collection<ClientSyncItem> clientSyncItems, BaseItemType itemTypeToBuild) {
+        for (ClientSyncItem clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncFactory()) {
                 if (ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getPosition(), clientSyncItem.getSyncBaseItem())
                         && ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getPosition(), itemTypeToBuild)) {
@@ -241,8 +241,8 @@ public class ActionHandler implements CommonActionService {
         }
     }
 
-    public void attack(Collection<ClientSyncBaseItemView> clientSyncItems, SyncBaseItem target) {
-        for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
+    public void attack(Collection<ClientSyncItem> clientSyncItems, SyncBaseItem target) {
+        for (ClientSyncItem clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncWaepon()) {
                 if (ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getPosition(), clientSyncItem.getSyncBaseItem())
                         && ClientTerritoryService.getInstance().isAllowed(target.getPosition(), clientSyncItem.getSyncBaseItem())
@@ -276,8 +276,8 @@ public class ActionHandler implements CommonActionService {
         }
     }
 
-    public void collect(Collection<ClientSyncBaseItemView> clientSyncItems, SyncResourceItem money) {
-        for (ClientSyncBaseItemView clientSyncItem : clientSyncItems) {
+    public void collect(Collection<ClientSyncItem> clientSyncItems, SyncResourceItem money) {
+        for (ClientSyncItem clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncHarvester()) {
                 if (ClientTerritoryService.getInstance().isAllowed(money.getPosition(), clientSyncItem.getSyncBaseItem())) {
                     collect(clientSyncItem.getSyncBaseItem(), money);
@@ -330,13 +330,13 @@ public class ActionHandler implements CommonActionService {
         }
     }
 
-    public void loadContainer(ClientSyncBaseItemView container, Collection<ClientSyncBaseItemView> items) {
+    public void loadContainer(ClientSyncItem container, Collection<ClientSyncItem> items) {
         if (!container.getSyncBaseItem().hasSyncItemContainer()) {
             GwtCommon.sendLogToServer("ActionHandler.loadContainer(): can not cast to ItemContainer:" + container);
             return;
         }
 
-        for (ClientSyncBaseItemView item : items) {
+        for (ClientSyncItem item : items) {
             if (item.getSyncBaseItem().hasSyncMovable()) {
                 if (ClientTerritoryService.getInstance().isAllowed(container.getSyncBaseItem().getPosition(), container.getSyncBaseItem())
                         && container.getSyncBaseItem().getSyncItemContainer().isAbleToContain(item.getSyncBaseItem())
