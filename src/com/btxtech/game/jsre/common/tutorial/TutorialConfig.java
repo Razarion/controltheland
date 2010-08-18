@@ -30,6 +30,8 @@ public class TutorialConfig implements Serializable {
     }
     private List<TaskConfig> taskConfigs;
     private SimpleBase ownBase;
+    private int width;
+    private int height;
 
     /**
      * Used by GWT
@@ -37,9 +39,11 @@ public class TutorialConfig implements Serializable {
     public TutorialConfig() {
     }
 
-    public TutorialConfig(List<TaskConfig> taskConfigs, SimpleBase ownBase) {
+    public TutorialConfig(List<TaskConfig> taskConfigs, SimpleBase ownBase, int width, int height) {
         this.taskConfigs = taskConfigs;
         this.ownBase = ownBase;
+        this.width = width;
+        this.height = height;
     }
 
     public List<TaskConfig> getTasks() {
@@ -48,5 +52,13 @@ public class TutorialConfig implements Serializable {
 
     public SimpleBase getOwnBase() {
         return ownBase;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

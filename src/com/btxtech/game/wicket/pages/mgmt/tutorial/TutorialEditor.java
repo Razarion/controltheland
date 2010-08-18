@@ -44,6 +44,8 @@ public class TutorialEditor extends WebPage {
 
         form.add(new TextField<String>("ownBase.name"));
         form.add(new TextField<String>("ownBase.htmlColor"));
+        form.add(new TextField<String>("width"));
+        form.add(new TextField<String>("height"));
 
         new CrudTableHelper<DbTaskConfig>("taskTable", null, "createTask", true, form) {
 
