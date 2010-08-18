@@ -98,6 +98,11 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild {
     private DbTutorialConfig dbTutorialConfig;
     private String finishedText;
     private int finishedTestDuration;
+    @Column(name = "imageContentType")
+    private String contentType;
+    @Column(name = "imageData", length = 500000)
+    private byte[] data;
+
     @Transient
     private CrudServiceHelper<DbItemTypeAndPosition> itemTypeAndPositionCrudHelper;
     @Transient
@@ -229,6 +234,14 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild {
         this.finishedTestDuration = finishedTestDuration;
     }
 
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
@@ -254,6 +267,10 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild {
         if (dbResourceHintConfig.getData() != null) {
             resourceHintConfig = dbResourceHintConfig.createResourceHintConfig(resourceHintManager);
         }
+        Integer imageId = null;
+        if (contentType != null && data != null) {
+            imageId = resourceHintManager.addResource(DbResourceHintConfig.createImageOnly(contentType, data));
+        }
         return new TaskConfig(clearGame,
                 itemTypeAndPositions,
                 isScrollingAllowed,
@@ -268,7 +285,8 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild {
                 description,
                 finishedText,
                 finishedTestDuration * 1000,
-                name);
+                name,
+                imageId);
     }
 
     public CrudServiceHelper<DbItemTypeAndPosition> getItemCrudServiceHelper() {

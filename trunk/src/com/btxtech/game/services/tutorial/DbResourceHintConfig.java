@@ -39,6 +39,13 @@ public class DbResourceHintConfig implements Serializable {
     @Column(name = "hintData", length = 500000)
     private byte[] data;
 
+    public static DbResourceHintConfig createImageOnly(String contentType, byte[] data) {
+        DbResourceHintConfig dbResourceHintConfig = new DbResourceHintConfig();
+        dbResourceHintConfig.setData(data);
+        dbResourceHintConfig.setContentType(contentType);
+        return dbResourceHintConfig;
+    }
+
     public Index getPosition() {
         return position;
     }
@@ -64,7 +71,7 @@ public class DbResourceHintConfig implements Serializable {
     }
 
     public ResourceHintConfig createResourceHintConfig(ResourceHintManager resourceHintManager) {
-        if(data == null || data.length == 0 || contentType == null) {
+        if (data == null || data.length == 0 || contentType == null) {
             return null;
         }
         int id = resourceHintManager.addResource(this);

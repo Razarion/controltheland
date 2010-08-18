@@ -43,6 +43,7 @@ public class Task {
         this.taskConfig = taskConfig;
         this.tutorialGui = tutorialGui;
         tutorialGui.setTaskText(taskConfig.getDescription());
+        tutorialGui.setImage(taskConfig.getImageId());
         start();
     }
 

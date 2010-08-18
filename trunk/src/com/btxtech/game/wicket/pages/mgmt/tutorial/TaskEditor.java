@@ -35,6 +35,8 @@ import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.form.upload.FileUpload;
+import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -89,6 +91,24 @@ public class TaskEditor extends WebPage {
         }));
         form.add(new TextField("accountBalance"));
         form.add(new TextArea("description"));
+        form.add(new FileUploadField("upload", new IModel<FileUpload>() {
+
+            @Override
+            public FileUpload getObject() {
+                return null;
+            }
+
+            @Override
+            public void setObject(FileUpload fileUpload) {
+                dbTaskConfig.setData(fileUpload.getBytes());
+                dbTaskConfig.setContentType(fileUpload.getContentType());
+            }
+
+            @Override
+            public void detach() {
+            }
+        }));
+
         form.add(new TextArea("finishedText"));
         form.add(new TextField("finishedTestDuration"));
 
