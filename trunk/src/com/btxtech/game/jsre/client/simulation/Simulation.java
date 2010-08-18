@@ -74,6 +74,8 @@ public class Simulation implements SelectionListener {
             tutorialGui = new TutorialGui();
             ClientBase.getInstance().setBase(tutorialConfig.getOwnBase());
             tutorialTime = System.currentTimeMillis();
+            MapWindow.getAbsolutePanel().getElement().getStyle().setProperty("minWidth", tutorialConfig.getWidth() + "px");
+            MapWindow.getAbsolutePanel().getElement().getStyle().setProperty("minHeight", tutorialConfig.getHeight() + "px");
             ClientUserTracker.getInstance().startEventTracking();
             runNextTask(activeTask);
         }

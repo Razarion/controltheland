@@ -59,6 +59,8 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
     private List<DbTaskConfig> dbTaskConfigs;
     @Transient
     private CrudServiceHelper<DbTaskConfig> crudServiceHelper;
+    private int width;
+    private int height;
 
     @Override
     public String getName() {
@@ -78,12 +80,20 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
         this.ownBase = ownBase;
     }
 
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
     public TutorialConfig createTutorialConfig(ResourceHintManager resourceHintManager) {
         ArrayList<TaskConfig> taskConfigs = new ArrayList<TaskConfig>();
         for (DbTaskConfig dbTaskConfig : dbTaskConfigs) {
             taskConfigs.add(dbTaskConfig.createTaskConfig(resourceHintManager));
         }
-        return new TutorialConfig(taskConfigs, ownBase);
+        return new TutorialConfig(taskConfigs, ownBase, width, height);
     }
 
     public void init() {
