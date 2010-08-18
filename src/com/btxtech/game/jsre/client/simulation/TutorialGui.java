@@ -13,10 +13,10 @@
 
 package com.btxtech.game.jsre.client.simulation;
 
+import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * User: beat
@@ -27,6 +27,7 @@ public class TutorialGui {
     private HTML html;
     private String taskText;
     private String stepText;
+    private AbsolutePanel image;
 
     public TutorialGui() {
         AbsolutePanel absolutePanel = new AbsolutePanel();
@@ -37,8 +38,11 @@ public class TutorialGui {
         absolutePanel.getElement().getStyle().setProperty("position", "absolute");
         absolutePanel.getElement().getStyle().setProperty("background", "url(images/tutorial.jpg) no-repeat");
 
+        image = new AbsolutePanel();
+        absolutePanel.add(image, 60, 130);
+        image.setPixelSize(250, 200);
         html = new HTML();
-        absolutePanel.add(html, 60, 150);
+        absolutePanel.add(html, 60, 310);
         html.setPixelSize(250, 220);
     }
 
@@ -58,15 +62,22 @@ public class TutorialGui {
         setupHtmlText();
     }
 
+    public void setImage(Integer imageId) {
+        image.clear();
+        if (imageId != null) {
+            image.add(ImageHandler.getTutorialImage(imageId));
+        }
+    }
+
     private void setupHtmlText() {
         StringBuilder builder = new StringBuilder();
         builder.append("<br>");
         builder.append("<font size='+1'>");
         builder.append(taskText);
         builder.append("</font>");
-        if(stepText != null) {
+        if (stepText != null) {
             builder.append("<br>");
-            builder.append("<br>");            
+            builder.append("<br>");
             builder.append(stepText);
         }
         html.setHTML(builder.toString());
