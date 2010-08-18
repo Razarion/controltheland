@@ -136,6 +136,7 @@ public class TaskEditor extends WebPage {
                 dbTaskConfigItem.add(new TextField("syncItemId"));
                 dbTaskConfigItem.add(new TextField("position.x"));
                 dbTaskConfigItem.add(new TextField("position.y"));
+                dbTaskConfigItem.add(new TextField("angel"));
                 dbTaskConfigItem.add(new TextField<String>("base.name", new IModel<String>() {
 
                     @Override

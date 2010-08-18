@@ -56,6 +56,7 @@ public class DbItemTypeAndPosition implements Serializable, CrudChild {
     private Index position;
     @ManyToOne(optional = false)
     private DbTaskConfig dbTaskConfig;
+    private Integer angel;
 
     public SimpleBase getBase() {
         return base;
@@ -125,10 +126,22 @@ public class DbItemTypeAndPosition implements Serializable, CrudChild {
         dbTaskConfig = (DbTaskConfig) crudParent;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public ItemTypeAndPosition createItemTypeAndPosition() {
         if (itemType == null || position == null) {
             return null;
         }
-        return new ItemTypeAndPosition(base, syncItemId, itemType.getId(), position);
+        double radiant = 0;
+        if (angel != null) {
+            radiant = (double) angel / 180.0 * Math.PI;
+        }
+        return new ItemTypeAndPosition(base, syncItemId, itemType.getId(), position, radiant);
     }
 }
