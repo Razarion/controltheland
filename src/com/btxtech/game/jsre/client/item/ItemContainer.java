@@ -41,6 +41,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
@@ -179,7 +180,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
     }
 
     public ClientSyncItemView getSimulationItem(int intId) {
-        for (Map.Entry<Id, ClientSyncItemView> entry: items.entrySet()) {
+        for (Map.Entry<Id, ClientSyncItemView> entry : items.entrySet()) {
             if (entry.getKey().getId() == intId) {
                 return entry.getValue();
             }
@@ -195,8 +196,13 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         ClientSyncItemView itemView = createAndAddItem(id, itemTypeAndPosition.getPosition(), itemTypeAndPosition.getItemTypeId(), itemTypeAndPosition.getBase());
         id.setUserTimeStamp(System.currentTimeMillis());
         if (itemView.getSyncItem() instanceof SyncBaseItem) {
-            ((SyncBaseItem) itemView.getSyncItem()).setBuild(true);
-            ((SyncBaseItem) itemView.getSyncItem()).setFullHealth();
+            SyncBaseItem syncBaseItem = (SyncBaseItem) itemView.getSyncItem();
+            syncBaseItem.setBuild(true);
+            syncBaseItem.setFullHealth();
+            if (syncBaseItem.hasSyncTurnable()) {
+                syncBaseItem.getSyncTurnable().setAngel(itemTypeAndPosition.getAngel());
+                syncBaseItem.fireItemChanged(SyncItemListener.Change.ANGEL);
+            }
         }
         return itemView.getSyncItem();
     }

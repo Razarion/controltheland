@@ -27,6 +27,7 @@ public class ItemTypeAndPosition implements Serializable {
     private int id;
     private int itemTypeId;
     private Index position;
+    private double angel;
 
     /**
      * Used by GWT
@@ -34,11 +35,12 @@ public class ItemTypeAndPosition implements Serializable {
     public ItemTypeAndPosition() {
     }
 
-    public ItemTypeAndPosition(SimpleBase base, int id, int itemTypeId, Index position) {
+    public ItemTypeAndPosition(SimpleBase base, int id, int itemTypeId, Index position, double angel) {
         this.base = base;
         this.id = id;
         this.itemTypeId = itemTypeId;
         this.position = position;
+        this.angel = angel;
     }
 
     public int getItemTypeId() {
@@ -55,5 +57,9 @@ public class ItemTypeAndPosition implements Serializable {
 
     public int getId() {
         return id;
+    }
+
+    public double getAngel() {
+        return angel;
     }
 }
