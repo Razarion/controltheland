@@ -604,10 +604,16 @@ public class SyncBaseItem extends SyncItem {
 
     @Override
     public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(super.toString());
         if (hasSyncHarvester()) {
-            return super.toString() + " target: " + getSyncHarvester().getTarget();
-        } else {
-            return super.toString();
+            builder.append(" target: ");
+            builder.append(getSyncHarvester().getTarget());
         }
+        if (containedIn != null) {
+            builder.append(" containedIn: ");
+            builder.append(containedIn);
+        }
+        return builder.toString();
     }
 }

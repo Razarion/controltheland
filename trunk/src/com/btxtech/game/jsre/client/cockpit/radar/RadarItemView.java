@@ -13,9 +13,7 @@
 
 package com.btxtech.game.jsre.client.cockpit.radar;
 
-import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
-import com.btxtech.game.jsre.client.ClientSyncItemView;
-import com.btxtech.game.jsre.client.ClientSyncResourceItemView;
+import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
@@ -52,17 +50,16 @@ public class RadarItemView extends MiniMap {
 
     private void refreshItems() {
         clear(getTerrainSettings().getPlayFieldXSize(), getTerrainSettings().getPlayFieldYSize());
-        for (ClientSyncItemView syncItemView : ItemContainer.getInstance().getItems()) {
-            if (syncItemView instanceof ClientSyncBaseItemView) {
-                ClientSyncBaseItemView baseItemView = (ClientSyncBaseItemView) syncItemView;
-                Index pos = baseItemView.getSyncBaseItem().getPosition();
+        for (ClientSyncItem clientSyncItem : ItemContainer.getInstance().getItems()) {
+            if (clientSyncItem.isSyncBaseItem()) {
+                Index pos = clientSyncItem.getSyncItem().getPosition();
                 if (pos == null) {
                     continue;
                 }
-                setStrokeStyle(new Color(baseItemView.getSyncBaseItem().getBase().getHtmlColor()));
+                setStrokeStyle(new Color(clientSyncItem.getSyncBaseItem().getBase().getHtmlColor()));
                 strokeRect(pos.getX(), pos.getY(), BASE_ITEM_SIZE, BASE_ITEM_SIZE);
-            } else if (syncItemView instanceof ClientSyncResourceItemView) {
-                Index pos = syncItemView.getSyncItem().getPosition();
+            } else if (clientSyncItem.isSyncResourceItem()) {
+                Index pos = clientSyncItem.getSyncItem().getPosition();
                 setStrokeStyle(Color.WHITE);
                 strokeRect(pos.getX(), pos.getY(), RESOURCE_ITEM_SIZE, RESOURCE_ITEM_SIZE);
             }

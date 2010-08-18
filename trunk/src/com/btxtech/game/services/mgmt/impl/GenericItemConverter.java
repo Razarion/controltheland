@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -113,9 +114,15 @@ public class GenericItemConverter {
         }
 
         // post process
-        for (GenericItem genericItem : genericItems) {
-            if (genericItem instanceof GenericBaseItem) {
-                postProcessRestore((GenericBaseItem) genericItem);
+        for (Iterator<GenericItem> iterator = genericItems.iterator(); iterator.hasNext();) {
+            GenericItem genericItem = iterator.next();
+            try {
+                if (genericItem instanceof GenericBaseItem) {
+                    postProcessRestore((GenericBaseItem) genericItem);
+                }
+            } catch (Throwable t) {
+                log.error("Error post process restore GenericItem: " + genericItem.getItemId(), t);
+                iterator.remove();
             }
         }
 
@@ -184,7 +191,7 @@ public class GenericItemConverter {
             if (item.getSyncFactory().getToBeBuiltType() != null) {
                 genericItem.setToBeBuilt((DbBaseItemType) dbItemTypeCache.get(item.getSyncFactory().getToBeBuiltType().getId()));
             }
-            genericItem.setBuildupProgress((int)item.getSyncFactory().getBuildupProgress());
+            genericItem.setBuildupProgress((int) item.getSyncFactory().getBuildupProgress());
             genericItem.setCreatedChildCount(item.getSyncFactory().getCreatedChildCount());
             genericItem.setRallyPoint(item.getSyncFactory().getRallyPoint());
         }
@@ -214,18 +221,26 @@ public class GenericItemConverter {
         GenericBaseItem genericBaseItem = (GenericBaseItem) genericItem;
         SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
         if (syncBaseItem.getContainedIn() != null) {
-            genericBaseItem.setContainedIn((GenericBaseItem) genericItems.get(syncBaseItem.getContainedIn()));
+            GenericBaseItem container = (GenericBaseItem) genericItems.get(syncBaseItem.getContainedIn());
+            if (container == null) {
+                log.error("BACKUP: No container found for: " + syncBaseItem + " container: " + syncBaseItem.getContainedIn());
+            }
+            genericBaseItem.setContainedIn(container);
         }
         if (syncBaseItem.hasSyncMovable()) {
             if (syncBaseItem.getSyncMovable().getTargetContainer() != null) {
-                genericBaseItem.setTargetContainer((GenericBaseItem) genericItems.get(syncBaseItem.getSyncMovable().getTargetContainer()));
+                GenericBaseItem container = (GenericBaseItem) genericItems.get(syncBaseItem.getSyncMovable().getTargetContainer());
+                if (container == null) {
+                    log.error("BACKUP: No  target container found for: " + syncBaseItem + " taget container: " + syncBaseItem.getSyncMovable().getTargetContainer());
+                }
+                genericBaseItem.setTargetContainer(container);
             }
         }
         if (syncBaseItem.hasSyncHarvester()) {
             if (syncBaseItem.getSyncHarvester().getTarget() != null) {
                 GenericResourceItem target = (GenericResourceItem) genericItems.get(syncBaseItem.getSyncHarvester().getTarget());
                 if (target == null) {
-                    log.info("BACKUP: No generic syncResourceItem for: " + syncBaseItem.getSyncHarvester().getTarget());
+                    log.error("BACKUP: No generic syncResourceItem for: " + syncBaseItem.getSyncHarvester().getTarget());
                 }
                 genericBaseItem.setResourceTarget(target);
             }
@@ -235,7 +250,7 @@ public class GenericItemConverter {
             if (syncBaseItem.getSyncWaepon().getTarget() != null) {
                 GenericBaseItem target = (GenericBaseItem) genericItems.get(syncBaseItem.getSyncWaepon().getTarget());
                 if (target == null) {
-                    log.info("BACKUP: No generic syncBaseItem for: " + syncBaseItem.getSyncWaepon().getTarget());
+                    log.error("BACKUP: No generic syncBaseItem for: " + syncBaseItem.getSyncWaepon().getTarget());
                 }
                 genericBaseItem.setBaseTarget(target);
             }
@@ -244,7 +259,7 @@ public class GenericItemConverter {
             if (syncBaseItem.getSyncBuilder().getCurrentBuildup() != null) {
                 GenericBaseItem target = (GenericBaseItem) genericItems.get(syncBaseItem.getSyncBuilder().getCurrentBuildup().getId());
                 if (target == null) {
-                    log.info("BACKUP: No generic syncBaseItem for: " + syncBaseItem.getSyncBuilder().getCurrentBuildup());
+                    log.error("BACKUP: No generic syncBaseItem for: " + syncBaseItem.getSyncBuilder().getCurrentBuildup());
                 }
                 genericBaseItem.setBaseTarget(target);
             }
@@ -335,7 +350,7 @@ public class GenericItemConverter {
             if (genericItem.getBaseTarget() != null) {
                 SyncItem target = syncItems.get(genericItem.getBaseTarget().getItemId());
                 if (target == null) {
-                    throw new IllegalStateException("Waepon, no sync item for: " + genericItem.getBaseTarget());
+                    throw new IllegalStateException("Weapon, no sync item for: " + genericItem.getBaseTarget());
                 }
             }
         }
@@ -352,12 +367,21 @@ public class GenericItemConverter {
 
         if (syncItem.hasSyncItemContainer()) {
             if (genericItem.getContainedItems() != null && !genericItem.getContainedItems().isEmpty()) {
-                ArrayList<SyncBaseItem> containedItems = new ArrayList<SyncBaseItem>();
+                ArrayList<Id> containedItems = new ArrayList<Id>();
                 for (GenericBaseItem genericBaseItem : genericItem.getContainedItems()) {
-                    containedItems.add((SyncBaseItem) syncItems.get(genericBaseItem.getItemId()));
+                    SyncBaseItem child = (SyncBaseItem) syncItems.get(genericBaseItem.getItemId());
+                    if (child != null) {
+                        containedItems.add(child.getId());
+                    } else {
+                        log.error("Can not add BaseSyncItem " + genericBaseItem.getItemId() + " to container " + syncItem);
+                    }
                 }
                 syncItem.getSyncItemContainer().setContainedItems(containedItems);
             }
+        }
+
+        if (syncItem.getPosition() == null && !syncItem.isContainedIn()) {
+            throw new IllegalStateException("SyncBaseItem has no position but is not contained in: " + syncItem);
         }
 
     }

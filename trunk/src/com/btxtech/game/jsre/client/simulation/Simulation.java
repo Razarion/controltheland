@@ -14,7 +14,7 @@
 package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.ClientSyncItemView;
+import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.InfoPanel;
@@ -168,7 +168,7 @@ public class Simulation implements SelectionListener {
     }
 
     @Override
-    public void onTargetSelectionChanged(ClientSyncItemView selection) {
+    public void onTargetSelectionChanged(ClientSyncItem selection) {
         // Ignore
     }
 

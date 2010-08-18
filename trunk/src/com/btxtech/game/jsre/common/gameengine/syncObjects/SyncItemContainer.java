@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class SyncItemContainer extends SyncBaseAbility {
     private ItemContainerType itemContainerType;
-    private List<SyncBaseItem> containedItems = new ArrayList<SyncBaseItem>();
+    private List<Id> containedItems = new ArrayList<Id>();
     private Index unloadPos;
 
     public SyncItemContainer(ItemContainerType itemContainerType, SyncBaseItem syncBaseItem) {
@@ -43,27 +43,19 @@ public class SyncItemContainer extends SyncBaseAbility {
     @Override
     public void synchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException, ItemDoesNotExistException {
         unloadPos = syncItemInfo.getUnloadPos();
-        if (syncItemInfo.getContainedItems() != null) {
-            containedItems = getServices().getItemService().getBaseItems(syncItemInfo.getContainedItems());
-        } else {
-            containedItems.clear();
-        }
+        containedItems = syncItemInfo.getContainedItems();
     }
 
     @Override
     public void fillSyncItemInfo(SyncItemInfo syncItemInfo) {
         syncItemInfo.setUnloadPos(unloadPos);
-        if (containedItems.isEmpty()) {
-            syncItemInfo.setContainedItems(null);
-        } else {
-            syncItemInfo.setContainedItems(getServices().getItemService().getBaseItemIds(containedItems));
-        }
+        syncItemInfo.setContainedItems(containedItems);
     }
 
     public void load(SyncBaseItem syncBaseItem) {
         isAbleToContainThrow(syncBaseItem);
 
-        containedItems.add(syncBaseItem);
+        containedItems.add(syncBaseItem.getId());
         syncBaseItem.setContained(getSyncBaseItem().getId());
         getSyncBaseItem().fireItemChanged(SyncItemListener.Change.CONTAINER_COUNT_CHANGED);
     }
@@ -107,7 +99,7 @@ public class SyncItemContainer extends SyncBaseAbility {
         unloadPos = unloadContainerCommand.getUnloadPos();
     }
 
-    public boolean tick(double factor) {
+    public boolean tick(double factor) throws ItemDoesNotExistException {
         if (!getSyncBaseItem().isAlive()) {
             return false;
         }
@@ -133,13 +125,14 @@ public class SyncItemContainer extends SyncBaseAbility {
 
     }
 
-    private void unload() {
+    private void unload() throws ItemDoesNotExistException {
         SurfaceType surfaceType = getServices().getTerrainService().getSurfaceTypeAbsolute(unloadPos);
-        for (Iterator<SyncBaseItem> iterator = containedItems.iterator(); iterator.hasNext();) {
-            SyncBaseItem containedItem = iterator.next();
+        for (Iterator<Id> iterator = containedItems.iterator(); iterator.hasNext();) {
+            Id containedItem = iterator.next();
             if (allowedUnload(surfaceType, containedItem)) {
-                containedItem.clearContained(unloadPos);
-                getServices().getConnectionService().sendSyncInfo(containedItem);
+                SyncBaseItem syncItem = (SyncBaseItem) getServices().getItemService().getItem(containedItem);
+                syncItem.clearContained(unloadPos);
+                getServices().getConnectionService().sendSyncInfo(syncItem);
                 iterator.remove();
             }
         }
@@ -173,11 +166,11 @@ public class SyncItemContainer extends SyncBaseAbility {
         return itemContainerType;
     }
 
-    public List<SyncBaseItem> getContainedItems() {
+    public List<Id> getContainedItems() {
         return containedItems;
     }
 
-    public void setContainedItems(List<SyncBaseItem> containedItems) {
+    public void setContainedItems(List<Id> containedItems) {
         this.containedItems = containedItems;
     }
 
@@ -190,9 +183,9 @@ public class SyncItemContainer extends SyncBaseAbility {
         return false;
     }
 
-    public boolean atLeastOneAllowedToUnload(Index position) {
+    public boolean atLeastOneAllowedToUnload(Index position) throws ItemDoesNotExistException {
         SurfaceType surfaceType = getServices().getTerrainService().getSurfaceTypeAbsolute(position);
-        for (SyncBaseItem containedItem : containedItems) {
+        for (Id containedItem : containedItems) {
             if (allowedUnload(surfaceType, containedItem)) {
                 return true;
             }
@@ -200,8 +193,8 @@ public class SyncItemContainer extends SyncBaseAbility {
         return false;
     }
 
-    private boolean allowedUnload(SurfaceType surfaceType, SyncBaseItem containedItem) {
-        return containedItem.getTerrainType().allowSurfaceType(surfaceType);
+    private boolean allowedUnload(SurfaceType surfaceType, Id containedItem) throws ItemDoesNotExistException {
+        return getServices().getItemService().getItem(containedItem).getTerrainType().allowSurfaceType(surfaceType);
     }
 
     public boolean isUnloadPosReachable(Index position) {

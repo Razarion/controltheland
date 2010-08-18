@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
 import com.btxtech.game.jsre.client.simulation.Simulation;
+import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.utg.MissionTarget;
 import com.google.gwt.dom.client.ButtonElement;
 import com.google.gwt.dom.client.Element;
@@ -199,6 +200,7 @@ public class StartupProbe {
         }
         RegisterDialog.showDialogRepeating();
         Simulation.getInstance().start();
+        MapWindow.getInstance().displayVisibleItems();
     }
 
     private void enableCloseButton() {

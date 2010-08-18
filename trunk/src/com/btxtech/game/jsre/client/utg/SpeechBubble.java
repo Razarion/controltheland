@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.utg;
 
+import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.ExtendedCanvas;
 import com.btxtech.game.jsre.client.GwtCommon;
@@ -52,8 +53,9 @@ public class SpeechBubble extends AbsolutePanel {
         RIGHT
     }
 
-    public SpeechBubble(ClientSyncItemView item, String html, boolean preventScroll) {
-        this.preventScroll = preventScroll;
+    public SpeechBubble(ClientSyncItem item, String html, boolean preventScroll) {
+        // TODO
+    /*    this.preventScroll = preventScroll;
         Index htmlSize = getHtmlSize(html);
         Direction direction = getBeakDirection(item.getRelativeMiddleX(), item.getRelativeMiddleY(), htmlSize.getX(), htmlSize.getY());
         int deltaX = (int) (item.getSyncItem().getItemType().getWidth() / 2 * 0.8);
@@ -72,7 +74,7 @@ public class SpeechBubble extends AbsolutePanel {
             case TOP:
                 setup(item.getRelativeMiddleX(), item.getRelativeMiddleY() + deltaY, html, htmlSize.getX(), htmlSize.getY(), direction);
                 break;
-        }
+        }*/
     }
 
     public SpeechBubble(int beakRelX, int beakRelY, String html, boolean preventScroll) {

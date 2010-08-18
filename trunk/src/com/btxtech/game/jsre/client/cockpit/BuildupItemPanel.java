@@ -14,7 +14,7 @@
 package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.ClientServices;
-import com.btxtech.game.jsre.client.ClientSyncItemView;
+import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.action.ActionHandler;
@@ -59,7 +59,7 @@ public class BuildupItemPanel extends HorizontalPanel implements SelectionListen
     }
 
     @Override
-    public void onTargetSelectionChanged(ClientSyncItemView selection) {
+    public void onTargetSelectionChanged(ClientSyncItem selection) {
         description.clear();
         itemsToBuild.clear();
     }

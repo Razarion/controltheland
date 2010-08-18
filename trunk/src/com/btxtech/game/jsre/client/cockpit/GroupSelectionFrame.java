@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
-import com.btxtech.game.jsre.client.ClientSyncBaseItemView;
+import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -115,12 +115,12 @@ public class GroupSelectionFrame extends AbsolutePanel implements MouseMoveHandl
             unsuccessfulSelection(mouseEvent);
             return;
         }
-        Collection<ClientSyncBaseItemView> selectedItems = ItemContainer.getInstance().getItemsInRect(selection, true);
+        Collection<ClientSyncItem> selectedItems = ItemContainer.getInstance().getItemsInRect(selection, true);
         if (selectedItems.isEmpty()) {
             return;
         }
         Group group = new Group();
-        for (ClientSyncBaseItemView selectedItem : selectedItems) {
+        for (ClientSyncItem selectedItem : selectedItems) {
             group.addItem(selectedItem);
         }
         SelectionHandler.getInstance().setItemGroupSelected(group);
