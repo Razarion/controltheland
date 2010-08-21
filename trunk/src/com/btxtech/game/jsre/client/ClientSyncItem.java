@@ -50,18 +50,14 @@ public class ClientSyncItem implements SyncItemListener {
         if (isSyncBaseItem()) {
             isContainedIn = getSyncBaseItem().isContainedIn();
         }
-        try {
-            boolean tmpIsVisible = !isHidden && !isContainedIn && TerrainView.getInstance().isItemVisible(syncItem);
-            if (tmpIsVisible != isVisible) {
-                if (tmpIsVisible) {
-                    ItemViewContainer.getInstance().onSyncItemVisible(this);
-                } else {
-                    ItemViewContainer.getInstance().onSyncItemInvisible(this);
-                }
-                isVisible = tmpIsVisible;
+        boolean tmpIsVisible = !isHidden && !isContainedIn && TerrainView.getInstance().isItemVisible(syncItem);
+        if (tmpIsVisible != isVisible) {
+            if (tmpIsVisible) {
+                ItemViewContainer.getInstance().onSyncItemVisible(this);
+            } else {
+                ItemViewContainer.getInstance().onSyncItemInvisible(this);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            isVisible = tmpIsVisible;
         }
     }
 

@@ -23,6 +23,8 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.ui.Widget;
 import java.util.ArrayList;
@@ -361,8 +363,8 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
         int RADIUS_STEPS = 10;
         for (int radius = maxRadius; radius > 0; radius -= maxRadius / RADIUS_STEPS) {
             for (double angel = 0; angel < (2 * Math.PI); angel += 2 * Math.PI / CIRCLE_PARTS) {
-                 Index newDestination = absoluteDestination.getPointFromAngelToNord(angel, radius);
-                if(isFree(new Index(newDestination.getX(), newDestination.getY()),0,0, allowedTerrainType.getSurfaceTypes())) {
+                Index newDestination = absoluteDestination.getPointFromAngelToNord(angel, radius);
+                if (isFree(new Index(newDestination.getX(), newDestination.getY()), 0, 0, allowedTerrainType.getSurfaceTypes())) {
                     return newDestination;
                 }
             }
@@ -453,5 +455,24 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
         return new Rectangle(widget.getAbsoluteLeft(), widget.getAbsoluteTop(), widget.getOffsetWidth(), widget.getOffsetHeight());
     }
 
+    public Index correctPosition(SyncItem syncItem, Index position) {
+        int x;
+        if (position.getX() - syncItem.getItemType().getWidth() / 2 < 0) {
+            x = syncItem.getItemType().getWidth() / 2;
+        } else if (position.getX() + syncItem.getItemType().getWidth() / 2 > terrainSettings.getPlayFieldXSize()) {
+            x = terrainSettings.getPlayFieldXSize() - syncItem.getItemType().getWidth() / 2;
+        } else {
+            x = position.getX();
+        }
+        int y;
+        if (position.getY() - syncItem.getItemType().getHeight() / 2 < 0) {
+            y = syncItem.getItemType().getHeight() / 2;
+        } else if (position.getY() + syncItem.getItemType().getHeight() / 2 > terrainSettings.getPlayFieldYSize()) {
+            y = terrainSettings.getPlayFieldYSize() - syncItem.getItemType().getHeight() / 2;
+        } else {
+            y = position.getY();
+        }
+        return new Index(x, y);
+    }
 
 }
