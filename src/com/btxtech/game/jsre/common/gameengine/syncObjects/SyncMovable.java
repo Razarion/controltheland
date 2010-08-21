@@ -167,7 +167,8 @@ public class SyncMovable extends SyncBaseAbility {
         if (getSyncBaseItem().getPosition().equals(moveCommand.getDestination())) {
             return;
         }
-        pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getPosition(), moveCommand.getDestination(), getSyncBaseItem().getTerrainType());
+        Index destination = getServices().getTerrainService().correctPosition(getSyncBaseItem(), moveCommand.getDestination());
+        pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getPosition(), destination, getSyncBaseItem().getTerrainType());
     }
 
     public void executeCommand(LoadContainCommand loadContainCommand) {

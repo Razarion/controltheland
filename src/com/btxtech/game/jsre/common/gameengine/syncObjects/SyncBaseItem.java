@@ -146,7 +146,6 @@ public class SyncBaseItem extends SyncItem {
     @Override
     public void synchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException, ItemDoesNotExistException {
         checkBase(syncItemInfo.getBase());
-        super.synchronize(syncItemInfo);
         isUpgrading = syncItemInfo.isUpgrading();
         if (isUpgrading) {
             upgradingItemType = (BaseItemType) getServices().getItemService().getItemType(getBaseItemType().getUpgradeable());
@@ -194,6 +193,7 @@ public class SyncBaseItem extends SyncItem {
         if (syncItemContainer != null) {
             syncItemContainer.synchronize(syncItemInfo);
         }
+        super.synchronize(syncItemInfo);
     }
 
     @Override
@@ -614,6 +614,8 @@ public class SyncBaseItem extends SyncItem {
             builder.append(" containedIn: ");
             builder.append(containedIn);
         }
+        builder.append(" ");
+        builder.append(base);
         return builder.toString();
     }
 }

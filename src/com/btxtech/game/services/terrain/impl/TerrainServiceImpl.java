@@ -230,10 +230,10 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     }
 
     @Override
-    public List<Index> setupPathToDestination(Index absolutePosition, Index absoluteDestination, int maxRadius, TerrainType terrainType) {
-        if (absolutePosition.isInRadius(absoluteDestination, maxRadius)) {
+    public List<Index> setupPathToDestination(Index start, Index absoluteDestination, int maxRadius, TerrainType terrainType) {
+        if (start.isInRadius(absoluteDestination, maxRadius)) {
             ArrayList<Index> singleIndex = new ArrayList<Index>();
-            singleIndex.add(absolutePosition);
+            singleIndex.add(start);
             return singleIndex;
         }
 
@@ -241,14 +241,14 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         if (!terrainType.allowSurfaceType(destSurfaceType)) {
             // Destination is has a different surface type
             absoluteDestination = getNearestPoint(terrainType, absoluteDestination, maxRadius);
-            return setupPathToDestination(absolutePosition, absoluteDestination, terrainType);
+            return setupPathToDestination(start, absoluteDestination, terrainType);
         } else {
-            List<Index> path = setupPathToDestination(absolutePosition, absoluteDestination, terrainType);
+            List<Index> path = setupPathToDestination(start, absoluteDestination, terrainType);
             path.remove(path.size() - 1); // This will be replace
             Index secondLastPoint;
             if (path.isEmpty()) {
                 // Start and destination are in the same passable rectangle
-                secondLastPoint = absolutePosition;
+                secondLastPoint = start;
             } else {
                 secondLastPoint = path.get(path.size() - 1);
             }
@@ -265,7 +265,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
                     }
                 }
             }
-            throw new IllegalStateException("Can not find position. Pos: " + absolutePosition + " dest: " + absoluteDestination + " maxRadius: " + maxRadius + " terrainType:" + terrainType);
+            throw new IllegalStateException("Can not find position. Pos: " + start + " dest: " + absoluteDestination + " maxRadius: " + maxRadius + " terrainType:" + terrainType);
         }
     }
 

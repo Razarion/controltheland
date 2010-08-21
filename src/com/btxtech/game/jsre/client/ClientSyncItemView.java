@@ -104,6 +104,9 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
 
     private void displayState() {
         setPosition();
+        if (clientSyncItem.isSyncBaseItem()) {
+            setProgress();
+        }
         setSelected(clientSyncItem.isSelected());
     }
 

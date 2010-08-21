@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client.terrain;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.Game;
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.InfoPanel;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.item.ItemViewContainer;
@@ -129,32 +130,40 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
         Event.addNativePreviewHandler(new Event.NativePreviewHandler() {
             @Override
             public void onPreviewNativeEvent(Event.NativePreviewEvent event) {
-                if (event.getTypeInt() == Event.ONKEYDOWN && scrollingAllowed) {
-                    switch (event.getNativeEvent().getKeyCode()) {
-                        case KeyCodes.KEY_LEFT: {
-                            TerrainView.getInstance().moveDelta(-SCROLL_DISTANCE_KEY, 0);
-                            break;
-                        }
-                        case KeyCodes.KEY_RIGHT: {
-                            TerrainView.getInstance().moveDelta(SCROLL_DISTANCE_KEY, 0);
-                            break;
-                        }
-                        case KeyCodes.KEY_UP: {
-                            TerrainView.getInstance().moveDelta(0, -SCROLL_DISTANCE_KEY);
-                            break;
-                        }
-                        case KeyCodes.KEY_DOWN: {
-                            TerrainView.getInstance().moveDelta(0, SCROLL_DISTANCE_KEY);
-                            break;
-                        }
-                    }
-                } else if ((event.getTypeInt() & Event.MOUSEEVENTS) != 0 && isTrackingEvents) {
-                    ClientUserTracker.getInstance().addEventTrackingItem(event.getNativeEvent().getClientX(),
-                            event.getNativeEvent().getClientY(),
-                            event.getTypeInt());
+                try {
+                    handlePreviewNativeEvent(event);
+                } catch (Throwable t) {
+                    GwtCommon.handleException(t);
                 }
             }
         });
+    }
+
+    private void handlePreviewNativeEvent(Event.NativePreviewEvent event) {
+        if (event.getTypeInt() == Event.ONKEYDOWN && scrollingAllowed) {
+            switch (event.getNativeEvent().getKeyCode()) {
+                case KeyCodes.KEY_LEFT: {
+                    TerrainView.getInstance().moveDelta(-SCROLL_DISTANCE_KEY, 0);
+                    break;
+                }
+                case KeyCodes.KEY_RIGHT: {
+                    TerrainView.getInstance().moveDelta(SCROLL_DISTANCE_KEY, 0);
+                    break;
+                }
+                case KeyCodes.KEY_UP: {
+                    TerrainView.getInstance().moveDelta(0, -SCROLL_DISTANCE_KEY);
+                    break;
+                }
+                case KeyCodes.KEY_DOWN: {
+                    TerrainView.getInstance().moveDelta(0, SCROLL_DISTANCE_KEY);
+                    break;
+                }
+            }
+        } else if ((event.getTypeInt() & Event.MOUSEEVENTS) != 0 && isTrackingEvents) {
+            ClientUserTracker.getInstance().addEventTrackingItem(event.getNativeEvent().getClientX(),
+                    event.getNativeEvent().getClientY(),
+                    event.getTypeInt());
+        }
     }
 
     public void setTrackingEvents() {
@@ -235,7 +244,11 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
 
     public void displayVisibleItems() {
         for (ClientSyncItem clientSyncItem : ItemContainer.getInstance().getItems()) {
-            clientSyncItem.onScroll();
+            try {
+                clientSyncItem.onScroll();
+            } catch (Throwable t) {
+                GwtCommon.handleException("Unable display sync item: " + clientSyncItem, t);
+            }
         }
         for (ClientSyncItemView clientSyncItemView : ItemViewContainer.getInstance().getVisibleItems()) {
             clientSyncItemView.setPosition();

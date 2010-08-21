@@ -17,6 +17,8 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,7 +28,7 @@ import java.util.List;
  * Time: 14:23:09
  */
 public interface AbstractTerrainService {
-    List<Index> setupPathToDestination(Index target, Index destination, int range, TerrainType terrainType);
+    List<Index> setupPathToDestination(Index start, Index destination, int range, TerrainType terrainType);
 
     List<Index> setupPathToDestination(Index start, Index destination, TerrainType terrainType);
 
@@ -93,5 +95,7 @@ public interface AbstractTerrainService {
 
     SurfaceType getSurfaceTypeAbsolute(Index absoluteIndex);
 
-    Index getNearestPoint(TerrainType allowedTerrainType, Index absoluteDestination, int maxRadius);    
+    Index getNearestPoint(TerrainType allowedTerrainType, Index absoluteDestination, int maxRadius);
+
+    Index correctPosition(SyncItem syncItem, Index position);
 }

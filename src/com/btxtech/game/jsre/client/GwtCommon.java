@@ -20,6 +20,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.ScriptElement;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.StatusCodeException;
 import java.util.Date;
 
 public class GwtCommon {
@@ -36,10 +37,21 @@ public class GwtCommon {
     }
 
     public static void handleException(Throwable t) {
-        handleException(t, false);
+        handleException(null, t, false);
+    }
+
+    public static void handleException(String message, Throwable t) {
+        handleException(message, t, false);
     }
 
     public static void handleException(Throwable t, boolean showDialog) {
+        handleException(null, t, showDialog);
+    }
+
+    public static void handleException(String message, Throwable t, boolean showDialog) {
+        if (t instanceof StatusCodeException) {
+            System.out.println("StatusCodeException status code: " + ((StatusCodeException) t).getStatusCode());
+        }
         t.printStackTrace();
         if (showDialog) {
             if (exceptionDialog != null) {
@@ -47,13 +59,17 @@ public class GwtCommon {
             }
             exceptionDialog = new ExceptionDialog(t);
         }
-        sendExceptionToServer(t);
+        sendExceptionToServer(message, t);
     }
 
 
-    private static void sendExceptionToServer(Throwable throwable) {
+    private static void sendExceptionToServer(String message, Throwable throwable) {
         try {
             StringBuilder stringBuilder = new StringBuilder();
+            if (message != null) {
+                stringBuilder.append(message);
+                stringBuilder.append("\n");
+            }
             boolean isCause = false;
             while (true) {
                 setupStackTrace(stringBuilder, throwable, isCause);
@@ -98,6 +114,11 @@ public class GwtCommon {
     private static void setupStackTrace(StringBuilder builder, Throwable throwable, boolean isCause) {
         if (isCause) {
             builder.append("Caused by: ");
+        }
+        if (throwable instanceof StatusCodeException) {
+            builder.append("StatusCodeException status code: ");
+            builder.append(((StatusCodeException) throwable).getStatusCode());
+            builder.append("\n");
         }
         builder.append(throwable.getMessage());
         builder.append("\n");
