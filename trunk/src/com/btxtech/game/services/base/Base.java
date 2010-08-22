@@ -91,7 +91,7 @@ public class Base implements Serializable {
         abandoned = false;
     }
 
-    public void removeItem(SyncItem item) {
+    public void removeItem(SyncBaseItem item) {
         synchronized (items) {
             if (!items.remove(item)) {
                 throw new IllegalArgumentException("Item (" + item + ") does not exist in base: " + getSimpleBase());
