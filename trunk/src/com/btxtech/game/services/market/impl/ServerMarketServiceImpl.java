@@ -33,7 +33,9 @@ import com.btxtech.game.services.utg.UserGuidanceService;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.annotation.PostConstruct;
@@ -84,6 +86,7 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     }
 
     private void loadXpPointSettings() {
+        @SuppressWarnings("unchecked")
         List<XpSettings> settings = hibernateTemplate.loadAll(XpSettings.class);
         if (settings.isEmpty()) {
             log.warn("No XpSettings found in DB. Will be created.");
@@ -127,11 +130,7 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     @Override
     public boolean isAllowed(int itemTypeId, Base base) {
         UserItemTypeAccess userItemTypeAccess = getUserItemTypeAccess(base);
-        if(userItemTypeAccess != null) {
-            return userItemTypeAccess.contains(itemTypeId);
-        }   else {
-            return false;
-        }
+        return userItemTypeAccess != null && userItemTypeAccess.contains(itemTypeId);
     }
 
     @Override
@@ -198,6 +197,7 @@ public class ServerMarketServiceImpl implements ServerMarketService {
         userService.save(user);
     }
 
+    @SuppressWarnings("unchecked")
     private Collection<MarketEntry> getAlwaysAllowed() {
         return (Collection<MarketEntry>) hibernateTemplate.execute(new HibernateCallback() {
             @Override
@@ -211,6 +211,7 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<MarketEntry> getItemTypeAccessEntries() {
         return (List<MarketEntry>) hibernateTemplate.executeFind(new HibernateCallback() {
             @Override
@@ -223,6 +224,7 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<MarketEntry> getMarketEntries(final MarketCategory marketCategory) {
         return (List<MarketEntry>) hibernateTemplate.executeFind(new HibernateCallback() {
             @Override
@@ -254,29 +256,16 @@ public class ServerMarketServiceImpl implements ServerMarketService {
         return getUserItemTypeAccess().getXp();
     }
 
-    private void increaseXpPerItem(SyncBaseItem syncBaseItem) {
-        SimpleBase simpleBase = syncBaseItem.getBase();
-        Base base = baseService.getBase(simpleBase);
-        if (base == null || base.isAbandoned()) {
-            // Base is may be killed in the mean time
-            return;
-        }
-
-        UserItemTypeAccess userItemTypeAccess = getUserItemTypeAccess4Base(base);
-        if (userItemTypeAccess != null) {
-            if (userItemTypeAccess.isPersistent()) {
-                hibernateTemplate.refresh(userItemTypeAccess);
-            }
-            increaseXp((int) (syncBaseItem.getBaseItemType().getPrice() * xpSettings.getPeriodItemFactor()), userItemTypeAccess, base);
-        }
-    }
-
     private void increaseXp(int amount, UserItemTypeAccess userItemTypeAccess, Base base) {
-        userItemTypeAccess.increaseXp(amount);
-        baseService.sendXpUpdate(userItemTypeAccess, base);
-        userGuidanceService.onIncreaseXp(base, userItemTypeAccess.getXp());
-        if (userItemTypeAccess.isPersistent()) {
-            hibernateTemplate.saveOrUpdate(userItemTypeAccess);
+        try {
+            userItemTypeAccess.increaseXp(amount);
+            if (userItemTypeAccess.isPersistent()) {
+                hibernateTemplate.saveOrUpdate(userItemTypeAccess);
+            }
+            baseService.sendXpUpdate(userItemTypeAccess, base);
+            userGuidanceService.onIncreaseXp(base, userItemTypeAccess.getXp());
+        } catch (Exception e) {
+            log.error("", e);
         }
     }
 
@@ -287,7 +276,13 @@ public class ServerMarketServiceImpl implements ServerMarketService {
         }
     }
 
-    private UserItemTypeAccess getUserItemTypeAccess4Base(Base base) {
+    private UserItemTypeAccess getUserItemTypeAccess4Base(SimpleBase simpleBase) {
+        Base base = baseService.getBase(simpleBase);
+        if (base == null || base.isAbandoned()) {
+            // Base is may be killed in the mean time
+            return null;
+        }
+
         UserItemTypeAccess userItemTypeAccess = base.getUserItemTypeAccess();
         if (userItemTypeAccess != null) {
             return userItemTypeAccess;
@@ -328,16 +323,19 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<MarketCategory> getMarketCategories() {
         return hibernateTemplate.loadAll(MarketCategory.class);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<MarketFunction> getMarketFunctions() {
         return hibernateTemplate.loadAll(MarketFunction.class);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void deleteMarketCategory(MarketCategory category) {
         hibernateTemplate.delete(category);
     }
@@ -358,6 +356,7 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<MarketCategory> getUsedMarketCategories() {
         return (List<MarketCategory>) hibernateTemplate.find("from com.btxtech.game.services.market.MarketCategory where exists (from com.btxtech.game.services.market.MarketEntry where marketCategory is not null)");
     }
@@ -365,17 +364,51 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     class XpPeriodTask extends TimerTask {
         @Override
         public void run() {
+            try {
+                periodicalXpIncrease();
+            } catch (Exception e) {
+                log.error("", e);
+            }
+        }
+
+        private void periodicalXpIncrease() {
+            HashMap<SimpleBase, Integer> xpIncreasePreBase = new HashMap<SimpleBase, Integer>();
             List<SyncItem> syncItems = itemService.getItemsCopyNoDummies();
             for (SyncItem syncItem : syncItems) {
                 if (syncItem instanceof SyncBaseItem) {
                     SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
-                    try {
-                        increaseXpPerItem(syncBaseItem);
-                    } catch (Exception e) {
-                        log.error("", e);
+                    Base base = baseService.getBase(syncBaseItem.getBase());
+                    if (base == null || base.isAbandoned()) {
+                        // Base is may be killed in the mean time
+                        continue;
                     }
+                    // Increase XP
+                    Integer xp = xpIncreasePreBase.get(base.getSimpleBase());
+                    if (xp == null) {
+                        xp = 0;
+                    }
+                    xp += (int) (syncBaseItem.getBaseItemType().getPrice() * xpSettings.getPeriodItemFactor());
+
+                    xpIncreasePreBase.put(base.getSimpleBase(), xp);
                 }
             }
+
+            increaseXpPerBase(xpIncreasePreBase);
+        }
+    }
+
+    private void increaseXpPerBase(HashMap<SimpleBase, Integer> xpIncreasePreBase) {
+        for (Map.Entry<SimpleBase, Integer> entry : xpIncreasePreBase.entrySet()) {
+            UserItemTypeAccess userItemTypeAccess = getUserItemTypeAccess4Base(entry.getKey());
+            if (userItemTypeAccess == null) {
+                continue;
+            }
+            Base base = baseService.getBase(entry.getKey());
+            if (base == null || base.isAbandoned()) {
+                // Base is may be killed in the mean time
+                continue;
+            }
+            increaseXp(entry.getValue(), userItemTypeAccess, base);
         }
     }
 }
