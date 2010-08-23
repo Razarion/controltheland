@@ -28,7 +28,7 @@ public class SavedQuery {
     @Id
     @GeneratedValue
     private Integer id;
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, length = 50000)
     private String query;
 
     public String getQuery() {
