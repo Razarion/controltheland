@@ -13,8 +13,11 @@
 
 package com.btxtech.game.jsre.client.simulation;
 
+import com.btxtech.game.jsre.client.ExtendedAbsolutePanel;
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -37,13 +40,15 @@ public class TutorialGui {
     private int flashCount;
 
     public TutorialGui() {
-        AbsolutePanel absolutePanel = new AbsolutePanel();
+        ExtendedAbsolutePanel absolutePanel = new ExtendedAbsolutePanel();
+        absolutePanel.getElement().getStyle().setCursor(Style.Cursor.DEFAULT);
         absolutePanel.setSize("360px", "100%");
         absolutePanel.getElement().getStyle().setProperty("right", "0");
         absolutePanel.getElement().getStyle().setProperty("top", "0");
         MapWindow.getAbsolutePanel().add(absolutePanel);
         absolutePanel.getElement().getStyle().setProperty("position", "absolute");
         absolutePanel.getElement().getStyle().setProperty("background", "url(images/tutorial.jpg) no-repeat");
+        GwtCommon.stopPropagation(absolutePanel);
 
         image = new AbsolutePanel();
         absolutePanel.add(image, 54, 95);
