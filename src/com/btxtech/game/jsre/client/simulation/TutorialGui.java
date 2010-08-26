@@ -51,11 +51,11 @@ public class TutorialGui {
         GwtCommon.stopPropagation(absolutePanel);
 
         image = new AbsolutePanel();
-        absolutePanel.add(image, 54, 95);
+        absolutePanel.add(image, 56, 98);
         image.setPixelSize(250, 200);
         html = new HTML();
-        absolutePanel.add(html, 60, 330);
-        html.setPixelSize(250, 200);
+        absolutePanel.add(html, 60, 333);
+        html.setPixelSize(240, 200);
     }
 
     public void setTaskText(String text) {
