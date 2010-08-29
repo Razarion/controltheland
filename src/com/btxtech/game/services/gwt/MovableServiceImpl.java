@@ -191,6 +191,7 @@ public class MovableServiceImpl implements MovableService {
             realityInfo.setLevel(userGuidanceService.getLevel4Base());
             realityInfo.setTerritories(territoryService.getTerritories());
             realityInfo.setLevelToRunMissionTarget(userGuidanceService.getLevelToRunMissionTarget());
+            realityInfo.setAllBases(baseService.getAllBaseAttributes());
             return realityInfo;
         } catch (com.btxtech.game.services.connection.NoConnectionException t) {
             log.error(t.getMessage() + " SessionId: " + t.getSessionId());
@@ -206,6 +207,7 @@ public class MovableServiceImpl implements MovableService {
             // Common
             setCommonInfo(simulationInfo, userService, itemService, mgmtService);
             simulationInfo.setTutorialConfig(tutorialService.getTutorialConfig());
+            //realityInfo.setAllBases(baseService.getAllBaseAttributes());
             // Terrain
             setupTerrain(simulationInfo, terrainService);
             return simulationInfo;
@@ -325,6 +327,25 @@ public class MovableServiceImpl implements MovableService {
     public void sendEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<BaseCommand> baseCommands, Collection<SelectionTrackingItem> selectionTrackingItems) {
         try {
             userTrackingService.onEventTrackerItems(eventTrackingItems, baseCommands, selectionTrackingItems);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    public List<String> getFreeColors(int index, int count) {
+        try {
+            return baseService.getFreeColors(index, count);
+        } catch (Throwable t) {
+            log.error("", t);
+            return null;
+        }
+    }
+
+    @Override
+    public void setBaseColor(String color) {
+        try {
+            baseService.setBaseColor(color);
         } catch (Throwable t) {
             log.error("", t);
         }

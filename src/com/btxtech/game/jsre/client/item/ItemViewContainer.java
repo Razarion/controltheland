@@ -88,4 +88,10 @@ public class ItemViewContainer {
     public Collection<ClientSyncItemView> getVisibleItems() {
         return visibleItems.values();
     }
+
+    public void updateMarker() {
+        for (ClientSyncItemView clientSyncItemView : visibleItems.values()) {
+            clientSyncItemView.updateMarker();
+        }
+    }
 }

@@ -44,7 +44,7 @@ public class UserCommand implements Serializable {
     @Column(nullable = false)
     private String interactionClass;
     @Column(nullable = false)
-    private String userName;
+    private String baseName;
 
     /**
      * Used by hibernate
@@ -52,8 +52,8 @@ public class UserCommand implements Serializable {
     public UserCommand() {
     }
 
-    public UserCommand(Connection connection, BaseCommand baseCommand) {
-        userName = connection.getBase().getName();
+    public UserCommand(Connection connection, BaseCommand baseCommand, String baseName) {
+        this.baseName = baseName;
         sessionId = connection.getSessionId();
         this.interaction = baseCommand.toString();
         interactionClass = baseCommand.getClass().getName();
@@ -61,8 +61,8 @@ public class UserCommand implements Serializable {
         timeStamp = new Date();
     }
 
-    public String getUserName() {
-        return userName;
+    public String getBaseName() {
+        return baseName;
     }
 
     public String getSessionId() {
@@ -103,6 +103,6 @@ public class UserCommand implements Serializable {
 
     @Override
     public String toString() {
-        return interaction + " " + userName + " " + sessionId;
+        return interaction + " " + baseName + " " + sessionId;
     }
 }

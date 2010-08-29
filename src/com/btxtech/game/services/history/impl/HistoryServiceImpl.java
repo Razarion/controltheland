@@ -53,32 +53,33 @@ public class HistoryServiceImpl implements HistoryService {
 
     @Override
     public void addBaseStartEntry(SimpleBase simpleBase) {
-        save(new HistoryElement(HistoryElement.Type.BASE_STARTED, simpleBase, baseService.getUser(simpleBase), null, null, null, null));
+        save(new HistoryElement(HistoryElement.Type.BASE_STARTED, baseService.getBaseName(simpleBase), baseService.getUser(simpleBase), null, null, null, null));
     }
 
     @Override
     public void addBaseDefeatedEntry(SyncBaseItem actor, SimpleBase target) {
-        save(new HistoryElement(HistoryElement.Type.BASE_DEFEATED, actor.getBase(), baseService.getUser(actor.getBase()), actor, target, baseService.getUser(target), null));
+        save(new HistoryElement(HistoryElement.Type.BASE_DEFEATED, baseService.getBaseName(actor.getBase()), baseService.getUser(actor.getBase()), actor, baseService.getBaseName(target), baseService.getUser(target), null));
     }
 
     @Override
     public void addBaseSurrenderedEntry(SimpleBase simpleBase) {
-        save(new HistoryElement(HistoryElement.Type.BASE_SURRENDERED, simpleBase, baseService.getUser(simpleBase), null, null, null, null));
+        save(new HistoryElement(HistoryElement.Type.BASE_SURRENDERED, baseService.getBaseName(simpleBase), baseService.getUser(simpleBase), null, null, null, null));
     }
 
     @Override
     public void addItemCreatedEntry(SyncBaseItem syncBaseItem) {
-        save(new HistoryElement(HistoryElement.Type.ITEM_CREATED, syncBaseItem.getBase(), baseService.getUser(syncBaseItem.getBase()), syncBaseItem, null, null, null));
+        save(new HistoryElement(HistoryElement.Type.ITEM_CREATED, baseService.getBaseName(syncBaseItem.getBase()), baseService.getUser(syncBaseItem.getBase()), syncBaseItem, null, null, null));
     }
 
     @Override
     public void addItemDestroyedEntry(SyncBaseItem actor, SyncBaseItem target) {
-        save(new HistoryElement(HistoryElement.Type.ITEM_DESTROYED, actor.getBase(), baseService.getUser(actor.getBase()), actor, target.getBase(), baseService.getUser(target.getBase()), target));
+        save(new HistoryElement(HistoryElement.Type.ITEM_DESTROYED, baseService.getBaseName(actor.getBase()), baseService.getUser(actor.getBase()), actor, baseService.getBaseName(target.getBase()), baseService.getUser(target.getBase()), target));
     }
 
     @Override
     public List<DisplayHistoryElement> getNewestHistoryElements(final User user, final int count) {
         ArrayList<DisplayHistoryElement> displayHistoryElements = new ArrayList<DisplayHistoryElement>();
+        @SuppressWarnings("unchecked")
         List<HistoryElement> historyElements = (List<HistoryElement>) hibernateTemplate.execute(new HibernateCallback() {
             public Object doInHibernate(Session session) {
                 Criteria criteria = session.createCriteria(HistoryElement.class);

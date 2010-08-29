@@ -15,7 +15,7 @@ package com.btxtech.game.services.common;
 
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionService;
-import com.btxtech.game.jsre.common.gameengine.services.base.BaseService;
+import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService;
 import com.btxtech.game.jsre.common.gameengine.services.energy.EnergyService;
@@ -69,7 +69,7 @@ public class ServerServices implements Services {
     }
 
     @Override
-    public BaseService getBaseService() {
+    public AbstractBaseService getBaseService() {
         return baseService;
     }
 

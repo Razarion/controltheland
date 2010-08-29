@@ -69,6 +69,12 @@ public class OnlineBasePanel extends TopMapPanel {
         verticalPanel.add(flexTable);
     }
 
+
+    public void update() {
+        setOnlineBases(onlineBaseUpdate);
+    }
+
+
     public void setOnlineBases(OnlineBaseUpdate onlineBaseUpdate) {
         flashBases.clear();
         while (flexTable.getRowCount() > 0) {
@@ -92,12 +98,12 @@ public class OnlineBasePanel extends TopMapPanel {
 
     private Widget addOnlineBase(SimpleBase simpleBase) {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(simpleBase.getName());
-        if(simpleBase.isBot()) {
+        stringBuilder.append(ClientBase.getInstance().getBaseName(simpleBase));
+        if (ClientBase.getInstance().isBot(simpleBase)) {
             stringBuilder.append(" <bot>");
         }
         InlineLabel label = new InlineLabel(stringBuilder.toString());
-        label.getElement().getStyle().setColor(simpleBase.getHtmlColor());
+        label.getElement().getStyle().setColor(ClientBase.getInstance().getBaseHtmlColor(simpleBase));
         flexTable.setWidget(flexTable.getRowCount() + 1, 0, label);
         return label;
     }

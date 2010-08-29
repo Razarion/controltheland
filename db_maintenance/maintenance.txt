@@ -39,3 +39,10 @@ DELETE FROM BACKUP_BASE;
 ------------------
 update TRACKER_CLOSE_WINDOW set clientTimeStamp = 0
 update TRACKER_TOTAL_STARTUP set clientTimeStamp = 0
+
+------------------
+update BACKUP_BASE set baseId = id - 3266;
+ALTER TABLE `gamedb`.`CONNECTION_STATISTICS` DROP COLUMN `userName`;
+TUTORIAL_CONFIG ownBaseId, enemyBaseId;
+ALTER TABLE `gamedb`.`BACKUP_BASE` DROP COLUMN `name`;
+ALTER TABLE `gamedb`.`TRACKER_USER_COMMAND` DROP COLUMN `userName`;

@@ -11,7 +11,9 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.base;
+package com.btxtech.game.jsre.client;
+
+import com.btxtech.game.services.base.BaseColor;
 
 /**
  * User: beat
@@ -20,13 +22,10 @@ package com.btxtech.game.services.base;
  */
 public class AlreadyUsedException extends Exception {
     private String name;
-    private BaseColor baseColor;
+    private String baseColor;
 
-    public AlreadyUsedException(String name) {
+    public AlreadyUsedException(String name, String baseColor) {
         this.name = name;
-    }
-
-    public AlreadyUsedException(BaseColor baseColor) {
         this.baseColor = baseColor;
     }
 
@@ -42,7 +41,7 @@ public class AlreadyUsedException extends Exception {
         return name;
     }
 
-    public BaseColor getBaseColor() {
+    public String getBaseColor() {
         return baseColor;
     }
 }

@@ -13,19 +13,22 @@
 
 package com.btxtech.game.services.base.impl;
 
+import com.btxtech.game.jsre.client.AlreadyUsedException;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
+import com.btxtech.game.jsre.common.BaseChangedPacket;
 import com.btxtech.game.jsre.common.EnergyPacket;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
+import com.btxtech.game.jsre.common.gameengine.services.base.impl.AbstractBaseServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.services.base.AlreadyUsedException;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseColor;
 import com.btxtech.game.services.base.BaseService;
@@ -51,9 +54,7 @@ import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -69,8 +70,8 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
  * Date: May 31, 2009
  * Time: 8:15:53 PM
  */
-public class BaseServiceImpl implements BaseService {
-    public static final String DEFAULT_BASE_NAME_PREFIX = "Base ";
+public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseService {
+    private static final String DEFAULT_BASE_NAME_PREFIX = "Base ";
     private Log log = LogFactory.getLog(BaseServiceImpl.class);
     @Autowired
     private Session session;
@@ -96,18 +97,9 @@ public class BaseServiceImpl implements BaseService {
     private MgmtService mgmtService;
     @Autowired
     private BotService botService;
-    private final HashMap<String, Base> bases = new HashMap<String, Base>();
-    private HashSet<String> colorsUsed = new HashSet<String>();
+    private final HashMap<SimpleBase, Base> bases = new HashMap<SimpleBase, Base>();
+    private int lastBaseId = 0;
     private HibernateTemplate hibernateTemplate;
-    private Base dummyBase;
-
-    @PostConstruct
-    public void setupDummyBase() {
-        BaseColor baseColor = new BaseColor(0, 0, 0);
-        dummyBase = new Base(Constants.DUMMY_BASE_NAME, baseColor, null);
-        bases.put(Constants.DUMMY_BASE_NAME, dummyBase);
-        colorsUsed.add(baseColor.getHtmlColor());
-    }
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -118,7 +110,7 @@ public class BaseServiceImpl implements BaseService {
     @Override
     public void checkBaseAccess(SyncBaseItem item) throws IllegalAccessException {
         if (!getBase().getSimpleBase().equals(item.getBase())) {
-            throw new IllegalAccessException("Invalid access from base: " + item.getBase().getName());
+            throw new IllegalAccessException("Invalid access from base: " + getBaseName(item.getBase()));
         }
     }
 
@@ -131,11 +123,11 @@ public class BaseServiceImpl implements BaseService {
 
     private Base createNewBase() throws AlreadyUsedException, NoSuchItemTypeException, GameFullException {
         synchronized (bases) {
-            List<BaseColor> baseColors = getFreeColors(1);
+            List<BaseColor> baseColors = getFreeBaseColors(0, 1);
             if (baseColors.isEmpty()) {
                 throw new GameFullException();
             }
-            return createNewBase(getFreePlayerName(), baseColors.get(0));
+            return createNewBase(baseColors.get(0));
         }
     }
 
@@ -151,28 +143,20 @@ public class BaseServiceImpl implements BaseService {
         return createNewBase();
     }
 
-    private Base createNewBase(String name, BaseColor baseColor) throws AlreadyUsedException, NoSuchItemTypeException {
+    private Base createNewBase(BaseColor baseColor) throws AlreadyUsedException, NoSuchItemTypeException {
         Base base;
         ItemType constructionVehicle = itemService.getItemType(Constants.CONSTRUCTION_VEHICLE);
         synchronized (bases) {
-            if (bases.containsKey(name)) {
-                throw new AlreadyUsedException(name);
-            }
-            if (colorsUsed.contains(baseColor.getHtmlColor())) {
-                throw new AlreadyUsedException(baseColor);
-            }
-
-            base = new Base(name, baseColor, userService.getLoggedinUser());
+            lastBaseId++;
+            base = new Base(baseColor, userService.getLoggedinUser(), lastBaseId);
+            createBase(base.getSimpleBase(), setupBaseName(base), base.getBaseColor().getHtmlColor(), base.isBot(), false);
             log.info("Base created: " + base);
             base.setAccountBalance(mgmtService.getStartupData().getStartMoney());
-            bases.put(name, base);
-            colorsUsed.add(baseColor.getHtmlColor());
-            if (userService.getLoggedinUser() != null) {
-                userTrackingService.onBaseCreated(userService.getLoggedinUser(), base);
-            }
+            bases.put(base.getSimpleBase(), base);
         }
         userGuidanceService.setupLevel4NewBase(base);
         base.setUser(userService.getLoggedinUser());
+        sendBaseChangedPacket(BaseChangedPacket.Type.CREATED, base.getSimpleBase());
         connectionService.createConnection(base);
         base.setUserItemTypeAccess(serverMarketService.getUserItemTypeAccess());
         StartupData startupData = mgmtService.getStartupData();
@@ -182,6 +166,9 @@ public class BaseServiceImpl implements BaseService {
         syncBaseItem.setFullHealth();
         syncBaseItem.getSyncTurnable().setAngel(Math.PI / 4.0); // Cosmetis shows vehicle from side
         historyService.addBaseStartEntry(base.getSimpleBase());
+        if (userService.getLoggedinUser() != null) {
+            userTrackingService.onBaseCreated(userService.getLoggedinUser(), base);
+        }
         return base;
     }
 
@@ -197,12 +184,11 @@ public class BaseServiceImpl implements BaseService {
     private void deleteBase(Base base) {
         log.info("Base deleted: " + base);
         synchronized (bases) {
-            if (bases.remove(base.getName()) == null) {
-                throw new IllegalArgumentException("Base does not exist: " + base.getSimpleBase());
+            if (bases.remove(base.getSimpleBase()) == null) {
+                throw new IllegalArgumentException("Base does not exist: " + getBaseName(base.getSimpleBase()));
             }
-            if (!colorsUsed.remove(base.getBaseColor().getHtmlColor())) {
-                throw new IllegalArgumentException("Base does not exist: " + base.getSimpleBase());
-            }
+            sendBaseChangedPacket(BaseChangedPacket.Type.REMOVED, base.getSimpleBase());
+            removeBase(base.getSimpleBase());
             serverEnergyService.onBaseKilled(base);
         }
         userGuidanceService.onBaseDeleted(base);
@@ -223,7 +209,7 @@ public class BaseServiceImpl implements BaseService {
 
     @Override
     public Base getBase(SyncBaseItem baseSyncItem) {
-        Base base = bases.get(baseSyncItem.getBase().getName());
+        Base base = bases.get(baseSyncItem.getBase());
         if (base == null) {
             throw new IllegalArgumentException("Base does not exist: " + baseSyncItem.getBase());
         }
@@ -232,20 +218,47 @@ public class BaseServiceImpl implements BaseService {
 
     @Override
     public Base getBase(SimpleBase simpleBase) {
-        return bases.get(simpleBase.getName());
+        return bases.get(simpleBase);
     }
 
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<BaseColor> getFreeColors(final int maxCount) {
+    public List<String> getFreeColors(final int index, final int count) {
+        ArrayList<String> colors = new ArrayList<String>();
+        for (BaseColor baseColor : getFreeBaseColors(index, count)) {
+            colors.add(baseColor.getHtmlColor());
+        }
+        return colors;
+    }
+
+    private BaseColor getBaseColor4HtmlColor(final String htmlColor) {
+        @SuppressWarnings("unchecked")
+        List<BaseColor> baseColors = (List<BaseColor>) hibernateTemplate.execute(new HibernateCallback() {
+            public Object doInHibernate(org.hibernate.Session session) {
+                Criteria criteria = session.createCriteria(BaseColor.class);
+                criteria.add(Restrictions.eq("htmlColor", htmlColor));
+                return criteria.list();
+            }
+        });
+        if (baseColors.isEmpty()) {
+            throw new IllegalArgumentException("HTML color does not exist: " + htmlColor);
+        }
+        return baseColors.get(0);
+    }
+
+
+    @SuppressWarnings("unchecked")
+    private List<BaseColor> getFreeBaseColors(final int index, final int count) {
         return (List<BaseColor>) hibernateTemplate.execute(new HibernateCallback() {
             public Object doInHibernate(org.hibernate.Session session) {
                 Criteria criteria = session.createCriteria(BaseColor.class);
+                Collection<String> colorsUsed = getHtmlColors();
                 if (!colorsUsed.isEmpty()) {
                     criteria.add(Restrictions.not(Restrictions.in("htmlColor", colorsUsed)));
                 }
-                criteria.setMaxResults(maxCount);
+                criteria.setMaxResults(count);
+                criteria.setFirstResult(index);
                 criteria.addOrder(Order.asc("id"));
                 return criteria.list();
             }
@@ -277,37 +290,6 @@ public class BaseServiceImpl implements BaseService {
     }
 
     @Override
-    public List<List<BaseColor>> getFreeColorsMultiColums(int maxCount, int columns) {
-        List<List<BaseColor>> result = new ArrayList<List<BaseColor>>();
-        int columnIndex = 0;
-        List<BaseColor> row = new ArrayList<BaseColor>();
-        for (BaseColor baseColor : getFreeColors(maxCount)) {
-            if (columnIndex >= columns) {
-                columnIndex = 0;
-                result.add(row);
-                row = new ArrayList<BaseColor>();
-            }
-            row.add(baseColor);
-            columnIndex++;
-        }
-        if (!row.isEmpty()) {
-            result.add(row);
-        }
-        return result;
-    }
-
-    @Override
-    public String getFreePlayerName() {
-        for (int i = 1; i < Integer.MAX_VALUE; i++) {
-            String name = DEFAULT_BASE_NAME_PREFIX + Integer.toString(i);
-            if (!bases.containsKey(name)) {
-                return name;
-            }
-        }
-        throw new IllegalStateException("No free name");
-    }
-
-    @Override
     public void itemCreated(SyncBaseItem syncItem) {
         Base base = getBase(syncItem);
         base.addItem(syncItem);
@@ -318,27 +300,25 @@ public class BaseServiceImpl implements BaseService {
         Base base = getBase(syncItem);
         base.removeItem(syncItem);
         if (!base.hasItems()) {
-            if (!base.getSimpleBase().equals(dummyBase.getSimpleBase())) {
-                if (actor != null) {
-                    historyService.addBaseDefeatedEntry(actor, base.getSimpleBase());
-                    sendDefeatedMessage(syncItem, actor);
-                }
-                if (base.getUser() != null) {
-                    userTrackingService.onBaseDefeated(base.getUser(), base);
-                }
-                deleteBase(base);
+            if (actor != null) {
+                historyService.addBaseDefeatedEntry(actor, base.getSimpleBase());
+                sendDefeatedMessage(syncItem, actor);
             }
+            if (base.getUser() != null) {
+                userTrackingService.onBaseDefeated(base.getUser(), base);
+            }
+            deleteBase(base);
         }
     }
 
     private void sendDefeatedMessage(SyncBaseItem victim, SyncBaseItem actor) {
         Message message = new Message();
         message.setTitle("Game over!");
-        message.setMessage("You have been defeated by " + actor.getBase().getName());
+        message.setMessage("You have been defeated by " + getBaseName(actor.getBase()));
         connectionService.sendPacket(victim.getBase(), message);
         message = new Message();
         message.setTitle("Congratulations!");
-        message.setMessage("You defeated " + victim.getBase().getName());
+        message.setMessage("You defeated " + getBaseName(victim.getBase()));
         connectionService.sendPacket(actor.getBase(), message);
     }
 
@@ -393,11 +373,6 @@ public class BaseServiceImpl implements BaseService {
     }
 
     @Override
-    public SimpleBase getDummyBase() {
-        return dummyBase.getSimpleBase();
-    }
-
-    @Override
     public User getUser(SimpleBase simpleBase) {
         Base base = getBase(simpleBase);
         return base.getUser();
@@ -409,8 +384,12 @@ public class BaseServiceImpl implements BaseService {
             historyService.addBaseSurrenderedEntry(base.getSimpleBase());
             userTrackingService.onBaseSurrender(base.getUser(), base);
         }
+        setBaseAbandoned(base.getSimpleBase(), true);
         base.setUser(null);
+        setBaseName(base.getSimpleBase(), setupBaseName(base));
         base.setAbandoned(true);
+        sendBaseChangedPacket(BaseChangedPacket.Type.CHANGED, base.getSimpleBase());
+        connectionService.sendOnlineBasesUpdate();
     }
 
     @Override
@@ -419,10 +398,9 @@ public class BaseServiceImpl implements BaseService {
     }
 
     @Override
+    @Deprecated
     public List<Base> getBasesNoDummy() {
-        ArrayList<Base> result = new ArrayList<Base>(bases.values());
-        result.remove(dummyBase);
-        return result;
+        return getBases();
     }
 
     @Override
@@ -438,12 +416,22 @@ public class BaseServiceImpl implements BaseService {
     public void restoreBases(Collection<Base> newBases) {
         synchronized (bases) {
             bases.clear();
-            colorsUsed.clear();
-            setupDummyBase();
+            lastBaseId = 0;
             for (Base newBase : newBases) {
-                bases.put(newBase.getName(), newBase);
-                colorsUsed.add(newBase.getBaseColor().getHtmlColor());
+                bases.put(newBase.getSimpleBase(), newBase);
+                createBase(newBase.getSimpleBase(), setupBaseName(newBase), newBase.getBaseColor().getHtmlColor(), newBase.isBot(), newBase.isAbandoned());
+                if (newBase.getBaseId() > lastBaseId) {
+                    lastBaseId = newBase.getBaseId();
+                }
             }
+        }
+    }
+
+    private String setupBaseName(Base base) {
+        if (base.getUser() != null) {
+            return base.getUser().getName();
+        } else {
+            return DEFAULT_BASE_NAME_PREFIX + base.getBaseId();
         }
     }
 
@@ -464,4 +452,36 @@ public class BaseServiceImpl implements BaseService {
         }
     }
 
+    private void sendBaseChangedPacket(BaseChangedPacket.Type type, SimpleBase simpleBase) {
+        BaseAttributes baseAttributes = getBaseAttributes(simpleBase);
+        if (baseAttributes != null) {
+            BaseChangedPacket baseChangedPacket = new BaseChangedPacket();
+            baseChangedPacket.setType(type);
+            baseChangedPacket.setBaseAttributes(baseAttributes);
+            connectionService.sendPacket(baseChangedPacket);
+        } else {
+            log.error("Base does not exist: " + simpleBase);
+        }
+    }
+
+    @Override
+    public void onUserRegistered(User user) {
+        Base base = getBase();
+        base.setUser(user);
+        setBaseName(base.getSimpleBase(), setupBaseName(base));
+        sendBaseChangedPacket(BaseChangedPacket.Type.CHANGED, base.getSimpleBase());
+        connectionService.sendOnlineBasesUpdate();
+    }
+
+    @Override
+    public void setBaseColor(String color) throws AlreadyUsedException {
+        BaseColor baseColor = getBaseColor4HtmlColor(color);
+        Base base = getBase();
+        base.setBaseColor(baseColor);
+        hibernateTemplate.save(base);
+        SimpleBase simpleBase = base.getSimpleBase();
+        setBaseColor(simpleBase, color);
+        sendBaseChangedPacket(BaseChangedPacket.Type.CHANGED, simpleBase);
+        connectionService.sendOnlineBasesUpdate();
+    }
 }

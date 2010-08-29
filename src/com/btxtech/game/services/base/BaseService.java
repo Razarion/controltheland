@@ -13,8 +13,10 @@
 
 package com.btxtech.game.services.base;
 
+import com.btxtech.game.jsre.client.AlreadyUsedException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.energy.impl.BaseEnergy;
@@ -28,16 +30,12 @@ import java.util.List;
  * Date: May 31, 2009
  * Time: 8:12:50 PM
  */
-public interface BaseService extends com.btxtech.game.jsre.common.gameengine.services.base.BaseService {
+public interface BaseService extends AbstractBaseService {
     void checkBaseAccess(SyncBaseItem item) throws IllegalAccessException;
 
     void checkCanBeAttack(SyncBaseItem victim);
 
-    List<BaseColor> getFreeColors(int maxCount);
-
-    List<List<BaseColor>> getFreeColorsMultiColums(int maxCount, int columns);
-
-    String getFreePlayerName();
+    List<String> getFreeColors(int index, int count);
 
     void itemCreated(SyncBaseItem syncItem);
 
@@ -71,10 +69,12 @@ public interface BaseService extends com.btxtech.game.jsre.common.gameengine.ser
 
     List<SimpleBase> getSimpleBases();
 
+    @Deprecated
     List<Base> getBasesNoDummy();
 
     void restoreBases(Collection<Base> bases);
 
-    SimpleBase getDummyBase();
+    void onUserRegistered(User user);
 
+    void setBaseColor(String color) throws AlreadyUsedException;
 }

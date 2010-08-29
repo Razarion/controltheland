@@ -157,65 +157,7 @@ public class TaskEditor extends WebPage {
                 dbTaskConfigItem.add(new TextField("position.x"));
                 dbTaskConfigItem.add(new TextField("position.y"));
                 dbTaskConfigItem.add(new TextField("angel"));
-                dbTaskConfigItem.add(new TextField<String>("base.name", new IModel<String>() {
-
-                    @Override
-                    public String getObject() {
-                        SimpleBase simpleBase = dbTaskConfigItem.getModelObject().getBase();
-                        if (simpleBase != null) {
-                            return simpleBase.getName();
-                        } else {
-                            return null;
-                        }
-                    }
-
-                    @Override
-                    public void setObject(String value) {
-                        SimpleBase simpleBase = dbTaskConfigItem.getModelObject().getBase();
-                        if (simpleBase != null && value != null) {
-                            dbTaskConfigItem.getModelObject().setBase(new SimpleBase(value, dbTaskConfigItem.getModelObject().getBase().getHtmlColor(), false));
-                        } else if (simpleBase == null && value != null) {
-                            dbTaskConfigItem.getModelObject().setBase(new SimpleBase(value, "#FFFFFF", false));
-                        } else if (simpleBase != null) {
-                            dbTaskConfigItem.getModelObject().setBase(null);
-                        }
-                    }
-
-                    @Override
-                    public void detach() {
-                        // Ignore
-                    }
-                }));
-                dbTaskConfigItem.add(new TextField<String>("base.htmlColor", new IModel<String>() {
-
-                    @Override
-                    public String getObject() {
-                        SimpleBase simpleBase = dbTaskConfigItem.getModelObject().getBase();
-                        if (simpleBase != null) {
-                            return simpleBase.getHtmlColor();
-                        } else {
-                            return null;
-                        }
-                    }
-
-                    @Override
-                    public void setObject(String value) {
-                        SimpleBase simpleBase = dbTaskConfigItem.getModelObject().getBase();
-                        if (simpleBase != null && value != null) {
-                            dbTaskConfigItem.getModelObject().setBase(new SimpleBase(dbTaskConfigItem.getModelObject().getBase().getName(), value, false));
-                        } else if (simpleBase == null && value != null) {
-                            dbTaskConfigItem.getModelObject().setBase(new SimpleBase("Base", value, false));
-                        } else if (simpleBase != null) {
-                            dbTaskConfigItem.getModelObject().setBase(null);
-                        }
-                    }
-
-                    @Override
-                    public void detach() {
-                        // Ignore
-                    }
-                }));
-
+                dbTaskConfigItem.add(new TextField<Integer>("baseId"));
 
             }
         };

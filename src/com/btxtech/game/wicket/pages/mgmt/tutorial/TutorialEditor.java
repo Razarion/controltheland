@@ -42,8 +42,12 @@ public class TutorialEditor extends WebPage {
         Form<DbTutorialConfig> form = new Form<DbTutorialConfig>("tutorialForm", new CompoundPropertyModel<DbTutorialConfig>(dbTutorialConfig));
         add(form);
 
-        form.add(new TextField<String>("ownBase.name"));
-        form.add(new TextField<String>("ownBase.htmlColor"));
+        form.add(new TextField<Integer>("ownBaseId"));
+        form.add(new TextField<String>("ownBaseName"));
+        form.add(new TextField<String>("ownBaseColor"));
+        form.add(new TextField<Integer>("enemyBaseId"));
+        form.add(new TextField<String>("enemyBaseName"));
+        form.add(new TextField<String>("enemyBaseColor"));
         form.add(new TextField<String>("width"));
         form.add(new TextField<String>("height"));
 

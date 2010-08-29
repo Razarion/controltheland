@@ -135,7 +135,6 @@ public class InfoPanel extends TopMapPanel {
         menu.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                // TODO ClientUserTracker.getInstance().onScrollHome();
                 MenuPanel menuPanel = new MenuPanel();
                 menuPanel.addToParent(MapWindow.getAbsolutePanel(), Direction.CENTER, 0);
             }
@@ -157,11 +156,15 @@ public class InfoPanel extends TopMapPanel {
     }
 
     public void setGameInfo(RealityInfo realityInfo) {
-        name.setText(realityInfo.getBase().getName());
-        marker.getElement().getStyle().setBackgroundColor(realityInfo.getBase().getHtmlColor());
         money.setText("$" + Integer.toString((int) realityInfo.getAccountBalance()));
         xp.setText(Integer.toString(realityInfo.getXp()));
         updateEnergy(realityInfo.getEnergyGenerating(), realityInfo.getEnergyConsuming());
+        updateBase();
+    }
+
+    public void updateBase() {
+        name.setText(ClientBase.getInstance().getOwnBaseName());
+        marker.getElement().getStyle().setBackgroundColor(ClientBase.getInstance().getOwnBaseHtmlColor());
     }
 
     public void updateMoney() {

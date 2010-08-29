@@ -37,7 +37,7 @@ public class ConnectionStatistics {
     @Column(nullable = false)
     private double ticksPerSecond;
     @Column(nullable = false)
-    private String userName;
+    private String simpleBase;
 
     /**
      * Used by Hibernate
@@ -45,9 +45,9 @@ public class ConnectionStatistics {
     protected ConnectionStatistics() {
     }
 
-    public ConnectionStatistics(SimpleBase simpleBase, String sessionId, double ticksPerSecond) {
+    public ConnectionStatistics(String simpleBase, String sessionId, double ticksPerSecond) {
         this.sessionId = sessionId;
-        userName = simpleBase.getName();
+        this.simpleBase = simpleBase;
         this.ticksPerSecond = ticksPerSecond;
         timeStamp = new Date();
     }
@@ -64,8 +64,8 @@ public class ConnectionStatistics {
         return ticksPerSecond;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getSimpleBase() {
+        return simpleBase;
     }
 
     @Override

@@ -28,7 +28,7 @@ public class BaseStatisticsDTO implements Serializable {
     private String data;
     private String color;
 
-    public BaseStatisticsDTO(int rank, Base base, String data) {
+    public BaseStatisticsDTO(int rank, Base base, String baseName, String data) {
         this.rank = rank;
         this.color = base.getBaseColor().getHtmlColor();
         if (base.getUser() != null) {
@@ -36,7 +36,7 @@ public class BaseStatisticsDTO implements Serializable {
         } else {
             userName = "";
         }
-        baseName = base.getName();
+        this.baseName = baseName;
         this.data = data;
     }
 

@@ -39,7 +39,7 @@ public class TestBaseColors {
 
     @Test
     public void testGetBaseColor() {
-        baseService.getFreeColors(15);
+        baseService.getFreeColors(15, 1);
     }
     
 }

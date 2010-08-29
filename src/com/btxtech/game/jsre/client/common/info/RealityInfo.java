@@ -15,9 +15,8 @@ package com.btxtech.game.jsre.client.common.info;
 
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.OnlineBaseUpdate;
-import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.Territory;
+import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import java.util.Collection;
 
 /**
@@ -34,6 +33,7 @@ public class RealityInfo extends GameInfo {
     private int energyConsuming;
     private OnlineBaseUpdate onlineBaseUpdate;
     private Level level;
+    private Collection<BaseAttributes> allBases;
 
     public SimpleBase getBase() {
         return base;
@@ -97,6 +97,14 @@ public class RealityInfo extends GameInfo {
 
     public void setLevel(Level level) {
         this.level = level;
+    }
+
+    public Collection<BaseAttributes> getAllBase() {
+        return allBases;
+    }
+
+    public void setAllBases(Collection<BaseAttributes> allBases) {
+        this.allBases = allBases;
     }
 
     @Override

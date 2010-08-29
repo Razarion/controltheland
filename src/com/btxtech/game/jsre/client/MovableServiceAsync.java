@@ -68,4 +68,8 @@ public interface MovableServiceAsync {
     void sendTotalStartupTime(long totalStartupTime, long clientTimeStamp, AsyncCallback<Void> asyncCallback);
 
     void sendCloseWindow(long totalRunningTime, long clientTimeStamp, AsyncCallback<Void> asyncCallback);
+
+    void getFreeColors(int index, int count, AsyncCallback<List<String>> asyncCallback);
+
+    void setBaseColor(String color, AsyncCallback<Void> asyncCallback);
 }

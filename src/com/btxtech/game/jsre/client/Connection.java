@@ -29,6 +29,7 @@ import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.client.utg.MissionTarget;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
+import com.btxtech.game.jsre.common.BaseChangedPacket;
 import com.btxtech.game.jsre.common.EnergyPacket;
 import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.btxtech.game.jsre.common.EventTrackingStart;
@@ -120,6 +121,7 @@ public class Connection implements AsyncCallback<Void> {
 
     private void setupSimulationStructure(final SimulationInfo simulationInfo) {
         setupGameStructure(simulationInfo);
+        ClientBase.getInstance().setAllBaseAttributes(simulationInfo.getTutorialConfig().getBaseAttributes());
         StartupProbe.getInstance().taskSwitch(StartupTask.INIT_GAME, StartupTask.LOAD_UNITS);
         StartupProbe.getInstance().taskSwitch(StartupTask.LOAD_UNITS, StartupTask.START_ACTION_HANDLER);
         StartupProbe.getInstance().taskFinished(StartupTask.START_ACTION_HANDLER);
@@ -127,6 +129,7 @@ public class Connection implements AsyncCallback<Void> {
 
     private void setupRealStructure(final RealityInfo realityInfo) {
         setupGameStructure(realityInfo);
+        ClientBase.getInstance().setAllBaseAttributes(realityInfo.getAllBase());
         ClientBase.getInstance().setBase(realityInfo.getBase());
         ClientBase.getInstance().setAccountBalance(realityInfo.getAccountBalance());
         InfoPanel.getInstance().setGameInfo(realityInfo);
@@ -233,6 +236,9 @@ public class Connection implements AsyncCallback<Void> {
                     OnlineBasePanel.getInstance().setOnlineBases((OnlineBaseUpdate) packet);
                 } else if (packet instanceof LevelPacket) {
                     MissionTarget.getInstance().onLevelChanged((LevelPacket) packet);
+                } else if (packet instanceof BaseChangedPacket) {
+                    ClientBase.getInstance().onBaseChangedPacket((BaseChangedPacket)packet);
+                    OnlineBasePanel.getInstance().update();
                 } else {
                     throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }
@@ -265,7 +271,7 @@ public class Connection implements AsyncCallback<Void> {
     public void sendUserMessage(String text) {
         if (movableServiceAsync != null) {
             UserMessage userMessage = new UserMessage();
-            userMessage.setBaseName(ClientBase.getInstance().getSimpleBase().getName());
+            userMessage.setBaseName(ClientBase.getInstance().getOwnBaseName());
             userMessage.setMessage(text);
             movableServiceAsync.sendUserMessage(userMessage, this);
         }

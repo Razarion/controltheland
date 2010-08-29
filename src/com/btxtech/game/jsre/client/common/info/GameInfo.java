@@ -14,8 +14,6 @@
 package com.btxtech.game.jsre.client.common.info;
 
 import com.btxtech.game.jsre.client.common.Level;
-import com.btxtech.game.jsre.client.common.OnlineBaseUpdate;
-import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
@@ -31,7 +29,7 @@ import java.util.Collection;
  * Date: Jun 5, 2009
  * Time: 8:19:05 PM
  */
-public abstract class GameInfo implements Serializable{
+public abstract class GameInfo implements Serializable {
     private TerrainSettings terrainSettings;
     private Collection<TerrainImagePosition> terrainImagePositions;
     private Collection<SurfaceRect> surfaceRects;
@@ -48,10 +46,9 @@ public abstract class GameInfo implements Serializable{
     private Level levelToRunMissionTarget;
     private Collection<ItemType> itemTypes;
 
-
     public TerrainSettings getTerrainSettings() {
         return terrainSettings;
-}
+    }
 
     public void setTerrainSettings(TerrainSettings terrainSettings) {
         this.terrainSettings = terrainSettings;

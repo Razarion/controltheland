@@ -21,7 +21,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
-import com.btxtech.game.jsre.common.gameengine.services.base.BaseService;
+import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -147,7 +147,7 @@ abstract public class AbstractItemService implements ItemService {
         return result;
     }
 
-    abstract protected BaseService getBaseService();
+    abstract protected AbstractBaseService getBaseService();
 
     public List<? extends SyncItem> getItems(String itemTypeName, SimpleBase simpleBase) throws NoSuchItemTypeException {
         return getItems(getItemType(itemTypeName), simpleBase);

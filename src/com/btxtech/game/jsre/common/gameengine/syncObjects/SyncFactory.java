@@ -109,7 +109,7 @@ public class SyncFactory extends SyncBaseAbility {
         if (!factoryType.isAbleToBuild(factoryCommand.getToBeBuilt())) {
             throw new IllegalArgumentException(this + " can not fabricate: " + factoryCommand.getToBeBuilt());
         }
-        if (!getSyncBaseItem().getBase().isBot() && !getServices().getItemTypeAccess().isAllowed(factoryCommand.getToBeBuilt())) {
+        if (!getServices().getBaseService().isBot(getSyncBaseItem().getBase()) && !getServices().getItemTypeAccess().isAllowed(factoryCommand.getToBeBuilt())) {
             throw new IllegalArgumentException(this + " user is not allowed to fabricate: " + factoryCommand.getToBeBuilt());
         }
         if (!getServices().getTerritoryService().isAllowed(getSyncBaseItem().getPosition(), getSyncBaseItem())) {

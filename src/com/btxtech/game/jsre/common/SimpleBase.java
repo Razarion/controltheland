@@ -21,9 +21,7 @@ import java.io.Serializable;
  * Time: 2:03:06 PM
  */
 public class SimpleBase implements Serializable {
-    private String name;
-    private boolean bot;
-    private String htmlColor;
+    private int id;
 
     /**
      * Used by GWT
@@ -31,46 +29,33 @@ public class SimpleBase implements Serializable {
     SimpleBase() {
     }
 
-    public SimpleBase(String name, String htmlColor, boolean bot) {
-        this.htmlColor = htmlColor;
-        this.name = name;
-        this.bot = bot;
+    public SimpleBase(int id) {
+        this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getHtmlColor() {
-        return htmlColor;
-    }
-
-    public boolean isBot() {
-        return bot;
-    }
-
-    public void setBot(boolean bot) {
-        this.bot = bot;
+    public int getId() {
+        return id;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof SimpleBase)) return false;
 
-        SimpleBase base = (SimpleBase) o;
+        SimpleBase that = (SimpleBase) o;
 
-        return !(name != null ? !name.equals(base.name) : base.name != null);
+        if (id != that.id) return false;
 
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return name != null ? name.hashCode() : 0;
+        return id;
     }
 
     @Override
     public String toString() {
-        return "Base: " + name + ":" + htmlColor;
+        return "Base: " + id;
     }
 }

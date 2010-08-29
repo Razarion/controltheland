@@ -15,15 +15,14 @@ package com.btxtech.game.services.user.impl;
 
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
-import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.market.ServerMarketService;
+import com.btxtech.game.services.user.AccessDeniedException;
 import com.btxtech.game.services.user.Arq;
 import com.btxtech.game.services.user.ArqEnum;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.services.user.AccessDeniedException;
 import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.Date;
 import java.util.List;
@@ -83,8 +82,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getLoggedinUserOrException() {
         User user = getLoggedinUser();
-        if(user == null) {
-           throw new RuntimeException("User is not logged in");
+        if (user == null) {
+            throw new RuntimeException("User is not logged in");
         }
         return user;
     }
@@ -156,8 +155,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void checkAuthorized(ArqEnum arq) {
-        if(!isAuthorized(arq)) {
-           throw new AccessDeniedException(session.getUser(), arq);  
+        if (!isAuthorized(arq)) {
+            throw new AccessDeniedException(session.getUser(), arq);
         }
     }
 
@@ -178,15 +177,9 @@ public class UserServiceImpl implements UserService {
     }
 
     private void loginUser(User user, boolean keepGame) {
-        Base base = null;
         if (keepGame) {
-            try {
-                base = baseService.getBase();
-                base.setUser(user);
-                serverMarketService.setUserItemTypeAccess(user, serverMarketService.getUserItemTypeAccess());
-            } catch (NoConnectionException e) {
-                // Ignore
-            }
+            baseService.onUserRegistered(user);
+            serverMarketService.setUserItemTypeAccess(user, serverMarketService.getUserItemTypeAccess());
         } else {
             session.clearGame();
             serverMarketService.clearSession();
@@ -194,7 +187,13 @@ public class UserServiceImpl implements UserService {
         session.setUser(user);
         user.setLastLoginDate(new Date());
         save(user);
-        userTrackingService.onUserLoggedIn(user, base);
+        try {
+            userTrackingService.onUserLoggedIn(user, baseService.getBase());
+        } catch (NoConnectionException e) {
+            // Ignore
+            userTrackingService.onUserLoggedIn(user, null);            
+        }
+
     }
 
 }

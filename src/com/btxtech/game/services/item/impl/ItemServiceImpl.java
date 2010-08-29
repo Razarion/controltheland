@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.items.impl.AbstractItemService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -284,16 +285,9 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
+    @Deprecated
     public List<SyncItem> getItemsCopyNoDummies() {
-        List<SyncItem> syncItems = getItemsCopy();
-        SimpleBase dummy = baseService.getDummyBase();
-        for (Iterator<SyncItem> it = syncItems.iterator(); it.hasNext();) {
-            SyncItem syncItem = it.next();
-            if ((syncItem instanceof SyncBaseItem) && dummy.equals(((SyncBaseItem) syncItem).getBase())) {
-                it.remove();
-            }
-        }
-        return syncItems;
+        return getItemsCopy();
     }
 
     @Override
@@ -319,7 +313,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    protected com.btxtech.game.jsre.common.gameengine.services.base.BaseService getBaseService() {
+    protected AbstractBaseService getBaseService() {
         return baseService;
     }
 

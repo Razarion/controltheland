@@ -30,7 +30,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.services.base.BaseService;
+import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.items.impl.AbstractItemService;
@@ -394,7 +394,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
     }
 
     @Override
-    protected BaseService getBaseService() {
+    protected AbstractBaseService getBaseService() {
         return ClientBase.getInstance();
     }
 

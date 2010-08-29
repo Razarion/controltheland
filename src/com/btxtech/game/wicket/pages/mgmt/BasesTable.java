@@ -64,7 +64,7 @@ public class BasesTable extends WebPage {
                         setResponsePage(new BaseEditor(listItem.getModelObject()));
                     }
                 };
-                link.add(new Label("baseName", listItem.getModelObject().getName()));
+                link.add(new Label("baseName", baseService.getBaseName(listItem.getModelObject())));
                 listItem.add(link);
             }
         };

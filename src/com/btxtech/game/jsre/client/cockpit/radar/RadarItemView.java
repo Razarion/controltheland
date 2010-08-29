@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.cockpit.radar;
 
+import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -56,7 +57,7 @@ public class RadarItemView extends MiniMap {
                 if (pos == null) {
                     continue;
                 }
-                setStrokeStyle(new Color(clientSyncItem.getSyncBaseItem().getBase().getHtmlColor()));
+                setStrokeStyle(new Color(ClientBase.getInstance().getBaseHtmlColor(clientSyncItem.getSyncBaseItem().getBase())));
                 strokeRect(pos.getX(), pos.getY(), BASE_ITEM_SIZE, BASE_ITEM_SIZE);
             } else if (clientSyncItem.isSyncResourceItem()) {
                 Index pos = clientSyncItem.getSyncItem().getPosition();

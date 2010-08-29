@@ -64,9 +64,6 @@ public class Constants {
     // Distances
     public static final int MIN_FREE_MONEY_DISTANCE = 400;
 
-    // Base
-    public static final String DUMMY_BASE_NAME = "Dummy";
-
     // Item names
     public static final String CONSTRUCTION_VEHICLE = "Construction Vehicle";
     public static final String FACTORY = "Factory";
