@@ -48,8 +48,6 @@ public class Base implements Serializable {
     @OneToOne
     private BaseColor baseColor;
     private Date startTime;
-    @Column(name = "name", nullable = false)
-    private String name;
     @Column(name = "kills", nullable = false, columnDefinition = "INT default '0'")
     private int kills;
     @Column(name = "created", nullable = false, columnDefinition = "INT default '0'")
@@ -66,6 +64,7 @@ public class Base implements Serializable {
     private boolean bot = false;
     @OneToOne(cascade = CascadeType.ALL)
     private BaseLevelStatus baseLevelStatus;
+    private int baseId;
     @Deprecated
     private String level;
     @Transient
@@ -83,12 +82,12 @@ public class Base implements Serializable {
     public Base() {
     }
 
-    public Base(String name, BaseColor baseColor, User user) {
-        this.name = name;
+    public Base(BaseColor baseColor, User user, int baseId) {
         this.baseColor = baseColor;
         this.user = user;
         startTime = new Date();
         abandoned = false;
+        this.baseId = baseId;
     }
 
     public void removeItem(SyncBaseItem item) {
@@ -115,17 +114,17 @@ public class Base implements Serializable {
         return items;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public BaseColor getBaseColor() {
         return baseColor;
     }
 
+    public void setBaseColor(BaseColor baseColor) {
+        this.baseColor = baseColor;
+    }
+
     public SimpleBase getSimpleBase() {
         if (simpleBase == null) {
-            simpleBase = new SimpleBase(name, baseColor.getHtmlColor(), bot);
+            simpleBase = new SimpleBase(baseId);
         }
         return simpleBase;
     }
@@ -223,7 +222,6 @@ public class Base implements Serializable {
 
     public void setBot(boolean bot) {
         this.bot = bot;
-        getSimpleBase().setBot(bot);
     }
 
     @Override
@@ -242,5 +240,9 @@ public class Base implements Serializable {
     @Deprecated
     public String getLevel() {
         return level;
+    }
+
+    public int getBaseId() {
+        return baseId;
     }
 }

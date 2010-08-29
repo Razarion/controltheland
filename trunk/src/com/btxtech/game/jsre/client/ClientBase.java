@@ -13,10 +13,13 @@
 
 package com.btxtech.game.jsre.client;
 
+import com.btxtech.game.jsre.client.item.ItemViewContainer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
+import com.btxtech.game.jsre.common.BaseChangedPacket;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.services.base.BaseService;
+import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
+import com.btxtech.game.jsre.common.gameengine.services.base.impl.AbstractBaseServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
 /**
@@ -24,7 +27,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
  * Date: Sep 9, 2009
  * Time: 5:07:34 PM
  */
-public class ClientBase implements BaseService {
+public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseService {
     private static final ClientBase INSTANCE = new ClientBase();
     private double accountBalance;
     private SimpleBase simpleBase;
@@ -88,5 +91,33 @@ public class ClientBase implements BaseService {
 
     public void setDepositResourceListener(DepositResourceListener depositResourceListener) {
         this.depositResourceListener = depositResourceListener;
+    }
+
+    public String getOwnBaseName() {
+        return getBaseName(simpleBase);
+    }
+
+    public String getOwnBaseHtmlColor() {
+        return getBaseHtmlColor(simpleBase);
+    }
+
+    public void onBaseChangedPacket(BaseChangedPacket baseChangedPacket) {
+        switch (baseChangedPacket.getType()) {
+            case CHANGED:
+                updateBase(baseChangedPacket.getBaseAttributes());
+                if (simpleBase.equals(baseChangedPacket.getBaseAttributes().getSimpleBase())) {
+                    InfoPanel.getInstance().updateBase();
+                }
+                ItemViewContainer.getInstance().updateMarker();
+                break;
+            case CREATED:
+                createBase(baseChangedPacket.getBaseAttributes());
+                break;
+            case REMOVED:
+                removeBase(baseChangedPacket.getBaseAttributes().getSimpleBase());
+                break;
+            default:
+                throw new IllegalArgumentException(this + " unknown type: " + baseChangedPacket.getType());
+        }
     }
 }

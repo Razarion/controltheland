@@ -60,12 +60,12 @@ public class UserBaseInfo extends BorderPanel {
                     return baseInfos;
                 }
                 baseInfos.add(new BaseInfo("Base since:", WebCommon.formatDuration(base.getUptime())));
-                baseInfos.add(new BaseInfo("Base name:", base.getName()));
-                baseInfos.add(new BaseInfo("Base color:", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", base.getSimpleBase().getHtmlColor()));
-                baseInfos.add(new BaseInfo("Money:", Integer.toString((int)base.getAccountBalance())));
+                baseInfos.add(new BaseInfo("Base name:", baseService.getBaseName(base.getSimpleBase())));
+                baseInfos.add(new BaseInfo("Base color:", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", baseService.getBaseHtmlColor(base.getSimpleBase())));
+                baseInfos.add(new BaseInfo("Money:", Integer.toString((int) base.getAccountBalance())));
                 for (ItemType itemType : itemService.getItemTypes()) {
                     int count = base.getItemCount(itemType);
-                    if(count == 0) {
+                    if (count == 0) {
                         continue;
                     }
                     baseInfos.add(new BaseInfo(itemType.getName() + ":", Integer.toString(count)));
@@ -87,7 +87,7 @@ public class UserBaseInfo extends BorderPanel {
             protected void populateItem(ListItem<BaseInfo> listItem) {
                 listItem.add(new Label("key", listItem.getModelObject().getKey()));
 
-                if(listItem.getModelObject().getAttribute() != null) {
+                if (listItem.getModelObject().getAttribute() != null) {
                     listItem.add(ColorField.create("value", listItem.getModelObject().getAttribute()));
                 } else {
                     listItem.add(new Label("value", listItem.getModelObject().getValue()));
@@ -109,32 +109,32 @@ public class UserBaseInfo extends BorderPanel {
     }
 
     class BaseInfo {
-         private String key;
-         private String value;
-         private String attribute;
+        private String key;
+        private String value;
+        private String attribute;
 
-         BaseInfo(String key, String value) {
-             this.key = key;
-             this.value = value;
-         }
+        BaseInfo(String key, String value) {
+            this.key = key;
+            this.value = value;
+        }
 
-         BaseInfo(String key, String value, String attribute) {
-             this.key = key;
-             this.value = value;
-             this.attribute = attribute;
-         }
+        BaseInfo(String key, String value, String attribute) {
+            this.key = key;
+            this.value = value;
+            this.attribute = attribute;
+        }
 
-         public String getKey() {
-             return key;
-         }
+        public String getKey() {
+            return key;
+        }
 
-         public String getValue() {
-             return value;
-         }
+        public String getValue() {
+            return value;
+        }
 
-         public String getAttribute() {
-             return attribute;
-         }
-     }
+        public String getAttribute() {
+            return attribute;
+        }
+    }
 
 }

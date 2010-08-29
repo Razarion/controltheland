@@ -19,7 +19,6 @@ import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.db.IndexUserType;
-import com.btxtech.game.services.common.db.SimpleBaseUserType;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import java.io.Serializable;
 import javax.persistence.Column;
@@ -30,7 +29,6 @@ import javax.persistence.ManyToOne;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
@@ -39,15 +37,12 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  * Time: 17:02:51
  */
 @Entity(name = "TUTORIAL_ITEM_TYPE_POSITION")
-@TypeDefs({@TypeDef(name = "index", typeClass = IndexUserType.class),
-        @TypeDef(name = "base", typeClass = SimpleBaseUserType.class)})
+@TypeDef(name = "index", typeClass = IndexUserType.class)
 public class DbItemTypeAndPosition implements Serializable, CrudChild {
     @Id
     @GeneratedValue
     private Integer id;
-    @Type(type = "base")
-    @Columns(columns = {@Column(name = "baseName"), @Column(name = "baseHtmlColor"), @Column(name = "baseBot")})
-    private SimpleBase base;
+    private Integer baseId;
     private int syncItemId;
     @ManyToOne
     private DbItemType itemType;
@@ -57,14 +52,6 @@ public class DbItemTypeAndPosition implements Serializable, CrudChild {
     @ManyToOne(optional = false)
     private DbTaskConfig dbTaskConfig;
     private Integer angel;
-
-    public SimpleBase getBase() {
-        return base;
-    }
-
-    public void setBase(SimpleBase base) {
-        this.base = base;
-    }
 
     public int getSyncItemId() {
         return syncItemId;
@@ -117,7 +104,7 @@ public class DbItemTypeAndPosition implements Serializable, CrudChild {
 
     @Override
     public void init() {
-        base = new SimpleBase("Base Name", "#FFFFFF", false);
+        baseId = 1;
         position = new Index(0, 0);
     }
 
@@ -134,6 +121,22 @@ public class DbItemTypeAndPosition implements Serializable, CrudChild {
         this.id = id;
     }
 
+    public Integer getBaseId() {
+        return baseId;
+    }
+
+    public void setBaseId(Integer baseId) {
+        this.baseId = baseId;
+    }
+
+    public Integer getAngel() {
+        return angel;
+    }
+
+    public void setAngel(Integer angel) {
+        this.angel = angel;
+    }
+
     public ItemTypeAndPosition createItemTypeAndPosition() {
         if (itemType == null || position == null) {
             return null;
@@ -142,6 +145,10 @@ public class DbItemTypeAndPosition implements Serializable, CrudChild {
         if (angel != null) {
             radiant = (double) angel / 180.0 * Math.PI;
         }
-        return new ItemTypeAndPosition(base, syncItemId, itemType.getId(), position, radiant);
+        SimpleBase simpleBase = null;
+        if (baseId != null) {
+            simpleBase = new SimpleBase(baseId);
+        }
+        return new ItemTypeAndPosition(simpleBase, syncItemId, itemType.getId(), position, radiant);
     }
 }

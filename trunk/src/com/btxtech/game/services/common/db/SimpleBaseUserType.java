@@ -31,8 +31,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 public class SimpleBaseUserType implements UserType {
     @Override
     public int[] sqlTypes() {
-        // Name, Color, Bot
-        return new int[]{Types.VARCHAR, Types.VARCHAR, Types.BIT};
+        return new int[]{Types.INTEGER};
     }
 
     @Override
@@ -52,35 +51,21 @@ public class SimpleBaseUserType implements UserType {
 
     @Override
     public Object nullSafeGet(ResultSet resultSet, String[] names, Object owner) throws HibernateException, SQLException {
-        String name = resultSet.getString(names[0]);
+        int id = resultSet.getInt(names[0]);
         if (resultSet.wasNull()) {
             return null;
         }
 
-        String color = resultSet.getString(names[1]);
-        if (resultSet.wasNull()) {
-            return null;
-        }
-
-        boolean isBot = resultSet.getBoolean(names[2]);
-        if (resultSet.wasNull()) {
-            return null;
-        }
-
-        return new SimpleBase(name, color, isBot);
+        return new SimpleBase(id);
     }
 
     @Override
     public void nullSafeSet(PreparedStatement statement, Object o, int columnIndex) throws HibernateException, SQLException {
         SimpleBase simpleBase = (SimpleBase) o;
         if (simpleBase != null) {
-            statement.setString(columnIndex, simpleBase.getName());
-            statement.setString(columnIndex + 1, simpleBase.getHtmlColor());
-            statement.setBoolean(columnIndex + 2, simpleBase.isBot());
+            statement.setInt(columnIndex, simpleBase.getId());
         } else {
-            statement.setNull(columnIndex, Types.VARCHAR);
-            statement.setNull(columnIndex + 1, Types.VARCHAR);
-            statement.setNull(columnIndex + 2, Types.BIT);
+            statement.setNull(columnIndex, Types.INTEGER);
         }
     }
 

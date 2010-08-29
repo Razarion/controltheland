@@ -119,7 +119,7 @@ public class BaseEditor extends WebPage {
         form.add(new Label("name", new IModel<String>() {
             @Override
             public String getObject() {
-                return baseService.getBase(simpleBase).getName();
+                return baseService.getBaseName(simpleBase);
             }
 
             @Override

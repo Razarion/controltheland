@@ -57,7 +57,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         ArrayList<BaseStatisticsDTO> dtos = new ArrayList<BaseStatisticsDTO>();
         int rank = 1;
         for (Base base : bases) {
-            BaseStatisticsDTO dto = new BaseStatisticsDTO(rank, base, WebCommon.formatDuration(base.getUptime()));
+            BaseStatisticsDTO dto = new BaseStatisticsDTO(rank, base, baseService.getBaseName(base.getSimpleBase()), WebCommon.formatDuration(base.getUptime()));
             dtos.add(dto);
             rank++;
         }
@@ -85,7 +85,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         ArrayList<BaseStatisticsDTO> dtos = new ArrayList<BaseStatisticsDTO>();
         int rank = 1;
         for (Base base : bases) {
-            BaseStatisticsDTO dto = new BaseStatisticsDTO(rank, base, "$" + Integer.toString((int)base.getAccountBalance()));
+            BaseStatisticsDTO dto = new BaseStatisticsDTO(rank, base, baseService.getBaseName(base.getSimpleBase()), "$" + Integer.toString((int) base.getAccountBalance()));
             dtos.add(dto);
             rank++;
         }
@@ -114,7 +114,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         ArrayList<BaseStatisticsDTO> dtos = new ArrayList<BaseStatisticsDTO>();
         int rank = 1;
         for (Base base : bases) {
-            BaseStatisticsDTO dto = new BaseStatisticsDTO(rank, base, Integer.toString(base.getItems().size()));
+            BaseStatisticsDTO dto = new BaseStatisticsDTO(rank, base, baseService.getBaseName(base.getSimpleBase()), Integer.toString(base.getItems().size()));
             dtos.add(dto);
             rank++;
         }
@@ -124,7 +124,7 @@ public class StatisticsServiceImpl implements StatisticsService {
 
     @Override
     public List<BaseStatisticsDTO> getBasesByKills(int count) {
-       List<Base> bases = baseService.getBases();
+        List<Base> bases = baseService.getBases();
         Collections.sort(bases, new Comparator<Base>() {
             @Override
             public int compare(Base b1, Base b2) {
@@ -144,7 +144,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         ArrayList<BaseStatisticsDTO> dtos = new ArrayList<BaseStatisticsDTO>();
         int rank = 1;
         for (Base base : bases) {
-            BaseStatisticsDTO dto = new BaseStatisticsDTO(rank, base, Integer.toString(base.getKills()));
+            BaseStatisticsDTO dto = new BaseStatisticsDTO(rank, base, baseService.getBaseName(base.getSimpleBase()), Integer.toString(base.getKills()));
             dtos.add(dto);
             rank++;
         }

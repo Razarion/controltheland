@@ -46,21 +46,21 @@ public class DbLevelPromotion {
     public DbLevelPromotion() {
     }
 
-    public DbLevelPromotion(String sessionId, Base base, DbLevel oldLevel) {
+    public DbLevelPromotion(String sessionId, Base base, String baseName,  DbLevel oldLevel) {
         this.sessionId = sessionId;
         level = oldLevel != null ? oldLevel.getName() : null;
         targetLevel = base.getBaseLevelStatus().getCurrentLevel().getName();
-        this.base = base.getName();
+        this.base = baseName;
         user = base.getUser() != null ? base.getUser().getName() : null;
         niceTimeStamp = new Date();
         timeStamp = niceTimeStamp.getTime();
     }
 
-    public DbLevelPromotion(String sessionId, Base base, String targetLevel, String interimPromotion) {
+    public DbLevelPromotion(String sessionId, Base base, String baseName, String targetLevel, String interimPromotion) {
         this.sessionId = sessionId;
         level = base.getBaseLevelStatus().getCurrentLevel().getName();
         this.targetLevel = targetLevel;
-        this.base = base.getName();
+        this.base = baseName;
         this.interimPromotion = interimPromotion;
         user = base.getUser() != null ? base.getUser().getName() : null;
         niceTimeStamp = new Date();

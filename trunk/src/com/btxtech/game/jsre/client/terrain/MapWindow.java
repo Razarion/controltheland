@@ -227,7 +227,7 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
     public void displayVisibleItems() {
         for (ClientSyncItem clientSyncItem : ItemContainer.getInstance().getItems()) {
             try {
-                clientSyncItem.onScroll();
+                clientSyncItem.checkVisibility();
             } catch (Throwable t) {
                 GwtCommon.handleException("Unable display sync item: " + clientSyncItem, t);
             }

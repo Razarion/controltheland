@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.history;
 
-import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.user.User;
 import java.io.Serializable;
@@ -31,7 +30,7 @@ import javax.persistence.ManyToOne;
  */
 @Entity(name = "HISTORY")
 public class HistoryElement implements Serializable {
-   public enum Type {
+    public enum Type {
         BASE_STARTED,
         BASE_DEFEATED,
         BASE_SURRENDERED,
@@ -64,18 +63,16 @@ public class HistoryElement implements Serializable {
     protected HistoryElement() {
     }
 
-    public HistoryElement(Type type, SimpleBase base, User user, SyncBaseItem item, SimpleBase targetBase, User targetUser, SyncBaseItem targetItem) {
+    public HistoryElement(Type type, String base, User user, SyncBaseItem item, String targetBase, User targetUser, SyncBaseItem targetItem) {
         timeStamp = new Date();
         timeStampMs = timeStamp.getTime();
         this.type = type;
-        baseName = base.getName();
+        baseName = base;
         this.user = user;
         if (item != null) {
             itemName = item.getBaseItemType().getName();
         }
-        if (targetBase != null) {
-            targetBaseName = targetBase.getName();
-        }
+        targetBaseName = targetBase;
         this.targetUser = targetUser;
         if (targetItem != null) {
             targetItemName = targetItem.getBaseItemType().getName();

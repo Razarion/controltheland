@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.base.Base;
+import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.connection.ClientLogEntry;
 import com.btxtech.game.services.connection.Connection;
@@ -58,6 +59,8 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     private UserTrackingService userTrackingService;
     @Autowired
     private BotService botService;
+    @Autowired
+    private BaseService baseService;
     private Timer timer;
     private Log log = LogFactory.getLog(ConnectionServiceImpl.class);
     private HibernateTemplate hibernateTemplate;
@@ -146,7 +149,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
             try {
                 int tickCount = connection.resetAndGetTickCount();
                 if (connection.getNoTickCount() > MAX_NO_TICK_COUNT) {
-                    log.info("User kicked due timeout: " + connection.getBase().getName());
+                    log.info("User kicked due timeout: " + baseService.getBaseName(connection.getBase().getSimpleBase()));
                     if (connection.getBase() != null && connection.getBase().getUser() != null) {
                         userTrackingService.onUserLeftGame(connection.getBase().getUser());
                     }
@@ -156,7 +159,8 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
                 } else {
                     double ticksPerSecond = (double) tickCount / (double) (USER_TRACKING_PERIODE / 1000);
                     if (!Double.isInfinite(ticksPerSecond) && !Double.isNaN(ticksPerSecond)) {
-                        ConnectionStatistics connectionStatistics = new ConnectionStatistics(connection.getBase().getSimpleBase(), connection.getSessionId(), ticksPerSecond);
+                        String baseName = baseService.getBaseName(connection.getBase().getSimpleBase());
+                        ConnectionStatistics connectionStatistics = new ConnectionStatistics(baseName, connection.getSessionId(), ticksPerSecond);
                         hibernateTemplate.saveOrUpdate(connectionStatistics);
                     }
                 }
@@ -175,7 +179,13 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     @Override
     public void clientLog(String message, Date date) {
         try {
-            ClientLogEntry clientLogEntry = new ClientLogEntry(message, date, session);
+            String baseName = null;
+            try {
+                baseName = baseService.getBaseName(baseService.getBase().getSimpleBase());
+            } catch (com.btxtech.game.services.connection.NoConnectionException e) {
+                // Ignore
+            }
+            ClientLogEntry clientLogEntry = new ClientLogEntry(message, date, session, baseName);
             // hibernateTemplate.saveOrUpdate(clientLogEntry);
             log.info(clientLogEntry.getFormatMessage());
         } catch (Throwable t) {
@@ -236,10 +246,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     @Override
     public boolean hasConnection() {
         Connection connection = session.getConnection();
-        if (connection == null) {
-            return false;
-        }
-        return !connection.isClosed();
+        return connection != null && !connection.isClosed();
     }
 
     @Override

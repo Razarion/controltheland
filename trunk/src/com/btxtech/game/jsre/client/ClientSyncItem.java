@@ -61,10 +61,6 @@ public class ClientSyncItem implements SyncItemListener {
         }
     }
 
-    public void onScroll() {
-        checkVisibility();
-    }
-
     public SyncItem getSyncItem() {
         return syncItem;
     }

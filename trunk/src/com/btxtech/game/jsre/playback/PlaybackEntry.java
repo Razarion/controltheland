@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.playback;
 
+import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ExtendedCanvas;
 import com.btxtech.game.jsre.client.Game;
@@ -62,13 +63,13 @@ public class PlaybackEntry implements EntryPoint {
             public void onSuccess(PlaybackInfo playbackInfo) {
                 Game game = new Game();
                 player.init(playbackInfo);
-                //RootPanel.get().add(MapWindow.getAbsolutePanel(), 0, 0);
                 MapWindow.getAbsolutePanel().getElement().getStyle().setZIndex(1);
                 MapWindow.getAbsolutePanel().setPixelSize(playbackInfo.getEventTrackingStart().getXResolution(), playbackInfo.getEventTrackingStart().getYResolution());
                 extendedCanvas = new ExtendedCanvas(playbackInfo.getEventTrackingStart().getXResolution(), playbackInfo.getEventTrackingStart().getYResolution());
                 RootPanel.get().add(extendedCanvas, 0, 0);
                 extendedCanvas.getElement().getStyle().setZIndex(100);
                 game.init();
+                ClientBase.getInstance().setAllBaseAttributes(playbackInfo.getTutorialConfig().getBaseAttributes());                
                 Connection.getInstance().setupGameStructure(playbackInfo);
                 Simulation.getInstance().start();
                 play();

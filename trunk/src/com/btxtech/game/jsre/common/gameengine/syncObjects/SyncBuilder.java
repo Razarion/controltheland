@@ -116,7 +116,7 @@ public class SyncBuilder extends SyncBaseAbility {
             throw new IllegalArgumentException(this + " can not build: " + builderCommand.getToBeBuilt());
         }
 
-        if (!getSyncBaseItem().getBase().isBot() && !getServices().getItemTypeAccess().isAllowed(builderCommand.getToBeBuilt())) {
+        if (!getServices().getBaseService().isBot(getSyncBaseItem().getBase()) && !getServices().getItemTypeAccess().isAllowed(builderCommand.getToBeBuilt())) {
             throw new IllegalArgumentException(this + " user is not allowed to build: " + builderCommand.getToBeBuilt());
         }
 

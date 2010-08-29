@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
+import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Game;
@@ -69,7 +70,7 @@ public class CockpitPanel extends TopMapPanel implements SelectionListener {
         if (selection.isSyncBaseItem()) {
             StringBuilder builder = new StringBuilder();
             builder.append("This item belongs to <b>");
-            builder.append(selection.getSyncBaseItem().getBase().getName());
+            builder.append(ClientBase.getInstance().getBaseName(selection.getSyncBaseItem().getBase()));
             builder.append("</b>. This is your enemy!<br/></b>Attack it!</b>");
             if (Game.isDebug()) {
                 builder.append("<br/>ID: ");

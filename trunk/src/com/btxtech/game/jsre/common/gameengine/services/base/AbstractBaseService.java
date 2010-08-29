@@ -15,14 +15,23 @@ package com.btxtech.game.jsre.common.gameengine.services.base;
 
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
+import java.util.Collection;
 
 /**
  * User: beat
  * Date: 22.11.2009
  * Time: 14:02:40
  */
-public interface BaseService {
+public interface AbstractBaseService {
     void depositResource(double price, SimpleBase simpleBase);
 
     void withdrawalMoney(double price, SimpleBase simpleBase) throws InsufficientFundsException;
+
+    String getBaseName(SimpleBase simpleBase);
+
+    String getBaseHtmlColor(SimpleBase simpleBase);
+
+    boolean isBot(SimpleBase simpleBase);
+
+    Collection<BaseAttributes> getAllBaseAttributes();
 }

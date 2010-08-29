@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client;
 
+import com.btxtech.game.jsre.client.dialogs.ChangeColorDialog;
 import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -74,6 +75,14 @@ public class MenuPanel extends TopMapPanel {
                 StartupProbe.getInstance().showStartScreen();
             }
         });
+        addRow("Base Color", "color", new Runnable() {
+
+            @Override
+            public void run() {
+                ChangeColorDialog.doShow();
+            }
+        });
+        
         addCloseButton();
         flexTable.getElement().getStyle().setColor("orange");
         return flexTable;

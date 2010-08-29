@@ -135,7 +135,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     public void startUpTaskFinished(StartupTask state, Date clientTimeStamp, long duration) {
         GameStartup gameStartup;
         if (connectionService.hasConnection()) {
-            gameStartup = new GameStartup(clientTimeStamp, GameStartup.FINISHED, state, duration, null, baseService.getBase().getName(), session.getUser(), session.getSessionId());
+            gameStartup = new GameStartup(clientTimeStamp, GameStartup.FINISHED, state, duration, null, baseService.getBaseName(baseService.getBase().getSimpleBase()), session.getUser(), session.getSessionId());
         } else {
             gameStartup = new GameStartup(clientTimeStamp, GameStartup.FINISHED, state, duration, null, TUTORIAL_MARKER, session.getUser(), session.getSessionId());
         }
@@ -146,7 +146,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     public void startUpTaskFailed(StartupTask state, Date clientTimeStamp, long duration, String failureText) {
         GameStartup gameStartup;
         if (connectionService.hasConnection()) {
-            gameStartup = new GameStartup(clientTimeStamp, GameStartup.FAILED, state, duration, failureText, baseService.getBase().getName(), session.getUser(), session.getSessionId());
+            gameStartup = new GameStartup(clientTimeStamp, GameStartup.FAILED, state, duration, failureText, baseService.getBaseName(baseService.getBase().getSimpleBase()), session.getUser(), session.getSessionId());
         } else {
             gameStartup = new GameStartup(clientTimeStamp, GameStartup.FAILED, state, duration, failureText, TUTORIAL_MARKER, session.getUser(), session.getSessionId());
         }
@@ -455,7 +455,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     @Override
     public void saveUserCommand(BaseCommand baseCommand) {
         try {
-            UserCommand userUserCommand = new UserCommand(session.getConnection(), baseCommand);
+            UserCommand userUserCommand = new UserCommand(session.getConnection(), baseCommand, baseService.getBaseName(baseService.getBase().getSimpleBase()));
             // log.debug("User Command: " + userUserCommand);
             hibernateTemplate.saveOrUpdate(userUserCommand);
         } catch (Throwable t) {
@@ -484,8 +484,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             userHistory.setCookieId(session.getCookieId());
             userHistory.setLoggedIn();
             if (base != null) {
-                //
-                userHistory.setBaseName(base.getName());
+                userHistory.setBaseName(baseService.getBaseName(base.getSimpleBase()));
             }
             hibernateTemplate.saveOrUpdate(userHistory);
         } catch (Throwable t) {
@@ -509,7 +508,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         try {
             UserHistory userHistory = new UserHistory(user);
             userHistory.setBaseCreated();
-            userHistory.setBaseName(base.getName());
+            userHistory.setBaseName(baseService.getBaseName(baseService.getBase().getSimpleBase()));
             hibernateTemplate.saveOrUpdate(userHistory);
         } catch (Throwable t) {
             log.error("", t);
@@ -521,7 +520,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         try {
             UserHistory userHistory = new UserHistory(user);
             userHistory.setBaseDefeated();
-            userHistory.setBaseName(base.getName());
+            userHistory.setBaseName(baseService.getBaseName(baseService.getBase().getSimpleBase()));
             hibernateTemplate.saveOrUpdate(userHistory);
         } catch (Throwable t) {
             log.error("", t);
@@ -533,7 +532,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         try {
             UserHistory userHistory = new UserHistory(user);
             userHistory.setBaseSurrender();
-            userHistory.setBaseName(base.getName());
+            userHistory.setBaseName(baseService.getBaseName(baseService.getBase().getSimpleBase()));
             hibernateTemplate.saveOrUpdate(userHistory);
         } catch (Throwable t) {
             log.error("", t);
@@ -581,7 +580,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 // Error creating bean with name 'scopedTarget.user': Scope 'session' is not active for the current thread
                 // This happens when the methode is called from the server side (e.g. XP increase timer)
             }
-            DbLevelPromotion dbLevelPromotion = new DbLevelPromotion(sessionId, base, oldLevel);
+            DbLevelPromotion dbLevelPromotion = new DbLevelPromotion(sessionId, base, baseService.getBaseName(base.getSimpleBase()), oldLevel);
             hibernateTemplate.saveOrUpdate(dbLevelPromotion);
         } catch (Throwable t) {
             log.error("", t);
@@ -599,7 +598,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 // Error creating bean with name 'scopedTarget.user': Scope 'session' is not active for the current thread
                 // This happens when the methode is called from the server side (e.g. XP increase timer)
             }
-            DbLevelPromotion dbLevelPromotion = new DbLevelPromotion(sessionId, base, targetLevel, interimPromotion);
+            DbLevelPromotion dbLevelPromotion = new DbLevelPromotion(sessionId, base, baseService.getBaseName(base.getSimpleBase()), targetLevel, interimPromotion);
             hibernateTemplate.saveOrUpdate(dbLevelPromotion);
         } catch (Throwable t) {
             log.error("", t);

@@ -35,22 +35,22 @@ public class ClientLogEntry {
     private Date timeStamp;
     private Date clientTimeStamp;
     private String userAgent;
-    private String userName;
+    private String baseName;
     @Column(nullable = false)
     private String sessionId;
     @Column(nullable = false, length = 10000)
     private String message;
 
-    public ClientLogEntry(String message, Date date, Session session) {
+    public ClientLogEntry(String message, Date date, Session session, String baseName) {
         this.message = message;
         timeStamp = new Date();
         clientTimeStamp = date;
         userAgent = session.getUserAgent();
         sessionId = session.getSessionId();
         try {
-            userName = session.getConnection().getBase().getName();
+            this.baseName = baseName;
         } catch (Exception e) {
-            userName = "???";
+            this.baseName = "???";
         }
     }
 
@@ -72,8 +72,8 @@ public class ClientLogEntry {
         return userAgent;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getBaseName() {
+        return baseName;
     }
 
     public String getSessionId() {
@@ -113,8 +113,8 @@ public class ClientLogEntry {
         builder.append(sessionId);
         builder.append("\n");
 
-        builder.append("userName: ");
-        builder.append(userName);
+        builder.append("baseName: ");
+        builder.append(baseName);
         builder.append("\n");
 
         builder.append(message);

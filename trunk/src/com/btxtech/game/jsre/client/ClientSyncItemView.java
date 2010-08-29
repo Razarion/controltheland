@@ -272,7 +272,13 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
             marker.setVisible(true);
         }
         setupMarkerPos();
-        DOM.setStyleAttribute(marker.getElement(), "background", clientSyncItem.getSyncBaseItem().getBase().getHtmlColor());
+        updateMarker();
+    }
+
+    public void updateMarker() {
+        if (clientSyncItem.isSyncBaseItem() && marker != null) {
+            DOM.setStyleAttribute(marker.getElement(), "background", ClientBase.getInstance().getBaseHtmlColor(clientSyncItem.getSyncBaseItem().getBase()));
+        }
     }
 
     private void setupMarkerPos() {
