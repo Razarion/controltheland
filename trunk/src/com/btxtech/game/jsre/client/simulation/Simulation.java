@@ -118,8 +118,9 @@ public class Simulation implements SelectionListener {
             tutorialFinished();
             return;
         }
+        int index;
         if (closedTask != null) {
-            int index = tasks.indexOf(closedTask.getTaskConfig());
+            index = tasks.indexOf(closedTask.getTaskConfig());
             index++;
             if (tasks.size() > index) {
                 taskConfig = tasks.get(index);
@@ -129,10 +130,12 @@ public class Simulation implements SelectionListener {
             }
         } else {
             taskConfig = tasks.get(0);
+            index = 0;
         }
         processPreparation(taskConfig);
         taskTime = System.currentTimeMillis();
         activeTask = new Task(taskConfig, tutorialGui);
+        tutorialGui.setProgress(index, tasks.size());
     }
 
     private void tutorialFinished() {
