@@ -417,6 +417,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         synchronized (bases) {
             bases.clear();
             lastBaseId = 0;
+            clear();
             for (Base newBase : newBases) {
                 bases.put(newBase.getSimpleBase(), newBase);
                 createBase(newBase.getSimpleBase(), setupBaseName(newBase), newBase.getBaseColor().getHtmlColor(), newBase.isBot(), newBase.isAbandoned());

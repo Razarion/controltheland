@@ -16,6 +16,7 @@ package com.btxtech.game.services.action.impl;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
+import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -146,6 +147,11 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
                                 baseService.sendAccountBaseUpdate(activeItem);
                             }
                         }
+                    } catch (PositionTakenException ife) {
+                        log.info("PositionTakenException: " + ife.getMessage());
+                        activeItem.stop();
+                        iterator.remove();
+                        connectionService.sendSyncInfo(activeItem);
                     } catch (InsufficientFundsException ife) {
                         log.info("InsufficientFundsException " + activeItem);
                         activeItem.stop();
@@ -252,7 +258,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
             for (SyncBaseItem attacker : guardingItems) {
                 //TankSyncItem tank = (TankSyncItem) baseSyncItem;
                 if (attacker.isEnemy(target)
-                        && attacker.getSyncWaepon().inAttackRange(target)
+                        && attacker.getSyncWaepon().isAttackAllowed(target)
                         && attacker.getSyncWaepon().isItemTypeAllowed(target)) {
                     AttackCommand attackCommand = createAttackCommand(attacker, target);
                     cmds.add(attackCommand);

@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.common.gameengine.services.items;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
@@ -66,4 +67,8 @@ public interface ItemService {
     List<? extends SyncItem> getItems(String itemTypeName, SimpleBase simpleBase) throws NoSuchItemTypeException;
 
     List<SyncBaseItem> getEnemyItems(SimpleBase base);
+
+    boolean hasBuildingsInRect(Rectangle rectangle);
+
+    boolean hasStandingItemsInRect(Rectangle rectangle, SyncItem exceptThat);
 }

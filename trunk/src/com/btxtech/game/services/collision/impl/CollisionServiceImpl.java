@@ -179,8 +179,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
         return getFreeRandomPosition(origin.getPosition(), itemType.getWidth(), itemType.getHeight(), itemType.getTerrainType().getSurfaceTypes(), targetMinRange, targetMaxRange);
     }
 
-    @Override
-    public Index getFreeRandomPosition(Index origin, int itemFreeWidth, int itemFreeHeight, Collection<SurfaceType> allowedSurfaces, int targetMinRange, int targetMaxRange) {
+    private Index getFreeRandomPosition(Index origin, int itemFreeWidth, int itemFreeHeight, Collection<SurfaceType> allowedSurfaces, int targetMinRange, int targetMaxRange) {
         int delta = (targetMaxRange - targetMinRange) / STEPS_DISTANCE;
         for (int distance = 0; distance < (targetMaxRange - targetMinRange); distance += delta) {
             for (double angel = 0.0; angel < 2.0 * Math.PI; angel += (2.0 * Math.PI / STEPS_ANGEL)) {
@@ -219,6 +218,44 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
                 + " allowedSurfaces: " + SurfaceType.toString(allowedSurfaces)
                 + " targetMinRange: " + targetMinRange
                 + " targetMaxRange: " + targetMaxRange);
+    }
+
+    @Override
+    public Index getFreeSyncMovableRandomPositionIfTaken(SyncItem syncItem, int targetMaxRange) {
+        ItemType itemType = syncItem.getItemType();
+        Index origin = syncItem.getPosition();
+        int targetMinRange = (int) (Math.sqrt(Math.pow(itemType.getWidth(), 2) + Math.pow(itemType.getHeight(), 2)) / 2.0);
+        int delta = (targetMaxRange - targetMinRange) / STEPS_DISTANCE;
+        for (int distance = 0; distance < (targetMaxRange - targetMinRange); distance += delta) {
+            for (double angel = 0.0; angel < 2.0 * Math.PI; angel += (2.0 * Math.PI / STEPS_ANGEL)) {
+                //System.out.println("distance + targetMinRange:" + (distance + targetMinRange) + " angel:" + angel);
+                Index point = origin.getPointFromAngelToNord(angel, distance + targetMinRange);
+
+                if (point.getX() >= terrainService.getDbTerrainSettings().getPlayFieldXSize()) {
+                    continue;
+                }
+                if (point.getY() >= terrainService.getDbTerrainSettings().getPlayFieldYSize()) {
+                    continue;
+                }
+                if (!terrainService.isFree(point, itemType.getWidth(), itemType.getHeight(), itemType.getTerrainType().getSurfaceTypes())) {
+                    continue;
+                }
+                if (itemService.hasStandingItemsInRect(new Rectangle(point.getX() - itemType.getWidth() / 2,
+                        point.getY() - itemType.getHeight() / 2,
+                        itemType.getWidth(),
+                        itemType.getHeight()), syncItem)) {
+                    continue;
+                }
+                return point;
+            }
+        }
+
+        log.error("getFreeSyncMovableRandomPositionIfTaken: Can not find free position. "
+                + syncItem
+                + " Origin: " + origin
+                + " targetMinRange: " + targetMinRange
+                + " targetMaxRange: " + targetMaxRange);
+        return null;
     }
 
 

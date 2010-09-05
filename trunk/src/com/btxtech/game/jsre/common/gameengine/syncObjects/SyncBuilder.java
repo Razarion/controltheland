@@ -14,7 +14,9 @@
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
+import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BuilderType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -47,13 +49,21 @@ public class SyncBuilder extends SyncBaseAbility {
             return false;
         }
 
-        if (isTargetInRange(toBeBuildPosition, builderType.getRange())) {
+        if (isTargetInRange(toBeBuildPosition, builderType.getRange() + getSyncBaseItem().getBaseItemType().getRadius())) {
             if (currentBuildup == null) {
                 if (toBeBuiltType == null || toBeBuildPosition == null) {
                     throw new IllegalArgumentException("Invalid attributes |" + toBeBuiltType + "|" + toBeBuildPosition);
                 }
                 if (getSyncBaseItem().hasSyncTurnable()) {
                     getSyncBaseItem().getSyncTurnable().turnTo(toBeBuildPosition);
+                }
+
+                Rectangle itemRect = new Rectangle(toBeBuildPosition.getX() - toBeBuiltType.getWidth() / 2,
+                        toBeBuildPosition.getY() - toBeBuiltType.getHeight() / 2,
+                        toBeBuiltType.getWidth(),
+                        toBeBuiltType.getHeight());
+                if (getServices().getItemService().hasBuildingsInRect(itemRect)) {
+                    throw new PositionTakenException(toBeBuildPosition, toBeBuiltType);
                 }
                 currentBuildup = (SyncBaseItem) getServices().getItemService().buySyncObject(toBeBuiltType, toBeBuildPosition, getSyncBaseItem(), getSyncBaseItem().getBase(), createdChildCount);
                 createdChildCount++;
@@ -76,7 +86,7 @@ public class SyncBuilder extends SyncBaseAbility {
             if (toBeBuildPosition == null) {
                 throw new IllegalStateException(this + " toBeBuildPosition == null");
             }
-            getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, builderType.getRange(), toBeBuildPosition);
+            getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, getSyncBaseItem().getBaseItemType().getRadius(), builderType.getRange(), toBeBuildPosition);
             return true;
         }
     }
@@ -122,7 +132,7 @@ public class SyncBuilder extends SyncBaseAbility {
 
         BaseItemType tmpToBeBuiltType = (BaseItemType) getServices().getItemService().getItemType(builderCommand.getToBeBuilt());
         if (!getServices().getTerrainService().isFree(builderCommand.getPositionToBeBuilt(), tmpToBeBuiltType)) {
-            throw new IllegalArgumentException(this + " Terrain is not free. Can not build: " + builderCommand.getPositionToBeBuilt() + " on: " + builderCommand.getToBeBuilt());
+            throw new PositionTakenException(builderCommand.getPositionToBeBuilt(), builderCommand.getToBeBuilt());
         }
 
         if (!getServices().getTerritoryService().isAllowed(builderCommand.getPositionToBeBuilt(), getSyncBaseItem())) {

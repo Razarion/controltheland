@@ -59,7 +59,7 @@ public class SyncWeapon extends SyncBaseAbility {
     private boolean tickAttack(double factor) {
         try {
             SyncBaseItem targetItem = (SyncBaseItem) getServices().getItemService().getItem(target);
-            if (isTargetInRange(targetItem.getPosition(), weaponType.getRange())) {
+            if (isTargetInRange(targetItem.getPosition(), weaponType.getRange() + getSyncBaseItem().getBaseItemType().getRadius() + targetItem.getBaseItemType().getRadius())) {
                 if (getSyncBaseItem().hasSyncTurnable()) {
                     getSyncBaseItem().getSyncTurnable().turnTo(targetItem.getPosition());
                 }
@@ -76,7 +76,7 @@ public class SyncWeapon extends SyncBaseAbility {
                 }
             } else {
                 if (followTarget && getSyncBaseItem().hasSyncMovable()) {
-                    getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, weaponType.getRange(), targetItem.getPosition());
+                    getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, getSyncBaseItem().getBaseItemType().getRadius() + targetItem.getBaseItemType().getRadius(), weaponType.getRange(), targetItem.getPosition());
                 } else {
                     stop();
                     return returnFalseIfReloaded();
@@ -142,10 +142,21 @@ public class SyncWeapon extends SyncBaseAbility {
         return weaponType.isItemTypeAllowed(target.getBaseItemType().getId());
     }
 
-    public boolean inAttackRange(SyncItem target) {
+    public boolean isAttackAllowed(SyncItem target) {
+        if (!(target instanceof SyncBaseItem)) {
+            return false;
+        }
+        SyncBaseItem baseTarget = (SyncBaseItem) target;
         Index pos = getSyncBaseItem().getPosition();
         Index targetPos = target.getPosition();
-        return !(pos == null || targetPos == null) && pos.isInRadius(targetPos, weaponType.getRange());
+        if (pos == null || targetPos == null) {
+            return false;
+        }
+        if (!isItemTypeAllowed(baseTarget)) {
+            return false;
+        }
+
+        return pos.isInRadius(targetPos, weaponType.getRange() + target.getItemType().getRadius() + getSyncBaseItem().getItemType().getRadius());
     }
 
     public Id getTarget() {

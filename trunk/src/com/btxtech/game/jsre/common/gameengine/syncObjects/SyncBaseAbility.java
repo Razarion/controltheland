@@ -36,7 +36,7 @@ public abstract class SyncBaseAbility {
     }
 
     public boolean isTargetInRange(Index targetPos, int range) {
-        return syncBaseItem.getPosition().isInRadius(targetPos, range);
+        return syncBaseItem.getPosition().isInRadius(targetPos, range) && (!getSyncBaseItem().hasSyncMovable() || !getSyncBaseItem().getSyncMovable().isActive());
     }
 
     public Services getServices() {

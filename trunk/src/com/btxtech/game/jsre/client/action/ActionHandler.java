@@ -28,6 +28,7 @@ import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.RectangleFormation;
 import com.btxtech.game.jsre.common.bot.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
+import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
@@ -99,6 +100,9 @@ public class ActionHandler implements CommonActionService {
                 } catch (ItemDoesNotExistException ife) {
                     iterator.remove();
                     activeItem.stop();
+                } catch (PositionTakenException ife) {
+                    iterator.remove();
+                    activeItem.stop();
                 } catch (InsufficientFundsException ife) {
                     iterator.remove();
                     activeItem.stop();
@@ -115,7 +119,8 @@ public class ActionHandler implements CommonActionService {
         }
     }
 
-    public void addActiveItem(SyncBaseItem syncItem) {
+    @Override
+    public void syncItemActivated(SyncBaseItem syncItem) {
         tmpAddActiveItems.add(syncItem);
     }
 
@@ -418,7 +423,7 @@ public class ActionHandler implements CommonActionService {
         Connection.getInstance().addCommandToQueue(baseCommand);
         ClientUserTracker.getInstance().onExecuteCommand(baseCommand);
         Simulation.getInstance().onSendCommand(syncItem, baseCommand);
-        addActiveItem(syncItem);
+        syncItemActivated(syncItem);
     }
 
     public void injectCommand(BaseCommand baseCommand) {

@@ -36,4 +36,6 @@ public interface CommonActionService {
     void attack(SyncBaseItem attacker, SyncBaseItem target);
 
     void upgrade(SyncBaseItem item) throws InsufficientFundsException;
+
+    void syncItemActivated(SyncBaseItem syncBaseItem);
 }

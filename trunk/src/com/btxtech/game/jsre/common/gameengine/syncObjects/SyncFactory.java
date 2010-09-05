@@ -61,6 +61,9 @@ public class SyncFactory extends SyncBaseAbility {
             buildupProgress = 0;
             toBeBuiltType = null;
             getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS);
+            if(item.hasSyncMovable() &&item.getSyncMovable().onFinished() ) {
+                getServices().getActionService().syncItemActivated(item);
+            }
             return false;
         }
         getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS);

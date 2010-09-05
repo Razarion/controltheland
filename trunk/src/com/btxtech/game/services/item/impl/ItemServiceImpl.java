@@ -47,7 +47,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -120,13 +119,14 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         }
 
         if (syncItem instanceof SyncBaseItem) {
-            historyService.addItemCreatedEntry((SyncBaseItem) syncItem);
-            actionService.addGuardingBaseItem((SyncBaseItem) syncItem);
+            SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
+            historyService.addItemCreatedEntry(syncBaseItem);
+            actionService.addGuardingBaseItem(syncBaseItem);
             syncItem.addSyncItemListener(actionService);
-            baseService.itemCreated((SyncBaseItem) syncItem);
-            baseService.sendAccountBaseUpdate((SyncBaseItem) syncItem);
-            actionService.interactionGuardingItems((SyncBaseItem) syncItem);
-            userGuidanceService.onSyncBaseItemCreated((SyncBaseItem) syncItem);
+            baseService.itemCreated(syncBaseItem);
+            baseService.sendAccountBaseUpdate(syncBaseItem);
+            actionService.interactionGuardingItems(syncBaseItem);
+            userGuidanceService.onSyncBaseItemCreated(syncBaseItem);
         }
         connectionService.sendSyncInfo(syncItem);
         if (log.isInfoEnabled()) {
@@ -253,22 +253,21 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     @Override
     public SyncBaseItem getFirstEnemyItemInRange(SyncBaseItem baseSyncItem) {
         int range = baseSyncItem.getSyncWaepon().getWeaponType().getRange();
-        int startX = baseSyncItem.getPosition().getX() - range;
+        int startX = baseSyncItem.getPosition().getX() - range - baseSyncItem.getItemType().getWidth() / 2;
         if (startX < 0) {
             startX = 0;
         }
-        int startY = baseSyncItem.getPosition().getY() - range;
+        int startY = baseSyncItem.getPosition().getY() - range - baseSyncItem.getItemType().getHeight() / 2;
         if (startY < 0) {
             startY = 0;
         }
-        Rectangle rectangle = new Rectangle(startX, startY, 2 * range, 2 * range);
+        Rectangle rectangle = new Rectangle(startX, startY, 2 * range + baseSyncItem.getItemType().getWidth(), 2 * range + baseSyncItem.getItemType().getHeight());
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
                 if (syncItem.getPosition() != null && rectangle.contains(syncItem.getPosition())
                         && syncItem instanceof SyncBaseItem
                         && baseSyncItem.isEnemy((SyncBaseItem) syncItem)
-                        && syncItem.getPosition().getDistance(baseSyncItem.getPosition()) <= range
-                        && baseSyncItem.getSyncWaepon().isItemTypeAllowed((SyncBaseItem) syncItem)) {
+                        && baseSyncItem.getSyncWaepon().isAttackAllowed(syncItem)) {
                     return (SyncBaseItem) syncItem;
                 }
             }
@@ -335,6 +334,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Collection<DbItemType> getDbItemTypes() {
         return hibernateTemplate.executeFind(new HibernateCallback() {
             @Override
@@ -347,6 +347,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Collection<DbBaseItemType> getDbBaseItemTypes() {
         return hibernateTemplate.executeFind(new HibernateCallback() {
             @Override
@@ -359,6 +360,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Collection<DbBaseItemType> getWeaponDbBaseItemTypes() {
         return hibernateTemplate.executeFind(new HibernateCallback() {
             @Override
@@ -445,6 +447,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
     @Override
     public DbItemType getDbItemType(final int itemTypeId) {
+        @SuppressWarnings("unchecked")
         List<DbItemType> list = (List<DbItemType>) hibernateTemplate.execute(new HibernateCallback() {
             @Override
             public Object doInHibernate(Session session) throws HibernateException, SQLException {
@@ -554,5 +557,54 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             }
         }
         return clientBaseItems;
+    }
+
+    @Override
+    public boolean hasBuildingsInRect(Rectangle rectangle) {
+        synchronized (items) {
+            for (SyncItem syncItem : items.values()) {
+                if (syncItem instanceof SyncBaseItem) {
+                    SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
+                    if (!syncBaseItem.hasSyncMovable() && rectangle.adjoinsEclusive(syncBaseItem.getRectangle())) {
+                        return true;
+                    }
+
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean hasStandingItemsInRect(Rectangle rectangle, SyncItem exceptThat) {
+        synchronized (items) {
+            for (SyncItem syncItem : items.values()) {
+                if (syncItem.equals(exceptThat)) {
+                    continue;
+                }
+                if (syncItem instanceof SyncBaseItem) {
+                    SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
+                    if (syncBaseItem.isContainedIn()) {
+                        continue;
+                    }
+                    if (syncBaseItem.hasSyncMovable()) {
+                        if (!syncBaseItem.getSyncMovable().isActive() && rectangle.adjoinsEclusive(syncBaseItem.getRectangle())) {
+                            return true;
+                        }
+                    } else {
+                        if (rectangle.adjoins(syncBaseItem.getRectangle())) {
+                            return true;
+                        }
+                    }
+                } else if (syncItem instanceof SyncResourceItem) {
+                    if (rectangle.adjoinsEclusive(syncItem.getRectangle())) {
+                        return true;
+                    }
+                } else {
+                    throw new IllegalAccessError(this + " unknown sync item: " + syncItem);
+                }
+            }
+        }
+        return false;
     }
 }

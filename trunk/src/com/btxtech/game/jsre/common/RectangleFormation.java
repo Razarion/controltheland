@@ -27,17 +27,22 @@ public class RectangleFormation {
     //Making own index to prevent negative value exception
     private int lastX;
     private int lastY;
-    private int distanceX;
-    private int distanceY;
+    private int distanceX = 0;
+    private int distanceY = 0;
     private int lineCount = 0;
     private int linePartCount = 1;
     private int currentLinePartCount = 0;
 
     public RectangleFormation(Index origin, Collection<ClientSyncItem> clientSyncItems) {
         this.origin = origin;
-        ClientSyncItem clientSyncItem = clientSyncItems.iterator().next();
-        this.distanceX = clientSyncItem.getSyncItem().getItemType().getWidth();
-        this.distanceY = clientSyncItem.getSyncItem().getItemType().getHeight();
+        for (ClientSyncItem clientSyncItem : clientSyncItems) {
+            if (clientSyncItem.getSyncItem().getItemType().getWidth() > distanceX) {
+                distanceX = clientSyncItem.getSyncItem().getItemType().getWidth();
+            }
+            if (clientSyncItem.getSyncItem().getItemType().getHeight() > distanceY) {
+                distanceY = clientSyncItem.getSyncItem().getItemType().getHeight();
+            }
+        }
     }
 
     public Index calculateNextEntry() {
@@ -75,7 +80,7 @@ public class RectangleFormation {
             return returnIndex();
         } else {
             //Y side decrease
-            lastY-= distanceY;
+            lastY -= distanceY;
             if (currentLinePartCount == linePartCount) {
                 lineCount++;
                 linePartCount++;

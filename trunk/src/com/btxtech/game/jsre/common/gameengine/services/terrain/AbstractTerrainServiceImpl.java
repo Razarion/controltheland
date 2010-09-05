@@ -313,10 +313,10 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
     }
 
     @Override
-    public List<Index> setupPathToDestination(Index start, Index destionation, int range, TerrainType terrainType) {
-        Index destination = start.getPointWithDistance(range, destionation);
+    public List<Index> setupPathToDestination(SyncBaseItem syncBaseItem, Index destination, int minRadius, int delta) {
+        Index newDestination = destination.getPointWithDistance(minRadius + delta, syncBaseItem.getPosition());
         ArrayList<Index> path = new ArrayList<Index>();
-        path.add(destination);
+        path.add(newDestination);
         return path;
     }
 
@@ -338,14 +338,7 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
 
         Rectangle rectangle = new Rectangle(x, y, width, height);
         Collection<SurfaceType> surfaceTypes = getSurfaceTypeTilesInRegion(rectangle);
-        if (surfaceTypes.isEmpty()) {
-            return false;
-        }
-        if (allowedSurfaces != null) {
-            return allowedSurfaces.containsAll(surfaceTypes);
-        } else {
-            return true; // TODO is this correct?
-        }
+        return !surfaceTypes.isEmpty() && (allowedSurfaces == null || allowedSurfaces.containsAll(surfaceTypes));
     }
 
     @Override
@@ -475,4 +468,8 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
         return new Index(x, y);
     }
 
+    @Override
+    public List<Index> setupPathToSyncMovableRandomPositionIfTaken(SyncItem syncItem) {
+        throw new UnsupportedOperationException();
+    }
 }

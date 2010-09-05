@@ -75,6 +75,10 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         createBase(new BaseAttributes(simpleBase, name, htmlColor, isBot, abandoned));
     }
 
+    protected void clear() {
+        bases.clear();
+    }
+
     protected void createBase(BaseAttributes baseAttributes) {
         if (bases.containsKey(baseAttributes.getSimpleBase())) {
             throw new IllegalArgumentException(this + " The base already exits: " + baseAttributes.getSimpleBase());
