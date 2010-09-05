@@ -28,7 +28,7 @@ import java.util.List;
  * Time: 14:23:09
  */
 public interface AbstractTerrainService {
-    List<Index> setupPathToDestination(Index start, Index destination, int range, TerrainType terrainType);
+    List<Index> setupPathToDestination(SyncBaseItem syncBaseItem, Index destination, int minRadius, int delta);
 
     List<Index> setupPathToDestination(Index start, Index destination, TerrainType terrainType);
 
@@ -98,4 +98,6 @@ public interface AbstractTerrainService {
     Index getNearestPoint(TerrainType allowedTerrainType, Index absoluteDestination, int maxRadius);
 
     Index correctPosition(SyncItem syncItem, Index position);
+
+    List<Index> setupPathToSyncMovableRandomPositionIfTaken(SyncItem syncItem);
 }

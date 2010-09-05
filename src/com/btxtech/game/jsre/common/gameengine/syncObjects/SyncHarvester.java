@@ -43,14 +43,14 @@ public class SyncHarvester extends SyncBaseAbility {
 
         try {
             SyncResourceItem resource = (SyncResourceItem) getServices().getItemService().getItem(target);
-            if (isTargetInRange(resource.getPosition(), harvesterType.getRange())) {
+            if (isTargetInRange(resource.getPosition(), harvesterType.getRange() + getSyncBaseItem().getBaseItemType().getRadius() + resource.getItemType().getRadius())) {
                 if (getSyncBaseItem().hasSyncTurnable()) {
                     getSyncBaseItem().getSyncTurnable().turnTo(resource.getPosition());
                 }
                 double money = resource.harvest(factor * harvesterType.getProgress());
                 getServices().getBaseService().depositResource(money, getSyncBaseItem().getBase());
             } else {
-                getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, harvesterType.getRange(), resource.getPosition());
+                getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, getSyncBaseItem().getBaseItemType().getRadius() + resource.getItemType().getRadius(), harvesterType.getRange(), resource.getPosition());
             }
             return true;
         } catch (ItemDoesNotExistException ignore) {

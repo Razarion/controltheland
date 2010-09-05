@@ -103,11 +103,6 @@ public class UserBaseInfo extends BorderPanel {
         return base != null;
     }
 
-    @Override
-    public void detachModels() {
-        super.detachModels();
-    }
-
     class BaseInfo {
         private String key;
         private String value;

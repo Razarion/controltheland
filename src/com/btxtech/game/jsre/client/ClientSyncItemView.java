@@ -44,7 +44,7 @@ import com.google.gwt.widgetideas.client.ProgressBar;
  * Date: May 20, 2009
  * Time: 2:48:36 PM
  */
-public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandler, MouseOverHandler, SyncItemListener {
+public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandler, MouseOverHandler/*, SyncItemListener*/ {
     private Image image;
     private ClientSyncItem clientSyncItem;
     private CursorItemState cursorItemState;
@@ -68,7 +68,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
     public void transform(ClientSyncItem clientSyncItem) {
         if (clientSyncItem == null && this.clientSyncItem != null) {
             MapWindow.getAbsolutePanel().remove(this);
-            this.clientSyncItem.getSyncItem().removeSyncItemListener(this);
+            this.clientSyncItem.setClientSyncItemListener(null);
             this.clientSyncItem = null;
         } else if (clientSyncItem != null && this.clientSyncItem == null) {
             MapWindow.getAbsolutePanel().add(this, 0, 0);
@@ -83,7 +83,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
             return;
         }
         if (this.clientSyncItem != null) {
-            this.clientSyncItem.getSyncItem().removeSyncItemListener(this);
+            this.clientSyncItem.setClientSyncItemListener(null);
         }
         ClientSyncItem oldClientSyncItem = this.clientSyncItem;
         this.clientSyncItem = clientSyncItem;
@@ -98,7 +98,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
         } else {
             throw new IllegalArgumentException(this + " transformTo(): SyncItem not supported: " + clientSyncItem);
         }
-        this.clientSyncItem.getSyncItem().addSyncItemListener(this);
+        this.clientSyncItem.setClientSyncItemListener(this);
         displayState();
     }
 
@@ -187,8 +187,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
         return pos - viewOrigin - itemSize / 2;
     }
 
-    @Override
-    public void onItemChanged(Change change, SyncItem syncItem) {
+    public void onModelChange(SyncItemListener.Change change) {
         switch (change) {
             case BUILD:
                 // TODO PlayerSimulation.getInstance().onItemBuilt(this);

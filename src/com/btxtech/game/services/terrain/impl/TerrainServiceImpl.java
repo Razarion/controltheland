@@ -14,11 +14,15 @@
 package com.btxtech.game.services.terrain.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbSurfaceRect;
@@ -55,6 +59,8 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     private DbTerrainSetting dbTerrainSettings;
     @Autowired
     private CollisionService collisionService;
+    @Autowired
+    private ItemService itemService;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -68,6 +74,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
 
     private void loadTerrain() {
         // Terrain settings
+        @SuppressWarnings("unchecked")
         List<DbTerrainSetting> dbTerrainSettings = hibernateTemplate.loadAll(DbTerrainSetting.class);
         if (dbTerrainSettings.isEmpty()) {
             this.dbTerrainSettings = createDefaultTerrainSettings();
@@ -88,12 +95,14 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
 
         // Surface rectangles
         setSurfaceRects(new ArrayList<SurfaceRect>());
+        @SuppressWarnings("unchecked")
         List<DbSurfaceRect> dbSurfaceRects = hibernateTemplate.loadAll(DbSurfaceRect.class);
         for (DbSurfaceRect dbSurfaceRect : dbSurfaceRects) {
             addSurfaceRect(dbSurfaceRect.createSurfaceRect());
         }
 
         // Terrain images
+        @SuppressWarnings("unchecked")
         List<DbTerrainImage> imageList = hibernateTemplate.loadAll(DbTerrainImage.class);
         clearTerrainImages();
         dbTerrainImages = new HashMap<Integer, DbTerrainImage>();
@@ -103,6 +112,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         }
 
         // Surface images
+        @SuppressWarnings("unchecked")
         List<DbSurfaceImage> surfaceList = hibernateTemplate.loadAll(DbSurfaceImage.class);
         clearSurfaceImages();
         dbSurfaceImages = new HashMap<Integer, DbSurfaceImage>();
@@ -124,6 +134,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         return dbTerrainSetting;
     }
 
+    @SuppressWarnings("unchecked")
     private List<DbTerrainImagePosition> loadDbTerrainImagePositions() {
         return hibernateTemplate.executeFind(new HibernateCallback() {
             @Override
@@ -214,6 +225,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         }
         hibernateTemplate.saveOrUpdateAll(dbTerrainImagePositionsNew);
         // Surface Rects
+        @SuppressWarnings("unchecked")
         List<DbSurfaceRect> dbSurfaceRects = hibernateTemplate.loadAll(DbSurfaceRect.class);
         hibernateTemplate.deleteAll(dbSurfaceRects);
         ArrayList<DbSurfaceRect> dbSurfaceRectsNew = new ArrayList<DbSurfaceRect>();
@@ -230,47 +242,110 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     }
 
     @Override
-    public List<Index> setupPathToDestination(Index start, Index absoluteDestination, int maxRadius, TerrainType terrainType) {
-        if (start.isInRadius(absoluteDestination, maxRadius)) {
+    public List<Index> setupPathToDestination(SyncBaseItem syncBaseItem, Index absoluteDestination, int minRadius, int delta) {
+        Index start = syncBaseItem.getPosition();
+        if (start.isInRadius(absoluteDestination, delta + minRadius) && !itemService.hasStandingItemsInRect(syncBaseItem.getRectangle(), syncBaseItem)) {
             ArrayList<Index> singleIndex = new ArrayList<Index>();
             singleIndex.add(start);
             return singleIndex;
         }
 
         SurfaceType destSurfaceType = getSurfaceTypeAbsolute(absoluteDestination);
-        if (!terrainType.allowSurfaceType(destSurfaceType)) {
+        if (!syncBaseItem.getTerrainType().allowSurfaceType(destSurfaceType)) {
             // Destination is has a different surface type
-            absoluteDestination = getNearestPoint(terrainType, absoluteDestination, maxRadius);
-            return setupPathToDestination(start, absoluteDestination, terrainType);
+            return setupPathToDestinationDifferentTerrainType(syncBaseItem, start, absoluteDestination, minRadius, delta);
         } else {
-            List<Index> path = setupPathToDestination(start, absoluteDestination, terrainType);
-            path.remove(path.size() - 1); // This will be replace
-            Index secondLastPoint;
-            if (path.isEmpty()) {
-                // Start and destination are in the same passable rectangle
-                secondLastPoint = start;
-            } else {
-                secondLastPoint = path.get(path.size() - 1);
+            return setupPathToDestinationSameTerrainType(syncBaseItem, start, absoluteDestination, minRadius, delta);
+        }
+    }
+
+    private List<Index> setupPathToDestinationDifferentTerrainType(SyncBaseItem syncBaseItem, Index start, Index absoluteDestination, int minRadius, int delta) {
+        Index reachableDestination = getNearestFreePoint(syncBaseItem, syncBaseItem.getTerrainType(), absoluteDestination, minRadius + delta);
+        return setupPathToDestination(start, reachableDestination, syncBaseItem.getTerrainType());
+    }
+
+    private Index getNearestFreePoint(SyncBaseItem syncBaseItem, TerrainType allowedTerrainType, Index absoluteDestination, int maxRadius) {
+        SurfaceType destSurfaceType = getSurfaceTypeAbsolute(absoluteDestination);
+        if (allowedTerrainType.allowSurfaceType(destSurfaceType)) {
+            throw new IllegalArgumentException("getNearestFreePoint: same surface type. absoluteDestination: " + absoluteDestination + " ");
+        }
+        int CIRCLE_PARTS = 36;
+        int RADIUS_STEPS = 10;
+        for (int radius = maxRadius; radius > 0; radius -= maxRadius / RADIUS_STEPS) {
+            for (double angel = 0; angel < (2 * Math.PI); angel += 2 * Math.PI / CIRCLE_PARTS) {
+                Index newDestination = absoluteDestination.getPointFromAngelToNord(angel, radius);
+                Rectangle newRectangle = syncBaseItem.getItemType().getRectangle(newDestination);
+                if (!isFree(new Index(newDestination.getX(), newDestination.getY()), newRectangle.getWidth(), newRectangle.getHeight(), allowedTerrainType.getSurfaceTypes())) {
+                    continue;
+                }
+                if (itemService.hasStandingItemsInRect(newRectangle, syncBaseItem)) {
+                    continue;
+                }
+                return newDestination;
             }
-            double angle = 0;
-            if (!absoluteDestination.equals(secondLastPoint)) {
-                angle = absoluteDestination.getAngleToNord(secondLastPoint);
-            }
-            for (int radius = maxRadius; radius > 0; radius -= getTerrainSettings().getTileHeight() / 10) {
-                for (double testAngle = angle; testAngle < angle + 2 * Math.PI; testAngle += Math.PI / 50) {
-                    Index newDestination = absoluteDestination.getPointFromAngelToNord(testAngle, maxRadius);
-                    if (isFree(new Index(newDestination.getX(), newDestination.getY()), 0, 0, terrainType.getSurfaceTypes())) {
-                        path.add(newDestination);
-                        return path;
-                    }
+        }
+        throw new IllegalArgumentException(this + "getNearestFreePoint: can not find position on surface. allowedTerrainType: " + allowedTerrainType + " absoluteDestination: " + absoluteDestination);
+    }
+
+
+    private List<Index> setupPathToDestinationSameTerrainType(SyncBaseItem syncBaseItem, Index start, Index absoluteDestination, int minRadius, int delta) {
+        List<Index> path = setupPathToDestination(start, absoluteDestination, syncBaseItem.getTerrainType());
+        path.remove(path.size() - 1); // This will be replace
+        Index secondLastPoint;
+        if (path.isEmpty()) {
+            // Start and destination are in the same passable rectangle
+            secondLastPoint = start;
+        } else {
+            secondLastPoint = path.get(path.size() - 1);
+        }
+        double startAngle = 0;
+        if (!absoluteDestination.equals(secondLastPoint)) {
+            startAngle = absoluteDestination.getAngleToNord(secondLastPoint);
+        }
+        for (double testAngle = 0; testAngle < startAngle + Math.PI; testAngle += Math.PI / 50) {
+            for (int radius = delta + minRadius; radius >= minRadius; radius -= getTerrainSettings().getTileHeight() / 10) {
+                Index newDestination = correctDestination(absoluteDestination, startAngle + testAngle, radius, syncBaseItem);
+                if (newDestination != null) {
+                    path.add(newDestination);
+                    return path;
+                }
+                newDestination = correctDestination(absoluteDestination, startAngle - testAngle, radius, syncBaseItem);
+                if (newDestination != null) {
+                    path.add(newDestination);
+                    return path;
                 }
             }
-            throw new IllegalStateException("Can not find position. Pos: " + start + " dest: " + absoluteDestination + " maxRadius: " + maxRadius + " terrainType:" + terrainType);
         }
+        throw new IllegalStateException("Can not find position. Pos: " + start + " dest: " + absoluteDestination + " maxRadius: " + delta + " syncBaseItem:" + syncBaseItem);
+    }
+
+    private Index correctDestination(Index absoluteDestination, double angle, int radius, SyncBaseItem syncBaseItem) {
+        Index newDestination = absoluteDestination.getPointFromAngelToNord(angle, radius);
+        Rectangle newRectangle = syncBaseItem.getItemType().getRectangle(newDestination);
+
+        if (!isFree(new Index(newRectangle.getX(), newRectangle.getY()), newRectangle.getWidth(), newRectangle.getHeight(), syncBaseItem.getTerrainType().getSurfaceTypes())) {
+            return null;
+
+        }
+        if (itemService.hasStandingItemsInRect(newRectangle, syncBaseItem)) {
+            return null;
+        }
+        return newDestination;
     }
 
     @Override
     public List<Index> setupPathToDestination(Index start, Index destination, TerrainType terrainType) {
         return collisionService.setupPathToDestination(start, destination, terrainType);
     }
+
+    @Override
+    public List<Index> setupPathToSyncMovableRandomPositionIfTaken(SyncItem syncItem) {
+        Index position = collisionService.getFreeSyncMovableRandomPositionIfTaken(syncItem, 500);
+        if (position == null) {
+            return null;
+        } else {
+            return setupPathToDestination(syncItem.getPosition(), position, syncItem.getTerrainType());
+        }
+    }
+
 }

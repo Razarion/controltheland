@@ -106,7 +106,7 @@ public class SyncItemContainer extends SyncBaseAbility {
         if (!isActive()) {
             return false;
         }
-        if (isTargetInRange(unloadPos, itemContainerType.getRange())) {
+        if (isTargetInRange(unloadPos, itemContainerType.getRange() + getSyncBaseItem().getBaseItemType().getRadius())) {
             if (getSyncBaseItem().hasSyncTurnable()) {
                 getSyncBaseItem().getSyncTurnable().turnTo(unloadPos);
             }
@@ -115,7 +115,7 @@ public class SyncItemContainer extends SyncBaseAbility {
             return false;
         } else {
             if (getSyncBaseItem().hasSyncMovable()) {
-                getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, itemContainerType.getRange(), unloadPos);
+                getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, getSyncBaseItem().getBaseItemType().getRadius(), itemContainerType.getRange(), unloadPos);
                 return true;
             } else {
                 stop();

@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -31,9 +32,9 @@ import java.util.Map;
 public interface CollisionService extends CommonCollisionService {
     Map<TerrainType, List<PassableRectangle>> getPassableRectangles();
 
-    Index getFreeRandomPosition(Index origin, int itemFreeWidth, int itemFreeHeight, Collection<SurfaceType> allowedSurfaces, int targetMinRange, int targetMaxRange);
-
     Index getFreeRandomPosition(ItemType itemType, Rectangle region, int itemFreeRange);
+
+    Index getFreeSyncMovableRandomPositionIfTaken(SyncItem syncItem, int targetMaxRange);
 
     void addCollisionServiceChangedListener(CollisionServiceChangedListener collisionServiceChangedListener);
 

@@ -103,6 +103,6 @@ public class PlaceablePreviewSyncItem extends PlaceablePreviewWidget {
 
         // Check items
         Rectangle itemRect = new Rectangle(absX, absY, itemTypeToBuilt.getWidth(), itemTypeToBuilt.getHeight());
-        return ItemContainer.getInstance().hasBuildingsInRect(itemRect);
+        return !ItemContainer.getInstance().hasBuildingsInRect(itemRect);
     }
 }

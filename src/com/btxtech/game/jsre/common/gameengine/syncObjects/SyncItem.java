@@ -37,9 +37,6 @@ public abstract class SyncItem {
     private Index position;
     // Sync states
     private final ArrayList<SyncItemListener> syncItemListeners = new ArrayList<SyncItemListener>();
-    boolean isFireItemChangedActive = false;
-    private final ArrayList<SyncItemListener> addSyncItemListeners = new ArrayList<SyncItemListener>();
-    private final ArrayList<SyncItemListener> removeSyncItemListeners = new ArrayList<SyncItemListener>();
 
 
     public SyncItem(Id id, Index position, ItemType itemType, Services services) {
@@ -91,28 +88,19 @@ public abstract class SyncItem {
     }
 
     public void addSyncItemListener(SyncItemListener syncItemListener) {
-        if (isFireItemChangedActive) {
-            addSyncItemListeners.add(syncItemListener);
-        } else {
-            synchronized (syncItemListeners) {
-                syncItemListeners.add(syncItemListener);
-            }
+        synchronized (syncItemListeners) {
+            syncItemListeners.add(syncItemListener);
         }
     }
 
     public void removeSyncItemListener(SyncItemListener syncItemListener) {
-        if (isFireItemChangedActive) {
-            removeSyncItemListeners.add(syncItemListener);
-        } else {
-            synchronized (syncItemListeners) {
-                syncItemListeners.remove(syncItemListener);
-            }
+        synchronized (syncItemListeners) {
+            syncItemListeners.remove(syncItemListener);
         }
     }
 
     public void fireItemChanged(SyncItemListener.Change change) {
         synchronized (syncItemListeners) {
-            isFireItemChangedActive = true;
             for (SyncItemListener syncItemListener : syncItemListeners) {
                 try {
                     syncItemListener.onItemChanged(change, this);
@@ -120,11 +108,6 @@ public abstract class SyncItem {
                     GwtCommon.handleException("Unable to fire change for sync item: " + this, t);
                 }
             }
-            isFireItemChangedActive = false;
-            syncItemListeners.addAll(addSyncItemListeners);
-            addSyncItemListeners.clear();
-            syncItemListeners.removeAll(removeSyncItemListeners);
-            removeSyncItemListeners.clear();
         }
     }
 
@@ -142,10 +125,7 @@ public abstract class SyncItem {
         if (position == null) {
             throw new NullPointerException("Has no position: " + this);
         }
-        return new Rectangle(position.getX() - itemType.getWidth() / 2,
-                position.getY() - itemType.getHeight() / 2,
-                itemType.getWidth(),
-                itemType.getHeight());
+        return itemType.getRectangle(position);
     }
 
     public TerrainType getTerrainType() {

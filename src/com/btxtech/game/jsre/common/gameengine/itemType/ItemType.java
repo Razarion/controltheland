@@ -13,6 +13,8 @@
 
 package com.btxtech.game.jsre.common.gameengine.itemType;
 
+import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import java.io.Serializable;
 
@@ -28,6 +30,7 @@ public abstract class ItemType implements Serializable {
     private String name;
     private String description;
     private TerrainType terrainType;
+    private Integer radius;
 
     public int getId() {
         return id;
@@ -77,6 +80,17 @@ public abstract class ItemType implements Serializable {
         return terrainType;
     }
 
+    public int getRadius() {
+        if (radius == null) {
+            radius = (int) (Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)) / 2.0);
+        }
+        return radius;
+    }
+
+    public Rectangle getRectangle(Index position) {
+        return new Rectangle(position.getX() - getWidth() / 2, position.getY() - getHeight() / 2, getWidth(), getHeight());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -102,7 +116,7 @@ public abstract class ItemType implements Serializable {
         width = itemType.width;
         name = itemType.name;
         description = itemType.description;
-        terrainType =  itemType.terrainType;
+        terrainType = itemType.terrainType;
     }
 
     @Override

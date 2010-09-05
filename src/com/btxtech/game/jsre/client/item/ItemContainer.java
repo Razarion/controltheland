@@ -128,7 +128,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
             clientSyncItem.update();
             checkSpecialItem(clientSyncItem);
             if (clientSyncItem.isSyncBaseItem()) {
-                ActionHandler.getInstance().addActiveItem(clientSyncItem.getSyncBaseItem());
+                ActionHandler.getInstance().syncItemActivated(clientSyncItem.getSyncBaseItem());
             }
         } else {
             if (clientSyncItem != null) {
@@ -306,13 +306,17 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
                     !orphanItems.containsKey(clientSyncItem.getSyncItem().getId()) &&
                     !seeminglyDeadItems.containsKey(clientSyncItem.getSyncItem().getId()) &&
                     !(clientSyncItem.getSyncBaseItem()).hasSyncMovable() &&
-                    rectangle.adjoins(clientSyncItem.getSyncItem().getRectangle())) {
-                return false;
+                    rectangle.adjoinsEclusive(clientSyncItem.getSyncItem().getRectangle())) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
+    @Override
+    public boolean hasStandingItemsInRect(Rectangle rectangle, SyncItem exceptThat) {
+        return false;
+    }
 
     public Collection<ClientSyncItem> getOwnItems() {
         ArrayList<ClientSyncItem> clientBaseItems = new ArrayList<ClientSyncItem>();

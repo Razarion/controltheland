@@ -17,7 +17,6 @@ import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import java.util.List;
 
@@ -38,8 +37,6 @@ public interface ActionService extends CommonActionService, SyncItemListener {
     void removeGuardingBaseItem(SyncBaseItem syncItem);
 
     void reload();
-
-    void syncItemActivated(SyncBaseItem syncBaseItem);
 
     void pause(boolean pause);
 }

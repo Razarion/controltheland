@@ -242,6 +242,7 @@ public class Connection implements AsyncCallback<Void> {
                 } else {
                     throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }
+
             } catch (Throwable t) {
                 GwtCommon.handleException(t);
             }

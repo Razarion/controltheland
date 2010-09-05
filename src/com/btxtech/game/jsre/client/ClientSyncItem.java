@@ -30,6 +30,7 @@ public class ClientSyncItem implements SyncItemListener {
     private boolean isVisible = false;
     private boolean isHidden = false;
     private boolean isSelected;
+    private ClientSyncItemView clientSyncItemView;
 
     public ClientSyncItem(SyncItem syncItem) {
         this.syncItem = syncItem;
@@ -42,6 +43,9 @@ public class ClientSyncItem implements SyncItemListener {
             case POSITION:
                 checkVisibility();
                 break;
+        }
+        if (clientSyncItemView != null) {
+            clientSyncItemView.onModelChange(change);
         }
     }
 
@@ -128,5 +132,9 @@ public class ClientSyncItem implements SyncItemListener {
     @Override
     public String toString() {
         return "ClientSyncItem: " + syncItem;
+    }
+
+    public void setClientSyncItemListener(ClientSyncItemView clientSyncItemView) {
+        this.clientSyncItemView = clientSyncItemView;
     }
 }
