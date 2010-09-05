@@ -31,6 +31,7 @@ public class TutorialGui {
     private static final int LETTER_DELAY = 70;
     private static final int FLASH_COUNT = 7;
     private HTML html;
+    private HTML progress;
     private String taskText;
     private String stepText;
     private AbsolutePanel image;
@@ -56,6 +57,14 @@ public class TutorialGui {
         html = new HTML();
         absolutePanel.add(html, 60, 333);
         html.setPixelSize(240, 200);
+
+        progress = new HTML();
+        progress.getElement().getStyle().setProperty("right", "380px");
+        progress.getElement().getStyle().setProperty("top", "10px");
+        MapWindow.getAbsolutePanel().add(progress);
+        progress.getElement().getStyle().setProperty("position", "absolute");
+        progress.getElement().getStyle().setFontSize(2.5, Style.Unit.EM);
+        progress.getElement().getStyle().setColor("#CCCCCC");
     }
 
     public void setTaskText(String text) {
@@ -155,4 +164,7 @@ public class TutorialGui {
     }
 
 
+    public void setProgress(int current, int todo) {
+        progress.setText("Training mode: task " + (current + 1) + " of " + todo);
+    }
 }
