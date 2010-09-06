@@ -21,11 +21,12 @@ import com.google.gwt.dom.client.Style;
  * Time: 20:31:59
  */
 public enum CursorType {
-    GO("/images/cursors/go.cur", Style.Cursor.CROSSHAIR,"/images/cursors/nogo.cur", Style.Cursor.POINTER),
+    GO("/images/cursors/go.cur", Style.Cursor.CROSSHAIR, "/images/cursors/nogo.cur", Style.Cursor.POINTER),
     ATTACK("/images/cursors/attack.cur", Style.Cursor.CROSSHAIR, "/images/cursors/noattack.cur", Style.Cursor.POINTER),
     COLLECT("/images/cursors/collect.cur", Style.Cursor.CROSSHAIR, "/images/cursors/nocollect.cur", Style.Cursor.POINTER),
     LOAD("/images/cursors/load.cur", Style.Cursor.S_RESIZE, "/images/cursors/noload.cur", Style.Cursor.POINTER),
-    UNLOAD("/images/cursors/unload.cur", Style.Cursor.N_RESIZE, "/images/cursors/nounload.cur", Style.Cursor.POINTER);
+    UNLOAD("/images/cursors/unload.cur", Style.Cursor.N_RESIZE, "/images/cursors/nounload.cur", Style.Cursor.POINTER),
+    SELL("/images/cursors/sell.cur", Style.Cursor.POINTER, "/images/cursors/nosell.cur", Style.Cursor.DEFAULT);
     private String url;
     private Style.Cursor alternativeDefault;
     private String noUrl;

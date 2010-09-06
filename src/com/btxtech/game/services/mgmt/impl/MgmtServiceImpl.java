@@ -335,6 +335,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
                 startupData.setUserActionCollectionTime(5 * 60);
                 startupData.setStartRectangle(new Rectangle(0, 0, 1000, 1000));
                 startupData.setStartItemFreeRange(200);
+                startupData.setItemSellFactor(0.01);
                 saveStartupData(startupData);
             } else if (startups.size() > 1) {
                 log.error("More than one startup data detected.");

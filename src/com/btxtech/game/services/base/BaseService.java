@@ -45,6 +45,8 @@ public interface BaseService extends AbstractBaseService {
 
     void sendAccountBaseUpdate(SyncBaseItem syncItem);
 
+    void sendAccountBaseUpdate(Base base);
+
     void sendXpUpdate(UserItemTypeAccess userItemTypeAccess, Base base);
 
     void sendEnergyUpdate(BaseEnergy baseEnergy, Base base);

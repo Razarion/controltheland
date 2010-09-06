@@ -337,6 +337,13 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
+    public void sendAccountBaseUpdate(Base base) {
+        AccountBalancePacket packet = new AccountBalancePacket();
+        packet.setAccountBalance(base.getAccountBalance());
+        connectionService.sendPacket(base.getSimpleBase(), packet);
+    }
+
+    @Override
     public void sendXpUpdate(UserItemTypeAccess userItemTypeAccess, Base base) {
         XpBalancePacket packet = new XpBalancePacket();
         packet.setXp(userItemTypeAccess.getXp());

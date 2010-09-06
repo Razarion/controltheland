@@ -39,6 +39,7 @@ public class SelectionHandler {
     private Group selectedGroup; // Always my property
     private ClientSyncItem selectedTargetClientSyncItem; // Not my property
     private ArrayList<SelectionListener> listeners = new ArrayList<SelectionListener>();
+    private boolean sellMode = false;
 
     public static SelectionHandler getInstance() {
         return INSTANCE;
@@ -180,5 +181,20 @@ public class SelectionHandler {
             selectedTargetClientSyncItem = ItemContainer.getInstance().getSimulationItem(id);
             onTargetSelectionItemChanged(selectedTargetClientSyncItem);
         }
+    }
+
+    public void setSellMode(boolean sellMode) {
+        if (this.sellMode == sellMode) {
+            return;
+        }
+        this.sellMode = sellMode;
+        if (sellMode) {
+            clearSelection();
+        }
+        CursorHandler.getInstance().setSell(sellMode);
+    }
+
+    public boolean isSellMode() {
+        return sellMode;
     }
 }

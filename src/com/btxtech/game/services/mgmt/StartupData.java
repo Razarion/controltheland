@@ -45,6 +45,7 @@ public class StartupData implements Serializable {
     @Columns(columns = {@Column(name = "startRectX"), @Column(name = "startRectY"), @Column(name = "startRectWidth"), @Column(name = "startRectHeight")})
     private Rectangle startRectangle;
     private int startItemFreeRange;
+    private double itemSellFactor;
     private static Log log = LogFactory.getLog(StartupData.class);
 
     public int getStartMoney() {
@@ -97,6 +98,14 @@ public class StartupData implements Serializable {
 
     public void setStartItemFreeRange(int startItemFreeRange) {
         this.startItemFreeRange = startItemFreeRange;
+    }
+
+    public double getItemSellFactor() {
+        return itemSellFactor;
+    }
+
+    public void setItemSellFactor(double itemSellFactor) {
+        this.itemSellFactor = itemSellFactor;
     }
 
     @Override

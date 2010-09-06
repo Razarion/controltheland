@@ -40,6 +40,7 @@ import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.bot.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccessSyncInfo;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
@@ -237,7 +238,7 @@ public class Connection implements AsyncCallback<Void> {
                 } else if (packet instanceof LevelPacket) {
                     MissionTarget.getInstance().onLevelChanged((LevelPacket) packet);
                 } else if (packet instanceof BaseChangedPacket) {
-                    ClientBase.getInstance().onBaseChangedPacket((BaseChangedPacket)packet);
+                    ClientBase.getInstance().onBaseChangedPacket((BaseChangedPacket) packet);
                     OnlineBasePanel.getInstance().update();
                 } else {
                     throw new IllegalArgumentException(this + " unknown packet: " + packet);
@@ -323,6 +324,16 @@ public class Connection implements AsyncCallback<Void> {
             });
         } else {
             missionTargetDialog.setNoConnection(null);
+        }
+    }
+
+
+    public void sendSellItem(SyncItem syncItem) {
+        if (!syncItem.getId().isSynchronized()) {
+            return;
+        }
+        if (movableServiceAsync != null) {
+            movableServiceAsync.sellItem(syncItem.getId(), this);
         }
     }
 

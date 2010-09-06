@@ -37,6 +37,7 @@ public abstract class SyncItem {
     private Index position;
     // Sync states
     private final ArrayList<SyncItemListener> syncItemListeners = new ArrayList<SyncItemListener>();
+    private boolean explode = false;
 
 
     public SyncItem(Id id, Index position, ItemType itemType, Services services) {
@@ -63,6 +64,7 @@ public abstract class SyncItem {
         syncItemInfo.setPosition(position);
         syncItemInfo.setItemTypeId(itemType.getId());
         syncItemInfo.setAlive(isAlive());
+        syncItemInfo.setExplode(explode);
         return syncItemInfo;
     }
 
@@ -151,5 +153,9 @@ public abstract class SyncItem {
     @Override
     public int hashCode() {
         return id.hashCode();
+    }
+
+    public void setExplode(boolean explode) {
+        this.explode = explode;
     }
 }

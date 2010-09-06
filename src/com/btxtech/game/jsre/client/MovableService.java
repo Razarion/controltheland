@@ -78,4 +78,6 @@ public interface MovableService extends RemoteService {
     List<String> getFreeColors(int index, int count);
 
     void setBaseColor(String color);
+
+    void sellItem(Id id);
 }

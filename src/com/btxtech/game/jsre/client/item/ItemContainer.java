@@ -132,7 +132,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
             }
         } else {
             if (clientSyncItem != null) {
-                definitelyKillItem(clientSyncItem);
+                definitelyKillItem(clientSyncItem, syncItemInfo.isExplode());
             }
 
         }
@@ -215,12 +215,12 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
     }
 
     @Override
-    public void killSyncItem(SyncItem killedItem, SyncBaseItem actor, boolean force) {
+    public void killSyncItem(SyncItem killedItem, SyncBaseItem actor, boolean force, boolean explode) {
         ClientSyncItem ClientSyncItem = items.get(killedItem.getId());
         if (Connection.getInstance().getGameInfo().hasServerCommunication()) {
             makeItemSeeminglyDead(killedItem, actor, ClientSyncItem);
         } else {
-            definitelyKillItem(ClientSyncItem);
+            definitelyKillItem(ClientSyncItem, explode);
         }
         Simulation.getInstance().onSyncItemKilled(killedItem, actor);
     }
@@ -234,13 +234,13 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         }
     }
 
-    private void definitelyKillItem(ClientSyncItem itemView) {
+    private void definitelyKillItem(ClientSyncItem itemView, boolean explode) {
         items.remove(itemView.getSyncItem().getId());
         checkSpecialRemoved(itemView);
         seeminglyDeadItems.remove(itemView.getSyncItem().getId());
         SelectionHandler.getInstance().itemKilled(itemView);
 
-        if (itemView.isSyncBaseItem()) {
+        if (explode) {
             ActionHandler.getInstance().removeActiveItem(itemView.getSyncBaseItem());
             ExplosionHandler.getInstance().terminateWithExplosion(itemView);
         } else {

@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client;
 
+import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.CursorHandler;
 import com.btxtech.game.jsre.client.cockpit.CursorItemState;
 import com.btxtech.game.jsre.client.cockpit.Group;
@@ -23,7 +24,6 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -225,18 +225,24 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
 
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
-        if (clientSyncItem.isSyncResourceItem()) {
-            SelectionHandler.getInstance().setTargetSelected(this, mouseDownEvent);
-        } else if (clientSyncItem.isSyncBaseItem()) {
-            if (clientSyncItem.isMyOwnProperty()) {
-                Group group = new Group();
-                group.addItem(clientSyncItem);
-                SelectionHandler.getInstance().setItemGroupSelected(group);
-            } else {
-                SelectionHandler.getInstance().setTargetSelected(this, mouseDownEvent);
-            }
+        if (SelectionHandler.getInstance().isSellMode()) {
+           if (clientSyncItem.isMyOwnProperty()) {
+               Connection.getInstance().sendSellItem(clientSyncItem.getSyncItem());
+           }
         } else {
-            throw new IllegalArgumentException(this + " onMouseDown: SyncItem not supported: " + clientSyncItem);
+            if (clientSyncItem.isSyncResourceItem()) {
+                SelectionHandler.getInstance().setTargetSelected(this, mouseDownEvent);
+            } else if (clientSyncItem.isSyncBaseItem()) {
+                if (clientSyncItem.isMyOwnProperty()) {
+                    Group group = new Group();
+                    group.addItem(clientSyncItem);
+                    SelectionHandler.getInstance().setItemGroupSelected(group);
+                } else {
+                    SelectionHandler.getInstance().setTargetSelected(this, mouseDownEvent);
+                }
+            } else {
+                throw new IllegalArgumentException(this + " onMouseDown: SyncItem not supported: " + clientSyncItem);
+            }
         }
         GwtCommon.preventDefault(mouseDownEvent);
     }

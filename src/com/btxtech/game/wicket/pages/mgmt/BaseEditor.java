@@ -260,7 +260,7 @@ public class BaseEditor extends WebPage {
                     Button killButton = new Button("kill") {
                         @Override
                         public void onSubmit() {
-                            itemService.killSyncItem(item.getModelObject(), null, true);
+                            itemService.killSyncItem(item.getModelObject(), null, true, false);
                             if (baseService.getBase(simpleBase) == null) {
                                 setResponsePage(BasesTable.class);
                             }
@@ -323,7 +323,7 @@ public class BaseEditor extends WebPage {
             public void onSubmit() {
                 for (Id id : itemsToKill) {
                     try {
-                        itemService.killSyncItem(itemService.getItem(id), null, true);
+                        itemService.killSyncItem(itemService.getItem(id), null, true, false);
 
                     } catch (Exception e) {
                         // Ignore
