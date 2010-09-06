@@ -491,7 +491,7 @@ public class SyncBaseItem extends SyncItem {
         fireItemChanged(SyncItemListener.Change.HEALTH);
         if (health <= 0) {
             health = 0;
-            getServices().getItemService().killSyncItem(this, actor, false);
+            getServices().getItemService().killSyncItem(this, actor, false, true);
         }
     }
 

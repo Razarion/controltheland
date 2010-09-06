@@ -36,6 +36,7 @@ import java.util.Collection;
 public class CursorHandler implements TerrainMouseMoveListener {
     private static CursorHandler INSTANCE = new CursorHandler();
     private CursorState cursorState;
+    private boolean sellMode = false;
 
     /**
      * Singleton
@@ -54,6 +55,10 @@ public class CursorHandler implements TerrainMouseMoveListener {
 
     public void clearUnloadContainer() {
         cursorState.setCanUnload(false);
+    }
+
+    public void setSell(boolean sellMode) {
+        this.sellMode = sellMode;
     }
 
     public void onOwnSelectionChanged(Group selection) {
@@ -81,6 +86,11 @@ public class CursorHandler implements TerrainMouseMoveListener {
 
     @Override
     public void onMove(int absoluteLeft, int absoluteTop, int relativeLeft, int relativeTop) {
+        if (sellMode) {
+            setTerrainCursor(CursorType.SELL, false);
+            return;
+        }
+
         if (cursorState == null) {
             setTerrainCursor(null, false);
             return;
@@ -114,6 +124,11 @@ public class CursorHandler implements TerrainMouseMoveListener {
     }
 
     public void setItemCursor(ClientSyncItemView clientSyncItemView, CursorItemState cursorItemState) {
+        if (sellMode) {
+            setCursor(clientSyncItemView, CursorType.SELL, clientSyncItemView.getClientSyncItem().isMyOwnProperty());
+            return;
+        }
+
         if (cursorState == null) {
             setCursor(clientSyncItemView, null, false);
             return;

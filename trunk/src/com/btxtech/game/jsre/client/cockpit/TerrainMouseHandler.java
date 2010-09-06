@@ -42,6 +42,9 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
 
     @Override
     public void onMouseDown(int absoluteX, int absoluteY, MouseDownEvent mouseDownEvent) {
+        if (SelectionHandler.getInstance().isSellMode()) {
+            return;
+        }
         if (mouseDownEvent.getNativeButton() == NativeEvent.BUTTON_LEFT) {
             new GroupSelectionFrame(mouseDownEvent.getX(), mouseDownEvent.getY(), this);
         } else if (mouseDownEvent.getNativeButton() == NativeEvent.BUTTON_RIGHT) {

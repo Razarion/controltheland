@@ -51,6 +51,7 @@ public class SyncItemInfo extends Packet {
     private Id targetContainer;
     private Id containedIn;
     private Index unloadPos;
+    private boolean explode;
 
 
     public Id getId() {
@@ -253,6 +254,14 @@ public class SyncItemInfo extends Packet {
         this.unloadPos = unloadPos;
     }
 
+    public boolean isExplode() {
+        return explode;
+    }
+
+    public void setExplode(boolean explode) {
+        this.explode = explode;
+    }
+
     private String pathToDestinationAsString() {
         StringBuilder builder = new StringBuilder();
         if (pathToDestination != null) {
@@ -313,7 +322,8 @@ public class SyncItemInfo extends Packet {
                 " pos:" + position +
                 " itemTypeId:" + itemTypeId +
                 " isAlive:" + isAlive +
-                " b: " + base +
+                " explode:" + explode +
+                base +
                 " pathToDestination:" + pathToDestinationAsString() +
                 " angel:" + angel +
                 " toBeBuildPosition:" + toBeBuildPosition +

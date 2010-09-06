@@ -40,6 +40,7 @@ import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeData;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.market.ServerMarketService;
+import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.resource.ResourceService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import java.sql.SQLException;
@@ -87,6 +88,8 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     private ResourceService resourceService;
     @Autowired
     private UserGuidanceService userGuidanceService;
+    @Autowired
+    private MgmtService mgmtService;
     private HibernateTemplate hibernateTemplate;
     private int lastId = 0;
     private final HashMap<Id, SyncItem> items = new HashMap<Id, SyncItem>();
@@ -179,7 +182,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public void killSyncItem(SyncItem killedItem, SyncBaseItem actor, boolean force) {
+    public void killSyncItem(SyncItem killedItem, SyncBaseItem actor, boolean force, boolean explode) {
         if (force) {
             if (killedItem instanceof SyncBaseItem) {
                 ((SyncBaseItem) killedItem).setHealth(0);
@@ -197,6 +200,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
                 throw new IllegalStateException("Id does not exist: " + killedItem);
             }
         }
+        killedItem.setExplode(explode);
         if (log.isInfoEnabled()) {
             log.info("DELETED: " + killedItem);
         }
@@ -228,7 +232,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         for (Id id : syncBaseItem.getSyncItemContainer().getContainedItems()) {
             try {
                 SyncBaseItem baseItem = (SyncBaseItem) getItem(id);
-                killSyncItem(baseItem, actor, true);
+                killSyncItem(baseItem, actor, true, false);
             } catch (ItemDoesNotExistException e) {
                 log.error("", e);
             }
@@ -606,5 +610,19 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             }
         }
         return false;
+    }
+
+    @Override
+    public void sellItem(Id id) throws ItemDoesNotExistException, IllegalAccessException {
+        SyncBaseItem syncBaseItem = (SyncBaseItem) getItem(id);
+        Base base = baseService.getBase();
+        baseService.checkBaseAccess(syncBaseItem);
+        double health = syncBaseItem.getHealth();
+        double fullHealth = syncBaseItem.getBaseItemType().getHealth();
+        double price = syncBaseItem.getBaseItemType().getPrice();
+        killSyncItem(syncBaseItem, null, true, false);
+        double money = health / fullHealth * price * mgmtService.getStartupData().getItemSellFactor();
+        base.depositMoney(money);
+        baseService.sendAccountBaseUpdate(base);
     }
 }

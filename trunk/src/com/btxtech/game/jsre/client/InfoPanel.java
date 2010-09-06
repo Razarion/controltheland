@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client;
 
+import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -26,6 +27,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.widgetideas.client.ProgressBar;
 
@@ -140,12 +142,26 @@ public class InfoPanel extends TopMapPanel {
             }
         });
 
+        // Sell button
+        layout.getFlexCellFormatter().setColSpan(10, 1, 2);
+        final ToggleButton sell = new ToggleButton("Sell");
+        sell.getElement().getStyle().setColor("#000000");
+         sell.getElement().getStyle().setProperty("textAlign", "center");
+
+        layout.setWidget(10, 1, sell);
+        sell.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent clickEvent) {
+                SelectionHandler.getInstance().setSellMode(sell.isDown());
+            }
+        });
+
         // Debug
         if (Game.isDebug()) {
             // Cursor
-            layout.setHTML(10, 1, "Cursor");
+            layout.setHTML(11, 1, "Cursor");
             cursorPos = new Label("");
-            layout.setWidget(10, 2, cursorPos);
+            layout.setWidget(11, 2, cursorPos);
         }
 
         return layout;

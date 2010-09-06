@@ -18,13 +18,10 @@ import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.btxtech.game.jsre.common.EventTrackingStart;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
-import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -63,7 +60,7 @@ public interface MovableServiceAsync {
 
     void sendEventTrackingStart(EventTrackingStart eventTrackingStart, AsyncCallback<Void> asyncCallback);
 
-    void sendEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems,Collection<BaseCommand> baseCommands,Collection<SelectionTrackingItem> selectionTrackingItems, AsyncCallback<Void> asyncCallback);
+    void sendEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<BaseCommand> baseCommands, Collection<SelectionTrackingItem> selectionTrackingItems, AsyncCallback<Void> asyncCallback);
 
     void sendTotalStartupTime(long totalStartupTime, long clientTimeStamp, AsyncCallback<Void> asyncCallback);
 
@@ -72,4 +69,6 @@ public interface MovableServiceAsync {
     void getFreeColors(int index, int count, AsyncCallback<List<String>> asyncCallback);
 
     void setBaseColor(String color, AsyncCallback<Void> asyncCallback);
+
+    void sellItem(Id id, AsyncCallback<Void> asyncCallback);
 }
