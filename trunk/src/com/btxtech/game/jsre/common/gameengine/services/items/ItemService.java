@@ -44,8 +44,6 @@ public interface ItemService {
 
     SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws NoSuchItemTypeException;
 
-    SyncItem buySyncObject(BaseItemType toBeBuiltType, Index toBeBuildPosition, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws InsufficientFundsException, NoSuchItemTypeException;
-
     boolean baseObjectExists(SyncItem currentBuildup);
 
     ItemType getItemType(int itemTypeId) throws NoSuchItemTypeException;

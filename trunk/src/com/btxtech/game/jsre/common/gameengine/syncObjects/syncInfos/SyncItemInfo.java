@@ -36,10 +36,10 @@ public class SyncItemInfo extends Packet {
     private Index toBeBuildPosition;
     private Integer toBeBuiltTypeId;
     private int createdChildCount;
-    private Double buildupProgress;
+    private Double factoryBuildupProgress;
     private Id target;
     private Double health;
-    private Boolean isBuild;
+    private double buildup;
     private Double amount;
     private Boolean followTarget;
     private Boolean operationState;
@@ -114,8 +114,8 @@ public class SyncItemInfo extends Packet {
         return createdChildCount;
     }
 
-    public Double getBuildupProgress() {
-        return buildupProgress;
+    public Double getFactoryBuildupProgress() {
+        return factoryBuildupProgress;
     }
 
     public Id getTarget() {
@@ -124,10 +124,6 @@ public class SyncItemInfo extends Packet {
 
     public Double getHealth() {
         return health;
-    }
-
-    public Boolean isBuild() {
-        return isBuild;
     }
 
     public Double getAmount() {
@@ -158,8 +154,8 @@ public class SyncItemInfo extends Packet {
         this.createdChildCount = createdChildCount;
     }
 
-    public void setBuildupProgress(Double buildupProgress) {
-        this.buildupProgress = buildupProgress;
+    public void setFactoryBuildupProgress(Double factoryBuildupProgress) {
+        this.factoryBuildupProgress = factoryBuildupProgress;
     }
 
     public void setTarget(Id target) {
@@ -168,10 +164,6 @@ public class SyncItemInfo extends Packet {
 
     public void setHealth(Double health) {
         this.health = health;
-    }
-
-    public void setBuild(Boolean build) {
-        isBuild = build;
     }
 
     public void setAmount(Double amount) {
@@ -262,6 +254,14 @@ public class SyncItemInfo extends Packet {
         this.explode = explode;
     }
 
+    public double getBuildup() {
+        return buildup;
+    }
+
+    public void setBuildup(double buildup) {
+        this.buildup = buildup;
+    }
+
     private String pathToDestinationAsString() {
         StringBuilder builder = new StringBuilder();
         if (pathToDestination != null) {
@@ -329,10 +329,10 @@ public class SyncItemInfo extends Packet {
                 " toBeBuildPosition:" + toBeBuildPosition +
                 " toBeBuiltTypeId:" + toBeBuiltTypeId +
                 " createdChildCount:" + createdChildCount +
-                " buildupProgress:" + buildupProgress +
+                " buildupProgress:" + factoryBuildupProgress +
                 " target:" + target +
                 " health:" + health +
-                " isBuild:" + isBuild +
+                " buildup:" + buildup +
                 " amount:" + amount +
                 " followTarget:" + followTarget +
                 " operationState:" + operationState +

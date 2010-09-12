@@ -40,6 +40,7 @@ import javax.persistence.OneToOne;
 public class DbBaseItemType extends DbItemType {
     private int health;
     private int price;
+    private int buildup;
     @OneToOne(cascade = CascadeType.ALL)
     private DbTurnableType dbTurnableType;
     @OneToOne(cascade = CascadeType.ALL)
@@ -78,6 +79,14 @@ public class DbBaseItemType extends DbItemType {
 
     public void setPrice(int price) {
         this.price = price;
+    }
+
+    public int getBuildup() {
+        return buildup;
+    }
+
+    public void setBuildup(int buildup) {
+        this.buildup = buildup;
     }
 
     public DbTurnableType getTurnableType() {
@@ -182,6 +191,7 @@ public class DbBaseItemType extends DbItemType {
         setupItemType(baseItemType);
         baseItemType.setPrice(price);
         baseItemType.setHealth(health);
+        baseItemType.setBuildup(buildup);
         if (dbTurnableType != null) {
             baseItemType.setTurnableType(new TurnableType(dbTurnableType.getImageCount()));
         }

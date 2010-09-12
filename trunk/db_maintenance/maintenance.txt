@@ -46,3 +46,10 @@ ALTER TABLE `gamedb`.`CONNECTION_STATISTICS` DROP COLUMN `userName`;
 TUTORIAL_CONFIG ownBaseId, enemyBaseId;
 ALTER TABLE `gamedb`.`BACKUP_BASE` DROP COLUMN `name`;
 ALTER TABLE `gamedb`.`TRACKER_USER_COMMAND` DROP COLUMN `userName`;
+
+------------------
+Buildup added
+update BACKUP_GENERIC_ITEM set buildup = 1.0
+ALTER TABLE `gamedb`.`ITEM_FACTORY_TYPE` MODIFY COLUMN `progress` DOUBLE NOT NULL;
+ALTER TABLE `gamedb`.`ITEM_BUILDER_TYPE` MODIFY COLUMN `progress` DOUBLE NOT NULL;
+UPDATE ITEM_TYPE set buildup = 10 where TYPE = "BASE"

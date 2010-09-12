@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client;
 
+import com.btxtech.game.jsre.client.dialogs.NoMoneyDialog;
 import com.btxtech.game.jsre.client.item.ItemViewContainer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
@@ -81,7 +82,8 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         if (!this.simpleBase.equals(simpleBase)) {
             return;
         }
-        if (price > accountBalance) {
+        if (price > Math.round(accountBalance)) {
+            NoMoneyDialog.open();
             throw new InsufficientFundsException();
         } else {
             accountBalance -= price;

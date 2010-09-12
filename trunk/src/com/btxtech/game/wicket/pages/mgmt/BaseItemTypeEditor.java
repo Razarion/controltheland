@@ -70,13 +70,13 @@ public class BaseItemTypeEditor extends WebPage {
     private int weaponMuzzlePointY_90;
     private boolean weaponMuzzleStretch;
     private boolean factory;
-    private int factoryProgress;
+    private double factoryProgress;
     private String factoryAbleToBuild;
     private boolean harvester;
     private int harvesterRange;
     private double harvesterProgress;
     private boolean builder;
-    private int builderProgress;
+    private double builderProgress;
     private int builderRange;
     private String builderAbleToBuild;
     private boolean consumer;
@@ -109,6 +109,7 @@ public class BaseItemTypeEditor extends WebPage {
         form.add(new TextArea<String>("contraDescription"));
         form.add(new TextField<String>("health"));
         form.add(new TextField<String>("price"));
+        form.add(new TextField<Double>("buildup"));
         form.add(new DropDownChoice<TerrainType>("terrainType", Arrays.asList(TerrainType.values())));
         form.add(new TextField<String>("upgradeable"));
         form.add(new TextField<String>("upgradeProgress"));
@@ -442,6 +443,14 @@ public class BaseItemTypeEditor extends WebPage {
 
     public void setHealth(int health) {
         dbBaseItemType.setHealth(health);
+    }
+
+    public int getBuildup() {
+        return dbBaseItemType.getBuildup();
+    }
+
+    public void setBuildup(int buildup) {
+        dbBaseItemType.setBuildup(buildup);
     }
 
     public int getPrice() {

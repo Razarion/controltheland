@@ -76,7 +76,7 @@ public class GenericItemConverter {
     public BackupEntry generateBackupEntry() {
         backupEntry = new BackupEntry();
         fillHelperCache();
-        List<SyncItem> syncItems = itemService.getItemsCopyNoDummies();
+        List<SyncItem> syncItems = itemService.getItemsCopy();
         backupEntry.setTimeStamp(new Date());
 
         for (SyncItem item : syncItems) {
@@ -163,7 +163,7 @@ public class GenericItemConverter {
         fillGenericItem(item, genericItem);
 
         genericItem.setHealth((int) item.getHealth());
-        genericItem.setBuild(item.isReady());
+        genericItem.setBuildup(item.getBuildup());
         Base base = baseService.getBase(item.getBase());
         if (base == null) {
             throw new IllegalStateException("No base for " + item.getBase());
@@ -270,7 +270,7 @@ public class GenericItemConverter {
         SyncBaseItem item = (SyncBaseItem) itemService.newSyncItem(genericItem.getItemId(), genericItem.getPosition(), genericItem.getDbItemTyp().getId(), genericItem.getBase().getSimpleBase(), services);
 
         item.setHealth(genericItem.getHealth());
-        item.setBuild(genericItem.isBuild());
+        item.setBuildup(genericItem.getBuildup());
         item.setUpgrading(genericItem.isUpgrading());
         item.setUpgradeProgress(genericItem.getUpgradeProgress());
         if (genericItem.getContainedIn() != null) {

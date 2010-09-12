@@ -21,6 +21,7 @@ package com.btxtech.game.jsre.common.gameengine.itemType;
 public class BaseItemType extends ItemType {
     private int health;
     private int price;
+    private int buildup;
     private TurnableType turnableType;
     private MovableType movableType;
     private WeaponType weaponType;
@@ -144,6 +145,14 @@ public class BaseItemType extends ItemType {
 
     public void setUpgradeProgress(int upgradeProgress) {
         this.upgradeProgress = upgradeProgress;
+    }
+
+    public int getBuildup() {
+        return buildup;
+    }
+
+    public void setBuildup(int buildup) {
+        this.buildup = buildup;
     }
 
     @Override

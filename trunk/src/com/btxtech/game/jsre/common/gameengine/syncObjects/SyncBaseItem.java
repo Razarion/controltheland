@@ -38,7 +38,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInf
  */
 public class SyncBaseItem extends SyncItem {
     private SimpleBase base;
-    private boolean isBuild = false;
+    private double buildup;
     private double health;
     private SyncMovable syncMovable;
     private SyncTurnable syncTurnable;
@@ -54,10 +54,12 @@ public class SyncBaseItem extends SyncItem {
     private boolean isUpgrading;
     private BaseItemType upgradingItemType;
     private Id containedIn;
+    private boolean isMoneyEarningOrConsuming = false;
 
     public SyncBaseItem(Id id, Index position, BaseItemType baseItemType, Services services, SimpleBase base) throws NoSuchItemTypeException {
         super(id, position, baseItemType, services);
         this.base = base;
+        health = baseItemType.getHealth(); 
         setup();
     }
 
@@ -84,18 +86,21 @@ public class SyncBaseItem extends SyncItem {
 
         if (baseItemType.getFactoryType() != null) {
             syncFactory = new SyncFactory(baseItemType.getFactoryType(), this);
+            isMoneyEarningOrConsuming = true;
         } else {
             syncFactory = null;
         }
 
         if (baseItemType.getBuilderType() != null) {
             syncBuilder = new SyncBuilder(baseItemType.getBuilderType(), this);
+            isMoneyEarningOrConsuming = true;
         } else {
             syncBuilder = null;
         }
 
         if (baseItemType.getHarvesterType() != null) {
             syncHarvester = new SyncHarvester(baseItemType.getHarvesterType(), this);
+            isMoneyEarningOrConsuming = true;
         } else {
             syncHarvester = null;
         }
@@ -158,7 +163,7 @@ public class SyncBaseItem extends SyncItem {
             setup();
         }
         health = syncItemInfo.getHealth();
-        setBuild(syncItemInfo.isBuild());
+        setBuildup(syncItemInfo.getBuildup());
         upgradeProgress = syncItemInfo.getUpgradeProgress();
         containedIn = syncItemInfo.getContainedIn();
 
@@ -201,7 +206,7 @@ public class SyncBaseItem extends SyncItem {
         SyncItemInfo syncItemInfo = super.getSyncInfo();
         syncItemInfo.setBase(base);
         syncItemInfo.setHealth(health);
-        syncItemInfo.setBuild(isBuild);
+        syncItemInfo.setBuildup(buildup);
         syncItemInfo.setUpgrading(isUpgrading);
         syncItemInfo.setUpgradeProgress(upgradeProgress);
         syncItemInfo.setContainedIn(containedIn);
@@ -241,7 +246,7 @@ public class SyncBaseItem extends SyncItem {
         return syncItemInfo;
     }
 
-    public boolean tick(double factor) throws InsufficientFundsException, ItemDoesNotExistException, NoSuchItemTypeException {
+    public boolean tick(double factor) throws ItemDoesNotExistException, NoSuchItemTypeException {
         if (isUpgrading) {
             if (upgradeProgress >= upgradingItemType.getHealth()) {
                 setItemType(upgradingItemType);
@@ -504,7 +509,11 @@ public class SyncBaseItem extends SyncItem {
     }
 
     public boolean isReady() {
-        return isBuild;
+        return buildup >= 1.0;
+    }
+
+    public double getBuildup() {
+        return buildup;
     }
 
     public boolean isAlive() {
@@ -515,18 +524,25 @@ public class SyncBaseItem extends SyncItem {
         return health >= getBaseItemType().getHealth();
     }
 
-    public void setBuild(boolean isBuild) {
-        if (this.isBuild == isBuild) {
+    public void addBuildup(double buildup) {
+        setBuildup(this.buildup + buildup);
+    }
+
+    public void setBuildup(double buildup) {
+        if (buildup > 1.0) {
+            buildup = 1.0;
+        }
+        if (this.buildup == buildup) {
             return;
         }
-
-        this.isBuild = isBuild;
+        this.buildup = buildup;
         if (syncConsumer != null) {
-            syncConsumer.setConsuming(isBuild);
+            syncConsumer.setConsuming(buildup >= 1.0);
         }
         if (syncGenerator != null) {
-            syncGenerator.setGenerating(isBuild);
+            syncGenerator.setGenerating(buildup >= 1.0);
         }
+
         fireItemChanged(SyncItemListener.Change.BUILD);
     }
 
@@ -541,10 +557,6 @@ public class SyncBaseItem extends SyncItem {
     public void setHealth(double health) {
         this.health = health;
         fireItemChanged(SyncItemListener.Change.HEALTH);
-    }
-
-    public void setFullHealth() {
-        setHealth(getBaseItemType().getHealth());
     }
 
     public double getUpgradeProgress() {
@@ -617,5 +629,9 @@ public class SyncBaseItem extends SyncItem {
         builder.append(" ");
         builder.append(base);
         return builder.toString();
+    }
+
+    public boolean isMoneyEarningOrConsuming() {
+        return isMoneyEarningOrConsuming;
     }
 }

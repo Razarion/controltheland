@@ -62,12 +62,6 @@ abstract public class AbstractItemService implements ItemService {
     }
 
     @Override
-    public SyncItem buySyncObject(BaseItemType toBeBuiltType, Index toBeBuildPosition, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws InsufficientFundsException, NoSuchItemTypeException {
-        getBaseService().withdrawalMoney(toBeBuiltType.getPrice(), creator.getBase());
-        return createSyncObject(toBeBuiltType, toBeBuildPosition, creator, base, createdChildCount);
-    }
-
-    @Override
     public ItemType getItemType(int itemTypeId) throws NoSuchItemTypeException {
         ItemType itemType = itemTypes.get(itemTypeId);
         if (itemType == null) {

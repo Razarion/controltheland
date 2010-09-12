@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.CursorHandler;
 import com.btxtech.game.jsre.client.cockpit.CursorItemState;
 import com.btxtech.game.jsre.client.cockpit.Group;
@@ -24,6 +23,7 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -167,7 +167,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
         image.sinkEvents(Event.ONMOUSEMOVE);
         image.getElement().getStyle().setZIndex(1);
         add(image);
-        setWidgetPosition(image, 0, 0);
+        setupImageSizeAndPos();
     }
 
     public void setPosition() {
@@ -191,7 +191,10 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
         switch (change) {
             case BUILD:
                 // TODO PlayerSimulation.getInstance().onItemBuilt(this);
-                Simulation.getInstance().onItemBuilt(clientSyncItem.getSyncBaseItem());
+                if (clientSyncItem.getSyncBaseItem().isReady()) {
+                    Simulation.getInstance().onItemBuilt(clientSyncItem.getSyncBaseItem());
+                }
+                setupImageSizeAndPos();
                 break;
             case ANGEL:
                 setupImage();
@@ -226,9 +229,9 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
         if (SelectionHandler.getInstance().isSellMode()) {
-           if (clientSyncItem.isMyOwnProperty()) {
-               Connection.getInstance().sendSellItem(clientSyncItem.getSyncItem());
-           }
+            if (clientSyncItem.isMyOwnProperty()) {
+                Connection.getInstance().sendSellItem(clientSyncItem.getSyncItem());
+            }
         } else {
             if (clientSyncItem.isSyncResourceItem()) {
                 SelectionHandler.getInstance().setTargetSelected(this, mouseDownEvent);
@@ -290,19 +293,24 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
         setWidgetPosition(marker, 0, clientSyncItem.getSyncItem().getItemType().getHeight() - 13);
     }
 
-    protected void setHealth() {
-        if (!clientSyncItem.getSyncBaseItem().isReady() && !GwtCommon.isIe6()) {
-            double factor = clientSyncItem.getSyncBaseItem().getHealth() / (double) clientSyncItem.getSyncBaseItem().getBaseItemType().getHealth();
-            int width = (int) (clientSyncItem.getSyncBaseItem().getItemType().getWidth() * factor);
-            int height = (int) (clientSyncItem.getSyncBaseItem().getItemType().getHeight() * factor);
+
+    private void setupImageSizeAndPos() {
+        if (clientSyncItem.isSyncBaseItem() && !clientSyncItem.getSyncBaseItem().isReady() && !GwtCommon.isIe6()) {
+            SyncBaseItem syncBaseItem = clientSyncItem.getSyncBaseItem();
+            int width = (int) (syncBaseItem.getItemType().getWidth() * syncBaseItem.getBuildup());
+            int height = (int) (syncBaseItem.getItemType().getHeight() * syncBaseItem.getBuildup());
             image.setPixelSize(width, height);
-            int imgX = (clientSyncItem.getSyncBaseItem().getItemType().getWidth() - width) / 2;
-            int imgY = (clientSyncItem.getSyncBaseItem().getItemType().getHeight() - height) / 2;
+            int imgX = (syncBaseItem.getItemType().getWidth() - width) / 2;
+            int imgY = (syncBaseItem.getItemType().getHeight() - height) / 2;
             setWidgetPosition(image, imgX, imgY);
         } else {
-            image.setPixelSize(clientSyncItem.getSyncBaseItem().getItemType().getWidth(), clientSyncItem.getSyncBaseItem().getItemType().getHeight());
+            image.setPixelSize(clientSyncItem.getSyncItem().getItemType().getWidth(), clientSyncItem.getSyncItem().getItemType().getHeight());
             setWidgetPosition(image, 0, 0);
         }
+    }
+
+
+    protected void setHealth() {
         healthBar.setProgress(clientSyncItem.getSyncBaseItem().getHealth());
     }
 
@@ -323,7 +331,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
 
     private void setProgress() {
         if (clientSyncItem.getSyncBaseItem().hasSyncFactory() && clientSyncItem.getSyncBaseItem().getSyncFactory().getToBeBuiltType() != null) {
-            progressBar.setMaxProgress(clientSyncItem.getSyncBaseItem().getSyncFactory().getToBeBuiltType().getHealth());
+            progressBar.setMaxProgress(1.0);
             progressBar.setProgress(clientSyncItem.getSyncBaseItem().getSyncFactory().getBuildupProgress());
         } else if (clientSyncItem.getSyncBaseItem().isUpgrading()) {
             progressBar.setMaxProgress(clientSyncItem.getSyncBaseItem().getFullUpgradeProgress());

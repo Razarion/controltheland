@@ -23,7 +23,7 @@ import java.util.Collection;
  */
 public class BuilderType implements Serializable {
     private int range;
-    private int progress;
+    private double progress;
     private Collection<Integer> ableToBuild;
 
     /**
@@ -32,7 +32,7 @@ public class BuilderType implements Serializable {
     BuilderType() {
     }
 
-    public BuilderType(int range, int progress, Collection<Integer> ableToBuild) {
+    public BuilderType(int range, double progress, Collection<Integer> ableToBuild) {
         this.range = range;
         this.progress = progress;
         this.ableToBuild = ableToBuild;
@@ -42,7 +42,7 @@ public class BuilderType implements Serializable {
         return range;
     }
 
-    public int getProgress() {
+    public double getProgress() {
         return progress;
     }
 

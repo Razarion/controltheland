@@ -103,6 +103,9 @@ public class CockpitPanel extends TopMapPanel implements SelectionListener {
                 syncItemContainer = syncBaseItem.getSyncItemContainer();
             }
             String descr = syncBaseItem.getItemType().getDescription();
+            if (!syncBaseItem.isReady()) {
+                descr += "<br/> Build up: " + Integer.toString((int) (syncBaseItem.getBuildup() * 100.0)) + "%";
+            }
             if (Game.isDebug()) {
                 descr += "<br/>ID: " + syncBaseItem.getId();
             }

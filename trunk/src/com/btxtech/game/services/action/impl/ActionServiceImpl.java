@@ -146,18 +146,15 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
                             if (activeItem.hasSyncHarvester()) {
                                 baseService.sendAccountBaseUpdate(activeItem);
                             }
+                            if (activeItem.isMoneyEarningOrConsuming()) {
+                                baseService.sendAccountBaseUpdate(activeItem);
+                            }
                         }
                     } catch (PositionTakenException ife) {
                         log.info("PositionTakenException: " + ife.getMessage());
                         activeItem.stop();
                         iterator.remove();
                         connectionService.sendSyncInfo(activeItem);
-                    } catch (InsufficientFundsException ife) {
-                        log.info("InsufficientFundsException " + activeItem);
-                        activeItem.stop();
-                        iterator.remove();
-                        connectionService.sendSyncInfo(activeItem);
-                        baseService.sendAccountBaseUpdate(activeItem);
                     } catch (Throwable t) {
                         log.error("", t);
                         activeItem.stop();
@@ -213,7 +210,9 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
         switch (change) {
             case BUILD:
                 if (syncItem instanceof SyncBaseItem) {
-                    addGuardingBaseItem((SyncBaseItem) syncItem);
+                    if (((SyncBaseItem) syncItem).isReady()) {
+                        addGuardingBaseItem((SyncBaseItem) syncItem);
+                    }
                 }
                 break;
             case POSITION:

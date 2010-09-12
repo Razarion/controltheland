@@ -44,7 +44,7 @@ public class SyncBuilder extends SyncBaseAbility {
         return toBeBuildPosition != null && toBeBuiltType != null;
     }
 
-    public boolean tick(double factor) throws InsufficientFundsException, NoSuchItemTypeException {
+    public boolean tick(double factor) throws NoSuchItemTypeException {
         if (toBeBuildPosition == null || toBeBuiltType == null) {
             return false;
         }
@@ -65,16 +65,23 @@ public class SyncBuilder extends SyncBaseAbility {
                 if (getServices().getItemService().hasBuildingsInRect(itemRect)) {
                     throw new PositionTakenException(toBeBuildPosition, toBeBuiltType);
                 }
-                currentBuildup = (SyncBaseItem) getServices().getItemService().buySyncObject(toBeBuiltType, toBeBuildPosition, getSyncBaseItem(), getSyncBaseItem().getBase(), createdChildCount);
+                currentBuildup = (SyncBaseItem) getServices().getItemService().createSyncObject(toBeBuiltType, toBeBuildPosition, getSyncBaseItem(), getSyncBaseItem().getBase(), createdChildCount);
                 createdChildCount++;
             }
             if (getServices().getItemService().baseObjectExists(currentBuildup)) {
-                currentBuildup.increaseHealth(builderType.getProgress() * factor);
-                if (currentBuildup.isHealthy()) {
-                    currentBuildup.setBuild(true);
-                    stop();
-                    return false;
-                } else {
+                double buildFactor = factor * builderType.getProgress() / (double) toBeBuiltType.getBuildup();
+                if (buildFactor + currentBuildup.getBuildup() > 1.0) {
+                    buildFactor = 1.0 - currentBuildup.getBuildup();
+                }
+                try {
+                    getServices().getBaseService().withdrawalMoney(buildFactor * (double) toBeBuiltType.getPrice(), getSyncBaseItem().getBase());
+                    currentBuildup.addBuildup(buildFactor);
+                    if (currentBuildup.isReady()) {
+                        stop();
+                        return false;
+                    }
+                    return true;
+                } catch (InsufficientFundsException e) {
                     return true;
                 }
             } else {
