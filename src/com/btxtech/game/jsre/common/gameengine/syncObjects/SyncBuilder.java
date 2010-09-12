@@ -16,11 +16,13 @@ package com.btxtech.game.jsre.common.gameengine.syncObjects;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
+import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BuilderType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderFinalizeCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 
 /**
@@ -154,6 +156,29 @@ public class SyncBuilder extends SyncBaseAbility {
         toBeBuildPosition = builderCommand.getPositionToBeBuilt();
     }
 
+    public void executeCommand(BuilderFinalizeCommand builderFinalizeCommand) throws NoSuchItemTypeException, ItemDoesNotExistException {
+        SyncBaseItem syncBaseItem = (SyncBaseItem) getServices().getItemService().getItem(builderFinalizeCommand.getToBeBuilt());
+        if (!builderType.isAbleToBuild(syncBaseItem.getItemType().getId())) {
+            throw new IllegalArgumentException(this + " can not build: " + builderFinalizeCommand.getToBeBuilt());
+        }
+
+        if (!getServices().getBaseService().isBot(getSyncBaseItem().getBase()) && !getServices().getItemTypeAccess().isAllowed(syncBaseItem.getItemType().getId())) {
+            throw new IllegalArgumentException(this + " user is not allowed to build: " + builderFinalizeCommand.getToBeBuilt());
+        }
+
+        if (!getServices().getTerritoryService().isAllowed(syncBaseItem.getPosition(), getSyncBaseItem())) {
+            throw new IllegalArgumentException(this + " Builder not allowed to build on territory: " + syncBaseItem.getPosition() + "  " + getSyncBaseItem());
+        }
+
+        if (!getServices().getTerritoryService().isAllowed(syncBaseItem.getPosition(), syncBaseItem)) {
+            throw new IllegalArgumentException(this + " Item can not be built on territory: " + syncBaseItem.getPosition() + "  " + syncBaseItem);
+        }
+
+        currentBuildup = syncBaseItem;
+        toBeBuiltType = syncBaseItem.getBaseItemType();
+        toBeBuildPosition = syncBaseItem.getPosition();
+    }
+
     public Index getToBeBuildPosition() {
         return toBeBuildPosition;
     }
@@ -184,5 +209,9 @@ public class SyncBuilder extends SyncBaseAbility {
 
     public void setCreatedChildCount(int createdChildCount) {
         this.createdChildCount = createdChildCount;
+    }
+
+    public BuilderType getBuilderType() {
+        return builderType;
     }
 }

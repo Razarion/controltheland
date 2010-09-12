@@ -14,6 +14,8 @@
 package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.ClientSyncItem;
+import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
+import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -98,6 +100,15 @@ public class Group {
     public boolean canMove() {
         for (ClientSyncItem clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncMovable()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean canFinalizeBuild() {
+        for (ClientSyncItem clientSyncItem : clientSyncItems) {
+            if (clientSyncItem.getSyncBaseItem().hasSyncBuilder()) {
                 return true;
             }
         }
@@ -205,4 +216,16 @@ public class Group {
         return false;
     }
 
+    public boolean atLeastOneItemTypeAllowed2FinalizeBuild(SyncBaseItem tobeFinalized) {
+        for (ClientSyncItem clientSyncItem : clientSyncItems) {
+            if (clientSyncItem.getSyncBaseItem().hasSyncBuilder()
+                    && clientSyncItem.getSyncBaseItem().getSyncBuilder().getBuilderType().isAbleToBuild(tobeFinalized.getItemType().getId())
+                    && ClientItemTypeAccess.getInstance().isAllowed(tobeFinalized.getItemType().getId())
+                    && ClientTerritoryService.getInstance().isAllowed(tobeFinalized.getPosition(), tobeFinalized)
+                    && ClientTerritoryService.getInstance().isAllowed(tobeFinalized.getPosition(), clientSyncItem.getSyncBaseItem())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

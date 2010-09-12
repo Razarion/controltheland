@@ -76,6 +76,10 @@ public class CursorHandler implements TerrainMouseMoveListener {
             cursorState.setCanCollect();
         }
 
+        if (selection.canFinalizeBuild()) {
+            cursorState.setCanFinalizeBuild();
+        }
+
         this.cursorState = cursorState;
     }
 
@@ -147,6 +151,10 @@ public class CursorHandler implements TerrainMouseMoveListener {
                     && syncItemContainer.isAbleToContainAtLeastOne(SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems())
                     && atLeastOneLoadPosReachable(SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems(), syncItemContainer);
             setCursor(clientSyncItemView, CursorType.LOAD, allowed);
+        } else if(cursorState.isCanFinalizeBuild() && cursorItemState.isFinalizeBuild()) {
+            setCursor(clientSyncItemView, CursorType.FINALIZE_BUILD, SelectionHandler.getInstance().atLeastOneItemTypeAllowed2FinalizeBuild(clientSyncItemView.getClientSyncItem().getSyncBaseItem()));
+        } else {
+            setCursor(clientSyncItemView, null, false);
         }
     }
 

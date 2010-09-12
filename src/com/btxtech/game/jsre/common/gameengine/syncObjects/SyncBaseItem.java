@@ -23,6 +23,7 @@ import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeExce
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderFinalizeCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
@@ -59,7 +60,7 @@ public class SyncBaseItem extends SyncItem {
     public SyncBaseItem(Id id, Index position, BaseItemType baseItemType, Services services, SimpleBase base) throws NoSuchItemTypeException {
         super(id, position, baseItemType, services);
         this.base = base;
-        health = baseItemType.getHealth(); 
+        health = baseItemType.getHealth();
         setup();
     }
 
@@ -336,6 +337,11 @@ public class SyncBaseItem extends SyncItem {
 
         if (baseCommand instanceof BuilderCommand) {
             getSyncBuilder().executeCommand((BuilderCommand) baseCommand);
+            return;
+        }
+
+        if (baseCommand instanceof BuilderFinalizeCommand) {
+            getSyncBuilder().executeCommand((BuilderFinalizeCommand) baseCommand);
             return;
         }
 
