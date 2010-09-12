@@ -162,8 +162,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         StartupData startupData = mgmtService.getStartupData();
         Index startPoint = collisionService.getFreeRandomPosition(constructionVehicle, startupData.getStartRectangle(), startupData.getStartItemFreeRange());
         SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(constructionVehicle, startPoint, null, base.getSimpleBase(), 0);
-        syncBaseItem.setBuild(true);
-        syncBaseItem.setFullHealth();
+        syncBaseItem.setBuildup(1.0);
         syncBaseItem.getSyncTurnable().setAngel(Math.PI / 4.0); // Cosmetis shows vehicle from side
         historyService.addBaseStartEntry(base.getSimpleBase());
         if (userService.getLoggedinUser() != null) {

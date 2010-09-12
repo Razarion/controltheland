@@ -35,7 +35,7 @@ public class DbFactoryType implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
-    private int progress;
+    private double progress;
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "ITEM_FACTORY_TYPE_ABLE_TO_BUILD",
             joinColumns = @JoinColumn(name = "factoryId"),
@@ -43,11 +43,11 @@ public class DbFactoryType implements Serializable {
     )
     private Set<DbBaseItemType> ableToBuild;
 
-    public int getProgress() {
+    public double getProgress() {
         return progress;
     }
 
-    public void setProgress(int progress) {
+    public void setProgress(double progress) {
         this.progress = progress;
     }
 

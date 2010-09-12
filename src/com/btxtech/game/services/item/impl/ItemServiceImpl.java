@@ -288,12 +288,6 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    @Deprecated
-    public List<SyncItem> getItemsCopyNoDummies() {
-        return getItemsCopy();
-    }
-
-    @Override
     public void restoreItems(Collection<SyncItem> syncItems) {
         int lastId = 0;
         synchronized (items) {

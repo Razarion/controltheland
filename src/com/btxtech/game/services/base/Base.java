@@ -138,7 +138,7 @@ public class Base implements Serializable {
 
     public void withdrawalMoney(double amount) throws InsufficientFundsException {
         synchronized (syncObject) {
-            if (amount > accountBalance) {
+            if (amount > Math.round(accountBalance)) {
                 throw new InsufficientFundsException();
             } else {
                 accountBalance -= amount;

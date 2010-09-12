@@ -22,7 +22,7 @@ import java.util.Collection;
  * Time: 23:18:42
  */
 public class FactoryType implements Serializable {
-    private int progress;
+    private double progress;
     private Collection<Integer> ableToBuild;
 
     /**
@@ -31,12 +31,12 @@ public class FactoryType implements Serializable {
     FactoryType() {
     }
 
-    public FactoryType(int progress, Collection<Integer> ableToBuild) {
+    public FactoryType(double progress, Collection<Integer> ableToBuild) {
         this.progress = progress;
         this.ableToBuild = ableToBuild;
     }
 
-    public int getProgress() {
+    public double getProgress() {
         return progress;
     }
 

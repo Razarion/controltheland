@@ -373,7 +373,7 @@ public class ServerMarketServiceImpl implements ServerMarketService {
 
         private void periodicalXpIncrease() {
             HashMap<SimpleBase, Integer> xpIncreasePreBase = new HashMap<SimpleBase, Integer>();
-            List<SyncItem> syncItems = itemService.getItemsCopyNoDummies();
+            List<SyncItem> syncItems = itemService.getItemsCopy();
             for (SyncItem syncItem : syncItems) {
                 if (syncItem instanceof SyncBaseItem) {
                     SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;

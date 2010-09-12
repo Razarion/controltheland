@@ -195,8 +195,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         id.setUserTimeStamp(System.currentTimeMillis());
         if (itemView.getSyncItem() instanceof SyncBaseItem) {
             SyncBaseItem syncBaseItem = (SyncBaseItem) itemView.getSyncItem();
-            syncBaseItem.setBuild(true);
-            syncBaseItem.setFullHealth();
+            syncBaseItem.setBuildup(1.0);
             if (syncBaseItem.hasSyncTurnable()) {
                 syncBaseItem.getSyncTurnable().setAngel(itemTypeAndPosition.getAngel());
                 syncBaseItem.fireItemChanged(SyncItemListener.Change.ANGEL);

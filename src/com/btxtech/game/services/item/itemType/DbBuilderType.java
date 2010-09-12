@@ -38,7 +38,7 @@ public class DbBuilderType implements Serializable {
     private Integer id;
     @Column(name= "theRange")
     private int range;
-    private int progress;
+    private double progress;
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "ITEM_BUILDER_TYPE_ABLE_TO_BUILD",
             joinColumns = @JoinColumn(name = "builderId"),
@@ -54,11 +54,11 @@ public class DbBuilderType implements Serializable {
         this.range = range;
     }
 
-    public int getProgress() {
+    public double getProgress() {
         return progress;
     }
 
-    public void setProgress(int progress) {
+    public void setProgress(double progress) {
         this.progress = progress;
     }
 

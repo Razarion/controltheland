@@ -146,7 +146,7 @@ public class InfoPanel extends TopMapPanel {
         layout.getFlexCellFormatter().setColSpan(10, 1, 2);
         final ToggleButton sell = new ToggleButton("Sell");
         sell.getElement().getStyle().setColor("#000000");
-         sell.getElement().getStyle().setProperty("textAlign", "center");
+        sell.getElement().getStyle().setProperty("textAlign", "center");
 
         layout.setWidget(10, 1, sell);
         sell.addClickHandler(new ClickHandler() {
@@ -185,7 +185,7 @@ public class InfoPanel extends TopMapPanel {
 
     public void updateMoney() {
         if (money != null) {
-            money.setText(Integer.toString((int) ClientBase.getInstance().getAccountBalance()));
+            money.setText(Integer.toString((int) Math.round(ClientBase.getInstance().getAccountBalance())));
         }
     }
 

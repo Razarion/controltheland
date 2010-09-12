@@ -103,12 +103,6 @@ public class ActionHandler implements CommonActionService {
                 } catch (PositionTakenException ife) {
                     iterator.remove();
                     activeItem.stop();
-                } catch (InsufficientFundsException ife) {
-                    iterator.remove();
-                    activeItem.stop();
-                    if (ClientBase.getInstance().isMyOwnProperty(activeItem) && !PlayerSimulation.isActive()) {
-                        MessageDialog.show("Insufficient Money!", "You do not have enough money. You have to Collect more money");
-                    }
                 } catch (Throwable throwable) {
                     GwtCommon.handleException(throwable);
                     activeItem.stop();

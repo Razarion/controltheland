@@ -58,7 +58,7 @@ public class GenericBaseItem extends GenericItem {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "baseId")
     private Base base;
-    private boolean build;
+    private double buildup;
     private double angel;
     @Type(type = "index")
     @Columns(columns = {@Column(name = "xPosRallyPoint"), @Column(name = "yPosRallyPoint")})
@@ -161,12 +161,12 @@ public class GenericBaseItem extends GenericItem {
         return base;
     }
 
-    public void setBuild(boolean build) {
-        this.build = build;
+    public double getBuildup() {
+        return buildup;
     }
 
-    public boolean isBuild() {
-        return build;
+    public void setBuildup(double buildup) {
+        this.buildup = buildup;
     }
 
     public void setAngel(double angel) {

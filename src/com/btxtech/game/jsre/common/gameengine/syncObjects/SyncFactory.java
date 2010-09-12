@@ -33,7 +33,7 @@ import java.util.Collection;
 public class SyncFactory extends SyncBaseAbility {
     private FactoryType factoryType;
     private BaseItemType toBeBuiltType;
-    private double buildupProgress;
+    private double buildup;
     private int createdChildCount;
     private Index rallyPoint;
 
@@ -47,31 +47,37 @@ public class SyncFactory extends SyncBaseAbility {
         return getSyncBaseItem().isAlive() && toBeBuiltType != null && getSyncBaseItem().isReady();
     }
 
-    public boolean tick(double factor) throws InsufficientFundsException, NoSuchItemTypeException {
+    public boolean tick(double factor) throws NoSuchItemTypeException {
         if (!isActive()) {
             return false;
         }
 
-        buildupProgress += ((double)factoryType.getProgress() * factor);
-        if (buildupProgress >= toBeBuiltType.getHealth()) {
-            SyncBaseItem item = (SyncBaseItem) getServices().getItemService().createSyncObject(toBeBuiltType, rallyPoint, getSyncBaseItem(), getSyncBaseItem().getBase(), createdChildCount);
-            item.setFullHealth();
-            item.setBuild(true);
-            createdChildCount++;
-            buildupProgress = 0;
-            toBeBuiltType = null;
-            getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS);
-            if(item.hasSyncMovable() &&item.getSyncMovable().onFinished() ) {
-                getServices().getActionService().syncItemActivated(item);
-            }
-            return false;
+        double buildFactor = factor * factoryType.getProgress() / (double) toBeBuiltType.getBuildup();
+        if (buildFactor + buildup > 1.0) {
+            buildFactor = 1.0 - buildup;
         }
-        getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS);
-        return true;
+        try {
+            getServices().getBaseService().withdrawalMoney(buildFactor * (double) toBeBuiltType.getPrice(), getSyncBaseItem().getBase());
+            buildup += buildFactor;
+            getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS);
+            if (buildup >= 1.0) {
+                SyncBaseItem item = (SyncBaseItem) getServices().getItemService().createSyncObject(toBeBuiltType, rallyPoint, getSyncBaseItem(), getSyncBaseItem().getBase(), createdChildCount);
+                item.setBuildup(buildup);
+                createdChildCount++;
+                stop();
+                if (item.hasSyncMovable() && item.getSyncMovable().onFinished()) {
+                    getServices().getActionService().syncItemActivated(item);
+                }
+                return false;
+            }
+            return true;
+        } catch (InsufficientFundsException e) {
+            return true;
+        }
     }
 
     public double getBuildupProgress() {
-        return buildupProgress;
+        return buildup;
     }
 
     public BaseItemType getToBeBuiltType() {
@@ -85,7 +91,7 @@ public class SyncFactory extends SyncBaseAbility {
         } else {
             toBeBuiltType = null;
         }
-        buildupProgress = syncItemInfo.getBuildupProgress();
+        buildup = syncItemInfo.getFactoryBuildupProgress();
         createdChildCount = syncItemInfo.getCreatedChildCount();
         rallyPoint = syncItemInfo.getRallyPoint();
     }
@@ -95,14 +101,14 @@ public class SyncFactory extends SyncBaseAbility {
         if (toBeBuiltType != null) {
             syncItemInfo.setToBeBuiltTypeId(toBeBuiltType.getId());
         }
-        syncItemInfo.setBuildupProgress(buildupProgress);
+        syncItemInfo.setFactoryBuildupProgress(buildup);
         syncItemInfo.setCreatedChildCount(createdChildCount);
         syncItemInfo.setRallyPoint(rallyPoint);
     }
 
     public void stop() {
+        buildup = 0;
         toBeBuiltType = null;
-        buildupProgress = 0;
     }
 
     public void executeCommand(FactoryCommand factoryCommand) throws InsufficientFundsException, NoSuchItemTypeException {
@@ -123,7 +129,6 @@ public class SyncFactory extends SyncBaseAbility {
         }
         if (toBeBuiltType == null) {
             BaseItemType tmpToBeBuiltType = (BaseItemType) getServices().getItemService().getItemType(factoryCommand.getToBeBuilt());
-            getServices().getBaseService().withdrawalMoney(tmpToBeBuiltType.getPrice(), getSyncBaseItem().getBase());
             toBeBuiltType = tmpToBeBuiltType;
         }
     }
@@ -136,8 +141,8 @@ public class SyncFactory extends SyncBaseAbility {
         this.toBeBuiltType = toBeBuiltType;
     }
 
-    public void setBuildupProgress(double buildupProgress) {
-        this.buildupProgress = buildupProgress;
+    public void setBuildupProgress(double buildup) {
+        this.buildup = buildup;
     }
 
     public void setCreatedChildCount(int createdChildCount) {
