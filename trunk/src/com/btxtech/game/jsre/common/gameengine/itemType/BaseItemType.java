@@ -161,6 +161,7 @@ public class BaseItemType extends ItemType {
         BaseItemType baseItemType = (BaseItemType) itemType;
         health = baseItemType.health;
         price = baseItemType.price;
+        buildup = baseItemType.buildup;
         upgradeable = baseItemType.upgradeable;
         upgradeProgress = baseItemType.upgradeProgress;
 
