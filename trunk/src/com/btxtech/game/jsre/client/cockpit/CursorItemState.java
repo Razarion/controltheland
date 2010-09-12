@@ -22,6 +22,7 @@ public class CursorItemState {
     private boolean isAttackTarget = false;
     private boolean isCollectTarget = false;
     private boolean isLoadTarget = false;
+    private boolean isFinalizeBuild = false;
 
     public boolean isAttackTarget() {
         return isAttackTarget;
@@ -45,5 +46,13 @@ public class CursorItemState {
 
     public void setLoadTarget() {
         isLoadTarget = true;
+    }
+
+    public boolean isFinalizeBuild() {
+        return isFinalizeBuild;
+    }
+
+    public void setFinalizeBuild(boolean finalizeBuild) {
+        isFinalizeBuild = finalizeBuild;
     }
 }

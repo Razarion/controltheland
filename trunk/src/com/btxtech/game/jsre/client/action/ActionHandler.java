@@ -13,12 +13,12 @@
 
 package com.btxtech.game.jsre.client.action;
 
-import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
+import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -39,6 +39,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderFinalizeCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
@@ -199,6 +200,40 @@ public class ActionHandler implements CommonActionService {
         try {
             syncItem.executeCommand(builderCommand);
             executeCommand(syncItem, builderCommand);
+        } catch (Exception e) {
+            GwtCommon.handleException(e);
+        }
+    }
+
+
+    public void finalizeBuild(Collection<ClientSyncItem> builders, ClientSyncItem building) {
+        for (ClientSyncItem builder : builders) {
+            if (builder.getSyncBaseItem().hasSyncBuilder()
+                    && ClientTerritoryService.getInstance().isAllowed(building.getSyncItem().getPosition(), builder.getSyncBaseItem())
+                    && ClientTerritoryService.getInstance().isAllowed(building.getSyncItem().getPosition(), building.getSyncBaseItem())
+                    && builder.getSyncBaseItem().getSyncBuilder().getBuilderType().isAbleToBuild(building.getSyncBaseItem().getItemType().getId())
+                    && ClientItemTypeAccess.getInstance().isAllowed(building.getSyncBaseItem().getItemType().getId())) {
+                finalizeBuild(builder.getSyncBaseItem(), building.getSyncBaseItem());
+            }
+        }
+        Connection.getInstance().sendCommandQueue();
+    }
+
+    private void finalizeBuild(SyncBaseItem builder, SyncBaseItem building) {
+        if (checkCommand(builder)) {
+            return;
+        }
+        if (checkCommand(building)) {
+            return;
+        }
+        builder.stop();
+        BuilderFinalizeCommand builderFinalizeCommand = new BuilderFinalizeCommand();
+        builderFinalizeCommand.setId(builder.getId());
+        builderFinalizeCommand.setTimeStamp();
+        builderFinalizeCommand.setToBeBuilt(building.getId());
+        try {
+            builder.executeCommand(builderFinalizeCommand);
+            executeCommand(builder, builderFinalizeCommand);
         } catch (Exception e) {
             GwtCommon.handleException(e);
         }

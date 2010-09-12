@@ -149,6 +149,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
             if (clientSyncItem.getSyncBaseItem().hasSyncItemContainer()) {
                 cursorItemState.setLoadTarget();
             }
+            cursorItemState.setFinalizeBuild(!clientSyncItem.getSyncBaseItem().isReady());
         } else {
             cursorItemState.setAttackTarget();
         }
@@ -194,6 +195,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
                 if (clientSyncItem.getSyncBaseItem().isReady()) {
                     Simulation.getInstance().onItemBuilt(clientSyncItem.getSyncBaseItem());
                 }
+                cursorItemState.setFinalizeBuild(!clientSyncItem.getSyncBaseItem().isReady());
                 setupImageSizeAndPos();
                 break;
             case ANGEL:

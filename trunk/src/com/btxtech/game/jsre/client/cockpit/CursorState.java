@@ -24,6 +24,7 @@ public class CursorState {
     private boolean canCollect = false;
     private boolean canLoad = false;
     private boolean canUnload = false;
+    private boolean canFinalizeBuild = false;
 
     public boolean isCanMove() {
         return canMove;
@@ -65,13 +66,11 @@ public class CursorState {
         this.canUnload = unload;
     }
 
-    /*  MOVE(CursorType.GO),
-    ATTACK(CursorType.ATTACK),
-    ATTACK_MOVE(CursorType.ATTACK, CursorType.GO),
-    COLLECT_MOVE(CursorType.COLLECT, CursorType.GO),
-    LOAD_MOVE(CursorType.LOAD, CursorType.GO),
-    UNLOAD(CursorType.UNLOAD);
+    public boolean isCanFinalizeBuild() {
+        return canFinalizeBuild;
+    }
 
-    CursorState(CursorType... cursorTypes) {
-    }*/
+    public void setCanFinalizeBuild() {
+        canFinalizeBuild = true;
+    }
 }

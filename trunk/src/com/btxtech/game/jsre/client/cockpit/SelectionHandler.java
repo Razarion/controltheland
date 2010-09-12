@@ -84,6 +84,10 @@ public class SelectionHandler {
         return selectedGroup == null || selectedGroup.atLeastOneItemTypeAllowed2Attack(syncBaseItem);
     }
 
+    public boolean atLeastOneItemTypeAllowed2FinalizeBuild(SyncBaseItem tobeFinalized) {
+        return selectedGroup == null || selectedGroup.atLeastOneItemTypeAllowed2FinalizeBuild(tobeFinalized);
+    }
+
     public void setTargetSelected(ClientSyncItemView selectedTargetClientSyncItem, MouseDownEvent event) {
         if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
             if (selectedGroup != null) {
@@ -100,15 +104,20 @@ public class SelectionHandler {
     }
 
     public void setItemGroupSelected(Group selectedGroup) {
-        if (hasOwnSelection() && selectedGroup.getCount() == 1 && selectedGroup.getFirst().getSyncBaseItem().hasSyncItemContainer()) {
-            ActionHandler.getInstance().loadContainer(selectedGroup.getFirst(), this.selectedGroup.getItems());
-            clearSelection();
-        } else {
-            clearSelection();
-            selectedGroup.setSelected(true);
-            this.selectedGroup = selectedGroup;
-            onOwnItemSelectionChanged(selectedGroup);
+        if (hasOwnSelection() && selectedGroup.getCount() == 1) {
+            if (selectedGroup.getFirst().getSyncBaseItem().hasSyncItemContainer()) {
+                ActionHandler.getInstance().loadContainer(selectedGroup.getFirst(), this.selectedGroup.getItems());
+                clearSelection();
+                return;
+            } else if (!selectedGroup.getFirst().getSyncBaseItem().isReady()) {
+                ActionHandler.getInstance().finalizeBuild(this.selectedGroup.getItems(), selectedGroup.getFirst());
+                return;
+            }
         }
+        clearSelection();
+        selectedGroup.setSelected(true);
+        this.selectedGroup = selectedGroup;
+        onOwnItemSelectionChanged(selectedGroup);
     }
 
     public void clearSelection() {
