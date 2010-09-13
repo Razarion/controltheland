@@ -135,7 +135,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void createUserAndLoggin(String name, String password, String confirmPassword) throws UserAlreadyExistsException, PasswordNotMatchException {
+    public void createUserAndLoggin(String name, String password, String confirmPassword, String email, boolean keepGame) throws UserAlreadyExistsException, PasswordNotMatchException {
         if (getUser(name) != null) {
             throw new UserAlreadyExistsException();
         }
@@ -143,8 +143,8 @@ public class UserServiceImpl implements UserService {
         if (!password.equals(confirmPassword)) {
             throw new PasswordNotMatchException();
         }
-        User user = createAndSaveUser(name, password);
-        loginUser(user, true);
+        User user = createAndSaveUser(name, password, email);
+        loginUser(user, keepGame);
     }
 
     @Override
@@ -165,10 +165,11 @@ public class UserServiceImpl implements UserService {
         return (Arq) hibernateTemplate.get(Arq.class, arq.name());
     }
 
-    private User createAndSaveUser(String name, String password) {
+    private User createAndSaveUser(String name, String password, String email) {
         User user = new User();
         user.setName(name);
         user.setPassword(password);
+        user.setEmail(email);
         user.setRegisterDate(new Date());
         user.addArq(getArq(ArqEnum.FORUM_POST));
         save(user);

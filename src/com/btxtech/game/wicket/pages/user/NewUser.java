@@ -31,6 +31,7 @@ public class NewUser extends BasePage {
     private String name;
     private String password;
     private String confirmPassword;
+    private String email;
 
     public NewUser() {
         Form form = new Form<NewUser>("newUserForm", new CompoundPropertyModel<NewUser>(this)) {
@@ -40,7 +41,7 @@ public class NewUser extends BasePage {
                   throw new IllegalStateException("User is already logged in");
                 }
                 try {
-                    userService.createUserAndLoggin(name, password, confirmPassword);
+                    userService.createUserAndLoggin(name, password, confirmPassword, email, false);
                     setResponsePage(UserPage.class);
                 } catch (UserAlreadyExistsException e) {
                     PageParameters parameters = new PageParameters();
@@ -55,6 +56,7 @@ public class NewUser extends BasePage {
         };
 
         form.add(new TextField<String>("name"));
+        form.add(new TextField("email"));
         form.add(new PasswordTextField("password"));
         form.add(new PasswordTextField("confirmPassword"));
         add(form);
@@ -63,6 +65,10 @@ public class NewUser extends BasePage {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setPassword(String password) {

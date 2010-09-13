@@ -40,7 +40,7 @@ public interface MovableServiceAsync {
 
     void getAllSyncInfo(AsyncCallback async);
 
-    void register(String userName, String password, String confirmPassword, AsyncCallback<Void> asyncCallback);
+    void register(String userName, String password, String confirmPassword, String email, AsyncCallback<Void> asyncCallback);
 
     void sendUserMessage(UserMessage userMessage, AsyncCallback<Void> asyncCallback);
 

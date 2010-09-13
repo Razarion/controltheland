@@ -246,9 +246,9 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public void register(String userName, String password, String confirmPassword) throws UserAlreadyExistsException, PasswordNotMatchException {
+    public void register(String userName, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException {
         try {
-            userService.createUserAndLoggin(userName, password, confirmPassword);
+            userService.createUserAndLoggin(userName, password, confirmPassword, email, true);
         } catch (UserAlreadyExistsException e) {
             throw e;
         } catch (PasswordNotMatchException e) {

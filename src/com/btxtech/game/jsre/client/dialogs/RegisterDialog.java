@@ -44,6 +44,7 @@ public class RegisterDialog extends Dialog {
     private static final String REGISTRATION_EXISTS = "The user already exists";
     private static Timer timer;
     private TextBox userName;
+    private TextBox email;
     private PasswordTextBox password;
     private PasswordTextBox confirmPassword;
 
@@ -73,22 +74,25 @@ public class RegisterDialog extends Dialog {
         grid.setWidget(2, 0, new Label("User name"));
         userName = new TextBox();
         grid.setWidget(2, 1, userName);
-        grid.setWidget(3, 0, new Label("Password"));
+        grid.setWidget(3, 0, new Label("Email"));
+        email = new TextBox();
+        grid.setWidget(3, 1, email);
+        grid.setWidget(4, 0, new Label("Password"));
         password = new PasswordTextBox();
-        grid.setWidget(3, 1, password);
-        grid.setWidget(4, 0, new Label("Confirm password"));
+        grid.setWidget(4, 1, password);
+        grid.setWidget(5, 0, new Label("Confirm password"));
         confirmPassword = new PasswordTextBox();
-        grid.setWidget(4, 1, confirmPassword);
+        grid.setWidget(5, 1, confirmPassword);
         Button regsiter = new Button("Register");
-        grid.setWidget(5, 0, regsiter);
+        grid.setWidget(6, 0, regsiter);
         regsiter.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 register();
             }
         });
-        grid.getFlexCellFormatter().setColSpan(5, 0, 2);
-        grid.getFlexCellFormatter().setHorizontalAlignment(5, 0, HasHorizontalAlignment.ALIGN_CENTER);
+        grid.getFlexCellFormatter().setColSpan(6, 0, 2);
+        grid.getFlexCellFormatter().setHorizontalAlignment(6, 0, HasHorizontalAlignment.ALIGN_CENTER);
         dialogVPanel.add(grid);
     }
 
@@ -103,7 +107,7 @@ public class RegisterDialog extends Dialog {
             return;
         }
 
-        Connection.getMovableServiceAsync().register(userName.getText(), password.getText(), confirmPassword.getText(), new AsyncCallback<Void>() {
+        Connection.getMovableServiceAsync().register(userName.getText(), password.getText(), confirmPassword.getText(), email.getText(), new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable throwable) {
                 if (throwable instanceof UserAlreadyExistsException) {
