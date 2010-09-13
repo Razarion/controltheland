@@ -36,7 +36,7 @@ public interface UserService {
 
     List<User> getAllUsers();
 
-    void createUserAndLoggin(String name, String password, String confirmPassword) throws UserAlreadyExistsException, PasswordNotMatchException;
+    void createUserAndLoggin(String name, String password, String confirmPassword, String email, boolean keepGame) throws UserAlreadyExistsException, PasswordNotMatchException;
 
     boolean isAuthorized(ArqEnum arq);
 

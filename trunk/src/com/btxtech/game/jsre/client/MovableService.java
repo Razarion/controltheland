@@ -49,7 +49,7 @@ public interface MovableService extends RemoteService {
 
     Collection<SyncItemInfo> getAllSyncInfo();
 
-    void register(String userName, String password, String confirmPassword) throws UserAlreadyExistsException, PasswordNotMatchException;
+    void register(String userName, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException;
 
     void sendUserMessage(UserMessage userMessage);
 
