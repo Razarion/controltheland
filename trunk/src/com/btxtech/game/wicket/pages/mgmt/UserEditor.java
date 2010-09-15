@@ -13,12 +13,16 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
+import com.btxtech.game.services.market.MarketEntry;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import java.util.ArrayList;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -43,6 +47,13 @@ public class UserEditor extends WebPage {
         };
         form.add(new Label("name"));
         form.add(new TextField<Integer>("userItemTypeAccess.xp"));
+        form.add(new ListView<MarketEntry>("allowedItemTypes", new ArrayList<MarketEntry>(userService.getUser(name).getUserItemTypeAccess().getAllowedItemTypes())) {
+
+            @Override
+            protected void populateItem(ListItem<MarketEntry> marketEntryListItem) {
+                marketEntryListItem.add(new Label("itemType", marketEntryListItem.getModelObject().getItemType().getName()));
+            }
+        });
         add(form);
 
     }

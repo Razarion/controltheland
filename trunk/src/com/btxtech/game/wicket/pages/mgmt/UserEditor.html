@@ -23,9 +23,32 @@
 <span wicket:id="msgs"/>
 
 <form wicket:id="form">
-    <span wicket:id="name" />
-    <input wicket:id="userItemTypeAccess.xp" type="text" size="30" />
-    <input type="submit" value="Save"/>    
+    <h3>User</h3>
+
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Name</td>
+            <td wicket:id="name">name</td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">XP</td>
+            <td>
+                <input wicket:id="userItemTypeAccess.xp" type="text" size="30"/>
+            </td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Items Types</td>
+            <td>
+                <table border="1">
+                    <tr wicket:id="allowedItemTypes">
+                        <td wicket:id="itemType"/>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <input type="submit" value="Save"/>
 </form>
 </body>
 </html>
