@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
+import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.MissionTarget;
@@ -45,10 +46,13 @@ public class InfoPanel extends TopMapPanel {
     private Label name;
     private SimplePanel marker;
     private Label cursorPos;
+    private Label itemLimit;
     private ProgressBar energyBar;
     private int generating;
     private int consuming;
     private Button scrollHome;
+    private Button option;
+    private ToggleButton sell;
 
     /**
      * Simgleton
@@ -117,11 +121,16 @@ public class InfoPanel extends TopMapPanel {
         layout.setWidget(7, 1, energyBar);
         layout.getFlexCellFormatter().setColSpan(7, 1, 2);
 
+        // Item Limit
+        layout.setHTML(8, 1, "Item Limit");
+        itemLimit = new Label("");
+        layout.setWidget(8, 2, itemLimit);
+
         // Move home button
-        layout.getFlexCellFormatter().setColSpan(8, 1, 2);
+        layout.getFlexCellFormatter().setColSpan(9, 1, 2);
         scrollHome = new Button("Scroll Home");
         scrollHome.setWidth("100%");
-        layout.setWidget(8, 1, scrollHome);
+        layout.setWidget(9, 1, scrollHome);
         scrollHome.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
@@ -130,11 +139,11 @@ public class InfoPanel extends TopMapPanel {
         });
 
         // Menu button
-        layout.getFlexCellFormatter().setColSpan(9, 1, 2);
-        Button menu = new Button("Options");
-        menu.setWidth("100%");
-        layout.setWidget(9, 1, menu);
-        menu.addClickHandler(new ClickHandler() {
+        layout.getFlexCellFormatter().setColSpan(10, 1, 2);
+        option = new Button("Options");
+        option.setWidth("100%");
+        layout.setWidget(10, 1, option);
+        option.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
                 MenuPanel menuPanel = new MenuPanel();
@@ -143,12 +152,12 @@ public class InfoPanel extends TopMapPanel {
         });
 
         // Sell button
-        layout.getFlexCellFormatter().setColSpan(10, 1, 2);
-        final ToggleButton sell = new ToggleButton("Sell");
+        layout.getFlexCellFormatter().setColSpan(11, 1, 2);
+        sell = new ToggleButton("Sell");
         sell.getElement().getStyle().setColor("#000000");
         sell.getElement().getStyle().setProperty("textAlign", "center");
 
-        layout.setWidget(10, 1, sell);
+        layout.setWidget(11, 1, sell);
         sell.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
@@ -159,9 +168,9 @@ public class InfoPanel extends TopMapPanel {
         // Debug
         if (Game.isDebug()) {
             // Cursor
-            layout.setHTML(11, 1, "Cursor");
+            layout.setHTML(12, 1, "Cursor");
             cursorPos = new Label("");
-            layout.setWidget(11, 2, cursorPos);
+            layout.setWidget(12, 2, cursorPos);
         }
 
         return layout;
@@ -217,11 +226,29 @@ public class InfoPanel extends TopMapPanel {
         return scrollHome;
     }
 
+    public ToggleButton getSell() {
+        return sell;
+    }
+
+    public Button getOption() {
+        return option;
+    }
+
     public Label getMoney() {
         return money;
     }
 
     public void setLevel(String level) {
         this.level.setText(level);
+    }
+
+    public void updateItemLimit() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(ItemContainer.getInstance().getOwnItemCount());
+        builder.append("/");
+        builder.append(ClientBase.getInstance().getHouseSpace());
+        builder.append("/");
+        builder.append(ClientBase.getInstance().getItemLimit());
+        itemLimit.setText(builder.toString());
     }
 }

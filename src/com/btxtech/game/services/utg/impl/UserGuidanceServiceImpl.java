@@ -13,17 +13,10 @@
 
 package com.btxtech.game.services.utg.impl;
 
-import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
@@ -155,24 +148,6 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
     }
 
-    @Deprecated
-    @SuppressWarnings("unchecked")
-    private DbLevel getDbLevel(final String level) {
-        List<DbLevel> levels = hibernateTemplate.executeFind(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbLevel.class);
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                criteria.add(Restrictions.eq("name", level));
-                return criteria.list();
-            }
-        });
-        if (levels.isEmpty()) {
-            throw new IllegalArgumentException("Unknown level: " + level);
-        }
-        return levels.get(0);
-    }
-
     @Override
     public void deleteDbLevel(DbLevel dbLevel) {
         for (Base base : baseService.getBases()) {
@@ -199,6 +174,13 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     @Override
     public void saveDbLevel(DbLevel dbLevel) {
         hibernateTemplate.update(dbLevel);
+        // Update all bases
+        for (Base base : baseService.getBases()) {
+            BaseLevelStatus baseLevelStatus = base.getBaseLevelStatus();
+            if (dbLevel.equals(baseLevelStatus.getCurrentLevel())) {
+                baseLevelStatus.setCurrentLevel(dbLevel);
+            }
+        }
     }
 
     @Override
@@ -271,23 +253,11 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     public Level getLevelToRunMissionTarget() {
         Base base = baseService.getBase();
         PendingPromotion pendingPromotion = pendingPromotions.get(base.getSimpleBase());
-        if (pendingPromotion != null && pendingPromotion.getDbLevel().isTutorialTermination() != null && pendingPromotion.getDbLevel().isTutorialTermination()) {
+        if (pendingPromotion != null) {
             return getLevel4Base();
         } else {
             return null;
         }
-    }
-
-    @Override
-    public void onTutorialTerminated() {
-        Base base = baseService.getBase();
-        PendingPromotion pendingPromotion = pendingPromotions.get(base.getSimpleBase());
-        if (pendingPromotion == null || pendingPromotion.getDbLevel().isTutorialTermination() == null || !pendingPromotion.getDbLevel().isTutorialTermination()) {
-            return;
-        }
-        pendingPromotion.setTutorialAchieved();
-        userTrackingService.levelInterimPromotion(base, pendingPromotion.getDbLevel().getName(), PendingPromotion.INTERIM_PROMOTION_TUTORIAL);
-        checkAndHandlePromotion(pendingPromotion, base);
     }
 
     @Override
@@ -394,6 +364,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         LevelPacket levelPacket = new LevelPacket();
         levelPacket.setLevel(achievedLevel.createLevel());
         connectionService.sendPacket(base.getSimpleBase(), levelPacket);
+        baseService.sendHouseSpacePacket(base);
         userTrackingService.levelPromotion(base, oldLevel);
         // Cleanup
         pendingPromotions.remove(base.getSimpleBase());
@@ -425,25 +396,12 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
             pendingPromotions.clear();
             for (Base base : bases) {
                 try {
-                    migrateDb(base);
                     prepareForNextPromotion(base, false);
                 } catch (Throwable throwable) {
                     log.error("", throwable);
                 }
             }
         }
-    }
-
-    @Deprecated
-    private void migrateDb(Base base) {
-        if (base.getBaseLevelStatus() != null) {
-            return;
-        }
-        String levelName = base.getLevel();
-        DbLevel dbLevel = getDbLevel(levelName);
-        BaseLevelStatus baseLevelStatus = new BaseLevelStatus();
-        baseLevelStatus.setCurrentLevel(dbLevel);
-        base.setBaseLevelStatus(baseLevelStatus);
     }
 
     private DbLevel getUnskippable(DbLevel dbLevel, Base base) {

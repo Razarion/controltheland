@@ -119,7 +119,6 @@ public class MissionTarget extends WebPage {
                 dbLevel.createDbItemCount();
             }
         });
-        form.add(new CheckBox("tutorialTermination"));
         form.add(new TextField<Integer>("minXp"));
         form.add(new TextField<Integer>("minMoney"));
         form.add(new TextField<Integer>("deltaMoney"));
@@ -141,6 +140,8 @@ public class MissionTarget extends WebPage {
                 // Ignore
             }
         }));
+        form.add(new TextField<Integer>("itemLimit"));
+        form.add(new TextField<Integer>("houseSpace"));
 
 
         form.add(new Button("save") {

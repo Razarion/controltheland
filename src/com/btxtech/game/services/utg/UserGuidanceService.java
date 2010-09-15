@@ -14,9 +14,6 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.Level;
-import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
-import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.Base;
 import java.util.Collection;
@@ -52,13 +49,11 @@ public interface UserGuidanceService {
 
     Level getLevelToRunMissionTarget();
 
-    void onTutorialTerminated();
-
     void onIncreaseXp(Base base, int xp);
 
     void onBaseDeleted(Base base);
 
-    void onMoneyIncrease(Base base);    
+    void onMoneyIncrease(Base base);
 
     void onItemKilled(Base actorBase);
 

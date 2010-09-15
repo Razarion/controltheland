@@ -193,6 +193,8 @@ public class MovableServiceImpl implements MovableService {
             realityInfo.setTerritories(territoryService.getTerritories());
             realityInfo.setLevelToRunMissionTarget(userGuidanceService.getLevelToRunMissionTarget());
             realityInfo.setAllBases(baseService.getAllBaseAttributes());
+            realityInfo.setItemLimit(baseService.getBase().getItemLimit());
+            realityInfo.setHouseSpace(baseService.getBase().getTotalHouseSpace());
             return realityInfo;
         } catch (com.btxtech.game.services.connection.NoConnectionException t) {
             log.error(t.getMessage() + " SessionId: " + t.getSessionId());
@@ -294,15 +296,6 @@ public class MovableServiceImpl implements MovableService {
         } catch (Throwable t) {
             log.error("", t);
             return t.toString();
-        }
-    }
-
-    @Override
-    public void tutorialTerminated() {
-        try {
-            userGuidanceService.onTutorialTerminated();
-        } catch (Throwable t) {
-            log.error("", t);
         }
     }
 

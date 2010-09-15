@@ -21,6 +21,8 @@ import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -42,7 +44,7 @@ public interface ItemService {
 
     void killSyncItem(SyncItem killedItem, SyncBaseItem actor, boolean force, boolean explode);
 
-    SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws NoSuchItemTypeException;
+    SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException;
 
     boolean baseObjectExists(SyncItem currentBuildup);
 

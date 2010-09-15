@@ -16,11 +16,14 @@ package com.btxtech.game.services.base;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.utg.BaseLevelStatus;
+import com.btxtech.game.services.utg.DbLevel;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
@@ -65,8 +68,6 @@ public class Base implements Serializable {
     @OneToOne(cascade = CascadeType.ALL)
     private BaseLevelStatus baseLevelStatus;
     private int baseId;
-    @Deprecated
-    private String level;
     @Transient
     private final Object syncObject = new Object();
     @Transient
@@ -75,6 +76,8 @@ public class Base implements Serializable {
     private UserItemTypeAccess userItemTypeAccess;
     @Transient
     private SimpleBase simpleBase;
+    @Transient
+    private int houseSpace = 0;
 
     /**
      * Used by hibernate
@@ -90,10 +93,10 @@ public class Base implements Serializable {
         this.baseId = baseId;
     }
 
-    public void removeItem(SyncBaseItem item) {
+    public void removeItem(SyncBaseItem syncItem) {
         synchronized (items) {
-            if (!items.remove(item)) {
-                throw new IllegalArgumentException("Item (" + item + ") does not exist in base: " + getSimpleBase());
+            if (!items.remove(syncItem)) {
+                throw new IllegalArgumentException("Item (" + syncItem + ") does not exist in base: " + getSimpleBase());
             }
             lost++;
         }
@@ -170,17 +173,23 @@ public class Base implements Serializable {
 
     public int getItemCount(ItemType itemType) {
         int count = 0;
-        for (SyncItem item : items) {
-            if (item.getItemType().equals(itemType)) {
-                count++;
+        synchronized (items) {
+            for (SyncItem item : items) {
+                if (item.getItemType().equals(itemType)) {
+                    count++;
+                }
             }
         }
         return count;
     }
 
+    public int getItemCount() {
+        return items.size();
+    }
+
     public void clearId() {
         id = null;
-        if(baseLevelStatus != null) {
+        if (baseLevelStatus != null) {
             baseLevelStatus.clearId();
         }
     }
@@ -237,12 +246,40 @@ public class Base implements Serializable {
         this.baseLevelStatus = baseLevelStatus;
     }
 
-    @Deprecated
-    public String getLevel() {
-        return level;
-    }
-
     public int getBaseId() {
         return baseId;
     }
+
+
+    public void checkItemLimit4ItemAdding() throws ItemLimitExceededException, HouseSpaceExceededException {
+        DbLevel dbLevel = baseLevelStatus.getCurrentLevel();
+        if (getItemCount() >= dbLevel.getItemLimit()) {
+            throw new ItemLimitExceededException();
+        }
+        if (getItemCount() >= houseSpace + dbLevel.getHouseSpace()) {
+            throw new HouseSpaceExceededException();
+        }
+    }
+
+    public boolean updateHouseSpace() {
+        int oldSpace = houseSpace;
+        houseSpace = 0;
+        synchronized (items) {
+            for (SyncBaseItem item : items) {
+                if (item.hasSyncHouse() && item.isReady()) {
+                    houseSpace += item.getSyncHouse().getSpace();
+                }
+            }
+        }
+        return oldSpace != houseSpace;
+    }
+
+    public int getTotalHouseSpace() {
+        return houseSpace + baseLevelStatus.getCurrentLevel().getHouseSpace();
+    }
+
+    public int getItemLimit() {
+        return baseLevelStatus.getCurrentLevel().getItemLimit();
+    }
+
 }

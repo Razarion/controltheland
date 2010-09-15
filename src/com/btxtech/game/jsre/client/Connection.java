@@ -43,6 +43,7 @@ import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeA
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.tutorial.HouseSpacePacket;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
@@ -140,6 +141,8 @@ public class Connection implements AsyncCallback<Void> {
         MissionTarget.getInstance().setLevel(realityInfo.getLevel());
         ClientTerritoryService.getInstance().setTerritories(realityInfo.getTerritories());
         StartupProbe.getInstance().taskSwitch(StartupTask.INIT_GAME, StartupTask.LOAD_UNITS);
+        ClientBase.getInstance().setItemLimit(realityInfo.getItemLimit());
+        ClientBase.getInstance().setHouseSpace(realityInfo.getHouseSpace());
 
         movableServiceAsync.getAllSyncInfo(new AsyncCallback<Collection<SyncItemInfo>>() {
             @Override
@@ -240,6 +243,10 @@ public class Connection implements AsyncCallback<Void> {
                 } else if (packet instanceof BaseChangedPacket) {
                     ClientBase.getInstance().onBaseChangedPacket((BaseChangedPacket) packet);
                     OnlineBasePanel.getInstance().update();
+                } else if (packet instanceof HouseSpacePacket) {
+                    HouseSpacePacket houseSpacePacket = (HouseSpacePacket) packet;
+                    ClientBase.getInstance().setHouseSpace(houseSpacePacket.getHouseSpace());
+                    InfoPanel.getInstance().updateItemLimit();
                 } else {
                     throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }
@@ -288,12 +295,6 @@ public class Connection implements AsyncCallback<Void> {
     public void sendEventTrackerItems(List<EventTrackingItem> eventTrackingItems, List<BaseCommand> baseCommands, List<SelectionTrackingItem> selectionTrackingItems) {
         if (movableServiceAsync != null) {
             movableServiceAsync.sendEventTrackerItems(eventTrackingItems, baseCommands, selectionTrackingItems, this);
-        }
-    }
-
-    public void tutorialTerminated() {
-        if (movableServiceAsync != null) {
-            movableServiceAsync.tutorialTerminated(this);
         }
     }
 

@@ -32,6 +32,7 @@ public class BaseItemType extends ItemType {
     private ConsumerType consumerType;
     private SpecialType specialType;
     private ItemContainerType itemContainerType;
+    private HouseType houseType;
     private Integer upgradeable;
     private int upgradeProgress;
 
@@ -131,6 +132,14 @@ public class BaseItemType extends ItemType {
         this.itemContainerType = itemContainerType;
     }
 
+    public HouseType getHouseType() {
+        return houseType;
+    }
+
+    public void setHouseType(HouseType houseType) {
+        this.houseType = houseType;
+    }
+
     public Integer getUpgradeable() {
         return upgradeable;
     }
@@ -199,6 +208,13 @@ public class BaseItemType extends ItemType {
             itemContainerType = null;
         } else if (itemContainerType != null) {
             itemContainerType.changeTo(baseItemType.itemContainerType);
+        }
+
+        if (baseItemType.houseType == null && houseType != null) {
+            // Remove
+            houseType = null;
+        } else if (houseType != null) {
+            houseType.changeTo(baseItemType.houseType);
         }
     }
 }

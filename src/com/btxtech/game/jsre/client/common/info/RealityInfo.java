@@ -34,6 +34,8 @@ public class RealityInfo extends GameInfo {
     private OnlineBaseUpdate onlineBaseUpdate;
     private Level level;
     private Collection<BaseAttributes> allBases;
+    private int houseSpace;
+    private int itemLimit;
 
     public SimpleBase getBase() {
         return base;
@@ -115,5 +117,21 @@ public class RealityInfo extends GameInfo {
     @Override
     public boolean hasServerCommunication() {
         return true;
+    }
+
+    public int getHouseSpace() {
+        return houseSpace;
+    }
+
+    public void setHouseSpace(int houseSpace) {
+        this.houseSpace = houseSpace;
+    }
+
+    public int getItemLimit() {
+        return itemLimit;
+    }
+
+    public void setItemLimit(int itemLimit) {
+        this.itemLimit = itemLimit;
     }
 }

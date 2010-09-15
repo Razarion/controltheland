@@ -82,7 +82,7 @@ public class RegionResource {
                     syncResourceItems.add((SyncResourceItem) syncItem);
                 }
             }
-        } catch (NoSuchItemTypeException e) {
+        } catch (Exception e) {
             log.error("", e);
         }
     }

@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ConsumerType;
 import com.btxtech.game.jsre.common.gameengine.itemType.FactoryType;
 import com.btxtech.game.jsre.common.gameengine.itemType.GeneratorType;
 import com.btxtech.game.jsre.common.gameengine.itemType.HarvesterType;
+import com.btxtech.game.jsre.common.gameengine.itemType.HouseType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemContainerType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
@@ -63,6 +64,9 @@ public class DbBaseItemType extends DbItemType {
     private DbBaseItemType upgradable;
     @OneToOne(cascade = CascadeType.ALL)
     private DbItemContainerType dbItemContainerType;
+    @OneToOne(cascade = CascadeType.ALL)
+    private DbHouseType dbHouseType;
+
     private Integer upgradeProgress;
 
     public int getHealth() {
@@ -169,6 +173,14 @@ public class DbBaseItemType extends DbItemType {
         this.dbItemContainerType = dbItemContainerType;
     }
 
+    public DbHouseType getDbHouseType() {
+        return dbHouseType;
+    }
+
+    public void setDbHouseType(DbHouseType dbHouseType) {
+        this.dbHouseType = dbHouseType;
+    }
+
     public DbBaseItemType getUpgradable() {
         return upgradable;
     }
@@ -231,6 +243,9 @@ public class DbBaseItemType extends DbItemType {
         }
         if (dbItemContainerType != null) {
             baseItemType.setItemContainerType(new ItemContainerType(toInt(dbItemContainerType.getAbleToContain()), dbItemContainerType.getMaxCount(), dbItemContainerType.getRange()));
+        }
+        if (dbHouseType != null) {
+            baseItemType.setHouseType(new HouseType(dbHouseType.getSpace()));
         }
         if (upgradable != null) {
             baseItemType.setUpgradeable(upgradable.getId());

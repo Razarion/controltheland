@@ -22,6 +22,7 @@ import com.btxtech.game.services.item.itemType.DbConsumerType;
 import com.btxtech.game.services.item.itemType.DbFactoryType;
 import com.btxtech.game.services.item.itemType.DbGeneratorType;
 import com.btxtech.game.services.item.itemType.DbHarvesterType;
+import com.btxtech.game.services.item.itemType.DbHouseType;
 import com.btxtech.game.services.item.itemType.DbItemContainerType;
 import com.btxtech.game.services.item.itemType.DbItemTypeData;
 import com.btxtech.game.services.item.itemType.DbMovableType;
@@ -87,6 +88,8 @@ public class BaseItemTypeEditor extends WebPage {
     private String itemContainerAbleToContain;
     private int itemContainerRange;
     private int itemContainerMaxCount;
+    private boolean house;
+    private int space;
     private boolean special;
     private String specialString;
     private String imageFileField;
@@ -146,6 +149,8 @@ public class BaseItemTypeEditor extends WebPage {
         form.add(new TextField("itemContainerAbleToContain"));
         form.add(new TextField("itemContainerRange"));
         form.add(new TextField("itemContainerMaxCount"));
+        form.add(new CheckBox("house"));
+        form.add(new TextField("space"));
         form.add(new CheckBox("special"));
         form.add(new TextField("specialString"));
         form.add(new HiddenField("imageFileField"));
@@ -243,6 +248,13 @@ public class BaseItemTypeEditor extends WebPage {
             itemContainerRange = dbBaseItemType.getDbItemContainerType().getRange();
         } else {
             itemContainer = false;
+        }
+
+        if (dbBaseItemType.getDbHouseType() != null) {
+            house = true;
+            space = dbBaseItemType.getDbHouseType().getSpace();
+        } else {
+            house = false;
         }
 
         if (dbBaseItemType.getSpecialType() != null) {
@@ -380,6 +392,14 @@ public class BaseItemTypeEditor extends WebPage {
             dbItemContainerType.setRange(itemContainerRange);
         } else {
             dbBaseItemType.setDbItemContainerType(null);
+        }
+
+        if (house) {
+            DbHouseType dbHouseType = new DbHouseType();
+            dbHouseType.setSpace(space);
+            dbBaseItemType.setDbHouseType(dbHouseType);
+        } else {
+            dbBaseItemType.setDbHouseType(null);
         }
 
         if (special) {

@@ -7,6 +7,8 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
+import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.services.base.BaseService;
@@ -60,7 +62,7 @@ public class TestMgmtService extends AbstractJUnit4SpringContextTests {
     }
 
     @Test
-    public void testBigBackup() throws AlreadyUsedException, NoSuchItemTypeException {
+    public void testBigBackup() throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
         for (int i = 0; i < ITEM_COUNT; i++) {
             ItemType itemType = getRandomItemType();
             System.out.println("Creating: " + (i + 1) + " of " + ITEM_COUNT);
@@ -72,8 +74,6 @@ public class TestMgmtService extends AbstractJUnit4SpringContextTests {
     private SimpleBase getBase(ItemType itemType) throws AlreadyUsedException, NoSuchItemTypeException {
         if (itemType instanceof ResourceType) {
             return null;
-        } else if (itemType instanceof BaseItemType) {
-            return baseService.getBasesNoDummy().get(0).getSimpleBase();
         } else {
             throw new IllegalArgumentException("Unknown itemType: " + itemType);
         }

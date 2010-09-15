@@ -68,6 +68,8 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild {
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private Set<DbItemTypeAndPosition> items;
     private boolean isScrollingAllowed;
+    private boolean isSellingAllowed;
+    private boolean isOptionAllowed;
     private boolean isOnlineBoxVisible;
     private boolean isInfoBoxVisible;
     @Type(type = "index")
@@ -102,6 +104,8 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild {
     private String contentType;
     @Column(name = "imageData", length = 500000)
     private byte[] data;
+    private int itemLimit;
+    private int houseCount;
 
     @Transient
     private CrudServiceHelper<DbItemTypeAndPosition> itemTypeAndPositionCrudHelper;
@@ -242,6 +246,38 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild {
         this.data = data;
     }
 
+    public int getItemLimit() {
+        return itemLimit;
+    }
+
+    public void setItemLimit(int itemLimit) {
+        this.itemLimit = itemLimit;
+    }
+
+    public int getHouseCount() {
+        return houseCount;
+    }
+
+    public void setHouseCount(int houseCount) {
+        this.houseCount = houseCount;
+    }
+
+    public boolean isSellingAllowed() {
+        return isSellingAllowed;
+    }
+
+    public void setSellingAllowed(boolean sellingAllowed) {
+        isSellingAllowed = sellingAllowed;
+    }
+
+    public boolean isOptionAllowed() {
+        return isOptionAllowed;
+    }
+
+    public void setOptionAllowed(boolean optionAllowed) {
+        isOptionAllowed = optionAllowed;
+    }
+
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
@@ -274,6 +310,8 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild {
         return new TaskConfig(clearGame,
                 itemTypeAndPositions,
                 isScrollingAllowed,
+                isSellingAllowed,
+                isOptionAllowed,
                 isOnlineBoxVisible,
                 isInfoBoxVisible,
                 scroll,
@@ -281,6 +319,8 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild {
                 completionConditionConfig.createConditionConfig(),
                 resourceHintConfig,
                 ItemsUtil.itemTypesToCollection(allowedItems),
+                houseCount,
+                itemLimit,
                 accountBalance,
                 description,
                 finishedText,
