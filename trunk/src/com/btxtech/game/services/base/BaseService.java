@@ -17,8 +17,11 @@ import com.btxtech.game.jsre.client.AlreadyUsedException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
+import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.btxtech.game.services.energy.impl.BaseEnergy;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.user.User;
@@ -30,7 +33,7 @@ import java.util.List;
  * Date: May 31, 2009
  * Time: 8:12:50 PM
  */
-public interface BaseService extends AbstractBaseService {
+public interface BaseService extends AbstractBaseService, SyncItemListener {
     void checkBaseAccess(SyncBaseItem item) throws IllegalAccessException;
 
     void checkCanBeAttack(SyncBaseItem victim);
@@ -57,7 +60,7 @@ public interface BaseService extends AbstractBaseService {
 
     Base getBase();
 
-    Base continueOrCreateBase() throws AlreadyUsedException, NoSuchItemTypeException, GameFullException;
+    Base continueOrCreateBase() throws AlreadyUsedException, NoSuchItemTypeException, GameFullException, ItemLimitExceededException, HouseSpaceExceededException;
 
     Base getBase(SyncBaseItem baseSyncItem);
 
@@ -71,12 +74,13 @@ public interface BaseService extends AbstractBaseService {
 
     List<SimpleBase> getSimpleBases();
 
-    @Deprecated
-    List<Base> getBasesNoDummy();
-
     void restoreBases(Collection<Base> bases);
 
     void onUserRegistered(User user);
 
     void setBaseColor(String color) throws AlreadyUsedException;
+
+    void checkItemLimit4ItemAdding(SimpleBase base) throws ItemLimitExceededException, HouseSpaceExceededException;
+
+    void sendHouseSpacePacket(Base base);
 }

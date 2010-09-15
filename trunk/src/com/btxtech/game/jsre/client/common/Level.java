@@ -22,6 +22,7 @@ import java.io.Serializable;
  */
 public class Level implements Serializable {
     private String name;
+    private int itemLimit;
 
     public String getName() {
         return name;
@@ -29,6 +30,14 @@ public class Level implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getItemLimit() {
+        return itemLimit;
+    }
+
+    public void setItemLimit(int itemLimit) {
+        this.itemLimit = itemLimit;
     }
 
     @Override

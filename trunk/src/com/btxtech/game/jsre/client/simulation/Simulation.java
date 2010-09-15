@@ -91,6 +91,11 @@ public class Simulation implements SelectionListener {
         RadarPanel.getInstance().setVisible(taskConfig.isScrollingAllowed());
         MapWindow.getInstance().setScrollingAllowed(taskConfig.isScrollingAllowed());
         InfoPanel.getInstance().getScrollHome().setEnabled(taskConfig.isScrollingAllowed());
+        InfoPanel.getInstance().getOption().setEnabled(taskConfig.isOptionAllowed());
+        InfoPanel.getInstance().getSell().setEnabled(taskConfig.isSellingAllowed());
+        ClientBase.getInstance().setHouseSpace(taskConfig.getHouseCount());
+        ClientBase.getInstance().setItemLimit(taskConfig.getItemLimit());
+        InfoPanel.getInstance().updateItemLimit();
 
         for (ItemTypeAndPosition itemTypeAndPosition : taskConfig.getOwnItems()) {
             try {

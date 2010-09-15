@@ -14,12 +14,15 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.UserMessage;
+import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.btxtech.game.jsre.common.EventTrackingStart;
+import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import java.util.Collection;
@@ -30,15 +33,15 @@ import java.util.List;
  * The async counterpart of <code>MovableService</code>.
  */
 public interface MovableServiceAsync {
-    void getGameInfo(AsyncCallback async);
+    void getGameInfo(AsyncCallback<GameInfo> async);
 
     void log(String message, Date date, AsyncCallback async);
 
     void sendCommands(List<BaseCommand> baseCommands, AsyncCallback async);
 
-    void getSyncInfo(SimpleBase simpleBase, AsyncCallback async);
+    void getSyncInfo(SimpleBase simpleBase, AsyncCallback<Collection<Packet>> async);
 
-    void getAllSyncInfo(AsyncCallback async);
+    void getAllSyncInfo(AsyncCallback<Collection<SyncItemInfo>> async);
 
     void register(String userName, String password, String confirmPassword, String email, AsyncCallback<Void> asyncCallback);
 
@@ -49,8 +52,6 @@ public interface MovableServiceAsync {
     void closeConnection(AsyncCallback<Void> async);
 
     void getMissionTarget(AsyncCallback<String> asyncCallback);
-
-    void tutorialTerminated(AsyncCallback<Void> async);
 
     void startUpTaskFinished(StartupTask state, Date clientTimeStamp, long duration, AsyncCallback<Void> asyncCallback);
 

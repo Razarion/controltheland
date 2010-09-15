@@ -53,3 +53,8 @@ update BACKUP_GENERIC_ITEM set buildup = 1.0
 ALTER TABLE `gamedb`.`ITEM_FACTORY_TYPE` MODIFY COLUMN `progress` DOUBLE NOT NULL;
 ALTER TABLE `gamedb`.`ITEM_BUILDER_TYPE` MODIFY COLUMN `progress` DOUBLE NOT NULL;
 UPDATE ITEM_TYPE set buildup = 10 where TYPE = "BASE"
+
+------------------
+Item Limit
+UPDATE GUIDANCE_LEVEL set houseSpace = 10, itemLimit = 10
+UPDATE TUTORIAL_TASK_CONFIG set houseCount = 10, itemLimit = 10, isOptionAllowed = false, isSellingAllowed = false

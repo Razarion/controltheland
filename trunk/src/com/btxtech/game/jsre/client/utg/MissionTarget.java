@@ -18,6 +18,7 @@
  */
 package com.btxtech.game.jsre.client.utg;
 
+import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.InfoPanel;
 import com.btxtech.game.jsre.client.common.Level;
@@ -41,15 +42,10 @@ public class MissionTarget {
         return INSTANCE;
     }
 
+    /**
+     * Singleton
+     */
     private MissionTarget() {
-        missionTargetDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-            @Override
-            public void onClose(CloseEvent<PopupPanel> popupPanelCloseEvent) {
-                if (level.equals(Connection.getInstance().getGameInfo().getLevelToRunMissionTarget())) {
-                    //ClientUserGuidance.getInstance().startTutorial();
-                }
-            }
-        });
     }
 
     public void showMissionTargetDialog() {
@@ -91,6 +87,8 @@ public class MissionTarget {
     }
 
     public void onLevelChanged(LevelPacket levelPacket) {
+        ClientBase.getInstance().setItemLimit(levelPacket.getLevel().getItemLimit());
+        InfoPanel.getInstance().updateItemLimit();
         loadingRequired = true;
         String oldLevel = level.getName();
         setLevel(levelPacket.getLevel());

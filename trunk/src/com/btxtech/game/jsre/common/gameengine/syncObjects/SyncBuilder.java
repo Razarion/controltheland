@@ -20,6 +20,8 @@ import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BuilderType;
+import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderFinalizeCommand;
@@ -67,8 +69,16 @@ public class SyncBuilder extends SyncBaseAbility {
                 if (getServices().getItemService().hasBuildingsInRect(itemRect)) {
                     throw new PositionTakenException(toBeBuildPosition, toBeBuiltType);
                 }
-                currentBuildup = (SyncBaseItem) getServices().getItemService().createSyncObject(toBeBuiltType, toBeBuildPosition, getSyncBaseItem(), getSyncBaseItem().getBase(), createdChildCount);
-                createdChildCount++;
+                try {
+                    currentBuildup = (SyncBaseItem) getServices().getItemService().createSyncObject(toBeBuiltType, toBeBuildPosition, getSyncBaseItem(), getSyncBaseItem().getBase(), createdChildCount);
+                    createdChildCount++;
+                } catch (ItemLimitExceededException e) {
+                    stop();
+                    return false;
+                } catch (HouseSpaceExceededException e) {
+                    stop();
+                    return false;
+                }
             }
             if (getServices().getItemService().baseObjectExists(currentBuildup)) {
                 double buildFactor = factor * builderType.getProgress() / (double) toBeBuiltType.getBuildup();

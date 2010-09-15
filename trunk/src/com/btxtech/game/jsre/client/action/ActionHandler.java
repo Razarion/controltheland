@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.action;
 
+import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
@@ -167,6 +168,10 @@ public class ActionHandler implements CommonActionService {
     }
 
     public void buildFactory(Collection<ClientSyncItem> clientSyncItems, Index positionToBeBuild, BaseItemType toBeBuilt) {
+        if (!ClientBase.getInstance().checkItemLimit4ItemAddingDialog()) {
+            return;
+        }
+
         for (ClientSyncItem clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncBuilder()) {
                 if (ClientTerritoryService.getInstance().isAllowed(positionToBeBuild, clientSyncItem.getSyncBaseItem())
@@ -240,6 +245,10 @@ public class ActionHandler implements CommonActionService {
     }
 
     public void build(Collection<ClientSyncItem> clientSyncItems, BaseItemType itemTypeToBuild) {
+        if (!ClientBase.getInstance().checkItemLimit4ItemAddingDialog()) {
+            return;
+        }
+
         for (ClientSyncItem clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncFactory()) {
                 if (ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getPosition(), clientSyncItem.getSyncBaseItem())

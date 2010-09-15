@@ -13,7 +13,6 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tutorial;
 
-import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
@@ -68,6 +67,8 @@ public class TaskEditor extends WebPage {
         form.add(new CheckBox("isScrollingAllowed"));
         form.add(new CheckBox("isOnlineBoxVisible"));
         form.add(new CheckBox("isInfoBoxVisible"));
+        form.add(new CheckBox("isOptionAllowed"));
+        form.add(new CheckBox("isSellingAllowed"));
         form.add(new TextField("scroll.x"));
         form.add(new TextField("scroll.y"));
         form.add(new ConditionWrapperPanel("completionConditionConfig", dbTaskConfig));
@@ -90,6 +91,8 @@ public class TaskEditor extends WebPage {
             }
         }));
         form.add(new TextField("accountBalance"));
+        form.add(new TextField("itemLimit"));
+        form.add(new TextField("houseCount"));
         form.add(new TextArea("description"));
         form.add(new FileUploadField("upload", new IModel<FileUpload>() {
 

@@ -20,6 +20,8 @@ import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
+import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.items.impl.AbstractItemService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -114,10 +116,12 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws NoSuchItemTypeException {
-        Id id = createId(creator, createdChildCount);
-        SyncItem syncItem = newSyncItem(id, position, toBeBuilt.getId(), base, services);
+    public SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
+        SyncItem syncItem;
         synchronized (items) {
+            baseService.checkItemLimit4ItemAdding(base);
+            Id id = createId(creator, createdChildCount);
+            syncItem = newSyncItem(id, position, toBeBuilt.getId(), base, services);
             items.put(id, syncItem);
         }
 
@@ -126,6 +130,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             historyService.addItemCreatedEntry(syncBaseItem);
             actionService.addGuardingBaseItem(syncBaseItem);
             syncItem.addSyncItemListener(actionService);
+            syncItem.addSyncItemListener(baseService);
             baseService.itemCreated(syncBaseItem);
             baseService.sendAccountBaseUpdate(syncBaseItem);
             actionService.interactionGuardingItems(syncBaseItem);
@@ -147,13 +152,11 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             childIndex = 0;
         }
 
-        synchronized (items) {
-            if (lastId == Integer.MAX_VALUE) {
-                throw new IllegalStateException("MAJOR ERROR!!! Number of id exeeded!!!");
-            }
-            lastId++;
-            return new Id(lastId, parentId, childIndex);
+        if (lastId == Integer.MAX_VALUE) {
+            throw new IllegalStateException("MAJOR ERROR!!! Number of id exeeded!!!");
         }
+        lastId++;
+        return new Id(lastId, parentId, childIndex);
     }
 
     @Override
@@ -296,6 +299,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
                 items.put(syncItem.getId(), syncItem);
                 if (syncItem instanceof SyncBaseItem) {
                     syncItem.addSyncItemListener(actionService);
+                    syncItem.addSyncItemListener(baseService);
                 }
                 if (syncItem.getId().isSynchronized()) {
                     int tmpId = syncItem.getId().getId();

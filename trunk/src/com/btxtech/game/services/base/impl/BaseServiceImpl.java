@@ -26,9 +26,13 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
+import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.impl.AbstractBaseServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.tutorial.HouseSpacePacket;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseColor;
 import com.btxtech.game.services.base.BaseService;
@@ -121,7 +125,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         }
     }
 
-    private Base createNewBase() throws AlreadyUsedException, NoSuchItemTypeException, GameFullException {
+    private Base createNewBase() throws AlreadyUsedException, NoSuchItemTypeException, GameFullException, ItemLimitExceededException, HouseSpaceExceededException {
         synchronized (bases) {
             List<BaseColor> baseColors = getFreeBaseColors(0, 1);
             if (baseColors.isEmpty()) {
@@ -132,7 +136,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public Base continueOrCreateBase() throws AlreadyUsedException, NoSuchItemTypeException, GameFullException {
+    public Base continueOrCreateBase() throws AlreadyUsedException, NoSuchItemTypeException, GameFullException, ItemLimitExceededException, HouseSpaceExceededException {
         if (userService.isLoggedin()) {
             Base base = getBaseForLoggedInUser();
             if (base != null) {
@@ -143,7 +147,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         return createNewBase();
     }
 
-    private Base createNewBase(BaseColor baseColor) throws AlreadyUsedException, NoSuchItemTypeException {
+    private Base createNewBase(BaseColor baseColor) throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
         Base base;
         ItemType constructionVehicle = itemService.getItemType(Constants.CONSTRUCTION_VEHICLE);
         synchronized (bases) {
@@ -292,6 +296,9 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     public void itemCreated(SyncBaseItem syncItem) {
         Base base = getBase(syncItem);
         base.addItem(syncItem);
+        if (syncItem.hasSyncHouse() && syncItem.isReady()) {
+            handleHouseSpaceChanged(getBase(syncItem));
+        }
     }
 
     @Override
@@ -307,6 +314,10 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
                 userTrackingService.onBaseDefeated(base.getUser(), base);
             }
             deleteBase(base);
+        } else {
+            if (syncItem.hasSyncHouse()) {
+                handleHouseSpaceChanged(base);
+            }
         }
     }
 
@@ -404,12 +415,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    @Deprecated
-    public List<Base> getBasesNoDummy() {
-        return getBases();
-    }
-
-    @Override
     public List<SimpleBase> getSimpleBases() {
         ArrayList<SimpleBase> simpleBases = new ArrayList<SimpleBase>();
         for (Base base : bases.values()) {
@@ -490,5 +495,43 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         setBaseColor(simpleBase, color);
         sendBaseChangedPacket(BaseChangedPacket.Type.CHANGED, simpleBase);
         connectionService.sendOnlineBasesUpdate();
+    }
+
+    @Override
+    public void checkItemLimit4ItemAdding(SimpleBase simpleBase) throws ItemLimitExceededException, HouseSpaceExceededException {
+        Base base = getBase(simpleBase);
+        if (base == null) {
+            throw new NoConnectionException("Base does not exist", session.getSessionId());
+        }
+        base.checkItemLimit4ItemAdding();
+    }
+
+    @Override
+    public void onItemChanged(Change change, SyncItem syncItem) {
+        switch (change) {
+            case BUILD: {
+                if (((SyncBaseItem) syncItem).hasSyncHouse() && ((SyncBaseItem) syncItem).isReady()) {
+                    handleHouseSpaceChanged(getBase((SyncBaseItem) syncItem));
+                }
+                break;
+            }
+            case ITEM_TYPE_CHANGED: {
+                handleHouseSpaceChanged(getBase((SyncBaseItem) syncItem));
+                break;
+            }
+        }
+    }
+
+    private void handleHouseSpaceChanged(Base base) {
+        if (!base.updateHouseSpace()) {
+            return;
+        }
+        sendHouseSpacePacket(base);
+    }
+
+    public void sendHouseSpacePacket(Base base) {
+        HouseSpacePacket houseSpacePacket = new HouseSpacePacket();
+        houseSpacePacket.setHouseSpace(base.getTotalHouseSpace());
+        connectionService.sendPacket(houseSpacePacket);
     }
 }

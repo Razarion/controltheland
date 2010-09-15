@@ -35,7 +35,7 @@ import java.util.HashMap;
 public class StartupProbe {
     private final static StartupProbe INSTANCE = new StartupProbe();
     private long startTimeStamp;
-    private long runningTimeStamp;
+    private long runningTimeStamp = 0;
 
     public static StartupProbe getInstance() {
         return INSTANCE;
@@ -201,6 +201,7 @@ public class StartupProbe {
         RegisterDialog.showDialogRepeating();
         Simulation.getInstance().start();
         MapWindow.getInstance().displayVisibleItems();
+        InfoPanel.getInstance().updateItemLimit();        
     }
 
     private void enableCloseButton() {
@@ -278,6 +279,10 @@ public class StartupProbe {
 
     public long getRunningTimeStamp() {
         return runningTimeStamp;
+    }
+
+    public boolean isRunning() {
+        return runningTimeStamp != 0;
     }
 
     private native double getNativeCtlStartTime() /*-{

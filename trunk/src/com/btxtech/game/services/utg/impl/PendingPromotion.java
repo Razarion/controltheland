@@ -30,7 +30,6 @@ public class PendingPromotion {
     private DbLevel dbLevel;
     private boolean xpAchieved = false;
     private boolean itemCountAchieved = false;
-    private boolean tutorialAchieved = false;
     private boolean minMoneyAchieved = false;
     private boolean deltaMoneyAchieved = false;
     private boolean deltaKillsAchieved = false;
@@ -51,10 +50,6 @@ public class PendingPromotion {
         itemCountAchieved = true;
     }
 
-    public void setTutorialAchieved() {
-        tutorialAchieved = true;
-    }
-
     public void setMinMoneyAchieved() {
         minMoneyAchieved = true;
     }
@@ -68,12 +63,6 @@ public class PendingPromotion {
     }
 
     public boolean achieved() {
-        if (dbLevel.isTutorialTermination()) {
-            if (!tutorialAchieved) {
-                return false;
-            }
-        }
-
         if (dbLevel.getMinXp() != null) {
             if (!xpAchieved) {
                 return false;

@@ -18,6 +18,8 @@ import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.InfoPanel;
+import com.btxtech.game.jsre.client.StartupProbe;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
@@ -31,6 +33,8 @@ import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
+import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.items.impl.AbstractItemService;
@@ -63,6 +67,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
     private HashSet<ClientSyncItem> specialItems = new HashSet<ClientSyncItem>();
     private HashMap<Id, ClientSyncItem> orphanItems = new HashMap<Id, ClientSyncItem>();
     private HashMap<Id, ClientSyncItem> seeminglyDeadItems = new HashMap<Id, ClientSyncItem>();
+    private int ownItemCount = 0;
 
     /**
      * Singleton
@@ -139,7 +144,10 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
     }
 
     @Override
-    public SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws NoSuchItemTypeException {
+    public SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
+        if (ClientBase.getInstance().isMyOwnBase(base)) {
+            ClientBase.getInstance().checkItemLimit4ItemAdding();
+        }
         ClientSyncItem itemView;
         if (Connection.getInstance().getGameInfo().hasServerCommunication()) {
             Id id = new Id(creator.getId().getId(), createdChildCount);
@@ -210,6 +218,12 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         SyncItem syncItem = newSyncItem(id, position, itemTypeId, base, ClientServices.getInstance());
         ClientSyncItem itemView = new ClientSyncItem(syncItem);
         items.put(id, itemView);
+        if (itemView.isMyOwnProperty()) {
+            ownItemCount++;
+            if (StartupProbe.getInstance().isRunning()) {
+                InfoPanel.getInstance().updateItemLimit();
+            }
+        }
         return itemView;
     }
 
@@ -235,6 +249,12 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
 
     private void definitelyKillItem(ClientSyncItem itemView, boolean explode) {
         items.remove(itemView.getSyncItem().getId());
+        if (itemView.isMyOwnProperty()) {
+            ownItemCount--;
+            if (StartupProbe.getInstance().isRunning()) {
+                InfoPanel.getInstance().updateItemLimit();
+            }
+        }
         checkSpecialRemoved(itemView);
         seeminglyDeadItems.remove(itemView.getSyncItem().getId());
         SelectionHandler.getInstance().itemKilled(itemView);
@@ -489,5 +509,10 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         specialItems.clear();
         orphanItems.clear();
         seeminglyDeadItems.clear();
+        ownItemCount = 0;
+    }
+
+    public int getOwnItemCount() {
+        return ownItemCount;
     }
 }

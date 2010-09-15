@@ -50,7 +50,6 @@ public class DbLevel implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "dbLevel")
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private Set<DbItemCount> dbItemCounts;
-    private Boolean tutorialTermination;
     private Integer minXp;
     private Integer minMoney;
     private Integer deltaMoney;
@@ -61,7 +60,8 @@ public class DbLevel implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "itemTypeId")
     )
     private Set<DbBaseItemType> skipIfItemsBought;
-
+    private int itemLimit;
+    private int houseSpace;
 
     public String getName() {
         return name;
@@ -104,14 +104,6 @@ public class DbLevel implements Serializable {
         dbItemCounts.remove(dbItemCount);
     }
 
-    public Boolean isTutorialTermination() {
-        return tutorialTermination;
-    }
-
-    public void setTutorialTermination(Boolean tutorialTermination) {
-        this.tutorialTermination = tutorialTermination;
-    }
-
     public Integer getMinXp() {
         return minXp;
     }
@@ -152,9 +144,26 @@ public class DbLevel implements Serializable {
         this.skipIfItemsBought = skipIfItemsBought;
     }
 
+    public int getItemLimit() {
+        return itemLimit;
+    }
+
+    public void setItemLimit(int itemLimit) {
+        this.itemLimit = itemLimit;
+    }
+
+    public int getHouseSpace() {
+        return houseSpace;
+    }
+
+    public void setHouseSpace(int houseSpace) {
+        this.houseSpace = houseSpace;
+    }
+
     public Level createLevel() {
         Level level = new Level();
         level.setName(name);
+        level.setItemLimit(itemLimit);
         return level;
     }
 

@@ -18,7 +18,7 @@
     <title>Mission Target</title>
 </head>
 <body>
-<h1>Mission Target</h1>
+<h1>Level and Mission Target</h1>
 
 <span wicket:id="msgs"/>
 
@@ -33,7 +33,7 @@
             <td colspan="3" valign="top">&nbsp;</td>
         </tr>
         <tr bgcolor="#DDDDDD">
-            <td rowspan="6" valign="top">Condition</td>
+            <td rowspan="5" valign="top">Condition</td>
             <td valign="top">Items</td>
             <td>
                 <table cellpadding="1" cellspacing="1" border="0">
@@ -56,12 +56,6 @@
                 </table>
                 <br/>
                 <input type="submit" wicket:id="addItemCount" value="Add">
-            </td>
-        </tr>
-        <tr bgcolor="#DDDDDD">
-            <td valign="top">Tutorial Terminated</td>
-            <td>
-                <input type="checkbox" wicket:id="tutorialTermination"/>
             </td>
         </tr>
         <tr bgcolor="#DDDDDD">
@@ -92,10 +86,27 @@
             <td colspan="3" valign="top">&nbsp;</td>
         </tr>
         <tr bgcolor="#DDDDDD">
-            <td rowspan="4" valign="top">Skip</td>
+            <td rowspan="1" valign="top">Skip</td>
             <td valign="top">Items already bought[;]</td>
             <td>
                 <input type="text" wicket:id="skipItemsBought"/>
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="3" valign="top">&nbsp;</td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td rowspan="2" valign="top">Level Constraints</td>
+            <td valign="top">Item Limit</td>
+            <td>
+                <input type="text" wicket:id="itemLimit"/>
+            </td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td valign="top">House Space</td>
+            <td>
+                <input type="text" wicket:id="houseSpace"/>
             </td>
         </tr>
     </table>

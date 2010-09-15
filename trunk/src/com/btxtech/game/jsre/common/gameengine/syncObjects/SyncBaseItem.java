@@ -51,6 +51,7 @@ public class SyncBaseItem extends SyncItem {
     private SyncConsumer syncConsumer;
     private SyncSpecial syncSpecial;
     private SyncItemContainer syncItemContainer;
+    private SyncHouse syncHouse;
     private double upgradeProgress;
     private boolean isUpgrading;
     private BaseItemType upgradingItemType;
@@ -129,6 +130,12 @@ public class SyncBaseItem extends SyncItem {
         } else {
             syncItemContainer = null;
         }
+
+        if (baseItemType.getHouseType() != null) {
+            syncHouse = new SyncHouse(baseItemType.getHouseType(), this);
+        } else {
+            syncHouse = null;
+        }
     }
 
 
@@ -199,6 +206,7 @@ public class SyncBaseItem extends SyncItem {
         if (syncItemContainer != null) {
             syncItemContainer.synchronize(syncItemInfo);
         }
+
         super.synchronize(syncItemInfo);
     }
 
@@ -493,6 +501,17 @@ public class SyncBaseItem extends SyncItem {
         return syncItemContainer;
     }
 
+    public boolean hasSyncHouse() {
+        return syncHouse != null;
+    }
+
+    public SyncHouse getSyncHouse() {
+        if (syncHouse == null) {
+            throw new IllegalStateException(this + " has no SyncHouse");
+        }
+        return syncHouse;
+    }
+
     public boolean isEnemy(SyncBaseItem syncBaseItem) {
         return !getBase().equals(syncBaseItem.getBase());
     }
@@ -640,4 +659,5 @@ public class SyncBaseItem extends SyncItem {
     public boolean isMoneyEarningOrConsuming() {
         return isMoneyEarningOrConsuming;
     }
+
 }

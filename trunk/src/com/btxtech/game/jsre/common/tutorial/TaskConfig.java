@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.common.tutorial;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.tutorial.condition.AbstractConditionConfig;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -28,6 +29,8 @@ public class TaskConfig implements Serializable {
     private boolean clearGame;
     private Collection<ItemTypeAndPosition> ownItems;
     private boolean isScrollingAllowed;
+    private boolean sellingAllowed;
+    private boolean optionAllowed;
     private boolean isOnlineBoxVisible;
     private boolean isInfoBoxVisible;
     private Index scroll;
@@ -35,6 +38,8 @@ public class TaskConfig implements Serializable {
     private AbstractConditionConfig completionConditionConfig;
     private ResourceHintConfig resourceHintConfig;
     private Collection<Integer> allowedItemTypes;
+    private int houseCount;
+    private int itemLimit;
     private int accountBalance;
     private String description;
     private String finishedText;
@@ -48,10 +53,12 @@ public class TaskConfig implements Serializable {
     public TaskConfig() {
     }
 
-    public TaskConfig(boolean clearGame, Collection<ItemTypeAndPosition> ownItems, boolean scrollingAllowed, boolean onlineBoxVisible, boolean infoBoxVisible, Index scroll, List<StepConfig> stepConfigs, AbstractConditionConfig completionConditionConfig, ResourceHintConfig resourceHintConfig, Collection<Integer> allowedItemTypes, int accountBalance, String description, String finishedText, int finishedTextDuration, String name, Integer imageId) {
+    public TaskConfig(boolean clearGame, ArrayList<ItemTypeAndPosition> ownItems, boolean scrollingAllowed, boolean sellingAllowed, boolean optionAllowed, boolean onlineBoxVisible, boolean infoBoxVisible, Index scroll, ArrayList<StepConfig> stepConfigs, AbstractConditionConfig completionConditionConfig, ResourceHintConfig resourceHintConfig, Collection<Integer> allowedItemTypes, int houseCount, int itemLimit, int accountBalance, String description, String finishedText, int finishedTextDuration, String name, Integer imageId) {
         this.clearGame = clearGame;
         this.ownItems = ownItems;
         isScrollingAllowed = scrollingAllowed;
+        this.sellingAllowed = sellingAllowed;
+        this.optionAllowed = optionAllowed;
         isOnlineBoxVisible = onlineBoxVisible;
         isInfoBoxVisible = infoBoxVisible;
         this.scroll = scroll;
@@ -59,6 +66,8 @@ public class TaskConfig implements Serializable {
         this.completionConditionConfig = completionConditionConfig;
         this.resourceHintConfig = resourceHintConfig;
         this.allowedItemTypes = allowedItemTypes;
+        this.houseCount = houseCount;
+        this.itemLimit = itemLimit;
         this.accountBalance = accountBalance;
         this.description = description;
         this.finishedText = finishedText;
@@ -129,5 +138,21 @@ public class TaskConfig implements Serializable {
 
     public Integer getImageId() {
         return imageId;
+    }
+
+    public boolean isSellingAllowed() {
+        return sellingAllowed;
+    }
+
+    public boolean isOptionAllowed() {
+        return optionAllowed;
+    }
+
+    public int getHouseCount() {
+        return houseCount;
+    }
+
+    public int getItemLimit() {
+        return itemLimit;
     }
 }

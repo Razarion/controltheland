@@ -13,13 +13,16 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.dialogs.NoMoneyDialog;
+import com.btxtech.game.jsre.client.dialogs.UnfrequentDialog;
+import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.item.ItemViewContainer;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
+import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.impl.AbstractBaseServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
@@ -33,6 +36,8 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     private double accountBalance;
     private SimpleBase simpleBase;
     private DepositResourceListener depositResourceListener;
+    private int houseSpace;
+    private int itemLimit;
 
     /**
      * Singleton
@@ -65,6 +70,10 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         return simpleBase.equals(syncItem.getBase());
     }
 
+    public boolean isMyOwnBase(SimpleBase simpleBase) {
+        return this.simpleBase.equals(simpleBase);
+    }
+
     @Override
     public void depositResource(double price, SimpleBase simpleBase) {
         if (this.simpleBase.equals(simpleBase)) {
@@ -83,7 +92,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
             return;
         }
         if (price > Math.round(accountBalance)) {
-            NoMoneyDialog.open();
+            UnfrequentDialog.open(UnfrequentDialog.Type.NO_MONEY, false);
             throw new InsufficientFundsException();
         } else {
             accountBalance -= price;
@@ -122,4 +131,44 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
                 throw new IllegalArgumentException(this + " unknown type: " + baseChangedPacket.getType());
         }
     }
+
+    public int getHouseSpace() {
+        return houseSpace;
+    }
+
+    public void setHouseSpace(int houseSpace) {
+        this.houseSpace = houseSpace;
+    }
+
+    public int getItemLimit() {
+        return itemLimit;
+    }
+
+    public void setItemLimit(int itemLimit) {
+        this.itemLimit = itemLimit;
+    }
+
+    public void checkItemLimit4ItemAdding() throws ItemLimitExceededException, HouseSpaceExceededException {
+        if (ItemContainer.getInstance().getOwnItemCount() >= itemLimit) {
+            UnfrequentDialog.open(UnfrequentDialog.Type.ITEM_LIMIT, false);
+            throw new ItemLimitExceededException();
+        }
+        if (ItemContainer.getInstance().getOwnItemCount() >= houseSpace) {
+            UnfrequentDialog.open(UnfrequentDialog.Type.SPACE_LIMIT, false);
+            throw new HouseSpaceExceededException();
+        }
+    }
+
+    public boolean checkItemLimit4ItemAddingDialog() {
+        if (ItemContainer.getInstance().getOwnItemCount() >= itemLimit) {
+            UnfrequentDialog.open(UnfrequentDialog.Type.ITEM_LIMIT, true);
+            return false;
+        }
+        if (ItemContainer.getInstance().getOwnItemCount() >= houseSpace) {
+            UnfrequentDialog.open(UnfrequentDialog.Type.SPACE_LIMIT, true);
+            return false;
+        }
+        return true;
+    }
+
 }

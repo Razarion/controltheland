@@ -109,7 +109,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     }
 
     @Resource(name = "readonlyDataSource")
-    @Autowired()
+    @Autowired
     public void setSessionFactory(DataSource dataSource) {
         readonlyJdbcTemplate = new JdbcTemplate(dataSource);
     }
@@ -158,6 +158,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
 
     @Override
     public List<String> getSavedQueris() {
+        @SuppressWarnings("unchecked")
         List<SavedQuery> list = (List<SavedQuery>) hibernateTemplate.execute(new HibernateCallback() {
             public Object doInHibernate(Session session) {
                 Criteria criteria = session.createCriteria(SavedQuery.class);
@@ -210,6 +211,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
 
     @Override
     public List<BackupSummary> getBackupSummary() {
+        @SuppressWarnings("unchecked")
         List<Object[]> list = (List<Object[]>) hibernateTemplate.execute(new HibernateCallback() {
             public Object doInHibernate(Session session) {
                 Criteria criteriaEntries = session.createCriteria(BackupEntry.class);
@@ -235,6 +237,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     @Override
     public void restore(final Date date) throws NoSuchItemTypeException {
         long time = System.currentTimeMillis();
+        @SuppressWarnings("unchecked")
         List<BackupEntry> list = (List<BackupEntry>) hibernateTemplate.execute(new HibernateCallback() {
             public Object doInHibernate(Session session) {
                 Criteria criteria = session.createCriteria(BackupEntry.class);
@@ -325,6 +328,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     @Override
     public StartupData getStartupData() {
         if (startupData == null) {
+            @SuppressWarnings("unchecked")
             List<StartupData> startups = hibernateTemplate.loadAll(StartupData.class);
             if (startups.isEmpty()) {
                 log.info("Startup data does not exist. Create default.");
