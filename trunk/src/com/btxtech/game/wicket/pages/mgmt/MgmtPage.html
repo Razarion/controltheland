@@ -24,7 +24,42 @@
     <br/>
     System time: <span wicket:id="systemTime">systemTime</span>
     <br/>
-    Memory: <span wicket:id="usedMem">usedMem</span>M of <span wicket:id="maxMem">maxMem</span>M
+    <table border="1">
+        <tr>
+            <td rowspan="4" valign="top">Heap [M]</td>
+            <td>Init</td>
+            <td wicket:id="heapInit">heapInit</td>
+        </tr>
+        <tr>
+            <td>Used</td>
+            <td wicket:id="heapUsed">heapUsed</td>
+        </tr>
+        <tr>
+            <td>Init</td>
+            <td wicket:id="heapCommitted">heapCommitted</td>
+        </tr>
+        <tr>
+            <td>Max</td>
+            <td wicket:id="heapMax">heapMax</td>
+        </tr>
+        <tr>
+            <td rowspan="4" valign="top">No Heap [M]</td>
+            <td>Init</td>
+            <td wicket:id="noHeapInit">noHeapInit</td>
+        </tr>
+        <tr>
+            <td>Used</td>
+            <td wicket:id="noHeapUsed">noHeapUsed</td>
+        </tr>
+        <tr>
+            <td>Init</td>
+            <td wicket:id="noHeapCommitted">noHeapCommitted</td>
+        </tr>
+        <tr>
+            <td>Max</td>
+            <td wicket:id="noHeapMax">noHeapMax</td>
+        </tr>
+    </table>
     <br/>
     <h2>Tools</h2>
     <ul>
