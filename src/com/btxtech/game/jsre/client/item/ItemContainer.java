@@ -145,7 +145,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
 
     @Override
     public SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
-        if (ClientBase.getInstance().isMyOwnBase(base)) {
+        if (ClientBase.getInstance().isMyOwnBase(base) && !ClientBase.getInstance().isBot(base)) {
             ClientBase.getInstance().checkItemLimit4ItemAdding();
         }
         ClientSyncItem itemView;
@@ -350,13 +350,14 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         return clientBaseItems;
     }
 
-    public List<SyncBaseItem> getEnemyItems(SimpleBase base) {
+    public List<SyncBaseItem> getEnemyItems(SimpleBase base, Rectangle region) {
         ArrayList<SyncBaseItem> clientBaseItems = new ArrayList<SyncBaseItem>();
         for (ClientSyncItem clientSyncItem : items.values()) {
             if (clientSyncItem.isSyncBaseItem() &&
                     !clientSyncItem.getSyncBaseItem().getBase().equals(base) &&
                     !orphanItems.containsKey(clientSyncItem.getSyncItem().getId()) &&
-                    !seeminglyDeadItems.containsKey(clientSyncItem.getSyncItem().getId())) {
+                    !seeminglyDeadItems.containsKey(clientSyncItem.getSyncItem().getId()) &&
+                    region.contains(clientSyncItem.getSyncItem().getPosition())) {
                 clientBaseItems.add(clientSyncItem.getSyncBaseItem());
             }
         }

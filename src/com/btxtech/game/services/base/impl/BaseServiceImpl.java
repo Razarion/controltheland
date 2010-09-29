@@ -153,7 +153,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         synchronized (bases) {
             lastBaseId++;
             base = new Base(baseColor, userService.getLoggedinUser(), lastBaseId);
-            createBase(base.getSimpleBase(), setupBaseName(base), base.getBaseColor().getHtmlColor(), base.isBot(), false);
+            createBase(base.getSimpleBase(), setupBaseName(base), base.getBaseColor().getHtmlColor(), false);
             log.info("Base created: " + base);
             base.setAccountBalance(mgmtService.getStartupData().getStartMoney());
             bases.put(base.getSimpleBase(), base);
@@ -182,6 +182,29 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         }
         connectionService.createConnection(base);
         base.setUserItemTypeAccess(serverMarketService.getUserItemTypeAccess());
+    }
+
+    @Override
+    public Base createBotBase(User user) throws GameFullException {
+        synchronized (bases) {
+            List<BaseColor> baseColors = getFreeBaseColors(0, 1);
+            if (baseColors.isEmpty()) {
+                throw new GameFullException();
+            }
+            Base base;
+            synchronized (bases) {
+                lastBaseId++;
+                base = new Base(baseColors.get(0), user, lastBaseId);
+                createBase(base.getSimpleBase(), setupBaseName(base), base.getBaseColor().getHtmlColor(), false);
+                log.info("Bot Base created: " + base);
+                base.setAccountBalance(mgmtService.getStartupData().getStartMoney());
+                bases.put(base.getSimpleBase(), base);
+            }
+            userGuidanceService.setupLevel4NewBase(base);
+            base.setUser(user);
+            base.setUserItemTypeAccess(user.getUserItemTypeAccess());
+            return base;
+        }
     }
 
     private void deleteBase(Base base) {
@@ -224,6 +247,10 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         return bases.get(simpleBase);
     }
 
+    @Override
+    public boolean isAlive(SimpleBase simpleBase) {
+        return bases.containsKey(simpleBase);
+    }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -431,7 +458,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             clear();
             for (Base newBase : newBases) {
                 bases.put(newBase.getSimpleBase(), newBase);
-                createBase(newBase.getSimpleBase(), setupBaseName(newBase), newBase.getBaseColor().getHtmlColor(), newBase.isBot(), newBase.isAbandoned());
+                createBase(newBase.getSimpleBase(), setupBaseName(newBase), newBase.getBaseColor().getHtmlColor(), newBase.isAbandoned());
                 if (newBase.getBaseId() > lastBaseId) {
                     lastBaseId = newBase.getBaseId();
                 }
@@ -450,7 +477,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     @Override
     public void depositResource(double price, SimpleBase simpleBase) {
         Base base = getBase(simpleBase);
-        if (!base.isBot()) {
+        if (!isBot(simpleBase)) {
             base.depositMoney(price);
             userGuidanceService.onMoneyIncrease(base);
         }
@@ -459,7 +486,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     @Override
     public void withdrawalMoney(double price, SimpleBase simpleBase) throws InsufficientFundsException {
         Base base = getBase(simpleBase);
-        if (!base.isBot()) {
+        if (!isBot(simpleBase)) {
             base.withdrawalMoney(price);
         }
     }
@@ -533,5 +560,11 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         HouseSpacePacket houseSpacePacket = new HouseSpacePacket();
         houseSpacePacket.setHouseSpace(base.getTotalHouseSpace());
         connectionService.sendPacket(houseSpacePacket);
+    }
+
+    @Override
+    public void setBot(Base base, boolean isBot) {
+        setBot(base.getSimpleBase(), isBot);
+        sendBaseChangedPacket(BaseChangedPacket.Type.CHANGED, base.getSimpleBase());
     }
 }

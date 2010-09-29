@@ -18,12 +18,12 @@ package com.btxtech.game.services.common;
  * Date: 24.07.2010
  * Time: 11:24:13
  */
-public interface CrudChild {
+public interface CrudChild<T> {
     String getName();
 
     void setName(String name);
 
     void init();
 
-    void setParent(CrudParent crudParent);
+    void setParent(T t);
 }

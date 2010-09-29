@@ -66,7 +66,7 @@ public interface ItemService {
 
     List<? extends SyncItem> getItems(String itemTypeName, SimpleBase simpleBase) throws NoSuchItemTypeException;
 
-    List<SyncBaseItem> getEnemyItems(SimpleBase base);
+    List<SyncBaseItem> getEnemyItems(SimpleBase base, Rectangle region);
 
     boolean hasBuildingsInRect(Rectangle rectangle);
 

@@ -130,8 +130,8 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
     public TutorialConfig createTutorialConfig(ResourceHintManager resourceHintManager) {
         ArrayList<BaseAttributes> baseAttributes = new ArrayList<BaseAttributes>();
         SimpleBase ownBase = new SimpleBase(ownBaseId);
-        baseAttributes.add(new BaseAttributes(ownBase, ownBaseName, ownBaseColor, false, false));
-        baseAttributes.add(new BaseAttributes(new SimpleBase(enemyBaseId), enemyBaseName, enemyBaseColor, false, false));
+        baseAttributes.add(new BaseAttributes(ownBase, ownBaseName, ownBaseColor, false));
+        baseAttributes.add(new BaseAttributes(new SimpleBase(enemyBaseId), enemyBaseName, enemyBaseColor, false));
 
         ArrayList<TaskConfig> taskConfigs = new ArrayList<TaskConfig>();
         for (DbTaskConfig dbTaskConfig : dbTaskConfigs) {
@@ -161,7 +161,7 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
     }
 
     @Override
-    public void setParent(CrudParent crudParent) {
+    public void setParent(Object crudParent) {
         throw new NotImplementedException();
     }
 

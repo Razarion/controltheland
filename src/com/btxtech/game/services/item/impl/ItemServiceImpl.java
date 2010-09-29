@@ -119,7 +119,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     public SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
         SyncItem syncItem;
         synchronized (items) {
-            if (toBeBuilt instanceof BaseItemType) {
+            if (toBeBuilt instanceof BaseItemType && !baseService.isBot(base)) {
                 baseService.checkItemLimit4ItemAdding(base);
             }
             Id id = createId(creator, createdChildCount);
@@ -551,11 +551,13 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public List<SyncBaseItem> getEnemyItems(SimpleBase simpleBase) {
+    public List<SyncBaseItem> getEnemyItems(SimpleBase simpleBase, Rectangle region) {
         ArrayList<SyncBaseItem> clientBaseItems = new ArrayList<SyncBaseItem>();
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
-                if (syncItem instanceof SyncBaseItem && !((SyncBaseItem) syncItem).getBase().equals(simpleBase)) {
+                if (syncItem instanceof SyncBaseItem &&
+                        !((SyncBaseItem) syncItem).getBase().equals(simpleBase) &&
+                        region.contains(syncItem.getPosition())) {
                     clientBaseItems.add((SyncBaseItem) syncItem);
                 }
             }
@@ -625,4 +627,39 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         base.depositMoney(money);
         baseService.sendAccountBaseUpdate(base);
     }
+
+    @Override
+    public Collection<SyncBaseItem> getBaseItemsInRectangle(Rectangle rectangle, SimpleBase simpleBase, Collection<BaseItemType> baseItemTypeFilter) {
+        ArrayList<SyncBaseItem> result = new ArrayList<SyncBaseItem>();
+        synchronized (items) {
+            for (SyncItem syncItem : items.values()) {
+                if (syncItem instanceof SyncBaseItem) {
+                    SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
+                    if (!(syncBaseItem.getBase().equals(simpleBase))) {
+                        continue;
+                    }
+                    if (!rectangle.contains(syncBaseItem.getPosition())) {
+                        continue;
+                    }
+                    if (!baseItemTypeFilter.contains(syncBaseItem.getBaseItemType())) {
+                        continue;
+                    }
+                    result.add(syncBaseItem);
+                }
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public ItemType getItemType(DbItemType dbItemType) {
+        ItemType itemType = null;
+        try {
+            itemType = getItemType(dbItemType.getId());
+        } catch (NoSuchItemTypeException e) {
+            throw new RuntimeException(e);
+        }
+        return itemType;
+    }
+
 }

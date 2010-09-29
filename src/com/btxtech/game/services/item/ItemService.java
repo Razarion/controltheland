@@ -14,7 +14,10 @@
 package com.btxtech.game.services.item;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -69,4 +72,8 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
     DbItemTypeData getMuzzleFlashSound(int itemTypeId);
 
     void sellItem(Id id) throws ItemDoesNotExistException, IllegalAccessException;
+
+    Collection<SyncBaseItem> getBaseItemsInRectangle(Rectangle rectangle, SimpleBase simpleBase, Collection<BaseItemType> baseItemTypeFilter);
+
+    ItemType getItemType(DbItemType dbItemType);
 }

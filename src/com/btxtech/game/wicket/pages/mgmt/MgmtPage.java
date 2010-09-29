@@ -103,7 +103,7 @@ public class MgmtPage extends WebPage {
         toolPages.add(new LinkAndName("Bases", BasesTable.class));
         toolPages.add(new LinkAndName("XP Settings", XpSettingsEditor.class));
         toolPages.add(new LinkAndName("Level and Mission Target", LevelAndMissionTarget.class));
-        toolPages.add(new LinkAndName("Bot editor", BotEditor.class));
+        toolPages.add(new LinkAndName("Bot editor", BotTable.class));
         toolPages.add(new LinkAndName("TerritoryEditor", TerritoryEditor.class));
         toolPages.add(new LinkAndName("Tutorial", TutorialTable.class));
         toolPages.add(new LinkAndName("User", UserTable.class));
