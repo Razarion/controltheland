@@ -18,6 +18,9 @@ import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.mgmt.tracking.UserTracking;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.TutorialTable;
 import java.io.Serializable;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,11 +45,24 @@ public class MgmtPage extends WebPage {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(WebCommon.DATE_TIME_FORMAT_STRING);
         add(new Label("sysstart", simpleDateFormat.format(mgmtService.getStartTime())));
         add(new Label("systemTime", simpleDateFormat.format(new Date())));
-        Runtime runtime = Runtime.getRuntime();
-        add(new Label("usedMem", Long.toString(runtime.totalMemory() / 1000000L)));
-        add(new Label("maxMem", Long.toString(runtime.maxMemory() / 1000000L)));
+        MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+        MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
+        add(new Label("heapInit", bytesToMega(heapMemoryUsage.getInit())));
+        add(new Label("heapUsed", bytesToMega(heapMemoryUsage.getUsed())));
+        add(new Label("heapCommitted", bytesToMega(heapMemoryUsage.getCommitted())));
+        add(new Label("heapMax", bytesToMega(heapMemoryUsage.getMax())));
+        MemoryUsage noHeapMemoryUsage = memoryMXBean.getNonHeapMemoryUsage();
+        add(new Label("noHeapInit", bytesToMega(noHeapMemoryUsage.getInit())));
+        add(new Label("noHeapUsed", bytesToMega(noHeapMemoryUsage.getUsed())));
+        add(new Label("noHeapCommitted", bytesToMega(noHeapMemoryUsage.getCommitted())));
+        add(new Label("noHeapMax", bytesToMega(noHeapMemoryUsage.getMax())));
 
         setupToolList();
+    }
+
+    private String bytesToMega(long bytes) {
+        double value = (double) bytes / 1000000.0;
+        return String.format("%.2f", value);
     }
 
     private void setupToolList() {
