@@ -27,7 +27,6 @@ import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.RectangleFormation;
-import com.btxtech.game.jsre.common.bot.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -95,7 +94,6 @@ public class ActionHandler implements CommonActionService {
                 SyncBaseItem activeItem = iterator.next();
                 try {
                     if (!activeItem.tick(factor)) {
-                        PlayerSimulation.getInstance().onSyncItemDeactivated(activeItem);
                         Simulation.getInstance().onSyncItemDeactivated(activeItem);
                         iterator.remove();
                     }
@@ -178,8 +176,8 @@ public class ActionHandler implements CommonActionService {
                         && ClientTerritoryService.getInstance().isAllowed(positionToBeBuild, toBeBuilt)) {
 
                     buildFactory(clientSyncItem.getSyncBaseItem(), positionToBeBuild, toBeBuilt);
-                    // Just get the first CV to build the building
-                    // Prevent to build multiple buildings
+                    // Just get the first CV to buildBuilding the building
+                    // Prevent to buildBuilding multiple buildings
                     Connection.getInstance().sendCommandQueue();
                     return;
                 }
@@ -276,9 +274,7 @@ public class ActionHandler implements CommonActionService {
             factory.executeCommand(factoryCommand);
             executeCommand(factory, factoryCommand);
         } catch (InsufficientFundsException e) {
-            if (!PlayerSimulation.isActive()) {
-                MessageDialog.show("Insufficient Money!", "You do not have enough money. You have to Collect more money");
-            }
+            MessageDialog.show("Insufficient Money!", "You do not have enough money. You have to Collect more money");
         } catch (Exception e) {
             GwtCommon.handleException(e);
         }
@@ -365,9 +361,7 @@ public class ActionHandler implements CommonActionService {
             executeCommand(item, upgradeCommand);
             Connection.getInstance().sendCommandQueue();
         } catch (InsufficientFundsException e) {
-            if (!PlayerSimulation.isActive()) {
-                MessageDialog.show("Insufficient Money!", "You do not have enough money. You have to Collect more money");
-            }
+            MessageDialog.show("Insufficient Money!", "You do not have enough money. You have to Collect more money");
         } catch (Exception e) {
             GwtCommon.handleException(e);
         }

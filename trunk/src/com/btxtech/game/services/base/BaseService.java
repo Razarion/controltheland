@@ -62,9 +62,13 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     Base continueOrCreateBase() throws AlreadyUsedException, NoSuchItemTypeException, GameFullException, ItemLimitExceededException, HouseSpaceExceededException;
 
+    Base createBotBase(User user) throws GameFullException;
+
     Base getBase(SyncBaseItem baseSyncItem);
 
     Base getBase(SimpleBase simpleBase);
+
+    boolean isAlive(SimpleBase simpleBase);
 
     User getUser(SimpleBase simpleBase);
 
@@ -83,4 +87,6 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
     void checkItemLimit4ItemAdding(SimpleBase base) throws ItemLimitExceededException, HouseSpaceExceededException;
 
     void sendHouseSpacePacket(Base base);
+
+    void setBot(Base simpleBase, boolean isBot);
 }

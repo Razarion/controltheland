@@ -63,8 +63,6 @@ public class Base implements Serializable {
     private double totalEarned;
     @Column(name = "abandoned", nullable = false, columnDefinition = "bit default b'1'")
     private boolean abandoned = false;
-    @Column(nullable = false, columnDefinition = "bit default b'0'")
-    private boolean bot = false;
     @OneToOne(cascade = CascadeType.ALL)
     private BaseLevelStatus baseLevelStatus;
     private int baseId;
@@ -223,14 +221,6 @@ public class Base implements Serializable {
 
     public void setUserItemTypeAccess(UserItemTypeAccess userItemTypeAccess) {
         this.userItemTypeAccess = userItemTypeAccess;
-    }
-
-    public boolean isBot() {
-        return bot;
-    }
-
-    public void setBot(boolean bot) {
-        this.bot = bot;
     }
 
     @Override

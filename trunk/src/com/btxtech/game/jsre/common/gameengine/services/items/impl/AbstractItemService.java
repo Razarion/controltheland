@@ -14,7 +14,6 @@
 package com.btxtech.game.jsre.common.gameengine.services.items.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -28,6 +27,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
+import com.btxtech.game.services.item.itemType.DbItemType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -131,10 +131,10 @@ abstract public class AbstractItemService implements ItemService {
                 continue;
             }
             BaseItemType baseItemType = (BaseItemType) itemType;
-            if(baseItemType.getBuilderType() != null && baseItemType.getBuilderType().getAbleToBuild().contains(toBeBuilt.getId())) {
+            if (baseItemType.getBuilderType() != null && baseItemType.getBuilderType().getAbleToBuild().contains(toBeBuilt.getId())) {
                 result.add(baseItemType);
             }
-            if(baseItemType.getFactoryType() != null && baseItemType.getFactoryType().getAbleToBuild().contains(toBeBuilt.getId())) {
+            if (baseItemType.getFactoryType() != null && baseItemType.getFactoryType().getAbleToBuild().contains(toBeBuilt.getId())) {
                 result.add(baseItemType);
             }
         }

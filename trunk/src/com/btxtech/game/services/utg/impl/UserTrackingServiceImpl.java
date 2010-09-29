@@ -520,7 +520,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         try {
             UserHistory userHistory = new UserHistory(user);
             userHistory.setBaseDefeated();
-            userHistory.setBaseName(baseService.getBaseName(baseService.getBase().getSimpleBase()));
+            userHistory.setBaseName(baseService.getBaseName(base.getSimpleBase()));
             hibernateTemplate.saveOrUpdate(userHistory);
         } catch (Throwable t) {
             log.error("", t);

@@ -14,9 +14,8 @@
 package com.btxtech.game.services.bot;
 
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.services.base.Base;
+import com.btxtech.game.services.common.CrudServiceHelper;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * User: beat
@@ -24,19 +23,13 @@ import java.util.List;
  * Time: 17:17:01
  */
 public interface BotService {
-    void addDbBotConfig();
-
-    void removeDbBotConfig(DbBotConfig dbBotConfig);
-
-    void saveDbBotConfig(List<DbBotConfig> dbLevels);
-
-    List<DbBotConfig> getDbBotConfigs();
+    CrudServiceHelper<DbBotConfig> getDbBotConfigCrudServiceHelper();
 
     Collection<SimpleBase> getRunningBotBases();
 
+    void updateBotList();
+
     void start();
 
-    void onConnectionClosed(Base base);
-
-    void onConnectionCreated(Base base);
+    void activate();
 }

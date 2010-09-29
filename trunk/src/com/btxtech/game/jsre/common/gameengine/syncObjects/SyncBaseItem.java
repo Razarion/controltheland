@@ -255,6 +255,35 @@ public class SyncBaseItem extends SyncItem {
         return syncItemInfo;
     }
 
+    public boolean isIdle() {
+        if (!isReady()) {
+            return false;
+        }
+        if (isUpgrading()) {
+            return false;
+        }
+        if (syncMovable != null && syncMovable.isActive()) {
+            return false;
+        }
+
+        if (syncWeapon != null && syncWeapon.isActive()) {
+            return false;
+        }
+
+        if (syncFactory != null && syncFactory.isActive()) {
+            return false;
+        }
+
+        if (syncBuilder != null && syncBuilder.isActive()) {
+            return false;
+        }
+
+        if (syncHarvester != null && syncHarvester.isActive()) {
+            return false;
+        }
+        return true;
+    }
+
     public boolean tick(double factor) throws ItemDoesNotExistException, NoSuchItemTypeException {
         if (isUpgrading) {
             if (upgradeProgress >= upgradingItemType.getHealth()) {

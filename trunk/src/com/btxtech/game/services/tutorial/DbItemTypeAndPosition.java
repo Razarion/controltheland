@@ -17,7 +17,6 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.services.common.CrudChild;
-import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.db.IndexUserType;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import java.io.Serializable;
@@ -38,7 +37,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  */
 @Entity(name = "TUTORIAL_ITEM_TYPE_POSITION")
 @TypeDef(name = "index", typeClass = IndexUserType.class)
-public class DbItemTypeAndPosition implements Serializable, CrudChild {
+public class DbItemTypeAndPosition implements Serializable, CrudChild<DbTaskConfig> {
     @Id
     @GeneratedValue
     private Integer id;
@@ -109,8 +108,8 @@ public class DbItemTypeAndPosition implements Serializable, CrudChild {
     }
 
     @Override
-    public void setParent(CrudParent crudParent) {
-        dbTaskConfig = (DbTaskConfig) crudParent;
+    public void setParent(DbTaskConfig crudParent) {
+        dbTaskConfig = crudParent;
     }
 
     public Integer getId() {

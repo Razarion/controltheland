@@ -11,27 +11,15 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.common.bot;
+package com.btxtech.game.services.bot.impl;
+
+import com.btxtech.game.services.bot.DbBotItemCount;
 
 /**
  * User: beat
- * Date: 01.03.2010
- * Time: 18:22:54
+ * Date: 17.09.2010
+ * Time: 21:54:21
  */
-public class ItemTypeBalance {
-    private String itemTypeName;
-    private int count;
-
-    public ItemTypeBalance(String itemTypeName, int count) {
-        this.itemTypeName = itemTypeName;
-        this.count = count;
-    }
-
-    public String getItemTypeName() {
-        return itemTypeName;
-    }
-
-    public int getCount() {
-        return count;
-    }
+public interface SyncBaseItemFactory {
+    void create(DbBotItemCount dbBotItemCount);
 }

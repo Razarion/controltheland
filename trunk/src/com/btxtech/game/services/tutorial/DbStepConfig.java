@@ -16,7 +16,6 @@ package com.btxtech.game.services.tutorial;
 import com.btxtech.game.jsre.common.tutorial.ResourceHintConfig;
 import com.btxtech.game.jsre.common.tutorial.StepConfig;
 import com.btxtech.game.services.common.CrudChild;
-import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.tutorial.condition.DbAbstractConditionConfig;
 import java.io.Serializable;
 import javax.persistence.CascadeType;
@@ -36,7 +35,7 @@ import javax.persistence.OneToOne;
  * Time: 19:12:10
  */
 @Entity(name = "TUTORIAL_STEP_CONFIG")
-public class DbStepConfig implements Serializable, CrudChild {
+public class DbStepConfig implements Serializable, CrudChild<DbTaskConfig> {
     @Id
     @GeneratedValue
     private Integer id;
@@ -67,8 +66,8 @@ public class DbStepConfig implements Serializable, CrudChild {
     }
 
     @Override
-    public void setParent(CrudParent crudParent) {
-        dbTaskConfig = (DbTaskConfig) crudParent;
+    public void setParent(DbTaskConfig crudParent) {
+        dbTaskConfig = crudParent;
     }
 
     public DbAbstractConditionConfig getAbstractConditionConfig() {

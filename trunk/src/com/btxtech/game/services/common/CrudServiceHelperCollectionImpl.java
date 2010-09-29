@@ -64,9 +64,13 @@ public class CrudServiceHelperCollectionImpl<T extends CrudChild> implements Cru
             T t = constructor.newInstance();
             t.setParent(crudParent);
             t.init();
+            initChild(t);
             children.add(t);
         } catch (Exception e) {
             log.error("", e);
         }
+    }
+
+    protected void initChild(T t) {
     }
 }

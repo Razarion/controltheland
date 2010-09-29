@@ -38,7 +38,6 @@ import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.XpBalancePacket;
-import com.btxtech.game.jsre.common.bot.PlayerSimulation;
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccessSyncInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
@@ -167,7 +166,6 @@ public class Connection implements AsyncCallback<Void> {
                         }
                     }
                     TerrainView.getInstance().moveToHome();
-                    PlayerSimulation.getInstance().start();
                     timer.schedule(MIN_DELAY_BETWEEN_TICKS);
                     StartupProbe.getInstance().taskFinished(StartupTask.START_ACTION_HANDLER);
                 } catch (Throwable t) {
@@ -216,10 +214,8 @@ public class Connection implements AsyncCallback<Void> {
                 if (packet instanceof SyncItemInfo) {
                     ItemContainer.getInstance().sychronize((SyncItemInfo) packet);
                 } else if (packet instanceof Message) {
-                    if (!PlayerSimulation.isActive()) {
-                        Message message = (Message) packet;
-                        MessageDialog.show(message.getTitle(), "<h1>" + message.getMessage() + "</h1>");
-                    }
+                    Message message = (Message) packet;
+                    MessageDialog.show(message.getTitle(), "<h1>" + message.getMessage() + "</h1>");
                 } else if (packet instanceof AccountBalancePacket) {
                     AccountBalancePacket balancePacket = (AccountBalancePacket) packet;
                     ClientBase.getInstance().setAccountBalance(balancePacket.getAccountBalance());

@@ -58,7 +58,7 @@ import org.hibernate.annotations.TypeDefs;
  */
 @Entity(name = "TUTORIAL_TASK_CONFIG")
 @TypeDefs({@TypeDef(name = "index", typeClass = IndexUserType.class)})
-public class DbTaskConfig implements Serializable, CrudParent, CrudChild {
+public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutorialConfig> {
     @Id
     @GeneratedValue
     private Integer id;
@@ -132,8 +132,8 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild {
     }
 
     @Override
-    public void setParent(CrudParent crudParent) {
-        dbTutorialConfig = (DbTutorialConfig) crudParent;
+    public void setParent(DbTutorialConfig crudParent) {
+        dbTutorialConfig = crudParent;
     }
 
     public void setClearGame(boolean clearGame) {

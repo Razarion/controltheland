@@ -15,68 +15,112 @@ package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
+import com.btxtech.game.services.bot.DbBotItemCount;
+import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.wicket.uiservices.ListProvider;
-import java.util.ArrayList;
-import java.util.List;
+import com.btxtech.game.wicket.uiservices.CrudTableHelper;
+import com.btxtech.game.wicket.uiservices.RectanglePanel;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
  * User: beat
- * Date: 19.05.2010
- * Time: 22:13:43
+ * Date: 25.09.2010
+ * Time: 14:04:26
  */
 public class BotEditor extends WebPage {
     @SpringBean
     private BotService botService;
     @SpringBean
     private UserService userService;
+    @SpringBean
+    private ItemService itemService;
+    private Log log = LogFactory.getLog(BotEditor.class);
 
-    public BotEditor() {
+    public BotEditor(final DbBotConfig dbBotConfig) {
         add(new FeedbackPanel("msgs"));
 
-        Form form = new Form("form");
+        Form<DbBotConfig> form = new Form<DbBotConfig>("from", new CompoundPropertyModel<DbBotConfig>(dbBotConfig));
         add(form);
+        form.add(new TextField("actionDelay"));
+        form.add(new RectanglePanel("core"));
+        form.add(new TextField("coreSuperiority"));
+        form.add(new RectanglePanel("realm"));
+        form.add(new TextField("realmSuperiority"));
+        form.add(new TextField<String>("userName", new IModel<String>() {
 
-        final ListProvider<DbBotConfig> botConfigProvider = new ListProvider<DbBotConfig>() {
             @Override
-            protected List<DbBotConfig> createList() {
-                return new ArrayList<DbBotConfig>(botService.getDbBotConfigs());
+            public String getObject() {
+                if (dbBotConfig.getUser() != null) {
+                    return dbBotConfig.getUser().getName();
+                }
+                return null;
             }
-        };
-        form.add(new DataView<DbBotConfig>("bots", botConfigProvider) {
+
             @Override
-            protected void populateItem(final Item<DbBotConfig> dbBotConfigItem) {
-                dbBotConfigItem.add(new TextField<String>("userName", new IModel<String>() {
+            public void setObject(String userName) {
+                if (userName != null) {
+                    User user = userService.getUser(userName);
+                    if (user != null) {
+                        dbBotConfig.setUser(user);
+                    } else {
+                        error("No such user: " + userName);
+                    }
+                } else {
+                    dbBotConfig.setUser(null);
+                }
+            }
+
+            @Override
+            public void detach() {
+                //Ignore
+            }
+        }));
+
+        new CrudTableHelper<DbBotItemCount>("baseFundamental", null, "createBaseFundamentalItem", false, form) {
+
+            @Override
+            protected CrudServiceHelper<DbBotItemCount> getCrudServiceHelper() {
+                return dbBotConfig.getBaseFundamentalCrudServiceHelper();
+            }
+
+            @Override
+            protected void extendedPopulateItem(final Item<DbBotItemCount> item) {
+                item.add(new TextField<Integer>("itemTypeId", new IModel<Integer>() {
 
                     @Override
-                    public String getObject() {
-                        if (dbBotConfigItem.getModelObject().getUser() != null) {
-                            return dbBotConfigItem.getModelObject().getUser().getName();
+                    public Integer getObject() {
+                        DbBaseItemType itemType = item.getModelObject().getBaseItemType();
+                        if (itemType != null) {
+                            return itemType.getId();
+                        } else {
+                            return null;
                         }
-                        return null;
                     }
 
                     @Override
-                    public void setObject(String userName) {
-                        if (userName != null) {
-                            User user = userService.getUser(userName);
-                            if (user != null) {
-                                dbBotConfigItem.getModelObject().setUser(user);
-                            } else {
-                                error("No such user: " + userName);
+                    public void setObject(Integer id) {
+                        if (id != null) {
+                            try {
+                                item.getModelObject().setBaseItemType((DbBaseItemType) itemService.getDbItemType(id));
+                            } catch (Throwable t) {
+                                log.error("", t);
+                                error(t.getMessage());
                             }
                         } else {
-                            dbBotConfigItem.getModelObject().setUser(null);
+                            item.getModelObject().setBaseItemType(null);
                         }
                     }
 
@@ -84,31 +128,111 @@ public class BotEditor extends WebPage {
                     public void detach() {
                         //Ignore
                     }
-                }));
-                dbBotConfigItem.add(new TextField<Integer>("actionDelay"));
-                dbBotConfigItem.add(new Button("delete") {
+                }, Integer.class));
+                item.add(new TextField("count"));
+            }
+        };
+
+        new CrudTableHelper<DbBotItemCount>("baseBuildup", null, "createBaseBuildupItem", false, form) {
+
+            @Override
+            protected CrudServiceHelper<DbBotItemCount> getCrudServiceHelper() {
+                return dbBotConfig.getBaseBuildupCrudServiceHelper();
+            }
+
+            @Override
+            protected void extendedPopulateItem(final Item<DbBotItemCount> item) {
+                item.add(new TextField<Integer>("itemTypeId", new IModel<Integer>() {
 
                     @Override
-                    public void onSubmit() {
-                        botService.removeDbBotConfig(dbBotConfigItem.getModelObject());
+                    public Integer getObject() {
+                        DbBaseItemType itemType = item.getModelObject().getBaseItemType();
+                        if (itemType != null) {
+                            return itemType.getId();
+                        } else {
+                            return null;
+                        }
                     }
-                });
 
+                    @Override
+                    public void setObject(Integer id) {
+                        if (id != null) {
+                            try {
+                                item.getModelObject().setBaseItemType((DbBaseItemType) itemService.getDbItemType(id));
+                            } catch (Throwable t) {
+                                log.error("", t);
+                                error(t.getMessage());
+                            }
+                        } else {
+                            item.getModelObject().setBaseItemType(null);
+                        }
+                    }
+
+                    @Override
+                    public void detach() {
+                        //Ignore
+                    }
+                }, Integer.class));
+                item.add(new TextField("count"));
             }
-        });
+        };
+
+        new CrudTableHelper<DbBotItemCount>("defence", null, "createDefenceItem", false, form) {
+
+            @Override
+            protected CrudServiceHelper<DbBotItemCount> getCrudServiceHelper() {
+                return dbBotConfig.getDefenceCrudServiceHelper();
+            }
+
+            @Override
+            protected void extendedPopulateItem(final Item<DbBotItemCount> item) {
+                item.add(new TextField<Integer>("itemTypeId", new IModel<Integer>() {
+
+                    @Override
+                    public Integer getObject() {
+                        DbBaseItemType itemType = item.getModelObject().getBaseItemType();
+                        if (itemType != null) {
+                            return itemType.getId();
+                        } else {
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    public void setObject(Integer id) {
+                        if (id != null) {
+                            try {
+                                item.getModelObject().setBaseItemType((DbBaseItemType) itemService.getDbItemType(id));
+                            } catch (Throwable t) {
+                                log.error("", t);
+                                error(t.getMessage());
+                            }
+                        } else {
+                            item.getModelObject().setBaseItemType(null);
+                        }
+                    }
+
+                    @Override
+                    public void detach() {
+                        //Ignore
+                    }
+                }, Integer.class));
+                item.add(new TextField("count"));
+            }
+        };
 
         form.add(new Button("save") {
 
             @Override
             public void onSubmit() {
-                botService.saveDbBotConfig(botConfigProvider.getLastModifiedList());
+                botService.getDbBotConfigCrudServiceHelper().updateDbChild(dbBotConfig);
             }
         });
-        form.add(new Button("add") {
+        form.add(new Button("back") {
 
             @Override
             public void onSubmit() {
-                botService.addDbBotConfig();
+                setResponsePage(BotTable.class);
             }
         });
 

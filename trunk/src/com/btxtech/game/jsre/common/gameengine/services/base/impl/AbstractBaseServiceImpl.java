@@ -71,8 +71,8 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         }
     }
 
-    protected void createBase(SimpleBase simpleBase, String name, String htmlColor, boolean isBot, boolean abandoned) {
-        createBase(new BaseAttributes(simpleBase, name, htmlColor, isBot, abandoned));
+    protected void createBase(SimpleBase simpleBase, String name, String htmlColor, boolean abandoned) {
+        createBase(new BaseAttributes(simpleBase, name, htmlColor, abandoned));
     }
 
     protected void clear() {
@@ -143,6 +143,15 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
             }
         }
         baseAttributes.setHtmlColor(color);
+    }
+
+
+    protected void setBot(SimpleBase simpleBase, boolean bot) {
+        BaseAttributes baseAttributes = getBaseAttributes(simpleBase);
+        if (baseAttributes == null) {
+            throw new IllegalArgumentException(this + " base does not exits " + simpleBase);
+        }
+        baseAttributes.setBot(bot);
     }
 
 }

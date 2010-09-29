@@ -171,9 +171,6 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         if (!closedConnection.isEmpty()) {
             sendOnlineBasesUpdate();
         }
-        for (Base base : closedConnection) {
-            botService.onConnectionClosed(base);
-        }
     }
 
     @Override
@@ -210,7 +207,6 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
             userTrackingService.onUserEnterGame(base.getUser());
         }
         sendOnlineBasesUpdate();
-        botService.onConnectionCreated(connection.getBase());
     }
 
     @Override
@@ -228,7 +224,6 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
             onlineConnection.remove(connection);
         }
         sendOnlineBasesUpdate();
-        botService.onConnectionClosed(connection.getBase());
     }
 
     @Override
