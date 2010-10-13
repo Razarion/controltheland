@@ -54,7 +54,19 @@ public class CursorHandler implements TerrainMouseMoveListener {
     }
 
     public void clearUnloadContainer() {
-        cursorState.setCanUnload(false);
+        if (cursorState != null) {
+            cursorState.setCanUnload(false);
+        }
+    }
+
+    public void setLaunch() {
+        cursorState.setCanLaunch(true);
+    }
+
+    public void clearLaunch() {
+        if (cursorState != null) {
+            cursorState.setCanLaunch(false);
+        }
     }
 
     public void setSell(boolean sellMode) {
@@ -103,6 +115,8 @@ public class CursorHandler implements TerrainMouseMoveListener {
 
         if (cursorState.isCanUnload()) {
             setTerrainCursor(CursorType.UNLOAD, SelectionHandler.getInstance().atLeastOneAllowedOnTerritory4Selection(position) && atLeastOnAllowedForUnload(position));
+        } else if (cursorState.isCanLaunch()) {
+            setTerrainCursor(CursorType.ATTACK, SelectionHandler.getInstance().atLeastOneAllowedToLaunch(position));
         } else if (cursorState.isCanMove()) {
             Collection<SurfaceType> allowedSurfaceTypes = SelectionHandler.getInstance().getOwnSelectionSurfaceTypes();
             SurfaceType surfaceType = TerrainView.getInstance().getTerrainHandler().getSurfaceTypeAbsolute(position);
@@ -151,8 +165,10 @@ public class CursorHandler implements TerrainMouseMoveListener {
                     && syncItemContainer.isAbleToContainAtLeastOne(SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems())
                     && atLeastOneLoadPosReachable(SelectionHandler.getInstance().getOwnSelection().getSyncBaseItems(), syncItemContainer);
             setCursor(clientSyncItemView, CursorType.LOAD, allowed);
-        } else if(cursorState.isCanFinalizeBuild() && cursorItemState.isFinalizeBuild()) {
+        } else if (cursorState.isCanFinalizeBuild() && cursorItemState.isFinalizeBuild()) {
             setCursor(clientSyncItemView, CursorType.FINALIZE_BUILD, SelectionHandler.getInstance().atLeastOneItemTypeAllowed2FinalizeBuild(clientSyncItemView.getClientSyncItem().getSyncBaseItem()));
+        } else if (cursorState.isCanLaunch() && cursorItemState.isAttackTarget()) {
+            setCursor(clientSyncItemView, CursorType.ATTACK, SelectionHandler.getInstance().atLeastOneAllowedToLaunch(position));
         } else {
             setCursor(clientSyncItemView, null, false);
         }

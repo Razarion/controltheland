@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededE
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.btxtech.game.services.energy.impl.BaseEnergy;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
@@ -42,11 +43,11 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     void itemCreated(SyncBaseItem syncItem);
 
-    void itemDeleted(SyncBaseItem syncItem, SyncBaseItem actor);
+    void itemDeleted(SyncBaseItem syncItem, SimpleBase actor);
 
     void sendPackage(Packet packet);
 
-    void sendAccountBaseUpdate(SyncBaseItem syncItem);
+    void sendAccountBaseUpdate(SyncBaseObject syncBaseObject);
 
     void sendAccountBaseUpdate(Base base);
 
@@ -64,7 +65,7 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     Base createBotBase(User user) throws GameFullException;
 
-    Base getBase(SyncBaseItem baseSyncItem);
+    Base getBase(SyncBaseObject syncBaseObject);
 
     Base getBase(SimpleBase simpleBase);
 

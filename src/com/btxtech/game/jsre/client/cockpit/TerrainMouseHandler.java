@@ -59,6 +59,8 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
             if (Game.cockpitPanel.isUnloadMode()) {
                 executeUnloadContainerCommand(absoluteX, absoluteY);
                 Game.cockpitPanel.clearUnloadMode();
+            } else if (Game.cockpitPanel.isLaunchMode()) {
+                ActionHandler.getInstance().executeLaunchCommand(absoluteX, absoluteY);
             } else {
                 executeMoveCommand(absoluteX, absoluteY);
             }
@@ -100,6 +102,7 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
 
         ActionHandler.getInstance().move(selection.getMovableItems(), new Index(absoluteX, absoluteY));
     }
+
 
     public static TerrainMouseHandler getInstance() {
         return INSTANCE;

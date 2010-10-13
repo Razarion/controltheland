@@ -46,7 +46,7 @@ public interface ServerMarketService extends ItemTypeAccess {
 
     UserItemTypeAccess getUserItemTypeAccess(Base base);
 
-    void increaseXp(Base actorBase, SyncBaseItem syncBaseItem);
+    void increaseXp(Base actorBase, SyncBaseItem killedItem);
 
     void clearSession();
 

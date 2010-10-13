@@ -29,9 +29,11 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
@@ -200,14 +202,14 @@ public class Simulation implements SelectionListener {
         }
     }
 
-    public void onSyncItemDeactivated(SyncBaseItem deactivatedItem) {
+    public void onSyncItemDeactivated(SyncTickItem syncTickItem) {
         if (activeTask != null) {
-            activeTask.onSyncItemDeactivated(deactivatedItem);
+            activeTask.onSyncItemDeactivated(syncTickItem);
             checkForTaskCompletion();
         }
     }
 
-    public void onSyncItemKilled(SyncItem killedItem, SyncBaseItem actor) {
+    public void onSyncItemKilled(SyncItem killedItem, SimpleBase actor) {
         if (activeTask != null) {
             activeTask.onSyncItemKilled(killedItem, actor);
             checkForTaskCompletion();

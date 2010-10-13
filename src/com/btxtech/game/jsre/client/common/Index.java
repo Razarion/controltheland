@@ -142,6 +142,7 @@ public class Index implements Serializable {
     }
 
     public Index getPointWithDistance(int distance, Index directionTo) {
+        // TODO wrong see DecimalPosition
         int dirDeltaX = directionTo.x - x;
         int dirDeltaY = directionTo.y - y;
         int directionDistance = getDistance(directionTo);

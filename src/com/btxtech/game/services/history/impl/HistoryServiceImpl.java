@@ -57,8 +57,8 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
-    public void addBaseDefeatedEntry(SyncBaseItem actor, SimpleBase target) {
-        save(new HistoryElement(HistoryElement.Type.BASE_DEFEATED, baseService.getBaseName(actor.getBase()), baseService.getUser(actor.getBase()), actor, baseService.getBaseName(target), baseService.getUser(target), null));
+    public void addBaseDefeatedEntry(SimpleBase actor, SimpleBase target) {
+        save(new HistoryElement(HistoryElement.Type.BASE_DEFEATED, baseService.getBaseName(actor), baseService.getUser(actor), null, baseService.getBaseName(target), baseService.getUser(target), null));
     }
 
     @Override
@@ -72,8 +72,8 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     @Override
-    public void addItemDestroyedEntry(SyncBaseItem actor, SyncBaseItem target) {
-        save(new HistoryElement(HistoryElement.Type.ITEM_DESTROYED, baseService.getBaseName(actor.getBase()), baseService.getUser(actor.getBase()), actor, baseService.getBaseName(target.getBase()), baseService.getUser(target.getBase()), target));
+    public void addItemDestroyedEntry(SimpleBase actor, SyncBaseItem target) {
+        save(new HistoryElement(HistoryElement.Type.ITEM_DESTROYED, baseService.getBaseName(actor), baseService.getUser(actor), null, baseService.getBaseName(target.getBase()), baseService.getUser(target.getBase()), target));
     }
 
     @Override

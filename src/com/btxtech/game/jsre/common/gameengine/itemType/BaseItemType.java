@@ -33,6 +33,7 @@ public class BaseItemType extends ItemType {
     private SpecialType specialType;
     private ItemContainerType itemContainerType;
     private HouseType houseType;
+    private LauncherType launcherType;
     private Integer upgradeable;
     private int upgradeProgress;
 
@@ -82,6 +83,14 @@ public class BaseItemType extends ItemType {
 
     public void setFactoryType(FactoryType factoryType) {
         this.factoryType = factoryType;
+    }
+
+    public LauncherType getLauncherType() {
+        return launcherType;
+    }
+
+    public void setLauncherType(LauncherType launcherType) {
+        this.launcherType = launcherType;
     }
 
     public HarvesterType getHarvesterType() {
@@ -215,6 +224,13 @@ public class BaseItemType extends ItemType {
             houseType = null;
         } else if (houseType != null) {
             houseType.changeTo(baseItemType.houseType);
+        }
+
+        if(baseItemType.launcherType == null && launcherType != null) {
+            // Remove
+            launcherType = null;
+        } else if (launcherType != null) {
+            launcherType.changeTo(baseItemType.launcherType);
         }
     }
 }

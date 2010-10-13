@@ -14,9 +14,12 @@
 package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.ClientSyncItem;
+import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import java.util.ArrayList;
@@ -81,7 +84,7 @@ public class Group {
 
     public boolean canAttack() {
         for (ClientSyncItem clientSyncItem : clientSyncItems) {
-            if (!clientSyncItem.getSyncBaseItem().hasSyncWaepon()) {
+            if (!clientSyncItem.getSyncBaseItem().hasSyncWeapon()) {
                 return false;
             }
         }
@@ -100,6 +103,15 @@ public class Group {
     public boolean canMove() {
         for (ClientSyncItem clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncMovable()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean canLaunch() {
+        for (ClientSyncItem clientSyncItem : clientSyncItems) {
+            if (clientSyncItem.getSyncBaseItem().hasSyncLauncher() && !clientSyncItem.getSyncBaseItem().getSyncLauncher().isActive()) {
                 return true;
             }
         }
@@ -209,7 +221,7 @@ public class Group {
 
     public boolean atLeastOneItemTypeAllowed2Attack(SyncBaseItem syncBaseItem) {
         for (ClientSyncItem clientSyncItem : clientSyncItems) {
-            if (clientSyncItem.getSyncBaseItem().hasSyncWaepon() && clientSyncItem.getSyncBaseItem().getSyncWaepon().isItemTypeAllowed(syncBaseItem)) {
+            if (clientSyncItem.getSyncBaseItem().hasSyncWeapon() && clientSyncItem.getSyncBaseItem().getSyncWeapon().isItemTypeAllowed(syncBaseItem)) {
                 return true;
             }
         }
@@ -224,6 +236,24 @@ public class Group {
                     && ClientTerritoryService.getInstance().isAllowed(tobeFinalized.getPosition(), tobeFinalized)
                     && ClientTerritoryService.getInstance().isAllowed(tobeFinalized.getPosition(), clientSyncItem.getSyncBaseItem())) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean atLeastOneAllowedToLaunch(Index position) {
+        for (ClientSyncItem clientSyncItem : clientSyncItems) {
+            if (clientSyncItem.getSyncBaseItem().hasSyncLauncher()) {
+                try {
+                    int range = clientSyncItem.getSyncBaseItem().getSyncLauncher().getRange();
+                    if (clientSyncItem.getSyncBaseItem().getPosition().getDistance(position) <= range
+                            && ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getPosition(), clientSyncItem.getSyncBaseItem())
+                            && ClientTerritoryService.getInstance().isAllowed(position, clientSyncItem.getSyncBaseItem().getSyncLauncher().getLauncherType().getProjectileItemType())) {
+                        return true;
+                    }
+                } catch (NoSuchItemTypeException e) {
+                    GwtCommon.handleException(e);
+                }
             }
         }
         return false;

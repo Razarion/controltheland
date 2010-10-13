@@ -25,7 +25,9 @@ import com.btxtech.game.services.item.itemType.DbHarvesterType;
 import com.btxtech.game.services.item.itemType.DbHouseType;
 import com.btxtech.game.services.item.itemType.DbItemContainerType;
 import com.btxtech.game.services.item.itemType.DbItemTypeData;
+import com.btxtech.game.services.item.itemType.DbLauncherType;
 import com.btxtech.game.services.item.itemType.DbMovableType;
+import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbSpecialType;
 import com.btxtech.game.services.item.itemType.DbTurnableType;
 import com.btxtech.game.services.item.itemType.DbWeaponType;
@@ -90,16 +92,21 @@ public class BaseItemTypeEditor extends WebPage {
     private int itemContainerMaxCount;
     private boolean house;
     private int space;
+    private boolean launcher;
+    private double launcherProgress;
+    private Integer launcherDbProjectileItemType;
     private boolean special;
     private String specialString;
     private String imageFileField;
-    private Collection<DbBaseItemType> itemTypes;
+    private Collection<DbBaseItemType> baseItemTypes;
+    private Collection<DbProjectileItemType> projectileItemTypes;
 
 
     public BaseItemTypeEditor(DbBaseItemType dbBaseItemType) {
         // Prevent circular object from with same id -> Hibernate problem
-        itemTypes = itemService.getDbBaseItemTypes();
-        this.dbBaseItemType = ItemsUtil.getItemType4Id(dbBaseItemType.getId(), itemTypes);
+        baseItemTypes = itemService.getDbBaseItemTypes();
+        projectileItemTypes = itemService.getDbProjectileItemTypes();
+        this.dbBaseItemType = ItemsUtil.getItemType4Id(dbBaseItemType.getId(), baseItemTypes);
 
         FeedbackPanel feedbackPanel = new FeedbackPanel("msgs");
         add(feedbackPanel);
@@ -131,6 +138,9 @@ public class BaseItemTypeEditor extends WebPage {
         form.add(new TextField("weaponMuzzlePointX_90"));
         form.add(new TextField("weaponMuzzlePointY_90"));
         form.add(new CheckBox("weaponMuzzleStretch"));
+        form.add(new CheckBox("launcher"));
+        form.add(new TextField("launcherProgress"));
+        form.add(new TextField("launcherDbProjectileItemType"));
         form.add(new CheckBox("factory"));
         form.add(new TextField("factoryProgress"));
         form.add(new TextField("factoryAbleToBuild"));
@@ -200,6 +210,16 @@ public class BaseItemTypeEditor extends WebPage {
             weaponMuzzleStretch = dbBaseItemType.getWeaponType().isStretchMuzzleFlashToTarget();
         } else {
             weapon = false;
+        }
+
+        if (dbBaseItemType.getDbLauncherType() != null) {
+            launcher = true;
+            launcherProgress = dbBaseItemType.getDbLauncherType().getProgress();
+            if (dbBaseItemType.getDbLauncherType().getDbProjectileItemType() != null) {
+                launcherDbProjectileItemType = dbBaseItemType.getDbLauncherType().getDbProjectileItemType().getId();
+            }
+        } else {
+            launcher = false;
         }
 
         if (dbBaseItemType.getFactoryType() != null) {
@@ -322,13 +342,27 @@ public class BaseItemTypeEditor extends WebPage {
             dbBaseItemType.setWeaponType(null);
         }
 
+        if (launcher) {
+            DbLauncherType dbLauncherType = dbBaseItemType.getDbLauncherType();
+            if (dbLauncherType == null) {
+                dbLauncherType = new DbLauncherType();
+                dbBaseItemType.setDbLauncherType(dbLauncherType);
+            }
+            dbLauncherType.setProgress(launcherProgress);
+            if (launcherDbProjectileItemType != null) {
+                dbLauncherType.setDbProjectileItemType(ItemsUtil.getProjectileItemType4Id(launcherDbProjectileItemType, projectileItemTypes));
+            }
+        } else {
+            dbBaseItemType.setDbLauncherType(null);
+        }
+
         if (factory) {
             DbFactoryType factoryType = dbBaseItemType.getFactoryType();
             if (factoryType == null) {
                 factoryType = new DbFactoryType();
                 dbBaseItemType.setFactoryType(factoryType);
             }
-            factoryType.setAbleToBuild(ItemsUtil.stringToItemTypes(factoryAbleToBuild, itemTypes));
+            factoryType.setAbleToBuild(ItemsUtil.stringToItemTypes(factoryAbleToBuild, baseItemTypes));
             factoryType.setProgress(factoryProgress);
         } else {
             dbBaseItemType.setFactoryType(null);
@@ -365,7 +399,7 @@ public class BaseItemTypeEditor extends WebPage {
             }
             builderType.setProgress(builderProgress);
             builderType.setRange(builderRange);
-            builderType.setAbleToBuild(ItemsUtil.stringToItemTypes(builderAbleToBuild, itemTypes));
+            builderType.setAbleToBuild(ItemsUtil.stringToItemTypes(builderAbleToBuild, baseItemTypes));
         } else {
             dbBaseItemType.setBuilderType(null);
         }
@@ -387,7 +421,7 @@ public class BaseItemTypeEditor extends WebPage {
                 dbItemContainerType = new DbItemContainerType();
                 dbBaseItemType.setDbItemContainerType(dbItemContainerType);
             }
-            dbItemContainerType.setAbleToContain(ItemsUtil.stringToItemTypes(itemContainerAbleToContain, itemTypes));
+            dbItemContainerType.setAbleToContain(ItemsUtil.stringToItemTypes(itemContainerAbleToContain, baseItemTypes));
             dbItemContainerType.setMaxCount(itemContainerMaxCount);
             dbItemContainerType.setRange(itemContainerRange);
         } else {
@@ -491,7 +525,7 @@ public class BaseItemTypeEditor extends WebPage {
 
     public void setUpgradeable(Integer id) {
         if (id != null) {
-            DbBaseItemType upgradeable = ItemsUtil.getItemType4Id(id, itemTypes);
+            DbBaseItemType upgradeable = ItemsUtil.getItemType4Id(id, baseItemTypes);
             dbBaseItemType.setUpgradable(upgradeable);
         } else {
             dbBaseItemType.setUpgradable(null);

@@ -25,6 +25,7 @@ public class CursorState {
     private boolean canLoad = false;
     private boolean canUnload = false;
     private boolean canFinalizeBuild = false;
+    private boolean canLaunch = false;
 
     public boolean isCanMove() {
         return canMove;
@@ -72,5 +73,13 @@ public class CursorState {
 
     public void setCanFinalizeBuild() {
         canFinalizeBuild = true;
+    }
+
+    public boolean isCanLaunch() {
+        return canLaunch;
+    }
+
+    public void setCanLaunch(boolean canLaunch) {
+        this.canLaunch = canLaunch;
     }
 }

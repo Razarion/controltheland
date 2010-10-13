@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.common.QueueWorker;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.ItemService;
@@ -74,10 +75,23 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     private Timer timer;
     private XpSettings xpSettings;
     private Log log = LogFactory.getLog(ServerMarketServiceImpl.class);
+    private QueueWorker<XpPerKill> xpPerKillQueueWorker = new QueueWorker<XpPerKill>() {
+        @Override
+        protected void processEntries(List<XpPerKill> xpPerKills) {
+            HashMap<SimpleBase, Integer> baseXpHashMap = new HashMap<SimpleBase, Integer>();
+            for (XpPerKill xpPerKill : xpPerKills) {
+                if (xpPerKill.getActorBase().isAbandoned()) {
+                    continue;
+                }
+                sumUpXpPerBase(baseXpHashMap, xpPerKill.getActorBase().getSimpleBase(), xpPerKill.getKilledItem(), xpSettings.getKillPriceFactor());
+            }
+
+            increaseXpPerBase(baseXpHashMap);
+        }
+    };
 
     @PostConstruct
     public void start() {
-        stop();
         loadXpPointSettings();
         if (xpSettings.getPeriodMilliSeconds() > 0) {
             timer = new Timer(getClass().getName(), true);
@@ -109,6 +123,7 @@ public class ServerMarketServiceImpl implements ServerMarketService {
             timer.cancel();
             timer = null;
         }
+        xpPerKillQueueWorker.stop();
     }
 
     @Autowired
@@ -270,10 +285,8 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     }
 
     @Override
-    public void increaseXp(Base actorBase, SyncBaseItem syncBaseItem) {
-        if (actorBase.getUserItemTypeAccess() != null && !actorBase.isAbandoned()) {
-            increaseXp((int) (syncBaseItem.getBaseItemType().getPrice() * xpSettings.getKillPriceFactor()), actorBase.getUserItemTypeAccess(), actorBase);
-        }
+    public void increaseXp(Base actorBase, SyncBaseItem killedItem) {
+        xpPerKillQueueWorker.put(new XpPerKill(actorBase, killedItem));
     }
 
     private UserItemTypeAccess getUserItemTypeAccess4Base(SimpleBase simpleBase) {
@@ -383,18 +396,22 @@ public class ServerMarketServiceImpl implements ServerMarketService {
                         continue;
                     }
                     // Increase XP
-                    Integer xp = xpIncreasePreBase.get(base.getSimpleBase());
-                    if (xp == null) {
-                        xp = 0;
-                    }
-                    xp += (int) (syncBaseItem.getBaseItemType().getPrice() * xpSettings.getPeriodItemFactor());
-
-                    xpIncreasePreBase.put(base.getSimpleBase(), xp);
+                    sumUpXpPerBase(xpIncreasePreBase, base.getSimpleBase(), syncBaseItem, xpSettings.getPeriodItemFactor());
                 }
             }
 
             increaseXpPerBase(xpIncreasePreBase);
         }
+
+    }
+
+    private void sumUpXpPerBase(HashMap<SimpleBase, Integer> xpIncreasePreBase, SimpleBase base, SyncBaseItem syncBaseItem, double factor) {
+        Integer xp = xpIncreasePreBase.get(base);
+        if (xp == null) {
+            xp = 0;
+        }
+        xp += (int) (syncBaseItem.getBaseItemType().getPrice() * factor);
+        xpIncreasePreBase.put(base, xp);
     }
 
     private void increaseXpPerBase(HashMap<SimpleBase, Integer> xpIncreasePreBase) {

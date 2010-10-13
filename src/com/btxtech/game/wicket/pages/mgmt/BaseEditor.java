@@ -88,8 +88,8 @@ public class BaseEditor extends WebPage {
         };
         form.add(new TextField<Integer>("x"));
         form.add(new TextField<Integer>("y"));
-        form.add(new TextField<Integer>("width"));
-        form.add(new TextField<Integer>("height"));
+        form.add(new TextField<Integer>("endX"));
+        form.add(new TextField<Integer>("endY"));
         form.add(new Label("count", new IModel<Integer>() {
 
             @Override

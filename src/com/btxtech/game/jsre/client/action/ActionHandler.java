@@ -16,7 +16,10 @@ package com.btxtech.game.jsre.client.action;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.cockpit.Group;
+import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
@@ -36,11 +39,13 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderFinalizeCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LaunchCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
@@ -60,9 +65,9 @@ public class ActionHandler implements CommonActionService {
     private final static ActionHandler INSTANCE = new ActionHandler();
     private static final int TICK_INTERVAL = 60;
     private long lastTickTime = 0;
-    private final HashSet<SyncBaseItem> activeItems = new HashSet<SyncBaseItem>();
-    private HashSet<SyncBaseItem> tmpAddActiveItems = new HashSet<SyncBaseItem>();
-    private HashSet<SyncBaseItem> tmpRemoveActiveItems = new HashSet<SyncBaseItem>();
+    private final HashSet<SyncTickItem> activeItems = new HashSet<SyncTickItem>();
+    private HashSet<SyncTickItem> tmpAddActiveItems = new HashSet<SyncTickItem>();
+    private HashSet<SyncTickItem> tmpRemoveActiveItems = new HashSet<SyncTickItem>();
 
     public static ActionHandler getInstance() {
         return INSTANCE;
@@ -89,9 +94,9 @@ public class ActionHandler implements CommonActionService {
             tmpRemoveActiveItems.clear();
             long time = System.currentTimeMillis();
             double factor = calculateFactor(time);
-            Iterator<SyncBaseItem> iterator = activeItems.iterator();
+            Iterator<SyncTickItem> iterator = activeItems.iterator();
             while (iterator.hasNext()) {
-                SyncBaseItem activeItem = iterator.next();
+                SyncTickItem activeItem = iterator.next();
                 try {
                     if (!activeItem.tick(factor)) {
                         Simulation.getInstance().onSyncItemDeactivated(activeItem);
@@ -114,12 +119,12 @@ public class ActionHandler implements CommonActionService {
     }
 
     @Override
-    public void syncItemActivated(SyncBaseItem syncItem) {
-        tmpAddActiveItems.add(syncItem);
+    public void syncItemActivated(SyncTickItem syncTickItem) {
+        tmpAddActiveItems.add(syncTickItem);
     }
 
-    public void removeActiveItem(SyncBaseItem baseSyncItem) {
-        tmpRemoveActiveItems.add(baseSyncItem);
+    public void removeActiveItem(SyncTickItem syncTickItem) {
+        tmpRemoveActiveItems.add(syncTickItem);
     }
 
     public void move(Collection<ClientSyncItem> clientSyncItems, Index destination) {
@@ -282,10 +287,10 @@ public class ActionHandler implements CommonActionService {
 
     public void attack(Collection<ClientSyncItem> clientSyncItems, SyncBaseItem target) {
         for (ClientSyncItem clientSyncItem : clientSyncItems) {
-            if (clientSyncItem.getSyncBaseItem().hasSyncWaepon()) {
+            if (clientSyncItem.getSyncBaseItem().hasSyncWeapon()) {
                 if (ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getPosition(), clientSyncItem.getSyncBaseItem())
                         && ClientTerritoryService.getInstance().isAllowed(target.getPosition(), clientSyncItem.getSyncBaseItem())
-                        && clientSyncItem.getSyncBaseItem().getSyncWaepon().isItemTypeAllowed(target)) {
+                        && clientSyncItem.getSyncBaseItem().getSyncWeapon().isItemTypeAllowed(target)) {
                     attack(clientSyncItem.getSyncBaseItem(), target);
                 }
             } else {
@@ -432,6 +437,49 @@ public class ActionHandler implements CommonActionService {
         try {
             container.executeCommand(unloadContainerCommand);
             executeCommand(container, unloadContainerCommand);
+            Connection.getInstance().sendCommandQueue();
+        } catch (Exception e) {
+            GwtCommon.handleException(e);
+        }
+    }
+
+    public void executeLaunchCommand(int absoluteX, int absoluteY) {
+        Group selection = SelectionHandler.getInstance().getOwnSelection();
+        if (selection == null) {
+            return;
+        }
+
+        if (selection.getCount() != 1) {
+            return;
+        }
+
+
+        if (!selection.canLaunch()) {
+            return;
+        }
+
+        launch(selection.getFirst().getSyncBaseItem(), new Index(absoluteX, absoluteY));
+        Game.cockpitPanel.clearLaunchMode();        
+    }
+
+    public void launch(SyncBaseItem launcherItem, Index target) {
+        if (checkCommand(launcherItem)) {
+            return;
+        }
+
+        if (!launcherItem.hasSyncLauncher()) {
+            GwtCommon.sendLogToServer("ActionHandler.launch(): can not cast to SyncLauncher:" + launcherItem);
+            return;
+        }
+
+        LaunchCommand launchCommand = new LaunchCommand();
+        launchCommand.setId(launcherItem.getId());
+        launchCommand.setTimeStamp();
+        launchCommand.setTarget(target);
+
+        try {
+            launcherItem.executeCommand(launchCommand);
+            executeCommand(launcherItem, launchCommand);
             Connection.getInstance().sendCommandQueue();
         } catch (Exception e) {
             GwtCommon.handleException(e);

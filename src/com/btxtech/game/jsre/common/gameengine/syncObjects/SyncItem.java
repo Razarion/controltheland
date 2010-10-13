@@ -45,7 +45,7 @@ public abstract class SyncItem {
         this.itemType = itemType;
         this.services = services;
         if (position != null) {
-            this.position = services.getTerrainService().correctPosition(this, position);
+            setPosition(services.getTerrainService().correctPosition(this, position));
         }
     }
 
@@ -61,7 +61,7 @@ public abstract class SyncItem {
     public SyncItemInfo getSyncInfo() {
         SyncItemInfo syncItemInfo = new SyncItemInfo();
         syncItemInfo.setId(id);
-        syncItemInfo.setPosition(position);
+        syncItemInfo.setPosition(getPosition());
         syncItemInfo.setItemTypeId(itemType.getId());
         syncItemInfo.setAlive(isAlive());
         syncItemInfo.setExplode(explode);
@@ -124,10 +124,10 @@ public abstract class SyncItem {
     }
 
     public Rectangle getRectangle() {
-        if (position == null) {
+        if (getPosition() == null) {
             throw new NullPointerException("Has no position: " + this);
         }
-        return itemType.getRectangle(position);
+        return itemType.getRectangle(getPosition());
     }
 
     public TerrainType getTerrainType() {
@@ -136,7 +136,7 @@ public abstract class SyncItem {
 
     @Override
     public String toString() {
-        return "SyncItem: " + id + " " + itemType + " pos: " + position;
+        return "SyncItem: " + id + " " + itemType + " pos: " + getPosition();
     }
 
     @Override

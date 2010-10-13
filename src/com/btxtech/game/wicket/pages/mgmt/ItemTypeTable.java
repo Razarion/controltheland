@@ -17,6 +17,7 @@ import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
+import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import java.util.Iterator;
 import org.apache.wicket.AttributeModifier;
@@ -61,6 +62,8 @@ public class ItemTypeTable extends WebPage {
                             setResponsePage(new BaseItemTypeEditor((DbBaseItemType) item.getModelObject()));
                         } else if (item.getModelObject() instanceof DbResourceItemType) {
                             setResponsePage(new ResourceItemTypeEditor((DbResourceItemType) item.getModelObject()));
+                        } else if (item.getModelObject() instanceof DbProjectileItemType) {
+                            setResponsePage(new ProjectileItemTypeEditor((DbProjectileItemType) item.getModelObject()));
                         }
                     }
                 };
@@ -98,6 +101,14 @@ public class ItemTypeTable extends WebPage {
                 DbResourceItemType dbResourceItemType = new DbResourceItemType();
                 itemService.saveDbItemType(dbResourceItemType);
                 setResponsePage(new ResourceItemTypeEditor(dbResourceItemType));
+            }
+        });
+        form.add(new Button("addProjectileItemType") {
+            @Override
+            public void onSubmit() {
+                DbProjectileItemType dbProjectileItemType = new DbProjectileItemType();
+                itemService.saveDbItemType(dbProjectileItemType);
+                setResponsePage(new ProjectileItemTypeEditor(dbProjectileItemType));
             }
         });
     }

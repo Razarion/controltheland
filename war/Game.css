@@ -73,6 +73,18 @@ td.box {
     background-color: #5555FF;
 }
 
+.gwt-ProjectileBar-shell {
+    border: 0px solid #faf9f7;
+    border-right: 0px solid #848280;
+    border-bottom: 0px solid #848280;
+    height: 3px;
+    width: 100%;
+}
+
+.gwt-ProjectileBar-shell .gwt-ProgressBar-bar {
+    background-color: #FFFF00;
+}
+
 .gwt-EnergyBar-shell {
     border: 0px solid #faf9f7;
     border-right: 0px solid #848280;

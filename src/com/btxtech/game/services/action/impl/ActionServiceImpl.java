@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
@@ -76,9 +77,9 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
     private ServerEnergyService energyService;
     @Autowired
     private TerritoryService territoryService;
-    private final HashSet<SyncBaseItem> activeItems = new HashSet<SyncBaseItem>();
+    private final HashSet<SyncTickItem> activeItems = new HashSet<SyncTickItem>();
     private final HashSet<SyncBaseItem> guardingItems = new HashSet<SyncBaseItem>();
-    private final ArrayList<SyncBaseItem> tmpActiveItems = new ArrayList<SyncBaseItem>();
+    private final ArrayList<SyncTickItem> tmpActiveItems = new ArrayList<SyncTickItem>();
     private Timer timer;
     private Log log = LogFactory.getLog(ActionServiceImpl.class);
     private long lastTickTime = 0;
@@ -113,8 +114,8 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
             tmpActiveItems.clear();
             Collection<SyncItem> syncItems = itemService.getItemsCopy();
             for (SyncItem syncItem : syncItems) {
-                if (syncItem instanceof SyncBaseItem) {
-                    activeItems.add((SyncBaseItem) syncItem);
+                if (syncItem instanceof SyncTickItem) {
+                    activeItems.add((SyncTickItem) syncItem);
                 }
             }
         }
@@ -132,22 +133,22 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
                     activeItems.addAll(tmpActiveItems);
                     tmpActiveItems.clear();
                 }
-                Iterator<SyncBaseItem> iterator = activeItems.iterator();
+                Iterator<SyncTickItem> iterator = activeItems.iterator();
                 long time = System.currentTimeMillis();
                 double factor = calculateFactor(time);
                 while (iterator.hasNext()) {
-                    SyncBaseItem activeItem = iterator.next();
+                    SyncTickItem activeItem = iterator.next();
                     try {
                         if (!activeItem.tick(factor)) {
                             iterator.remove();
                             activeItem.stop();
                             addGuardingBaseItem(activeItem);
                             connectionService.sendSyncInfo(activeItem);
-                            if (activeItem.hasSyncHarvester()) {
-                                baseService.sendAccountBaseUpdate(activeItem);
+                            if (activeItem instanceof SyncBaseItem && ((SyncBaseItem) activeItem).hasSyncHarvester()) {
+                                baseService.sendAccountBaseUpdate((SyncBaseItem) activeItem);
                             }
-                            if (activeItem.isMoneyEarningOrConsuming()) {
-                                baseService.sendAccountBaseUpdate(activeItem);
+                            if (activeItem instanceof SyncBaseItem && ((SyncBaseItem) activeItem).isMoneyEarningOrConsuming()) {
+                                baseService.sendAccountBaseUpdate((SyncBaseItem) activeItem);
                             }
                         }
                     } catch (PositionTakenException ife) {
@@ -169,34 +170,40 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
         }
     }
 
-    public void addGuardingBaseItem(SyncBaseItem syncItem) {
-        if (!syncItem.hasSyncWaepon() || !syncItem.isAlive()) {
+    @Override
+    public void addGuardingBaseItem(SyncTickItem syncTickItem) {
+        if (!(syncTickItem instanceof SyncBaseItem)) {
             return;
         }
 
-        if (syncItem.hasSyncConsumer() && !syncItem.getSyncConsumer().isOperating()) {
+        SyncBaseItem syncBaseItem = (SyncBaseItem) syncTickItem;
+        if (!syncBaseItem.hasSyncWeapon() || !syncBaseItem.isAlive()) {
             return;
         }
 
-        if (syncItem.getPosition() == null) {
+        if (syncBaseItem.hasSyncConsumer() && !syncBaseItem.getSyncConsumer().isOperating()) {
             return;
         }
 
-        if (!territoryService.isAllowed(syncItem.getPosition(), syncItem)) {
+        if (syncBaseItem.getPosition() == null) {
             return;
         }
 
-        if (checkGuardingItemHasEnemiesInRange(syncItem)) {
+        if (!territoryService.isAllowed(syncBaseItem.getPosition(), syncBaseItem)) {
+            return;
+        }
+
+        if (checkGuardingItemHasEnemiesInRange(syncBaseItem)) {
             return;
         }
 
         synchronized (guardingItems) {
-            guardingItems.add(syncItem);
+            guardingItems.add(syncBaseItem);
         }
     }
 
     public void removeGuardingBaseItem(SyncBaseItem syncItem) {
-        if (!syncItem.hasSyncWaepon()) {
+        if (!syncItem.hasSyncWeapon()) {
             return;
         }
 
@@ -257,8 +264,8 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
             for (SyncBaseItem attacker : guardingItems) {
                 //TankSyncItem tank = (TankSyncItem) baseSyncItem;
                 if (attacker.isEnemy(target)
-                        && attacker.getSyncWaepon().isAttackAllowed(target)
-                        && attacker.getSyncWaepon().isItemTypeAllowed(target)) {
+                        && attacker.getSyncWeapon().isAttackAllowed(target)
+                        && attacker.getSyncWeapon().isItemTypeAllowed(target)) {
                     AttackCommand attackCommand = createAttackCommand(attacker, target);
                     cmds.add(attackCommand);
                     connectionService.sendSyncInfo(target);
@@ -363,11 +370,11 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
     }
 
     @Override
-    public void syncItemActivated(SyncBaseItem syncBaseItem) {
+    public void syncItemActivated(SyncTickItem syncTickItem) {
         synchronized (tmpActiveItems) {
-            tmpActiveItems.add(syncBaseItem);
+            tmpActiveItems.add(syncTickItem);
         }
-        addGuardingBaseItem(syncBaseItem);
+        addGuardingBaseItem(syncTickItem);
     }
 
     /**

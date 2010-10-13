@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.simulation.condition;
 
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.tutorial.condition.ItemsKilledConditionConfig;
@@ -32,7 +33,7 @@ public class ItemsKilledCondition extends AbstractCondition {
     }
 
     @Override
-    public boolean isFulfilledItemsKilled(SyncItem killedItem, SyncBaseItem actor) {
+    public boolean isFulfilledItemsKilled(SyncItem killedItem, SimpleBase actor) {
         int id = killedItem.getId().getId();
         if (itemsKilledConditionConfig.getIds().contains(id)) {
             killedItems.add(id);
