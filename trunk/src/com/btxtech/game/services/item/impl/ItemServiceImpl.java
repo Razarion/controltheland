@@ -26,8 +26,10 @@ import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeExce
 import com.btxtech.game.jsre.common.gameengine.services.items.impl.AbstractItemService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.Base;
@@ -41,6 +43,7 @@ import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeData;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
+import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.resource.ResourceService;
@@ -127,6 +130,14 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             items.put(id, syncItem);
         }
 
+        if (syncItem instanceof SyncBaseObject) {
+            baseService.sendAccountBaseUpdate((SyncBaseObject) syncItem);
+        }
+
+        if (syncItem instanceof SyncTickItem) {
+            actionService.syncItemActivated((SyncTickItem) syncItem);
+        }
+
         if (syncItem instanceof SyncBaseItem) {
             SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
             historyService.addItemCreatedEntry(syncBaseItem);
@@ -134,10 +145,10 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             syncItem.addSyncItemListener(actionService);
             syncItem.addSyncItemListener(baseService);
             baseService.itemCreated(syncBaseItem);
-            baseService.sendAccountBaseUpdate(syncBaseItem);
             actionService.interactionGuardingItems(syncBaseItem);
             userGuidanceService.onSyncBaseItemCreated(syncBaseItem);
         }
+
         connectionService.sendSyncInfo(syncItem);
         if (log.isInfoEnabled()) {
             log.info("CREATED: " + syncItem);
@@ -187,7 +198,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public void killSyncItem(SyncItem killedItem, SyncBaseItem actor, boolean force, boolean explode) {
+    public void killSyncItem(SyncItem killedItem, SimpleBase actor, boolean force, boolean explode) {
         if (force) {
             if (killedItem instanceof SyncBaseItem) {
                 ((SyncBaseItem) killedItem).setHealth(0);
@@ -213,24 +224,25 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
         if (killedItem instanceof SyncBaseItem) {
             actionService.removeGuardingBaseItem((SyncBaseItem) killedItem);
+
             if (actor != null) {
                 historyService.addItemDestroyedEntry(actor, (SyncBaseItem) killedItem);
                 Base actorBase = baseService.getBase(actor);
                 actorBase.increaseKills();
                 serverMarketService.increaseXp(actorBase, (SyncBaseItem) killedItem);
                 userGuidanceService.onItemKilled(actorBase);
+
             }
             baseService.itemDeleted((SyncBaseItem) killedItem, actor);
             serverEnergyService.onBaseItemKilled((SyncBaseItem) killedItem);
             killContainedItems((SyncBaseItem) killedItem, actor);
-        }
-
-        if (killedItem instanceof SyncResourceItem) {
+        } else if (killedItem instanceof SyncResourceItem) {
             resourceService.resourceItemDeleted((SyncResourceItem) killedItem);
         }
+
     }
 
-    private void killContainedItems(SyncBaseItem syncBaseItem, SyncBaseItem actor) {
+    private void killContainedItems(SyncBaseItem syncBaseItem, SimpleBase actor) {
         if (!syncBaseItem.hasSyncItemContainer()) {
             return;
         }
@@ -261,7 +273,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
     @Override
     public SyncBaseItem getFirstEnemyItemInRange(SyncBaseItem baseSyncItem) {
-        int range = baseSyncItem.getSyncWaepon().getWeaponType().getRange();
+        int range = baseSyncItem.getSyncWeapon().getWeaponType().getRange();
         int startX = baseSyncItem.getPosition().getX() - range - baseSyncItem.getItemType().getWidth() / 2;
         if (startX < 0) {
             startX = 0;
@@ -276,7 +288,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
                 if (syncItem.getPosition() != null && rectangle.contains(syncItem.getPosition())
                         && syncItem instanceof SyncBaseItem
                         && baseSyncItem.isEnemy((SyncBaseItem) syncItem)
-                        && baseSyncItem.getSyncWaepon().isAttackAllowed(syncItem)) {
+                        && baseSyncItem.getSyncWeapon().isAttackAllowed(syncItem)) {
                     return (SyncBaseItem) syncItem;
                 }
             }
@@ -357,6 +369,19 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             @Override
             public Object doInHibernate(Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(DbBaseItemType.class);
+                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                return criteria.list();
+            }
+        });
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Collection<DbProjectileItemType> getDbProjectileItemTypes() {
+        return hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbProjectileItemType.class);
                 criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
                 return criteria.list();
             }
@@ -606,8 +631,6 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
                     if (rectangle.adjoinsEclusive(syncItem.getRectangle())) {
                         return true;
                     }
-                } else {
-                    throw new IllegalAccessError(this + " unknown sync item: " + syncItem);
                 }
             }
         }
@@ -635,13 +658,13 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             for (SyncItem syncItem : items.values()) {
                 if (syncItem instanceof SyncBaseItem) {
                     SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
-                    if (!(syncBaseItem.getBase().equals(simpleBase))) {
+                    if (simpleBase != null && !(syncBaseItem.getBase().equals(simpleBase))) {
                         continue;
                     }
                     if (!rectangle.contains(syncBaseItem.getPosition())) {
                         continue;
                     }
-                    if (!baseItemTypeFilter.contains(syncBaseItem.getBaseItemType())) {
+                    if (baseItemTypeFilter != null && !baseItemTypeFilter.contains(syncBaseItem.getBaseItemType())) {
                         continue;
                     }
                     result.add(syncBaseItem);
@@ -653,7 +676,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
     @Override
     public ItemType getItemType(DbItemType dbItemType) {
-        ItemType itemType = null;
+        ItemType itemType;
         try {
             itemType = getItemType(dbItemType.getId());
         } catch (NoSuchItemTypeException e) {
@@ -661,5 +684,4 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         }
         return itemType;
     }
-
 }

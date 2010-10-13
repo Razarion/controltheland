@@ -33,11 +33,13 @@
         <mapping class="com.btxtech.game.services.mgmt.impl.BackupEntry"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.GenericBaseItem"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.GenericResourceItem"/>
+        <mapping class="com.btxtech.game.services.mgmt.impl.GenericProjectileItem"/>
         <mapping class="com.btxtech.game.services.base.Base"/>
         <mapping class="com.btxtech.game.services.base.BaseColor"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.SavedQuery"/>
         <mapping class="com.btxtech.game.services.mgmt.StartupData"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbResourceItemType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbProjectileItemType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbBaseItemType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbBuilderType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbFactoryType"/>
@@ -52,6 +54,7 @@
         <mapping class="com.btxtech.game.services.item.itemType.DbItemTypeData"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbItemContainerType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbHouseType"/>
+        <mapping class="com.btxtech.game.services.item.itemType.DbLauncherType"/>
         <mapping class="com.btxtech.game.services.market.MarketEntry"/>
         <mapping class="com.btxtech.game.services.market.impl.UserItemTypeAccess"/>
         <mapping class="com.btxtech.game.services.market.XpSettings"/>

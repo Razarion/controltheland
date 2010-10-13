@@ -19,12 +19,15 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderFinalizeCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LaunchCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
@@ -37,7 +40,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInf
  * Date: 04.12.2009
  * Time: 19:11:49
  */
-public class SyncBaseItem extends SyncItem {
+public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
     private SimpleBase base;
     private double buildup;
     private double health;
@@ -52,6 +55,7 @@ public class SyncBaseItem extends SyncItem {
     private SyncSpecial syncSpecial;
     private SyncItemContainer syncItemContainer;
     private SyncHouse syncHouse;
+    private SyncLauncher syncLauncher;
     private double upgradeProgress;
     private boolean isUpgrading;
     private BaseItemType upgradingItemType;
@@ -91,6 +95,13 @@ public class SyncBaseItem extends SyncItem {
             isMoneyEarningOrConsuming = true;
         } else {
             syncFactory = null;
+        }
+
+        if (baseItemType.getLauncherType() != null) {
+            syncLauncher = new SyncLauncher(baseItemType.getLauncherType(), this);
+            isMoneyEarningOrConsuming = true;
+        } else {
+            syncLauncher = null;
         }
 
         if (baseItemType.getBuilderType() != null) {
@@ -206,6 +217,9 @@ public class SyncBaseItem extends SyncItem {
         if (syncItemContainer != null) {
             syncItemContainer.synchronize(syncItemInfo);
         }
+        if (syncLauncher != null) {
+            syncLauncher.synchronize(syncItemInfo);
+        }
 
         super.synchronize(syncItemInfo);
     }
@@ -252,6 +266,10 @@ public class SyncBaseItem extends SyncItem {
             syncItemContainer.fillSyncItemInfo(syncItemInfo);
         }
 
+        if (syncLauncher != null) {
+            syncLauncher.fillSyncItemInfo(syncItemInfo);
+        }
+
         return syncItemInfo;
     }
 
@@ -281,6 +299,11 @@ public class SyncBaseItem extends SyncItem {
         if (syncHarvester != null && syncHarvester.isActive()) {
             return false;
         }
+
+        if (syncLauncher != null && syncLauncher.isActive()) {
+            return false;
+        }
+
         return true;
     }
 
@@ -325,6 +348,10 @@ public class SyncBaseItem extends SyncItem {
             return syncItemContainer.tick(factor);
         }
 
+        if (syncLauncher != null && syncLauncher.isActive()) {
+            return syncLauncher.tick(factor);
+        }
+
         return syncMovable != null && syncMovable.isActive() && syncMovable.tick(factor);
     }
 
@@ -352,13 +379,18 @@ public class SyncBaseItem extends SyncItem {
         if (syncItemContainer != null) {
             syncItemContainer.stop();
         }
+
+        if (syncLauncher != null) {
+            syncLauncher.stop();
+        }
+
     }
 
-    public void executeCommand(BaseCommand baseCommand) throws ItemDoesNotExistException, InsufficientFundsException, NoSuchItemTypeException {
+    public void executeCommand(BaseCommand baseCommand) throws ItemDoesNotExistException, InsufficientFundsException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
         checkId(baseCommand);
 
         if (baseCommand instanceof AttackCommand) {
-            getSyncWaepon().executeCommand((AttackCommand) baseCommand);
+            getSyncWeapon().executeCommand((AttackCommand) baseCommand);
             return;
         }
 
@@ -408,6 +440,11 @@ public class SyncBaseItem extends SyncItem {
 
         if (baseCommand instanceof UnloadContainerCommand) {
             getSyncItemContainer().executeCommand((UnloadContainerCommand) baseCommand);
+            return;
+        }
+
+        if (baseCommand instanceof LaunchCommand) {
+            getSyncLauncher().executeCommand((LaunchCommand) baseCommand);
             return;
         }
 
@@ -464,11 +501,11 @@ public class SyncBaseItem extends SyncItem {
         return syncFactory != null;
     }
 
-    public boolean hasSyncWaepon() {
+    public boolean hasSyncWeapon() {
         return syncWeapon != null;
     }
 
-    public SyncWeapon getSyncWaepon() {
+    public SyncWeapon getSyncWeapon() {
         if (syncWeapon == null) {
             throw new IllegalStateException(this + " has no syncWeapon");
         }
@@ -541,11 +578,22 @@ public class SyncBaseItem extends SyncItem {
         return syncHouse;
     }
 
+    public SyncLauncher getSyncLauncher() {
+        if (syncLauncher == null) {
+            throw new IllegalStateException(this + " has no SyncLauncher");
+        }
+        return syncLauncher;
+    }
+
+    public boolean hasSyncLauncher() {
+        return syncLauncher != null;
+    }
+
     public boolean isEnemy(SyncBaseItem syncBaseItem) {
         return !getBase().equals(syncBaseItem.getBase());
     }
 
-    public void decreaseHealth(double progress, SyncBaseItem actor) {
+    public void decreaseHealth(double progress, SimpleBase actor) {
         health -= progress;
         fireItemChanged(SyncItemListener.Change.HEALTH);
         if (health <= 0) {

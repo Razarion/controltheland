@@ -14,8 +14,10 @@
 package com.btxtech.game.jsre.client.simulation.condition;
 
 import com.btxtech.game.jsre.client.cockpit.Group;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 
 /**
@@ -32,11 +34,11 @@ public abstract class AbstractCondition {
         return false;
     }
 
-    public boolean isFulfilledSyncItemDeactivated(SyncBaseItem deactivatedItem) {
+    public boolean isFulfilledSyncItemDeactivated(SyncTickItem deactivatedItem) {
         return false;
     }
 
-    public boolean isFulfilledItemsKilled(SyncItem syncItem, SyncBaseItem actor) {
+    public boolean isFulfilledItemsKilled(SyncItem syncItem, SimpleBase actor) {
         return false;
     }
 

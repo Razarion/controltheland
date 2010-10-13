@@ -37,6 +37,7 @@ public class SyncItemInfo extends Packet {
     private Integer toBeBuiltTypeId;
     private int createdChildCount;
     private Double factoryBuildupProgress;
+    private Double projectileBuildupProgress;
     private Id target;
     private Double health;
     private double buildup;
@@ -52,6 +53,7 @@ public class SyncItemInfo extends Packet {
     private Id containedIn;
     private Index unloadPos;
     private boolean explode;
+    private Index targetPosition;
 
 
     public Id getId() {
@@ -116,6 +118,14 @@ public class SyncItemInfo extends Packet {
 
     public Double getFactoryBuildupProgress() {
         return factoryBuildupProgress;
+    }
+
+    public Double getProjectileBuildupProgress() {
+        return projectileBuildupProgress;
+    }
+
+    public void setProjectileBuildupProgress(Double projectileBuildupProgress) {
+        this.projectileBuildupProgress = projectileBuildupProgress;
     }
 
     public Id getTarget() {
@@ -262,6 +272,14 @@ public class SyncItemInfo extends Packet {
         this.buildup = buildup;
     }
 
+    public Index getTargetPosition() {
+        return targetPosition;
+    }
+
+    public void setTargetPosition(Index targetPosition) {
+        this.targetPosition = targetPosition;
+    }
+
     private String pathToDestinationAsString() {
         StringBuilder builder = new StringBuilder();
         if (pathToDestination != null) {
@@ -341,7 +359,8 @@ public class SyncItemInfo extends Packet {
                 " containedItems:" + intCollectionAsString() +
                 " targetContainer:" + targetContainer +
                 " containedIn:" + containedIn +
-                " unloadPos:" + unloadPos;
+                " unloadPos:" + unloadPos +
+                " targetPosition:" + targetPosition;
     }
 
 }

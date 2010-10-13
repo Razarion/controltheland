@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.ProjectileItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
@@ -26,11 +27,12 @@ import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeExce
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncProjectileItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
-import com.btxtech.game.services.item.itemType.DbItemType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -54,9 +56,13 @@ abstract public class AbstractItemService implements ItemService {
                 throw new IllegalArgumentException(this + " ResourceType does not have a base");
             }
             syncItem = new SyncResourceItem(id, position, (ResourceType) itemType, services);
+        } else if (itemType instanceof ProjectileItemType) {
+            if (base == null) {
+                throw new NullPointerException(this + " base must be set for a ProjectileItemType");
+            }
+            syncItem = new SyncProjectileItem(id, position, (ProjectileItemType) itemType, services, base);
         } else {
             throw new IllegalArgumentException(this + " ItemType not supported: " + itemType);
-
         }
         return syncItem;
     }
@@ -166,4 +172,15 @@ abstract public class AbstractItemService implements ItemService {
         return syncBaseItemIds;
     }
 
+    @Override
+    public Collection<SyncBaseItem> getBaseItemsInRadius(Index position, int radius, SimpleBase simpleBase, Collection<BaseItemType> baseItemTypeFilter) {
+        Collection<SyncBaseItem> syncBaseItems = getBaseItemsInRectangle(position.getRegion(2 *radius, 2 *radius), simpleBase, baseItemTypeFilter);
+        for (Iterator<SyncBaseItem> iterator = syncBaseItems.iterator(); iterator.hasNext();) {
+            SyncBaseItem syncBaseItem = iterator.next();
+            if (syncBaseItem.getPosition().getDistance(position) > radius) {
+                iterator.remove();
+            }
+        }
+        return syncBaseItems;
+    }
 }

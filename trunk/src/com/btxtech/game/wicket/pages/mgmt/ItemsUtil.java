@@ -14,6 +14,8 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.item.itemType.DbItemType;
+import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -69,4 +71,14 @@ public class ItemsUtil {
         }
         return result;
     }
+
+    public static DbProjectileItemType getProjectileItemType4Id(int id, Collection<DbProjectileItemType> dbProjectileItemTypes) {
+        for (DbProjectileItemType dbProjectileItemType : dbProjectileItemTypes) {
+            if (dbProjectileItemType.getId() == id) {
+                return  dbProjectileItemType;
+            }
+        }
+        throw new IllegalArgumentException("Projectile Item type does not exist: " + id);
+    }
+
 }

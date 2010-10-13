@@ -14,6 +14,7 @@
 package com.btxtech.game.services.mgmt.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.gameengine.itemType.LauncherType;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import java.util.List;
@@ -76,6 +77,8 @@ public class GenericBaseItem extends GenericItem {
     @Type(type = "index")
     @Columns(columns = {@Column(name = "xUnloadPos"), @Column(name = "yUnloadPos")})
     private Index unloadPos;
+    private Double launcherBuildup;
+
 
 
     /**
@@ -251,5 +254,13 @@ public class GenericBaseItem extends GenericItem {
 
     public void setTargetContainer(GenericBaseItem targetContainer) {
         this.targetContainer = targetContainer;
+    }
+
+    public double getLauncherBuildup() {
+        return launcherBuildup;
+    }
+
+    public void setLauncherBuildup(double launcherBuildup) {
+        this.launcherBuildup = launcherBuildup;
     }
 }

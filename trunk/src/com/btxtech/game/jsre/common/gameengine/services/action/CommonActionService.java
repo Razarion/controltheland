@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 
 /**
  * User: beat
@@ -37,5 +38,5 @@ public interface CommonActionService {
 
     void upgrade(SyncBaseItem item) throws InsufficientFundsException;
 
-    void syncItemActivated(SyncBaseItem syncBaseItem);
+    void syncItemActivated(SyncTickItem syncTickItem);
 }

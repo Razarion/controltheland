@@ -18,8 +18,10 @@ import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.simulation.condition.AbstractCondition;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.tutorial.StepConfig;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
@@ -81,7 +83,7 @@ public class Task {
         }
     }
 
-    public void onSyncItemDeactivated(SyncBaseItem deactivatedItem) {
+    public void onSyncItemDeactivated(SyncTickItem deactivatedItem) {
         if (activeStep != null) {
             activeStep.onSyncItemDeactivated(deactivatedItem);
             checkForCompletion();
@@ -91,7 +93,7 @@ public class Task {
         }
     }
 
-    public void onSyncItemKilled(SyncItem killedItem, SyncBaseItem actor) {
+    public void onSyncItemKilled(SyncItem killedItem, SimpleBase actor) {
         if (activeStep != null) {
             activeStep.onSyncItemKilled(killedItem, actor);
             checkForCompletion();

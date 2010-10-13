@@ -49,14 +49,14 @@ public class MuzzleFlash {
         this.clientSyncItem = clientSyncItem;
         SoundHandler.playMuzzleFlashSound(clientSyncItem.getSyncBaseItem().getBaseItemType());
         Index center = getAbsoluteStartPoint(clientSyncItem);
-        WeaponType weaponType = clientSyncItem.getSyncBaseItem().getSyncWaepon().getWeaponType();
+        WeaponType weaponType = clientSyncItem.getSyncBaseItem().getSyncWeapon().getWeaponType();
         int x;
         int y;
         int width;
         int height;
 
         if (weaponType.stretchMuzzleFlashToTarget()) {
-            SyncItem target = ItemContainer.getInstance().getItem(clientSyncItem.getSyncBaseItem().getSyncWaepon().getTarget());
+            SyncItem target = ItemContainer.getInstance().getItem(clientSyncItem.getSyncBaseItem().getSyncWeapon().getTarget());
             int distance = target.getPosition().getDistance(center);
             x = (int) (center.getX() - Math.round(weaponType.getMuzzleFlashWidth() / 2.0));
             y = center.getY() - distance;
@@ -91,7 +91,7 @@ public class MuzzleFlash {
                     if (imageElements.length != 1) {
                         throw new IllegalArgumentException("MuzzleFlash: Wrong image count received: " + imageElements.length);
                     }
-                    WeaponType weaponType = clientSyncItem.getSyncBaseItem().getSyncWaepon().getWeaponType();
+                    WeaponType weaponType = clientSyncItem.getSyncBaseItem().getSyncWeapon().getWeaponType();
                     canvas.translate(normCenter.getX(), normCenter.getY());
                     canvas.rotate(-angel);
                     canvas.drawImage(imageElements[0], -Math.round(weaponType.getMuzzleFlashWidth() / 2.0), -weaponType.getMuzzleFlashLength());
@@ -103,7 +103,7 @@ public class MuzzleFlash {
     }
 
     private Index getAbsoluteStartPoint(ClientSyncItem clientSyncItem) throws ItemDoesNotExistException {
-        SyncItem target = ItemContainer.getInstance().getItem(clientSyncItem.getSyncBaseItem().getSyncWaepon().getTarget());
+        SyncItem target = ItemContainer.getInstance().getItem(clientSyncItem.getSyncBaseItem().getSyncWeapon().getTarget());
         BaseItemType baseItemType = clientSyncItem.getSyncBaseItem().getBaseItemType();
         if (clientSyncItem.getSyncBaseItem().hasSyncTurnable()) {
             // Make angel start on the Y axsi

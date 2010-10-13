@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client;
 
+import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.CursorHandler;
 import com.btxtech.game.jsre.client.cockpit.CursorItemState;
 import com.btxtech.game.jsre.client.cockpit.Group;
@@ -44,14 +45,14 @@ import com.google.gwt.widgetideas.client.ProgressBar;
  * Date: May 20, 2009
  * Time: 2:48:36 PM
  */
-public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandler, MouseOverHandler/*, SyncItemListener*/ {
+public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandler, MouseOverHandler {
     private Image image;
     private ClientSyncItem clientSyncItem;
     private CursorItemState cursorItemState;
     private ProgressBar healthBar;
-    private ProgressBar progressBar;
+    private ProgressBar factorizeBar;
+    private ProgressBar projectileBar;
     private SimplePanel marker;
-
 
     public ClientSyncItemView() {
         sinkEvents(Event.ONMOUSEMOVE);
@@ -95,6 +96,10 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
             if (oldClientSyncItem == null || !oldClientSyncItem.isSyncResourceItem()) {
                 pupateToSyncResourceItem();
             }
+        } else if (clientSyncItem.isSyncProjectileItem()) {
+            if (oldClientSyncItem == null || !oldClientSyncItem.isSyncProjectileItem()) {
+                pupateToSyncProjectileItem();
+            }
         } else {
             throw new IllegalArgumentException(this + " transformTo(): SyncItem not supported: " + clientSyncItem);
         }
@@ -105,7 +110,8 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
     private void displayState() {
         setPosition();
         if (clientSyncItem.isSyncBaseItem()) {
-            setProgress();
+            setFactorizeProgress();
+            setProjectileProgress();
         }
         setSelected(clientSyncItem.isSelected());
     }
@@ -123,8 +129,29 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
         if (healthBar != null) {
             healthBar.setVisible(false);
         }
-        if (progressBar != null) {
-            progressBar.setVisible(false);
+        if (factorizeBar != null) {
+            factorizeBar.setVisible(false);
+        }
+        if (projectileBar != null) {
+            projectileBar.setVisible(false);
+        }
+        if (marker != null) {
+            marker.setVisible(false);
+        }
+    }
+
+    private void pupateToSyncProjectileItem() {
+        pupateCommon();
+        cursorItemState = new CursorItemState();        
+        getElement().getStyle().setZIndex(Constants.Z_INDEX_PROJECTILE);
+        if (healthBar != null) {
+            healthBar.setVisible(false);
+        }
+        if (factorizeBar != null) {
+            factorizeBar.setVisible(false);
+        }
+        if (projectileBar != null) {
+            projectileBar.setVisible(false);
         }
         if (marker != null) {
             marker.setVisible(false);
@@ -142,7 +169,16 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
         // Abilities
         setupMarker();
         setupHealthBar();
-        setupProgressBar();
+        if (clientSyncItem.getSyncBaseItem().hasSyncFactory()) {
+            setupFactorizeBar();
+        } else if (factorizeBar != null) {
+            factorizeBar.setVisible(false);
+        }
+        if (clientSyncItem.getSyncBaseItem().hasSyncLauncher()) {
+            setupProjectileBar();
+        } else if (projectileBar != null) {
+            projectileBar.setVisible(false);
+        }
         // Cursor
         cursorItemState = new CursorItemState();
         if (clientSyncItem.isMyOwnProperty()) {
@@ -202,7 +238,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
                 setupImage();
                 break;
             case FACTORY_PROGRESS:
-                setProgress();
+                setFactorizeProgress();
                 break;
             case HEALTH:
                 setHealth();
@@ -217,13 +253,18 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
                 setupSize();
                 setupMarkerPos();
                 setupHealthBarPos();
-                setProgress();
+                setFactorizeProgress();
+                setProjectileProgress();
                 setupImage();
                 SelectionHandler.getInstance().refresh();
                 ItemContainer.getInstance().handleSpecial(clientSyncItem);
                 break;
+            case LAUNCHER_PROGRESS:
+                setProjectileProgress();
+                break;
             case UPGRADE_PROGRESS_CHANGED:
-                setProgress();
+                setFactorizeProgress();
+                setProjectileProgress();
                 break;
         }
     }
@@ -234,6 +275,10 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
             if (clientSyncItem.isMyOwnProperty()) {
                 Connection.getInstance().sendSellItem(clientSyncItem.getSyncItem());
             }
+        } else if (Game.cockpitPanel.isLaunchMode() && !clientSyncItem.isMyOwnProperty()) {
+            int x = mouseDownEvent.getRelativeX(TerrainView.getInstance().getCanvas().getElement()) + TerrainView.getInstance().getViewOriginLeft();
+            int y = mouseDownEvent.getRelativeY(TerrainView.getInstance().getCanvas().getElement()) + TerrainView.getInstance().getViewOriginTop();
+            ActionHandler.getInstance().executeLaunchCommand(x, y);
         } else {
             if (clientSyncItem.isSyncResourceItem()) {
                 SelectionHandler.getInstance().setTargetSelected(this, mouseDownEvent);
@@ -316,30 +361,50 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
         healthBar.setProgress(clientSyncItem.getSyncBaseItem().getHealth());
     }
 
-    private void setupProgressBar() {
-        if (progressBar == null) {
-            progressBar = new ProgressBar(0.0, 0.0);
-            progressBar.setTextVisible(false);
-            progressBar.setStyleName("gwt-DeviceBuildBar-shell");
-            progressBar.getElement().getStyle().setZIndex(2);
-            progressBar.getElement().getStyle().setHeight(4, Style.Unit.PX);
-            progressBar.getElement().getStyle().setFontSize(0, Style.Unit.PX);
-            add(progressBar);
+    private void setupFactorizeBar() {
+        if (factorizeBar == null) {
+            factorizeBar = new ProgressBar(0.0, 0.0);
+            factorizeBar.setTextVisible(false);
+            factorizeBar.setStyleName("gwt-DeviceBuildBar-shell");
+            factorizeBar.getElement().getStyle().setZIndex(2);
+            factorizeBar.getElement().getStyle().setHeight(4, Style.Unit.PX);
+            factorizeBar.getElement().getStyle().setFontSize(0, Style.Unit.PX);
+            add(factorizeBar);
         } else {
-            progressBar.setVisible(true);
+            factorizeBar.setVisible(true);
         }
-        setWidgetPosition(progressBar, 0, 2);
+        setWidgetPosition(factorizeBar, 0, 2);
     }
 
-    private void setProgress() {
-        if (clientSyncItem.getSyncBaseItem().hasSyncFactory() && clientSyncItem.getSyncBaseItem().getSyncFactory().getToBeBuiltType() != null) {
-            progressBar.setMaxProgress(1.0);
-            progressBar.setProgress(clientSyncItem.getSyncBaseItem().getSyncFactory().getBuildupProgress());
+    private void setFactorizeProgress() {
+        if (clientSyncItem.getSyncBaseItem().hasSyncFactory()) {
+            factorizeBar.setMaxProgress(1.0);
+            factorizeBar.setProgress(clientSyncItem.getSyncBaseItem().getSyncFactory().getBuildupProgress());
         } else if (clientSyncItem.getSyncBaseItem().isUpgrading()) {
-            progressBar.setMaxProgress(clientSyncItem.getSyncBaseItem().getFullUpgradeProgress());
-            progressBar.setProgress(clientSyncItem.getSyncBaseItem().getUpgradeProgress());
+            factorizeBar.setMaxProgress(clientSyncItem.getSyncBaseItem().getFullUpgradeProgress());
+            factorizeBar.setProgress(clientSyncItem.getSyncBaseItem().getUpgradeProgress());
+        }
+    }
+
+    private void setupProjectileBar() {
+        if (projectileBar == null) {
+            projectileBar = new ProgressBar(0.0, 0.0);
+            projectileBar.setTextVisible(false);
+            projectileBar.setStyleName("gwt-ProjectileBar-shell");
+            projectileBar.getElement().getStyle().setZIndex(2);
+            projectileBar.getElement().getStyle().setHeight(4, Style.Unit.PX);
+            projectileBar.getElement().getStyle().setFontSize(0, Style.Unit.PX);
+            add(projectileBar);
         } else {
-            progressBar.setProgress(0);
+            projectileBar.setVisible(true);
+        }
+        setWidgetPosition(projectileBar, 0, 2);
+    }
+
+    private void setProjectileProgress() {
+        if (clientSyncItem.getSyncBaseItem().hasSyncLauncher()) {
+            projectileBar.setMaxProgress(1.0);
+            projectileBar.setProgress(clientSyncItem.getSyncBaseItem().getSyncLauncher().getBuildup());
         }
     }
 
@@ -360,7 +425,10 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
             setHealth();
             setPosition();
             if (clientSyncItem.getSyncBaseItem().hasSyncFactory()) {
-                setProgress();
+                setFactorizeProgress();
+            }
+            if (clientSyncItem.getSyncBaseItem().hasSyncLauncher()) {
+                setProjectileProgress();
             }
             setVisible(!clientSyncItem.getSyncBaseItem().isContainedIn());
         }

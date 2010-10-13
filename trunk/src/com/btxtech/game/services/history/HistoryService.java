@@ -26,13 +26,13 @@ import java.util.List;
 public interface HistoryService {
     void addBaseStartEntry(SimpleBase simpleBase);
 
-    void addBaseDefeatedEntry(SyncBaseItem actor, SimpleBase target);
+    void addBaseDefeatedEntry(SimpleBase actor, SimpleBase target);
 
     void addBaseSurrenderedEntry(SimpleBase simpleBase);
 
     void addItemCreatedEntry(SyncBaseItem syncBaseItem);
 
-    void addItemDestroyedEntry(SyncBaseItem actor, SyncBaseItem target);
+    void addItemDestroyedEntry(SimpleBase actor, SyncBaseItem target);
 
     List<DisplayHistoryElement> getNewestHistoryElements(User user, int count);
 }

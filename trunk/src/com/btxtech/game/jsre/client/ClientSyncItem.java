@@ -18,7 +18,9 @@ import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncProjectileItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 
 /**
  * User: beat
@@ -77,6 +79,14 @@ public class ClientSyncItem implements SyncItemListener {
         return (SyncResourceItem) syncItem;
     }
 
+    public SyncProjectileItem getSyncProjectileItem() {
+        return (SyncProjectileItem) syncItem;
+    }
+
+    public SyncTickItem getSyncTickItem() {
+        return (SyncTickItem) syncItem;
+    }
+
     public boolean isVisible() {
         return isVisible;
     }
@@ -114,6 +124,14 @@ public class ClientSyncItem implements SyncItemListener {
 
     public boolean isSyncResourceItem() {
         return syncItem instanceof SyncResourceItem;
+    }
+
+    public boolean isSyncProjectileItem() {
+        return syncItem instanceof SyncProjectileItem;
+    }
+
+    public boolean isSyncTickItem() {
+        return syncItem instanceof SyncTickItem;
     }
 
     public void setSelected(boolean selected) {

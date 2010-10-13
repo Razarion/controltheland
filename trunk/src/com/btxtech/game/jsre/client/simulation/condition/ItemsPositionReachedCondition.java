@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.tutorial.condition.ItemsPositionReachedConditionConfig;
 
 /**
@@ -32,7 +33,7 @@ public class ItemsPositionReachedCondition extends AbstractCondition {
     }
 
     @Override
-    public boolean isFulfilledSyncItemDeactivated(SyncBaseItem deactivatedItem) {
+    public boolean isFulfilledSyncItemDeactivated(SyncTickItem deactivatedItem) {
         for (Integer id : itemsPositionReachedConditionConfig.getIds()) {
             try {
                 SyncBaseItem syncItem = (SyncBaseItem) ItemContainer.getInstance().getItem(ItemContainer.getInstance().createSimulationId(id));

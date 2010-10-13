@@ -71,7 +71,7 @@ public class SyncWeapon extends SyncBaseAbility {
                 }
                 if (reloadProgress >= weaponType.getReloadTime()) {
                     handleAttackState();
-                    targetItem.decreaseHealth(weaponType.getDemage() * reloadProgress / weaponType.getReloadTime(), getSyncBaseItem());
+                    targetItem.decreaseHealth(weaponType.getDemage() * reloadProgress / weaponType.getReloadTime(), getSyncBaseItem().getBase());
                     reloadProgress = 0;
                 }
             } else {

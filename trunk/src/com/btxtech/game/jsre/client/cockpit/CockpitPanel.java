@@ -40,6 +40,7 @@ public class CockpitPanel extends TopMapPanel implements SelectionListener {
     private VerticalPanel detailPanel;
     private BuildupItemPanel buildupItemPanel;
     private boolean unloadMode = false;
+    private boolean launchMode = false;
 
     @Override
     protected Widget createBody() {
@@ -76,12 +77,12 @@ public class CockpitPanel extends TopMapPanel implements SelectionListener {
                 builder.append("<br/>ID: ");
                 builder.append(selection.getSyncItem().getId());
             }
-            setupDescrBox(builder.toString(), null, null);
+            setupDescrBox(builder.toString(), null, null, false);
         } else if (selection.isSyncResourceItem()) {
             if (Game.isDebug()) {
-                setupDescrBox(selection.getSyncItem().getItemType().getDescription() + "<br/>ID: " + selection.getSyncItem().getId(), null, null);
+                setupDescrBox(selection.getSyncItem().getItemType().getDescription() + "<br/>ID: " + selection.getSyncItem().getId(), null, null, false);
             } else {
-                setupDescrBox(selection.getSyncItem().getItemType().getDescription(), null, null);
+                setupDescrBox(selection.getSyncItem().getItemType().getDescription(), null, null, false);
             }
         } else {
             throw new IllegalArgumentException(this + " can not set details for: " + selection);
@@ -92,6 +93,7 @@ public class CockpitPanel extends TopMapPanel implements SelectionListener {
     public void onOwnSelectionChanged(Group selectedGroup) {
         detailPanel.clear();
         clearUnloadMode();
+        clearLaunchMode();
         if (selectedGroup.count() == 1) {
             SyncBaseItem syncBaseItem = (SyncBaseItem) selectedGroup.getFirst().getSyncItem();
             SyncBaseItem upgradeable = null;
@@ -109,16 +111,16 @@ public class CockpitPanel extends TopMapPanel implements SelectionListener {
             if (Game.isDebug()) {
                 descr += "<br/>ID: " + syncBaseItem.getId();
             }
-            setupDescrBox(descr, upgradeable, syncItemContainer);
+            setupDescrBox(descr, upgradeable, syncItemContainer, syncBaseItem.hasSyncLauncher());
         } else if (selectedGroup.canAttack()) {
-            setupDescrBox(selectedGroup.getFirst().getSyncItem().getItemType().getDescription(), null, null);
+            setupDescrBox(selectedGroup.getFirst().getSyncItem().getItemType().getDescription(), null, null, false);
         } else if (selectedGroup.canCollect()) {
-            setupDescrBox(selectedGroup.getFirst().getSyncItem().getItemType().getDescription(), null, null);
+            setupDescrBox(selectedGroup.getFirst().getSyncItem().getItemType().getDescription(), null, null, false);
         }
         setVisible(true);
     }
 
-    private void setupDescrBox(String descr, final SyncBaseItem upgradeable, SyncItemContainer syncItemContainer) {
+    private void setupDescrBox(String descr, final SyncBaseItem upgradeable, SyncItemContainer syncItemContainer, boolean canLaunch) {
         HTML label = new HTML(descr);
         label.setWidth("100px");
         label.getElement().getStyle().setColor("darkorange");
@@ -151,6 +153,18 @@ public class CockpitPanel extends TopMapPanel implements SelectionListener {
             });
             detailPanel.add(button);
         }
+
+        if(canLaunch) {
+            detailPanel.add(new HTML("<br>"));
+            Button button = new Button("Fire");
+            button.addClickHandler(new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    setLaunchMode();
+                }
+            });
+            detailPanel.add(button);
+        }
     }
 
     public BuildupItemPanel getBuildupItemPanel() {
@@ -172,6 +186,24 @@ public class CockpitPanel extends TopMapPanel implements SelectionListener {
         if (unloadMode) {
             unloadMode = false;
             CursorHandler.getInstance().clearUnloadContainer();
+        }
+    }
+
+    public boolean isLaunchMode() {
+        return launchMode;
+    }
+
+    private void setLaunchMode() {
+        if (!launchMode) {
+            launchMode = true;
+            CursorHandler.getInstance().setLaunch();
+        }
+    }
+
+    public void clearLaunchMode() {
+        if (launchMode) {
+            launchMode = false;
+            CursorHandler.getInstance().clearLaunch();
         }
     }
 

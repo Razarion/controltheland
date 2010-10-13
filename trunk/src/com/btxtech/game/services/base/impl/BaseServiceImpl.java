@@ -31,6 +31,7 @@ import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededEx
 import com.btxtech.game.jsre.common.gameengine.services.base.impl.AbstractBaseServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.tutorial.HouseSpacePacket;
 import com.btxtech.game.services.base.Base;
@@ -234,10 +235,10 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public Base getBase(SyncBaseItem baseSyncItem) {
-        Base base = bases.get(baseSyncItem.getBase());
+    public Base getBase(SyncBaseObject syncBaseObject) {
+        Base base = bases.get(syncBaseObject.getBase());
         if (base == null) {
-            throw new IllegalArgumentException("Base does not exist: " + baseSyncItem.getBase());
+            throw new IllegalArgumentException("Base does not exist: " + syncBaseObject.getBase());
         }
         return base;
     }
@@ -329,7 +330,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public void itemDeleted(SyncBaseItem syncItem, SyncBaseItem actor) {
+    public void itemDeleted(SyncBaseItem syncItem, SimpleBase actor) {
         Base base = getBase(syncItem);
         base.removeItem(syncItem);
         if (!base.hasItems()) {
@@ -348,15 +349,15 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         }
     }
 
-    private void sendDefeatedMessage(SyncBaseItem victim, SyncBaseItem actor) {
+    private void sendDefeatedMessage(SyncBaseItem victim, SimpleBase actor) {
         Message message = new Message();
         message.setTitle("Game over!");
-        message.setMessage("You have been defeated by " + getBaseName(actor.getBase()));
+        message.setMessage("You have been defeated by " + getBaseName(actor));
         connectionService.sendPacket(victim.getBase(), message);
         message = new Message();
         message.setTitle("Congratulations!");
         message.setMessage("You defeated " + getBaseName(victim.getBase()));
-        connectionService.sendPacket(actor.getBase(), message);
+        connectionService.sendPacket(actor, message);
     }
 
     @Override
@@ -366,8 +367,8 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public void sendAccountBaseUpdate(SyncBaseItem syncItem) {
-        Base base = getBase(syncItem);
+    public void sendAccountBaseUpdate(SyncBaseObject syncBaseObject) {
+        Base base = getBase(syncBaseObject);
         AccountBalancePacket packet = new AccountBalancePacket();
         packet.setAccountBalance(base.getAccountBalance());
         connectionService.sendPacket(base.getSimpleBase(), packet);

@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.common.gameengine.services.territory;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.ProjectileItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import java.util.Collection;
 
@@ -28,6 +29,8 @@ public interface AbstractTerritoryService {
     Collection<Territory> getTerritories();
 
     boolean isAllowed(Index position, SyncBaseItem syncBaseItem);
+
+    boolean isAllowed(Index target, ProjectileItemType projectileItemType);
 
     boolean isAllowed(Index position, int itemTypeId);
 

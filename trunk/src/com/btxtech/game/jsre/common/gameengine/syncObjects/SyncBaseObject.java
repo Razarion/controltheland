@@ -13,26 +13,14 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
+import com.btxtech.game.jsre.common.SimpleBase;
+
 /**
  * User: beat
- * Date: 22.11.2009
- * Time: 22:21:39
+ * Date: 06.10.2010
+ * Time: 12:08:57
  */
-public interface SyncItemListener {
-    public enum Change {
-        ANGEL,
-        POSITION,
-        ON_ATTACK,
-        HEALTH,
-        FACTORY_PROGRESS,
-        RESOURCE,
-        BUILD,
-        ITEM_TYPE_CHANGED,
-        UPGRADE_PROGRESS_CHANGED,
-        CONTAINED_IN_CHANGED,
-        CONTAINER_COUNT_CHANGED,
-        LAUNCHER_PROGRESS
-    }
+public interface SyncBaseObject {
 
-    void onItemChanged(Change change, SyncItem syncItem);
+    SimpleBase getBase();
 }

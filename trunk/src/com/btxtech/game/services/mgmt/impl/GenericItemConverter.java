@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeExce
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncProjectileItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.services.action.ActionService;
@@ -105,6 +106,8 @@ public class GenericItemConverter {
                     base.addItem(syncItem);
                 } else if (genericItem instanceof GenericResourceItem) {
                     addSyncItem((GenericResourceItem) genericItem);
+                } else if (genericItem instanceof GenericProjectileItem) {
+                    addSyncItem((GenericProjectileItem) genericItem);
                 } else {
                     log.error("restoreBackup: unknown type: " + genericItem);
                 }
@@ -145,6 +148,8 @@ public class GenericItemConverter {
             addGenericBaseItem((SyncBaseItem) item);
         } else if (item instanceof SyncResourceItem) {
             addGenericResourceItem((SyncResourceItem) item);
+        } else if (item instanceof SyncProjectileItem) {
+            addGenericProjectileItem((SyncProjectileItem) item);
         } else {
             throw new IllegalArgumentException("Unknwon SyncItem: " + item);
         }
@@ -155,6 +160,21 @@ public class GenericItemConverter {
         fillGenericItem(item, genericItem);
         genericItem.setAmount(item.getAmount());
         genericItems.put(item.getId(), genericItem);
+    }
+
+    private void addGenericProjectileItem(SyncProjectileItem item) {
+        if(!item.isAlive()) {
+            return;
+        }
+        GenericProjectileItem genericProjectileItem = new GenericProjectileItem(backupEntry);
+        fillGenericItem(item, genericProjectileItem);
+        Base base = baseService.getBase(item.getBase());
+        if (base == null) {
+            throw new IllegalStateException("No base for " + item.getBase());
+        }
+        genericProjectileItem.setBase(base);
+        genericProjectileItem.setTargetPosition(item.getTarget());
+        genericItems.put(item.getId(), genericProjectileItem);
     }
 
     private void addGenericBaseItem(SyncBaseItem item) {
@@ -195,12 +215,15 @@ public class GenericItemConverter {
             genericItem.setCreatedChildCount(item.getSyncFactory().getCreatedChildCount());
             genericItem.setRallyPoint(item.getSyncFactory().getRallyPoint());
         }
-        if (item.hasSyncWaepon()) {
-            genericItem.setFollowTarget(item.getSyncWaepon().isFollowTarget());
-            genericItem.setReloadProgress(item.getSyncWaepon().getReloadProgress());
+        if (item.hasSyncWeapon()) {
+            genericItem.setFollowTarget(item.getSyncWeapon().isFollowTarget());
+            genericItem.setReloadProgress(item.getSyncWeapon().getReloadProgress());
         }
         if (item.hasSyncItemContainer()) {
             genericItem.setUnloadPos(item.getSyncItemContainer().getUnloadPos());
+        }
+        if (item.hasSyncLauncher()) {
+            genericItem.setLauncherBuildup(item.getSyncLauncher().getBuildup());
         }
         genericItems.put(item.getId(), genericItem);
 
@@ -246,11 +269,11 @@ public class GenericItemConverter {
             }
 
         }
-        if (syncBaseItem.hasSyncWaepon()) {
-            if (syncBaseItem.getSyncWaepon().getTarget() != null) {
-                GenericBaseItem target = (GenericBaseItem) genericItems.get(syncBaseItem.getSyncWaepon().getTarget());
+        if (syncBaseItem.hasSyncWeapon()) {
+            if (syncBaseItem.getSyncWeapon().getTarget() != null) {
+                GenericBaseItem target = (GenericBaseItem) genericItems.get(syncBaseItem.getSyncWeapon().getTarget());
                 if (target == null) {
-                    log.error("BACKUP: No generic syncBaseItem for: " + syncBaseItem.getSyncWaepon().getTarget());
+                    log.error("BACKUP: No generic syncBaseItem for: " + syncBaseItem.getSyncWeapon().getTarget());
                 }
                 genericBaseItem.setBaseTarget(target);
             }
@@ -300,12 +323,12 @@ public class GenericItemConverter {
             item.getSyncFactory().setCreatedChildCount(genericItem.getCreatedChildCount());
             item.getSyncFactory().setRallyPoint(genericItem.getRallyPoint());
         }
-        if (item.hasSyncWaepon()) {
-            item.getSyncWaepon().setFollowTarget(genericItem.isFollowTarget());
-            item.getSyncWaepon().setReloadProgress(genericItem.getReloadProgress());
+        if (item.hasSyncWeapon()) {
+            item.getSyncWeapon().setFollowTarget(genericItem.isFollowTarget());
+            item.getSyncWeapon().setReloadProgress(genericItem.getReloadProgress());
 
             if (genericItem.getBaseTarget() != null) {
-                item.getSyncWaepon().setTarget(genericItem.getBaseTarget().getItemId());
+                item.getSyncWeapon().setTarget(genericItem.getBaseTarget().getItemId());
             }
         }
         if (item.hasSyncHarvester()) {
@@ -315,6 +338,9 @@ public class GenericItemConverter {
         }
         if (item.hasSyncItemContainer()) {
             item.getSyncItemContainer().setUnloadPos(genericItem.getUnloadPos());
+        }
+        if (item.hasSyncLauncher()) {
+            item.getSyncLauncher().setBuildup(genericItem.getBuildup());
         }
         syncItems.put(genericItem.getItemId(), item);
         return item;
@@ -326,6 +352,11 @@ public class GenericItemConverter {
         syncItems.put(genericItem.getItemId(), item);
     }
 
+    private void addSyncItem(GenericProjectileItem genericItem) throws NoSuchItemTypeException {
+        SyncProjectileItem item = (SyncProjectileItem) itemService.newSyncItem(genericItem.getItemId(), genericItem.getPosition(), genericItem.getDbItemTyp().getId(), genericItem.getBase().getSimpleBase(), services);
+        item.setTarget(genericItem.getTargetPosition());
+        syncItems.put(genericItem.getItemId(), item);
+    }
 
     private void postProcessRestore(GenericBaseItem genericItem) {
         SyncBaseItem syncItem = (SyncBaseItem) syncItems.get(genericItem.getItemId());
@@ -346,7 +377,7 @@ public class GenericItemConverter {
                 }
             }
         }
-        if (syncItem.hasSyncWaepon()) {
+        if (syncItem.hasSyncWeapon()) {
             if (genericItem.getBaseTarget() != null) {
                 SyncItem target = syncItems.get(genericItem.getBaseTarget().getItemId());
                 if (target == null) {

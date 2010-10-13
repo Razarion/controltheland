@@ -42,11 +42,12 @@ public class Constants {
 
     // zIndex
     public static final int Z_INDEX_STARTUP_SCREEN = 100; // Fix coded in Game.html
-    public static final int Z_INDEX_DIALOG = 15;
-    public static final int Z_INDEX_GROUP_SELECTION_FRAME = 14;
-    public static final int Z_INDEX_SPEECH_BUBBLE = 13;
-    public static final int Z_INDEX_PLACEABLE_PREVIEW = 12;
-    public static final int Z_INDEX_TOP_MAP_PANEL = 11;
+    public static final int Z_INDEX_DIALOG = 16;
+    public static final int Z_INDEX_GROUP_SELECTION_FRAME = 15;
+    public static final int Z_INDEX_SPEECH_BUBBLE = 14;
+    public static final int Z_INDEX_PLACEABLE_PREVIEW = 13;
+    public static final int Z_INDEX_TOP_MAP_PANEL = 12;
+    public static final int Z_INDEX_PROJECTILE = 11;
     public static final int Z_INDEX_EXPLOSION = 10;
     public static final int Z_INDEX_MUZZLE_FLASH = 9;
     public static final int Z_INDEX_MACHINE_GUN_ATTACK = 8;

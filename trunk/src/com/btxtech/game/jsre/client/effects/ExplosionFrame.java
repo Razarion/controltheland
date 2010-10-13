@@ -48,8 +48,13 @@ public class ExplosionFrame extends ExtendedCanvas {
     public ExplosionFrame(ClientSyncItem clientSyncItem) {
         this.clientSyncItemView = clientSyncItem;
         frame = 1;
-        width = clientSyncItem.getSyncItem().getItemType().getWidth();
-        height = clientSyncItem.getSyncItem().getItemType().getHeight();
+        if(clientSyncItem.isSyncProjectileItem()){
+            width = clientSyncItem.getSyncProjectileItem().getProjectileItemType().getExplosionRadius() * 2;
+            height = width;
+        } else {
+            width = clientSyncItem.getSyncItem().getItemType().getWidth();
+            height = clientSyncItem.getSyncItem().getItemType().getHeight();
+        }
         SoundController soundController = new SoundController();
         Sound sound = soundController.createSound(Sound.MIME_TYPE_AUDIO_MPEG, "/sounds/explosion.mp3");
         sound.play();

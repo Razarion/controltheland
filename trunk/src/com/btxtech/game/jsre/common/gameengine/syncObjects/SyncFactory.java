@@ -134,8 +134,7 @@ public class SyncFactory extends SyncBaseAbility {
             throw new IllegalArgumentException(this + " Item can not be built on territory: " + getSyncBaseItem().getPosition() + "  " + factoryCommand.getToBeBuilt());
         }
         if (toBeBuiltType == null) {
-            BaseItemType tmpToBeBuiltType = (BaseItemType) getServices().getItemService().getItemType(factoryCommand.getToBeBuilt());
-            toBeBuiltType = tmpToBeBuiltType;
+            toBeBuiltType = (BaseItemType) getServices().getItemService().getItemType(factoryCommand.getToBeBuilt());
         }
     }
 

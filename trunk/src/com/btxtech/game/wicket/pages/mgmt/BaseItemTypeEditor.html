@@ -16,7 +16,7 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="GameEditor.css">
-    <title>Item Type Editor</title>
+    <title>Base Item Type Editor</title>
     <script>
         var count = 0;
         var progress = 0;
@@ -94,7 +94,7 @@
     <td valign="top"><textarea wicket:id="proDescription" rows="10" cols="60">proDescription</textarea></td>
 </tr>
 <tr bgcolor="#DDDDDD">
-    <td colspan="2" valign="top">Control description</td>
+    <td colspan="2" valign="top">Contra description</td>
     <td valign="top"><textarea wicket:id="contraDescription" rows="10" cols="60">contraDescription</textarea></td>
 </tr>
 <tr bgcolor="#DDDDDD">
@@ -198,6 +198,22 @@
     <td valign="top" width="20px">&nbsp;</td>
     <td valign="top">Stretch to Target</td>
     <td valign="top"><input wicket:id="weaponMuzzleStretch" type="checkbox"></td>
+</tr>
+<tr>
+    <td colspan="3" valign="top">&nbsp;</td>
+</tr>
+<tr bgcolor="#DDDDDD">
+    <td colspan="3" valign="top"><input type="checkbox" wicket:id="launcher">Launcher</td>
+</tr>
+<tr bgcolor="#DDDDDD">
+    <td valign="top" width="20px">&nbsp;</td>
+    <td valign="top">Launcher Progress</td>
+    <td valign="top"><input wicket:id="launcherProgress" type="text" size="30" maxlength="40"></td>
+</tr>
+<tr bgcolor="#DDDDDD">
+    <td valign="top" width="20px">&nbsp;</td>
+    <td valign="top">Launcher Projectile Item</td>
+    <td valign="top"><input wicket:id="launcherDbProjectileItemType" type="text" size="30" maxlength="40"></td>
 </tr>
 <tr>
     <td colspan="3" valign="top">&nbsp;</td>
