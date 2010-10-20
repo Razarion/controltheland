@@ -85,7 +85,6 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
     @Embedded
     private DbResourceHintConfig dbResourceHintConfig;
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     @JoinTable(name = "TUTORIAL_TASK_CONFIG_ALLOWED_ITEMS",
             joinColumns = @JoinColumn(name = "factoryId"),
             inverseJoinColumns = @JoinColumn(name = "itemTypeId")

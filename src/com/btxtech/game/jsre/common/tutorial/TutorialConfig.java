@@ -25,28 +25,37 @@ import java.util.List;
  * Time: 23:25:25
  */
 public class TutorialConfig implements Serializable {
-    public static enum TYPE{
+    public static enum TYPE {
         TUTORIAL,
         TASK,
-        STEP
+        STEP,
+        TUTORIAL_FAILED
     }
+
     private List<TaskConfig> taskConfigs;
     private SimpleBase ownBase;
     private int width;
     private int height;
     private Collection<BaseAttributes> baseAttributes;
+    private String exitUrl;
+    private boolean showTrainingModeText;
+    private boolean failOnOwnItemsLost;
+
     /**
      * Used by GWT
      */
     public TutorialConfig() {
     }
 
-    public TutorialConfig(List<TaskConfig> taskConfigs, SimpleBase ownBase, int width, int height, Collection<BaseAttributes> baseAttributes) {
+    public TutorialConfig(List<TaskConfig> taskConfigs, SimpleBase ownBase, int width, int height, Collection<BaseAttributes> baseAttributes, String exitUrl, boolean showTrainingModeText, boolean failOnOwnItemsLost) {
         this.taskConfigs = taskConfigs;
         this.ownBase = ownBase;
         this.width = width;
         this.height = height;
         this.baseAttributes = baseAttributes;
+        this.exitUrl = exitUrl;
+        this.showTrainingModeText = showTrainingModeText;
+        this.failOnOwnItemsLost = failOnOwnItemsLost;
     }
 
     public List<TaskConfig> getTasks() {
@@ -67,5 +76,17 @@ public class TutorialConfig implements Serializable {
 
     public Collection<BaseAttributes> getBaseAttributes() {
         return baseAttributes;
+    }
+
+    public String getExitUrl() {
+        return exitUrl;
+    }
+
+    public boolean isShowTrainingModeText() {
+        return showTrainingModeText;
+    }
+
+    public boolean isFailOnOwnItemsLost() {
+        return failOnOwnItemsLost;
     }
 }

@@ -13,10 +13,11 @@
 
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.common.gameengine.services.utg.MissionAction;
 import com.btxtech.game.jsre.common.gameengine.services.utg.UserAction;
 import com.btxtech.game.services.TestWebSessionContextLoader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +38,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class TestUserTracking {
     @Autowired
     private UserTrackingService userTrackingService;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
 
-    @Test
+    //@Test
+
     public void testSaveUserActions() {
         ArrayList<UserAction> userActions = new ArrayList<UserAction>();
         StringBuilder stringBuilder = new StringBuilder();
@@ -46,6 +50,23 @@ public class TestUserTracking {
             stringBuilder.append("x");
         }
         userActions.add(new UserAction("XXXX", stringBuilder.toString()));
+    }
+
+    //@Test
+
+    public void testDbUserStageStorage() {
+        List<DbUserStage> dbUserStages = userGuidanceService.getAllDbUserStage();
+        Collections.swap(dbUserStages, 0, 1);
+        userGuidanceService.saveAllDbUserStage(dbUserStages);
+    }
+
+    @Test
+    public void testNextDbUserStage() {
+        List<DbUserStage> dbUserStages = userGuidanceService.getAllDbUserStage();
+        DbUserStage dbUserStage = dbUserStages.get(0);
+        System.out.println(dbUserStage);
+        // dbUserStage = userGuidanceService.getNextDbUserStage(dbUserStage);
+        // System.out.println(dbUserStage);
     }
 
 }

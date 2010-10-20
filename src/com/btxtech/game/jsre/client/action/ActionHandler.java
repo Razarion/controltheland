@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -318,6 +319,20 @@ public class ActionHandler implements CommonActionService {
         } catch (Exception e) {
             GwtCommon.handleException(e);
         }
+
+        if (Connection.getInstance().getGameInfo() instanceof SimulationInfo && target.hasSyncWeapon()) {
+            AttackCommand revengeCommand = new AttackCommand();
+            revengeCommand.setId(target.getId());
+            revengeCommand.setTimeStamp();
+            revengeCommand.setTarget(tank.getId());
+            revengeCommand.setFollowTarget(target.hasSyncMovable());
+            try {
+                target.executeCommand(revengeCommand);
+                executeCommand(target, revengeCommand);
+            } catch (Exception e) {
+                GwtCommon.handleException(e);
+            }
+        }
     }
 
     public void collect(Collection<ClientSyncItem> clientSyncItems, SyncResourceItem money) {
@@ -459,7 +474,7 @@ public class ActionHandler implements CommonActionService {
         }
 
         launch(selection.getFirst().getSyncBaseItem(), new Index(absoluteX, absoluteY));
-        Game.cockpitPanel.clearLaunchMode();        
+        Game.cockpitPanel.clearLaunchMode();
     }
 
     public void launch(SyncBaseItem launcherItem, Index target) {

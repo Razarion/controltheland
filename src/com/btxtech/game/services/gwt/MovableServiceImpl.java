@@ -49,6 +49,7 @@ import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.DbUserStage;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.ArrayList;
@@ -163,10 +164,11 @@ public class MovableServiceImpl implements MovableService {
 
     @Override
     public GameInfo getGameInfo() {
-        if (userGuidanceService.isTutorialRequired()) {
-            return createSimulationInfo();
-        } else {
+        DbUserStage dbUserStage = userGuidanceService.getDbUserStage();
+        if (dbUserStage.isRealGame()) {
             return createRealInfo();
+        } else {
+            return createSimulationInfo(dbUserStage);
         }
     }
 
@@ -204,13 +206,12 @@ public class MovableServiceImpl implements MovableService {
         return null;
     }
 
-    private SimulationInfo createSimulationInfo() {
+    private SimulationInfo createSimulationInfo(DbUserStage dbUserStage) {
         try {
             SimulationInfo simulationInfo = new SimulationInfo();
             // Common
             setCommonInfo(simulationInfo, userService, itemService, mgmtService);
-            simulationInfo.setTutorialConfig(tutorialService.getTutorialConfig());
-            //realityInfo.setAllBases(baseService.getAllBaseAttributes());
+            simulationInfo.setTutorialConfig(tutorialService.getTutorialConfig(dbUserStage));
             // Terrain
             setupTerrain(simulationInfo, terrainService);
             return simulationInfo;

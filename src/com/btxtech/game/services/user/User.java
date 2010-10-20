@@ -14,10 +14,11 @@
 package com.btxtech.game.services.user;
 
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
+import com.btxtech.game.services.utg.DbUserStage;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,6 +26,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 @Entity(name = "USER")
@@ -43,6 +45,8 @@ public class User implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "arq_name")
     )
     private Set<Arq> arqs;
+    @ManyToOne
+    private DbUserStage dbUserStage;
 
     public String getName() {
         return name;
@@ -122,5 +126,17 @@ public class User implements Serializable {
             arqs = new HashSet<Arq>();
         }
         arqs.add(arq);
+    }
+
+    public DbUserStage getUserStage() {
+        return dbUserStage;
+    }
+
+    public DbUserStage getDbUserStage() {
+        return dbUserStage;
+    }
+
+    public void setDbUserStage(DbUserStage dbUserStage) {
+        this.dbUserStage = dbUserStage;
     }
 }

@@ -25,9 +25,12 @@ import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.market.ServerMarketService;
+import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.BaseLevelStatus;
 import com.btxtech.game.services.utg.DbItemCount;
 import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.DbUserStage;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import java.sql.SQLException;
@@ -69,6 +72,8 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     private UserTrackingService userTrackingService;
     @Autowired
     private Session session;
+    @Autowired
+    private UserService userService;
     private HibernateTemplate hibernateTemplate;
     final private HashMap<SimpleBase, PendingPromotion> pendingPromotions = new HashMap<SimpleBase, PendingPromotion>();
     private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
@@ -428,12 +433,97 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     }
 
     @Override
-    public boolean isTutorialRequired() {
-        return baseService.getBaseForLoggedInUser() == null && !session.isTutorialFinished();
+    public DbUserStage getDbUserStage() {
+        User user = userService.getLoggedinUser();
+        if (user != null) {
+            return user.getUserStage();
+        }
+        return getDbUserStageFromSession();
+    }
+
+    @Override
+    public void onUserCreated(User user) {
+        user.setDbUserStage(getDbUserStageFromSession());
+        session.setDbUserStage(null);
     }
 
     @Override
     public void onTutorialFinished() {
-        session.setTutorialFinished();
+        DbUserStage dbUserStage = getDbUserStage();
+        DbUserStage nextDbUserStage = getNextDbUserStage(dbUserStage);
+        saveUserStageInUser(nextDbUserStage);
+    }
+
+    private void saveUserStageInUser(DbUserStage dbUserStage) {
+        User user = userService.getLoggedinUser();
+        if (user != null) {
+            user.setDbUserStage(dbUserStage);
+            userService.save(user);
+        } else {
+            session.setDbUserStage(dbUserStage);
+        }
+    }
+
+    private DbUserStage getNextDbUserStage(final DbUserStage dbUserStage) {
+        @SuppressWarnings("unchecked")
+        List<DbUserStage> dbUserStages = hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbUserStage.class);
+                // TODO: Assumption orderindex is contiguously
+                criteria.add(Restrictions.eq("orderIndex", dbUserStage.getOrderIndex() + 1));
+                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                return criteria.list();
+            }
+        });
+        if (dbUserStages.isEmpty()) {
+            throw new IllegalStateException("No next DbUserStage found for: " + dbUserStage);
+        } else {
+            return dbUserStages.get(0);
+        }
+    }
+
+    private DbUserStage getDbUserStageFromSession() {
+        DbUserStage dbUserStage = session.getUserStage();
+        if (dbUserStage == null) {
+            dbUserStage = getLowestDbUserStage();
+            session.setDbUserStage(dbUserStage);
+        }
+        return dbUserStage;
+    }
+
+    @SuppressWarnings("unchecked")
+    private DbUserStage getLowestDbUserStage() {
+        return getAllDbUserStage().get(0);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<DbUserStage> getAllDbUserStage() {
+        return hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbUserStage.class);
+                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                criteria.addOrder(Order.asc("orderIndex"));
+                return criteria.list();
+            }
+        });
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void saveAllDbUserStage(final List<DbUserStage> dbUserStages) {
+        for (int i = 0, dbUserStagesSize = dbUserStages.size(); i < dbUserStagesSize; i++) {
+            dbUserStages.get(i).setOrderIndex(i);
+        }
+        hibernateTemplate.execute(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                hibernateTemplate.saveOrUpdateAll(dbUserStages);
+                hibernateTemplate.flush();
+                return null;
+            }
+        });
     }
 }

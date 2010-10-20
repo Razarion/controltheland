@@ -18,6 +18,7 @@ import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.utg.BrowserDetails;
+import com.btxtech.game.services.utg.DbUserStage;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.WebCommon;
 import java.io.Serializable;
@@ -44,7 +45,7 @@ public class SessionImpl implements Session, Serializable {
     private UserItemTypeAccess userItemTypeAccess;
     private boolean javaScriptDetected = false;
     private BrowserDetails browserDetails;
-    private boolean tutorialFinished = false;
+    private DbUserStage dbUserStage;
 
     @Override
     public Connection getConnection() {
@@ -118,7 +119,6 @@ public class SessionImpl implements Session, Serializable {
 
     @Override
     public void clearGame() {
-        //base = null;
         connection = null;
         user = null;
         userItemTypeAccess = null;
@@ -141,12 +141,12 @@ public class SessionImpl implements Session, Serializable {
     }
 
     @Override
-    public boolean isTutorialFinished() {
-        return tutorialFinished;
+    public DbUserStage getUserStage() {
+        return dbUserStage;
     }
 
     @Override
-    public void setTutorialFinished() {
-        tutorialFinished = true;
+    public void setDbUserStage(DbUserStage dbUserStage) {
+        this.dbUserStage = dbUserStage;
     }
 }

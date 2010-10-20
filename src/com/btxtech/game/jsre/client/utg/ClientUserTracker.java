@@ -14,7 +14,6 @@
 package com.btxtech.game.jsre.client.utg;
 
 import com.btxtech.game.jsre.client.ClientSyncItem;
-import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.StartupProbe;
 import com.btxtech.game.jsre.client.cockpit.Group;
@@ -65,16 +64,20 @@ public class ClientUserTracker implements SelectionListener {
         });
     }
 
-    public void onTutorialFinished(long duration, long clientTimeStamp) {
-        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, null, null, duration, clientTimeStamp);
+    public void onTutorialFinished(long duration, long clientTimeStamp, Runnable runnable) {
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, null, null, duration, clientTimeStamp, runnable);
+    }
+
+    public void onTutorialFailed(long duration, long clientTimeStamp, Runnable runnable) {
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL_FAILED, null, null, duration, clientTimeStamp, runnable);
     }
 
     public void onTaskFinished(Task task, long duration, long clientTimeStamp) {
-        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TASK, task.getTaskConfig().getName(), null, duration, clientTimeStamp);
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TASK, task.getTaskConfig().getName(), null, duration, clientTimeStamp, null);
     }
 
     public void onStepFinished(Step step, Task task, long duration, long clientTimeStamp) {
-        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.STEP, step.getStepConfig().getName(), task.getTaskConfig().getName(), duration, clientTimeStamp);
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.STEP, step.getStepConfig().getName(), task.getTaskConfig().getName(), duration, clientTimeStamp, null);
     }
 
     public void startEventTracking() {

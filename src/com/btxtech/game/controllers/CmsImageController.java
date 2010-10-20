@@ -34,6 +34,7 @@ import org.springframework.web.servlet.mvc.Controller;
 public class CmsImageController implements Controller {
     public static final String IMG_PARAMETER = "img";
     public static final String IMG_START = "start";
+    public static final String IMG_USER_STAGE = "stage";
     public static final String CONTROLLER = "/spring/cms";
     @Autowired
     private CmsService cmsService;
@@ -45,10 +46,19 @@ public class CmsImageController implements Controller {
         try {
             String imgParam = httpServletRequest.getParameter(IMG_PARAMETER);
             if (IMG_START.equalsIgnoreCase(imgParam)) {
-                byte[] img = cmsService.getHomeCmsInfo().getDbCmsHomeLayout().getBgImage();
+                byte[] img = cmsService.getHomeContentStyleDTO().getDbCmsHomeLayout().getBgImage();
                 if (img != null) {
                     httpServletResponse.setContentLength(img.length);
-                    httpServletResponse.setContentType(cmsService.getHomeCmsInfo().getDbCmsHomeLayout().getBgImageContentType());
+                    httpServletResponse.setContentType(cmsService.getHomeContentStyleDTO().getDbCmsHomeLayout().getBgImageContentType());
+                    OutputStream out = httpServletResponse.getOutputStream();
+                    out.write(img);
+                    out.close();
+                }
+            } else if (IMG_USER_STAGE.equalsIgnoreCase(imgParam)) {
+                byte[] img = cmsService.getDbCmsUserStage().getBgData();
+                if (img != null) {
+                    httpServletResponse.setContentLength(img.length);
+                    httpServletResponse.setContentType(cmsService.getDbCmsUserStage().getBgContentType());
                     OutputStream out = httpServletResponse.getOutputStream();
                     out.write(img);
                     out.close();

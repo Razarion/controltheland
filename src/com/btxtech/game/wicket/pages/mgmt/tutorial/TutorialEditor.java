@@ -20,6 +20,7 @@ import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.wicket.uiservices.CrudTableHelper;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -50,6 +51,8 @@ public class TutorialEditor extends WebPage {
         form.add(new TextField<String>("enemyBaseColor"));
         form.add(new TextField<String>("width"));
         form.add(new TextField<String>("height"));
+        form.add(new CheckBox("showTrainingModeText"));
+        form.add(new CheckBox("failOnOwnItemsLost"));
 
         new CrudTableHelper<DbTaskConfig>("taskTable", null, "createTask", true, form) {
 
