@@ -267,9 +267,21 @@ public class Connection implements AsyncCallback<Void> {
         commandQueue.clear();
     }
 
-    public void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp) {
+    public void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp, final Runnable runnable) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.sendTutorialProgress(type, name, parent, duration, clientTimeStamp, this);
+            movableServiceAsync.sendTutorialProgress(type, name, parent, duration, clientTimeStamp, new AsyncCallback<Void>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    GwtCommon.handleException(caught);
+                }
+
+                @Override
+                public void onSuccess(Void result) {
+                    if (runnable != null) {
+                        runnable.run();
+                    }
+                }
+            });
         }
     }
 

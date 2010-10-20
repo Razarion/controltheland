@@ -60,7 +60,7 @@ public class PlaybackServiceImpl implements PlaybackService {
 
         // Tutorial
         MovableServiceImpl.setCommonInfo(playbackInfo, userService, itemService, mgmtService);
-        playbackInfo.setTutorialConfig(tutorialService.getTutorialConfig());
+        playbackInfo.setTutorialConfig(tutorialService.getTutorialConfig(null)); // TODO
         MovableServiceImpl.setupTerrain(playbackInfo, terrainService);
 
         // Mouse tracker

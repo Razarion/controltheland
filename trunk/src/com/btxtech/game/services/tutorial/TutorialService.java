@@ -15,6 +15,7 @@ package com.btxtech.game.services.tutorial;
 
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.utg.DbUserStage;
 
 /**
  * User: beat
@@ -26,7 +27,7 @@ public interface TutorialService {
 
     void activate();
 
-    TutorialConfig getTutorialConfig();
+    TutorialConfig getTutorialConfig(DbUserStage dbUserStage);
 
     DbResourceHintConfig getDbResourceHintConfig(int id);
 }

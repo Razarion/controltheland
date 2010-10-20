@@ -142,14 +142,20 @@ public class Simulation implements SelectionListener {
         processPreparation(taskConfig);
         taskTime = System.currentTimeMillis();
         activeTask = new Task(taskConfig, tutorialGui);
-        tutorialGui.setProgress(index, tasks.size());
+        if (simulationInfo.getTutorialConfig().isShowTrainingModeText()) {
+            tutorialGui.setProgress(index, tasks.size());
+        }
     }
 
     private void tutorialFinished() {
         activeTask = null;
         long time = System.currentTimeMillis();
-        ClientUserTracker.getInstance().onTutorialFinished(time - tutorialTime, time);
-        Window.Location.reload();
+        ClientUserTracker.getInstance().onTutorialFinished(time - tutorialTime, time, new Runnable() {
+            @Override
+            public void run() {
+                Window.Location.replace(simulationInfo.getTutorialConfig().getExitUrl());
+            }
+        });
     }
 
 
@@ -175,6 +181,18 @@ public class Simulation implements SelectionListener {
             }
         }
 
+    }
+
+    private void checkForTutorialFailed() {
+        if (simulationInfo.getTutorialConfig().isFailOnOwnItemsLost() && ItemContainer.getInstance().getOwnItemCount() == 0) {
+            long time = System.currentTimeMillis();
+            ClientUserTracker.getInstance().onTutorialFailed(time - tutorialTime, time, new Runnable() {
+                @Override
+                public void run() {
+                    Window.Location.replace(simulationInfo.getTutorialConfig().getExitUrl());
+                }
+            });
+        }
     }
 
     @Override
@@ -214,6 +232,7 @@ public class Simulation implements SelectionListener {
             activeTask.onSyncItemKilled(killedItem, actor);
             checkForTaskCompletion();
         }
+        checkForTutorialFailed();
     }
 
     public void onItemBuilt(SyncBaseItem syncBaseItem) {

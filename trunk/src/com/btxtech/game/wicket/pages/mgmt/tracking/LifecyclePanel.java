@@ -49,5 +49,7 @@ public class LifecyclePanel extends Panel {
         } else {
             add(new Label("totalStartup", "???"));
         }
+        add(new Label("userStageName", lifecycleTrackingInfo.getUserStageName()));
+
     }
 }

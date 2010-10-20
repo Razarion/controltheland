@@ -17,7 +17,6 @@ import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.WebCommon;
-import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import com.btxtech.game.wicket.pages.info.Info;
 import com.btxtech.game.wicket.pages.user.LoggedinBox;
@@ -62,17 +61,17 @@ public class Home extends WebPage implements IHeaderContributor {
         }
 
         ///////////////////////////////
-        add(new Label("style", new PropertyModel(cmsService.getHomeCmsInfo(), "style")));
-        add(new Label("text", new PropertyModel(cmsService.getHomeCmsInfo(), "text")).setEscapeModelStrings(false));
+        add(new Label("style", new PropertyModel(cmsService.getHomeContentStyleDTO(), "style")));
+        add(new Label("text", new PropertyModel(cmsService.getHomeContentStyleDTO(), "text")).setEscapeModelStrings(false));
 
-        BookmarkablePageLink<WebPage> startLink = new BookmarkablePageLink<WebPage>("startLink", Game.class);
+        BookmarkablePageLink<WebPage> startLink = new BookmarkablePageLink<WebPage>("startLink", UserStagePage.class);
         add(startLink);
         startLink.add(new Image("startImage", new IModel<ByteArrayResource>() {
 
             @Override
             public ByteArrayResource getObject() {
-                return new ByteArrayResource(cmsService.getHomeCmsInfo().getDbCmsHomeLayout().getStartImageContentType(),
-                        cmsService.getHomeCmsInfo().getDbCmsHomeLayout().getStartImage());
+                return new ByteArrayResource(cmsService.getHomeContentStyleDTO().getDbCmsHomeLayout().getStartImageContentType(),
+                        cmsService.getHomeContentStyleDTO().getDbCmsHomeLayout().getStartImage());
             }
 
             @Override
@@ -92,8 +91,8 @@ public class Home extends WebPage implements IHeaderContributor {
 
             @Override
             public ByteArrayResource getObject() {
-                return new ByteArrayResource(cmsService.getHomeCmsInfo().getDbCmsHomeLayout().getInfoImageContentType(),
-                        cmsService.getHomeCmsInfo().getDbCmsHomeLayout().getInfoImage());
+                return new ByteArrayResource(cmsService.getHomeContentStyleDTO().getDbCmsHomeLayout().getInfoImageContentType(),
+                        cmsService.getHomeContentStyleDTO().getDbCmsHomeLayout().getInfoImage());
             }
 
             @Override

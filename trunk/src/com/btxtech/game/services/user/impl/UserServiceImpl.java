@@ -23,6 +23,7 @@ import com.btxtech.game.services.user.Arq;
 import com.btxtech.game.services.user.ArqEnum;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.Date;
 import java.util.List;
@@ -46,6 +47,8 @@ public class UserServiceImpl implements UserService {
     private BaseService baseService;
     @Autowired
     private UserTrackingService userTrackingService;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -172,7 +175,9 @@ public class UserServiceImpl implements UserService {
         user.setEmail(email);
         user.setRegisterDate(new Date());
         user.addArq(getArq(ArqEnum.FORUM_POST));
+        userGuidanceService.onUserCreated(user);
         save(user);
+
         userTrackingService.onUserCreated(user);
         return user;
     }
@@ -192,7 +197,7 @@ public class UserServiceImpl implements UserService {
             userTrackingService.onUserLoggedIn(user, baseService.getBase());
         } catch (NoConnectionException e) {
             // Ignore
-            userTrackingService.onUserLoggedIn(user, null);            
+            userTrackingService.onUserLoggedIn(user, null);
         }
 
     }

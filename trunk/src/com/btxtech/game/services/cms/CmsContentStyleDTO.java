@@ -14,6 +14,7 @@
 package com.btxtech.game.services.cms;
 
 import com.btxtech.game.controllers.CmsImageController;
+import com.btxtech.game.services.utg.DbUserStage;
 import java.io.Serializable;
 
 /**
@@ -21,7 +22,7 @@ import java.io.Serializable;
  * Date: 07.07.2010
  * Time: 16:19:07
  */
-public class HomeCmsInfo implements Serializable {
+public class CmsContentStyleDTO implements Serializable {
     private String text;
     private String style;
     private DbCmsHomeLayout dbCmsHomeLayout;
@@ -94,4 +95,10 @@ public class HomeCmsInfo implements Serializable {
         style = createStyle(dbCmsHomeLayout);
         text = dbCmsHomeText.getText();
     }
+
+    public void update(DbUserStage dbUserStage, String layout) {
+        text = dbUserStage.getHtml();
+        style = layout;
+    }
+
 }

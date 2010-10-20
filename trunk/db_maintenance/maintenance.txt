@@ -58,3 +58,7 @@ UPDATE ITEM_TYPE set buildup = 10 where TYPE = "BASE"
 Item Limit
 UPDATE GUIDANCE_LEVEL set houseSpace = 10, itemLimit = 10
 UPDATE TUTORIAL_TASK_CONFIG set houseCount = 10, itemLimit = 10, isOptionAllowed = false, isSellingAllowed = false
+
+------------------
+Update TUTORIAL_CONFIG set showTrainingModeText = true
+Update TUTORIAL_CONFIG set failOnOwnItemsLost = true

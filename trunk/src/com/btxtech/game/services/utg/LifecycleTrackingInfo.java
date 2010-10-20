@@ -31,7 +31,6 @@ public class LifecycleTrackingInfo implements Serializable {
     private Long duration;
     private Long startupDuration;
     private String sessionId;
-    private boolean isTutorial;
 
     public LifecycleTrackingInfo(String SessionId, GameStartup gameStartup) {
         sessionId = SessionId;
@@ -104,10 +103,10 @@ public class LifecycleTrackingInfo implements Serializable {
     }
 
     public boolean isTutorial() {
-        return isTutorial;
+        return gameStartups.get(gameStartups.size() - 1).isTutorial();
     }
 
-    public void handleTutorial() {
-        isTutorial = UserTrackingService.TUTORIAL_MARKER.equals(gameStartups.get(gameStartups.size() - 1).getBaseName());
+    public String getUserStageName() {
+        return gameStartups.get(gameStartups.size() - 1).getUserStageName();
     }
 }

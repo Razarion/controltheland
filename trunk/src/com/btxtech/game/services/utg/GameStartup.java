@@ -52,6 +52,8 @@ public class GameStartup implements Serializable {
     @Column(nullable = false)
     private String baseName;
     private String userName;
+    private boolean tutorial;
+    private String userStageName;
 
     /**
      * Used by Hibernate
@@ -59,7 +61,9 @@ public class GameStartup implements Serializable {
     public GameStartup() {
     }
 
-    public GameStartup(Date clientTimeStamp, String type, StartupTask state, long duration, String failureText, String baseName, User user, String sessionId) {
+    public GameStartup(Date clientTimeStamp, String type, StartupTask state, long duration, String failureText, String baseName, User user, String sessionId, boolean isTutorial, String userStageName) {
+        tutorial = isTutorial;
+        this.userStageName = userStageName;
         this.clientTimeStamp = clientTimeStamp.getTime();
         this.type = type;
         niceTimeStamp = new Date();
@@ -104,6 +108,14 @@ public class GameStartup implements Serializable {
 
     public String getUserName() {
         return userName;
+    }
+
+    public boolean isTutorial() {
+        return tutorial;
+    }
+
+    public String getUserStageName() {
+        return userStageName;
     }
 
     @Override

@@ -13,12 +13,17 @@
 
 package com.btxtech.game.services.cms.impl;
 
+import com.btxtech.game.services.cms.CmsContentStyleDTO;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbCmsHomeLayout;
 import com.btxtech.game.services.cms.DbCmsHomeText;
-import com.btxtech.game.services.cms.HomeCmsInfo;
+import com.btxtech.game.services.cms.DbCmsUserStage;
+import com.btxtech.game.services.utg.DbUserStage;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,9 +44,13 @@ import org.springframework.stereotype.Component;
  */
 @Component("cmsServiceImpl")
 public class CmsServiceImpl implements CmsService {
-    private HomeCmsInfo homeCmsInfo = new HomeCmsInfo();
+    private CmsContentStyleDTO homeContentStyleDTO = new CmsContentStyleDTO();
+    private final Map<DbUserStage, CmsContentStyleDTO> userStageCmsContentStyleDTOMap = new HashMap<DbUserStage, CmsContentStyleDTO>();
     private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(CmsServiceImpl.class);
+    @Autowired
+    private UserGuidanceService userGuidanceService;
+    private DbCmsUserStage dbCmsUserStage;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -52,8 +61,42 @@ public class CmsServiceImpl implements CmsService {
     public void init() {
         try {
             activateHome();
+            activateUserStage();
         } catch (Throwable t) {
             log.error("", t);
+        }
+    }
+
+    @Override
+    public void activateUserStage() {
+        @SuppressWarnings("unchecked")
+        List<DbCmsUserStage> dbCmsUserStages = hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbCmsUserStage.class);
+                criteria.add(Restrictions.eq("isActive", true));
+                return criteria.list();
+            }
+        });
+        if (dbCmsUserStages.isEmpty()) {
+            throw new IllegalStateException("No active DbCmsUserStage found");
+        }
+        if (dbCmsUserStages.size() > 1) {
+            log.info("More the one active DbCmsUserStage found. Take first one.");
+        }
+        dbCmsUserStage = dbCmsUserStages.get(0);
+
+        List<DbUserStage> dbUserStages = userGuidanceService.getAllDbUserStage();
+        if (dbUserStages.isEmpty()) {
+            throw new IllegalStateException("No user stages defined");
+        }
+        synchronized (userStageCmsContentStyleDTOMap) {
+            userStageCmsContentStyleDTOMap.clear();
+            for (DbUserStage dbUserStage : dbUserStages) {
+                CmsContentStyleDTO cmsContentStyleDTO = new CmsContentStyleDTO();
+                cmsContentStyleDTO.update(dbUserStage, dbCmsUserStage.getLayout());
+                userStageCmsContentStyleDTOMap.put(dbUserStage, cmsContentStyleDTO);
+            }
         }
     }
 
@@ -93,12 +136,12 @@ public class CmsServiceImpl implements CmsService {
         }
         DbCmsHomeLayout dbCmsHomeLayout = dbCmsHomeLayouts.get(0);
 
-        homeCmsInfo.update(dbCmsHomeText, dbCmsHomeLayout);
+        homeContentStyleDTO.update(dbCmsHomeText, dbCmsHomeLayout);
     }
 
     @Override
-    public HomeCmsInfo getHomeCmsInfo() {
-        return homeCmsInfo;
+    public CmsContentStyleDTO getHomeContentStyleDTO() {
+        return homeContentStyleDTO;
     }
 
     @Override
@@ -151,5 +194,17 @@ public class CmsServiceImpl implements CmsService {
     @Override
     public void createDbCmsHomeLayout() {
         hibernateTemplate.save(new DbCmsHomeLayout());
+    }
+
+    @Override
+    public CmsContentStyleDTO getStagingContentStyleDTO() {
+        DbUserStage dbUserStage = userGuidanceService.getDbUserStage();
+
+
+        return userStageCmsContentStyleDTOMap.get(dbUserStage);
+    }
+
+    public DbCmsUserStage getDbCmsUserStage() {
+        return dbCmsUserStage;
     }
 }

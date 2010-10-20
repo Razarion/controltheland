@@ -20,8 +20,11 @@ import com.btxtech.game.services.tutorial.DbResourceHintConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.ResourceHintManager;
 import com.btxtech.game.services.tutorial.TutorialService;
-import java.util.Collection;
+import com.btxtech.game.services.utg.DbUserStage;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,10 +42,12 @@ import org.springframework.stereotype.Component;
 public class TutorialServiceImpl implements TutorialService, ResourceHintManager {
     private HibernateTemplate hibernateTemplate;
     private CrudServiceHelper<DbTutorialConfig> tutorialCrudServiceHelper;
-    private TutorialConfig tutorialConfig;
+    private final Map<DbUserStage, TutorialConfig> tutorialConfigMap = new HashMap<DbUserStage, TutorialConfig>();
     private int imageId;
     private HashMap<Integer, DbResourceHintConfig> resourceHints = new HashMap<Integer, DbResourceHintConfig>();
     private Log log = LogFactory.getLog(TutorialServiceImpl.class);
+    @Autowired
+    private UserGuidanceService userGuidanceService;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -66,18 +71,31 @@ public class TutorialServiceImpl implements TutorialService, ResourceHintManager
 
     @Override
     public void activate() {
-        Collection<DbTutorialConfig> dbTutorialConfigs = tutorialCrudServiceHelper.readDbChildren();
-        if (dbTutorialConfigs.isEmpty()) {
-            throw new IllegalStateException("No tutorial defined");
+        List<DbUserStage> dbUserStages = userGuidanceService.getAllDbUserStage();
+        if (dbUserStages.isEmpty()) {
+            throw new IllegalStateException("No user stages defined");
         }
-        DbTutorialConfig dbTutorialConfig = dbTutorialConfigs.iterator().next();
-        imageId = 0;
-        resourceHints.clear();
-        tutorialConfig = dbTutorialConfig.createTutorialConfig(this);
+        synchronized (tutorialConfigMap) {
+            imageId = 0;
+            resourceHints.clear();
+            tutorialConfigMap.clear();
+            for (DbUserStage dbUserStage : dbUserStages) {
+                DbTutorialConfig dbTutorialConfig = dbUserStage.getDbTutorialConfig();
+                if (dbTutorialConfig == null) {
+                    continue;
+                }
+                TutorialConfig tutorialConfig = dbTutorialConfig.createTutorialConfig(this);
+                tutorialConfigMap.put(dbUserStage, tutorialConfig);
+            }
+        }
     }
 
     @Override
-    public TutorialConfig getTutorialConfig() {
+    public TutorialConfig getTutorialConfig(DbUserStage dbUserStage) {
+        TutorialConfig tutorialConfig = tutorialConfigMap.get(dbUserStage);
+        if (tutorialConfig == null) {
+            throw new IllegalArgumentException("No TutorialConfig for: " + dbUserStage);
+        }
         return tutorialConfig;
     }
 

@@ -21,6 +21,7 @@ import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelperCollectionImpl;
+import com.btxtech.game.wicket.pages.cms.UserStagePage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+import org.hibernate.annotations.Cascade;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
@@ -48,6 +50,7 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @org.hibernate.annotations.IndexColumn(name = "orderIndex", nullable = false, base = 0)
     @JoinColumn(name = "dbTutorialConfig", nullable = false)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private List<DbTaskConfig> dbTaskConfigs;
     @Transient
     private CrudServiceHelper<DbTaskConfig> crudServiceHelper;
@@ -59,6 +62,8 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
     private int enemyBaseId;
     private String enemyBaseName;
     private String enemyBaseColor;
+    private boolean showTrainingModeText;
+    private boolean failOnOwnItemsLost;
 
 
     @Override
@@ -127,6 +132,22 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
         this.enemyBaseColor = enemyBaseColor;
     }
 
+    public boolean isShowTrainingModeText() {
+        return showTrainingModeText;
+    }
+
+    public void setShowTrainingModeText(boolean showTrainingModeText) {
+        this.showTrainingModeText = showTrainingModeText;
+    }
+
+    public boolean isFailOnOwnItemsLost() {
+        return failOnOwnItemsLost;
+    }
+
+    public void setFailOnOwnItemsLost(boolean failOnOwnItemsLost) {
+        this.failOnOwnItemsLost = failOnOwnItemsLost;
+    }
+
     public TutorialConfig createTutorialConfig(ResourceHintManager resourceHintManager) {
         ArrayList<BaseAttributes> baseAttributes = new ArrayList<BaseAttributes>();
         SimpleBase ownBase = new SimpleBase(ownBaseId);
@@ -137,7 +158,8 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
         for (DbTaskConfig dbTaskConfig : dbTaskConfigs) {
             taskConfigs.add(dbTaskConfig.createTaskConfig(resourceHintManager));
         }
-        return new TutorialConfig(taskConfigs, ownBase, width, height, baseAttributes);
+
+        return new TutorialConfig(taskConfigs, ownBase, width, height, baseAttributes, UserStagePage.URL, showTrainingModeText, failOnOwnItemsLost);
     }
 
     public void init() {

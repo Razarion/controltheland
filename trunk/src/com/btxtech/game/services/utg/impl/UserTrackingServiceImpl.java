@@ -43,6 +43,7 @@ import com.btxtech.game.services.utg.DbTotalStartupTime;
 import com.btxtech.game.services.utg.DbTutorialProgress;
 import com.btxtech.game.services.utg.DbUserAction;
 import com.btxtech.game.services.utg.DbUserMessage;
+import com.btxtech.game.services.utg.DbUserStage;
 import com.btxtech.game.services.utg.GameStartup;
 import com.btxtech.game.services.utg.GameTrackingInfo;
 import com.btxtech.game.services.utg.LifecycleTrackingInfo;
@@ -134,10 +135,11 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     @Override
     public void startUpTaskFinished(StartupTask state, Date clientTimeStamp, long duration) {
         GameStartup gameStartup;
+        DbUserStage dbUserStage = userGuidanceService.getDbUserStage();
         if (connectionService.hasConnection()) {
-            gameStartup = new GameStartup(clientTimeStamp, GameStartup.FINISHED, state, duration, null, baseService.getBaseName(baseService.getBase().getSimpleBase()), session.getUser(), session.getSessionId());
+            gameStartup = new GameStartup(clientTimeStamp, GameStartup.FINISHED, state, duration, null, baseService.getBaseName(baseService.getBase().getSimpleBase()), session.getUser(), session.getSessionId(), !dbUserStage.isRealGame(), dbUserStage.getName());
         } else {
-            gameStartup = new GameStartup(clientTimeStamp, GameStartup.FINISHED, state, duration, null, TUTORIAL_MARKER, session.getUser(), session.getSessionId());
+            gameStartup = new GameStartup(clientTimeStamp, GameStartup.FINISHED, state, duration, null, "", session.getUser(), session.getSessionId(), !dbUserStage.isRealGame(), dbUserStage.getName());
         }
         hibernateTemplate.saveOrUpdate(gameStartup);
     }
@@ -145,10 +147,11 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     @Override
     public void startUpTaskFailed(StartupTask state, Date clientTimeStamp, long duration, String failureText) {
         GameStartup gameStartup;
+        DbUserStage dbUserStage = userGuidanceService.getDbUserStage();
         if (connectionService.hasConnection()) {
-            gameStartup = new GameStartup(clientTimeStamp, GameStartup.FAILED, state, duration, failureText, baseService.getBaseName(baseService.getBase().getSimpleBase()), session.getUser(), session.getSessionId());
+            gameStartup = new GameStartup(clientTimeStamp, GameStartup.FAILED, state, duration, failureText, baseService.getBaseName(baseService.getBase().getSimpleBase()), session.getUser(), session.getSessionId(), !dbUserStage.isRealGame(), dbUserStage.getName());
         } else {
-            gameStartup = new GameStartup(clientTimeStamp, GameStartup.FAILED, state, duration, failureText, TUTORIAL_MARKER, session.getUser(), session.getSessionId());
+            gameStartup = new GameStartup(clientTimeStamp, GameStartup.FAILED, state, duration, failureText, "", session.getUser(), session.getSessionId(), !dbUserStage.isRealGame(), dbUserStage.getName());
         }
         hibernateTemplate.saveOrUpdate(gameStartup);
     }
@@ -376,8 +379,6 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                     return g1.getState().compareTo(g2.getState());
                 }
             });
-
-            trackingInfo.handleTutorial();
         }
 
         return lifecycleTrackingInfos;

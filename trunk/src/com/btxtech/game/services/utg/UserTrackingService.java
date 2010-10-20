@@ -36,8 +36,6 @@ import java.util.List;
  * Time: 22:04:31
  */
 public interface UserTrackingService {
-    static final String TUTORIAL_MARKER = "<Tutorial>"; // TODO ugly
-
     void saveBrowserDetails(BrowserDetails browserDetails);
 
     void pageAccess(BasePage basePage);
