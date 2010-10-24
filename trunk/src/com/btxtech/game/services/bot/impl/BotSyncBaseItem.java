@@ -66,7 +66,7 @@ public class BotSyncBaseItem {
 
     public void attack(SyncBaseItem target) {
         try {
-            actionService.attack(syncBaseItem, target);
+            actionService.attack(syncBaseItem, target, true);
             idle = false;
         } catch (Exception e) {
             idle = true;

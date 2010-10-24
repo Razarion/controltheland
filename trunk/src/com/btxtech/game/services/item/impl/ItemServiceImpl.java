@@ -288,7 +288,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
                 if (syncItem.getPosition() != null && rectangle.contains(syncItem.getPosition())
                         && syncItem instanceof SyncBaseItem
                         && baseSyncItem.isEnemy((SyncBaseItem) syncItem)
-                        && baseSyncItem.getSyncWeapon().isAttackAllowed(syncItem)) {
+                        && baseSyncItem.getSyncWeapon().isAttackAllowedWithoutMoving(syncItem)) {
                     return (SyncBaseItem) syncItem;
                 }
             }
