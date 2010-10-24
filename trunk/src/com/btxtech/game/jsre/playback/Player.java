@@ -18,9 +18,7 @@ import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.widgetideas.graphics.client.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -85,11 +83,11 @@ public class Player {
     private void displayItem() {
         Object object = nextFrame.getLoad();
         if (object instanceof EventTrackingItem) {
-           displayEventTrackingItemFrame((EventTrackingItem)object);
+            displayEventTrackingItemFrame((EventTrackingItem) object);
         } else if (object instanceof SelectionTrackingItem) {
-            displaySelectionTrackingItemFrame((SelectionTrackingItem)object);
+            displaySelectionTrackingItemFrame((SelectionTrackingItem) object);
         } else if (object instanceof BaseCommand) {
-            displayBaseCommandFrame((BaseCommand)object);
+            displayBaseCommandFrame((BaseCommand) object);
         } else {
             throw new IllegalArgumentException(this + " Unknown Frame: " + object);
         }
@@ -128,5 +126,10 @@ public class Player {
             timer = null;
         }
         play();
+    }
+
+    public void skip() {
+        timer.cancel();
+        displayItem();
     }
 }
