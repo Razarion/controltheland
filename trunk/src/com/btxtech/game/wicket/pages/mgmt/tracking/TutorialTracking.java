@@ -43,7 +43,7 @@ public class TutorialTracking extends Panel {
         add(new LifecyclePanel("lifecycle", lifecycleTrackingInfo));
         TutorialTrackingInfo tutorialTrackingInfo = userTrackingService.getTutorialTrackingInfo(lifecycleTrackingInfo);
 
-        overview(tutorialTrackingInfo);
+        overview(tutorialTrackingInfo, lifecycleTrackingInfo.getUserStageName());
         tutorialProgress(tutorialTrackingInfo);
     }
 
@@ -59,13 +59,14 @@ public class TutorialTracking extends Panel {
         });
     }
 
-    private void overview(TutorialTrackingInfo tutorialTrackingInfo) {
+    private void overview(TutorialTrackingInfo tutorialTrackingInfo, String stageName) {
         add(new Label("tasks", Integer.toString(tutorialTrackingInfo.getTaskCount())));
         DbEventTrackingStart dbEventTrackingStart = tutorialTrackingInfo.getDbEventTrackingStart();
         if (dbEventTrackingStart != null) {
             PageParameters pageParameters = new PageParameters();
             pageParameters.add(PlaybackEntry.SESSION_ID, dbEventTrackingStart.getSessionId());
             pageParameters.add(PlaybackEntry.START_TIME, Long.toString(dbEventTrackingStart.getClientTimeStamp()));
+            pageParameters.add(PlaybackEntry.STAGE_NAME, stageName);
             BookmarkablePageLink<PlaybackPage> pageLink = new BookmarkablePageLink<PlaybackPage>("link", PlaybackPage.class, pageParameters);
             add(pageLink);
             add(new Label("area", dbEventTrackingStart.getxResolution() + " x " + dbEventTrackingStart.getyResolution()));

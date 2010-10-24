@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RadioChoice;
 import org.apache.wicket.markup.html.form.TextField;
@@ -55,7 +56,9 @@ public class UserTracking extends WebPage {
         Form<UserTrackingFilter> form = new Form<UserTrackingFilter>("filterForm", new CompoundPropertyModel<UserTrackingFilter>(userTrackingFilter));
         add(form);
         form.add(new RadioChoice<UserTrackingFilter>("jsEnabled", UserTrackingFilter.JS_ENABLED_CHOICES));
-        form.add(new TextField<UserTrackingFilter>("days"));
+        form.add(new TextField("days"));
+        form.add(new RadioChoice<UserTrackingFilter>("cookieEnabled", UserTrackingFilter.COOKIE_ENABLED_CHOICES));
+        form.add(new TextField("hits"));
     }
 
     private void resultTable() {
