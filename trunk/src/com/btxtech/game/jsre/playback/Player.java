@@ -57,6 +57,10 @@ public class Player {
     }
 
     public void play() {
+        if (frames.isEmpty()) {
+            onFinished();
+            return;
+        }
         timer = new Timer() {
             @Override
             public void run() {
@@ -112,12 +116,16 @@ public class Player {
         Frame oldFrame = nextFrame;
         nextFrameIndex++;
         if (nextFrameIndex >= frames.size()) {
-            playbackControlPanel.setState("Finished");
+            onFinished();
             return;
         }
         Frame frame = frames.get(nextFrameIndex);
         long sleepTime = frame.getTimeStamp() - oldFrame.getTimeStamp();
         prepareNextItem(sleepTime, frame);
+    }
+
+    private void onFinished() {
+        playbackControlPanel.setState("Finished");
     }
 
     public void replay() {
