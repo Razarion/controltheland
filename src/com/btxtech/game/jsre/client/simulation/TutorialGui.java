@@ -16,8 +16,12 @@ package com.btxtech.game.jsre.client.simulation;
 import com.btxtech.game.jsre.client.ExtendedAbsolutePanel;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.client.dialogs.Dialog;
+import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -57,6 +61,13 @@ public class TutorialGui {
         html = new HTML();
         absolutePanel.add(html, 60, 333);
         html.setPixelSize(240, 200);
+
+        absolutePanel.addMouseDownHandler(new MouseDownHandler() {
+            @Override
+            public void onMouseDown(MouseDownEvent event) {
+                MessageDialog.showOnCursorPosition("Don't click here!","Click on the left side", event);
+            }
+        });
 
         progress = new HTML();
         progress.getElement().getStyle().setProperty("right", "380px");

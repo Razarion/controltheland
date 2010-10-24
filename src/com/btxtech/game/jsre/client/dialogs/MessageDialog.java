@@ -13,15 +13,17 @@
 
 package com.btxtech.game.jsre.client.dialogs;
 
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
  * User: beat
  * Date: Jul 2, 2009
  * Time: 3:23:47 PM
  */
-public class MessageDialog extends Dialog{
+public class MessageDialog extends Dialog {
     private String message;
 
     public MessageDialog(String title, String message) {
@@ -35,6 +37,19 @@ public class MessageDialog extends Dialog{
     }
 
     public static void show(String title, String message) {
-       new MessageDialog(title, message);
+        new MessageDialog(title, message);
     }
+
+    public static void showOnCursorPosition(String title, String message, final MouseDownEvent event) {
+        final MessageDialog messageDialog = new MessageDialog(title, message);
+        messageDialog.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
+            public void setPosition(int offsetWidth, int offsetHeight) {
+                int left = event.getClientX() - offsetWidth / 2;
+                int top = event.getClientY() - offsetHeight / 2;
+                messageDialog.setPopupPosition(left, top);
+            }
+        });
+
+    }
+
 }
