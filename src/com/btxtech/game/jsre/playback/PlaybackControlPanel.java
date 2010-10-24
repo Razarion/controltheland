@@ -55,6 +55,14 @@ public class PlaybackControlPanel extends TopMapPanel {
             }
         }));
 
+        // Skip frame
+        verticalPanel.add(new Button("Skip", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                playbackEntry.skip();
+            }
+        }));
+
         return verticalPanel;
     }
 

@@ -27,6 +27,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.widgetideas.graphics.client.Color;
 
@@ -50,8 +51,7 @@ public class PlaybackEntry implements EntryPoint {
         long timeStamp = Long.parseLong(Window.Location.getParameter(START_TIME));
         String stageName = Window.Location.getParameter(STAGE_NAME);
 
-        PlaybackControlPanel playbackControlPanel = new PlaybackControlPanel(this);
-        playbackControlPanel.addToParent(RootPanel.get(), TopMapPanel.Direction.RIGHT_TOP, 10);
+        final PlaybackControlPanel playbackControlPanel = new PlaybackControlPanel(this);
         player = new Player(playbackControlPanel, this);
 
         PlaybackAsync playbackAsync = GWT.create(Playback.class);
@@ -68,8 +68,14 @@ public class PlaybackEntry implements EntryPoint {
                 MapWindow.getAbsolutePanel().getElement().getStyle().setZIndex(1);
                 MapWindow.getAbsolutePanel().setPixelSize(playbackInfo.getEventTrackingStart().getXResolution(), playbackInfo.getEventTrackingStart().getYResolution());
                 extendedCanvas = new ExtendedCanvas(playbackInfo.getEventTrackingStart().getXResolution(), playbackInfo.getEventTrackingStart().getYResolution());
-                RootPanel.get().add(extendedCanvas, 0, 0);
-                extendedCanvas.getElement().getStyle().setZIndex(100);
+                AbsolutePanel absolutePanel = new AbsolutePanel();
+                absolutePanel.getElement().getStyle().setZIndex(2);
+                absolutePanel.setHeight("100%");
+                absolutePanel.setWidth("100%");
+                RootPanel.get().add(absolutePanel, 0, 0);
+                absolutePanel.add(extendedCanvas, 0,0);
+                playbackControlPanel.addToParent(absolutePanel, TopMapPanel.Direction.RIGHT_TOP, 10);
+
                 game.init();
                 ClientBase.getInstance().setAllBaseAttributes(playbackInfo.getTutorialConfig().getBaseAttributes());
                 Connection.getInstance().setupGameStructure(playbackInfo);
@@ -85,7 +91,7 @@ public class PlaybackEntry implements EntryPoint {
         extendedCanvas.beginPath();
         extendedCanvas.setLineWidth(1);
         extendedCanvas.setStrokeStyle(Color.WHITE);
-        player.play();
+        player.replay();
     }
 
     public void displayMouseTracking(EventTrackingItem eventTrackingItem) {
@@ -108,4 +114,7 @@ public class PlaybackEntry implements EntryPoint {
         }
     }
 
+    public void skip() {
+        player.skip();
+    }
 }
