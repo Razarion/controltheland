@@ -23,6 +23,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("gwtrpc/PlaybackServiceService")
 public interface Playback extends RemoteService {
-    PlaybackInfo getPlaybackInfo(String sessionId, long startTime);
+    PlaybackInfo getPlaybackInfo(String sessionId, long startTime, String stageName);
 
 }

@@ -69,4 +69,6 @@ public interface UserGuidanceService {
     List<DbUserStage> getAllDbUserStage();
 
     void saveAllDbUserStage(List<DbUserStage> dbUserStages);
+
+    DbUserStage getDbUserStage(String name);
 }

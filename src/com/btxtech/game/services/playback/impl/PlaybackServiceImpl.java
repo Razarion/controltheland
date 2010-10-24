@@ -28,9 +28,12 @@ import com.btxtech.game.services.utg.DbCommand;
 import com.btxtech.game.services.utg.DbEventTrackingItem;
 import com.btxtech.game.services.utg.DbEventTrackingStart;
 import com.btxtech.game.services.utg.DbSelectionTrackingItem;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -44,6 +47,8 @@ public class PlaybackServiceImpl implements PlaybackService {
     @Autowired
     private UserTrackingService userTrackingService;
     @Autowired
+    private UserGuidanceService userGuidanceService;
+    @Autowired
     private TerrainService terrainService;
     @Autowired
     private TutorialService tutorialService;
@@ -53,56 +58,62 @@ public class PlaybackServiceImpl implements PlaybackService {
     private MgmtService mgmtService;
     @Autowired
     private UserService userService;
+    private Log log = LogFactory.getLog(PlaybackServiceImpl.class);
 
     @Override
-    public PlaybackInfo getPlaybackInfo(String sessionId, long startTime) {
-        PlaybackInfo playbackInfo = new PlaybackInfo();
+    public PlaybackInfo getPlaybackInfo(String sessionId, long startTime, String stageName) {
+        try {
+            PlaybackInfo playbackInfo = new PlaybackInfo();
 
-        // Tutorial
-        MovableServiceImpl.setCommonInfo(playbackInfo, userService, itemService, mgmtService);
-        playbackInfo.setTutorialConfig(tutorialService.getTutorialConfig(null)); // TODO
-        MovableServiceImpl.setupTerrain(playbackInfo, terrainService);
+            // Tutorial
+            MovableServiceImpl.setCommonInfo(playbackInfo, userService, itemService, mgmtService);
+            playbackInfo.setTutorialConfig(tutorialService.getTutorialConfig(userGuidanceService.getDbUserStage(stageName)));
+            MovableServiceImpl.setupTerrain(playbackInfo, terrainService);
 
-        // Mouse tracker
-        DbEventTrackingStart start = null;
-        DbEventTrackingStart next = null;
-        Long endTime = null;
-        List<DbEventTrackingStart> dbEventTrackingStarts = userTrackingService.getDbEventTrackingStart(sessionId);
-        for (int i = 0, dbEventTrackingStartsSize = dbEventTrackingStarts.size(); i < dbEventTrackingStartsSize; i++) {
-            DbEventTrackingStart dbEventTrackingStart = dbEventTrackingStarts.get(i);
-            if (dbEventTrackingStart.getClientTimeStamp() == startTime) {
-                start = dbEventTrackingStart;
-                i++;
-                if (i < dbEventTrackingStartsSize) {
-                    next = dbEventTrackingStarts.get(i);
-                    endTime = next.getClientTimeStamp();
+            // Mouse tracker
+            DbEventTrackingStart start = null;
+            DbEventTrackingStart next = null;
+            Long endTime = null;
+            List<DbEventTrackingStart> dbEventTrackingStarts = userTrackingService.getDbEventTrackingStart(sessionId);
+            for (int i = 0, dbEventTrackingStartsSize = dbEventTrackingStarts.size(); i < dbEventTrackingStartsSize; i++) {
+                DbEventTrackingStart dbEventTrackingStart = dbEventTrackingStarts.get(i);
+                if (dbEventTrackingStart.getClientTimeStamp() == startTime) {
+                    start = dbEventTrackingStart;
+                    i++;
+                    if (i < dbEventTrackingStartsSize) {
+                        next = dbEventTrackingStarts.get(i);
+                        endTime = next.getClientTimeStamp();
+                    }
+                    break;
                 }
-                break;
             }
-        }
-        if (start != null) {
-            ArrayList<EventTrackingItem> eventTrackingItems = new ArrayList<EventTrackingItem>();
-            for (DbEventTrackingItem dbEventTrackingItem : userTrackingService.getDbEventTrackingItem(start, next)) {
-                eventTrackingItems.add(dbEventTrackingItem.createEventTrackingItem());
+            if (start != null) {
+                ArrayList<EventTrackingItem> eventTrackingItems = new ArrayList<EventTrackingItem>();
+                for (DbEventTrackingItem dbEventTrackingItem : userTrackingService.getDbEventTrackingItem(start, next)) {
+                    eventTrackingItems.add(dbEventTrackingItem.createEventTrackingItem());
+                }
+                playbackInfo.setEventTrackingItems(eventTrackingItems);
+                playbackInfo.setEventTrackingStart(start.createEventTrackingStart());
             }
-            playbackInfo.setEventTrackingItems(eventTrackingItems);
-            playbackInfo.setEventTrackingStart(start.createEventTrackingStart());
-        }
 
-        // Selections
-        ArrayList<SelectionTrackingItem> selectionTrackingItems = new ArrayList<SelectionTrackingItem>();
-        for (DbSelectionTrackingItem dbSelectionTrackingItem : userTrackingService.getDbSelectionTrackingItems(sessionId, startTime, endTime)) {
-            selectionTrackingItems.add(dbSelectionTrackingItem.createSelectionTrackingItem());
-        }
-        playbackInfo.setSelectionTrackingItems(selectionTrackingItems);
+            // Selections
+            ArrayList<SelectionTrackingItem> selectionTrackingItems = new ArrayList<SelectionTrackingItem>();
+            for (DbSelectionTrackingItem dbSelectionTrackingItem : userTrackingService.getDbSelectionTrackingItems(sessionId, startTime, endTime)) {
+                selectionTrackingItems.add(dbSelectionTrackingItem.createSelectionTrackingItem());
+            }
+            playbackInfo.setSelectionTrackingItems(selectionTrackingItems);
 
-        // Commands
-        ArrayList<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
-        for (DbCommand dbCommand : userTrackingService.getDbCommands(sessionId, startTime, endTime)) {
-            baseCommands.add(dbCommand.getBaseCommand());
-        }
-        playbackInfo.setCommands(baseCommands);
+            // Commands
+            ArrayList<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
+            for (DbCommand dbCommand : userTrackingService.getDbCommands(sessionId, startTime, endTime)) {
+                baseCommands.add(dbCommand.getBaseCommand());
+            }
+            playbackInfo.setCommands(baseCommands);
 
-        return playbackInfo;
+            return playbackInfo;
+        } catch (Throwable t) {
+            log.error("", t);
+            return null;
+        }
     }
 }

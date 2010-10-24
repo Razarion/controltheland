@@ -27,13 +27,17 @@ public class UserTrackingFilter implements Serializable {
     public static final String DISABLED = "Disabled";
     public static final String BOTH = "Both";
     public static final List JS_ENABLED_CHOICES = Arrays.asList(ENABLED, DISABLED, BOTH);
+    public static final List COOKIE_ENABLED_CHOICES = Arrays.asList(ENABLED, DISABLED, BOTH);
     private String jsEnabled;
     private int days;
+    private String cookieEnabled;
+    private Integer hits;
 
     public static UserTrackingFilter newDefaultFilter() {
         UserTrackingFilter userTrackingFilter = new UserTrackingFilter();
         userTrackingFilter.setJsEnabled(ENABLED);
         userTrackingFilter.setDays(1);
+        userTrackingFilter.setCookieEnabled(BOTH);
         return userTrackingFilter;
     }
 
@@ -51,5 +55,21 @@ public class UserTrackingFilter implements Serializable {
 
     public void setDays(int days) {
         this.days = days;
+    }
+
+    public String getCookieEnabled() {
+        return cookieEnabled;
+    }
+
+    public void setCookieEnabled(String cookieEnabled) {
+        this.cookieEnabled = cookieEnabled;
+    }
+
+    public Integer getHits() {
+        return hits;
+    }
+
+    public void setHits(Integer hits) {
+        this.hits = hits;
     }
 }

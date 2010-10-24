@@ -179,8 +179,17 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             Date timeStamp = (Date) datesAndHit[0];
             String sessionId = (String) datesAndHit[1];
             boolean cookie = datesAndHit[2] != null;
+            if (filter.getCookieEnabled().equals(UserTrackingFilter.ENABLED) && !cookie) {
+                continue;
+            } else if (filter.getCookieEnabled().equals(UserTrackingFilter.DISABLED) && cookie) {
+                continue;
+            }
             String referer = (String) datesAndHit[3];
             int hits = getPageHits(sessionId);
+            if (filter.getHits() != null && hits < filter.getHits()) {
+                continue;
+            }
+
             int startStates = getStartStates(sessionId);
             int successfulStarts = getSuccessfulStarts(sessionId);
             int enterGameHits = getGameAttempts(sessionId);

@@ -20,21 +20,25 @@
 <body>
 <h1>User Tracking</h1>
 
-<h2>Filter</h2>
-
 <span wicket:id="msgs"/>
 
 <form wicket:id="filterForm">
     <table style="border: 2px dotted #000000; width: 400px; padding: 5px;">
         <tr>
             <td valign="top">JavaScript enabled</td>
-            <td>
-              <span valign="top" wicket:id="jsEnabled"></span>
-            </td>
+            <td><span valign="top" wicket:id="jsEnabled"></span></td>
         </tr>
         <tr>
             <td valign="top">Show last days</td>
             <td valign="top"><input wicket:id="days" type="text" size="6" maxlength="6"></td>
+        </tr>
+        <tr>
+            <td valign="top">Cookie</td>
+            <td><span valign="top" wicket:id="cookieEnabled"></span></td>
+        </tr>
+        <tr>
+            <td valign="top">Page Hits (>=)</td>
+            <td valign="top"><input wicket:id="hits" type="text" size="6" maxlength="6"></td>
         </tr>
         <tr>
             <td colspan="2" align="center">

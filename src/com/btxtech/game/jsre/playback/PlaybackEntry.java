@@ -38,6 +38,7 @@ import com.google.gwt.widgetideas.graphics.client.Color;
 public class PlaybackEntry implements EntryPoint {
     public static final String SESSION_ID = "sessionId";
     public static final String START_TIME = "start";
+    public static final String STAGE_NAME = "stage";
     private ExtendedCanvas extendedCanvas;
     private Player player;
 
@@ -47,13 +48,14 @@ public class PlaybackEntry implements EntryPoint {
 
         String sessionId = Window.Location.getParameter(SESSION_ID);
         long timeStamp = Long.parseLong(Window.Location.getParameter(START_TIME));
+        String stageName = Window.Location.getParameter(STAGE_NAME);
 
         PlaybackControlPanel playbackControlPanel = new PlaybackControlPanel(this);
         playbackControlPanel.addToParent(RootPanel.get(), TopMapPanel.Direction.RIGHT_TOP, 10);
         player = new Player(playbackControlPanel, this);
 
         PlaybackAsync playbackAsync = GWT.create(Playback.class);
-        playbackAsync.getPlaybackInfo(sessionId, timeStamp, new AsyncCallback<PlaybackInfo>() {
+        playbackAsync.getPlaybackInfo(sessionId, timeStamp, stageName, new AsyncCallback<PlaybackInfo>() {
             @Override
             public void onFailure(Throwable caught) {
                 GwtCommon.handleException(caught, true);
@@ -69,7 +71,7 @@ public class PlaybackEntry implements EntryPoint {
                 RootPanel.get().add(extendedCanvas, 0, 0);
                 extendedCanvas.getElement().getStyle().setZIndex(100);
                 game.init();
-                ClientBase.getInstance().setAllBaseAttributes(playbackInfo.getTutorialConfig().getBaseAttributes());                
+                ClientBase.getInstance().setAllBaseAttributes(playbackInfo.getTutorialConfig().getBaseAttributes());
                 Connection.getInstance().setupGameStructure(playbackInfo);
                 Simulation.getInstance().start();
                 play();

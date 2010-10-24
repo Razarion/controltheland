@@ -526,4 +526,24 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
             }
         });
     }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public DbUserStage getDbUserStage(final String name) {
+        List<DbUserStage> result = hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbUserStage.class);
+                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                criteria.add(Restrictions.eq("name", name));
+                criteria.setFetchSize(1);
+                return criteria.list();
+            }
+        });
+        if (result.isEmpty()) {
+            throw new IllegalStateException("No DbUserStage found for name: " + name);
+        } else {
+            return result.get(0);
+        }
+    }
 }
