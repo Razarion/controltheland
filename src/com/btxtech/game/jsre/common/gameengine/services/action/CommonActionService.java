@@ -34,7 +34,7 @@ public interface CommonActionService {
 
     void collect(SyncBaseItem harvester, SyncResourceItem moneyItem);
 
-    void attack(SyncBaseItem attacker, SyncBaseItem target);
+    void attack(SyncBaseItem attacker, SyncBaseItem target, boolean followTarget);
 
     void upgrade(SyncBaseItem item) throws InsufficientFundsException;
 

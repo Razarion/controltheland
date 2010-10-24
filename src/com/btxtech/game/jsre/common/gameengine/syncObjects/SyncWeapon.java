@@ -72,6 +72,7 @@ public class SyncWeapon extends SyncBaseAbility {
                 if (reloadProgress >= weaponType.getReloadTime()) {
                     handleAttackState();
                     targetItem.decreaseHealth(weaponType.getDemage() * reloadProgress / weaponType.getReloadTime(), getSyncBaseItem().getBase());
+                    targetItem.onAttacked(getSyncBaseItem());
                     reloadProgress = 0;
                 }
             } else {
@@ -142,6 +143,15 @@ public class SyncWeapon extends SyncBaseAbility {
         return weaponType.isItemTypeAllowed(target.getBaseItemType().getId());
     }
 
+    public boolean isAttackAllowedWithoutMoving(SyncItem target) {
+        if (!(target instanceof SyncBaseItem)) {
+            return false;
+        }
+        SyncBaseItem baseTarget = (SyncBaseItem) target;
+        return isItemTypeAllowed(baseTarget) && isInRange(baseTarget);
+
+    }
+
     public boolean isAttackAllowed(SyncItem target) {
         if (!(target instanceof SyncBaseItem)) {
             return false;
@@ -152,10 +162,15 @@ public class SyncWeapon extends SyncBaseAbility {
         if (pos == null || targetPos == null) {
             return false;
         }
-        if (!isItemTypeAllowed(baseTarget)) {
+        return isItemTypeAllowed(baseTarget);
+    }
+
+    public boolean isInRange(SyncBaseItem target) {
+        Index pos = getSyncBaseItem().getPosition();
+        Index targetPos = target.getPosition();
+        if (pos == null || targetPos == null) {
             return false;
         }
-
         return pos.isInRadius(targetPos, weaponType.getRange() + target.getItemType().getRadius() + getSyncBaseItem().getItemType().getRadius());
     }
 
@@ -185,5 +200,9 @@ public class SyncWeapon extends SyncBaseAbility {
 
     public void setReloadProgress(double reloadProgress) {
         this.reloadProgress = reloadProgress;
+    }
+
+    public boolean isTargetInRange(SyncBaseItem syncBaseItem) {
+        return false;  //To change body of created methods use File | Settings | File Templates.
     }
 }

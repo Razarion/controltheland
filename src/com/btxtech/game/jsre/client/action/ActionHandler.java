@@ -292,7 +292,7 @@ public class ActionHandler implements CommonActionService {
                 if (ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getPosition(), clientSyncItem.getSyncBaseItem())
                         && ClientTerritoryService.getInstance().isAllowed(target.getPosition(), clientSyncItem.getSyncBaseItem())
                         && clientSyncItem.getSyncBaseItem().getSyncWeapon().isItemTypeAllowed(target)) {
-                    attack(clientSyncItem.getSyncBaseItem(), target);
+                    attack(clientSyncItem.getSyncBaseItem(), target, true);
                 }
             } else {
                 GwtCommon.sendLogToServer("ActionHandler.attack(): can not cast to TankSyncItem:" + clientSyncItem);
@@ -302,7 +302,7 @@ public class ActionHandler implements CommonActionService {
     }
 
     @Override
-    public void attack(SyncBaseItem tank, SyncBaseItem target) {
+    public void attack(SyncBaseItem tank, SyncBaseItem target, boolean followTarget) {
         if (checkCommand(tank)) {
             return;
         }
@@ -311,27 +311,13 @@ public class ActionHandler implements CommonActionService {
         attackCommand.setId(tank.getId());
         attackCommand.setTimeStamp();
         attackCommand.setTarget(target.getId());
-        attackCommand.setFollowTarget(true);
+        attackCommand.setFollowTarget(followTarget);
 
         try {
             tank.executeCommand(attackCommand);
             executeCommand(tank, attackCommand);
         } catch (Exception e) {
             GwtCommon.handleException(e);
-        }
-
-        if (Connection.getInstance().getGameInfo() instanceof SimulationInfo && target.hasSyncWeapon()) {
-            AttackCommand revengeCommand = new AttackCommand();
-            revengeCommand.setId(target.getId());
-            revengeCommand.setTimeStamp();
-            revengeCommand.setTarget(tank.getId());
-            revengeCommand.setFollowTarget(target.hasSyncMovable());
-            try {
-                target.executeCommand(revengeCommand);
-                executeCommand(target, revengeCommand);
-            } catch (Exception e) {
-                GwtCommon.handleException(e);
-            }
         }
     }
 

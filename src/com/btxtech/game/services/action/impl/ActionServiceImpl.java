@@ -264,7 +264,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
             for (SyncBaseItem attacker : guardingItems) {
                 //TankSyncItem tank = (TankSyncItem) baseSyncItem;
                 if (attacker.isEnemy(target)
-                        && attacker.getSyncWeapon().isAttackAllowed(target)
+                        && attacker.getSyncWeapon().isAttackAllowedWithoutMoving(target)
                         && attacker.getSyncWeapon().isItemTypeAllowed(target)) {
                     AttackCommand attackCommand = createAttackCommand(attacker, target);
                     cmds.add(attackCommand);
@@ -338,7 +338,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
     }
 
     @Override
-    public void attack(SyncBaseItem tank, SyncBaseItem target) {
+    public void attack(SyncBaseItem tank, SyncBaseItem target, boolean followTarget) {
         tank.stop();
         AttackCommand attackCommand = createAttackCommand(tank, target);
         attackCommand.setFollowTarget(true);

@@ -737,4 +737,22 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
         return isMoneyEarningOrConsuming;
     }
 
+    public void onAttacked(SyncBaseItem syncBaseItem) {
+        if (!hasSyncWeapon()) {
+            return;
+        }
+        if (!isIdle()) {
+            return;
+        }
+        SyncWeapon syncWeapon = getSyncWeapon();
+        if (!syncWeapon.isAttackAllowed(syncBaseItem)) {
+            return;
+        }
+
+        if (hasSyncMovable()) {
+            getServices().getActionService().attack(this,syncBaseItem, true);
+        } else if (syncWeapon.isInRange(syncBaseItem)) {
+            getServices().getActionService().attack(this,syncBaseItem, false);
+        }
+    }
 }
