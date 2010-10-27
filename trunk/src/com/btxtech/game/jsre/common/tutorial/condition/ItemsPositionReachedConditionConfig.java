@@ -32,6 +32,9 @@ public class ItemsPositionReachedConditionConfig extends AbstractConditionConfig
     }
 
     public ItemsPositionReachedConditionConfig(Collection<Integer> ids, Rectangle region) {
+        if (ids == null || ids.isEmpty()) {
+            throw new IllegalArgumentException("Ids are needed in position reached condition");
+        }
         this.ids = ids;
         this.region = region;
     }

@@ -53,6 +53,7 @@ public class TutorialEditor extends WebPage {
         form.add(new TextField<String>("height"));
         form.add(new CheckBox("showTrainingModeText"));
         form.add(new CheckBox("failOnOwnItemsLost"));
+        form.add(new TextField<Integer>("failOnMoneyBelowAndNoAttackUnits"));
 
         new CrudTableHelper<DbTaskConfig>("taskTable", null, "createTask", true, form) {
 

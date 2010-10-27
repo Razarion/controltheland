@@ -91,13 +91,14 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         if (!this.simpleBase.equals(simpleBase)) {
             return;
         }
-        if (price > Math.round(accountBalance)) {
+        if (Math.round(price) > Math.round(accountBalance)) {
             UnfrequentDialog.open(UnfrequentDialog.Type.NO_MONEY, false);
             throw new InsufficientFundsException();
         } else {
             accountBalance -= price;
             InfoPanel.getInstance().updateMoney();
         }
+        Simulation.getInstance().onWithdrawalMoney();        
     }
 
     public void setDepositResourceListener(DepositResourceListener depositResourceListener) {

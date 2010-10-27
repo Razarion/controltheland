@@ -386,6 +386,20 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         return clientBaseItems;
     }
 
+    public boolean hasOwnAttackingMovable() {
+        for (ClientSyncItem clientSyncItem : items.values()) {
+            if (clientSyncItem.isSyncBaseItem()
+                    && clientSyncItem.isMyOwnProperty()
+                    && !orphanItems.containsKey(clientSyncItem.getSyncItem().getId())
+                    && !seeminglyDeadItems.containsKey(clientSyncItem.getSyncItem().getId())
+                    && clientSyncItem.getSyncBaseItem().hasSyncWeapon()
+                    && clientSyncItem.getSyncBaseItem().hasSyncMovable()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public List<? extends SyncItem> getItems(ItemType itemType, SimpleBase simpleBase) {
         ArrayList<SyncItem> syncItems = new ArrayList<SyncItem>();
         for (ClientSyncItem clientSyncItem : items.values()) {

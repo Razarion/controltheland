@@ -40,6 +40,7 @@ public class TutorialConfig implements Serializable {
     private String exitUrl;
     private boolean showTrainingModeText;
     private boolean failOnOwnItemsLost;
+    private Integer failOnMoneyBelowAndNoAttackUnits;
 
     /**
      * Used by GWT
@@ -47,7 +48,15 @@ public class TutorialConfig implements Serializable {
     public TutorialConfig() {
     }
 
-    public TutorialConfig(List<TaskConfig> taskConfigs, SimpleBase ownBase, int width, int height, Collection<BaseAttributes> baseAttributes, String exitUrl, boolean showTrainingModeText, boolean failOnOwnItemsLost) {
+    public TutorialConfig(List<TaskConfig> taskConfigs,
+                          SimpleBase ownBase,
+                          int width,
+                          int height,
+                          Collection<BaseAttributes> baseAttributes,
+                          String exitUrl,
+                          boolean showTrainingModeText,
+                          boolean failOnOwnItemsLost,
+                          Integer failOnMoneyBelowAndNoAttackUnits) {
         this.taskConfigs = taskConfigs;
         this.ownBase = ownBase;
         this.width = width;
@@ -56,6 +65,7 @@ public class TutorialConfig implements Serializable {
         this.exitUrl = exitUrl;
         this.showTrainingModeText = showTrainingModeText;
         this.failOnOwnItemsLost = failOnOwnItemsLost;
+        this.failOnMoneyBelowAndNoAttackUnits = failOnMoneyBelowAndNoAttackUnits;
     }
 
     public List<TaskConfig> getTasks() {
@@ -88,5 +98,9 @@ public class TutorialConfig implements Serializable {
 
     public boolean isFailOnOwnItemsLost() {
         return failOnOwnItemsLost;
+    }
+
+    public Integer isFailOnMoneyBelowAndNoAttackUnits() {
+        return failOnMoneyBelowAndNoAttackUnits;
     }
 }
