@@ -30,6 +30,9 @@ public class ItemsKilledConditionConfig extends AbstractConditionConfig {
     }
 
     public ItemsKilledConditionConfig(Collection<Integer> ids) {
+        if (ids == null || ids.isEmpty()) {
+            throw new IllegalArgumentException("Ids are needed in killed condition");
+        }
         this.ids = ids;
     }
 

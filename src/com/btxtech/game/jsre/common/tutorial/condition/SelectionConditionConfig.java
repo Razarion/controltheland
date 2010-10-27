@@ -30,6 +30,9 @@ public class SelectionConditionConfig extends AbstractConditionConfig {
     }
 
     public SelectionConditionConfig(Collection<Integer> ids) {
+        if (ids == null || ids.isEmpty()) {
+            throw new IllegalArgumentException("Ids are needed in selection condition");
+        }
         this.ids = ids;
     }
 

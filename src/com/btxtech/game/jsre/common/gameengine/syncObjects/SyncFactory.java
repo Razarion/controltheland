@@ -115,6 +115,7 @@ public class SyncFactory extends SyncBaseAbility {
     public void stop() {
         buildup = 0;
         toBeBuiltType = null;
+        getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS);        
     }
 
     public void executeCommand(FactoryCommand factoryCommand) throws InsufficientFundsException, NoSuchItemTypeException {

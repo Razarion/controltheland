@@ -64,7 +64,7 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
     private String enemyBaseColor;
     private boolean showTrainingModeText;
     private boolean failOnOwnItemsLost;
-
+    private Integer failOnMoneyBelowAndNoAttackUnits;
 
     @Override
     public String getName() {
@@ -148,6 +148,14 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
         this.failOnOwnItemsLost = failOnOwnItemsLost;
     }
 
+    public Integer getFailOnMoneyBelowAndNoAttackUnits() {
+        return failOnMoneyBelowAndNoAttackUnits;
+    }
+
+    public void setFailOnMoneyBelowAndNoAttackUnits(Integer failOnMoneyBelowAndNoAttackUnits) {
+        this.failOnMoneyBelowAndNoAttackUnits = failOnMoneyBelowAndNoAttackUnits;
+    }
+
     public TutorialConfig createTutorialConfig(ResourceHintManager resourceHintManager) {
         ArrayList<BaseAttributes> baseAttributes = new ArrayList<BaseAttributes>();
         SimpleBase ownBase = new SimpleBase(ownBaseId);
@@ -159,7 +167,7 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
             taskConfigs.add(dbTaskConfig.createTaskConfig(resourceHintManager));
         }
 
-        return new TutorialConfig(taskConfigs, ownBase, width, height, baseAttributes, UserStagePage.URL, showTrainingModeText, failOnOwnItemsLost);
+        return new TutorialConfig(taskConfigs, ownBase, width, height, baseAttributes, UserStagePage.URL, showTrainingModeText, failOnOwnItemsLost, failOnMoneyBelowAndNoAttackUnits);
     }
 
     public void init() {

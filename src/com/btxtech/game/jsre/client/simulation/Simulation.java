@@ -184,8 +184,17 @@ public class Simulation implements SelectionListener {
     }
 
     private void checkForTutorialFailed() {
+        long time = System.currentTimeMillis();
         if (simulationInfo.getTutorialConfig().isFailOnOwnItemsLost() && ItemContainer.getInstance().getOwnItemCount() == 0) {
-            long time = System.currentTimeMillis();
+            ClientUserTracker.getInstance().onTutorialFailed(time - tutorialTime, time, new Runnable() {
+                @Override
+                public void run() {
+                    Window.Location.replace(simulationInfo.getTutorialConfig().getExitUrl());
+                }
+            });
+        } else if (simulationInfo.getTutorialConfig().isFailOnMoneyBelowAndNoAttackUnits() != null
+                && ClientBase.getInstance().getAccountBalance() < simulationInfo.getTutorialConfig().isFailOnMoneyBelowAndNoAttackUnits()
+                && !ItemContainer.getInstance().hasOwnAttackingMovable()) {
             ClientUserTracker.getInstance().onTutorialFailed(time - tutorialTime, time, new Runnable() {
                 @Override
                 public void run() {
@@ -247,5 +256,9 @@ public class Simulation implements SelectionListener {
             activeTask.onDeposit();
             checkForTaskCompletion();
         }
+    }
+
+    public void onWithdrawalMoney() {
+        checkForTutorialFailed();
     }
 }
