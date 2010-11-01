@@ -16,6 +16,7 @@ package com.btxtech.game.services.gwt;
 
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.StartupTask;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.UserMessage;
@@ -224,10 +225,11 @@ public class MovableServiceImpl implements MovableService {
     public static void setupTerrain(SimulationInfo simulationInfo, TerrainService terrainService) {
         simulationInfo.setTerrainSettings(new TerrainSettings(20, 10, 100, 100));
         Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
+        terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0),70 ));
         simulationInfo.setTerrainImagePositions(terrainImagePositions);
         simulationInfo.setTerrainImages(terrainService.getTerrainImages());
         Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
-        surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 2000, 1000), 1));
+        surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 2000, 1000), 3));
         simulationInfo.setSurfaceRects(surfaceRects);
         simulationInfo.setSurfaceImages(terrainService.getSurfaceImages());
     }
