@@ -79,6 +79,11 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
                 }
             });
         }
+        setupCreate(form, createId);
+
+    }
+
+    protected void setupCreate(Form form, String createId) {
         form.add(new Button(createId) {
 
             @Override
@@ -86,7 +91,6 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
                 getCrudServiceHelper().createDbChild();
             }
         });
-
     }
 
     /**

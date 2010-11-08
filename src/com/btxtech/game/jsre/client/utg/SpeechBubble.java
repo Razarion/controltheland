@@ -13,18 +13,14 @@
 
 package com.btxtech.game.jsre.client.utg;
 
-import com.btxtech.game.jsre.client.ClientSyncItem;
-import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.ExtendedCanvas;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.widgetideas.graphics.client.Color;
@@ -41,10 +37,8 @@ public class SpeechBubble extends AbsolutePanel {
     public static final int HTML_OFFSET = CURVE_SIZE / 4 + LINE_SIZE;
     public static final int BEAK_LENGTH = 20;
     public static final int BEAK_WIDTH = 10;
-    public static final String STOP_TEXT = "Stop tutorials. I know the game.";
     private ExtendedCanvas extendedCanvas;
     private boolean blink = false;
-    private boolean preventScroll;
 
     enum Direction {
         TOP,
@@ -53,38 +47,35 @@ public class SpeechBubble extends AbsolutePanel {
         RIGHT
     }
 
-    public SpeechBubble(ClientSyncItem item, String html, boolean preventScroll) {
-        // TODO
-    /*    this.preventScroll = preventScroll;
+    public SpeechBubble(SyncItem item, String html) {
         Index htmlSize = getHtmlSize(html);
-        Direction direction = getBeakDirection(item.getRelativeMiddleX(), item.getRelativeMiddleY(), htmlSize.getX(), htmlSize.getY());
-        int deltaX = (int) (item.getSyncItem().getItemType().getWidth() / 2 * 0.8);
-        int deltaY = (int) (item.getSyncItem().getItemType().getHeight() / 2 * 0.8);
+        Index relative = TerrainView.getInstance().toRelativeIndex(item.getPosition());
+        Direction direction = getBeakDirection(relative.getX(), relative.getY(), htmlSize.getX(), htmlSize.getY());
+        int deltaX = (int) (item.getItemType().getWidth() / 2 * 0.8);
+        int deltaY = (int) (item.getItemType().getHeight() / 2 * 0.8);
 
         switch (direction) {
             case BOTTOM:
-                setup(item.getRelativeMiddleX(), item.getRelativeMiddleY() - deltaY, html, htmlSize.getX(), htmlSize.getY(), direction);
+                setup(relative.getX(), relative.getY() - deltaY, html, htmlSize.getX(), htmlSize.getY(), direction);
                 break;
             case LEFT:
-                setup(item.getRelativeMiddleX() + deltaX, item.getRelativeMiddleY(), html, htmlSize.getX(), htmlSize.getY(), direction);
+                setup(relative.getX() + deltaX, relative.getY(), html, htmlSize.getX(), htmlSize.getY(), direction);
                 break;
             case RIGHT:
-                setup(item.getRelativeMiddleX() - deltaX, item.getRelativeMiddleY(), html, htmlSize.getX(), htmlSize.getY(), direction);
+                setup(relative.getX() - deltaX, relative.getY(), html, htmlSize.getX(), htmlSize.getY(), direction);
                 break;
             case TOP:
-                setup(item.getRelativeMiddleX(), item.getRelativeMiddleY() + deltaY, html, htmlSize.getX(), htmlSize.getY(), direction);
+                setup(relative.getX(), relative.getY() + deltaY, html, htmlSize.getX(), htmlSize.getY(), direction);
                 break;
-        }*/
+        }
     }
 
-    public SpeechBubble(int beakRelX, int beakRelY, String html, boolean preventScroll) {
-        this.preventScroll = preventScroll;
+    public SpeechBubble(int beakRelX, int beakRelY, String html) {
         Index htmlSize = getHtmlSize(html);
         setup(beakRelX, beakRelY, html, htmlSize.getX(), htmlSize.getY(), null);
     }
 
     private Index getHtmlSize(String html) {
-        html = html + "<hr>" + STOP_TEXT;
         AbsolutePanel absolutePanel = new AbsolutePanel();
         absolutePanel.setSize("100%", "100%");
         MapWindow.getAbsolutePanel().add(absolutePanel, 0, 0);
@@ -161,15 +152,6 @@ public class SpeechBubble extends AbsolutePanel {
         VerticalPanel verticalPanel = new VerticalPanel();
         HTML htmlContent = new HTML(html);
         verticalPanel.add(htmlContent);
-        verticalPanel.add(new HTML("<hr>"));
-        Anchor anchor = new Anchor(STOP_TEXT);
-        anchor.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                GwtCommon.preventDefault(event);
-            }
-        });
-        verticalPanel.add(anchor);
         verticalPanel.getElement().getStyle().setZIndex(2);
         verticalPanel.setPixelSize(htmlWidth, htmlHeight);
         switch (direction) {
@@ -420,9 +402,5 @@ public class SpeechBubble extends AbsolutePanel {
         extendedCanvas.setFillStyle(Color.WHITE);
         blink = false;
         extendedCanvas.fill();
-    }
-
-    public boolean isPreventScroll() {
-        return preventScroll;
     }
 }

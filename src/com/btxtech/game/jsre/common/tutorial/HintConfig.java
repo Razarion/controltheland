@@ -11,25 +11,15 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.common;
+package com.btxtech.game.jsre.common.tutorial;
 
-import java.util.Collection;
+import java.io.Serializable;
 
 /**
  * User: beat
- * Date: 23.07.2010
- * Time: 23:51:06
+ * Date: 05.11.2010
+ * Time: 18:44:42
  */
-public interface CrudServiceHelper<T extends CrudChild> {
-    Collection<T> readDbChildren();
+public interface HintConfig extends Serializable {
 
-    void deleteDbChild(T child);
-
-    void updateDbChildren(Collection<T> children);
-
-    void updateDbChild(T t);
-
-    void createDbChild();
-
-    void createDbChild(Class createClass);
 }

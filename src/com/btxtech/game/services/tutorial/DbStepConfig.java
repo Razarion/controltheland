@@ -13,21 +13,29 @@
 
 package com.btxtech.game.services.tutorial;
 
-import com.btxtech.game.jsre.common.tutorial.ResourceHintConfig;
+import com.btxtech.game.jsre.common.tutorial.HintConfig;
 import com.btxtech.game.jsre.common.tutorial.StepConfig;
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.common.CrudParent;
+import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.common.CrudServiceHelperCollectionImpl;
 import com.btxtech.game.services.tutorial.condition.DbAbstractConditionConfig;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
+import org.hibernate.annotations.Cascade;
 
 /**
  * User: beat
@@ -35,7 +43,7 @@ import javax.persistence.OneToOne;
  * Time: 19:12:10
  */
 @Entity(name = "TUTORIAL_STEP_CONFIG")
-public class DbStepConfig implements Serializable, CrudChild<DbTaskConfig> {
+public class DbStepConfig implements Serializable, CrudParent, CrudChild<DbTaskConfig> {
     @Id
     @GeneratedValue
     private Integer id;
@@ -47,8 +55,12 @@ public class DbStepConfig implements Serializable, CrudChild<DbTaskConfig> {
     private DbAbstractConditionConfig abstractConditionConfig;
     @Column(length = 50000)
     private String description;
-    @Embedded
-    private DbResourceHintConfig dbResourceHintConfig;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "dbStepConfig", nullable = false)    
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    private Set<DbHintConfig> dbHintConfigs;
+    @Transient
+    private CrudServiceHelper<DbHintConfig> hintConfigCrudHelper;
 
     @Override
     public String getName() {
@@ -62,7 +74,7 @@ public class DbStepConfig implements Serializable, CrudChild<DbTaskConfig> {
 
     @Override
     public void init() {
-        dbResourceHintConfig = new DbResourceHintConfig();
+        dbHintConfigs = new HashSet<DbHintConfig>();
     }
 
     @Override
@@ -86,13 +98,13 @@ public class DbStepConfig implements Serializable, CrudChild<DbTaskConfig> {
         this.description = description;
     }
 
-    public DbResourceHintConfig getDbResourceHintConfig() {
-        return dbResourceHintConfig;
+    public CrudServiceHelper<DbHintConfig> getHintConfigCrudServiceHelper() {
+        if (hintConfigCrudHelper == null) {
+            hintConfigCrudHelper = new CrudServiceHelperCollectionImpl<DbHintConfig>(dbHintConfigs, DbHintConfig.class, this);
+        }
+        return hintConfigCrudHelper;
     }
 
-    public void setDbResourceHintConfig(DbResourceHintConfig dbResourceHintConfig) {
-        this.dbResourceHintConfig = dbResourceHintConfig;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -110,13 +122,16 @@ public class DbStepConfig implements Serializable, CrudChild<DbTaskConfig> {
     }
 
     public StepConfig createStepConfig(ResourceHintManager resourceHintManager) {
-        ResourceHintConfig resourceHintConfig = null;
-        if (dbResourceHintConfig.getData() != null) {
-            resourceHintConfig = dbResourceHintConfig.createResourceHintConfig(resourceHintManager);
-        }
         if (abstractConditionConfig == null) {
             throw new IllegalStateException("No condition set in step: " + name);
         }
-        return new StepConfig(abstractConditionConfig.createConditionConfig(), resourceHintConfig, description, name);
+        ArrayList<HintConfig> hintConfigs = new ArrayList<HintConfig>();
+        for (DbHintConfig dbHintConfig : dbHintConfigs) {
+            HintConfig hintConfig = dbHintConfig.createHintConfig(resourceHintManager);
+            if(hintConfig != null) {
+               hintConfigs.add(hintConfig);
+            }
+        }
+        return new StepConfig(abstractConditionConfig.createConditionConfig(), hintConfigs, description, name);
     }
 }

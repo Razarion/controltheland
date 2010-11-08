@@ -11,25 +11,13 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.common;
-
-import java.util.Collection;
+package com.btxtech.game.jsre.client.simulation;
 
 /**
  * User: beat
- * Date: 23.07.2010
- * Time: 23:51:06
+ * Date: 05.11.2010
+ * Time: 18:51:42
  */
-public interface CrudServiceHelper<T extends CrudChild> {
-    Collection<T> readDbChildren();
-
-    void deleteDbChild(T child);
-
-    void updateDbChildren(Collection<T> children);
-
-    void updateDbChild(T t);
-
-    void createDbChild();
-
-    void createDbChild(Class createClass);
+public interface Hint {
+    void dispose();
 }

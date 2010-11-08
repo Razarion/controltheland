@@ -72,7 +72,6 @@ public class TaskEditor extends WebPage {
         form.add(new TextField("scroll.x"));
         form.add(new TextField("scroll.y"));
         form.add(new ConditionWrapperPanel("completionConditionConfig", dbTaskConfig));
-        form.add(new ResourceHintPanel("resourceHint", dbTaskConfig.getDbResourceHintConfig()));
         form.add(new TextField<String>("allowedItemTypeIds", new IModel<String>() {
 
             @Override

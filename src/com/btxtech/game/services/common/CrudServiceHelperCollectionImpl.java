@@ -59,8 +59,13 @@ public class CrudServiceHelperCollectionImpl<T extends CrudChild> implements Cru
 
     @Override
     public void createDbChild() {
+        createDbChild(childClass);
+    }
+
+    @Override
+    public void createDbChild(Class createClass) {
         try {
-            Constructor<T> constructor = childClass.getConstructor();
+            Constructor<T> constructor = createClass.getConstructor();
             T t = constructor.newInstance();
             t.setParent(crudParent);
             t.init();

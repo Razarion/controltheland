@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.common.tutorial;
 
 import com.btxtech.game.jsre.common.tutorial.condition.AbstractConditionConfig;
 import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -23,7 +24,7 @@ import java.io.Serializable;
  */
 public class StepConfig implements Serializable {
     private AbstractConditionConfig abstractConditionConfig;
-    private ResourceHintConfig resourceHintConfig;
+    private Collection<HintConfig> hintConfigs;
     private String description;
     private String name;
 
@@ -33,10 +34,10 @@ public class StepConfig implements Serializable {
     public StepConfig() {
     }
 
-    public StepConfig(AbstractConditionConfig abstractConditionConfig, ResourceHintConfig resourceHintConfig, String description, String name) {
+    public StepConfig(AbstractConditionConfig abstractConditionConfig, Collection<HintConfig> hintConfigs, String description, String name) {
         this.description = description;
         this.abstractConditionConfig = abstractConditionConfig;
-        this.resourceHintConfig = resourceHintConfig;
+        this.hintConfigs = hintConfigs;
         this.name = name;
     }
 
@@ -44,8 +45,8 @@ public class StepConfig implements Serializable {
         return abstractConditionConfig;
     }
 
-    public ResourceHintConfig getGraphicHintConfig() {
-        return resourceHintConfig;
+    public Collection<HintConfig> getGraphicHintConfigs() {
+        return hintConfigs;
     }
 
     public String getDescription() {
