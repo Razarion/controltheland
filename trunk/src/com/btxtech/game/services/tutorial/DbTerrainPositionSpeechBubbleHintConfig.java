@@ -15,7 +15,7 @@ package com.btxtech.game.services.tutorial;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.tutorial.HintConfig;
-import com.btxtech.game.jsre.common.tutorial.ResourceHintConfig;
+import com.btxtech.game.jsre.common.tutorial.TerrainPositionSpeechBubbleHintConfig;
 import com.btxtech.game.services.common.db.IndexUserType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -30,21 +30,21 @@ import org.hibernate.annotations.TypeDef;
  * Time: 19:19:28
  */
 @Entity
-@DiscriminatorValue("RESOURCE")
+@DiscriminatorValue("TERRAIN_SPEECH_BUBBLE")
 @TypeDef(name = "index", typeClass = IndexUserType.class)
-public class DbResourceHintConfig extends DbHintConfig {
+public class DbTerrainPositionSpeechBubbleHintConfig extends DbHintConfig {
     @Type(type = "index")
     @Columns(columns = {@Column(name = "xPos"), @Column(name = "yPos")})
     private Index position;
-    private String contentType;
-    @Column(length = 500000)
-    private byte[] data;
+    @Column(length = 50000)
+    private String html;
 
-    public static DbResourceHintConfig createImageOnly(String contentType, byte[] data) {
-        DbResourceHintConfig dbResourceHintConfig = new DbResourceHintConfig();
-        dbResourceHintConfig.setData(data);
-        dbResourceHintConfig.setContentType(contentType);
-        return dbResourceHintConfig;
+    public String getHtml() {
+        return html;
+    }
+
+    public void setHtml(String html) {
+        this.html = html;
     }
 
     public Index getPosition() {
@@ -55,22 +55,6 @@ public class DbResourceHintConfig extends DbHintConfig {
         this.position = position;
     }
 
-    public String getContentType() {
-        return contentType;
-    }
-
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
-
-    public byte[] getData() {
-        return data;
-    }
-
-    public void setData(byte[] data) {
-        this.data = data;
-    }
-
     @Override
     public void init() {
         position = new Index(0, 0);
@@ -78,10 +62,6 @@ public class DbResourceHintConfig extends DbHintConfig {
 
     @Override
     public HintConfig createHintConfig(ResourceHintManager resourceHintManager) {
-        if (data == null || data.length == 0 || contentType == null) {
-            return null;
-        }
-        int id = resourceHintManager.addResource(this);
-        return new ResourceHintConfig(position, id);
+        return new TerrainPositionSpeechBubbleHintConfig(position, html);
     }
 }

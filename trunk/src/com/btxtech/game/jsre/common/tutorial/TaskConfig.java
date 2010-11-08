@@ -36,7 +36,6 @@ public class TaskConfig implements Serializable {
     private Index scroll;
     private List<StepConfig> stepConfigs;
     private AbstractConditionConfig completionConditionConfig;
-    private ResourceHintConfig resourceHintConfig;
     private Collection<Integer> allowedItemTypes;
     private int houseCount;
     private int itemLimit;
@@ -53,7 +52,7 @@ public class TaskConfig implements Serializable {
     public TaskConfig() {
     }
 
-    public TaskConfig(boolean clearGame, ArrayList<ItemTypeAndPosition> ownItems, boolean scrollingAllowed, boolean sellingAllowed, boolean optionAllowed, boolean onlineBoxVisible, boolean infoBoxVisible, Index scroll, ArrayList<StepConfig> stepConfigs, AbstractConditionConfig completionConditionConfig, ResourceHintConfig resourceHintConfig, Collection<Integer> allowedItemTypes, int houseCount, int itemLimit, int accountBalance, String description, String finishedText, int finishedTextDuration, String name, Integer imageId) {
+    public TaskConfig(boolean clearGame, ArrayList<ItemTypeAndPosition> ownItems, boolean scrollingAllowed, boolean sellingAllowed, boolean optionAllowed, boolean onlineBoxVisible, boolean infoBoxVisible, Index scroll, ArrayList<StepConfig> stepConfigs, AbstractConditionConfig completionConditionConfig, Collection<Integer> allowedItemTypes, int houseCount, int itemLimit, int accountBalance, String description, String finishedText, int finishedTextDuration, String name, Integer imageId) {
         this.clearGame = clearGame;
         this.ownItems = ownItems;
         isScrollingAllowed = scrollingAllowed;
@@ -64,7 +63,6 @@ public class TaskConfig implements Serializable {
         this.scroll = scroll;
         this.stepConfigs = stepConfigs;
         this.completionConditionConfig = completionConditionConfig;
-        this.resourceHintConfig = resourceHintConfig;
         this.allowedItemTypes = allowedItemTypes;
         this.houseCount = houseCount;
         this.itemLimit = itemLimit;
@@ -102,10 +100,6 @@ public class TaskConfig implements Serializable {
 
     public List<StepConfig> getStepConfigs() {
         return stepConfigs;
-    }
-
-    public ResourceHintConfig getGraphicHintConfig() {
-        return resourceHintConfig;
     }
 
     public AbstractConditionConfig getCompletionConditionConfig() {

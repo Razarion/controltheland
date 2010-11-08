@@ -14,37 +14,32 @@
 package com.btxtech.game.jsre.common.tutorial;
 
 import com.btxtech.game.jsre.client.common.Index;
-import java.io.Serializable;
 
 /**
  * User: beat
  * Date: 18.07.2010
  * Time: 22:28:34
  */
-public class ResourceHintConfig implements HintConfig {
+public class TerrainPositionSpeechBubbleHintConfig implements HintConfig {
     private Index position;
-    private int imageId;
+    private String html;
 
     /**
      * Used by GWT
      */
-    public ResourceHintConfig() {
+    public TerrainPositionSpeechBubbleHintConfig() {
     }
 
-    public ResourceHintConfig(Index position, int imageId) {
+    public TerrainPositionSpeechBubbleHintConfig(Index position, String html) {
+        this.html = html;
         this.position = position;
-        this.imageId = imageId;
     }
 
-    public void setImageId(int imageId) {
-        this.imageId = imageId;
+    public String getHtml() {
+        return html;
     }
 
     public Index getPosition() {
         return position;
-    }
-
-    public int getImageId() {
-        return imageId;
     }
 }

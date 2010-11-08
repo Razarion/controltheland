@@ -82,8 +82,6 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
     private List<DbStepConfig> stepConfigs;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private DbAbstractConditionConfig completionConditionConfig; // TODO orphans are not removed from the condition table
-    @Embedded
-    private DbResourceHintConfig dbResourceHintConfig;
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "TUTORIAL_TASK_CONFIG_ALLOWED_ITEMS",
             joinColumns = @JoinColumn(name = "factoryId"),
@@ -126,7 +124,6 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
         items = new HashSet<DbItemTypeAndPosition>();
         scroll = new Index(0, 0);
         stepConfigs = new ArrayList<DbStepConfig>();
-        dbResourceHintConfig = new DbResourceHintConfig();
         allowedItems = new HashSet<DbBaseItemType>();
     }
 
@@ -193,14 +190,6 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public DbResourceHintConfig getDbResourceHintConfig() {
-        return dbResourceHintConfig;
-    }
-
-    public void setDbResourceHintConfig(DbResourceHintConfig dbResourceHintConfig) {
-        this.dbResourceHintConfig = dbResourceHintConfig;
     }
 
     @Override
@@ -298,10 +287,6 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
                 itemTypeAndPositions.add(itemTypeAndPosition);
             }
         }
-        ResourceHintConfig resourceHintConfig = null;
-        if (dbResourceHintConfig.getData() != null) {
-            resourceHintConfig = dbResourceHintConfig.createResourceHintConfig(resourceHintManager);
-        }
         Integer imageId = null;
         if (contentType != null && data != null) {
             imageId = resourceHintManager.addResource(DbResourceHintConfig.createImageOnly(contentType, data));
@@ -316,7 +301,6 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
                 scroll,
                 stepConfigs,
                 completionConditionConfig.createConditionConfig(),
-                resourceHintConfig,
                 ItemsUtil.itemTypesToCollection(allowedItems),
                 houseCount,
                 itemLimit,

@@ -34,8 +34,25 @@
             <td><textarea wicket:id="description" rows="10" cols="30"></textarea></td>
         </tr>
         <tr>
-            <td bgcolor="#dadada">Graphical hint</td>
-            <td wicket:id="resourceHint"></td>
+            <td bgcolor="#dadada">Hints</td>
+            <td>
+                <table cellpadding="1" cellspacing="1" border="0">
+                    <tr>
+                        <th bgcolor="#dadada">Name [Internal use]</th>
+                        <th bgcolor="#dadada">Hint</th>
+                        <th bgcolor="#dadada">Delete</th>
+                    </tr>
+                    <tr wicket:id="hints">
+                        <td><input type="text" wicket:id="name" size="6"></td>
+                        <td wicket:id="hint"></td>
+                        <td valign="center">
+                            <input type="submit" value="Delete" wicket:id="delete"/>
+                        </td>
+                    </tr>
+                </table>
+                <select wicket:id="createHintChoice" name="top5" size="1"></select>
+                <input type="submit" wicket:id="createHint" value="Create">
+            </td>
         </tr>
     </table>
     <br>

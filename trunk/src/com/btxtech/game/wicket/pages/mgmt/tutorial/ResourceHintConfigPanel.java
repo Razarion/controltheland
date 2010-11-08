@@ -27,11 +27,11 @@ import org.apache.wicket.model.PropertyModel;
  * Date: 27.07.2010
  * Time: 22:48:35
  */
-public class ResourceHintPanel extends Panel {
-    public ResourceHintPanel(String id, final DbResourceHintConfig dbResourceHintConfig) {
+public class ResourceHintConfigPanel extends Panel {
+    public ResourceHintConfigPanel(String id, final DbResourceHintConfig dbResourceHintConfig) {
         super(id);
-        add(new TextField<Integer>("x", new PropertyModel<Integer>(dbResourceHintConfig, "position.x")));
-        add(new TextField<Integer>("y", new PropertyModel<Integer>(dbResourceHintConfig, "position.y")));
+        add(new TextField<Integer>("position.x"));
+        add(new TextField<Integer>("position.y"));
 
         add(new FileUploadField("upload", new IModel<FileUpload>() {
 
@@ -50,21 +50,5 @@ public class ResourceHintPanel extends Panel {
             public void detach() {
             }
         }));
-        add(new Button("delete") {
-
-            @Override
-            public void onSubmit() {
-                dbResourceHintConfig.setData(null);
-                dbResourceHintConfig.setContentType(null);
-            }
-
-            @Override
-            public boolean isVisible() {
-                return dbResourceHintConfig.getData() != null
-                        && dbResourceHintConfig.getData().length > 0
-                        && dbResourceHintConfig.getContentType() != null
-                        && !dbResourceHintConfig.getContentType().trim().isEmpty();
-            }
-        });
     }
 }

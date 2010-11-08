@@ -104,6 +104,8 @@
         <mapping class="com.btxtech.game.services.tutorial.condition.DbItemsPositionReachedConditionConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.condition.DbSelectionConditionConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.condition.DbSendCommandConditionConfig"/>
-
+        <mapping class="com.btxtech.game.services.tutorial.DbItemSpeechBubbleHintConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.DbResourceHintConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.DbTerrainPositionSpeechBubbleHintConfig"/>
     </session-factory>
 </hibernate-configuration>

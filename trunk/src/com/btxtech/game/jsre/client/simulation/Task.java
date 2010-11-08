@@ -23,8 +23,11 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.tutorial.HintConfig;
 import com.btxtech.game.jsre.common.tutorial.StepConfig;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -36,8 +39,7 @@ public class Task {
     private TaskConfig taskConfig;
     private TutorialGui tutorialGui;
     private Step activeStep;
-    private GraphicHint stepGraphicHint;
-    private GraphicHint taskGraphicHint;
+    private Collection<Hint> stepGraphicHints = new ArrayList<Hint>();
     private AbstractCondition completionCondition;
     private long stepTime;
 
@@ -52,9 +54,6 @@ public class Task {
     private void start() {
         ClientItemTypeAccess.getInstance().setAllowedItemTypes(taskConfig.getAllowedItemTypes());
         ClientBase.getInstance().setAccountBalance(taskConfig.getAccountBalance());
-        if (taskConfig.getGraphicHintConfig() != null) {
-            taskGraphicHint = new GraphicHint(taskConfig.getGraphicHintConfig());
-        }
         completionCondition = ConditionFactory.createCondition(taskConfig.getCompletionConditionConfig());
         runNextStep();
     }
@@ -124,10 +123,7 @@ public class Task {
     }
 
     private void runNextStep() {
-        if (stepGraphicHint != null) {
-            stepGraphicHint.dispose();
-            stepGraphicHint = null;
-        }
+        disposeAllHints();
         StepConfig stepConfig;
         List<StepConfig> stepConfigs = taskConfig.getStepConfigs();
         if (stepConfigs.isEmpty()) {
@@ -155,11 +151,18 @@ public class Task {
         runNextStep(stepConfig);
     }
 
-    private void runNextStep(StepConfig stepConfig) {
-        if (stepConfig.getGraphicHintConfig() != null) {
-            stepGraphicHint = new GraphicHint(stepConfig.getGraphicHintConfig());
+    private void disposeAllHints() {
+        for (Hint stepGraphicHint : stepGraphicHints) {
+            stepGraphicHint.dispose();
         }
+        stepGraphicHints.clear();
+    }
+
+    private void runNextStep(StepConfig stepConfig) {
         stepTime = System.currentTimeMillis();
+        for (HintConfig hintConfig : stepConfig.getGraphicHintConfigs()) {
+            stepGraphicHints.add(HintFactory.createHint(hintConfig));
+        }
         activeStep = new Step(stepConfig, tutorialGui);
     }
 
@@ -176,12 +179,7 @@ public class Task {
     }
 
     private void cleanup() {
-        if (taskGraphicHint != null) {
-            taskGraphicHint.dispose();
-        }
-        if (stepGraphicHint != null) {
-            stepGraphicHint.dispose();
-        }
+        disposeAllHints();
         activeStep = null;
         completionCondition = null;
     }
