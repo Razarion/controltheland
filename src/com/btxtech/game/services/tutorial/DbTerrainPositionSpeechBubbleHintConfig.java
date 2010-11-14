@@ -62,6 +62,6 @@ public class DbTerrainPositionSpeechBubbleHintConfig extends DbHintConfig {
 
     @Override
     public HintConfig createHintConfig(ResourceHintManager resourceHintManager) {
-        return new TerrainPositionSpeechBubbleHintConfig(position, html);
+        return new TerrainPositionSpeechBubbleHintConfig(isCloseOnTaskEnd(), position, html);
     }
 }

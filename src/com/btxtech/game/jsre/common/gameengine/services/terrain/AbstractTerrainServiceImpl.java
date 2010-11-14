@@ -440,7 +440,6 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
 
         return Game.cockpitPanel.isExpanded() && getRectangle4Widget(Game.cockpitPanel).contains(point)
                 || InfoPanel.getInstance().isExpanded() && getRectangle4Widget(InfoPanel.getInstance()).contains(point)
-                || RadarPanel.getInstance().isExpanded() && getRectangle4Widget(RadarPanel.getInstance()).contains(point)
                 || OnlineBasePanel.getInstance().isExpanded() && getRectangle4Widget(OnlineBasePanel.getInstance()).contains(point);
     }
 

@@ -20,7 +20,7 @@ import com.btxtech.game.jsre.client.common.Index;
  * Date: 18.07.2010
  * Time: 22:28:34
  */
-public class TerrainPositionSpeechBubbleHintConfig implements HintConfig {
+public class TerrainPositionSpeechBubbleHintConfig extends HintConfig {
     private Index position;
     private String html;
 
@@ -30,7 +30,8 @@ public class TerrainPositionSpeechBubbleHintConfig implements HintConfig {
     public TerrainPositionSpeechBubbleHintConfig() {
     }
 
-    public TerrainPositionSpeechBubbleHintConfig(Index position, String html) {
+    public TerrainPositionSpeechBubbleHintConfig(boolean closeOnTaskEnd, Index position, String html) {
+        super(closeOnTaskEnd);
         this.html = html;
         this.position = position;
     }

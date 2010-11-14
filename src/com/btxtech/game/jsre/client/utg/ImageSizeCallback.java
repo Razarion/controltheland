@@ -11,29 +11,22 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.common.tutorial;
+package com.btxtech.game.jsre.client.utg;
 
-import java.io.Serializable;
+import com.google.gwt.user.client.ui.Image;
 
 /**
  * User: beat
- * Date: 05.11.2010
- * Time: 18:44:42
+ * Date: 14.11.2010
+ * Time: 13:17:44
  */
-public class HintConfig implements Serializable {
-    private boolean closeOnTaskEnd;
-
+public interface ImageSizeCallback {
     /**
-     * Used by GWT
+     * Can be called multiple time
+     *
+     * @param image Image
+     * @param width  of the image
+     * @param height of the image
      */
-    public HintConfig() {
-    }
-
-    public HintConfig(boolean closeOnTaskEnd) {
-        this.closeOnTaskEnd = closeOnTaskEnd;
-    }
-
-    public boolean isCloseOnTaskEnd() {
-        return closeOnTaskEnd;
-    }
+    void onImageSize(Image image, int width, int height);
 }

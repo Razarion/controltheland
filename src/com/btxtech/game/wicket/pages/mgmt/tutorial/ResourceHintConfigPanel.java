@@ -15,6 +15,7 @@ package com.btxtech.game.wicket.pages.mgmt.tutorial;
 
 import com.btxtech.game.services.tutorial.DbResourceHintConfig;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
@@ -30,6 +31,7 @@ import org.apache.wicket.model.PropertyModel;
 public class ResourceHintConfigPanel extends Panel {
     public ResourceHintConfigPanel(String id, final DbResourceHintConfig dbResourceHintConfig) {
         super(id);
+        add(new CheckBox("closeOnTaskEnd"));
         add(new TextField<Integer>("position.x"));
         add(new TextField<Integer>("position.y"));
 

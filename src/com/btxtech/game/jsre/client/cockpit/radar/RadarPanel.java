@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.client.cockpit.radar;
 
-import com.btxtech.game.jsre.client.TopMapPanel;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -24,10 +23,8 @@ import com.google.gwt.user.client.ui.Widget;
  * Date: 22.12.2009
  * Time: 12:26:58
  */
-public class RadarPanel extends TopMapPanel {
+public class RadarPanel {
     public static final String NO_POWER = "<br/>You do not have a enough energy. Get a Power Plant from <a href=\"?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.market.MarketPage\" target=\"_blank\">Market</a> and build it with your construction vehicle.";
-    public static final int WIDTH = 200;
-    public static final int HEIGHT = 200;
     public static final String RADAR_1 = "Radar 1";
     private static final RadarPanel INSTANCE = new RadarPanel();
     private MiniTerrain miniTerrain;
@@ -35,7 +32,7 @@ public class RadarPanel extends TopMapPanel {
     private RadarItemView radarItemView;
     private boolean hasRadar1 = false;
     private boolean hasEnergy = false;
-    private HTML noRadaPanel;
+    private HTML noRadarPanel;
 
     public static RadarPanel getInstance() {
         return INSTANCE;
@@ -47,35 +44,34 @@ public class RadarPanel extends TopMapPanel {
     private RadarPanel() {
     }
 
-    @Override
-    protected Widget createBody() {
+    public AbsolutePanel createWidget(int width, int height) {
         AbsolutePanel absolutePanel = new AbsolutePanel();
-        absolutePanel.setPixelSize(WIDTH, HEIGHT);
+        absolutePanel.setPixelSize(width, height);
         boolean state = !hasRadar1 || hasEnergy;
 
         // No radar Panel
-        noRadaPanel = new HTML();
-        noRadaPanel.setSize("100%", "100%");
-        noRadaPanel.getElement().getStyle().setColor("#FFFFFF");
-        noRadaPanel.getElement().getStyle().setBackgroundColor("#000000");
-        noRadaPanel.setHTML(NO_POWER);
-        noRadaPanel.setVisible(!state);
-        absolutePanel.add(noRadaPanel, 0, 0);
+        noRadarPanel = new HTML();
+        noRadarPanel.setSize("100%", "100%");
+        noRadarPanel.getElement().getStyle().setColor("#FFFFFF");
+        noRadarPanel.getElement().getStyle().setBackgroundColor("#000000");
+        noRadarPanel.setHTML(NO_POWER);
+        noRadarPanel.setVisible(!state);
+        absolutePanel.add(noRadarPanel, 0, 0);
 
         // Terrain
-        miniTerrain = new MiniTerrain(WIDTH, HEIGHT);
+        miniTerrain = new MiniTerrain(width, height);
         miniTerrain.getElement().getStyle().setZIndex(1);
         miniTerrain.setVisible(state);
         absolutePanel.add(miniTerrain, 0, 0);
 
         // Own item view
-        radarItemView = new RadarItemView(WIDTH, HEIGHT);
+        radarItemView = new RadarItemView(width, height);
         radarItemView.getElement().getStyle().setZIndex(2);
         radarItemView.setVisible(hasRadar1 && hasEnergy);
         absolutePanel.add(radarItemView, 0, 0);
 
         // Frame view
-        radarFrameView = new RadarFrameView(WIDTH, HEIGHT);
+        radarFrameView = new RadarFrameView(width, height);
         radarFrameView.getElement().getStyle().setZIndex(3);
         radarFrameView.setVisible(state);
         absolutePanel.add(radarFrameView, 0, 0);
@@ -103,10 +99,10 @@ public class RadarPanel extends TopMapPanel {
         if (radarItemView != null) {
             radarItemView.setVisible(hasRadar1 && hasEnergy);
         }
-        if (noRadaPanel != null) {
+        if (noRadarPanel != null) {
             if (hasRadar1 && !hasEnergy) {
-                noRadaPanel.setVisible(true);
-                noRadaPanel.setHTML(NO_POWER);
+                noRadarPanel.setVisible(true);
+                noRadarPanel.setHTML(NO_POWER);
             }
         }
     }
@@ -124,5 +120,9 @@ public class RadarPanel extends TopMapPanel {
         miniTerrain.onTerrainSettings(terrainSettings);
         radarFrameView.onTerrainSettings(terrainSettings);
         radarItemView.onTerrainSettings(terrainSettings);
+    }
+
+    public RadarFrameView getRadarFrameView() {
+        return radarFrameView;
     }
 }

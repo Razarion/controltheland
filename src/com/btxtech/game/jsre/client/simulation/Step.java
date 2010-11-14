@@ -33,7 +33,6 @@ public class Step {
 
     public Step(StepConfig stepConfig, TutorialGui tutorialGui) {
         this.stepConfig = stepConfig;
-        tutorialGui.setStepText(stepConfig.getDescription());
         condition = ConditionFactory.createCondition(stepConfig.getAbstractConditionConfig());
     }
 

@@ -48,11 +48,11 @@ public class MainTerrainEditor implements EntryPoint {
         MapWindow.getAbsolutePanel().add(cockpit, 30, 30);
 
         // Radar panel
-        MapWindow.getAbsolutePanel().add(RadarPanel.getInstance(), 1, 30);
-        RadarPanel.getInstance().getElement().getStyle().setProperty("left", "");
-        RadarPanel.getInstance().getElement().getStyle().setProperty("right", "30px");
-        RadarPanel.getInstance().setRadarState1(true);
-        RadarPanel.getInstance().updateEnergy(1, 0);
+        //MapWindow.getAbsolutePanel().add(RadarPanel.getInstance(), 1, 30);
+        //RadarPanel.getInstance().getElement().getStyle().setProperty("left", "");
+        //RadarPanel.getInstance().getElement().getStyle().setProperty("right", "30px");
+        //RadarPanel.getInstance().setRadarState1(true);
+        //RadarPanel.getInstance().updateEnergy(1, 0);
 
         terrainEditor.getTerrainInfo(new AsyncCallback<TerrainInfo>() {
             @Override

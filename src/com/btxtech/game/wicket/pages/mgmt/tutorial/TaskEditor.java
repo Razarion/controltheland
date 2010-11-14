@@ -64,6 +64,7 @@ public class TaskEditor extends WebPage {
         add(form);
 
         form.add(new CheckBox("clearGame"));
+        form.add(new TextField<String>("taskText"));
         form.add(new CheckBox("isScrollingAllowed"));
         form.add(new CheckBox("isOnlineBoxVisible"));
         form.add(new CheckBox("isInfoBoxVisible"));
@@ -92,7 +93,6 @@ public class TaskEditor extends WebPage {
         form.add(new TextField("accountBalance"));
         form.add(new TextField("itemLimit"));
         form.add(new TextField("houseCount"));
-        form.add(new TextArea("description"));
         form.add(new FileUploadField("upload", new IModel<FileUpload>() {
 
             @Override
@@ -102,17 +102,15 @@ public class TaskEditor extends WebPage {
 
             @Override
             public void setObject(FileUpload fileUpload) {
-                dbTaskConfig.setData(fileUpload.getBytes());
-                dbTaskConfig.setContentType(fileUpload.getContentType());
+                dbTaskConfig.setFinishImageData(fileUpload.getBytes());
+                dbTaskConfig.setFinishedImageContentType(fileUpload.getContentType());
             }
 
             @Override
             public void detach() {
             }
         }));
-
-        form.add(new TextArea("finishedText"));
-        form.add(new TextField("finishedTestDuration"));
+        form.add(new TextField("finishImageDuration"));
 
 
         new CrudTableHelper<DbItemTypeAndPosition>("itemTable", null, "createItem", false, form) {

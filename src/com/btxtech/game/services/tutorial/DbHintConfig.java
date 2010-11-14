@@ -47,6 +47,7 @@ abstract public class DbHintConfig implements CrudChild<DbStepConfig>, Serializa
     @ManyToOne(optional = false)
     @JoinColumn(name = "dbStepConfig", insertable = false, updatable = false, nullable = false)
     private DbStepConfig parent;
+    private boolean closeOnTaskEnd;
 
     @Override
     public boolean equals(Object o) {
@@ -86,5 +87,13 @@ abstract public class DbHintConfig implements CrudChild<DbStepConfig>, Serializa
     @Override
     public void setParent(DbStepConfig parent) {
         this.parent = parent;
+    }
+
+    public boolean isCloseOnTaskEnd() {
+        return closeOnTaskEnd;
+    }
+
+    public void setCloseOnTaskEnd(boolean closeOnTaskEnd) {
+        this.closeOnTaskEnd = closeOnTaskEnd;
     }
 }

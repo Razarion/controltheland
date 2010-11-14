@@ -21,7 +21,7 @@ import java.io.Serializable;
  * Date: 18.07.2010
  * Time: 22:28:34
  */
-public class ResourceHintConfig implements HintConfig {
+public class ResourceHintConfig extends HintConfig {
     private Index position;
     private int imageId;
 
@@ -31,7 +31,8 @@ public class ResourceHintConfig implements HintConfig {
     public ResourceHintConfig() {
     }
 
-    public ResourceHintConfig(Index position, int imageId) {
+    public ResourceHintConfig(boolean closeOnTaskEnd, Index position, int imageId) {
+        super(closeOnTaskEnd);
         this.position = position;
         this.imageId = imageId;
     }

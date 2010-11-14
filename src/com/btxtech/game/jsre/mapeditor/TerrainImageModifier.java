@@ -73,7 +73,7 @@ public class TerrainImageModifier implements TerrainMouseMoveListener, MouseDown
 
     @Override
     public void onMove(int absoluteLeft, int absoluteTop, int relativeLeft, int relativeTop) {
-        if (cockpit.isInside(relativeLeft, relativeTop) || RadarPanel.getInstance().isInside(relativeLeft, relativeTop)) {
+        if (cockpit.isInside(relativeLeft, relativeTop)) {
             marker.setVisible(false);
             return;
         }

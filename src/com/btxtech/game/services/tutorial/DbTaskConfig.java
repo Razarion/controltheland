@@ -15,7 +15,6 @@ package com.btxtech.game.services.tutorial;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
-import com.btxtech.game.jsre.common.tutorial.ResourceHintConfig;
 import com.btxtech.game.jsre.common.tutorial.StepConfig;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 import com.btxtech.game.services.common.CrudChild;
@@ -33,7 +32,6 @@ import java.util.List;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -89,20 +87,16 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
     )
     private Set<DbBaseItemType> allowedItems;
     private int accountBalance;
-    @Column(length = 50000)
-    private String description;
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "dbTutorialConfig", insertable = false, updatable = false, nullable = false)
     private DbTutorialConfig dbTutorialConfig;
-    private String finishedText;
-    private int finishedTestDuration;
-    @Column(name = "imageContentType")
-    private String contentType;
-    @Column(name = "imageData", length = 500000)
-    private byte[] data;
+    private int finishImageDuration;
+    private String finishedImageContentType;
+    @Column(length = 500000)
+    private byte[] finishImageData;
     private int itemLimit;
     private int houseCount;
+    private String taskText;
 
     @Transient
     private CrudServiceHelper<DbItemTypeAndPosition> itemTypeAndPositionCrudHelper;
@@ -184,14 +178,6 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
         this.accountBalance = accountBalance;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -210,28 +196,28 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
         this.completionConditionConfig = completionConditionConfig;
     }
 
-    public String getFinishedText() {
-        return finishedText;
+    public int getFinishImageDuration() {
+        return finishImageDuration;
     }
 
-    public void setFinishedText(String finishedText) {
-        this.finishedText = finishedText;
+    public void setFinishImageDuration(int finishImageDuration) {
+        this.finishImageDuration = finishImageDuration;
     }
 
-    public int getFinishedTestDuration() {
-        return finishedTestDuration;
+    public String getFinishedImageContentType() {
+        return finishedImageContentType;
     }
 
-    public void setFinishedTestDuration(int finishedTestDuration) {
-        this.finishedTestDuration = finishedTestDuration;
+    public void setFinishedImageContentType(String finishedImageContentType) {
+        this.finishedImageContentType = finishedImageContentType;
     }
 
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
+    public byte[] getFinishImageData() {
+        return finishImageData;
     }
 
-    public void setData(byte[] data) {
-        this.data = data;
+    public void setFinishImageData(byte[] finishImageData) {
+        this.finishImageData = finishImageData;
     }
 
     public int getItemLimit() {
@@ -266,6 +252,14 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
         isOptionAllowed = optionAllowed;
     }
 
+    public String getTaskText() {
+        return taskText;
+    }
+
+    public void setTaskText(String taskText) {
+        this.taskText = taskText;
+    }
+
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
@@ -287,11 +281,12 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
                 itemTypeAndPositions.add(itemTypeAndPosition);
             }
         }
-        Integer imageId = null;
-        if (contentType != null && data != null) {
-            imageId = resourceHintManager.addResource(DbResourceHintConfig.createImageOnly(contentType, data));
+        Integer finishImageId = null;
+        if (finishedImageContentType != null && finishImageData != null) {
+            finishImageId = resourceHintManager.addResource(DbResourceHintConfig.createImageOnly(finishedImageContentType, finishImageData));
         }
         return new TaskConfig(clearGame,
+                taskText,
                 itemTypeAndPositions,
                 isScrollingAllowed,
                 isSellingAllowed,
@@ -305,11 +300,9 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
                 houseCount,
                 itemLimit,
                 accountBalance,
-                description,
-                finishedText,
-                finishedTestDuration * 1000,
+                finishImageDuration * 1000,
                 name,
-                imageId);
+                finishImageId);
     }
 
     public CrudServiceHelper<DbItemTypeAndPosition> getItemCrudServiceHelper() {

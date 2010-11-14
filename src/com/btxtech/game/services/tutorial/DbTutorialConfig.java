@@ -62,7 +62,6 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
     private int enemyBaseId;
     private String enemyBaseName;
     private String enemyBaseColor;
-    private boolean showTrainingModeText;
     private boolean failOnOwnItemsLost;
     private Integer failOnMoneyBelowAndNoAttackUnits;
 
@@ -132,14 +131,6 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
         this.enemyBaseColor = enemyBaseColor;
     }
 
-    public boolean isShowTrainingModeText() {
-        return showTrainingModeText;
-    }
-
-    public void setShowTrainingModeText(boolean showTrainingModeText) {
-        this.showTrainingModeText = showTrainingModeText;
-    }
-
     public boolean isFailOnOwnItemsLost() {
         return failOnOwnItemsLost;
     }
@@ -167,7 +158,7 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
             taskConfigs.add(dbTaskConfig.createTaskConfig(resourceHintManager));
         }
 
-        return new TutorialConfig(taskConfigs, ownBase, width, height, baseAttributes, UserStagePage.URL, showTrainingModeText, failOnOwnItemsLost, failOnMoneyBelowAndNoAttackUnits);
+        return new TutorialConfig(taskConfigs, ownBase, width, height, baseAttributes, UserStagePage.URL, failOnOwnItemsLost, failOnMoneyBelowAndNoAttackUnits);
     }
 
     public void init() {

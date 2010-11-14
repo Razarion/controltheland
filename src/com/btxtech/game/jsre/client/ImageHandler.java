@@ -14,10 +14,13 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.utg.ImageSizeCallback;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTurnable;
+import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Image;
@@ -178,7 +181,7 @@ public class ImageHandler {
         return createImageIE6TransparencyProblem("/" + IMAGES + "/" + ICONS + "/" + icon + PNG_SUFFIX, 16, 16);
     }
 
-    public static Image getTutorialImage(int id) {
+    public static Image getTutorialImage(int id, final ImageSizeCallback imageSizeCallback) {
         StringBuilder url = new StringBuilder();
         url.append(Constants.TUTORIAL_RESOURCE_URL);
         url.append("?");
@@ -186,8 +189,21 @@ public class ImageHandler {
         url.append("=");
         url.append(id);
         String urlStr = url.toString();
+        final Image image = new Image();
+        if (imageSizeCallback != null) {
+            image.addLoadHandler(new LoadHandler() {
+                @Override
+                public void onLoad(LoadEvent event) {
+                    imageSizeCallback.onImageSize(image, image.getWidth(), image.getHeight());
+                }
+            });
+        }
+        image.setUrl(urlStr);
+        if (image.getWidth() > 0 && image.getHeight() > 0 && imageSizeCallback != null) {
+            imageSizeCallback.onImageSize(image, image.getWidth(), image.getHeight());
+        }
         loadImage(urlStr);
-        return new Image(urlStr);
+        return image;
     }
 
 

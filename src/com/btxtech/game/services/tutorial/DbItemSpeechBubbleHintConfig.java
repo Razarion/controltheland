@@ -56,6 +56,6 @@ public class DbItemSpeechBubbleHintConfig extends DbHintConfig {
 
     @Override
     public HintConfig createHintConfig(ResourceHintManager resourceHintManager) {
-        return new ItemSpeechBubbleHintConfig(syncItemId, html);
+        return new ItemSpeechBubbleHintConfig(isCloseOnTaskEnd(), syncItemId, html);
     }
 }

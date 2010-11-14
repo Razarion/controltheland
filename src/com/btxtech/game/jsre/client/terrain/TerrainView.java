@@ -66,9 +66,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
      * Singleton
      */
     private TerrainView() {
-        //canvas.addMouseDownHandler(this);
         canvas.addMouseOutHandler(this);
-        //canvas.addMouseUpHandler(this);
         canvas.sinkEvents(Event.ONMOUSEMOVE);
     }
 
