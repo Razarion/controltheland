@@ -19,6 +19,7 @@
 package com.btxtech.game.jsre.client.utg;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.CockpitNew;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.InfoPanel;
 import com.btxtech.game.jsre.client.common.Level;
@@ -83,12 +84,12 @@ public class MissionTarget {
 
     public void setLevel(Level level) {
         this.level = level;
-        InfoPanel.getInstance().setLevel(level.getName());
+        CockpitNew.getInstance().setLevel(level.getName());
     }
 
     public void onLevelChanged(LevelPacket levelPacket) {
         ClientBase.getInstance().setItemLimit(levelPacket.getLevel().getItemLimit());
-        InfoPanel.getInstance().updateItemLimit();
+        CockpitNew.getInstance().updateItemLimit();
         loadingRequired = true;
         String oldLevel = level.getName();
         setLevel(levelPacket.getLevel());

@@ -133,7 +133,7 @@ public class Connection implements AsyncCallback<Void> {
         ClientBase.getInstance().setAllBaseAttributes(realityInfo.getAllBase());
         ClientBase.getInstance().setBase(realityInfo.getBase());
         ClientBase.getInstance().setAccountBalance(realityInfo.getAccountBalance());
-        InfoPanel.getInstance().setGameInfo(realityInfo);
+        CockpitNew.getInstance().setGameInfo(realityInfo);
         ClientItemTypeAccess.getInstance().setAllowedItemTypes(realityInfo.getAllowedItemTypes());
         RadarPanel.getInstance().updateEnergy(realityInfo.getEnergyGenerating(), realityInfo.getEnergyConsuming());
         OnlineBasePanel.getInstance().setOnlineBases(realityInfo.getOnlineBaseUpdate());
@@ -221,14 +221,14 @@ public class Connection implements AsyncCallback<Void> {
                     ClientBase.getInstance().setAccountBalance(balancePacket.getAccountBalance());
                 } else if (packet instanceof XpBalancePacket) {
                     XpBalancePacket xpBalancePacket = (XpBalancePacket) packet;
-                    InfoPanel.getInstance().updateXp(xpBalancePacket.getXp());
+                    CockpitNew.getInstance().updateXp(xpBalancePacket.getXp());
                 } else if (packet instanceof ItemTypeAccessSyncInfo) {
                     ItemTypeAccessSyncInfo itemTypeAccessSyncInfo = (ItemTypeAccessSyncInfo) packet;
                     ClientItemTypeAccess.getInstance().setAllowedItemTypes(itemTypeAccessSyncInfo.getAllowedItemTypes());
                     SelectionHandler.getInstance().refresh();
                 } else if (packet instanceof EnergyPacket) {
                     EnergyPacket energyPacket = (EnergyPacket) packet;
-                    InfoPanel.getInstance().updateEnergy(energyPacket.getGenerating(), energyPacket.getConsuming());
+                    CockpitNew.getInstance().updateEnergy(energyPacket.getGenerating(), energyPacket.getConsuming());
                     RadarPanel.getInstance().updateEnergy(energyPacket.getGenerating(), energyPacket.getConsuming());
                 } else if (packet instanceof UserMessage) {
                     OnlineBasePanel.getInstance().onMessageReceived((UserMessage) packet);
@@ -242,7 +242,7 @@ public class Connection implements AsyncCallback<Void> {
                 } else if (packet instanceof HouseSpacePacket) {
                     HouseSpacePacket houseSpacePacket = (HouseSpacePacket) packet;
                     ClientBase.getInstance().setHouseSpace(houseSpacePacket.getHouseSpace());
-                    InfoPanel.getInstance().updateItemLimit();
+                    CockpitNew.getInstance().updateItemLimit();
                 } else {
                     throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }
