@@ -51,7 +51,6 @@ public class TutorialEditor extends WebPage {
         form.add(new TextField<String>("enemyBaseColor"));
         form.add(new TextField<String>("width"));
         form.add(new TextField<String>("height"));
-        form.add(new CheckBox("showTrainingModeText"));
         form.add(new CheckBox("failOnOwnItemsLost"));
         form.add(new TextField<Integer>("failOnMoneyBelowAndNoAttackUnits"));
 

@@ -14,6 +14,7 @@
 package com.btxtech.game.wicket.pages.mgmt.tutorial;
 
 import com.btxtech.game.services.tutorial.DbItemSpeechBubbleHintConfig;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -26,6 +27,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 public class ItemSpeechBubbleHintConfigPanel extends Panel {
     public ItemSpeechBubbleHintConfigPanel(String id) {
         super(id);
+        add(new CheckBox("closeOnTaskEnd"));
         add(new TextField("syncItemId"));
         add(new TextArea("html"));
     }

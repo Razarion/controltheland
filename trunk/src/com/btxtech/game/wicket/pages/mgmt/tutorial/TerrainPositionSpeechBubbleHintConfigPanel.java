@@ -13,6 +13,7 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tutorial;
 
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -25,6 +26,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 public class TerrainPositionSpeechBubbleHintConfigPanel extends Panel {
     public TerrainPositionSpeechBubbleHintConfigPanel(String id) {
         super(id);
+        add(new CheckBox("closeOnTaskEnd"));
         add(new TextField<Integer>("position.x"));
         add(new TextField<Integer>("position.y"));
         add(new TextArea("html"));

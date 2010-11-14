@@ -28,7 +28,7 @@ public class ResourceHint implements Hint {
     private Image image;
 
     public ResourceHint(ResourceHintConfig resourceHintConfig) {
-        image = ImageHandler.getTutorialImage(resourceHintConfig.getImageId());
+        image = ImageHandler.getTutorialImage(resourceHintConfig.getImageId(), null);
         image.getElement().getStyle().setZIndex(Constants.Z_INDEX_BELOW_BUILDING);
         MapWindow.getAbsolutePanel().add(image, resourceHintConfig.getPosition().getX(), resourceHintConfig.getPosition().getY());
     }

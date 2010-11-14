@@ -63,7 +63,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
 
     public void setAccountBalance(double accountBalance) {
         this.accountBalance = accountBalance;
-        InfoPanel.getInstance().updateMoney();
+        CockpitNew.getInstance().updateMoney();
     }
 
     public boolean isMyOwnProperty(SyncBaseItem syncItem) {
@@ -78,7 +78,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     public void depositResource(double price, SimpleBase simpleBase) {
         if (this.simpleBase.equals(simpleBase)) {
             accountBalance += price;
-            InfoPanel.getInstance().updateMoney();
+            CockpitNew.getInstance().updateMoney();
             Simulation.getInstance().onDeposit();
             if (depositResourceListener != null) {
                 depositResourceListener.onDeposit();
@@ -96,7 +96,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
             throw new InsufficientFundsException();
         } else {
             accountBalance -= price;
-            InfoPanel.getInstance().updateMoney();
+            CockpitNew.getInstance().updateMoney();
         }
         Simulation.getInstance().onWithdrawalMoney();        
     }

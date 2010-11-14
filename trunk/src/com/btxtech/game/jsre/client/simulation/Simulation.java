@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientSyncItem;
+import com.btxtech.game.jsre.client.CockpitNew;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.InfoPanel;
@@ -23,7 +24,6 @@ import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
-import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
@@ -90,7 +90,7 @@ public class Simulation implements SelectionListener {
 
         OnlineBasePanel.getInstance().setVisible(taskConfig.isOnlineBoxVisible());
         InfoPanel.getInstance().setVisible(taskConfig.isInfoBoxVisible());
-        RadarPanel.getInstance().setVisible(taskConfig.isScrollingAllowed());
+        CockpitNew.getInstance().setVisibleRadar(taskConfig.isScrollingAllowed());
         MapWindow.getInstance().setScrollingAllowed(taskConfig.isScrollingAllowed());
         InfoPanel.getInstance().getScrollHome().setEnabled(taskConfig.isScrollingAllowed());
         InfoPanel.getInstance().getOption().setEnabled(taskConfig.isOptionAllowed());
@@ -142,9 +142,7 @@ public class Simulation implements SelectionListener {
         processPreparation(taskConfig);
         taskTime = System.currentTimeMillis();
         activeTask = new Task(taskConfig, tutorialGui);
-        if (simulationInfo.getTutorialConfig().isShowTrainingModeText()) {
-            tutorialGui.setProgress(index, tasks.size());
-        }
+        tutorialGui.setTaskText(taskConfig.getTaskText());
     }
 
     private void tutorialFinished() {
@@ -163,21 +161,19 @@ public class Simulation implements SelectionListener {
         if (activeTask.isFulFilled()) {
             long time = System.currentTimeMillis();
             ClientUserTracker.getInstance().onTaskFinished(activeTask, time - taskTime, time);
-            if (activeTask.getTaskConfig().getFinishedText() == null
-                    || activeTask.getTaskConfig().getFinishedText().isEmpty()
-                    || activeTask.getTaskConfig().getFinishedTextDuration() <= 0) {
-                runNextTask(activeTask);
-            } else {
+            if (activeTask.getTaskConfig().getFinishImageDuration() > 0 && activeTask.getTaskConfig().getFinishImageId() != null) {
+                tutorialGui.showFinishImage(activeTask.getTaskConfig().getFinishImageId(), activeTask.getTaskConfig().getFinishImageDuration());
                 final Task closedTask = activeTask;
                 activeTask = null;
-                tutorialGui.showFinishedText(closedTask.getTaskConfig().getFinishedText());
                 Timer timer = new Timer() {
                     @Override
                     public void run() {
                         runNextTask(closedTask);
                     }
                 };
-                timer.schedule(closedTask.getTaskConfig().getFinishedTextDuration());
+                timer.schedule(closedTask.getTaskConfig().getFinishImageDuration());
+            } else {
+                runNextTask(activeTask);
             }
         }
 

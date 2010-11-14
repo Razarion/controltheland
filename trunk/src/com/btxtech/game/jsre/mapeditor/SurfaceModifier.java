@@ -15,7 +15,6 @@ package com.btxtech.game.jsre.mapeditor;
 
 import com.btxtech.game.jsre.client.ExtendedCanvas;
 import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
@@ -55,7 +54,7 @@ public class SurfaceModifier implements TerrainMouseMoveListener, MouseDownHandl
 
     @Override
     public void onMove(int absoluteLeft, int absoluteTop, int relativeLeft, int relativeTop) {
-        if (cockpit.isInside(relativeLeft, relativeTop) || RadarPanel.getInstance().isInside(relativeLeft, relativeTop)) {
+        if (cockpit.isInside(relativeLeft, relativeTop)) {
             marker.setVisible(false);
             return;
         }
@@ -122,7 +121,7 @@ public class SurfaceModifier implements TerrainMouseMoveListener, MouseDownHandl
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
         int relX = mouseDownEvent.getRelativeX(MapWindow.getAbsolutePanel().getElement());
         int relY = mouseDownEvent.getRelativeY(MapWindow.getAbsolutePanel().getElement());
-        if (cockpit.isInside(relX, relY) || RadarPanel.getInstance().isInside(relX, relY)) {
+        if (cockpit.isInside(relX, relY)) {
             return;
         }
 

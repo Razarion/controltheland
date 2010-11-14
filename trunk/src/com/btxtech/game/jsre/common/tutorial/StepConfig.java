@@ -25,7 +25,6 @@ import java.util.Collection;
 public class StepConfig implements Serializable {
     private AbstractConditionConfig abstractConditionConfig;
     private Collection<HintConfig> hintConfigs;
-    private String description;
     private String name;
 
     /**
@@ -34,8 +33,7 @@ public class StepConfig implements Serializable {
     public StepConfig() {
     }
 
-    public StepConfig(AbstractConditionConfig abstractConditionConfig, Collection<HintConfig> hintConfigs, String description, String name) {
-        this.description = description;
+    public StepConfig(AbstractConditionConfig abstractConditionConfig, Collection<HintConfig> hintConfigs, String name) {
         this.abstractConditionConfig = abstractConditionConfig;
         this.hintConfigs = hintConfigs;
         this.name = name;
@@ -47,10 +45,6 @@ public class StepConfig implements Serializable {
 
     public Collection<HintConfig> getGraphicHintConfigs() {
         return hintConfigs;
-    }
-
-    public String getDescription() {
-        return description;
     }
 
     public String getName() {

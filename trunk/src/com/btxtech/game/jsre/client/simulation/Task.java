@@ -40,14 +40,13 @@ public class Task {
     private TutorialGui tutorialGui;
     private Step activeStep;
     private Collection<Hint> stepGraphicHints = new ArrayList<Hint>();
+    private Collection<Hint> taskGraphicHints = new ArrayList<Hint>();
     private AbstractCondition completionCondition;
     private long stepTime;
 
     public Task(TaskConfig taskConfig, TutorialGui tutorialGui) {
         this.taskConfig = taskConfig;
         this.tutorialGui = tutorialGui;
-        tutorialGui.setTaskText(taskConfig.getDescription());
-        tutorialGui.setImage(taskConfig.getImageId());
         start();
     }
 
@@ -123,7 +122,7 @@ public class Task {
     }
 
     private void runNextStep() {
-        disposeAllHints();
+        disposeAllStepHints();
         StepConfig stepConfig;
         List<StepConfig> stepConfigs = taskConfig.getStepConfigs();
         if (stepConfigs.isEmpty()) {
@@ -151,17 +150,29 @@ public class Task {
         runNextStep(stepConfig);
     }
 
-    private void disposeAllHints() {
+    private void disposeAllStepHints() {
         for (Hint stepGraphicHint : stepGraphicHints) {
             stepGraphicHint.dispose();
         }
         stepGraphicHints.clear();
     }
 
+    private void disposeAllTaskHints() {
+        for (Hint stepGraphicHint : taskGraphicHints) {
+            stepGraphicHint.dispose();
+        }
+        taskGraphicHints.clear();
+    }
+
     private void runNextStep(StepConfig stepConfig) {
         stepTime = System.currentTimeMillis();
         for (HintConfig hintConfig : stepConfig.getGraphicHintConfigs()) {
-            stepGraphicHints.add(HintFactory.createHint(hintConfig));
+            Hint hint = HintFactory.createHint(hintConfig);
+            if (hintConfig.isCloseOnTaskEnd()) {
+                taskGraphicHints.add(hint);
+            } else {
+                stepGraphicHints.add(hint);
+            }
         }
         activeStep = new Step(stepConfig, tutorialGui);
     }
@@ -179,7 +190,8 @@ public class Task {
     }
 
     private void cleanup() {
-        disposeAllHints();
+        disposeAllTaskHints();
+        disposeAllStepHints();
         activeStep = null;
         completionCondition = null;
     }

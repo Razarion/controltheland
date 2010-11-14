@@ -82,6 +82,6 @@ public class DbResourceHintConfig extends DbHintConfig {
             return null;
         }
         int id = resourceHintManager.addResource(this);
-        return new ResourceHintConfig(position, id);
+        return new ResourceHintConfig(isCloseOnTaskEnd(), position, id);
     }
 }

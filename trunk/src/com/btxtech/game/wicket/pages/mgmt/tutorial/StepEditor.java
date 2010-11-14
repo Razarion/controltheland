@@ -26,8 +26,6 @@ import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.condition.ConditionWrapperPanel;
 import com.btxtech.game.wicket.uiservices.CrudTableHelper;
 import java.util.Arrays;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -58,7 +56,6 @@ public class StepEditor extends WebPage {
         add(form);
 
         form.add(new ConditionWrapperPanel("abstractConditionConfig", dbStepConfig));
-        form.add(new TextArea("description"));
         new CrudTableHelper<DbHintConfig>("hints", null, "createHint", false, form) {
             @Override
             protected CrudServiceHelper<DbHintConfig> getCrudServiceHelper() {

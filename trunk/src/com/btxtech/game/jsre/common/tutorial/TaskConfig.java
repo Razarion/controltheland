@@ -27,6 +27,7 @@ import java.util.List;
  */
 public class TaskConfig implements Serializable {
     private boolean clearGame;
+    private String taskText;
     private Collection<ItemTypeAndPosition> ownItems;
     private boolean isScrollingAllowed;
     private boolean sellingAllowed;
@@ -40,11 +41,9 @@ public class TaskConfig implements Serializable {
     private int houseCount;
     private int itemLimit;
     private int accountBalance;
-    private String description;
-    private String finishedText;
-    private int finishedTextDuration;
+    private int finishImageDuration;
     private String name;
-    private Integer imageId;
+    private Integer finishImageId;
 
     /**
      * Used by GWT
@@ -52,8 +51,9 @@ public class TaskConfig implements Serializable {
     public TaskConfig() {
     }
 
-    public TaskConfig(boolean clearGame, ArrayList<ItemTypeAndPosition> ownItems, boolean scrollingAllowed, boolean sellingAllowed, boolean optionAllowed, boolean onlineBoxVisible, boolean infoBoxVisible, Index scroll, ArrayList<StepConfig> stepConfigs, AbstractConditionConfig completionConditionConfig, Collection<Integer> allowedItemTypes, int houseCount, int itemLimit, int accountBalance, String description, String finishedText, int finishedTextDuration, String name, Integer imageId) {
+    public TaskConfig(boolean clearGame, String taskText, ArrayList<ItemTypeAndPosition> ownItems, boolean scrollingAllowed, boolean sellingAllowed, boolean optionAllowed, boolean onlineBoxVisible, boolean infoBoxVisible, Index scroll, ArrayList<StepConfig> stepConfigs, AbstractConditionConfig completionConditionConfig, Collection<Integer> allowedItemTypes, int houseCount, int itemLimit, int accountBalance, int finishImageDuration, String name, Integer finishImageId) {
         this.clearGame = clearGame;
+        this.taskText = taskText;
         this.ownItems = ownItems;
         isScrollingAllowed = scrollingAllowed;
         this.sellingAllowed = sellingAllowed;
@@ -67,11 +67,9 @@ public class TaskConfig implements Serializable {
         this.houseCount = houseCount;
         this.itemLimit = itemLimit;
         this.accountBalance = accountBalance;
-        this.description = description;
-        this.finishedText = finishedText;
-        this.finishedTextDuration = finishedTextDuration;
+        this.finishImageDuration = finishImageDuration;
         this.name = name;
-        this.imageId = imageId;
+        this.finishImageId = finishImageId;
     }
 
     public boolean isClearGame() {
@@ -114,24 +112,16 @@ public class TaskConfig implements Serializable {
         return accountBalance;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public String getFinishedText() {
-        return finishedText;
-    }
-
-    public int getFinishedTextDuration() {
-        return finishedTextDuration;
+    public int getFinishImageDuration() {
+        return finishImageDuration;
     }
 
     public String getName() {
         return name;
     }
 
-    public Integer getImageId() {
-        return imageId;
+    public Integer getFinishImageId() {
+        return finishImageId;
     }
 
     public boolean isSellingAllowed() {
@@ -148,5 +138,9 @@ public class TaskConfig implements Serializable {
 
     public int getItemLimit() {
         return itemLimit;
+    }
+
+    public String getTaskText() {
+        return taskText;
     }
 }

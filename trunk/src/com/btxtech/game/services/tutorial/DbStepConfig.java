@@ -53,8 +53,6 @@ public class DbStepConfig implements Serializable, CrudParent, CrudChild<DbTaskC
     private DbTaskConfig dbTaskConfig;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private DbAbstractConditionConfig abstractConditionConfig;
-    @Column(length = 50000)
-    private String description;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "dbStepConfig", nullable = false)    
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
@@ -88,14 +86,6 @@ public class DbStepConfig implements Serializable, CrudParent, CrudChild<DbTaskC
 
     public void setAbstractConditionConfig(DbAbstractConditionConfig abstractConditionConfig) {
         this.abstractConditionConfig = abstractConditionConfig;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public CrudServiceHelper<DbHintConfig> getHintConfigCrudServiceHelper() {
@@ -132,6 +122,6 @@ public class DbStepConfig implements Serializable, CrudParent, CrudChild<DbTaskC
                hintConfigs.add(hintConfig);
             }
         }
-        return new StepConfig(abstractConditionConfig.createConditionConfig(), hintConfigs, description, name);
+        return new StepConfig(abstractConditionConfig.createConditionConfig(), hintConfigs, name);
     }
 }

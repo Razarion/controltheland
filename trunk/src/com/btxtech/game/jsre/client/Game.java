@@ -15,7 +15,6 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.CockpitPanel;
 import com.btxtech.game.jsre.client.cockpit.TerrainMouseHandler;
-import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -28,7 +27,6 @@ public class Game implements EntryPoint {
     static public CockpitPanel cockpitPanel;
 
     public void onModuleLoad() {
-        //GwtCommon.sendLogViaLoadScriptCommunication("START");
         try {
             GwtCommon.setUncaughtExceptionHandler();
 
@@ -46,10 +44,12 @@ public class Game implements EntryPoint {
 
     public void init() {
         GwtCommon.disableBrowserContextMenuJSNI();
-
+        //////////////////////////////////////////////////////
+        CockpitNew.getInstance().addToParent(MapWindow.getAbsolutePanel());
+        //////////////////////////////////////////////////////
         RootPanel.get().add(MapWindow.getAbsolutePanel(), 0, 0);
 
-        RadarPanel.getInstance().addToParent(MapWindow.getAbsolutePanel(), TopMapPanel.Direction.RIGHT_TOP, 30);
+        //RadarPanel.getInstance().addToParent(MapWindow.getAbsolutePanel(), TopMapPanel.Direction.RIGHT_TOP, 30);
 
         cockpitPanel = new CockpitPanel();
         cockpitPanel.addToParent(MapWindow.getAbsolutePanel(), TopMapPanel.Direction.LEFT_BOTTOM, 30);
