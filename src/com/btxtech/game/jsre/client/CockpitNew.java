@@ -16,8 +16,11 @@ package com.btxtech.game.jsre.client;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.common.info.RealityInfo;
+import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.client.utg.MissionTarget;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -28,6 +31,7 @@ import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.widgetideas.client.ProgressBar;
 
 /**
  * User: beat
@@ -38,20 +42,42 @@ public class CockpitNew extends AbsolutePanel {
     private static final CockpitNew INSTANCE = new CockpitNew();
     private static final int WIDTH = 1015;
     private static final int HEIGHT = 230;
+    // Radar
     private static final int RADAR_WIDTH = 198;
     private static final int RADAR_HEIGHT = 198;
     private static final int RADAR_LEFT = 17;
     private static final int RADAR_TOP = 21;
-    private static final int BUTTON_SCROLL_HOME_LEFT = 238;
-    private static final int BUTTON_SCROLL_HOME_TOP = 35;
-    private static final int BUTTON_SELL_LEFT = 238;
-    private static final int BUTTON_SELL_TOP = 70;
-    private static final int BUTTON_OPTION_LEFT = 238;
-    private static final int BUTTON_OPTION_TOP = 105;
-    private static final int MONEY_LEFT = 673;
-    private static final int MONEY_TOP = 33;
+    // Buttons
+    private static final int BUTTON_SCROLL_HOME_LEFT = 654;
+    private static final int BUTTON_SCROLL_HOME_TOP = 39;
+    private static final int BUTTON_SELL_LEFT = 684;
+    private static final int BUTTON_SELL_TOP = 39;
+    private static final int BUTTON_OPTION_LEFT = 623;
+    private static final int BUTTON_OPTION_TOP = 39;
+    private static final int MISSION_LEFT = 716;
+    private static final int MISSION_TOP = 39;
+    // Label
+    private static final int MONEY_LEFT = 644;
+    private static final int MONEY_TOP = 114;
+    private static final int XP_LEFT = 644;
+    private static final int XP_TOP = 134;
+    private static final int LEVEL_LEFT = 644;
+    private static final int LEVEL_TOP = 156;
+    private static final int ITEM_LIMIT_LEFT = 644;
+    private static final int ITEM_LIMIT_TOP = 176;
+    private static final int ENERGY_LEFT = 644;
+    private static final int ENERGY_TOP = 197;
+    private static final int ENERGY_BAR_LEFT = 775;
+    private static final int ENERGY_BAR_TOP = 202;
     private AbsolutePanel radar;
     private Label money;
+    private Label xp;
+    private Label level;
+    private Label itemLimit;
+    private Label energy;
+    private ProgressBar energyBar;
+    private int generating;
+    private int consuming;
 
     public static CockpitNew getInstance() {
         return INSTANCE;
@@ -69,6 +95,22 @@ public class CockpitNew extends AbsolutePanel {
         /////////////////////////////////
         money = new Label();
         add(money, MONEY_LEFT, MONEY_TOP);
+        xp = new Label();
+        add(xp, XP_LEFT, XP_TOP);
+        level = new Label();
+        add(level, LEVEL_LEFT, LEVEL_TOP);
+        itemLimit = new Label();
+        add(itemLimit, ITEM_LIMIT_LEFT, ITEM_LIMIT_TOP);
+        energy = new Label("0/0");
+        add(energy, ENERGY_LEFT, ENERGY_TOP);
+        energyBar = new ProgressBar(0, 0);
+        energyBar.setTextVisible(false);
+        energyBar.setStyleName("gwt-EnergyBar-shell");
+        energyBar.getElement().getStyle().setHeight(10, Style.Unit.PX);
+        energyBar.getElement().getStyle().setWidth(210, Style.Unit.PX);
+        energyBar.getElement().getStyle().setColor("#000000");
+        add(energyBar, ENERGY_BAR_LEFT, ENERGY_BAR_TOP);
+
     }
 
     private void setupButtons() {
@@ -95,6 +137,14 @@ public class CockpitNew extends AbsolutePanel {
             }
         });
         add(option, BUTTON_OPTION_LEFT, BUTTON_OPTION_TOP);
+        ExtendedCustomButton mission = new ExtendedCustomButton("/images/cockpit/missionButton-up.png", "/images/cockpit/missionButton-down.png", false, new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                MissionTarget.getInstance().showMissionTargetDialog();
+            }
+        });
+
+        add(mission, MISSION_LEFT, MISSION_TOP);
     }
 
     private void setupRadar() {
@@ -145,5 +195,41 @@ public class CockpitNew extends AbsolutePanel {
             money.setText(Integer.toString((int) Math.round(ClientBase.getInstance().getAccountBalance())));
         }
     }
+
+    public void updateXp(int amount) {
+        if (xp != null) {
+            xp.setText(Integer.toString(amount));
+        }
+    }
+
+    public void setLevel(String level) {
+        this.level.setText(level);
+    }
+
+    public void updateItemLimit() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(ItemContainer.getInstance().getOwnItemCount());
+        builder.append("/");
+        builder.append(ClientBase.getInstance().getHouseSpace());
+        itemLimit.setText(builder.toString());
+    }
+
+    public void updateEnergy(int generating, int consuming) {
+        energy.setText(Integer.toString(consuming) + "/" + Integer.toString(generating));
+        if (generating == 0) {
+            energyBar.setMaxProgress(consuming);
+        } else {
+            energyBar.setMaxProgress(generating);
+        }
+        energyBar.setProgress(consuming);        
+    }
+
+    public void setGameInfo(RealityInfo realityInfo) {
+        money.setText("$" + Integer.toString((int) realityInfo.getAccountBalance()));
+        xp.setText(Integer.toString(realityInfo.getXp()));
+        // TODO updateEnergy(realityInfo.getEnergyGenerating(), realityInfo.getEnergyConsuming());
+        // TODO updateBase();
+    }
+
 
 }

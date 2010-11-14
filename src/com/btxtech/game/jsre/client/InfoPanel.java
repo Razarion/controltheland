@@ -180,13 +180,6 @@ public class InfoPanel extends TopMapPanel {
         return INSTANCE;
     }
 
-    public void setGameInfo(RealityInfo realityInfo) {
-        money.setText("$" + Integer.toString((int) realityInfo.getAccountBalance()));
-        xp.setText(Integer.toString(realityInfo.getXp()));
-        updateEnergy(realityInfo.getEnergyGenerating(), realityInfo.getEnergyConsuming());
-        updateBase();
-    }
-
     public void updateBase() {
         name.setText(ClientBase.getInstance().getOwnBaseName());
         marker.getElement().getStyle().setBackgroundColor(ClientBase.getInstance().getOwnBaseHtmlColor());
@@ -198,28 +191,10 @@ public class InfoPanel extends TopMapPanel {
         }
     }
 
-    public void updateXp(int amount) {
-        if (xp != null) {
-            xp.setText(Integer.toString(amount));
-        }
-    }
-
-
     public void setAbsoluteCureserPos(int x, int y) {
         if (cursorPos != null) {
             cursorPos.setText(x + ":" + y);
         }
-    }
-
-    public void updateEnergy(int generating, int consuming) {
-        this.generating = generating;
-        this.consuming = consuming;
-        if (generating == 0) {
-            energyBar.setMaxProgress(consuming);
-        } else {
-            energyBar.setMaxProgress(generating);
-        }
-        energyBar.setProgress(consuming);
     }
 
     public Button getScrollHome() {
@@ -238,17 +213,4 @@ public class InfoPanel extends TopMapPanel {
         return money;
     }
 
-    public void setLevel(String level) {
-        this.level.setText(level);
-    }
-
-    public void updateItemLimit() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(ItemContainer.getInstance().getOwnItemCount());
-        builder.append("/");
-        builder.append(ClientBase.getInstance().getHouseSpace());
-        builder.append("/");
-        builder.append(ClientBase.getInstance().getItemLimit());
-        itemLimit.setText(builder.toString());
-    }
 }

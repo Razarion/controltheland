@@ -201,7 +201,7 @@ public class StartupProbe {
         RegisterDialog.showDialogRepeating();
         Simulation.getInstance().start();
         MapWindow.getInstance().displayVisibleItems();
-        InfoPanel.getInstance().updateItemLimit();        
+        CockpitNew.getInstance().updateItemLimit();        
     }
 
     private void enableCloseButton() {

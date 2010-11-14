@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client.item;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.ClientSyncItem;
+import com.btxtech.game.jsre.client.CockpitNew;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.InfoPanel;
@@ -220,7 +221,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         if (itemView.isMyOwnProperty()) {
             ownItemCount++;
             if (StartupProbe.getInstance().isRunning()) {
-                InfoPanel.getInstance().updateItemLimit();
+                CockpitNew.getInstance().updateItemLimit();
             }
         }
         return itemView;
@@ -251,7 +252,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         if (itemView.isMyOwnProperty()) {
             ownItemCount--;
             if (StartupProbe.getInstance().isRunning()) {
-                InfoPanel.getInstance().updateItemLimit();
+                CockpitNew.getInstance().updateItemLimit();
             }
         }
         checkSpecialRemoved(itemView);

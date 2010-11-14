@@ -97,7 +97,7 @@ public class Simulation implements SelectionListener {
         InfoPanel.getInstance().getSell().setEnabled(taskConfig.isSellingAllowed());
         ClientBase.getInstance().setHouseSpace(taskConfig.getHouseCount());
         ClientBase.getInstance().setItemLimit(taskConfig.getItemLimit());
-        InfoPanel.getInstance().updateItemLimit();
+        CockpitNew.getInstance().updateItemLimit();
 
         for (ItemTypeAndPosition itemTypeAndPosition : taskConfig.getOwnItems()) {
             try {
