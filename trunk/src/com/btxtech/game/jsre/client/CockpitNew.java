@@ -31,6 +31,7 @@ import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.widgetideas.client.ProgressBar;
 
 /**
@@ -69,6 +70,17 @@ public class CockpitNew extends AbsolutePanel {
     private static final int ENERGY_TOP = 197;
     private static final int ENERGY_BAR_LEFT = 775;
     private static final int ENERGY_BAR_TOP = 202;
+    // Chat
+    private static final int RECEIVED_TEXT_LEFT = 785;
+    private static final int RECEIVED_TEXT_TOP = 55;
+    private static final int SEND_LEFT = 961;
+    private static final int SEND_TOP = 27;
+    private static final int NAME_LEFT = 812;
+    private static final int NAME_TOP = 33;
+    private static final int NAME_BG_LEFT = 808;
+    private static final int NAME_BG_TOP = 32;
+
+
     private AbsolutePanel radar;
     private Label money;
     private Label xp;
@@ -76,8 +88,9 @@ public class CockpitNew extends AbsolutePanel {
     private Label itemLimit;
     private Label energy;
     private ProgressBar energyBar;
-    private int generating;
-    private int consuming;
+    private TextArea receivedText;
+    private AbsolutePanel userColor;
+    private Label userName;
 
     public static CockpitNew getInstance() {
         return INSTANCE;
@@ -92,7 +105,29 @@ public class CockpitNew extends AbsolutePanel {
         preventEvents();
         setupRadar();
         setupButtons();
+        setupInfo();
         /////////////////////////////////
+        receivedText = new TextArea();
+        receivedText.getElement().getStyle().setColor("black");
+        receivedText.setReadOnly(true);
+        receivedText.getElement().getStyle().setHeight(106, Style.Unit.PX);
+        receivedText.getElement().getStyle().setWidth(202, Style.Unit.PX);
+        add(receivedText, RECEIVED_TEXT_LEFT, RECEIVED_TEXT_TOP);
+        ExtendedCustomButton send = new ExtendedCustomButton("/images/cockpit/sendButton-up.png", "/images/cockpit/sendButton-down.png", false, new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+            }
+        });
+        add(send, SEND_LEFT, SEND_TOP);
+        userColor = new AbsolutePanel();
+        userColor.setPixelSize(147, 16);
+        add(userColor, NAME_BG_LEFT, NAME_BG_TOP);
+        userName = new Label();
+        add(userName, NAME_LEFT, NAME_TOP);
+
+    }
+
+    private void setupInfo() {
         money = new Label();
         add(money, MONEY_LEFT, MONEY_TOP);
         xp = new Label();
@@ -110,7 +145,6 @@ public class CockpitNew extends AbsolutePanel {
         energyBar.getElement().getStyle().setWidth(210, Style.Unit.PX);
         energyBar.getElement().getStyle().setColor("#000000");
         add(energyBar, ENERGY_BAR_LEFT, ENERGY_BAR_TOP);
-
     }
 
     private void setupButtons() {
@@ -221,15 +255,18 @@ public class CockpitNew extends AbsolutePanel {
         } else {
             energyBar.setMaxProgress(generating);
         }
-        energyBar.setProgress(consuming);        
+        energyBar.setProgress(consuming);
+    }
+
+    public void updateBase() {
+        userName.setText(ClientBase.getInstance().getOwnBaseName());
+        userColor.getElement().getStyle().setBackgroundColor(ClientBase.getInstance().getOwnBaseHtmlColor());
     }
 
     public void setGameInfo(RealityInfo realityInfo) {
-        money.setText("$" + Integer.toString((int) realityInfo.getAccountBalance()));
+        money.setText(Integer.toString((int) Math.round(realityInfo.getAccountBalance())));
         xp.setText(Integer.toString(realityInfo.getXp()));
-        // TODO updateEnergy(realityInfo.getEnergyGenerating(), realityInfo.getEnergyConsuming());
-        // TODO updateBase();
+        updateEnergy(realityInfo.getEnergyGenerating(), realityInfo.getEnergyConsuming());
+        updateBase();
     }
-
-
 }
