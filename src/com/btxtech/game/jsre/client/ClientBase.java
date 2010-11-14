@@ -118,7 +118,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
             case CHANGED:
                 updateBase(baseChangedPacket.getBaseAttributes());
                 if (simpleBase.equals(baseChangedPacket.getBaseAttributes().getSimpleBase())) {
-                    InfoPanel.getInstance().updateBase();
+                    CockpitNew.getInstance().updateBase();
                 }
                 ItemViewContainer.getInstance().updateMarker();
                 break;

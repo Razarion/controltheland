@@ -180,11 +180,6 @@ public class InfoPanel extends TopMapPanel {
         return INSTANCE;
     }
 
-    public void updateBase() {
-        name.setText(ClientBase.getInstance().getOwnBaseName());
-        marker.getElement().getStyle().setBackgroundColor(ClientBase.getInstance().getOwnBaseHtmlColor());
-    }
-
     public void updateMoney() {
         if (money != null) {
             money.setText(Integer.toString((int) Math.round(ClientBase.getInstance().getAccountBalance())));
