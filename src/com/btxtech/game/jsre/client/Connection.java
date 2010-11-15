@@ -17,7 +17,6 @@ import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
-import com.btxtech.game.jsre.client.common.OnlineBaseUpdate;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
@@ -126,6 +125,7 @@ public class Connection implements AsyncCallback<Void> {
         StartupProbe.getInstance().taskSwitch(StartupTask.INIT_GAME, StartupTask.LOAD_UNITS);
         StartupProbe.getInstance().taskSwitch(StartupTask.LOAD_UNITS, StartupTask.START_ACTION_HANDLER);
         StartupProbe.getInstance().taskFinished(StartupTask.START_ACTION_HANDLER);
+        CockpitNew.getInstance().enableOnlinePanel(false);
     }
 
     private void setupRealStructure(final RealityInfo realityInfo) {
@@ -136,12 +136,12 @@ public class Connection implements AsyncCallback<Void> {
         CockpitNew.getInstance().setGameInfo(realityInfo);
         ClientItemTypeAccess.getInstance().setAllowedItemTypes(realityInfo.getAllowedItemTypes());
         RadarPanel.getInstance().updateEnergy(realityInfo.getEnergyGenerating(), realityInfo.getEnergyConsuming());
-        OnlineBasePanel.getInstance().setOnlineBases(realityInfo.getOnlineBaseUpdate());
         MissionTarget.getInstance().setLevel(realityInfo.getLevel());
         ClientTerritoryService.getInstance().setTerritories(realityInfo.getTerritories());
         StartupProbe.getInstance().taskSwitch(StartupTask.INIT_GAME, StartupTask.LOAD_UNITS);
         ClientBase.getInstance().setItemLimit(realityInfo.getItemLimit());
         ClientBase.getInstance().setHouseSpace(realityInfo.getHouseSpace());
+        CockpitNew.getInstance().enableOnlinePanel(true);
 
         movableServiceAsync.getAllSyncInfo(new AsyncCallback<Collection<SyncItemInfo>>() {
             @Override
@@ -231,14 +231,11 @@ public class Connection implements AsyncCallback<Void> {
                     CockpitNew.getInstance().updateEnergy(energyPacket.getGenerating(), energyPacket.getConsuming());
                     RadarPanel.getInstance().updateEnergy(energyPacket.getGenerating(), energyPacket.getConsuming());
                 } else if (packet instanceof UserMessage) {
-                    OnlineBasePanel.getInstance().onMessageReceived((UserMessage) packet);
-                } else if (packet instanceof OnlineBaseUpdate) {
-                    OnlineBasePanel.getInstance().setOnlineBases((OnlineBaseUpdate) packet);
+                    CockpitNew.getInstance().onMessageReceived((UserMessage) packet);
                 } else if (packet instanceof LevelPacket) {
                     MissionTarget.getInstance().onLevelChanged((LevelPacket) packet);
                 } else if (packet instanceof BaseChangedPacket) {
                     ClientBase.getInstance().onBaseChangedPacket((BaseChangedPacket) packet);
-                    OnlineBasePanel.getInstance().update();
                 } else if (packet instanceof HouseSpacePacket) {
                     HouseSpacePacket houseSpacePacket = (HouseSpacePacket) packet;
                     ClientBase.getInstance().setHouseSpace(houseSpacePacket.getHouseSpace());

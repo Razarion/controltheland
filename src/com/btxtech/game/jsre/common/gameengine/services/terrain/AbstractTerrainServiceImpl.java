@@ -13,10 +13,9 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.terrain;
 
+import com.btxtech.game.jsre.client.CockpitNew;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.InfoPanel;
-import com.btxtech.game.jsre.client.OnlineBasePanel;
-import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -440,7 +439,7 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
 
         return Game.cockpitPanel.isExpanded() && getRectangle4Widget(Game.cockpitPanel).contains(point)
                 || InfoPanel.getInstance().isExpanded() && getRectangle4Widget(InfoPanel.getInstance()).contains(point)
-                || OnlineBasePanel.getInstance().isExpanded() && getRectangle4Widget(OnlineBasePanel.getInstance()).contains(point);
+                || CockpitNew.getInstance().contains(point);
     }
 
     public Rectangle getRectangle4Widget(Widget widget) {

@@ -56,8 +56,6 @@ public class Game implements EntryPoint {
 
         InfoPanel.getInstance().addToParent(MapWindow.getAbsolutePanel(), TopMapPanel.Direction.LEFT_TOP, 30);
 
-        OnlineBasePanel.getInstance().addToParent(MapWindow.getAbsolutePanel(), TopMapPanel.Direction.RIGHT_BOTTOM, 30);
-
         TerrainView.getInstance().addToParent(MapWindow.getAbsolutePanel());
         TerrainView.getInstance().getCanvas().getElement().getStyle().setZIndex(Constants.Z_INDEX_TERRAIN);
         TerrainView.getInstance().addTerrainScrollListener(MapWindow.getInstance());

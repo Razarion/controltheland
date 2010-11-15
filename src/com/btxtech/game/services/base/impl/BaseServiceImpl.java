@@ -434,7 +434,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         setBaseName(base.getSimpleBase(), setupBaseName(base));
         base.setAbandoned(true);
         sendBaseChangedPacket(BaseChangedPacket.Type.CHANGED, base.getSimpleBase());
-        connectionService.sendOnlineBasesUpdate();
     }
 
     @Override
@@ -510,7 +509,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         base.setUser(user);
         setBaseName(base.getSimpleBase(), setupBaseName(base));
         sendBaseChangedPacket(BaseChangedPacket.Type.CHANGED, base.getSimpleBase());
-        connectionService.sendOnlineBasesUpdate();
     }
 
     @Override
@@ -522,7 +520,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         SimpleBase simpleBase = base.getSimpleBase();
         setBaseColor(simpleBase, color);
         sendBaseChangedPacket(BaseChangedPacket.Type.CHANGED, simpleBase);
-        connectionService.sendOnlineBasesUpdate();
     }
 
     @Override

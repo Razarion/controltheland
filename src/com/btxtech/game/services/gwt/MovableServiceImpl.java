@@ -188,7 +188,6 @@ public class MovableServiceImpl implements MovableService {
             realityInfo.setTerrainImages(terrainService.getTerrainImages());
             realityInfo.setSurfaceRects(terrainService.getSurfaceRects());
             realityInfo.setSurfaceImages(terrainService.getSurfaceImages());
-            realityInfo.setOnlineBaseUpdate(connectionService.getOnlineBaseUpdate());
             StartupData startupData = mgmtService.getStartupData();
             realityInfo.setTutorialTimeout(startupData.getTutorialTimeout());
             realityInfo.setUserActionCollectionTime(startupData.getUserActionCollectionTime());

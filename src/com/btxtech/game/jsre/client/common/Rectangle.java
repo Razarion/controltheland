@@ -47,7 +47,7 @@ public class Rectangle implements Serializable {
 
     public void replace(Rectangle target) {
         start = target.start.getCopy();
-        end = target.end.getCopy(); 
+        end = target.end.getCopy();
     }
 
     public Index getStart() {
@@ -315,4 +315,7 @@ public class Rectangle implements Serializable {
         return new Rectangle(start, end);
     }
 
+    public static boolean contains(int x, int y, int width, int height, Index position) {
+        return position != null && position.getX() >= x && position.getY() >= y && position.getX() <= x + width && position.getY() <= y + height;
+    }
 }

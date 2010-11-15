@@ -16,7 +16,11 @@ package com.btxtech.game.jsre.client;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
+import com.btxtech.game.jsre.client.dialogs.SendMessageDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -28,6 +32,7 @@ import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -79,7 +84,9 @@ public class CockpitNew extends AbsolutePanel {
     private static final int NAME_TOP = 33;
     private static final int NAME_BG_LEFT = 808;
     private static final int NAME_BG_TOP = 32;
-
+    private static final int MAX_CHARS_RECEIVED_BOX = 1000;
+    private static final int FLASHING_COUNT = 3;
+    private static final int FLASHING_DELAY = 500;
 
     private AbsolutePanel radar;
     private Label money;
@@ -89,8 +96,11 @@ public class CockpitNew extends AbsolutePanel {
     private Label energy;
     private ProgressBar energyBar;
     private TextArea receivedText;
+    private ExtendedCustomButton send;
     private AbsolutePanel userColor;
     private Label userName;
+    private int currentFlashingCount = 0;
+    private Timer timer;
 
     public static CockpitNew getInstance() {
         return INSTANCE;
@@ -106,25 +116,29 @@ public class CockpitNew extends AbsolutePanel {
         setupRadar();
         setupButtons();
         setupInfo();
-        /////////////////////////////////
+        setupOnline();
+    }
+
+    private void setupOnline() {
         receivedText = new TextArea();
         receivedText.getElement().getStyle().setColor("black");
         receivedText.setReadOnly(true);
         receivedText.getElement().getStyle().setHeight(106, Style.Unit.PX);
         receivedText.getElement().getStyle().setWidth(202, Style.Unit.PX);
         add(receivedText, RECEIVED_TEXT_LEFT, RECEIVED_TEXT_TOP);
-        ExtendedCustomButton send = new ExtendedCustomButton("/images/cockpit/sendButton-up.png", "/images/cockpit/sendButton-down.png", false, new ClickHandler() {
+        send = new ExtendedCustomButton("/images/cockpit/sendButton-up.png", "/images/cockpit/sendButton-down.png", false, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+                SendMessageDialog.showDialog();
             }
         });
+        send.getUpDisabledFace().setImage(new Image("/images/cockpit/sendButton-disabled-up.png"));
         add(send, SEND_LEFT, SEND_TOP);
         userColor = new AbsolutePanel();
         userColor.setPixelSize(147, 16);
         add(userColor, NAME_BG_LEFT, NAME_BG_TOP);
         userName = new Label();
         add(userName, NAME_LEFT, NAME_TOP);
-
     }
 
     private void setupInfo() {
@@ -268,5 +282,57 @@ public class CockpitNew extends AbsolutePanel {
         xp.setText(Integer.toString(realityInfo.getXp()));
         updateEnergy(realityInfo.getEnergyGenerating(), realityInfo.getEnergyConsuming());
         updateBase();
+    }
+
+    public void onMessageReceived(UserMessage userMessage) {
+        StringBuffer buffer = new StringBuffer();
+        if (receivedText.getText().length() > MAX_CHARS_RECEIVED_BOX) {
+            buffer.append(receivedText.getText().substring(receivedText.getText().length() - MAX_CHARS_RECEIVED_BOX));
+            buffer.append("\n");
+        } else if (!receivedText.getText().isEmpty()) {
+            buffer.append(receivedText.getText());
+            buffer.append("\n");
+        }
+        buffer.append(userMessage.getBaseName());
+        buffer.append("\n");
+        buffer.append(userMessage.getMessage());
+        buffer.append("\n");
+        receivedText.setText(buffer.toString());
+        receivedText.getElement().setScrollTop(receivedText.getElement().getScrollHeight());
+        startFlashing();
+    }
+
+    private void startFlashing() {
+        if (currentFlashingCount > 0) {
+            currentFlashingCount = FLASHING_COUNT;
+            return;
+        }
+        timer = new Timer() {
+            @Override
+            public void run() {
+                if (currentFlashingCount <= 0) {
+                    receivedText.getElement().getStyle().setBackgroundColor("white");
+                    timer.cancel();
+                } else {
+                    currentFlashingCount--;
+                    if (currentFlashingCount % 2 == 1) {
+                        receivedText.getElement().getStyle().setBackgroundColor("white");
+                    } else {
+                        receivedText.getElement().getStyle().setBackgroundColor("red");
+                    }
+                }
+            }
+        };
+        currentFlashingCount = FLASHING_COUNT;
+        timer.scheduleRepeating(FLASHING_DELAY);
+    }
+
+    public boolean contains(Index point) {
+        return Rectangle.contains(getAbsoluteLeft(), getAbsoluteTop(), WIDTH, HEIGHT, point);
+    }
+
+    public void enableOnlinePanel(boolean enabled) {
+        receivedText.setEnabled(enabled);
+        send.setEnabled(enabled);
     }
 }
