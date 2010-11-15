@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.connection.impl;
 
-import com.btxtech.game.jsre.client.common.OnlineBaseUpdate;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
@@ -143,7 +142,6 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
 
     @Override
     public void run() {
-        ArrayList<Base> closedConnection = new ArrayList<Base>();
         for (Iterator<Connection> it = onlineConnection.iterator(); it.hasNext();) {
             Connection connection = it.next();
             try {
@@ -153,7 +151,6 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
                     if (connection.getBase() != null && connection.getBase().getUser() != null) {
                         userTrackingService.onUserLeftGame(connection.getBase().getUser());
                     }
-                    closedConnection.add(connection.getBase());
                     connection.setClosed();
                     it.remove();
                 } else {
@@ -167,9 +164,6 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
             } catch (Throwable t) {
                 log.error("", t);
             }
-        }
-        if (!closedConnection.isEmpty()) {
-            sendOnlineBasesUpdate();
         }
     }
 
@@ -206,7 +200,6 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         if (base.getUser() != null) {
             userTrackingService.onUserEnterGame(base.getUser());
         }
-        sendOnlineBasesUpdate();
     }
 
     @Override
@@ -223,7 +216,6 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         synchronized (onlineConnection) {
             onlineConnection.remove(connection);
         }
-        sendOnlineBasesUpdate();
     }
 
     @Override
@@ -245,12 +237,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     }
 
     @Override
-    public void sendOnlineBasesUpdate() {
-        sendPacket(getOnlineBaseUpdate());
-    }
-
-    @Override
-    public OnlineBaseUpdate getOnlineBaseUpdate() {
+    public Collection<SimpleBase> getOnlineBases() {
         HashSet<SimpleBase> simpleBases = new HashSet<SimpleBase>();
         synchronized (onlineConnection) {
             for (Connection connection : onlineConnection) {
@@ -258,11 +245,8 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
                     simpleBases.add(connection.getBase().getSimpleBase());
                 }
             }
-            simpleBases.addAll(botService.getRunningBotBases());
         }
-        OnlineBaseUpdate onlineBaseUpdate = new OnlineBaseUpdate();
-        onlineBaseUpdate.setOnlineBases(simpleBases);
-        return onlineBaseUpdate;
+        return simpleBases;
     }
 
 }

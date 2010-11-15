@@ -66,7 +66,6 @@ public class TaskEditor extends WebPage {
         form.add(new CheckBox("clearGame"));
         form.add(new TextField<String>("taskText"));
         form.add(new CheckBox("isScrollingAllowed"));
-        form.add(new CheckBox("isOnlineBoxVisible"));
         form.add(new CheckBox("isInfoBoxVisible"));
         form.add(new CheckBox("isOptionAllowed"));
         form.add(new CheckBox("isSellingAllowed"));

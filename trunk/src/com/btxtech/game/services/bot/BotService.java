@@ -25,10 +25,6 @@ import java.util.Collection;
 public interface BotService {
     CrudServiceHelper<DbBotConfig> getDbBotConfigCrudServiceHelper();
 
-    Collection<SimpleBase> getRunningBotBases();
-
-    void updateBotList();
-
     void start();
 
     void activate();

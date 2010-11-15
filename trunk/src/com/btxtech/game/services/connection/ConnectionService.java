@@ -13,12 +13,11 @@
 
 package com.btxtech.game.services.connection;
 
+import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.client.common.UserMessage;
-import com.btxtech.game.jsre.client.common.OnlineBaseUpdate;
 import com.btxtech.game.services.base.Base;
 import java.util.Collection;
 import java.util.Date;
@@ -47,7 +46,5 @@ public interface ConnectionService extends com.btxtech.game.jsre.common.gameengi
 
     void sendUserMessage(UserMessage userMessage);
 
-    OnlineBaseUpdate getOnlineBaseUpdate();
-
-    void sendOnlineBasesUpdate();
+    Collection<SimpleBase> getOnlineBases();
 }

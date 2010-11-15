@@ -31,7 +31,6 @@ public class RealityInfo extends GameInfo {
     private Collection<Integer> allowedItemTypes;
     private int energyGenerating;
     private int energyConsuming;
-    private OnlineBaseUpdate onlineBaseUpdate;
     private Level level;
     private Collection<BaseAttributes> allBases;
     private int houseSpace;
@@ -83,14 +82,6 @@ public class RealityInfo extends GameInfo {
 
     public void setEnergyConsuming(int energyConsuming) {
         this.energyConsuming = energyConsuming;
-    }
-
-    public OnlineBaseUpdate getOnlineBaseUpdate() {
-        return onlineBaseUpdate;
-    }
-
-    public void setOnlineBaseUpdate(OnlineBaseUpdate onlineBaseUpdate) {
-        this.onlineBaseUpdate = onlineBaseUpdate;
     }
 
     public Level getLevel() {

@@ -19,7 +19,6 @@ import com.btxtech.game.jsre.client.CockpitNew;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.InfoPanel;
-import com.btxtech.game.jsre.client.OnlineBasePanel;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
@@ -89,7 +88,6 @@ public class Simulation implements SelectionListener {
             clearGame();
         }
 
-        OnlineBasePanel.getInstance().setVisible(taskConfig.isOnlineBoxVisible());
         InfoPanel.getInstance().setVisible(taskConfig.isInfoBoxVisible());
         CockpitNew.getInstance().setVisibleRadar(taskConfig.isScrollingAllowed());
         MapWindow.getInstance().setScrollingAllowed(taskConfig.isScrollingAllowed());

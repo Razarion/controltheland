@@ -48,7 +48,6 @@ public class BotServiceImpl implements BotService {
     private CrudServiceHelper<DbBotConfig> dbBotConfigCrudServiceHelper;
     private HibernateTemplate hibernateTemplate;
     final private Map<DbBotConfig, BotRunner> botRunners = new HashMap<DbBotConfig, BotRunner>();
-    private final Collection<SimpleBase> simpleBases = new ArrayList<SimpleBase>();
     private Log log = LogFactory.getLog(BotServiceImpl.class);
 
     @Autowired
@@ -137,18 +136,4 @@ public class BotServiceImpl implements BotService {
         }
     }
 
-    @Override
-    public Collection<SimpleBase> getRunningBotBases() {
-        return simpleBases;
-    }
-
-    @Override
-    public void updateBotList() {
-        synchronized (simpleBases) {
-            simpleBases.clear();
-            for (BotRunner botRunner : botRunners.values()) {
-               simpleBases.add(botRunner.getBase().getSimpleBase());
-            }
-        }
-    }
 }

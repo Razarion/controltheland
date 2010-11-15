@@ -97,9 +97,7 @@ public class BotRunner {
         tmp.interrupt();
         if (base != null) {
             baseService.setBot(base, false);
-            botService.updateBotList();            
         }
-        connectionService.sendOnlineBasesUpdate();
     }
 
     private void setupBot() {
@@ -191,8 +189,6 @@ public class BotRunner {
                 }
             }
             baseService.setBot(base, true);
-            botService.updateBotList();
-            connectionService.sendOnlineBasesUpdate();            
         }
 
     }
