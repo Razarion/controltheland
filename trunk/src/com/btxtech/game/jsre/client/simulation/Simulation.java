@@ -15,10 +15,10 @@ package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientSyncItem;
-import com.btxtech.game.jsre.client.CockpitNew;
+import com.btxtech.game.jsre.client.cockpit.CockpitGuiElements;
+import com.btxtech.game.jsre.client.cockpit.CockpitNew;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.InfoPanel;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
@@ -88,12 +88,11 @@ public class Simulation implements SelectionListener {
             clearGame();
         }
 
-        InfoPanel.getInstance().setVisible(taskConfig.isInfoBoxVisible());
         CockpitNew.getInstance().setVisibleRadar(taskConfig.isScrollingAllowed());
         MapWindow.getInstance().setScrollingAllowed(taskConfig.isScrollingAllowed());
-        InfoPanel.getInstance().getScrollHome().setEnabled(taskConfig.isScrollingAllowed());
-        InfoPanel.getInstance().getOption().setEnabled(taskConfig.isOptionAllowed());
-        InfoPanel.getInstance().getSell().setEnabled(taskConfig.isSellingAllowed());
+        CockpitNew.getInstance().enableFocusWidget(CockpitGuiElements.SCROLL_HOME_BUTTON, taskConfig.isScrollingAllowed());
+        CockpitNew.getInstance().enableFocusWidget(CockpitGuiElements.OPTION_BUTTON, taskConfig.isOptionAllowed());
+        CockpitNew.getInstance().enableFocusWidget(CockpitGuiElements.SELL_BUTTON, taskConfig.isSellingAllowed());
         ClientBase.getInstance().setHouseSpace(taskConfig.getHouseCount());
         ClientBase.getInstance().setItemLimit(taskConfig.getItemLimit());
         CockpitNew.getInstance().updateItemLimit();
@@ -124,9 +123,8 @@ public class Simulation implements SelectionListener {
             tutorialFinished();
             return;
         }
-        int index;
         if (closedTask != null) {
-            index = tasks.indexOf(closedTask.getTaskConfig());
+            int index = tasks.indexOf(closedTask.getTaskConfig());
             index++;
             if (tasks.size() > index) {
                 taskConfig = tasks.get(index);
@@ -136,7 +134,6 @@ public class Simulation implements SelectionListener {
             }
         } else {
             taskConfig = tasks.get(0);
-            index = 0;
         }
         processPreparation(taskConfig);
         taskTime = System.currentTimeMillis();

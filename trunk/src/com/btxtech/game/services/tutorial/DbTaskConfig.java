@@ -68,7 +68,6 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
     private boolean isScrollingAllowed;
     private boolean isSellingAllowed;
     private boolean isOptionAllowed;
-    private boolean isInfoBoxVisible;
     @Type(type = "index")
     @Columns(columns = {@Column(name = "xScroll"), @Column(name = "yScroll")})
     private Index scroll;
@@ -135,14 +134,6 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
 
     public void setScrollingAllowed(boolean scrollingAllowed) {
         isScrollingAllowed = scrollingAllowed;
-    }
-
-    public boolean isInfoBoxVisible() {
-        return isInfoBoxVisible;
-    }
-
-    public void setInfoBoxVisible(boolean infoBoxVisible) {
-        isInfoBoxVisible = infoBoxVisible;
     }
 
     public Index getScroll() {
@@ -282,7 +273,6 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
                 isScrollingAllowed,
                 isSellingAllowed,
                 isOptionAllowed,
-                isInfoBoxVisible,
                 scroll,
                 stepConfigs,
                 completionConditionConfig.createConditionConfig(),

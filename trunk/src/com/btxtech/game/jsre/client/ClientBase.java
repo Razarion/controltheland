@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client;
 
+import com.btxtech.game.jsre.client.cockpit.CockpitNew;
 import com.btxtech.game.jsre.client.dialogs.UnfrequentDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.item.ItemViewContainer;

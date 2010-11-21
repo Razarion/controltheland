@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
-import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.common.Index;
@@ -56,10 +55,10 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
     @Override
     public void onMouseUp(int absoluteX, int absoluteY, MouseUpEvent event) {
         if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
-            if (Game.cockpitPanel.isUnloadMode()) {
+            if (CockpitNew.getInstance().getCockpitMode().isUnloadMode()) {
                 executeUnloadContainerCommand(absoluteX, absoluteY);
-                Game.cockpitPanel.clearUnloadMode();
-            } else if (Game.cockpitPanel.isLaunchMode()) {
+                CockpitNew.getInstance().getCockpitMode().clearUnloadMode();
+            } else if (CockpitNew.getInstance().getCockpitMode().isLaunchMode()) {
                 ActionHandler.getInstance().executeLaunchCommand(absoluteX, absoluteY);
             } else {
                 executeMoveCommand(absoluteX, absoluteY);

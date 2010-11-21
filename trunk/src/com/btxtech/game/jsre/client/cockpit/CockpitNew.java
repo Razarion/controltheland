@@ -11,9 +11,13 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.client;
+package com.btxtech.game.jsre.client.cockpit;
 
-import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
+import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ExtendedCustomButton;
+import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.client.MenuPanel;
+import com.btxtech.game.jsre.client.TopMapPanel;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
@@ -34,10 +38,14 @@ import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.FocusWidget;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.widgetideas.client.ProgressBar;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: beat
@@ -87,7 +95,11 @@ public class CockpitNew extends AbsolutePanel {
     private static final int MAX_CHARS_RECEIVED_BOX = 1000;
     private static final int FLASHING_COUNT = 3;
     private static final int FLASHING_DELAY = 500;
+    // Selection
+    private static final int SELECTION_LEFT = 240;
+    private static final int SELECTION_TOP = 26;
 
+    private CockpitMode cockpitMode;
     private AbsolutePanel radar;
     private Label money;
     private Label xp;
@@ -101,6 +113,8 @@ public class CockpitNew extends AbsolutePanel {
     private Label userName;
     private int currentFlashingCount = 0;
     private Timer timer;
+    private Map<CockpitGuiElements, Widget> widgets = new HashMap<CockpitGuiElements, Widget>();
+    private SelectedItemPanel selectedItemPanel;
 
     public static CockpitNew getInstance() {
         return INSTANCE;
@@ -110,6 +124,7 @@ public class CockpitNew extends AbsolutePanel {
      * Singleton
      */
     private CockpitNew() {
+        cockpitMode = new CockpitMode();
         getElement().getStyle().setBackgroundImage("url(/images/cockpit/cockpit.png)");
         setPixelSize(WIDTH, HEIGHT);
         preventEvents();
@@ -117,6 +132,8 @@ public class CockpitNew extends AbsolutePanel {
         setupButtons();
         setupInfo();
         setupOnline();
+        selectedItemPanel = new SelectedItemPanel();
+        add(selectedItemPanel, SELECTION_LEFT, SELECTION_TOP);
     }
 
     private void setupOnline() {
@@ -169,6 +186,7 @@ public class CockpitNew extends AbsolutePanel {
             }
         });
         add(scrollHome, BUTTON_SCROLL_HOME_LEFT, BUTTON_SCROLL_HOME_TOP);
+        widgets.put(CockpitGuiElements.SCROLL_HOME_BUTTON, scrollHome);
         ExtendedCustomButton sell = new ExtendedCustomButton("/images/cockpit/sellButton-up.png", "/images/cockpit/sellButton-down.png", true, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -177,6 +195,7 @@ public class CockpitNew extends AbsolutePanel {
             }
         });
         add(sell, BUTTON_SELL_LEFT, BUTTON_SELL_TOP);
+        widgets.put(CockpitGuiElements.SELL_BUTTON, sell);
         ExtendedCustomButton option = new ExtendedCustomButton("/images/cockpit/optionButton-up.png", "/images/cockpit/optionButton-down.png", false, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -185,14 +204,15 @@ public class CockpitNew extends AbsolutePanel {
             }
         });
         add(option, BUTTON_OPTION_LEFT, BUTTON_OPTION_TOP);
+        widgets.put(CockpitGuiElements.OPTION_BUTTON, option);
         ExtendedCustomButton mission = new ExtendedCustomButton("/images/cockpit/missionButton-up.png", "/images/cockpit/missionButton-down.png", false, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 MissionTarget.getInstance().showMissionTargetDialog();
             }
         });
-
         add(mission, MISSION_LEFT, MISSION_TOP);
+        widgets.put(CockpitGuiElements.MISSION_BUTTON, mission);
     }
 
     private void setupRadar() {
@@ -334,5 +354,21 @@ public class CockpitNew extends AbsolutePanel {
     public void enableOnlinePanel(boolean enabled) {
         receivedText.setEnabled(enabled);
         send.setEnabled(enabled);
+    }
+
+    public void debugAbsoluteCursorPos(int x, int y) {
+        //TODO
+    }
+
+    public void enableFocusWidget(CockpitGuiElements cockpitGuiElements, boolean enabled) {
+        ((FocusWidget) widgets.get(cockpitGuiElements)).setEnabled(enabled);
+    }
+
+    public SelectedItemPanel getSelectedItemPanel() {
+        return selectedItemPanel;
+    }
+
+    public CockpitMode getCockpitMode() {
+        return cockpitMode;
     }
 }

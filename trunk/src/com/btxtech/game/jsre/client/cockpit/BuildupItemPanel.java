@@ -15,70 +15,99 @@ package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.ClientSyncItem;
+import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * User: beat
  * Date: 15.11.2009
  * Time: 14:12:18
  */
-public class BuildupItemPanel extends HorizontalPanel implements SelectionListener {
-    private HorizontalPanel description;
-    private HorizontalPanel itemsToBuild;
-    private Map<ItemType, Widget> itemTypesToBuild = new HashMap<ItemType, Widget>();
+public class BuildupItemPanel extends AbsolutePanel {
+    private static final int SCROLL_STEP = 50;
+    private static final int HEIGHT = 100;
+    private static final int ARROW_L_LEFT = 0;
+    private static final int ARROW_L_TOP = 0;
+    private static final int ARROW_R_LEFT = 300;
+    private static final int ARROW_R_TOP = 0;
+    private static final int SCROLL_LEFT = 50;
+    private static final int SCROLL_TOP = 0;
+    private static final int SCROLL_LENGTH = 250;
+    private static final int SCROLL_HEIGHT = 100;
+    private ScrollPanel scrollPanel;
 
     public BuildupItemPanel() {
-        setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
-        description = new HorizontalPanel();
-        add(description);
-        itemsToBuild = new HorizontalPanel();
-        itemsToBuild.setSpacing(10);
-        itemsToBuild.setVerticalAlignment(HasVerticalAlignment.ALIGN_BOTTOM);
-        add(itemsToBuild);
-
-        SelectionHandler.getInstance().addSelectionListener(this);
+        setPixelSize(SelectedItemPanel.WIDTH, HEIGHT);
+        ExtendedCustomButton leftArrow = new ExtendedCustomButton("/images/cockpit/leftArrowButton-up.png", "/images/cockpit/leftArrowButton-down.png", false, new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                scrollPanel.setHorizontalScrollPosition(scrollPanel.getHorizontalScrollPosition() - SCROLL_STEP);
+            }
+        });
+        add(leftArrow, ARROW_L_LEFT, ARROW_L_TOP);
+        ExtendedCustomButton rightArrow = new ExtendedCustomButton("/images/cockpit/rightArrowButton-up.png", "/images/cockpit/rightArrowButton-down.png", false, new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                scrollPanel.setHorizontalScrollPosition(scrollPanel.getHorizontalScrollPosition() + SCROLL_STEP);
+            }
+        });
+        add(rightArrow, ARROW_R_LEFT, ARROW_R_TOP);
+        scrollPanel = new ScrollPanel();
+        scrollPanel.setPixelSize(SCROLL_LENGTH, SCROLL_HEIGHT);
+        scrollPanel.getElement().getStyle().setOverflow(Style.Overflow.HIDDEN);
+        add(scrollPanel, SCROLL_LEFT, SCROLL_TOP);
     }
 
-    @Override
-    public void onTargetSelectionChanged(ClientSyncItem selection) {
-        description.clear();
-        itemsToBuild.clear();
+    public void display(ClientSyncItem syncBaseItem) {
+        try {
+            if (syncBaseItem.getSyncBaseItem().hasSyncBuilder()) {
+                Group group = new Group();
+                group.addItem(syncBaseItem);
+                setupBuildupItemsCV(group);
+                setVisible(true);
+            } else if (syncBaseItem.getSyncBaseItem().hasSyncFactory()) {
+                Group group = new Group();
+                group.addItem(syncBaseItem);
+                setupBuildupItemsFactory(group);
+                setVisible(true);
+            } else {
+                setVisible(false);
+            }
+        } catch (NoSuchItemTypeException e) {
+            GwtCommon.handleException(e);
+        }
     }
 
-    @Override
-    public void onSelectionCleared() {
-        description.clear();
-        itemsToBuild.clear();
-    }
-
-    @Override
-    public void onOwnSelectionChanged(Group selectedGroup) {
-        description.clear();
-        itemsToBuild.clear();
+    public void display(Group selectedGroup) {
         try {
             if (selectedGroup.onlyConstructionVehicle()) {
                 setupBuildupItemsCV(selectedGroup);
+                setVisible(true);
             } else if (selectedGroup.onlyFactories()) {
                 setupBuildupItemsFactory(selectedGroup);
+                setVisible(true);
+            } else {
+                setVisible(false);
             }
         } catch (NoSuchItemTypeException e) {
             GwtCommon.handleException(e);
@@ -86,9 +115,7 @@ public class BuildupItemPanel extends HorizontalPanel implements SelectionListen
     }
 
     private void setupBuildupItemsCV(final Group constructionVehicles) throws NoSuchItemTypeException {
-        description.getElement().getStyle().setColor("darkorange");
-        itemsToBuild.getElement().getStyle().setColor("darkorange");
-        itemTypesToBuild.clear();
+        HorizontalPanel itemsToBuild = new HorizontalPanel();
         Collection<Integer> itemTypeIDs = constructionVehicles.getFirst().getSyncBaseItem().getBaseItemType().getBuilderType().getAbleToBuild();
         for (Integer itemTypeID : itemTypeIDs) {
             final BaseItemType itemType = (BaseItemType) ClientServices.getInstance().getItemService().getItemType(itemTypeID);
@@ -100,11 +127,13 @@ public class BuildupItemPanel extends HorizontalPanel implements SelectionListen
                 }
             }));
         }
+        scrollPanel.setWidget(itemsToBuild);
+        scrollPanel.scrollToLeft();
     }
 
     private void setupBuildupItemsFactory(final Group factories) throws NoSuchItemTypeException {
+        HorizontalPanel itemsToBuild = new HorizontalPanel();
         Collection<Integer> itemTypeIDs = factories.getFirst().getSyncBaseItem().getBaseItemType().getFactoryType().getAbleToBuild();
-        itemTypesToBuild.clear();
         for (Integer itemTypeID : itemTypeIDs) {
             final BaseItemType itemType = (BaseItemType) ClientServices.getInstance().getItemService().getItemType(itemTypeID);
             boolean enabled = ClientItemTypeAccess.getInstance().isAllowed(itemTypeID) && ClientTerritoryService.getInstance().isAllowed(factories.getFirst().getSyncBaseItem().getPosition(), itemTypeID);
@@ -115,13 +144,13 @@ public class BuildupItemPanel extends HorizontalPanel implements SelectionListen
                 }
             }));
         }
+        scrollPanel.setWidget(itemsToBuild);
+        scrollPanel.scrollToLeft();
     }
 
     private Widget setupBuildupBlock(final BaseItemType itemType, boolean enabled, MouseDownHandler mouseDownHandler) {
         VerticalPanel verticalPanel = new VerticalPanel();
-        verticalPanel.getElement().getStyle().setColor("darkorange");
         verticalPanel.setWidth("64px");
-        verticalPanel.add(new Label(itemType.getName()));
         Image image = ImageHandler.getItemTypeImage(itemType);
         image.setSize("64px", "64px");
         PushButton button = new PushButton(image);
@@ -130,15 +159,7 @@ public class BuildupItemPanel extends HorizontalPanel implements SelectionListen
         button.addMouseDownHandler(mouseDownHandler);
         verticalPanel.add(button);
         verticalPanel.add(new Label("$" + itemType.getPrice()));
-        if (enabled) {
-            itemTypesToBuild.put(itemType, button);
-        }
-
         return verticalPanel;
-
     }
 
-    public Map<ItemType, Widget> getItemTypesToBuild() {
-        return itemTypesToBuild;
-    }
 }
