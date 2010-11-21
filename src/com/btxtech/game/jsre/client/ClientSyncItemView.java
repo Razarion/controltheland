@@ -14,6 +14,8 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.action.ActionHandler;
+import com.btxtech.game.jsre.client.cockpit.CockpitMode;
+import com.btxtech.game.jsre.client.cockpit.CockpitNew;
 import com.btxtech.game.jsre.client.cockpit.CursorHandler;
 import com.btxtech.game.jsre.client.cockpit.CursorItemState;
 import com.btxtech.game.jsre.client.cockpit.Group;
@@ -275,7 +277,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
             if (clientSyncItem.isMyOwnProperty()) {
                 Connection.getInstance().sendSellItem(clientSyncItem.getSyncItem());
             }
-        } else if (Game.cockpitPanel.isLaunchMode() && !clientSyncItem.isMyOwnProperty()) {
+        } else if (CockpitNew.getInstance().getCockpitMode().isLaunchMode() && !clientSyncItem.isMyOwnProperty()) {
             int x = mouseDownEvent.getRelativeX(TerrainView.getInstance().getCanvas().getElement()) + TerrainView.getInstance().getViewOriginLeft();
             int y = mouseDownEvent.getRelativeY(TerrainView.getInstance().getCanvas().getElement()) + TerrainView.getInstance().getViewOriginTop();
             ActionHandler.getInstance().executeLaunchCommand(x, y);

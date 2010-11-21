@@ -32,7 +32,6 @@ public class TaskConfig implements Serializable {
     private boolean isScrollingAllowed;
     private boolean sellingAllowed;
     private boolean optionAllowed;
-    private boolean isInfoBoxVisible;
     private Index scroll;
     private List<StepConfig> stepConfigs;
     private AbstractConditionConfig completionConditionConfig;
@@ -50,14 +49,13 @@ public class TaskConfig implements Serializable {
     public TaskConfig() {
     }
 
-    public TaskConfig(boolean clearGame, String taskText, ArrayList<ItemTypeAndPosition> ownItems, boolean scrollingAllowed, boolean sellingAllowed, boolean optionAllowed, boolean infoBoxVisible, Index scroll, ArrayList<StepConfig> stepConfigs, AbstractConditionConfig completionConditionConfig, Collection<Integer> allowedItemTypes, int houseCount, int itemLimit, int accountBalance, int finishImageDuration, String name, Integer finishImageId) {
+    public TaskConfig(boolean clearGame, String taskText, ArrayList<ItemTypeAndPosition> ownItems, boolean scrollingAllowed, boolean sellingAllowed, boolean optionAllowed, Index scroll, ArrayList<StepConfig> stepConfigs, AbstractConditionConfig completionConditionConfig, Collection<Integer> allowedItemTypes, int houseCount, int itemLimit, int accountBalance, int finishImageDuration, String name, Integer finishImageId) {
         this.clearGame = clearGame;
         this.taskText = taskText;
         this.ownItems = ownItems;
         isScrollingAllowed = scrollingAllowed;
         this.sellingAllowed = sellingAllowed;
         this.optionAllowed = optionAllowed;
-        isInfoBoxVisible = infoBoxVisible;
         this.scroll = scroll;
         this.stepConfigs = stepConfigs;
         this.completionConditionConfig = completionConditionConfig;
@@ -80,10 +78,6 @@ public class TaskConfig implements Serializable {
 
     public boolean isScrollingAllowed() {
         return isScrollingAllowed;
-    }
-
-    public boolean isInfoBoxVisible() {
-        return isInfoBoxVisible;
     }
 
     public Index getScroll() {

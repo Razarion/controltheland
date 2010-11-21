@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client;
 
+import com.btxtech.game.jsre.client.cockpit.CockpitNew;
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
@@ -201,7 +202,7 @@ public class StartupProbe {
         RegisterDialog.showDialogRepeating();
         Simulation.getInstance().start();
         MapWindow.getInstance().displayVisibleItems();
-        CockpitNew.getInstance().updateItemLimit();        
+        CockpitNew.getInstance().updateItemLimit();
     }
 
     private void enableCloseButton() {

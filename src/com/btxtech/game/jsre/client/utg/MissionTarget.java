@@ -19,9 +19,8 @@
 package com.btxtech.game.jsre.client.utg;
 
 import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.CockpitNew;
+import com.btxtech.game.jsre.client.cockpit.CockpitNew;
 import com.btxtech.game.jsre.client.Connection;
-import com.btxtech.game.jsre.client.InfoPanel;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.dialogs.MissionTargetDialog;
 import com.btxtech.game.jsre.client.dialogs.PromotionDialog;

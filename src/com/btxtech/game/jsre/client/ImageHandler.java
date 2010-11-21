@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.utg.ImageSizeCallback;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.TurnableType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTurnable;
 import com.google.gwt.event.dom.client.LoadEvent;
@@ -65,7 +66,15 @@ public class ImageHandler {
     }
 
     public static Image getItemTypeImage(ItemType itemType) {
-        return getItemTypeImage(1, itemType);
+        int imgIndex = 1;
+        if (itemType instanceof BaseItemType) {
+            BaseItemType baseItemType = (BaseItemType) itemType;
+            TurnableType turnableType = baseItemType.getTurnableType();
+            if (turnableType != null) {
+                imgIndex = turnableType.getImageCount() / 4;
+            }
+        }
+        return getItemTypeImage(imgIndex, itemType);
     }
 
     private static Image getItemTypeImage(int imgIndex, ItemType itemType) {

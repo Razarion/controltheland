@@ -16,12 +16,12 @@ package com.btxtech.game.jsre.client.action;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
-import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.cockpit.CockpitMode;
+import com.btxtech.game.jsre.client.cockpit.CockpitNew;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -460,7 +460,7 @@ public class ActionHandler implements CommonActionService {
         }
 
         launch(selection.getFirst().getSyncBaseItem(), new Index(absoluteX, absoluteY));
-        Game.cockpitPanel.clearLaunchMode();
+        CockpitNew.getInstance().getCockpitMode().clearLaunchMode();
     }
 
     public void launch(SyncBaseItem launcherItem, Index target) {

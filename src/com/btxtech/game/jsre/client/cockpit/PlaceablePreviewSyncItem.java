@@ -14,7 +14,6 @@
 package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.ClientServices;
-import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
@@ -74,7 +73,7 @@ public class PlaceablePreviewSyncItem extends PlaceablePreviewWidget {
     @Override
     protected boolean allowedToPlace(int relX, int relY) {
         // Check if over cockpit
-        if (Game.cockpitPanel.isInside(relX + itemTypeToBuilt.getHeight() / 2, relY + itemTypeToBuilt.getWidth() / 2)) {
+        if (CockpitNew.getInstance().contains(new Index(relX + itemTypeToBuilt.getHeight() / 2, relY + itemTypeToBuilt.getWidth() / 2))) {
             return false;
         }
 
