@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.wicket.pages.mgmt.tutorial;
+package com.btxtech.game.wicket.pages.mgmt.tutorial.hint;
 
 import com.btxtech.game.services.tutorial.DbResourceHintConfig;
 import org.apache.wicket.markup.html.form.Button;

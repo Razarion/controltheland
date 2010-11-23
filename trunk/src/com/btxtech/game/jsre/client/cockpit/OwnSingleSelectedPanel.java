@@ -17,16 +17,19 @@ import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.tutorial.CockpitSpeechBubbleHintConfig;
+import com.btxtech.game.jsre.common.tutorial.CockpitWidgetEnum;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * User: beat
  * Date: 17.11.2010
  * Time: 18:37:20
  */
-public class OwnSingleSelectedPanel extends AbsolutePanel {
+public class OwnSingleSelectedPanel extends AbsolutePanel implements HintWidgetProvider {
     private static final int IMAGE_LEFT = 20;
     private static final int IMAGE_TOP = 20;
     private static final int DESCRIPTION_LEFT = 119;
@@ -83,4 +86,8 @@ public class OwnSingleSelectedPanel extends AbsolutePanel {
         buildupItemPanel.display(clientSyncItem);
     }
 
+    @Override
+    public Widget getHintWidget(CockpitSpeechBubbleHintConfig config) throws HintWidgetException {
+        return buildupItemPanel.getHintWidget(config);
+    }
 }

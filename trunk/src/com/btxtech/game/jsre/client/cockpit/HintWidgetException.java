@@ -13,14 +13,15 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
+import com.btxtech.game.jsre.common.tutorial.CockpitSpeechBubbleHintConfig;
+
 /**
  * User: beat
- * Date: 16.11.2010
- * Time: 22:05:16
+ * Date: 22.11.2010
+ * Time: 20:03:58
  */
-public enum CockpitGuiElements {
-    SCROLL_HOME_BUTTON,
-    OPTION_BUTTON,
-    SELL_BUTTON,
-    MISSION_BUTTON
+public class HintWidgetException extends Exception {
+    public HintWidgetException(String s, CockpitSpeechBubbleHintConfig config) {
+        super(s + " " + config.getCockpitWidgetEnum());
+    }
 }

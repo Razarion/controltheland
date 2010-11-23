@@ -71,7 +71,7 @@ public class SpecialFunctionPanel extends VerticalPanel {
         ExtendedCustomButton button = new ExtendedCustomButton("/images/cockpit/unloadButton-up.png", "/images/cockpit/unloadButton-down.png", false, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                CockpitNew.getInstance().getCockpitMode().setUnloadMode();
+                Cockpit.getInstance().getCockpitMode().setUnloadMode();
             }
         });
         horizontalPanel.add(button);
@@ -83,7 +83,7 @@ public class SpecialFunctionPanel extends VerticalPanel {
         ExtendedCustomButton button = new ExtendedCustomButton("/images/cockpit/launchButton-up.png", "/images/cockpit/launchButton-down.png", false, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                CockpitNew.getInstance().getCockpitMode().setUnloadMode();
+                Cockpit.getInstance().getCockpitMode().setUnloadMode();
             }
         });
         add(button);

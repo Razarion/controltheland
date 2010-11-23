@@ -15,8 +15,7 @@ package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientSyncItem;
-import com.btxtech.game.jsre.client.cockpit.CockpitGuiElements;
-import com.btxtech.game.jsre.client.cockpit.CockpitNew;
+import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.action.ActionHandler;
@@ -34,6 +33,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.tutorial.CockpitWidgetEnum;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
@@ -74,7 +74,7 @@ public class Simulation implements SelectionListener {
             }
             tutorialGui = new TutorialGui();
             ClientBase.getInstance().setBase(tutorialConfig.getOwnBase());
-            CockpitNew.getInstance().updateBase();
+            Cockpit.getInstance().updateBase();
             tutorialTime = System.currentTimeMillis();
             MapWindow.getAbsolutePanel().getElement().getStyle().setProperty("minWidth", tutorialConfig.getWidth() + "px");
             MapWindow.getAbsolutePanel().getElement().getStyle().setProperty("minHeight", tutorialConfig.getHeight() + "px");
@@ -88,14 +88,14 @@ public class Simulation implements SelectionListener {
             clearGame();
         }
 
-        CockpitNew.getInstance().setVisibleRadar(taskConfig.isScrollingAllowed());
+        Cockpit.getInstance().setVisibleRadar(taskConfig.isScrollingAllowed());
         MapWindow.getInstance().setScrollingAllowed(taskConfig.isScrollingAllowed());
-        CockpitNew.getInstance().enableFocusWidget(CockpitGuiElements.SCROLL_HOME_BUTTON, taskConfig.isScrollingAllowed());
-        CockpitNew.getInstance().enableFocusWidget(CockpitGuiElements.OPTION_BUTTON, taskConfig.isOptionAllowed());
-        CockpitNew.getInstance().enableFocusWidget(CockpitGuiElements.SELL_BUTTON, taskConfig.isSellingAllowed());
+        Cockpit.getInstance().enableFocusWidget(CockpitWidgetEnum.SCROLL_HOME_BUTTON, taskConfig.isScrollingAllowed());
+        Cockpit.getInstance().enableFocusWidget(CockpitWidgetEnum.OPTION_BUTTON, taskConfig.isOptionAllowed());
+        Cockpit.getInstance().enableFocusWidget(CockpitWidgetEnum.SELL_BUTTON, taskConfig.isSellingAllowed());
         ClientBase.getInstance().setHouseSpace(taskConfig.getHouseCount());
         ClientBase.getInstance().setItemLimit(taskConfig.getItemLimit());
-        CockpitNew.getInstance().updateItemLimit();
+        Cockpit.getInstance().updateItemLimit();
 
         for (ItemTypeAndPosition itemTypeAndPosition : taskConfig.getOwnItems()) {
             try {

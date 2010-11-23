@@ -38,7 +38,9 @@ abstract public class DbHintConfig implements CrudChild<DbStepConfig>, Serializa
     public static Class[] ALL_HINTS = {
             DbItemSpeechBubbleHintConfig.class,
             DbResourceHintConfig.class,
-            DbTerrainPositionSpeechBubbleHintConfig.class
+            DbTerrainPositionSpeechBubbleHintConfig.class,
+            DbCockpitSpeechBubbleHintConfig.class
+
     };
     @Id
     @GeneratedValue

@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.cockpit.CockpitNew;
+import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.cockpit.TerrainMouseHandler;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
@@ -43,7 +43,7 @@ public class Game implements EntryPoint {
 
     public void init() {
         GwtCommon.disableBrowserContextMenuJSNI();
-        CockpitNew.getInstance().addToParent(MapWindow.getAbsolutePanel());
+        Cockpit.getInstance().addToParent(MapWindow.getAbsolutePanel());
         RootPanel.get().add(MapWindow.getAbsolutePanel(), 0, 0);
 
         TerrainView.getInstance().addToParent(MapWindow.getAbsolutePanel());

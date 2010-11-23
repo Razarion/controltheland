@@ -29,6 +29,8 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.MissionTarget;
+import com.btxtech.game.jsre.common.tutorial.CockpitSpeechBubbleHintConfig;
+import com.btxtech.game.jsre.common.tutorial.CockpitWidgetEnum;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -52,8 +54,8 @@ import java.util.Map;
  * Date: 08.11.2010
  * Time: 23:14:36
  */
-public class CockpitNew extends AbsolutePanel {
-    private static final CockpitNew INSTANCE = new CockpitNew();
+public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
+    private static final Cockpit INSTANCE = new Cockpit();
     private static final int WIDTH = 1015;
     private static final int HEIGHT = 230;
     // Radar
@@ -113,17 +115,17 @@ public class CockpitNew extends AbsolutePanel {
     private Label userName;
     private int currentFlashingCount = 0;
     private Timer timer;
-    private Map<CockpitGuiElements, Widget> widgets = new HashMap<CockpitGuiElements, Widget>();
+    private Map<CockpitWidgetEnum, Widget> widgets = new HashMap<CockpitWidgetEnum, Widget>();
     private SelectedItemPanel selectedItemPanel;
 
-    public static CockpitNew getInstance() {
+    public static Cockpit getInstance() {
         return INSTANCE;
     }
 
     /**
      * Singleton
      */
-    private CockpitNew() {
+    private Cockpit() {
         cockpitMode = new CockpitMode();
         getElement().getStyle().setBackgroundImage("url(/images/cockpit/cockpit.png)");
         setPixelSize(WIDTH, HEIGHT);
@@ -186,7 +188,7 @@ public class CockpitNew extends AbsolutePanel {
             }
         });
         add(scrollHome, BUTTON_SCROLL_HOME_LEFT, BUTTON_SCROLL_HOME_TOP);
-        widgets.put(CockpitGuiElements.SCROLL_HOME_BUTTON, scrollHome);
+        widgets.put(CockpitWidgetEnum.SCROLL_HOME_BUTTON, scrollHome);
         ExtendedCustomButton sell = new ExtendedCustomButton("/images/cockpit/sellButton-up.png", "/images/cockpit/sellButton-down.png", true, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -195,7 +197,7 @@ public class CockpitNew extends AbsolutePanel {
             }
         });
         add(sell, BUTTON_SELL_LEFT, BUTTON_SELL_TOP);
-        widgets.put(CockpitGuiElements.SELL_BUTTON, sell);
+        widgets.put(CockpitWidgetEnum.SELL_BUTTON, sell);
         ExtendedCustomButton option = new ExtendedCustomButton("/images/cockpit/optionButton-up.png", "/images/cockpit/optionButton-down.png", false, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -204,7 +206,7 @@ public class CockpitNew extends AbsolutePanel {
             }
         });
         add(option, BUTTON_OPTION_LEFT, BUTTON_OPTION_TOP);
-        widgets.put(CockpitGuiElements.OPTION_BUTTON, option);
+        widgets.put(CockpitWidgetEnum.OPTION_BUTTON, option);
         ExtendedCustomButton mission = new ExtendedCustomButton("/images/cockpit/missionButton-up.png", "/images/cockpit/missionButton-down.png", false, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -212,7 +214,7 @@ public class CockpitNew extends AbsolutePanel {
             }
         });
         add(mission, MISSION_LEFT, MISSION_TOP);
-        widgets.put(CockpitGuiElements.MISSION_BUTTON, mission);
+        widgets.put(CockpitWidgetEnum.MISSION_BUTTON, mission);
     }
 
     private void setupRadar() {
@@ -360,7 +362,7 @@ public class CockpitNew extends AbsolutePanel {
         //TODO
     }
 
-    public void enableFocusWidget(CockpitGuiElements cockpitGuiElements, boolean enabled) {
+    public void enableFocusWidget(CockpitWidgetEnum cockpitGuiElements, boolean enabled) {
         ((FocusWidget) widgets.get(cockpitGuiElements)).setEnabled(enabled);
     }
 
@@ -370,5 +372,19 @@ public class CockpitNew extends AbsolutePanel {
 
     public CockpitMode getCockpitMode() {
         return cockpitMode;
+    }
+
+    @Override
+    public Widget getHintWidget(CockpitSpeechBubbleHintConfig config) throws HintWidgetException {
+        Widget widget = widgets.get(config.getCockpitWidgetEnum());
+        if (widget != null) {
+            return widget;
+        } else {
+            if (selectedItemPanel.isVisible()) {
+                return selectedItemPanel.getHintWidget(config);
+            } else {
+                throw new HintWidgetException(this + " selectedItemPanel is not visible", config);
+            }
+        }
     }
 }
