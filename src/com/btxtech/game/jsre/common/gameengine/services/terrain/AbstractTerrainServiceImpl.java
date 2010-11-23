@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.terrain;
 
-import com.btxtech.game.jsre.client.cockpit.CockpitNew;
+import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -434,7 +434,7 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
 
     public boolean isInTopMapPanel(Index absolutePoint) {
         Index point = TerrainView.getInstance().toRelativeIndex(absolutePoint);
-        return CockpitNew.getInstance().contains(point);
+        return Cockpit.getInstance().contains(point);
     }
 
     public Rectangle getRectangle4Widget(Widget widget) {

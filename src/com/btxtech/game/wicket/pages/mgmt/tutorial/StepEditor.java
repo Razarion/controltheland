@@ -15,6 +15,7 @@ package com.btxtech.game.wicket.pages.mgmt.tutorial;
 
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.tutorial.DbCockpitSpeechBubbleHintConfig;
 import com.btxtech.game.services.tutorial.DbHintConfig;
 import com.btxtech.game.services.tutorial.DbItemSpeechBubbleHintConfig;
 import com.btxtech.game.services.tutorial.DbResourceHintConfig;
@@ -24,13 +25,16 @@ import com.btxtech.game.services.tutorial.DbTerrainPositionSpeechBubbleHintConfi
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.condition.ConditionWrapperPanel;
+import com.btxtech.game.wicket.pages.mgmt.tutorial.hint.CockpitSpeechBubbleHintConfigPanel;
+import com.btxtech.game.wicket.pages.mgmt.tutorial.hint.ItemSpeechBubbleHintConfigPanel;
+import com.btxtech.game.wicket.pages.mgmt.tutorial.hint.ResourceHintConfigPanel;
+import com.btxtech.game.wicket.pages.mgmt.tutorial.hint.TerrainPositionSpeechBubbleHintConfigPanel;
 import com.btxtech.game.wicket.uiservices.CrudTableHelper;
 import java.util.Arrays;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -99,6 +103,8 @@ public class StepEditor extends WebPage {
                     dbHintConfigItem.add(new ResourceHintConfigPanel("hint", (DbResourceHintConfig) dbHintConfigItem.getModelObject()));
                 } else if (dbHintConfigItem.getModelObject() instanceof DbTerrainPositionSpeechBubbleHintConfig) {
                     dbHintConfigItem.add(new TerrainPositionSpeechBubbleHintConfigPanel("hint"));
+                } else if (dbHintConfigItem.getModelObject() instanceof DbCockpitSpeechBubbleHintConfig) {
+                    dbHintConfigItem.add(new CockpitSpeechBubbleHintConfigPanel("hint"));
                 } else {
                     throw new IllegalArgumentException("Unknown DbHintConfig: " + dbHintConfigItem.getModelObject());
                 }

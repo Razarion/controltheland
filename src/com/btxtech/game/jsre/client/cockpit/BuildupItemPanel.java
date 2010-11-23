@@ -23,6 +23,8 @@ import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.btxtech.game.jsre.common.tutorial.CockpitSpeechBubbleHintConfig;
+import com.btxtech.game.jsre.common.tutorial.CockpitWidgetEnum;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -37,13 +39,15 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: beat
  * Date: 15.11.2009
  * Time: 14:12:18
  */
-public class BuildupItemPanel extends AbsolutePanel {
+public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvider {
     private static final int SCROLL_STEP = 50;
     private static final int HEIGHT = 100;
     private static final int ARROW_L_LEFT = 0;
@@ -55,6 +59,7 @@ public class BuildupItemPanel extends AbsolutePanel {
     private static final int SCROLL_LENGTH = 250;
     private static final int SCROLL_HEIGHT = 100;
     private ScrollPanel scrollPanel;
+    private Map<Integer, Widget> builupItem = new HashMap<Integer, Widget>();
 
     public BuildupItemPanel() {
         setPixelSize(SelectedItemPanel.WIDTH, HEIGHT);
@@ -99,6 +104,7 @@ public class BuildupItemPanel extends AbsolutePanel {
     }
 
     public void display(Group selectedGroup) {
+        builupItem.clear();
         try {
             if (selectedGroup.onlyConstructionVehicle()) {
                 setupBuildupItemsCV(selectedGroup);
@@ -148,7 +154,7 @@ public class BuildupItemPanel extends AbsolutePanel {
         scrollPanel.scrollToLeft();
     }
 
-    private Widget setupBuildupBlock(final BaseItemType itemType, boolean enabled, MouseDownHandler mouseDownHandler) {
+    private Widget setupBuildupBlock(BaseItemType itemType, boolean enabled, MouseDownHandler mouseDownHandler) {
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.setWidth("64px");
         Image image = ImageHandler.getItemTypeImage(itemType);
@@ -159,7 +165,23 @@ public class BuildupItemPanel extends AbsolutePanel {
         button.addMouseDownHandler(mouseDownHandler);
         verticalPanel.add(button);
         verticalPanel.add(new Label("$" + itemType.getPrice()));
+        builupItem.put(itemType.getId(), verticalPanel);
         return verticalPanel;
     }
 
+    @Override
+    public Widget getHintWidget(CockpitSpeechBubbleHintConfig config) throws HintWidgetException {
+        if (config.getCockpitWidgetEnum() != CockpitWidgetEnum.BUILDUP_ITEM) {
+            throw new HintWidgetException(this + " Only BUILDUP_ITEM supported", config);
+        }
+        if (!isVisible()) {
+            throw new HintWidgetException(this + " BuildupItemPanel not visible", config);
+        }
+        Widget widget = builupItem.get(config.getBaseItemTypeId());
+        if (widget != null) {
+            return widget;
+        } else {
+            throw new HintWidgetException(this + " no such item type id: " + config.getBaseItemTypeId(), config);
+        }
+    }
 }

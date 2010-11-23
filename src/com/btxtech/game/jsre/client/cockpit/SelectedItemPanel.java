@@ -14,24 +14,25 @@
 package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.ClientSyncItem;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
+import com.btxtech.game.jsre.common.tutorial.CockpitSpeechBubbleHintConfig;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import java.util.Map;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * User: beat
  * Date: May 20, 2009
  * Time: 7:50:02 PM
  */
-public class SelectedItemPanel extends AbsolutePanel {
+public class SelectedItemPanel extends AbsolutePanel implements HintWidgetProvider {
     public static final int WIDTH = 344;
     public static final int HEIGHT = 190;
     private EnemySelectedPanel enemySelectedPanel;
     private ResourceSelectedPanel resourceSelectedPanel;
     private OwnSingleSelectedPanel ownSingleSelectedPanel;
     private OwnMultiSelectedPanel ownMultiSelectedPanel;
+    private HintWidgetProvider activeHintWidgetProvider;
 
     public SelectedItemPanel() {
         setPixelSize(WIDTH, HEIGHT);
@@ -58,22 +59,33 @@ public class SelectedItemPanel extends AbsolutePanel {
         resourceSelectedPanel.setVisible(true);
     }
 
-    public void displayNone() {
-        enemySelectedPanel.setVisible(false);
-        resourceSelectedPanel.setVisible(false);
-        ownSingleSelectedPanel.setVisible(false);
-        ownMultiSelectedPanel.setVisible(false);
-    }
-
     public void displayOwnSingleItem(ClientSyncItem clientSyncItem) {
         displayNone();
         ownSingleSelectedPanel.display(clientSyncItem);
         ownSingleSelectedPanel.setVisible(true);
+        activeHintWidgetProvider = ownSingleSelectedPanel;
     }
 
     public void displayMultiOwnItems(Group selectedGroup) {
         displayNone();
         ownMultiSelectedPanel.display(selectedGroup);
         ownMultiSelectedPanel.setVisible(true);
+    }
+
+    public void displayNone() {
+        enemySelectedPanel.setVisible(false);
+        resourceSelectedPanel.setVisible(false);
+        ownSingleSelectedPanel.setVisible(false);
+        ownMultiSelectedPanel.setVisible(false);
+        activeHintWidgetProvider = null;
+    }
+
+    @Override
+    public Widget getHintWidget(CockpitSpeechBubbleHintConfig config) throws HintWidgetException {
+        if (activeHintWidgetProvider != null) {
+            return activeHintWidgetProvider.getHintWidget(config);
+        } else {
+            throw new HintWidgetException(this + " activeHintWidgetProvider == null", config);
+        }
     }
 }

@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.cockpit.CockpitNew;
+import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Message;
@@ -126,7 +126,7 @@ public class Connection implements AsyncCallback<Void> {
         StartupProbe.getInstance().taskSwitch(StartupTask.INIT_GAME, StartupTask.LOAD_UNITS);
         StartupProbe.getInstance().taskSwitch(StartupTask.LOAD_UNITS, StartupTask.START_ACTION_HANDLER);
         StartupProbe.getInstance().taskFinished(StartupTask.START_ACTION_HANDLER);
-        CockpitNew.getInstance().enableOnlinePanel(false);
+        Cockpit.getInstance().enableOnlinePanel(false);
     }
 
     private void setupRealStructure(final RealityInfo realityInfo) {
@@ -134,7 +134,7 @@ public class Connection implements AsyncCallback<Void> {
         ClientBase.getInstance().setAllBaseAttributes(realityInfo.getAllBase());
         ClientBase.getInstance().setBase(realityInfo.getBase());
         ClientBase.getInstance().setAccountBalance(realityInfo.getAccountBalance());
-        CockpitNew.getInstance().setGameInfo(realityInfo);
+        Cockpit.getInstance().setGameInfo(realityInfo);
         ClientItemTypeAccess.getInstance().setAllowedItemTypes(realityInfo.getAllowedItemTypes());
         RadarPanel.getInstance().updateEnergy(realityInfo.getEnergyGenerating(), realityInfo.getEnergyConsuming());
         MissionTarget.getInstance().setLevel(realityInfo.getLevel());
@@ -142,7 +142,7 @@ public class Connection implements AsyncCallback<Void> {
         StartupProbe.getInstance().taskSwitch(StartupTask.INIT_GAME, StartupTask.LOAD_UNITS);
         ClientBase.getInstance().setItemLimit(realityInfo.getItemLimit());
         ClientBase.getInstance().setHouseSpace(realityInfo.getHouseSpace());
-        CockpitNew.getInstance().enableOnlinePanel(true);
+        Cockpit.getInstance().enableOnlinePanel(true);
 
         movableServiceAsync.getAllSyncInfo(new AsyncCallback<Collection<SyncItemInfo>>() {
             @Override
@@ -222,17 +222,17 @@ public class Connection implements AsyncCallback<Void> {
                     ClientBase.getInstance().setAccountBalance(balancePacket.getAccountBalance());
                 } else if (packet instanceof XpBalancePacket) {
                     XpBalancePacket xpBalancePacket = (XpBalancePacket) packet;
-                    CockpitNew.getInstance().updateXp(xpBalancePacket.getXp());
+                    Cockpit.getInstance().updateXp(xpBalancePacket.getXp());
                 } else if (packet instanceof ItemTypeAccessSyncInfo) {
                     ItemTypeAccessSyncInfo itemTypeAccessSyncInfo = (ItemTypeAccessSyncInfo) packet;
                     ClientItemTypeAccess.getInstance().setAllowedItemTypes(itemTypeAccessSyncInfo.getAllowedItemTypes());
                     SelectionHandler.getInstance().refresh();
                 } else if (packet instanceof EnergyPacket) {
                     EnergyPacket energyPacket = (EnergyPacket) packet;
-                    CockpitNew.getInstance().updateEnergy(energyPacket.getGenerating(), energyPacket.getConsuming());
+                    Cockpit.getInstance().updateEnergy(energyPacket.getGenerating(), energyPacket.getConsuming());
                     RadarPanel.getInstance().updateEnergy(energyPacket.getGenerating(), energyPacket.getConsuming());
                 } else if (packet instanceof UserMessage) {
-                    CockpitNew.getInstance().onMessageReceived((UserMessage) packet);
+                    Cockpit.getInstance().onMessageReceived((UserMessage) packet);
                 } else if (packet instanceof LevelPacket) {
                     MissionTarget.getInstance().onLevelChanged((LevelPacket) packet);
                 } else if (packet instanceof BaseChangedPacket) {
@@ -240,7 +240,7 @@ public class Connection implements AsyncCallback<Void> {
                 } else if (packet instanceof HouseSpacePacket) {
                     HouseSpacePacket houseSpacePacket = (HouseSpacePacket) packet;
                     ClientBase.getInstance().setHouseSpace(houseSpacePacket.getHouseSpace());
-                    CockpitNew.getInstance().updateItemLimit();
+                    Cockpit.getInstance().updateItemLimit();
                 } else {
                     throw new IllegalArgumentException(this + " unknown packet: " + packet);
                 }

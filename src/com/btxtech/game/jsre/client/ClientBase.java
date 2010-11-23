@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.cockpit.CockpitNew;
+import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.dialogs.UnfrequentDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.item.ItemViewContainer;
@@ -64,7 +64,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
 
     public void setAccountBalance(double accountBalance) {
         this.accountBalance = accountBalance;
-        CockpitNew.getInstance().updateMoney();
+        Cockpit.getInstance().updateMoney();
     }
 
     public boolean isMyOwnProperty(SyncBaseItem syncItem) {
@@ -79,7 +79,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     public void depositResource(double price, SimpleBase simpleBase) {
         if (this.simpleBase.equals(simpleBase)) {
             accountBalance += price;
-            CockpitNew.getInstance().updateMoney();
+            Cockpit.getInstance().updateMoney();
             Simulation.getInstance().onDeposit();
             if (depositResourceListener != null) {
                 depositResourceListener.onDeposit();
@@ -97,7 +97,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
             throw new InsufficientFundsException();
         } else {
             accountBalance -= price;
-            CockpitNew.getInstance().updateMoney();
+            Cockpit.getInstance().updateMoney();
         }
         Simulation.getInstance().onWithdrawalMoney();        
     }
@@ -119,7 +119,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
             case CHANGED:
                 updateBase(baseChangedPacket.getBaseAttributes());
                 if (simpleBase.equals(baseChangedPacket.getBaseAttributes().getSimpleBase())) {
-                    CockpitNew.getInstance().updateBase();
+                    Cockpit.getInstance().updateBase();
                 }
                 ItemViewContainer.getInstance().updateMarker();
                 break;

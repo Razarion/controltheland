@@ -70,9 +70,9 @@ public class CockpitMode implements SelectionListener {
     @Override
     public void onTargetSelectionChanged(ClientSyncItem selection) {
         if (selection.isSyncBaseItem()) {
-            CockpitNew.getInstance().getSelectedItemPanel().displayEnemyItem(selection.getSyncBaseItem());
+            Cockpit.getInstance().getSelectedItemPanel().displayEnemyItem(selection.getSyncBaseItem());
         } else if (selection.isSyncResourceItem()) {
-            CockpitNew.getInstance().getSelectedItemPanel().displayResourceItem(selection.getSyncResourceItem());
+            Cockpit.getInstance().getSelectedItemPanel().displayResourceItem(selection.getSyncResourceItem());
         } else {
             throw new IllegalArgumentException(this + " can not set details for: " + selection);
         }
@@ -80,7 +80,7 @@ public class CockpitMode implements SelectionListener {
 
     @Override
     public void onSelectionCleared() {
-        CockpitNew.getInstance().getSelectedItemPanel().displayNone();
+        Cockpit.getInstance().getSelectedItemPanel().displayNone();
     }
 
     @Override
@@ -88,9 +88,9 @@ public class CockpitMode implements SelectionListener {
         clearUnloadMode();
         clearLaunchMode();
         if (selectedGroup.count() == 1) {
-            CockpitNew.getInstance().getSelectedItemPanel().displayOwnSingleItem(selectedGroup.getFirst());
+            Cockpit.getInstance().getSelectedItemPanel().displayOwnSingleItem(selectedGroup.getFirst());
         } else {
-            CockpitNew.getInstance().getSelectedItemPanel().displayMultiOwnItems(selectedGroup);
+            Cockpit.getInstance().getSelectedItemPanel().displayMultiOwnItems(selectedGroup);
         }
     }
 }

@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.wicket.pages.mgmt.tutorial;
+package com.btxtech.game.wicket.pages.mgmt.tutorial.hint;
 
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.TextArea;
@@ -21,14 +21,13 @@ import org.apache.wicket.markup.html.panel.Panel;
 /**
  * User: beat
  * Date: 07.11.2010
- * Time: 21:45:23
+ * Time: 15:28:19
  */
-public class TerrainPositionSpeechBubbleHintConfigPanel extends Panel {
-    public TerrainPositionSpeechBubbleHintConfigPanel(String id) {
+public class ItemSpeechBubbleHintConfigPanel extends Panel {
+    public ItemSpeechBubbleHintConfigPanel(String id) {
         super(id);
         add(new CheckBox("closeOnTaskEnd"));
-        add(new TextField<Integer>("position.x"));
-        add(new TextField<Integer>("position.y"));
+        add(new TextField("syncItemId"));
         add(new TextArea("html"));
     }
 }
