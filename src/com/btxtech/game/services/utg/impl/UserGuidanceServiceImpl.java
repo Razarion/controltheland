@@ -20,6 +20,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
+import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.common.CrudServiceHelperHibernateImpl;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.ItemService;
@@ -77,6 +79,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     private HibernateTemplate hibernateTemplate;
     final private HashMap<SimpleBase, PendingPromotion> pendingPromotions = new HashMap<SimpleBase, PendingPromotion>();
     private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
+    private CrudServiceHelper<DbUserStage> userStageCrudServiceHelper;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -494,37 +497,36 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
     @SuppressWarnings("unchecked")
     private DbUserStage getLowestDbUserStage() {
-        return getAllDbUserStage().get(0);
+        return getUserStageCrudServiceHelper().readDbChildren().iterator().next();
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<DbUserStage> getAllDbUserStage() {
-        return hibernateTemplate.executeFind(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbUserStage.class);
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                criteria.addOrder(Order.asc("orderIndex"));
-                return criteria.list();
-            }
-        });
-    }
+    public CrudServiceHelper<DbUserStage> getUserStageCrudServiceHelper() {
+        if (userStageCrudServiceHelper == null) {
+            userStageCrudServiceHelper = new CrudServiceHelperHibernateImpl<DbUserStage>(hibernateTemplate, DbUserStage.class) {
+                @Override
+                protected void addAdditionalReadCriteria(Criteria criteria) {
+                    criteria.addOrder(Order.asc("orderIndex"));
+                }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public void saveAllDbUserStage(final List<DbUserStage> dbUserStages) {
-        for (int i = 0, dbUserStagesSize = dbUserStages.size(); i < dbUserStagesSize; i++) {
-            dbUserStages.get(i).setOrderIndex(i);
+                @Override
+                public void updateDbChildren(Collection<DbUserStage> children) {
+                    final List<DbUserStage> dbUserStages = (List<DbUserStage>) children;
+                    for (int i = 0, dbUserStagesSize = dbUserStages.size(); i < dbUserStagesSize; i++) {
+                        dbUserStages.get(i).setOrderIndex(i);
+                    }
+                    hibernateTemplate.execute(new HibernateCallback() {
+                        @Override
+                        public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                            hibernateTemplate.saveOrUpdateAll(dbUserStages);
+                            hibernateTemplate.flush();
+                            return null;
+                        }
+                    });
+                }
+            };
         }
-        hibernateTemplate.execute(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                hibernateTemplate.saveOrUpdateAll(dbUserStages);
-                hibernateTemplate.flush();
-                return null;
-            }
-        });
+        return userStageCrudServiceHelper;
     }
 
     @SuppressWarnings("unchecked")

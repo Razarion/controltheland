@@ -22,6 +22,7 @@ import com.btxtech.game.services.tutorial.ResourceHintManager;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.utg.DbUserStage;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,7 +72,7 @@ public class TutorialServiceImpl implements TutorialService, ResourceHintManager
 
     @Override
     public void activate() {
-        List<DbUserStage> dbUserStages = userGuidanceService.getAllDbUserStage();
+        Collection<DbUserStage> dbUserStages = userGuidanceService.getUserStageCrudServiceHelper().readDbChildren();
         if (dbUserStages.isEmpty()) {
             throw new IllegalStateException("No user stages defined");
         }

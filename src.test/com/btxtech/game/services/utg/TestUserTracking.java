@@ -18,6 +18,7 @@ import com.btxtech.game.services.TestWebSessionContextLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,20 +53,23 @@ public class TestUserTracking {
         userActions.add(new UserAction("XXXX", stringBuilder.toString()));
     }
 
-    //@Test
-
+    @Test
     public void testDbUserStageStorage() {
-        List<DbUserStage> dbUserStages = userGuidanceService.getAllDbUserStage();
+        List<DbUserStage> dbUserStages = (List<DbUserStage>) userGuidanceService.getUserStageCrudServiceHelper().readDbChildren();
         Collections.swap(dbUserStages, 0, 1);
-        userGuidanceService.saveAllDbUserStage(dbUserStages);
+        userGuidanceService.getUserStageCrudServiceHelper().updateDbChildren(dbUserStages);
+        List<DbUserStage> newDbUserStages = (List<DbUserStage>) userGuidanceService.getUserStageCrudServiceHelper().readDbChildren();
+        for (int i = 0; i < dbUserStages.size(); i++) {
+            Assert.assertEquals(dbUserStages.get(i), newDbUserStages.get(i));
+        }
     }
 
-    @Test
+    //@Test
     public void testNextDbUserStage() {
-        List<DbUserStage> dbUserStages = userGuidanceService.getAllDbUserStage();
+        List<DbUserStage> dbUserStages = (List<DbUserStage>) userGuidanceService.getUserStageCrudServiceHelper().readDbChildren();
         DbUserStage dbUserStage = dbUserStages.get(0);
         System.out.println(dbUserStage);
-        // dbUserStage = userGuidanceService.getNextDbUserStage(dbUserStage);
+        //dbUserStage = userGuidanceService.getNextDbUserStage(dbUserStage);
         // System.out.println(dbUserStage);
     }
 

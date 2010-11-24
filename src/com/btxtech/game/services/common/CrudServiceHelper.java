@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.common;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -22,6 +23,8 @@ import java.util.Collection;
  */
 public interface CrudServiceHelper<T extends CrudChild> {
     Collection<T> readDbChildren();
+
+    T readDbChild(Serializable id);
 
     void deleteDbChild(T child);
 

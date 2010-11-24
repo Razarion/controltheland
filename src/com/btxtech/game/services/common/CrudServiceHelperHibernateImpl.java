@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.common;
 
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -47,9 +48,23 @@ public class CrudServiceHelperHibernateImpl<T extends CrudChild> implements Crud
             public Object doInHibernate(Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(childClass);
                 criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                addAdditionalReadCriteria(criteria);
                 return criteria.list();
             }
         });
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public T readDbChild(Serializable id) {
+        T t = (T) hibernateTemplate.get(childClass, id);
+        if (t == null) {
+            throw new IllegalArgumentException("No child found for: " + id);
+        }
+        return t;
+    }
+
+    protected void addAdditionalReadCriteria(Criteria criteria) {
     }
 
     @Override

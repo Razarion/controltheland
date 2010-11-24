@@ -63,6 +63,11 @@ public class CrudServiceHelperCollectionImpl<T extends CrudChild> implements Cru
     }
 
     @Override
+    public T readDbChild(Serializable id) {
+        throw new NotImplementedException();
+    }
+
+    @Override
     public void createDbChild(Class createClass) {
         try {
             Constructor<T> constructor = createClass.getConstructor();

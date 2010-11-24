@@ -147,6 +147,10 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
         this.failOnMoneyBelowAndNoAttackUnits = failOnMoneyBelowAndNoAttackUnits;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     public TutorialConfig createTutorialConfig(ResourceHintManager resourceHintManager) {
         ArrayList<BaseAttributes> baseAttributes = new ArrayList<BaseAttributes>();
         SimpleBase ownBase = new SimpleBase(ownBaseId);
