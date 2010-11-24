@@ -18,6 +18,7 @@ import com.btxtech.game.services.common.CrudServiceHelper;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -32,13 +33,14 @@ import org.apache.wicket.markup.repeater.data.DataView;
  */
 public abstract class CrudTableHelper<T extends CrudChild> implements Serializable {
     public static final String NAME = "name";
+    private ListProvider<T> provider;
 
     public CrudTableHelper(String tableId, String saveId, String createId, final boolean showEdit, Form form) {
-        final ListProvider<T> provider = new ListProvider<T>() {
+        provider = new ListProvider<T>() {
             @Override
             protected List<T> createList() {
                 Collection<T> collection = getCrudServiceHelper().readDbChildren();
-                if(collection instanceof List) {
+                if (collection instanceof List) {
                     return (List<T>) collection;
                 } else {
                     return new ArrayList<T>(collection);
@@ -112,4 +114,14 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
     protected void onEditSubmit(T t) {
 
     }
+
+    public void swapRow(int i, int j) {
+        Collections.swap(provider.getLastModifiedList(), i, j);
+        getCrudServiceHelper().updateDbChildren(provider.getLastModifiedList());
+    }
+
+    public int rowCount() {
+        return provider.getLastModifiedList().size();
+    }
+
 }

@@ -21,6 +21,7 @@ import com.btxtech.game.services.cms.DbCmsUserStage;
 import com.btxtech.game.services.utg.DbUserStage;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -86,7 +87,7 @@ public class CmsServiceImpl implements CmsService {
         }
         dbCmsUserStage = dbCmsUserStages.get(0);
 
-        List<DbUserStage> dbUserStages = userGuidanceService.getAllDbUserStage();
+        Collection<DbUserStage> dbUserStages = userGuidanceService.getUserStageCrudServiceHelper().readDbChildren();
         if (dbUserStages.isEmpty()) {
             throw new IllegalStateException("No user stages defined");
         }

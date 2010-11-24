@@ -16,6 +16,7 @@ package com.btxtech.game.services.utg;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.Base;
+import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.user.User;
 import java.util.Collection;
 import java.util.List;
@@ -66,9 +67,7 @@ public interface UserGuidanceService {
 
     void onTutorialFinished();
 
-    List<DbUserStage> getAllDbUserStage();
-
-    void saveAllDbUserStage(List<DbUserStage> dbUserStages);
+    CrudServiceHelper<DbUserStage> getUserStageCrudServiceHelper();
 
     DbUserStage getDbUserStage(String name);
 }

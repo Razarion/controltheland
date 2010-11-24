@@ -15,40 +15,42 @@
         "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-    <title>Titorial Table</title>
+    <title>Stages</title>
 </head>
 <body>
-<h1>Titorial Table</h1>
+<h2>Stages</h2>
 
 <span wicket:id="msgs"/>
 
-<form wicket:id="tutorialForm">
-    <h2>Region Resource</h2>
+<form wicket:id="from">
     <table cellpadding="1" cellspacing="1" border="0">
         <tr>
-            <th bgcolor="#dadada">Id</th>
-            <th bgcolor="#dadada">Name [internal only]</th>
-            <th bgcolor="#dadada">Edit</th>
+            <th bgcolor="#dadada">Name [internal]</th>
+            <th bgcolor="#dadada">HTML Text</th>
+            <th bgcolor="#dadada">Real Game</th>
+            <th bgcolor="#dadada">Tutorial</th>
+            <th bgcolor="#dadada">Up</th>
+            <th bgcolor="#dadada">Down</th>
             <th bgcolor="#dadada">Delete</th>
         </tr>
-
-        <tr wicket:id="tutorialTable">
-            <td wicket:id="id"></td>
-            <td><input type="text" wicket:id="name" size="20" maxlength="500"/></td>
+        <tr wicket:id="userStageTable">
+            <td><input type="text" wicket:id="name" size="20"></td>
+            <td><input type="text" wicket:id="html" size="20"></td>
+            <td align="center"><input type="checkbox" wicket:id="isRealGame" ></td>
+            <td><input type="text" wicket:id="dbTutorialConfig" size="4"></td>
             <td valign="center">
-                <input type="submit" value="Edit" wicket:id="edit"/>
+                <input type="submit" value="Up" wicket:id="up"/>
             </td>
+            <td valign="center">
+                <input type="submit" value="Down" wicket:id="down"/>
+            </td>            
             <td valign="center">
                 <input type="submit" value="Delete" wicket:id="delete"/>
             </td>
         </tr>
     </table>
-    <input type="submit" wicket:id="create" value="Create">
-    <br>
-    <br>
-    <input type="submit" wicket:id="save" value="Save">
-    <input type="submit" wicket:id="activate" value="Activate">
-
+    <input type="submit" wicket:id="createUserStage" value="Create">
+    <input type="submit" wicket:id="saveUserStage" value="Save">
 </form>
 </body>
 </html>

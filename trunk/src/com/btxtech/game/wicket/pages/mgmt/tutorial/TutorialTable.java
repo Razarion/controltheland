@@ -18,9 +18,11 @@ import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.wicket.uiservices.CrudTableHelper;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -48,6 +50,12 @@ public class TutorialTable extends WebPage {
             @Override
             protected void onEditSubmit(DbTutorialConfig dbTutorialConfig) {
                 setResponsePage(new TutorialEditor(dbTutorialConfig));
+            }
+
+            @Override
+            protected void extendedPopulateItem(Item<DbTutorialConfig> dbTutorialConfigItem) {
+                super.extendedPopulateItem(dbTutorialConfigItem);
+                dbTutorialConfigItem.add(new Label("id"));
             }
         };
 

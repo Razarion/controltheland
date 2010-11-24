@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.utg;
 
+import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import java.io.Serializable;
 import javax.persistence.Column;
@@ -28,7 +29,7 @@ import javax.persistence.OneToOne;
  * Time: 12:39:45
  */
 @Entity(name = "GUIDANCE_USER_STAGE")
-public class DbUserStage implements Serializable {
+public class DbUserStage implements CrudChild, Serializable {
     @Id
     @GeneratedValue
     private Integer id;
@@ -56,12 +57,24 @@ public class DbUserStage implements Serializable {
         return html;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public void init() {
+        // Not used
+    }
+
+    @Override
+    public void setParent(Object o) {
+        // Not used
     }
 
     public int getOrderIndex() {
