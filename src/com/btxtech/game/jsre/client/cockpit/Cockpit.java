@@ -163,6 +163,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
     private void setupInfo() {
         money = new Label();
         add(money, MONEY_LEFT, MONEY_TOP);
+        widgets.put(CockpitWidgetEnum.MONEY_FIELD, money);
         xp = new Label();
         add(xp, XP_LEFT, XP_TOP);
         level = new Label();

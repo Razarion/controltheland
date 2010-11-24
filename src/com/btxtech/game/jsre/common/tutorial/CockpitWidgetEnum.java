@@ -23,7 +23,9 @@ public enum CockpitWidgetEnum {
     OPTION_BUTTON(false),
     SELL_BUTTON(false),
     MISSION_BUTTON(false),
+    MONEY_FIELD(false),
     BUILDUP_ITEM(true);
+
     private boolean itemTypeNeeded;
 
     CockpitWidgetEnum(boolean itemTypeNeeded) {
