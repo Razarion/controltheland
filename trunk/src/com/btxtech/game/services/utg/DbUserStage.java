@@ -69,7 +69,7 @@ public class DbUserStage implements CrudChild, Serializable {
 
     @Override
     public void init() {
-        // Not used
+        html = "Text";
     }
 
     @Override

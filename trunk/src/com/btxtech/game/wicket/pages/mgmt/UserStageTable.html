@@ -36,14 +36,14 @@
         <tr wicket:id="userStageTable">
             <td><input type="text" wicket:id="name" size="20"></td>
             <td><input type="text" wicket:id="html" size="20"></td>
-            <td align="center"><input type="checkbox" wicket:id="isRealGame" ></td>
+            <td align="center"><input type="checkbox" wicket:id="isRealGame"></td>
             <td><input type="text" wicket:id="dbTutorialConfig" size="4"></td>
             <td valign="center">
                 <input type="submit" value="Up" wicket:id="up"/>
             </td>
             <td valign="center">
                 <input type="submit" value="Down" wicket:id="down"/>
-            </td>            
+            </td>
             <td valign="center">
                 <input type="submit" value="Delete" wicket:id="delete"/>
             </td>
@@ -52,5 +52,9 @@
     <input type="submit" wicket:id="createUserStage" value="Create">
     <input type="submit" wicket:id="saveUserStage" value="Save">
 </form>
+<form wicket:id="activateUserStage">
+    <input type="submit" value="Activate"/>
+</form>
+
 </body>
 </html>

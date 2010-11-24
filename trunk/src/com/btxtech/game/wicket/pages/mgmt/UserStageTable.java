@@ -14,6 +14,7 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.services.bot.DbBotConfig;
+import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
@@ -42,6 +43,8 @@ public class UserStageTable extends WebPage {
     private UserGuidanceService userGuidanceService;
     @SpringBean
     private TutorialService tutorialService;
+    @SpringBean
+    private CmsService cmsService;
     private Log log = LogFactory.getLog(UserStageTable.class);
 
     public UserStageTable() {
@@ -112,6 +115,14 @@ public class UserStageTable extends WebPage {
                 });
             }
         };
+
+        add(new Form("activateUserStage") {
+
+            @Override
+            protected void onSubmit() {
+                cmsService.activateUserStage();
+            }
+        });
 
     }
 }
