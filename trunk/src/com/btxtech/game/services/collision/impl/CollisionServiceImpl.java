@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -28,7 +29,6 @@ import com.btxtech.game.services.collision.PassableRectangle;
 import com.btxtech.game.services.collision.Path;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.MgmtService;
-import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainService;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,8 +63,12 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
 
     @PostConstruct
     public void init() {
-        terrainService.addTerrainListener(this);
-        setupPassableTerrain();
+        try {
+            terrainService.addTerrainListener(this);
+            setupPassableTerrain();
+        } catch (Throwable t) {
+            log.error("", t);
+        }
     }
 
     private void setupPassableTerrain() {
@@ -76,10 +80,10 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     }
 
     private SurfaceType[][] getSurfaceTypeField() {
-        DbTerrainSetting dbTerrainSetting = terrainService.getDbTerrainSettings();
-        SurfaceType[][] surfaceTypeFiled = new SurfaceType[dbTerrainSetting.getTileXCount()][dbTerrainSetting.getTileYCount()];
-        for (int x = 0; x < dbTerrainSetting.getTileXCount(); x++) {
-            for (int y = 0; y < dbTerrainSetting.getTileYCount(); y++) {
+        TerrainSettings terrainSettings = terrainService.getTerrainSettings();
+        SurfaceType[][] surfaceTypeFiled = new SurfaceType[terrainSettings.getTileXCount()][terrainSettings.getTileYCount()];
+        for (int x = 0; x < terrainSettings.getTileXCount(); x++) {
+            for (int y = 0; y < terrainSettings.getTileYCount(); y++) {
                 surfaceTypeFiled[x][y] = terrainService.getSurfaceType(new Index(x, y));
             }
         }
@@ -185,10 +189,10 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
             for (double angel = 0.0; angel < 2.0 * Math.PI; angel += (2.0 * Math.PI / STEPS_ANGEL)) {
                 Index point = origin.getPointFromAngelToNord(angel, distance + targetMinRange);
 
-                if (point.getX() >= terrainService.getDbTerrainSettings().getPlayFieldXSize()) {
+                if (point.getX() >= terrainService.getTerrainSettings().getPlayFieldXSize()) {
                     continue;
                 }
-                if (point.getY() >= terrainService.getDbTerrainSettings().getPlayFieldYSize()) {
+                if (point.getY() >= terrainService.getTerrainSettings().getPlayFieldYSize()) {
                     continue;
                 }
 
@@ -231,10 +235,10 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
                 //System.out.println("distance + targetMinRange:" + (distance + targetMinRange) + " angel:" + angel);
                 Index point = origin.getPointFromAngelToNord(angel, distance + targetMinRange);
 
-                if (point.getX() >= terrainService.getDbTerrainSettings().getPlayFieldXSize()) {
+                if (point.getX() >= terrainService.getTerrainSettings().getPlayFieldXSize()) {
                     continue;
                 }
-                if (point.getY() >= terrainService.getDbTerrainSettings().getPlayFieldYSize()) {
+                if (point.getY() >= terrainService.getTerrainSettings().getPlayFieldYSize()) {
                     continue;
                 }
                 if (!terrainService.isFree(point, itemType.getWidth(), itemType.getHeight(), itemType.getTerrainType().getSurfaceTypes())) {
@@ -265,7 +269,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
             return null;
         }
         for (PassableRectangle passableRectangle : passableRectangles) {
-            if (passableRectangle.containAbsoluteIndex(absoluteIndex, terrainService.getDbTerrainSettings())) {
+            if (passableRectangle.containAbsoluteIndex(absoluteIndex, terrainService.getTerrainSettings())) {
                 return passableRectangle;
             }
         }

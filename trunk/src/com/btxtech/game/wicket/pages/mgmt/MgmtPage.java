@@ -107,7 +107,7 @@ public class MgmtPage extends WebPage {
         toolPages.add(new LinkAndName("CMS", CmsEditor.class));
         toolPages.add(new LinkAndName("DB View", DbView.class));
         toolPages.add(new LinkAndName("Log View", LogView.class));
-        toolPages.add(new LinkAndName("Map Editor", TerrainFieldEditor.class));
+        toolPages.add(new LinkAndName("Map Editor", TerrainSettingsTable.class));
         toolPages.add(new LinkAndName("Terrain Tile Editor", TerrainTileEditor.class));
         toolPages.add(new LinkAndName("Backup/Restore", BackupRestore.class));
         toolPages.add(new LinkAndName("Item Type Editpr", ItemTypeTable.class));

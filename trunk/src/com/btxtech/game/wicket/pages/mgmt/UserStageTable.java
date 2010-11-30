@@ -16,6 +16,8 @@ package com.btxtech.game.wicket.pages.mgmt;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.terrain.DbTerrainSetting;
+import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.utg.DbUserStage;
@@ -45,6 +47,8 @@ public class UserStageTable extends WebPage {
     private TutorialService tutorialService;
     @SpringBean
     private CmsService cmsService;
+    @SpringBean
+    private TerrainService terrainService;
     private Log log = LogFactory.getLog(UserStageTable.class);
 
     public UserStageTable() {
@@ -90,6 +94,33 @@ public class UserStageTable extends WebPage {
                         // Ignore
                     }
                 }, Integer.class));
+                item.add(new TextField<Integer>("dbTerrainSetting", new IModel<Integer>() {
+                    @Override
+                    public Integer getObject() {
+                        if (item.getModelObject().getDbTerrainSetting() != null) {
+                            return item.getModelObject().getDbTerrainSetting().getId();
+                        } else {
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    public void setObject(Integer id) {
+                        try {
+                            DbTerrainSetting dbTerrainSetting = terrainService.getDbTerrainSettingCrudServiceHelper().readDbChild(id);
+                            item.getModelObject().setDbTerrainSetting(dbTerrainSetting);
+                        } catch (Throwable t) {
+                            log.error("", t);
+                            error(t.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void detach() {
+                        // Ignore
+                    }
+                }, Integer.class));
+
                 item.add(new Button("up") {
                     @Override
                     public void onSubmit() {

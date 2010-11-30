@@ -141,7 +141,9 @@
           <root url="jar://$MODULE_DIR$/war/WEB-INF/lib/spring.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../../../tech/spring-framework-2.5.5/src" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="module-library" exported="">

@@ -1,0 +1,68 @@
+/*
+ * Copyright (c) 2010.
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; version 2 of the License.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ */
+
+package com.btxtech.game.wicket.pages.mgmt;
+
+import com.btxtech.game.jsre.mapeditor.TerrainEditorAsync;
+import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.terrain.DbTerrainSetting;
+import com.btxtech.game.services.terrain.TerrainService;
+import com.btxtech.game.wicket.uiservices.CrudTableHelper;
+import org.apache.wicket.PageParameters;
+import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.spring.injection.annot.SpringBean;
+
+/**
+ * User: beat
+ * Date: 28.11.2010
+ * Time: 14:50:22
+ */
+public class TerrainSettingsTable extends WebPage {
+    @SpringBean
+    private TerrainService terrainService;
+
+    public TerrainSettingsTable() {
+        add(new FeedbackPanel("msgs"));
+
+        Form form = new Form("from");
+        add(form);
+
+        new CrudTableHelper<DbTerrainSetting>("terrainSettingTable", "saveTerrainSetting", "createTerrainSetting", false, form) {
+
+            @Override
+            protected CrudServiceHelper<DbTerrainSetting> getCrudServiceHelper() {
+                return terrainService.getDbTerrainSettingCrudServiceHelper();
+            }
+
+            @Override
+            protected void extendedPopulateItem(final Item<DbTerrainSetting> item) {
+                item.add(new Label("id"));
+                super.extendedPopulateItem(item);
+                item.add(new TextField("tileXCount"));
+                item.add(new TextField("tileYCount"));
+                item.add(new TextField("tileHeight"));
+                item.add(new TextField("tileWidth"));
+                PageParameters pageParameters = new PageParameters();
+                pageParameters.add(TerrainEditorAsync.TERRAIN_SETTING_ID, item.getModelObject().getId().toString());
+                item.add(new BookmarkablePageLink<TerrainFieldEditor>("editorLink", TerrainFieldEditor.class, pageParameters));
+            }
+        };
+
+    }
+}

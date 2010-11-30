@@ -15,7 +15,7 @@ package com.btxtech.game.services.collision;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.services.terrain.DbTerrainSetting;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.services.terrain.TerrainService;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -87,18 +87,18 @@ public class PassableRectangle {
         neighbors.put(neighborPassableRectangle, neighbor);
     }
 
-    public Rectangle getPixelRectangle(DbTerrainSetting dbTerrainSetting) {
-        int x = rectangle.getX() * dbTerrainSetting.getTileWidth();
-        int y = rectangle.getY() * dbTerrainSetting.getTileHeight();
+    public Rectangle getPixelRectangle(TerrainSettings terrainSettings) {
+        int x = rectangle.getX() * terrainSettings.getTileWidth();
+        int y = rectangle.getY() * terrainSettings.getTileHeight();
 
-        int width = rectangle.getWidth() * dbTerrainSetting.getTileWidth();
-        int height = rectangle.getHeight() * dbTerrainSetting.getTileHeight();
+        int width = rectangle.getWidth() * terrainSettings.getTileWidth();
+        int height = rectangle.getHeight() * terrainSettings.getTileHeight();
 
         return new Rectangle(x, y, width, height);
     }
 
-    public boolean containAbsoluteIndex(Index absoluteIndex, DbTerrainSetting dbTerrainSetting) {
-        return getPixelRectangle(dbTerrainSetting).contains(absoluteIndex);
+    public boolean containAbsoluteIndex(Index absoluteIndex, TerrainSettings terrainSettings) {
+        return getPixelRectangle(terrainSettings).contains(absoluteIndex);
     }
 
     public Path findAllPossiblePassableRectanglePaths(PassableRectangle destinationRect, Index absDestination) {

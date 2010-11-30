@@ -27,6 +27,7 @@ import com.btxtech.game.jsre.mapview.territory.TerritoryCockpit;
 import com.btxtech.game.jsre.mapview.territory.TerritoryEditModel;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -44,6 +45,8 @@ public class MapView implements EntryPoint {
         // Setup common
         GwtCommon.setUncaughtExceptionHandler();
         GwtCommon.disableBrowserContextMenuJSNI();
+
+        int terrainId = Integer.parseInt(Window.Location.getParameter(TerrainEditorAsync.TERRAIN_SETTING_ID));
 
         AbsolutePanel absolutePanel = new AbsolutePanel();
         absolutePanel.setSize("100%", "100%");
@@ -65,7 +68,7 @@ public class MapView implements EntryPoint {
 
         TerrainEditorAsync terrainEditor = GWT.create(TerrainEditor.class);
         territoryEditModel.setTerrainEditorAsync(terrainEditor);
-        terrainEditor.getTerrainInfo(new AsyncCallback<TerrainInfo>() {
+        terrainEditor.getTerrainInfo(terrainId, new AsyncCallback<TerrainInfo>() {
             @Override
             public void onFailure(Throwable throwable) {
                 GwtCommon.handleException(throwable, true);

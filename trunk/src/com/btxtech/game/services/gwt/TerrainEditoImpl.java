@@ -20,6 +20,8 @@ import com.btxtech.game.jsre.mapeditor.TerrainEditor;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.TerritoryService;
+import com.btxtech.game.services.utg.DbUserStage;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import java.util.Collection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,14 +42,10 @@ public class TerrainEditoImpl implements TerrainEditor {
     private Log log = LogFactory.getLog(TerrainEditoImpl.class);
 
     @Override
-    public TerrainInfo getTerrainInfo() {
+    public TerrainInfo getTerrainInfo(int terrainId) {
         try {
             TerrainInfo terrainInfo = new TerrainInfo();
-            terrainInfo.setTerrainSettings(terrainService.getTerrainSettings());
-            terrainInfo.setTerrainImagePositions(terrainService.getTerrainImagePositions());
-            terrainInfo.setTerrainImages(terrainService.getTerrainImages());
-            terrainInfo.setSurfaceImages(terrainService.getSurfaceImages());
-            terrainInfo.setSurfaceRects(terrainService.getSurfaceRects());
+            terrainService.setupTerrain(terrainInfo, terrainId);
             return terrainInfo;
         } catch (Throwable t) {
             log.error("", t);
@@ -56,9 +54,9 @@ public class TerrainEditoImpl implements TerrainEditor {
     }
 
     @Override
-    public void saveTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects) {
+    public void saveTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int terrainId) {
         try {
-            terrainService.saveAndActivateTerrain(terrainImagePositions, surfaceRects);
+            terrainService.saveAndActivateTerrain(terrainImagePositions, surfaceRects, terrainId);
         } catch (Throwable t) {
             log.error("", t);
         }

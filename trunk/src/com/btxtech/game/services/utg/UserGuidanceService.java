@@ -61,13 +61,15 @@ public interface UserGuidanceService {
 
     void restore(Collection<Base> bases);
 
-    DbUserStage getDbUserStage();
-
     void onUserCreated(User user);
 
     void onTutorialFinished();
 
     CrudServiceHelper<DbUserStage> getUserStageCrudServiceHelper();
 
+    DbUserStage getDbUserStage();
+
     DbUserStage getDbUserStage(String name);
+
+    DbUserStage getDbUserStage4RealGame();
 }

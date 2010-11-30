@@ -92,10 +92,20 @@ public class CrudServiceHelperHibernateImpl<T extends CrudChild> implements Crud
         try {
             Constructor<T> constructor = createClass.getConstructor();
             T t = constructor.newInstance();
-            t.init();
-            hibernateTemplate.save(t);
+            addChild(t);
         } catch (Exception e) {
             log.error("", e);
         }
+    }
+
+    @Override
+    public void deleteAllChildren() {
+        hibernateTemplate.deleteAll(readDbChildren());
+    }
+
+    @Override
+    public void addChild(T t) {
+        t.init();
+        hibernateTemplate.save(t);
     }
 }

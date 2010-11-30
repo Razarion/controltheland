@@ -14,6 +14,7 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import java.io.Serializable;
 import javax.persistence.Column;
@@ -40,6 +41,8 @@ public class DbUserStage implements CrudChild, Serializable {
     private int orderIndex;
     @OneToOne(fetch = FetchType.EAGER)
     private DbTutorialConfig dbTutorialConfig;
+    @OneToOne(fetch = FetchType.EAGER)
+    private DbTerrainSetting dbTerrainSetting;
 
     public boolean isRealGame() {
         return isRealGame;
@@ -111,5 +114,13 @@ public class DbUserStage implements CrudChild, Serializable {
 
     public void setDbTutorialConfig(DbTutorialConfig dbTutorialConfig) {
         this.dbTutorialConfig = dbTutorialConfig;
+    }
+
+    public DbTerrainSetting getDbTerrainSetting() {
+        return dbTerrainSetting;
+    }
+
+    public void setDbTerrainSetting(DbTerrainSetting dbTerrainSetting) {
+        this.dbTerrainSetting = dbTerrainSetting;
     }
 }

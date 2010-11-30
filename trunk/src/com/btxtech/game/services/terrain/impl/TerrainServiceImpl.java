@@ -15,6 +15,7 @@ package com.btxtech.game.services.terrain.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
@@ -23,28 +24,31 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosi
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.btxtech.game.services.collision.CollisionService;
+import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.common.CrudServiceHelperHibernateImpl;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbSurfaceRect;
 import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.services.terrain.DbTerrainImagePosition;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainService;
-import java.sql.SQLException;
+import com.btxtech.game.services.utg.DbUserStage;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * User: beat
@@ -55,12 +59,14 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     private HibernateTemplate hibernateTemplate;
     private HashMap<Integer, DbTerrainImage> dbTerrainImages = new HashMap<Integer, DbTerrainImage>();
     private HashMap<Integer, DbSurfaceImage> dbSurfaceImages = new HashMap<Integer, DbSurfaceImage>();
-    private Log log = LogFactory.getLog(TerrainServiceImpl.class);
-    private DbTerrainSetting dbTerrainSettings;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
     @Autowired
     private CollisionService collisionService;
     @Autowired
     private ItemService itemService;
+    private CrudServiceHelper<DbTerrainSetting> dbTerrainSettingCrudServiceHelper;
+    private Log lgo = LogFactory.getLog(TerrainServiceImpl.class);
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -69,86 +75,60 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
 
     @PostConstruct
     public void init() {
+        dbTerrainSettingCrudServiceHelper = new CrudServiceHelperHibernateImpl<DbTerrainSetting>(hibernateTemplate, DbTerrainSetting.class);
         loadTerrain();
     }
 
+    public CrudServiceHelper<DbTerrainSetting> getDbTerrainSettingCrudServiceHelper() {
+        return dbTerrainSettingCrudServiceHelper;
+    }
+
     private void loadTerrain() {
-        // Terrain settings
-        @SuppressWarnings("unchecked")
-        List<DbTerrainSetting> dbTerrainSettings = hibernateTemplate.loadAll(DbTerrainSetting.class);
-        if (dbTerrainSettings.isEmpty()) {
-            this.dbTerrainSettings = createDefaultTerrainSettings();
-        } else {
-            if (dbTerrainSettings.size() > 1) {
-                log.error("More than one terrain setting row found: " + dbTerrainSettings.size());
+        SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
+        try {
+            // Terrain settings
+            DbUserStage dbUserStage = userGuidanceService.getDbUserStage4RealGame();
+            if (dbUserStage.getDbTerrainSetting() == null) {
+                lgo.error("No DbTerrainSetting for real game");
+                return;
             }
-            this.dbTerrainSettings = dbTerrainSettings.get(0);
-        }
-        setTerrainSettings(this.dbTerrainSettings.createTerrainSettings());
+            setTerrainSettings(dbUserStage.getDbTerrainSetting().createTerrainSettings());
 
-        // Terrain image position
-        setTerrainImagePositions(new ArrayList<TerrainImagePosition>());
-        List<DbTerrainImagePosition> dbTerrainImagePositions = loadDbTerrainImagePositions();
-        for (DbTerrainImagePosition dbTerrainImagePosition : dbTerrainImagePositions) {
-            addTerrainImagePosition(dbTerrainImagePosition.createTerrainImagePosition());
-        }
-
-        // Surface rectangles
-        setSurfaceRects(new ArrayList<SurfaceRect>());
-        @SuppressWarnings("unchecked")
-        List<DbSurfaceRect> dbSurfaceRects = hibernateTemplate.loadAll(DbSurfaceRect.class);
-        for (DbSurfaceRect dbSurfaceRect : dbSurfaceRects) {
-            addSurfaceRect(dbSurfaceRect.createSurfaceRect());
-        }
-
-        // Terrain images
-        @SuppressWarnings("unchecked")
-        List<DbTerrainImage> imageList = hibernateTemplate.loadAll(DbTerrainImage.class);
-        clearTerrainImages();
-        dbTerrainImages = new HashMap<Integer, DbTerrainImage>();
-        for (DbTerrainImage dbTerrainImage : imageList) {
-            dbTerrainImages.put(dbTerrainImage.getId(), dbTerrainImage);
-            putTerrainImage(dbTerrainImage.createTerrainImage());
-        }
-
-        // Surface images
-        @SuppressWarnings("unchecked")
-        List<DbSurfaceImage> surfaceList = hibernateTemplate.loadAll(DbSurfaceImage.class);
-        clearSurfaceImages();
-        dbSurfaceImages = new HashMap<Integer, DbSurfaceImage>();
-        for (DbSurfaceImage dbSurfaceImage : surfaceList) {
-            dbSurfaceImages.put(dbSurfaceImage.getId(), dbSurfaceImage);
-            putSurfaceImage(dbSurfaceImage.createSurfaceImage());
-        }
-
-        fireTerrainChanged();
-    }
-
-    private DbTerrainSetting createDefaultTerrainSettings() {
-        DbTerrainSetting dbTerrainSetting = new DbTerrainSetting();
-        dbTerrainSetting.setTileWidth(100);
-        dbTerrainSetting.setTileHeight(100);
-        dbTerrainSetting.setTileXCount(50);
-        dbTerrainSetting.setTileYCount(50);
-        hibernateTemplate.saveOrUpdate(dbTerrainSetting);
-        return dbTerrainSetting;
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<DbTerrainImagePosition> loadDbTerrainImagePositions() {
-        return hibernateTemplate.executeFind(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbTerrainImagePosition.class);
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                return criteria.list();
+            // Terrain image position
+            setTerrainImagePositions(new ArrayList<TerrainImagePosition>());
+            for (DbTerrainImagePosition dbTerrainImagePosition : dbUserStage.getDbTerrainSetting().getDbTerrainImagePositionCrudServiceHelper().readDbChildren()) {
+                addTerrainImagePosition(dbTerrainImagePosition.createTerrainImagePosition());
             }
-        });
-    }
 
-    @Override
-    public DbTerrainSetting getDbTerrainSettings() {
-        return dbTerrainSettings;
+            // Surface rectangles
+            setSurfaceRects(new ArrayList<SurfaceRect>());
+            for (DbSurfaceRect dbSurfaceRect : dbUserStage.getDbTerrainSetting().getDbSurfaceRectCrudServiceHelper().readDbChildren()) {
+                addSurfaceRect(dbSurfaceRect.createSurfaceRect());
+            }
+
+            // Terrain images
+            @SuppressWarnings("unchecked")
+            List<DbTerrainImage> imageList = hibernateTemplate.loadAll(DbTerrainImage.class);
+            clearTerrainImages();
+            dbTerrainImages = new HashMap<Integer, DbTerrainImage>();
+            for (DbTerrainImage dbTerrainImage : imageList) {
+                dbTerrainImages.put(dbTerrainImage.getId(), dbTerrainImage);
+                putTerrainImage(dbTerrainImage.createTerrainImage());
+            }
+
+            // Surface images
+            @SuppressWarnings("unchecked")
+            List<DbSurfaceImage> surfaceList = hibernateTemplate.loadAll(DbSurfaceImage.class);
+            clearSurfaceImages();
+            dbSurfaceImages = new HashMap<Integer, DbSurfaceImage>();
+            for (DbSurfaceImage dbSurfaceImage : surfaceList) {
+                dbSurfaceImages.put(dbSurfaceImage.getId(), dbSurfaceImage);
+                putSurfaceImage(dbSurfaceImage.createSurfaceImage());
+            }
+            fireTerrainChanged();
+        } finally {
+            SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
+        }
     }
 
     @Override
@@ -211,35 +191,29 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         loadTerrain();
     }
 
+    @Transactional
     @Override
-    public void saveAndActivateTerrain(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects) {
-        // Terrain Images
-        List<DbTerrainImagePosition> dbTerrainImagePositions = loadDbTerrainImagePositions();
-        hibernateTemplate.deleteAll(dbTerrainImagePositions);
-        ArrayList<DbTerrainImagePosition> dbTerrainImagePositionsNew = new ArrayList<DbTerrainImagePosition>();
-        for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
-            DbTerrainImagePosition dbTerrainImagePosition = new DbTerrainImagePosition(terrainImagePosition.getTileIndex());
-            DbTerrainImage dbTerrainImage = getDbTerrainImage(terrainImagePosition.getImageId());
-            dbTerrainImagePosition.setTerrainImage(dbTerrainImage);
-            dbTerrainImagePositionsNew.add(dbTerrainImagePosition);
-        }
-        hibernateTemplate.saveOrUpdateAll(dbTerrainImagePositionsNew);
-        // Surface Rects
-        @SuppressWarnings("unchecked")
-        List<DbSurfaceRect> dbSurfaceRects = hibernateTemplate.loadAll(DbSurfaceRect.class);
-        hibernateTemplate.deleteAll(dbSurfaceRects);
-        ArrayList<DbSurfaceRect> dbSurfaceRectsNew = new ArrayList<DbSurfaceRect>();
-        for (SurfaceRect surfaceRect : surfaceRects) {
-            DbSurfaceRect dbSurfaceRect = new DbSurfaceRect();
-            dbSurfaceRect.setRectangle(surfaceRect.getTileRectangle());
-            DbSurfaceImage dbSurfaceImage = getDbSurfaceImage(surfaceRect.getSurfaceImageId());
-            dbSurfaceRect.setDbSurfaceImage(dbSurfaceImage);
-            dbSurfaceRectsNew.add(dbSurfaceRect);
-        }
-        hibernateTemplate.saveOrUpdateAll(dbSurfaceRectsNew);
+    public void saveAndActivateTerrain(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int terrainId) {
+        DbTerrainSetting dbTerrainSetting = dbTerrainSettingCrudServiceHelper.readDbChild(terrainId);
 
+        // Terrain Image Position
+        dbTerrainSetting.getDbTerrainImagePositionCrudServiceHelper().deleteAllChildren();
+        for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
+            DbTerrainImage dbTerrainImage = getDbTerrainImage(terrainImagePosition.getImageId());
+            dbTerrainSetting.getDbTerrainImagePositionCrudServiceHelper().addChild(new DbTerrainImagePosition(terrainImagePosition.getTileIndex(), dbTerrainImage));
+        }
+
+        // Surface Rects
+        dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().deleteAllChildren();
+        for (SurfaceRect surfaceRect : surfaceRects) {
+            DbSurfaceImage dbSurfaceImage = getDbSurfaceImage(surfaceRect.getSurfaceImageId());
+            dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(surfaceRect.getTileRectangle(), dbSurfaceImage));
+        }
+        
+        hibernateTemplate.saveOrUpdate(dbTerrainSetting);
         loadTerrain();
     }
+
 
     @Override
     public List<Index> setupPathToDestination(SyncBaseItem syncBaseItem, Index absoluteDestination, int minRadius, int delta) {
@@ -346,6 +320,47 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         } else {
             return setupPathToDestination(syncItem.getPosition(), position, syncItem.getTerrainType());
         }
+    }
+
+    @Override
+    public void setupTerrain(SimulationInfo simulationInfo, DbUserStage dbUserStage) {
+        simulationInfo.setTerrainSettings(dbUserStage.getDbTerrainSetting().createTerrainSettings());// TODO cache
+        simulationInfo.setTerrainImagePositions(getTerrainImagePositions(dbUserStage.getDbTerrainSetting())); // TODO cache
+        simulationInfo.setTerrainImages(getTerrainImages());
+        simulationInfo.setSurfaceRects(getSurfaceRects(dbUserStage.getDbTerrainSetting()));// TODO cache
+        simulationInfo.setSurfaceImages(getSurfaceImages());
+    }
+
+    @Override
+    public void setupTerrain(TerrainInfo terrainInfo, int terrainId) {
+        SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
+        try {
+            DbTerrainSetting dbTerrainSetting = dbTerrainSettingCrudServiceHelper.readDbChild(terrainId);
+            terrainInfo.setTerrainSettings(dbTerrainSetting.createTerrainSettings());
+            terrainInfo.setTerrainImagePositions(getTerrainImagePositions(dbTerrainSetting));
+            terrainInfo.setTerrainImages(getTerrainImages());
+            terrainInfo.setSurfaceRects(getSurfaceRects(dbTerrainSetting));
+            terrainInfo.setSurfaceImages(getSurfaceImages());
+        } finally {
+            SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
+        }
+
+    }
+
+    private Collection<TerrainImagePosition> getTerrainImagePositions(DbTerrainSetting dbTerrainSetting) {
+        ArrayList<TerrainImagePosition> result = new ArrayList<TerrainImagePosition>();
+        for (DbTerrainImagePosition dbTerrainImagePosition : dbTerrainSetting.getDbTerrainImagePositionCrudServiceHelper().readDbChildren()) {
+            result.add(dbTerrainImagePosition.createTerrainImagePosition());
+        }
+        return result;
+    }
+
+    private Collection<SurfaceRect> getSurfaceRects(DbTerrainSetting dbTerrainSetting) {
+        ArrayList<SurfaceRect> result = new ArrayList<SurfaceRect>();
+        for (DbSurfaceRect dbSurfaceRect : dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().readDbChildren()) {
+            result.add(dbSurfaceRect.createSurfaceRect());
+        }
+        return result;
     }
 
 }
