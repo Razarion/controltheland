@@ -44,13 +44,15 @@ public class Cockpit extends TopMapPanel {
     private FlexTable surfaceSelector;
     private ToggleButton deleteButton;
     private TerrainEditorAsync terrainEditor;
+    private int terrainId;
     private TerrainImageModifier terrainImageModifier;
     private SurfaceModifier surfaceModifier;
     private ScrollPanel terrainImageScroll;
     private ScrollPanel surfaceScroll;
 
-    public Cockpit(TerrainEditorAsync terrainEditor) {
+    public Cockpit(TerrainEditorAsync terrainEditor, int terrainId) {
         this.terrainEditor = terrainEditor;
+        this.terrainId = terrainId;
     }
 
     @Override
@@ -70,6 +72,7 @@ public class Cockpit extends TopMapPanel {
                 saveButton.setEnabled(false);
                 terrainEditor.saveTerrainImagePositions(TerrainView.getInstance().getTerrainHandler().getTerrainImagePositions(),
                         TerrainView.getInstance().getTerrainHandler().getSurfaceRects(),
+                        terrainId,
                         new AsyncCallback<Void>() {
                             @Override
                             public void onFailure(Throwable throwable) {

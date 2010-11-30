@@ -17,7 +17,6 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.services.terrain.TerrainService;
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -188,8 +187,8 @@ public class TerrainTileEditor extends WebPage {
                         ImageIcon image = new ImageIcon(fileUpload.getBytes());
                         item.getModelObject().setImageData(fileUpload.getBytes());
                         item.getModelObject().setContentType(fileUpload.getContentType());
-                        item.getModelObject().setTiles((int) Math.ceil(image.getIconWidth() / terrainService.getDbTerrainSettings().getTileWidth()),
-                                (int) Math.ceil(image.getIconHeight() / terrainService.getDbTerrainSettings().getTileHeight()));
+                        item.getModelObject().setTiles((int) Math.ceil(image.getIconWidth() / terrainService.getTerrainSettings().getTileWidth()),
+                                (int) Math.ceil(image.getIconHeight() / terrainService.getTerrainSettings().getTileHeight()));
                     }
 
                     @Override

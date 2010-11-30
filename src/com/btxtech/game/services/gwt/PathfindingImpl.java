@@ -51,7 +51,7 @@ public class PathfindingImpl implements Pathfinding {
             for (Map.Entry<TerrainType, List<PassableRectangle>> entry : passableRectangles.entrySet()) {
                 List<Rectangle> rectangles = new ArrayList<Rectangle>();
                 for (PassableRectangle passableRectangle : entry.getValue()) {
-                    rectangles.add(passableRectangle.getPixelRectangle(terrainService.getDbTerrainSettings()));
+                    rectangles.add(passableRectangle.getPixelRectangle(terrainService.getTerrainSettings()));
                 }
                 result.put(entry.getKey(), rectangles);
             }

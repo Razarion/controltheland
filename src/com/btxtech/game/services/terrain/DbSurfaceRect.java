@@ -15,10 +15,13 @@ package com.btxtech.game.services.terrain;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
+import com.btxtech.game.services.common.CrudChild;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * User: beat
@@ -26,7 +29,7 @@ import javax.persistence.OneToOne;
  * Time: 14:02:37
  */
 @Entity(name = "TERRAIN_SURFACE_RECT")
-public class DbSurfaceRect {
+public class DbSurfaceRect implements CrudChild<DbTerrainSetting> {
     @Id
     @GeneratedValue
     private Integer id;
@@ -36,24 +39,30 @@ public class DbSurfaceRect {
     private int tileY;
     private int tileWidth;
     private int tileHeight;
+    @ManyToOne(optional = false)
+    private DbTerrainSetting dbTerrainSetting;
+
+    /**
+     * Used by Hibernate
+     */
+    protected DbSurfaceRect() {
+    }
+
+    public DbSurfaceRect(Rectangle tileRectangle, DbSurfaceImage dbSurfaceImage) {
+        tileX = tileRectangle.getX();
+        tileY = tileRectangle.getY();
+        tileWidth = tileRectangle.getWidth();
+        tileHeight = tileRectangle.getHeight();
+        this.dbSurfaceImage = dbSurfaceImage;
+
+    }
 
     public Rectangle getRectangle() {
         return new Rectangle(tileX, tileY, tileWidth, tileHeight);
     }
 
-    public void setRectangle(Rectangle rectangle) {
-        tileX = rectangle.getX();
-        tileY = rectangle.getY();
-        tileWidth = rectangle.getWidth();
-        tileHeight = rectangle.getHeight();
-    }
-
     public DbSurfaceImage getDbSurfaceImage() {
         return dbSurfaceImage;
-    }
-
-    public void setDbSurfaceImage(DbSurfaceImage dbSurfaceImage) {
-        this.dbSurfaceImage = dbSurfaceImage;
     }
 
     public SurfaceRect createSurfaceRect() {
@@ -62,7 +71,7 @@ public class DbSurfaceRect {
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 
     @Override
@@ -72,7 +81,26 @@ public class DbSurfaceRect {
 
         DbSurfaceRect that = (DbSurfaceRect) o;
 
-        return !(id != null ? !id.equals(that.id) : that.id != null);
+        return id != null && id.equals(that.id);
 
+    }
+
+    @Override
+    public String getName() {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void setName(String name) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void init() {
+    }
+
+    @Override
+    public void setParent(DbTerrainSetting dbTerrainSetting) {
+        this.dbTerrainSetting = dbTerrainSetting;
     }
 }

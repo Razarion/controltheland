@@ -213,24 +213,12 @@ public class MovableServiceImpl implements MovableService {
             setCommonInfo(simulationInfo, userService, itemService, mgmtService);
             simulationInfo.setTutorialConfig(tutorialService.getTutorialConfig(dbUserStage));
             // Terrain
-            setupTerrain(simulationInfo, terrainService);
+            terrainService.setupTerrain(simulationInfo, dbUserStage);
             return simulationInfo;
         } catch (Throwable t) {
             log.error("", t);
         }
         return null;
-    }
-
-    public static void setupTerrain(SimulationInfo simulationInfo, TerrainService terrainService) {
-        simulationInfo.setTerrainSettings(new TerrainSettings(20, 10, 100, 100));
-        Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
-        terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0),70 ));
-        simulationInfo.setTerrainImagePositions(terrainImagePositions);
-        simulationInfo.setTerrainImages(terrainService.getTerrainImages());
-        Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
-        surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 2000, 1000), 3));
-        simulationInfo.setSurfaceRects(surfaceRects);
-        simulationInfo.setSurfaceImages(terrainService.getSurfaceImages());
     }
 
     public static void setCommonInfo(GameInfo gameInfo, UserService userService, ItemService itemService, MgmtService mgmtService) {

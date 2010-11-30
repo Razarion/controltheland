@@ -13,9 +13,13 @@
 
 package com.btxtech.game.services.terrain;
 
+import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
+import com.btxtech.game.jsre.mapeditor.TerrainInfo;
+import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.utg.DbUserStage;
 import java.util.Collection;
 import java.util.List;
 
@@ -25,8 +29,6 @@ import java.util.List;
  * Time: 11:55:20 AM
  */
 public interface TerrainService extends AbstractTerrainService {
-    DbTerrainSetting getDbTerrainSettings();
-
     DbTerrainImage getDbTerrainImage(int id);
 
     DbSurfaceImage getDbSurfaceImage(int id);
@@ -39,5 +41,11 @@ public interface TerrainService extends AbstractTerrainService {
 
     void saveAndActivateTerrainImages(List<DbTerrainImage> dbTerrainImages, List<DbSurfaceImage> dbSurfaceImages);
 
-    void saveAndActivateTerrain(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects);
+    void saveAndActivateTerrain(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int dbUserStage);
+
+    void setupTerrain(SimulationInfo simulationInfo, DbUserStage dbUserStage);
+
+    void setupTerrain(TerrainInfo terrainInfo, int terrainId);
+
+    CrudServiceHelper<DbTerrainSetting> getDbTerrainSettingCrudServiceHelper();
 }

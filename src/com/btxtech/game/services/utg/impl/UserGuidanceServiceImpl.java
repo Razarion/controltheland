@@ -529,9 +529,9 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         return userStageCrudServiceHelper;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public DbUserStage getDbUserStage(final String name) {
+        @SuppressWarnings("unchecked")
         List<DbUserStage> result = hibernateTemplate.executeFind(new HibernateCallback() {
             @Override
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
@@ -544,6 +544,28 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         });
         if (result.isEmpty()) {
             throw new IllegalStateException("No DbUserStage found for name: " + name);
+        } else {
+            return result.get(0);
+        }
+    }
+
+    @Override
+    public DbUserStage getDbUserStage4RealGame() {
+        @SuppressWarnings("unchecked")
+        List<DbUserStage> result = hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbUserStage.class);
+                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                criteria.add(Restrictions.eq("isRealGame", true));
+                return criteria.list();
+            }
+        });
+        if (result.isEmpty()) {
+            throw new IllegalStateException("No DbUserStage for real game found");
+        } else if (result.size() > 1) {
+            log.error("More than one DbUserStage for real game found. Taking first.");
+            return result.get(0);
         } else {
             return result.get(0);
         }

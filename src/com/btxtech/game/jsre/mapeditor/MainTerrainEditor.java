@@ -14,12 +14,12 @@
 package com.btxtech.game.jsre.mapeditor;
 
 import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 
@@ -35,6 +35,9 @@ public class MainTerrainEditor implements EntryPoint {
         // Setup common
         GwtCommon.setUncaughtExceptionHandler();
         GwtCommon.disableBrowserContextMenuJSNI();
+
+        int terrainId = Integer.parseInt(Window.Location.getParameter(TerrainEditorAsync.TERRAIN_SETTING_ID));
+
         TerrainEditorAsync terrainEditor = GWT.create(TerrainEditor.class);
 
         // Setup map
@@ -44,7 +47,7 @@ public class MainTerrainEditor implements EntryPoint {
         TerrainView.getInstance().addTerrainScrollListener(MapWindow.getInstance());
 
         // Setup editor
-        final Cockpit cockpit = new Cockpit(terrainEditor);
+        final Cockpit cockpit = new Cockpit(terrainEditor, terrainId);
         MapWindow.getAbsolutePanel().add(cockpit, 30, 30);
 
         // Radar panel
@@ -54,7 +57,7 @@ public class MainTerrainEditor implements EntryPoint {
         //RadarPanel.getInstance().setRadarState1(true);
         //RadarPanel.getInstance().updateEnergy(1, 0);
 
-        terrainEditor.getTerrainInfo(new AsyncCallback<TerrainInfo>() {
+        terrainEditor.getTerrainInfo(terrainId, new AsyncCallback<TerrainInfo>() {
             @Override
             public void onFailure(Throwable throwable) {
                 GwtCommon.handleException(throwable);

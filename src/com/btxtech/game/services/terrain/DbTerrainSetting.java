@@ -14,10 +14,22 @@
 package com.btxtech.game.services.terrain;
 
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
-import javax.persistence.Column;
+import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.common.CrudParent;
+import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.common.CrudServiceHelperCollectionImpl;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+import org.hibernate.annotations.Cascade;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * User: beat
@@ -25,7 +37,7 @@ import javax.persistence.Id;
  * Time: 21:01:14
  */
 @Entity(name = "TERRAIN_SETTINGS")
-public class DbTerrainSetting {
+public class DbTerrainSetting implements CrudParent, CrudChild, Serializable {
     @Id
     @GeneratedValue
     private Integer id;
@@ -33,6 +45,17 @@ public class DbTerrainSetting {
     private int tileYCount;
     private int tileHeight;
     private int tileWidth;
+    @OneToMany(mappedBy = "dbTerrainSetting", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
+    private Set<DbTerrainImagePosition> dbTerrainImagePositions;
+    @OneToMany(mappedBy = "dbTerrainSetting", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    private Set<DbSurfaceRect> dbSurfaceRects;
+    private String name;
+    @Transient
+    private CrudServiceHelper<DbTerrainImagePosition> dbTerrainImagePositionCrudServiceHelper;
+    @Transient
+    private CrudServiceHelper<DbSurfaceRect> dbSurfaceRectCrudServiceHelper;
 
     public Integer getId() {
         return id;
@@ -89,13 +112,52 @@ public class DbTerrainSetting {
 
         DbTerrainSetting that = (DbTerrainSetting) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        return !(id != null ? !id.equals(that.id) : that.id != null);
 
-        return true;
     }
 
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
+    }
+
+    public CrudServiceHelper<DbTerrainImagePosition> getDbTerrainImagePositionCrudServiceHelper() {
+        if (dbTerrainImagePositionCrudServiceHelper == null) {
+            dbTerrainImagePositionCrudServiceHelper = new CrudServiceHelperCollectionImpl<DbTerrainImagePosition>(dbTerrainImagePositions, DbTerrainImagePosition.class, this);
+        }
+        return dbTerrainImagePositionCrudServiceHelper;
+    }
+
+    public CrudServiceHelper<DbSurfaceRect> getDbSurfaceRectCrudServiceHelper() {
+        if (dbSurfaceRectCrudServiceHelper == null) {
+            dbSurfaceRectCrudServiceHelper = new CrudServiceHelperCollectionImpl<DbSurfaceRect>(dbSurfaceRects, DbSurfaceRect.class, this);
+        }
+        return dbSurfaceRectCrudServiceHelper;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public void init() {
+        tileXCount = 50;
+        tileYCount = 50;
+        tileHeight = 100;
+        tileWidth = 100;
+        name = "Unnamed";
+        dbTerrainImagePositions = new HashSet<DbTerrainImagePosition>();
+        dbSurfaceRects = new HashSet<DbSurfaceRect>();
+    }
+
+    @Override
+    public void setParent(Object o) {
+        throw new NotImplementedException();
     }
 }

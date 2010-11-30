@@ -14,13 +14,15 @@
 package com.btxtech.game.services.terrain;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
-import com.btxtech.game.services.terrain.impl.DbKey;
+import com.btxtech.game.services.common.CrudChild;
 import java.io.Serializable;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * User: beat
@@ -28,11 +30,16 @@ import javax.persistence.OneToOne;
  * Time: 22:25:25
  */
 @Entity(name = "TERRAIN_IMAGE_POSITION")
-public class DbTerrainImagePosition implements Serializable {
-    @EmbeddedId
-    private DbKey dbKey;
+public class DbTerrainImagePosition implements Serializable, CrudChild<DbTerrainSetting> {
+    @Id
+    @GeneratedValue
+    private Integer id;
+    private int tileX;
+    private int tileY;
     @OneToOne
     private DbTerrainImage dbTerrainImage;
+    @ManyToOne(optional = false)
+    private DbTerrainSetting dbTerrainSetting;
 
     /**
      * Used by hibernate
@@ -40,17 +47,26 @@ public class DbTerrainImagePosition implements Serializable {
     protected DbTerrainImagePosition() {
     }
 
-    public DbTerrainImagePosition(Index tileIndex) {
-        dbKey = new DbKey(tileIndex.getX(), tileIndex.getY());
+    public DbTerrainImagePosition(Index position, DbTerrainImage dbTerrainImage) {
+        tileX = position.getX();
+        tileY = position.getY();
+        this.dbTerrainImage = dbTerrainImage;
     }
 
-    public Index getTileIndex() {
-        return dbKey.getIndex();
+    public int getTileX() {
+        return tileX;
     }
 
-    public void setTileIndex(Index tileIndex) {
-        dbKey.setIndexX(tileIndex.getX());
-        dbKey.setIndexY(tileIndex.getY());
+    public void setTileX(int tileX) {
+        this.tileX = tileX;
+    }
+
+    public int getTileY() {
+        return tileY;
+    }
+
+    public void setTileY(int tileY) {
+        this.tileY = tileY;
     }
 
     public DbTerrainImage getTerrainImage() {
@@ -62,7 +78,7 @@ public class DbTerrainImagePosition implements Serializable {
     }
 
     public TerrainImagePosition createTerrainImagePosition() {
-        return new TerrainImagePosition(dbKey.getIndex().getCopy(), dbTerrainImage.getId());
+        return new TerrainImagePosition(new Index(tileX, tileY), dbTerrainImage.getId());
     }
 
     @Override
@@ -72,17 +88,38 @@ public class DbTerrainImagePosition implements Serializable {
 
         DbTerrainImagePosition that = (DbTerrainImagePosition) o;
 
-        return !(dbKey != null ? !dbKey.equals(that.dbKey) : that.dbKey != null);
-
+        return id != null && id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return dbKey != null ? dbKey.hashCode() : 0;
+        if (id != null) {
+            return id;
+        } else {
+            return System.identityHashCode(this);
+        }
     }
 
     @Override
-    public String toString() {
-        return getClass() + " " +  dbKey  + " " + dbTerrainImage;
+    public String getName() {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void setName(String name) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void init() {
+    }
+
+    @Override
+    public void setParent(DbTerrainSetting dbTerrainSetting) {
+        this.dbTerrainSetting = dbTerrainSetting;
+    }
+
+    public DbTerrainSetting getDbTerrainSetting() {
+        return dbTerrainSetting;
     }
 }

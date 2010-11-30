@@ -28,11 +28,13 @@ import java.util.Collection;
  */
 @RemoteServiceRelativePath("gwtrpc/TerrainServiceService")
 public interface TerrainEditorAsync extends RemoteService {
-    void getTerrainInfo(AsyncCallback<TerrainInfo> async);
+    public static final String TERRAIN_SETTING_ID = "terrain_id";
 
-    void saveTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, AsyncCallback<Void> async);
+    void saveTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int terrainId, AsyncCallback<Void> async);
 
     void saveTerritory(Territory territory, AsyncCallback<Void> async);
 
     void getTerritories(AsyncCallback<Collection<Territory>> asyncCallback);
+
+    void getTerrainInfo(int terrainId, AsyncCallback<TerrainInfo> async);
 }

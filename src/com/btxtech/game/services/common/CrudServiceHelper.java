@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.common;
 
+import com.btxtech.game.services.terrain.DbTerrainImagePosition;
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -35,4 +36,8 @@ public interface CrudServiceHelper<T extends CrudChild> {
     void createDbChild();
 
     void createDbChild(Class createClass);
+
+    void deleteAllChildren();
+
+    void addChild(T t);
 }
