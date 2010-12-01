@@ -11,29 +11,21 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.common.tutorial;
+package com.btxtech.game.jsre.client.simulation.condition;
+
+import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.common.tutorial.condition.HarvestConditionConfig;
+import com.btxtech.game.jsre.common.tutorial.condition.ScrollConditionConfig;
 
 /**
  * User: beat
- * Date: 22.11.2010
- * Time: 19:46:54
+ * Date: 01.12.2010
+ * Time: 21:05:57
  */
-public enum CockpitWidgetEnum {
-    SCROLL_HOME_BUTTON(false),
-    OPTION_BUTTON(false),
-    SELL_BUTTON(false),
-    MISSION_BUTTON(false),
-    MONEY_FIELD(false),
-    BUILDUP_ITEM(true),
-    RADAR_PANEL(false);
+public class ScrollCondition extends AbstractCondition {
 
-    private boolean itemTypeNeeded;
-
-    CockpitWidgetEnum(boolean itemTypeNeeded) {
-        this.itemTypeNeeded = itemTypeNeeded;
-    }
-
-    public boolean isItemTypeNeeded() {
-        return itemTypeNeeded;
+    @Override
+    public boolean isFulfilledScroll() {
+        return true;
     }
 }

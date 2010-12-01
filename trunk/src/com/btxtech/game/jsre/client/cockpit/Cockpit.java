@@ -220,6 +220,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
 
     private void setupRadar() {
         radar = RadarPanel.getInstance().createWidget(RADAR_WIDTH, RADAR_HEIGHT);
+        widgets.put(CockpitWidgetEnum.RADAR_PANEL, radar);        
         add(radar, RADAR_LEFT, RADAR_TOP);
         Image radarFrame = ImageHandler.createImageIE6TransparencyProblem("/images/cockpit/radarframe.png", RADAR_WIDTH, RADAR_HEIGHT);
         radarFrame.getElement().getStyle().setZIndex(100);

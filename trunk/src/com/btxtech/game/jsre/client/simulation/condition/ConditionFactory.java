@@ -11,20 +11,14 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.client.simulation;
+package com.btxtech.game.jsre.client.simulation.condition;
 
-import com.btxtech.game.jsre.client.simulation.condition.AbstractCondition;
-import com.btxtech.game.jsre.client.simulation.condition.HarvestCondition;
-import com.btxtech.game.jsre.client.simulation.condition.ItemBuiltCondition;
-import com.btxtech.game.jsre.client.simulation.condition.ItemsKilledCondition;
-import com.btxtech.game.jsre.client.simulation.condition.ItemsPositionReachedCondition;
-import com.btxtech.game.jsre.client.simulation.condition.SelectionCondition;
-import com.btxtech.game.jsre.client.simulation.condition.SendCommandCondition;
 import com.btxtech.game.jsre.common.tutorial.condition.AbstractConditionConfig;
 import com.btxtech.game.jsre.common.tutorial.condition.HarvestConditionConfig;
 import com.btxtech.game.jsre.common.tutorial.condition.ItemBuiltConditionConfig;
 import com.btxtech.game.jsre.common.tutorial.condition.ItemsKilledConditionConfig;
 import com.btxtech.game.jsre.common.tutorial.condition.ItemsPositionReachedConditionConfig;
+import com.btxtech.game.jsre.common.tutorial.condition.ScrollConditionConfig;
 import com.btxtech.game.jsre.common.tutorial.condition.SelectionConditionConfig;
 import com.btxtech.game.jsre.common.tutorial.condition.SendCommandConditionConfig;
 
@@ -50,6 +44,8 @@ public class ConditionFactory {
             return new ItemBuiltCondition((ItemBuiltConditionConfig) abstractConditionConfig);
         } else if (abstractConditionConfig instanceof HarvestConditionConfig) {
             return new HarvestCondition((HarvestConditionConfig) abstractConditionConfig);
+        } else if (abstractConditionConfig instanceof ScrollConditionConfig) {
+            return new ScrollCondition();
         } else {
             throw new IllegalArgumentException("Unknown condition config: " + abstractConditionConfig);
         }

@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.simulation.condition.AbstractCondition;
+import com.btxtech.game.jsre.client.simulation.condition.ConditionFactory;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -117,6 +118,16 @@ public class Task {
             checkForCompletion();
         }
         if (completionCondition != null && completionCondition.isFulfilledHarvest()) {
+            taskFinished();
+        }
+    }
+
+    public void onScroll() {
+        if (activeStep != null) {
+            activeStep.onScroll();
+            checkForCompletion();
+        }
+        if (completionCondition != null && completionCondition.isFulfilledScroll()) {
             taskFinished();
         }
     }
