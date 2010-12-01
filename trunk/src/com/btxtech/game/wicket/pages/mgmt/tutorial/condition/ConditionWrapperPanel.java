@@ -14,6 +14,7 @@
 package com.btxtech.game.wicket.pages.mgmt.tutorial.condition;
 
 import com.btxtech.game.services.tutorial.condition.DbAbstractConditionConfig;
+import com.btxtech.game.services.tutorial.condition.DbCockpitButtonConditionConfig;
 import com.btxtech.game.services.tutorial.condition.DbHarvestConditionConfig;
 import com.btxtech.game.services.tutorial.condition.DbItemBuiltConditionConfig;
 import com.btxtech.game.services.tutorial.condition.DbItemsKilledConditionConfig;
@@ -46,7 +47,8 @@ public class ConditionWrapperPanel extends Panel {
             DbItemsPositionReachedConditionConfig.class,
             DbSelectionConditionConfig.class,
             DbSendCommandConditionConfig.class,
-            DbScrollConditionConfig.class};
+            DbScrollConditionConfig.class,
+            DbCockpitButtonConditionConfig.class};
     private Object object;
     private Log log = LogFactory.getLog(TaskEditor.class);
     private DbAbstractConditionConfig dbAbstractConditionConfig;
@@ -64,6 +66,7 @@ public class ConditionWrapperPanel extends Panel {
         add(new SelectionConditionConfigPanel("selectionConditionConfigPanel", this));
         add(new SendCommandConditionConfigPanel("sendCommandConditionConfigPanel", this));
         add(new ScrollConditionConfigPanel("scrollConditionConfigPanel", this));
+        add(new CockpitButtonConditionConfigPanel("cockpitButtonConditionConfigPanel", this));
     }
 
     private void setupCreation() {
@@ -141,6 +144,7 @@ public class ConditionWrapperPanel extends Panel {
         try {
             Constructor constructor = choice.getConstructor();
             dbAbstractConditionConfig = (DbAbstractConditionConfig) constructor.newInstance();
+            dbAbstractConditionConfig.init();
             PropertyModel propertyModel = new PropertyModel(object, getId());
             propertyModel.getPropertySetter().invoke(object, dbAbstractConditionConfig);
         } catch (Exception e) {

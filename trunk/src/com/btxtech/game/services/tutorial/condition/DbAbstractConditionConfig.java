@@ -52,4 +52,10 @@ public abstract class DbAbstractConditionConfig implements Serializable {
     }
 
     public abstract AbstractConditionConfig createConditionConfig();
+
+    /**
+     * Override in subclasses
+     */
+    public void init() {
+    }
 }

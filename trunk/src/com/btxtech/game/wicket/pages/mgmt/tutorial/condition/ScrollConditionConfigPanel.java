@@ -13,8 +13,7 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tutorial.condition;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.behavior.IBehavior;
+import com.btxtech.game.services.tutorial.condition.DbCockpitButtonConditionConfig;
 import org.apache.wicket.markup.html.panel.Panel;
 
 /**
@@ -23,7 +22,16 @@ import org.apache.wicket.markup.html.panel.Panel;
  * Time: 13:40:27
  */
 public class ScrollConditionConfigPanel extends Panel {
+    private ConditionWrapperPanel conditionWrapperPanel;
+
     public ScrollConditionConfigPanel(String id, ConditionWrapperPanel conditionWrapperPanel) {
         super(id);
+        this.conditionWrapperPanel = conditionWrapperPanel;
     }
+
+    @Override
+    public boolean isVisible() {
+        return conditionWrapperPanel.getDbAbstractConditionConfig() instanceof DbCockpitButtonConditionConfig;
+    }
+
 }

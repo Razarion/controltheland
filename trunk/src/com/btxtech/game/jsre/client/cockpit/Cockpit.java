@@ -220,7 +220,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
 
     private void setupRadar() {
         radar = RadarPanel.getInstance().createWidget(RADAR_WIDTH, RADAR_HEIGHT);
-        widgets.put(CockpitWidgetEnum.RADAR_PANEL, radar);        
+        widgets.put(CockpitWidgetEnum.RADAR_PANEL, radar);
         add(radar, RADAR_LEFT, RADAR_TOP);
         Image radarFrame = ImageHandler.createImageIE6TransparencyProblem("/images/cockpit/radarframe.png", RADAR_WIDTH, RADAR_HEIGHT);
         radarFrame.getElement().getStyle().setZIndex(100);
@@ -364,16 +364,24 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         //TODO
     }
 
-    public void enableFocusWidget(CockpitWidgetEnum cockpitGuiElements, boolean enabled) {
-        ((FocusWidget) widgets.get(cockpitGuiElements)).setEnabled(enabled);
-    }
-
     public SelectedItemPanel getSelectedItemPanel() {
         return selectedItemPanel;
     }
 
     public CockpitMode getCockpitMode() {
         return cockpitMode;
+    }
+
+    public void enableFocusWidget(CockpitWidgetEnum cockpitGuiElements, boolean enabled) {
+        ((FocusWidget) widgets.get(cockpitGuiElements)).setEnabled(enabled);
+    }
+
+    public FocusWidget getFocusWidget(CockpitWidgetEnum cockpitGuiElements) {
+        FocusWidget focusWidget = ((FocusWidget) widgets.get(cockpitGuiElements));
+        if (focusWidget == null) {
+            throw new IllegalArgumentException(this + "  getFocusWidget: focusWidget == null " + cockpitGuiElements);
+        }
+        return focusWidget;
     }
 
     @Override

@@ -27,6 +27,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.tutorial.HintConfig;
 import com.btxtech.game.jsre.common.tutorial.StepConfig;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
+import com.google.gwt.user.client.ui.Widget;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -128,6 +129,16 @@ public class Task {
             checkForCompletion();
         }
         if (completionCondition != null && completionCondition.isFulfilledScroll()) {
+            taskFinished();
+        }
+    }
+
+    public void onClickCockpitButton(Widget widget) {
+        if (activeStep != null) {
+            activeStep.onClickCockpitButton(widget);
+            checkForCompletion();
+        }
+        if (completionCondition != null && completionCondition.isFulfilledCockpitButton(widget)) {
             taskFinished();
         }
     }
