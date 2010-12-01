@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.simulation.condition.AbstractCondition;
+import com.btxtech.game.jsre.client.simulation.condition.ConditionFactory;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -73,6 +74,12 @@ public class Step {
 
     public void onDeposit() {
         if (condition != null && condition.isFulfilledHarvest()) {
+            condition = null;
+        }
+    }
+
+    public void onScroll() {
+        if (condition != null && condition.isFulfilledScroll()) {
             condition = null;
         }
     }

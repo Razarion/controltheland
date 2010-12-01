@@ -18,6 +18,7 @@ import com.btxtech.game.services.tutorial.condition.DbHarvestConditionConfig;
 import com.btxtech.game.services.tutorial.condition.DbItemBuiltConditionConfig;
 import com.btxtech.game.services.tutorial.condition.DbItemsKilledConditionConfig;
 import com.btxtech.game.services.tutorial.condition.DbItemsPositionReachedConditionConfig;
+import com.btxtech.game.services.tutorial.condition.DbScrollConditionConfig;
 import com.btxtech.game.services.tutorial.condition.DbSelectionConditionConfig;
 import com.btxtech.game.services.tutorial.condition.DbSendCommandConditionConfig;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.TaskEditor;
@@ -44,7 +45,8 @@ public class ConditionWrapperPanel extends Panel {
             DbItemsKilledConditionConfig.class,
             DbItemsPositionReachedConditionConfig.class,
             DbSelectionConditionConfig.class,
-            DbSendCommandConditionConfig.class};
+            DbSendCommandConditionConfig.class,
+            DbScrollConditionConfig.class};
     private Object object;
     private Log log = LogFactory.getLog(TaskEditor.class);
     private DbAbstractConditionConfig dbAbstractConditionConfig;
@@ -61,6 +63,7 @@ public class ConditionWrapperPanel extends Panel {
         add(new ItemsPositionReachedConditionConfigPanel("itemsPositionReachedConditionConfigPanel", this));
         add(new SelectionConditionConfigPanel("selectionConditionConfigPanel", this));
         add(new SendCommandConditionConfigPanel("sendCommandConditionConfigPanel", this));
+        add(new ScrollConditionConfigPanel("scrollConditionConfigPanel", this));
     }
 
     private void setupCreation() {

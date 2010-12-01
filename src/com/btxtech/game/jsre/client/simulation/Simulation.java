@@ -15,16 +15,17 @@ package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientSyncItem;
-import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.action.ActionHandler;
+import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
+import com.btxtech.game.jsre.client.terrain.TerrainScrollListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -46,7 +47,7 @@ import java.util.List;
  * Date: 17.07.2010
  * Time: 17:21:24
  */
-public class Simulation implements SelectionListener {
+public class Simulation implements SelectionListener, TerrainScrollListener {
     private static final Simulation SIMULATION = new Simulation();
     private SimulationInfo simulationInfo;
     private Task activeTask;
@@ -73,6 +74,7 @@ public class Simulation implements SelectionListener {
                 return;
             }
             tutorialGui = new TutorialGui();
+            TerrainView.getInstance().addTerrainScrollListener(this);
             ClientBase.getInstance().setBase(tutorialConfig.getOwnBase());
             Cockpit.getInstance().updateBase();
             tutorialTime = System.currentTimeMillis();
@@ -250,7 +252,16 @@ public class Simulation implements SelectionListener {
         }
     }
 
+    @Override
+    public void onScroll(int left, int top, int width, int height, int deltaLeft, int deltaTop) {
+        if (activeTask != null) {
+            activeTask.onScroll();
+            checkForTaskCompletion();
+        }
+    }
+
     public void onWithdrawalMoney() {
         checkForTutorialFailed();
     }
+
 }

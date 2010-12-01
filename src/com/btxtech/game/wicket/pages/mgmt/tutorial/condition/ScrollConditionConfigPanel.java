@@ -11,29 +11,19 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.common.tutorial;
+package com.btxtech.game.wicket.pages.mgmt.tutorial.condition;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.behavior.IBehavior;
+import org.apache.wicket.markup.html.panel.Panel;
 
 /**
  * User: beat
- * Date: 22.11.2010
- * Time: 19:46:54
+ * Date: 01.12.2010
+ * Time: 13:40:27
  */
-public enum CockpitWidgetEnum {
-    SCROLL_HOME_BUTTON(false),
-    OPTION_BUTTON(false),
-    SELL_BUTTON(false),
-    MISSION_BUTTON(false),
-    MONEY_FIELD(false),
-    BUILDUP_ITEM(true),
-    RADAR_PANEL(false);
-
-    private boolean itemTypeNeeded;
-
-    CockpitWidgetEnum(boolean itemTypeNeeded) {
-        this.itemTypeNeeded = itemTypeNeeded;
-    }
-
-    public boolean isItemTypeNeeded() {
-        return itemTypeNeeded;
+public class ScrollConditionConfigPanel extends Panel {
+    public ScrollConditionConfigPanel(String id, ConditionWrapperPanel conditionWrapperPanel) {
+        super(id);
     }
 }

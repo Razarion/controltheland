@@ -50,4 +50,7 @@ public abstract class AbstractCondition {
         return false;
     }
 
+    public boolean isFulfilledScroll() {
+        return false;
+    }
 }
