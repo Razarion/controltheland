@@ -39,7 +39,6 @@ import com.btxtech.game.services.utg.UserGuidanceService;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
@@ -209,9 +208,11 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
             DbSurfaceImage dbSurfaceImage = getDbSurfaceImage(surfaceRect.getSurfaceImageId());
             dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(surfaceRect.getTileRectangle(), dbSurfaceImage));
         }
-        
+
         hibernateTemplate.saveOrUpdate(dbTerrainSetting);
-        loadTerrain();
+        if (userGuidanceService.getDbUserStage4RealGame().getDbTerrainSetting().equals(dbTerrainSetting)) {
+            loadTerrain();
+        }
     }
 
 
@@ -324,11 +325,17 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
 
     @Override
     public void setupTerrain(SimulationInfo simulationInfo, DbUserStage dbUserStage) {
-        simulationInfo.setTerrainSettings(dbUserStage.getDbTerrainSetting().createTerrainSettings());// TODO cache
-        simulationInfo.setTerrainImagePositions(getTerrainImagePositions(dbUserStage.getDbTerrainSetting())); // TODO cache
-        simulationInfo.setTerrainImages(getTerrainImages());
-        simulationInfo.setSurfaceRects(getSurfaceRects(dbUserStage.getDbTerrainSetting()));// TODO cache
-        simulationInfo.setSurfaceImages(getSurfaceImages());
+        SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
+        try {
+            DbTerrainSetting reattached = (DbTerrainSetting) hibernateTemplate.get(DbTerrainSetting.class, dbUserStage.getDbTerrainSetting().getId());
+            simulationInfo.setTerrainSettings(reattached.createTerrainSettings());// TODO cache
+            simulationInfo.setTerrainImagePositions(getTerrainImagePositions(reattached)); // TODO cache
+            simulationInfo.setTerrainImages(getTerrainImages());
+            simulationInfo.setSurfaceRects(getSurfaceRects(reattached));// TODO cache
+            simulationInfo.setSurfaceImages(getSurfaceImages());
+        } finally {
+            SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
+        }
     }
 
     @Override
@@ -344,7 +351,6 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         } finally {
             SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
         }
-
     }
 
     private Collection<TerrainImagePosition> getTerrainImagePositions(DbTerrainSetting dbTerrainSetting) {

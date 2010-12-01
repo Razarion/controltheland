@@ -81,7 +81,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         }
         terrainHandler.addTerrainListener(this);
         terrainHandler.setupTerrain(terrainSettings, terrainImagePositions, surfaceRects, surfaceImages, terrainImages);
-     //   RadarPanel.getInstance().onTerrainSettings(terrainSettings);
+        RadarPanel.getInstance().onTerrainSettings(terrainSettings);
     }
 
     public static TerrainView getInstance() {

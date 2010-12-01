@@ -103,3 +103,6 @@ AND vtable.x = TERRAIN_IMAGE_POSITION.x
 AND vtable.y = TERRAIN_IMAGE_POSITION.y
 AND vtable.dbTerrainImage_id = TERRAIN_IMAGE_POSITION.dbTerrainImage_id
 AND vtable.dbTerrainSetting_id = TERRAIN_IMAGE_POSITION.dbTerrainSetting_id
+
+SET @i := 0;
+UPDATE TERRAIN_IMAGE_POSITION SET id = (@i := (@i + 1));
