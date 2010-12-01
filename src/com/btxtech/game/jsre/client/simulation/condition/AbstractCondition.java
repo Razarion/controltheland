@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * User: beat
@@ -51,6 +52,10 @@ public abstract class AbstractCondition {
     }
 
     public boolean isFulfilledScroll() {
+        return false;
+    }
+
+    public boolean isFulfilledCockpitButton(Widget widget) {
         return false;
     }
 }

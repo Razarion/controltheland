@@ -38,8 +38,11 @@ import com.btxtech.game.jsre.common.tutorial.CockpitWidgetEnum;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Widget;
 import java.util.List;
 
 /**
@@ -47,7 +50,7 @@ import java.util.List;
  * Date: 17.07.2010
  * Time: 17:21:24
  */
-public class Simulation implements SelectionListener, TerrainScrollListener {
+public class Simulation implements SelectionListener, TerrainScrollListener, ClickHandler {
     private static final Simulation SIMULATION = new Simulation();
     private SimulationInfo simulationInfo;
     private Task activeTask;
@@ -264,4 +267,11 @@ public class Simulation implements SelectionListener, TerrainScrollListener {
         checkForTutorialFailed();
     }
 
+    @Override
+    public void onClick(ClickEvent event) {
+        if (activeTask != null) {
+            activeTask.onClickCockpitButton((Widget) event.getSource());
+            checkForTaskCompletion();
+        }
+    }
 }

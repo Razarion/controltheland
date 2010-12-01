@@ -13,27 +13,46 @@
 
 package com.btxtech.game.jsre.common.tutorial;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * User: beat
  * Date: 22.11.2010
  * Time: 19:46:54
  */
 public enum CockpitWidgetEnum {
-    SCROLL_HOME_BUTTON(false),
-    OPTION_BUTTON(false),
-    SELL_BUTTON(false),
-    MISSION_BUTTON(false),
-    MONEY_FIELD(false),
-    BUILDUP_ITEM(true),
-    RADAR_PANEL(false);
+    SCROLL_HOME_BUTTON(true, false),
+    OPTION_BUTTON(true, false),
+    SELL_BUTTON(true, false),
+    MISSION_BUTTON(true, false),
+    MONEY_FIELD(false, false),
+    BUILDUP_ITEM(false, true),
+    RADAR_PANEL(false, false);
 
     private boolean itemTypeNeeded;
+    private boolean button;
 
-    CockpitWidgetEnum(boolean itemTypeNeeded) {
+    CockpitWidgetEnum(boolean isButton, boolean itemTypeNeeded) {
         this.itemTypeNeeded = itemTypeNeeded;
+        button = isButton;
     }
 
     public boolean isItemTypeNeeded() {
         return itemTypeNeeded;
+    }
+
+    public boolean isButton() {
+        return button;
+    }
+
+    public static List<CockpitWidgetEnum> getButtons() {
+        ArrayList<CockpitWidgetEnum> result = new ArrayList<CockpitWidgetEnum>();
+        for (CockpitWidgetEnum cockpitWidgetEnum : values()) {
+            if (cockpitWidgetEnum.isButton()) {
+                result.add(cockpitWidgetEnum);
+            }
+        }
+        return result;
     }
 }

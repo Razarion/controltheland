@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.tutorial.StepConfig;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * User: beat
@@ -80,6 +81,12 @@ public class Step {
 
     public void onScroll() {
         if (condition != null && condition.isFulfilledScroll()) {
+            condition = null;
+        }
+    }
+
+    public void onClickCockpitButton(Widget widget) {
+        if (condition != null && condition.isFulfilledCockpitButton(widget)) {
             condition = null;
         }
     }

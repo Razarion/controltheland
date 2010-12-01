@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.simulation.condition;
 
 import com.btxtech.game.jsre.common.tutorial.condition.AbstractConditionConfig;
+import com.btxtech.game.jsre.common.tutorial.condition.CockpitButtonConditionConfig;
 import com.btxtech.game.jsre.common.tutorial.condition.HarvestConditionConfig;
 import com.btxtech.game.jsre.common.tutorial.condition.ItemBuiltConditionConfig;
 import com.btxtech.game.jsre.common.tutorial.condition.ItemsKilledConditionConfig;
@@ -46,6 +47,8 @@ public class ConditionFactory {
             return new HarvestCondition((HarvestConditionConfig) abstractConditionConfig);
         } else if (abstractConditionConfig instanceof ScrollConditionConfig) {
             return new ScrollCondition();
+        } else if (abstractConditionConfig instanceof CockpitButtonConditionConfig) {
+            return new CockpitButtonCondition((CockpitButtonConditionConfig) abstractConditionConfig);
         } else {
             throw new IllegalArgumentException("Unknown condition config: " + abstractConditionConfig);
         }
