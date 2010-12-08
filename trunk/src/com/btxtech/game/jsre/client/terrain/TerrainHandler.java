@@ -15,10 +15,9 @@ package com.btxtech.game.jsre.client.terrain;
 
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
-import com.btxtech.game.jsre.client.StartupProbe;
-import com.btxtech.game.jsre.client.StartupTask;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.control.task.DeferredStartup;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
@@ -46,12 +45,10 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
                              Collection<SurfaceRect> surfaceRects,
                              Collection<SurfaceImage> surfaceImages,
                              Collection<TerrainImage> terrainImages) {
-        StartupProbe.getInstance().newTask(StartupTask.LOAD_MAP_IMAGES);
         setTerrainSettings(terrainSettings);
         setTerrainImagePositions(terrainImagePositions);
         setSurfaceRects(surfaceRects);
         setupImages(surfaceImages, terrainImages);
-        loadImagesAndDrawMap();
     }
 
     public ImageElement getTerrainImageElement(int tileId) {
@@ -62,7 +59,7 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
         return surfaceImageElements.get(tileId);
     }
 
-    public void loadImagesAndDrawMap() {
+    public void loadImagesAndDrawMap(final DeferredStartup deferredStartup) {
         ArrayList<String> urls = new ArrayList<String>();
         final ArrayList<Integer> ids = new ArrayList<Integer>();
         TreeSet<Integer> addedIds = new TreeSet<Integer>();
@@ -84,8 +81,8 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
                 urls.add(ImageHandler.getTerrainImageUrl(terrainImagePosition.getImageId()));
             }
         }
-        if(urls.isEmpty()) {
-            StartupProbe.getInstance().taskFinished(StartupTask.LOAD_MAP_IMAGES);
+        if (urls.isEmpty()) {
+            deferredStartup.finished();
             return;
         }
         ImageLoader.loadImages(urls.toArray(new String[urls.size()]), new ImageLoader.CallBack() {
@@ -103,10 +100,10 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
                         }
                     }
                     fireTerrainChanged();
-                    StartupProbe.getInstance().taskFinished(StartupTask.LOAD_MAP_IMAGES);
+                    deferredStartup.finished();
                 } catch (Throwable throwable) {
                     GwtCommon.handleException(throwable);
-                    StartupProbe.getInstance().taskFailed(StartupTask.LOAD_MAP_IMAGES, throwable);
+                    deferredStartup.failed(throwable);
                 }
             }
         });

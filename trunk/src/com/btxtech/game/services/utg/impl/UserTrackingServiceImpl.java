@@ -13,7 +13,7 @@
 
 package com.btxtech.game.services.utg.impl;
 
-import com.btxtech.game.jsre.client.StartupTask;
+import com.btxtech.game.jsre.client.control.ColdRealGameStartupTaskEnum;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.btxtech.game.jsre.common.EventTrackingStart;
@@ -133,7 +133,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public void startUpTaskFinished(StartupTask state, Date clientTimeStamp, long duration) {
+    public void startUpTaskFinished(ColdRealGameStartupTaskEnum state, Date clientTimeStamp, long duration) {
         GameStartup gameStartup;
         DbUserStage dbUserStage = userGuidanceService.getDbUserStage();
         if (connectionService.hasConnection()) {
@@ -145,7 +145,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public void startUpTaskFailed(StartupTask state, Date clientTimeStamp, long duration, String failureText) {
+    public void startUpTaskFailed(ColdRealGameStartupTaskEnum state, Date clientTimeStamp, long duration, String failureText) {
         GameStartup gameStartup;
         DbUserStage dbUserStage = userGuidanceService.getDbUserStage();
         if (connectionService.hasConnection()) {
@@ -338,7 +338,8 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         ArrayList<LifecycleTrackingInfo> lifecycleTrackingInfos = new ArrayList<LifecycleTrackingInfo>();
         LifecycleTrackingInfo lifecycleTrackingInfo = null;
         for (GameStartup gameStartup : gameStartups) {
-            if (StartupTask.isFirstTask(gameStartup.getState())) {
+            // TODO startup
+         /*   if (ColdRealGameStartupTaskEnum.isFirstTask(gameStartup.getState())) {
                 lifecycleTrackingInfo = new LifecycleTrackingInfo(sessionId, gameStartup);
                 lifecycleTrackingInfos.add(lifecycleTrackingInfo);
             } else {
@@ -347,7 +348,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                     continue;
                 }
                 lifecycleTrackingInfo.getGameStartups().add(gameStartup);
-            }
+            } */
         }
 
         @SuppressWarnings("unchecked")

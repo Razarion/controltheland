@@ -16,12 +16,14 @@ package com.btxtech.game.jsre.client;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
+import com.btxtech.game.jsre.client.control.ColdRealGameStartupTaskEnum;
 import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.btxtech.game.jsre.common.EventTrackingStart;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -59,9 +61,9 @@ public interface MovableService extends RemoteService {
 
     String getMissionTarget();
 
-    void startUpTaskFinished(StartupTask state, Date clientTimeStamp, long duration);
+    void sendStartupInfo(Collection<StartupTaskInfo> infos, long totalTime);
 
-    void startUpTaskFailed(StartupTask state, Date clientTimeStamp, long duration, String failureText);
+    void sendStartupFailedInfo(StartupTaskInfo failedTask, Collection<StartupTaskInfo> infos, long totalTime);
 
     void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp);
 

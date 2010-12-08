@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.mapeditor;
 
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.google.gwt.core.client.EntryPoint;
@@ -70,6 +71,7 @@ public class MainTerrainEditor implements EntryPoint {
                         terrainInfo.getSurfaceRects(),
                         terrainInfo.getSurfaceImages(),
                         terrainInfo.getTerrainImages());
+                TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(new SimpleDeferredStartup());
                 cockpit.fillTerrainImages(terrainInfo.getTerrainImages());
                 cockpit.fillSurfaces(terrainInfo.getSurfaceImages());
             }

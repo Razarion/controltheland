@@ -13,11 +13,9 @@
 
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.client.StartupTask;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 /**

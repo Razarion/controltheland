@@ -14,6 +14,7 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.client.control.StartupSeq;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.common.CrudServiceHelper;
@@ -68,6 +69,8 @@ public interface UserGuidanceService {
     CrudServiceHelper<DbUserStage> getUserStageCrudServiceHelper();
 
     DbUserStage getDbUserStage();
+
+    StartupSeq getColdStartupSeq();
 
     DbUserStage getDbUserStage(String name);
 

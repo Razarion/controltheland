@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.client.StartupTask;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,9 +34,11 @@ public class LifecycleTrackingInfo implements Serializable {
     public LifecycleTrackingInfo(String SessionId, GameStartup gameStartup) {
         sessionId = SessionId;
         gameStartups.add(gameStartup);
-        if (!StartupTask.isFirstTask(gameStartup.getState())) {
+        // TODO startup
+/*
+        if (!ColdRealGameStartupTaskEnum.isFirstTask(gameStartup.getState())) {
             throw new IllegalArgumentException("gameStartup must be first task");
-        }
+        }  */
         start = gameStartup.getClientTimeStamp();
     }
 

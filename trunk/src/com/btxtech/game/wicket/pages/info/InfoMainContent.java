@@ -14,7 +14,6 @@
 package com.btxtech.game.wicket.pages.info;
 
 import com.btxtech.game.wicket.pages.BorderPanel;
-import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.UserStagePage;
 import org.apache.wicket.markup.html.form.Form;
 

@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.pathfinding;
 
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniTerrain;
+import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.google.gwt.core.client.EntryPoint;
@@ -61,6 +62,7 @@ public class PathfindingEntry implements EntryPoint {
                         terrainInfo.getSurfaceRects(),
                         terrainInfo.getSurfaceImages(),
                         terrainInfo.getTerrainImages());
+                TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(new SimpleDeferredStartup());
                 miniTerrain.onTerrainSettings(terrainInfo.getTerrainSettings());
                 pathMiniMap.onTerrainSettings(terrainInfo.getTerrainSettings());
             }

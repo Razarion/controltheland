@@ -13,7 +13,9 @@
 
 package com.btxtech.game.wicket.pages;
 
-import com.btxtech.game.jsre.client.StartupTask;
+import com.btxtech.game.jsre.client.control.StartupTaskEnum;
+import com.btxtech.game.jsre.client.control.StartupSeq;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.Arrays;
 import org.apache.wicket.Component;
@@ -37,45 +39,59 @@ public class Game extends WebPage {
 
     @SpringBean
     private UserTrackingService userTrackingService;
+    @SpringBean
+    private UserGuidanceService userGuidanceService;
 
     public Game() {
-        ListView<StartupTask> taskTable = new ListView<StartupTask>("tasks", Arrays.asList(StartupTask.values())) {
-            protected void populateItem(ListItem<StartupTask> linkItem) {
+        StartupSeq startupSeq = userGuidanceService.getColdStartupSeq();
+
+        setupStartupSeq(startupSeq);
+
+        // Startup visualisation table
+        ListView<StartupTaskEnum> taskTable = new ListView<StartupTaskEnum>("tasks", Arrays.asList(startupSeq.getAbstractStartupTaskEnum())) {
+            protected void populateItem(ListItem<StartupTaskEnum> linkItem) {
                 addImage(linkItem, "taskImageLoad", WORKING);
                 addImage(linkItem, "taskImageDone", FINISHED);
                 addImage(linkItem, "taskImageFailed", FAILED);
 
-                Label taskName = new Label("taskName", linkItem.getModelObject().getNiceText());
-                taskName.add(new SimpleAttributeModifier("id", linkItem.getModelObject().getNameId()));
-                if (StartupTask.isFirstTask(linkItem.getModelObject())) {
+                Label taskName = new Label("taskName", linkItem.getModelObject().getStartupTaskEnumHtmlHelper().getNiceText());
+                taskName.add(new SimpleAttributeModifier("id", linkItem.getModelObject().getStartupTaskEnumHtmlHelper().getNameId()));
+                if (linkItem.getModelObject().isFirstTask()) {
                     taskName.add(new SimpleAttributeModifier("style", "font-weight:bold;"));
                 }
                 linkItem.add(taskName);
 
                 Component time = new Label("taskTime", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;").setEscapeModelStrings(false);
-                time.add(new SimpleAttributeModifier("id", linkItem.getModelObject().getTimeId()));
+                time.add(new SimpleAttributeModifier("id", linkItem.getModelObject().getStartupTaskEnumHtmlHelper().getTimeId()));
                 linkItem.add(time);
             }
         };
         add(taskTable);
     }
 
-    private void addImage(ListItem<StartupTask> linkItem, String id, String imageName) {
+    private void setupStartupSeq(StartupSeq startupSeq) {
+        Label startupSeqLabel = new Label("startupSeq", "");
+        startupSeqLabel.add(new SimpleAttributeModifier("id", com.btxtech.game.jsre.client.Game.STARTUP_SEQ_ID));
+        startupSeqLabel.add(new SimpleAttributeModifier(com.btxtech.game.jsre.client.Game.STARTUP_SEQ_ID, startupSeq.name()));
+        add(startupSeqLabel);
+    }
+
+    private void addImage(ListItem<StartupTaskEnum> linkItem, String id, String imageName) {
         Image working = new Image(id, imageName);
         if (imageName.equals(WORKING)) {
-            if (!StartupTask.isFirstTask(linkItem.getModelObject())) {
+            if (!linkItem.getModelObject().isFirstTask()) {
                 working.add(new SimpleAttributeModifier("width", "0px"));
                 working.add(new SimpleAttributeModifier("height", "0px"));
             }
-            working.add(new SimpleAttributeModifier("id", linkItem.getModelObject().getImgIdWorking()));
+            working.add(new SimpleAttributeModifier("id", linkItem.getModelObject().getStartupTaskEnumHtmlHelper().getImgIdWorking()));
         } else if (imageName.equals(FINISHED)) {
             working.add(new SimpleAttributeModifier("width", "0px"));
             working.add(new SimpleAttributeModifier("height", "0px"));
-            working.add(new SimpleAttributeModifier("id", linkItem.getModelObject().getImgIdFinished()));
+            working.add(new SimpleAttributeModifier("id", linkItem.getModelObject().getStartupTaskEnumHtmlHelper().getImgIdFinished()));
         } else if (imageName.equals(FAILED)) {
             working.add(new SimpleAttributeModifier("width", "0px"));
             working.add(new SimpleAttributeModifier("height", "0px"));
-            working.add(new SimpleAttributeModifier("id", linkItem.getModelObject().getImgIdFailed()));
+            working.add(new SimpleAttributeModifier("id", linkItem.getModelObject().getStartupTaskEnumHtmlHelper().getImgIdFailed()));
         } else {
             throw new IllegalArgumentException("Unknown image: " + imageName);
         }
@@ -88,5 +104,4 @@ public class Game extends WebPage {
         super.onBeforeRender();
         userTrackingService.pageAccess(getClass());
     }
-
 }
