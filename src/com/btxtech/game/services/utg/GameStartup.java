@@ -13,7 +13,7 @@
 
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.client.StartupTask;
+import com.btxtech.game.jsre.client.control.ColdRealGameStartupTaskEnum;
 import com.btxtech.game.services.user.User;
 import java.io.Serializable;
 import java.util.Date;
@@ -43,7 +43,7 @@ public class GameStartup implements Serializable {
     @Column(nullable = false)
     private String sessionId;
     @Column(nullable = false)
-    private StartupTask state;
+    private ColdRealGameStartupTaskEnum state;
     private long duration;
     @Column(length = 50000)    
     private String failureText;
@@ -61,7 +61,7 @@ public class GameStartup implements Serializable {
     public GameStartup() {
     }
 
-    public GameStartup(Date clientTimeStamp, String type, StartupTask state, long duration, String failureText, String baseName, User user, String sessionId, boolean isTutorial, String userStageName) {
+    public GameStartup(Date clientTimeStamp, String type, ColdRealGameStartupTaskEnum state, long duration, String failureText, String baseName, User user, String sessionId, boolean isTutorial, String userStageName) {
         tutorial = isTutorial;
         this.userStageName = userStageName;
         this.clientTimeStamp = clientTimeStamp.getTime();
@@ -90,7 +90,7 @@ public class GameStartup implements Serializable {
         return sessionId;
     }
 
-    public StartupTask getState() {
+    public ColdRealGameStartupTaskEnum getState() {
         return state;
     }
 

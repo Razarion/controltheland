@@ -16,11 +16,10 @@ package com.btxtech.game.jsre.client.item;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.ClientSyncItem;
-import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.StartupProbe;
 import com.btxtech.game.jsre.client.action.ActionHandler;
+import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Index;
@@ -219,9 +218,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         items.put(id, itemView);
         if (itemView.isMyOwnProperty()) {
             ownItemCount++;
-            if (StartupProbe.getInstance().isRunning()) {
-                Cockpit.getInstance().updateItemLimit();
-            }
+            Cockpit.getInstance().updateItemLimit();
         }
         return itemView;
     }
@@ -250,9 +247,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         items.remove(itemView.getSyncItem().getId());
         if (itemView.isMyOwnProperty()) {
             ownItemCount--;
-            if (StartupProbe.getInstance().isRunning()) {
-                Cockpit.getInstance().updateItemLimit();
-            }
+            Cockpit.getInstance().updateItemLimit();
         }
         checkSpecialRemoved(itemView);
         seeminglyDeadItems.remove(itemView.getSyncItem().getId());

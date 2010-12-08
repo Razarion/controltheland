@@ -15,7 +15,8 @@ package com.btxtech.game.jsre.client.utg;
 
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
-import com.btxtech.game.jsre.client.StartupProbe;
+import com.btxtech.game.jsre.client.control.ClientRunner;
+import com.btxtech.game.jsre.client.control.StartupScreen;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
@@ -59,7 +60,7 @@ public class ClientUserTracker implements SelectionListener {
             public void onClose(CloseEvent<Window> windowCloseEvent) {
                 sendEventTrackerItems();
                 long time = System.currentTimeMillis();
-                Connection.getInstance().sendCloseWindow(time - StartupProbe.getInstance().getRunningTimeStamp(), time);
+                Connection.getInstance().sendCloseWindow(time - ClientRunner.getInstance().getStartupTimeStamp(), time);
             }
         });
     }

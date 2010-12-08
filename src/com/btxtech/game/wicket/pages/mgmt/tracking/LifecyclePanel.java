@@ -40,7 +40,10 @@ public class LifecyclePanel extends Panel {
         add(new ListView<GameStartup>("startup", lifecycleTrackingInfo.getGameStartups()) {
             @Override
             protected void populateItem(ListItem<GameStartup> gameStartupListItem) {
+                // TODO startup                
+                /*
                 gameStartupListItem.add(new Label("task", gameStartupListItem.getModelObject().getState().getNiceText()));
+                */
                 gameStartupListItem.add(new Label("time", WebCommon.formatDurationMilis(gameStartupListItem.getModelObject().getDuration())));
             }
         });

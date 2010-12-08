@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
@@ -98,7 +99,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
             Rectangle absolutePos = terrainHandler.convertToAbsolutePosition(surfaceRect.getTileRectangle());
             ImageElement imageElement = terrainHandler.getSurfaceImageElement(surfaceRect.getSurfaceImageId());
             if (imageElement == null) {
-                terrainHandler.loadImagesAndDrawMap();
+                terrainHandler.loadImagesAndDrawMap(new SimpleDeferredStartup());
                 continue;
             }
             tilingSurface(imageElement, absolutePos);
@@ -154,7 +155,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
             int relYStart = absolutePos.getY() - viewOriginTop;
             ImageElement imageElement = terrainHandler.getTerrainImageElement(terrainImagePosition.getImageId());
             if (imageElement == null) {
-                terrainHandler.loadImagesAndDrawMap();
+                terrainHandler.loadImagesAndDrawMap(new SimpleDeferredStartup());
                 continue;
             }
             try {

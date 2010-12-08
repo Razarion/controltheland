@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client;
 
+import com.btxtech.game.jsre.client.control.StartupScreen;
 import com.btxtech.game.jsre.client.dialogs.ChangeColorDialog;
 import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
 import com.google.gwt.dom.client.Style;
@@ -72,7 +73,7 @@ public class MenuPanel extends TopMapPanel {
 
             @Override
             public void run() {
-                StartupProbe.getInstance().showStartScreen();
+                StartupScreen.getInstance().showStartScreen();
             }
         });
         addRow("Base Color", "color", new Runnable() {

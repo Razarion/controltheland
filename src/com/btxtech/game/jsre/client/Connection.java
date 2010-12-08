@@ -20,13 +20,10 @@ import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
-import com.btxtech.game.jsre.client.common.info.RealityInfo;
-import com.btxtech.game.jsre.client.common.info.SimulationInfo;
+import com.btxtech.game.jsre.client.control.task.DeferredStartup;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.item.ItemContainer;
-import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.client.utg.MissionTarget;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
@@ -37,6 +34,7 @@ import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
+import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccessSyncInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -58,11 +56,12 @@ import java.util.List;
  * Time: 11:23:52 AM
  */
 public class Connection implements AsyncCallback<Void> {
-    public static final int MIN_DELAY_BETWEEN_TICKS = 200;
+    public static final int MIN_DELAY_BETWEEN_POLL = 200;
     public static final int STATISTIC_DELAY = 10000;
     public static final Connection INSTANCE = new Connection();
     private boolean isRegistered;
     private GameInfo gameInfo;
+    private Collection<SyncItemInfo> syncInfos;
     private ArrayList<BaseCommand> commandQueue = new ArrayList<BaseCommand>();
 
     private MovableServiceAsync movableServiceAsync = GWT.create(MovableService.class);
@@ -79,113 +78,69 @@ public class Connection implements AsyncCallback<Void> {
 
     }
 
-    public void start() {
-        StartupProbe.getInstance().taskSwitch(StartupTask.INIT_GUI, StartupTask.DOWNLOAD_GAME_INFO);
+    public void downloadGameInfo(final DeferredStartup deferredStartup) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.getGameInfo(new AsyncCallback<GameInfo>() {
 
-        movableServiceAsync.getGameInfo(new AsyncCallback<GameInfo>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    handleDisconnection(caught);
+                    deferredStartup.failed(caught);
+                }
 
-            @Override
-            public void onFailure(Throwable caught) {
-                handleDisconnection(caught);
-                StartupProbe.getInstance().taskFailed(StartupTask.DOWNLOAD_GAME_INFO, caught);
-            }
+                @Override
+                public void onSuccess(GameInfo gameInfo) {
+                    Connection.this.gameInfo = gameInfo;
+                    deferredStartup.finished();
+                }
+            });
+        } else {
+            deferredStartup.failed(DeferredStartup.NO_CONNECTION);
+        }
+    }
 
-            @Override
-            public void onSuccess(GameInfo gameInfo) {
-                StartupProbe.getInstance().taskSwitch(StartupTask.DOWNLOAD_GAME_INFO, StartupTask.INIT_GAME);
-                try {
-                    if (gameInfo instanceof SimulationInfo) {
-                        setupSimulationStructure((SimulationInfo) gameInfo);
-                    } else if (gameInfo instanceof RealityInfo) {
-                        setupRealStructure((RealityInfo) gameInfo);
+    public void downloadAllSyncInfo(final DeferredStartup deferredStartup) {
+        if (movableServiceAsync != null) {
+            movableServiceAsync.getAllSyncInfo(new AsyncCallback<Collection<SyncItemInfo>>() {
+                @Override
+                public void onFailure(Throwable throwable) {
+                    handleDisconnection(throwable);
+                    deferredStartup.failed(throwable);
+                }
+
+                @Override
+                public void onSuccess(Collection<SyncItemInfo> syncInfos) {
+                    if (syncInfos != null) {
+                        Connection.this.syncInfos = syncInfos;
+                        deferredStartup.finished();
                     } else {
-                        StartupProbe.getInstance().taskFailed(StartupTask.INIT_GAME, "Unknown GameInfo: " + gameInfo);
+                        deferredStartup.failed(DeferredStartup.NO_SYNC_INFO);
                     }
-                } catch (Throwable throwable) {
-                    GwtCommon.handleException(throwable);
-                    StartupProbe.getInstance().taskFailed(StartupTask.INIT_GAME, throwable);
                 }
-            }
-        });
+            });
+        } else {
+            deferredStartup.failed(DeferredStartup.NO_CONNECTION);
+        }
     }
 
-    public void setupGameStructure(GameInfo gameInfo) {
-        this.gameInfo = gameInfo;
-        isRegistered = gameInfo.isRegistered();
-        TerrainView.getInstance().setupTerrain(gameInfo.getTerrainSettings(),
-                gameInfo.getTerrainImagePositions(),
-                gameInfo.getSurfaceRects(),
-                gameInfo.getSurfaceImages(),
-                gameInfo.getTerrainImages());
-        ItemContainer.getInstance().setItemTypes(gameInfo.getItemTypes());
-    }
-
-    private void setupSimulationStructure(final SimulationInfo simulationInfo) {
-        setupGameStructure(simulationInfo);
-        ClientBase.getInstance().setAllBaseAttributes(simulationInfo.getTutorialConfig().getBaseAttributes());
-        StartupProbe.getInstance().taskSwitch(StartupTask.INIT_GAME, StartupTask.LOAD_UNITS);
-        StartupProbe.getInstance().taskSwitch(StartupTask.LOAD_UNITS, StartupTask.START_ACTION_HANDLER);
-        StartupProbe.getInstance().taskFinished(StartupTask.START_ACTION_HANDLER);
-        Cockpit.getInstance().enableOnlinePanel(false);
-    }
-
-    private void setupRealStructure(final RealityInfo realityInfo) {
-        setupGameStructure(realityInfo);
-        ClientBase.getInstance().setAllBaseAttributes(realityInfo.getAllBase());
-        ClientBase.getInstance().setBase(realityInfo.getBase());
-        ClientBase.getInstance().setAccountBalance(realityInfo.getAccountBalance());
-        Cockpit.getInstance().setGameInfo(realityInfo);
-        ClientItemTypeAccess.getInstance().setAllowedItemTypes(realityInfo.getAllowedItemTypes());
-        RadarPanel.getInstance().updateEnergy(realityInfo.getEnergyGenerating(), realityInfo.getEnergyConsuming());
-        MissionTarget.getInstance().setLevel(realityInfo.getLevel());
-        ClientTerritoryService.getInstance().setTerritories(realityInfo.getTerritories());
-        StartupProbe.getInstance().taskSwitch(StartupTask.INIT_GAME, StartupTask.LOAD_UNITS);
-        ClientBase.getInstance().setItemLimit(realityInfo.getItemLimit());
-        ClientBase.getInstance().setHouseSpace(realityInfo.getHouseSpace());
-        Cockpit.getInstance().enableOnlinePanel(true);
-
-        movableServiceAsync.getAllSyncInfo(new AsyncCallback<Collection<SyncItemInfo>>() {
-            @Override
-            public void onFailure(Throwable throwable) {
-                handleDisconnection(throwable);
-                StartupProbe.getInstance().taskFailed(StartupTask.LOAD_UNITS, throwable);
-            }
-
-            @Override
-            public void onSuccess(Collection<SyncItemInfo> syncInfos) {
-                try {
-                    StartupProbe.getInstance().taskSwitch(StartupTask.LOAD_UNITS, StartupTask.START_ACTION_HANDLER);
-                    if (syncInfos == null) {
-                        StartupProbe.getInstance().taskFailed(StartupTask.START_ACTION_HANDLER, "No synchronization information received");
-                        return;
-                    }
-                    for (SyncItemInfo syncInfo : syncInfos) {
-                        try {
-                            ItemContainer.getInstance().sychronize(syncInfo);
-                        } catch (Throwable t) {
-                            GwtCommon.handleException(t);
-                        }
-                    }
-                    TerrainView.getInstance().moveToHome();
-                    timer.schedule(MIN_DELAY_BETWEEN_TICKS);
-                    StartupProbe.getInstance().taskFinished(StartupTask.START_ACTION_HANDLER);
-                } catch (Throwable t) {
-                    GwtCommon.handleException(t);
-                    StartupProbe.getInstance().taskFailed(StartupTask.START_ACTION_HANDLER, t);
-                }
-
-            }
-        });
-
+    public void startSyncInfoPoll() {
         timer = new Timer() {
             @Override
             public void run() {
-                tick();
+                pollSyncInfo();
             }
         };
+        timer.schedule(MIN_DELAY_BETWEEN_POLL);
     }
 
-    private void tick() {
+    public void stopSyncInfoPoll() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    private void pollSyncInfo() {
         if (movableServiceAsync == null) {
             return;
         }
@@ -200,7 +155,7 @@ public class Connection implements AsyncCallback<Void> {
                 try {
                     handlePackets(packets);
                 } finally {
-                    timer.schedule(MIN_DELAY_BETWEEN_TICKS);
+                    timer.schedule(MIN_DELAY_BETWEEN_POLL);
                 }
             }
         });
@@ -304,15 +259,15 @@ public class Connection implements AsyncCallback<Void> {
         }
     }
 
-    public void sandStartUpTaskFinished(StartupTask state, Date timeStamp, long duration) {
+    public void sendStartupFinished(Collection<StartupTaskInfo> infos, long totalTime) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.startUpTaskFinished(state, timeStamp, duration, this);
+            movableServiceAsync.sendStartupInfo(infos, totalTime, this);
         }
     }
 
-    public void sandStartUpTaskFailed(StartupTask state, Date timeStamp, long duration, String failureText) {
+    public void sendStartupFailed(StartupTaskInfo failedTask, Collection<StartupTaskInfo> infos, long totalTime) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.startUpTaskFailed(state, timeStamp, duration, failureText, this);
+            movableServiceAsync.sendStartupFailedInfo(failedTask, infos, totalTime, this);
         }
     }
 
@@ -415,5 +370,14 @@ public class Connection implements AsyncCallback<Void> {
 
     public GameInfo getGameInfo() {
         return gameInfo;
+    }
+
+    public Collection<SyncItemInfo> getAndClearSyncInfos() {
+        if (syncInfos == null) {
+            throw new IllegalArgumentException("No syncInfos loaded");
+        }
+        Collection<SyncItemInfo> tmp = syncInfos;
+        syncInfos = null;
+        return tmp;
     }
 }

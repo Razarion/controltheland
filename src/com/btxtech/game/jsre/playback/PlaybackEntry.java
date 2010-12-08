@@ -76,9 +76,9 @@ public class PlaybackEntry implements EntryPoint {
                 absolutePanel.add(extendedCanvas, 0,0);
                 playbackControlPanel.addToParent(absolutePanel, TopMapPanel.Direction.RIGHT_TOP, 10);
 
-                game.init();
+                // TODO game.init();
                 ClientBase.getInstance().setAllBaseAttributes(playbackInfo.getTutorialConfig().getBaseAttributes());
-                Connection.getInstance().setupGameStructure(playbackInfo);
+                // TODO Connection.getInstance().setupGameStructure(playbackInfo);
                 Simulation.getInstance().start();
                 play();
             }

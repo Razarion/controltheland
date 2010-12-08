@@ -13,47 +13,48 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.cockpit.Cockpit;
-import com.btxtech.game.jsre.client.cockpit.TerrainMouseHandler;
-import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.jsre.client.terrain.MapWindow;
-import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.client.control.ClientRunner;
+import com.btxtech.game.jsre.client.control.StartupSeq;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 
 public class Game implements EntryPoint {
+    public static final String DEBUG_PARAM = "debug";
+    public static final String STARTUP_SEQ_ID = "startSeq";
     private static boolean isDebug = false;
 
     public void onModuleLoad() {
         try {
             GwtCommon.setUncaughtExceptionHandler();
-
-            StartupProbe.getInstance().init();
-            StartupProbe.getInstance().taskSwitch(StartupTask.getFirstTask(), StartupTask.INIT_GUI);
-
-            isDebug = Boolean.parseBoolean(Window.Location.getParameter("debug"));
-
-            init();
-            Connection.INSTANCE.start();
+            isDebug = Boolean.parseBoolean(Window.Location.getParameter(DEBUG_PARAM));
+            StartupSeq startupSeq = getStartupSeqFromHtml();
+            if (!startupSeq.isCold()) {
+                throw new IllegalArgumentException("Can not do a warm start on a cold system");
+            }
+            ClientRunner.getInstance().start(startupSeq);
         } catch (Throwable t) {
             GwtCommon.handleException(t);
         }
     }
 
-    public void init() {
-        GwtCommon.disableBrowserContextMenuJSNI();
-        Cockpit.getInstance().addToParent(MapWindow.getAbsolutePanel());
-        RootPanel.get().add(MapWindow.getAbsolutePanel(), 0, 0);
-
-        TerrainView.getInstance().addToParent(MapWindow.getAbsolutePanel());
-        TerrainView.getInstance().getCanvas().getElement().getStyle().setZIndex(Constants.Z_INDEX_TERRAIN);
-        TerrainView.getInstance().addTerrainScrollListener(MapWindow.getInstance());
-
-        TerrainMouseHandler.getInstance(); // Just for activation
-    }
-
     public static boolean isDebug() {
         return isDebug;
+    }
+
+    private StartupSeq getStartupSeqFromHtml() {
+        RootPanel div = RootPanel.get(STARTUP_SEQ_ID);
+        if (div == null) {
+            throw new IllegalArgumentException(STARTUP_SEQ_ID + " not found in html");
+        }
+        String startSeqStr = div.getElement().getAttribute(STARTUP_SEQ_ID);
+        if (startSeqStr == null || startSeqStr.trim().isEmpty()) {
+            throw new IllegalArgumentException(STARTUP_SEQ_ID + " not found in div element as parameter");
+        }
+        try {
+            return StartupSeq.valueOf(startSeqStr);
+        } catch (Throwable t) {
+            throw new IllegalArgumentException(STARTUP_SEQ_ID + " can not convert to enum: " + startSeqStr);
+        }
     }
 }

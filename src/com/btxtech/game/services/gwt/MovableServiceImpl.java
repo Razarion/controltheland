@@ -15,7 +15,6 @@ package com.btxtech.game.services.gwt;
 
 
 import com.btxtech.game.jsre.client.MovableService;
-import com.btxtech.game.jsre.client.StartupTask;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
@@ -27,6 +26,7 @@ import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -55,7 +55,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 @Component("movableService")
 public class MovableServiceImpl implements MovableService {
@@ -123,7 +122,31 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public void startUpTaskFinished(StartupTask state, Date clientTimeStamp, long duration) {
+    public void sendStartupInfo(Collection<StartupTaskInfo> infos, long totalTime) {
+        // TODO
+        System.out.println("-----------------------------------------------");
+        System.out.println("Startup success");
+        System.out.println("totalTime: " + totalTime);
+        for (StartupTaskInfo info : infos) {
+            System.out.println(info);
+        }
+    }
+
+    @Override
+    public void sendStartupFailedInfo(StartupTaskInfo failedTask, Collection<StartupTaskInfo> infos, long totalTime) {
+        // TODO
+        System.out.println("-----------------------------------------------");
+        System.out.println("Startup FAILED!");
+        System.out.println("totalTime: " + totalTime);
+        for (StartupTaskInfo info : infos) {
+            System.out.println(info);
+        }
+        System.out.println(failedTask);        
+    }
+
+    /*
+    @Override
+    public void startUpTaskFinished(ColdRealGameStartupTaskEnum state, Date clientTimeStamp, long duration) {
         try {
             userTrackingService.startUpTaskFinished(state, clientTimeStamp, duration);
         } catch (Throwable t) {
@@ -132,14 +155,14 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public void startUpTaskFailed(StartupTask state, Date clientTimeStamp, long duration, String failureText) {
+    public void startUpTaskFailed(ColdRealGameStartupTaskEnum state, Date clientTimeStamp, long duration, String failureText) {
         try {
             userTrackingService.startUpTaskFailed(state, clientTimeStamp, duration, failureText);
         } catch (Throwable t) {
             log.error("", t);
         }
     }
-
+    */
     @Override
     public void sendTotalStartupTime(long totalStartupTime, long clientTimeStamp) {
         try {

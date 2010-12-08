@@ -66,8 +66,11 @@ public class GwtCommon {
         sendExceptionToServer(message, t);
     }
 
-
     private static void sendExceptionToServer(String message, Throwable throwable) {
+        sendLogToServer(setupStackTrace(message, throwable));
+    }
+
+    public static String setupStackTrace(String message, Throwable throwable) {
         try {
             StringBuilder stringBuilder = new StringBuilder();
             if (message != null) {
@@ -84,9 +87,29 @@ public class GwtCommon {
                 throwable = inner;
                 isCause = true;
             }
-            sendLogToServer(stringBuilder.toString());
+            return stringBuilder.toString();
         } catch (Throwable ignore) {
-            // Ignore
+            return "failed to setup stacktrace: " + ignore;
+        }
+    }
+
+    public static void setupStackTrace(StringBuilder builder, Throwable throwable, boolean isCause) {
+        if (isCause) {
+            builder.append("Caused by: ");
+        }
+        if (throwable instanceof StatusCodeException) {
+            builder.append("StatusCodeException status code: ");
+            builder.append(((StatusCodeException) throwable).getStatusCode());
+            builder.append("\n");
+        }
+        builder.append(throwable.getMessage());
+        builder.append("\n");
+        builder.append(throwable.toString());
+        builder.append("\n");
+        for (Object element : throwable.getStackTrace()) {
+            builder.append("  at ");
+            builder.append(element.toString());
+            builder.append("\n");
         }
     }
 
@@ -112,26 +135,6 @@ public class GwtCommon {
             Document.get().getElementsByTagName("head").getItem(0).appendChild(scriptElement);
         } catch (Throwable ignore) {
             // Ignore
-        }
-    }
-
-    private static void setupStackTrace(StringBuilder builder, Throwable throwable, boolean isCause) {
-        if (isCause) {
-            builder.append("Caused by: ");
-        }
-        if (throwable instanceof StatusCodeException) {
-            builder.append("StatusCodeException status code: ");
-            builder.append(((StatusCodeException) throwable).getStatusCode());
-            builder.append("\n");
-        }
-        builder.append(throwable.getMessage());
-        builder.append("\n");
-        builder.append(throwable.toString());
-        builder.append("\n");
-        for (Object element : throwable.getStackTrace()) {
-            builder.append("  at ");
-            builder.append(element.toString());
-            builder.append("\n");
         }
     }
 

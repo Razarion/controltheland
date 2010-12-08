@@ -279,6 +279,10 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
     }
 
     public void updateItemLimit() {
+        if (itemLimit == null) {
+            // Not initialized yet
+            return;
+        }
         StringBuilder builder = new StringBuilder();
         builder.append(ItemContainer.getInstance().getOwnItemCount());
         builder.append("/");
