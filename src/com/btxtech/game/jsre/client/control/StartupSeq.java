@@ -37,7 +37,7 @@ public enum StartupSeq {
     WARM_SIMULATED(false) {
         @Override
         public StartupTaskEnum[] getAbstractStartupTaskEnum() {
-            return null; // TODO
+            return WarmSimulatedGameStartupTaskEnum.values();
         }};
     private boolean cold;
 

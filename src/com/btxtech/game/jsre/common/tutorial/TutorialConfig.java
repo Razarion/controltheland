@@ -37,7 +37,6 @@ public class TutorialConfig implements Serializable {
     private int width;
     private int height;
     private Collection<BaseAttributes> baseAttributes;
-    private String exitUrl;
     private boolean failOnOwnItemsLost;
     private Integer failOnMoneyBelowAndNoAttackUnits;
 
@@ -52,7 +51,6 @@ public class TutorialConfig implements Serializable {
                           int width,
                           int height,
                           Collection<BaseAttributes> baseAttributes,
-                          String exitUrl,
                           boolean failOnOwnItemsLost,
                           Integer failOnMoneyBelowAndNoAttackUnits) {
         this.taskConfigs = taskConfigs;
@@ -60,7 +58,6 @@ public class TutorialConfig implements Serializable {
         this.width = width;
         this.height = height;
         this.baseAttributes = baseAttributes;
-        this.exitUrl = exitUrl;
         this.failOnOwnItemsLost = failOnOwnItemsLost;
         this.failOnMoneyBelowAndNoAttackUnits = failOnMoneyBelowAndNoAttackUnits;
     }
@@ -83,10 +80,6 @@ public class TutorialConfig implements Serializable {
 
     public Collection<BaseAttributes> getBaseAttributes() {
         return baseAttributes;
-    }
-
-    public String getExitUrl() {
-        return exitUrl;
     }
 
     public boolean isFailOnOwnItemsLost() {

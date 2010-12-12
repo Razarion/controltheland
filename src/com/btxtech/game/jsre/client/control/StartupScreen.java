@@ -28,6 +28,9 @@ import com.google.gwt.user.client.EventListener;
  * Time: 18:19:28
  */
 public class StartupScreen {
+    private static final String WORKING_IMG_SRC = "resources/com.btxtech.game.wicket.pages.Game/working.gif";
+    private static final String FINISHED_IMG_SRC = "resources/com.btxtech.game.wicket.pages.Game/finished.png";
+    private static final String FAILED_IMG_SRC = "resources/com.btxtech.game.wicket.pages.Game/failed.png";
     private final static StartupScreen INSTANCE = new StartupScreen();
 
     public static StartupScreen getInstance() {
@@ -38,6 +41,7 @@ public class StartupScreen {
     private Element startScreen;
     private ButtonElement closeButton;
     private com.google.gwt.user.client.Element closeButtonElement;
+    private StartupSeq startupSeq;
 
     /**
      * Singleton
@@ -46,16 +50,75 @@ public class StartupScreen {
     }
 
     public void setupScreen(StartupSeq startupSeq) {
+        StartupSeq oldStartupSeq = this.startupSeq;
+        this.startupSeq = startupSeq;
         if (parent == null) {
             startScreen = DOM.getElementById("startScreen");
             parent = startScreen.getParentElement();
             setupCloseButton();
         }
-        if (!startupSeq.isCold()) {
-            // TODO setup screen from enum
-        }
         hideCloseButton();
         showStartScreen();
+        if (!startupSeq.isCold()) {
+            setupTable(startupSeq, oldStartupSeq);
+        }
+    }
+
+    private void setupTable(StartupSeq newStartupSeq, StartupSeq oldStartupSeq) {
+        // Clear table
+        Element tableSectionElement = null;
+        for (StartupTaskEnum startupTaskEnum : oldStartupSeq.getAbstractStartupTaskEnum()) {
+            Element tdElement = DOM.getElementById(startupTaskEnum.getStartupTaskEnumHtmlHelper().getNameId());
+            Element trElement = tdElement.getParentElement();
+            if (tableSectionElement == null) {
+                tableSectionElement = trElement.getParentElement();
+            }
+            tableSectionElement.removeChild(trElement);
+            trElement = null;
+        }
+
+        if (tableSectionElement == null) {
+            throw new IllegalStateException("Can not modify startup table. No section element found");
+        }
+
+        // Setup table
+        for (StartupTaskEnum startupTaskEnum : newStartupSeq.getAbstractStartupTaskEnum()) {
+            Element trElement = DOM.createTR();
+            tableSectionElement.appendChild(trElement);
+            // Finished Image
+            Element imageTdElement = DOM.createTD();
+            com.google.gwt.user.client.Element finishedImage = DOM.createImg();
+            finishedImage.setId(startupTaskEnum.getStartupTaskEnumHtmlHelper().getImgIdFinished());
+            DOM.setImgSrc(finishedImage, FINISHED_IMG_SRC);
+            finishedImage.getStyle().setHeight(0, Style.Unit.PX);
+            finishedImage.getStyle().setWidth(0, Style.Unit.PX);
+            imageTdElement.appendChild(finishedImage);
+            trElement.appendChild(imageTdElement);
+            // Failing Image
+            com.google.gwt.user.client.Element failingImage = DOM.createImg();
+            failingImage.setId(startupTaskEnum.getStartupTaskEnumHtmlHelper().getImgIdFailed());
+            failingImage.getStyle().setHeight(0, Style.Unit.PX);
+            failingImage.getStyle().setWidth(0, Style.Unit.PX);
+            DOM.setImgSrc(failingImage, FAILED_IMG_SRC);
+            imageTdElement.appendChild(failingImage);
+            // Working Image
+            com.google.gwt.user.client.Element workingImage = DOM.createImg();
+            workingImage.setId(startupTaskEnum.getStartupTaskEnumHtmlHelper().getImgIdWorking());
+            workingImage.getStyle().setHeight(0, Style.Unit.PX);
+            workingImage.getStyle().setWidth(0, Style.Unit.PX);
+            DOM.setImgSrc(workingImage, WORKING_IMG_SRC);
+            imageTdElement.appendChild(workingImage);
+            // Text
+            Element textTdElement = DOM.createTD();
+            textTdElement.setInnerText(startupTaskEnum.getStartupTaskEnumHtmlHelper().getNiceText());
+            textTdElement.setId(startupTaskEnum.getStartupTaskEnumHtmlHelper().getNameId());
+            trElement.appendChild(textTdElement);
+            // Time
+            Element timeTdElement = DOM.createTD();
+            timeTdElement.setInnerHTML("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+            timeTdElement.setId(startupTaskEnum.getStartupTaskEnumHtmlHelper().getTimeId());
+            trElement.appendChild(timeTdElement);
+        }
     }
 
     private void setupCloseButton() {
@@ -96,9 +159,9 @@ public class StartupScreen {
         Element nameElement = DOM.getElementById(task.getTaskEnum().getStartupTaskEnumHtmlHelper().getNameId());
         nameElement.getStyle().setFontWeight(Style.FontWeight.NORMAL);
         // Hide working image
-        Element workingIMage = DOM.getElementById(task.getTaskEnum().getStartupTaskEnumHtmlHelper().getImgIdWorking());
-        workingIMage.getStyle().setHeight(0, Style.Unit.PX);
-        workingIMage.getStyle().setWidth(0, Style.Unit.PX);
+        Element workingImage = DOM.getElementById(task.getTaskEnum().getStartupTaskEnumHtmlHelper().getImgIdWorking());
+        workingImage.getStyle().setHeight(0, Style.Unit.PX);
+        workingImage.getStyle().setWidth(0, Style.Unit.PX);
         // Show finished image
         Element finishedImage = DOM.getElementById(task.getTaskEnum().getStartupTaskEnumHtmlHelper().getImgIdFinished());
         finishedImage.getStyle().setHeight(24, Style.Unit.PX);

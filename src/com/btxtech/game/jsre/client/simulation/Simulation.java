@@ -16,19 +16,23 @@ package com.btxtech.game.jsre.client.simulation;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.GameCommon;
 import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.action.ActionHandler;
+import com.btxtech.game.jsre.client.ParametrisedRunnable;
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
+import com.btxtech.game.jsre.client.control.ClientRunner;
+import com.btxtech.game.jsre.client.control.StartupSeq;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainScrollListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.UserStage;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -41,7 +45,6 @@ import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 import java.util.List;
 
@@ -70,27 +73,25 @@ public class Simulation implements SelectionListener, TerrainScrollListener, Cli
     }
 
     public void start() {
-        if (Connection.getInstance().getGameInfo() instanceof SimulationInfo) {
-            simulationInfo = (SimulationInfo) Connection.getInstance().getGameInfo();
-            TutorialConfig tutorialConfig = simulationInfo.getTutorialConfig();
-            if (tutorialConfig == null) {
-                return;
-            }
-            tutorialGui = new TutorialGui();
-            TerrainView.getInstance().addTerrainScrollListener(this);
-            ClientBase.getInstance().setBase(tutorialConfig.getOwnBase());
-            Cockpit.getInstance().updateBase();
-            tutorialTime = System.currentTimeMillis();
-            MapWindow.getAbsolutePanel().getElement().getStyle().setProperty("minWidth", tutorialConfig.getWidth() + "px");
-            MapWindow.getAbsolutePanel().getElement().getStyle().setProperty("minHeight", tutorialConfig.getHeight() + "px");
-            ClientUserTracker.getInstance().startEventTracking();
-            runNextTask(activeTask);
+        simulationInfo = (SimulationInfo) Connection.getInstance().getGameInfo();
+        TutorialConfig tutorialConfig = simulationInfo.getTutorialConfig();
+        if (tutorialConfig == null) {
+            return;
         }
+        tutorialGui = new TutorialGui();
+        TerrainView.getInstance().addTerrainScrollListener(this);
+        ClientBase.getInstance().setBase(tutorialConfig.getOwnBase());
+        Cockpit.getInstance().updateBase();
+        tutorialTime = System.currentTimeMillis();
+        MapWindow.getAbsolutePanel().getElement().getStyle().setProperty("minWidth", tutorialConfig.getWidth() + "px");
+        MapWindow.getAbsolutePanel().getElement().getStyle().setProperty("minHeight", tutorialConfig.getHeight() + "px");
+        ClientUserTracker.getInstance().startEventTracking();
+        runNextTask(activeTask);
     }
 
     private void processPreparation(TaskConfig taskConfig) {
         if (taskConfig.isClearGame()) {
-            clearGame();
+            GameCommon.clearGame();
         }
 
         Cockpit.getInstance().setVisibleRadar(taskConfig.isScrollingAllowed());
@@ -113,12 +114,6 @@ public class Simulation implements SelectionListener, TerrainScrollListener, Cli
         if (taskConfig.getScroll() != null) {
             TerrainView.getInstance().moveAbsolute(taskConfig.getScroll());
         }
-    }
-
-    private void clearGame() {
-        ItemContainer.getInstance().clear();
-        ActionHandler.getInstance().clear();
-        SelectionHandler.getInstance().clearSelection();
     }
 
     private void runNextTask(Task closedTask) {
@@ -149,10 +144,16 @@ public class Simulation implements SelectionListener, TerrainScrollListener, Cli
     private void tutorialFinished() {
         activeTask = null;
         long time = System.currentTimeMillis();
-        ClientUserTracker.getInstance().onTutorialFinished(time - tutorialTime, time, new Runnable() {
+        ClientUserTracker.getInstance().onTutorialFinished(time - tutorialTime, time, new ParametrisedRunnable<UserStage>() {
             @Override
-            public void run() {
-                Window.Location.replace(simulationInfo.getTutorialConfig().getExitUrl());
+            public void run(UserStage userStage) {
+                StartupSeq startupSeq;
+                if (userStage.isRealGame()) {
+                    startupSeq = StartupSeq.WARM_REAL;
+                } else {
+                    startupSeq = StartupSeq.WARM_SIMULATED;
+                }
+                ClientRunner.getInstance().start(startupSeq);
             }
         });
     }
@@ -181,23 +182,14 @@ public class Simulation implements SelectionListener, TerrainScrollListener, Cli
     }
 
     private void checkForTutorialFailed() {
+        // TODO mission failed startup sequence + send to server
         long time = System.currentTimeMillis();
         if (simulationInfo.getTutorialConfig().isFailOnOwnItemsLost() && ItemContainer.getInstance().getOwnItemCount() == 0) {
-            ClientUserTracker.getInstance().onTutorialFailed(time - tutorialTime, time, new Runnable() {
-                @Override
-                public void run() {
-                    Window.Location.replace(simulationInfo.getTutorialConfig().getExitUrl());
-                }
-            });
+            throw new RuntimeException("Not implemented yet");
         } else if (simulationInfo.getTutorialConfig().isFailOnMoneyBelowAndNoAttackUnits() != null
                 && ClientBase.getInstance().getAccountBalance() < simulationInfo.getTutorialConfig().isFailOnMoneyBelowAndNoAttackUnits()
                 && !ItemContainer.getInstance().hasOwnAttackingMovable()) {
-            ClientUserTracker.getInstance().onTutorialFailed(time - tutorialTime, time, new Runnable() {
-                @Override
-                public void run() {
-                    Window.Location.replace(simulationInfo.getTutorialConfig().getExitUrl());
-                }
-            });
+            throw new RuntimeException("Not implemented yet");
         }
     }
 

@@ -259,17 +259,6 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     }
 
     @Override
-    public Level getLevelToRunMissionTarget() {
-        Base base = baseService.getBase();
-        PendingPromotion pendingPromotion = pendingPromotions.get(base.getSimpleBase());
-        if (pendingPromotion != null) {
-            return getLevel4Base();
-        } else {
-            return null;
-        }
-    }
-
-    @Override
     public void onIncreaseXp(Base base, int xp) {
         PendingPromotion pendingPromotion = pendingPromotions.get(base.getSimpleBase());
         if (pendingPromotion == null || pendingPromotion.getDbLevel().getMinXp() == null) {

@@ -50,8 +50,6 @@ public interface UserGuidanceService {
 
     void setupLevel4NewBase(Base base);
 
-    Level getLevelToRunMissionTarget();
-
     void onIncreaseXp(Base base, int xp);
 
     void onBaseDeleted(Base base);

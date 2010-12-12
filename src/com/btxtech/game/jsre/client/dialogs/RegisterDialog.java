@@ -135,6 +135,10 @@ public class RegisterDialog extends Dialog {
     }
 
     public static void showDialogRepeating() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
         if (Connection.getInstance().isRegistered()) {
             return;
         }

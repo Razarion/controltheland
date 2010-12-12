@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.utg;
 
+import com.btxtech.game.jsre.common.UserStage;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
@@ -122,5 +123,9 @@ public class DbUserStage implements CrudChild, Serializable {
 
     public void setDbTerrainSetting(DbTerrainSetting dbTerrainSetting) {
         this.dbTerrainSetting = dbTerrainSetting;
+    }
+
+    public UserStage createUserStage() {
+        return new UserStage(html, isRealGame);
     }
 }

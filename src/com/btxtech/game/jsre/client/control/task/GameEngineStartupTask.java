@@ -40,5 +40,14 @@ public abstract class GameEngineStartupTask extends AbstractStartupTask {
         ItemContainer.getInstance().setItemTypes(gameInfo.getItemTypes());
     }
 
+    protected void deltaSetupGameStructure(GameInfo gameInfo) {
+        Connection.getInstance().setRegistered(gameInfo.isRegistered());
+        TerrainView.getInstance().deltaSetupTerrain(gameInfo.getTerrainSettings(),
+                gameInfo.getTerrainImagePositions(),
+                gameInfo.getSurfaceRects(),
+                gameInfo.getSurfaceImages(),
+                gameInfo.getTerrainImages());
+        ItemContainer.getInstance().addDeltaItemTypes(gameInfo.getItemTypes());
+    }
 
 }
