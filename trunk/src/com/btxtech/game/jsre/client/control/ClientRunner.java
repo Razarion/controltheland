@@ -111,7 +111,12 @@ public class ClientRunner {
     }
 
     void onTaskFinished(AbstractStartupTask abstractStartupTask) {
-        StartupScreen.getInstance().displayTaskFinished(abstractStartupTask);
+        try {
+            StartupScreen.getInstance().displayTaskFinished(abstractStartupTask);
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+
         finishedTasks.add(abstractStartupTask);
         runNextTask();
     }

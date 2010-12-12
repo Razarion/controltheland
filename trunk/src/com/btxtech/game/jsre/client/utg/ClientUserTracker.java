@@ -15,17 +15,18 @@ package com.btxtech.game.jsre.client.utg;
 
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
-import com.btxtech.game.jsre.client.control.ClientRunner;
-import com.btxtech.game.jsre.client.control.StartupScreen;
+import com.btxtech.game.jsre.client.ParametrisedRunnable;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
+import com.btxtech.game.jsre.client.control.ClientRunner;
 import com.btxtech.game.jsre.client.simulation.Step;
 import com.btxtech.game.jsre.client.simulation.Task;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.btxtech.game.jsre.common.EventTrackingStart;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
+import com.btxtech.game.jsre.common.UserStage;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -65,13 +66,14 @@ public class ClientUserTracker implements SelectionListener {
         });
     }
 
-    public void onTutorialFinished(long duration, long clientTimeStamp, Runnable runnable) {
+    public void onTutorialFinished(long duration, long clientTimeStamp, ParametrisedRunnable<UserStage> runnable) {
         Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, null, null, duration, clientTimeStamp, runnable);
     }
 
-    public void onTutorialFailed(long duration, long clientTimeStamp, Runnable runnable) {
-        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL_FAILED, null, null, duration, clientTimeStamp, runnable);
-    }
+    // TODO
+    /*   public void onTutorialFailed(long duration, long clientTimeStamp, Runnable runnable) {
+       Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL_FAILED, null, null, duration, clientTimeStamp, runnable);
+   } */
 
     public void onTaskFinished(Task task, long duration, long clientTimeStamp) {
         Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TASK, task.getTaskConfig().getName(), null, duration, clientTimeStamp, null);

@@ -35,6 +35,7 @@ import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
+import com.btxtech.game.jsre.common.UserStage;
 import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccessSyncInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -220,18 +221,18 @@ public class Connection implements AsyncCallback<Void> {
         commandQueue.clear();
     }
 
-    public void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp, final Runnable runnable) {
+    public void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp, final ParametrisedRunnable<UserStage> runnable) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.sendTutorialProgress(type, name, parent, duration, clientTimeStamp, new AsyncCallback<Void>() {
+            movableServiceAsync.sendTutorialProgress(type, name, parent, duration, clientTimeStamp, new AsyncCallback<UserStage>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     GwtCommon.handleException(caught);
                 }
 
                 @Override
-                public void onSuccess(Void result) {
+                public void onSuccess(UserStage userStage) {
                     if (runnable != null) {
-                        runnable.run();
+                        runnable.run(userStage);
                     }
                 }
             });

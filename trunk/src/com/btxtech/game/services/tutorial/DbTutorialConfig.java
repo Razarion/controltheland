@@ -162,7 +162,7 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
             taskConfigs.add(dbTaskConfig.createTaskConfig(resourceHintManager));
         }
 
-        return new TutorialConfig(taskConfigs, ownBase, width, height, baseAttributes, UserStagePage.URL, failOnOwnItemsLost, failOnMoneyBelowAndNoAttackUnits);
+        return new TutorialConfig(taskConfigs, ownBase, width, height, baseAttributes, failOnOwnItemsLost, failOnMoneyBelowAndNoAttackUnits);
     }
 
     public void init() {

@@ -38,8 +38,10 @@ public class StartupData implements Serializable {
     @GeneratedValue
     private Integer id;
     private int startMoney;
+    @Deprecated
     private int tutorialTimeout;
     private int registerDialogDelay;
+    @Deprecated
     private int userActionCollectionTime;
     @Type(type = "rectangle")
     @Columns(columns = {@Column(name = "startRectX"), @Column(name = "startRectY"), @Column(name = "startRectWidth"), @Column(name = "startRectHeight")})
@@ -56,10 +58,6 @@ public class StartupData implements Serializable {
         this.startMoney = startMoney;
     }
 
-    public int getTutorialTimeout() {
-        return tutorialTimeout;
-    }
-
     public void setTutorialTimeout(int tutorialTimeout) {
         this.tutorialTimeout = tutorialTimeout;
     }
@@ -70,10 +68,6 @@ public class StartupData implements Serializable {
 
     public void setRegisterDialogDelay(int registerDialogDelay) {
         this.registerDialogDelay = registerDialogDelay;
-    }
-
-    public int getUserActionCollectionTime() {
-        return userActionCollectionTime;
     }
 
     public void setUserActionCollectionTime(int userActionCollectionTime) {

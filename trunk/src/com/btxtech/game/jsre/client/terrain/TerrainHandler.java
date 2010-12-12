@@ -65,6 +65,9 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
         TreeSet<Integer> addedIds = new TreeSet<Integer>();
         // Surface images
         for (SurfaceRect surfaceRect : getSurfaceRects()) {
+            if(surfaceImageElements.containsKey(surfaceRect.getSurfaceImageId())) {
+                continue;
+            }
             if (!addedIds.contains(surfaceRect.getSurfaceImageId())) {
                 addedIds.add(surfaceRect.getSurfaceImageId());
                 ids.add(surfaceRect.getSurfaceImageId());
@@ -75,6 +78,9 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
         // Terrain images
         addedIds.clear();
         for (TerrainImagePosition terrainImagePosition : getTerrainImagePositions()) {
+            if(surfaceImageElements.containsKey(terrainImagePosition.getImageId())) {
+                continue;
+            }
             if (!addedIds.contains(terrainImagePosition.getImageId())) {
                 addedIds.add(terrainImagePosition.getImageId());
                 ids.add(terrainImagePosition.getImageId());
@@ -89,8 +95,6 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
 
             @Override
             public void onImagesLoaded(ImageElement[] imageElements) {
-                surfaceImageElements.clear();
-                terrainImageElements.clear();
                 try {
                     for (int i = 0; i < imageElements.length; i++) {
                         if (i < firstTerrainImageIndex) {

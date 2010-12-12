@@ -13,11 +13,12 @@
 
 package com.btxtech.game.services.utg.impl;
 
-import com.btxtech.game.jsre.client.control.ColdRealGameStartupTaskEnum;
 import com.btxtech.game.jsre.client.common.UserMessage;
+import com.btxtech.game.jsre.client.control.ColdRealGameStartupTaskEnum;
 import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.btxtech.game.jsre.common.EventTrackingStart;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
+import com.btxtech.game.jsre.common.UserStage;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
@@ -339,16 +340,16 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         LifecycleTrackingInfo lifecycleTrackingInfo = null;
         for (GameStartup gameStartup : gameStartups) {
             // TODO startup
-         /*   if (ColdRealGameStartupTaskEnum.isFirstTask(gameStartup.getState())) {
-                lifecycleTrackingInfo = new LifecycleTrackingInfo(sessionId, gameStartup);
-                lifecycleTrackingInfos.add(lifecycleTrackingInfo);
-            } else {
-                if (lifecycleTrackingInfo == null) {
-                    log.error("lifecycleTrackingInfo == null");
-                    continue;
-                }
-                lifecycleTrackingInfo.getGameStartups().add(gameStartup);
-            } */
+            /*   if (ColdRealGameStartupTaskEnum.isFirstTask(gameStartup.getState())) {
+               lifecycleTrackingInfo = new LifecycleTrackingInfo(sessionId, gameStartup);
+               lifecycleTrackingInfos.add(lifecycleTrackingInfo);
+           } else {
+               if (lifecycleTrackingInfo == null) {
+                   log.error("lifecycleTrackingInfo == null");
+                   continue;
+               }
+               lifecycleTrackingInfo.getGameStartups().add(gameStartup);
+           } */
         }
 
         @SuppressWarnings("unchecked")
@@ -627,15 +628,12 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public void onTutorialProgressChanged(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp) {
-        try {
-            if (type == TutorialConfig.TYPE.TUTORIAL) {
-                userGuidanceService.onTutorialFinished();
-            }
-            hibernateTemplate.saveOrUpdate(new DbTutorialProgress(session.getSessionId(), type.name(), name, parent, duration, clientTimeStamp));
-        } catch (Throwable t) {
-            log.error("", t);
+    public UserStage onTutorialProgressChanged(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp) {
+        if (type == TutorialConfig.TYPE.TUTORIAL) {
+            userGuidanceService.onTutorialFinished();
         }
+        hibernateTemplate.saveOrUpdate(new DbTutorialProgress(session.getSessionId(), type.name(), name, parent, duration, clientTimeStamp));
+        return userGuidanceService.getDbUserStage().createUserStage();
     }
 
     private int getTaskCount(final String sessionId, final Date from, final Date to) {

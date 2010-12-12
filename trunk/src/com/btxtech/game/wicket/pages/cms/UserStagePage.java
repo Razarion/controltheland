@@ -35,9 +35,6 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Time: 10:34:23
  */
 public class UserStagePage extends WebPage {
-    // TODO UGLY !!!
-    @Deprecated
-    public static final String URL = "/?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.cms.UserStagePage"; // TODO UGLY !!!
     @SpringBean
     private UserService userService;
     @SpringBean

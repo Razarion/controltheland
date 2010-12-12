@@ -101,6 +101,14 @@ abstract public class AbstractItemService implements ItemService {
         }
     }
 
+    public void addDeltaItemTypes(Collection<ItemType> itemTypes) {
+        for (ItemType itemType : itemTypes) {
+            if (!this.itemTypes.containsKey(itemType.getId())) {
+                this.itemTypes.put(itemType.getId(), itemType);
+            }
+        }
+    }
+
     protected void removeAll(ArrayList<ItemType> newItems) {
         for (ItemType newItem : newItems) {
             this.itemTypes.put(newItem.getId(), newItem);
@@ -174,7 +182,7 @@ abstract public class AbstractItemService implements ItemService {
 
     @Override
     public Collection<SyncBaseItem> getBaseItemsInRadius(Index position, int radius, SimpleBase simpleBase, Collection<BaseItemType> baseItemTypeFilter) {
-        Collection<SyncBaseItem> syncBaseItems = getBaseItemsInRectangle(position.getRegion(2 *radius, 2 *radius), simpleBase, baseItemTypeFilter);
+        Collection<SyncBaseItem> syncBaseItems = getBaseItemsInRectangle(position.getRegion(2 * radius, 2 * radius), simpleBase, baseItemTypeFilter);
         for (Iterator<SyncBaseItem> iterator = syncBaseItems.iterator(); iterator.hasNext();) {
             SyncBaseItem syncBaseItem = iterator.next();
             if (syncBaseItem.getPosition().getDistance(position) > radius) {

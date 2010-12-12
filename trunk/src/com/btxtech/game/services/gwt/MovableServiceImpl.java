@@ -27,6 +27,7 @@ import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
+import com.btxtech.game.jsre.common.UserStage;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -206,12 +207,8 @@ public class MovableServiceImpl implements MovableService {
             realityInfo.setTerrainImages(terrainService.getTerrainImages());
             realityInfo.setSurfaceRects(terrainService.getSurfaceRects());
             realityInfo.setSurfaceImages(terrainService.getSurfaceImages());
-            StartupData startupData = mgmtService.getStartupData();
-            realityInfo.setTutorialTimeout(startupData.getTutorialTimeout());
-            realityInfo.setUserActionCollectionTime(startupData.getUserActionCollectionTime());
             realityInfo.setLevel(userGuidanceService.getLevel4Base());
             realityInfo.setTerritories(territoryService.getTerritories());
-            realityInfo.setLevelToRunMissionTarget(userGuidanceService.getLevelToRunMissionTarget());
             realityInfo.setAllBases(baseService.getAllBaseAttributes());
             realityInfo.setItemLimit(baseService.getBase().getItemLimit());
             realityInfo.setHouseSpace(baseService.getBase().getTotalHouseSpace());
@@ -308,11 +305,12 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp) {
+    public UserStage sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp) {
         try {
-            userTrackingService.onTutorialProgressChanged(type, name, parent, duration, clientTimeStamp);
+            return userTrackingService.onTutorialProgressChanged(type, name, parent, duration, clientTimeStamp);
         } catch (Throwable t) {
             log.error("", t);
+            return null;
         }
     }
 

@@ -81,6 +81,18 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
             return;
         }
         terrainHandler.addTerrainListener(this);
+        deltaSetupTerrain(terrainSettings, terrainImagePositions, surfaceRects, surfaceImages, terrainImages);
+    }
+
+    public void deltaSetupTerrain(TerrainSettings terrainSettings,
+                                  Collection<TerrainImagePosition> terrainImagePositions,
+                                  Collection<SurfaceRect> surfaceRects,
+                                  Collection<SurfaceImage> surfaceImages,
+                                  Collection<TerrainImage> terrainImages) {
+        if (terrainSettings == null) {
+            GwtCommon.sendLogToServer("Invalid terrain settings for delta");
+            return;
+        }
         terrainHandler.setupTerrain(terrainSettings, terrainImagePositions, surfaceRects, surfaceImages, terrainImages);
         RadarPanel.getInstance().onTerrainSettings(terrainSettings);
     }
@@ -323,6 +335,9 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
     }
 
     public void addTerrainScrollListener(TerrainScrollListener terrainScrollListener) {
+        if (terrainScrollListeners.contains(terrainScrollListener)) {
+            return;
+        }
         terrainScrollListeners.add(terrainScrollListener);
     }
 
