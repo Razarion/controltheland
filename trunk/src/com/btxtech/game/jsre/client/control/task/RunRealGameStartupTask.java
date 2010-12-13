@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.utg.MissionTarget;
+import com.btxtech.game.jsre.common.tutorial.CockpitWidgetEnum;
 
 /**
  * User: beat
@@ -38,5 +39,10 @@ public class RunRealGameStartupTask extends AbstractStartupTask {
         RegisterDialog.showDialogRepeating();
         MapWindow.getInstance().displayVisibleItems();
         Cockpit.getInstance().updateItemLimit();
+        Cockpit.getInstance().setVisibleRadar(true);
+        MapWindow.getInstance().setScrollingAllowed(true);
+        Cockpit.getInstance().enableFocusWidget(CockpitWidgetEnum.SCROLL_HOME_BUTTON, true);
+        Cockpit.getInstance().enableFocusWidget(CockpitWidgetEnum.OPTION_BUTTON, true);
+        Cockpit.getInstance().enableFocusWidget(CockpitWidgetEnum.SELL_BUTTON, true);
     }
 }

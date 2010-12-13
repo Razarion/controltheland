@@ -54,6 +54,7 @@ public class MiniMap extends ExtendedCanvas implements MouseMoveHandler, MouseDo
 
     public void onTerrainSettings(TerrainSettings terrainSettings) {
         this.terrainSettings = terrainSettings;
+        scale(1.0 / scale, 1.0 / scale);        
         scale = Math.min((double) width / (double) terrainSettings.getPlayFieldXSize(),
                 (double) height / (double) terrainSettings.getPlayFieldYSize());
         scale(scale, scale);

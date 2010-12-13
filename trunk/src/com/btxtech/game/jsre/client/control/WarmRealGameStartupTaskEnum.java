@@ -15,18 +15,19 @@ package com.btxtech.game.jsre.client.control;
 
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.client.control.task.ClearGame;
+import com.btxtech.game.jsre.client.control.task.InitItemStartupTask;
 import com.btxtech.game.jsre.client.control.task.LoadGameInfoStartupTask;
 import com.btxtech.game.jsre.client.control.task.LoadMapImageStartupTask;
-import com.btxtech.game.jsre.client.control.task.RunSimulationStartupTask;
-import com.btxtech.game.jsre.client.control.task.SimulationDeltaStartupTask;
-import com.btxtech.game.jsre.client.control.task.SimulationStartupTask;
+import com.btxtech.game.jsre.client.control.task.LoadSyncInfoStartupTask;
+import com.btxtech.game.jsre.client.control.task.RealDeltaStartupTask;
+import com.btxtech.game.jsre.client.control.task.RunRealGameStartupTask;
 
 /**
  * User: beat
- * Date: 19.06.2010
+ * Date: 12.12.2010
  * Time: 18:21:15
  */
-public enum WarmSimulatedGameStartupTaskEnum implements StartupTaskEnum {
+public enum WarmRealGameStartupTaskEnum implements StartupTaskEnum {
     CLEAR_GAME("Clear game") {
         @Override
         public AbstractStartupTask createTask() {
@@ -37,25 +38,35 @@ public enum WarmSimulatedGameStartupTaskEnum implements StartupTaskEnum {
         public AbstractStartupTask createTask() {
             return new LoadGameInfoStartupTask(this);
         }},
-    INIT_GAME("Delta init simulated Game") {
+    INIT_GAME("Delta init real Game") {
         @Override
         public AbstractStartupTask createTask() {
-            return new SimulationDeltaStartupTask(this);
+            return new RealDeltaStartupTask(this);
         }},
     LOAD_MAP("Load delta Map") {
         @Override
         public AbstractStartupTask createTask() {
             return new LoadMapImageStartupTask(this);
         }},
-    LOAD_UNITS("Run simulated Game") {
+    LOAD_UNITS("Load Units") {
         @Override
         public AbstractStartupTask createTask() {
-            return new RunSimulationStartupTask(this);
+            return new LoadSyncInfoStartupTask(this);
+        }},
+    START_ACTION_HANDLER("Initialize Units") {
+        @Override
+        public AbstractStartupTask createTask() {
+            return new InitItemStartupTask(this);
+        }},
+    LOAD_MAP_IMAGES("Run real Game") {
+        @Override
+        public AbstractStartupTask createTask() {
+            return new RunRealGameStartupTask(this);
         }};
 
     private StartupTaskEnumHtmlHelper startupTaskEnumHtmlHelper;
 
-    WarmSimulatedGameStartupTaskEnum(String niceText) {
+    WarmRealGameStartupTaskEnum(String niceText) {
         startupTaskEnumHtmlHelper = new StartupTaskEnumHtmlHelper(niceText, this);
     }
 
