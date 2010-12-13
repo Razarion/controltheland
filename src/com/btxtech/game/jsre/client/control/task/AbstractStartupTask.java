@@ -60,4 +60,8 @@ public abstract class AbstractStartupTask {
     public StartupTaskInfo createStartupTaskInfo() {
         return new StartupTaskInfo(taskEnum, startTime, duration);
     }
+
+    public void correctDeferredDuration() {
+        duration = System.currentTimeMillis() - startTime;
+    }
 }

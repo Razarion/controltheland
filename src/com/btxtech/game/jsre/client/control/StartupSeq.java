@@ -32,7 +32,7 @@ public enum StartupSeq {
     WARM_REAL(false) {
         @Override
         public StartupTaskEnum[] getAbstractStartupTaskEnum() {
-            return null; // TODO
+            return WarmRealGameStartupTaskEnum.values();
         }},
     WARM_SIMULATED(false) {
         @Override
