@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.control.ClientRunner;
 import com.btxtech.game.jsre.client.control.StartupSeq;
+import com.btxtech.game.jsre.client.dialogs.UserStageDialog;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -28,11 +29,7 @@ public class Game implements EntryPoint {
         try {
             GwtCommon.setUncaughtExceptionHandler();
             isDebug = Boolean.parseBoolean(Window.Location.getParameter(DEBUG_PARAM));
-            StartupSeq startupSeq = getStartupSeqFromHtml();
-            if (!startupSeq.isCold()) {
-                throw new IllegalArgumentException("Can not do a warm start on a cold system");
-            }
-            ClientRunner.getInstance().start(startupSeq);
+            ClientRunner.getInstance().start(getStartupSeqFromHtml());
         } catch (Throwable t) {
             GwtCommon.handleException(t);
         }
@@ -51,10 +48,17 @@ public class Game implements EntryPoint {
         if (startSeqStr == null || startSeqStr.trim().isEmpty()) {
             throw new IllegalArgumentException(STARTUP_SEQ_ID + " not found in div element as parameter");
         }
+        StartupSeq startupSeq;
         try {
-            return StartupSeq.valueOf(startSeqStr);
+            startupSeq = StartupSeq.valueOf(startSeqStr);
         } catch (Throwable t) {
             throw new IllegalArgumentException(STARTUP_SEQ_ID + " can not convert to enum: " + startSeqStr);
         }
+        if (startupSeq.isCold()) {
+            return startupSeq;
+        } else {
+            throw new IllegalArgumentException("Can not do a warm start on a cold system");
+        }
+
     }
 }

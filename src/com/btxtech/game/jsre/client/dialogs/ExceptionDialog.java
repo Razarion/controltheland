@@ -23,7 +23,7 @@ public class ExceptionDialog extends Dialog {
 
     public ExceptionDialog(Throwable throwable) {
         this.throwable = throwable;
-        setupDialog("Exception (GWT: " + GWT.getVersion() + ")");
+        setupDialog();
     }
 
     protected void setupPanel(VerticalPanel parent) {
@@ -32,6 +32,7 @@ public class ExceptionDialog extends Dialog {
         parent.add(scrollPanel);
         VerticalPanel exceptionPanel = new VerticalPanel();
         scrollPanel.add(exceptionPanel);
+        exceptionPanel.add(new HTML("<b>Exception (GWT: " + GWT.getVersion() + ")</b>", false));
         exceptionPanel.add(new HTML("<b>" + throwable.getMessage() + "</b>", false));
         boolean isCause = false;
         Throwable tmpThrowable = throwable;

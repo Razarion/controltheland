@@ -28,12 +28,15 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public abstract class Dialog extends DialogBox {
     private boolean showCloseButton = true;
 
+    protected Dialog() {
+        setStyleName("ctl-DialogBox");        
+    }
+
     protected void setShowCloseButton(boolean showCloseButton) {
         this.showCloseButton = showCloseButton;
     }
 
-    protected void setupDialog(String title) {
-        setText(title);
+    protected void setupDialog() {
         setAnimationEnabled(true);
         VerticalPanel dialogVPanel = new VerticalPanel();
         //setupExceptionPanel(dialogVPanel, t);

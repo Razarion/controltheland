@@ -21,16 +21,7 @@ import com.btxtech.game.jsre.common.Packet;
  * Time: 3:04:47 PM
  */
 public class Message extends Packet {
-    private String title;
     private String message;
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
 
     public String getMessage() {
         return message;

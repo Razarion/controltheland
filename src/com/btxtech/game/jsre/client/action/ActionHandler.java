@@ -279,7 +279,7 @@ public class ActionHandler implements CommonActionService {
             factory.executeCommand(factoryCommand);
             executeCommand(factory, factoryCommand);
         } catch (InsufficientFundsException e) {
-            MessageDialog.show("Insufficient Money!", "You do not have enough money. You have to Collect more money");
+            MessageDialog.show("You do not have enough money. You have to Collect more money");
         } catch (Exception e) {
             GwtCommon.handleException(e);
         }
@@ -366,7 +366,7 @@ public class ActionHandler implements CommonActionService {
             executeCommand(item, upgradeCommand);
             Connection.getInstance().sendCommandQueue();
         } catch (InsufficientFundsException e) {
-            MessageDialog.show("Insufficient Money!", "You do not have enough money. You have to Collect more money");
+            MessageDialog.show("You do not have enough money. You have to Collect more money");
         } catch (Exception e) {
             GwtCommon.handleException(e);
         }
