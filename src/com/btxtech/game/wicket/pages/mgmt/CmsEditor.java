@@ -48,15 +48,6 @@ public class CmsEditor extends WebPage {
                 cmsService.activateHome();
             }
         });
-
-        add(new Form("activateUserStage") {
-
-            @Override
-            protected void onSubmit() {
-                cmsService.activateUserStage();
-            }
-        });
-
     }
 
     private void createTextTable() {

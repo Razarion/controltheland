@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.control.StartupSeq;
 import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.UserStage;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
@@ -569,4 +570,19 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
             return result.get(0);
         }
     }
+
+    @Override
+    public String getDbUserStageHtml() {
+        DbUserStage dbUserStage = getDbUserStage();
+        DbUserStage newDbUserStage = userStageCrudServiceHelper.readDbChild(dbUserStage.getId());
+        return newDbUserStage.getHtml();
+    }
+
+    @Override
+    public UserStage getUserStage() {
+        DbUserStage dbUserStage = getDbUserStage();
+        DbUserStage newDbUserStage = userStageCrudServiceHelper.readDbChild(dbUserStage.getId());
+        return new UserStage(newDbUserStage.getHtml(), newDbUserStage.isRealGame());
+    }
+
 }

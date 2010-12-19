@@ -23,8 +23,6 @@ import java.util.List;
 public interface CmsService {
     void activateHome();
 
-    void activateUserStage();
-
     CmsContentStyleDTO getHomeContentStyleDTO();
 
     List<DbCmsHomeText> getDbCmsHomeTexts();
@@ -46,9 +44,4 @@ public interface CmsService {
     void saveDbCmsHomeLayouts(List<DbCmsHomeLayout> dbCmsHomeLayouts);
 
     void createDbCmsHomeLayout();
-
-    CmsContentStyleDTO getStagingContentStyleDTO();
-
-    DbCmsUserStage getDbCmsUserStage();
-
 }

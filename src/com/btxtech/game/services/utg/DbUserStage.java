@@ -89,6 +89,10 @@ public class DbUserStage implements CrudChild, Serializable {
         this.orderIndex = orderIndex;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -123,9 +127,5 @@ public class DbUserStage implements CrudChild, Serializable {
 
     public void setDbTerrainSetting(DbTerrainSetting dbTerrainSetting) {
         this.dbTerrainSetting = dbTerrainSetting;
-    }
-
-    public UserStage createUserStage() {
-        return new UserStage(html, isRealGame);
     }
 }

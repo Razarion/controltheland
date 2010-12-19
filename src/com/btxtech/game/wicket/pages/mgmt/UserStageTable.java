@@ -150,14 +150,5 @@ public class UserStageTable extends WebPage {
                 setResponsePage(new UserStageEditor(dbUserStage));
             }
         };
-
-        add(new Form("activateUserStage") {
-
-            @Override
-            protected void onSubmit() {
-                cmsService.activateUserStage();
-            }
-        });
-
     }
 }

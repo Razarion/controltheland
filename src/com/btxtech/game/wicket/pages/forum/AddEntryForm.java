@@ -48,8 +48,8 @@ public class AddEntryForm extends BasePage {
         TextArea<String> contentArea = new TextArea<String>("content", content);
         if (tinyMceEditor) {
             TinyMCESettings tinyMCESettings = new TinyMCESettings();
-            tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.link, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after); // TODO does not work
-            tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.unlink, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after); // TODO does not work
+            tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.link, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after);
+            tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.unlink, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after);
             contentArea.add(new TinyMceBehavior(tinyMCESettings));
         }
         form.add(contentArea);

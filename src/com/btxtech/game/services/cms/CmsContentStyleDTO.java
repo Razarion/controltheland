@@ -95,10 +95,4 @@ public class CmsContentStyleDTO implements Serializable {
         style = createStyle(dbCmsHomeLayout);
         text = dbCmsHomeText.getText();
     }
-
-    public void update(DbUserStage dbUserStage, String layout) {
-        text = dbUserStage.getHtml();
-        style = layout;
-    }
-
 }
