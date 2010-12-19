@@ -99,19 +99,19 @@ td.box {
 }
 
 .gwt-PushButton-up,
-    .gwt-PushButton-up-hovering,
-    .gwt-PushButton-up-disabled,
-    .gwt-PushButton-down,
-    .gwt-PushButton-down-hovering,
-    .gwt-PushButton-down-disabled {
+.gwt-PushButton-up-hovering,
+.gwt-PushButton-up-disabled,
+.gwt-PushButton-down,
+.gwt-PushButton-down-hovering,
+.gwt-PushButton-down-disabled {
     margin: 0;
     text-decoration: none;
     background: url("images/hborder.png") repeat-x 0px -27px;
 }
 
 .gwt-PushButton-up,
-    .gwt-PushButton-up-hovering,
-    .gwt-PushButton-up-disabled {
+.gwt-PushButton-up-hovering,
+.gwt-PushButton-up-disabled {
     padding: 3px 5px 3px 5px;
 }
 
@@ -135,8 +135,8 @@ td.box {
 }
 
 .gwt-PushButton-down,
-    .gwt-PushButton-down-hovering,
-    .gwt-PushButton-down-disabled {
+.gwt-PushButton-down-hovering,
+.gwt-PushButton-down-disabled {
     padding: 4px 4px 2px 6px;
 }
 
@@ -205,18 +205,18 @@ td.box {
 }
 
 .topMapPanel .topLeftInner,
-    .topMapPanel .topRightInner,
-    .topMapPanel .bottomLeftInner,
-    .topMapPanel .bottomRightInner {
+.topMapPanel .topRightInner,
+.topMapPanel .bottomLeftInner,
+.topMapPanel .bottomRightInner {
     width: 5px;
     height: 5px;
     zoom: 1;
 }
 
 * html .topMapPanel .topLeftInner,
-    * html .topMapPanel .topRightInner,
-    * html .topMapPanel .bottomLeftInner,
-    * html .topMapPanel .bottomRightInner {
+* html .topMapPanel .topRightInner,
+* html .topMapPanel .bottomLeftInner,
+* html .topMapPanel .bottomRightInner {
     width: 5px;
     height: 5px;
     overflow: hidden;
@@ -227,4 +227,91 @@ td.box {
 
 .topMapPanelText {
     color: darkorange;
+}
+
+/* Dialog box */
+.ctl-DialogBox .Caption {
+    background: url(/images/gwtdialog/border_t.png) repeat-x 0px 0px;
+    height: 30px;
+    cursor: default;
+}
+
+.ctl-DialogBox .dialogContent {
+}
+
+.ctl-DialogBox .dialogMiddleCenter {
+    background-color: #969696;
+}
+
+.ctl-DialogBox .dialogBottomCenter {
+    height: 40px;
+    background: url(/images/gwtdialog/border_b.png) repeat-x 0px 0px;
+}
+
+.ctl-DialogBox .dialogMiddleLeft {
+    background: url(/images/gwtdialog/border_l.png) repeat-y 0px 0px;
+    width: 33px;
+}
+
+.ctl-DialogBox .dialogMiddleRight {
+    background: url(/images/gwtdialog/border_r.png) repeat-y 0px 0px;
+    width: 41px;
+}
+
+.ctl-DialogBox .dialogTopLeftInner {
+    width: 33px;
+    height: 30px;
+}
+
+.ctl-DialogBox .dialogTopRightInner {
+    width: 41px;
+    height: 30px;
+}
+
+.ctl-DialogBox .dialogBottomLeftInner {
+    width: 33px;
+    height: 40px;
+}
+
+.ctl-DialogBox .dialogBottomRightInner {
+    width: 41px;
+    height: 40px;
+}
+
+.ctl-DialogBox .dialogTopLeft {
+    background: url(/images/gwtdialog/corner_t_l.png) no-repeat 0px 0px;
+}
+
+.ctl-DialogBox .dialogTopRight {
+    background: url(/images/gwtdialog/corner_t_r.png) no-repeat 0px 0px;
+}
+
+.ctl-DialogBox .dialogBottomLeft {
+    background: url(/images/gwtdialog/corner_b_l.png) no-repeat 0px 0px;
+}
+
+.ctl-DialogBox .dialogBottomRight {
+    background: url(/images/gwtdialog/corner_b_r.png) no-repeat 0px 0px;
+}
+
+* html .ctl-DialogBox .dialogTopLeftInner {
+    width: 5px;
+    overflow: hidden;
+}
+
+* html .ctl-DialogBox .dialogTopRightInner {
+    width: 8px;
+    overflow: hidden;
+}
+
+* html .ctl-DialogBox .dialogBottomLeftInner {
+    width: 5px;
+    height: 8px;
+    overflow: hidden;
+}
+
+* html .ctl-DialogBox .dialogBottomRightInner {
+    width: 8px;
+    height: 8px;
+    overflow: hidden;
 }
