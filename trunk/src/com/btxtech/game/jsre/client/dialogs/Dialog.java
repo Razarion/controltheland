@@ -13,11 +13,14 @@
 
 package com.btxtech.game.jsre.client.dialogs;
 
+import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
@@ -39,19 +42,18 @@ public abstract class Dialog extends DialogBox {
     protected void setupDialog() {
         setAnimationEnabled(true);
         VerticalPanel dialogVPanel = new VerticalPanel();
-        //setupExceptionPanel(dialogVPanel, t);
         setupPanel(dialogVPanel);
         dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
         setWidget(dialogVPanel);
         if (showCloseButton) {
-            final Button closeButton = new Button("Close");
-            dialogVPanel.add(closeButton);
-
-            closeButton.addClickHandler(new ClickHandler() {
+            final ExtendedCustomButton closeButton = new ExtendedCustomButton("/images/gwtdialog/closeButton-up.png", "/images/gwtdialog/closeButton-down.png", false, new ClickHandler() {
+                @Override
                 public void onClick(ClickEvent event) {
                     close();
                 }
             });
+            dialogVPanel.add(closeButton);
+            dialogVPanel.setCellHorizontalAlignment(closeButton, HasHorizontalAlignment.ALIGN_CENTER);
             closeButton.setFocus(true);
         }
         center();
