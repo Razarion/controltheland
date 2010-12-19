@@ -633,7 +633,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             userGuidanceService.onTutorialFinished();
         }
         hibernateTemplate.saveOrUpdate(new DbTutorialProgress(session.getSessionId(), type.name(), name, parent, duration, clientTimeStamp));
-        return userGuidanceService.getDbUserStage().createUserStage();
+        return userGuidanceService.getUserStage();
     }
 
     private int getTaskCount(final String sessionId, final Date from, final Date to) {
