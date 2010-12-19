@@ -66,7 +66,6 @@ public class Simulation implements SelectionListener, TerrainScrollListener, Cli
      * Singleton
      */
     private Simulation() {
-        SelectionHandler.getInstance().addSelectionListener(this);
     }
 
     public static Simulation getInstance() {
@@ -79,8 +78,11 @@ public class Simulation implements SelectionListener, TerrainScrollListener, Cli
         if (tutorialConfig == null) {
             return;
         }
-        tutorialGui = new TutorialGui();
-        TerrainView.getInstance().addTerrainScrollListener(this);
+        if (tutorialGui == null) {
+            SelectionHandler.getInstance().addSelectionListener(this);
+            TerrainView.getInstance().addTerrainScrollListener(this);
+            tutorialGui = new TutorialGui();
+        }
         ClientBase.getInstance().setBase(tutorialConfig.getOwnBase());
         Cockpit.getInstance().updateBase();
         tutorialTime = System.currentTimeMillis();
@@ -185,7 +187,6 @@ public class Simulation implements SelectionListener, TerrainScrollListener, Cli
 
     private void checkForTutorialFailed() {
         // TODO mission failed startup sequence + send to server
-        long time = System.currentTimeMillis();
         if (simulationInfo.getTutorialConfig().isFailOnOwnItemsLost() && ItemContainer.getInstance().getOwnItemCount() == 0) {
             throw new RuntimeException("Not implemented yet");
         } else if (simulationInfo.getTutorialConfig().isFailOnMoneyBelowAndNoAttackUnits() != null
@@ -268,6 +269,12 @@ public class Simulation implements SelectionListener, TerrainScrollListener, Cli
         if (activeTask != null) {
             activeTask.onClickCockpitButton((Widget) event.getSource());
             checkForTaskCompletion();
+        }
+    }
+
+    public void clearGui() {
+        if (tutorialGui != null) {
+            tutorialGui.clear();
         }
     }
 }

@@ -16,8 +16,8 @@ package com.btxtech.game.wicket.pages.user;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
-import com.btxtech.game.wicket.pages.cms.UserStagePage;
 import com.btxtech.game.wicket.pages.history.HistoryPanel;
 import com.btxtech.game.wicket.pages.messenger.MessengerOverviewPanel;
 import org.apache.wicket.PageParameters;
@@ -46,7 +46,7 @@ public class UserPage extends BasePage {
         Form form = new Form("enterForm") {
             @Override
             protected void onSubmit() {
-                setResponsePage(UserStagePage.class);
+                setResponsePage(Game.class);
             }
 
             @Override

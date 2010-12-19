@@ -27,7 +27,6 @@ import com.google.gwt.user.client.ui.Image;
  * Date: 21.07.2010
  * Time: 20:26:29
  */
-@Deprecated
 public class TutorialGui {
     private HTML taskText;
     private Image finishImage;
@@ -85,5 +84,12 @@ public class TutorialGui {
 
     public void setTaskText(String tutorialText) {
         this.taskText.setText(tutorialText);
+    }
+
+    public void clear() {
+        if (taskText != null) {
+            taskText.setHTML("");
+        }
+        removeFinishImage();
     }
 }

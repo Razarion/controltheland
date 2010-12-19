@@ -34,6 +34,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 16.10.2010
  * Time: 10:34:23
  */
+@Deprecated
 public class UserStagePage extends WebPage {
     @SpringBean
     private UserService userService;

@@ -14,7 +14,7 @@
 package com.btxtech.game.wicket.pages.info;
 
 import com.btxtech.game.wicket.pages.BorderPanel;
-import com.btxtech.game.wicket.pages.cms.UserStagePage;
+import com.btxtech.game.wicket.pages.Game;
 import org.apache.wicket.markup.html.form.Form;
 
 /**
@@ -29,7 +29,7 @@ public class InfoMainContent extends BorderPanel {
         Form form = new Form("form") {
             @Override
             protected void onSubmit() {
-                setResponsePage(UserStagePage.class);
+                setResponsePage(Game.class);
             }
         };
         add(form);
