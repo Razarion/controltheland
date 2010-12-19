@@ -24,15 +24,13 @@ import java.util.HashMap;
  */
 public class UnfrequentDialog extends Dialog {
     public enum Type {
-        NO_MONEY("Insufficient Money!", "You do not have enough money. You have to Collect more money", 60 * 1000),
-        ITEM_LIMIT("Item Limit Exceeded!", "You have to many items. Level up to get a bigger limit", 60 * 1000),
-        SPACE_LIMIT("Space Limit Exceeded!", "Build more houses to get more space", 60 * 1000);
-        private String title;
+        NO_MONEY("You do not have enough money. You have to Collect more money", 60 * 1000),
+        ITEM_LIMIT("You have to many items. Level up to get a bigger limit", 60 * 1000),
+        SPACE_LIMIT("Space Limit Exceeded!. Build more houses to get more space", 60 * 1000);
         private String message;
         private int delay;
 
-        Type(String title, String message, int delay) {
-            this.title = title;
+        Type(String message, int delay) {
             this.message = message;
             this.delay = delay;
         }
@@ -44,7 +42,7 @@ public class UnfrequentDialog extends Dialog {
 
     private UnfrequentDialog(Type type) {
         this.message = type.message;
-        setupDialog(type.title);
+        setupDialog();
     }
 
     @Override

@@ -26,6 +26,7 @@ import com.btxtech.game.jsre.client.cockpit.SelectionListener;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.ClientRunner;
 import com.btxtech.game.jsre.client.control.StartupSeq;
+import com.btxtech.game.jsre.client.dialogs.UserStageDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainScrollListener;
@@ -147,6 +148,7 @@ public class Simulation implements SelectionListener, TerrainScrollListener, Cli
         ClientUserTracker.getInstance().onTutorialFinished(time - tutorialTime, time, new ParametrisedRunnable<UserStage>() {
             @Override
             public void run(UserStage userStage) {
+                UserStageDialog.showDialog(userStage.getHtml());
                 StartupSeq startupSeq;
                 if (userStage.isRealGame()) {
                     startupSeq = StartupSeq.WARM_REAL;
@@ -256,7 +258,9 @@ public class Simulation implements SelectionListener, TerrainScrollListener, Cli
     }
 
     public void onWithdrawalMoney() {
-        checkForTutorialFailed();
+        if (activeTask != null) {
+            checkForTutorialFailed();
+        }
     }
 
     @Override

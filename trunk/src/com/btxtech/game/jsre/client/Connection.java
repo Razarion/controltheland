@@ -172,7 +172,7 @@ public class Connection implements AsyncCallback<Void> {
                     ItemContainer.getInstance().sychronize((SyncItemInfo) packet);
                 } else if (packet instanceof Message) {
                     Message message = (Message) packet;
-                    MessageDialog.show(message.getTitle(), "<h1>" + message.getMessage() + "</h1>");
+                    MessageDialog.show("<h1>" + message.getMessage() + "</h1>");
                 } else if (packet instanceof AccountBalancePacket) {
                     AccountBalancePacket balancePacket = (AccountBalancePacket) packet;
                     ClientBase.getInstance().setAccountBalance(balancePacket.getAccountBalance());
@@ -349,9 +349,9 @@ public class Connection implements AsyncCallback<Void> {
     private void handleDisconnection(Throwable throwable) {
         movableServiceAsync = null;
         if (throwable instanceof NotYourBaseException) {
-            MessageDialog.show("Not your Base", "Most likely you start another<br />base in another browser window");
+            MessageDialog.show("Not your Base: Most likely you start another<br />base in another browser window");
         } else if (throwable instanceof NoConnectionException) {
-            MessageDialog.show("No Connection", "Most likely you start another<br />base in another browser window: " + throwable.getMessage());
+            MessageDialog.show("No Connection: Most likely you start another<br />base in another browser window: " + throwable.getMessage());
         } else {
             GwtCommon.handleException(throwable);
         }

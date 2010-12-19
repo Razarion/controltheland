@@ -38,7 +38,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  */
 public class RegisterDialog extends Dialog {
     private static final String REGISTRATION_DIALOG = "<b>Attention:</b> if you continue without registration you will not be able to return to your base after you leave the game.";
-    private static final String REGISTRATION_FAILED = "Registration failed";
     private static final String REGISTRATION_FILLED = "All fields must be filled in";
     private static final String REGISTRATION_MATCH = "Password and confirm password do not match";
     private static final String REGISTRATION_EXISTS = "The user already exists";
@@ -50,7 +49,7 @@ public class RegisterDialog extends Dialog {
 
     public RegisterDialog() {
         setShowCloseButton(false);
-        setupDialog("You are not registered");
+        setupDialog();
         getElement().getStyle().setWidth(300, Style.Unit.PX);
     }
 
@@ -98,12 +97,12 @@ public class RegisterDialog extends Dialog {
 
     private void register() {
         if (userName.getText().isEmpty() || password.getText().isEmpty() || confirmPassword.getText().isEmpty()) {
-            MessageDialog.show(REGISTRATION_FAILED, REGISTRATION_FILLED);
+            MessageDialog.show(REGISTRATION_FILLED);
             return;
         }
 
         if (!password.getText().equals(confirmPassword.getText())) {
-            MessageDialog.show(REGISTRATION_FAILED, REGISTRATION_MATCH);
+            MessageDialog.show(REGISTRATION_MATCH);
             return;
         }
 
@@ -111,9 +110,9 @@ public class RegisterDialog extends Dialog {
             @Override
             public void onFailure(Throwable throwable) {
                 if (throwable instanceof UserAlreadyExistsException) {
-                    MessageDialog.show(REGISTRATION_FAILED, REGISTRATION_EXISTS);
+                    MessageDialog.show(REGISTRATION_EXISTS);
                 } else if (throwable instanceof PasswordNotMatchException) {
-                    MessageDialog.show(REGISTRATION_FAILED, REGISTRATION_MATCH);
+                    MessageDialog.show(REGISTRATION_MATCH);
                 } else {
                     GwtCommon.handleException(throwable);
                 }

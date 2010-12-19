@@ -26,9 +26,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class MessageDialog extends Dialog {
     private String message;
 
-    public MessageDialog(String title, String message) {
+    public MessageDialog(String message) {
         this.message = message;
-        setupDialog(title);
+        setupDialog();
     }
 
     @Override
@@ -36,12 +36,12 @@ public class MessageDialog extends Dialog {
         dialogVPanel.add(new HTML(message, false));
     }
 
-    public static void show(String title, String message) {
-        new MessageDialog(title, message);
+    public static void show(String message) {
+        new MessageDialog(message);
     }
 
-    public static void showOnCursorPosition(String title, String message, final MouseDownEvent event) {
-        final MessageDialog messageDialog = new MessageDialog(title, message);
+    public static void showOnCursorPosition(String message, final MouseDownEvent event) {
+        final MessageDialog messageDialog = new MessageDialog(message);
         messageDialog.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
             public void setPosition(int offsetWidth, int offsetHeight) {
                 int left = event.getClientX() - offsetWidth / 2;

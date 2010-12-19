@@ -65,7 +65,7 @@ public class ChangeColorDialog extends Dialog {
     }
 
     public ChangeColorDialog() {
-        setupDialog("Choose your color");
+        setupDialog();
     }
 
     @Override

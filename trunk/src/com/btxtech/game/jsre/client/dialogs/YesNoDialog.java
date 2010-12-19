@@ -31,11 +31,11 @@ public class YesNoDialog extends Dialog {
     private Runnable onYesBtn;
 
 
-    public YesNoDialog(String title, String message, Runnable onYesBtn) {
+    public YesNoDialog(String message, Runnable onYesBtn) {
         this.message = message;
         this.onYesBtn = onYesBtn;
         setShowCloseButton(false);
-        setupDialog(title);
+        setupDialog();
     }
 
     @Override
@@ -65,7 +65,7 @@ public class YesNoDialog extends Dialog {
         dialogVPanel.add(horizontalPanel);
     }
 
-    public static void show(String title, String message, Runnable onYesBtn) {
-        new YesNoDialog(title, message, onYesBtn);
+    public static void show(String message, Runnable onYesBtn) {
+        new YesNoDialog(message, onYesBtn);
     }
 }
