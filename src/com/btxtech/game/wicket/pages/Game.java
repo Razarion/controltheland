@@ -70,7 +70,7 @@ public class Game extends WebPage {
     }
 
     private void setupStartupSeq(StartupSeq startupSeq) {
-        Label startupSeqLabel = new Label("startupSeq", "");
+        Component startupSeqLabel = new Label("startupSeq", userGuidanceService.getDbUserStage().getHtml()).setEscapeModelStrings(false);
         startupSeqLabel.add(new SimpleAttributeModifier("id", com.btxtech.game.jsre.client.Game.STARTUP_SEQ_ID));
         startupSeqLabel.add(new SimpleAttributeModifier(com.btxtech.game.jsre.client.Game.STARTUP_SEQ_ID, startupSeq.name()));
         add(startupSeqLabel);

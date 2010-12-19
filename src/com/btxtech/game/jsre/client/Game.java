@@ -29,6 +29,7 @@ public class Game implements EntryPoint {
         try {
             GwtCommon.setUncaughtExceptionHandler();
             isDebug = Boolean.parseBoolean(Window.Location.getParameter(DEBUG_PARAM));
+            UserStageDialog.showDialog(getUserStageHtml());
             ClientRunner.getInstance().start(getStartupSeqFromHtml());
         } catch (Throwable t) {
             GwtCommon.handleException(t);
@@ -39,11 +40,13 @@ public class Game implements EntryPoint {
         return isDebug;
     }
 
+    private String getUserStageHtml() {
+        RootPanel div = getStartupInformation();
+        return div.getElement().getInnerHTML();
+    }
+
     private StartupSeq getStartupSeqFromHtml() {
-        RootPanel div = RootPanel.get(STARTUP_SEQ_ID);
-        if (div == null) {
-            throw new IllegalArgumentException(STARTUP_SEQ_ID + " not found in html");
-        }
+        RootPanel div = getStartupInformation();
         String startSeqStr = div.getElement().getAttribute(STARTUP_SEQ_ID);
         if (startSeqStr == null || startSeqStr.trim().isEmpty()) {
             throw new IllegalArgumentException(STARTUP_SEQ_ID + " not found in div element as parameter");
@@ -60,5 +63,13 @@ public class Game implements EntryPoint {
             throw new IllegalArgumentException("Can not do a warm start on a cold system");
         }
 
+    }
+
+    private RootPanel getStartupInformation() {
+        RootPanel div = RootPanel.get(STARTUP_SEQ_ID);
+        if (div == null) {
+            throw new IllegalArgumentException(STARTUP_SEQ_ID + " not found in html");
+        }
+        return div;
     }
 }
