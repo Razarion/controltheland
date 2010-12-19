@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
+import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -53,7 +54,13 @@ public class SelectionHandler {
     }
 
     public void addSelectionListener(SelectionListener selectionListener) {
-        listeners.add(selectionListener);
+        if (!listeners.contains(selectionListener)) {
+            listeners.add(selectionListener);
+        }
+    }
+
+    public void removeSelectionListener(SelectionListener selectionListener) {
+        listeners.remove(selectionListener);
     }
 
     public Group getOwnSelection() {

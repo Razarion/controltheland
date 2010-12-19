@@ -148,8 +148,8 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
         }
     }
 
-    public void setTrackingEvents() {
-        isTrackingEvents = true;
+    public void setTrackingEvents(boolean isTrackingEvents) {
+        this.isTrackingEvents = isTrackingEvents;
     }
 
     @Override

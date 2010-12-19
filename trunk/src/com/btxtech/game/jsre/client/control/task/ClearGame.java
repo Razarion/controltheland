@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client.control.task;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameCommon;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
+import com.btxtech.game.jsre.client.simulation.Simulation;
 
 /**
  * User: beat
@@ -32,5 +33,6 @@ public class ClearGame extends AbstractStartupTask {
     protected void privateStart(DeferredStartup deferredStartup) {
         Connection.getInstance().stopSyncInfoPoll();
         GameCommon.clearGame();
+        Simulation.getInstance().clearGui();
     }
 }

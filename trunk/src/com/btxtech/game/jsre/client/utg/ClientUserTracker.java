@@ -47,6 +47,7 @@ public class ClientUserTracker implements SelectionListener {
     private List<EventTrackingItem> eventTrackingItems = new ArrayList<EventTrackingItem>();
     private List<SelectionTrackingItem> selectionTrackingItems = new ArrayList<SelectionTrackingItem>();
     private List<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
+    private Timer timer;
 
     public static ClientUserTracker getInstance() {
         return INSTANCE;
@@ -92,8 +93,18 @@ public class ClientUserTracker implements SelectionListener {
         };
         timer.scheduleRepeating(SEND_TIMEOUT);
         SelectionHandler.getInstance().addSelectionListener(this);
-        MapWindow.getInstance().setTrackingEvents();
+        MapWindow.getInstance().setTrackingEvents(true);
         Connection.getInstance().sendEventTrackingStart(new EventTrackingStart(Window.getClientWidth(), Window.getClientHeight()));
+    }
+
+    public void stopEventTracking() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+        SelectionHandler.getInstance().removeSelectionListener(this);
+        MapWindow.getInstance().setTrackingEvents(false);
+        sendEventTrackerItems();
     }
 
     public void addEventTrackingItem(int xPos, int yPos, int eventType) {
