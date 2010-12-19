@@ -26,7 +26,7 @@
     <table cellpadding="1" cellspacing="1" border="0">
         <tr>
             <th bgcolor="#dadada">Name [internal]</th>
-            <th bgcolor="#dadada">HTML Text</th>
+            <th bgcolor="#dadada">Edit</th>
             <th bgcolor="#dadada">Real Game</th>
             <th bgcolor="#dadada">Tutorial</th>
             <th bgcolor="#dadada">Terrain</th>
@@ -36,7 +36,9 @@
         </tr>
         <tr wicket:id="userStageTable">
             <td><input type="text" wicket:id="name" size="20"></td>
-            <td><input type="text" wicket:id="html" size="20"></td>
+            <td valign="center">
+                <input type="submit" value="Edit" wicket:id="edit"/>
+            </td>
             <td align="center"><input type="checkbox" wicket:id="isRealGame"></td>
             <td><input type="text" wicket:id="dbTutorialConfig" size="4"></td>
             <td><input type="text" wicket:id="dbTerrainSetting" size="4"></td>

@@ -56,7 +56,7 @@ public class UserStageTable extends WebPage {
         Form<DbBotConfig> form = new Form<DbBotConfig>("from");
         add(form);
 
-        new CrudTableHelper<DbUserStage>("userStageTable", "saveUserStage", "createUserStage", false, form) {
+        new CrudTableHelper<DbUserStage>("userStageTable", "saveUserStage", "createUserStage", true, form) {
 
             @Override
             protected CrudServiceHelper<DbUserStage> getCrudServiceHelper() {
@@ -66,7 +66,6 @@ public class UserStageTable extends WebPage {
             @Override
             protected void extendedPopulateItem(final Item<DbUserStage> item) {
                 super.extendedPopulateItem(item);
-                item.add(new TextField<String>("html"));
                 item.add(new CheckBox("isRealGame"));
                 item.add(new TextField<Integer>("dbTutorialConfig", new IModel<Integer>() {
                     @Override
@@ -144,6 +143,11 @@ public class UserStageTable extends WebPage {
                     }
 
                 });
+            }
+
+            @Override
+            protected void onEditSubmit(DbUserStage dbUserStage) {
+                setResponsePage(new UserStageEditor(dbUserStage));
             }
         };
 
