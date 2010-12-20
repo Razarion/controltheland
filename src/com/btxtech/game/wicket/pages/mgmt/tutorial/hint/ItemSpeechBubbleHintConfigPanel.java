@@ -29,5 +29,7 @@ public class ItemSpeechBubbleHintConfigPanel extends Panel {
         add(new CheckBox("closeOnTaskEnd"));
         add(new TextField("syncItemId"));
         add(new TextArea("html"));
+        add(new TextField<Integer>("blinkDelay"));
+        add(new TextField<Integer>("blinkInterval"));
     }
 }

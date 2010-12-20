@@ -23,16 +23,9 @@ import com.btxtech.game.jsre.common.tutorial.ItemSpeechBubbleHintConfig;
  * Date: 05.11.2010
  * Time: 18:56:56
  */
-public class ItemSpeechBubbleHint implements Hint {
-    private SpeechBubble speechBubble;
-
+public class ItemSpeechBubbleHint extends SpeechBubbleHint {
     public ItemSpeechBubbleHint(ItemSpeechBubbleHintConfig itemSpeechBubbleHintConfig) {
         ClientSyncItem clientSyncItem = ItemContainer.getInstance().getSimulationItem(itemSpeechBubbleHintConfig.getSyncItemId());
-        speechBubble = new SpeechBubble(clientSyncItem.getSyncItem(), itemSpeechBubbleHintConfig.getHtml());
-    }
-
-    @Override
-    public void dispose() {
-        speechBubble.close();
+        setSpeechBubble(new SpeechBubble(clientSyncItem.getSyncItem(), itemSpeechBubbleHintConfig.getHtml()), itemSpeechBubbleHintConfig);
     }
 }

@@ -25,23 +25,17 @@ import com.google.gwt.user.client.ui.Widget;
  * Date: 05.11.2010
  * Time: 18:56:56
  */
-public class CockpitSpeechBubbleHint implements Hint {
-    private SpeechBubble speechBubble;
+public class CockpitSpeechBubbleHint extends SpeechBubbleHint {
 
     public CockpitSpeechBubbleHint(CockpitSpeechBubbleHintConfig cockpitSpeechBubbleHintConfig) {
         try {
             Widget widget = Cockpit.getInstance().getHintWidget(cockpitSpeechBubbleHintConfig);
             int left = widget.getAbsoluteLeft() + widget.getOffsetWidth() / 2;
             int top = widget.getAbsoluteTop();
-            speechBubble = new SpeechBubble(left, top, cockpitSpeechBubbleHintConfig.getHtml());
+            setSpeechBubble(new SpeechBubble(left, top, cockpitSpeechBubbleHintConfig.getHtml()), cockpitSpeechBubbleHintConfig);
         } catch (HintWidgetException e) {
             GwtCommon.handleException(e);
-            speechBubble = new SpeechBubble(0, 0, "???");
+            setSpeechBubble(new SpeechBubble(0, 0, "???"), cockpitSpeechBubbleHintConfig);
         }
-    }
-
-    @Override
-    public void dispose() {
-        speechBubble.close();
     }
 }

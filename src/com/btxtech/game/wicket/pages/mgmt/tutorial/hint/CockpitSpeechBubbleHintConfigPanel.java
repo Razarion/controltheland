@@ -80,6 +80,8 @@ public class CockpitSpeechBubbleHintConfigPanel extends Panel {
         });
 
         add(new TextArea("html"));
+        add(new TextField<Integer>("blinkDelay"));
+        add(new TextField<Integer>("blinkInterval"));
     }
 
     private DbCockpitSpeechBubbleHintConfig getCockpitSpeechBubbleHintConfig() {

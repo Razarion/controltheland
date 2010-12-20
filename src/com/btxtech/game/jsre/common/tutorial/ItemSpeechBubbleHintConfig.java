@@ -18,7 +18,7 @@ package com.btxtech.game.jsre.common.tutorial;
  * Date: 18.07.2010
  * Time: 22:28:34
  */
-public class ItemSpeechBubbleHintConfig extends HintConfig {
+public class ItemSpeechBubbleHintConfig extends SpeechBubbleHintConfig {
     private int syncItemId;
     private String html;
 
@@ -28,8 +28,8 @@ public class ItemSpeechBubbleHintConfig extends HintConfig {
     public ItemSpeechBubbleHintConfig() {
     }
 
-    public ItemSpeechBubbleHintConfig(boolean closeOnTaskEnd, int syncItemId, String html) {
-        super(closeOnTaskEnd);
+    public ItemSpeechBubbleHintConfig(boolean closeOnTaskEnd, int syncItemId, String html, int blinkDelay, int blinkInterval) {
+        super(closeOnTaskEnd, blinkDelay, blinkInterval);
         this.html = html;
         this.syncItemId = syncItemId;
     }

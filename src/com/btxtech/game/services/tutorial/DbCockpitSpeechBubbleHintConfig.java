@@ -35,6 +35,8 @@ public class DbCockpitSpeechBubbleHintConfig extends DbHintConfig {
     private String html;
     @ManyToOne
     private DbBaseItemType baseItemType;
+    private int blinkDelay;
+    private int blinkInterval;
 
     public String getHtml() {
         return html;
@@ -60,9 +62,27 @@ public class DbCockpitSpeechBubbleHintConfig extends DbHintConfig {
         this.baseItemType = baseItemType;
     }
 
+    public int getBlinkDelay() {
+        return blinkDelay;
+    }
+
+    public void setBlinkDelay(int blinkDelay) {
+        this.blinkDelay = blinkDelay;
+    }
+
+    public int getBlinkInterval() {
+        return blinkInterval;
+    }
+
+    public void setBlinkInterval(int blinkInterval) {
+        this.blinkInterval = blinkInterval;
+    }
+
     @Override
     public void init() {
         cockpitWidgetEnum = CockpitWidgetEnum.SELL_BUTTON;
+        blinkDelay = 0;
+        blinkInterval = 0;
     }
 
     @Override
@@ -75,6 +95,6 @@ public class DbCockpitSpeechBubbleHintConfig extends DbHintConfig {
                 throw new IllegalStateException("Base item type not set");
             }
         }
-        return new CockpitSpeechBubbleHintConfig(isCloseOnTaskEnd(), cockpitWidgetEnum, itemTypeId, html);
+        return new CockpitSpeechBubbleHintConfig(isCloseOnTaskEnd(), cockpitWidgetEnum, itemTypeId, html, blinkDelay, blinkInterval);
     }
 }

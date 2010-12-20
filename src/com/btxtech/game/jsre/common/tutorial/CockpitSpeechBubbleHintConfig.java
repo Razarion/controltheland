@@ -18,7 +18,7 @@ package com.btxtech.game.jsre.common.tutorial;
  * Date: 22.11.2010
  * Time: 19:45:33
  */
-public class CockpitSpeechBubbleHintConfig extends HintConfig {
+public class CockpitSpeechBubbleHintConfig extends SpeechBubbleHintConfig {
     private CockpitWidgetEnum cockpitWidgetEnum;
     private int baseItemTypeId;
     private String html;
@@ -29,8 +29,8 @@ public class CockpitSpeechBubbleHintConfig extends HintConfig {
     public CockpitSpeechBubbleHintConfig() {
     }
 
-    public CockpitSpeechBubbleHintConfig(boolean closeOnTaskEnd, CockpitWidgetEnum cockpitWidgetEnum, int baseItemTypeId, String html) {
-        super(closeOnTaskEnd);
+    public CockpitSpeechBubbleHintConfig(boolean closeOnTaskEnd, CockpitWidgetEnum cockpitWidgetEnum, int baseItemTypeId, String html, int blinkDelay, int blinkInterval) {
+        super(closeOnTaskEnd, blinkDelay, blinkInterval);
         this.cockpitWidgetEnum = cockpitWidgetEnum;
         this.baseItemTypeId = baseItemTypeId;
         this.html = html;

@@ -30,5 +30,7 @@ public class TerrainPositionSpeechBubbleHintConfigPanel extends Panel {
         add(new TextField<Integer>("position.x"));
         add(new TextField<Integer>("position.y"));
         add(new TextArea("html"));
+        add(new TextField<Integer>("blinkDelay"));
+        add(new TextField<Integer>("blinkInterval"));
     }
 }
