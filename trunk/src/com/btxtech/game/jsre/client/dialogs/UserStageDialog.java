@@ -17,7 +17,9 @@ import com.btxtech.game.jsre.client.common.Constants;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.widgetideas.client.GlassPanel;
 
 /**
  * User: beat
@@ -26,6 +28,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  */
 public class UserStageDialog extends Dialog {
     private String html;
+    private GlassPanel glassPanel;
 
     public UserStageDialog(String html) {
         this.html = html;
@@ -42,6 +45,9 @@ public class UserStageDialog extends Dialog {
 
     public static void showDialog(String html) {
         final UserStageDialog userStageDialog = new UserStageDialog(html);
+        userStageDialog.glassPanel = new GlassPanel(false);
+        userStageDialog.glassPanel.getElement().getStyle().setZIndex(Constants.Z_INDEX_GLASS_PANEL);
+        RootPanel.get().add(userStageDialog.glassPanel, 0, 0);
         userStageDialog.setPopupPositionAndShow(new PositionCallback() {
             @Override
             public void setPosition(int offsetWidth, int offsetHeight) {
@@ -52,4 +58,9 @@ public class UserStageDialog extends Dialog {
         });
     }
 
+    @Override
+    public void close() {
+        RootPanel.get().remove(glassPanel);
+        super.close();
+    }
 }
