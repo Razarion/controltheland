@@ -21,17 +21,11 @@ import com.btxtech.game.jsre.common.tutorial.TerrainPositionSpeechBubbleHintConf
  * Date: 07.11.2010
  * Time: 22:08:41
  */
-public class TerrainPositionSpeechBubbleHint implements Hint {
-    private SpeechBubble speechBubble;
-
+public class TerrainPositionSpeechBubbleHint extends SpeechBubbleHint {
     public TerrainPositionSpeechBubbleHint(TerrainPositionSpeechBubbleHintConfig terrainPositionSpeechBubbleHintConfig) {
-        speechBubble = new SpeechBubble(terrainPositionSpeechBubbleHintConfig.getPosition().getX(),
+        setSpeechBubble(new SpeechBubble(terrainPositionSpeechBubbleHintConfig.getPosition().getX(),
                 terrainPositionSpeechBubbleHintConfig.getPosition().getY(),
-                terrainPositionSpeechBubbleHintConfig.getHtml());
-    }
-
-    @Override
-    public void dispose() {
-        speechBubble.close();
+                terrainPositionSpeechBubbleHintConfig.getHtml()),
+                terrainPositionSpeechBubbleHintConfig);
     }
 }

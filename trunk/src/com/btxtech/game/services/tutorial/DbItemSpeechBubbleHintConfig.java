@@ -33,6 +33,8 @@ public class DbItemSpeechBubbleHintConfig extends DbHintConfig {
     private int syncItemId;
     @Column(length = 50000)
     private String html;
+    private int blinkDelay;
+    private int blinkInterval;
 
     public int getSyncItemId() {
         return syncItemId;
@@ -50,12 +52,30 @@ public class DbItemSpeechBubbleHintConfig extends DbHintConfig {
         this.html = html;
     }
 
+    public int getBlinkDelay() {
+        return blinkDelay;
+    }
+
+    public void setBlinkDelay(int blinkDelay) {
+        this.blinkDelay = blinkDelay;
+    }
+
+    public int getBlinkInterval() {
+        return blinkInterval;
+    }
+
+    public void setBlinkInterval(int blinkInterval) {
+        this.blinkInterval = blinkInterval;
+    }
+
     @Override
     public void init() {
+        blinkDelay = 0;
+        blinkInterval = 0;
     }
 
     @Override
     public HintConfig createHintConfig(ResourceHintManager resourceHintManager) {
-        return new ItemSpeechBubbleHintConfig(isCloseOnTaskEnd(), syncItemId, html);
+        return new ItemSpeechBubbleHintConfig(isCloseOnTaskEnd(), syncItemId, html, blinkDelay, blinkInterval);
     }
 }

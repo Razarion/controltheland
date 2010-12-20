@@ -38,6 +38,8 @@ public class DbTerrainPositionSpeechBubbleHintConfig extends DbHintConfig {
     private Index position;
     @Column(length = 50000)
     private String html;
+    private int blinkDelay;
+    private int blinkInterval;
 
     public String getHtml() {
         return html;
@@ -55,13 +57,31 @@ public class DbTerrainPositionSpeechBubbleHintConfig extends DbHintConfig {
         this.position = position;
     }
 
+    public int getBlinkDelay() {
+        return blinkDelay;
+    }
+
+    public void setBlinkDelay(int blinkDelay) {
+        this.blinkDelay = blinkDelay;
+    }
+
+    public int getBlinkInterval() {
+        return blinkInterval;
+    }
+
+    public void setBlinkInterval(int blinkInterval) {
+        this.blinkInterval = blinkInterval;
+    }
+
     @Override
     public void init() {
         position = new Index(0, 0);
+        blinkDelay = 0;
+        blinkInterval = 0;
     }
 
     @Override
     public HintConfig createHintConfig(ResourceHintManager resourceHintManager) {
-        return new TerrainPositionSpeechBubbleHintConfig(isCloseOnTaskEnd(), position, html);
+        return new TerrainPositionSpeechBubbleHintConfig(isCloseOnTaskEnd(), position, html, blinkDelay, blinkInterval);
     }
 }
