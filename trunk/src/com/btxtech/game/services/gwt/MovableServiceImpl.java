@@ -124,50 +124,8 @@ public class MovableServiceImpl implements MovableService {
 
     @Override
     public void sendStartupInfo(Collection<StartupTaskInfo> infos, long totalTime) {
-        // TODO
-        System.out.println("-----------------------------------------------");
-        System.out.println("Startup success");
-        System.out.println("totalTime: " + totalTime);
-        for (StartupTaskInfo info : infos) {
-            System.out.println(info);
-        }
-    }
-
-    @Override
-    public void sendStartupFailedInfo(StartupTaskInfo failedTask, Collection<StartupTaskInfo> infos, long totalTime) {
-        // TODO
-        System.out.println("-----------------------------------------------");
-        System.out.println("Startup FAILED!");
-        System.out.println("totalTime: " + totalTime);
-        for (StartupTaskInfo info : infos) {
-            System.out.println(info);
-        }
-        System.out.println(failedTask);        
-    }
-
-    /*
-    @Override
-    public void startUpTaskFinished(ColdRealGameStartupTaskEnum state, Date clientTimeStamp, long duration) {
         try {
-            userTrackingService.startUpTaskFinished(state, clientTimeStamp, duration);
-        } catch (Throwable t) {
-            log.error("", t);
-        }
-    }
-
-    @Override
-    public void startUpTaskFailed(ColdRealGameStartupTaskEnum state, Date clientTimeStamp, long duration, String failureText) {
-        try {
-            userTrackingService.startUpTaskFailed(state, clientTimeStamp, duration, failureText);
-        } catch (Throwable t) {
-            log.error("", t);
-        }
-    }
-    */
-    @Override
-    public void sendTotalStartupTime(long totalStartupTime, long clientTimeStamp) {
-        try {
-            userTrackingService.onTotalStartupTime(totalStartupTime, clientTimeStamp);
+            userTrackingService.startUpTaskFinished(infos, totalTime);
         } catch (Throwable t) {
             log.error("", t);
         }

@@ -61,8 +61,6 @@ public interface MovableServiceAsync {
 
     void sendEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<BaseCommand> baseCommands, Collection<SelectionTrackingItem> selectionTrackingItems, AsyncCallback<Void> asyncCallback);
 
-    void sendTotalStartupTime(long totalStartupTime, long clientTimeStamp, AsyncCallback<Void> asyncCallback);
-
     void sendCloseWindow(long totalRunningTime, long clientTimeStamp, AsyncCallback<Void> asyncCallback);
 
     void getFreeColors(int index, int count, AsyncCallback<List<String>> asyncCallback);
@@ -72,6 +70,4 @@ public interface MovableServiceAsync {
     void sellItem(Id id, AsyncCallback<Void> asyncCallback);
 
     void sendStartupInfo(Collection<StartupTaskInfo> infos, long totalTime, AsyncCallback<Void> asyncCallback);
-
-    void sendStartupFailedInfo(StartupTaskInfo failedTask, Collection<StartupTaskInfo> infos, long totalTime, AsyncCallback<Void> asyncCallback);
 }

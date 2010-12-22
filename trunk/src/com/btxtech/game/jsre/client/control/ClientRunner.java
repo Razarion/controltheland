@@ -86,18 +86,27 @@ public class ClientRunner {
         deferredStartups.clear();
     }
 
-    private Collection<StartupTaskInfo> createTaskInfo() {
+    private Collection<StartupTaskInfo> createTaskInfo(AbstractStartupTask failedTask, String error) {
         Collection<StartupTaskInfo> infos = new ArrayList<StartupTaskInfo>();
         for (AbstractStartupTask finishedTask : finishedTasks) {
             infos.add(finishedTask.createStartupTaskInfo());
         }
+        if (failedTask != null && error != null) {
+            StartupTaskInfo failedTaskInfo = failedTask.createStartupTaskInfo();
+            failedTaskInfo.setErrorText(error);
+            infos.add(failedTaskInfo);
+        }
         return infos;
     }
 
+
     private void onStartupFinish() {
+        if (failed) {
+            return;
+        }
         if (deferredStartups.isEmpty()) {
             long totalTime = finishedTasks.isEmpty() ? 0 : System.currentTimeMillis() - finishedTasks.get(0).getStartTime();
-            Connection.getInstance().sendStartupFinished(createTaskInfo(), totalTime);
+            Connection.getInstance().sendStartupFinished(createTaskInfo(null, null), totalTime);
             cleanup();
             StartupScreen.getInstance().showCloseButton();
             StartupScreen.getInstance().hideStartScreen();
@@ -127,11 +136,10 @@ public class ClientRunner {
         }
         failed = true;
         long totalTime = System.currentTimeMillis() - (finishedTasks.isEmpty() ? abstractStartupTask.getStartTime() : finishedTasks.get(0).getStartTime());
-        StartupScreen.getInstance().displayTaskFailed(abstractStartupTask, error);
-        StartupTaskInfo startupTaskInfo = abstractStartupTask.createStartupTaskInfo();
-        startupTaskInfo.setErrorText(error);
-        Connection.getInstance().sendStartupFailed(startupTaskInfo, createTaskInfo(), totalTime);
+        Connection.getInstance().sendStartupFinished(createTaskInfo(abstractStartupTask, error), totalTime);
         cleanup();
+        StartupScreen.getInstance().showCloseButton();
+        StartupScreen.getInstance().hideStartScreen();
     }
 
     void onTaskFailed(AbstractStartupTask abstractStartupTask, Throwable t) {

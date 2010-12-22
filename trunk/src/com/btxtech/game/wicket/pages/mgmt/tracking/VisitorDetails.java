@@ -73,11 +73,11 @@ public class VisitorDetails extends WebPage {
         ListView<LifecycleTrackingInfo> gameTrackingInfoList = new ListView<LifecycleTrackingInfo>("detailTrackings", visitorDetailInfo.getLifecycleTrackingInfos()) {
             @Override
             protected void populateItem(ListItem<LifecycleTrackingInfo> listItem) {
-                if (listItem.getModelObject().isTutorial()) {
-                    listItem.add(new TutorialTracking("detailTracking", listItem.getModelObject()));
-                } else {
-                    listItem.add(new GameTracking("detailTracking", listItem.getModelObject()));
-                }
+                // if (listItem.getModelObject().isTutorial()) {
+                listItem.add(new TutorialTracking("detailTracking", listItem.getModelObject()));
+                // } else {
+                //     listItem.add(new GameTracking("detailTracking", listItem.getModelObject()));
+                // }
             }
         };
         add(gameTrackingInfoList);
@@ -97,7 +97,7 @@ public class VisitorDetails extends WebPage {
     }
 
     private void gameOverview(VisitorDetailInfo visitorDetailInfo) {
-        add(new Label("totalTime", WebCommon.formatDuration(visitorDetailInfo.getTotalTime())));
+        //add(new Label("totalTime", WebCommon.formatDuration(visitorDetailInfo.getTotalTime())));
         add(new Label("gameAttempts", Integer.toString(visitorDetailInfo.getGameAttempts())));
         add(new Label("moveCommands", Integer.toString(visitorDetailInfo.getMoveCommands())));
         add(new Label("builderCommands", Integer.toString(visitorDetailInfo.getBuilderCommands())));

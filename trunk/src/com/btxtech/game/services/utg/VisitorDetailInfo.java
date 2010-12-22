@@ -14,7 +14,6 @@
 package com.btxtech.game.services.utg;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -25,7 +24,6 @@ import java.util.List;
 public class VisitorDetailInfo {
     private BrowserDetails browserDetails;
     private List<PageAccess> pageAccessHistory;
-    private long totalTime;
     private int attackCommands;
     private int moveCommands;
     private int builderCommands;
@@ -57,10 +55,6 @@ public class VisitorDetailInfo {
 
     public List<PageAccess> getPageAccessHistory() {
         return pageAccessHistory;
-    }
-
-    public long getTotalTime() {
-        return totalTime;
     }
 
     public int getAttackCommands() {
@@ -113,12 +107,6 @@ public class VisitorDetailInfo {
 
     public void setLifecycleTrackingInfos(List<LifecycleTrackingInfo> lifecycleTrackingInfos) {
         this.lifecycleTrackingInfos = lifecycleTrackingInfos;
-        totalTime = 0;
-        for (LifecycleTrackingInfo lifecycleTrackingInfo : lifecycleTrackingInfos) {
-            if (lifecycleTrackingInfo.hasDuration()) {
-                totalTime += lifecycleTrackingInfo.getDuration();
-            }
-        }
     }
 
     public List<LifecycleTrackingInfo> getLifecycleTrackingInfos() {

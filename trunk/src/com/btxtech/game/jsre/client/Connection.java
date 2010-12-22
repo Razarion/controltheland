@@ -266,12 +266,6 @@ public class Connection implements AsyncCallback<Void> {
         }
     }
 
-    public void sendStartupFailed(StartupTaskInfo failedTask, Collection<StartupTaskInfo> infos, long totalTime) {
-        if (movableServiceAsync != null) {
-            movableServiceAsync.sendStartupFailedInfo(failedTask, infos, totalTime, this);
-        }
-    }
-
     public void getMissionTarget(final MissionTarget missionTargetDialog) {
         if (movableServiceAsync != null) {
             movableServiceAsync.getMissionTarget(new AsyncCallback<String>() {
@@ -311,12 +305,6 @@ public class Connection implements AsyncCallback<Void> {
         if (movableServiceAsync != null) {
             movableServiceAsync.closeConnection(this);
             movableServiceAsync = null;
-        }
-    }
-
-    public void sendTotalStartupTime(long totalStartupTime, long clientTimeStamp) {
-        if (movableServiceAsync != null) {
-            movableServiceAsync.sendTotalStartupTime(totalStartupTime, clientTimeStamp, this);
         }
     }
 
