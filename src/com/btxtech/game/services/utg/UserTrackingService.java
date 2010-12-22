@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.btxtech.game.jsre.common.EventTrackingStart;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
+import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.UserStage;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
@@ -68,10 +69,6 @@ public interface UserTrackingService {
 
     void levelInterimPromotion(Base base, String targetLevel, String interimPromotion);
 
-    void startUpTaskFinished(ColdRealGameStartupTaskEnum state, Date clientTimeStamp, long duration);
-
-    void startUpTaskFailed(ColdRealGameStartupTaskEnum state, Date clientTimeStamp, long duration, String failureText);
-
     void onJavaScriptDetected();
 
     boolean isJavaScriptDetected();
@@ -86,7 +83,7 @@ public interface UserTrackingService {
 
     List<DbEventTrackingItem> getDbEventTrackingItem(DbEventTrackingStart begin, DbEventTrackingStart end);
 
-    void onTotalStartupTime(long totalStartupTime, long clientTimeStamp);
+    void startUpTaskFinished(Collection<StartupTaskInfo> infos, long totalTime);
 
     void onCloseWindow(long totalRunningTime, long clientTimeStamp);
 

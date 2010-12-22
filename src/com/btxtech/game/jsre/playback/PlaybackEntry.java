@@ -14,7 +14,6 @@
 package com.btxtech.game.jsre.playback;
 
 import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ExtendedCanvas;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GwtCommon;
@@ -37,6 +36,7 @@ import com.google.gwt.widgetideas.graphics.client.Color;
  * Time: 10:53:54
  */
 public class PlaybackEntry implements EntryPoint {
+    public static final String ID = "playbackInfo";
     public static final String SESSION_ID = "sessionId";
     public static final String START_TIME = "start";
     public static final String STAGE_NAME = "stage";
@@ -47,15 +47,15 @@ public class PlaybackEntry implements EntryPoint {
     public void onModuleLoad() {
         GwtCommon.setUncaughtExceptionHandler();
 
-        String sessionId = Window.Location.getParameter(SESSION_ID);
-        long timeStamp = Long.parseLong(Window.Location.getParameter(START_TIME));
-        String stageName = Window.Location.getParameter(STAGE_NAME);
+        String sessionId = getSessionIdFromHtml();
+        long timeStamp = getTimeStampFromHtml();
+        String userStage = getUserStageFromHtml();
 
         final PlaybackControlPanel playbackControlPanel = new PlaybackControlPanel(this);
         player = new Player(playbackControlPanel, this);
 
         PlaybackAsync playbackAsync = GWT.create(Playback.class);
-        playbackAsync.getPlaybackInfo(sessionId, timeStamp, stageName, new AsyncCallback<PlaybackInfo>() {
+        playbackAsync.getPlaybackInfo(sessionId, timeStamp, userStage, new AsyncCallback<PlaybackInfo>() {
             @Override
             public void onFailure(Throwable caught) {
                 GwtCommon.handleException(caught, true);
@@ -73,7 +73,7 @@ public class PlaybackEntry implements EntryPoint {
                 absolutePanel.setHeight("100%");
                 absolutePanel.setWidth("100%");
                 RootPanel.get().add(absolutePanel, 0, 0);
-                absolutePanel.add(extendedCanvas, 0,0);
+                absolutePanel.add(extendedCanvas, 0, 0);
                 playbackControlPanel.addToParent(absolutePanel, TopMapPanel.Direction.RIGHT_TOP, 10);
 
                 // TODO game.init();
@@ -117,4 +117,40 @@ public class PlaybackEntry implements EntryPoint {
     public void skip() {
         player.skip();
     }
+
+    private String getSessionIdFromHtml() {
+        RootPanel div = getStartupInformation();
+        String sessionId = div.getElement().getAttribute(SESSION_ID);
+        if (sessionId == null || sessionId.trim().isEmpty()) {
+            throw new IllegalArgumentException(SESSION_ID + " not found in div element as parameter");
+        }
+        return sessionId;
+    }
+
+    private long getTimeStampFromHtml() {
+        RootPanel div = getStartupInformation();
+        String timeStampString = div.getElement().getAttribute(START_TIME);
+        if (timeStampString == null || timeStampString.trim().isEmpty()) {
+            throw new IllegalArgumentException(START_TIME + " not found in div element as parameter");
+        }
+        return Long.parseLong(timeStampString);
+    }
+
+    private String getUserStageFromHtml() {
+        RootPanel div = getStartupInformation();
+        String userStage = div.getElement().getAttribute(STAGE_NAME);
+        if (userStage == null || userStage.trim().isEmpty()) {
+            throw new IllegalArgumentException(STAGE_NAME + " not found in div element as parameter");
+        }
+        return userStage;
+    }
+
+    private RootPanel getStartupInformation() {
+        RootPanel div = RootPanel.get(ID);
+        if (div == null) {
+            throw new IllegalArgumentException(ID + " not found in html");
+        }
+        return div;
+    }
+
 }

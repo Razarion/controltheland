@@ -26,7 +26,6 @@ public class VisitorInfo {
     private String sessionId;
     private int pageHits;
     private int enterGameHits;
-    private int startStates;
     private int successfulStarts;
     private int commands;
     private int tasks;
@@ -37,7 +36,6 @@ public class VisitorInfo {
                        String sessionId,
                        int pageHits,
                        int enterGameHits,
-                       int startStates,
                        int successfulStarts,
                        int commands,
                        int tasks,
@@ -47,7 +45,6 @@ public class VisitorInfo {
         this.sessionId = sessionId;
         this.pageHits = pageHits;
         this.enterGameHits = enterGameHits;
-        this.startStates = startStates;
         this.successfulStarts = successfulStarts;
         this.commands = commands;
         this.tasks = tasks;
@@ -93,9 +90,5 @@ public class VisitorInfo {
 
     public int getSuccessfulStarts() {
         return successfulStarts;
-    }
-
-    public int getStartStates() {
-        return startStates;
     }
 }

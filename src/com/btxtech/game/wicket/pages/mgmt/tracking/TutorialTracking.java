@@ -21,12 +21,14 @@ import com.btxtech.game.services.utg.TutorialTrackingInfo;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.mgmt.PlaybackPage;
-import org.apache.wicket.PageParameters;
+import javax.servlet.http.HttpSession;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -43,7 +45,7 @@ public class TutorialTracking extends Panel {
         add(new LifecyclePanel("lifecycle", lifecycleTrackingInfo));
         TutorialTrackingInfo tutorialTrackingInfo = userTrackingService.getTutorialTrackingInfo(lifecycleTrackingInfo);
 
-        overview(tutorialTrackingInfo, lifecycleTrackingInfo.getUserStageName());
+        overview(tutorialTrackingInfo, lifecycleTrackingInfo.getUserStage());
         tutorialProgress(tutorialTrackingInfo);
     }
 
@@ -59,22 +61,27 @@ public class TutorialTracking extends Panel {
         });
     }
 
-    private void overview(TutorialTrackingInfo tutorialTrackingInfo, String stageName) {
-        add(new Label("tasks", Integer.toString(tutorialTrackingInfo.getTaskCount())));
-        DbEventTrackingStart dbEventTrackingStart = tutorialTrackingInfo.getDbEventTrackingStart();
+    private void overview(TutorialTrackingInfo tutorialTrackingInfo, final String userStage) {
+        final DbEventTrackingStart dbEventTrackingStart = tutorialTrackingInfo.getDbEventTrackingStart();
         if (dbEventTrackingStart != null) {
-            PageParameters pageParameters = new PageParameters();
-            pageParameters.add(PlaybackEntry.SESSION_ID, dbEventTrackingStart.getSessionId());
-            pageParameters.add(PlaybackEntry.START_TIME, Long.toString(dbEventTrackingStart.getClientTimeStamp()));
-            pageParameters.add(PlaybackEntry.STAGE_NAME, stageName);
-            BookmarkablePageLink<PlaybackPage> pageLink = new BookmarkablePageLink<PlaybackPage>("link", PlaybackPage.class, pageParameters);
-            add(pageLink);
-            add(new Label("area", dbEventTrackingStart.getxResolution() + " x " + dbEventTrackingStart.getyResolution()));
+            Link link = new Link("link") {
+
+                @Override
+                public void onClick() {
+                    HttpSession httpSession = ((WebRequest) getRequest()).getHttpServletRequest().getSession();
+                    httpSession.setAttribute(PlaybackEntry.SESSION_ID, dbEventTrackingStart.getSessionId());
+                    httpSession.setAttribute(PlaybackEntry.START_TIME, Long.toString(dbEventTrackingStart.getClientTimeStamp()));
+                    httpSession.setAttribute(PlaybackEntry.STAGE_NAME, userStage);
+                    setResponsePage(new PlaybackPage());
+                }
+            };
+            add(link);
+            add(new Label("resolution", dbEventTrackingStart.getxResolution() + " x " + dbEventTrackingStart.getyResolution()));
         } else {
             BookmarkablePageLink<PlaybackPage> pageLink = new BookmarkablePageLink<PlaybackPage>("link", PlaybackPage.class, null);
             pageLink.setEnabled(false);
             add(pageLink);
-            add(new Label("area", "-"));
+            add(new Label("resolution", "-"));
         }
     }
 }

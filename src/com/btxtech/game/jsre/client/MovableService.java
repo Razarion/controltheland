@@ -64,15 +64,11 @@ public interface MovableService extends RemoteService {
 
     void sendStartupInfo(Collection<StartupTaskInfo> infos, long totalTime);
 
-    void sendStartupFailedInfo(StartupTaskInfo failedTask, Collection<StartupTaskInfo> infos, long totalTime);
-
     UserStage sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp);
 
     void sendEventTrackingStart(EventTrackingStart eventTrackingStart);
 
     void sendEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<BaseCommand> baseCommands, Collection<SelectionTrackingItem> selectionTrackingItems);
-
-    void sendTotalStartupTime(long totalStartupTime, long clientTimeStamp);
 
     void sendCloseWindow(long totalRunningTime, long clientTimeStamp);
 

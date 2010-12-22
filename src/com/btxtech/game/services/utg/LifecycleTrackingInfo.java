@@ -24,90 +24,46 @@ import java.util.List;
  * Time: 14:03:07
  */
 public class LifecycleTrackingInfo implements Serializable {
-    private List<GameStartup> gameStartups = new ArrayList<GameStartup>();
+    private List<DbStartupTask> dbStartupTasks = new ArrayList<DbStartupTask>();
     private Date start;
-    private Date end;
-    private Long duration;
-    private Long startupDuration;
+    private long startupDuration;
     private String sessionId;
+    private Date end;
+    private String userStage;
 
-    public LifecycleTrackingInfo(String SessionId, GameStartup gameStartup) {
-        sessionId = SessionId;
-        gameStartups.add(gameStartup);
-        // TODO startup
-/*
-        if (!ColdRealGameStartupTaskEnum.isFirstTask(gameStartup.getState())) {
-            throw new IllegalArgumentException("gameStartup must be first task");
-        }  */
-        start = gameStartup.getClientTimeStamp();
+    public LifecycleTrackingInfo(String sessionId, DbStartup startup) {
+        this.sessionId = sessionId;
+        start = new Date(startup.getClientTimeStamp());
+        dbStartupTasks = (List<DbStartupTask>) startup.getGameStartupTasks();
+        startupDuration = startup.getStartupDuration();
+        userStage = startup.getUserStage();
     }
 
     public Date getStart() {
         return start;
     }
 
-    public Date getEnd() {
-        return end;
-    }
-
-    public List<GameStartup> getGameStartups() {
-        return gameStartups;
-    }
-
-    public void setStartupDuration(long startupDuration) {
-        this.startupDuration = startupDuration;
-    }
-
-    public boolean hasTotalStartupDurtaion() {
-        return startupDuration != null;
+    public List<DbStartupTask> getGameStartups() {
+        return dbStartupTasks;
     }
 
     public long getStartupDuration() {
         return startupDuration;
     }
 
-    public boolean hasDuration() {
-        return duration != null;
-    }
-
-    public long getDuration() {
-        return duration;
-    }
-
-    public void setDuration(long duration) {
-        this.duration = duration;
-        end = new Date(start.getTime() + duration);
-    }
-
-    public String getUserName() {
-        if (gameStartups.isEmpty()) {
-            return "???";
-        } else {
-            if (gameStartups.get(0).getUserName() != null) {
-                return gameStartups.get(0).getUserName();
-            } else {
-                return "not registered";
-            }
-        }
-    }
-
-    public String getBaseName() {
-        if (gameStartups.isEmpty()) {
-            return "???";
-        } else {
-            return gameStartups.get(0).getBaseName();
-        }
-    }
-
     public String getSessionId() {
         return sessionId;
     }
 
-    public boolean isTutorial() {
-        return gameStartups.get(gameStartups.size() - 1).isTutorial();
+    public Date getEnd() {
+        return end;
     }
 
-    public String getUserStageName() {
-        return gameStartups.get(gameStartups.size() - 1).getUserStageName();
+    public void setEnd(Date end) {
+        this.end = end;
+    }
+
+    public String getUserStage() {
+        return userStage;
     }
 }

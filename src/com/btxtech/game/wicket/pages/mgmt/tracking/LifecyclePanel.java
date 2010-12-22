@@ -13,7 +13,7 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tracking;
 
-import com.btxtech.game.services.utg.GameStartup;
+import com.btxtech.game.services.utg.DbStartupTask;
 import com.btxtech.game.services.utg.LifecycleTrackingInfo;
 import com.btxtech.game.wicket.WebCommon;
 import org.apache.wicket.markup.html.basic.Label;
@@ -29,30 +29,14 @@ import org.apache.wicket.markup.html.panel.Panel;
 public class LifecyclePanel extends Panel {
     public LifecyclePanel(String id, LifecycleTrackingInfo lifecycleTrackingInfo) {
         super(id);
-        if (lifecycleTrackingInfo.hasDuration()) {
-            add(new Label("timeInGame", WebCommon.formatDuration(lifecycleTrackingInfo.getDuration())));
-        } else {
-            add(new Label("timeInGame", "???"));
-        }
-        add(new Label("userName", lifecycleTrackingInfo.getUserName()));
-        add(new Label("baseName", lifecycleTrackingInfo.getBaseName()));
-
-        add(new ListView<GameStartup>("startup", lifecycleTrackingInfo.getGameStartups()) {
+        add(new Label("userStage", lifecycleTrackingInfo.getUserStage()));        
+        add(new ListView<DbStartupTask>("startup", lifecycleTrackingInfo.getGameStartups()) {
             @Override
-            protected void populateItem(ListItem<GameStartup> gameStartupListItem) {
-                // TODO startup                
-                /*
-                gameStartupListItem.add(new Label("task", gameStartupListItem.getModelObject().getState().getNiceText()));
-                */
+            protected void populateItem(ListItem<DbStartupTask> gameStartupListItem) {
+                gameStartupListItem.add(new Label("task", gameStartupListItem.getModelObject().getTask()));
                 gameStartupListItem.add(new Label("time", WebCommon.formatDurationMilis(gameStartupListItem.getModelObject().getDuration())));
             }
         });
-        if (lifecycleTrackingInfo.hasTotalStartupDurtaion()) {
-            add(new Label("totalStartup", WebCommon.formatDurationMilis(lifecycleTrackingInfo.getStartupDuration())));
-        } else {
-            add(new Label("totalStartup", "???"));
-        }
-        add(new Label("userStageName", lifecycleTrackingInfo.getUserStageName()));
-
+        add(new Label("totalStartup", WebCommon.formatDurationMilis(lifecycleTrackingInfo.getStartupDuration())));
     }
 }
