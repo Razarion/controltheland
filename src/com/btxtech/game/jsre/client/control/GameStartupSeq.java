@@ -51,7 +51,7 @@ public enum GameStartupSeq implements StartupSeq {
 
     @Override
     public boolean isBackEndMode() {
-        return true;
+        return false;
     }
 
     public abstract StartupTaskEnum[] getAbstractStartupTaskEnum();

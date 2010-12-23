@@ -36,6 +36,6 @@ public enum PlaybackStartupSeq implements StartupSeq {
 
     @Override
     public boolean isBackEndMode() {
-        return false;
+        return true;
     }
 }

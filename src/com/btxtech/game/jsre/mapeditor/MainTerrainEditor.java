@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.mapeditor;
 
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.TopMapPanel;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
@@ -52,11 +53,8 @@ public class MainTerrainEditor implements EntryPoint {
         MapWindow.getAbsolutePanel().add(cockpit, 30, 30);
 
         // Radar panel
-        //MapWindow.getAbsolutePanel().add(RadarPanel.getInstance(), 1, 30);
-        //RadarPanel.getInstance().getElement().getStyle().setProperty("left", "");
-        //RadarPanel.getInstance().getElement().getStyle().setProperty("right", "30px");
-        //RadarPanel.getInstance().setRadarState1(true);
-        //RadarPanel.getInstance().updateEnergy(1, 0);
+        MapEditorRadar mapEditorRadar = new MapEditorRadar();
+        mapEditorRadar.addToParent(MapWindow.getAbsolutePanel(), TopMapPanel.Direction.RIGHT_TOP, 0);
 
         terrainEditor.getTerrainInfo(terrainId, new AsyncCallback<TerrainInfo>() {
             @Override

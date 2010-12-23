@@ -50,7 +50,7 @@ public class ClientRunner {
     public void start(StartupSeq startupSeq) {
         failed = false;
         isBackEndMode = startupSeq.isBackEndMode();
-        if (isBackEndMode) {
+        if (!isBackEndMode) {
             StartupScreen.getInstance().setupScreen(startupSeq);
         }
         setupStartupSeq(startupSeq);
@@ -66,7 +66,7 @@ public class ClientRunner {
         } else {
             AbstractStartupTask task = startupList.remove(0);
             ClientRunnerDeferredStartupImpl deferredStartup = new ClientRunnerDeferredStartupImpl(task, this);
-            if (isBackEndMode) {
+            if (!isBackEndMode) {
                 StartupScreen.getInstance().displayTaskRunning(task.getTaskEnum());
             }
             try {
@@ -111,13 +111,13 @@ public class ClientRunner {
             return;
         }
         if (deferredStartups.isEmpty()) {
-            cleanup();
-            if (isBackEndMode) {
+            if (!isBackEndMode) {
                 long totalTime = finishedTasks.isEmpty() ? 0 : System.currentTimeMillis() - finishedTasks.get(0).getStartTime();
                 Connection.getInstance().sendStartupFinished(createTaskInfo(null, null), totalTime);
                 StartupScreen.getInstance().showCloseButton();
                 StartupScreen.getInstance().hideStartScreen();
             }
+            cleanup();
         }
     }
 
@@ -129,7 +129,7 @@ public class ClientRunner {
 
     void onTaskFinished(AbstractStartupTask abstractStartupTask) {
         try {
-            if (isBackEndMode) {
+            if (!isBackEndMode) {
                 StartupScreen.getInstance().displayTaskFinished(abstractStartupTask);
             }
         } catch (Throwable t) {
@@ -147,12 +147,12 @@ public class ClientRunner {
         failed = true;
         cleanup();
         if (isBackEndMode) {
+            GwtCommon.sendLogToServer(error);
+        } else {
             long totalTime = System.currentTimeMillis() - (finishedTasks.isEmpty() ? abstractStartupTask.getStartTime() : finishedTasks.get(0).getStartTime());
             Connection.getInstance().sendStartupFinished(createTaskInfo(abstractStartupTask, error), totalTime);
             StartupScreen.getInstance().showCloseButton();
             StartupScreen.getInstance().hideStartScreen();
-        } else {
-            GwtCommon.sendLogToServer(error);
         }
     }
 
