@@ -13,8 +13,8 @@
 
 package com.btxtech.game.wicket.pages;
 
+import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
-import com.btxtech.game.jsre.client.control.StartupSeq;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.Arrays;
@@ -43,12 +43,12 @@ public class Game extends WebPage {
     private UserGuidanceService userGuidanceService;
 
     public Game() {
-        StartupSeq startupSeq = userGuidanceService.getColdStartupSeq();
+        GameStartupSeq gameStartupSeq = userGuidanceService.getColdStartupSeq();
 
-        setupStartupSeq(startupSeq);
+        setupStartupSeq(gameStartupSeq);
 
         // Startup visualisation table
-        ListView<StartupTaskEnum> taskTable = new ListView<StartupTaskEnum>("tasks", Arrays.asList(startupSeq.getAbstractStartupTaskEnum())) {
+        ListView<StartupTaskEnum> taskTable = new ListView<StartupTaskEnum>("tasks", Arrays.asList(gameStartupSeq.getAbstractStartupTaskEnum())) {
             protected void populateItem(ListItem<StartupTaskEnum> linkItem) {
                 addImage(linkItem, "taskImageLoad", WORKING);
                 addImage(linkItem, "taskImageDone", FINISHED);
@@ -69,10 +69,10 @@ public class Game extends WebPage {
         add(taskTable);
     }
 
-    private void setupStartupSeq(StartupSeq startupSeq) {
+    private void setupStartupSeq(GameStartupSeq gameStartupSeq) {
         Component startupSeqLabel = new Label("startupSeq", userGuidanceService.getDbUserStageHtml()).setEscapeModelStrings(false);
         startupSeqLabel.add(new SimpleAttributeModifier("id", com.btxtech.game.jsre.client.Game.STARTUP_SEQ_ID));
-        startupSeqLabel.add(new SimpleAttributeModifier(com.btxtech.game.jsre.client.Game.STARTUP_SEQ_ID, startupSeq.name()));
+        startupSeqLabel.add(new SimpleAttributeModifier(com.btxtech.game.jsre.client.Game.STARTUP_SEQ_ID, gameStartupSeq.name()));
         add(startupSeqLabel);
     }
 

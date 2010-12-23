@@ -100,6 +100,16 @@ public class Connection implements AsyncCallback<Void> {
         }
     }
 
+    /**
+     * Shall only be used by the play back functionality. Other classes must use
+     * downloadGameInfo.
+     *
+     * @param gameInfo the gameinfo
+     */
+    public void setGameInfo(GameInfo gameInfo) {
+        this.gameInfo = gameInfo;
+    }
+
     public void downloadAllSyncInfo(final DeferredStartup deferredStartup) {
         if (movableServiceAsync != null) {
             movableServiceAsync.getAllSyncInfo(new AsyncCallback<Collection<SyncItemInfo>>() {

@@ -34,11 +34,11 @@ public class Player {
     private int nextFrameIndex = 0;
     private Frame nextFrame;
     private long startTime;
-    private PlaybackEntry playbackEntry;
+    private PlaybackControl playbackControl;
 
-    public Player(PlaybackControlPanel playbackControlPanel, PlaybackEntry playbackEntry) {
+    public Player(PlaybackControlPanel playbackControlPanel, PlaybackControl playbackControl) {
         this.playbackControlPanel = playbackControlPanel;
-        this.playbackEntry = playbackEntry;
+        this.playbackControl = playbackControl;
     }
 
     public void init(PlaybackInfo playbackInfo) {
@@ -109,7 +109,7 @@ public class Player {
     }
 
     private void displayEventTrackingItemFrame(EventTrackingItem eventTrackingItem) {
-        playbackEntry.displayMouseTracking(eventTrackingItem);
+        playbackControl.displayMouseTracking(eventTrackingItem);
     }
 
     private void loadNextItem() {

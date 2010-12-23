@@ -14,7 +14,7 @@
 package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.client.common.Level;
-import com.btxtech.game.jsre.client.control.StartupSeq;
+import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.UserStage;
@@ -436,11 +436,11 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     }
 
     @Override
-    public StartupSeq getColdStartupSeq() {
+    public GameStartupSeq getColdStartupSeq() {
         if (getDbUserStage().isRealGame()) {
-            return StartupSeq.COLD_REAL;
+            return GameStartupSeq.COLD_REAL;
         } else {
-            return StartupSeq.COLD_SIMULATED;
+            return GameStartupSeq.COLD_SIMULATED;
         }
     }
 

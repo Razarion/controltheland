@@ -31,7 +31,7 @@ public class StartupTaskEnumHtmlHelper implements Serializable {
     private String niceText;
     private StartupTaskEnum startupTaskEnum;
 
-    StartupTaskEnumHtmlHelper(String niceText, StartupTaskEnum startupTaskEnum) {
+    public StartupTaskEnumHtmlHelper(String niceText, StartupTaskEnum startupTaskEnum) {
         this.niceText = niceText;
         this.startupTaskEnum = startupTaskEnum;
     }

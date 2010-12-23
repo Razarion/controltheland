@@ -11,68 +11,50 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.client.control;
+package com.btxtech.game.jsre.playback;
 
+import com.btxtech.game.jsre.client.control.StartupTaskEnum;
+import com.btxtech.game.jsre.client.control.StartupTaskEnumHtmlHelper;
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
-import com.btxtech.game.jsre.client.control.task.GameStartupTask;
 import com.btxtech.game.jsre.client.control.task.GuiStartupTask;
-import com.btxtech.game.jsre.client.control.task.InitItemStartupTask;
-import com.btxtech.game.jsre.client.control.task.LoadGameInfoStartupTask;
 import com.btxtech.game.jsre.client.control.task.LoadMapImageStartupTask;
-import com.btxtech.game.jsre.client.control.task.LoadStartJsAbstractStartupTask;
-import com.btxtech.game.jsre.client.control.task.LoadSyncInfoStartupTask;
-import com.btxtech.game.jsre.client.control.task.RunRealGameStartupTask;
 
 /**
  * User: beat
- * Date: 19.06.2010
- * Time: 18:21:15
+ * Date: 22.12.2010
+ * Time: 14:18:24
  */
-public enum ColdRealGameStartupTaskEnum implements StartupTaskEnum {
-    LOAD_JAVA_SCRIPT("Load JavaScript") {
+public enum ColdPlaybackStartupTaskEnum implements StartupTaskEnum {
+    LOAD_PLAYBACK_INFO("Load Playback Info") {
         @Override
         public AbstractStartupTask createTask() {
-            return new LoadStartJsAbstractStartupTask(this);
+            return new LoadStartupTask(this);
         }},
     INIT_GUI("Init GUI") {
         @Override
         public AbstractStartupTask createTask() {
             return new GuiStartupTask(this);
         }},
-    DOWNLOAD_GAME_INFO("Load game information") {
+    INIT_PLAYBACK("Init Playback") {
         @Override
         public AbstractStartupTask createTask() {
-            return new LoadGameInfoStartupTask(this);
-        }},
-    INIT_GAME("Init real Game") {
-        @Override
-        public AbstractStartupTask createTask() {
-            return new GameStartupTask(this);
+            return new InitStartupTask(this);
         }},
     LOAD_MAP("Load Map") {
         @Override
         public AbstractStartupTask createTask() {
             return new LoadMapImageStartupTask(this);
         }},
-    LOAD_UNITS("Load Units") {
+    RUN("Run") {
         @Override
         public AbstractStartupTask createTask() {
-            return new LoadSyncInfoStartupTask(this);
-        }},
-    START_ACTION_HANDLER("Initialize Units") {
-        @Override
-        public AbstractStartupTask createTask() {
-            return new InitItemStartupTask(this);
-        }},
-    LOAD_MAP_IMAGES("Run real Game") {
-        @Override
-        public AbstractStartupTask createTask() {
-            return new RunRealGameStartupTask(this);
+            return new RunPlaybackStartupTask(this);
         }};
+
 
     private StartupTaskEnumHtmlHelper startupTaskEnumHtmlHelper;
 
-    ColdRealGameStartupTaskEnum(String niceText) {
+    ColdPlaybackStartupTaskEnum(String niceText) {
         startupTaskEnumHtmlHelper = new StartupTaskEnumHtmlHelper(niceText, this);
     }
 

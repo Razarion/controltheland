@@ -39,6 +39,7 @@ public class ClientRunner {
     private List<DeferredStartup> deferredStartups = new ArrayList<DeferredStartup>();
     private List<AbstractStartupTask> finishedTasks = new ArrayList<AbstractStartupTask>();
     private boolean failed;
+    private boolean isBackEndMode;
 
     /**
      * Singleton
@@ -48,7 +49,10 @@ public class ClientRunner {
 
     public void start(StartupSeq startupSeq) {
         failed = false;
-        StartupScreen.getInstance().setupScreen(startupSeq);
+        isBackEndMode = startupSeq.isBackEndMode();
+        if (isBackEndMode) {
+            StartupScreen.getInstance().setupScreen(startupSeq);
+        }
         setupStartupSeq(startupSeq);
         runNextTask();
     }
@@ -62,7 +66,9 @@ public class ClientRunner {
         } else {
             AbstractStartupTask task = startupList.remove(0);
             ClientRunnerDeferredStartupImpl deferredStartup = new ClientRunnerDeferredStartupImpl(task, this);
-            StartupScreen.getInstance().displayTaskRunning(task.getTaskEnum());
+            if (isBackEndMode) {
+                StartupScreen.getInstance().displayTaskRunning(task.getTaskEnum());
+            }
             try {
                 task.start(deferredStartup);
             } catch (Throwable t) {
@@ -105,11 +111,13 @@ public class ClientRunner {
             return;
         }
         if (deferredStartups.isEmpty()) {
-            long totalTime = finishedTasks.isEmpty() ? 0 : System.currentTimeMillis() - finishedTasks.get(0).getStartTime();
-            Connection.getInstance().sendStartupFinished(createTaskInfo(null, null), totalTime);
             cleanup();
-            StartupScreen.getInstance().showCloseButton();
-            StartupScreen.getInstance().hideStartScreen();
+            if (isBackEndMode) {
+                long totalTime = finishedTasks.isEmpty() ? 0 : System.currentTimeMillis() - finishedTasks.get(0).getStartTime();
+                Connection.getInstance().sendStartupFinished(createTaskInfo(null, null), totalTime);
+                StartupScreen.getInstance().showCloseButton();
+                StartupScreen.getInstance().hideStartScreen();
+            }
         }
     }
 
@@ -121,7 +129,9 @@ public class ClientRunner {
 
     void onTaskFinished(AbstractStartupTask abstractStartupTask) {
         try {
-            StartupScreen.getInstance().displayTaskFinished(abstractStartupTask);
+            if (isBackEndMode) {
+                StartupScreen.getInstance().displayTaskFinished(abstractStartupTask);
+            }
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -135,11 +145,15 @@ public class ClientRunner {
             return;
         }
         failed = true;
-        long totalTime = System.currentTimeMillis() - (finishedTasks.isEmpty() ? abstractStartupTask.getStartTime() : finishedTasks.get(0).getStartTime());
-        Connection.getInstance().sendStartupFinished(createTaskInfo(abstractStartupTask, error), totalTime);
         cleanup();
-        StartupScreen.getInstance().showCloseButton();
-        StartupScreen.getInstance().hideStartScreen();
+        if (isBackEndMode) {
+            long totalTime = System.currentTimeMillis() - (finishedTasks.isEmpty() ? abstractStartupTask.getStartTime() : finishedTasks.get(0).getStartTime());
+            Connection.getInstance().sendStartupFinished(createTaskInfo(abstractStartupTask, error), totalTime);
+            StartupScreen.getInstance().showCloseButton();
+            StartupScreen.getInstance().hideStartScreen();
+        } else {
+            GwtCommon.sendLogToServer(error);
+        }
     }
 
     void onTaskFailed(AbstractStartupTask abstractStartupTask, Throwable t) {
