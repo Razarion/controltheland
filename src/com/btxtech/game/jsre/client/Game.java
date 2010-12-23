@@ -14,7 +14,7 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.control.ClientRunner;
-import com.btxtech.game.jsre.client.control.StartupSeq;
+import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.dialogs.UserStageDialog;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Window;
@@ -45,20 +45,20 @@ public class Game implements EntryPoint {
         return div.getElement().getInnerHTML();
     }
 
-    private StartupSeq getStartupSeqFromHtml() {
+    private GameStartupSeq getStartupSeqFromHtml() {
         RootPanel div = getStartupInformation();
         String startSeqStr = div.getElement().getAttribute(STARTUP_SEQ_ID);
         if (startSeqStr == null || startSeqStr.trim().isEmpty()) {
             throw new IllegalArgumentException(STARTUP_SEQ_ID + " not found in div element as parameter");
         }
-        StartupSeq startupSeq;
+        GameStartupSeq gameStartupSeq;
         try {
-            startupSeq = StartupSeq.valueOf(startSeqStr);
+            gameStartupSeq = GameStartupSeq.valueOf(startSeqStr);
         } catch (Throwable t) {
             throw new IllegalArgumentException(STARTUP_SEQ_ID + " can not convert to enum: " + startSeqStr);
         }
-        if (startupSeq.isCold()) {
-            return startupSeq;
+        if (gameStartupSeq.isCold()) {
+            return gameStartupSeq;
         } else {
             throw new IllegalArgumentException("Can not do a warm start on a cold system");
         }

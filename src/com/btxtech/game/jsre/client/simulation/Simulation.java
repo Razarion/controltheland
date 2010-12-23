@@ -25,7 +25,7 @@ import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.ClientRunner;
-import com.btxtech.game.jsre.client.control.StartupSeq;
+import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.dialogs.UserStageDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
@@ -151,13 +151,13 @@ public class Simulation implements SelectionListener, TerrainScrollListener, Cli
             @Override
             public void run(UserStage userStage) {
                 UserStageDialog.showDialog(userStage.getHtml());
-                StartupSeq startupSeq;
+                GameStartupSeq gameStartupSeq;
                 if (userStage.isRealGame()) {
-                    startupSeq = StartupSeq.WARM_REAL;
+                    gameStartupSeq = GameStartupSeq.WARM_REAL;
                 } else {
-                    startupSeq = StartupSeq.WARM_SIMULATED;
+                    gameStartupSeq = GameStartupSeq.WARM_SIMULATED;
                 }
-                ClientRunner.getInstance().start(startupSeq);
+                ClientRunner.getInstance().start(gameStartupSeq);
             }
         });
     }

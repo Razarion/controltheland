@@ -15,39 +15,13 @@ package com.btxtech.game.jsre.client.control;
 
 /**
  * User: beat
- * Date: 06.12.2010
- * Time: 22:03:20
+ * Date: 22.12.2010
+ * Time: 14:31:16
  */
-public enum StartupSeq {
-    COLD_REAL(true) {
-        @Override
-        public StartupTaskEnum[] getAbstractStartupTaskEnum() {
-            return ColdRealGameStartupTaskEnum.values();
-        }},
-    COLD_SIMULATED(true) {
-        @Override
-        public StartupTaskEnum[] getAbstractStartupTaskEnum() {
-            return ColdSimulatedGameStartupTaskEnum.values();
-        }},
-    WARM_REAL(false) {
-        @Override
-        public StartupTaskEnum[] getAbstractStartupTaskEnum() {
-            return WarmRealGameStartupTaskEnum.values();
-        }},
-    WARM_SIMULATED(false) {
-        @Override
-        public StartupTaskEnum[] getAbstractStartupTaskEnum() {
-            return WarmSimulatedGameStartupTaskEnum.values();
-        }};
-    private boolean cold;
+public interface StartupSeq {
+    StartupTaskEnum[] getAbstractStartupTaskEnum();
 
-    StartupSeq(boolean isCold) {
-        cold = isCold;
-    }
+    boolean isCold();
 
-    public boolean isCold() {
-        return cold;
-    }
-
-    public abstract StartupTaskEnum[] getAbstractStartupTaskEnum();
+    boolean isBackEndMode();
 }

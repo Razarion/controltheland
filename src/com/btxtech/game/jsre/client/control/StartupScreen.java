@@ -74,7 +74,6 @@ public class StartupScreen {
                 tableSectionElement = trElement.getParentElement();
             }
             tableSectionElement.removeChild(trElement);
-            trElement = null;
         }
 
         if (tableSectionElement == null) {
