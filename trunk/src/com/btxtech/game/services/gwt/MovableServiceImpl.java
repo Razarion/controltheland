@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.btxtech.game.jsre.common.EventTrackingStart;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
+import com.btxtech.game.jsre.common.ScrollTrackingItem;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
@@ -282,9 +283,9 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public void sendEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<BaseCommand> baseCommands, Collection<SelectionTrackingItem> selectionTrackingItems) {
+    public void sendEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<BaseCommand> baseCommands, Collection<SelectionTrackingItem> selectionTrackingItems, List<ScrollTrackingItem> scrollTrackingItems) {
         try {
-            userTrackingService.onEventTrackerItems(eventTrackingItems, baseCommands, selectionTrackingItems);
+            userTrackingService.onEventTrackerItems(eventTrackingItems, baseCommands, selectionTrackingItems, scrollTrackingItems);
         } catch (Throwable t) {
             log.error("", t);
         }

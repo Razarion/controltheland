@@ -14,6 +14,7 @@
 package com.btxtech.game.services.playback.impl;
 
 import com.btxtech.game.jsre.common.EventTrackingItem;
+import com.btxtech.game.jsre.common.ScrollTrackingItem;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.playback.PlaybackInfo;
@@ -27,6 +28,7 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.DbCommand;
 import com.btxtech.game.services.utg.DbEventTrackingItem;
 import com.btxtech.game.services.utg.DbEventTrackingStart;
+import com.btxtech.game.services.utg.DbScrollTrackingItem;
 import com.btxtech.game.services.utg.DbSelectionTrackingItem;
 import com.btxtech.game.services.utg.DbUserStage;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -111,6 +113,13 @@ public class PlaybackServiceImpl implements PlaybackService {
                 baseCommands.add(dbCommand.getBaseCommand());
             }
             playbackInfo.setCommands(baseCommands);
+
+            // Scrolling
+            ArrayList<ScrollTrackingItem> scrollTrackingItems = new ArrayList<ScrollTrackingItem>();
+            for (DbScrollTrackingItem dbScrollTrackingItem : userTrackingService.getDbScrollTrackingItems(sessionId, startTime, endTime)) {
+                scrollTrackingItems.add(dbScrollTrackingItem.createScrollTrackingItem());
+            }
+            playbackInfo.setScrollTrackingItems(scrollTrackingItems);
 
             return playbackInfo;
         } catch (Throwable t) {

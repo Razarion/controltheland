@@ -80,6 +80,7 @@
         <mapping class="com.btxtech.game.services.utg.DbCloseWindow"/>
         <mapping class="com.btxtech.game.services.utg.DbCommand"/>
         <mapping class="com.btxtech.game.services.utg.DbSelectionTrackingItem"/>
+        <mapping class="com.btxtech.game.services.utg.DbScrollTrackingItem"/>
         <mapping class="com.btxtech.game.services.forum.AbstractForumEntry"/>
         <mapping class="com.btxtech.game.services.forum.SubForum"/>
         <mapping class="com.btxtech.game.services.forum.Category"/>

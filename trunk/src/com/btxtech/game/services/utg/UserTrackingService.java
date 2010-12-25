@@ -13,10 +13,10 @@
 
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.client.control.ColdRealGameStartupTaskEnum;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.btxtech.game.jsre.common.EventTrackingStart;
+import com.btxtech.game.jsre.common.ScrollTrackingItem;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.UserStage;
@@ -26,7 +26,6 @@ import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -77,7 +76,7 @@ public interface UserTrackingService {
 
     void onEventTrackingStart(EventTrackingStart eventTrackingStart);
 
-    void onEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<BaseCommand> baseCommands, Collection<SelectionTrackingItem> selectionTrackingItems);
+    void onEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<BaseCommand> baseCommands, Collection<SelectionTrackingItem> selectionTrackingItems, List<ScrollTrackingItem> scrollTrackingItems);
 
     List<DbEventTrackingStart> getDbEventTrackingStart(String sessionId);
 
@@ -94,4 +93,6 @@ public interface UserTrackingService {
     List<DbSelectionTrackingItem> getDbSelectionTrackingItems(String sessionId, long startTime, Long endTime);
 
     List<DbCommand> getDbCommands(String sessionId, long startTime, Long endTime);
+
+    List<DbScrollTrackingItem> getDbScrollTrackingItems(final String sessionId, final long startTime, final Long endTime);
 }

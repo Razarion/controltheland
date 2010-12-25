@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameCommon;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.simulation.Simulation;
+import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 
 /**
  * User: beat
@@ -31,6 +32,7 @@ public class ClearGame extends AbstractStartupTask {
 
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
+        ClientUserTracker.getInstance().stopEventTracking();
         Connection.getInstance().stopSyncInfoPoll();
         GameCommon.clearGame();
         Simulation.getInstance().clearGui();

@@ -39,6 +39,7 @@ public class TutorialConfig implements Serializable {
     private Collection<BaseAttributes> baseAttributes;
     private boolean failOnOwnItemsLost;
     private Integer failOnMoneyBelowAndNoAttackUnits;
+    private boolean eventTracking;
 
     /**
      * Used by GWT
@@ -52,7 +53,8 @@ public class TutorialConfig implements Serializable {
                           int height,
                           Collection<BaseAttributes> baseAttributes,
                           boolean failOnOwnItemsLost,
-                          Integer failOnMoneyBelowAndNoAttackUnits) {
+                          Integer failOnMoneyBelowAndNoAttackUnits,
+                          boolean eventTracking) {
         this.taskConfigs = taskConfigs;
         this.ownBase = ownBase;
         this.width = width;
@@ -60,6 +62,7 @@ public class TutorialConfig implements Serializable {
         this.baseAttributes = baseAttributes;
         this.failOnOwnItemsLost = failOnOwnItemsLost;
         this.failOnMoneyBelowAndNoAttackUnits = failOnMoneyBelowAndNoAttackUnits;
+        this.eventTracking = eventTracking;
     }
 
     public List<TaskConfig> getTasks() {
@@ -88,5 +91,9 @@ public class TutorialConfig implements Serializable {
 
     public Integer isFailOnMoneyBelowAndNoAttackUnits() {
         return failOnMoneyBelowAndNoAttackUnits;
+    }
+
+    public boolean isEventTracking() {
+        return eventTracking;
     }
 }

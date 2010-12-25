@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.playback;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.btxtech.game.jsre.common.EventTrackingStart;
+import com.btxtech.game.jsre.common.ScrollTrackingItem;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class PlaybackInfo extends SimulationInfo {
     private List<EventTrackingItem> eventTrackingItems;
     private List<SelectionTrackingItem> selectionTrackingItems;
     private ArrayList<BaseCommand> baseCommands;
+    private ArrayList<ScrollTrackingItem> scrollTrackingItems;
 
     public EventTrackingStart getEventTrackingStart() {
         return eventTrackingStart;
@@ -62,5 +64,13 @@ public class PlaybackInfo extends SimulationInfo {
 
     public ArrayList<BaseCommand> getBaseCommands() {
         return baseCommands;
+    }
+
+    public void setScrollTrackingItems(ArrayList<ScrollTrackingItem> scrollTrackingItems) {
+        this.scrollTrackingItems = scrollTrackingItems;
+    }
+
+    public ArrayList<ScrollTrackingItem> getScrollTrackingItems() {
+        return scrollTrackingItems;
     }
 }
