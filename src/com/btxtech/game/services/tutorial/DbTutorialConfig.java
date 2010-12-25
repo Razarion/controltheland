@@ -63,6 +63,7 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
     private String enemyBaseColor;
     private boolean failOnOwnItemsLost;
     private Integer failOnMoneyBelowAndNoAttackUnits;
+    private boolean tracking;
 
     @Override
     public String getName() {
@@ -150,6 +151,14 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
         return id;
     }
 
+    public boolean isTracking() {
+        return tracking;
+    }
+
+    public void setTracking(boolean tracking) {
+        this.tracking = tracking;
+    }
+
     public TutorialConfig createTutorialConfig(ResourceHintManager resourceHintManager) {
         ArrayList<BaseAttributes> baseAttributes = new ArrayList<BaseAttributes>();
         SimpleBase ownBase = new SimpleBase(ownBaseId);
@@ -161,7 +170,7 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
             taskConfigs.add(dbTaskConfig.createTaskConfig(resourceHintManager));
         }
 
-        return new TutorialConfig(taskConfigs, ownBase, width, height, baseAttributes, failOnOwnItemsLost, failOnMoneyBelowAndNoAttackUnits);
+        return new TutorialConfig(taskConfigs, ownBase, width, height, baseAttributes, failOnOwnItemsLost, failOnMoneyBelowAndNoAttackUnits, tracking);
     }
 
     public void init() {

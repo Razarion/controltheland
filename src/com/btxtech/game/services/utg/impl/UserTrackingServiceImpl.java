@@ -16,6 +16,7 @@ package com.btxtech.game.services.utg.impl;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.btxtech.game.jsre.common.EventTrackingStart;
+import com.btxtech.game.jsre.common.ScrollTrackingItem;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.UserStage;
@@ -39,6 +40,7 @@ import com.btxtech.game.services.utg.DbEventTrackingItem;
 import com.btxtech.game.services.utg.DbEventTrackingStart;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelPromotion;
+import com.btxtech.game.services.utg.DbScrollTrackingItem;
 import com.btxtech.game.services.utg.DbSelectionTrackingItem;
 import com.btxtech.game.services.utg.DbStartup;
 import com.btxtech.game.services.utg.DbStartupTask;
@@ -586,10 +588,11 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public void onEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<BaseCommand> baseCommands, Collection<SelectionTrackingItem> selectionTrackingItems) {
+    public void onEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<BaseCommand> baseCommands, Collection<SelectionTrackingItem> selectionTrackingItems, List<ScrollTrackingItem> scrollTrackingItems) {
         onEventTrackerItems(eventTrackingItems);
         saveCommand(baseCommands);
         saveSelections(selectionTrackingItems);
+        saveScrollTrackingItems(scrollTrackingItems);
     }
 
     private void onEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems) {
@@ -614,6 +617,14 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             dbSelectionTrackingItems.add(new DbSelectionTrackingItem(command, session.getSessionId()));
         }
         hibernateTemplate.saveOrUpdateAll(dbSelectionTrackingItems);
+    }
+
+    private void saveScrollTrackingItems(List<ScrollTrackingItem> scrollTrackingItems) {
+        ArrayList<DbScrollTrackingItem> dbScrollTrackingItems = new ArrayList<DbScrollTrackingItem>();
+        for (ScrollTrackingItem scroll : scrollTrackingItems) {
+            dbScrollTrackingItems.add(new DbScrollTrackingItem(scroll, session.getSessionId()));
+        }
+        hibernateTemplate.saveOrUpdateAll(dbScrollTrackingItems);
     }
 
     @Override
@@ -705,6 +716,24 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             @Override
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(DbCommand.class);
+                criteria.add(Restrictions.eq("sessionId", sessionId));
+                criteria.add(Restrictions.ge("clientTimeStamp", startTime));
+                if (endTime != null) {
+                    criteria.add(Restrictions.lt("clientTimeStamp", endTime));
+                }
+                criteria.addOrder(Order.asc("clientTimeStamp"));
+                return criteria.list();
+            }
+        });
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<DbScrollTrackingItem> getDbScrollTrackingItems(final String sessionId, final long startTime, final Long endTime) {
+        return hibernateTemplate.executeFind(new HibernateCallback() {
+            @Override
+            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbScrollTrackingItem.class);
                 criteria.add(Restrictions.eq("sessionId", sessionId));
                 criteria.add(Restrictions.ge("clientTimeStamp", startTime));
                 if (endTime != null) {

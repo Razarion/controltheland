@@ -23,8 +23,11 @@ import com.btxtech.game.jsre.client.control.ClientRunner;
 import com.btxtech.game.jsre.client.simulation.Step;
 import com.btxtech.game.jsre.client.simulation.Task;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
+import com.btxtech.game.jsre.client.terrain.TerrainScrollListener;
+import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.btxtech.game.jsre.common.EventTrackingStart;
+import com.btxtech.game.jsre.common.ScrollTrackingItem;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.UserStage;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
@@ -41,13 +44,15 @@ import java.util.List;
  * Date: 13.01.2010
  * Time: 15:12:08
  */
-public class ClientUserTracker implements SelectionListener {
+public class ClientUserTracker implements SelectionListener, TerrainScrollListener {
     private static final int SEND_TIMEOUT = 1000 * 30;
     private static final ClientUserTracker INSTANCE = new ClientUserTracker();
     private List<EventTrackingItem> eventTrackingItems = new ArrayList<EventTrackingItem>();
     private List<SelectionTrackingItem> selectionTrackingItems = new ArrayList<SelectionTrackingItem>();
+    private List<ScrollTrackingItem> scrollTrackingItems = new ArrayList<ScrollTrackingItem>();
     private List<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
     private Timer timer;
+    private boolean isCollecting = false;
 
     public static ClientUserTracker getInstance() {
         return INSTANCE;
@@ -85,7 +90,9 @@ public class ClientUserTracker implements SelectionListener {
     }
 
     public void startEventTracking() {
-        Timer timer = new Timer() {
+        stopEventTracking();
+        isCollecting = true;
+        timer = new Timer() {
             @Override
             public void run() {
                 sendEventTrackerItems();
@@ -94,49 +101,74 @@ public class ClientUserTracker implements SelectionListener {
         timer.scheduleRepeating(SEND_TIMEOUT);
         SelectionHandler.getInstance().addSelectionListener(this);
         MapWindow.getInstance().setTrackingEvents(true);
+        TerrainView.getInstance().addTerrainScrollListener(this);
         Connection.getInstance().sendEventTrackingStart(new EventTrackingStart(Window.getClientWidth(), Window.getClientHeight()));
     }
 
     public void stopEventTracking() {
+        isCollecting = false;
         if (timer != null) {
             timer.cancel();
             timer = null;
         }
         SelectionHandler.getInstance().removeSelectionListener(this);
         MapWindow.getInstance().setTrackingEvents(false);
+        TerrainView.getInstance().removeTerrainScrollListener(this);
         sendEventTrackerItems();
     }
 
     public void addEventTrackingItem(int xPos, int yPos, int eventType) {
-        eventTrackingItems.add(new EventTrackingItem(xPos, yPos, eventType));
+        if (isCollecting) {
+            eventTrackingItems.add(new EventTrackingItem(xPos, yPos, eventType));
+        }
     }
 
     public void onExecuteCommand(BaseCommand baseCommand) {
-        baseCommands.add(baseCommand);
+        if (isCollecting) {
+            baseCommands.add(baseCommand);
+        }
     }
 
     private void sendEventTrackerItems() {
-        if (eventTrackingItems.isEmpty() && baseCommands.isEmpty() && selectionTrackingItems.isEmpty()) {
+        if (eventTrackingItems.isEmpty() && baseCommands.isEmpty() && selectionTrackingItems.isEmpty() && scrollTrackingItems.isEmpty()) {
             return;
         }
-        Connection.getInstance().sendEventTrackerItems(eventTrackingItems, baseCommands, selectionTrackingItems);
+        Connection.getInstance().sendEventTrackerItems(eventTrackingItems, baseCommands, selectionTrackingItems, scrollTrackingItems);
+        clearTracking();
+    }
+
+    private void clearTracking() {
         eventTrackingItems = new ArrayList<EventTrackingItem>();
         baseCommands = new ArrayList<BaseCommand>();
         selectionTrackingItems = new ArrayList<SelectionTrackingItem>();
+        scrollTrackingItems = new ArrayList<ScrollTrackingItem>();
     }
 
     @Override
     public void onTargetSelectionChanged(ClientSyncItem selection) {
-        selectionTrackingItems.add(new SelectionTrackingItem(selection));
+        if (isCollecting) {
+            selectionTrackingItems.add(new SelectionTrackingItem(selection));
+        }
     }
 
     @Override
     public void onSelectionCleared() {
-        selectionTrackingItems.add(new SelectionTrackingItem());
+        if (isCollecting) {
+            selectionTrackingItems.add(new SelectionTrackingItem());
+        }
     }
 
     @Override
     public void onOwnSelectionChanged(Group selectedGroup) {
-        selectionTrackingItems.add(new SelectionTrackingItem(selectedGroup));
+        if (isCollecting) {
+            selectionTrackingItems.add(new SelectionTrackingItem(selectedGroup));
+        }
+    }
+
+    @Override
+    public void onScroll(int left, int top, int width, int height, int deltaLeft, int deltaTop) {
+        if (isCollecting) {
+            scrollTrackingItems.add(new ScrollTrackingItem(left, top, width, height));
+        }
     }
 }

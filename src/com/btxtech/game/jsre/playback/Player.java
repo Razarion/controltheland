@@ -15,7 +15,11 @@ package com.btxtech.game.jsre.playback;
 
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
+import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.terrain.MapWindow;
+import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.EventTrackingItem;
+import com.btxtech.game.jsre.common.ScrollTrackingItem;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.google.gwt.user.client.Timer;
@@ -52,6 +56,9 @@ public class Player {
         }
         for (BaseCommand baseCommand : playbackInfo.getBaseCommands()) {
             frames.add(new Frame(baseCommand.getTimeStamp().getTime(), baseCommand));
+        }
+        for (ScrollTrackingItem scrollTrackingItem : playbackInfo.getScrollTrackingItems()) {
+            frames.add(new Frame(scrollTrackingItem.getClientTimeStamp(), scrollTrackingItem));
         }
         Collections.sort(frames);
     }
@@ -92,6 +99,8 @@ public class Player {
             displaySelectionTrackingItemFrame((SelectionTrackingItem) object);
         } else if (object instanceof BaseCommand) {
             displayBaseCommandFrame((BaseCommand) object);
+        } else if (object instanceof ScrollTrackingItem) {
+            displayScrollingFrame((ScrollTrackingItem) object);
         } else {
             throw new IllegalArgumentException(this + " Unknown Frame: " + object);
         }
@@ -110,6 +119,11 @@ public class Player {
 
     private void displayEventTrackingItemFrame(EventTrackingItem eventTrackingItem) {
         playbackControl.displayMouseTracking(eventTrackingItem);
+    }
+
+    private void displayScrollingFrame(ScrollTrackingItem scrollTrackingItem) {
+        MapWindow.getAbsolutePanel().setPixelSize(scrollTrackingItem.getWidth(), scrollTrackingItem.getHeight());
+        TerrainView.getInstance().moveAbsolute(new Index(scrollTrackingItem.getLeft(), scrollTrackingItem.getTop()));
     }
 
     private void loadNextItem() {

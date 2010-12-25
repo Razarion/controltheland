@@ -88,7 +88,9 @@ public class Simulation implements SelectionListener, TerrainScrollListener, Cli
         tutorialTime = System.currentTimeMillis();
         MapWindow.getAbsolutePanel().getElement().getStyle().setProperty("minWidth", tutorialConfig.getWidth() + "px");
         MapWindow.getAbsolutePanel().getElement().getStyle().setProperty("minHeight", tutorialConfig.getHeight() + "px");
-        ClientUserTracker.getInstance().startEventTracking();
+        if (tutorialConfig.isEventTracking()) {
+            ClientUserTracker.getInstance().startEventTracking();
+        }
         runNextTask(activeTask);
     }
 
