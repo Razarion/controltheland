@@ -27,7 +27,6 @@ import javax.persistence.Id;
  * Date: Jul 26, 2009
  * Time: 11:09:27 AM
  */
-@Deprecated
 @Entity(name = "TRACKER_USER_COMMAND")
 public class UserCommand implements Serializable {
     @Id

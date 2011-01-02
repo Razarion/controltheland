@@ -26,7 +26,7 @@ import javax.persistence.OneToOne;
  * Time: 23:23:02
  */
 @Entity(name = "BACKUP_LEVEL_STATUS")
-public class BaseLevelStatus {
+public class UserLevelStatus {
     @Id
     @GeneratedValue
     private Integer id;

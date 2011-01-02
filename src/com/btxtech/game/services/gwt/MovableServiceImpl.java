@@ -15,6 +15,7 @@ package com.btxtech.game.services.gwt;
 
 
 import com.btxtech.game.jsre.client.MovableService;
+import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
@@ -28,7 +29,6 @@ import com.btxtech.game.jsre.common.ScrollTrackingItem;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
-import com.btxtech.game.jsre.common.UserStage;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -47,7 +47,7 @@ import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.services.utg.DbUserStage;
+import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.Collection;
@@ -143,30 +143,27 @@ public class MovableServiceImpl implements MovableService {
 
     @Override
     public GameInfo getGameInfo() {
-        DbUserStage dbUserStage = userGuidanceService.getDbUserStage();
-        if (dbUserStage.isRealGame()) {
-            return createRealInfo();
+        DbLevel dbLevel = userGuidanceService.getDbLevel();
+        if (dbLevel.isRealGame()) {
+            return createRealInfo(dbLevel);
         } else {
-            return createSimulationInfo(dbUserStage);
+            return createSimulationInfo(dbLevel);
         }
     }
 
-    private GameInfo createRealInfo() {
+    private GameInfo createRealInfo(DbLevel dbLevel) {
         try {
+            baseService.continueBase();
             RealityInfo realityInfo = new RealityInfo();
             setCommonInfo(realityInfo, userService, itemService, mgmtService);
-            realityInfo.setBase(baseService.continueOrCreateBase().getSimpleBase());
+            realityInfo.setBase(baseService.getBase().getSimpleBase());
             realityInfo.setAccountBalance(baseService.getBase().getAccountBalance());
             realityInfo.setAllowedItemTypes(serverMarketService.getAllowedItemTypes());
             realityInfo.setXp(serverMarketService.getXp());
             realityInfo.setEnergyConsuming(serverEnergyService.getConsuming());
             realityInfo.setEnergyGenerating(serverEnergyService.getGenerating());
-            realityInfo.setTerrainSettings(terrainService.getTerrainSettings());
-            realityInfo.setTerrainImagePositions(terrainService.getTerrainImagePositions());
-            realityInfo.setTerrainImages(terrainService.getTerrainImages());
-            realityInfo.setSurfaceRects(terrainService.getSurfaceRects());
-            realityInfo.setSurfaceImages(terrainService.getSurfaceImages());
-            realityInfo.setLevel(userGuidanceService.getLevel4Base());
+            terrainService.setupTerrain(realityInfo, dbLevel);            
+            realityInfo.setLevel(userGuidanceService.getDbLevel().getLevel());
             realityInfo.setTerritories(territoryService.getTerritories());
             realityInfo.setAllBases(baseService.getAllBaseAttributes());
             realityInfo.setItemLimit(baseService.getBase().getItemLimit());
@@ -180,14 +177,14 @@ public class MovableServiceImpl implements MovableService {
         return null;
     }
 
-    private SimulationInfo createSimulationInfo(DbUserStage dbUserStage) {
+    private SimulationInfo createSimulationInfo(DbLevel dbLevel) {
         try {
             SimulationInfo simulationInfo = new SimulationInfo();
             // Common
             setCommonInfo(simulationInfo, userService, itemService, mgmtService);
-            simulationInfo.setTutorialConfig(tutorialService.getTutorialConfig(dbUserStage));
+            simulationInfo.setTutorialConfig(tutorialService.getTutorialConfig(dbLevel));
             // Terrain
-            terrainService.setupTerrain(simulationInfo, dbUserStage);
+            terrainService.setupTerrain(simulationInfo, dbLevel);
             return simulationInfo;
         } catch (Throwable t) {
             log.error("", t);
@@ -237,7 +234,7 @@ public class MovableServiceImpl implements MovableService {
     @Override
     public void surrenderBase() {
         try {
-            baseService.surrenderBase(baseService.getBaseForLoggedInUser());
+            baseService.surrenderBase(baseService.getBase());
             connectionService.closeConnection();
         } catch (Throwable t) {
             log.error("", t);
@@ -254,17 +251,7 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public String getMissionTarget() {
-        try {
-            return userGuidanceService.getMissionTarget4NextLevel(baseService.getBase());
-        } catch (Throwable t) {
-            log.error("", t);
-            return t.toString();
-        }
-    }
-
-    @Override
-    public UserStage sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp) {
+    public Level sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp) {
         try {
             return userTrackingService.onTutorialProgressChanged(type, name, parent, duration, clientTimeStamp);
         } catch (Throwable t) {

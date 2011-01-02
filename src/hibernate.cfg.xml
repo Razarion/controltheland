@@ -72,7 +72,7 @@
         <mapping class="com.btxtech.game.services.utg.DbUserStage"/>
         <mapping class="com.btxtech.game.services.utg.DbItemCount"/>
         <mapping class="com.btxtech.game.services.utg.DbLevelPromotion"/>
-        <mapping class="com.btxtech.game.services.utg.BaseLevelStatus"/>
+        <mapping class="com.btxtech.game.services.utg.UserLevelStatus"/>
         <mapping class="com.btxtech.game.services.utg.DbTutorialProgress"/>
         <mapping class="com.btxtech.game.services.utg.DbEventTrackingStart"/>
         <mapping class="com.btxtech.game.services.utg.DbEventTrackingItem"/>
@@ -81,6 +81,8 @@
         <mapping class="com.btxtech.game.services.utg.DbCommand"/>
         <mapping class="com.btxtech.game.services.utg.DbSelectionTrackingItem"/>
         <mapping class="com.btxtech.game.services.utg.DbScrollTrackingItem"/>
+        <mapping class="com.btxtech.game.services.utg.condition.DbConditionConfig"/>
+        <mapping class="com.btxtech.game.services.utg.condition.DbCountComparisonConfig"/>
         <mapping class="com.btxtech.game.services.forum.AbstractForumEntry"/>
         <mapping class="com.btxtech.game.services.forum.SubForum"/>
         <mapping class="com.btxtech.game.services.forum.Category"/>
@@ -107,9 +109,9 @@
         <mapping class="com.btxtech.game.services.tutorial.condition.DbSendCommandConditionConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.condition.DbScrollConditionConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.condition.DbCockpitButtonConditionConfig"/>
-        <mapping class="com.btxtech.game.services.tutorial.DbItemSpeechBubbleHintConfig"/>
-        <mapping class="com.btxtech.game.services.tutorial.DbResourceHintConfig"/>
-        <mapping class="com.btxtech.game.services.tutorial.DbTerrainPositionSpeechBubbleHintConfig"/>
-        <mapping class="com.btxtech.game.services.tutorial.DbCockpitSpeechBubbleHintConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.hint.DbItemSpeechBubbleHintConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.hint.DbResourceHintConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.hint.DbTerrainPositionSpeechBubbleHintConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.hint.DbCockpitSpeechBubbleHintConfig"/>
     </session-factory>
 </hibernate-configuration>

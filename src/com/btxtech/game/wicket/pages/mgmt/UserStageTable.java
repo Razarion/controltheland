@@ -60,7 +60,8 @@ public class UserStageTable extends WebPage {
 
             @Override
             protected CrudServiceHelper<DbUserStage> getCrudServiceHelper() {
-                return userGuidanceService.getUserStageCrudServiceHelper();
+                // TODO return userGuidanceService.getUserStageCrudServiceHelper(); 
+                return null;
             }
 
             @Override

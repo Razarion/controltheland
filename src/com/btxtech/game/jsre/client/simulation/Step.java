@@ -13,16 +13,7 @@
 
 package com.btxtech.game.jsre.client.simulation;
 
-import com.btxtech.game.jsre.client.cockpit.Group;
-import com.btxtech.game.jsre.client.simulation.condition.AbstractCondition;
-import com.btxtech.game.jsre.client.simulation.condition.ConditionFactory;
-import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.tutorial.StepConfig;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * User: beat
@@ -31,67 +22,14 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class Step {
     private StepConfig stepConfig;
-    private AbstractCondition condition;
 
-    public Step(StepConfig stepConfig, TutorialGui tutorialGui) {
+    public Step(StepConfig stepConfig) {
         this.stepConfig = stepConfig;
-        condition = ConditionFactory.createCondition(stepConfig.getAbstractConditionConfig());
+        SimulationConditionServiceImpl.getInstance().activateCondition(stepConfig.getConditionConfig(), null);
     }
 
     public StepConfig getStepConfig() {
         return stepConfig;
     }
 
-    public void onOwnSelectionChanged(Group selectedGroup) {
-        if (condition != null && condition.isFulfilledSelection(selectedGroup)) {
-            condition = null;
-        }
-    }
-
-    public void onSendCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
-        if (condition != null && condition.isFulfilledSendCommand(syncItem, baseCommand)) {
-            condition = null;
-        }
-    }
-
-    public void onSyncItemDeactivated(SyncTickItem deactivatedItem) {
-        if (condition != null && condition.isFulfilledSyncItemDeactivated(deactivatedItem)) {
-            condition = null;
-        }
-    }
-
-
-    public void onSyncItemKilled(SyncItem killedItem, SimpleBase actor) {
-        if (condition != null && condition.isFulfilledItemsKilled(killedItem, actor)) {
-            condition = null;
-        }
-    }
-
-    public void onItemBuilt(SyncBaseItem syncBaseItem) {
-        if (condition != null && condition.isFulfilledItemBuilt(syncBaseItem)) {
-            condition = null;
-        }
-    }
-
-    public void onDeposit() {
-        if (condition != null && condition.isFulfilledHarvest()) {
-            condition = null;
-        }
-    }
-
-    public void onScroll() {
-        if (condition != null && condition.isFulfilledScroll()) {
-            condition = null;
-        }
-    }
-
-    public void onClickCockpitButton(Widget widget) {
-        if (condition != null && condition.isFulfilledCockpitButton(widget)) {
-            condition = null;
-        }
-    }
-
-    public boolean isFulFilled() {
-        return condition == null;
-    }
 }

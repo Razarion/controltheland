@@ -11,13 +11,16 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.tutorial;
+package com.btxtech.game.jsre.common.level;
 
 /**
  * User: beat
- * Date: 28.07.2010
- * Time: 17:08:29
+ * Date: 28.12.2010
+ * Time: 12:00:38
  */
-public interface ResourceHintManager {
-    int addResource(DbResourceHintConfig dbResourceHintConfig);
+public class ScopeAndLimitService {
+    public void activate(Level level) {
+        Scope scope = level.getScope();
+        Limitation limitation = level.getLimitation();
+    }
 }

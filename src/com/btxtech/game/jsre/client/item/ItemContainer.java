@@ -25,7 +25,7 @@ import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.effects.ExplosionHandler;
-import com.btxtech.game.jsre.client.simulation.Simulation;
+import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
@@ -231,7 +231,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         } else {
             definitelyKillItem(ClientSyncItem, explode);
         }
-        Simulation.getInstance().onSyncItemKilled(killedItem, actor);
+        SimulationConditionServiceImpl.getInstance().onSyncItemKilled(actor, killedItem);
     }
 
     private void makeItemSeeminglyDead(SyncItem syncItem, SimpleBase actor, ClientSyncItem ClientSyncItem) {

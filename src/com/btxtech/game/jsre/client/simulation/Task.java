@@ -14,20 +14,13 @@
 package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
-import com.btxtech.game.jsre.client.simulation.condition.AbstractCondition;
-import com.btxtech.game.jsre.client.simulation.condition.ConditionFactory;
+import com.btxtech.game.jsre.client.simulation.hint.Hint;
+import com.btxtech.game.jsre.client.simulation.hint.HintFactory;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
-import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.tutorial.HintConfig;
 import com.btxtech.game.jsre.common.tutorial.StepConfig;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
-import com.google.gwt.user.client.ui.Widget;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -39,23 +32,19 @@ import java.util.List;
  */
 public class Task {
     private TaskConfig taskConfig;
-    private TutorialGui tutorialGui;
     private Step activeStep;
     private Collection<Hint> stepGraphicHints = new ArrayList<Hint>();
     private Collection<Hint> taskGraphicHints = new ArrayList<Hint>();
-    private AbstractCondition completionCondition;
     private long stepTime;
 
-    public Task(TaskConfig taskConfig, TutorialGui tutorialGui) {
+    public Task(TaskConfig taskConfig) {
         this.taskConfig = taskConfig;
-        this.tutorialGui = tutorialGui;
         start();
     }
 
     private void start() {
         ClientItemTypeAccess.getInstance().setAllowedItemTypes(taskConfig.getAllowedItemTypes());
         ClientBase.getInstance().setAccountBalance(taskConfig.getAccountBalance());
-        completionCondition = ConditionFactory.createCondition(taskConfig.getCompletionConditionConfig());
         runNextStep();
     }
 
@@ -63,94 +52,11 @@ public class Task {
         return taskConfig;
     }
 
-    public void onOwnSelectionChanged(Group selectedGroup) {
-        if (activeStep != null) {
-            activeStep.onOwnSelectionChanged(selectedGroup);
-            checkForCompletion();
-        }
-        if (completionCondition != null && completionCondition.isFulfilledSelection(selectedGroup)) {
-            taskFinished();
-        }
-    }
-
-    public void onSendCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
-        if (activeStep != null) {
-            activeStep.onSendCommand(syncItem, baseCommand);
-            checkForCompletion();
-        }
-        if (completionCondition != null && completionCondition.isFulfilledSendCommand(syncItem, baseCommand)) {
-            taskFinished();
-        }
-    }
-
-    public void onSyncItemDeactivated(SyncTickItem deactivatedItem) {
-        if (activeStep != null) {
-            activeStep.onSyncItemDeactivated(deactivatedItem);
-            checkForCompletion();
-        }
-        if (completionCondition != null && completionCondition.isFulfilledSyncItemDeactivated(deactivatedItem)) {
-            taskFinished();
-        }
-    }
-
-    public void onSyncItemKilled(SyncItem killedItem, SimpleBase actor) {
-        if (activeStep != null) {
-            activeStep.onSyncItemKilled(killedItem, actor);
-            checkForCompletion();
-        }
-        if (completionCondition != null && completionCondition.isFulfilledItemsKilled(killedItem, actor)) {
-            taskFinished();
-        }
-    }
-
-    public void onItemBuilt(SyncBaseItem syncBaseItem) {
-        if (activeStep != null) {
-            activeStep.onItemBuilt(syncBaseItem);
-            checkForCompletion();
-        }
-        if (completionCondition != null && completionCondition.isFulfilledItemBuilt(syncBaseItem)) {
-            taskFinished();
-        }
-    }
-
-    public void onDeposit() {
-        if (activeStep != null) {
-            activeStep.onDeposit();
-            checkForCompletion();
-        }
-        if (completionCondition != null && completionCondition.isFulfilledHarvest()) {
-            taskFinished();
-        }
-    }
-
-    public void onScroll() {
-        if (activeStep != null) {
-            activeStep.onScroll();
-            checkForCompletion();
-        }
-        if (completionCondition != null && completionCondition.isFulfilledScroll()) {
-            taskFinished();
-        }
-    }
-
-    public void onClickCockpitButton(Widget widget) {
-        if (activeStep != null) {
-            activeStep.onClickCockpitButton(widget);
-            checkForCompletion();
-        }
-        if (completionCondition != null && completionCondition.isFulfilledCockpitButton(widget)) {
-            taskFinished();
-        }
-    }
-
-    private void runNextStep() {
+    public void runNextStep() {
         disposeAllStepHints();
         StepConfig stepConfig;
         List<StepConfig> stepConfigs = taskConfig.getStepConfigs();
         if (stepConfigs.isEmpty()) {
-            if (completionCondition == null) {
-                taskFinished();
-            }
             activeStep = null;
             return;
         }
@@ -160,9 +66,6 @@ public class Task {
             if (stepConfigs.size() > index) {
                 stepConfig = stepConfigs.get(index);
             } else {
-                if (completionCondition == null) {
-                    taskFinished();
-                }
                 activeStep = null;
                 return;
             }
@@ -170,6 +73,23 @@ public class Task {
             stepConfig = stepConfigs.get(0);
         }
         runNextStep(stepConfig);
+    }
+
+    private void runNextStep(StepConfig stepConfig) {
+        if (activeStep != null) {
+            long time = System.currentTimeMillis();
+            ClientUserTracker.getInstance().onStepFinished(activeStep, this, time - stepTime, time);
+        }
+        stepTime = System.currentTimeMillis();
+        for (HintConfig hintConfig : stepConfig.getGraphicHintConfigs()) {
+            Hint hint = HintFactory.createHint(hintConfig);
+            if (hintConfig.isCloseOnTaskEnd()) {
+                taskGraphicHints.add(hint);
+            } else {
+                stepGraphicHints.add(hint);
+            }
+        }
+        activeStep = new Step(stepConfig);
     }
 
     private void disposeAllStepHints() {
@@ -186,39 +106,13 @@ public class Task {
         taskGraphicHints.clear();
     }
 
-    private void runNextStep(StepConfig stepConfig) {
-        stepTime = System.currentTimeMillis();
-        for (HintConfig hintConfig : stepConfig.getGraphicHintConfigs()) {
-            Hint hint = HintFactory.createHint(hintConfig);
-            if (hintConfig.isCloseOnTaskEnd()) {
-                taskGraphicHints.add(hint);
-            } else {
-                stepGraphicHints.add(hint);
-            }
-        }
-        activeStep = new Step(stepConfig, tutorialGui);
+    public boolean isFulfilled() {
+        return activeStep == null;
     }
 
-    private void checkForCompletion() {
-        if (activeStep.isFulFilled()) {
-            long time = System.currentTimeMillis();
-            ClientUserTracker.getInstance().onStepFinished(activeStep, this, time - stepTime, time);
-            runNextStep();
-        }
-    }
-
-    private void taskFinished() {
-        cleanup();
-    }
-
-    private void cleanup() {
+    public void cleanup() {
         disposeAllTaskHints();
         disposeAllStepHints();
         activeStep = null;
-        completionCondition = null;
-    }
-
-    public boolean isFulFilled() {
-        return activeStep == null && completionCondition == null;
     }
 }

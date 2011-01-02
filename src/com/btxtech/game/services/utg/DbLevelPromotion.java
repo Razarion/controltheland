@@ -14,6 +14,7 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.services.base.Base;
+import com.btxtech.game.services.user.User;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,10 +36,7 @@ public class DbLevelPromotion {
     private long timeStamp;
     private String sessionId;
     private String level;
-    private String targetLevel;
-    private String base;
     private String user;
-    private String interimPromotion;
 
     /**
      * Used by Hibernate
@@ -46,23 +44,10 @@ public class DbLevelPromotion {
     public DbLevelPromotion() {
     }
 
-    public DbLevelPromotion(String sessionId, Base base, String baseName,  DbLevel oldLevel) {
+    public DbLevelPromotion(String sessionId, User user, DbLevel oldLevel) {
         this.sessionId = sessionId;
-        level = oldLevel != null ? oldLevel.getName() : null;
-        targetLevel = base.getBaseLevelStatus().getCurrentLevel().getName();
-        this.base = baseName;
-        user = base.getUser() != null ? base.getUser().getName() : null;
-        niceTimeStamp = new Date();
-        timeStamp = niceTimeStamp.getTime();
-    }
-
-    public DbLevelPromotion(String sessionId, Base base, String baseName, String targetLevel, String interimPromotion) {
-        this.sessionId = sessionId;
-        level = base.getBaseLevelStatus().getCurrentLevel().getName();
-        this.targetLevel = targetLevel;
-        this.base = baseName;
-        this.interimPromotion = interimPromotion;
-        user = base.getUser() != null ? base.getUser().getName() : null;
+        level = oldLevel.getName();
+        this.user = user.getName();
         niceTimeStamp = new Date();
         timeStamp = niceTimeStamp.getTime();
     }

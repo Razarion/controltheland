@@ -325,6 +325,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         }
     }
 
+    // TODO change to a DB property service
     @Override
     public StartupData getStartupData() {
         if (startupData == null) {
@@ -334,12 +335,6 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
                 log.info("Startup data does not exist. Create default.");
                 startupData = new StartupData();
                 startupData.setRegisterDialogDelay(2 * 60);
-                startupData.setStartMoney(1000);
-                startupData.setTutorialTimeout(3 * 60);
-                startupData.setUserActionCollectionTime(5 * 60);
-                startupData.setStartRectangle(new Rectangle(0, 0, 1000, 1000));
-                startupData.setStartItemFreeRange(200);
-                startupData.setItemSellFactor(0.01);
                 saveStartupData(startupData);
             } else if (startups.size() > 1) {
                 log.error("More than one startup data detected.");

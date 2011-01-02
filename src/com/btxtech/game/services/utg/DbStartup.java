@@ -39,7 +39,7 @@ public class DbStartup implements Serializable {
     private Integer id;
     @Column(nullable = false)
     private Date timeStamp;
-    private String userStage;
+    private String level;
     @Column(nullable = false)
     private String sessionId;
     private long startupDuration;
@@ -56,9 +56,9 @@ public class DbStartup implements Serializable {
     public DbStartup() {
     }
 
-    public DbStartup(long startupDuration, long clientTimeStamp, DbUserStage userStage, String sessionId) {
+    public DbStartup(long startupDuration, long clientTimeStamp, DbLevel level, String sessionId) {
         this.clientTimeStamp = clientTimeStamp;
-        this.userStage = userStage.getName();
+        this.level = level.getName();
         this.sessionId = sessionId;
         this.startupDuration = startupDuration;
         timeStamp = new Date();
@@ -91,8 +91,8 @@ public class DbStartup implements Serializable {
         dbStartupTasks.add(dbStartupTask);
     }
 
-    public String getUserStage() {
-        return userStage;
+    public String getLevel() {
+        return level;
     }
 
     @Override

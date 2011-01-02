@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client;
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
+import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.UserMessage;
@@ -232,18 +233,18 @@ public class Connection implements AsyncCallback<Void> {
         commandQueue.clear();
     }
 
-    public void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp, final ParametrisedRunnable<UserStage> runnable) {
+    public void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp, final ParametrisedRunnable<Level> runnable) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.sendTutorialProgress(type, name, parent, duration, clientTimeStamp, new AsyncCallback<UserStage>() {
+            movableServiceAsync.sendTutorialProgress(type, name, parent, duration, clientTimeStamp, new AsyncCallback<Level>() {
                 @Override
                 public void onFailure(Throwable caught) {
                     GwtCommon.handleException(caught);
                 }
 
                 @Override
-                public void onSuccess(UserStage userStage) {
+                public void onSuccess(Level level) {
                     if (runnable != null) {
-                        runnable.run(userStage);
+                        runnable.run(level);
                     }
                 }
             });
@@ -276,25 +277,6 @@ public class Connection implements AsyncCallback<Void> {
             movableServiceAsync.sendStartupInfo(infos, totalTime, this);
         }
     }
-
-    public void getMissionTarget(final MissionTarget missionTargetDialog) {
-        if (movableServiceAsync != null) {
-            movableServiceAsync.getMissionTarget(new AsyncCallback<String>() {
-                @Override
-                public void onFailure(Throwable caught) {
-                    missionTargetDialog.setNoConnection(caught);
-                }
-
-                @Override
-                public void onSuccess(String result) {
-                    missionTargetDialog.setMissionTarget(result);
-                }
-            });
-        } else {
-            missionTargetDialog.setNoConnection(null);
-        }
-    }
-
 
     public void sendSellItem(SyncItem syncItem) {
         if (!syncItem.getId().isSynchronized()) {

@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.tutorial;
+package com.btxtech.game.services.tutorial.hint;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.tutorial.HintConfig;

@@ -75,8 +75,8 @@ public class UserPage extends BasePage {
             viewUser = userService.getUser(viewUserName);
         }
 
-        User loggedinUser = userService.getLoggedinUser();
-        if (loggedinUser != null) {
+        User loggedinUser = userService.getUser();
+        if (loggedinUser.isLoggedIn()) {
             if (viewUser == null) {
                 // Clicks on mySite from menu
                 canEditSite = true;

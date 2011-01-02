@@ -14,7 +14,6 @@
 package com.btxtech.game.services.base.impl;
 
 import com.btxtech.game.jsre.client.AlreadyUsedException;
-import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
@@ -24,7 +23,7 @@ import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.XpBalancePacket;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
@@ -51,9 +50,10 @@ import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.mgmt.MgmtService;
-import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.DbScope;
+import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.ArrayList;
@@ -102,6 +102,8 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     private MgmtService mgmtService;
     @Autowired
     private BotService botService;
+    @Autowired
+    private ServerConditionService serverConditionService;
     private final HashMap<SimpleBase, Base> bases = new HashMap<SimpleBase, Base>();
     private int lastBaseId = 0;
     private HibernateTemplate hibernateTemplate;
@@ -126,7 +128,8 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         }
     }
 
-    private Base createNewBase() throws AlreadyUsedException, NoSuchItemTypeException, GameFullException, ItemLimitExceededException, HouseSpaceExceededException {
+    @Override
+    public Base createNewBase() throws AlreadyUsedException, NoSuchItemTypeException, GameFullException, ItemLimitExceededException, HouseSpaceExceededException {
         synchronized (bases) {
             List<BaseColor> baseColors = getFreeBaseColors(0, 1);
             if (baseColors.isEmpty()) {
@@ -136,48 +139,35 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         }
     }
 
-    @Override
-    public Base continueOrCreateBase() throws AlreadyUsedException, NoSuchItemTypeException, GameFullException, ItemLimitExceededException, HouseSpaceExceededException {
-        if (userService.isLoggedin()) {
-            Base base = getBaseForLoggedInUser();
-            if (base != null) {
-                continueBase();
-                return base;
-            }
-        }
-        return createNewBase();
-    }
-
     private Base createNewBase(BaseColor baseColor) throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
+        DbScope dbScope = userGuidanceService.getDbScope();
         Base base;
-        ItemType constructionVehicle = itemService.getItemType(Constants.CONSTRUCTION_VEHICLE);
         synchronized (bases) {
             lastBaseId++;
-            base = new Base(baseColor, userService.getLoggedinUser(), lastBaseId);
+            base = new Base(baseColor, userService.getUser(), lastBaseId);
             createBase(base.getSimpleBase(), setupBaseName(base), base.getBaseColor().getHtmlColor(), false);
             log.info("Base created: " + base);
-            base.setAccountBalance(mgmtService.getStartupData().getStartMoney());
+            base.setAccountBalance(dbScope.getMoney());
             bases.put(base.getSimpleBase(), base);
         }
-        userGuidanceService.setupLevel4NewBase(base);
-        base.setUser(userService.getLoggedinUser());
+        BaseItemType startItem = (BaseItemType) itemService.getItemType(dbScope.getStartItem());
         sendBaseChangedPacket(BaseChangedPacket.Type.CREATED, base.getSimpleBase());
         connectionService.createConnection(base);
         base.setUserItemTypeAccess(serverMarketService.getUserItemTypeAccess());
-        StartupData startupData = mgmtService.getStartupData();
-        Index startPoint = collisionService.getFreeRandomPosition(constructionVehicle, startupData.getStartRectangle(), startupData.getStartItemFreeRange());
-        SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(constructionVehicle, startPoint, null, base.getSimpleBase(), 0);
+        Index startPoint = collisionService.getFreeRandomPosition(startItem, dbScope.getStartRectangle(), dbScope.getStartItemFreeRange());
+        SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(startItem, startPoint, null, base.getSimpleBase(), 0);
         syncBaseItem.setBuildup(1.0);
-        syncBaseItem.getSyncTurnable().setAngel(Math.PI / 4.0); // Cosmetis shows vehicle from side
-        historyService.addBaseStartEntry(base.getSimpleBase());
-        if (userService.getLoggedinUser() != null) {
-            userTrackingService.onBaseCreated(userService.getLoggedinUser(), base);
+        if (syncBaseItem.hasSyncTurnable()) {
+            syncBaseItem.getSyncTurnable().setAngel(Math.PI / 4.0); // Cosmetics shows vehicle from side
         }
+        historyService.addBaseStartEntry(base.getSimpleBase());
+        userTrackingService.onBaseCreated(userService.getUser(), base);
         return base;
     }
 
-    private void continueBase() {
-        Base base = getBaseForLoggedInUser();
+    @Override
+    public void continueBase() {
+        Base base = getBase();
         if (base == null) {
             throw new IllegalStateException("User does not have any running base");
         }
@@ -198,10 +188,8 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
                 base = new Base(baseColors.get(0), user, lastBaseId);
                 createBase(base.getSimpleBase(), setupBaseName(base), base.getBaseColor().getHtmlColor(), false);
                 log.info("Bot Base created: " + base);
-                base.setAccountBalance(mgmtService.getStartupData().getStartMoney());
                 bases.put(base.getSimpleBase(), base);
             }
-            userGuidanceService.setupLevel4NewBase(base);
             base.setUser(user);
             base.setUserItemTypeAccess(user.getUserItemTypeAccess());
             return base;
@@ -218,7 +206,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             removeBase(base.getSimpleBase());
             serverEnergyService.onBaseKilled(base);
         }
-        userGuidanceService.onBaseDeleted(base);
+        serverConditionService.onBaseDeleted(base.getSimpleBase());
     }
 
     @Override
@@ -407,15 +395,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public Base getBaseForLoggedInUser() {
-        User user = userService.getLoggedinUser();
-        if (user == null) {
-            return null;
-        }
-        return getBase(user);
-    }
-
-    @Override
     public User getUser(SimpleBase simpleBase) {
         Base base = getBase(simpleBase);
         return base.getUser();
@@ -477,7 +456,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         Base base = getBase(simpleBase);
         if (!isBot(simpleBase)) {
             base.depositMoney(price);
-            userGuidanceService.onMoneyIncrease(base);
+            serverConditionService.onMoneyIncrease(base.getSimpleBase(), base.getAccountBalance());
         }
     }
 
@@ -535,6 +514,9 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             case BUILD: {
                 if (((SyncBaseItem) syncItem).hasSyncHouse() && ((SyncBaseItem) syncItem).isReady()) {
                     handleHouseSpaceChanged(getBase((SyncBaseItem) syncItem));
+                }
+                if (((SyncBaseItem) syncItem).isReady()) {
+                    serverConditionService.onSyncItemBuilt((SyncBaseItem) syncItem);
                 }
                 break;
             }

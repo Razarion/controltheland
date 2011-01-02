@@ -57,9 +57,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean login(String name, String password) {
-        if (session.getUser() != null) {
-            throw new IllegalStateException("The user is already logged in: " + session.getUser());
+        if (getUser().isLoggedIn()) {
+            throw new IllegalStateException("The user is already logged in: " + getUser());
         }
+
         User user = getUser(name);
         if (user == null) {
             return false;
@@ -74,31 +75,47 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isLoggedin() {
-        return session.getUser() != null;
+        return getUser().isLoggedIn();
+    }
+
+    private void loginUser(User user, boolean keepGame) {
+        if (keepGame) {
+            baseService.onUserRegistered(user);
+            serverMarketService.setUserItemTypeAccess(user, serverMarketService.getUserItemTypeAccess());
+        } else {
+            session.setUser(user);
+        }
+        user.setLoggedIn(true);
+        user.setLastLoginDate(new Date());
+        save(user);
+        try {
+            userTrackingService.onUserLoggedIn(user, baseService.getBase());
+        } catch (NoConnectionException e) {
+            // Ignore
+            userTrackingService.onUserLoggedIn(user, null);
+        }
+
     }
 
     @Override
-    public User getLoggedinUser() {
-        return session.getUser();
-    }
-
-    @Override
-    public User getLoggedinUserOrException() {
-        User user = getLoggedinUser();
+    public User getUser() {
+        User user = session.getUser();
         if (user == null) {
-            throw new RuntimeException("User is not logged in");
+            user = new User();
+            userGuidanceService.setLevelForNewUser(user);
+            session.setUser(user);
         }
         return user;
     }
 
     @Override
     public void logout() {
-        if (session.getUser() == null) {
-            throw new IllegalStateException("The user is not logged in");
+        if (!getUser().isLoggedIn()) {
+            throw new IllegalStateException("The user is not logged in: " + getUser());
         }
-        session.clearGame();
-        serverMarketService.clearSession();
-        userTrackingService.onUserLoggedOut(session.getUser());
+
+        getUser().setLoggedIn(false);
+        session.setUser(null);
     }
 
     @SuppressWarnings("unchecked")
@@ -139,6 +156,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void createUserAndLoggin(String name, String password, String confirmPassword, String email, boolean keepGame) throws UserAlreadyExistsException, PasswordNotMatchException {
+        User user = getUser();
+        if(user.isLoggedIn()) {
+            throw new IllegalStateException("The user is already logged in: " + getUser());
+        }
+
         if (getUser(name) != null) {
             throw new UserAlreadyExistsException();
         }
@@ -146,14 +168,15 @@ public class UserServiceImpl implements UserService {
         if (!password.equals(confirmPassword)) {
             throw new PasswordNotMatchException();
         }
-        User user = createAndSaveUser(name, password, email);
+        user.registerUser(name, password, email);
+        userTrackingService.onUserCreated(user);
         loginUser(user, keepGame);
+        save(user);
     }
 
     @Override
     public boolean isAuthorized(ArqEnum arq) {
-        User user = session.getUser();
-        return user != null && user.hasArq(getArq(arq));
+        return getUser().hasArq(getArq(arq));
     }
 
     @Override
@@ -167,39 +190,4 @@ public class UserServiceImpl implements UserService {
     public Arq getArq(ArqEnum arq) {
         return (Arq) hibernateTemplate.get(Arq.class, arq.name());
     }
-
-    private User createAndSaveUser(String name, String password, String email) {
-        User user = new User();
-        user.setName(name);
-        user.setPassword(password);
-        user.setEmail(email);
-        user.setRegisterDate(new Date());
-        user.addArq(getArq(ArqEnum.FORUM_POST));
-        userGuidanceService.onUserCreated(user);
-        save(user);
-
-        userTrackingService.onUserCreated(user);
-        return user;
-    }
-
-    private void loginUser(User user, boolean keepGame) {
-        if (keepGame) {
-            baseService.onUserRegistered(user);
-            serverMarketService.setUserItemTypeAccess(user, serverMarketService.getUserItemTypeAccess());
-        } else {
-            session.clearGame();
-            serverMarketService.clearSession();
-        }
-        session.setUser(user);
-        user.setLastLoginDate(new Date());
-        save(user);
-        try {
-            userTrackingService.onUserLoggedIn(user, baseService.getBase());
-        } catch (NoConnectionException e) {
-            // Ignore
-            userTrackingService.onUserLoggedIn(user, null);
-        }
-
-    }
-
 }

@@ -11,10 +11,11 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.tutorial;
+package com.btxtech.game.services.tutorial.hint;
 
 import com.btxtech.game.jsre.common.tutorial.HintConfig;
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.tutorial.DbStepConfig;
 import java.io.Serializable;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;

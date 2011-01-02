@@ -10423,7 +10423,7 @@ tinymce.create('tinymce.ui.Toolbar:tinymce.ui.Container', {
 
 				// Remove all events
 
-				// Don't clear the window or document if content editable
+				// Don't cleanup the window or document if content editable
 				// is enabled since other instances might still be present
 				if (!t.settings.content_editable) {
 					Event.clear(t.getWin());
@@ -13751,7 +13751,7 @@ tinymce.create('tinymce.ui.Toolbar:tinymce.ui.Container', {
 						}
 					});
 
-					// Always unbind and clear pending styles on keyup
+					// Always unbind and cleanup pending styles on keyup
 					if (e.type == 'keyup') {
 						unbind();
 						resetPending();

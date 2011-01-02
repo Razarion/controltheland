@@ -14,7 +14,10 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.tutorial.DbTutorialConfig;
+import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
@@ -28,7 +31,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 import org.hibernate.annotations.Cascade;
 
 /**
@@ -37,14 +43,14 @@ import org.hibernate.annotations.Cascade;
  * Time: 12:20:32
  */
 @Entity(name = "GUIDANCE_LEVEL")
-public class DbLevel implements Serializable {
+public class DbLevel implements CrudChild, Serializable {
     @Id
     @GeneratedValue
     private Integer id;
     @Column(unique = true)
     private String name;
     @Column(unique = true)
-    private int rank;
+    private int orderIndex;
     @Column(length = 50000)
     private String missionTarget;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "dbLevel")
@@ -62,6 +68,14 @@ public class DbLevel implements Serializable {
     private Set<DbBaseItemType> skipIfItemsBought;
     private int itemLimit;
     private int houseSpace;
+    private boolean realGame;
+    @Transient
+    private Level level;
+    private String html;
+    @OneToOne(fetch = FetchType.EAGER)
+    private DbConditionConfig dbConditionConfig;
+    @ManyToOne
+    private DbTutorialConfig dbTutorialConfig;
 
     public String getName() {
         return name;
@@ -71,12 +85,14 @@ public class DbLevel implements Serializable {
         this.name = name;
     }
 
-    public int getRank() {
-        return rank;
+    @Override
+    public void init() {
+        // Ignore
     }
 
-    public void setRank(int rank) {
-        this.rank = rank;
+    @Override
+    public void setParent(Object o) {
+        // Ignore
     }
 
     public String getMissionTarget() {
@@ -160,6 +176,18 @@ public class DbLevel implements Serializable {
         this.houseSpace = houseSpace;
     }
 
+    public DbTutorialConfig getDbTutorialConfig() {
+        return dbTutorialConfig;
+    }
+
+    public void setDbTutorialConfig(DbTutorialConfig dbTutorialConfig) {
+        this.dbTutorialConfig = dbTutorialConfig;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
     public Level createLevel() {
         Level level = new Level();
         level.setName(name);
@@ -180,5 +208,42 @@ public class DbLevel implements Serializable {
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
+    }
+
+    public boolean isRealGame() {
+        return realGame;
+    }
+
+    public void setRealGame(boolean realGame) {
+        this.realGame = realGame;
+    }
+
+    public Level getLevel() {
+        return level;
+    }
+
+    public DbScope getDbScope() {
+        return null;  //To change body of created methods use File | Settings | File Templates.
+    }
+
+    public String getHtml() {
+        return html;
+    }
+
+    public DbConditionConfig getDbConditionConfig() {
+        return dbConditionConfig;
+    }
+
+    public int getOrderIndex() {
+        return orderIndex;
+    }
+
+    public void setOrderIndex(int orderIndex) {
+        this.orderIndex = orderIndex;
+    }
+
+    @Override
+    public String toString() {
+        return "DbLevel: " + name + " real game: " + isRealGame();
     }
 }

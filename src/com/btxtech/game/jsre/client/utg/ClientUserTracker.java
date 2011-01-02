@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.ParametrisedRunnable;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
+import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.control.ClientRunner;
 import com.btxtech.game.jsre.client.simulation.Step;
 import com.btxtech.game.jsre.client.simulation.Task;
@@ -72,7 +73,7 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
         });
     }
 
-    public void onTutorialFinished(long duration, long clientTimeStamp, ParametrisedRunnable<UserStage> runnable) {
+    public void onTutorialFinished(long duration, long clientTimeStamp, ParametrisedRunnable<Level> runnable) {
         Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, null, null, duration, clientTimeStamp, runnable);
     }
 

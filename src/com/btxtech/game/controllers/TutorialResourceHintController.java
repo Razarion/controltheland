@@ -14,7 +14,7 @@
 package com.btxtech.game.controllers;
 
 import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.services.tutorial.DbResourceHintConfig;
+import com.btxtech.game.services.tutorial.hint.DbResourceHintConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import java.io.IOException;
 import java.io.OutputStream;

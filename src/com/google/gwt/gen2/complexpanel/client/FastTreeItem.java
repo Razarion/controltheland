@@ -258,7 +258,7 @@ public class FastTreeItem extends UIObject implements HasFastTreeItems, HasHTML 
         }
       }
 
-      // clear element
+      // cleanup element
       contentElement.getParentElement().removeChild(contentElement);
       getElement().setInnerHTML("");
 

@@ -15,7 +15,7 @@ package com.btxtech.game.services.terrain.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.common.info.SimulationInfo;
+import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
@@ -34,7 +34,8 @@ import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.services.terrain.DbTerrainImagePosition;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainService;
-import com.btxtech.game.services.utg.DbUserStage;
+import com.btxtech.game.services.tutorial.DbTutorialConfig;
+import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,17 +56,17 @@ import org.springframework.transaction.annotation.Transactional;
  * Time: 11:56:20 AM
  */
 public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements TerrainService {
-    private HibernateTemplate hibernateTemplate;
-    private HashMap<Integer, DbTerrainImage> dbTerrainImages = new HashMap<Integer, DbTerrainImage>();
-    private HashMap<Integer, DbSurfaceImage> dbSurfaceImages = new HashMap<Integer, DbSurfaceImage>();
     @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired
     private CollisionService collisionService;
     @Autowired
     private ItemService itemService;
+    private HibernateTemplate hibernateTemplate;
+    private HashMap<Integer, DbTerrainImage> dbTerrainImages = new HashMap<Integer, DbTerrainImage>();
+    private HashMap<Integer, DbSurfaceImage> dbSurfaceImages = new HashMap<Integer, DbSurfaceImage>();
     private CrudServiceHelper<DbTerrainSetting> dbTerrainSettingCrudServiceHelper;
-    private Log lgo = LogFactory.getLog(TerrainServiceImpl.class);
+    private Log log = LogFactory.getLog(TerrainServiceImpl.class);
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -86,22 +87,21 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
         try {
             // Terrain settings
-            DbUserStage dbUserStage = userGuidanceService.getDbUserStage4RealGame();
-            if (dbUserStage.getDbTerrainSetting() == null) {
-                lgo.error("No DbTerrainSetting for real game");
+            DbTerrainSetting dbTerrainSetting = getDbTerrainSetting4RealGame();
+            if (dbTerrainSetting == null) {
                 return;
             }
-            setTerrainSettings(dbUserStage.getDbTerrainSetting().createTerrainSettings());
+            setTerrainSettings(dbTerrainSetting.createTerrainSettings());
 
             // Terrain image position
             setTerrainImagePositions(new ArrayList<TerrainImagePosition>());
-            for (DbTerrainImagePosition dbTerrainImagePosition : dbUserStage.getDbTerrainSetting().getDbTerrainImagePositionCrudServiceHelper().readDbChildren()) {
+            for (DbTerrainImagePosition dbTerrainImagePosition : dbTerrainSetting.getDbTerrainImagePositionCrudServiceHelper().readDbChildren()) {
                 addTerrainImagePosition(dbTerrainImagePosition.createTerrainImagePosition());
             }
 
             // Surface rectangles
             setSurfaceRects(new ArrayList<SurfaceRect>());
-            for (DbSurfaceRect dbSurfaceRect : dbUserStage.getDbTerrainSetting().getDbSurfaceRectCrudServiceHelper().readDbChildren()) {
+            for (DbSurfaceRect dbSurfaceRect : dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().readDbChildren()) {
                 addSurfaceRect(dbSurfaceRect.createSurfaceRect());
             }
 
@@ -128,6 +128,24 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         } finally {
             SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
         }
+    }
+
+    private DbTerrainSetting getDbTerrainSetting4RealGame() {
+        Collection<DbTerrainSetting> dbTerrainSettings = dbTerrainSettingCrudServiceHelper.readDbChildren();
+        DbTerrainSetting realGame = null;
+        for (DbTerrainSetting dbTerrainSetting : dbTerrainSettings) {
+            if (dbTerrainSetting.isRealGame()) {
+                if (realGame != null) {
+                    log.warn("More than one terrain setting for real game detected.");
+                } else {
+                    realGame = dbTerrainSetting;
+                }
+            }
+        }
+        if (realGame == null) {
+            log.warn("No terrain setting for real game detected.");
+        }
+        return realGame;
     }
 
     @Override
@@ -210,7 +228,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         }
 
         hibernateTemplate.saveOrUpdate(dbTerrainSetting);
-        if (userGuidanceService.getDbUserStage4RealGame().getDbTerrainSetting().equals(dbTerrainSetting)) {
+        if (dbTerrainSetting.isRealGame()) {
             loadTerrain();
         }
     }
@@ -324,18 +342,43 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     }
 
     @Override
-    public void setupTerrain(SimulationInfo simulationInfo, DbUserStage dbUserStage) {
-        SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
-        try {
-            DbTerrainSetting reattached = (DbTerrainSetting) hibernateTemplate.get(DbTerrainSetting.class, dbUserStage.getDbTerrainSetting().getId());
-            simulationInfo.setTerrainSettings(reattached.createTerrainSettings());// TODO cache
-            simulationInfo.setTerrainImagePositions(getTerrainImagePositions(reattached)); // TODO cache
-            simulationInfo.setTerrainImages(getTerrainImages());
-            simulationInfo.setSurfaceRects(getSurfaceRects(reattached));// TODO cache
-            simulationInfo.setSurfaceImages(getSurfaceImages());
-        } finally {
-            SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
+    public void setupTerrain(GameInfo gameInfo, DbLevel dbLevel) {
+        if (dbLevel.isRealGame()) {
+            gameInfo.setTerrainSettings(getTerrainSettings());
+            gameInfo.setTerrainImagePositions(getTerrainImagePositions());
+            gameInfo.setTerrainImages(getTerrainImages());
+            gameInfo.setSurfaceRects(getSurfaceRects());
+            gameInfo.setSurfaceImages(getSurfaceImages());
+        } else {
+            SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
+            try {
+                DbTerrainSetting terrainSetting = reattachDbTerrainSetting4Tutorial(dbLevel);
+                gameInfo.setTerrainSettings(terrainSetting.createTerrainSettings());// TODO cache
+                gameInfo.setTerrainImagePositions(getTerrainImagePositions(terrainSetting)); // TODO cache
+                gameInfo.setTerrainImages(getTerrainImages());
+                gameInfo.setSurfaceRects(getSurfaceRects(terrainSetting));// TODO cache
+                gameInfo.setSurfaceImages(getSurfaceImages());
+            } finally {
+                SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
+            }
         }
+    }
+
+    public DbTerrainSetting reattachDbTerrainSetting4Tutorial(DbLevel dbLevel) {
+        if (dbLevel.isRealGame()) {
+            throw new IllegalArgumentException("Level is for real game: " + dbLevel);
+        }
+        hibernateTemplate.load(dbLevel, dbLevel.getId());
+
+        DbTutorialConfig dbTutorialConfig = dbLevel.getDbTutorialConfig();
+        if (dbTutorialConfig == null) {
+            throw new IllegalStateException("No tutorial for level: " + dbLevel);
+        }
+        DbTerrainSetting dbTerrainSetting = dbTutorialConfig.getDbTerrainSetting();
+        if (dbTerrainSetting == null) {
+            throw new IllegalStateException("No terrain for tutorial: " + dbTutorialConfig);
+        }
+        return dbTerrainSetting;
     }
 
     @Override

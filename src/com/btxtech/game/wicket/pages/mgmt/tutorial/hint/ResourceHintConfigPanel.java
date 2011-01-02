@@ -13,15 +13,13 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tutorial.hint;
 
-import com.btxtech.game.services.tutorial.DbResourceHintConfig;
-import org.apache.wicket.markup.html.form.Button;
+import com.btxtech.game.services.tutorial.hint.DbResourceHintConfig;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
 
 /**
  * User: beat

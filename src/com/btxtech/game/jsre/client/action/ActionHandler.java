@@ -24,7 +24,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.item.ItemContainer;
-import com.btxtech.game.jsre.client.simulation.Simulation;
+import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
@@ -99,7 +99,7 @@ public class ActionHandler implements CommonActionService {
                 SyncTickItem activeItem = iterator.next();
                 try {
                     if (!activeItem.tick(factor)) {
-                        Simulation.getInstance().onSyncItemDeactivated(activeItem);
+                        SimulationConditionServiceImpl.getInstance().onSyncItemDeactivated(activeItem);
                         iterator.remove();
                     }
                 } catch (ItemDoesNotExistException ife) {
@@ -502,7 +502,7 @@ public class ActionHandler implements CommonActionService {
     private void executeCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
         Connection.getInstance().addCommandToQueue(baseCommand);
         ClientUserTracker.getInstance().onExecuteCommand(baseCommand);
-        Simulation.getInstance().onSendCommand(syncItem, baseCommand);
+        SimulationConditionServiceImpl.getInstance().onSendCommand(syncItem, baseCommand);
         syncItemActivated(syncItem);
     }
 

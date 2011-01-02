@@ -14,7 +14,7 @@
 package com.btxtech.game.jsre.client.simulation.condition;
 
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
-import com.btxtech.game.jsre.client.simulation.Simulation;
+import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.common.tutorial.condition.CockpitButtonConditionConfig;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FocusWidget;
@@ -31,7 +31,7 @@ public class CockpitButtonCondition extends AbstractCondition {
 
     public CockpitButtonCondition(CockpitButtonConditionConfig cockpitButtonConditionConfig) {
         button = Cockpit.getInstance().getFocusWidget(cockpitButtonConditionConfig.getCockpitButton());
-        handlerRegistration = button.addClickHandler(Simulation.getInstance());
+        handlerRegistration = button.addClickHandler(SimulationConditionServiceImpl.getInstance());
     }
 
     @Override

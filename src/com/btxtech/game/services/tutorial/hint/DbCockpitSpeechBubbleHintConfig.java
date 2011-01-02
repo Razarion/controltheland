@@ -11,15 +11,16 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.tutorial;
+package com.btxtech.game.services.tutorial.hint;
 
+import com.btxtech.game.jsre.common.tutorial.CockpitSpeechBubbleHintConfig;
+import com.btxtech.game.jsre.common.tutorial.CockpitWidgetEnum;
 import com.btxtech.game.jsre.common.tutorial.HintConfig;
-import com.btxtech.game.jsre.common.tutorial.ItemSpeechBubbleHintConfig;
-import com.btxtech.game.services.common.db.IndexUserType;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import org.hibernate.annotations.TypeDef;
+import javax.persistence.ManyToOne;
 
 /**
  * User: beat
@@ -27,22 +28,15 @@ import org.hibernate.annotations.TypeDef;
  * Time: 19:19:28
  */
 @Entity
-@DiscriminatorValue("ITEM_SPEECH_BUBBLE")
-@TypeDef(name = "index", typeClass = IndexUserType.class)
-public class DbItemSpeechBubbleHintConfig extends DbHintConfig {
-    private int syncItemId;
+@DiscriminatorValue("COCKPIT_SPEECH_BUBBLE")
+public class DbCockpitSpeechBubbleHintConfig extends DbHintConfig {
+    private CockpitWidgetEnum cockpitWidgetEnum;
     @Column(length = 50000)
     private String html;
+    @ManyToOne
+    private DbBaseItemType baseItemType;
     private int blinkDelay;
     private int blinkInterval;
-
-    public int getSyncItemId() {
-        return syncItemId;
-    }
-
-    public void setSyncItemId(int syncItemId) {
-        this.syncItemId = syncItemId;
-    }
 
     public String getHtml() {
         return html;
@@ -50,6 +44,22 @@ public class DbItemSpeechBubbleHintConfig extends DbHintConfig {
 
     public void setHtml(String html) {
         this.html = html;
+    }
+
+    public CockpitWidgetEnum getCockpitWidgetEnum() {
+        return cockpitWidgetEnum;
+    }
+
+    public void setCockpitWidgetEnum(CockpitWidgetEnum cockpitWidgetEnum) {
+        this.cockpitWidgetEnum = cockpitWidgetEnum;
+    }
+
+    public DbBaseItemType getBaseItemType() {
+        return baseItemType;
+    }
+
+    public void setBaseItemType(DbBaseItemType baseItemType) {
+        this.baseItemType = baseItemType;
     }
 
     public int getBlinkDelay() {
@@ -70,12 +80,21 @@ public class DbItemSpeechBubbleHintConfig extends DbHintConfig {
 
     @Override
     public void init() {
+        cockpitWidgetEnum = CockpitWidgetEnum.SELL_BUTTON;
         blinkDelay = 0;
         blinkInterval = 0;
     }
 
     @Override
     public HintConfig createHintConfig(ResourceHintManager resourceHintManager) {
-        return new ItemSpeechBubbleHintConfig(isCloseOnTaskEnd(), syncItemId, html, blinkDelay, blinkInterval);
+        int itemTypeId = 0;
+        if (cockpitWidgetEnum.isItemTypeNeeded()) {
+            if (baseItemType != null) {
+                itemTypeId = baseItemType.getId();
+            } else {
+                throw new IllegalStateException("Base item type not set");
+            }
+        }
+        return new CockpitSpeechBubbleHintConfig(isCloseOnTaskEnd(), cockpitWidgetEnum, itemTypeId, html, blinkDelay, blinkInterval);
     }
 }

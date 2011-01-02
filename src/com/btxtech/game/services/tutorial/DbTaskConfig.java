@@ -24,6 +24,8 @@ import com.btxtech.game.services.common.CrudServiceHelperCollectionImpl;
 import com.btxtech.game.services.common.db.IndexUserType;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.tutorial.condition.DbAbstractConditionConfig;
+import com.btxtech.game.services.tutorial.hint.DbResourceHintConfig;
+import com.btxtech.game.services.tutorial.hint.ResourceHintManager;
 import com.btxtech.game.wicket.pages.mgmt.ItemsUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -76,8 +78,6 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
     @JoinColumn(name = "dbTaskConfig", nullable = false)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private List<DbStepConfig> stepConfigs;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private DbAbstractConditionConfig completionConditionConfig; // TODO orphans are not removed from the condition table
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "TUTORIAL_TASK_CONFIG_ALLOWED_ITEMS",
             joinColumns = @JoinColumn(name = "factoryId"),
@@ -170,14 +170,6 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
         return !(id != null ? !id.equals(that.id) : that.id != null);
     }
 
-    public DbAbstractConditionConfig getCompletionConditionConfig() {
-        return completionConditionConfig;
-    }
-
-    public void setCompletionConditionConfig(DbAbstractConditionConfig completionConditionConfig) {
-        this.completionConditionConfig = completionConditionConfig;
-    }
-
     public int getFinishImageDuration() {
         return finishImageDuration;
     }
@@ -248,9 +240,6 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
     }
 
     public TaskConfig createTaskConfig(ResourceHintManager resourceHintManager) {
-        if (completionConditionConfig == null) {
-            throw new IllegalStateException("No condition set in task: " + name);
-        }
         ArrayList<StepConfig> stepConfigs = new ArrayList<StepConfig>();
         for (DbStepConfig dBstepConfig : this.stepConfigs) {
             stepConfigs.add(dBstepConfig.createStepConfig(resourceHintManager));
@@ -275,7 +264,6 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
                 isOptionAllowed,
                 scroll,
                 stepConfigs,
-                completionConditionConfig.createConditionConfig(),
                 ItemsUtil.itemTypesToCollection(allowedItems),
                 houseCount,
                 itemLimit,

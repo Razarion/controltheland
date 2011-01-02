@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.client.simulation;
+package com.btxtech.game.jsre.client.simulation.hint;
 
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.Cockpit;

@@ -105,7 +105,7 @@ public abstract class Gen2Composite<WidgetType extends Widget> extends
 
     // Clobber the widget's call to setEventListener(), causing all events to
     // be routed to this composite, which will delegate back to the widget by
-    // default (note: it's not necessary to clear this in onDetach(), because
+    // default (note: it's not necessary to cleanup this in onDetach(), because
     // the widget's onDetach will do so).
     DOM.setEventListener(getElement(), this);
 

@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.common.tutorial;
 
-import com.btxtech.game.jsre.common.tutorial.condition.AbstractConditionConfig;
+import com.btxtech.game.jsre.common.level.config.ConditionConfig;
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -23,9 +23,9 @@ import java.util.Collection;
  * Time: 15:11:11
  */
 public class StepConfig implements Serializable {
-    private AbstractConditionConfig abstractConditionConfig;
     private Collection<HintConfig> hintConfigs;
     private String name;
+    private ConditionConfig conditionConfig;
 
     /**
      * Used by GWT
@@ -33,14 +33,10 @@ public class StepConfig implements Serializable {
     public StepConfig() {
     }
 
-    public StepConfig(AbstractConditionConfig abstractConditionConfig, Collection<HintConfig> hintConfigs, String name) {
-        this.abstractConditionConfig = abstractConditionConfig;
+    public StepConfig(ConditionConfig conditionConfig, Collection<HintConfig> hintConfigs, String name) {
+        this.conditionConfig = conditionConfig;
         this.hintConfigs = hintConfigs;
         this.name = name;
-    }
-
-    public AbstractConditionConfig getAbstractConditionConfig() {
-        return abstractConditionConfig;
     }
 
     public Collection<HintConfig> getGraphicHintConfigs() {
@@ -49,5 +45,9 @@ public class StepConfig implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public ConditionConfig getConditionConfig() {
+        return conditionConfig;
     }
 }

@@ -21,6 +21,7 @@ import com.btxtech.game.wicket.uiservices.CrudTableHelper;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -58,6 +59,7 @@ public class TerrainSettingsTable extends WebPage {
                 item.add(new TextField("tileYCount"));
                 item.add(new TextField("tileHeight"));
                 item.add(new TextField("tileWidth"));
+                item.add(new CheckBox("isRealGame"));
                 PageParameters pageParameters = new PageParameters();
                 pageParameters.add(TerrainEditorAsync.TERRAIN_SETTING_ID, item.getModelObject().getId().toString());
                 item.add(new BookmarkablePageLink<TerrainFieldEditor>("editorLink", TerrainFieldEditor.class, pageParameters));

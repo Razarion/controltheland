@@ -13,13 +13,13 @@
 
 package com.btxtech.game.services.utg.impl;
 
+import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.btxtech.game.jsre.common.EventTrackingStart;
 import com.btxtech.game.jsre.common.ScrollTrackingItem;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
-import com.btxtech.game.jsre.common.UserStage;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
@@ -33,6 +33,7 @@ import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.BrowserDetails;
 import com.btxtech.game.services.utg.DbCloseWindow;
 import com.btxtech.game.services.utg.DbCommand;
@@ -45,11 +46,11 @@ import com.btxtech.game.services.utg.DbSelectionTrackingItem;
 import com.btxtech.game.services.utg.DbStartup;
 import com.btxtech.game.services.utg.DbStartupTask;
 import com.btxtech.game.services.utg.DbTutorialProgress;
-import com.btxtech.game.services.utg.DbUserAction;
 import com.btxtech.game.services.utg.DbUserMessage;
 import com.btxtech.game.services.utg.GameTrackingInfo;
 import com.btxtech.game.services.utg.LifecycleTrackingInfo;
 import com.btxtech.game.services.utg.PageAccess;
+import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.TutorialTrackingInfo;
 import com.btxtech.game.services.utg.UserCommand;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -94,6 +95,10 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     private UserGuidanceService userGuidanceService;
     @Autowired
     private ConnectionService connectionService;
+    @Autowired
+    private ServerConditionService serverConditionService;
+    @Autowired
+    private UserService userService;
     private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(UserTrackingServiceImpl.class);
 
@@ -116,7 +121,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     public void pageAccess(Class theClass) {
         try {
             PageAccess pageAccess = new PageAccess(session.getSessionId(), theClass.getName(), "");
-            hibernateTemplate.saveOrUpdate(pageAccess);
+            hibernateTemplate.save(pageAccess);
         } catch (NoConnectionException e) {
             log.error("", e);
         }
@@ -130,15 +135,6 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         } catch (Throwable t) {
             log.error("", t);
         }
-    }
-
-    @Override
-    public void startUpTaskFinished(Collection<StartupTaskInfo> infos, long totalTime) {
-        DbStartup dbStartup = new DbStartup(totalTime, infos.iterator().next().getStartTime(), userGuidanceService.getDbUserStage(), session.getSessionId());
-        for (StartupTaskInfo info : infos) {
-            dbStartup.addGameStartupTasks(new DbStartupTask(info, dbStartup));
-        }
-        hibernateTemplate.save(dbStartup);
     }
 
     @Override
@@ -250,23 +246,6 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         return list.get(0);
     }
 
-    @SuppressWarnings("unchecked")
-    private List<UserCommand> getUserCommands(final String sessionId, final Date from, final Date to) {
-        return (List<UserCommand>) hibernateTemplate.execute(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(UserCommand.class);
-                criteria.add(Restrictions.eq("sessionId", sessionId));
-                criteria.add(Restrictions.ge("clientTimeStamp", from));
-                if (to != null) {
-                    criteria.add(Restrictions.lt("clientTimeStamp", to));
-                }
-                criteria.addOrder(Order.asc("clientTimeStamp"));
-                return criteria.list();
-            }
-        });
-    }
-
     @Override
     public VisitorDetailInfo getVisitorDetails(final String sessionId) {
         @SuppressWarnings("unchecked")
@@ -352,23 +331,6 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 criteria.add(Restrictions.ge("clientTimeStamp", begin.getTime()));
                 if (end != null) {
                     criteria.add(Restrictions.lt("clientTimeStamp", end.getTime()));
-                }
-                criteria.addOrder(Order.asc("clientTimeStamp"));
-                return criteria.list();
-            }
-        });
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<DbUserAction> getUserActions(final String sessionId, final Date from, final Date to) {
-        return (List<DbUserAction>) hibernateTemplate.execute(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbUserAction.class);
-                criteria.add(Restrictions.eq("sessionId", sessionId));
-                criteria.add(Restrictions.ge("clientTimeStamp", from));
-                if (to != null) {
-                    criteria.add(Restrictions.lt("clientTimeStamp", to));
                 }
                 criteria.addOrder(Order.asc("clientTimeStamp"));
                 return criteria.list();
@@ -507,7 +469,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public void levelPromotion(Base base, DbLevel oldLevel) {
+    public void levelPromotion(User user, DbLevel oldLevel) {
         try {
             String sessionId = null;
             try {
@@ -517,25 +479,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 // Error creating bean with name 'scopedTarget.user': Scope 'session' is not active for the current thread
                 // This happens when the methode is called from the server side (e.g. XP increase timer)
             }
-            DbLevelPromotion dbLevelPromotion = new DbLevelPromotion(sessionId, base, baseService.getBaseName(base.getSimpleBase()), oldLevel);
-            hibernateTemplate.saveOrUpdate(dbLevelPromotion);
-        } catch (Throwable t) {
-            log.error("", t);
-        }
-    }
-
-    @Override
-    public void levelInterimPromotion(Base base, String targetLevel, String interimPromotion) {
-        try {
-            String sessionId = null;
-            try {
-                sessionId = session.getSessionId();
-            } catch (Throwable t) {
-                // Ignore
-                // Error creating bean with name 'scopedTarget.user': Scope 'session' is not active for the current thread
-                // This happens when the methode is called from the server side (e.g. XP increase timer)
-            }
-            DbLevelPromotion dbLevelPromotion = new DbLevelPromotion(sessionId, base, baseService.getBaseName(base.getSimpleBase()), targetLevel, interimPromotion);
+            DbLevelPromotion dbLevelPromotion = new DbLevelPromotion(sessionId, user, oldLevel);
             hibernateTemplate.saveOrUpdate(dbLevelPromotion);
         } catch (Throwable t) {
             log.error("", t);
@@ -553,12 +497,12 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public UserStage onTutorialProgressChanged(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp) {
+    public Level onTutorialProgressChanged(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp) {
         if (type == TutorialConfig.TYPE.TUTORIAL) {
-            userGuidanceService.onTutorialFinished();
+            serverConditionService.onTutorialFinished(userService.getUser());
         }
         hibernateTemplate.saveOrUpdate(new DbTutorialProgress(session.getSessionId(), type.name(), name, parent, duration, clientTimeStamp));
-        return userGuidanceService.getUserStage();
+        return userGuidanceService.getDbLevel().getLevel();
     }
 
     private int getTaskCount(final String sessionId, final Date from, final Date to) {
@@ -669,6 +613,14 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         }
     }
 
+    @Override
+    public void startUpTaskFinished(Collection<StartupTaskInfo> infos, long totalTime) {
+        DbStartup dbStartup = new DbStartup(totalTime, infos.iterator().next().getStartTime(), userGuidanceService.getDbLevel(), session.getSessionId());
+        for (StartupTaskInfo info : infos) {
+            dbStartup.addGameStartupTasks(new DbStartupTask(info, dbStartup));
+        }
+        hibernateTemplate.save(dbStartup);
+    }
 
     @Override
     @SuppressWarnings("unchecked")

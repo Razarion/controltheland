@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.utg;
 
+import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.btxtech.game.jsre.common.EventTrackingStart;
@@ -64,15 +65,13 @@ public interface UserTrackingService {
 
     void trackUserMessage(UserMessage userMessage);
 
-    void levelPromotion(Base base, DbLevel oldLevel);
-
-    void levelInterimPromotion(Base base, String targetLevel, String interimPromotion);
+    void levelPromotion(User user, DbLevel oldLevel);
 
     void onJavaScriptDetected();
 
     boolean isJavaScriptDetected();
 
-    UserStage onTutorialProgressChanged(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp);
+    Level onTutorialProgressChanged(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp);
 
     void onEventTrackingStart(EventTrackingStart eventTrackingStart);
 

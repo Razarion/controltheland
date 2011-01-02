@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client;
 
+import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.common.EventTrackingItem;
@@ -54,9 +55,7 @@ public interface MovableServiceAsync {
 
     void closeConnection(AsyncCallback<Void> async);
 
-    void getMissionTarget(AsyncCallback<String> asyncCallback);
-
-    void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp, AsyncCallback<UserStage> asyncCallback);
+    void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp, AsyncCallback<Level> asyncCallback);
 
     void sendEventTrackingStart(EventTrackingStart eventTrackingStart, AsyncCallback<Void> asyncCallback);
 

@@ -19,13 +19,14 @@ import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelperCollectionImpl;
-import com.btxtech.game.services.tutorial.condition.DbAbstractConditionConfig;
+import com.btxtech.game.services.tutorial.hint.DbHintConfig;
+import com.btxtech.game.services.tutorial.hint.ResourceHintManager;
+import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -52,9 +53,9 @@ public class DbStepConfig implements Serializable, CrudParent, CrudChild<DbTaskC
     @JoinColumn(name = "dbTaskConfig", insertable = false, updatable = false, nullable = false)
     private DbTaskConfig dbTaskConfig;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private DbAbstractConditionConfig abstractConditionConfig;
+    private DbConditionConfig conditionConfig;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "dbStepConfig", nullable = false)    
+    @JoinColumn(name = "dbStepConfig", nullable = false)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private Set<DbHintConfig> dbHintConfigs;
     @Transient
@@ -80,12 +81,12 @@ public class DbStepConfig implements Serializable, CrudParent, CrudChild<DbTaskC
         dbTaskConfig = crudParent;
     }
 
-    public DbAbstractConditionConfig getAbstractConditionConfig() {
-        return abstractConditionConfig;
+    public DbConditionConfig getConditionConfig() {
+        return conditionConfig;
     }
 
-    public void setAbstractConditionConfig(DbAbstractConditionConfig abstractConditionConfig) {
-        this.abstractConditionConfig = abstractConditionConfig;
+    public void setConditionConfig(DbConditionConfig conditionConfig) {
+        this.conditionConfig = conditionConfig;
     }
 
     public CrudServiceHelper<DbHintConfig> getHintConfigCrudServiceHelper() {
@@ -111,17 +112,22 @@ public class DbStepConfig implements Serializable, CrudParent, CrudChild<DbTaskC
         return id != null ? id.hashCode() : 0;
     }
 
+    @Override
+    public String toString() {
+        return "DbStepConfig: " + name + " id: " + id;
+    }
+
     public StepConfig createStepConfig(ResourceHintManager resourceHintManager) {
-        if (abstractConditionConfig == null) {
-            throw new IllegalStateException("No condition set in step: " + name);
+        if (conditionConfig == null) {
+            throw new IllegalStateException("No condition set in step: " + this);
         }
         ArrayList<HintConfig> hintConfigs = new ArrayList<HintConfig>();
         for (DbHintConfig dbHintConfig : dbHintConfigs) {
             HintConfig hintConfig = dbHintConfig.createHintConfig(resourceHintManager);
-            if(hintConfig != null) {
-               hintConfigs.add(hintConfig);
+            if (hintConfig != null) {
+                hintConfigs.add(hintConfig);
             }
         }
-        return new StepConfig(abstractConditionConfig.createConditionConfig(), hintConfigs, name);
+        return new StepConfig(conditionConfig.createConditionConfig(), hintConfigs, name);
     }
 }

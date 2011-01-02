@@ -14,7 +14,7 @@
 package com.btxtech.game.services.user;
 
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
-import com.btxtech.game.services.utg.DbUserStage;
+import com.btxtech.game.services.utg.UserLevelStatus;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
@@ -26,8 +26,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 @Entity(name = "USER")
 public class User implements Serializable {
@@ -37,59 +37,44 @@ public class User implements Serializable {
     private String email;
     private Date registerDate;
     private Date lastLoginDate;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private UserItemTypeAccess userItemTypeAccess;
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "USER_ARQ",
             joinColumns = @JoinColumn(name = "user_name"),
             inverseJoinColumns = @JoinColumn(name = "arq_name")
     )
     private Set<Arq> arqs;
-    @ManyToOne
-    private DbUserStage dbUserStage;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private UserItemTypeAccess userItemTypeAccess;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private UserLevelStatus userLevelStatus;
+    @Transient
+    private boolean loggedIn;
 
     public String getName() {
         return name;
-    }
-
-    public void setName(String userName) {
-        this.name = userName;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public UserLevelStatus getUserLevelStatus() {
+        return userLevelStatus;
+    }
+
+    public void setUserLevelStatus(UserLevelStatus userLevelStatus) {
+        this.userLevelStatus = userLevelStatus;
+    }
+
+    public void registerUser(String name, String password, String email) {
+        this.name = name;
+        this.password = password;
         this.email = email;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        User user = (User) o;
-
-        return name.equals(user.name);
-
-    }
-
-    @Override
-    public int hashCode() {
-        return name.hashCode();
-    }
-
-    public void setRegisterDate(Date date) {
-        registerDate = date;
+        registerDate = new Date();
     }
 
     public Date getRegisterDate() {
@@ -102,11 +87,6 @@ public class User implements Serializable {
 
     public Date getLastLoginDate() {
         return lastLoginDate;
-    }
-
-    @Override
-    public String toString() {
-        return "User: '" + name + "'";
     }
 
     public UserItemTypeAccess getUserItemTypeAccess() {
@@ -128,15 +108,35 @@ public class User implements Serializable {
         arqs.add(arq);
     }
 
-    public DbUserStage getUserStage() {
-        return dbUserStage;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+
+        User user = (User) o;
+
+        return name != null && name.equals(user.name);
     }
 
-    public DbUserStage getDbUserStage() {
-        return dbUserStage;
+    @Override
+    public int hashCode() {
+        if (name != null) {
+            return name.hashCode();
+        } else {
+            return System.identityHashCode(this);
+        }
     }
 
-    public void setDbUserStage(DbUserStage dbUserStage) {
-        this.dbUserStage = dbUserStage;
+    @Override
+    public String toString() {
+        return "User: '" + name + "'";
+    }
+
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
+
+    public void setLoggedIn(boolean loggedIn) {
+        this.loggedIn = loggedIn;
     }
 }
