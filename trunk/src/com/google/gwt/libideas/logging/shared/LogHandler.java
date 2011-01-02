@@ -36,7 +36,7 @@ public abstract class LogHandler {
   private Level logLevel;
 
   /**
-   * Clears the handler if clear is supported.
+   * Clears the handler if cleanup is supported.
    */
   public void clear() {
   }

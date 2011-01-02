@@ -86,9 +86,10 @@ public class TutorialGui {
         this.taskText.setText(tutorialText);
     }
 
-    public void clear() {
+    public void cleanup() {
         if (taskText != null) {
-            taskText.setHTML("");
+            MapWindow.getAbsolutePanel().remove(taskText);
+            taskText = null;
         }
         removeFinishImage();
     }

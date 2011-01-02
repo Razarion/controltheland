@@ -143,7 +143,7 @@ public class ForumServiceImpl implements ForumService {
 
     @Override
     public void insertForumEntry(final int parentId, final AbstractForumEntry abstractForumEntry) {
-        abstractForumEntry.setUser(userService.getLoggedinUser());
+        abstractForumEntry.setUser(userService.getUser());
         if (abstractForumEntry instanceof SubForum) {
             userService.checkAuthorized(ArqEnum.FORUM_ADMIN);
             abstractForumEntry.setDate();

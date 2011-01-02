@@ -15,13 +15,13 @@ package com.btxtech.game.wicket.pages.mgmt.tutorial;
 
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.tutorial.DbCockpitSpeechBubbleHintConfig;
-import com.btxtech.game.services.tutorial.DbHintConfig;
-import com.btxtech.game.services.tutorial.DbItemSpeechBubbleHintConfig;
-import com.btxtech.game.services.tutorial.DbResourceHintConfig;
+import com.btxtech.game.services.tutorial.hint.DbCockpitSpeechBubbleHintConfig;
+import com.btxtech.game.services.tutorial.hint.DbHintConfig;
+import com.btxtech.game.services.tutorial.hint.DbItemSpeechBubbleHintConfig;
+import com.btxtech.game.services.tutorial.hint.DbResourceHintConfig;
 import com.btxtech.game.services.tutorial.DbStepConfig;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
-import com.btxtech.game.services.tutorial.DbTerrainPositionSpeechBubbleHintConfig;
+import com.btxtech.game.services.tutorial.hint.DbTerrainPositionSpeechBubbleHintConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.condition.ConditionWrapperPanel;

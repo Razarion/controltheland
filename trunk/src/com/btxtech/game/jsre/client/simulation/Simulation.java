@@ -14,39 +14,27 @@
 package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameCommon;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ParametrisedRunnable;
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
-import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
-import com.btxtech.game.jsre.client.cockpit.SelectionListener;
+import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.ClientRunner;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.dialogs.UserStageDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
-import com.btxtech.game.jsre.client.terrain.TerrainScrollListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
-import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.UserStage;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.tutorial.CockpitWidgetEnum;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.Widget;
 import java.util.List;
 
 /**
@@ -54,7 +42,7 @@ import java.util.List;
  * Date: 17.07.2010
  * Time: 17:21:24
  */
-public class Simulation implements SelectionListener, TerrainScrollListener, ClickHandler {
+public class Simulation {
     private static final Simulation SIMULATION = new Simulation();
     private SimulationInfo simulationInfo;
     private Task activeTask;
@@ -79,8 +67,8 @@ public class Simulation implements SelectionListener, TerrainScrollListener, Cli
             return;
         }
         if (tutorialGui == null) {
-            SelectionHandler.getInstance().addSelectionListener(this);
-            TerrainView.getInstance().addTerrainScrollListener(this);
+            SelectionHandler.getInstance().addSelectionListener(SimulationConditionServiceImpl.getInstance());
+            TerrainView.getInstance().addTerrainScrollListener(SimulationConditionServiceImpl.getInstance());
             tutorialGui = new TutorialGui();
         }
         ClientBase.getInstance().setBase(tutorialConfig.getOwnBase());
@@ -142,19 +130,19 @@ public class Simulation implements SelectionListener, TerrainScrollListener, Cli
         }
         processPreparation(taskConfig);
         taskTime = System.currentTimeMillis();
-        activeTask = new Task(taskConfig, tutorialGui);
+        activeTask = new Task(taskConfig);
         tutorialGui.setTaskText(taskConfig.getTaskText());
     }
 
     private void tutorialFinished() {
         activeTask = null;
         long time = System.currentTimeMillis();
-        ClientUserTracker.getInstance().onTutorialFinished(time - tutorialTime, time, new ParametrisedRunnable<UserStage>() {
+        ClientUserTracker.getInstance().onTutorialFinished(time - tutorialTime, time, new ParametrisedRunnable<Level>() {
             @Override
-            public void run(UserStage userStage) {
-                UserStageDialog.showDialog(userStage.getHtml());
+            public void run(Level level) {
+                UserStageDialog.showDialog(level.getHtml());
                 GameStartupSeq gameStartupSeq;
-                if (userStage.isRealGame()) {
+                if (level.isRealGame()) {
                     gameStartupSeq = GameStartupSeq.WARM_REAL;
                 } else {
                     gameStartupSeq = GameStartupSeq.WARM_SIMULATED;
@@ -164,9 +152,31 @@ public class Simulation implements SelectionListener, TerrainScrollListener, Cli
         });
     }
 
+    /*
+    TODO checkForTutorialFailed
+    private void checkForTutorialFailed() {
+        // TODO mission failed startup sequence + send to server
+        if (simulationInfo.getTutorialConfig().isFailOnOwnItemsLost() && ItemContainer.getInstance().getOwnItemCount() == 0) {
+            throw new RuntimeException("Not implemented yet");
+        } else if (simulationInfo.getTutorialConfig().isFailOnMoneyBelowAndNoAttackUnits() != null
+                && ClientBase.getInstance().getAccountBalance() < simulationInfo.getTutorialConfig().isFailOnMoneyBelowAndNoAttackUnits()
+                && !ItemContainer.getInstance().hasOwnAttackingMovable()) {
+            throw new RuntimeException("Not implemented yet");
+        }
+    }*/
 
-    private void checkForTaskCompletion() {
-        if (activeTask.isFulFilled()) {
+    public void cleanup() {
+        if (tutorialGui != null) {
+            tutorialGui.cleanup();
+            tutorialGui = null;
+        }
+        SelectionHandler.getInstance().removeSelectionListener(SimulationConditionServiceImpl.getInstance());
+        TerrainView.getInstance().removeTerrainScrollListener(SimulationConditionServiceImpl.getInstance());
+
+    }
+
+    public void conditionPassed() {
+        if (activeTask.isFulfilled()) {
             long time = System.currentTimeMillis();
             ClientUserTracker.getInstance().onTaskFinished(activeTask, time - taskTime, time);
             if (activeTask.getTaskConfig().getFinishImageDuration() > 0 && activeTask.getTaskConfig().getFinishImageId() != null) {
@@ -183,100 +193,6 @@ public class Simulation implements SelectionListener, TerrainScrollListener, Cli
             } else {
                 runNextTask(activeTask);
             }
-        }
-
-    }
-
-    private void checkForTutorialFailed() {
-        // TODO mission failed startup sequence + send to server
-        if (simulationInfo.getTutorialConfig().isFailOnOwnItemsLost() && ItemContainer.getInstance().getOwnItemCount() == 0) {
-            throw new RuntimeException("Not implemented yet");
-        } else if (simulationInfo.getTutorialConfig().isFailOnMoneyBelowAndNoAttackUnits() != null
-                && ClientBase.getInstance().getAccountBalance() < simulationInfo.getTutorialConfig().isFailOnMoneyBelowAndNoAttackUnits()
-                && !ItemContainer.getInstance().hasOwnAttackingMovable()) {
-            throw new RuntimeException("Not implemented yet");
-        }
-    }
-
-    @Override
-    public void onTargetSelectionChanged(ClientSyncItem selection) {
-        // Ignore
-    }
-
-    @Override
-    public void onSelectionCleared() {
-        // Ignore
-    }
-
-    @Override
-    public void onOwnSelectionChanged(Group selectedGroup) {
-        if (activeTask != null) {
-            activeTask.onOwnSelectionChanged(selectedGroup);
-            checkForTaskCompletion();
-        }
-    }
-
-    public void onSendCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
-        if (activeTask != null) {
-            activeTask.onSendCommand(syncItem, baseCommand);
-            checkForTaskCompletion();
-        }
-    }
-
-    public void onSyncItemDeactivated(SyncTickItem syncTickItem) {
-        if (activeTask != null) {
-            activeTask.onSyncItemDeactivated(syncTickItem);
-            checkForTaskCompletion();
-        }
-    }
-
-    public void onSyncItemKilled(SyncItem killedItem, SimpleBase actor) {
-        if (activeTask != null) {
-            activeTask.onSyncItemKilled(killedItem, actor);
-            checkForTaskCompletion();
-        }
-        checkForTutorialFailed();
-    }
-
-    public void onItemBuilt(SyncBaseItem syncBaseItem) {
-        if (activeTask != null) {
-            activeTask.onItemBuilt(syncBaseItem);
-            checkForTaskCompletion();
-        }
-    }
-
-    public void onDeposit() {
-        if (activeTask != null) {
-            activeTask.onDeposit();
-            checkForTaskCompletion();
-        }
-    }
-
-    @Override
-    public void onScroll(int left, int top, int width, int height, int deltaLeft, int deltaTop) {
-        if (activeTask != null) {
-            activeTask.onScroll();
-            checkForTaskCompletion();
-        }
-    }
-
-    public void onWithdrawalMoney() {
-        if (activeTask != null) {
-            checkForTutorialFailed();
-        }
-    }
-
-    @Override
-    public void onClick(ClickEvent event) {
-        if (activeTask != null) {
-            activeTask.onClickCockpitButton((Widget) event.getSource());
-            checkForTaskCompletion();
-        }
-    }
-
-    public void clearGui() {
-        if (tutorialGui != null) {
-            tutorialGui.clear();
         }
     }
 }

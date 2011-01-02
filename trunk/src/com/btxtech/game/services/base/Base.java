@@ -22,7 +22,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.user.User;
-import com.btxtech.game.services.utg.BaseLevelStatus;
+import com.btxtech.game.services.utg.UserLevelStatus;
 import com.btxtech.game.services.utg.DbLevel;
 import java.io.Serializable;
 import java.util.Date;
@@ -64,7 +64,7 @@ public class Base implements Serializable {
     @Column(name = "abandoned", nullable = false, columnDefinition = "bit default b'1'")
     private boolean abandoned = false;
     @OneToOne(cascade = CascadeType.ALL)
-    private BaseLevelStatus baseLevelStatus;
+    private UserLevelStatus userLevelStatus;
     private int baseId;
     @Transient
     private final Object syncObject = new Object();
@@ -187,8 +187,8 @@ public class Base implements Serializable {
 
     public void clearId() {
         id = null;
-        if (baseLevelStatus != null) {
-            baseLevelStatus.clearId();
+        if (userLevelStatus != null) {
+            userLevelStatus.clearId();
         }
     }
 
@@ -228,12 +228,12 @@ public class Base implements Serializable {
         return getSimpleBase().toString();
     }
 
-    public BaseLevelStatus getBaseLevelStatus() {
-        return baseLevelStatus;
+    public UserLevelStatus getBaseLevelStatus() {
+        return userLevelStatus;
     }
 
-    public void setBaseLevelStatus(BaseLevelStatus baseLevelStatus) {
-        this.baseLevelStatus = baseLevelStatus;
+    public void setBaseLevelStatus(UserLevelStatus userLevelStatus) {
+        this.userLevelStatus = userLevelStatus;
     }
 
     public int getBaseId() {
@@ -242,7 +242,7 @@ public class Base implements Serializable {
 
 
     public void checkItemLimit4ItemAdding() throws ItemLimitExceededException, HouseSpaceExceededException {
-        DbLevel dbLevel = baseLevelStatus.getCurrentLevel();
+        DbLevel dbLevel = userLevelStatus.getCurrentLevel();
         if (getItemCount() >= dbLevel.getItemLimit()) {
             throw new ItemLimitExceededException();
         }
@@ -265,11 +265,11 @@ public class Base implements Serializable {
     }
 
     public int getTotalHouseSpace() {
-        return houseSpace + baseLevelStatus.getCurrentLevel().getHouseSpace();
+        return houseSpace + userLevelStatus.getCurrentLevel().getHouseSpace();
     }
 
     public int getItemLimit() {
-        return baseLevelStatus.getCurrentLevel().getItemLimit();
+        return userLevelStatus.getCurrentLevel().getItemLimit();
     }
 
 }

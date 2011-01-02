@@ -17,7 +17,7 @@ import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.dialogs.UnfrequentDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.item.ItemViewContainer;
-import com.btxtech.game.jsre.client.simulation.Simulation;
+import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -80,7 +80,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         if (this.simpleBase.equals(simpleBase)) {
             accountBalance += price;
             Cockpit.getInstance().updateMoney();
-            Simulation.getInstance().onDeposit();
+            SimulationConditionServiceImpl.getInstance().onMoneyIncrease(simpleBase, accountBalance);
             if (depositResourceListener != null) {
                 depositResourceListener.onDeposit();
             }
@@ -99,7 +99,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
             accountBalance -= price;
             Cockpit.getInstance().updateMoney();
         }
-        Simulation.getInstance().onWithdrawalMoney();        
+        SimulationConditionServiceImpl.getInstance().onWithdrawalMoney();
     }
 
     public void setDepositResourceListener(DepositResourceListener depositResourceListener) {

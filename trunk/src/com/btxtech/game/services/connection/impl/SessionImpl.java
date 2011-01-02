@@ -42,10 +42,8 @@ public class SessionImpl implements Session, Serializable {
     private String cookieId;
     private String userAgent;
     private User user;
-    private UserItemTypeAccess userItemTypeAccess;
     private boolean javaScriptDetected = false;
     private BrowserDetails browserDetails;
-    private DbUserStage dbUserStage;
 
     @Override
     public Connection getConnection() {
@@ -108,23 +106,6 @@ public class SessionImpl implements Session, Serializable {
     }
 
     @Override
-    public UserItemTypeAccess getUserItemTypeAccess() {
-        return userItemTypeAccess;
-    }
-
-    @Override
-    public void setUserItemTypeAccess(UserItemTypeAccess userItemTypeAccess) {
-        this.userItemTypeAccess = userItemTypeAccess;
-    }
-
-    @Override
-    public void clearGame() {
-        connection = null;
-        user = null;
-        userItemTypeAccess = null;
-    }
-
-    @Override
     public void onJavaScriptDetected() {
         if (javaScriptDetected) {
             return;
@@ -138,15 +119,5 @@ public class SessionImpl implements Session, Serializable {
     @Override
     public boolean isJavaScriptDetected() {
         return javaScriptDetected;
-    }
-
-    @Override
-    public DbUserStage getUserStage() {
-        return dbUserStage;
-    }
-
-    @Override
-    public void setDbUserStage(DbUserStage dbUserStage) {
-        this.dbUserStage = dbUserStage;
     }
 }

@@ -23,6 +23,8 @@ import java.io.Serializable;
 public class Level implements Serializable {
     private String name;
     private int itemLimit;
+    private String html;
+    private boolean realGame;
 
     public String getName() {
         return name;
@@ -55,5 +57,13 @@ public class Level implements Serializable {
     @Override
     public int hashCode() {
         return name != null ? name.hashCode() : 0;
+    }
+
+    public String getHtml() {
+        return html;
+    }
+
+    public boolean isRealGame() {
+        return realGame;
     }
 }

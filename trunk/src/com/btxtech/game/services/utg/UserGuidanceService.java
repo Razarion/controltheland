@@ -13,12 +13,8 @@
 
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
-import com.btxtech.game.jsre.common.UserStage;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.user.User;
 import java.util.Collection;
 import java.util.List;
@@ -29,53 +25,25 @@ import java.util.List;
  * Time: 22:02:57
  */
 public interface UserGuidanceService {
-    List<DbLevel> getDbLevels();
+    GameStartupSeq getColdStartupSeq();
 
-    void deleteDbLevel(DbLevel dbLevel);
+    void promote(User user);
 
-    void addDbLevel();
+    DbScope getDbScope();
 
-    void saveDbLevels(List<DbLevel> dbLevels);
+    DbLevel getDbLevel();
 
-    void saveDbLevel(DbLevel dbLevel);
+    DbLevel getDbLevel(String levelName);
 
-    void moveUpDbLevel(DbLevel dbLevel);
-
-    void moveDownDbLevel(DbLevel dbLevel);
-
-    Level getLevel4Base();
-
-    String getMissionTarget4NextLevel(Base base);
-
-    void onSyncBaseItemCreated(SyncBaseItem syncBaseItem);
-
-    void setupLevel4NewBase(Base base);
-
-    void onIncreaseXp(Base base, int xp);
-
-    void onBaseDeleted(Base base);
-
-    void onMoneyIncrease(Base base);
-
-    void onItemKilled(Base actorBase);
+    String getDbLevelHtml();
 
     void restore(Collection<Base> bases);
 
-    void onUserCreated(User user);
+    void setLevelForNewUser(User user);
 
-    void onTutorialFinished();
+    List<DbLevel> getDbLevels();
 
-    CrudServiceHelper<DbUserStage> getUserStageCrudServiceHelper();
+    void saveDbLevels(List<DbLevel> dbLevels);
 
-    DbUserStage getDbUserStage();
-
-    GameStartupSeq getColdStartupSeq();
-
-    DbUserStage getDbUserStage(String name);
-
-    DbUserStage getDbUserStage4RealGame();
-
-    String getDbUserStageHtml();
-
-    UserStage getUserStage();
+    void activateLevels();
 }

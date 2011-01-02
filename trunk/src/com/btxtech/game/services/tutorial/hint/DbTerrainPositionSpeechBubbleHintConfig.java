@@ -11,16 +11,18 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.tutorial;
+package com.btxtech.game.services.tutorial.hint;
 
-import com.btxtech.game.jsre.common.tutorial.CockpitSpeechBubbleHintConfig;
-import com.btxtech.game.jsre.common.tutorial.CockpitWidgetEnum;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.tutorial.HintConfig;
-import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.jsre.common.tutorial.TerrainPositionSpeechBubbleHintConfig;
+import com.btxtech.game.services.common.db.IndexUserType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 /**
  * User: beat
@@ -28,13 +30,14 @@ import javax.persistence.ManyToOne;
  * Time: 19:19:28
  */
 @Entity
-@DiscriminatorValue("COCKPIT_SPEECH_BUBBLE")
-public class DbCockpitSpeechBubbleHintConfig extends DbHintConfig {
-    private CockpitWidgetEnum cockpitWidgetEnum;
+@DiscriminatorValue("TERRAIN_SPEECH_BUBBLE")
+@TypeDef(name = "index", typeClass = IndexUserType.class)
+public class DbTerrainPositionSpeechBubbleHintConfig extends DbHintConfig {
+    @Type(type = "index")
+    @Columns(columns = {@Column(name = "xPos"), @Column(name = "yPos")})
+    private Index position;
     @Column(length = 50000)
     private String html;
-    @ManyToOne
-    private DbBaseItemType baseItemType;
     private int blinkDelay;
     private int blinkInterval;
 
@@ -46,20 +49,12 @@ public class DbCockpitSpeechBubbleHintConfig extends DbHintConfig {
         this.html = html;
     }
 
-    public CockpitWidgetEnum getCockpitWidgetEnum() {
-        return cockpitWidgetEnum;
+    public Index getPosition() {
+        return position;
     }
 
-    public void setCockpitWidgetEnum(CockpitWidgetEnum cockpitWidgetEnum) {
-        this.cockpitWidgetEnum = cockpitWidgetEnum;
-    }
-
-    public DbBaseItemType getBaseItemType() {
-        return baseItemType;
-    }
-
-    public void setBaseItemType(DbBaseItemType baseItemType) {
-        this.baseItemType = baseItemType;
+    public void setPosition(Index position) {
+        this.position = position;
     }
 
     public int getBlinkDelay() {
@@ -80,21 +75,13 @@ public class DbCockpitSpeechBubbleHintConfig extends DbHintConfig {
 
     @Override
     public void init() {
-        cockpitWidgetEnum = CockpitWidgetEnum.SELL_BUTTON;
+        position = new Index(0, 0);
         blinkDelay = 0;
         blinkInterval = 0;
     }
 
     @Override
     public HintConfig createHintConfig(ResourceHintManager resourceHintManager) {
-        int itemTypeId = 0;
-        if (cockpitWidgetEnum.isItemTypeNeeded()) {
-            if (baseItemType != null) {
-                itemTypeId = baseItemType.getId();
-            } else {
-                throw new IllegalStateException("Base item type not set");
-            }
-        }
-        return new CockpitSpeechBubbleHintConfig(isCloseOnTaskEnd(), cockpitWidgetEnum, itemTypeId, html, blinkDelay, blinkInterval);
+        return new TerrainPositionSpeechBubbleHintConfig(isCloseOnTaskEnd(), position, html, blinkDelay, blinkInterval);
     }
 }

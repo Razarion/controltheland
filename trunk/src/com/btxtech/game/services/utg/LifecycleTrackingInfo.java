@@ -36,7 +36,7 @@ public class LifecycleTrackingInfo implements Serializable {
         start = new Date(startup.getClientTimeStamp());
         dbStartupTasks = (List<DbStartupTask>) startup.getGameStartupTasks();
         startupDuration = startup.getStartupDuration();
-        userStage = startup.getUserStage();
+        userStage = startup.getLevel();
     }
 
     public Date getStart() {

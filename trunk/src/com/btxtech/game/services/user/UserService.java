@@ -24,9 +24,7 @@ public interface UserService {
 
     boolean isLoggedin();
 
-    User getLoggedinUser();
-
-    User getLoggedinUserOrException();
+    User getUser();
 
     void logout();
 

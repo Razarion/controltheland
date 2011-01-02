@@ -1411,7 +1411,7 @@ public abstract class HTMLTable extends Panel implements SourcesTableEvents {
    * methods should use internalClearCell rather than clearCell, as clearCell
    * may be overridden in subclasses to format an empty cell.
    * 
-   * @param td element to clear
+   * @param td element to cleanup
    * @param clearInnerHTML should the cell's inner html be cleared?
    * @return returns whether a widget was cleared
    */
@@ -1426,7 +1426,7 @@ public abstract class HTMLTable extends Panel implements SourcesTableEvents {
       remove(widget);
       return true;
     } else {
-      // Otherwise, simply clear whatever text and/or HTML may be there.
+      // Otherwise, simply cleanup whatever text and/or HTML may be there.
       if (clearInnerHTML) {
         DOM.setInnerHTML(td, clearText);
       }
@@ -1517,7 +1517,7 @@ public abstract class HTMLTable extends Panel implements SourcesTableEvents {
    * Set the string to insert into cells when they are cleared. By default, an
    * empty string is used, but a &nbsp; or line break may also be used.
    * 
-   * @param clearText the default clear text
+   * @param clearText the default cleanup text
    */
   protected void setClearText(String clearText) {
     this.clearText = clearText;

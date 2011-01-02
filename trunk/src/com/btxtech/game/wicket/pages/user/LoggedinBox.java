@@ -48,7 +48,7 @@ public class LoggedinBox extends Panel {
                 setResponsePage(UserPage.class);
             }
         };
-        link.add(new Label("name", userService.getLoggedinUser().getName()));
+        link.add(new Label("name", userService.getUser().getName()));
         form.add(link);
 
     }

@@ -52,6 +52,7 @@ public class DbTerrainSetting implements CrudParent, CrudChild, Serializable {
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private Set<DbSurfaceRect> dbSurfaceRects;
     private String name;
+    private boolean isRealGame;
     @Transient
     private CrudServiceHelper<DbTerrainImagePosition> dbTerrainImagePositionCrudServiceHelper;
     @Transient
@@ -103,6 +104,14 @@ public class DbTerrainSetting implements CrudParent, CrudChild, Serializable {
 
     public TerrainSettings createTerrainSettings() {
         return new TerrainSettings(tileXCount, tileYCount, tileHeight, tileWidth);
+    }
+
+    public boolean isRealGame() {
+        return isRealGame;
+    }
+
+    public void setRealGame(boolean realGame) {
+        isRealGame = realGame;
     }
 
     @Override

@@ -58,7 +58,7 @@ public class MissionTarget {
         });
 
         if (loadingRequired) {
-            Connection.getInstance().getMissionTarget(this);
+            //Connection.getInstance().getMissionTarget(this);
             loadingRequired = false;
             missionTargetDialog.setMissionTarget("Loading...");
         } else if (missionTargetString != null) {

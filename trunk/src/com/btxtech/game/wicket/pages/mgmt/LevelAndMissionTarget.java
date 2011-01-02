@@ -13,18 +13,24 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
+import com.btxtech.game.services.tutorial.DbTutorialConfig;
+import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.uiservices.ListProvider;
 import java.util.List;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -35,6 +41,9 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 public class LevelAndMissionTarget extends WebPage {
     @SpringBean
     private UserGuidanceService userGuidanceService;
+    @SpringBean
+    private TutorialService tutorialService;
+    private Log log = LogFactory.getLog(LevelAndMissionTarget.class);
 
     public LevelAndMissionTarget() {
         setupLevelTable();
@@ -56,18 +65,47 @@ public class LevelAndMissionTarget extends WebPage {
             @Override
             protected void populateItem(final Item<DbLevel> dbLevelItem) {
                 dbLevelItem.add(new TextField<String>("name"));
+                dbLevelItem.add(new CheckBox("realGame"));
+                dbLevelItem.add(new TextField<Integer>("dbTutorialConfig", new IModel<Integer>() {
+                    @Override
+                    public Integer getObject() {
+                        if (dbLevelItem.getModelObject().getDbTutorialConfig() != null) {
+                            return dbLevelItem.getModelObject().getDbTutorialConfig().getId();
+                        } else {
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    public void setObject(Integer id) {
+                        try {
+                            DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudServiceHelper().readDbChild(id);
+                            dbLevelItem.getModelObject().setDbTutorialConfig(dbTutorialConfig);
+                        } catch (Throwable t) {
+                            log.error("", t);
+                            error(t.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void detach() {
+                        // Ignore
+                    }
+                }, Integer.class));
+
+
                 dbLevelItem.add(new Button("up") {
 
                     @Override
                     public void onSubmit() {
-                        userGuidanceService.moveUpDbLevel(dbLevelItem.getModelObject());
+                        // TODO  userGuidanceService.moveUpDbLevel(dbLevelItem.getModelObject());
                     }
                 });
                 dbLevelItem.add(new Button("down") {
 
                     @Override
                     public void onSubmit() {
-                        userGuidanceService.moveDownDbLevel(dbLevelItem.getModelObject());
+                        // TODO  userGuidanceService.moveDownDbLevel(dbLevelItem.getModelObject());
                     }
                 });
                 dbLevelItem.add(new Link("missionTargetLink") {
@@ -81,7 +119,7 @@ public class LevelAndMissionTarget extends WebPage {
 
                     @Override
                     public void onSubmit() {
-                        userGuidanceService.deleteDbLevel(dbLevelItem.getModelObject());
+                        // TODO  userGuidanceService.deleteDbLevel(dbLevelItem.getModelObject());
                     }
                 });
 
@@ -91,7 +129,7 @@ public class LevelAndMissionTarget extends WebPage {
 
             @Override
             public void onSubmit() {
-                userGuidanceService.addDbLevel();
+                // TODO  userGuidanceService.addDbLevel();
             }
         });
         form.add(new Button("save") {
@@ -99,6 +137,13 @@ public class LevelAndMissionTarget extends WebPage {
             @Override
             public void onSubmit() {
                 userGuidanceService.saveDbLevels(levelProvider.getLastModifiedList());
+            }
+        });
+        form.add(new Button("activate") {
+
+            @Override
+            public void onSubmit() {
+                userGuidanceService.activateLevels();
             }
         });
 

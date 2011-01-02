@@ -11,17 +11,14 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.tutorial;
+package com.btxtech.game.services.tutorial.hint;
 
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.tutorial.HintConfig;
-import com.btxtech.game.jsre.common.tutorial.TerrainPositionSpeechBubbleHintConfig;
+import com.btxtech.game.jsre.common.tutorial.ItemSpeechBubbleHintConfig;
 import com.btxtech.game.services.common.db.IndexUserType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import org.hibernate.annotations.Columns;
-import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 /**
@@ -30,16 +27,22 @@ import org.hibernate.annotations.TypeDef;
  * Time: 19:19:28
  */
 @Entity
-@DiscriminatorValue("TERRAIN_SPEECH_BUBBLE")
+@DiscriminatorValue("ITEM_SPEECH_BUBBLE")
 @TypeDef(name = "index", typeClass = IndexUserType.class)
-public class DbTerrainPositionSpeechBubbleHintConfig extends DbHintConfig {
-    @Type(type = "index")
-    @Columns(columns = {@Column(name = "xPos"), @Column(name = "yPos")})
-    private Index position;
+public class DbItemSpeechBubbleHintConfig extends DbHintConfig {
+    private int syncItemId;
     @Column(length = 50000)
     private String html;
     private int blinkDelay;
     private int blinkInterval;
+
+    public int getSyncItemId() {
+        return syncItemId;
+    }
+
+    public void setSyncItemId(int syncItemId) {
+        this.syncItemId = syncItemId;
+    }
 
     public String getHtml() {
         return html;
@@ -47,14 +50,6 @@ public class DbTerrainPositionSpeechBubbleHintConfig extends DbHintConfig {
 
     public void setHtml(String html) {
         this.html = html;
-    }
-
-    public Index getPosition() {
-        return position;
-    }
-
-    public void setPosition(Index position) {
-        this.position = position;
     }
 
     public int getBlinkDelay() {
@@ -75,13 +70,12 @@ public class DbTerrainPositionSpeechBubbleHintConfig extends DbHintConfig {
 
     @Override
     public void init() {
-        position = new Index(0, 0);
         blinkDelay = 0;
         blinkInterval = 0;
     }
 
     @Override
     public HintConfig createHintConfig(ResourceHintManager resourceHintManager) {
-        return new TerrainPositionSpeechBubbleHintConfig(isCloseOnTaskEnd(), position, html, blinkDelay, blinkInterval);
+        return new ItemSpeechBubbleHintConfig(isCloseOnTaskEnd(), syncItemId, html, blinkDelay, blinkInterval);
     }
 }

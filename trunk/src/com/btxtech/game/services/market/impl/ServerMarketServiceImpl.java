@@ -30,6 +30,7 @@ import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.market.XpSettings;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -71,6 +72,8 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     private ConnectionService connectionService;
     @Autowired
     private UserGuidanceService userGuidanceService;
+    @Autowired
+    private ServerConditionService serverConditionService;
     private HibernateTemplate hibernateTemplate;
     private Timer timer;
     private XpSettings xpSettings;
@@ -165,11 +168,9 @@ public class ServerMarketServiceImpl implements ServerMarketService {
 
     @Override
     public UserItemTypeAccess getUserItemTypeAccess() {
-        UserItemTypeAccess userItemTypeAccess = session.getUserItemTypeAccess();
+        UserItemTypeAccess userItemTypeAccess = userService.getUser().getUserItemTypeAccess();
         if (userItemTypeAccess == null) {
-            User user = userService.getLoggedinUser();
-            userItemTypeAccess = createOrGetUserItemTypeAccess(user);
-            session.setUserItemTypeAccess(userItemTypeAccess);
+            userItemTypeAccess = createOrGetUserItemTypeAccess(userService.getUser());
         } else if (userItemTypeAccess.isPersistent()) {
             hibernateTemplate.refresh(userItemTypeAccess);
         }
@@ -182,10 +183,7 @@ public class ServerMarketServiceImpl implements ServerMarketService {
             return null;
         }
         User user = baseService.getUser(base.getSimpleBase());
-        if (user != null) {
-            return createOrGetUserItemTypeAccess(user);
-        }
-        return getUserItemTypeAccess();
+        return createOrGetUserItemTypeAccess(user);
     }
 
     public UserItemTypeAccess createOrGetUserItemTypeAccess(User user) {
@@ -201,9 +199,7 @@ public class ServerMarketServiceImpl implements ServerMarketService {
 
     private UserItemTypeAccess createUserItemTypeAccess(User user) {
         UserItemTypeAccess userItemTypeAccess = new UserItemTypeAccess(getAlwaysAllowed());
-        if (user != null) {
-            setUserItemTypeAccess(user, userItemTypeAccess);
-        }
+        setUserItemTypeAccess(user, userItemTypeAccess);
         return userItemTypeAccess;
     }
 
@@ -278,7 +274,7 @@ public class ServerMarketServiceImpl implements ServerMarketService {
                 hibernateTemplate.saveOrUpdate(userItemTypeAccess);
             }
             baseService.sendXpUpdate(userItemTypeAccess, base);
-            userGuidanceService.onIncreaseXp(base, userItemTypeAccess.getXp());
+            serverConditionService.onIncreaseXp(base.getSimpleBase(), userItemTypeAccess.getXp());
         } catch (Exception e) {
             log.error("", e);
         }
@@ -305,11 +301,6 @@ public class ServerMarketServiceImpl implements ServerMarketService {
             return null;
         }
         return createOrGetUserItemTypeAccess(base.getUser());
-    }
-
-    @Override
-    public void clearSession() {
-        session.setUserItemTypeAccess(null);
     }
 
     public XpSettings getXpPointSettings() {

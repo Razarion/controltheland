@@ -53,7 +53,7 @@ public class MessengerServiceImpl implements MessengerService {
 
     @Override
     public int getUnreadMails() {
-        final User user = userService.getLoggedinUserOrException();
+        final User user = userService.getUser();
         List<Integer> list = (List<Integer>) hibernateTemplate.execute(new HibernateCallback() {
             @Override
             public Object doInHibernate(Session session) throws HibernateException, SQLException {
@@ -70,7 +70,7 @@ public class MessengerServiceImpl implements MessengerService {
 
     @Override
     public List<Mail> getMails() {
-        final User user = userService.getLoggedinUserOrException();
+        final User user = userService.getUser();
         return (List<Mail>) hibernateTemplate.executeFind(new HibernateCallback() {
             @Override
             public Object doInHibernate(Session session) throws HibernateException, SQLException {
@@ -85,7 +85,7 @@ public class MessengerServiceImpl implements MessengerService {
 
     @Override
     public void sendMail(String to, String subject, String body) throws InvalidFieldException {
-        final User fromUser = userService.getLoggedinUserOrException();
+        final User fromUser = userService.getUser();
         if (to == null || to.isEmpty()) {
             throw new InvalidFieldException("To no allowed to be empty");
         }

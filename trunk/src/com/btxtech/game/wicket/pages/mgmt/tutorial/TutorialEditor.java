@@ -14,10 +14,14 @@
 package com.btxtech.game.wicket.pages.mgmt.tutorial;
 
 import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.terrain.DbTerrainSetting;
+import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.wicket.uiservices.CrudTableHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -26,7 +30,9 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.hibernate.SessionFactory;
 
 /**
  * User: beat
@@ -36,9 +42,17 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 public class TutorialEditor extends WebPage {
     @SpringBean
     private TutorialService tutorialService;
+    @SpringBean
+    private TerrainService terrainService;
+    @SpringBean
+    private SessionFactory sessionFactory;
+    private Log log = LogFactory.getLog(TutorialEditor.class);
 
     public TutorialEditor(final DbTutorialConfig dbTutorialConfig) {
         add(new FeedbackPanel("msgs"));
+
+        sessionFactory.getCurrentSession().load(dbTutorialConfig, dbTutorialConfig.getId()); // TODO should not be in the presentation layer
+        dbTutorialConfig.getDbTerrainSetting().getName();
 
         Form<DbTutorialConfig> form = new Form<DbTutorialConfig>("tutorialForm", new CompoundPropertyModel<DbTutorialConfig>(dbTutorialConfig));
         add(form);
@@ -54,6 +68,32 @@ public class TutorialEditor extends WebPage {
         form.add(new CheckBox("failOnOwnItemsLost"));
         form.add(new TextField<Integer>("failOnMoneyBelowAndNoAttackUnits"));
         form.add(new CheckBox("tracking"));
+        form.add(new TextField<Integer>("dbTerrainSetting", new IModel<Integer>() {
+            @Override
+            public Integer getObject() {
+                if (dbTutorialConfig.getDbTerrainSetting() != null) {
+                    return dbTutorialConfig.getDbTerrainSetting().getId();
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public void setObject(Integer id) {
+                try {
+                    DbTerrainSetting dbTerrainSetting = terrainService.getDbTerrainSettingCrudServiceHelper().readDbChild(id);
+                    dbTutorialConfig.setDbTerrainSetting(dbTerrainSetting);
+                } catch (Throwable t) {
+                    log.error("", t);
+                    error(t.getMessage());
+                }
+            }
+
+            @Override
+            public void detach() {
+                // Ignore
+            }
+        }, Integer.class));
 
         new CrudTableHelper<DbTaskConfig>("taskTable", null, "createTask", true, form) {
 

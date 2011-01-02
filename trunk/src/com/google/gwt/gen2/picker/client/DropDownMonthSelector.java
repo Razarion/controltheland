@@ -208,7 +208,7 @@ public class DropDownMonthSelector extends MonthSelector {
     if (yearList == null) {
       createYearList();
     } else {
-      // TODO add removeItem() and clear() to DropDownListBox and remove this
+      // TODO add removeItem() and cleanup() to DropDownListBox and remove this
       // ugliness
       createYearList();
       grid.setWidget(0, 3, yearList);

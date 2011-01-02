@@ -11,13 +11,17 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.client.simulation;
+package com.btxtech.game.jsre.common.level.condition;
+
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 /**
  * User: beat
- * Date: 05.11.2010
- * Time: 18:51:42
+ * Date: 27.12.2010
+ * Time: 17:25:49
  */
-public interface Hint {
-    void dispose();
+public abstract class AbstractComparison {
+    public abstract void onSyncItem(SyncItem syncItem);
+
+    public abstract boolean isFulfilled();
 }

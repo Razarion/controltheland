@@ -13,12 +13,8 @@
 
 package com.btxtech.game.services.utg.impl;
 
-import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.common.LevelPacket;
-import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.UserStage;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
@@ -27,30 +23,26 @@ import com.btxtech.game.services.common.CrudServiceHelperHibernateImpl;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.market.ServerMarketService;
+import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.services.utg.BaseLevelStatus;
-import com.btxtech.game.services.utg.DbItemCount;
 import com.btxtech.game.services.utg.DbLevel;
-import com.btxtech.game.services.utg.DbUserStage;
+import com.btxtech.game.services.utg.DbScope;
+import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.UserLevelStatus;
 import com.btxtech.game.services.utg.UserTrackingService;
-import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
 
@@ -78,10 +70,29 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     private Session session;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ServerConditionService serverConditionService;
+    @Autowired
+    private TutorialService tutorialService;
     private HibernateTemplate hibernateTemplate;
-    final private HashMap<SimpleBase, PendingPromotion> pendingPromotions = new HashMap<SimpleBase, PendingPromotion>();
     private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
-    private CrudServiceHelper<DbUserStage> userStageCrudServiceHelper;
+    private List<DbLevel> dbLevels = new ArrayList<DbLevel>();
+    private CrudServiceHelper<DbLevel> crudServiceHelperHibernate;
+
+    @PostConstruct
+    public void init() {
+        try {
+            crudServiceHelperHibernate = new CrudServiceHelperHibernateImpl<DbLevel>(hibernateTemplate, DbLevel.class) {
+                @Override
+                protected void addAdditionalReadCriteria(Criteria criteria) {
+                    criteria.addOrder(Order.asc("orderIndex"));
+                }
+            };
+            activateLevels();
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -89,355 +100,62 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<DbLevel> getDbLevels() {
-        return (List<DbLevel>) hibernateTemplate.executeFind(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbLevel.class);
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                criteria.addOrder(Order.desc("rank"));
-                return criteria.list();
-            }
-        });
-    }
+    public void promote(User user) {
+        // Prepare
+        Base base = baseService.getBase(user);
+        UserLevelStatus userLevelStatus = user.getUserLevelStatus();
 
-    private int getHighestDbLevel() {
-        List result = (List) hibernateTemplate.execute(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbLevel.class);
-                criteria.setProjection(Projections.max("rank"));
-                return criteria.list();
-            }
-        });
-        if (result.isEmpty() || result.get(0) == null) {
-            return 0;
-        } else {
-            return (Integer) result.get(0);
-        }
-    }
+        // Get next level
+        DbLevel dbOldLevel = userLevelStatus.getCurrentLevel();
+        DbLevel dbNextLevel = getNextDbLevel(dbOldLevel);
 
-    @SuppressWarnings("unchecked")
-    private DbLevel getLowestDbLevel() {
-        List<DbLevel> result = hibernateTemplate.executeFind(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbLevel.class);
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                criteria.addOrder(Order.asc("rank"));
-                criteria.setFetchSize(1);
-                return criteria.list();
-            }
-        });
-        if (result.isEmpty()) {
-            throw new IllegalStateException("No levels found");
-        } else {
-            return result.get(0);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private DbLevel getNextDbLevel(final DbLevel dbLevel) {
-        List<DbLevel> result = hibernateTemplate.executeFind(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbLevel.class);
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                criteria.add(Restrictions.gt("rank", dbLevel.getRank()));
-                criteria.addOrder(Order.asc("rank"));
-                criteria.setFetchSize(1);
-                return criteria.list();
-            }
-        });
-        if (result.isEmpty()) {
-            return null;
-        } else {
-            return result.get(0);
-        }
-
-    }
-
-    @Override
-    public void deleteDbLevel(DbLevel dbLevel) {
-        for (Base base : baseService.getBases()) {
-            BaseLevelStatus baseLevelStatus = base.getBaseLevelStatus();
-            if (baseLevelStatus.getCurrentLevel().equals(dbLevel)) {
-                throw new IllegalStateException("Can not delete level. It is used in base: " + base);
-            }
-        }
-        hibernateTemplate.delete(dbLevel);
-    }
-
-    @Override
-    public void addDbLevel() {
-        DbLevel dbLevel = new DbLevel();
-        dbLevel.setRank(getHighestDbLevel() + 1);
-        hibernateTemplate.save(dbLevel);
-    }
-
-    @Override
-    public void saveDbLevels(List<DbLevel> dbLevels) {
-        hibernateTemplate.saveOrUpdateAll(dbLevels);
-    }
-
-    @Override
-    public void saveDbLevel(DbLevel dbLevel) {
-        hibernateTemplate.update(dbLevel);
-        // Update all bases
-        for (Base base : baseService.getBases()) {
-            BaseLevelStatus baseLevelStatus = base.getBaseLevelStatus();
-            if (dbLevel.equals(baseLevelStatus.getCurrentLevel())) {
-                baseLevelStatus.setCurrentLevel(dbLevel);
-            }
-        }
-    }
-
-    @Override
-    public void moveUpDbLevel(DbLevel dbLevel) {
-        List<DbLevel> levels = getDbLevels();
-        int i = levels.indexOf(dbLevel);
-        if (i > 0) {
-            final DbLevel level1 = levels.get(i);
-            final DbLevel level2 = levels.get(i - 1);
-            int tmpRank = level1.getRank();
-            level1.setRank(level2.getRank());
-            level2.setRank(getHighestDbLevel() + 1); // Avoid unique constraint
-            hibernateTemplate.update(level2);
-            hibernateTemplate.update(level1);
-            level2.setRank(tmpRank);
-            hibernateTemplate.update(level2);
-        }
-    }
-
-    @Override
-    public void moveDownDbLevel(DbLevel dbLevel) {
-        List<DbLevel> levels = getDbLevels();
-        int i = levels.indexOf(dbLevel);
-        if (levels.size() > i + 1) {
-            DbLevel level1 = levels.get(i);
-            DbLevel level2 = levels.get(i + 1);
-            int tmpRank = level1.getRank();
-            level1.setRank(level2.getRank());
-            level2.setRank(getHighestDbLevel() + 1); // Avoid unique constraint
-            hibernateTemplate.update(level2);
-            hibernateTemplate.update(level1);
-            level2.setRank(tmpRank);
-            hibernateTemplate.update(level2);
-        }
-    }
-
-    @Override
-    public Level getLevel4Base() {
-        return baseService.getBase().getBaseLevelStatus().getCurrentLevel().createLevel();
-    }
-
-    @Override
-    public String getMissionTarget4NextLevel(Base base) {
-        DbLevel dbLevel = getNextDbLevel(base.getBaseLevelStatus().getCurrentLevel());
-        if (dbLevel == null) {
-            return NO_MISSION_TARGET;
-        }
-        dbLevel = getUnskippable(dbLevel, base);
-        if (dbLevel == null) {
-            return NO_MISSION_TARGET;
-        }
-        return dbLevel.getMissionTarget();
-    }
-
-    @Override
-    public void setupLevel4NewBase(Base base) {
-        DbLevel dbLevel = getLowestDbLevel();
-        dbLevel = getUnskippable(dbLevel, base);
-        if (dbLevel == null) {
-            return;
-        }
-        BaseLevelStatus baseLevelStatus = new BaseLevelStatus();
-        baseLevelStatus.setCurrentLevel(dbLevel);
-        base.setBaseLevelStatus(baseLevelStatus);
-        prepareForNextPromotion(base, true);
-        userTrackingService.levelPromotion(base, null);
-    }
-
-    @Override
-    public void onIncreaseXp(Base base, int xp) {
-        PendingPromotion pendingPromotion = pendingPromotions.get(base.getSimpleBase());
-        if (pendingPromotion == null || pendingPromotion.getDbLevel().getMinXp() == null) {
-            return;
-        }
-        if (xp >= pendingPromotion.getDbLevel().getMinXp()) {
-            pendingPromotion.setXpAchieved();
-            userTrackingService.levelInterimPromotion(base, pendingPromotion.getDbLevel().getName(), PendingPromotion.INTERIM_PROMOTION_XP);
-            checkAndHandlePromotion(pendingPromotion, base);
-        }
-    }
-
-    @Override
-    public void onMoneyIncrease(Base base) {
-        PendingPromotion pendingPromotion = pendingPromotions.get(base.getSimpleBase());
-        if (pendingPromotion == null || (pendingPromotion.getDbLevel().getMinMoney() == null && pendingPromotion.getDbLevel().getDeltaMoney() == null)) {
-            return;
-        }
-
-        if (pendingPromotion.getDbLevel().getMinMoney() != null) {
-            int minMoney = pendingPromotion.getDbLevel().getMinMoney();
-            if (minMoney >= base.getAccountBalance()) {
-                pendingPromotion.setMinMoneyAchieved();
-                userTrackingService.levelInterimPromotion(base, pendingPromotion.getDbLevel().getName(), PendingPromotion.INTERIM_PROMOTION_MIN_MONEY);
-                checkAndHandlePromotion(pendingPromotion, base);
-            }
-        } else {
-            int deltaMoney = pendingPromotion.getDbLevel().getDeltaMoney();
-            Integer beginningMoney = base.getBaseLevelStatus().getBeginningMoney();
-            if (beginningMoney == null) {
-                throw new IllegalArgumentException("beginningMoney == null " + base);
-            }
-            if (base.getAccountBalance() - beginningMoney > deltaMoney) {
-                pendingPromotion.setDeltaMoneyAchieved();
-                userTrackingService.levelInterimPromotion(base, pendingPromotion.getDbLevel().getName(), PendingPromotion.INTERIM_PROMOTION_DELTA_MONEY);
-                checkAndHandlePromotion(pendingPromotion, base);
-            }
-        }
-    }
-
-    @Override
-    public void onSyncBaseItemCreated(SyncBaseItem syncBaseItem) {
-        Base base = baseService.getBase(syncBaseItem);
-        PendingPromotion pendingPromotion = pendingPromotions.get(base.getSimpleBase());
-        if (pendingPromotion == null || pendingPromotion.getDbLevel().getDbItemCounts() == null || pendingPromotion.getDbLevel().getDbItemCounts().isEmpty()) {
-            return;
-        }
-        if (checkForItemsCondition(pendingPromotion.getDbLevel(), base)) {
-            pendingPromotion.setItemCountAchieved();
-            userTrackingService.levelInterimPromotion(base, pendingPromotion.getDbLevel().getName(), PendingPromotion.INTERIM_PROMOTION_ITEMS);
-            checkAndHandlePromotion(pendingPromotion, base);
-        }
-    }
-
-    @Override
-    public void onItemKilled(Base actorBase) {
-        PendingPromotion pendingPromotion = pendingPromotions.get(actorBase.getSimpleBase());
-        if (pendingPromotion == null || pendingPromotion.getDbLevel().getDeltaKills() == null) {
-            return;
-        }
-        Integer beginningKills = actorBase.getBaseLevelStatus().getBeginningKills();
-        if (beginningKills == null) {
-            throw new IllegalArgumentException("beginningKills == null " + actorBase);
-        }
-
-        if (actorBase.getKills() - beginningKills >= pendingPromotion.getDbLevel().getDeltaKills()) {
-            pendingPromotion.setDeltaKillsAchieved();
-            userTrackingService.levelInterimPromotion(actorBase, pendingPromotion.getDbLevel().getName(), PendingPromotion.INTERIM_PROMOTION_DELTA_KILLS);
-            checkAndHandlePromotion(pendingPromotion, actorBase);
-        }
-    }
-
-    @Override
-    public void onBaseDeleted(Base base) {
-        pendingPromotions.remove(base.getSimpleBase());
-    }
-
-    private boolean checkForItemsCondition(DbLevel promotionLevel, Base base) {
-        Collection<DbItemCount> dbItemCounts = promotionLevel.getDbItemCounts();
-        if (dbItemCounts == null || dbItemCounts.isEmpty()) {
-            return true;
-        }
-
-        for (DbItemCount dbItemCount : dbItemCounts) {
-            int count = base.getItemCount(dbItemCount.getBaseItemType().createItemType());
-            if (count < dbItemCount.getCount()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private void checkAndHandlePromotion(PendingPromotion pendingPromotion, Base base) {
-        if (!pendingPromotion.achieved()) {
-            return;
-        }
-        BaseLevelStatus baseLevelStatus = base.getBaseLevelStatus();
-        DbLevel oldLevel = baseLevelStatus.getCurrentLevel();
-        DbLevel achievedLevel = pendingPromotion.getDbLevel();
-        baseLevelStatus.setCurrentLevel(achievedLevel);
-        LevelPacket levelPacket = new LevelPacket();
-        levelPacket.setLevel(achievedLevel.createLevel());
-        connectionService.sendPacket(base.getSimpleBase(), levelPacket);
+        // Prepare next level
+        userLevelStatus.setCurrentLevel(dbNextLevel);
         baseService.sendHouseSpacePacket(base);
-        userTrackingService.levelPromotion(base, oldLevel);
-        // Cleanup
-        pendingPromotions.remove(base.getSimpleBase());
+        DbScope dbScope = dbNextLevel.getDbScope();
+        if (dbScope.isCreateRealBase()) {
+            try {
+                baseService.createNewBase();
+            } catch (Exception e) {
+                log.error("Can not create base for user: " + user, e);
+            }
+        }
 
-        // Prepare next promotion
-        prepareForNextPromotion(base, true);
+        // TODO save user
+        // Send level update packet
+        if (dbNextLevel.isRealGame()) {
+            LevelPacket levelPacket = new LevelPacket();
+            levelPacket.setLevel(dbNextLevel.createLevel());
+            connectionService.sendPacket(base.getSimpleBase(), levelPacket);
+        }
+        // Tracking
+        userTrackingService.levelPromotion(user, dbOldLevel);
     }
 
-    private void prepareForNextPromotion(Base base, boolean setDeltas) {
-        BaseLevelStatus baseLevelStatus = base.getBaseLevelStatus();
-        DbLevel nextDbLevel = getNextDbLevel(baseLevelStatus.getCurrentLevel());
-        if (nextDbLevel == null) {
-            return;
+    private DbLevel getNextDbLevel(DbLevel dbLevel) {
+        int index = dbLevels.indexOf(dbLevel);
+        if (index < 0) {
+            throw new IllegalArgumentException("DbLevel not found: " + dbLevel);
         }
-        nextDbLevel = getUnskippable(nextDbLevel, base);
-        if (nextDbLevel == null) {
-            return;
+        index++;
+        if (index >= dbLevels.size()) {
+            throw new IllegalStateException("No next level for: " + dbLevel);
         }
-        if (setDeltas) {
-            baseLevelStatus.setDeltas(base, nextDbLevel);
-        }
-        PendingPromotion pendingPromotion = new PendingPromotion(nextDbLevel);
-        pendingPromotions.put(base.getSimpleBase(), pendingPromotion);
+        return dbLevels.get(index);
     }
 
     @Override
-    public void restore(Collection<Base> bases) {
-        synchronized (pendingPromotions) {
-            pendingPromotions.clear();
-            for (Base base : bases) {
-                try {
-                    prepareForNextPromotion(base, false);
-                } catch (Throwable throwable) {
-                    log.error("", throwable);
-                }
-            }
-        }
-    }
-
-    private DbLevel getUnskippable(DbLevel dbLevel, Base base) {
-        while (canBeSkippedIfBought(dbLevel, base)) {
-            dbLevel = getNextDbLevel(dbLevel);
-            if (dbLevel == null) {
-                return null;
-            }
-        }
-        return dbLevel;
-    }
-
-    private boolean canBeSkippedIfBought(DbLevel dbLevel, Base base) {
-        Collection<DbBaseItemType> skipIfBought = dbLevel.getSkipIfItemsBought();
-        if (skipIfBought == null || skipIfBought.isEmpty()) {
-            return false;
-        }
-        for (DbBaseItemType dbBaseItemType : skipIfBought) {
-            if (!serverMarketService.isAllowed(dbBaseItemType.getId(), base)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public DbUserStage getDbUserStage() {
-        User user = userService.getLoggedinUser();
-        if (user != null) {
-            return user.getUserStage();
-        }
-        return getDbUserStageFromSession();
+    public void setLevelForNewUser(User user) {
+        DbLevel dbLevel = dbLevels.get(0);
+        UserLevelStatus userLevelStatus = new UserLevelStatus();
+        userLevelStatus.setCurrentLevel(dbLevel);
+        user.setUserLevelStatus(userLevelStatus);
+        serverConditionService.activateCondition(dbLevel.getDbConditionConfig().createConditionConfig(), user);
     }
 
     @Override
     public GameStartupSeq getColdStartupSeq() {
-        if (getDbUserStage().isRealGame()) {
+        if (getDbLevel().isRealGame()) {
             return GameStartupSeq.COLD_REAL;
         } else {
             return GameStartupSeq.COLD_SIMULATED;
@@ -445,144 +163,44 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     }
 
     @Override
-    public void onUserCreated(User user) {
-        user.setDbUserStage(getDbUserStageFromSession());
-        session.setDbUserStage(null);
+    public DbScope getDbScope() {
+        return getDbLevel().getDbScope();
     }
 
     @Override
-    public void onTutorialFinished() {
-        DbUserStage dbUserStage = getDbUserStage();
-        DbUserStage nextDbUserStage = getNextDbUserStage(dbUserStage);
-        saveUserStageInUser(nextDbUserStage);
-    }
-
-    private void saveUserStageInUser(DbUserStage dbUserStage) {
-        User user = userService.getLoggedinUser();
-        if (user != null) {
-            user.setDbUserStage(dbUserStage);
-            userService.save(user);
-        } else {
-            session.setDbUserStage(dbUserStage);
-        }
-    }
-
-    private DbUserStage getNextDbUserStage(final DbUserStage dbUserStage) {
-        @SuppressWarnings("unchecked")
-        List<DbUserStage> dbUserStages = hibernateTemplate.executeFind(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbUserStage.class);
-                // TODO: Assumption orderindex is contiguously
-                criteria.add(Restrictions.eq("orderIndex", dbUserStage.getOrderIndex() + 1));
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                return criteria.list();
-            }
-        });
-        if (dbUserStages.isEmpty()) {
-            throw new IllegalStateException("No next DbUserStage found for: " + dbUserStage);
-        } else {
-            return dbUserStages.get(0);
-        }
-    }
-
-    private DbUserStage getDbUserStageFromSession() {
-        DbUserStage dbUserStage = session.getUserStage();
-        if (dbUserStage == null) {
-            dbUserStage = getLowestDbUserStage();
-            session.setDbUserStage(dbUserStage);
-        }
-        return dbUserStage;
-    }
-
-    @SuppressWarnings("unchecked")
-    private DbUserStage getLowestDbUserStage() {
-        return getUserStageCrudServiceHelper().readDbChildren().iterator().next();
+    public DbLevel getDbLevel() {
+        return userService.getUser().getUserLevelStatus().getCurrentLevel();
     }
 
     @Override
-    public CrudServiceHelper<DbUserStage> getUserStageCrudServiceHelper() {
-        if (userStageCrudServiceHelper == null) {
-            userStageCrudServiceHelper = new CrudServiceHelperHibernateImpl<DbUserStage>(hibernateTemplate, DbUserStage.class) {
-                @Override
-                protected void addAdditionalReadCriteria(Criteria criteria) {
-                    criteria.addOrder(Order.asc("orderIndex"));
-                }
-
-                @Override
-                public void updateDbChildren(Collection<DbUserStage> children) {
-                    final List<DbUserStage> dbUserStages = (List<DbUserStage>) children;
-                    for (int i = 0, dbUserStagesSize = dbUserStages.size(); i < dbUserStagesSize; i++) {
-                        dbUserStages.get(i).setOrderIndex(i);
-                    }
-                    hibernateTemplate.execute(new HibernateCallback() {
-                        @Override
-                        public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                            hibernateTemplate.saveOrUpdateAll(dbUserStages);
-                            hibernateTemplate.flush();
-                            return null;
-                        }
-                    });
-                }
-            };
-        }
-        return userStageCrudServiceHelper;
+    public DbLevel getDbLevel(String levelName) {
+        // TODO
+        return null;
     }
 
     @Override
-    public DbUserStage getDbUserStage(final String name) {
-        @SuppressWarnings("unchecked")
-        List<DbUserStage> result = hibernateTemplate.executeFind(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbUserStage.class);
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                criteria.add(Restrictions.eq("name", name));
-                criteria.setFetchSize(1);
-                return criteria.list();
-            }
-        });
-        if (result.isEmpty()) {
-            throw new IllegalStateException("No DbUserStage found for name: " + name);
-        } else {
-            return result.get(0);
-        }
+    public String getDbLevelHtml() {
+        return getDbLevel().getHtml();
     }
 
     @Override
-    public DbUserStage getDbUserStage4RealGame() {
-        @SuppressWarnings("unchecked")
-        List<DbUserStage> result = hibernateTemplate.executeFind(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbUserStage.class);
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                criteria.add(Restrictions.eq("isRealGame", true));
-                return criteria.list();
-            }
-        });
-        if (result.isEmpty()) {
-            throw new IllegalStateException("No DbUserStage for real game found");
-        } else if (result.size() > 1) {
-            log.error("More than one DbUserStage for real game found. Taking first.");
-            return result.get(0);
-        } else {
-            return result.get(0);
-        }
+    public void restore(Collection<Base> bases) {
+        // TODO
     }
 
     @Override
-    public String getDbUserStageHtml() {
-        DbUserStage dbUserStage = getDbUserStage();
-        DbUserStage newDbUserStage = userStageCrudServiceHelper.readDbChild(dbUserStage.getId());
-        return newDbUserStage.getHtml();
+    public List<DbLevel> getDbLevels() {
+        return dbLevels;
     }
 
     @Override
-    public UserStage getUserStage() {
-        DbUserStage dbUserStage = getDbUserStage();
-        DbUserStage newDbUserStage = userStageCrudServiceHelper.readDbChild(dbUserStage.getId());
-        return new UserStage(newDbUserStage.getHtml(), newDbUserStage.isRealGame());
+    public void saveDbLevels(List<DbLevel> dbLevels) {
+        crudServiceHelperHibernate.updateDbChildren(dbLevels);
     }
 
+    @Override
+    public void activateLevels() {
+        dbLevels = (List<DbLevel>) crudServiceHelperHibernate.readDbChildren();
+        tutorialService.activate();
+    }
 }

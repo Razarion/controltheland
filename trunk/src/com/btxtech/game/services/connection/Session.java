@@ -13,9 +13,7 @@
 
 package com.btxtech.game.services.connection;
 
-import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.user.User;
-import com.btxtech.game.services.utg.DbUserStage;
 
 /**
  * User: beat
@@ -37,17 +35,7 @@ public interface Session {
 
     void setUser(User user);
 
-    UserItemTypeAccess getUserItemTypeAccess();
-
-    void setUserItemTypeAccess(UserItemTypeAccess userItemTypeAccess);
-
-    void clearGame();
-
     void onJavaScriptDetected();
 
     boolean isJavaScriptDetected();
-
-    DbUserStage getUserStage();
-
-    void setDbUserStage(DbUserStage dbUserStage);
 }

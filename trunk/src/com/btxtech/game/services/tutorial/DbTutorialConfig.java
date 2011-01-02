@@ -21,6 +21,8 @@ import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelperCollectionImpl;
+import com.btxtech.game.services.terrain.DbTerrainSetting;
+import com.btxtech.game.services.tutorial.hint.ResourceHintManager;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import org.hibernate.annotations.Cascade;
@@ -46,7 +49,7 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
     @GeneratedValue
     private Integer id;
     private String name;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @org.hibernate.annotations.IndexColumn(name = "orderIndex", nullable = false, base = 0)
     @JoinColumn(name = "dbTutorialConfig", nullable = false)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
@@ -64,6 +67,8 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
     private boolean failOnOwnItemsLost;
     private Integer failOnMoneyBelowAndNoAttackUnits;
     private boolean tracking;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DbTerrainSetting dbTerrainSetting;
 
     @Override
     public String getName() {
@@ -159,6 +164,22 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
         this.tracking = tracking;
     }
 
+    public List<DbTaskConfig> getDbTaskConfigs() {
+        return dbTaskConfigs;
+    }
+
+    public void setDbTaskConfigs(List<DbTaskConfig> dbTaskConfigs) {
+        this.dbTaskConfigs = dbTaskConfigs;
+    }
+
+    public DbTerrainSetting getDbTerrainSetting() {
+        return dbTerrainSetting;
+    }
+
+    public void setDbTerrainSetting(DbTerrainSetting dbTerrainSetting) {
+        this.dbTerrainSetting = dbTerrainSetting;
+    }
+
     public TutorialConfig createTutorialConfig(ResourceHintManager resourceHintManager) {
         ArrayList<BaseAttributes> baseAttributes = new ArrayList<BaseAttributes>();
         SimpleBase ownBase = new SimpleBase(ownBaseId);
@@ -224,5 +245,10 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
             DbTaskConfig old = dbTaskConfigs.set(i + 1, task);
             dbTaskConfigs.set(i, old);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "DbTutorialSetting: " + name;
     }
 }

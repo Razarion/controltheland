@@ -47,6 +47,7 @@ import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.resource.ResourceService;
+import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -95,6 +96,8 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     private UserGuidanceService userGuidanceService;
     @Autowired
     private MgmtService mgmtService;
+    @Autowired
+    private ServerConditionService serverConditionService;
     private HibernateTemplate hibernateTemplate;
     private int lastId = 0;
     private final HashMap<Id, SyncItem> items = new HashMap<Id, SyncItem>();
@@ -146,7 +149,6 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             syncItem.addSyncItemListener(baseService);
             baseService.itemCreated(syncBaseItem);
             actionService.interactionGuardingItems(syncBaseItem);
-            userGuidanceService.onSyncBaseItemCreated(syncBaseItem);
         }
 
         connectionService.sendSyncInfo(syncItem);
@@ -230,7 +232,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
                 Base actorBase = baseService.getBase(actor);
                 actorBase.increaseKills();
                 serverMarketService.increaseXp(actorBase, (SyncBaseItem) killedItem);
-                userGuidanceService.onItemKilled(actorBase);
+                serverConditionService.onSyncItemKilled(actor, killedItem);
 
             }
             baseService.itemDeleted((SyncBaseItem) killedItem, actor);
@@ -646,7 +648,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         double fullHealth = syncBaseItem.getBaseItemType().getHealth();
         double price = syncBaseItem.getBaseItemType().getPrice();
         killSyncItem(syncBaseItem, null, true, false);
-        double money = health / fullHealth * price * mgmtService.getStartupData().getItemSellFactor();
+        double money = health / fullHealth * price * userGuidanceService.getDbScope().getItemSellFactor();
         base.depositMoney(money);
         baseService.sendAccountBaseUpdate(base);
     }

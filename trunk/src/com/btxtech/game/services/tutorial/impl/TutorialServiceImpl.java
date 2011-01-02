@@ -16,13 +16,12 @@ package com.btxtech.game.services.tutorial.impl;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelperHibernateImpl;
-import com.btxtech.game.services.tutorial.DbResourceHintConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
-import com.btxtech.game.services.tutorial.ResourceHintManager;
 import com.btxtech.game.services.tutorial.TutorialService;
-import com.btxtech.game.services.utg.DbUserStage;
+import com.btxtech.game.services.tutorial.hint.DbResourceHintConfig;
+import com.btxtech.game.services.tutorial.hint.ResourceHintManager;
+import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.stereotype.Component;
 
 /**
@@ -43,7 +43,7 @@ import org.springframework.stereotype.Component;
 public class TutorialServiceImpl implements TutorialService, ResourceHintManager {
     private HibernateTemplate hibernateTemplate;
     private CrudServiceHelper<DbTutorialConfig> tutorialCrudServiceHelper;
-    private final Map<DbUserStage, TutorialConfig> tutorialConfigMap = new HashMap<DbUserStage, TutorialConfig>();
+    private final Map<DbLevel, TutorialConfig> tutorialConfigMap = new HashMap<DbLevel, TutorialConfig>();
     private int imageId;
     private HashMap<Integer, DbResourceHintConfig> resourceHints = new HashMap<Integer, DbResourceHintConfig>();
     private Log log = LogFactory.getLog(TutorialServiceImpl.class);
@@ -59,7 +59,6 @@ public class TutorialServiceImpl implements TutorialService, ResourceHintManager
     public void init() {
         try {
             tutorialCrudServiceHelper = new CrudServiceHelperHibernateImpl<DbTutorialConfig>(hibernateTemplate, DbTutorialConfig.class);
-            activate();
         } catch (Exception e) {
             log.error("", e);
         }
@@ -72,30 +71,40 @@ public class TutorialServiceImpl implements TutorialService, ResourceHintManager
 
     @Override
     public void activate() {
-        Collection<DbUserStage> dbUserStages = userGuidanceService.getUserStageCrudServiceHelper().readDbChildren();
-        if (dbUserStages.isEmpty()) {
-            throw new IllegalStateException("No user stages defined");
+        List<DbLevel> dbLevels = userGuidanceService.getDbLevels();
+        if (dbLevels.isEmpty()) {
+            throw new IllegalStateException("No levels defined");
         }
-        synchronized (tutorialConfigMap) {
-            imageId = 0;
-            resourceHints.clear();
-            tutorialConfigMap.clear();
-            for (DbUserStage dbUserStage : dbUserStages) {
-                DbTutorialConfig dbTutorialConfig = dbUserStage.getDbTutorialConfig();
-                if (dbTutorialConfig == null) {
-                    continue;
+        SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
+        try {
+            synchronized (tutorialConfigMap) {
+                imageId = 0;
+                resourceHints.clear();
+                tutorialConfigMap.clear();
+                for (DbLevel dbLevel : dbLevels) {
+                    if (dbLevel.isRealGame()) {
+                        continue;
+                    }
+                    hibernateTemplate.load(dbLevel, dbLevel.getId());
+                    DbTutorialConfig dbTutorialConfig = dbLevel.getDbTutorialConfig();
+                    if (dbTutorialConfig == null) {
+                        log.warn("No DbTutorialConfig for level: " + dbLevel);
+                        continue;
+                    }
+                    TutorialConfig tutorialConfig = dbTutorialConfig.createTutorialConfig(this);
+                    tutorialConfigMap.put(dbLevel, tutorialConfig);
                 }
-                TutorialConfig tutorialConfig = dbTutorialConfig.createTutorialConfig(this);
-                tutorialConfigMap.put(dbUserStage, tutorialConfig);
             }
+        } finally {
+            SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
         }
     }
 
     @Override
-    public TutorialConfig getTutorialConfig(DbUserStage dbUserStage) {
-        TutorialConfig tutorialConfig = tutorialConfigMap.get(dbUserStage);
+    public TutorialConfig getTutorialConfig(DbLevel dbLevel) {
+        TutorialConfig tutorialConfig = tutorialConfigMap.get(dbLevel);
         if (tutorialConfig == null) {
-            throw new IllegalArgumentException("No TutorialConfig for: " + dbUserStage);
+            throw new IllegalArgumentException("No TutorialConfig for: " + dbLevel);
         }
         return tutorialConfig;
     }

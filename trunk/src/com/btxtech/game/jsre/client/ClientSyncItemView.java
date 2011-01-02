@@ -22,7 +22,7 @@ import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.effects.AttackEffectHandler;
 import com.btxtech.game.jsre.client.item.ItemContainer;
-import com.btxtech.game.jsre.client.simulation.Simulation;
+import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -228,9 +228,8 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
     public void onModelChange(SyncItemListener.Change change) {
         switch (change) {
             case BUILD:
-                // TODO PlayerSimulation.getInstance().onItemBuilt(this);
                 if (clientSyncItem.getSyncBaseItem().isReady()) {
-                    Simulation.getInstance().onItemBuilt(clientSyncItem.getSyncBaseItem());
+                    SimulationConditionServiceImpl.getInstance().onSyncItemBuilt(clientSyncItem.getSyncBaseItem());
                 }
                 cursorItemState.setFinalizeBuild(!clientSyncItem.getSyncBaseItem().isReady());
                 setupImageSizeAndPos();

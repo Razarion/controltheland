@@ -14,7 +14,6 @@
 package com.btxtech.game.jsre.common.tutorial;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.tutorial.condition.AbstractConditionConfig;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,7 +33,6 @@ public class TaskConfig implements Serializable {
     private boolean optionAllowed;
     private Index scroll;
     private List<StepConfig> stepConfigs;
-    private AbstractConditionConfig completionConditionConfig;
     private Collection<Integer> allowedItemTypes;
     private int houseCount;
     private int itemLimit;
@@ -49,7 +47,7 @@ public class TaskConfig implements Serializable {
     public TaskConfig() {
     }
 
-    public TaskConfig(boolean clearGame, String taskText, ArrayList<ItemTypeAndPosition> ownItems, boolean scrollingAllowed, boolean sellingAllowed, boolean optionAllowed, Index scroll, ArrayList<StepConfig> stepConfigs, AbstractConditionConfig completionConditionConfig, Collection<Integer> allowedItemTypes, int houseCount, int itemLimit, int accountBalance, int finishImageDuration, String name, Integer finishImageId) {
+    public TaskConfig(boolean clearGame, String taskText, ArrayList<ItemTypeAndPosition> ownItems, boolean scrollingAllowed, boolean sellingAllowed, boolean optionAllowed, Index scroll, ArrayList<StepConfig> stepConfigs, Collection<Integer> allowedItemTypes, int houseCount, int itemLimit, int accountBalance, int finishImageDuration, String name, Integer finishImageId) {
         this.clearGame = clearGame;
         this.taskText = taskText;
         this.ownItems = ownItems;
@@ -58,7 +56,6 @@ public class TaskConfig implements Serializable {
         this.optionAllowed = optionAllowed;
         this.scroll = scroll;
         this.stepConfigs = stepConfigs;
-        this.completionConditionConfig = completionConditionConfig;
         this.allowedItemTypes = allowedItemTypes;
         this.houseCount = houseCount;
         this.itemLimit = itemLimit;
@@ -86,10 +83,6 @@ public class TaskConfig implements Serializable {
 
     public List<StepConfig> getStepConfigs() {
         return stepConfigs;
-    }
-
-    public AbstractConditionConfig getCompletionConditionConfig() {
-        return completionConditionConfig;
     }
 
     public Collection<Integer> getAllowedItemTypes() {

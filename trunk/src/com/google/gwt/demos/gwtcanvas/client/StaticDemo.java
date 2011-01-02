@@ -56,8 +56,8 @@ public class StaticDemo extends SimpleCanvasDemo {
     
     canvas.resize(width, height);
     
-    // Changing the coordinate size will implicitly clear the canvas
-    // canvas.clear();
+    // Changing the coordinate size will implicitly cleanup the canvas
+    // canvas.cleanup();
     canvas.saveContext();
     
     canvas.setLineWidth(1);
@@ -172,7 +172,7 @@ public class StaticDemo extends SimpleCanvasDemo {
     canvas.restoreContext();
     
     canvas.restoreContext();
-    // canvas.clear();
+    // canvas.cleanup();
   }
 
   public void stopDemo() {

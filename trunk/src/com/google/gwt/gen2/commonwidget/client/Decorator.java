@@ -133,7 +133,7 @@ public class Decorator {
     nextAttach.removeAttribute("id");
     nextAttach.appendChild(node);
 
-    // clear the hidden div.
+    // cleanup the hidden div.
     Node removed = hiddenDiv.removeChild(nextRoot);
     assert (removed != null);
     return nextRoot;
