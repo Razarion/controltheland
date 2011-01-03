@@ -15,6 +15,8 @@ package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.common.LevelPacket;
+import com.btxtech.game.jsre.common.level.config.ConditionConfig;
+import com.btxtech.game.jsre.common.level.config.ConditionTrigger;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
@@ -150,7 +152,11 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         UserLevelStatus userLevelStatus = new UserLevelStatus();
         userLevelStatus.setCurrentLevel(dbLevel);
         user.setUserLevelStatus(userLevelStatus);
-        serverConditionService.activateCondition(dbLevel.getDbConditionConfig().createConditionConfig(), user);
+        if (dbLevel.isRealGame()) {
+            serverConditionService.activateCondition(dbLevel.getDbConditionConfig().createConditionConfig(), user);
+        } else {
+            serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.TUTORIAL, null), user);
+        }
     }
 
     @Override

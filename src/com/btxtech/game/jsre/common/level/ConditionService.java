@@ -42,7 +42,7 @@ public interface ConditionService<T> {
 
     void onIncreaseXp(SimpleBase base, int xp);
 
-    void onSyncItemKilled(SimpleBase actor, SyncItem killedItem);
+    void onSyncItemKilled(SimpleBase actor, SyncBaseItem killedItem);
 
     void onSyncItemBuilt(SyncBaseItem syncBaseItem);
 

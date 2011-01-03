@@ -13,7 +13,9 @@
 
 package com.btxtech.game.jsre.common.level.condition;
 
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -28,6 +30,18 @@ public class SyncObjectIdComparison extends AbstractComparison {
     public void onSyncItem(SyncItem syncItem) {
         if (!isFulfilled) {
             isFulfilled = syncItem.getId().getId() == syncObjectId;
+        }
+    }
+
+    @Override
+    public void onSyncItems(Collection<SyncBaseItem> syncItems) {
+        if (!isFulfilled) {
+            for (SyncBaseItem syncItem : syncItems) {
+                onSyncItem(syncItem);
+                if (isFulfilled) {
+                    return;
+                }
+            }
         }
     }
 

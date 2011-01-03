@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010.
+ * Copyright (c) 2011.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -14,21 +14,30 @@
 package com.btxtech.game.jsre.common.level.condition;
 
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import java.util.Collection;
 
 /**
  * User: beat
  * Date: 27.12.2010
  * Time: 18:58:14
  */
-public class KillConditionTrigger<T> extends AbstractConditionTrigger<T> {
+public class SyncItemConditionTrigger<T> extends AbstractConditionTrigger<T> {
 
-    public KillConditionTrigger(AbstractComparison abstractComparison, T t) {
+    public SyncItemConditionTrigger(AbstractComparison abstractComparison, T t) {
         super(abstractComparison, t);
     }
 
-    public void onItemKilled(SimpleBase actor, SyncItem killedItem) {
-        getAbstractComparison().onSyncItem(killedItem);
+    public void onItems(SimpleBase actor, Collection<SyncBaseItem> syncItems) {
+        getAbstractComparison().onSyncItems(syncItems);
+        if (getAbstractComparison().isFulfilled()) {
+            setFulfilled();
+        }
+    }
+
+    public void onItem(SimpleBase actor, SyncItem syncItem) {
+        getAbstractComparison().onSyncItem(syncItem);
         if (getAbstractComparison().isFulfilled()) {
             setFulfilled();
         }

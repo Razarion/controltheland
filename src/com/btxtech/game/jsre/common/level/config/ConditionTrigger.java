@@ -15,7 +15,7 @@ package com.btxtech.game.jsre.common.level.config;
 
 import com.btxtech.game.jsre.common.level.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.level.condition.AbstractConditionTrigger;
-import com.btxtech.game.jsre.common.level.condition.KillConditionTrigger;
+import com.btxtech.game.jsre.common.level.condition.SyncItemConditionTrigger;
 import com.btxtech.game.jsre.common.level.condition.TutorialConditionTrigger;
 
 /**
@@ -27,13 +27,19 @@ public enum ConditionTrigger {
     SYNC_ITEM_KILLED(true) {
         @Override
         public <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison abstractComparison, T t) {
-            return new KillConditionTrigger<T>(abstractComparison, t);
+            return new SyncItemConditionTrigger<T>(abstractComparison, t);
         }},
     TUTORIAL(false) {
         @Override
         public <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison ignore, T t) {
             return new TutorialConditionTrigger<T>(t);
+        }},
+    SELECT(true) {
+        @Override
+        public <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison abstractComparison, T t) {
+            return new SyncItemConditionTrigger<T>(abstractComparison, t);
         }};
+
 
     private boolean comparisonNeeded;
 
@@ -42,6 +48,7 @@ public enum ConditionTrigger {
     }
 
     public abstract <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison abstractComparison, T t);
+
     public boolean isComparisonNeeded() {
         return comparisonNeeded;
     }

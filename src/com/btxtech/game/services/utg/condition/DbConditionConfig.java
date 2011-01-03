@@ -78,7 +78,7 @@ public class DbConditionConfig implements Serializable {
         if (conditionTrigger.isComparisonNeeded() && dbAbstractComparisonConfig == null) {
             throw new IllegalStateException("dbAbstractComparisonConfig is null");
         }
-        if (conditionConfig == null) {
+        if (dbAbstractComparisonConfig != null) {
             AbstractComparisonConfig abstractComparisonConfig = null;
             if (conditionTrigger.isComparisonNeeded()) {
                 abstractComparisonConfig = dbAbstractComparisonConfig.createComparisonConfig();

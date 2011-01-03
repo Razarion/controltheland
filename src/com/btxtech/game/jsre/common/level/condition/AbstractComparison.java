@@ -13,7 +13,9 @@
 
 package com.btxtech.game.jsre.common.level.condition;
 
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -22,6 +24,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
  */
 public abstract class AbstractComparison {
     public abstract void onSyncItem(SyncItem syncItem);
+
+    public abstract void onSyncItems(Collection<SyncBaseItem> syncItems);
 
     public abstract boolean isFulfilled();
 }

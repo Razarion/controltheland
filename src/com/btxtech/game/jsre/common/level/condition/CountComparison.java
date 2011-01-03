@@ -13,7 +13,9 @@
 
 package com.btxtech.game.jsre.common.level.condition;
 
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -32,6 +34,11 @@ public class CountComparison extends AbstractComparison {
     @Override
     public void onSyncItem(SyncItem syncItem) {
         value++;
+    }
+
+    @Override
+    public void onSyncItems(Collection<SyncBaseItem> syncItems) {
+        value += syncItems.size();
     }
 
     @Override
