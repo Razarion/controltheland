@@ -16,6 +16,7 @@ package com.btxtech.game.services.utg.impl;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.level.condition.AbstractConditionTrigger;
 import com.btxtech.game.jsre.common.level.condition.TutorialConditionTrigger;
+import com.btxtech.game.jsre.common.level.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.level.impl.ConditionServiceImpl;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.user.User;
@@ -45,7 +46,7 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<User> imple
     }
 
     @Override
-    protected AbstractConditionTrigger<User> getAbstractConditionPrivate(SimpleBase simpleBase) {
+    protected AbstractConditionTrigger<User> getAbstractConditionPrivate(SimpleBase simpleBase, ConditionTrigger conditionTrigger) {
         User user = baseService.getUser(simpleBase);
         AbstractConditionTrigger<User> abstractConditionTrigger = triggerMap.get(user);
         if (abstractConditionTrigger == null) {

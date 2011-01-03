@@ -226,13 +226,12 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
         if (killedItem instanceof SyncBaseItem) {
             actionService.removeGuardingBaseItem((SyncBaseItem) killedItem);
-
             if (actor != null) {
                 historyService.addItemDestroyedEntry(actor, (SyncBaseItem) killedItem);
                 Base actorBase = baseService.getBase(actor);
                 actorBase.increaseKills();
                 serverMarketService.increaseXp(actorBase, (SyncBaseItem) killedItem);
-                serverConditionService.onSyncItemKilled(actor, killedItem);
+                serverConditionService.onSyncItemKilled(actor, (SyncBaseItem) killedItem);
 
             }
             baseService.itemDeleted((SyncBaseItem) killedItem, actor);

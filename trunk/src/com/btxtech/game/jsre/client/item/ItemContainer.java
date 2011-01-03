@@ -231,7 +231,9 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         } else {
             definitelyKillItem(ClientSyncItem, explode);
         }
-        SimulationConditionServiceImpl.getInstance().onSyncItemKilled(actor, killedItem);
+        if (killedItem instanceof SyncBaseItem) {
+            SimulationConditionServiceImpl.getInstance().onSyncItemKilled(actor, (SyncBaseItem) killedItem);
+        }
     }
 
     private void makeItemSeeminglyDead(SyncItem syncItem, SimpleBase actor, ClientSyncItem ClientSyncItem) {

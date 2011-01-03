@@ -176,6 +176,7 @@ public class Simulation {
     }
 
     public void conditionPassed() {
+        activeTask.runNextStep();
         if (activeTask.isFulfilled()) {
             long time = System.currentTimeMillis();
             ClientUserTracker.getInstance().onTaskFinished(activeTask, time - taskTime, time);
