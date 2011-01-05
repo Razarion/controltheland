@@ -52,6 +52,7 @@ import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbScope;
 import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -147,10 +148,10 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             base = new Base(baseColor, userService.getUser(), lastBaseId);
             createBase(base.getSimpleBase(), setupBaseName(base), base.getBaseColor().getHtmlColor(), false);
             log.info("Base created: " + base);
-            base.setAccountBalance(dbScope.getMoney());
+            base.setAccountBalance(dbScope.getDeltaMoney());
             bases.put(base.getSimpleBase(), base);
         }
-        BaseItemType startItem = (BaseItemType) itemService.getItemType(dbScope.getStartItem());
+        BaseItemType startItem = (BaseItemType) itemService.getItemType(dbScope.getStartItemType());
         sendBaseChangedPacket(BaseChangedPacket.Type.CREATED, base.getSimpleBase());
         connectionService.createConnection(base);
         base.setUserItemTypeAccess(serverMarketService.getUserItemTypeAccess());
@@ -505,7 +506,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         if (base == null) {
             throw new NoConnectionException("Base does not exist", session.getSessionId());
         }
-        base.checkItemLimit4ItemAdding();
+        base.checkItemLimit4ItemAdding(userGuidanceService.getDbLevel(simpleBase));
     }
 
     @Override
@@ -536,7 +537,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
 
     public void sendHouseSpacePacket(Base base) {
         HouseSpacePacket houseSpacePacket = new HouseSpacePacket();
-        houseSpacePacket.setHouseSpace(base.getTotalHouseSpace());
+        houseSpacePacket.setHouseSpace(getTotalHouseSpace());
         connectionService.sendPacket(houseSpacePacket);
     }
 
@@ -544,5 +545,11 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     public void setBot(Base base, boolean isBot) {
         setBot(base.getSimpleBase(), isBot);
         sendBaseChangedPacket(BaseChangedPacket.Type.CHANGED, base.getSimpleBase());
+    }
+
+    @Override
+    public int getTotalHouseSpace() {
+        DbLevel dbLevel = userGuidanceService.getDbLevel();
+        return dbLevel.getDbScope().getHouseSpace() + getBase().getHouseSpace();
     }
 }

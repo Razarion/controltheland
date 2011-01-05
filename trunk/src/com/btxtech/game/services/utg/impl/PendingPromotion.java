@@ -62,7 +62,7 @@ public class PendingPromotion {
         deltaKillsAchieved = true;
     }
 
-    public boolean achieved() {
+   /* public boolean achieved() {
         if (dbLevel.getMinXp() != null) {
             if (!xpAchieved) {
                 return false;
@@ -94,5 +94,5 @@ public class PendingPromotion {
         }
 
         return true;
-    }
+    } */
 }

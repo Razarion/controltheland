@@ -13,10 +13,12 @@
 
 package com.btxtech.game.services.utg.impl;
 
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.common.LevelPacket;
-import com.btxtech.game.jsre.common.level.config.ConditionConfig;
-import com.btxtech.game.jsre.common.level.config.ConditionTrigger;
+import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
+import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
@@ -25,6 +27,8 @@ import com.btxtech.game.services.common.CrudServiceHelperHibernateImpl;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.User;
@@ -35,6 +39,8 @@ import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserLevelStatus;
 import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.services.utg.condition.DbConditionConfig;
+import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -104,7 +110,6 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     @Override
     public void promote(User user) {
         // Prepare
-        Base base = baseService.getBase(user);
         UserLevelStatus userLevelStatus = user.getUserLevelStatus();
 
         // Get next level
@@ -113,7 +118,6 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
         // Prepare next level
         userLevelStatus.setCurrentLevel(dbNextLevel);
-        baseService.sendHouseSpacePacket(base);
         DbScope dbScope = dbNextLevel.getDbScope();
         if (dbScope.isCreateRealBase()) {
             try {
@@ -122,16 +126,20 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
                 log.error("Can not create base for user: " + user, e);
             }
         }
+        serverConditionService.activateCondition(dbNextLevel.getDbConditionConfig().createConditionConfig(itemService), user);
 
         // TODO save user
         // Send level update packet
         if (dbNextLevel.isRealGame()) {
+            Base base = baseService.getBase(user);
             LevelPacket levelPacket = new LevelPacket();
-            levelPacket.setLevel(dbNextLevel.createLevel());
+            levelPacket.setLevel(dbNextLevel.getLevel());
             connectionService.sendPacket(base.getSimpleBase(), levelPacket);
+            baseService.sendHouseSpacePacket(base);
         }
         // Tracking
         userTrackingService.levelPromotion(user, dbOldLevel);
+        log.debug("User: " + user + " has been promeoted: " + dbOldLevel + " to " + dbNextLevel);
     }
 
     private DbLevel getNextDbLevel(DbLevel dbLevel) {
@@ -153,7 +161,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         userLevelStatus.setCurrentLevel(dbLevel);
         user.setUserLevelStatus(userLevelStatus);
         if (dbLevel.isRealGame()) {
-            serverConditionService.activateCondition(dbLevel.getDbConditionConfig().createConditionConfig(), user);
+            serverConditionService.activateCondition(dbLevel.getDbConditionConfig().createConditionConfig(itemService), user);
         } else {
             serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.TUTORIAL, null), user);
         }
@@ -176,6 +184,11 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     @Override
     public DbLevel getDbLevel() {
         return userService.getUser().getUserLevelStatus().getCurrentLevel();
+    }
+
+    @Override
+    public DbLevel getDbLevel(SimpleBase simpleBase) {
+        return baseService.getUser(simpleBase).getUserLevelStatus().getCurrentLevel();
     }
 
     @Override
@@ -206,7 +219,48 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
     @Override
     public void activateLevels() {
-        dbLevels = (List<DbLevel>) crudServiceHelperHibernate.readDbChildren();
+        /***************/
+        dbLevels = new ArrayList<DbLevel>();
+        DbLevel dbLevel1 = new DbLevel();
+        dbLevel1.setHtml("Html 1");
+        dbLevel1.setName("Name 1");
+        dbLevel1.setRealGame(false);
+        dbLevel1.setDbTutorialConfig(tutorialService.getDbTutorialCrudServiceHelper().readDbChild(1));
+        DbConditionConfig dbConditionConfig1 = new DbConditionConfig();
+        dbConditionConfig1.setConditionTrigger(ConditionTrigger.TUTORIAL);
+        dbLevel1.setDbConditionConfig(dbConditionConfig1);
+        dbLevel1.setId(1);
+        dbLevels.add(dbLevel1);
+        ////////////////////////////////////////////
+        DbLevel dbLevel2 = new DbLevel();
+        dbLevel2.setHtml("Html 2");
+        dbLevel2.setName("Name 2");
+        dbLevel2.setRealGame(true);
+        dbLevel2.setDbTutorialConfig(tutorialService.getDbTutorialCrudServiceHelper().readDbChild(1));
+        DbConditionConfig dbConditionConfig2 = new DbConditionConfig();
+        dbConditionConfig2.setConditionTrigger(ConditionTrigger.SYNC_ITEM_BUILT);
+        DbSyncItemTypeComparisonConfig dbSyncItemTypeComparisonConfig1 = new DbSyncItemTypeComparisonConfig();
+        dbSyncItemTypeComparisonConfig1.setDbItemType((DbItemType) hibernateTemplate.get(DbItemType.class, 3));
+        dbConditionConfig2.setDbAbstractComparisonConfig(dbSyncItemTypeComparisonConfig1);
+        dbLevel2.setDbConditionConfig(dbConditionConfig2);
+        DbScope dbScope2 = new DbScope();
+        dbLevel2.setDbScope(dbScope2);
+        dbScope2.setCreateRealBase(true);
+        dbScope2.setStartItemFreeRange(100);
+        dbScope2.setStartItemType((DbBaseItemType) hibernateTemplate.get(DbBaseItemType.class, 4));
+        dbScope2.setStartRectangle(new Rectangle(0, 0, 4000, 3500));
+        dbScope2.setHouseSpace(10);
+        dbScope2.setItemSellFactor(0.5);
+        dbScope2.setDeltaMoney(10000);
+        dbLevels.add(dbLevel2);
+        ////////////////////////////////////////////
+        DbLevel dbLevel3 = new DbLevel();
+        dbLevel3.setHtml("Html 2");
+        dbLevel3.setName("Name 2");
+        dbLevel3.setRealGame(true);
+
+        /***************/
+        //TODO dbLevels = (List<DbLevel>) crudServiceHelperHibernate.readDbChildren();
         tutorialService.activate();
     }
 }

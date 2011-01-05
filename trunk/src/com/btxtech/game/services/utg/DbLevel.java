@@ -52,30 +52,28 @@ public class DbLevel implements CrudChild, Serializable {
     @Column(unique = true)
     private int orderIndex;
     @Column(length = 50000)
-    private String missionTarget;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "dbLevel")
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
-    private Set<DbItemCount> dbItemCounts;
-    private Integer minXp;
-    private Integer minMoney;
-    private Integer deltaMoney;
-    private Integer deltaKills;
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "GUIDANCE_LEVEL_SKIP_IF_BOUGHT",
-            joinColumns = @JoinColumn(name = "dbLevelId"),
-            inverseJoinColumns = @JoinColumn(name = "itemTypeId")
-    )
-    private Set<DbBaseItemType> skipIfItemsBought;
-    private int itemLimit;
-    private int houseSpace;
+    //@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    //@JoinTable(name = "GUIDANCE_LEVEL_SKIP_IF_BOUGHT",
+    //        joinColumns = @JoinColumn(name = "dbLevelId"),
+    //        inverseJoinColumns = @JoinColumn(name = "itemTypeId")
+    //)
+    //private Set<DbBaseItemType> skipIfItemsBought;
     private boolean realGame;
     @Transient
     private Level level;
+    @Column(length = 50000)
     private String html;
     @OneToOne(fetch = FetchType.EAGER)
     private DbConditionConfig dbConditionConfig;
     @ManyToOne
     private DbTutorialConfig dbTutorialConfig;
+    @OneToOne
+    private DbScope dbScope;
+
+    @Deprecated
+    public void setId(Integer id) {
+        this.id = id; // TODO
+    }
 
     public String getName() {
         return name;
@@ -83,6 +81,54 @@ public class DbLevel implements CrudChild, Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getOrderIndex() {
+        return orderIndex;
+    }
+
+    public void setOrderIndex(int orderIndex) {
+        this.orderIndex = orderIndex;
+    }
+
+    public boolean isRealGame() {
+        return realGame;
+    }
+
+    public void setRealGame(boolean realGame) {
+        this.realGame = realGame;
+    }
+
+    public String getHtml() {
+        return html;
+    }
+
+    public void setHtml(String html) {
+        this.html = html;
+    }
+
+    public DbConditionConfig getDbConditionConfig() {
+        return dbConditionConfig;
+    }
+
+    public void setDbConditionConfig(DbConditionConfig dbConditionConfig) {
+        this.dbConditionConfig = dbConditionConfig;
+    }
+
+    public DbTutorialConfig getDbTutorialConfig() {
+        return dbTutorialConfig;
+    }
+
+    public void setDbTutorialConfig(DbTutorialConfig dbTutorialConfig) {
+        this.dbTutorialConfig = dbTutorialConfig;
+    }
+
+    public DbScope getDbScope() {
+        return dbScope;
+    }
+
+    public void setDbScope(DbScope dbScope) {
+        this.dbScope = dbScope;
     }
 
     @Override
@@ -95,103 +141,15 @@ public class DbLevel implements CrudChild, Serializable {
         // Ignore
     }
 
-    public String getMissionTarget() {
-        return missionTarget;
-    }
-
-    public void setMissionTarget(String missionTarget) {
-        this.missionTarget = missionTarget;
-    }
-
-    public Collection<DbItemCount> getDbItemCounts() {
-        return dbItemCounts;
-    }
-
-    public void createDbItemCount() {
-        if (dbItemCounts == null) {
-            dbItemCounts = new HashSet<DbItemCount>();
-        }
-        DbItemCount dbItemCount = new DbItemCount();
-        dbItemCount.setDbLevel(this);
-        dbItemCounts.add(dbItemCount);
-    }
-
-    public void removeDbItemCount(DbItemCount dbItemCount) {
-        dbItemCounts.remove(dbItemCount);
-    }
-
-    public Integer getMinXp() {
-        return minXp;
-    }
-
-    public void setMinXp(Integer minXp) {
-        this.minXp = minXp;
-    }
-
-    public Integer getMinMoney() {
-        return minMoney;
-    }
-
-    public void setMinMoney(Integer minMoney) {
-        this.minMoney = minMoney;
-    }
-
-    public Integer getDeltaMoney() {
-        return deltaMoney;
-    }
-
-    public void setDeltaMoney(Integer deltaMoney) {
-        this.deltaMoney = deltaMoney;
-    }
-
-    public Integer getDeltaKills() {
-        return deltaKills;
-    }
-
-    public void setDeltaKills(Integer deltaKills) {
-        this.deltaKills = deltaKills;
-    }
-
-    public Collection<DbBaseItemType> getSkipIfItemsBought() {
-        return skipIfItemsBought;
-    }
-
-    public void setSkipIfItemsBought(Set<DbBaseItemType> skipIfItemsBought) {
-        this.skipIfItemsBought = skipIfItemsBought;
-    }
-
-    public int getItemLimit() {
-        return itemLimit;
-    }
-
-    public void setItemLimit(int itemLimit) {
-        this.itemLimit = itemLimit;
-    }
-
-    public int getHouseSpace() {
-        return houseSpace;
-    }
-
-    public void setHouseSpace(int houseSpace) {
-        this.houseSpace = houseSpace;
-    }
-
-    public DbTutorialConfig getDbTutorialConfig() {
-        return dbTutorialConfig;
-    }
-
-    public void setDbTutorialConfig(DbTutorialConfig dbTutorialConfig) {
-        this.dbTutorialConfig = dbTutorialConfig;
-    }
-
     public Integer getId() {
         return id;
     }
 
-    public Level createLevel() {
-        Level level = new Level();
-        level.setName(name);
-        level.setItemLimit(itemLimit);
+
+    public Level getLevel() {
+        if (level == null) {
+            level = new Level(name, html, realGame, 0);
+        }
         return level;
     }
 
@@ -208,38 +166,6 @@ public class DbLevel implements CrudChild, Serializable {
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
-    }
-
-    public boolean isRealGame() {
-        return realGame;
-    }
-
-    public void setRealGame(boolean realGame) {
-        this.realGame = realGame;
-    }
-
-    public Level getLevel() {
-        return level;
-    }
-
-    public DbScope getDbScope() {
-        return null;  //To change body of created methods use File | Settings | File Templates.
-    }
-
-    public String getHtml() {
-        return html;
-    }
-
-    public DbConditionConfig getDbConditionConfig() {
-        return dbConditionConfig;
-    }
-
-    public int getOrderIndex() {
-        return orderIndex;
-    }
-
-    public void setOrderIndex(int orderIndex) {
-        this.orderIndex = orderIndex;
     }
 
     @Override

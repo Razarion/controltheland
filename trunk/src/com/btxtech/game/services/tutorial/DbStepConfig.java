@@ -19,6 +19,7 @@ import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelperCollectionImpl;
+import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.tutorial.hint.DbHintConfig;
 import com.btxtech.game.services.tutorial.hint.ResourceHintManager;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
@@ -117,7 +118,7 @@ public class DbStepConfig implements Serializable, CrudParent, CrudChild<DbTaskC
         return "DbStepConfig: " + name + " id: " + id;
     }
 
-    public StepConfig createStepConfig(ResourceHintManager resourceHintManager) {
+    public StepConfig createStepConfig(ResourceHintManager resourceHintManager, ItemService itemService) {
         if (conditionConfig == null) {
             throw new IllegalStateException("No condition set in step: " + this);
         }
@@ -128,6 +129,6 @@ public class DbStepConfig implements Serializable, CrudParent, CrudChild<DbTaskC
                 hintConfigs.add(hintConfig);
             }
         }
-        return new StepConfig(conditionConfig.createConditionConfig(), hintConfigs, name);
+        return new StepConfig(conditionConfig.createConditionConfig(itemService), hintConfigs, name);
     }
 }

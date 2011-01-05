@@ -14,6 +14,7 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.user.User;
 import java.util.Collection;
@@ -32,6 +33,8 @@ public interface UserGuidanceService {
     DbScope getDbScope();
 
     DbLevel getDbLevel();
+
+    DbLevel getDbLevel(SimpleBase simpleBase);
 
     DbLevel getDbLevel(String levelName);
 

@@ -15,9 +15,12 @@ package com.btxtech.game.services.utg.condition;
 
 import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.CountComparisonConfig;
+import com.btxtech.game.jsre.common.utg.config.SyncItemTypeComparisonConfig;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.itemType.DbItemType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 /**
  * User: beat
@@ -26,19 +29,20 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("COUNT")
-public class DbCountComparisonConfig extends DbAbstractComparisonConfig {
-    private int count;
+public class DbSyncItemTypeComparisonConfig extends DbAbstractComparisonConfig {
+    @ManyToOne
+    private DbItemType dbItemType;
 
-    public int getCount() {
-        return count;
+    public DbItemType getDbItemType() {
+        return dbItemType;
     }
 
-    public void setCount(int count) {
-        this.count = count;
+    public void setDbItemType(DbItemType dbItemType) {
+        this.dbItemType = dbItemType;
     }
 
     @Override
     public AbstractComparisonConfig createComparisonConfig(ItemService itemService) {
-        return new CountComparisonConfig(count);
+        return new SyncItemTypeComparisonConfig(itemService.getItemType(dbItemType));
     }
 }

@@ -13,7 +13,8 @@
 
 package com.btxtech.game.services.utg.condition;
 
-import com.btxtech.game.jsre.common.level.config.AbstractComparisonConfig;
+import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
+import com.btxtech.game.services.item.ItemService;
 import java.io.Serializable;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -36,7 +37,7 @@ public abstract class DbAbstractComparisonConfig implements Serializable{
     @GeneratedValue
     private Integer id;
 
-    public abstract AbstractComparisonConfig createComparisonConfig();
+    public abstract AbstractComparisonConfig createComparisonConfig(ItemService itemService);
 
     @Override
     public boolean equals(Object o) {

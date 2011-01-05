@@ -16,6 +16,7 @@ package com.btxtech.game.services.tutorial.impl;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelperHibernateImpl;
+import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.tutorial.hint.DbResourceHintConfig;
@@ -49,6 +50,8 @@ public class TutorialServiceImpl implements TutorialService, ResourceHintManager
     private Log log = LogFactory.getLog(TutorialServiceImpl.class);
     @Autowired
     private UserGuidanceService userGuidanceService;
+    @Autowired
+    private ItemService itemService;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -91,7 +94,7 @@ public class TutorialServiceImpl implements TutorialService, ResourceHintManager
                         log.warn("No DbTutorialConfig for level: " + dbLevel);
                         continue;
                     }
-                    TutorialConfig tutorialConfig = dbTutorialConfig.createTutorialConfig(this);
+                    TutorialConfig tutorialConfig = dbTutorialConfig.createTutorialConfig(this, itemService);
                     tutorialConfigMap.put(dbLevel, tutorialConfig);
                 }
             }

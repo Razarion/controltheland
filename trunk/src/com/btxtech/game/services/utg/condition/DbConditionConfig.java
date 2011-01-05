@@ -13,9 +13,10 @@
 
 package com.btxtech.game.services.utg.condition;
 
-import com.btxtech.game.jsre.common.level.config.AbstractComparisonConfig;
-import com.btxtech.game.jsre.common.level.config.ConditionConfig;
-import com.btxtech.game.jsre.common.level.config.ConditionTrigger;
+import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
+import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
+import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
+import com.btxtech.game.services.item.ItemService;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -71,7 +72,7 @@ public class DbConditionConfig implements Serializable {
         return id != null ? id.hashCode() : 0;
     }
 
-    public ConditionConfig createConditionConfig() {
+    public ConditionConfig createConditionConfig(ItemService itemService) {
         if (conditionTrigger == null) {
             throw new IllegalStateException("conditionTrigger is null");
         }
@@ -81,7 +82,7 @@ public class DbConditionConfig implements Serializable {
         if (dbAbstractComparisonConfig != null) {
             AbstractComparisonConfig abstractComparisonConfig = null;
             if (conditionTrigger.isComparisonNeeded()) {
-                abstractComparisonConfig = dbAbstractComparisonConfig.createComparisonConfig();
+                abstractComparisonConfig = dbAbstractComparisonConfig.createComparisonConfig(itemService);
             }
             conditionConfig = new ConditionConfig(conditionTrigger, abstractComparisonConfig);
         }
