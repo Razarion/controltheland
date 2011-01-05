@@ -20,6 +20,7 @@ import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.uiservices.ListProvider;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,7 +64,8 @@ public class MissionTarget extends WebPage {
         final ListProvider<DbItemCount> itemCounts = new ListProvider<DbItemCount>() {
             @Override
             protected List<DbItemCount> createList() {
-                return new ArrayList<DbItemCount>(dbLevel.getDbItemCounts());
+                // return new ArrayList<DbItemCount>(dbLevel.getDbItemCounts());
+                return Collections.emptyList();
             }
         };
         form.add(new DataView<DbItemCount>("itemCounts", itemCounts) {
@@ -108,7 +110,7 @@ public class MissionTarget extends WebPage {
 
                     @Override
                     public void onSubmit() {
-                        dbLevel.removeDbItemCount(dbLevelItem.getModelObject());
+                        //dbLevel.removeDbItemCount(dbLevelItem.getModelObject());
                     }
                 });
             }
@@ -116,7 +118,7 @@ public class MissionTarget extends WebPage {
         form.add(new Button("addItemCount") {
             @Override
             public void onSubmit() {
-                dbLevel.createDbItemCount();
+                //dbLevel.createDbItemCount();
             }
         });
         form.add(new TextField<Integer>("minXp"));
@@ -127,12 +129,13 @@ public class MissionTarget extends WebPage {
 
             @Override
             public String getObject() {
-                return ItemsUtil.itemTypesToString(dbLevel.getSkipIfItemsBought());
+                // return ItemsUtil.itemTypesToString(dbLevel.getSkipIfItemsBought());
+                return "TODO"; // TODO
             }
 
             @Override
             public void setObject(String itemsString) {
-                dbLevel.setSkipIfItemsBought(ItemsUtil.stringToItemTypes(itemsString, itemService.getDbBaseItemTypes()));
+                // TODO dbLevel.setSkipIfItemsBought(ItemsUtil.stringToItemTypes(itemsString, itemService.getDbBaseItemTypes()));
             }
 
             @Override
