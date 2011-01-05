@@ -84,6 +84,7 @@
         <mapping class="com.btxtech.game.services.utg.DbScrollTrackingItem"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbConditionConfig"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbCountComparisonConfig"/>
+        <mapping class="com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig"/>
         <mapping class="com.btxtech.game.services.forum.AbstractForumEntry"/>
         <mapping class="com.btxtech.game.services.forum.SubForum"/>
         <mapping class="com.btxtech.game.services.forum.Category"/>

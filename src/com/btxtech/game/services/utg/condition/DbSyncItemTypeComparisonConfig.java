@@ -14,7 +14,6 @@
 package com.btxtech.game.services.utg.condition;
 
 import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
-import com.btxtech.game.jsre.common.utg.config.CountComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.SyncItemTypeComparisonConfig;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbItemType;
@@ -28,7 +27,7 @@ import javax.persistence.ManyToOne;
  * Time: 16:31:29
  */
 @Entity
-@DiscriminatorValue("COUNT")
+@DiscriminatorValue("ITEM_TYPE")
 public class DbSyncItemTypeComparisonConfig extends DbAbstractComparisonConfig {
     @ManyToOne
     private DbItemType dbItemType;
