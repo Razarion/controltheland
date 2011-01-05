@@ -17,9 +17,9 @@ import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
 import com.btxtech.game.jsre.client.terrain.TerrainScrollListener;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.level.condition.AbstractConditionTrigger;
-import com.btxtech.game.jsre.common.level.config.ConditionTrigger;
-import com.btxtech.game.jsre.common.level.impl.ConditionServiceImpl;
+import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
+import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
+import com.btxtech.game.jsre.common.utg.impl.ConditionServiceImpl;
 import com.google.gwt.event.dom.client.ClickHandler;
 
 /**
@@ -42,7 +42,11 @@ public class SimulationConditionServiceImpl extends ConditionServiceImpl<Object>
 
     @Override
     protected AbstractConditionTrigger<Object> getAbstractConditionPrivate(SimpleBase actor, ConditionTrigger conditionTrigger) {
-        return abstractConditionTrigger;
+        if (abstractConditionTrigger != null && abstractConditionTrigger.getConditionTrigger() == conditionTrigger) {
+            return abstractConditionTrigger;
+        } else {
+            return null;
+        }
     }
 
     @Override

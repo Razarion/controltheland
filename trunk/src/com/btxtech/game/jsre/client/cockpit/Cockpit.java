@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ExtendedCustomButton;
+import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.MenuPanel;
 import com.btxtech.game.jsre.client.TopMapPanel;
@@ -100,6 +101,9 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
     // Selection
     private static final int SELECTION_LEFT = 240;
     private static final int SELECTION_TOP = 26;
+    // Debug
+    private static final int DEBUG_POSITION_LEFT = 240;
+    private static final int DEBUG_POSITION__TOP = 26;
 
     private CockpitMode cockpitMode;
     private AbsolutePanel radar;
@@ -117,6 +121,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
     private Timer timer;
     private Map<CockpitWidgetEnum, Widget> widgets = new HashMap<CockpitWidgetEnum, Widget>();
     private SelectedItemPanel selectedItemPanel;
+    private Label debugPosition;
 
     public static Cockpit getInstance() {
         return INSTANCE;
@@ -136,6 +141,11 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         setupOnline();
         selectedItemPanel = new SelectedItemPanel();
         add(selectedItemPanel, SELECTION_LEFT, SELECTION_TOP);
+        if (Game.isDebug()) {
+            debugPosition = new Label();
+            debugPosition.getElement().getStyle().setBackgroundColor("#FFFFFF");
+            add(debugPosition, DEBUG_POSITION_LEFT, DEBUG_POSITION__TOP);
+        }
     }
 
     private void setupOnline() {
@@ -365,7 +375,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
     }
 
     public void debugAbsoluteCursorPos(int x, int y) {
-        //TODO
+        debugPosition.setText(x + ":" + y);
     }
 
     public SelectedItemPanel getSelectedItemPanel() {

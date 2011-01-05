@@ -24,7 +24,7 @@ import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.ClientRunner;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
-import com.btxtech.game.jsre.client.dialogs.UserStageDialog;
+import com.btxtech.game.jsre.client.dialogs.LevelTargetDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -140,7 +140,7 @@ public class Simulation {
         ClientUserTracker.getInstance().onTutorialFinished(time - tutorialTime, time, new ParametrisedRunnable<Level>() {
             @Override
             public void run(Level level) {
-                UserStageDialog.showDialog(level.getHtml());
+                LevelTargetDialog.showDialog(level.getHtml());
                 GameStartupSeq gameStartupSeq;
                 if (level.isRealGame()) {
                     gameStartupSeq = GameStartupSeq.WARM_REAL;
@@ -179,6 +179,7 @@ public class Simulation {
         activeTask.runNextStep();
         if (activeTask.isFulfilled()) {
             long time = System.currentTimeMillis();
+            activeTask.cleanup();
             ClientUserTracker.getInstance().onTaskFinished(activeTask, time - taskTime, time);
             if (activeTask.getTaskConfig().getFinishImageDuration() > 0 && activeTask.getTaskConfig().getFinishImageId() != null) {
                 tutorialGui.showFinishImage(activeTask.getTaskConfig().getFinishImageId(), activeTask.getTaskConfig().getFinishImageDuration());
