@@ -57,7 +57,7 @@ public class UserLevelStatus {
     public Integer getBeginningKills() {
         return beginningKills;
     }
-
+    /*
     public void setDeltas(Base base, DbLevel nextDbLevel) {
         if (nextDbLevel.getDeltaMoney() != null) {
             beginningMoney = (int) base.getAccountBalance();
@@ -66,7 +66,7 @@ public class UserLevelStatus {
             beginningKills = base.getKills();
         }
     }
-
+    */
     public void clearId() {
         id = null;
     }

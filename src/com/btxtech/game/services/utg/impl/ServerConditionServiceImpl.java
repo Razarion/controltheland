@@ -14,10 +14,10 @@
 package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.level.condition.AbstractConditionTrigger;
-import com.btxtech.game.jsre.common.level.condition.TutorialConditionTrigger;
-import com.btxtech.game.jsre.common.level.config.ConditionTrigger;
-import com.btxtech.game.jsre.common.level.impl.ConditionServiceImpl;
+import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
+import com.btxtech.game.jsre.common.utg.condition.TutorialConditionTrigger;
+import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
+import com.btxtech.game.jsre.common.utg.impl.ConditionServiceImpl;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.utg.ServerConditionService;

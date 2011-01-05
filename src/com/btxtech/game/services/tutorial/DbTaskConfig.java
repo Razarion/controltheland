@@ -22,8 +22,8 @@ import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelperCollectionImpl;
 import com.btxtech.game.services.common.db.IndexUserType;
+import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.services.tutorial.condition.DbAbstractConditionConfig;
 import com.btxtech.game.services.tutorial.hint.DbResourceHintConfig;
 import com.btxtech.game.services.tutorial.hint.ResourceHintManager;
 import com.btxtech.game.wicket.pages.mgmt.ItemsUtil;
@@ -43,7 +43,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Columns;
@@ -239,10 +238,10 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
         return id != null ? id.hashCode() : 0;
     }
 
-    public TaskConfig createTaskConfig(ResourceHintManager resourceHintManager) {
+    public TaskConfig createTaskConfig(ResourceHintManager resourceHintManager, ItemService itemService) {
         ArrayList<StepConfig> stepConfigs = new ArrayList<StepConfig>();
         for (DbStepConfig dBstepConfig : this.stepConfigs) {
-            stepConfigs.add(dBstepConfig.createStepConfig(resourceHintManager));
+            stepConfigs.add(dBstepConfig.createStepConfig(resourceHintManager, itemService));
         }
 
         ArrayList<ItemTypeAndPosition> itemTypeAndPositions = new ArrayList<ItemTypeAndPosition>();

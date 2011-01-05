@@ -14,43 +14,95 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 /**
  * User: beat
  * Date: 28.12.2010
  * Time: 23:32:02
  */
+@Entity(name = "GUIDANCE_SCOPE")
 public class DbScope {
-    private int money;
+    @Id
+    @GeneratedValue
+    private Integer id;
+    private int deltaMoney;
+    private double itemSellFactor;
+//    private int itemLimit;
+    private int houseSpace;
+//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "dbLevel")
+//    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+//    @Deprecated
+//    private Set<DbItemCount> dbItemCounts;
+    // new base
+    private boolean createRealBase;
+    @ManyToOne
+    private DbBaseItemType startItemType;
     private Rectangle startRectangle;
     private int startItemFreeRange;
-    private double itemSellFactor;
-    private boolean createRealBase;
 
 
-    public DbBaseItemType getStartItem() {
-        return null;  //To change body of created methods use File | Settings | File Templates.
+    public int getDeltaMoney() {
+        return deltaMoney;
     }
 
-    public int getMoney() {
-        return money;
-    }
-
-    public Rectangle getStartRectangle() {
-        return startRectangle;
-    }
-
-    public int getStartItemFreeRange() {
-        return startItemFreeRange;
+    public void setDeltaMoney(int deltaMoney) {
+        this.deltaMoney = deltaMoney;
     }
 
     public double getItemSellFactor() {
         return itemSellFactor;
     }
 
+    public void setItemSellFactor(double itemSellFactor) {
+        this.itemSellFactor = itemSellFactor;
+    }
+
+    public int getHouseSpace() {
+        return houseSpace;
+    }
+
+    public void setHouseSpace(int houseSpace) {
+        this.houseSpace = houseSpace;
+    }
+
     public boolean isCreateRealBase() {
         return createRealBase;
+    }
+
+    public void setCreateRealBase(boolean createRealBase) {
+        this.createRealBase = createRealBase;
+    }
+
+    public DbBaseItemType getStartItemType() {
+        return startItemType;
+    }
+
+    public void setStartItemType(DbBaseItemType startItemType) {
+        this.startItemType = startItemType;
+    }
+
+    public Rectangle getStartRectangle() {
+        return startRectangle;
+    }
+
+    public void setStartRectangle(Rectangle startRectangle) {
+        this.startRectangle = startRectangle;
+    }
+
+    public int getStartItemFreeRange() {
+        return startItemFreeRange;
+    }
+
+    public void setStartItemFreeRange(int startItemFreeRange) {
+        this.startItemFreeRange = startItemFreeRange;
+    }
+
+    public int getItemLimit() {
+        return 100;            // TODO
     }
 }

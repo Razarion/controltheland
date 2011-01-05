@@ -97,28 +97,29 @@ public class HistoryServiceImpl implements HistoryService {
 
     private DisplayHistoryElement convert(User user, HistoryElement historyElement) {
         DisplayHistoryElement displayHistoryElement = new DisplayHistoryElement(historyElement.getTimeStamp());
+        String userName = user.getName();
         switch (historyElement.getType()) {
             case BASE_STARTED:
-                displayHistoryElement.setMessage("Base created: " + historyElement.getBaseName());
+                displayHistoryElement.setMessage("Base created: " + historyElement.getActorBaseName());
                 break;
             case BASE_DEFEATED:
-                if (user.equals(historyElement.getUser())) {
+                if (userName.equals(historyElement.getActorUserName())) {
                     displayHistoryElement.setMessage("Base destroyed: " + historyElement.getTargetBaseName());
                 } else {
-                    displayHistoryElement.setMessage("Your base " + historyElement.getTargetBaseName() + " has been destroyed by " + historyElement.getBaseName());
+                    displayHistoryElement.setMessage("Your base " + historyElement.getTargetBaseName() + " has been destroyed by " + historyElement.getTargetBaseName());
                 }
                 break;
             case BASE_SURRENDERED:
-                displayHistoryElement.setMessage("Base surrendered: " + historyElement.getBaseName());
+                displayHistoryElement.setMessage("Base surrendered: " + historyElement.getActorBaseName());
                 break;
             case ITEM_CREATED:
-                displayHistoryElement.setMessage("Item created: " + historyElement.getItemName());
+                displayHistoryElement.setMessage("Item created: " + historyElement.getActorItemName());
                 break;
             case ITEM_DESTROYED:
-                if (user.equals(historyElement.getUser())) {
+                if (userName.equals(historyElement.getActorUserName())) {
                     displayHistoryElement.setMessage("Destroyed a " + historyElement.getTargetItemName() + " from " + historyElement.getTargetBaseName());
                 } else {
-                    displayHistoryElement.setMessage(historyElement.getBaseName() + " destroyed your " + historyElement.getTargetItemName());
+                    displayHistoryElement.setMessage(historyElement.getActorBaseName() + " destroyed your " + historyElement.getTargetItemName());
                 }
                 break;
             default:

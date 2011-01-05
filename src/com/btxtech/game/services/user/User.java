@@ -139,4 +139,8 @@ public class User implements Serializable {
     public void setLoggedIn(boolean loggedIn) {
         this.loggedIn = loggedIn;
     }
+
+    public boolean isRegistered() {
+        return name != null;
+    }
 }

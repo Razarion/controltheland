@@ -63,8 +63,6 @@ public class Base implements Serializable {
     private double totalEarned;
     @Column(name = "abandoned", nullable = false, columnDefinition = "bit default b'1'")
     private boolean abandoned = false;
-    @OneToOne(cascade = CascadeType.ALL)
-    private UserLevelStatus userLevelStatus;
     private int baseId;
     @Transient
     private final Object syncObject = new Object();
@@ -187,9 +185,6 @@ public class Base implements Serializable {
 
     public void clearId() {
         id = null;
-        if (userLevelStatus != null) {
-            userLevelStatus.clearId();
-        }
     }
 
     public void increaseKills() {
@@ -228,25 +223,16 @@ public class Base implements Serializable {
         return getSimpleBase().toString();
     }
 
-    public UserLevelStatus getBaseLevelStatus() {
-        return userLevelStatus;
-    }
-
-    public void setBaseLevelStatus(UserLevelStatus userLevelStatus) {
-        this.userLevelStatus = userLevelStatus;
-    }
-
     public int getBaseId() {
         return baseId;
     }
 
 
-    public void checkItemLimit4ItemAdding() throws ItemLimitExceededException, HouseSpaceExceededException {
-        DbLevel dbLevel = userLevelStatus.getCurrentLevel();
-        if (getItemCount() >= dbLevel.getItemLimit()) {
+    public void checkItemLimit4ItemAdding(DbLevel dbLevel) throws ItemLimitExceededException, HouseSpaceExceededException {
+        if (getItemCount() >= dbLevel.getDbScope().getItemLimit()) {
             throw new ItemLimitExceededException();
         }
-        if (getItemCount() >= houseSpace + dbLevel.getHouseSpace()) {
+        if (getItemCount() >= houseSpace + dbLevel.getDbScope().getHouseSpace()) {
             throw new HouseSpaceExceededException();
         }
     }
@@ -264,12 +250,7 @@ public class Base implements Serializable {
         return oldSpace != houseSpace;
     }
 
-    public int getTotalHouseSpace() {
-        return houseSpace + userLevelStatus.getCurrentLevel().getHouseSpace();
+    public int getHouseSpace() {
+        return houseSpace;
     }
-
-    public int getItemLimit() {
-        return userLevelStatus.getCurrentLevel().getItemLimit();
-    }
-
 }

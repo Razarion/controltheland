@@ -13,7 +13,7 @@
 
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.common.level.ConditionService;
+import com.btxtech.game.jsre.common.utg.ConditionService;
 import com.btxtech.game.services.user.User;
 
 /**

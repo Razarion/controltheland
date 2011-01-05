@@ -21,6 +21,7 @@ import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelperCollectionImpl;
+import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.tutorial.hint.ResourceHintManager;
 import java.io.Serializable;
@@ -180,7 +181,7 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
         this.dbTerrainSetting = dbTerrainSetting;
     }
 
-    public TutorialConfig createTutorialConfig(ResourceHintManager resourceHintManager) {
+    public TutorialConfig createTutorialConfig(ResourceHintManager resourceHintManager, ItemService itemService) {
         ArrayList<BaseAttributes> baseAttributes = new ArrayList<BaseAttributes>();
         SimpleBase ownBase = new SimpleBase(ownBaseId);
         baseAttributes.add(new BaseAttributes(ownBase, ownBaseName, ownBaseColor, false));
@@ -188,7 +189,7 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
 
         ArrayList<TaskConfig> taskConfigs = new ArrayList<TaskConfig>();
         for (DbTaskConfig dbTaskConfig : dbTaskConfigs) {
-            taskConfigs.add(dbTaskConfig.createTaskConfig(resourceHintManager));
+            taskConfigs.add(dbTaskConfig.createTaskConfig(resourceHintManager, itemService));
         }
 
         return new TutorialConfig(taskConfigs, ownBase, width, height, baseAttributes, failOnOwnItemsLost, failOnMoneyBelowAndNoAttackUnits, tracking);

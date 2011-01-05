@@ -205,7 +205,9 @@ public class ServerMarketServiceImpl implements ServerMarketService {
 
     public void setUserItemTypeAccess(User user, UserItemTypeAccess userItemTypeAccess) {
         user.setUserItemTypeAccess(userItemTypeAccess);
-        userService.save(user);
+        if (user.isRegistered()) {
+            userService.save(user);
+        }
     }
 
     @SuppressWarnings("unchecked")

@@ -21,7 +21,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 /**
  * User: beat
@@ -46,16 +45,12 @@ public class HistoryElement implements Serializable {
     private long timeStampMs;
     @Column(nullable = false)
     private Type type;
-    @Column(nullable = false)
-    private String baseName;
-    @ManyToOne()
-    private User user;
-    private String itemName;
+    private String actorBaseName;
+    private String actorUserName;
+    private String actorItemName;
     private String targetBaseName;
-    @ManyToOne()
-    private User targetUser;
+    private String targetUserName;
     private String targetItemName;
-
 
     /**
      * Used by hibernate
@@ -63,28 +58,34 @@ public class HistoryElement implements Serializable {
     protected HistoryElement() {
     }
 
-    public HistoryElement(Type type, String base, User user, SyncBaseItem item, String targetBase, User targetUser, SyncBaseItem targetItem) {
+    public HistoryElement(Type type, String actorBaseName, User actorUser, SyncBaseItem actorItem, String targetBase, User targetUser, SyncBaseItem targetItem) {
         timeStamp = new Date();
         timeStampMs = timeStamp.getTime();
         this.type = type;
-        baseName = base;
-        this.user = user;
-        if (item != null) {
-            itemName = item.getBaseItemType().getName();
+        this.actorUserName = actorUser.getName();
+        this.actorBaseName = actorBaseName;
+        if (actorItem != null) {
+            actorItemName = actorItem.getBaseItemType().getName();
         }
-        targetBaseName = targetBase;
-        this.targetUser = targetUser;
+        this.targetBaseName = targetBase;
+        if(targetUser != null) {
+           this.targetUserName = targetUser.getName();
+        }
         if (targetItem != null) {
             targetItemName = targetItem.getBaseItemType().getName();
         }
     }
-
-    public String getBaseName() {
-        return baseName;
+    
+    public String getActorBaseName() {
+        return actorBaseName;
     }
 
-    public User getUser() {
-        return user;
+    public String getActorUserName() {
+        return actorUserName;
+    }
+
+    public String getTargetUserName() {
+        return targetUserName;
     }
 
     public Date getTimeStamp() {
@@ -95,16 +96,16 @@ public class HistoryElement implements Serializable {
         return type;
     }
 
-    public String getItemName() {
-        return itemName;
+    public String getActorItemName() {
+        return actorItemName;
     }
 
     public String getTargetBaseName() {
         return targetBaseName;
     }
 
-    public User getTargetUser() {
-        return targetUser;
+    public String getTargetUser() {
+        return targetUserName;
     }
 
     public String getTargetItemName() {
