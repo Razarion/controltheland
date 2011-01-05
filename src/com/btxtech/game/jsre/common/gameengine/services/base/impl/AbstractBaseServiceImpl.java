@@ -35,7 +35,11 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
     public String getBaseName(SimpleBase simpleBase) {
         BaseAttributes baseAttributes = bases.get(simpleBase);
         if (baseAttributes != null) {
-            return baseAttributes.getName();
+            if (baseAttributes.getName() != null) {
+                return baseAttributes.getName();
+            } else {
+                return simpleBase.toString();
+            }
         } else {
             return UNDEFINED_NAME;
         }
