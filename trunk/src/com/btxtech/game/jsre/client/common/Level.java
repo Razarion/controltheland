@@ -26,20 +26,34 @@ public class Level implements Serializable {
     private String html;
     private boolean realGame;
 
-    public String getName() {
-        return name;
+    /**
+     * Used by GWT
+     */
+    public Level() {
     }
 
-    public void setName(String name) {
+    public Level(String name, String html, boolean realGame, int itemLimit) {
         this.name = name;
+        this.html = html;
+        this.realGame = realGame;
+        this.itemLimit = itemLimit;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public int getItemLimit() {
         return itemLimit;
     }
 
-    public void setItemLimit(int itemLimit) {
-        this.itemLimit = itemLimit;
+
+    public String getHtml() {
+        return html;
+    }
+
+    public boolean isRealGame() {
+        return realGame;
     }
 
     @Override
@@ -57,13 +71,5 @@ public class Level implements Serializable {
     @Override
     public int hashCode() {
         return name != null ? name.hashCode() : 0;
-    }
-
-    public String getHtml() {
-        return html;
-    }
-
-    public boolean isRealGame() {
-        return realGame;
     }
 }
