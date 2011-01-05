@@ -70,11 +70,6 @@ public class DbLevel implements CrudChild, Serializable {
     @OneToOne
     private DbScope dbScope;
 
-    @Deprecated
-    public void setId(Integer id) {
-        this.id = id; // TODO
-    }
-
     public String getName() {
         return name;
     }

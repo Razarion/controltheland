@@ -119,7 +119,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         // Prepare next level
         userLevelStatus.setCurrentLevel(dbNextLevel);
         DbScope dbScope = dbNextLevel.getDbScope();
-        if (dbScope.isCreateRealBase()) {
+        if (dbScope != null && dbScope.isCreateRealBase()) {
             try {
                 baseService.createNewBase();
             } catch (Exception e) {
@@ -229,7 +229,6 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         DbConditionConfig dbConditionConfig1 = new DbConditionConfig();
         dbConditionConfig1.setConditionTrigger(ConditionTrigger.TUTORIAL);
         dbLevel1.setDbConditionConfig(dbConditionConfig1);
-        dbLevel1.setId(1);
         dbLevels.add(dbLevel1);
         ////////////////////////////////////////////
         DbLevel dbLevel2 = new DbLevel();
@@ -255,9 +254,14 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         dbLevels.add(dbLevel2);
         ////////////////////////////////////////////
         DbLevel dbLevel3 = new DbLevel();
-        dbLevel3.setHtml("Html 2");
-        dbLevel3.setName("Name 2");
+        dbLevel3.setHtml("Html 3");
+        dbLevel3.setName("Name 3");
         dbLevel3.setRealGame(true);
+        dbLevel3.setDbTutorialConfig(tutorialService.getDbTutorialCrudServiceHelper().readDbChild(2));
+        DbConditionConfig dbConditionConfig3 = new DbConditionConfig();
+        dbConditionConfig3.setConditionTrigger(ConditionTrigger.TUTORIAL);
+        dbLevel3.setDbConditionConfig(dbConditionConfig3);
+        dbLevels.add(dbLevel3);
 
         /***************/
         //TODO dbLevels = (List<DbLevel>) crudServiceHelperHibernate.readDbChildren();
