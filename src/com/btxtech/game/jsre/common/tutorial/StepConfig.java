@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.common.tutorial;
 
-import com.btxtech.game.jsre.common.level.config.ConditionConfig;
+import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import java.io.Serializable;
 import java.util.Collection;
 
