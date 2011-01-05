@@ -220,7 +220,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     @Override
     public void activateLevels() {
         /***************/
-        dbLevels = new ArrayList<DbLevel>();
+        /*dbLevels = new ArrayList<DbLevel>();
         DbLevel dbLevel1 = new DbLevel();
         dbLevel1.setHtml("Html 1");
         dbLevel1.setName("Name 1");
@@ -261,10 +261,10 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         DbConditionConfig dbConditionConfig3 = new DbConditionConfig();
         dbConditionConfig3.setConditionTrigger(ConditionTrigger.TUTORIAL);
         dbLevel3.setDbConditionConfig(dbConditionConfig3);
-        dbLevels.add(dbLevel3);
+        dbLevels.add(dbLevel3);*/
 
         /***************/
-        //TODO dbLevels = (List<DbLevel>) crudServiceHelperHibernate.readDbChildren();
+        dbLevels = (List<DbLevel>) crudServiceHelperHibernate.readDbChildren();
         tutorialService.activate();
     }
 }
