@@ -26,11 +26,11 @@ import com.google.gwt.widgetideas.client.GlassPanel;
  * Date: 14.12.2010
  * Time: 18:36:49
  */
-public class UserStageDialog extends Dialog {
+public class LevelTargetDialog extends Dialog {
     private String html;
     private GlassPanel glassPanel;
 
-    public UserStageDialog(String html) {
+    public LevelTargetDialog(String html) {
         this.html = html;
         setShowCloseButton(true);
         setupDialog();
@@ -44,16 +44,16 @@ public class UserStageDialog extends Dialog {
     }
 
     public static void showDialog(String html) {
-        final UserStageDialog userStageDialog = new UserStageDialog(html);
-        userStageDialog.glassPanel = new GlassPanel(false);
-        userStageDialog.glassPanel.getElement().getStyle().setZIndex(Constants.Z_INDEX_GLASS_PANEL);
-        RootPanel.get().add(userStageDialog.glassPanel, 0, 0);
-        userStageDialog.setPopupPositionAndShow(new PositionCallback() {
+        final LevelTargetDialog levelTargetDialog = new LevelTargetDialog(html);
+        levelTargetDialog.glassPanel = new GlassPanel(false);
+        levelTargetDialog.glassPanel.getElement().getStyle().setZIndex(Constants.Z_INDEX_GLASS_PANEL);
+        RootPanel.get().add(levelTargetDialog.glassPanel, 0, 0);
+        levelTargetDialog.setPopupPositionAndShow(new PositionCallback() {
             @Override
             public void setPosition(int offsetWidth, int offsetHeight) {
                 int left = (Window.getClientWidth() - offsetWidth) / 2;
                 int top = (Window.getClientHeight() - offsetHeight) / 2;
-                userStageDialog.setPopupPosition(left, top);
+                levelTargetDialog.setPopupPosition(left, top);
             }
         });
     }

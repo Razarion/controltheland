@@ -13,7 +13,13 @@
 
 package com.btxtech.game.jsre.client.simulation;
 
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.tutorial.StepConfig;
+import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
+import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
+import com.btxtech.game.jsre.common.utg.config.SyncItemIdComparisonConfig;
+import com.btxtech.game.jsre.common.utg.config.SyncItemIdPositionComparisonConfig;
+import java.util.ArrayList;
 
 /**
  * User: beat
@@ -25,7 +31,41 @@ public class Step {
 
     public Step(StepConfig stepConfig) {
         this.stepConfig = stepConfig;
-        SimulationConditionServiceImpl.getInstance().activateCondition(stepConfig.getConditionConfig(), null);
+        // TODO SimulationConditionServiceImpl.getInstance().activateCondition(stepConfig.getConditionConfig(), null);
+
+        _TEST_(stepConfig);
+    }
+
+    private void _TEST_(StepConfig stepConfig) {
+        if (stepConfig.getName().equals("Select")) {
+            _TEST_1();
+        } else if (stepConfig.getName().equals("Move")) {
+            _TEST_2();
+        }else if (stepConfig.getName().equals("Kill")) {
+            _TEST_3();
+        }
+    }
+
+    private void _TEST_1() {
+        ArrayList<Integer> arrayList = new ArrayList<Integer>();
+        arrayList.add(1);
+        SyncItemIdComparisonConfig syncItemIdComparisonConfig = new SyncItemIdComparisonConfig(arrayList);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_SELECT, syncItemIdComparisonConfig);
+        SimulationConditionServiceImpl.getInstance().activateCondition(conditionConfig, null);
+    }
+
+    private void _TEST_2() {
+        SyncItemIdPositionComparisonConfig syncItemIdPositionComparisonConfig = new SyncItemIdPositionComparisonConfig(1, new Rectangle(130, 170, 120, 120));
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_DEACTIVATE, syncItemIdPositionComparisonConfig);
+        SimulationConditionServiceImpl.getInstance().activateCondition(conditionConfig, null);
+    }
+
+    private void _TEST_3() {
+        ArrayList<Integer> arrayList = new ArrayList<Integer>();
+        arrayList.add(2);
+        SyncItemIdComparisonConfig syncItemIdComparisonConfig = new SyncItemIdComparisonConfig(arrayList);
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, syncItemIdComparisonConfig);
+        SimulationConditionServiceImpl.getInstance().activateCondition(conditionConfig, null);
     }
 
     public StepConfig getStepConfig() {
