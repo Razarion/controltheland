@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.common.utg.condition.CountComparison;
  * Date: 01.01.2011
  * Time: 14:04:29
  */
+@Deprecated
 public class CountComparisonConfig extends AbstractComparisonConfig {
     private int count;
 
