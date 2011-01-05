@@ -180,7 +180,7 @@ public class BaseEditor extends WebPage {
         form.add(new Label("level", new IModel<String>() {
             @Override
             public String getObject() {
-                return baseService.getBase(simpleBase).getBaseLevelStatus().getCurrentLevel().getName();
+                return baseService.getUser(simpleBase).getUserLevelStatus().getCurrentLevel().getName();
             }
 
             @Override
