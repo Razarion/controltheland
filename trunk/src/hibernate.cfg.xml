@@ -69,6 +69,7 @@
         <mapping class="com.btxtech.game.services.utg.UserHistory"/>
         <mapping class="com.btxtech.game.services.utg.DbUserMessage"/>
         <mapping class="com.btxtech.game.services.utg.DbLevel"/>
+        <mapping class="com.btxtech.game.services.utg.DbScope"/>
         <mapping class="com.btxtech.game.services.utg.DbUserStage"/>
         <mapping class="com.btxtech.game.services.utg.DbItemCount"/>
         <mapping class="com.btxtech.game.services.utg.DbLevelPromotion"/>
