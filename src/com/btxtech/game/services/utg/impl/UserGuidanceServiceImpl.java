@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.utg.impl;
 
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -27,8 +26,6 @@ import com.btxtech.game.services.common.CrudServiceHelperHibernateImpl;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.User;
@@ -39,8 +36,6 @@ import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserLevelStatus;
 import com.btxtech.game.services.utg.UserTrackingService;
-import com.btxtech.game.services.utg.condition.DbConditionConfig;
-import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -52,6 +47,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.stereotype.Component;
 
 /**
@@ -89,6 +85,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
     @PostConstruct
     public void init() {
+        SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
         try {
             crudServiceHelperHibernate = new CrudServiceHelperHibernateImpl<DbLevel>(hibernateTemplate, DbLevel.class) {
                 @Override
@@ -99,6 +96,8 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
             activateLevels();
         } catch (Throwable t) {
             log.error("", t);
+        } finally {
+            SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
         }
     }
 

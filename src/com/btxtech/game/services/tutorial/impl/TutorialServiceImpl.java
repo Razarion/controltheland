@@ -32,7 +32,6 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.stereotype.Component;
 
 /**
@@ -78,28 +77,23 @@ public class TutorialServiceImpl implements TutorialService, ResourceHintManager
         if (dbLevels.isEmpty()) {
             throw new IllegalStateException("No levels defined");
         }
-        SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
-        try {
-            synchronized (tutorialConfigMap) {
-                imageId = 0;
-                resourceHints.clear();
-                tutorialConfigMap.clear();
-                for (DbLevel dbLevel : dbLevels) {
-                    if (dbLevel.isRealGame()) {
-                        continue;
-                    }
-                    hibernateTemplate.load(dbLevel, dbLevel.getId());
-                    DbTutorialConfig dbTutorialConfig = dbLevel.getDbTutorialConfig();
-                    if (dbTutorialConfig == null) {
-                        log.warn("No DbTutorialConfig for level: " + dbLevel);
-                        continue;
-                    }
-                    TutorialConfig tutorialConfig = dbTutorialConfig.createTutorialConfig(this, itemService);
-                    tutorialConfigMap.put(dbLevel, tutorialConfig);
+        synchronized (tutorialConfigMap) {
+            imageId = 0;
+            resourceHints.clear();
+            tutorialConfigMap.clear();
+            for (DbLevel dbLevel : dbLevels) {
+                if (dbLevel.isRealGame()) {
+                    continue;
                 }
+                //hibernateTemplate.load(dbLevel, dbLevel.getId());
+                DbTutorialConfig dbTutorialConfig = dbLevel.getDbTutorialConfig();
+                if (dbTutorialConfig == null) {
+                    log.warn("No DbTutorialConfig for level: " + dbLevel);
+                    continue;
+                }
+                TutorialConfig tutorialConfig = dbTutorialConfig.createTutorialConfig(this, itemService);
+                tutorialConfigMap.put(dbLevel, tutorialConfig);
             }
-        } finally {
-            SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
         }
     }
 
