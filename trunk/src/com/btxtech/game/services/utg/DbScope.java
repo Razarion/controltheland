@@ -14,11 +14,16 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.services.common.db.RectangleUserType;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 /**
  * User: beat
@@ -26,6 +31,7 @@ import javax.persistence.ManyToOne;
  * Time: 23:32:02
  */
 @Entity(name = "GUIDANCE_SCOPE")
+@TypeDef(name = "rectangle", typeClass = RectangleUserType.class)
 public class DbScope {
     @Id
     @GeneratedValue
@@ -42,6 +48,8 @@ public class DbScope {
     private boolean createRealBase;
     @ManyToOne
     private DbBaseItemType startItemType;
+    @Type(type = "rectangle")
+    @Columns(columns = {@Column(name = "startX"), @Column(name = "startY"), @Column(name = "startWidth"), @Column(name = "startHeight")})
     private Rectangle startRectangle;
     private int startItemFreeRange;
 
