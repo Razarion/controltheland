@@ -125,7 +125,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
                 log.error("Can not create base for user: " + user, e);
             }
         }
-        serverConditionService.activateCondition(dbNextLevel.getDbConditionConfig().createConditionConfig(itemService), user);
+        activateCondition(user, dbNextLevel);
 
         // TODO save user
         // Send level update packet
@@ -159,6 +159,10 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         UserLevelStatus userLevelStatus = new UserLevelStatus();
         userLevelStatus.setCurrentLevel(dbLevel);
         user.setUserLevelStatus(userLevelStatus);
+        activateCondition(user, dbLevel);
+    }
+
+    private void activateCondition(User user, DbLevel dbLevel) {
         if (dbLevel.isRealGame()) {
             serverConditionService.activateCondition(dbLevel.getDbConditionConfig().createConditionConfig(itemService), user);
         } else {
