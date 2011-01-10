@@ -39,6 +39,7 @@ public abstract class GameInfo implements Serializable {
     private int registerDialogDelay;
     private Collection<Territory> territories;
     private Collection<ItemType> itemTypes;
+    private Level level;
 
     public TerrainSettings getTerrainSettings() {
         return terrainSettings;
@@ -116,4 +117,12 @@ public abstract class GameInfo implements Serializable {
     public abstract boolean showMissionTargetDialog();
 
     public abstract boolean hasServerCommunication();
+
+    public Level getLevel() {
+        return level;
+    }
+
+    public void setLevel(Level level) {
+        this.level = level;
+    }
 }

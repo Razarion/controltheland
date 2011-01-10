@@ -33,6 +33,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * User: beat
@@ -120,5 +121,11 @@ public class TutorialServiceImpl implements TutorialService, ResourceHintManager
             throw new IllegalArgumentException("No DbResourceHintConfig for id: " + id);
         }
         return dbResourceHintConfig;
+    }
+
+    @Override
+    @Transactional
+    public void saveTutorial(DbTutorialConfig dbTutorialConfig) {
+        tutorialCrudServiceHelper.updateDbChild(dbTutorialConfig);
     }
 }

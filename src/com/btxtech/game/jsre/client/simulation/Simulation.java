@@ -28,6 +28,7 @@ import com.btxtech.game.jsre.client.dialogs.LevelTargetDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.tutorial.CockpitWidgetEnum;
@@ -140,14 +141,7 @@ public class Simulation {
         ClientUserTracker.getInstance().onTutorialFinished(time - tutorialTime, time, new ParametrisedRunnable<Level>() {
             @Override
             public void run(Level level) {
-                LevelTargetDialog.showDialog(level.getHtml());
-                GameStartupSeq gameStartupSeq;
-                if (level.isRealGame()) {
-                    gameStartupSeq = GameStartupSeq.WARM_REAL;
-                } else {
-                    gameStartupSeq = GameStartupSeq.WARM_SIMULATED;
-                }
-                ClientRunner.getInstance().start(gameStartupSeq);
+                ClientLevelHandler.getInstance().onLevelChanged(level);
             }
         });
     }

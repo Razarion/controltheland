@@ -22,7 +22,7 @@ import java.io.Serializable;
  */
 public class Level implements Serializable {
     private String name;
-    private int itemLimit;
+    private int itemLimit; // TODO
     private String html;
     private boolean realGame;
 
@@ -43,6 +43,7 @@ public class Level implements Serializable {
         return name;
     }
 
+    @Deprecated
     public int getItemLimit() {
         return itemLimit;
     }

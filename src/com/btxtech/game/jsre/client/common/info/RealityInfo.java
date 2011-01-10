@@ -31,7 +31,6 @@ public class RealityInfo extends GameInfo {
     private Collection<Integer> allowedItemTypes;
     private int energyGenerating;
     private int energyConsuming;
-    private Level level;
     private Collection<BaseAttributes> allBases;
     private int houseSpace;
     private int itemLimit;
@@ -82,14 +81,6 @@ public class RealityInfo extends GameInfo {
 
     public void setEnergyConsuming(int energyConsuming) {
         this.energyConsuming = energyConsuming;
-    }
-
-    public Level getLevel() {
-        return level;
-    }
-
-    public void setLevel(Level level) {
-        this.level = level;
     }
 
     public Collection<BaseAttributes> getAllBase() {

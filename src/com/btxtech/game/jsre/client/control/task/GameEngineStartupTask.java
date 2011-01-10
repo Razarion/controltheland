@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 
 /**
  * User: beat
@@ -32,6 +33,7 @@ public abstract class GameEngineStartupTask extends AbstractStartupTask {
 
     protected void setupGameStructure(GameInfo gameInfo) {
         Connection.getInstance().setRegistered(gameInfo.isRegistered());
+        ClientLevelHandler.getInstance().setLevel(gameInfo.getLevel());        
         TerrainView.getInstance().setupTerrain(gameInfo.getTerrainSettings(),
                 gameInfo.getTerrainImagePositions(),
                 gameInfo.getSurfaceRects(),
@@ -42,6 +44,7 @@ public abstract class GameEngineStartupTask extends AbstractStartupTask {
 
     protected void deltaSetupGameStructure(GameInfo gameInfo) {
         Connection.getInstance().setRegistered(gameInfo.isRegistered());
+        ClientLevelHandler.getInstance().setLevel(gameInfo.getLevel());
         TerrainView.getInstance().deltaSetupTerrain(gameInfo.getTerrainSettings(),
                 gameInfo.getTerrainImagePositions(),
                 gameInfo.getSurfaceRects(),

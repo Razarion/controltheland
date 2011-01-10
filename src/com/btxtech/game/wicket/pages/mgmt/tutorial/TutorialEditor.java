@@ -52,7 +52,6 @@ public class TutorialEditor extends WebPage {
         add(new FeedbackPanel("msgs"));
 
         sessionFactory.getCurrentSession().load(dbTutorialConfig, dbTutorialConfig.getId()); // TODO should not be in the presentation layer
-        dbTutorialConfig.getDbTerrainSetting().getName();
 
         Form<DbTutorialConfig> form = new Form<DbTutorialConfig>("tutorialForm", new CompoundPropertyModel<DbTutorialConfig>(dbTutorialConfig));
         add(form);
@@ -129,7 +128,7 @@ public class TutorialEditor extends WebPage {
 
             @Override
             public void onSubmit() {
-                tutorialService.getDbTutorialCrudServiceHelper().updateDbChild(dbTutorialConfig);
+                tutorialService.saveTutorial(dbTutorialConfig);
             }
         });
         form.add(new Button("back") {

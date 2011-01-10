@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
+import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 
 /**
  * User: beat

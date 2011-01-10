@@ -18,11 +18,10 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
-import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
-import com.btxtech.game.jsre.client.utg.MissionTarget;
+import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 
 /**
  * User: beat
@@ -45,7 +44,6 @@ public class RealDeltaStartupTask extends GameEngineStartupTask {
         Cockpit.getInstance().setGameInfo(realityInfo);
         ClientItemTypeAccess.getInstance().setAllowedItemTypes(realityInfo.getAllowedItemTypes());
         RadarPanel.getInstance().updateEnergy(realityInfo.getEnergyGenerating(), realityInfo.getEnergyConsuming());
-        MissionTarget.getInstance().setLevel(realityInfo.getLevel());
         ClientTerritoryService.getInstance().setTerritories(realityInfo.getTerritories());
         ClientBase.getInstance().setItemLimit(realityInfo.getItemLimit());
         ClientBase.getInstance().setHouseSpace(realityInfo.getHouseSpace());

@@ -16,6 +16,7 @@ package com.btxtech.game.services.terrain;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.services.common.CrudChild;
+import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -29,7 +30,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  * Time: 14:02:37
  */
 @Entity(name = "TERRAIN_SURFACE_RECT")
-public class DbSurfaceRect implements CrudChild<DbTerrainSetting> {
+public class DbSurfaceRect implements CrudChild<DbTerrainSetting>, Serializable {
     @Id
     @GeneratedValue
     private Integer id;

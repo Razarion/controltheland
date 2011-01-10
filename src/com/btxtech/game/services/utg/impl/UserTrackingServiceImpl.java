@@ -618,6 +618,9 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         DbStartup dbStartup = new DbStartup(totalTime, infos.iterator().next().getStartTime(), userGuidanceService.getDbLevel(), session.getSessionId());
         for (StartupTaskInfo info : infos) {
             dbStartup.addGameStartupTasks(new DbStartupTask(info, dbStartup));
+            if(info.getError() != null) {
+                log.debug("Startup failed: " + info.getTaskEnum().getStartupTaskEnumHtmlHelper().getNiceText() + " Error: " + info.getError());
+            }
         }
         hibernateTemplate.save(dbStartup);
     }
