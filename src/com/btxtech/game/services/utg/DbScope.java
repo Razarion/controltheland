@@ -16,6 +16,7 @@ package com.btxtech.game.services.utg;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.services.common.db.RectangleUserType;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,7 +33,7 @@ import org.hibernate.annotations.TypeDef;
  */
 @Entity(name = "GUIDANCE_SCOPE")
 @TypeDef(name = "rectangle", typeClass = RectangleUserType.class)
-public class DbScope {
+public class DbScope implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;

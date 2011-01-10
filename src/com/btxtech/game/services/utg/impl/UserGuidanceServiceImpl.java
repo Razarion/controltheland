@@ -49,6 +49,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * User: beat
@@ -216,6 +217,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     }
 
     @Override
+    @Transactional
     public void saveDbLevels(List<DbLevel> dbLevels) {
         crudServiceHelperHibernate.updateDbChildren(dbLevels);
     }
