@@ -180,6 +180,7 @@ public class MovableServiceImpl implements MovableService {
     private SimulationInfo createSimulationInfo(DbLevel dbLevel) {
         try {
             SimulationInfo simulationInfo = new SimulationInfo();
+            simulationInfo.setLevel(userGuidanceService.getDbLevel().getLevel());
             // Common
             setCommonInfo(simulationInfo, userService, itemService, mgmtService);
             simulationInfo.setTutorialConfig(tutorialService.getTutorialConfig(dbLevel));

@@ -129,12 +129,12 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
         // TODO save user
         // Send level update packet
-        if (dbNextLevel.isRealGame()) {
+        if (dbOldLevel.isRealGame()) {
             Base base = baseService.getBase(user);
             LevelPacket levelPacket = new LevelPacket();
             levelPacket.setLevel(dbNextLevel.getLevel());
             connectionService.sendPacket(base.getSimpleBase(), levelPacket);
-            baseService.sendHouseSpacePacket(base);
+            // TODO baseService.sendHouseSpacePacket(base);
         }
         // Tracking
         userTrackingService.levelPromotion(user, dbOldLevel);

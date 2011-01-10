@@ -14,7 +14,7 @@
 package com.btxtech.game.jsre.client.control;
 
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
-import com.btxtech.game.jsre.client.control.task.GameStartupTask;
+import com.btxtech.game.jsre.client.control.task.RealStartupTask;
 import com.btxtech.game.jsre.client.control.task.GuiStartupTask;
 import com.btxtech.game.jsre.client.control.task.InitItemStartupTask;
 import com.btxtech.game.jsre.client.control.task.LoadGameInfoStartupTask;
@@ -47,7 +47,7 @@ public enum ColdRealGameStartupTaskEnum implements StartupTaskEnum {
     INIT_GAME("Init real Game") {
         @Override
         public AbstractStartupTask createTask() {
-            return new GameStartupTask(this);
+            return new RealStartupTask(this);
         }},
     LOAD_MAP("Load Map") {
         @Override

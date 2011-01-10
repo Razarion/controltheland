@@ -30,6 +30,7 @@ import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.PopupPanel;
 
+@Deprecated
 public class MissionTarget {
     public static final int BLINK_DELAY = 500;
     private static MissionTarget INSTANCE = new MissionTarget();
@@ -79,25 +80,5 @@ public class MissionTarget {
     public void setMissionTarget(String htmlString) {
         missionTargetString = htmlString;
         missionTargetDialog.setMissionTarget(missionTargetString);
-    }
-
-    public void setLevel(Level level) {
-        this.level = level;
-        Cockpit.getInstance().setLevel(level.getName());
-    }
-
-    public void onLevelChanged(LevelPacket levelPacket) {
-        ClientBase.getInstance().setItemLimit(levelPacket.getLevel().getItemLimit());
-        Cockpit.getInstance().updateItemLimit();
-        loadingRequired = true;
-        String oldLevel = level.getName();
-        setLevel(levelPacket.getLevel());
-        PromotionDialog promotionDialog = PromotionDialog.showPromotion(oldLevel, level.getName());
-        promotionDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-            @Override
-            public void onClose(CloseEvent<PopupPanel> popupPanelCloseEvent) {
-                showMissionTargetDialog();
-            }
-        });
     }
 }

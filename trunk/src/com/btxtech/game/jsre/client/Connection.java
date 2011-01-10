@@ -25,7 +25,7 @@ import com.btxtech.game.jsre.client.control.task.DeferredStartup;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.item.ItemContainer;
-import com.btxtech.game.jsre.client.utg.MissionTarget;
+import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
 import com.btxtech.game.jsre.common.EnergyPacket;
@@ -201,7 +201,7 @@ public class Connection implements AsyncCallback<Void> {
                 } else if (packet instanceof UserMessage) {
                     Cockpit.getInstance().onMessageReceived((UserMessage) packet);
                 } else if (packet instanceof LevelPacket) {
-                    MissionTarget.getInstance().onLevelChanged((LevelPacket) packet);
+                    ClientLevelHandler.getInstance().onLevelChanged(((LevelPacket) packet).getLevel());
                 } else if (packet instanceof BaseChangedPacket) {
                     ClientBase.getInstance().onBaseChangedPacket((BaseChangedPacket) packet);
                 } else if (packet instanceof HouseSpacePacket) {
