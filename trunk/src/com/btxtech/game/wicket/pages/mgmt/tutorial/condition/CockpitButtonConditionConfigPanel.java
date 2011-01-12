@@ -13,9 +13,8 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tutorial.condition;
 
-import com.btxtech.game.jsre.common.tutorial.CockpitWidgetEnum;
+import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
 import com.btxtech.game.services.tutorial.condition.DbCockpitButtonConditionConfig;
-import com.btxtech.game.services.tutorial.condition.DbHarvestConditionConfig;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;

@@ -21,11 +21,12 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.utg.ConditionService;
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
+import com.btxtech.game.jsre.common.utg.condition.CockpitButtonTrigger;
+import com.btxtech.game.jsre.common.utg.condition.SimpleConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.SyncItemConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.google.gwt.event.dom.client.ClickEvent;
-import java.util.Collection;
 
 /**
  * User: beat
@@ -50,26 +51,33 @@ public abstract class ConditionServiceImpl<T> implements ConditionService<T> {
         saveAbstractConditionTrigger(abstractConditionTrigger);
     }
 
-    private <U extends AbstractConditionTrigger<T>> U getAbstractCondition(SimpleBase actor, ConditionTrigger conditionTrigger, Class<U> theClass) {
+    private <U extends AbstractConditionTrigger<T>> U getAbstractCondition(SimpleBase actor, ConditionTrigger conditionTrigger) {
         AbstractConditionTrigger<T> abstractConditionTrigger = getAbstractConditionPrivate(actor, conditionTrigger);
         if (abstractConditionTrigger == null) {
             return null;
         }
-        if (theClass.equals(abstractConditionTrigger.getClass())) {
-            return (U) abstractConditionTrigger;
-        } else {
-            return null;
-        }
+        return (U) abstractConditionTrigger;
     }
 
-    private void triggerSyncItem(SimpleBase actor, ConditionTrigger conditionTrigger, SyncBaseItem syncBaseItem) {
-        SyncItemConditionTrigger<T> syncItemConditionTrigger = getAbstractCondition(actor, conditionTrigger, SyncItemConditionTrigger.class);
+    protected void triggerSyncItem(SimpleBase actor, ConditionTrigger conditionTrigger, SyncBaseItem syncBaseItem) {
+        SyncItemConditionTrigger<T> syncItemConditionTrigger = getAbstractCondition(actor, conditionTrigger);
         if (syncItemConditionTrigger == null) {
             return;
         }
         syncItemConditionTrigger.onItem(actor, syncBaseItem);
         if (syncItemConditionTrigger.isFulfilled()) {
             conditionPassed(syncItemConditionTrigger.getUserObject());
+        }
+    }
+
+    protected void triggerSimple(ConditionTrigger conditionTrigger) {
+        SimpleConditionTrigger<T> simpleConditionTrigger = getAbstractCondition(null, conditionTrigger);
+        if (simpleConditionTrigger == null) {
+            return;
+        }
+        simpleConditionTrigger.onTrigger();
+        if (simpleConditionTrigger.isFulfilled()) {
+            conditionPassed(simpleConditionTrigger.getUserObject());
         }
     }
 
@@ -83,6 +91,7 @@ public abstract class ConditionServiceImpl<T> implements ConditionService<T> {
 
     @Override
     public void onSendCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
+        // TODO
     }
 
     @Override
@@ -95,16 +104,26 @@ public abstract class ConditionServiceImpl<T> implements ConditionService<T> {
 
     @Override
     public void onScroll(int left, int top, int width, int height, int deltaLeft, int deltaTop) {
+        triggerSimple(ConditionTrigger.SCROLL);
     }
 
     @Override
     public void onClick(ClickEvent event) {
+        CockpitButtonTrigger<T> cockpitButtonTrigger = getAbstractCondition(null, ConditionTrigger.COCKPIT_BUTTON_EVENT);
+        if (cockpitButtonTrigger == null) {
+            return;
+        }
+        cockpitButtonTrigger.onClick(event);
+        if (cockpitButtonTrigger.isFulfilled()) {
+            conditionPassed(cockpitButtonTrigger.getUserObject());
+        }
     }
 
     //------ Server------
 
     @Override
     public void onIncreaseXp(SimpleBase base, int xp) {
+        // TODO
     }
 
     //------ Both Client and Server ------
@@ -116,20 +135,23 @@ public abstract class ConditionServiceImpl<T> implements ConditionService<T> {
 
     @Override
     public void onSyncItemBuilt(SyncBaseItem syncBaseItem) {
-        triggerSyncItem(syncBaseItem.getBase(), ConditionTrigger.SYNC_ITEM_BUILT, syncBaseItem);        
+        triggerSyncItem(syncBaseItem.getBase(), ConditionTrigger.SYNC_ITEM_BUILT, syncBaseItem);
     }
 
     @Override
     public void onMoneyIncrease(SimpleBase base, double accountBalance) {
+        // TODO
     }
 
     //------ Only used for fail ------
 
     @Override
     public void onWithdrawalMoney() {
+        // TODO
     }
 
     @Override
     public void onBaseDeleted(SimpleBase base) {
+        // TODO
     }
 }

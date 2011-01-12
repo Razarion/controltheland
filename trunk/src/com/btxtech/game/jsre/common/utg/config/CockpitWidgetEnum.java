@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.common.tutorial;
+package com.btxtech.game.jsre.common.utg.config;
 
 import java.util.ArrayList;
 import java.util.List;

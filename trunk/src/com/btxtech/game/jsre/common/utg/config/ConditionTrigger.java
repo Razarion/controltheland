@@ -15,8 +15,9 @@ package com.btxtech.game.jsre.common.utg.config;
 
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
+import com.btxtech.game.jsre.common.utg.condition.CockpitButtonTrigger;
+import com.btxtech.game.jsre.common.utg.condition.SimpleConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.SyncItemConditionTrigger;
-import com.btxtech.game.jsre.common.utg.condition.TutorialConditionTrigger;
 
 /**
  * User: beat
@@ -32,7 +33,7 @@ public enum ConditionTrigger {
     TUTORIAL(false) {
         @Override
         public <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison ignore, T t) {
-            return new TutorialConditionTrigger<T>(t);
+            return new SimpleConditionTrigger<T>(ConditionTrigger.TUTORIAL, t);
         }},
     SYNC_ITEM_SELECT(true) {
         @Override
@@ -48,6 +49,16 @@ public enum ConditionTrigger {
         @Override
         public <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison abstractComparison, T t) {
             return new SyncItemConditionTrigger<T>(this, abstractComparison, t);
+        }},
+    SCROLL(false) {
+        @Override
+        public <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison abstractComparison, T t) {
+            return new SimpleConditionTrigger<T>(ConditionTrigger.SCROLL, t);
+        }},
+    COCKPIT_BUTTON_EVENT(true) {
+        @Override
+        public <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison abstractComparison, T t) {
+            return new CockpitButtonTrigger<T>(abstractComparison, t);
         }};
 
 

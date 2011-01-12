@@ -22,6 +22,7 @@ import java.util.Collection;
  * Date: 27.12.2010
  * Time: 16:31:29
  */
+@Deprecated
 public class CountComparison extends AbstractComparison {
     private int value;
     private int count;
@@ -31,10 +32,10 @@ public class CountComparison extends AbstractComparison {
         value = 0;
     }
 
-    @Override
+/*    @Override
     public void onSyncItem(SyncItem syncItem) {
         value++;
-    }
+    } */
 
     @Override
     public boolean isFulfilled() {

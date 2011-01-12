@@ -28,7 +28,6 @@ public class SyncItemIdComparison extends AbstractComparison {
         this.syncObjectIds = syncObjectIds;
     }
 
-    @Override
     public void onSyncItem(SyncItem syncItem) {
         syncObjectIds.remove(syncItem.getId().getId());
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011.
+ * Copyright (c) 2010.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -13,8 +13,6 @@
 
 package com.btxtech.game.jsre.common.utg.condition;
 
-import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 
 /**
@@ -22,16 +20,13 @@ import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
  * Date: 27.12.2010
  * Time: 18:58:14
  */
-public class SyncItemConditionTrigger<T> extends AbstractConditionTrigger<T> {
+public class SimpleConditionTrigger<T> extends AbstractConditionTrigger<T> {
 
-    public SyncItemConditionTrigger(ConditionTrigger conditionTrigger, AbstractComparison abstractComparison, T t) {
-        super(conditionTrigger, abstractComparison, t);
+    public SimpleConditionTrigger(ConditionTrigger conditionTrigger,T t) {
+        super(conditionTrigger, null, t);
     }
 
-    public void onItem(SimpleBase actor, SyncItem syncItem) {
-        ((AbstractSyncItemComparison) getAbstractComparison()).onSyncItem(syncItem);
-        if (getAbstractComparison().isFulfilled()) {
-            setFulfilled();
-        }
+    public void onTrigger() {
+        setFulfilled();
     }
 }

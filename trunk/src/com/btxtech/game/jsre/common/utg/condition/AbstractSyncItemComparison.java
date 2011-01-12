@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010.
+ * Copyright (c) 2011.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -13,20 +13,14 @@
 
 package com.btxtech.game.jsre.common.utg.condition;
 
-import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 /**
  * User: beat
- * Date: 27.12.2010
- * Time: 18:58:14
+ * Date: 12.01.2011
+ * Time: 12:05:40
  */
-public class TutorialConditionTrigger<T> extends AbstractConditionTrigger<T> {
+public abstract class AbstractSyncItemComparison extends AbstractComparison {
+    public abstract void onSyncItem(SyncItem syncItem);
 
-    public TutorialConditionTrigger(T t) {
-        super(ConditionTrigger.TUTORIAL, null, t);
-    }
-
-    public void onTutorialFinished() {
-        setFulfilled();
-    }
 }

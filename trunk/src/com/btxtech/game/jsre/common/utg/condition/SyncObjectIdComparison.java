@@ -22,8 +22,7 @@ import java.util.Collection;
  * Date: 27.12.2010
  * Time: 16:31:29
  */
-@Deprecated
-public class SyncObjectIdComparison extends AbstractComparison {
+public class SyncObjectIdComparison extends AbstractSyncItemComparison {
     private int syncObjectId;
     private boolean isFulfilled = false;
 

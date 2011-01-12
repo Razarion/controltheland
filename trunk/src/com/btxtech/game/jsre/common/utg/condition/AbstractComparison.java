@@ -23,7 +23,5 @@ import java.util.Collection;
  * Time: 17:25:49
  */
 public abstract class AbstractComparison {
-    public abstract void onSyncItem(SyncItem syncItem);
-
     public abstract boolean isFulfilled();
 }
