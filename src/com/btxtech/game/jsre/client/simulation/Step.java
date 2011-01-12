@@ -15,6 +15,9 @@ package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.tutorial.StepConfig;
+import com.btxtech.game.jsre.common.utg.condition.CockpitButtonClickedComparison;
+import com.btxtech.game.jsre.common.utg.config.CockpitButtonClickedComparisonConfig;
+import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.SyncItemIdComparisonConfig;
@@ -41,8 +44,12 @@ public class Step {
             _TEST_1();
         } else if (stepConfig.getName().equals("Move")) {
             _TEST_2();
-        }else if (stepConfig.getName().equals("Kill")) {
+        } else if (stepConfig.getName().equals("Kill")) {
             _TEST_3();
+        } else if (stepConfig.getName().equals("Scroll")) {
+            _TEST_4();
+        } else if (stepConfig.getName().equals("Scroll Home")) {
+            _TEST_5();
         }
     }
 
@@ -65,6 +72,17 @@ public class Step {
         arrayList.add(2);
         SyncItemIdComparisonConfig syncItemIdComparisonConfig = new SyncItemIdComparisonConfig(arrayList);
         ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, syncItemIdComparisonConfig);
+        SimulationConditionServiceImpl.getInstance().activateCondition(conditionConfig, null);
+    }
+
+    private void _TEST_4() {
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SCROLL, null);
+        SimulationConditionServiceImpl.getInstance().activateCondition(conditionConfig, null);
+    }
+
+    private void _TEST_5() {
+
+        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.COCKPIT_BUTTON_EVENT, new CockpitButtonClickedComparisonConfig(CockpitWidgetEnum.SCROLL_HOME_BUTTON));
         SimulationConditionServiceImpl.getInstance().activateCondition(conditionConfig, null);
     }
 

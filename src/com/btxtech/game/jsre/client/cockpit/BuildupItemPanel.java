@@ -24,7 +24,7 @@ import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.tutorial.CockpitSpeechBubbleHintConfig;
-import com.btxtech.game.jsre.common.tutorial.CockpitWidgetEnum;
+import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

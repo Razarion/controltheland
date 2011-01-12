@@ -18,7 +18,6 @@ import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.tutorial.CockpitSpeechBubbleHintConfig;
-import com.btxtech.game.jsre.common.tutorial.CockpitWidgetEnum;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;

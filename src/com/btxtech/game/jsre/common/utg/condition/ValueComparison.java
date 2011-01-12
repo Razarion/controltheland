@@ -27,10 +27,10 @@ public class ValueComparison extends AbstractComparison {
     private int value;
     private int count;
 
-    @Override
+/*    @Override
     public void onSyncItem(SyncItem syncItem) {
         value++;
-    }
+    } */
 
     @Override
     public boolean isFulfilled() {

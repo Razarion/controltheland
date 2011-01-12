@@ -13,7 +13,7 @@
 
 package com.btxtech.game.jsre.common.tutorial.condition;
 
-import com.btxtech.game.jsre.common.tutorial.CockpitWidgetEnum;
+import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
 
 /**
  * User: beat

@@ -13,7 +13,7 @@
 
 package com.btxtech.game.services.tutorial.condition;
 
-import com.btxtech.game.jsre.common.tutorial.CockpitWidgetEnum;
+import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
 import com.btxtech.game.jsre.common.tutorial.condition.AbstractConditionConfig;
 import com.btxtech.game.jsre.common.tutorial.condition.CockpitButtonConditionConfig;
 import javax.persistence.DiscriminatorValue;

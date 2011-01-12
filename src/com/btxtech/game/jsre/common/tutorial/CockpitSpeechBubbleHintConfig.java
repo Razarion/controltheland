@@ -13,6 +13,8 @@
 
 package com.btxtech.game.jsre.common.tutorial;
 
+import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
+
 /**
  * User: beat
  * Date: 22.11.2010

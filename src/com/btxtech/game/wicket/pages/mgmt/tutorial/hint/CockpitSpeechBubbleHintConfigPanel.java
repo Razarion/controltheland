@@ -13,7 +13,7 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tutorial.hint;
 
-import com.btxtech.game.jsre.common.tutorial.CockpitWidgetEnum;
+import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.tutorial.hint.DbCockpitSpeechBubbleHintConfig;

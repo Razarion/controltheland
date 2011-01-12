@@ -23,7 +23,7 @@ import java.util.Collection;
  * Date: 18.07.2010
  * Time: 21:06:41
  */
-public class SyncItemIdPositionComparison extends AbstractComparison {
+public class SyncItemIdPositionComparison extends AbstractSyncItemComparison {
     private int syncObjectId;
     private Rectangle region;
     private boolean isFulfilled = false;

@@ -15,11 +15,11 @@ package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
-import com.btxtech.game.jsre.common.utg.condition.TutorialConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.impl.ConditionServiceImpl;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import java.util.HashMap;
@@ -38,6 +38,8 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<User> imple
     private BaseService baseService;
     @Autowired
     private UserGuidanceService userGuidanceService;
+    @Autowired
+    private UserService userService;
     private Map<User, AbstractConditionTrigger<User>> triggerMap = new HashMap<User, AbstractConditionTrigger<User>>();
 
     @Override
@@ -47,12 +49,21 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<User> imple
 
     @Override
     protected AbstractConditionTrigger<User> getAbstractConditionPrivate(SimpleBase simpleBase, ConditionTrigger conditionTrigger) {
-        User user = baseService.getUser(simpleBase);
+        User user;
+        if (simpleBase != null) {
+            user = baseService.getUser(simpleBase);
+        } else {
+            user = userService.getUser();
+        }
         AbstractConditionTrigger<User> abstractConditionTrigger = triggerMap.get(user);
         if (abstractConditionTrigger == null) {
-            throw new IllegalArgumentException("No entry for " + simpleBase);
+            throw new IllegalArgumentException("No entry for " + user);
         }
-        return abstractConditionTrigger;
+        if (abstractConditionTrigger.getConditionTrigger() == conditionTrigger) {
+            return abstractConditionTrigger;
+        } else {
+            return null;
+        }
     }
 
     private <U> U getAbstractCondition(User user, Class<U> theClass) {
@@ -74,13 +85,6 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<User> imple
 
     @Override
     public void onTutorialFinished(User user) {
-        TutorialConditionTrigger<User> userTutorialConditionTrigger = getAbstractCondition(user, TutorialConditionTrigger.class);
-        if (userTutorialConditionTrigger == null) {
-            return;
-        }
-        userTutorialConditionTrigger.onTutorialFinished();
-        if (userTutorialConditionTrigger.isFulfilled()) {
-            conditionPassed(userTutorialConditionTrigger.getUserObject());
-        }
+        triggerSimple(ConditionTrigger.TUTORIAL);
     }
 }

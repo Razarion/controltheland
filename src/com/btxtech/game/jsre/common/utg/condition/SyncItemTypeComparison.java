@@ -21,7 +21,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
  * Date: 18.07.2010
  * Time: 21:06:41
  */
-public class SyncItemTypeComparison extends AbstractComparison {
+public class SyncItemTypeComparison extends AbstractSyncItemComparison {
     private ItemType itemType;
     private boolean isFulfilled = false;
 
