@@ -23,7 +23,6 @@ import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.wicket.pages.mgmt.ItemsUtil;
-import com.btxtech.game.wicket.pages.mgmt.tutorial.condition.ConditionWrapperPanel;
 import com.btxtech.game.wicket.uiservices.CrudTableHelper;
 import java.util.Collection;
 import org.apache.commons.logging.Log;
@@ -32,7 +31,6 @@ import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
@@ -70,7 +68,6 @@ public class TaskEditor extends WebPage {
         form.add(new CheckBox("isSellingAllowed"));
         form.add(new TextField("scroll.x"));
         form.add(new TextField("scroll.y"));
-        form.add(new ConditionWrapperPanel("completionConditionConfig", dbTaskConfig));
         form.add(new TextField<String>("allowedItemTypeIds", new IModel<String>() {
 
             @Override

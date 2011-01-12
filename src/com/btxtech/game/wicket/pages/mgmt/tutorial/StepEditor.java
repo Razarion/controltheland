@@ -24,7 +24,6 @@ import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.services.tutorial.hint.DbTerrainPositionSpeechBubbleHintConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
-import com.btxtech.game.wicket.pages.mgmt.tutorial.condition.ConditionWrapperPanel;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.hint.CockpitSpeechBubbleHintConfigPanel;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.hint.ItemSpeechBubbleHintConfigPanel;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.hint.ResourceHintConfigPanel;
@@ -59,7 +58,7 @@ public class StepEditor extends WebPage {
         Form<DbTaskConfig> form = new Form<DbTaskConfig>("stepForm", new CompoundPropertyModel<DbTaskConfig>(dbStepConfig));
         add(form);
 
-        form.add(new ConditionWrapperPanel("abstractConditionConfig", dbStepConfig));
+        // TODO form.add(new ConditionWrapperPanel("abstractConditionConfig", dbStepConfig));
         new CrudTableHelper<DbHintConfig>("hints", null, "createHint", false, form) {
             @Override
             protected CrudServiceHelper<DbHintConfig> getCrudServiceHelper() {
