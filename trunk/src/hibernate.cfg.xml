@@ -103,14 +103,6 @@
         <mapping class="com.btxtech.game.services.tutorial.DbTaskConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.DbItemTypeAndPosition"/>
         <mapping class="com.btxtech.game.services.tutorial.DbStepConfig"/>
-        <mapping class="com.btxtech.game.services.tutorial.condition.DbHarvestConditionConfig"/>
-        <mapping class="com.btxtech.game.services.tutorial.condition.DbItemBuiltConditionConfig"/>
-        <mapping class="com.btxtech.game.services.tutorial.condition.DbItemsKilledConditionConfig"/>
-        <mapping class="com.btxtech.game.services.tutorial.condition.DbItemsPositionReachedConditionConfig"/>
-        <mapping class="com.btxtech.game.services.tutorial.condition.DbSelectionConditionConfig"/>
-        <mapping class="com.btxtech.game.services.tutorial.condition.DbSendCommandConditionConfig"/>
-        <mapping class="com.btxtech.game.services.tutorial.condition.DbScrollConditionConfig"/>
-        <mapping class="com.btxtech.game.services.tutorial.condition.DbCockpitButtonConditionConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.hint.DbItemSpeechBubbleHintConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.hint.DbResourceHintConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.hint.DbTerrainPositionSpeechBubbleHintConfig"/>
