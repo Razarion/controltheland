@@ -15,15 +15,15 @@ package com.btxtech.game.wicket.pages.mgmt.tutorial;
 
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.tutorial.DbStepConfig;
+import com.btxtech.game.services.tutorial.DbTutorialConfig;
+import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.tutorial.hint.DbCockpitSpeechBubbleHintConfig;
 import com.btxtech.game.services.tutorial.hint.DbHintConfig;
 import com.btxtech.game.services.tutorial.hint.DbItemSpeechBubbleHintConfig;
 import com.btxtech.game.services.tutorial.hint.DbResourceHintConfig;
-import com.btxtech.game.services.tutorial.DbStepConfig;
-import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.services.tutorial.hint.DbTerrainPositionSpeechBubbleHintConfig;
-import com.btxtech.game.services.tutorial.DbTutorialConfig;
-import com.btxtech.game.services.tutorial.TutorialService;
+import com.btxtech.game.wicket.pages.mgmt.condition.ConditionConfigPanel;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.hint.CockpitSpeechBubbleHintConfigPanel;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.hint.ItemSpeechBubbleHintConfigPanel;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.hint.ResourceHintConfigPanel;
@@ -55,10 +55,10 @@ public class StepEditor extends WebPage {
     public StepEditor(final DbTutorialConfig dbTutorialConfig, final DbStepConfig dbStepConfig) {
         add(new FeedbackPanel("msgs"));
 
-        Form<DbTaskConfig> form = new Form<DbTaskConfig>("stepForm", new CompoundPropertyModel<DbTaskConfig>(dbStepConfig));
+        Form<DbStepConfig> form = new Form<DbStepConfig>("stepForm", new CompoundPropertyModel<DbStepConfig>(dbStepConfig));
         add(form);
 
-        // TODO form.add(new ConditionWrapperPanel("abstractConditionConfig", dbStepConfig));
+        form.add(new ConditionConfigPanel("conditionConfig"));
         new CrudTableHelper<DbHintConfig>("hints", null, "createHint", false, form) {
             @Override
             protected CrudServiceHelper<DbHintConfig> getCrudServiceHelper() {
@@ -113,7 +113,7 @@ public class StepEditor extends WebPage {
 
             @Override
             public void onSubmit() {
-                tutorialService.getDbTutorialCrudServiceHelper().updateDbChild(dbTutorialConfig);
+                tutorialService.saveTutorial(dbTutorialConfig);
             }
         });
         form.add(new Button("back") {

@@ -190,7 +190,7 @@ public class TaskEditor extends WebPage {
 
             @Override
             public void onSubmit() {
-                tutorialService.getDbTutorialCrudServiceHelper().updateDbChild(dbTutorialConfig);
+                tutorialService.saveTutorial(dbTutorialConfig);
             }
         });
         form.add(new Button("back") {

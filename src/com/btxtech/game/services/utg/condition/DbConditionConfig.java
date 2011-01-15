@@ -18,11 +18,15 @@ import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.item.ItemService;
 import java.io.Serializable;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
+import org.hibernate.annotations.Cascade;
 
 /**
  * User: beat
@@ -35,7 +39,8 @@ public class DbConditionConfig implements Serializable {
     @GeneratedValue
     private Integer id;
     @OneToOne
-    private DbAbstractComparisonConfig dbAbstractComparisonConfig;
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    private DbAbstractComparisonConfig dbAbstractComparisonConfig; // DELETE_ORPHAN does not work
     private ConditionTrigger conditionTrigger;
     @Transient
     private ConditionConfig conditionConfig;
