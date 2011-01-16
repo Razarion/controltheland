@@ -16,6 +16,7 @@ package com.btxtech.game.wicket.pages.mgmt;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.wicket.pages.mgmt.condition.ConditionConfigPanel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.markup.html.WebPage;
@@ -44,12 +45,14 @@ public class DbLevelEditor extends WebPage {
         add(new FeedbackPanel("msgs"));
 
         Form<DbLevel> form = new Form<DbLevel>("form", new CompoundPropertyModel<DbLevel>(dbLevel));
+        add(form);
 
         TextArea<String> contentArea = new TextArea<String>("html");
         TinyMCESettings tinyMCESettings = new TinyMCESettings();
         contentArea.add(new TinyMceBehavior(tinyMCESettings));
         form.add(contentArea);
-        add(form);
+
+        form.add(new ConditionConfigPanel("dbConditionConfig"));        
 
         form.add(new Button("save") {
             @Override

@@ -25,13 +25,18 @@
 <form wicket:id="form">
     <table border="0" cellSpacing="1"
            cellPadding="0">
-        <tr bgcolor="#DDDDDD">
-            <td colspan="2" valign="top">Mission Target description</td>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Mission Target description</td>
             <td><textarea wicket:id="html" rows="20" cols="60">content</textarea></td>
         </tr>
         <tr>
-            <td colspan="3" valign="top">&nbsp;</td>
+            <td colspan="2" valign="top">&nbsp;</td>
         </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Condition</td>
+            <td wicket:id="dbConditionConfig"></td>
+        </tr>
+
     </table>
     <br>
     <input type="submit" wicket:id="save" value="Save">

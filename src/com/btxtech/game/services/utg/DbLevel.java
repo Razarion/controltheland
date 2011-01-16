@@ -15,27 +15,18 @@ package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.services.common.CrudChild;
-import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
-import org.hibernate.annotations.Cascade;
 
 /**
  * User: beat
@@ -63,7 +54,7 @@ public class DbLevel implements CrudChild, Serializable {
     private Level level;
     @Column(length = 50000)
     private String html;
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private DbConditionConfig dbConditionConfig;
     @ManyToOne
     private DbTutorialConfig dbTutorialConfig;
