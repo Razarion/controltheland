@@ -35,7 +35,9 @@ import com.btxtech.game.services.terrain.DbTerrainImagePosition;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
-import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.DbAbstractLevel;
+import com.btxtech.game.services.utg.DbRealGameLevel;
+import com.btxtech.game.services.utg.DbSimulationLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -342,17 +344,17 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     }
 
     @Override
-    public void setupTerrain(GameInfo gameInfo, DbLevel dbLevel) {
-        if (dbLevel.isRealGame()) {
+    public void setupTerrain(GameInfo gameInfo, DbAbstractLevel dbAbstractLevel) {
+        if (dbAbstractLevel instanceof DbRealGameLevel) {
             gameInfo.setTerrainSettings(getTerrainSettings());
             gameInfo.setTerrainImagePositions(getTerrainImagePositions());
             gameInfo.setTerrainImages(getTerrainImages());
             gameInfo.setSurfaceRects(getSurfaceRects());
             gameInfo.setSurfaceImages(getSurfaceImages());
-        } else {
+        } else if (dbAbstractLevel instanceof DbSimulationLevel){
             SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
             try {
-                DbTerrainSetting terrainSetting = reattachDbTerrainSetting4Tutorial(dbLevel);
+                DbTerrainSetting terrainSetting = reattachDbTerrainSetting4Tutorial((DbSimulationLevel) dbAbstractLevel);
                 gameInfo.setTerrainSettings(terrainSetting.createTerrainSettings());// TODO cache
                 gameInfo.setTerrainImagePositions(getTerrainImagePositions(terrainSetting)); // TODO cache
                 gameInfo.setTerrainImages(getTerrainImages());
@@ -361,18 +363,17 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
             } finally {
                 SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
             }
+        } else {
+            throw new IllegalArgumentException("Unknown Level class: " + dbAbstractLevel);
         }
     }
 
-    public DbTerrainSetting reattachDbTerrainSetting4Tutorial(DbLevel dbLevel) {
-        if (dbLevel.isRealGame()) {
-            throw new IllegalArgumentException("Level is for real game: " + dbLevel);
-        }
-        hibernateTemplate.load(dbLevel, dbLevel.getId());
+    private DbTerrainSetting reattachDbTerrainSetting4Tutorial(DbSimulationLevel dbSimulationLevel) {
+        hibernateTemplate.load(dbSimulationLevel, dbSimulationLevel.getId());
 
-        DbTutorialConfig dbTutorialConfig = dbLevel.getDbTutorialConfig();
+        DbTutorialConfig dbTutorialConfig = dbSimulationLevel.getDbTutorialConfig();
         if (dbTutorialConfig == null) {
-            throw new IllegalStateException("No tutorial for level: " + dbLevel);
+            throw new IllegalStateException("No tutorial for level: " + dbSimulationLevel);
         }
         DbTerrainSetting dbTerrainSetting = dbTutorialConfig.getDbTerrainSetting();
         if (dbTerrainSetting == null) {

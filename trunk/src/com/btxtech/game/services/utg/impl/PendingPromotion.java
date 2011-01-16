@@ -13,7 +13,7 @@
 
 package com.btxtech.game.services.utg.impl;
 
-import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.DbAbstractLevel;
 
 /**
  * User: beat
@@ -27,19 +27,19 @@ public class PendingPromotion {
     public static final String INTERIM_PROMOTION_MIN_MONEY = "MIN MONEY";
     public static final String INTERIM_PROMOTION_DELTA_MONEY = "DELTA MONEY";
     public static final String INTERIM_PROMOTION_DELTA_KILLS = "DELTA KILLS";
-    private DbLevel dbLevel;
+    private DbAbstractLevel dbAbstractLevel;
     private boolean xpAchieved = false;
     private boolean itemCountAchieved = false;
     private boolean minMoneyAchieved = false;
     private boolean deltaMoneyAchieved = false;
     private boolean deltaKillsAchieved = false;
 
-    public PendingPromotion(DbLevel dbLevel) {
-        this.dbLevel = dbLevel;
+    public PendingPromotion(DbAbstractLevel dbAbstractLevel) {
+        this.dbAbstractLevel = dbAbstractLevel;
     }
 
-    public DbLevel getDbLevel() {
-        return dbLevel;
+    public DbAbstractLevel getDbLevel() {
+        return dbAbstractLevel;
     }
 
     public void setXpAchieved() {
@@ -63,31 +63,31 @@ public class PendingPromotion {
     }
 
    /* public boolean achieved() {
-        if (dbLevel.getMinXp() != null) {
+        if (dbAbstractLevel.getMinXp() != null) {
             if (!xpAchieved) {
                 return false;
             }
         }
 
-        if (dbLevel.getDbItemCounts() != null && !dbLevel.getDbItemCounts().isEmpty()) {
+        if (dbAbstractLevel.getDbItemCounts() != null && !dbAbstractLevel.getDbItemCounts().isEmpty()) {
             if (!itemCountAchieved) {
                 return false;
             }
         }
 
-        if (dbLevel.getMinMoney() != null) {
+        if (dbAbstractLevel.getMinMoney() != null) {
             if (!minMoneyAchieved) {
                 return false;
             }
         }
 
-        if (dbLevel.getDeltaMoney() != null) {
+        if (dbAbstractLevel.getDeltaMoney() != null) {
             if (!deltaMoneyAchieved) {
                 return false;
             }
         }
 
-        if (dbLevel.getDeltaKills() != null) {
+        if (dbAbstractLevel.getDeltaKills() != null) {
             if (!deltaKillsAchieved) {
                 return false;
             }

@@ -31,17 +31,17 @@ public class DbItemCount implements Serializable {
     @GeneratedValue
     private Integer id;
     @ManyToOne(optional = false)
-    private DbLevel dbLevel;
+    private DbAbstractLevel dbAbstractLevel;
     @ManyToOne
     private DbBaseItemType baseItemType;
     private int count;
 
-    public DbLevel getDbLevel() {
-        return dbLevel;
+    public DbAbstractLevel getDbLevel() {
+        return dbAbstractLevel;
     }
 
-    public void setDbLevel(DbLevel dbLevel) {
-        this.dbLevel = dbLevel;
+    public void setDbLevel(DbAbstractLevel dbAbstractLevel) {
+        this.dbAbstractLevel = dbAbstractLevel;
     }
 
     public DbBaseItemType getBaseItemType() {

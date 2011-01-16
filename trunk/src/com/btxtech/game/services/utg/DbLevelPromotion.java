@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.user.User;
 import java.util.Date;
 import javax.persistence.Column;
@@ -44,9 +43,9 @@ public class DbLevelPromotion {
     public DbLevelPromotion() {
     }
 
-    public DbLevelPromotion(String sessionId, User user, DbLevel oldLevel) {
+    public DbLevelPromotion(String sessionId, User user, DbAbstractLevel oldAbstractLevel) {
         this.sessionId = sessionId;
-        level = oldLevel.getName();
+        level = oldAbstractLevel.getName();
         this.user = user.getName();
         niceTimeStamp = new Date();
         timeStamp = niceTimeStamp.getTime();

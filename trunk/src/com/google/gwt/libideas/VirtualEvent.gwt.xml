@@ -17,6 +17,6 @@
     <inherits name="com.google.gwt.user.User" />
     <inherits name="com.google.gwt.libideas.Event"/>   
 
-    <!-- We're using a two-level package naming scheme -->
+    <!-- We're using a two-abstractLevel package naming scheme -->
     <source path="event/virtual/shared"/>
 </module>

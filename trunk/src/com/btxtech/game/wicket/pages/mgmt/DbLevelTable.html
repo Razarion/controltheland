@@ -26,8 +26,7 @@
     <table cellpadding="1" cellspacing="1" border="0">
         <tr>
             <th bgcolor="#dadada">Level</th>
-            <th bgcolor="#dadada">Real Game</th>
-            <th bgcolor="#dadada">Tutorial</th>
+            <th bgcolor="#dadada">Type</th>
             <th bgcolor="#dadada">Move Up</th>
             <th bgcolor="#dadada">Move down</th>
             <th bgcolor="#dadada">Edit</th>
@@ -35,8 +34,8 @@
         </tr>
         <tr wicket:id="levels">
             <td><input type="text" wicket:id="name" size="20" maxlength="500"/></td>
-            <td><input type="checkbox" wicket:id="realGame"></td>
-            <td><input type="text" wicket:id="dbTutorialConfig" size="4"/></td>
+            <td wicket:id="displayType"></td>
+            <!--td><input type="text" wicket:id="dbTutorialConfig" size="4"/></td-->
             <td valign="center">
                 <input type="submit" value="Up" wicket:id="up"/>
             </td>
@@ -51,7 +50,10 @@
             </td>
         </tr>
     </table>
-    <input wicket:id="add" type="submit" value="Add">
+    <br>
+    <input wicket:id="createRealGame" type="submit" value="Add Real Game">
+    <input wicket:id="createSimulation" type="submit" value="Add Simulated">
+    <br>
     <input wicket:id="save" type="submit" value="Save">
     <br>
     <input wicket:id="activate" type="submit" value="Activate">

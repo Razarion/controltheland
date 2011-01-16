@@ -20,7 +20,6 @@ import com.btxtech.game.jsre.common.EventTrackingStart;
 import com.btxtech.game.jsre.common.ScrollTrackingItem;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
-import com.btxtech.game.jsre.common.UserStage;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.base.Base;
@@ -65,7 +64,7 @@ public interface UserTrackingService {
 
     void trackUserMessage(UserMessage userMessage);
 
-    void levelPromotion(User user, DbLevel oldLevel);
+    void levelPromotion(User user, DbAbstractLevel oldAbstractLevel);
 
     void onJavaScriptDetected();
 

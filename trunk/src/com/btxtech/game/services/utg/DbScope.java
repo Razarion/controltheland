@@ -31,6 +31,7 @@ import org.hibernate.annotations.TypeDef;
  * Date: 28.12.2010
  * Time: 23:32:02
  */
+@Deprecated
 @Entity(name = "GUIDANCE_SCOPE")
 @TypeDef(name = "rectangle", typeClass = RectangleUserType.class)
 public class DbScope implements Serializable {

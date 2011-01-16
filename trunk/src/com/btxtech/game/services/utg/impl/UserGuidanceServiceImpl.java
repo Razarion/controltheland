@@ -30,8 +30,10 @@ import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.DbAbstractLevel;
+import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.services.utg.DbScope;
+import com.btxtech.game.services.utg.DbSimulationLevel;
 import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserLevelStatus;
@@ -86,29 +88,29 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
     @Deprecated
-    private List<DbLevel> dbLevels = new ArrayList<DbLevel>();
-    private CrudServiceHelper<DbLevel> crudServiceHelperHibernate;
+    private List<DbAbstractLevel> dbAbstractLevels = new ArrayList<DbAbstractLevel>();
+    private CrudServiceHelper<DbAbstractLevel> crudServiceHelperHibernate;
 
     @PostConstruct
     public void init() {
         try {
-            crudServiceHelperHibernate = new CrudServiceHelperHibernateImpl<DbLevel>(hibernateTemplate, DbLevel.class) {
+            crudServiceHelperHibernate = new CrudServiceHelperHibernateImpl<DbAbstractLevel>(hibernateTemplate, DbAbstractLevel.class) {
                 @Override
                 protected void addAdditionalReadCriteria(Criteria criteria) {
                     criteria.addOrder(Order.asc("orderIndex"));
                 }
 
                 @Override
-                protected void initChild(DbLevel dbLevel) {
+                protected void initChild(DbAbstractLevel dbAbstractLevel) {
                     int rowCount = (Integer) hibernateTemplate.execute(new HibernateCallback() {
                         @Override
                         public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                            Criteria criteria = session.createCriteria(DbLevel.class);
+                            Criteria criteria = session.createCriteria(DbAbstractLevel.class);
                             criteria.setProjection(Projections.rowCount());
                             return criteria.list().get(0);
                         }
                     });
-                    dbLevel.setOrderIndex(rowCount);
+                    dbAbstractLevel.setOrderIndex(rowCount);
                 }
             };
         } catch (Throwable t) {
@@ -139,90 +141,93 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         UserLevelStatus userLevelStatus = user.getUserLevelStatus();
 
         // Get next level
-        DbLevel dbOldLevel = userLevelStatus.getCurrentLevel();
-        DbLevel dbNextLevel = getNextDbLevel(dbOldLevel);
+        DbAbstractLevel dbOldAbstractLevel = userLevelStatus.getCurrentLevel();
+        DbAbstractLevel dbNextAbstractLevel = getNextDbLevel(dbOldAbstractLevel);
 
         // Prepare next level
-        userLevelStatus.setCurrentLevel(dbNextLevel);
-        DbScope dbScope = dbNextLevel.getDbScope();
-        if (dbScope != null && dbScope.isCreateRealBase()) {
+        userLevelStatus.setCurrentLevel(dbNextAbstractLevel);
+        if(dbNextAbstractLevel instanceof DbRealGameLevel && ((DbRealGameLevel)dbNextAbstractLevel).isCreateRealBase()) {
             try {
                 baseService.createNewBase();
             } catch (Exception e) {
                 log.error("Can not create base for user: " + user, e);
             }
         }
-        activateCondition(user, dbNextLevel);
+        activateCondition(user, dbNextAbstractLevel);
 
         // TODO save user
         // Send level update packet
-        if (dbOldLevel.isRealGame()) {
+        if (dbOldAbstractLevel instanceof DbRealGameLevel) {
             Base base = baseService.getBase(user);
             LevelPacket levelPacket = new LevelPacket();
-            levelPacket.setLevel(dbNextLevel.getLevel());
+            levelPacket.setLevel(dbNextAbstractLevel.getLevel());
             connectionService.sendPacket(base.getSimpleBase(), levelPacket);
             // TODO baseService.sendHouseSpacePacket(base);
         }
         // Tracking
-        userTrackingService.levelPromotion(user, dbOldLevel);
-        log.debug("User: " + user + " has been promeoted: " + dbOldLevel + " to " + dbNextLevel);
+        userTrackingService.levelPromotion(user, dbOldAbstractLevel);
+        log.debug("User: " + user + " has been promeoted: " + dbOldAbstractLevel + " to " + dbNextAbstractLevel);
     }
 
-    private DbLevel getNextDbLevel(DbLevel dbLevel) {
-        int index = dbLevels.indexOf(dbLevel);
+    private DbAbstractLevel getNextDbLevel(DbAbstractLevel dbAbstractLevel) {
+        int index = dbAbstractLevels.indexOf(dbAbstractLevel);
         if (index < 0) {
-            throw new IllegalArgumentException("DbLevel not found: " + dbLevel);
+            throw new IllegalArgumentException("DbLevel not found: " + dbAbstractLevel);
         }
         index++;
-        if (index >= dbLevels.size()) {
-            throw new IllegalStateException("No next level for: " + dbLevel);
+        if (index >= dbAbstractLevels.size()) {
+            throw new IllegalStateException("No next level for: " + dbAbstractLevel);
         }
-        return dbLevels.get(index);
+        return dbAbstractLevels.get(index);
     }
 
     @Override
     public void setLevelForNewUser(User user) {
-        DbLevel dbLevel = dbLevels.get(0);
+        DbAbstractLevel dbAbstractLevel = dbAbstractLevels.get(0);
         UserLevelStatus userLevelStatus = new UserLevelStatus();
-        userLevelStatus.setCurrentLevel(dbLevel);
+        userLevelStatus.setCurrentLevel(dbAbstractLevel);
         user.setUserLevelStatus(userLevelStatus);
-        activateCondition(user, dbLevel);
+        activateCondition(user, dbAbstractLevel);
     }
 
-    private void activateCondition(User user, DbLevel dbLevel) {
-        if (dbLevel.isRealGame()) {
-            serverConditionService.activateCondition(dbLevel.getDbConditionConfig().createConditionConfig(itemService), user);
-        } else {
+    private void activateCondition(User user, DbAbstractLevel dbAbstractLevel) {
+        if (dbAbstractLevel instanceof DbRealGameLevel) {
+            serverConditionService.activateCondition(((DbRealGameLevel) dbAbstractLevel).getDbConditionConfig().createConditionConfig(itemService), user);
+        } else if (dbAbstractLevel instanceof DbSimulationLevel) {
             serverConditionService.activateCondition(new ConditionConfig(ConditionTrigger.TUTORIAL, null), user);
+        } else {
+            throw new IllegalArgumentException("Unknown level  " + dbAbstractLevel);
         }
     }
 
     @Override
     public GameStartupSeq getColdStartupSeq() {
-        if (getDbLevel().isRealGame()) {
+        DbAbstractLevel dbAbstractLevel = getDbAbstractLevel();
+        if (dbAbstractLevel instanceof DbRealGameLevel) {
             return GameStartupSeq.COLD_REAL;
-        } else {
+        } else if (dbAbstractLevel instanceof DbSimulationLevel) {
             return GameStartupSeq.COLD_SIMULATED;
+        } else {
+            throw new IllegalArgumentException("Unknown level  " + dbAbstractLevel);
         }
     }
 
     @Override
-    public DbScope getDbScope() {
-        return getDbLevel().getDbScope();
+    public DbRealGameLevel getDbLevel() {
+        return (DbRealGameLevel) getDbAbstractLevel();
     }
 
-    @Override
-    public DbLevel getDbLevel() {
+    private DbAbstractLevel getDbAbstractLevel() {
         return userService.getUser().getUserLevelStatus().getCurrentLevel();
     }
 
     @Override
-    public DbLevel getDbLevel(SimpleBase simpleBase) {
-        return baseService.getUser(simpleBase).getUserLevelStatus().getCurrentLevel();
+    public DbRealGameLevel getDbLevel(SimpleBase simpleBase) {
+        return (DbRealGameLevel) baseService.getUser(simpleBase).getUserLevelStatus().getCurrentLevel();
     }
 
     @Override
-    public DbLevel getDbLevel(String levelName) {
+    public DbAbstractLevel getDbLevel(String levelName) {
         // TODO
         return null;
     }
@@ -238,24 +243,24 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     }
 
     @Override
-    public List<DbLevel> getDbLevels() {
-        return dbLevels;
+    public List<DbAbstractLevel> getDbLevels() {
+        return dbAbstractLevels;
     }
 
     @Override
     @Transactional
-    public void saveDbLevels(List<DbLevel> dbLevels) {
+    public void saveDbLevels(List<DbAbstractLevel> dbAbstractLevels) {
         int orderIndex = 0;
-        for (DbLevel dbLevel : dbLevels) {
-            dbLevel.setOrderIndex(orderIndex++);
+        for (DbAbstractLevel dbAbstractLevel : dbAbstractLevels) {
+            dbAbstractLevel.setOrderIndex(orderIndex++);
         }
-        crudServiceHelperHibernate.updateDbChildren(dbLevels);
+        crudServiceHelperHibernate.updateDbChildren(dbAbstractLevels);
     }
 
     @Override
     @Transactional
-    public void saveDbLevel(DbLevel dbLevel) {
-        crudServiceHelperHibernate.updateDbChild(dbLevel);
+    public void saveDbLevel(DbAbstractLevel dbAbstractLevel) {
+        crudServiceHelperHibernate.updateDbChild(dbAbstractLevel);
     }
 
     @Override
@@ -266,20 +271,20 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
     @Override
     @Transactional
-    public void deleteDbLevel(DbLevel dbLevel) {
-        crudServiceHelperHibernate.deleteDbChild(dbLevel);
+    public void deleteDbLevel(DbAbstractLevel dbAbstractLevel) {
+        crudServiceHelperHibernate.deleteDbChild(dbAbstractLevel);
     }
 
     @Override
-    public CrudServiceHelper<DbLevel> getDbLevelCrudServiceHelper() {
+    public CrudServiceHelper<DbAbstractLevel> getDbLevelCrudServiceHelper() {
         return crudServiceHelperHibernate;
     }
 
     @Override
     public void activateLevels() {
         /***************/
-        /*dbLevels = new ArrayList<DbLevel>();
-        DbLevel dbLevel1 = new DbLevel();
+        /*dbAbstractLevels = new ArrayList<DbAbstractLevel>();
+        DbAbstractLevel dbLevel1 = new DbAbstractLevel();
         dbLevel1.setHtml("Html 1");
         dbLevel1.setName("Name 1");
         dbLevel1.setRealGame(false);
@@ -287,9 +292,9 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         DbConditionConfig dbConditionConfig1 = new DbConditionConfig();
         dbConditionConfig1.setConditionTrigger(ConditionTrigger.TUTORIAL);
         dbLevel1.setDbConditionConfig(dbConditionConfig1);
-        dbLevels.add(dbLevel1);
+        dbAbstractLevels.add(dbLevel1);
         ////////////////////////////////////////////
-        DbLevel dbLevel2 = new DbLevel();
+        DbAbstractLevel dbLevel2 = new DbAbstractLevel();
         dbLevel2.setHtml("Html 2");
         dbLevel2.setName("Name 2");
         dbLevel2.setRealGame(true);
@@ -309,9 +314,9 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         dbScope2.setHouseSpace(10);
         dbScope2.setItemSellFactor(0.5);
         dbScope2.setDeltaMoney(10000);
-        dbLevels.add(dbLevel2);
+        dbAbstractLevels.add(dbLevel2);
         ////////////////////////////////////////////
-        DbLevel dbLevel3 = new DbLevel();
+        DbAbstractLevel dbLevel3 = new DbAbstractLevel();
         dbLevel3.setHtml("Html 3");
         dbLevel3.setName("Name 3");
         dbLevel3.setRealGame(true);
@@ -319,10 +324,10 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         DbConditionConfig dbConditionConfig3 = new DbConditionConfig();
         dbConditionConfig3.setConditionTrigger(ConditionTrigger.TUTORIAL);
         dbLevel3.setDbConditionConfig(dbConditionConfig3);
-        dbLevels.add(dbLevel3);*/
+        dbAbstractLevels.add(dbLevel3);*/
 
         /***************/
-        dbLevels = (List<DbLevel>) crudServiceHelperHibernate.readDbChildren();
+        dbAbstractLevels = (List<DbAbstractLevel>) crudServiceHelperHibernate.readDbChildren();
         tutorialService.activate();
     }
 }

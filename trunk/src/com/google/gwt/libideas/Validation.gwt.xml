@@ -15,7 +15,7 @@
 <module>
     <inherits name="com.google.gwt.core.Core"/>
      
-    <!-- We're using a two-level package naming scheme -->
+    <!-- We're using a two-abstractLevel package naming scheme -->
     <source path="validation/client"/>
     
 </module>

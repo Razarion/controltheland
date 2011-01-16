@@ -35,11 +35,11 @@ import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.BrowserDetails;
+import com.btxtech.game.services.utg.DbAbstractLevel;
 import com.btxtech.game.services.utg.DbCloseWindow;
 import com.btxtech.game.services.utg.DbCommand;
 import com.btxtech.game.services.utg.DbEventTrackingItem;
 import com.btxtech.game.services.utg.DbEventTrackingStart;
-import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.DbLevelPromotion;
 import com.btxtech.game.services.utg.DbScrollTrackingItem;
 import com.btxtech.game.services.utg.DbSelectionTrackingItem;
@@ -469,7 +469,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public void levelPromotion(User user, DbLevel oldLevel) {
+    public void levelPromotion(User user, DbAbstractLevel oldAbstractLevel) {
         try {
             String sessionId = null;
             try {
@@ -479,7 +479,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 // Error creating bean with name 'scopedTarget.user': Scope 'session' is not active for the current thread
                 // This happens when the methode is called from the server side (e.g. XP increase timer)
             }
-            DbLevelPromotion dbLevelPromotion = new DbLevelPromotion(sessionId, user, oldLevel);
+            DbLevelPromotion dbLevelPromotion = new DbLevelPromotion(sessionId, user, oldAbstractLevel);
             hibernateTemplate.saveOrUpdate(dbLevelPromotion);
         } catch (Throwable t) {
             log.error("", t);
