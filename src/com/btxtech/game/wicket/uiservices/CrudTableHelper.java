@@ -65,7 +65,7 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
 
                     @Override
                     public void onSubmit() {
-                        getCrudServiceHelper().deleteDbChild(item.getModelObject());
+                        deleteChild(item.getModelObject());
                     }
                 });
 
@@ -73,16 +73,24 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
         });
 
         if (saveId != null) {
-            form.add(new Button(saveId) {
-
-                @Override
-                public void onSubmit() {
-                    getCrudServiceHelper().updateDbChildren(provider.getLastModifiedList());
-                }
-            });
+            setupSave(form, saveId);
         }
         setupCreate(form, createId);
 
+    }
+
+    protected void deleteChild(T child) {
+        getCrudServiceHelper().deleteDbChild(child);
+    }
+
+    protected void setupSave(Form form, String saveId) {
+        form.add(new Button(saveId) {
+
+            @Override
+            public void onSubmit() {
+                getCrudServiceHelper().updateDbChildren(getLastModifiedList());
+            }
+        });
     }
 
     protected void setupCreate(Form form, String createId) {
@@ -122,6 +130,10 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
 
     public int rowCount() {
         return provider.getLastModifiedList().size();
+    }
+
+    public List<T> getLastModifiedList() {
+        return provider.getLastModifiedList();
     }
 
 }

@@ -13,12 +13,12 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
+import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.utg.DbLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import com.btxtech.game.wicket.uiservices.ListProvider;
-import java.util.List;
+import com.btxtech.game.wicket.uiservices.CrudTableHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.markup.html.WebPage;
@@ -29,7 +29,6 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
@@ -38,33 +37,49 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 12.05.2010
  * Time: 20:26:33
  */
-public class LevelAndMissionTarget extends WebPage {
+public class DbLevelTable extends WebPage {
     @SpringBean
     private UserGuidanceService userGuidanceService;
     @SpringBean
     private TutorialService tutorialService;
-    private Log log = LogFactory.getLog(LevelAndMissionTarget.class);
+    private Log log = LogFactory.getLog(DbLevelTable.class);
 
-    public LevelAndMissionTarget() {
-        setupLevelTable();
-    }
-
-    private void setupLevelTable() {
-        final ListProvider<DbLevel> levelProvider = new ListProvider<DbLevel>() {
-            @Override
-            protected List<DbLevel> createList() {
-                return userGuidanceService.getDbLevels();
-            }
-        };
+    public DbLevelTable() {
         add(new FeedbackPanel("msgs"));
         Form form = new Form("levelForm");
         add(form);
 
-        form.add(new DataView<DbLevel>("levels", levelProvider) {
+        new CrudTableHelper<DbLevel>("levels", "save", "add", true, form) {
 
             @Override
-            protected void populateItem(final Item<DbLevel> dbLevelItem) {
-                dbLevelItem.add(new TextField<String>("name"));
+            protected CrudServiceHelper<DbLevel> getCrudServiceHelper() {
+                return userGuidanceService.getDbLevelCrudServiceHelper();
+            }
+
+            @Override
+            protected void setupSave(Form form, String saveId) {
+                form.add(new Button(saveId) {
+
+                    @Override
+                    public void onSubmit() {
+                        userGuidanceService.saveDbLevels(getLastModifiedList());
+                    }
+                });
+            }
+
+            @Override
+            protected void deleteChild(DbLevel child) {
+                userGuidanceService.deleteDbLevel(child);
+            }
+
+            @Override
+            protected void onEditSubmit(DbLevel dbLevel) {
+                setResponsePage(new DbLevelEditor(dbLevel));
+            }
+
+            @Override
+            protected void extendedPopulateItem(final Item<DbLevel> dbLevelItem) {
+                super.extendedPopulateItem(dbLevelItem);
                 dbLevelItem.add(new CheckBox("realGame"));
                 dbLevelItem.add(new TextField<Integer>("dbTutorialConfig", new IModel<Integer>() {
                     @Override
@@ -108,37 +123,8 @@ public class LevelAndMissionTarget extends WebPage {
                         // TODO  userGuidanceService.moveDownDbLevel(dbLevelItem.getModelObject());
                     }
                 });
-                dbLevelItem.add(new Link("missionTargetLink") {
-
-                    @Override
-                    public void onClick() {
-                        setResponsePage(new MissionTarget(dbLevelItem.getModelObject()));
-                    }
-                });
-                dbLevelItem.add(new Button("delete") {
-
-                    @Override
-                    public void onSubmit() {
-                        // TODO  userGuidanceService.deleteDbLevel(dbLevelItem.getModelObject());
-                    }
-                });
-
             }
-        });
-        form.add(new Button("add") {
-
-            @Override
-            public void onSubmit() {
-                // TODO  userGuidanceService.addDbLevel();
-            }
-        });
-        form.add(new Button("save") {
-
-            @Override
-            public void onSubmit() {
-                userGuidanceService.saveDbLevels(levelProvider.getLastModifiedList());
-            }
-        });
+        };
         form.add(new Button("activate") {
 
             @Override

@@ -15,6 +15,9 @@ package com.btxtech.game.wicket.pages.mgmt.condition;
 
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
+import com.btxtech.game.services.utg.condition.DbCockpitButtonClickedComparisonConfig;
+import com.btxtech.game.services.utg.condition.DbSyncItemIdComparisonConfig;
+import com.btxtech.game.services.utg.condition.DbSyncItemIdPositionComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,13 +29,13 @@ import java.util.List;
  */
 public class ComparisonFactory {
     public enum ComparisonClass {
-        SYNC_ITEM_KILLED(ConditionTrigger.SYNC_ITEM_KILLED, DbSyncItemTypeComparisonConfig.class),
+        SYNC_ITEM_KILLED(ConditionTrigger.SYNC_ITEM_KILLED, DbSyncItemTypeComparisonConfig.class, DbSyncItemIdComparisonConfig.class),
         TUTORIAL(ConditionTrigger.TUTORIAL),
-        SYNC_ITEM_SELECT(ConditionTrigger.SYNC_ITEM_SELECT),
-        SYNC_ITEM_DEACTIVATE(ConditionTrigger.SYNC_ITEM_DEACTIVATE),
-        SYNC_ITEM_BUILT(ConditionTrigger.SYNC_ITEM_BUILT),
+        SYNC_ITEM_SELECT(ConditionTrigger.SYNC_ITEM_SELECT, DbSyncItemTypeComparisonConfig.class, DbSyncItemIdComparisonConfig.class),
+        SYNC_ITEM_DEACTIVATE(ConditionTrigger.SYNC_ITEM_DEACTIVATE, DbSyncItemTypeComparisonConfig.class, DbSyncItemIdComparisonConfig.class, DbSyncItemIdPositionComparisonConfig.class),
+        SYNC_ITEM_BUILT(ConditionTrigger.SYNC_ITEM_BUILT, DbSyncItemTypeComparisonConfig.class, DbSyncItemIdComparisonConfig.class),
         SCROLL(ConditionTrigger.SCROLL),
-        COCKPIT_BUTTON_EVENT(ConditionTrigger.COCKPIT_BUTTON_EVENT);
+        COCKPIT_BUTTON_EVENT(ConditionTrigger.COCKPIT_BUTTON_EVENT, DbCockpitButtonClickedComparisonConfig.class);
 
         private ConditionTrigger conditionTrigger;
         private List<Class<? extends DbAbstractComparisonConfig>> comparisons;

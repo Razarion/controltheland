@@ -36,6 +36,7 @@ import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserLevelStatus;
 import com.btxtech.game.services.utg.UserTrackingService;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -43,9 +44,12 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.stereotype.Component;
@@ -81,19 +85,41 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     private TutorialService tutorialService;
     private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
+    @Deprecated
     private List<DbLevel> dbLevels = new ArrayList<DbLevel>();
     private CrudServiceHelper<DbLevel> crudServiceHelperHibernate;
 
     @PostConstruct
     public void init() {
-        SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
         try {
             crudServiceHelperHibernate = new CrudServiceHelperHibernateImpl<DbLevel>(hibernateTemplate, DbLevel.class) {
                 @Override
                 protected void addAdditionalReadCriteria(Criteria criteria) {
                     criteria.addOrder(Order.asc("orderIndex"));
                 }
+
+                @Override
+                protected void initChild(DbLevel dbLevel) {
+                    int rowCount = (Integer) hibernateTemplate.execute(new HibernateCallback() {
+                        @Override
+                        public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                            Criteria criteria = session.createCriteria(DbLevel.class);
+                            criteria.setProjection(Projections.rowCount());
+                            return criteria.list().get(0);
+                        }
+                    });
+                    dbLevel.setOrderIndex(rowCount);
+                }
             };
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
+    @Override
+    public void init2() {
+        SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
+        try {
             activateLevels();
         } catch (Throwable t) {
             log.error("", t);
@@ -219,7 +245,34 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     @Override
     @Transactional
     public void saveDbLevels(List<DbLevel> dbLevels) {
+        int orderIndex = 0;
+        for (DbLevel dbLevel : dbLevels) {
+            dbLevel.setOrderIndex(orderIndex++);
+        }
         crudServiceHelperHibernate.updateDbChildren(dbLevels);
+    }
+
+    @Override
+    @Transactional
+    public void saveDbLevel(DbLevel dbLevel) {
+        crudServiceHelperHibernate.updateDbChild(dbLevel);
+    }
+
+    @Override
+    @Transactional
+    public void createDbLevel() {
+        crudServiceHelperHibernate.createDbChild();
+    }
+
+    @Override
+    @Transactional
+    public void deleteDbLevel(DbLevel dbLevel) {
+        crudServiceHelperHibernate.deleteDbChild(dbLevel);
+    }
+
+    @Override
+    public CrudServiceHelper<DbLevel> getDbLevelCrudServiceHelper() {
+        return crudServiceHelperHibernate;
     }
 
     @Override

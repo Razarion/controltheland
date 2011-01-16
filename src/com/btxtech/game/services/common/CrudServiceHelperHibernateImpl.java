@@ -88,7 +88,7 @@ public class CrudServiceHelperHibernateImpl<T extends CrudChild> implements Crud
     }
 
     @Override
-    public void createDbChild(Class createClass) {
+    public void createDbChild(Class<T> createClass) {
         try {
             Constructor<T> constructor = createClass.getConstructor();
             T t = constructor.newInstance();
@@ -103,9 +103,13 @@ public class CrudServiceHelperHibernateImpl<T extends CrudChild> implements Crud
         hibernateTemplate.deleteAll(readDbChildren());
     }
 
+    protected void initChild(T t) {
+    }
+
     @Override
     public void addChild(T t) {
         t.init();
+        initChild(t);
         hibernateTemplate.save(t);
     }
 }

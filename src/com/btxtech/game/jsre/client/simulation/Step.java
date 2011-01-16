@@ -34,56 +34,7 @@ public class Step {
 
     public Step(StepConfig stepConfig) {
         this.stepConfig = stepConfig;
-        // TODO SimulationConditionServiceImpl.getInstance().activateCondition(stepConfig.getConditionConfig(), null);
-
-        _TEST_(stepConfig);
-    }
-
-    private void _TEST_(StepConfig stepConfig) {
-        if (stepConfig.getName().equals("Select")) {
-            _TEST_1();
-        } else if (stepConfig.getName().equals("Move")) {
-            _TEST_2();
-        } else if (stepConfig.getName().equals("Kill")) {
-            _TEST_3();
-        } else if (stepConfig.getName().equals("Scroll")) {
-            _TEST_4();
-        } else if (stepConfig.getName().equals("Scroll Home")) {
-            _TEST_5();
-        }
-    }
-
-    private void _TEST_1() {
-        ArrayList<Integer> arrayList = new ArrayList<Integer>();
-        arrayList.add(1);
-        SyncItemIdComparisonConfig syncItemIdComparisonConfig = new SyncItemIdComparisonConfig(arrayList);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_SELECT, syncItemIdComparisonConfig);
-        SimulationConditionServiceImpl.getInstance().activateCondition(conditionConfig, null);
-    }
-
-    private void _TEST_2() {
-        SyncItemIdPositionComparisonConfig syncItemIdPositionComparisonConfig = new SyncItemIdPositionComparisonConfig(1, new Rectangle(130, 170, 120, 120));
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_DEACTIVATE, syncItemIdPositionComparisonConfig);
-        SimulationConditionServiceImpl.getInstance().activateCondition(conditionConfig, null);
-    }
-
-    private void _TEST_3() {
-        ArrayList<Integer> arrayList = new ArrayList<Integer>();
-        arrayList.add(2);
-        SyncItemIdComparisonConfig syncItemIdComparisonConfig = new SyncItemIdComparisonConfig(arrayList);
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SYNC_ITEM_KILLED, syncItemIdComparisonConfig);
-        SimulationConditionServiceImpl.getInstance().activateCondition(conditionConfig, null);
-    }
-
-    private void _TEST_4() {
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.SCROLL, null);
-        SimulationConditionServiceImpl.getInstance().activateCondition(conditionConfig, null);
-    }
-
-    private void _TEST_5() {
-
-        ConditionConfig conditionConfig = new ConditionConfig(ConditionTrigger.COCKPIT_BUTTON_EVENT, new CockpitButtonClickedComparisonConfig(CockpitWidgetEnum.SCROLL_HOME_BUTTON));
-        SimulationConditionServiceImpl.getInstance().activateCondition(conditionConfig, null);
+        SimulationConditionServiceImpl.getInstance().activateCondition(stepConfig.getConditionConfig(), null);
     }
 
     public StepConfig getStepConfig() {

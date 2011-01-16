@@ -35,7 +35,7 @@ public interface CrudServiceHelper<T extends CrudChild> {
 
     void createDbChild();
 
-    void createDbChild(Class createClass);
+    void createDbChild(Class<T> createClass);
 
     void deleteAllChildren();
 

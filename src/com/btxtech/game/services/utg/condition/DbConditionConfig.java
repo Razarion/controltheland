@@ -18,12 +18,9 @@ import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.item.ItemService;
 import java.io.Serializable;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import org.hibernate.annotations.Cascade;
@@ -84,13 +81,11 @@ public class DbConditionConfig implements Serializable {
         if (conditionTrigger.isComparisonNeeded() && dbAbstractComparisonConfig == null) {
             throw new IllegalStateException("dbAbstractComparisonConfig is null");
         }
-        if (dbAbstractComparisonConfig != null) {
-            AbstractComparisonConfig abstractComparisonConfig = null;
-            if (conditionTrigger.isComparisonNeeded()) {
-                abstractComparisonConfig = dbAbstractComparisonConfig.createComparisonConfig(itemService);
-            }
-            conditionConfig = new ConditionConfig(conditionTrigger, abstractComparisonConfig);
+        AbstractComparisonConfig abstractComparisonConfig = null;
+        if (conditionTrigger.isComparisonNeeded()) {
+            abstractComparisonConfig = dbAbstractComparisonConfig.createComparisonConfig(itemService);
         }
+        conditionConfig = new ConditionConfig(conditionTrigger, abstractComparisonConfig);
         return conditionConfig;
     }
 }

@@ -15,15 +15,20 @@ package com.btxtech.game.wicket.pages.mgmt.condition;
 
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
+import com.btxtech.game.services.utg.condition.DbCockpitButtonClickedComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
+import com.btxtech.game.services.utg.condition.DbSyncItemIdComparisonConfig;
+import com.btxtech.game.services.utg.condition.DbSyncItemIdPositionComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.IFormModelUpdateListener;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -33,7 +38,7 @@ import org.apache.wicket.model.Model;
  * Date: 12.01.2011
  * Time: 14:34:18
  */
-public class ConditionConfigPanel extends Panel {
+public class ConditionConfigPanel extends Panel implements IFormModelUpdateListener {
     private Model<ConditionTrigger> conditionTriggerModel = new Model<ConditionTrigger>();
     private Model<Class<? extends DbAbstractComparisonConfig>> comparisonModel = new Model<Class<? extends DbAbstractComparisonConfig>>();
     private Log log = LogFactory.getLog(ConditionConfigPanel.class);
@@ -78,10 +83,6 @@ public class ConditionConfigPanel extends Panel {
                     return;
                 }
                 DbConditionConfig dbConditionConfig = (DbConditionConfig) ConditionConfigPanel.this.getDefaultModelObject();
-                if (dbConditionConfig == null) {
-                    dbConditionConfig = new DbConditionConfig();
-                    setDefaultModelObject(dbConditionConfig);
-                }
 
                 ConditionTrigger conditionTrigger = conditionTriggerModel.getObject();
                 if (conditionTriggerModel.getObject() != dbConditionConfig.getConditionTrigger()) {
@@ -122,15 +123,51 @@ public class ConditionConfigPanel extends Panel {
                 setupComparisonFields();
             }
         });
-        add(new Label("dbAbstractComparisonConfig", "").setVisible(false));
+        setupComparisonFields();
     }
 
     private void setupComparisonFields() {
         DbConditionConfig dbConditionConfig = (DbConditionConfig) getDefaultModelObject();
-        if(dbConditionConfig == null || dbConditionConfig.getDbAbstractComparisonConfig() == null) {
+        if (dbConditionConfig == null || dbConditionConfig.getDbAbstractComparisonConfig() == null) {
             addOrReplace(new Label("dbAbstractComparisonConfig", "").setVisible(false));
-        }   else {
-            addOrReplace(new SyncItemTypeComparisonConfigPanel("dbAbstractComparisonConfig", (DbSyncItemTypeComparisonConfig) dbConditionConfig.getDbAbstractComparisonConfig()));
+        } else {
+            DbAbstractComparisonConfig config = dbConditionConfig.getDbAbstractComparisonConfig();
+            if (config instanceof DbSyncItemTypeComparisonConfig) {
+                addOrReplace(new SyncItemTypeComparisonConfigPanel("dbAbstractComparisonConfig", (DbSyncItemTypeComparisonConfig) config));
+            } else if (config instanceof DbCockpitButtonClickedComparisonConfig) {
+                addOrReplace(new CockpitButtonClickedComparisonConfigPanel("dbAbstractComparisonConfig", (DbCockpitButtonClickedComparisonConfig) config));
+            } else if (config instanceof DbSyncItemIdComparisonConfig) {
+                addOrReplace(new SyncItemIdComparisonConfigPanel("dbAbstractComparisonConfig", (DbSyncItemIdComparisonConfig) config));
+            } else if (config instanceof DbSyncItemIdPositionComparisonConfig) {
+                addOrReplace(new SyncItemIdPositionComparisonConfigPanel("dbAbstractComparisonConfig", (DbSyncItemIdPositionComparisonConfig) config));
+            } else {
+                throw new IllegalArgumentException("No panel for " + config);
+            }
+        }
+    }
+
+    @Override
+    protected void onComponentTag(final ComponentTag tag) {
+        DbConditionConfig dbConditionConfig = (DbConditionConfig) getDefaultModelObject();
+        if (dbConditionConfig != null && dbConditionConfig.getConditionTrigger() != null) {
+            conditionTriggerModel.setObject(dbConditionConfig.getConditionTrigger());
+            if (dbConditionConfig.getDbAbstractComparisonConfig() != null) {
+                comparisonModel.setObject(dbConditionConfig.getDbAbstractComparisonConfig().getClass());
+            }
+        }
+        super.onComponentTag(tag);
+    }
+
+    @Override
+    protected void onBeforeRender() {
+        setupComparisonFields();
+        super.onBeforeRender();
+    }
+
+    @Override
+    public void updateModel() {
+        if (getDefaultModelObject() == null) {
+            setDefaultModelObject(new DbConditionConfig());
         }
     }
 }

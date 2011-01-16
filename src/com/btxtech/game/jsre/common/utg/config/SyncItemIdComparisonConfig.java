@@ -23,7 +23,7 @@ import java.util.Collection;
  * Time: 21:06:41
  */
 public class SyncItemIdComparisonConfig extends AbstractComparisonConfig {
-    private Collection<Integer> syncObjectId;
+    private Collection<Integer> syncItemId;
 
     /**
      * Used by GWT
@@ -31,12 +31,12 @@ public class SyncItemIdComparisonConfig extends AbstractComparisonConfig {
     public SyncItemIdComparisonConfig() {
     }
 
-    public SyncItemIdComparisonConfig(Collection<Integer> syncObjectId) {
-        this.syncObjectId = syncObjectId;
+    public SyncItemIdComparisonConfig(Collection<Integer> syncItemId) {
+        this.syncItemId = syncItemId;
     }
 
     @Override
     public AbstractComparison createAbstractComparison() {
-        return new SyncItemIdComparison(syncObjectId);
+        return new SyncItemIdComparison(syncItemId);
     }
 }

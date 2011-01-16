@@ -16,6 +16,7 @@ package com.btxtech.game.services.utg;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.services.base.Base;
+import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.user.User;
 import java.util.Collection;
 import java.util.List;
@@ -48,5 +49,15 @@ public interface UserGuidanceService {
 
     void saveDbLevels(List<DbLevel> dbLevels);
 
+    void saveDbLevel(DbLevel dbLevel);
+
     void activateLevels();
+
+    void init2();
+
+    void createDbLevel();
+
+    void deleteDbLevel(DbLevel dbLevel);
+
+    CrudServiceHelper<DbLevel> getDbLevelCrudServiceHelper();
 }
