@@ -22,7 +22,7 @@ import com.btxtech.game.jsre.common.utg.condition.CockpitButtonClickedComparison
  * Time: 21:06:41
  */
 public class CockpitButtonClickedComparisonConfig extends AbstractComparisonConfig {
-    private CockpitWidgetEnum scrollHomeButton;
+    private CockpitWidgetEnum cockpitWidgetEnum;
 
     /**
      * Used by GWT
@@ -30,12 +30,12 @@ public class CockpitButtonClickedComparisonConfig extends AbstractComparisonConf
     public CockpitButtonClickedComparisonConfig() {
     }
 
-    public CockpitButtonClickedComparisonConfig(CockpitWidgetEnum scrollHomeButton) {
-        this.scrollHomeButton = scrollHomeButton;
+    public CockpitButtonClickedComparisonConfig(CockpitWidgetEnum cockpitWidgetEnum) {
+        this.cockpitWidgetEnum = cockpitWidgetEnum;
     }
 
     @Override
     public AbstractComparison createAbstractComparison() {
-        return new CockpitButtonClickedComparison(scrollHomeButton);
+        return new CockpitButtonClickedComparison(cockpitWidgetEnum);
     }
 }

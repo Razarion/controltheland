@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.mgmt.impl;
 
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.BaseService;
@@ -294,6 +293,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
                 if (!backupSummaries.isEmpty()) {
                     restore(backupSummaries.get(0).getDate());
                 }
+                userGuidanceService.init2();
                 resourceService.resetAllResources();
                 botService.start();
             }
@@ -326,6 +326,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     }
 
     // TODO change to a DB property service
+
     @Override
     public StartupData getStartupData() {
         if (startupData == null) {

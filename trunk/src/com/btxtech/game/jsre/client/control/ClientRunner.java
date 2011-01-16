@@ -128,6 +128,9 @@ public class ClientRunner {
     }
 
     void onTaskFinished(AbstractStartupTask abstractStartupTask) {
+        if (failed) {
+            return;
+        }
         try {
             if (!isBackEndMode) {
                 StartupScreen.getInstance().displayTaskFinished(abstractStartupTask);

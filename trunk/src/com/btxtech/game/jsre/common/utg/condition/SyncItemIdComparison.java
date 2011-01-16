@@ -22,19 +22,19 @@ import java.util.Collection;
  * Time: 21:06:41
  */
 public class SyncItemIdComparison extends AbstractSyncItemComparison {
-    private Collection<Integer> syncObjectIds;
+    private Collection<Integer> syncItemIds;
 
-    public SyncItemIdComparison(Collection<Integer> syncObjectIds) {
-        this.syncObjectIds = syncObjectIds;
+    public SyncItemIdComparison(Collection<Integer> syncItemIds) {
+        this.syncItemIds = syncItemIds;
     }
 
     public void onSyncItem(SyncItem syncItem) {
-        syncObjectIds.remove(syncItem.getId().getId());
+        syncItemIds.remove(syncItem.getId().getId());
     }
 
     @Override
     public boolean isFulfilled() {
-        return syncObjectIds.isEmpty();
+        return syncItemIds.isEmpty();
     }
 
 }
