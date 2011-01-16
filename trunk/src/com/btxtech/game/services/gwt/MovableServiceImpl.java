@@ -170,7 +170,7 @@ public class MovableServiceImpl implements MovableService {
             realityInfo.setHouseSpace(baseService.getTotalHouseSpace());
             return realityInfo;
         } catch (com.btxtech.game.services.connection.NoConnectionException t) {
-            log.error(t.getMessage() + " SessionId: " + t.getSessionId());
+            log.error(t.getMessage() + ", SessionId: " + t.getSessionId());
         } catch (Throwable t) {
             log.error("", t);
         }
