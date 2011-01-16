@@ -14,9 +14,10 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.DbAbstractLevel;
+import com.btxtech.game.services.utg.DbRealGameLevel;
+import com.btxtech.game.services.utg.DbSimulationLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import com.btxtech.game.wicket.pages.mgmt.condition.ConditionConfigPanel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.markup.html.WebPage;
@@ -37,14 +38,11 @@ import wicket.contrib.tinymce.settings.TinyMCESettings;
 public class DbLevelEditor extends WebPage {
     @SpringBean
     private UserGuidanceService userGuidanceService;
-    @SpringBean
-    private ItemService itemService;
-    private Log log = LogFactory.getLog(DbLevelEditor.class);
 
-    public DbLevelEditor(final DbLevel dbLevel) {
+    public DbLevelEditor(final DbAbstractLevel dbAbstractLevel) {
         add(new FeedbackPanel("msgs"));
 
-        Form<DbLevel> form = new Form<DbLevel>("form", new CompoundPropertyModel<DbLevel>(dbLevel));
+        Form<DbAbstractLevel> form = new Form<DbAbstractLevel>("form", new CompoundPropertyModel<DbAbstractLevel>(dbAbstractLevel));
         add(form);
 
         TextArea<String> contentArea = new TextArea<String>("html");
@@ -52,12 +50,17 @@ public class DbLevelEditor extends WebPage {
         contentArea.add(new TinyMceBehavior(tinyMCESettings));
         form.add(contentArea);
 
-        form.add(new ConditionConfigPanel("dbConditionConfig"));        
-
+        if (dbAbstractLevel instanceof DbRealGameLevel) {
+           form.add(new RealGameLevelEditor("levelDetail", (DbRealGameLevel)dbAbstractLevel));
+        } else if (dbAbstractLevel instanceof DbSimulationLevel) {
+            form.add(new SimulationLevelEditor("levelDetail", (DbSimulationLevel)dbAbstractLevel));
+        } else {
+            throw new IllegalArgumentException("Unknown level: " + dbAbstractLevel);
+        }
         form.add(new Button("save") {
             @Override
             public void onSubmit() {
-                userGuidanceService.saveDbLevel(dbLevel);
+                userGuidanceService.saveDbLevel(dbAbstractLevel);
             }
         });
 

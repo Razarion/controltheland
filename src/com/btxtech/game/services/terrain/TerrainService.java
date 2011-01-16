@@ -14,14 +14,12 @@
 package com.btxtech.game.services.terrain;
 
 import com.btxtech.game.jsre.client.common.info.GameInfo;
-import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.utg.DbLevel;
-import com.btxtech.game.services.utg.DbUserStage;
+import com.btxtech.game.services.utg.DbAbstractLevel;
 import java.util.Collection;
 import java.util.List;
 
@@ -45,7 +43,7 @@ public interface TerrainService extends AbstractTerrainService {
 
     void saveAndActivateTerrain(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int dbUserStage);
 
-    void setupTerrain(GameInfo gameInfo, DbLevel dbLevel);
+    void setupTerrain(GameInfo gameInfo, DbAbstractLevel dbAbstractLevel);
 
     void setupTerrain(TerrainInfo terrainInfo, int terrainId);
 

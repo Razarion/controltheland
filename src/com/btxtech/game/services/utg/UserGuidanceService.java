@@ -31,13 +31,11 @@ public interface UserGuidanceService {
 
     void promote(User user);
 
-    DbScope getDbScope();
+    DbRealGameLevel getDbLevel();
 
-    DbLevel getDbLevel();
+    DbRealGameLevel getDbLevel(SimpleBase simpleBase);
 
-    DbLevel getDbLevel(SimpleBase simpleBase);
-
-    DbLevel getDbLevel(String levelName);
+    DbAbstractLevel getDbLevel(String levelName);
 
     String getDbLevelHtml();
 
@@ -45,11 +43,11 @@ public interface UserGuidanceService {
 
     void setLevelForNewUser(User user);
 
-    List<DbLevel> getDbLevels();
+    List<DbAbstractLevel> getDbLevels();
 
-    void saveDbLevels(List<DbLevel> dbLevels);
+    void saveDbLevels(List<DbAbstractLevel> dbAbstractLevels);
 
-    void saveDbLevel(DbLevel dbLevel);
+    void saveDbLevel(DbAbstractLevel dbAbstractLevel);
 
     void activateLevels();
 
@@ -57,7 +55,7 @@ public interface UserGuidanceService {
 
     void createDbLevel();
 
-    void deleteDbLevel(DbLevel dbLevel);
+    void deleteDbLevel(DbAbstractLevel dbAbstractLevel);
 
-    CrudServiceHelper<DbLevel> getDbLevelCrudServiceHelper();
+    CrudServiceHelper<DbAbstractLevel> getDbLevelCrudServiceHelper();
 }

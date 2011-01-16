@@ -13,12 +13,10 @@
 
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.services.base.Base;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
 /**
  * User: beat
@@ -33,15 +31,15 @@ public class UserLevelStatus {
     private Integer beginningMoney;
     private Integer beginningKills;
     @ManyToOne(optional = false)
-    private DbLevel currentLevel;
+    private DbAbstractLevel currentAbstractLevel;
 
 
-    public DbLevel getCurrentLevel() {
-        return currentLevel;
+    public DbAbstractLevel getCurrentLevel() {
+        return currentAbstractLevel;
     }
 
-    public void setCurrentLevel(DbLevel currentLevel) {
-        this.currentLevel = currentLevel;
+    public void setCurrentLevel(DbAbstractLevel currentAbstractLevel) {
+        this.currentAbstractLevel = currentAbstractLevel;
         clear();
     }
 
@@ -58,7 +56,7 @@ public class UserLevelStatus {
         return beginningKills;
     }
     /*
-    public void setDeltas(Base base, DbLevel nextDbLevel) {
+    public void setDeltas(Base base, DbAbstractLevel nextDbLevel) {
         if (nextDbLevel.getDeltaMoney() != null) {
             beginningMoney = (int) base.getAccountBalance();
         }

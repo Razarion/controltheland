@@ -47,7 +47,9 @@ import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.DbAbstractLevel;
+import com.btxtech.game.services.utg.DbRealGameLevel;
+import com.btxtech.game.services.utg.DbSimulationLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import java.util.Collection;
@@ -143,15 +145,17 @@ public class MovableServiceImpl implements MovableService {
 
     @Override
     public GameInfo getGameInfo() {
-        DbLevel dbLevel = userGuidanceService.getDbLevel();
-        if (dbLevel.isRealGame()) {
-            return createRealInfo(dbLevel);
+        DbAbstractLevel dbAbstractLevel = userGuidanceService.getDbLevel();
+        if (dbAbstractLevel instanceof DbRealGameLevel) {
+            return createRealInfo(dbAbstractLevel);
+        } else if (dbAbstractLevel instanceof DbSimulationLevel) {
+            return createSimulationInfo(dbAbstractLevel);
         } else {
-            return createSimulationInfo(dbLevel);
+            throw new IllegalArgumentException("Unknown DbAbstractLevel " + dbAbstractLevel);
         }
     }
 
-    private GameInfo createRealInfo(DbLevel dbLevel) {
+    private GameInfo createRealInfo(DbAbstractLevel dbAbstractLevel) {
         try {
             baseService.continueBase();
             RealityInfo realityInfo = new RealityInfo();
@@ -162,7 +166,7 @@ public class MovableServiceImpl implements MovableService {
             realityInfo.setXp(serverMarketService.getXp());
             realityInfo.setEnergyConsuming(serverEnergyService.getConsuming());
             realityInfo.setEnergyGenerating(serverEnergyService.getGenerating());
-            terrainService.setupTerrain(realityInfo, dbLevel);            
+            terrainService.setupTerrain(realityInfo, dbAbstractLevel);
             realityInfo.setLevel(userGuidanceService.getDbLevel().getLevel());
             realityInfo.setTerritories(territoryService.getTerritories());
             realityInfo.setAllBases(baseService.getAllBaseAttributes());
@@ -177,15 +181,15 @@ public class MovableServiceImpl implements MovableService {
         return null;
     }
 
-    private SimulationInfo createSimulationInfo(DbLevel dbLevel) {
+    private SimulationInfo createSimulationInfo(DbAbstractLevel dbAbstractLevel) {
         try {
             SimulationInfo simulationInfo = new SimulationInfo();
             simulationInfo.setLevel(userGuidanceService.getDbLevel().getLevel());
             // Common
             setCommonInfo(simulationInfo, userService, itemService, mgmtService);
-            simulationInfo.setTutorialConfig(tutorialService.getTutorialConfig(dbLevel));
+            simulationInfo.setTutorialConfig(tutorialService.getTutorialConfig(dbAbstractLevel));
             // Terrain
-            terrainService.setupTerrain(simulationInfo, dbLevel);
+            terrainService.setupTerrain(simulationInfo, dbAbstractLevel);
             return simulationInfo;
         } catch (Throwable t) {
             log.error("", t);

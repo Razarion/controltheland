@@ -1,4 +1,4 @@
-<!-- inherits all top-level modules of then gen2 package.-->
+<!-- inherits all top-abstractLevel modules of then gen2 package.-->
 <module>
     <!-- Selection includes Base, Event, CommonWidget -->
     <inherits name='com.google.gwt.user.User'/>

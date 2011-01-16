@@ -22,12 +22,10 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.user.User;
-import com.btxtech.game.services.utg.UserLevelStatus;
-import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.DbRealGameLevel;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -228,11 +226,11 @@ public class Base implements Serializable {
     }
 
 
-    public void checkItemLimit4ItemAdding(DbLevel dbLevel) throws ItemLimitExceededException, HouseSpaceExceededException {
-        if (getItemCount() >= dbLevel.getDbScope().getItemLimit()) {
+    public void checkItemLimit4ItemAdding(DbRealGameLevel dbRealGameLevel) throws ItemLimitExceededException, HouseSpaceExceededException {
+        /* TODO if (getItemCount() >= dbAbstractLevel.getDbScope().getItemLimit()) {
             throw new ItemLimitExceededException();
-        }
-        if (getItemCount() >= houseSpace + dbLevel.getDbScope().getHouseSpace()) {
+        }*/
+        if (getItemCount() >= houseSpace + dbRealGameLevel.getHouseSpace()) {
             throw new HouseSpaceExceededException();
         }
     }

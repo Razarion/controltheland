@@ -647,7 +647,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         double fullHealth = syncBaseItem.getBaseItemType().getHealth();
         double price = syncBaseItem.getBaseItemType().getPrice();
         killSyncItem(syncBaseItem, null, true, false);
-        double money = health / fullHealth * price * userGuidanceService.getDbScope().getItemSellFactor();
+        double money = health / fullHealth * price * userGuidanceService.getDbLevel().getItemSellFactor();
         base.depositMoney(money);
         baseService.sendAccountBaseUpdate(base);
     }

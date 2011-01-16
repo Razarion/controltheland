@@ -56,9 +56,9 @@ public class DbStartup implements Serializable {
     public DbStartup() {
     }
 
-    public DbStartup(long startupDuration, long clientTimeStamp, DbLevel level, String sessionId) {
+    public DbStartup(long startupDuration, long clientTimeStamp, DbAbstractLevel abstractLevel, String sessionId) {
         this.clientTimeStamp = clientTimeStamp;
-        this.level = level.getName();
+        this.level = abstractLevel.getName();
         this.sessionId = sessionId;
         this.startupDuration = startupDuration;
         timeStamp = new Date();

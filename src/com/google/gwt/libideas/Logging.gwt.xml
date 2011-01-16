@@ -19,7 +19,7 @@
 	<inherits name="com.google.gwt.libideas.BasicLib" />
 	<inherits name="com.google.gwt.widgetideas.BasicWidget" />
 
-	<!-- We're using a two-level package naming scheme -->
+	<!-- We're using a two-abstractLevel package naming scheme -->
 	<source path="logging/client" />
 	<source path="logging/shared" />
 

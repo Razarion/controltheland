@@ -14,22 +14,20 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
-import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.DbAbstractLevel;
+import com.btxtech.game.services.utg.DbRealGameLevel;
+import com.btxtech.game.services.utg.DbSimulationLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.uiservices.CrudTableHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -40,19 +38,16 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 public class DbLevelTable extends WebPage {
     @SpringBean
     private UserGuidanceService userGuidanceService;
-    @SpringBean
-    private TutorialService tutorialService;
-    private Log log = LogFactory.getLog(DbLevelTable.class);
 
     public DbLevelTable() {
         add(new FeedbackPanel("msgs"));
         Form form = new Form("levelForm");
         add(form);
 
-        new CrudTableHelper<DbLevel>("levels", "save", "add", true, form) {
+        new CrudTableHelper<DbAbstractLevel>("levels", "save", null, true, form) {
 
             @Override
-            protected CrudServiceHelper<DbLevel> getCrudServiceHelper() {
+            protected CrudServiceHelper<DbAbstractLevel> getCrudServiceHelper() {
                 return userGuidanceService.getDbLevelCrudServiceHelper();
             }
 
@@ -68,47 +63,37 @@ public class DbLevelTable extends WebPage {
             }
 
             @Override
-            protected void deleteChild(DbLevel child) {
+            protected void deleteChild(DbAbstractLevel child) {
                 userGuidanceService.deleteDbLevel(child);
             }
 
             @Override
-            protected void onEditSubmit(DbLevel dbLevel) {
-                setResponsePage(new DbLevelEditor(dbLevel));
+            protected void onEditSubmit(DbAbstractLevel dbAbstractLevel) {
+                setResponsePage(new DbLevelEditor(dbAbstractLevel));
             }
 
             @Override
-            protected void extendedPopulateItem(final Item<DbLevel> dbLevelItem) {
+            protected void setupCreate(Form form, String createId) {
+                form.add(new Button("createRealGame") {
+
+                    @Override
+                    public void onSubmit() {
+                        getCrudServiceHelper().createDbChild(DbRealGameLevel.class);
+                    }
+                });
+                form.add(new Button("createSimulation") {
+
+                    @Override
+                    public void onSubmit() {
+                        getCrudServiceHelper().createDbChild(DbSimulationLevel.class);
+                    }
+                });
+            }
+
+            @Override
+            protected void extendedPopulateItem(final Item<DbAbstractLevel> dbLevelItem) {
                 super.extendedPopulateItem(dbLevelItem);
-                dbLevelItem.add(new CheckBox("realGame"));
-                dbLevelItem.add(new TextField<Integer>("dbTutorialConfig", new IModel<Integer>() {
-                    @Override
-                    public Integer getObject() {
-                        if (dbLevelItem.getModelObject().getDbTutorialConfig() != null) {
-                            return dbLevelItem.getModelObject().getDbTutorialConfig().getId();
-                        } else {
-                            return null;
-                        }
-                    }
-
-                    @Override
-                    public void setObject(Integer id) {
-                        try {
-                            DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudServiceHelper().readDbChild(id);
-                            dbLevelItem.getModelObject().setDbTutorialConfig(dbTutorialConfig);
-                        } catch (Throwable t) {
-                            log.error("", t);
-                            error(t.getMessage());
-                        }
-                    }
-
-                    @Override
-                    public void detach() {
-                        // Ignore
-                    }
-                }, Integer.class));
-
-
+                dbLevelItem.add(new Label("displayType"));
                 dbLevelItem.add(new Button("up") {
 
                     @Override

@@ -21,7 +21,8 @@ import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.tutorial.hint.DbResourceHintConfig;
 import com.btxtech.game.services.tutorial.hint.ResourceHintManager;
-import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.DbAbstractLevel;
+import com.btxtech.game.services.utg.DbSimulationLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +45,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class TutorialServiceImpl implements TutorialService, ResourceHintManager {
     private HibernateTemplate hibernateTemplate;
     private CrudServiceHelper<DbTutorialConfig> tutorialCrudServiceHelper;
-    private final Map<DbLevel, TutorialConfig> tutorialConfigMap = new HashMap<DbLevel, TutorialConfig>();
+    private final Map<DbAbstractLevel, TutorialConfig> tutorialConfigMap = new HashMap<DbAbstractLevel, TutorialConfig>();
     private int imageId;
     private HashMap<Integer, DbResourceHintConfig> resourceHints = new HashMap<Integer, DbResourceHintConfig>();
     private Log log = LogFactory.getLog(TutorialServiceImpl.class);
@@ -74,35 +75,34 @@ public class TutorialServiceImpl implements TutorialService, ResourceHintManager
 
     @Override
     public void activate() {
-        List<DbLevel> dbLevels = userGuidanceService.getDbLevels();
-        if (dbLevels.isEmpty()) {
+        List<DbAbstractLevel> dbAbstractLevels = userGuidanceService.getDbLevels();
+        if (dbAbstractLevels.isEmpty()) {
             throw new IllegalStateException("No levels defined");
         }
         synchronized (tutorialConfigMap) {
             imageId = 0;
             resourceHints.clear();
             tutorialConfigMap.clear();
-            for (DbLevel dbLevel : dbLevels) {
-                if (dbLevel.isRealGame()) {
-                    continue;
+            for (DbAbstractLevel dbAbstractLevel : dbAbstractLevels) {
+                if (dbAbstractLevel instanceof DbSimulationLevel) {
+                    //hibernateTemplate.load(dbAbstractLevel, dbAbstractLevel.getId());
+                    DbTutorialConfig dbTutorialConfig = ((DbSimulationLevel) dbAbstractLevel).getDbTutorialConfig();
+                    if (dbTutorialConfig == null) {
+                        log.warn("No DbTutorialConfig for level: " + dbAbstractLevel);
+                        continue;
+                    }
+                    TutorialConfig tutorialConfig = dbTutorialConfig.createTutorialConfig(this, itemService);
+                    tutorialConfigMap.put(dbAbstractLevel, tutorialConfig);
                 }
-                //hibernateTemplate.load(dbLevel, dbLevel.getId());
-                DbTutorialConfig dbTutorialConfig = dbLevel.getDbTutorialConfig();
-                if (dbTutorialConfig == null) {
-                    log.warn("No DbTutorialConfig for level: " + dbLevel);
-                    continue;
-                }
-                TutorialConfig tutorialConfig = dbTutorialConfig.createTutorialConfig(this, itemService);
-                tutorialConfigMap.put(dbLevel, tutorialConfig);
             }
         }
     }
 
     @Override
-    public TutorialConfig getTutorialConfig(DbLevel dbLevel) {
-        TutorialConfig tutorialConfig = tutorialConfigMap.get(dbLevel);
+    public TutorialConfig getTutorialConfig(DbAbstractLevel dbAbstractLevel) {
+        TutorialConfig tutorialConfig = tutorialConfigMap.get(dbAbstractLevel);
         if (tutorialConfig == null) {
-            throw new IllegalArgumentException("No TutorialConfig for: " + dbLevel);
+            throw new IllegalArgumentException("No TutorialConfig for: " + dbAbstractLevel);
         }
         return tutorialConfig;
     }

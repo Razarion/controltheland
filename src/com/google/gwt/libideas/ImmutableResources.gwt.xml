@@ -21,7 +21,7 @@
   <!-- Used by ExternalTextResource -->
   <inherits name="com.google.gwt.http.HTTP" />
 
-  <!-- We're using a two-level package naming scheme -->
+  <!-- We're using a two-abstractLevel package naming scheme -->
   <source path="resources/client" />
 
   <!--  This acts as a switch to disable the use of data: URLs -->

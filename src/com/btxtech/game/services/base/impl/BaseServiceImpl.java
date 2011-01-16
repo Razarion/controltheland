@@ -52,7 +52,7 @@ import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.services.utg.DbLevel;
+import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.services.utg.DbScope;
 import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -141,21 +141,21 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     private Base createNewBase(BaseColor baseColor) throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
-        DbScope dbScope = userGuidanceService.getDbScope();
+        DbRealGameLevel dbRealGameLevel = userGuidanceService.getDbLevel();
         Base base;
         synchronized (bases) {
             lastBaseId++;
             base = new Base(baseColor, userService.getUser(), lastBaseId);
             createBase(base.getSimpleBase(), setupBaseName(base), base.getBaseColor().getHtmlColor(), false);
             log.info("Base created: " + base);
-            base.setAccountBalance(dbScope.getDeltaMoney());
+            base.setAccountBalance(dbRealGameLevel.getDeltaMoney());
             bases.put(base.getSimpleBase(), base);
         }
-        BaseItemType startItem = (BaseItemType) itemService.getItemType(dbScope.getStartItemType());
+        BaseItemType startItem = (BaseItemType) itemService.getItemType(dbRealGameLevel.getStartItemType());
         sendBaseChangedPacket(BaseChangedPacket.Type.CREATED, base.getSimpleBase());
         connectionService.createConnection(base);
         base.setUserItemTypeAccess(serverMarketService.getUserItemTypeAccess());
-        Index startPoint = collisionService.getFreeRandomPosition(startItem, dbScope.getStartRectangle(), dbScope.getStartItemFreeRange());
+        Index startPoint = collisionService.getFreeRandomPosition(startItem, dbRealGameLevel.getStartRectangle(), dbRealGameLevel.getStartItemFreeRange());
         SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(startItem, startPoint, null, base.getSimpleBase(), 0);
         syncBaseItem.setBuildup(1.0);
         if (syncBaseItem.hasSyncTurnable()) {
@@ -549,7 +549,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
 
     @Override
     public int getTotalHouseSpace() {
-        DbLevel dbLevel = userGuidanceService.getDbLevel();
-        return dbLevel.getDbScope().getHouseSpace() + getBase().getHouseSpace();
+        return userGuidanceService.getDbLevel().getHouseSpace() + getBase().getHouseSpace();
     }
 }
