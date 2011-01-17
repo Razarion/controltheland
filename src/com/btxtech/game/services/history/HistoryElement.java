@@ -27,7 +27,7 @@ import javax.persistence.Id;
  * Date: Jul 5, 2009
  * Time: 7:28:46 PM
  */
-@Entity(name = "HISTORY")
+@Entity(name = "TRACKER_HISTORY")
 public class HistoryElement implements Serializable {
     public enum Type {
         BASE_STARTED,

@@ -217,7 +217,8 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         return (DbRealGameLevel) getDbAbstractLevel();
     }
 
-    private DbAbstractLevel getDbAbstractLevel() {
+    @Override
+    public DbAbstractLevel getDbAbstractLevel() {
         return userService.getUser().getUserLevelStatus().getCurrentLevel();
     }
 
@@ -234,7 +235,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
     @Override
     public String getDbLevelHtml() {
-        return getDbLevel().getHtml();
+        return getDbAbstractLevel().getHtml();
     }
 
     @Override

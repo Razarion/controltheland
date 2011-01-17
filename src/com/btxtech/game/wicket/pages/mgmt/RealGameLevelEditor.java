@@ -13,13 +13,13 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.wicket.pages.mgmt.condition.ConditionConfigPanel;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
+import com.btxtech.game.wicket.uiservices.RectanglePanel;
+import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
  * User: beat
@@ -27,12 +27,23 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Time: 22:28:24
  */
 public class RealGameLevelEditor extends Panel {
-    @SpringBean
-    private ItemService itemService;
-    private Log log = LogFactory.getLog(DbLevelEditor.class);
 
-    public RealGameLevelEditor(String id, DbRealGameLevel dbRealGameLevel) {
+    public RealGameLevelEditor(String id) {
         super(id);
+        // Condition
         add(new ConditionConfigPanel("dbConditionConfig"));
+
+        // Scope
+        add(new TextField("houseSpace"));
+        add(new TextField("itemSellFactor"));
+
+        // Reward
+        add(new TextField("deltaMoney"));
+
+        // Create Base
+        add(new CheckBox("createRealBase"));
+        add(new BaseItemTypePanel("startItemType"));
+        add(new RectanglePanel("startRectangle"));
+        add(new TextField("startItemFreeRange"));
     }
 }

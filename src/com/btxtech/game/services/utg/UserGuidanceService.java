@@ -35,6 +35,8 @@ public interface UserGuidanceService {
 
     DbRealGameLevel getDbLevel(SimpleBase simpleBase);
 
+    DbAbstractLevel getDbAbstractLevel();
+
     DbAbstractLevel getDbLevel(String levelName);
 
     String getDbLevelHtml();
