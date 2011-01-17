@@ -16,6 +16,7 @@ package com.btxtech.game.services.utg;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.services.common.db.RectangleUserType;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import javax.persistence.CascadeType;
@@ -46,7 +47,7 @@ public class DbRealGameLevel extends DbAbstractLevel {
     private int houseSpace;
     private double deltaMoney;
     @ManyToOne
-    private DbItemType startItemType;
+    private DbBaseItemType startItemType;
     @Type(type = "rectangle")
     @Columns(columns = {@Column(name = "startX"), @Column(name = "startY"), @Column(name = "startWidth"), @Column(name = "startHeight")})
     private Rectangle startRectangle;
@@ -85,7 +86,7 @@ public class DbRealGameLevel extends DbAbstractLevel {
         return startItemType;
     }
 
-    public void setStartItemType(DbItemType startItemType) {
+    public void setStartItemType(DbBaseItemType startItemType) {
         this.startItemType = startItemType;
     }
 

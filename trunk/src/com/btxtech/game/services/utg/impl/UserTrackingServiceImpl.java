@@ -502,7 +502,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             serverConditionService.onTutorialFinished(userService.getUser());
         }
         hibernateTemplate.saveOrUpdate(new DbTutorialProgress(session.getSessionId(), type.name(), name, parent, duration, clientTimeStamp));
-        return userGuidanceService.getDbLevel().getLevel();
+        return userGuidanceService.getDbAbstractLevel().getLevel();
     }
 
     private int getTaskCount(final String sessionId, final Date from, final Date to) {
@@ -615,7 +615,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     public void startUpTaskFinished(Collection<StartupTaskInfo> infos, long totalTime) {
-        DbStartup dbStartup = new DbStartup(totalTime, infos.iterator().next().getStartTime(), userGuidanceService.getDbLevel(), session.getSessionId());
+        DbStartup dbStartup = new DbStartup(totalTime, infos.iterator().next().getStartTime(), userGuidanceService.getDbAbstractLevel(), session.getSessionId());
         for (StartupTaskInfo info : infos) {
             dbStartup.addGameStartupTasks(new DbStartupTask(info, dbStartup));
             if(info.getError() != null) {

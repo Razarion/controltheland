@@ -145,14 +145,19 @@ public class MovableServiceImpl implements MovableService {
 
     @Override
     public GameInfo getGameInfo() {
-        DbAbstractLevel dbAbstractLevel = userGuidanceService.getDbLevel();
-        if (dbAbstractLevel instanceof DbRealGameLevel) {
-            return createRealInfo(dbAbstractLevel);
-        } else if (dbAbstractLevel instanceof DbSimulationLevel) {
-            return createSimulationInfo(dbAbstractLevel);
-        } else {
-            throw new IllegalArgumentException("Unknown DbAbstractLevel " + dbAbstractLevel);
+        try {
+            DbAbstractLevel dbAbstractLevel = userGuidanceService.getDbAbstractLevel();
+            if (dbAbstractLevel instanceof DbRealGameLevel) {
+                return createRealInfo(dbAbstractLevel);
+            } else if (dbAbstractLevel instanceof DbSimulationLevel) {
+                return createSimulationInfo(dbAbstractLevel);
+            } else {
+                throw new IllegalArgumentException("Unknown DbAbstractLevel " + dbAbstractLevel);
+            }
+        } catch (Throwable t) {
+            log.error("", t);
         }
+        return null;
     }
 
     private GameInfo createRealInfo(DbAbstractLevel dbAbstractLevel) {
@@ -184,7 +189,7 @@ public class MovableServiceImpl implements MovableService {
     private SimulationInfo createSimulationInfo(DbAbstractLevel dbAbstractLevel) {
         try {
             SimulationInfo simulationInfo = new SimulationInfo();
-            simulationInfo.setLevel(userGuidanceService.getDbLevel().getLevel());
+            simulationInfo.setLevel(dbAbstractLevel.getLevel());
             // Common
             setCommonInfo(simulationInfo, userService, itemService, mgmtService);
             simulationInfo.setTutorialConfig(tutorialService.getTutorialConfig(dbAbstractLevel));

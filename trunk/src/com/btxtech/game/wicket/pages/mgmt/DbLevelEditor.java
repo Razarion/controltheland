@@ -51,7 +51,7 @@ public class DbLevelEditor extends WebPage {
         form.add(contentArea);
 
         if (dbAbstractLevel instanceof DbRealGameLevel) {
-           form.add(new RealGameLevelEditor("levelDetail", (DbRealGameLevel)dbAbstractLevel));
+           form.add(new RealGameLevelEditor("levelDetail"));
         } else if (dbAbstractLevel instanceof DbSimulationLevel) {
             form.add(new SimulationLevelEditor("levelDetail", (DbSimulationLevel)dbAbstractLevel));
         } else {
@@ -61,6 +61,12 @@ public class DbLevelEditor extends WebPage {
             @Override
             public void onSubmit() {
                 userGuidanceService.saveDbLevel(dbAbstractLevel);
+            }
+        });
+        form.add(new Button("back") {
+            @Override
+            public void onSubmit() {
+                setResponsePage(DbLevelTable.class);
             }
         });
 
