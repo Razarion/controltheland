@@ -25,7 +25,7 @@ import javax.persistence.Id;
  * Date: Jul 26, 2009
  * Time: 12:56:17 PM
  */
-@Entity(name = "CONNECTION_STATISTICS")
+@Entity(name = "TRACKER_CONNECTION_STATISTICS")
 public class ConnectionStatistics {
     @Id
     @GeneratedValue
