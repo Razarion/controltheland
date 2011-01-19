@@ -23,7 +23,6 @@ import java.io.Serializable;
  */
 public class BaseStatisticsDTO implements Serializable {
     private int rank;
-    private String userName;
     private String baseName;
     private String data;
     private String color;
@@ -31,21 +30,12 @@ public class BaseStatisticsDTO implements Serializable {
     public BaseStatisticsDTO(int rank, Base base, String baseName, String data) {
         this.rank = rank;
         this.color = base.getBaseColor().getHtmlColor();
-        if (base.getUser() != null) {
-            userName = base.getUser().getName();
-        } else {
-            userName = "";
-        }
         this.baseName = baseName;
         this.data = data;
     }
 
     public int getRank() {
         return rank;
-    }
-
-    public String getUserName() {
-        return userName;
     }
 
     public String getBaseName() {

@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import java.util.Collection;
 import java.util.List;
@@ -50,7 +51,7 @@ public interface UserTrackingService {
 
     void onUserLoggedIn(User user, Base base);
 
-    void onUserLoggedOut(User user);
+    void onUserLoggedOut(UserState user);
 
     void onBaseCreated(User user, Base base);
 

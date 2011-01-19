@@ -19,7 +19,6 @@ import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelperCollectionImpl;
 import com.btxtech.game.services.common.db.RectangleUserType;
-import com.btxtech.game.services.user.User;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -54,8 +53,6 @@ public class DbBotConfig implements CrudChild, Serializable, CrudParent {
     @GeneratedValue
     private Integer id;
     private int actionDelay;
-    @OneToOne(fetch = FetchType.EAGER)
-    private User user;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_id")
     @Where(clause = "type=" + BASE_BUILDUP)
@@ -93,14 +90,6 @@ public class DbBotConfig implements CrudChild, Serializable, CrudParent {
 
     public void setActionDelay(int actionDelay) {
         this.actionDelay = actionDelay;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public Set<DbBotItemCount> getBaseFundamental() {

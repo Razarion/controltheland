@@ -13,7 +13,7 @@
 
 package com.btxtech.game.services.connection;
 
-import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserState;
 
 /**
  * User: beat
@@ -31,11 +31,11 @@ public interface Session {
 
     String getUserAgent();
 
-    User getUser();
-
-    void setUser(User user);
-
     void onJavaScriptDetected();
 
     boolean isJavaScriptDetected();
+
+    UserState getUserState();
+
+    void setUserState(UserState userState);
 }

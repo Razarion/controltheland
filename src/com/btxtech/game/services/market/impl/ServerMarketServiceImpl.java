@@ -28,8 +28,8 @@ import com.btxtech.game.services.market.MarketEntry;
 import com.btxtech.game.services.market.MarketFunction;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.market.XpSettings;
-import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import java.sql.SQLException;
@@ -161,18 +161,13 @@ public class ServerMarketServiceImpl implements ServerMarketService {
             baseService.sendPackage(itemTypeAccessSyncInfo);
             baseService.sendXpUpdate(userItemTypeAccess, baseService.getBase());
         }
-        if (userItemTypeAccess.isPersistent()) {
-            hibernateTemplate.saveOrUpdate(userItemTypeAccess);
-        }
     }
 
     @Override
     public UserItemTypeAccess getUserItemTypeAccess() {
-        UserItemTypeAccess userItemTypeAccess = userService.getUser().getUserItemTypeAccess();
+        UserItemTypeAccess userItemTypeAccess = userService.getUserState().getUserItemTypeAccess();
         if (userItemTypeAccess == null) {
-            userItemTypeAccess = createOrGetUserItemTypeAccess(userService.getUser());
-        } else if (userItemTypeAccess.isPersistent()) {
-            hibernateTemplate.refresh(userItemTypeAccess);
+            userItemTypeAccess = createOrGetUserItemTypeAccess(userService.getUserState());
         }
         return userItemTypeAccess;
     }
@@ -182,32 +177,24 @@ public class ServerMarketServiceImpl implements ServerMarketService {
         if (base.isAbandoned()) {
             return null;
         }
-        User user = baseService.getUser(base.getSimpleBase());
-        return createOrGetUserItemTypeAccess(user);
+        UserState userState = baseService.getUserState(base.getSimpleBase());
+        return createOrGetUserItemTypeAccess(userState);
     }
 
-    public UserItemTypeAccess createOrGetUserItemTypeAccess(User user) {
-        if (user != null) {
-            UserItemTypeAccess access = user.getUserItemTypeAccess();
+    public UserItemTypeAccess createOrGetUserItemTypeAccess(UserState userState) {
+        if (userState != null) {
+            UserItemTypeAccess access = userState.getUserItemTypeAccess();
             if (access != null) {
-                hibernateTemplate.refresh(access);
                 return access;
             }
         }
-        return createUserItemTypeAccess(user);
+        return createUserItemTypeAccess(userState);
     }
 
-    private UserItemTypeAccess createUserItemTypeAccess(User user) {
+    private UserItemTypeAccess createUserItemTypeAccess(UserState userState) {
         UserItemTypeAccess userItemTypeAccess = new UserItemTypeAccess(getAlwaysAllowed());
-        setUserItemTypeAccess(user, userItemTypeAccess);
+        userState.setUserItemTypeAccess(userItemTypeAccess);
         return userItemTypeAccess;
-    }
-
-    public void setUserItemTypeAccess(User user, UserItemTypeAccess userItemTypeAccess) {
-        user.setUserItemTypeAccess(userItemTypeAccess);
-        if (user.isRegistered()) {
-            userService.save(user);
-        }
     }
 
     @SuppressWarnings("unchecked")
@@ -272,9 +259,6 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     private void increaseXp(int amount, UserItemTypeAccess userItemTypeAccess, Base base) {
         try {
             userItemTypeAccess.increaseXp(amount);
-            if (userItemTypeAccess.isPersistent()) {
-                hibernateTemplate.saveOrUpdate(userItemTypeAccess);
-            }
             baseService.sendXpUpdate(userItemTypeAccess, base);
             serverConditionService.onIncreaseXp(base.getSimpleBase(), userItemTypeAccess.getXp());
         } catch (Exception e) {
@@ -288,21 +272,17 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     }
 
     private UserItemTypeAccess getUserItemTypeAccess4Base(SimpleBase simpleBase) {
-        Base base = baseService.getBase(simpleBase);
-        if (base == null || base.isAbandoned()) {
+        UserState userState = baseService.getUserState(simpleBase);
+        if (userState == null) {
             // Base is may be killed in the mean time
             return null;
         }
 
-        UserItemTypeAccess userItemTypeAccess = base.getUserItemTypeAccess();
-        if (userItemTypeAccess != null) {
-            return userItemTypeAccess;
+        if (userState.getUserItemTypeAccess() != null) {
+            return userState.getUserItemTypeAccess();
+        } else {
+            return createOrGetUserItemTypeAccess(userState);
         }
-        // Loaded base from DB with registered user which was not online yet
-        if (base.getUser() == null) {
-            return null;
-        }
-        return createOrGetUserItemTypeAccess(base.getUser());
     }
 
     public XpSettings getXpPointSettings() {

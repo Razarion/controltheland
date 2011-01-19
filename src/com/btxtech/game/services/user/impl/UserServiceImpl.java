@@ -15,18 +15,20 @@ package com.btxtech.game.services.user.impl;
 
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.connection.NoConnectionException;
+import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.market.ServerMarketService;
-import com.btxtech.game.services.user.AccessDeniedException;
 import com.btxtech.game.services.user.Arq;
 import com.btxtech.game.services.user.ArqEnum;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -49,6 +51,8 @@ public class UserServiceImpl implements UserService {
     private UserTrackingService userTrackingService;
     @Autowired
     private UserGuidanceService userGuidanceService;
+    private Map<DbBotConfig, UserState> botStates = new HashMap<DbBotConfig, UserState>();
+    private Map<User, UserState> userStates = new HashMap<User, UserState>();
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -57,35 +61,28 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean login(String name, String password) {
-        if (getUser().isLoggedIn()) {
-            throw new IllegalStateException("The user is already logged in: " + getUser());
-        }
+        /* TODO if (getUser().isLoggedIn()) {
+           throw new IllegalStateException("The user is already logged in: " + getUser());
+       }
 
-        User user = getUser(name);
-        if (user == null) {
-            return false;
-        }
-        if (user.getPassword().equals(password)) {
-            loginUser(user, false);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean isLoggedin() {
-        return getUser().isLoggedIn();
+       User user = getUser(name);
+       if (user == null) {
+           return false;
+       }
+       if (user.getPassword().equals(password)) {
+           loginUser(user, false);
+           return true;
+       } else {
+           return false;
+       } */
+        return true;
     }
 
     private void loginUser(User user, boolean keepGame) {
-        if (keepGame) {
-            baseService.onUserRegistered(user);
-            serverMarketService.setUserItemTypeAccess(user, serverMarketService.getUserItemTypeAccess());
-        } else {
-            session.setUser(user);
+        /* TODO if (keepGame) {
+            baseService.onUserRegistered();
         }
-        user.setLoggedIn(true);
+        userState.setLoggedIn();
         user.setLastLoginDate(new Date());
         save(user);
         try {
@@ -93,29 +90,29 @@ public class UserServiceImpl implements UserService {
         } catch (NoConnectionException e) {
             // Ignore
             userTrackingService.onUserLoggedIn(user, null);
-        }
-
+        } */
     }
 
     @Override
     public User getUser() {
-        User user = session.getUser();
-        if (user == null) {
-            user = new User();
-            userGuidanceService.setLevelForNewUser(user);
-            session.setUser(user);
-        }
-        return user;
+        return null;
+        /* TODO User user = session.getUser();
+      if (user == null) {
+          user = new User();
+          userGuidanceService.setLevelForNewUser(user);
+          session.setUser(user);
+      }
+      return user; */
     }
 
     @Override
     public void logout() {
-        if (!getUser().isLoggedIn()) {
+        /* TODO if (!getUser().isLoggedIn()) {
             throw new IllegalStateException("The user is not logged in: " + getUser());
         }
 
         getUser().setLoggedIn(false);
-        session.setUser(null);
+        session.setUser(null);*/
     }
 
     @SuppressWarnings("unchecked")
@@ -137,6 +134,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
     public void save(User user) {
         hibernateTemplate.saveOrUpdate(user);
     }
@@ -156,7 +154,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void createUserAndLoggin(String name, String password, String confirmPassword, String email, boolean keepGame) throws UserAlreadyExistsException, PasswordNotMatchException {
-        User user = getUser();
+        /* TODO User user = getUser();
         if(user.isLoggedIn()) {
             throw new IllegalStateException("The user is already logged in: " + getUser());
         }
@@ -171,23 +169,62 @@ public class UserServiceImpl implements UserService {
         user.registerUser(name, password, email);
         userTrackingService.onUserCreated(user);
         loginUser(user, keepGame);
-        save(user);
+        save(user);*/
     }
 
     @Override
     public boolean isAuthorized(ArqEnum arq) {
-        return getUser().hasArq(getArq(arq));
+        // TODO  return getUser().hasArq(getArq(arq));
+        return false;
     }
 
     @Override
     public void checkAuthorized(ArqEnum arq) {
-        if (!isAuthorized(arq)) {
-            throw new AccessDeniedException(session.getUser(), arq);
-        }
+        /* TODO if (!isAuthorized(arq)) {
+          throw new AccessDeniedException(session.getUser(), arq);
+      }  */
     }
 
     @Override
     public Arq getArq(ArqEnum arq) {
         return (Arq) hibernateTemplate.get(Arq.class, arq.name());
+    }
+
+    @Override
+    public boolean isLoggedin() {
+        return getUserState().isLoggedIn();
+    }
+
+    @Override
+    public User getUser(UserState userState) {
+        return null;
+        // TODO
+    }
+
+    @Override
+    public UserState getUserState() {
+        if (session.getUserState() == null) {
+            UserState userState = new UserState();
+            session.setUserState(userState);
+            userGuidanceService.setLevelForNewUser(userState);
+        }
+        return session.getUserState();
+    }
+
+    @Override
+    public UserState getUserState(DbBotConfig botConfig) {
+        UserState userState = botStates.get(botConfig);
+        if (userState == null) {
+            userState = new UserState();
+            userState.setBotConfig(botConfig);
+            botStates.put(botConfig, userState);
+        }
+        return userState;
+    }
+
+    @Override
+    public SyncBaseObject getUserState(User user) {
+        // TODO
+        return null;
     }
 }

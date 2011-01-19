@@ -18,8 +18,8 @@ import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.impl.ConditionServiceImpl;
 import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import java.util.HashMap;
@@ -33,31 +33,32 @@ import org.springframework.stereotype.Component;
  * Time: 18:16:33
  */
 @Component("serverConditionService")
-public class ServerConditionServiceImpl extends ConditionServiceImpl<User> implements ServerConditionService {
+public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState> implements ServerConditionService {
     @Autowired
     private BaseService baseService;
     @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired
     private UserService userService;
-    private Map<User, AbstractConditionTrigger<User>> triggerMap = new HashMap<User, AbstractConditionTrigger<User>>();
+    private Map<UserState, AbstractConditionTrigger<UserState>> triggerMap = new HashMap<UserState, AbstractConditionTrigger<UserState>>();
 
     @Override
-    protected void saveAbstractConditionTrigger(AbstractConditionTrigger<User> abstractConditionTrigger) {
+    protected void saveAbstractConditionTrigger(AbstractConditionTrigger<UserState> abstractConditionTrigger) {
         triggerMap.put(abstractConditionTrigger.getUserObject(), abstractConditionTrigger);
     }
 
     @Override
-    protected AbstractConditionTrigger<User> getAbstractConditionPrivate(SimpleBase simpleBase, ConditionTrigger conditionTrigger) {
-        User user;
+    protected AbstractConditionTrigger<UserState> getAbstractConditionPrivate(SimpleBase simpleBase, ConditionTrigger conditionTrigger) {
+        UserState userState;
         if (simpleBase != null) {
-            user = baseService.getUser(simpleBase);
+            userState = baseService.getUserState(simpleBase);
         } else {
-            user = userService.getUser();
+            userState = userService.getUserState();
         }
-        AbstractConditionTrigger<User> abstractConditionTrigger = triggerMap.get(user);
+
+        AbstractConditionTrigger<UserState> abstractConditionTrigger = triggerMap.get(userState);
         if (abstractConditionTrigger == null) {
-            throw new IllegalArgumentException("No entry for " + user);
+            return null;
         }
         if (abstractConditionTrigger.getConditionTrigger() == conditionTrigger) {
             return abstractConditionTrigger;
@@ -66,25 +67,13 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<User> imple
         }
     }
 
-    private <U> U getAbstractCondition(User user, Class<U> theClass) {
-        AbstractConditionTrigger<User> abstractConditionTrigger = triggerMap.get(user);
-        if (abstractConditionTrigger == null) {
-            return null;
-        }
-        if (theClass.equals(abstractConditionTrigger.getClass())) {
-            return (U) abstractConditionTrigger;
-        } else {
-            return null;
-        }
+    @Override
+    protected void conditionPassed(UserState userState) {
+        userGuidanceService.promote(userState);
     }
 
     @Override
-    protected void conditionPassed(User user) {
-        userGuidanceService.promote(user);
-    }
-
-    @Override
-    public void onTutorialFinished(User user) {
+    public void onTutorialFinished(UserState userState) {
         triggerSimple(ConditionTrigger.TUTORIAL);
     }
 }

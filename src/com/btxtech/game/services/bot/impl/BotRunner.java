@@ -30,6 +30,8 @@ import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.user.UserState;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +64,8 @@ public class BotRunner {
     private BaseService baseService;
     @Autowired
     private BotService botService;
+    @Autowired
+    private UserService userService;
     private DbBotConfig botConfig;
     private Base base;
     private Thread botThread;
@@ -72,6 +76,7 @@ public class BotRunner {
     private BotItemContainer defence;
     private BotDefenseContainer realmDefense;
     private BotDefenseContainer coreDefense;
+    private UserState userState;
 
 
     public void setBotConfig(DbBotConfig botConfig) {
@@ -84,6 +89,7 @@ public class BotRunner {
     }
 
     public void start() {
+        userState = userService.getUserState(botConfig);
         checkBase();
         runBot();
     }
@@ -161,9 +167,9 @@ public class BotRunner {
                             protectCore(realmDefense);
                             Thread.sleep(botConfig.getActionDelay());
                         } catch (ItemLimitExceededException e) {
-                            log.error("Bot " + botConfig.getUser() + ": " + e.getMessage());
+                            log.error("Bot " + botConfig.getName() + ": " + e.getMessage());
                         } catch (HouseSpaceExceededException e) {
-                            log.error("Bot " + botConfig.getUser() + ": " + e.getMessage());
+                            log.error("Bot " + botConfig.getName() + ": " + e.getMessage());
                         }
                     }
                 } catch (InterruptedException ignore) {
@@ -180,10 +186,10 @@ public class BotRunner {
 
     private void checkBase() {
         if (base == null || !baseService.isAlive(base.getSimpleBase())) {
-            base = baseService.getBase(botConfig.getUser());
+            base = baseService.getBase(userState);
             if (base == null) {
                 try {
-                    base = baseService.createBotBase(botConfig.getUser());
+                    base = baseService.createBotBase(userState);
                 } catch (GameFullException e) {
                     log.error("", e);
                 }

@@ -17,7 +17,7 @@ import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserState;
 import java.util.Collection;
 import java.util.List;
 
@@ -29,7 +29,7 @@ import java.util.List;
 public interface UserGuidanceService {
     GameStartupSeq getColdStartupSeq();
 
-    void promote(User user);
+    void promote(UserState userState);
 
     DbRealGameLevel getDbLevel();
 
@@ -43,7 +43,7 @@ public interface UserGuidanceService {
 
     void restore(Collection<Base> bases);
 
-    void setLevelForNewUser(User user);
+    void setLevelForNewUser(UserState userState);
 
     List<DbAbstractLevel> getDbLevels();
 

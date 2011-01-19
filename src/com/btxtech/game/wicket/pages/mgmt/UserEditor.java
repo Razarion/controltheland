@@ -47,14 +47,14 @@ public class UserEditor extends WebPage {
         };
         form.add(new Label("name"));
         form.add(new TextField<Integer>("userItemTypeAccess.xp"));
-        form.add(new ListView<MarketEntry>("allowedItemTypes", new ArrayList<MarketEntry>(userService.getUser(name).getUserItemTypeAccess().getAllowedItemTypes())) {
+        /* TODO form.add(new ListView<MarketEntry>("allowedItemTypes", new ArrayList<MarketEntry>(userService.getUser(name).getUserItemTypeAccess().getAllowedItemTypes())) {
 
             @Override
             protected void populateItem(ListItem<MarketEntry> marketEntryListItem) {
                 marketEntryListItem.add(new Label("itemType", marketEntryListItem.getModelObject().getItemType().getName()));
             }
         });
-        add(form);
+        add(form);*/
 
     }
 }

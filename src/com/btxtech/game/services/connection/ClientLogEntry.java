@@ -18,15 +18,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 /**
  * User: beat
  * Date: Jul 31, 2009
  * Time: 9:03:13 PM
  */
-@Entity
-@Table(name = "CLIENT_LOG_ENTRY")
+@Entity(name = "TRACKER_CLIENT_LOG_ENTRY")
 public class ClientLogEntry {
     @Id
     @GeneratedValue

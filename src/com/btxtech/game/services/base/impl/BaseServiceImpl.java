@@ -50,10 +50,9 @@ import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.mgmt.MgmtService;
-import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbRealGameLevel;
-import com.btxtech.game.services.utg.DbScope;
 import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
@@ -145,7 +144,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         Base base;
         synchronized (bases) {
             lastBaseId++;
-            base = new Base(baseColor, userService.getUser(), lastBaseId);
+            base = new Base(baseColor, userService.getUserState(), lastBaseId);
             createBase(base.getSimpleBase(), setupBaseName(base), base.getBaseColor().getHtmlColor(), false);
             log.info("Base created: " + base);
             base.setAccountBalance(dbRealGameLevel.getDeltaMoney());
@@ -154,7 +153,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         BaseItemType startItem = (BaseItemType) itemService.getItemType(dbRealGameLevel.getStartItemType());
         sendBaseChangedPacket(BaseChangedPacket.Type.CREATED, base.getSimpleBase());
         connectionService.createConnection(base);
-        base.setUserItemTypeAccess(serverMarketService.getUserItemTypeAccess());
         Index startPoint = collisionService.getFreeRandomPosition(startItem, dbRealGameLevel.getStartRectangle(), dbRealGameLevel.getStartItemFreeRange());
         SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(startItem, startPoint, null, base.getSimpleBase(), 0);
         syncBaseItem.setBuildup(1.0);
@@ -162,7 +160,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             syncBaseItem.getSyncTurnable().setAngel(Math.PI / 4.0); // Cosmetics shows vehicle from side
         }
         historyService.addBaseStartEntry(base.getSimpleBase());
-        userTrackingService.onBaseCreated(userService.getUser(), base);
+        // TODO userTrackingService.onBaseCreated(userService.getUser(), base);
         return base;
     }
 
@@ -173,26 +171,20 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             throw new IllegalStateException("User does not have any running base");
         }
         connectionService.createConnection(base);
-        base.setUserItemTypeAccess(serverMarketService.getUserItemTypeAccess());
     }
 
     @Override
-    public Base createBotBase(User user) throws GameFullException {
+    public Base createBotBase(UserState userState) throws GameFullException {
         synchronized (bases) {
             List<BaseColor> baseColors = getFreeBaseColors(0, 1);
             if (baseColors.isEmpty()) {
                 throw new GameFullException();
             }
-            Base base;
-            synchronized (bases) {
-                lastBaseId++;
-                base = new Base(baseColors.get(0), user, lastBaseId);
-                createBase(base.getSimpleBase(), setupBaseName(base), base.getBaseColor().getHtmlColor(), false);
-                log.info("Bot Base created: " + base);
-                bases.put(base.getSimpleBase(), base);
-            }
-            base.setUser(user);
-            base.setUserItemTypeAccess(user.getUserItemTypeAccess());
+            lastBaseId++;
+            Base base = new Base(baseColors.get(0), userState, lastBaseId);
+            createBase(base.getSimpleBase(), setupBaseName(base), base.getBaseColor().getHtmlColor(), false);
+            log.info("Bot Base created: " + base);
+            bases.put(base.getSimpleBase(), base);
             return base;
         }
     }
@@ -235,6 +227,20 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     @Override
     public Base getBase(SimpleBase simpleBase) {
         return bases.get(simpleBase);
+    }
+
+    @Override
+    public Base getBase(UserState userState) {
+        return userState.getBase();
+    }
+
+    @Override
+    public UserState getUserState(SimpleBase simpleBase) {
+        Base base = getBase(simpleBase);
+        if (base == null) {
+            return null;
+        }
+        return base.getUserState();
     }
 
     @Override
@@ -327,10 +333,11 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
                 historyService.addBaseDefeatedEntry(actor, base.getSimpleBase());
                 sendDefeatedMessage(syncItem, actor);
             }
-            if (base.getUser() != null) {
-                userTrackingService.onBaseDefeated(base.getUser(), base);
-            }
+            // TODO if (base.getUser() != null) {
+            //     userTrackingService.onBaseDefeated(base.getUser(), base);
+            // }
             deleteBase(base);
+            base.getUserState().setBase(null);
         } else {
             if (syncItem.hasSyncHouse()) {
                 handleHouseSpaceChanged(base);
@@ -384,31 +391,15 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public Base getBase(User user) {
-        synchronized (bases) {
-            for (Base base : bases.values()) {
-                if (user.equals(base.getUser())) {
-                    return base;
-                }
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public User getUser(SimpleBase simpleBase) {
-        Base base = getBase(simpleBase);
-        return base.getUser();
-    }
-
-    @Override
     public void surrenderBase(Base base) {
-        if (base.getUser() != null) {
+        /* TODO if (base.getUser() != null) {
             historyService.addBaseSurrenderedEntry(base.getSimpleBase());
             userTrackingService.onBaseSurrender(base.getUser(), base);
-        }
+        }*/
         setBaseAbandoned(base.getSimpleBase(), true);
-        base.setUser(null);
+        UserState userState = base.getUserState();
+        userState.setBase(null);
+        base.setUserState(null);
         setBaseName(base.getSimpleBase(), setupBaseName(base));
         base.setAbandoned(true);
         sendBaseChangedPacket(BaseChangedPacket.Type.CHANGED, base.getSimpleBase());
@@ -445,8 +436,8 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     private String setupBaseName(Base base) {
-        if (base.getUser() != null) {
-            return base.getUser().getName();
+        if (base.getUserState().isRegistered()) {
+            return userService.getUser(base.getUserState()).getName();
         } else {
             return DEFAULT_BASE_NAME_PREFIX + base.getBaseId();
         }
@@ -482,9 +473,8 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public void onUserRegistered(User user) {
+    public void onUserRegistered() {
         Base base = getBase();
-        base.setUser(user);
         setBaseName(base.getSimpleBase(), setupBaseName(base));
         sendBaseChangedPacket(BaseChangedPacket.Type.CHANGED, base.getSimpleBase());
     }

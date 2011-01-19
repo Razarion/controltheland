@@ -87,7 +87,7 @@ public class WicketAplication extends WebApplication {
                 log.error("URL: " + getRequest().getURL());
                 log.error("Page: " + cause);
                 log.error("User Agent: " + session.getUserAgent());
-                log.error("User: " + session.getUser());
+                // TODO log.error("User: " + session.getUser());
                 log.error("Session Id: " + session.getSessionId());
                 return new PageExpired();                
             } else {

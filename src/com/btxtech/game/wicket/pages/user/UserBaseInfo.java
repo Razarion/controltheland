@@ -18,6 +18,7 @@ import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.BorderPanel;
 import com.btxtech.game.wicket.uiservices.ColorField;
@@ -43,6 +44,8 @@ public class UserBaseInfo extends BorderPanel {
     @SpringBean
     private BaseService baseService;
     @SpringBean
+    private UserService userService;
+    @SpringBean
     private ItemService itemService;
     private User user;
 
@@ -54,7 +57,7 @@ public class UserBaseInfo extends BorderPanel {
         ListView<BaseInfo> listView = new ListView<BaseInfo>("baseInfo", new IModel<List<BaseInfo>>() {
             @Override
             public List<BaseInfo> getObject() {
-                Base base = baseService.getBase(user);
+                Base base = baseService.getBase(userService.getUserState(user));
                 ArrayList<BaseInfo> baseInfos = new ArrayList<BaseInfo>();
                 if (base == null) {
                     return baseInfos;
@@ -99,8 +102,7 @@ public class UserBaseInfo extends BorderPanel {
 
     @Override
     public boolean isVisible() {
-        Base base = baseService.getBase(user);
-        return base != null;
+        return userService.getUserState(user) != null;
     }
 
     class BaseInfo {
