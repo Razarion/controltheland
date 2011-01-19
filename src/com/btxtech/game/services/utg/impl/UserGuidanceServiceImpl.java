@@ -32,7 +32,6 @@ import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.DbAbstractLevel;
 import com.btxtech.game.services.utg.DbRealGameLevel;
-import com.btxtech.game.services.utg.DbScope;
 import com.btxtech.game.services.utg.DbSimulationLevel;
 import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -136,6 +135,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     }
 
     @Override
+    @Transactional
     public void promote(User user) {
         // Prepare
         UserLevelStatus userLevelStatus = user.getUserLevelStatus();
@@ -146,16 +146,16 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
         // Prepare next level
         userLevelStatus.setCurrentLevel(dbNextAbstractLevel);
-        if(dbNextAbstractLevel instanceof DbRealGameLevel && ((DbRealGameLevel)dbNextAbstractLevel).isCreateRealBase()) {
+        activateCondition(user, dbNextAbstractLevel);
+        saveUser(user);
+
+        if (dbNextAbstractLevel instanceof DbRealGameLevel && ((DbRealGameLevel) dbNextAbstractLevel).isCreateRealBase()) {
             try {
                 baseService.createNewBase();
             } catch (Exception e) {
                 log.error("Can not create base for user: " + user, e);
             }
         }
-        activateCondition(user, dbNextAbstractLevel);
-
-        // TODO save user
         // Send level update packet
         if (dbOldAbstractLevel instanceof DbRealGameLevel) {
             Base base = baseService.getBase(user);
@@ -188,6 +188,16 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         userLevelStatus.setCurrentLevel(dbAbstractLevel);
         user.setUserLevelStatus(userLevelStatus);
         activateCondition(user, dbAbstractLevel);
+        saveUser(user);
+    }
+
+    // Put to user service
+    private void saveUser(User user) {
+        if (user.isRegistered()) {
+            hibernateTemplate.saveOrUpdate(user);
+        } else {
+            hibernateTemplate.evict(user);
+        }
     }
 
     private void activateCondition(User user, DbAbstractLevel dbAbstractLevel) {

@@ -19,6 +19,7 @@ import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 
 /**
@@ -29,7 +30,7 @@ import javax.persistence.ManyToOne;
 @Entity
 @DiscriminatorValue("ITEM_TYPE")
 public class DbSyncItemTypeComparisonConfig extends DbAbstractComparisonConfig {
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private DbItemType dbItemType;
 
     public DbItemType getDbItemType() {
