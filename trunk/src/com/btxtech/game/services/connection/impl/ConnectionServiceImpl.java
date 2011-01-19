@@ -148,7 +148,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
                 int tickCount = connection.resetAndGetTickCount();
                 if (connection.getNoTickCount() > MAX_NO_TICK_COUNT) {
                     log.info("User kicked due timeout: " + baseService.getBaseName(connection.getBase().getSimpleBase()));
-                    if (connection.getBase() != null && connection.getBase().getUser() != null) {
+                    if (connection.getBase() != null && connection.getBase().getUser().isRegistered()) {
                         userTrackingService.onUserLeftGame(connection.getBase().getUser());
                     }
                     connection.setClosed();
