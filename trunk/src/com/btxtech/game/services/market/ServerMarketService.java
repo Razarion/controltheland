@@ -73,6 +73,4 @@ public interface ServerMarketService extends ItemTypeAccess {
     void deleteMarketFunction(MarketFunction marketFunction);
 
     void saveMarketFunctions(ArrayList<MarketFunction> marketFunctions);
-
-    void setUserItemTypeAccess(User user, UserItemTypeAccess userItemTypeAccess);
 }

@@ -14,7 +14,9 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.item.ItemService;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -24,6 +26,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.Transient;
 
 /**
  * User: beat
@@ -43,6 +46,8 @@ public abstract class DbAbstractLevel implements CrudChild, Serializable {
     private int orderIndex;
     @Column(length = 50000)
     private String html;
+    @Transient
+    private ConditionConfig conditionConfig;
 
     public String getName() {
         return name;
@@ -105,4 +110,17 @@ public abstract class DbAbstractLevel implements CrudChild, Serializable {
     public String toString() {
         return getClass().getSimpleName() + " " + getName();
     }
+
+    public ConditionConfig getConditionConfig() {
+        if(conditionConfig == null) {
+            throw new IllegalStateException("Condition config was not created");
+        }
+        return conditionConfig;
+    }
+
+    public void activate(ItemService itemService) {
+       conditionConfig = createConditionConfig(itemService);
+    }
+
+    protected abstract ConditionConfig createConditionConfig(ItemService itemService);
 }

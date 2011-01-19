@@ -75,7 +75,7 @@ public class UserPage extends BasePage {
             viewUser = userService.getUser(viewUserName);
         }
 
-        User loggedinUser = userService.getUser();
+        /* TODO User loggedinUser = userService.getUser();
         if (loggedinUser.isLoggedIn()) {
             if (viewUser == null) {
                 // Clicks on mySite from menu
@@ -88,7 +88,7 @@ public class UserPage extends BasePage {
         }
         if (viewUser == null) {
             throw new IllegalArgumentException("No such viewUser: " + viewUserName);
-        }
+        }*/
     }
 
     @Override

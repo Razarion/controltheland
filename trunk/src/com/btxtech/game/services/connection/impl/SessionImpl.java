@@ -17,6 +17,7 @@ import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.BrowserDetails;
 import com.btxtech.game.services.utg.DbUserStage;
 import com.btxtech.game.services.utg.UserTrackingService;
@@ -41,9 +42,9 @@ public class SessionImpl implements Session, Serializable {
     private String sessionId;
     private String cookieId;
     private String userAgent;
-    private User user;
     private boolean javaScriptDetected = false;
     private BrowserDetails browserDetails;
+    private UserState userState;
 
     @Override
     public Connection getConnection() {
@@ -71,8 +72,8 @@ public class SessionImpl implements Session, Serializable {
 
     @PreDestroy
     public void destroy() {
-        if (user != null) {
-            userTrackingService.onUserLoggedOut(user);
+        if (userState != null) {
+            userTrackingService.onUserLoggedOut(userState);
         }
     }
 
@@ -91,18 +92,18 @@ public class SessionImpl implements Session, Serializable {
         return userAgent;
     }
 
-    @Override
-    public User getUser() {
-        return user;
-    }
-
-    @Override
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public HttpServletRequest getRequest() {
         return request;
+    }
+
+    @Override
+    public UserState getUserState() {
+        return userState;
+    }
+
+    @Override
+    public void setUserState(UserState userState) {
+        this.userState = userState;
     }
 
     @Override

@@ -14,6 +14,8 @@
 package com.btxtech.game.services.user;
 
 
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
+import com.btxtech.game.services.bot.DbBotConfig;
 import java.util.List;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
@@ -41,4 +43,12 @@ public interface UserService {
     void checkAuthorized(ArqEnum arq);
 
     Arq getArq(ArqEnum arq);
+
+    User getUser(UserState userState);
+
+    UserState getUserState();
+
+    UserState getUserState(DbBotConfig botConfig);
+
+    SyncBaseObject getUserState(User user);
 }

@@ -177,23 +177,6 @@ public class BaseEditor extends WebPage {
                 // Ignore
             }
         }));
-        form.add(new Label("level", new IModel<String>() {
-            @Override
-            public String getObject() {
-                return baseService.getUser(simpleBase).getUserLevelStatus().getCurrentLevel().getName();
-            }
-
-            @Override
-            public void setObject(String object) {
-                // Ignore
-            }
-
-            @Override
-            public void detach() {
-                // Ignore
-            }
-        }));
-
 
         // Items
         final DataView<SyncBaseItem> itemDataView = new DataView<SyncBaseItem>("itemTypes", new SyncBaseItemProvider(simpleBase)) {

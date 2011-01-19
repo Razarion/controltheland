@@ -15,7 +15,9 @@ package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.services.common.db.RectangleUserType;
+import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
@@ -120,6 +122,14 @@ public class DbRealGameLevel extends DbAbstractLevel {
 
     public void setItemSellFactor(double itemSellFactor) {
         this.itemSellFactor = itemSellFactor;
+    }
+
+    @Override
+    protected ConditionConfig createConditionConfig(ItemService itemService) {
+        if(dbConditionConfig == null) {
+            throw new IllegalStateException("No condition config for DbRealGameLevel: " + getName());
+        }
+        return dbConditionConfig.createConditionConfig(itemService);
     }
 
     public Level getLevel() {

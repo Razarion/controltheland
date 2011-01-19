@@ -148,9 +148,9 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
                 int tickCount = connection.resetAndGetTickCount();
                 if (connection.getNoTickCount() > MAX_NO_TICK_COUNT) {
                     log.info("User kicked due timeout: " + baseService.getBaseName(connection.getBase().getSimpleBase()));
-                    if (connection.getBase() != null && connection.getBase().getUser().isRegistered()) {
-                        userTrackingService.onUserLeftGame(connection.getBase().getUser());
-                    }
+                    // TODO if (connection.getBase() != null && connection.getBase().getUser().isRegistered()) {
+                    //    userTrackingService.onUserLeftGame(connection.getBase().getUser());
+                    //}
                     connection.setClosed();
                     it.remove();
                 } else {
@@ -197,9 +197,9 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         synchronized (onlineConnection) {
             onlineConnection.add(connection);
         }
-        if (base.getUser() != null) {
-            userTrackingService.onUserEnterGame(base.getUser());
-        }
+        // TODO if (base.getUser() != null) {
+        //    userTrackingService.onUserEnterGame(base.getUser());
+        //}
     }
 
     @Override
@@ -208,9 +208,9 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         if (connection == null) {
             throw new IllegalStateException("Connection does not exist");
         }
-        if (connection.getBase() != null && connection.getBase().getUser() != null) {
-            userTrackingService.onUserLeftGame(connection.getBase().getUser());
-        }
+        // TODO if (connection.getBase() != null && connection.getBase().getUser() != null) {
+        //    userTrackingService.onUserLeftGame(connection.getBase().getUser());
+        //}
         connection.setClosed();
         session.setConnection(null);
         synchronized (onlineConnection) {

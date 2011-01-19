@@ -295,7 +295,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
                 }
                 userGuidanceService.init2();
                 resourceService.resetAllResources();
-                botService.start();
+                // TODO botService.start();
             }
         } catch (Throwable t) {
             log.error("", t);

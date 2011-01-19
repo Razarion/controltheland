@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbRealGameLevel;
 import java.io.Serializable;
 import java.util.Date;
@@ -45,8 +46,6 @@ public class Base implements Serializable {
     private Integer id;
     private double accountBalance;
     @OneToOne
-    private User user;
-    @OneToOne
     private BaseColor baseColor;
     private Date startTime;
     @Column(name = "kills", nullable = false, columnDefinition = "INT default '0'")
@@ -67,11 +66,11 @@ public class Base implements Serializable {
     @Transient
     private final HashSet<SyncBaseItem> items = new HashSet<SyncBaseItem>();
     @Transient
-    private UserItemTypeAccess userItemTypeAccess;
-    @Transient
     private SimpleBase simpleBase;
     @Transient
     private int houseSpace = 0;
+    @Transient
+    private UserState userState; // TODO
 
     /**
      * Used by hibernate
@@ -79,9 +78,10 @@ public class Base implements Serializable {
     public Base() {
     }
 
-    public Base(BaseColor baseColor, User user, int baseId) {
+    public Base(BaseColor baseColor, UserState userState, int baseId) {
         this.baseColor = baseColor;
-        this.user = user;
+        this.userState = userState;
+        userState.setBase(this);
         startTime = new Date();
         abandoned = false;
         this.baseId = baseId;
@@ -152,15 +152,6 @@ public class Base implements Serializable {
         this.accountBalance = accountBalance;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-
     public long getUptime() {
         return System.currentTimeMillis() - startTime.getTime();
     }
@@ -202,18 +193,9 @@ public class Base implements Serializable {
     }
 
     public void connectionClosed() {
-        if (user == null) {
+       if (userState == null || !userState.isRegistered()) {
             abandoned = true;
-            userItemTypeAccess = null;
         }
-    }
-
-    public UserItemTypeAccess getUserItemTypeAccess() {
-        return userItemTypeAccess;
-    }
-
-    public void setUserItemTypeAccess(UserItemTypeAccess userItemTypeAccess) {
-        this.userItemTypeAccess = userItemTypeAccess;
     }
 
     @Override
@@ -250,5 +232,13 @@ public class Base implements Serializable {
 
     public int getHouseSpace() {
         return houseSpace;
+    }
+
+    public UserState getUserState() {
+        return userState;
+    }
+
+    public void setUserState(UserState userState) {
+        this.userState = userState;
     }
 }

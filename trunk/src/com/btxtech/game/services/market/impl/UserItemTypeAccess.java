@@ -123,10 +123,6 @@ public class UserItemTypeAccess implements Serializable {
         return getClass().getSimpleName() + " id: " + id + " xp: " + xp;
     }
 
-    public boolean isPersistent() {
-        return id != null;
-    }
-
     public Integer getId() {
         return id;
     }

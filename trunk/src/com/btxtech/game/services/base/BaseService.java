@@ -25,7 +25,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.btxtech.game.services.energy.impl.BaseEnergy;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
-import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserState;
 import java.util.Collection;
 import java.util.List;
 
@@ -55,13 +55,11 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     void sendEnergyUpdate(BaseEnergy baseEnergy, Base base);
 
-    Base getBase(User viewUser);
-
     Base getBase();
 
     Base createNewBase() throws AlreadyUsedException, NoSuchItemTypeException, GameFullException, ItemLimitExceededException, HouseSpaceExceededException;
 
-    Base createBotBase(User user) throws GameFullException;
+    Base createBotBase(UserState userState) throws GameFullException;
 
     void continueBase();
 
@@ -71,7 +69,7 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     boolean isAlive(SimpleBase simpleBase);
 
-    User getUser(SimpleBase simpleBase);
+    UserState getUserState(SimpleBase simpleBase);
 
     void surrenderBase(Base base);
 
@@ -81,7 +79,7 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     void restoreBases(Collection<Base> bases);
 
-    void onUserRegistered(User user);
+    void onUserRegistered();
 
     void setBaseColor(String color) throws AlreadyUsedException;
 
@@ -92,4 +90,6 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
     void setBot(Base simpleBase, boolean isBot);
 
     int getTotalHouseSpace();
+
+    Base getBase(UserState userState);
 }

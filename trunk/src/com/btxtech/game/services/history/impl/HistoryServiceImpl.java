@@ -53,27 +53,27 @@ public class HistoryServiceImpl implements HistoryService {
 
     @Override
     public void addBaseStartEntry(SimpleBase simpleBase) {
-        save(new HistoryElement(HistoryElement.Type.BASE_STARTED, baseService.getBaseName(simpleBase), baseService.getUser(simpleBase), null, null, null, null));
+        // TODO save(new HistoryElement(HistoryElement.Type.BASE_STARTED, baseService.getBaseName(simpleBase), baseService.getUserState(simpleBase), null, null, null, null));
     }
 
     @Override
     public void addBaseDefeatedEntry(SimpleBase actor, SimpleBase target) {
-        save(new HistoryElement(HistoryElement.Type.BASE_DEFEATED, baseService.getBaseName(actor), baseService.getUser(actor), null, baseService.getBaseName(target), baseService.getUser(target), null));
+        // TODO save(new HistoryElement(HistoryElement.Type.BASE_DEFEATED, baseService.getBaseName(actor), baseService.getUserState(actor), null, baseService.getBaseName(target), baseService.getUserState(target), null));
     }
 
     @Override
     public void addBaseSurrenderedEntry(SimpleBase simpleBase) {
-        save(new HistoryElement(HistoryElement.Type.BASE_SURRENDERED, baseService.getBaseName(simpleBase), baseService.getUser(simpleBase), null, null, null, null));
+        // TODO save(new HistoryElement(HistoryElement.Type.BASE_SURRENDERED, baseService.getBaseName(simpleBase), baseService.getUserState(simpleBase), null, null, null, null));
     }
 
     @Override
     public void addItemCreatedEntry(SyncBaseItem syncBaseItem) {
-        save(new HistoryElement(HistoryElement.Type.ITEM_CREATED, baseService.getBaseName(syncBaseItem.getBase()), baseService.getUser(syncBaseItem.getBase()), syncBaseItem, null, null, null));
+        // TODO save(new HistoryElement(HistoryElement.Type.ITEM_CREATED, baseService.getBaseName(syncBaseItem.getBase()), baseService.getUserState(syncBaseItem.getBase()), syncBaseItem, null, null, null));
     }
 
     @Override
     public void addItemDestroyedEntry(SimpleBase actor, SyncBaseItem target) {
-        save(new HistoryElement(HistoryElement.Type.ITEM_DESTROYED, baseService.getBaseName(actor), baseService.getUser(actor), null, baseService.getBaseName(target.getBase()), baseService.getUser(target.getBase()), target));
+        // TODO save(new HistoryElement(HistoryElement.Type.ITEM_DESTROYED, baseService.getBaseName(actor), baseService.getUserState(actor), null, baseService.getBaseName(target.getBase()), baseService.getUserState(target.getBase()), target));
     }
 
     @Override

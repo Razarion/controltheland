@@ -19,7 +19,6 @@ import com.btxtech.game.services.bot.DbBotItemCount;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.uiservices.CrudTableHelper;
 import com.btxtech.game.wicket.uiservices.RectanglePanel;
@@ -59,35 +58,6 @@ public class BotEditor extends WebPage {
         form.add(new TextField("coreSuperiority"));
         form.add(new RectanglePanel("realm"));
         form.add(new TextField("realmSuperiority"));
-        form.add(new TextField<String>("userName", new IModel<String>() {
-
-            @Override
-            public String getObject() {
-                if (dbBotConfig.getUser() != null) {
-                    return dbBotConfig.getUser().getName();
-                }
-                return null;
-            }
-
-            @Override
-            public void setObject(String userName) {
-                if (userName != null) {
-                    User user = userService.getUser(userName);
-                    if (user != null) {
-                        dbBotConfig.setUser(user);
-                    } else {
-                        error("No such user: " + userName);
-                    }
-                } else {
-                    dbBotConfig.setUser(null);
-                }
-            }
-
-            @Override
-            public void detach() {
-                //Ignore
-            }
-        }));
 
         new CrudTableHelper<DbBotItemCount>("baseFundamental", null, "createBaseFundamentalItem", false, form) {
 

@@ -34,6 +34,7 @@ import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.BrowserDetails;
 import com.btxtech.game.services.utg.DbAbstractLevel;
 import com.btxtech.game.services.utg.DbCloseWindow;
@@ -392,14 +393,14 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public void onUserLoggedOut(User user) {
-        try {
+    public void onUserLoggedOut(UserState user) {
+       /* TODO try {
             UserHistory userHistory = new UserHistory(user);
             userHistory.setLoggedOut();
             hibernateTemplate.saveOrUpdate(userHistory);
         } catch (Throwable t) {
             log.error("", t);
-        }
+        }*/
     }
 
     @Override
@@ -499,7 +500,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     @Override
     public Level onTutorialProgressChanged(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp) {
         if (type == TutorialConfig.TYPE.TUTORIAL) {
-            serverConditionService.onTutorialFinished(userService.getUser());
+            serverConditionService.onTutorialFinished(userService.getUserState());
         }
         hibernateTemplate.saveOrUpdate(new DbTutorialProgress(session.getSessionId(), type.name(), name, parent, duration, clientTimeStamp));
         return userGuidanceService.getDbAbstractLevel().getLevel();

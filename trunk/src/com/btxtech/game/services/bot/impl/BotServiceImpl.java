@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.bot.impl;
 
-import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.base.GameFullException;
 import com.btxtech.game.services.bot.BotService;
@@ -64,6 +63,7 @@ public class BotServiceImpl implements BotService {
         }
     }
 
+    @Override
     public void start() {
         for (DbBotConfig botConfig : dbBotConfigCrudServiceHelper.readDbChildren()) {
             try {
@@ -80,9 +80,6 @@ public class BotServiceImpl implements BotService {
     }
 
     private void startBot(DbBotConfig botConfig) throws GameFullException {
-        if (botConfig.getUser() == null) {
-            return;
-        }
         BotRunner botRunner = (BotRunner) applicationContext.getBean("botRunner");
         botRunner.setBotConfig(botConfig);
         botRunner.start();
@@ -92,15 +89,12 @@ public class BotServiceImpl implements BotService {
     }
 
     private void stopBot(DbBotConfig botConfig) {
-        if (botConfig.getUser() == null) {
-            return;
-        }
         BotRunner botRunner;
         synchronized (botRunners) {
             botRunner = botRunners.remove(botConfig);
         }
         if (botRunner == null) {
-            throw new IllegalArgumentException("Can not stop bot. No such bot " + botConfig.getUser().getName());
+            throw new IllegalArgumentException("Can not stop bot. No such bot " + botConfig.getName());
         }
 
         botRunner.stop();

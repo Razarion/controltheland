@@ -43,12 +43,6 @@ public class User implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "arq_name")
     )
     private Set<Arq> arqs;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private UserItemTypeAccess userItemTypeAccess;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private UserLevelStatus userLevelStatus;
-    @Transient
-    private boolean loggedIn;
 
     public String getName() {
         return name;
@@ -60,14 +54,6 @@ public class User implements Serializable {
 
     public String getEmail() {
         return email;
-    }
-
-    public UserLevelStatus getUserLevelStatus() {
-        return userLevelStatus;
-    }
-
-    public void setUserLevelStatus(UserLevelStatus userLevelStatus) {
-        this.userLevelStatus = userLevelStatus;
     }
 
     public void registerUser(String name, String password, String email) {
@@ -87,14 +73,6 @@ public class User implements Serializable {
 
     public Date getLastLoginDate() {
         return lastLoginDate;
-    }
-
-    public UserItemTypeAccess getUserItemTypeAccess() {
-        return userItemTypeAccess;
-    }
-
-    public void setUserItemTypeAccess(UserItemTypeAccess userItemTypeAccess) {
-        this.userItemTypeAccess = userItemTypeAccess;
     }
 
     public boolean hasArq(Arq arq) {
@@ -130,17 +108,5 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "User: '" + name + "'";
-    }
-
-    public boolean isLoggedIn() {
-        return loggedIn;
-    }
-
-    public void setLoggedIn(boolean loggedIn) {
-        this.loggedIn = loggedIn;
-    }
-
-    public boolean isRegistered() {
-        return name != null;
     }
 }

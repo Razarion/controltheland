@@ -20,6 +20,7 @@ import java.io.Serializable;
  * Date: 08.12.2010
  * Time: 16:35:30
  */
+@Deprecated
 public class UserStage implements Serializable {
     private String html;
     private boolean isRealGame;

@@ -14,6 +14,9 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
+import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
+import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -46,6 +49,11 @@ public class DbSimulationLevel extends DbAbstractLevel {
             level = new Level(getName(), getHtml(), false, 0);
         }
         return level;
+    }
+
+    @Override
+    protected ConditionConfig createConditionConfig(ItemService itemService) {
+        return new ConditionConfig(ConditionTrigger.TUTORIAL, null);
     }
 
     @Override

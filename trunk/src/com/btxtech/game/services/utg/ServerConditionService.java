@@ -15,12 +15,13 @@ package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.common.utg.ConditionService;
 import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserState;
 
 /**
  * User: beat
  * Date: 28.12.2010
  * Time: 18:16:08
  */
-public interface ServerConditionService extends ConditionService<User> {
-    void onTutorialFinished(User user);
+public interface ServerConditionService extends ConditionService<UserState> {
+    void onTutorialFinished(UserState userState);
 }
