@@ -68,6 +68,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * User: beat
@@ -346,6 +347,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
+    @Transactional
     public void saveDbItemType(DbItemType dbItemType) {
         hibernateTemplate.saveOrUpdate(dbItemType);
     }
@@ -499,11 +501,6 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     @Override
     public void deleteItemType(DbItemType dbItemType) {
         hibernateTemplate.delete(dbItemType);
-    }
-
-    @Override
-    public void removeItemTypeImages(DbItemType dbItemType) {
-        hibernateTemplate.deleteAll(dbItemType.getItemTypeImages());
     }
 
     @Override

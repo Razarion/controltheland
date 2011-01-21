@@ -61,4 +61,8 @@ public class Html5ImagesUploadConverter {
     public boolean isEmpty() {
         return images.isEmpty();
     }
+
+    public DbItemTypeImage getFirst() {
+        return images.iterator().next();
+    }
 }

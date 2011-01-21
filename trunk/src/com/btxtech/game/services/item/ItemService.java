@@ -63,9 +63,7 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
     DbItemType getDbItemType(int itemTypeId);
 
     void deleteItemType(DbItemType dbItemType);
-
-    void removeItemTypeImages(DbItemType dbItemType);
-
+    
     DbItemTypeImage getItemTypeImage(int itemTypeId, int index);
 
     DbItemTypeData getMuzzleFlashImage(int itemTypeId);
