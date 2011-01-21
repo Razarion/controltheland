@@ -182,9 +182,9 @@ public class ItemServiceTest {
         //ableoToBuild.add((DbBaseItemType) itemService.getDbItemType(2));
         ableoToBuild.add((DbBaseItemType) itemType.get(3));
         dbBaseItemType1.getBuilderType().setAbleToBuild(ableoToBuild);
-        itemService.removeItemTypeImages(dbBaseItemType1);
-        dbBaseItemType1.setItemTypeImages(fillImages(dbBaseItemType1));
-        itemService.saveDbItemType(dbBaseItemType1);
+        //itemService.removeItemTypeImages(dbBaseItemType1);
+        //dbBaseItemType1.setItemTypeImages(fillImages(dbBaseItemType1));
+       // itemService.saveDbItemType(dbBaseItemType1);
     }
 
     private Set<DbItemTypeImage> fillImages(DbItemType dbItemType) {

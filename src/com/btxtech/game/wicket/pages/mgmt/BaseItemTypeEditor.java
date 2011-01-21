@@ -449,9 +449,8 @@ public class BaseItemTypeEditor extends WebPage {
 
         Html5ImagesUploadConverter html5ImagesUploadConverter = new Html5ImagesUploadConverter(imageFileField, dbBaseItemType);
         if (!html5ImagesUploadConverter.isEmpty()) {
-            itemService.removeItemTypeImages(dbBaseItemType);
             dbBaseItemType.setItemTypeImages(html5ImagesUploadConverter.getImages());
-            ImageIcon image = new ImageIcon(html5ImagesUploadConverter.getImages().iterator().next().getData());
+            ImageIcon image = new ImageIcon(html5ImagesUploadConverter.getFirst().getData());
             dbBaseItemType.setHeight(image.getIconHeight());
             dbBaseItemType.setWidth(image.getIconWidth());
         }

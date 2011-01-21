@@ -18,9 +18,9 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
@@ -30,6 +30,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
+import org.hibernate.annotations.Cascade;
 
 /**
  * User: beat
@@ -50,6 +51,7 @@ public abstract class DbItemType implements Serializable {
     private String proDescription;
     private String contraDescription;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "itemType")
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private Set<DbItemTypeImage> itemTypeImages;
     private TerrainType terrainType;
 
@@ -90,11 +92,17 @@ public abstract class DbItemType implements Serializable {
     }
 
     public Set<DbItemTypeImage> getItemTypeImages() {
+        if (itemTypeImages == null) {
+            itemTypeImages = new HashSet<DbItemTypeImage>();
+        }
         return itemTypeImages;
     }
 
-    public void setItemTypeImages(Set<DbItemTypeImage> itemTypeImages) {
-        this.itemTypeImages = itemTypeImages;
+    public void setItemTypeImages(Collection<DbItemTypeImage> itemTypeImages) {
+        getItemTypeImages().clear();
+        for (DbItemTypeImage itemTypeImage : itemTypeImages) {
+            getItemTypeImages().add(itemTypeImage);
+        }
     }
 
     public String getProDescription() {
@@ -152,6 +160,6 @@ public abstract class DbItemType implements Serializable {
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 }

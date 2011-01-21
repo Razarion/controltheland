@@ -69,7 +69,6 @@ public class ResourceItemTypeEditor extends WebPage {
                 itemTypeImage.setContentType(fileUpload.getContentType());
                 itemTypeImage.setNumber(1);
                 itemTypeImage.setData(fileUpload.getBytes());
-                itemService.removeItemTypeImages(dbResourceItemType);
                 HashSet<DbItemTypeImage> dbItemTypeImages = new HashSet<DbItemTypeImage>();
                 dbItemTypeImages.add(itemTypeImage);
                 dbResourceItemType.setItemTypeImages(dbItemTypeImages);

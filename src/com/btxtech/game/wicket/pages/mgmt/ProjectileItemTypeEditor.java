@@ -72,7 +72,6 @@ public class ProjectileItemTypeEditor extends WebPage {
                 itemTypeImage.setContentType(fileUpload.getContentType());
                 itemTypeImage.setNumber(1);
                 itemTypeImage.setData(fileUpload.getBytes());
-                itemService.removeItemTypeImages(dbProjectileItemType);
                 HashSet<DbItemTypeImage> dbItemTypeImages = new HashSet<DbItemTypeImage>();
                 dbItemTypeImages.add(itemTypeImage);
                 dbProjectileItemType.setItemTypeImages(dbItemTypeImages);
