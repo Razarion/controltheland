@@ -39,6 +39,10 @@ public abstract class DbAbstractComparisonConfig implements Serializable{
 
     public abstract AbstractComparisonConfig createComparisonConfig(ItemService itemService);
 
+    public Integer getId() {
+        return id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

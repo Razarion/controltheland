@@ -22,6 +22,7 @@ import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.uiservices.CrudTableHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -52,8 +53,8 @@ public class DbLevelTable extends WebPage {
             }
 
             @Override
-            protected void setupSave(Form form, String saveId) {
-                form.add(new Button(saveId) {
+            protected void setupSave(WebMarkupContainer markupContainer, String saveId) {
+                markupContainer.add(new Button(saveId) {
 
                     @Override
                     public void onSubmit() {
@@ -73,15 +74,15 @@ public class DbLevelTable extends WebPage {
             }
 
             @Override
-            protected void setupCreate(Form form, String createId) {
-                form.add(new Button("createRealGame") {
+            protected void setupCreate(WebMarkupContainer markupContainer, String createId) {
+                markupContainer.add(new Button("createRealGame") {
 
                     @Override
                     public void onSubmit() {
                         getCrudServiceHelper().createDbChild(DbRealGameLevel.class);
                     }
                 });
-                form.add(new Button("createSimulation") {
+                markupContainer.add(new Button("createSimulation") {
 
                     @Override
                     public void onSubmit() {

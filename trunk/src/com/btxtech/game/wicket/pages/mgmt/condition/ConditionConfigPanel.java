@@ -14,6 +14,7 @@
 package com.btxtech.game.wicket.pages.mgmt.condition;
 
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbCockpitButtonClickedComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
@@ -24,14 +25,13 @@ import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.IFormModelUpdateListener;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
  * User: beat
@@ -39,8 +39,57 @@ import org.apache.wicket.model.Model;
  * Time: 14:34:18
  */
 public class ConditionConfigPanel extends Panel implements IFormModelUpdateListener {
-    private Model<ConditionTrigger> conditionTriggerModel = new Model<ConditionTrigger>();
-    private Model<Class<? extends DbAbstractComparisonConfig>> comparisonModel = new Model<Class<? extends DbAbstractComparisonConfig>>();
+    @SpringBean
+    private UserGuidanceService userGuidanceService;
+
+    private IModel<ConditionTrigger> conditionTriggerModel = new IModel<ConditionTrigger>() {
+        private ConditionTrigger conditionTrigger;
+
+        @Override
+        public ConditionTrigger getObject() {
+            if (conditionTrigger == null) {
+                DbConditionConfig dbConditionConfig = (DbConditionConfig) ConditionConfigPanel.this.getDefaultModelObject();
+                if (dbConditionConfig != null) {
+                    conditionTrigger = dbConditionConfig.getConditionTrigger();
+                }
+            }
+            return conditionTrigger;
+        }
+
+        @Override
+        public void setObject(ConditionTrigger conditionTrigger) {
+            this.conditionTrigger = conditionTrigger;
+        }
+
+        @Override
+        public void detach() {
+            // Ignore
+        }
+    };
+    private IModel<Class<? extends DbAbstractComparisonConfig>> comparisonModel = new IModel<Class<? extends DbAbstractComparisonConfig>>() {
+        private Class<? extends DbAbstractComparisonConfig> dbAbstractComparisonConfig;
+
+        @Override
+        public Class<? extends DbAbstractComparisonConfig> getObject() {
+            if (dbAbstractComparisonConfig == null) {
+                DbConditionConfig dbConditionConfig = (DbConditionConfig) ConditionConfigPanel.this.getDefaultModelObject();
+                if (dbConditionConfig != null && dbConditionConfig.getDbAbstractComparisonConfig() != null) {
+                    dbAbstractComparisonConfig = dbConditionConfig.getDbAbstractComparisonConfig().getClass();
+                }
+            }
+            return dbAbstractComparisonConfig;
+        }
+
+        @Override
+        public void setObject(Class<? extends DbAbstractComparisonConfig> dbAbstractComparisonConfig) {
+            this.dbAbstractComparisonConfig = dbAbstractComparisonConfig;
+        }
+
+        @Override
+        public void detach() {
+            // Ignore
+        }
+    };
     private Log log = LogFactory.getLog(ConditionConfigPanel.class);
 
     public ConditionConfigPanel(String id) {
@@ -88,12 +137,14 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
                 if (conditionTriggerModel.getObject() != dbConditionConfig.getConditionTrigger()) {
                     dbConditionConfig.setConditionTrigger(conditionTriggerModel.getObject());
                     dbConditionConfig.setDbAbstractComparisonConfig(null);
+                    userGuidanceService.updateDbConditionConfig(dbConditionConfig);
                     setupComparisonFields();
                     return;
                 }
 
                 if (!conditionTrigger.isComparisonNeeded()) {
                     dbConditionConfig.setDbAbstractComparisonConfig(null);
+                    userGuidanceService.updateDbConditionConfig(dbConditionConfig);
                     setupComparisonFields();
                     return;
                 }
@@ -116,6 +167,7 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
                 if (createComparisonConfig) {
                     try {
                         dbConditionConfig.setDbAbstractComparisonConfig(comparisonModel.getObject().getConstructor().newInstance());
+                        userGuidanceService.updateDbConditionConfig(dbConditionConfig);
                     } catch (Exception e) {
                         log.error("", e);
                     }
@@ -146,7 +198,7 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
         }
     }
 
-    @Override
+/*    @Override
     protected void onComponentTag(final ComponentTag tag) {
         DbConditionConfig dbConditionConfig = (DbConditionConfig) getDefaultModelObject();
         if (dbConditionConfig != null && dbConditionConfig.getConditionTrigger() != null) {
@@ -156,7 +208,7 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
             }
         }
         super.onComponentTag(tag);
-    }
+    }**/
 
     @Override
     protected void onBeforeRender() {
@@ -167,6 +219,7 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
     @Override
     public void updateModel() {
         if (getDefaultModelObject() == null) {
+            // TODO geht nicht
             setDefaultModelObject(new DbConditionConfig());
         }
     }

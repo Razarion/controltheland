@@ -13,15 +13,22 @@
 
 package com.btxtech.game.wicket.pages.mgmt.condition;
 
+import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.item.itemType.DbItemType;
+import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.condition.DbComparisonItemCount;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
+import com.btxtech.game.wicket.pages.mgmt.BaseItemTypeEditor;
+import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
+import com.btxtech.game.wicket.uiservices.CrudTableHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -31,41 +38,34 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  */
 public class SyncItemTypeComparisonConfigPanel extends Panel {
     @SpringBean
-    private ItemService itemService;
-    private Log log = LogFactory.getLog(SyncItemTypeComparisonConfigPanel.class);
+    private UserGuidanceService userGuidanceService;
 
     public SyncItemTypeComparisonConfigPanel(String id, DbSyncItemTypeComparisonConfig dbSyncItemTypeComparisonConfig) {
         super(id, new CompoundPropertyModel<DbSyncItemTypeComparisonConfig>(dbSyncItemTypeComparisonConfig));
-        add(new TextField<Integer>("dbItemType", new IModel<Integer>() {
+        final int dbSyncItemTypeComparisonConfigId = dbSyncItemTypeComparisonConfig.getId();
+        new CrudTableHelper<DbComparisonItemCount>("itemCounts", null, "createItemCount", false, this) {
 
             @Override
-            public Integer getObject() {
-                DbItemType itemType = ((DbSyncItemTypeComparisonConfig) getDefaultModelObject()).getDbItemType();
-                if (itemType != null) {
-                    return itemType.getId();
-                } else {
-                    return null;
-                }
+            protected void extendedPopulateItem(Item<DbComparisonItemCount> dbComparisonItemCountItem) {
+                dbComparisonItemCountItem.add(new BaseItemTypePanel("itemType"));
+                dbComparisonItemCountItem.add(new TextField("count"));
             }
 
             @Override
-            public void setObject(Integer id) {
-                if (id != null) {
-                    try {
-                        ((DbSyncItemTypeComparisonConfig) getDefaultModelObject()).setDbItemType(itemService.getDbItemType(id));
-                    } catch (Throwable t) {
-                        log.error("", t);
-                        error(t.getMessage());
+            protected CrudServiceHelper<DbComparisonItemCount> getCrudServiceHelper() {
+                return ((DbSyncItemTypeComparisonConfig)getDefaultModelObject()).getCrudDbComparisonItemCount();
+            }
+
+            @Override
+            protected void setupCreate(WebMarkupContainer markupContainer, String createId) {
+                markupContainer.add(new Button(createId) {
+
+                    @Override
+                    public void onSubmit() {
+                        userGuidanceService.createDbComparisonItemCount(dbSyncItemTypeComparisonConfigId);
                     }
-                } else {
-                    ((DbSyncItemTypeComparisonConfig) getDefaultModelObject()).setDbItemType(null);
-                }
+                });
             }
-
-            @Override
-            public void detach() {
-                //Ignore
-            }
-        }, Integer.class));
+        };
     }
 }

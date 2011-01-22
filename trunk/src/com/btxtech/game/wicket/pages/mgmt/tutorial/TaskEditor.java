@@ -181,7 +181,7 @@ public class TaskEditor extends WebPage {
 
             @Override
             protected void onEditSubmit(DbStepConfig dbStepConfig) {
-                setResponsePage(new StepEditor(dbTutorialConfig, dbStepConfig));
+                setResponsePage(new StepEditor(dbStepConfig.getId()));
             }
         };
 
