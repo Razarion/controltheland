@@ -15,6 +15,8 @@ package com.btxtech.game.jsre.common.utg.condition;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: beat
@@ -22,23 +24,29 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
  * Time: 21:06:41
  */
 public class SyncItemTypeComparison extends AbstractSyncItemComparison {
-    private ItemType itemType;
-    private boolean isFulfilled = false;
+    private Map<ItemType, Integer> remaining;
 
-    public SyncItemTypeComparison(ItemType itemType) {
-        this.itemType = itemType;
+    public SyncItemTypeComparison(Map<ItemType, Integer> itemType) {
+        remaining = new HashMap<ItemType, Integer>(itemType);
     }
 
     @Override
     public void onSyncItem(SyncItem syncItem) {
-        if (!isFulfilled) {
-            isFulfilled = syncItem.getItemType().equals(itemType);
+        Integer remainingCount = remaining.get(syncItem.getItemType());
+        if (remainingCount == null) {
+            return;
+        }
+        remainingCount--;
+        if (remainingCount == 0) {
+            remaining.remove(syncItem.getItemType());
+        } else {
+            remaining.put(syncItem.getItemType(), remainingCount);
         }
     }
 
     @Override
     public boolean isFulfilled() {
-        return isFulfilled;
+        return remaining.isEmpty();
     }
 
 }

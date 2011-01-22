@@ -33,4 +33,8 @@ public interface TutorialService {
     DbResourceHintConfig getDbResourceHintConfig(int id);
 
     void saveTutorial(DbTutorialConfig dbTutorialConfig);
+
+    DbStepConfig getDbStepConfig(int dbStepConfigId);
+
+    void saveDbStepConfig(DbStepConfig dbStepConfig);
 }

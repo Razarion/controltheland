@@ -72,7 +72,7 @@
         <mapping class="com.btxtech.game.services.utg.DbRealGameLevel"/>
         <mapping class="com.btxtech.game.services.utg.DbScope"/>
         <mapping class="com.btxtech.game.services.utg.DbUserStage"/>
-        <mapping class="com.btxtech.game.services.utg.DbItemCount"/>
+        <mapping class="com.btxtech.game.services.utg.condition.DbComparisonItemCount"/>
         <mapping class="com.btxtech.game.services.utg.DbLevelPromotion"/>
         <mapping class="com.btxtech.game.services.utg.UserLevelStatus"/>
         <mapping class="com.btxtech.game.services.utg.DbTutorialProgress"/>

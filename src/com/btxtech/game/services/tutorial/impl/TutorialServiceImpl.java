@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelperHibernateImpl;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.tutorial.DbStepConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.tutorial.hint.DbResourceHintConfig;
@@ -127,5 +128,15 @@ public class TutorialServiceImpl implements TutorialService, ResourceHintManager
     @Transactional
     public void saveTutorial(DbTutorialConfig dbTutorialConfig) {
         tutorialCrudServiceHelper.updateDbChild(dbTutorialConfig);
+    }
+
+    @Override
+    public DbStepConfig getDbStepConfig(int dbStepConfigId) {
+        return (DbStepConfig) hibernateTemplate.get(DbStepConfig.class, dbStepConfigId);
+    }
+
+    @Override
+    public void saveDbStepConfig(DbStepConfig dbStepConfig) {
+        hibernateTemplate.update(dbStepConfig);
     }
 }

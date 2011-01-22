@@ -35,6 +35,10 @@ import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserLevelStatus;
 import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
+import com.btxtech.game.services.utg.condition.DbComparisonItemCount;
+import com.btxtech.game.services.utg.condition.DbConditionConfig;
+import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -271,6 +275,27 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     @Override
     public CrudServiceHelper<DbAbstractLevel> getDbLevelCrudServiceHelper() {
         return crudServiceHelperHibernate;
+    }
+
+    @Override
+    @Transactional
+    public void updateDbConditionConfig(DbConditionConfig dbConditionConfig) {
+        hibernateTemplate.update(dbConditionConfig);
+    }
+
+    @Override
+    @Transactional
+    public void createDbComparisonItemCount(int dbSyncItemTypeComparisonConfigId) {
+        DbSyncItemTypeComparisonConfig dbSyncItemTypeComparisonConfig = (DbSyncItemTypeComparisonConfig) getDbAbstractComparisonConfig(dbSyncItemTypeComparisonConfigId);
+        DbComparisonItemCount dbComparisonItemCount = new DbComparisonItemCount();
+        dbComparisonItemCount.setParent(dbSyncItemTypeComparisonConfig);
+        dbComparisonItemCount.init();
+        hibernateTemplate.save(dbComparisonItemCount);
+    }
+
+    @Override
+    public DbAbstractComparisonConfig getDbAbstractComparisonConfig(int dbAbstractComparisonConfigId) {
+        return (DbAbstractComparisonConfig) hibernateTemplate.get(DbAbstractComparisonConfig.class, dbAbstractComparisonConfigId);
     }
 
     @Override

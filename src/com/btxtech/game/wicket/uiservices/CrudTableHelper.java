@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -35,7 +35,7 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
     public static final String NAME = "name";
     private ListProvider<T> provider;
 
-    public CrudTableHelper(String tableId, String saveId, String createId, final boolean showEdit, Form form) {
+    public CrudTableHelper(String tableId, String saveId, String createId, final boolean showEdit, WebMarkupContainer markupContainer) {
         provider = new ListProvider<T>() {
             @Override
             protected List<T> createList() {
@@ -47,7 +47,7 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
                 }
             }
         };
-        form.add(new DataView<T>(tableId, provider) {
+        markupContainer.add(new DataView<T>(tableId, provider) {
             @Override
             protected void populateItem(final Item<T> item) {
                 extendedPopulateItem(item);
@@ -73,9 +73,9 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
         });
 
         if (saveId != null) {
-            setupSave(form, saveId);
+            setupSave(markupContainer, saveId);
         }
-        setupCreate(form, createId);
+        setupCreate(markupContainer, createId);
 
     }
 
@@ -83,8 +83,8 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
         getCrudServiceHelper().deleteDbChild(child);
     }
 
-    protected void setupSave(Form form, String saveId) {
-        form.add(new Button(saveId) {
+    protected void setupSave(WebMarkupContainer markupContainer, String saveId) {
+        markupContainer.add(new Button(saveId) {
 
             @Override
             public void onSubmit() {
@@ -93,8 +93,8 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
         });
     }
 
-    protected void setupCreate(Form form, String createId) {
-        form.add(new Button(createId) {
+    protected void setupCreate(WebMarkupContainer markupContainer, String createId) {
+        markupContainer.add(new Button(createId) {
 
             @Override
             public void onSubmit() {

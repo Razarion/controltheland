@@ -479,7 +479,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
     @Override
     public DbItemType getDbItemType(final int itemTypeId) {
-        @SuppressWarnings("unchecked")
+/*        @SuppressWarnings("unchecked")
         List<DbItemType> list = (List<DbItemType>) hibernateTemplate.execute(new HibernateCallback() {
             @Override
             public Object doInHibernate(Session session) throws HibernateException, SQLException {
@@ -495,7 +495,8 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         if (list.size() > 1) {
             throw new IllegalArgumentException("More then one entry found: " + itemTypeId);
         }
-        return list.get(0);
+        return list.get(0);*/
+        return (DbItemType) hibernateTemplate.get(DbItemType.class, itemTypeId);
     }
 
     @Override

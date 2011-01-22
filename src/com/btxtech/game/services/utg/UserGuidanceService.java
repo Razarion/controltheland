@@ -18,6 +18,8 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
+import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import java.util.Collection;
 import java.util.List;
 
@@ -60,4 +62,10 @@ public interface UserGuidanceService {
     void deleteDbLevel(DbAbstractLevel dbAbstractLevel);
 
     CrudServiceHelper<DbAbstractLevel> getDbLevelCrudServiceHelper();
+
+    void updateDbConditionConfig(DbConditionConfig dbConditionConfig);
+
+    void createDbComparisonItemCount(int dbSyncItemTypeComparisonConfigId);
+
+    DbAbstractComparisonConfig getDbAbstractComparisonConfig(int dbAbstractComparisonConfigId);
 }

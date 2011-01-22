@@ -21,10 +21,19 @@
 <wicket:panel>
     <table border="0">
         <tr>
-            <td bgcolor="#dadada">Item Type</td>
-            <td><input wicket:id="dbItemType" type="text" size="10"></td>
+            <th bgcolor="#dadada">Item Type</th>
+            <th bgcolor="#dadada">Count</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+        <tr wicket:id="itemCounts">
+            <td wicket:id="itemType"/>
+            <td><input type="text" wicket:id="count" size="6"></td>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
         </tr>
     </table>
+    <input type="submit" wicket:id="createItemCount" value="Create">
 </wicket:panel>
 </body>
 </html>

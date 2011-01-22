@@ -45,7 +45,7 @@ import org.hibernate.annotations.Cascade;
  * Time: 19:12:10
  */
 @Entity(name = "TUTORIAL_STEP_CONFIG")
-public class DbStepConfig implements Serializable, CrudParent, CrudChild<DbTaskConfig> {
+public class DbStepConfig implements CrudParent, CrudChild<DbTaskConfig> {
     @Id
     @GeneratedValue
     private Integer id;
@@ -61,6 +61,10 @@ public class DbStepConfig implements Serializable, CrudParent, CrudChild<DbTaskC
     private Set<DbHintConfig> dbHintConfigs;
     @Transient
     private CrudServiceHelper<DbHintConfig> hintConfigCrudHelper;
+
+    public Integer getId() {
+        return id;
+    }
 
     @Override
     public String getName() {

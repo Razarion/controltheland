@@ -14,9 +14,7 @@
 package com.btxtech.game.wicket.pages.mgmt.tutorial;
 
 import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.tutorial.DbStepConfig;
-import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.tutorial.hint.DbCockpitSpeechBubbleHintConfig;
 import com.btxtech.game.services.tutorial.hint.DbHintConfig;
@@ -30,6 +28,7 @@ import com.btxtech.game.wicket.pages.mgmt.tutorial.hint.ResourceHintConfigPanel;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.hint.TerrainPositionSpeechBubbleHintConfigPanel;
 import com.btxtech.game.wicket.uiservices.CrudTableHelper;
 import java.util.Arrays;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -48,14 +47,33 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 public class StepEditor extends WebPage {
     @SpringBean
     private TutorialService tutorialService;
-    @SpringBean
-    private ItemService itemService;
     private Class createChoice = DbHintConfig.ALL_HINTS[0];
+    private DbStepConfig dbStepConfig;
 
-    public StepEditor(final DbTutorialConfig dbTutorialConfig, final DbStepConfig dbStepConfig) {
+    public StepEditor(final int dbStepConfigId) {
         add(new FeedbackPanel("msgs"));
 
-        Form<DbStepConfig> form = new Form<DbStepConfig>("stepForm", new CompoundPropertyModel<DbStepConfig>(dbStepConfig));
+        Form<DbStepConfig> form = new Form<DbStepConfig>("stepForm", new CompoundPropertyModel<DbStepConfig>(new IModel<DbStepConfig>() {
+
+
+            @Override
+            public DbStepConfig getObject() {
+                if (dbStepConfig == null) {
+                    dbStepConfig = tutorialService.getDbStepConfig(dbStepConfigId);
+                }
+                return dbStepConfig;
+            }
+
+            @Override
+            public void setObject(DbStepConfig object) {
+                // Ignore
+            }
+
+            @Override
+            public void detach() {
+                dbStepConfig = null;
+            }
+        }));
         add(form);
 
         form.add(new ConditionConfigPanel("conditionConfig"));
@@ -66,8 +84,8 @@ public class StepEditor extends WebPage {
             }
 
             @Override
-            protected void setupCreate(Form form, String createId) {
-                form.add(new DropDownChoice<Class>("createHintChoice", new IModel<Class>() {
+            protected void setupCreate(WebMarkupContainer markupContainer, String createId) {
+                markupContainer.add(new DropDownChoice<Class>("createHintChoice", new IModel<Class>() {
                     @Override
                     public Class getObject() {
                         return createChoice;
@@ -83,7 +101,7 @@ public class StepEditor extends WebPage {
                         // Ignored
                     }
                 }, Arrays.asList(DbHintConfig.ALL_HINTS)));
-                form.add(new Button(createId) {
+                markupContainer.add(new Button(createId) {
 
                     @Override
                     public void onSubmit() {
@@ -113,7 +131,7 @@ public class StepEditor extends WebPage {
 
             @Override
             public void onSubmit() {
-                tutorialService.saveTutorial(dbTutorialConfig);
+                tutorialService.saveDbStepConfig(dbStepConfig);
             }
         });
         form.add(new Button("back") {

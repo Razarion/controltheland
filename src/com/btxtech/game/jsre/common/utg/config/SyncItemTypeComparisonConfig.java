@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.common.utg.config;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.SyncItemTypeComparison;
+import java.util.Map;
 
 /**
  * User: beat
@@ -23,7 +24,8 @@ import com.btxtech.game.jsre.common.utg.condition.SyncItemTypeComparison;
  * Time: 21:06:41
  */
 public class SyncItemTypeComparisonConfig extends AbstractComparisonConfig {
-    private ItemType itemType;
+    private Map<ItemType, Integer> itemTypeCount;
+
 
     /**
      * Used by GWT
@@ -31,12 +33,12 @@ public class SyncItemTypeComparisonConfig extends AbstractComparisonConfig {
     public SyncItemTypeComparisonConfig() {
     }
 
-    public SyncItemTypeComparisonConfig(ItemType itemType) {
-        this.itemType = itemType;
+    public SyncItemTypeComparisonConfig(Map<ItemType, Integer> itemTypeCount) {
+        this.itemTypeCount = itemTypeCount;
     }
 
     @Override
     public AbstractComparison createAbstractComparison() {
-        return new SyncItemTypeComparison(itemType);
+        return new SyncItemTypeComparison(itemTypeCount);
     }
 }
