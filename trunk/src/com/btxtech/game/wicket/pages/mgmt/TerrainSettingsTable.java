@@ -19,8 +19,10 @@ import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.wicket.uiservices.CrudTableHelper;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
@@ -49,6 +51,17 @@ public class TerrainSettingsTable extends WebPage {
             @Override
             protected CrudServiceHelper<DbTerrainSetting> getCrudServiceHelper() {
                 return terrainService.getDbTerrainSettingCrudServiceHelper();
+            }
+
+            @Override
+            protected void setupSave(WebMarkupContainer markupContainer, String saveId) {
+                markupContainer.add(new Button(saveId) {
+
+                    @Override
+                    public void onSubmit() {
+                        terrainService.saveDbTerrainSetting(getLastModifiedList());
+                    }
+                });
             }
 
             @Override

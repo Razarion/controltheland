@@ -48,4 +48,6 @@ public interface TerrainService extends AbstractTerrainService {
     void setupTerrain(TerrainInfo terrainInfo, int terrainId);
 
     CrudServiceHelper<DbTerrainSetting> getDbTerrainSettingCrudServiceHelper();
+
+    void saveDbTerrainSetting(List<DbTerrainSetting> dbTerrainSettings);
 }
