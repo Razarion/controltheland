@@ -13,12 +13,15 @@
 
 package com.btxtech.game.wicket.pages.mgmt.condition;
 
+import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemIdComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemIdPositionComparisonConfig;
+import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import com.btxtech.game.wicket.uiservices.RectanglePanel;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
 
 /**
  * User: beat
@@ -27,8 +30,26 @@ import org.apache.wicket.model.CompoundPropertyModel;
  */
 public class SyncItemIdComparisonConfigPanel extends Panel {
 
-    public SyncItemIdComparisonConfigPanel(String id, DbSyncItemIdComparisonConfig idComparisonConfig) {
-        super(id, new CompoundPropertyModel<DbSyncItemIdComparisonConfig>(idComparisonConfig));
+    public SyncItemIdComparisonConfigPanel(String id) {
+        super(id);
+        setDefaultModel(new CompoundPropertyModel<DbSyncItemIdComparisonConfig>(new IModel<DbSyncItemIdComparisonConfig>() {
+
+            @Override
+            public DbSyncItemIdComparisonConfig getObject() {
+                // TODO Why does not wicket do this?
+                DbConditionConfig dbConditionConfig = (DbConditionConfig) getParent().getDefaultModelObject();
+                return (DbSyncItemIdComparisonConfig) dbConditionConfig.getDbAbstractComparisonConfig();
+            }
+
+            @Override
+            public void setObject(DbSyncItemIdComparisonConfig object) {
+                // Ignore
+            }
+
+            @Override
+            public void detach() {
+            }
+        }));
         add(new TextField("syncItemIdsString"));
     }
 }

@@ -48,13 +48,12 @@ public class StepEditor extends WebPage {
     @SpringBean
     private TutorialService tutorialService;
     private Class createChoice = DbHintConfig.ALL_HINTS[0];
-    private DbStepConfig dbStepConfig;
 
     public StepEditor(final int dbStepConfigId) {
         add(new FeedbackPanel("msgs"));
 
-        Form<DbStepConfig> form = new Form<DbStepConfig>("stepForm", new CompoundPropertyModel<DbStepConfig>(new IModel<DbStepConfig>() {
-
+        final Form<DbStepConfig> form = new Form<DbStepConfig>("stepForm", new CompoundPropertyModel<DbStepConfig>(new IModel<DbStepConfig>() {
+            private DbStepConfig dbStepConfig;
 
             @Override
             public DbStepConfig getObject() {
@@ -80,7 +79,7 @@ public class StepEditor extends WebPage {
         new CrudTableHelper<DbHintConfig>("hints", null, "createHint", false, form) {
             @Override
             protected CrudServiceHelper<DbHintConfig> getCrudServiceHelper() {
-                return dbStepConfig.getHintConfigCrudServiceHelper();
+                return ((DbStepConfig) form.getDefaultModelObject()).getHintConfigCrudServiceHelper();
             }
 
             @Override
@@ -131,7 +130,7 @@ public class StepEditor extends WebPage {
 
             @Override
             public void onSubmit() {
-                tutorialService.saveDbStepConfig(dbStepConfig);
+                tutorialService.saveDbStepConfig((DbStepConfig) form.getDefaultModelObject());
             }
         });
         form.add(new Button("back") {

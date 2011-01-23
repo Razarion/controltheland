@@ -33,10 +33,10 @@ import org.apache.wicket.markup.repeater.data.DataView;
  */
 public abstract class CrudTableHelper<T extends CrudChild> implements Serializable {
     public static final String NAME = "name";
-    private ListProvider<T> provider;
+    private CrudTableListProvider<T> provider;
 
     public CrudTableHelper(String tableId, String saveId, String createId, final boolean showEdit, WebMarkupContainer markupContainer) {
-        provider = new ListProvider<T>() {
+        provider = new CrudTableListProvider<T>() {
             @Override
             protected List<T> createList() {
                 Collection<T> collection = getCrudServiceHelper().readDbChildren();

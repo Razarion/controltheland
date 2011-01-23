@@ -13,6 +13,8 @@
 
 package com.btxtech.game.services.common;
 
+import java.io.Serializable;
+
 /**
  * User: beat
  * Date: 24.07.2010
@@ -26,4 +28,6 @@ public interface CrudChild<T> {
     void init();
 
     void setParent(T t);
+
+    Serializable getId();
 }

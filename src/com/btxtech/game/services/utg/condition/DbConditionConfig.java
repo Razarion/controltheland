@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.item.ItemService;
 import java.io.Serializable;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -35,7 +36,7 @@ public class DbConditionConfig implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private DbAbstractComparisonConfig dbAbstractComparisonConfig; // DELETE_ORPHAN does not work
     private ConditionTrigger conditionTrigger;

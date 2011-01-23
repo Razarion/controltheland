@@ -39,6 +39,10 @@ public class DbComparisonItemCount implements CrudChild<DbSyncItemTypeComparison
     private DbItemType itemType;
     private int count;
 
+    public Integer getId() {
+        return id;
+    }
+
     public DbItemType getItemType() {
         return itemType;
     }

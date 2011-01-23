@@ -86,7 +86,6 @@ public class TutorialServiceImpl implements TutorialService, ResourceHintManager
             tutorialConfigMap.clear();
             for (DbAbstractLevel dbAbstractLevel : dbAbstractLevels) {
                 if (dbAbstractLevel instanceof DbSimulationLevel) {
-                    //hibernateTemplate.load(dbAbstractLevel, dbAbstractLevel.getId());
                     DbTutorialConfig dbTutorialConfig = ((DbSimulationLevel) dbAbstractLevel).getDbTutorialConfig();
                     if (dbTutorialConfig == null) {
                         log.warn("No DbTutorialConfig for level: " + dbAbstractLevel);
@@ -136,6 +135,7 @@ public class TutorialServiceImpl implements TutorialService, ResourceHintManager
     }
 
     @Override
+    @Transactional
     public void saveDbStepConfig(DbStepConfig dbStepConfig) {
         hibernateTemplate.update(dbStepConfig);
     }

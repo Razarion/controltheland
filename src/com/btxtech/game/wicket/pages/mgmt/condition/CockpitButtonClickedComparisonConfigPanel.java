@@ -15,9 +15,12 @@ package com.btxtech.game.wicket.pages.mgmt.condition;
 
 import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
 import com.btxtech.game.services.utg.condition.DbCockpitButtonClickedComparisonConfig;
+import com.btxtech.game.services.utg.condition.DbConditionConfig;
+import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
 
 /**
  * User: beat
@@ -26,8 +29,27 @@ import org.apache.wicket.model.CompoundPropertyModel;
  */
 public class CockpitButtonClickedComparisonConfigPanel extends Panel {
 
-    public CockpitButtonClickedComparisonConfigPanel(String id, DbCockpitButtonClickedComparisonConfig clickedComparisonConfig) {
-        super(id, new CompoundPropertyModel<DbCockpitButtonClickedComparisonConfig>(clickedComparisonConfig));
+    public CockpitButtonClickedComparisonConfigPanel(String id) {
+        super(id);
+        setDefaultModel(new CompoundPropertyModel<DbCockpitButtonClickedComparisonConfig>(new IModel<DbCockpitButtonClickedComparisonConfig>() {
+
+            @Override
+            public DbCockpitButtonClickedComparisonConfig getObject() {
+                // TODO Why does not wicket do this?
+                DbConditionConfig dbConditionConfig = (DbConditionConfig) getParent().getDefaultModelObject();
+                return (DbCockpitButtonClickedComparisonConfig) dbConditionConfig.getDbAbstractComparisonConfig();
+            }
+
+            @Override
+            public void setObject(DbCockpitButtonClickedComparisonConfig object) {
+                // Ignore
+            }
+
+            @Override
+            public void detach() {
+            }
+        }));
+
         add(new DropDownChoice<CockpitWidgetEnum>("cockpitWidgetEnum", CockpitWidgetEnum.getButtons()));
     }
 }

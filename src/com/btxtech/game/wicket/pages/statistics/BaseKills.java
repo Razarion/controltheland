@@ -40,7 +40,6 @@ public class BaseKills extends Panel {
             protected void populateItem(Item<BaseStatisticsDTO> baseItem) {
                 baseItem.add(new Label("rank", baseItem.getModelObject().getRankAsString()));
                 baseItem.add(new Label("base", baseItem.getModelObject().getBaseName()));
-                baseItem.add(new Label("userName", baseItem.getModelObject().getUserName()));
                 baseItem.add(new Label("kills", baseItem.getModelObject().getData()));
                 baseItem.add(ColorField.create("color", baseItem.getModelObject().getColor()));
             }

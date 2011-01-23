@@ -40,7 +40,7 @@ import org.hibernate.annotations.Cascade;
 @Entity
 @DiscriminatorValue("ITEM_TYPE")
 public class DbSyncItemTypeComparisonConfig extends DbAbstractComparisonConfig implements CrudParent {
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "dbSyncItemTypeComparisonConfig")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "dbSyncItemTypeComparisonConfig")
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private Set<DbComparisonItemCount> dbComparisonItemCounts;
     @Transient

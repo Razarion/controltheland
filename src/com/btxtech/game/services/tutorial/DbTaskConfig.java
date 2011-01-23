@@ -100,6 +100,10 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
     @Transient
     private CrudServiceHelper<DbStepConfig> stepConfigCrudHelper;
 
+    public Integer getId() {
+        return id;
+    }
+
     @Override
     public String getName() {
         return name;
