@@ -36,7 +36,6 @@ import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserLevelStatus;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
-import com.btxtech.game.services.utg.condition.DbComparisonItemCount;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import java.sql.SQLException;
@@ -280,22 +279,24 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     @Override
     @Transactional
     public void updateDbConditionConfig(DbConditionConfig dbConditionConfig) {
-        hibernateTemplate.update(dbConditionConfig);
+        hibernateTemplate.saveOrUpdate(dbConditionConfig);
     }
 
     @Override
     @Transactional
-    public void createDbComparisonItemCount(int dbSyncItemTypeComparisonConfigId) {
-        DbSyncItemTypeComparisonConfig dbSyncItemTypeComparisonConfig = (DbSyncItemTypeComparisonConfig) getDbAbstractComparisonConfig(dbSyncItemTypeComparisonConfigId);
-        DbComparisonItemCount dbComparisonItemCount = new DbComparisonItemCount();
-        dbComparisonItemCount.setParent(dbSyncItemTypeComparisonConfig);
-        dbComparisonItemCount.init();
-        hibernateTemplate.save(dbComparisonItemCount);
+    public void createDbComparisonItemCount(DbSyncItemTypeComparisonConfig dbSyncItemTypeComparisonConfigId) {
+        dbSyncItemTypeComparisonConfigId.getCrudDbComparisonItemCount().createDbChild();
+        hibernateTemplate.save(dbSyncItemTypeComparisonConfigId);
     }
 
     @Override
     public DbAbstractComparisonConfig getDbAbstractComparisonConfig(int dbAbstractComparisonConfigId) {
         return (DbAbstractComparisonConfig) hibernateTemplate.get(DbAbstractComparisonConfig.class, dbAbstractComparisonConfigId);
+    }
+
+    @Override
+    public DbSyncItemTypeComparisonConfig getDbSyncItemTypeComparisonConfig(int dbSyncItemTypeComparisonConfigId) {
+        return (DbSyncItemTypeComparisonConfig) hibernateTemplate.get(DbSyncItemTypeComparisonConfig.class, dbSyncItemTypeComparisonConfigId);
     }
 
     @Override

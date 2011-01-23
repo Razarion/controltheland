@@ -45,6 +45,10 @@ public class DbBotItemCount implements CrudChild<DbBotConfig>, Serializable {
     public DbBotItemCount() {
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     public DbBaseItemType getBaseItemType() {
         return baseItemType;
     }

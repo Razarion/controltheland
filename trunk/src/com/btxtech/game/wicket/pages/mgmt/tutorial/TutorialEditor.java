@@ -51,7 +51,7 @@ public class TutorialEditor extends WebPage {
     public TutorialEditor(final DbTutorialConfig dbTutorialConfig) {
         add(new FeedbackPanel("msgs"));
 
-        sessionFactory.getCurrentSession().load(dbTutorialConfig, dbTutorialConfig.getId()); // TODO should not be in the presentation layer
+//        sessionFactory.getCurrentSession().load(dbTutorialConfig, dbTutorialConfig.getId()); // TODO should not be in the presentation layer
 
         Form<DbTutorialConfig> form = new Form<DbTutorialConfig>("tutorialForm", new CompoundPropertyModel<DbTutorialConfig>(dbTutorialConfig));
         add(form);

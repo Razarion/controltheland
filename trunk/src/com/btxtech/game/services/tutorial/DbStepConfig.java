@@ -45,7 +45,7 @@ import org.hibernate.annotations.Cascade;
  * Time: 19:12:10
  */
 @Entity(name = "TUTORIAL_STEP_CONFIG")
-public class DbStepConfig implements CrudParent, CrudChild<DbTaskConfig> {
+public class DbStepConfig implements Serializable, CrudParent, CrudChild<DbTaskConfig> {
     @Id
     @GeneratedValue
     private Integer id;
@@ -53,9 +53,9 @@ public class DbStepConfig implements CrudParent, CrudChild<DbTaskConfig> {
     @ManyToOne(optional = false)
     @JoinColumn(name = "dbTaskConfig", insertable = false, updatable = false, nullable = false)
     private DbTaskConfig dbTaskConfig;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbConditionConfig conditionConfig;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "dbStepConfig", nullable = false)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private Set<DbHintConfig> dbHintConfigs;
@@ -119,7 +119,7 @@ public class DbStepConfig implements CrudParent, CrudChild<DbTaskConfig> {
 
     @Override
     public String toString() {
-        return "DbStepConfig: " + name + " id: " + id;
+        return "DbStepConfig: '" + name + "' id: " + id;
     }
 
     public StepConfig createStepConfig(ResourceHintManager resourceHintManager, ItemService itemService) {

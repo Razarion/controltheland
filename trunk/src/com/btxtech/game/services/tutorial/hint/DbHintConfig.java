@@ -52,6 +52,10 @@ abstract public class DbHintConfig implements CrudChild<DbStepConfig>, Serializa
     private DbStepConfig parent;
     private boolean closeOnTaskEnd;
 
+    public Integer getId() {
+        return id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

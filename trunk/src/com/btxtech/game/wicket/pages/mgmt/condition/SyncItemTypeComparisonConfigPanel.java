@@ -14,21 +14,20 @@
 package com.btxtech.game.wicket.pages.mgmt.condition;
 
 import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.condition.DbComparisonItemCount;
+import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
-import com.btxtech.game.wicket.pages.mgmt.BaseItemTypeEditor;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.CrudTableHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.Collection;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -40,9 +39,27 @@ public class SyncItemTypeComparisonConfigPanel extends Panel {
     @SpringBean
     private UserGuidanceService userGuidanceService;
 
-    public SyncItemTypeComparisonConfigPanel(String id, DbSyncItemTypeComparisonConfig dbSyncItemTypeComparisonConfig) {
-        super(id, new CompoundPropertyModel<DbSyncItemTypeComparisonConfig>(dbSyncItemTypeComparisonConfig));
-        final int dbSyncItemTypeComparisonConfigId = dbSyncItemTypeComparisonConfig.getId();
+    public SyncItemTypeComparisonConfigPanel(String id) {
+        super(id);
+        setDefaultModel(new CompoundPropertyModel<DbSyncItemTypeComparisonConfig>(new IModel<DbSyncItemTypeComparisonConfig>() {
+
+            @Override
+            public DbSyncItemTypeComparisonConfig getObject() {
+                // TODO Why does not wicket do this?
+                DbConditionConfig dbConditionConfig = (DbConditionConfig) getParent().getDefaultModelObject();
+                return (DbSyncItemTypeComparisonConfig) dbConditionConfig.getDbAbstractComparisonConfig();
+            }
+
+            @Override
+            public void setObject(DbSyncItemTypeComparisonConfig object) {
+                // Ignore
+            }
+
+            @Override
+            public void detach() {
+            }
+        }));
+
         new CrudTableHelper<DbComparisonItemCount>("itemCounts", null, "createItemCount", false, this) {
 
             @Override
@@ -53,7 +70,7 @@ public class SyncItemTypeComparisonConfigPanel extends Panel {
 
             @Override
             protected CrudServiceHelper<DbComparisonItemCount> getCrudServiceHelper() {
-                return ((DbSyncItemTypeComparisonConfig)getDefaultModelObject()).getCrudDbComparisonItemCount();
+                return ((DbSyncItemTypeComparisonConfig) getDefaultModelObject()).getCrudDbComparisonItemCount();
             }
 
             @Override
@@ -62,7 +79,7 @@ public class SyncItemTypeComparisonConfigPanel extends Panel {
 
                     @Override
                     public void onSubmit() {
-                        userGuidanceService.createDbComparisonItemCount(dbSyncItemTypeComparisonConfigId);
+                         userGuidanceService.createDbComparisonItemCount((DbSyncItemTypeComparisonConfig)SyncItemTypeComparisonConfigPanel.this.getDefaultModelObject());
                     }
                 });
             }

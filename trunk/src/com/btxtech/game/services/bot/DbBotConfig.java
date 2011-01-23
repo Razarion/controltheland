@@ -84,6 +84,10 @@ public class DbBotConfig implements CrudChild, Serializable, CrudParent {
     @Transient
     private CrudServiceHelper<DbBotItemCount> defenceCrudServiceHelper;
 
+    public Integer getId() {
+        return id;
+    }
+
     public int getActionDelay() {
         return actionDelay;
     }

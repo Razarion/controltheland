@@ -53,6 +53,10 @@ public class DbTerrainImagePosition implements Serializable, CrudChild<DbTerrain
         this.dbTerrainImage = dbTerrainImage;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     public int getTileX() {
         return tileX;
     }

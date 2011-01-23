@@ -185,13 +185,13 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
         } else {
             DbAbstractComparisonConfig config = dbConditionConfig.getDbAbstractComparisonConfig();
             if (config instanceof DbSyncItemTypeComparisonConfig) {
-                addOrReplace(new SyncItemTypeComparisonConfigPanel("dbAbstractComparisonConfig", (DbSyncItemTypeComparisonConfig) config));
+                addOrReplace(new SyncItemTypeComparisonConfigPanel("dbAbstractComparisonConfig"));
             } else if (config instanceof DbCockpitButtonClickedComparisonConfig) {
-                addOrReplace(new CockpitButtonClickedComparisonConfigPanel("dbAbstractComparisonConfig", (DbCockpitButtonClickedComparisonConfig) config));
+                addOrReplace(new CockpitButtonClickedComparisonConfigPanel("dbAbstractComparisonConfig"));
             } else if (config instanceof DbSyncItemIdComparisonConfig) {
-                addOrReplace(new SyncItemIdComparisonConfigPanel("dbAbstractComparisonConfig", (DbSyncItemIdComparisonConfig) config));
+                addOrReplace(new SyncItemIdComparisonConfigPanel("dbAbstractComparisonConfig"));
             } else if (config instanceof DbSyncItemIdPositionComparisonConfig) {
-                addOrReplace(new SyncItemIdPositionComparisonConfigPanel("dbAbstractComparisonConfig", (DbSyncItemIdPositionComparisonConfig) config));
+                addOrReplace(new SyncItemIdPositionComparisonConfigPanel("dbAbstractComparisonConfig"));
             } else {
                 throw new IllegalArgumentException("No panel for " + config);
             }

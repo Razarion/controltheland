@@ -58,6 +58,10 @@ public class DbSurfaceRect implements CrudChild<DbTerrainSetting>, Serializable 
 
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     public Rectangle getRectangle() {
         return new Rectangle(tileX, tileY, tileWidth, tileHeight);
     }

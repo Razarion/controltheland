@@ -16,6 +16,8 @@ package com.btxtech.game.wicket.pages.mgmt.condition;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbItemType;
+import com.btxtech.game.services.utg.condition.DbConditionConfig;
+import com.btxtech.game.services.utg.condition.DbSyncItemIdComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemIdPositionComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import com.btxtech.game.wicket.uiservices.RectanglePanel;
@@ -34,8 +36,26 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  */
 public class SyncItemIdPositionComparisonConfigPanel extends Panel {
 
-    public SyncItemIdPositionComparisonConfigPanel(String id, DbSyncItemIdPositionComparisonConfig dbSyncItemIdPositionComparisonConfig) {
-        super(id, new CompoundPropertyModel<DbSyncItemIdPositionComparisonConfig>(dbSyncItemIdPositionComparisonConfig));
+    public SyncItemIdPositionComparisonConfigPanel(String id) {
+        super(id);
+        setDefaultModel(new CompoundPropertyModel<DbSyncItemIdPositionComparisonConfig>(new IModel<DbSyncItemIdPositionComparisonConfig>() {
+
+            @Override
+            public DbSyncItemIdPositionComparisonConfig getObject() {
+                // TODO Why does not wicket do this?
+                DbConditionConfig dbConditionConfig = (DbConditionConfig) getParent().getDefaultModelObject();
+                return (DbSyncItemIdPositionComparisonConfig) dbConditionConfig.getDbAbstractComparisonConfig();
+            }
+
+            @Override
+            public void setObject(DbSyncItemIdPositionComparisonConfig object) {
+                // Ignore
+            }
+
+            @Override
+            public void detach() {
+            }
+        }));
         add(new TextField("syncItemId"));
         add(new RectanglePanel("region"));
     }

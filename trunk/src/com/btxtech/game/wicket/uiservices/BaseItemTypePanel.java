@@ -13,12 +13,8 @@
 
 package com.btxtech.game.wicket.uiservices;
 
-import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.wicket.pages.mgmt.DbLevelEditor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -32,7 +28,6 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 public class BaseItemTypePanel extends Panel {
     @SpringBean
     private ItemService itemService;
-    private Log log = LogFactory.getLog(DbLevelEditor.class);
 
     public BaseItemTypePanel(String id) {
         super(id);
