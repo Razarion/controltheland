@@ -413,4 +413,9 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         return result;
     }
 
+    @Override
+    @Transactional
+    public void saveDbTerrainSetting(List<DbTerrainSetting> dbTerrainSettings) {
+       dbTerrainSettingCrudServiceHelper.updateDbChildren(dbTerrainSettings); 
+    }
 }
