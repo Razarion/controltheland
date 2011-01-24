@@ -125,8 +125,29 @@ public class RectanglePanel extends Panel implements IFormModelUpdateListener {
 
     @Override
     public void updateModel() {
-        if (x != null && y != null && endX != null && endY != null) {
-            setDefaultModelObject(new Rectangle(x, y, endX, endY));
+        if (x == null && y == null && endX == null && endY == null) {
+            return;
         }
+        Rectangle rectangle;
+        if (getDefaultModelObject() != null) {
+            rectangle = ((Rectangle) getDefaultModelObject()).copy();
+        } else {
+            rectangle = new Rectangle(0, 0, 0, 0);
+        }
+
+        if (x != null) {
+            rectangle.setX(x);
+        }
+        if (y != null) {
+            rectangle.setY(y);
+        }
+        if (endX != null) {
+            rectangle.setEndX(endX);
+        }
+        if (endY != null) {
+            rectangle.setEndY(endY);
+        }
+
+        setDefaultModelObject(rectangle);
     }
 }
