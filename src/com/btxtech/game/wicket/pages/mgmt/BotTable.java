@@ -16,22 +16,11 @@ package com.btxtech.game.wicket.pages.mgmt;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.tutorial.DbTutorialConfig;
-import com.btxtech.game.services.user.User;
-import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.wicket.pages.mgmt.tutorial.TutorialEditor;
 import com.btxtech.game.wicket.uiservices.CrudTableHelper;
-import com.btxtech.game.wicket.uiservices.ListProvider;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -50,7 +39,7 @@ public class BotTable extends WebPage {
         add(form);
 
 
-         new CrudTableHelper<DbBotConfig>("bots", "save", "create", true, form) {
+         new CrudTableHelper<DbBotConfig>("bots", "save", "create", true, form, false) {
 
             @Override
             protected CrudServiceHelper<DbBotConfig> getCrudServiceHelper() {

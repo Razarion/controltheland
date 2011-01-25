@@ -28,7 +28,6 @@ import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
-import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -48,12 +47,30 @@ public class TutorialEditor extends WebPage {
     private SessionFactory sessionFactory;
     private Log log = LogFactory.getLog(TutorialEditor.class);
 
-    public TutorialEditor(final DbTutorialConfig dbTutorialConfig) {
+    public TutorialEditor(final int dbTutorialConfigId) {
         add(new FeedbackPanel("msgs"));
 
-//        sessionFactory.getCurrentSession().load(dbTutorialConfig, dbTutorialConfig.getId()); // TODO should not be in the presentation layer
+        final Form<DbTutorialConfig> form = new Form<DbTutorialConfig>("tutorialForm", new CompoundPropertyModel<DbTutorialConfig>(new IModel<DbTutorialConfig>() {
+            private DbTutorialConfig dbTaskConfig;
 
-        Form<DbTutorialConfig> form = new Form<DbTutorialConfig>("tutorialForm", new CompoundPropertyModel<DbTutorialConfig>(dbTutorialConfig));
+            @Override
+            public DbTutorialConfig getObject() {
+                if (dbTaskConfig == null) {
+                    dbTaskConfig = tutorialService.getDbTutorialConfig(dbTutorialConfigId);
+                }
+                return dbTaskConfig;
+            }
+
+            @Override
+            public void setObject(DbTutorialConfig object) {
+                // Ignore
+            }
+
+            @Override
+            public void detach() {
+                dbTaskConfig = null;
+            }
+        }));
         add(form);
 
         form.add(new TextField<Integer>("ownBaseId"));
@@ -70,6 +87,7 @@ public class TutorialEditor extends WebPage {
         form.add(new TextField<Integer>("dbTerrainSetting", new IModel<Integer>() {
             @Override
             public Integer getObject() {
+                DbTutorialConfig dbTutorialConfig = (DbTutorialConfig) form.getDefaultModelObject();
                 if (dbTutorialConfig.getDbTerrainSetting() != null) {
                     return dbTutorialConfig.getDbTerrainSetting().getId();
                 } else {
@@ -81,7 +99,7 @@ public class TutorialEditor extends WebPage {
             public void setObject(Integer id) {
                 try {
                     DbTerrainSetting dbTerrainSetting = terrainService.getDbTerrainSettingCrudServiceHelper().readDbChild(id);
-                    dbTutorialConfig.setDbTerrainSetting(dbTerrainSetting);
+                    ((DbTutorialConfig) form.getDefaultModelObject()).setDbTerrainSetting(dbTerrainSetting);
                 } catch (Throwable t) {
                     log.error("", t);
                     error(t.getMessage());
@@ -94,33 +112,16 @@ public class TutorialEditor extends WebPage {
             }
         }, Integer.class));
 
-        new CrudTableHelper<DbTaskConfig>("taskTable", null, "createTask", true, form) {
+        new CrudTableHelper<DbTaskConfig>("taskTable", null, "createTask", true, form, true) {
 
             @Override
             protected CrudServiceHelper<DbTaskConfig> getCrudServiceHelper() {
-                return dbTutorialConfig.getCrudServiceHelper();
-            }
-
-            @Override
-            protected void extendedPopulateItem(final Item<DbTaskConfig> dbTaskConfigItem) {
-                super.extendedPopulateItem(dbTaskConfigItem);
-                dbTaskConfigItem.add(new Button("up") {
-                    @Override
-                    public void onSubmit() {
-                        dbTutorialConfig.moveTaskUp(dbTaskConfigItem.getModelObject());
-                    }
-                });
-                dbTaskConfigItem.add(new Button("down") {
-                    @Override
-                    public void onSubmit() {
-                        dbTutorialConfig.moveTaskDown(dbTaskConfigItem.getModelObject());
-                    }
-                });
+                return ((DbTutorialConfig) form.getDefaultModelObject()).getCrudServiceHelper();
             }
 
             @Override
             protected void onEditSubmit(DbTaskConfig dbTaskConfig) {
-                setResponsePage(new TaskEditor(dbTutorialConfig, dbTaskConfig));
+                setResponsePage(new TaskEditor(((DbTutorialConfig) form.getDefaultModelObject()).getId()));
             }
         };
 
@@ -128,7 +129,7 @@ public class TutorialEditor extends WebPage {
 
             @Override
             public void onSubmit() {
-                tutorialService.saveTutorial(dbTutorialConfig);
+                tutorialService.saveTutorial((DbTutorialConfig) getDefaultModelObject());
             }
         });
         form.add(new Button("back") {

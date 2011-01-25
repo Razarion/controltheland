@@ -40,7 +40,7 @@ public class TutorialTable extends WebPage {
         Form form = new Form("tutorialForm");
         add(form);
 
-        new CrudTableHelper<DbTutorialConfig>("tutorialTable", "save", "create", true, form) {
+        new CrudTableHelper<DbTutorialConfig>("tutorialTable", "save", "create", true, form, false) {
 
             @Override
             protected CrudServiceHelper<DbTutorialConfig> getCrudServiceHelper() {
@@ -49,7 +49,7 @@ public class TutorialTable extends WebPage {
 
             @Override
             protected void onEditSubmit(DbTutorialConfig dbTutorialConfig) {
-                setResponsePage(new TutorialEditor(dbTutorialConfig));
+                setResponsePage(new TutorialEditor(dbTutorialConfig.getId()));
             }
 
             @Override

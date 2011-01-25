@@ -46,7 +46,7 @@ public class TerrainSettingsTable extends WebPage {
         Form form = new Form("from");
         add(form);
 
-        new CrudTableHelper<DbTerrainSetting>("terrainSettingTable", "saveTerrainSetting", "createTerrainSetting", false, form) {
+        new CrudTableHelper<DbTerrainSetting>("terrainSettingTable", "saveTerrainSetting", "createTerrainSetting", false, form, false) {
 
             @Override
             protected CrudServiceHelper<DbTerrainSetting> getCrudServiceHelper() {

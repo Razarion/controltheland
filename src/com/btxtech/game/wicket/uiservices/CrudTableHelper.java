@@ -15,6 +15,7 @@ package com.btxtech.game.wicket.uiservices;
 
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.tutorial.DbTaskConfig;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,7 +36,7 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
     public static final String NAME = "name";
     private CrudTableListProvider<T> provider;
 
-    public CrudTableHelper(String tableId, String saveId, String createId, final boolean showEdit, WebMarkupContainer markupContainer) {
+    public CrudTableHelper(String tableId, String saveId, String createId, final boolean showEdit, WebMarkupContainer markupContainer, final boolean showOrderButtons) {
         provider = new CrudTableListProvider<T>() {
             @Override
             protected List<T> createList() {
@@ -57,6 +58,31 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
                         @Override
                         public void onSubmit() {
                             onEditSubmit(item.getModelObject());
+                        }
+                    });
+                }
+
+                if(showOrderButtons) {
+                    item.add(new Button("up") {
+                        @Override
+                        public void onSubmit() {
+                            moveChildUp(item);
+                        }
+
+                        @Override
+                        public boolean isVisible() {
+                            return canMoveUp(item);
+                        }
+                    });
+                    item.add(new Button("down") {
+                        @Override
+                        public void onSubmit() {
+                            moveChildDown(item);
+                        }
+
+                        @Override
+                        public boolean isVisible() {
+                            return canMoveDown(item);
                         }
                     });
                 }
@@ -126,6 +152,28 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
     public void swapRow(int i, int j) {
         Collections.swap(provider.getLastModifiedList(), i, j);
         getCrudServiceHelper().updateDbChildren(provider.getLastModifiedList());
+    }
+
+    public void moveChildUp(Item<T> item) {
+        if (item.getIndex() < 1) {
+            return;
+        }
+        swapRow(item.getIndex(), item.getIndex() - 1);
+    }
+
+    public void moveChildDown(Item<T> item) {
+        if (item.getIndex() + 1 < rowCount()) {
+            return;
+        }
+        swapRow(item.getIndex(), item.getIndex() + 1);
+    }
+
+    public boolean canMoveUp(Item<T> item) {
+        return item.getIndex() > 0;
+    }
+
+    public boolean canMoveDown(Item<T> item) {
+        return item.getIndex() + 1 < rowCount();
     }
 
     public int rowCount() {
