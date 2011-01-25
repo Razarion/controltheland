@@ -37,4 +37,10 @@ public interface TutorialService {
     DbStepConfig getDbStepConfig(int dbStepConfigId);
 
     void saveDbStepConfig(DbStepConfig dbStepConfig);
+
+    DbTaskConfig getDbTaskConfig(int dbTaskConfigId);
+
+    DbTutorialConfig getDbTutorialConfig(int dbTutorialConfigId);
+
+    void saveDbTaskConfig(DbTaskConfig dbTaskConfig);
 }

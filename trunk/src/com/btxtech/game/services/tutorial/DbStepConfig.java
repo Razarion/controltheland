@@ -50,7 +50,7 @@ public class DbStepConfig implements Serializable, CrudParent, CrudChild<DbTaskC
     @GeneratedValue
     private Integer id;
     private String name;
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "dbTaskConfig", insertable = false, updatable = false, nullable = false)
     private DbTaskConfig dbTaskConfig;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

@@ -20,7 +20,6 @@ import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.tutorial.DbItemTypeAndPosition;
 import com.btxtech.game.services.tutorial.DbStepConfig;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
-import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.wicket.pages.mgmt.ItemsUtil;
 import com.btxtech.game.wicket.uiservices.CrudTableHelper;
@@ -53,12 +52,32 @@ public class TaskEditor extends WebPage {
     private Log log = LogFactory.getLog(TaskEditor.class);
     private Collection<DbBaseItemType> itemTypes;
 
-    public TaskEditor(final DbTutorialConfig dbTutorialConfig, final DbTaskConfig dbTaskConfig) {
+    public TaskEditor(final int dbTaskConfigId) {
         itemTypes = itemService.getDbBaseItemTypes();
 
         add(new FeedbackPanel("msgs"));
 
-        Form<DbTaskConfig> form = new Form<DbTaskConfig>("taskForm", new CompoundPropertyModel<DbTaskConfig>(dbTaskConfig));
+        final Form<DbTaskConfig> form = new Form<DbTaskConfig>("taskForm", new CompoundPropertyModel<DbTaskConfig>(new IModel<DbTaskConfig>() {
+            private DbTaskConfig dbTaskConfig;
+
+            @Override
+            public DbTaskConfig getObject() {
+                if (dbTaskConfig == null) {
+                    dbTaskConfig = tutorialService.getDbTaskConfig(dbTaskConfigId);
+                }
+                return dbTaskConfig;
+            }
+
+            @Override
+            public void setObject(DbTaskConfig object) {
+                // Ignore
+            }
+
+            @Override
+            public void detach() {
+                dbTaskConfig = null;
+            }
+        }));
         add(form);
 
         form.add(new CheckBox("clearGame"));
@@ -72,12 +91,12 @@ public class TaskEditor extends WebPage {
 
             @Override
             public String getObject() {
-                return ItemsUtil.itemTypesToString(dbTaskConfig.getAllowedItems());
+                return ItemsUtil.itemTypesToString(((DbTaskConfig)form.getDefaultModelObject()).getAllowedItems());
             }
 
             @Override
             public void setObject(String s) {
-                dbTaskConfig.setAllowedItems(ItemsUtil.stringToItemTypes(s, itemTypes));
+                ((DbTaskConfig)form.getDefaultModelObject()).setAllowedItems(ItemsUtil.stringToItemTypes(s, itemTypes));
             }
 
             @Override
@@ -97,8 +116,8 @@ public class TaskEditor extends WebPage {
 
             @Override
             public void setObject(FileUpload fileUpload) {
-                dbTaskConfig.setFinishImageData(fileUpload.getBytes());
-                dbTaskConfig.setFinishedImageContentType(fileUpload.getContentType());
+                ((DbTaskConfig)form.getDefaultModelObject()).setFinishImageData(fileUpload.getBytes());
+                ((DbTaskConfig)form.getDefaultModelObject()).setFinishedImageContentType(fileUpload.getContentType());
             }
 
             @Override
@@ -108,11 +127,11 @@ public class TaskEditor extends WebPage {
         form.add(new TextField("finishImageDuration"));
 
 
-        new CrudTableHelper<DbItemTypeAndPosition>("itemTable", null, "createItem", false, form) {
+        new CrudTableHelper<DbItemTypeAndPosition>("itemTable", null, "createItem", false, form, false) {
 
             @Override
             protected CrudServiceHelper<DbItemTypeAndPosition> getCrudServiceHelper() {
-                return dbTaskConfig.getItemCrudServiceHelper();
+                return ((DbTaskConfig)form.getDefaultModelObject()).getItemCrudServiceHelper();
             }
 
             @Override
@@ -156,27 +175,10 @@ public class TaskEditor extends WebPage {
 
             }
         };
-        new CrudTableHelper<DbStepConfig>("stepTable", null, "createStep", true, form) {
+        new CrudTableHelper<DbStepConfig>("stepTable", null, "createStep", true, form, true) {
             @Override
             protected CrudServiceHelper<DbStepConfig> getCrudServiceHelper() {
-                return dbTaskConfig.getStepConfigCrudServiceHelper();
-            }
-
-            @Override
-            protected void extendedPopulateItem(final Item<DbStepConfig> dbStepConfigItem) {
-                super.extendedPopulateItem(dbStepConfigItem);
-                dbStepConfigItem.add(new Button("up") {
-                    @Override
-                    public void onSubmit() {
-                        dbTaskConfig.moveTaskUp(dbStepConfigItem.getModelObject());
-                    }
-                });
-                dbStepConfigItem.add(new Button("down") {
-                    @Override
-                    public void onSubmit() {
-                        dbTaskConfig.moveTaskDown(dbStepConfigItem.getModelObject());
-                    }
-                });
+                return ((DbTaskConfig)form.getDefaultModelObject()).getStepConfigCrudServiceHelper();
             }
 
             @Override
@@ -190,7 +192,7 @@ public class TaskEditor extends WebPage {
 
             @Override
             public void onSubmit() {
-                tutorialService.saveTutorial(dbTutorialConfig);
+                tutorialService.saveDbTaskConfig(((DbTaskConfig)form.getDefaultModelObject()));
             }
         });
         form.add(new Button("back") {

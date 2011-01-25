@@ -14,14 +14,11 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.utg.DbAbstractLevel;
 import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.services.utg.DbSimulationLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.uiservices.CrudTableHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -45,7 +42,7 @@ public class DbLevelTable extends WebPage {
         Form form = new Form("levelForm");
         add(form);
 
-        new CrudTableHelper<DbAbstractLevel>("levels", "save", null, true, form) {
+        new CrudTableHelper<DbAbstractLevel>("levels", "save", null, true, form, false) {
 
             @Override
             protected CrudServiceHelper<DbAbstractLevel> getCrudServiceHelper() {

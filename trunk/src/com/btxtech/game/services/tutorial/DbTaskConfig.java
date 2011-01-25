@@ -46,6 +46,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
@@ -63,7 +64,7 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
     private Integer id;
     private String name;
     private boolean clearGame;
-    @OneToMany(mappedBy = "dbTaskConfig", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "dbTaskConfig", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private Set<DbItemTypeAndPosition> items;
     private boolean isScrollingAllowed;
@@ -72,19 +73,19 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
     @Type(type = "index")
     @Columns(columns = {@Column(name = "xScroll"), @Column(name = "yScroll")})
     private Index scroll;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @org.hibernate.annotations.IndexColumn(name = "orderIndex", nullable = false, base = 0)
     @JoinColumn(name = "dbTaskConfig", nullable = false)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private List<DbStepConfig> stepConfigs;
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "TUTORIAL_TASK_CONFIG_ALLOWED_ITEMS",
             joinColumns = @JoinColumn(name = "factoryId"),
             inverseJoinColumns = @JoinColumn(name = "itemTypeId")
     )
     private Set<DbBaseItemType> allowedItems;
     private int accountBalance;
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "dbTutorialConfig", insertable = false, updatable = false, nullable = false)
     private DbTutorialConfig dbTutorialConfig;
     private int finishImageDuration;

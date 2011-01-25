@@ -20,7 +20,6 @@ import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.CrudTableHelper;
-import java.util.Collection;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.TextField;
@@ -60,7 +59,7 @@ public class SyncItemTypeComparisonConfigPanel extends Panel {
             }
         }));
 
-        new CrudTableHelper<DbComparisonItemCount>("itemCounts", null, "createItemCount", false, this) {
+        new CrudTableHelper<DbComparisonItemCount>("itemCounts", null, "createItemCount", false, this, false) {
 
             @Override
             protected void extendedPopulateItem(Item<DbComparisonItemCount> dbComparisonItemCountItem) {

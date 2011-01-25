@@ -59,7 +59,7 @@ public class BotEditor extends WebPage {
         form.add(new RectanglePanel("realm"));
         form.add(new TextField("realmSuperiority"));
 
-        new CrudTableHelper<DbBotItemCount>("baseFundamental", null, "createBaseFundamentalItem", false, form) {
+        new CrudTableHelper<DbBotItemCount>("baseFundamental", null, "createBaseFundamentalItem", false, form, false) {
 
             @Override
             protected CrudServiceHelper<DbBotItemCount> getCrudServiceHelper() {
@@ -103,7 +103,7 @@ public class BotEditor extends WebPage {
             }
         };
 
-        new CrudTableHelper<DbBotItemCount>("baseBuildup", null, "createBaseBuildupItem", false, form) {
+        new CrudTableHelper<DbBotItemCount>("baseBuildup", null, "createBaseBuildupItem", false, form, false) {
 
             @Override
             protected CrudServiceHelper<DbBotItemCount> getCrudServiceHelper() {
@@ -147,7 +147,7 @@ public class BotEditor extends WebPage {
             }
         };
 
-        new CrudTableHelper<DbBotItemCount>("defence", null, "createDefenceItem", false, form) {
+        new CrudTableHelper<DbBotItemCount>("defence", null, "createDefenceItem", false, form, false) {
 
             @Override
             protected CrudServiceHelper<DbBotItemCount> getCrudServiceHelper() {

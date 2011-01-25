@@ -56,7 +56,7 @@ public class UserStageTable extends WebPage {
         Form<DbBotConfig> form = new Form<DbBotConfig>("from");
         add(form);
 
-        new CrudTableHelper<DbUserStage>("userStageTable", "saveUserStage", "createUserStage", true, form) {
+        new CrudTableHelper<DbUserStage>("userStageTable", "saveUserStage", "createUserStage", true, form, false) {
 
             @Override
             protected CrudServiceHelper<DbUserStage> getCrudServiceHelper() {

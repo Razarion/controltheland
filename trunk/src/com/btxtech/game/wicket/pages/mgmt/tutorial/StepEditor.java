@@ -76,7 +76,7 @@ public class StepEditor extends WebPage {
         add(form);
 
         form.add(new ConditionConfigPanel("conditionConfig"));
-        new CrudTableHelper<DbHintConfig>("hints", null, "createHint", false, form) {
+        new CrudTableHelper<DbHintConfig>("hints", null, "createHint", false, form, false) {
             @Override
             protected CrudServiceHelper<DbHintConfig> getCrudServiceHelper() {
                 return ((DbStepConfig) form.getDefaultModelObject()).getHintConfigCrudServiceHelper();
