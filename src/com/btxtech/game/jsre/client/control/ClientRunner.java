@@ -77,7 +77,7 @@ public class ClientRunner {
             }
             if (deferredStartup.isDeferred()) {
                 deferredStartups.add(deferredStartup);
-                if (deferredStartup.isParallel()) {
+                if (deferredStartup.isBackground()) {
                     runNextTask();
                 }
             } else {
@@ -136,11 +136,15 @@ public class ClientRunner {
                 StartupScreen.getInstance().displayTaskFinished(abstractStartupTask);
             }
         } catch (Throwable t) {
-            t.printStackTrace();
+            GwtCommon.handleException(t);
         }
 
         finishedTasks.add(abstractStartupTask);
-        runNextTask();
+        if(!abstractStartupTask.isBackground()) {
+            runNextTask();
+        } else if (startupList.isEmpty()) {
+            onStartupFinish();
+        }
     }
 
     void onTaskFailed(AbstractStartupTask abstractStartupTask, String error) {

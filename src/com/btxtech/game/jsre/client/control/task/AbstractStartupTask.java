@@ -25,6 +25,7 @@ public abstract class AbstractStartupTask {
     private long startTime;
     private long duration;
     private StartupTaskEnum taskEnum;
+    private boolean isBackground = false;
 
     protected AbstractStartupTask(StartupTaskEnum taskEnum) {
         this.taskEnum = taskEnum;
@@ -36,6 +37,7 @@ public abstract class AbstractStartupTask {
         startTime = calculateStartTime();
         try {
             privateStart(deferredStartup);
+            isBackground = deferredStartup.isBackground();
         } finally {
             duration = System.currentTimeMillis() - startTime;
         }
@@ -63,5 +65,9 @@ public abstract class AbstractStartupTask {
 
     public void correctDeferredDuration() {
         duration = System.currentTimeMillis() - startTime;
+    }
+
+    public boolean isBackground() {
+        return isBackground;
     }
 }

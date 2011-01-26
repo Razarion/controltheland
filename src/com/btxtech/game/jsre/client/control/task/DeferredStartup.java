@@ -30,5 +30,7 @@ public interface DeferredStartup {
 
     void failed(String error);
 
-    void setParallel();
+    void setBackground();
+
+    boolean isBackground();
 }

@@ -23,7 +23,7 @@ import com.btxtech.game.jsre.client.control.task.DeferredStartup;
  */
 public class ClientRunnerDeferredStartupImpl implements DeferredStartup {
     private boolean isDeferred;
-    private boolean isParallel;
+    private boolean isBackground;
     private AbstractStartupTask task;
     private ClientRunner clientRunner;
 
@@ -56,16 +56,16 @@ public class ClientRunnerDeferredStartupImpl implements DeferredStartup {
     }
 
     @Override
-    public void setParallel() {
-        isParallel = true;
+    public void setBackground() {
+        isBackground = true;
     }
 
     public boolean isDeferred() {
         return isDeferred;
     }
 
-    public boolean isParallel() {
-        return isParallel;
+    @Override
+    public boolean isBackground() {
+        return isBackground;
     }
-
 }

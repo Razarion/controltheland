@@ -152,7 +152,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         }
         BaseItemType startItem = (BaseItemType) itemService.getItemType(dbRealGameLevel.getStartItemType());
         sendBaseChangedPacket(BaseChangedPacket.Type.CREATED, base.getSimpleBase());
-        connectionService.createConnection(base);
         Index startPoint = collisionService.getFreeRandomPosition(startItem, dbRealGameLevel.getStartRectangle(), dbRealGameLevel.getStartItemFreeRange());
         SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(startItem, startPoint, null, base.getSimpleBase(), 0);
         syncBaseItem.setBuildup(1.0);
@@ -166,9 +165,13 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
 
     @Override
     public void continueBase() {
-        Base base = getBase();
+        UserState userState = userService.getUserState();
+        if (userState == null) {
+            throw new IllegalStateException("No UserState available.");
+        }
+        Base base = userState.getBase();
         if (base == null) {
-            throw new IllegalStateException("User does not have any running base");
+            throw new IllegalStateException("No Base in user UserState: " + userState);
         }
         connectionService.createConnection(base);
     }

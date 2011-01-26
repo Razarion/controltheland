@@ -42,7 +42,12 @@ public class SimpleDeferredStartup implements DeferredStartup {
     }
 
     @Override
-    public void setParallel() {
+    public void setBackground() {
         // Ignore
+    }
+
+    @Override
+    public boolean isBackground() {
+        return false;
     }
 }

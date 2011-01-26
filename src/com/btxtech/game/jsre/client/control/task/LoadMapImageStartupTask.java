@@ -30,7 +30,7 @@ public class LoadMapImageStartupTask extends AbstractStartupTask {
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
         deferredStartup.setDeferred();
-        deferredStartup.setParallel();
+        deferredStartup.setBackground();
         TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(deferredStartup);
     }
 }
