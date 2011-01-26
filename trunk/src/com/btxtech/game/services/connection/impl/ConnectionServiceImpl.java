@@ -194,6 +194,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         connection = new Connection(session.getSessionId());
         connection.setBase(base);
         session.setConnection(connection);
+        log.debug("Connection established");        
         synchronized (onlineConnection) {
             onlineConnection.add(connection);
         }
@@ -213,6 +214,7 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         //}
         connection.setClosed();
         session.setConnection(null);
+        log.debug("Connection closed");
         synchronized (onlineConnection) {
             onlineConnection.remove(connection);
         }
