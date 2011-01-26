@@ -15,11 +15,9 @@ package com.btxtech.game.services.connection.impl;
 
 import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.Session;
-import com.btxtech.game.services.market.impl.UserItemTypeAccess;
-import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.BrowserDetails;
-import com.btxtech.game.services.utg.DbUserStage;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.WebCommon;
 import java.io.Serializable;
@@ -33,18 +31,22 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Date: May 31, 2009
  * Time: 8:45:09 PM
  */
+//@Component("session")
+//@Scope(value = "session", proxyMode=) // TODO use spring 3
 public class SessionImpl implements Session, Serializable {
-    private Connection connection;
     @Autowired
     private HttpServletRequest request;
     @Autowired
     UserTrackingService userTrackingService;
+    @Autowired
+    UserService userService;
     private String sessionId;
     private String cookieId;
     private String userAgent;
     private boolean javaScriptDetected = false;
     private BrowserDetails browserDetails;
     private UserState userState;
+    private Connection connection;
 
     @Override
     public Connection getConnection() {
@@ -74,6 +76,7 @@ public class SessionImpl implements Session, Serializable {
     public void destroy() {
         if (userState != null) {
             userTrackingService.onUserLoggedOut(userState);
+            userService.onSessionTimedOut(userState, sessionId);
         }
     }
 

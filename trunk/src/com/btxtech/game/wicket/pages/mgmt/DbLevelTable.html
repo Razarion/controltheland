@@ -25,6 +25,7 @@
 <form wicket:id="levelForm">
     <table cellpadding="1" cellspacing="1" border="0">
         <tr>
+            <th bgcolor="#dadada">Id</th>
             <th bgcolor="#dadada">Level</th>
             <th bgcolor="#dadada">Type</th>
             <th bgcolor="#dadada">Move Up</th>
@@ -33,6 +34,7 @@
             <th bgcolor="#dadada">Delete</th>
         </tr>
         <tr wicket:id="levels">
+            <td wicket:id="id"/>
             <td><input type="text" wicket:id="name" size="20" maxlength="500"/></td>
             <td wicket:id="displayType"></td>
             <!--td><input type="text" wicket:id="dbTutorialConfig" size="4"/></td-->

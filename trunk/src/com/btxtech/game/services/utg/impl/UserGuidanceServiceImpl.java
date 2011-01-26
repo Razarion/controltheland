@@ -136,13 +136,35 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     }
 
     @Override
+    public void promote(UserState userState, int newDbLevelId) {
+        DbAbstractLevel dbNextAbstractLevel = null;
+        for (DbAbstractLevel dbAbstractLevel : dbAbstractLevels) {
+            if(dbAbstractLevel.getId() == newDbLevelId) {
+               dbNextAbstractLevel = dbAbstractLevel;
+            }
+        }
+        if(dbNextAbstractLevel == null) {
+            throw new IllegalArgumentException("DBLevel Id is unknown: " + newDbLevelId);
+        }
+
+        promote(userState, dbNextAbstractLevel);
+    }
+
+    @Override
     public void promote(UserState userState) {
+        UserLevelStatus userLevelStatus = userState.getUserLevelStatus();
+        DbAbstractLevel dbOldAbstractLevel = userLevelStatus.getCurrentLevel();
+        DbAbstractLevel dbNextAbstractLevel = getNextDbLevel(dbOldAbstractLevel);
+
+        promote(userState, dbNextAbstractLevel);
+    }
+
+    private void promote(UserState userState, DbAbstractLevel dbNextAbstractLevel) {
         // Prepare
         UserLevelStatus userLevelStatus = userState.getUserLevelStatus();
 
-        // Get next level
         DbAbstractLevel dbOldAbstractLevel = userLevelStatus.getCurrentLevel();
-        DbAbstractLevel dbNextAbstractLevel = getNextDbLevel(dbOldAbstractLevel);
+
         userLevelStatus.setCurrentLevel(dbNextAbstractLevel);
 
         if (dbNextAbstractLevel instanceof DbRealGameLevel && ((DbRealGameLevel) dbNextAbstractLevel).isCreateRealBase()) {

@@ -14,11 +14,11 @@
 package com.btxtech.game.services.user;
 
 
+import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
+import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.services.bot.DbBotConfig;
 import java.util.List;
-import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
-import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 
 public interface UserService {
 
@@ -50,5 +50,11 @@ public interface UserService {
 
     UserState getUserState(DbBotConfig botConfig);
 
+    UserState getUserState(String sessionId);
+
     SyncBaseObject getUserState(User user);
+
+    void onSessionTimedOut(UserState userState, String sessionId);
+
+    List<UserState> getOnlineUserStates();
 }

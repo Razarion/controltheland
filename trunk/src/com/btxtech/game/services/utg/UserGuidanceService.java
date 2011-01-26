@@ -34,6 +34,8 @@ public interface UserGuidanceService {
 
     void promote(UserState userState);
 
+    void promote(UserState userState, int newDbLevelId);
+
     DbRealGameLevel getDbLevel();
 
     DbRealGameLevel getDbLevel(SimpleBase simpleBase);

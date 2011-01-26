@@ -30,6 +30,7 @@ public class UserState {
     private Base base;
     private UserLevelStatus userLevelStatus;
     private UserItemTypeAccess userItemTypeAccess;
+    private String sessionId;
 
     public boolean isRegistered() {
         return user != null;
@@ -69,5 +70,13 @@ public class UserState {
 
     public boolean isLoggedIn() {
         return loggedIn;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 }
