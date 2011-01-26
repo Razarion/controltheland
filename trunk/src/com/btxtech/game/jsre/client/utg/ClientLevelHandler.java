@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.control.ClientRunner;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
+import com.btxtech.game.jsre.client.dialogs.LevelTargetDialog;
 
 /**
  * User: beat
@@ -49,6 +50,7 @@ public class ClientLevelHandler {
         }
         Level oldLevel = this.level;
         this.level = level;
+        LevelTargetDialog.showDialog(level.getHtml());        
         if (oldLevel.isRealGame() && level.isRealGame()) {
             Cockpit.getInstance().setLevel(level.getName());
             // TODO set scope

@@ -29,7 +29,7 @@ public class Game implements EntryPoint {
         try {
             GwtCommon.setUncaughtExceptionHandler();
             isDebug = Boolean.parseBoolean(Window.Location.getParameter(DEBUG_PARAM));
-            LevelTargetDialog.showDialog(getUserStageHtml());
+            LevelTargetDialog.showDialog(getLevelHtml());
             ClientRunner.getInstance().start(getStartupSeqFromHtml());
         } catch (Throwable t) {
             GwtCommon.handleException(t);
@@ -40,7 +40,7 @@ public class Game implements EntryPoint {
         return isDebug;
     }
 
-    private String getUserStageHtml() {
+    private String getLevelHtml() {
         RootPanel div = getStartupInformation();
         return div.getElement().getInnerHTML();
     }
