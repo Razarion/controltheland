@@ -26,9 +26,13 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -52,7 +56,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserGuidanceService userGuidanceService;
     private Map<DbBotConfig, UserState> botStates = new HashMap<DbBotConfig, UserState>();
-    private Map<User, UserState> userStates = new HashMap<User, UserState>();
+    private final Collection<UserState> userStates = new ArrayList<UserState>();
+    private Log log = LogFactory.getLog(UserServiceImpl.class);
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -205,7 +210,11 @@ public class UserServiceImpl implements UserService {
     public UserState getUserState() {
         if (session.getUserState() == null) {
             UserState userState = new UserState();
+            userState.setSessionId(session.getSessionId());
             session.setUserState(userState);
+            synchronized (userStates) {
+                userStates.add(userState);
+            }
             userGuidanceService.setLevelForNewUser(userState);
         }
         return session.getUserState();
@@ -223,8 +232,40 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserState getUserState(String sessionId) {
+        synchronized (userStates) {
+            for (UserState userState : userStates) {
+                if (userState.getSessionId().equals(sessionId)) {
+                    return userState;
+                }
+            }
+        }
+        throw new IllegalArgumentException("No user state for session id:" + sessionId + " The session was may closed");
+    }
+
+    @Override
     public SyncBaseObject getUserState(User user) {
         // TODO
         return null;
+    }
+
+    @Override
+    public void onSessionTimedOut(UserState userState, String sessionId) {
+        boolean hasBeenRemoved;
+        synchronized (userStates) {
+            hasBeenRemoved = userStates.remove(userState);
+        }
+        if (hasBeenRemoved) {
+            log.error("UserState could not be found for session: " + sessionId);
+        }
+    }
+
+    @Override
+    public List<UserState> getOnlineUserStates() {
+        ArrayList<UserState> userStateCopy;
+        synchronized (userStates) {
+            userStateCopy = new ArrayList<UserState>(userStates);
+        }
+        return userStateCopy;
     }
 }

@@ -90,6 +90,7 @@ public class DbLevelTable extends WebPage {
 
             @Override
             protected void extendedPopulateItem(final Item<DbAbstractLevel> dbLevelItem) {
+                dbLevelItem.add(new Label("id"));                
                 super.extendedPopulateItem(dbLevelItem);
                 dbLevelItem.add(new Label("displayType"));
                 dbLevelItem.add(new Button("up") {
