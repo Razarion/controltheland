@@ -18,7 +18,6 @@ import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.dialogs.RegisterDialog;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
-import com.btxtech.game.jsre.client.utg.MissionTarget;
 import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
 
 /**
@@ -35,7 +34,6 @@ public class RunRealGameStartupTask extends AbstractStartupTask {
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
         Connection.getInstance().startSyncInfoPoll();
-        MissionTarget.getInstance().showMissionTargetDialog();
         RegisterDialog.showDialogRepeating();
         MapWindow.getInstance().displayVisibleItems();
         Cockpit.getInstance().updateItemLimit();

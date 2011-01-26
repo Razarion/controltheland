@@ -29,7 +29,6 @@ import com.btxtech.game.jsre.client.dialogs.SendMessageDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.client.utg.MissionTarget;
 import com.btxtech.game.jsre.common.tutorial.CockpitSpeechBubbleHintConfig;
 import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
 import com.google.gwt.dom.client.Style;
@@ -221,7 +220,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         ExtendedCustomButton mission = new ExtendedCustomButton("/images/cockpit/missionButton-up.png", "/images/cockpit/missionButton-down.png", false, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                MissionTarget.getInstance().showMissionTargetDialog();
+                // TODO MissionTarget.getInstance().showMissionTargetDialog();
             }
         });
         add(mission, MISSION_LEFT, MISSION_TOP);
