@@ -167,7 +167,9 @@ public class Connection implements AsyncCallback<Void> {
                 try {
                     handlePackets(packets);
                 } finally {
-                    timer.schedule(MIN_DELAY_BETWEEN_POLL);
+                    if (timer != null) {
+                        timer.schedule(MIN_DELAY_BETWEEN_POLL);
+                    }
                 }
             }
         });
