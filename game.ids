@@ -20,23 +20,15 @@
       <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
       <column name="abandoned" sqlType="BIT" length="1" precision="0" nullable="false" jdbcType="-7" />
       <column name="accountBalance" sqlType="DOUBLE" length="22" precision="0" nullable="false" jdbcType="8" />
-      <column name="bot" sqlType="BIT" length="1" precision="0" nullable="false" jdbcType="-7" />
+      <column name="baseId" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
       <column name="created" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
       <column name="kills" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
-      <column name="level" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
       <column name="lost" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
       <column name="startTime" sqlType="DATETIME" length="19" precision="0" nullable="true" jdbcType="93" />
       <column name="totalEarned" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
       <column name="totalSpent" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
       <column name="baseColor_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
-      <column name="user_name" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
-      <column name="baseLevelStatus_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
-      <column name="baseId" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
-      <column name="userLevelStatus_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
       <primary-key name="PRIMARY" columns="id" />
-      <foreign-key name="FKC4CC172E287A0CC1" columns="userLevelStatus_id" ref-table="backup_level_status" ref-schema="" ref-catalog="gamedb" ref-columns="id" />
-      <foreign-key name="FKC4CC172EC5CE4A81" columns="baseLevelStatus_id" ref-table="backup_level_status" ref-schema="" ref-catalog="gamedb" ref-columns="id" />
-      <foreign-key name="FKC4CC172ECCCCA23A" columns="user_name" ref-table="user" ref-schema="" ref-catalog="gamedb" ref-columns="name" />
       <foreign-key name="FKC4CC172ECF3B95F0" columns="baseColor_id" ref-table="base_color" ref-schema="" ref-catalog="gamedb" ref-columns="id" />
     </table>
     <table name="BACKUP_ENTRY" schema="" catalog="gamedb" type="TABLE">
@@ -53,33 +45,32 @@
       <column name="xPos" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
       <column name="yPos" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
       <column name="angel" sqlType="DOUBLE" length="22" precision="0" nullable="true" jdbcType="8" />
-      <column name="build" sqlType="BIT" length="1" precision="0" nullable="true" jdbcType="-7" />
+      <column name="buildup" sqlType="DOUBLE" length="22" precision="0" nullable="true" jdbcType="8" />
       <column name="buildupProgress" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
       <column name="createdChildCount" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
       <column name="followTarget" sqlType="BIT" length="1" precision="0" nullable="true" jdbcType="-7" />
       <column name="health" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="isUpgrading" sqlType="BIT" length="1" precision="0" nullable="true" jdbcType="-7" />
+      <column name="launcherBuildup" sqlType="DOUBLE" length="22" precision="0" nullable="true" jdbcType="8" />
       <column name="pathToAbsoluteDestination" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
       <column name="xPosToBeBuilt" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
       <column name="yPosToBeBuilt" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
       <column name="xPosRallyPoint" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
       <column name="yPosRallyPoint" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
       <column name="reloadProgress" sqlType="DOUBLE" length="22" precision="0" nullable="true" jdbcType="8" />
+      <column name="xUnloadPos" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="yUnloadPos" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="upgradeProgress" sqlType="DOUBLE" length="22" precision="0" nullable="true" jdbcType="8" />
       <column name="amount" sqlType="DOUBLE" length="22" precision="0" nullable="true" jdbcType="8" />
       <column name="backupEntryId" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
       <column name="itemType_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
       <column name="baseId" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
       <column name="baseTarget_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
-      <column name="resourceTarget_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
-      <column name="toBeBuilt_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
-      <column name="isUpgrading" sqlType="BIT" length="1" precision="0" nullable="true" jdbcType="-7" />
-      <column name="xUnloadPos" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
-      <column name="yUnloadPos" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
-      <column name="upgradeProgress" sqlType="DOUBLE" length="22" precision="0" nullable="true" jdbcType="8" />
       <column name="containedIn_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="resourceTarget_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
       <column name="targetContainer_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="toBeBuilt_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
       <column name="upgradingItemType_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
-      <column name="buildup" sqlType="DOUBLE" length="22" precision="0" nullable="true" jdbcType="8" />
-      <column name="launcherBuildup" sqlType="DOUBLE" length="22" precision="0" nullable="true" jdbcType="8" />
       <primary-key name="PRIMARY" columns="id" />
       <foreign-key name="FK8B25FBF8D35557AF" columns="toBeBuilt_id" ref-table="item_type" ref-schema="" ref-catalog="gamedb" ref-columns="id" />
       <foreign-key name="FK8B25FBF81E01BBFF" columns="baseTarget_id" ref-table="backup_generic_item" ref-schema="" ref-catalog="gamedb" ref-columns="id" />
@@ -96,7 +87,9 @@
       <column name="beginningKills" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
       <column name="beginningMoney" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
       <column name="currentLevel_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
+      <column name="currentAbstractLevel_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
       <primary-key name="PRIMARY" columns="id" />
+      <foreign-key name="FK8B1AB08ABCC5D0DC" columns="currentAbstractLevel_id" ref-table="guidance_level" ref-schema="" ref-catalog="gamedb" ref-columns="id" />
       <foreign-key name="FK8B1AB08A6F2DFBC" columns="currentLevel_id" ref-table="guidance_level" ref-schema="" ref-catalog="gamedb" ref-columns="id" />
     </table>
     <table name="BASE_COLOR" schema="" catalog="gamedb" type="TABLE">
@@ -135,13 +128,12 @@
     </table>
     <table name="CLIENT_LOG_ENTRY" schema="" catalog="gamedb" type="TABLE">
       <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
+      <column name="baseName" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
       <column name="clientTimeStamp" sqlType="DATETIME" length="19" precision="0" nullable="true" jdbcType="93" />
       <column name="message" sqlType="VARCHAR" length="10000" precision="0" nullable="false" jdbcType="12" />
       <column name="sessionId" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12" />
       <column name="timeStamp" sqlType="DATETIME" length="19" precision="0" nullable="false" jdbcType="93" />
       <column name="userAgent" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
-      <column name="userName" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
-      <column name="baseName" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
       <primary-key name="PRIMARY" columns="id" />
     </table>
     <table name="CMS_HOME_LAYOUT" schema="" catalog="gamedb" type="TABLE">
@@ -180,14 +172,6 @@
       <column name="bgData" sqlType="MEDIUMBLOB" length="16777215" precision="0" nullable="true" jdbcType="-4" />
       <column name="isActive" sqlType="BIT" length="1" precision="0" nullable="true" jdbcType="-7" />
       <column name="layout" sqlType="LONGTEXT" length="2147483647" precision="0" nullable="true" jdbcType="-1" />
-      <primary-key name="PRIMARY" columns="id" />
-    </table>
-    <table name="CONNECTION_STATISTICS" schema="" catalog="gamedb" type="TABLE">
-      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
-      <column name="sessionId" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12" />
-      <column name="ticksPerSecond" sqlType="DOUBLE" length="22" precision="0" nullable="false" jdbcType="8" />
-      <column name="timeStamp" sqlType="DATETIME" length="19" precision="0" nullable="false" jdbcType="93" />
-      <column name="simpleBase" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
       <primary-key name="PRIMARY" columns="id" />
     </table>
     <table name="FORUM_CATEGORY" schema="" catalog="gamedb" type="TABLE">
@@ -237,7 +221,25 @@
       <column name="TYPE" sqlType="VARCHAR" length="31" precision="0" nullable="false" jdbcType="12" />
       <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
       <column name="count" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="syncItemIdsString" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
+      <column name="cockpitWidgetEnum" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="regionX" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="regionY" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="regionWidth" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="regionHeight" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="syncItemId" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="dbItemType_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
       <primary-key name="PRIMARY" columns="id" />
+      <foreign-key name="FK86C94B50F6668753" columns="dbItemType_id" ref-table="item_type" ref-schema="" ref-catalog="gamedb" ref-columns="id" />
+    </table>
+    <table name="GUIDANCE_COMPARISON_ITEM_COUNT" schema="" catalog="gamedb" type="TABLE">
+      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
+      <column name="count" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
+      <column name="dbSyncItemTypeComparisonConfig_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
+      <column name="itemType_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <primary-key name="PRIMARY" columns="id" />
+      <foreign-key name="FK23B42D12B01662E6" columns="dbSyncItemTypeComparisonConfig_id" ref-table="guidance_comparison" ref-schema="" ref-catalog="gamedb" ref-columns="id" />
+      <foreign-key name="FK23B42D12D936AE91" columns="itemType_id" ref-table="item_type" ref-schema="" ref-catalog="gamedb" ref-columns="id" />
     </table>
     <table name="GUIDANCE_CONDITION_CONFIG" schema="" catalog="gamedb" type="TABLE">
       <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
@@ -248,33 +250,38 @@
     </table>
     <table name="GUIDANCE_LEVEL" schema="" catalog="gamedb" type="TABLE">
       <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
-      <column name="minMoney" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
-      <column name="minXp" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
-      <column name="missionTarget" sqlType="VARCHAR" length="50000" precision="0" nullable="true" jdbcType="12" />
+      <column name="html" sqlType="VARCHAR" length="50000" precision="0" nullable="true" jdbcType="12" />
       <column name="name" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
       <column name="orderIndex" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
-      <column name="tutorialTermination" sqlType="BIT" length="1" precision="0" nullable="true" jdbcType="-7" />
-      <column name="deltaKills" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
-      <column name="deltaMoney" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
-      <column name="houseSpace" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
-      <column name="itemLimit" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
-      <column name="html" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
-      <column name="realGame" sqlType="BIT" length="1" precision="0" nullable="true" jdbcType="-7" />
-      <column name="dbTutorialConfig_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
       <column name="dbConditionConfig_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="dbTutorialConfig_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="TYPE" sqlType="VARCHAR" length="31" precision="0" nullable="true" jdbcType="12" />
+      <column name="createRealBase" sqlType="BIT" length="1" precision="0" nullable="true" jdbcType="-7" />
+      <column name="deltaMoney" sqlType="DOUBLE" length="22" precision="0" nullable="true" jdbcType="8" />
+      <column name="houseSpace" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="itemSellFactor" sqlType="DOUBLE" length="22" precision="0" nullable="true" jdbcType="8" />
+      <column name="startItemFreeRange" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="startX" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="startY" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="startWidth" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="startHeight" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="startItemType_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
       <primary-key name="PRIMARY" columns="id" />
+      <foreign-key name="FKE053FFBDB7BDFF60" columns="startItemType_id" ref-table="item_type" ref-schema="" ref-catalog="gamedb" ref-columns="id" />
       <foreign-key name="FKE053FFBD76CA87AE" columns="dbConditionConfig_id" ref-table="guidance_condition_config" ref-schema="" ref-catalog="gamedb" ref-columns="id" />
       <foreign-key name="FKE053FFBDF1A6D777" columns="dbTutorialConfig_id" ref-table="tutorial_config" ref-schema="" ref-catalog="gamedb" ref-columns="id" />
       <index name="name" unique="true" columns="name" />
-      <index name="rank" unique="true" columns="orderIndex" />
+      <index name="orderIndex" unique="true" columns="orderIndex" />
     </table>
     <table name="GUIDANCE_LEVEL_ITEM_COUNT" schema="" catalog="gamedb" type="TABLE">
       <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
       <column name="count" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
       <column name="baseItemType_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
       <column name="dbLevel_id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
+      <column name="dbAbstractLevel_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
       <primary-key name="PRIMARY" columns="id" />
       <foreign-key name="FK7ED46285B35E59C1" columns="dbLevel_id" ref-table="guidance_level" ref-schema="" ref-catalog="gamedb" ref-columns="id" />
+      <foreign-key name="FK7ED46285506D75E1" columns="dbAbstractLevel_id" ref-table="guidance_level" ref-schema="" ref-catalog="gamedb" ref-columns="id" />
       <foreign-key name="FK7ED462858CE43191" columns="baseItemType_id" ref-table="item_type" ref-schema="" ref-catalog="gamedb" ref-columns="id" />
     </table>
     <table name="GUIDANCE_LEVEL_SKIP_IF_BOUGHT" schema="" catalog="gamedb" type="TABLE">
@@ -284,14 +291,29 @@
       <foreign-key name="FK7DBE5C4FC99DF1DD" columns="itemTypeId" ref-table="item_type" ref-schema="" ref-catalog="gamedb" ref-columns="id" />
       <foreign-key name="FK7DBE5C4FB6A114EE" columns="dbLevelId" ref-table="guidance_level" ref-schema="" ref-catalog="gamedb" ref-columns="id" />
     </table>
+    <table name="GUIDANCE_SCOPE" schema="" catalog="gamedb" type="TABLE">
+      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
+      <column name="createRealBase" sqlType="BIT" length="1" precision="0" nullable="false" jdbcType="-7" />
+      <column name="deltaMoney" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
+      <column name="houseSpace" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
+      <column name="itemSellFactor" sqlType="DOUBLE" length="22" precision="0" nullable="false" jdbcType="8" />
+      <column name="startItemFreeRange" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
+      <column name="startX" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="startY" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="startWidth" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="startHeight" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="startItemType_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <primary-key name="PRIMARY" columns="id" />
+      <foreign-key name="FKE0B5A28DB7BDFF60" columns="startItemType_id" ref-table="item_type" ref-schema="" ref-catalog="gamedb" ref-columns="id" />
+    </table>
     <table name="GUIDANCE_USER_STAGE" schema="" catalog="gamedb" type="TABLE">
       <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
-      <column name="html" sqlType="VARCHAR" length="50000" precision="0" nullable="true" jdbcType="12" />
-      <column name="isRealGame" sqlType="BIT" length="1" precision="0" nullable="true" jdbcType="-7" />
+      <column name="html" sqlType="LONGTEXT" length="2147483647" precision="0" nullable="false" jdbcType="-1" />
+      <column name="isRealGame" sqlType="BIT" length="1" precision="0" nullable="false" jdbcType="-7" />
       <column name="name" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
       <column name="orderIndex" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
-      <column name="dbTutorialConfig_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
       <column name="dbTerrainSetting_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
+      <column name="dbTutorialConfig_id" sqlType="INT" length="10" precision="0" nullable="true" jdbcType="4" />
       <primary-key name="PRIMARY" columns="id" />
       <foreign-key name="FK630C40B15187F1A6" columns="dbTerrainSetting_id" ref-table="terrain_settings" ref-schema="" ref-catalog="gamedb" ref-columns="id" />
       <foreign-key name="FK630C40B1F1A6D777" columns="dbTutorialConfig_id" ref-table="tutorial_config" ref-schema="" ref-catalog="gamedb" ref-columns="id" />
@@ -642,6 +664,16 @@
       <column name="userAgent" sqlType="VARCHAR" length="10000" precision="0" nullable="true" jdbcType="12" />
       <primary-key name="PRIMARY" columns="id" />
     </table>
+    <table name="TRACKER_CLIENT_LOG_ENTRY" schema="" catalog="gamedb" type="TABLE">
+      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
+      <column name="baseName" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
+      <column name="clientTimeStamp" sqlType="DATETIME" length="19" precision="0" nullable="true" jdbcType="93" />
+      <column name="message" sqlType="VARCHAR" length="10000" precision="0" nullable="false" jdbcType="12" />
+      <column name="sessionId" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12" />
+      <column name="timeStamp" sqlType="DATETIME" length="19" precision="0" nullable="false" jdbcType="93" />
+      <column name="userAgent" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
+      <primary-key name="PRIMARY" columns="id" />
+    </table>
     <table name="TRACKER_CLOSE_WINDOW" schema="" catalog="gamedb" type="TABLE">
       <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
       <column name="clientTimeStamp" sqlType="BIGINT" length="19" precision="0" nullable="false" jdbcType="-5" />
@@ -656,6 +688,14 @@
       <column name="clientTimeStamp" sqlType="BIGINT" length="19" precision="0" nullable="false" jdbcType="-5" />
       <column name="niceTimeStamp" sqlType="DATETIME" length="19" precision="0" nullable="false" jdbcType="93" />
       <column name="sessionId" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12" />
+      <primary-key name="PRIMARY" columns="id" />
+    </table>
+    <table name="TRACKER_CONNECTION_STATISTICS" schema="" catalog="gamedb" type="TABLE">
+      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
+      <column name="sessionId" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12" />
+      <column name="simpleBase" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12" />
+      <column name="ticksPerSecond" sqlType="DOUBLE" length="22" precision="0" nullable="false" jdbcType="8" />
+      <column name="timeStamp" sqlType="DATETIME" length="19" precision="0" nullable="false" jdbcType="93" />
       <primary-key name="PRIMARY" columns="id" />
     </table>
     <table name="TRACKER_EVENT_ITEM" schema="" catalog="gamedb" type="TABLE">
@@ -677,14 +717,24 @@
       <column name="yResolution" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
       <primary-key name="PRIMARY" columns="id" />
     </table>
+    <table name="TRACKER_HISTORY" schema="" catalog="gamedb" type="TABLE">
+      <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
+      <column name="actorBaseName" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
+      <column name="actorItemName" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
+      <column name="actorUserName" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
+      <column name="targetBaseName" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
+      <column name="targetItemName" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
+      <column name="targetUserName" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
+      <column name="timeStamp" sqlType="DATETIME" length="19" precision="0" nullable="false" jdbcType="93" />
+      <column name="timeStampMs" sqlType="BIGINT" length="19" precision="0" nullable="false" jdbcType="-5" />
+      <column name="type" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
+      <primary-key name="PRIMARY" columns="id" />
+    </table>
     <table name="TRACKER_LEVEL_PROMOTION" schema="" catalog="gamedb" type="TABLE">
       <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
-      <column name="base" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
-      <column name="interimPromotion" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
       <column name="level" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
       <column name="niceTimeStamp" sqlType="DATETIME" length="19" precision="0" nullable="false" jdbcType="93" />
       <column name="sessionId" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
-      <column name="targetLevel" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
       <column name="timeStamp" sqlType="BIGINT" length="19" precision="0" nullable="false" jdbcType="-5" />
       <column name="user" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
       <primary-key name="PRIMARY" columns="id" />
@@ -729,11 +779,10 @@
     <table name="TRACKER_STARTUP" schema="" catalog="gamedb" type="TABLE">
       <column name="id" sqlType="INT" length="10" precision="0" nullable="false" jdbcType="4" />
       <column name="clientTimeStamp" sqlType="BIGINT" length="19" precision="0" nullable="false" jdbcType="-5" />
+      <column name="level" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
       <column name="sessionId" sqlType="VARCHAR" length="255" precision="0" nullable="false" jdbcType="12" />
       <column name="startupDuration" sqlType="BIGINT" length="19" precision="0" nullable="false" jdbcType="-5" />
       <column name="timeStamp" sqlType="DATETIME" length="19" precision="0" nullable="false" jdbcType="93" />
-      <column name="userStage" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
-      <column name="level" sqlType="VARCHAR" length="255" precision="0" nullable="true" jdbcType="12" />
       <primary-key name="PRIMARY" columns="id" />
     </table>
     <table name="TRACKER_STARTUP_TASK" schema="" catalog="gamedb" type="TABLE">
