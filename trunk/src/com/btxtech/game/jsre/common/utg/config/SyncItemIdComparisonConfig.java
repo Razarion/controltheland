@@ -22,7 +22,7 @@ import java.util.Collection;
  * Date: 18.07.2010
  * Time: 21:06:41
  */
-public class SyncItemIdComparisonConfig extends AbstractComparisonConfig {
+public class SyncItemIdComparisonConfig implements AbstractComparisonConfig {
     private Collection<Integer> syncItemId;
 
     /**

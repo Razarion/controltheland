@@ -26,7 +26,6 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("COUNT")
-@Deprecated
 public class DbCountComparisonConfig extends DbAbstractComparisonConfig {
     private int count;
 

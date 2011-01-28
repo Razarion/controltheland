@@ -23,7 +23,7 @@ import java.util.Collection;
  * Time: 16:31:29
  */
 @Deprecated
-public class ValueComparison extends AbstractComparison {
+public class ValueComparison implements AbstractComparison {
     private int value;
     private int count;
 

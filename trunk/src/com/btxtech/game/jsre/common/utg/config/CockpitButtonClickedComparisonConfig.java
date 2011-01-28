@@ -21,7 +21,7 @@ import com.btxtech.game.jsre.common.utg.condition.CockpitButtonClickedComparison
  * Date: 18.07.2010
  * Time: 21:06:41
  */
-public class CockpitButtonClickedComparisonConfig extends AbstractComparisonConfig {
+public class CockpitButtonClickedComparisonConfig implements AbstractComparisonConfig {
     private CockpitWidgetEnum cockpitWidgetEnum;
 
     /**

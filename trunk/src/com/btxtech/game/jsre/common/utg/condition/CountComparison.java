@@ -22,14 +22,18 @@ import java.util.Collection;
  * Date: 27.12.2010
  * Time: 16:31:29
  */
-@Deprecated
-public class CountComparison extends AbstractComparison {
+public class CountComparison implements AbstractSyncItemComparison {
     private int value;
     private int count;
 
     public CountComparison(int count) {
         this.count = count;
         value = 0;
+    }
+
+    @Override
+    public void onSyncItem(SyncItem syncItem) {
+        value++;
     }
 
 /*    @Override

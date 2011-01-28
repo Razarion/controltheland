@@ -180,35 +180,8 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
 
     private void setupComparisonFields() {
         DbConditionConfig dbConditionConfig = (DbConditionConfig) getDefaultModelObject();
-        if (dbConditionConfig == null || dbConditionConfig.getDbAbstractComparisonConfig() == null) {
-            addOrReplace(new Label("dbAbstractComparisonConfig", "").setVisible(false));
-        } else {
-            DbAbstractComparisonConfig config = dbConditionConfig.getDbAbstractComparisonConfig();
-            if (config instanceof DbSyncItemTypeComparisonConfig) {
-                addOrReplace(new SyncItemTypeComparisonConfigPanel("dbAbstractComparisonConfig"));
-            } else if (config instanceof DbCockpitButtonClickedComparisonConfig) {
-                addOrReplace(new CockpitButtonClickedComparisonConfigPanel("dbAbstractComparisonConfig"));
-            } else if (config instanceof DbSyncItemIdComparisonConfig) {
-                addOrReplace(new SyncItemIdComparisonConfigPanel("dbAbstractComparisonConfig"));
-            } else if (config instanceof DbSyncItemIdPositionComparisonConfig) {
-                addOrReplace(new SyncItemIdPositionComparisonConfigPanel("dbAbstractComparisonConfig"));
-            } else {
-                throw new IllegalArgumentException("No panel for " + config);
-            }
-        }
+        addOrReplace(ComparisonFactory.createComparisonPanel(dbConditionConfig, "dbAbstractComparisonConfig"));
     }
-
-/*    @Override
-    protected void onComponentTag(final ComponentTag tag) {
-        DbConditionConfig dbConditionConfig = (DbConditionConfig) getDefaultModelObject();
-        if (dbConditionConfig != null && dbConditionConfig.getConditionTrigger() != null) {
-            conditionTriggerModel.setObject(dbConditionConfig.getConditionTrigger());
-            if (dbConditionConfig.getDbAbstractComparisonConfig() != null) {
-                comparisonModel.setObject(dbConditionConfig.getDbAbstractComparisonConfig().getClass());
-            }
-        }
-        super.onComponentTag(tag);
-    }**/
 
     @Override
     protected void onBeforeRender() {

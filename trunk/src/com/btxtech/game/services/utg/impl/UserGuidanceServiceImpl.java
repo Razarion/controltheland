@@ -179,7 +179,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         activateCondition(userState, dbNextAbstractLevel);
 
         // Send level update packet
-        if (dbOldAbstractLevel instanceof DbRealGameLevel) {
+        if (dbOldAbstractLevel instanceof DbRealGameLevel && baseService.getBase(userState) != null) {
             Base base = baseService.getBase(userState);
             LevelPacket levelPacket = new LevelPacket();
             levelPacket.setLevel(dbNextAbstractLevel.getLevel());

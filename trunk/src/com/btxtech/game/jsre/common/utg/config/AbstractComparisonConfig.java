@@ -21,6 +21,6 @@ import java.io.Serializable;
  * Date: 27.12.2010
  * Time: 23:07:18
  */
-public abstract class AbstractComparisonConfig implements Serializable {
-    public abstract AbstractComparison createAbstractComparison();
+public interface AbstractComparisonConfig extends Serializable {
+    AbstractComparison createAbstractComparison();
 }

@@ -23,7 +23,7 @@ import java.util.Map;
  * Date: 18.07.2010
  * Time: 21:06:41
  */
-public class SyncItemTypeComparison extends AbstractSyncItemComparison {
+public class SyncItemTypeComparison implements AbstractSyncItemComparison {
     private Map<ItemType, Integer> remaining;
 
     public SyncItemTypeComparison(Map<ItemType, Integer> itemType) {
