@@ -20,7 +20,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
  * Date: 12.01.2011
  * Time: 12:05:40
  */
-public abstract class AbstractSyncItemComparison extends AbstractComparison {
+public abstract interface AbstractSyncItemComparison extends AbstractComparison {
     public abstract void onSyncItem(SyncItem syncItem);
 
 }

@@ -22,6 +22,6 @@ import java.util.Collection;
  * Date: 27.12.2010
  * Time: 17:25:49
  */
-public abstract class AbstractComparison {
+public abstract interface AbstractComparison {
     public abstract boolean isFulfilled();
 }
