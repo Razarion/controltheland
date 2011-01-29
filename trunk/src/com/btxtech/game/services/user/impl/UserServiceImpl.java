@@ -269,4 +269,17 @@ public class UserServiceImpl implements UserService {
         }
         return userStateCopy;
     }
+
+    @Override
+    public void restore(Collection<UserState> restoreUserStates) {
+        botStates.clear();
+        userStates.clear();
+        for (UserState userState : restoreUserStates) {
+            if (userState.isBot()) {
+                botStates.put(userState.getBotConfig(), userState);
+            } else {
+                userStates.add(userState);
+            }
+        }
+    }
 }

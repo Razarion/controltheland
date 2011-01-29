@@ -13,8 +13,6 @@
 
 package com.btxtech.game.services.user;
 
-import com.btxtech.game.services.market.impl.UserItemTypeAccess;
-import com.btxtech.game.services.utg.UserLevelStatus;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
@@ -26,8 +24,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Transient;
 
 @Entity(name = "USER")
 public class User implements Serializable {

@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchExc
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.services.bot.DbBotConfig;
+import java.util.Collection;
 import java.util.List;
 
 public interface UserService {
@@ -57,4 +58,6 @@ public interface UserService {
     void onSessionTimedOut(UserState userState, String sessionId);
 
     List<UserState> getOnlineUserStates();
+
+    void restore(Collection<UserState> userStates);
 }

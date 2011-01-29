@@ -43,7 +43,6 @@ import org.hibernate.annotations.TypeDefs;
 @DiscriminatorValue("PROJECTILE")
 public class GenericProjectileItem extends GenericItem{
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "baseId")
     private Base base;
     @Type(type = "index")
     @Columns(columns = {@Column(name = "xUnloadPos"), @Column(name = "yUnloadPos")})

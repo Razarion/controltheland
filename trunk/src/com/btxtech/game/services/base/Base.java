@@ -20,15 +20,14 @@ import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededE
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.services.market.impl.UserItemTypeAccess;
-import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbRealGameLevel;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
@@ -48,19 +47,15 @@ public class Base implements Serializable {
     @OneToOne
     private BaseColor baseColor;
     private Date startTime;
-    @Column(name = "kills", nullable = false, columnDefinition = "INT default '0'")
     private int kills;
-    @Column(name = "created", nullable = false, columnDefinition = "INT default '0'")
     private int created;
-    @Column(name = "lost", nullable = false, columnDefinition = "INT default '0'")
     private int lost;
-    @Column(name = "totalSpent", nullable = false, columnDefinition = "INT default '0'")
     private double totalSpent;
-    @Column(name = "totalEarned", nullable = false, columnDefinition = "INT default '0'")
     private double totalEarned;
-    @Column(name = "abandoned", nullable = false, columnDefinition = "bit default b'1'")
     private boolean abandoned = false;
     private int baseId;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "base", fetch = FetchType.LAZY)
+    private UserState userState;
     @Transient
     private final Object syncObject = new Object();
     @Transient
@@ -69,8 +64,6 @@ public class Base implements Serializable {
     private SimpleBase simpleBase;
     @Transient
     private int houseSpace = 0;
-    @Transient
-    private UserState userState; // TODO
 
     /**
      * Used by hibernate
@@ -174,6 +167,9 @@ public class Base implements Serializable {
 
     public void clearId() {
         id = null;
+        if (userState != null) {
+            userState.clearId();
+        }
     }
 
     public void increaseKills() {
@@ -231,5 +227,25 @@ public class Base implements Serializable {
 
     public UserState getUserState() {
         return userState;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public int getCreated() {
+        return created;
+    }
+
+    public int getLost() {
+        return lost;
+    }
+
+    public double getTotalSpent() {
+        return totalSpent;
+    }
+
+    public double getTotalEarned() {
+        return totalEarned;
     }
 }

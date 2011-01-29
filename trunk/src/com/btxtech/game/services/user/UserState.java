@@ -17,20 +17,40 @@ import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.utg.UserLevelStatus;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 /**
  * User: beat
  * Date: 19.01.2011
  * Time: 10:42:00
  */
+@Entity(name = "BACKUP_USER_STATUS")
 public class UserState {
-    private boolean loggedIn;
+    @Id
+    @GeneratedValue
+    private Integer id;
+    @ManyToOne
     private DbBotConfig botConfig;
+    @ManyToOne
     private User user;
+    @OneToOne
     private Base base;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private UserLevelStatus userLevelStatus;
+    @Transient
+    // TODO
     private UserItemTypeAccess userItemTypeAccess;
+    @Transient
     private String sessionId;
+    @Transient
+    private boolean loggedIn;
 
     public boolean isRegistered() {
         return user != null;
@@ -42,6 +62,10 @@ public class UserState {
 
     public boolean isBot() {
         return botConfig != null;
+    }
+
+    public DbBotConfig getBotConfig() {
+        return botConfig;
     }
 
     public void setBase(Base base) {
@@ -78,5 +102,23 @@ public class UserState {
 
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void clearId() {
+        id = null;
+        if(userLevelStatus != null) {
+            userLevelStatus.clearId();
+        }
+        if(userItemTypeAccess != null) {
+            userItemTypeAccess.clearId();
+        }
     }
 }

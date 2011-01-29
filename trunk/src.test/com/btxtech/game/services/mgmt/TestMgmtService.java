@@ -11,9 +11,12 @@ import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededE
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.btxtech.game.services.TestWebSessionContextLoader;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.terrain.TerrainService;
+import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * User: beat
@@ -28,10 +33,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * Time: 12:00:44 PM
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:war/WEB-INF/applicationContext.xml"})
-//@ContextConfiguration(locations = {"file:war/WEB-INF/applicationContext.xml"}, loader = TestWebSessionContextLoader.class)
-//@TransactionConfiguration()
-//@Transactional
+@ContextConfiguration(locations = {"file:war/WEB-INF/applicationContext.xml"}, loader = TestWebSessionContextLoader.class)
+@Transactional
+@TransactionConfiguration()
 public class TestMgmtService extends AbstractJUnit4SpringContextTests {
     public static final int ITEM_COUNT = 100000;
     @Autowired
@@ -44,24 +48,29 @@ public class TestMgmtService extends AbstractJUnit4SpringContextTests {
     private CollisionService collisionService;
     @Autowired
     private TerrainService terrainService;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
+    @Autowired
+    private UserService userService;
 
     @Test
-    public void testBackup() throws AlreadyUsedException {
+    public void testBackup() throws Exception {
+        userGuidanceService.promote(userService.getUserState(), 5);
         mgmtService.backup();
     }
 
-    @Test
+    // @Test
     public void testBackupSummary() throws AlreadyUsedException {
         mgmtService.getBackupSummary();
     }
 
-    @Test
+    // @Test
     public void testRestore() throws AlreadyUsedException, NoSuchItemTypeException {
         List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
         mgmtService.restore(backupSummaries.get(0).getDate());
     }
 
-    @Test
+    // @Test
     public void testBigBackup() throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
         for (int i = 0; i < ITEM_COUNT; i++) {
             ItemType itemType = getRandomItemType();

@@ -30,11 +30,6 @@
         <mapping class="com.btxtech.game.services.terrain.DbTerrainSetting"/>
         <mapping class="com.btxtech.game.services.user.User"/>
         <mapping class="com.btxtech.game.services.user.Arq"/>
-        <mapping class="com.btxtech.game.services.mgmt.impl.BackupEntry"/>
-        <mapping class="com.btxtech.game.services.mgmt.impl.GenericBaseItem"/>
-        <mapping class="com.btxtech.game.services.mgmt.impl.GenericResourceItem"/>
-        <mapping class="com.btxtech.game.services.mgmt.impl.GenericProjectileItem"/>
-        <mapping class="com.btxtech.game.services.base.Base"/>
         <mapping class="com.btxtech.game.services.base.BaseColor"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.SavedQuery"/>
         <mapping class="com.btxtech.game.services.mgmt.StartupData"/>
@@ -56,7 +51,6 @@
         <mapping class="com.btxtech.game.services.item.itemType.DbHouseType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbLauncherType"/>
         <mapping class="com.btxtech.game.services.market.MarketEntry"/>
-        <mapping class="com.btxtech.game.services.market.impl.UserItemTypeAccess"/>
         <mapping class="com.btxtech.game.services.market.XpSettings"/>
         <mapping class="com.btxtech.game.services.market.MarketCategory"/>
         <mapping class="com.btxtech.game.services.market.MarketFunction"/>
@@ -73,7 +67,6 @@
         <mapping class="com.btxtech.game.services.utg.DbScope"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbComparisonItemCount"/>
         <mapping class="com.btxtech.game.services.utg.DbLevelPromotion"/>
-        <mapping class="com.btxtech.game.services.utg.UserLevelStatus"/>
         <mapping class="com.btxtech.game.services.utg.DbTutorialProgress"/>
         <mapping class="com.btxtech.game.services.utg.DbEventTrackingStart"/>
         <mapping class="com.btxtech.game.services.utg.DbEventTrackingItem"/>
@@ -109,5 +102,15 @@
         <mapping class="com.btxtech.game.services.tutorial.hint.DbResourceHintConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.hint.DbTerrainPositionSpeechBubbleHintConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.hint.DbCockpitSpeechBubbleHintConfig"/>
+        <!-- Backup -->
+        <mapping class="com.btxtech.game.services.utg.UserLevelStatus"/>
+        <mapping class="com.btxtech.game.services.user.UserState"/>
+        <mapping class="com.btxtech.game.services.mgmt.impl.BackupEntry"/>
+        <mapping class="com.btxtech.game.services.mgmt.impl.GenericBaseItem"/>
+        <mapping class="com.btxtech.game.services.mgmt.impl.GenericResourceItem"/>
+        <mapping class="com.btxtech.game.services.mgmt.impl.GenericProjectileItem"/>
+        <mapping class="com.btxtech.game.services.base.Base"/>
+        <mapping class="com.btxtech.game.services.market.impl.UserItemTypeAccess"/>
+
     </session-factory>
 </hibernate-configuration>
