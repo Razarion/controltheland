@@ -30,7 +30,6 @@ import com.btxtech.game.jsre.common.EventTrackingItem;
 import com.btxtech.game.jsre.common.EventTrackingStart;
 import com.btxtech.game.jsre.common.ScrollTrackingItem;
 import com.btxtech.game.jsre.common.SelectionTrackingItem;
-import com.btxtech.game.jsre.common.UserStage;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.google.gwt.event.logical.shared.CloseEvent;

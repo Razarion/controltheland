@@ -20,8 +20,6 @@ import com.btxtech.game.jsre.mapeditor.TerrainEditor;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.TerritoryService;
-import com.btxtech.game.services.utg.DbUserStage;
-import com.btxtech.game.services.utg.UserGuidanceService;
 import java.util.Collection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

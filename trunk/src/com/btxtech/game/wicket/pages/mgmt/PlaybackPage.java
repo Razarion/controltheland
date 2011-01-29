@@ -32,7 +32,7 @@ public class PlaybackPage extends WebPage {
         startupSeqLabel.add(new SimpleAttributeModifier("id", PlaybackEntry.ID));
         startupSeqLabel.add(new SimpleAttributeModifier(PlaybackEntry.SESSION_ID, (String)httpSession.getAttribute(PlaybackEntry.SESSION_ID)));
         startupSeqLabel.add(new SimpleAttributeModifier(PlaybackEntry.START_TIME, (String)httpSession.getAttribute(PlaybackEntry.START_TIME)));
-        startupSeqLabel.add(new SimpleAttributeModifier(PlaybackEntry.STAGE_NAME, (String)httpSession.getAttribute(PlaybackEntry.STAGE_NAME)));
+        startupSeqLabel.add(new SimpleAttributeModifier(PlaybackEntry.LAVAL_NAME, (String)httpSession.getAttribute(PlaybackEntry.LAVAL_NAME)));
         add(startupSeqLabel);
     }
 }

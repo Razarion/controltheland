@@ -50,25 +50,4 @@ public class TestUserTracking {
         userActions.add(new UserAction("XXXX", stringBuilder.toString()));
     }
 
-    @Test
-    public void testDbUserStageStorage() {
-        /*      List<DbUserStage> dbUserStages = (List<DbUserStage>) userGuidanceService.getUserStageCrudServiceHelper().readDbChildren();
-        Collections.swap(dbUserStages, 0, 1);
-        userGuidanceService.getUserStageCrudServiceHelper().updateDbChildren(dbUserStages);
-        List<DbUserStage> newDbUserStages = (List<DbUserStage>) userGuidanceService.getUserStageCrudServiceHelper().readDbChildren();
-        for (int i = 0; i < dbUserStages.size(); i++) {
-            Assert.assertEquals(dbUserStages.get(i), newDbUserStages.get(i));
-        }*/
-    }
-
-    //@Test
-
-    public void testNextDbUserStage() {
-        //  List<DbUserStage> dbUserStages = (List<DbUserStage>) userGuidanceService.getUserStageCrudServiceHelper().readDbChildren();
-        //  DbUserStage dbUserStage = dbUserStages.get(0);
-        //  System.out.println(dbUserStage);
-        //dbUserStage = userGuidanceService.getNextDbUserStage(dbUserStage);
-        // System.out.println(dbUserStage);
-    }
-
 }

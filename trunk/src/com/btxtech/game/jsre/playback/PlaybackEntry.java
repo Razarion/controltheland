@@ -26,7 +26,7 @@ public class PlaybackEntry implements EntryPoint {
     public static final String ID = "playbackInfo";
     public static final String SESSION_ID = "sessionId";
     public static final String START_TIME = "start";
-    public static final String STAGE_NAME = "stage";
+    public static final String LAVAL_NAME = "level";
 
     @Override
     public void onModuleLoad() {

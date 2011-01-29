@@ -40,10 +40,10 @@ public class LoadStartupTask extends AbstractStartupTask {
         GwtCommon.setUncaughtExceptionHandler();
         String sessionId = getSessionIdFromHtml();
         long timeStamp = getTimeStampFromHtml();
-        String userStage = getUserStageFromHtml();
+        String level = getLevelFromHtml();
 
         PlaybackAsync playbackAsync = GWT.create(Playback.class);
-        playbackAsync.getPlaybackInfo(sessionId, timeStamp, userStage, new AsyncCallback<PlaybackInfo>() {
+        playbackAsync.getPlaybackInfo(sessionId, timeStamp, level, new AsyncCallback<PlaybackInfo>() {
             @Override
             public void onFailure(Throwable caught) {
                 GwtCommon.handleException(caught, true);
@@ -76,13 +76,13 @@ public class LoadStartupTask extends AbstractStartupTask {
         return Long.parseLong(timeStampString);
     }
 
-    private String getUserStageFromHtml() {
+    private String getLevelFromHtml() {
         RootPanel div = getStartupInformation();
-        String userStage = div.getElement().getAttribute(PlaybackEntry.STAGE_NAME);
-        if (userStage == null || userStage.trim().isEmpty()) {
-            throw new IllegalArgumentException(PlaybackEntry.STAGE_NAME + " not found in div element as parameter");
+        String level = div.getElement().getAttribute(PlaybackEntry.LAVAL_NAME);
+        if (level == null || level.trim().isEmpty()) {
+            throw new IllegalArgumentException(PlaybackEntry.LAVAL_NAME + " not found in div element as parameter");
         }
-        return userStage;
+        return level;
     }
 
     private RootPanel getStartupInformation() {
