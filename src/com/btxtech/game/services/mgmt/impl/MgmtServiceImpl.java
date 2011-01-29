@@ -63,6 +63,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.stereotype.Component;
 
 /**
@@ -101,6 +102,17 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     private HibernateTemplate hibernateTemplate;
     private boolean testMode;
     private StartupData startupData;
+
+    static {
+        File tmpLogDir = null;
+        try {
+            String userHome = System.getProperty("user.home");
+            tmpLogDir = new File(userHome, LOG_DIR_NAME);
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+        LOG_DIR = tmpLogDir;
+    }
 
     @Override
     public Date getStartTime() {
@@ -195,15 +207,9 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     @Override
     public void backup() {
         long time = System.currentTimeMillis();
-        final BackupEntry backupEntry = genericItemConverter.generateBackupEntry();
-
+        BackupEntry backupEntry = genericItemConverter.generateBackupEntry();
         // Save to db
-        hibernateTemplate.execute(new HibernateCallback() {
-            public Object doInHibernate(Session session) {
-                session.saveOrUpdate(backupEntry);
-                return null;
-            }
-        });
+        hibernateTemplate.save(backupEntry);
         log.info("Time used for backup: " + (System.currentTimeMillis() - time) + "ms. Items: " + backupEntry.getItemCount() + " Bases: " + backupEntry.getBaseCount());
         genericItemConverter.clear();
     }
@@ -272,26 +278,20 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         }
     }
 
-    static {
-        File tmpLogDir = null;
-        try {
-            String userHome = System.getProperty("user.home");
-            tmpLogDir = new File(userHome, LOG_DIR_NAME);
-        } catch (Throwable t) {
-            log.error("", t);
-        }
-        LOG_DIR = tmpLogDir;
-    }
-
     @Override
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
+        SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
         try {
             if (applicationEvent instanceof ContextRefreshedEvent &&
                     applicationEvent.getSource() instanceof AbstractApplicationContext &&
                     ((AbstractApplicationContext) applicationEvent.getSource()).getParent() == null) {
                 List<BackupSummary> backupSummaries = getBackupSummary();
                 if (!backupSummaries.isEmpty()) {
-                    restore(backupSummaries.get(0).getDate());
+                    try {
+                        restore(backupSummaries.get(0).getDate());
+                    } catch (Exception e) {
+                        log.error("", e);
+                    }
                 }
                 userGuidanceService.init2();
                 resourceService.resetAllResources();
@@ -299,6 +299,8 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
             }
         } catch (Throwable t) {
             log.error("", t);
+        } finally {
+            SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
         }
 
     }

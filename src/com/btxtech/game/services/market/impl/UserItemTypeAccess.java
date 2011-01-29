@@ -33,13 +33,13 @@ import javax.persistence.ManyToMany;
  * Date: 19.12.2009
  * Time: 13:00:19
  */
-@Entity(name = "USER_ITEM_TYPE_ACCESS")
+@Entity(name = "BACKUP_USER_ITEM_TYPE_ACCESS")
 public class UserItemTypeAccess implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "USER_ITEM_TYPE_ACCESS_BOUGHT",
+    @JoinTable(name = "BACKUP_USER_ITEM_TYPE_ACCESS_BOUGHT",
             joinColumns = @JoinColumn(name = "itemTypeAccessId"),
             inverseJoinColumns = @JoinColumn(name = "userItemTypeId")
     )
@@ -125,5 +125,9 @@ public class UserItemTypeAccess implements Serializable {
 
     public Integer getId() {
         return id;
+    }
+
+    public void clearId() {
+        id = null;
     }
 }

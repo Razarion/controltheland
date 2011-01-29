@@ -53,7 +53,6 @@ import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -120,13 +119,10 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
     @Override
     public void init2() {
-        SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
         try {
             activateLevels();
         } catch (Throwable t) {
             log.error("", t);
-        } finally {
-            SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
         }
     }
 
@@ -139,11 +135,11 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     public void promote(UserState userState, int newDbLevelId) {
         DbAbstractLevel dbNextAbstractLevel = null;
         for (DbAbstractLevel dbAbstractLevel : dbAbstractLevels) {
-            if(dbAbstractLevel.getId() == newDbLevelId) {
-               dbNextAbstractLevel = dbAbstractLevel;
+            if (dbAbstractLevel.getId() == newDbLevelId) {
+                dbNextAbstractLevel = dbAbstractLevel;
             }
         }
-        if(dbNextAbstractLevel == null) {
+        if (dbNextAbstractLevel == null) {
             throw new IllegalArgumentException("DBLevel Id is unknown: " + newDbLevelId);
         }
 

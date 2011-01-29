@@ -28,11 +28,8 @@ public class UserLevelStatus {
     @Id
     @GeneratedValue
     private Integer id;
-    private Integer beginningMoney;
-    private Integer beginningKills;
     @ManyToOne(optional = false)
     private DbAbstractLevel currentAbstractLevel;
-
 
     public DbAbstractLevel getCurrentLevel() {
         return currentAbstractLevel;
@@ -40,31 +37,8 @@ public class UserLevelStatus {
 
     public void setCurrentLevel(DbAbstractLevel currentAbstractLevel) {
         this.currentAbstractLevel = currentAbstractLevel;
-        clear();
     }
 
-    private void clear() {
-        beginningMoney = null;
-        beginningKills = null;
-    }
-
-    public Integer getBeginningMoney() {
-        return beginningMoney;
-    }
-
-    public Integer getBeginningKills() {
-        return beginningKills;
-    }
-    /*
-    public void setDeltas(Base base, DbAbstractLevel nextDbLevel) {
-        if (nextDbLevel.getDeltaMoney() != null) {
-            beginningMoney = (int) base.getAccountBalance();
-        }
-        if(nextDbLevel.getDeltaKills() != null) {
-            beginningKills = base.getKills();
-        }
-    }
-    */
     public void clearId() {
         id = null;
     }

@@ -29,6 +29,8 @@ import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
+import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -61,6 +63,8 @@ public class GenericItemConverter {
     private ItemService itemService;
     @Autowired
     private Services services;
+    @Autowired
+    private UserService userService;
     private BackupEntry backupEntry;
     private HashMap<Id, GenericItem> genericItems = new HashMap<Id, GenericItem>();
     private HashMap<Id, SyncItem> syncItems = new HashMap<Id, SyncItem>();
@@ -97,12 +101,14 @@ public class GenericItemConverter {
         serverEnergyService.pauseService(true);
         Collection<GenericItem> genericItems = backupEntry.getItems();
         Collection<Base> bases = new HashSet<Base>();
+        Collection<UserState> userStates = new HashSet<UserState>();
         for (GenericItem genericItem : genericItems) {
             try {
                 if (genericItem instanceof GenericBaseItem) {
                     SyncBaseItem syncItem = addSyncBaseItem((GenericBaseItem) genericItem);
                     Base base = ((GenericBaseItem) genericItem).getBase();
                     bases.add(base);
+                    userStates.add(base.getUserState());
                     base.addItem(syncItem);
                 } else if (genericItem instanceof GenericResourceItem) {
                     addSyncItem((GenericResourceItem) genericItem);
@@ -129,6 +135,7 @@ public class GenericItemConverter {
             }
         }
 
+        userService.restore(userStates);
         baseService.restoreBases(bases);
         itemService.restoreItems(syncItems.values());
         serverEnergyService.pauseService(false);
@@ -151,7 +158,7 @@ public class GenericItemConverter {
         } else if (item instanceof SyncProjectileItem) {
             addGenericProjectileItem((SyncProjectileItem) item);
         } else {
-            throw new IllegalArgumentException("Unknwon SyncItem: " + item);
+            throw new IllegalArgumentException("Unknown SyncItem: " + item);
         }
     }
 
@@ -163,7 +170,7 @@ public class GenericItemConverter {
     }
 
     private void addGenericProjectileItem(SyncProjectileItem item) {
-        if(!item.isAlive()) {
+        if (!item.isAlive()) {
             return;
         }
         GenericProjectileItem genericProjectileItem = new GenericProjectileItem(backupEntry);

@@ -14,7 +14,6 @@
 package com.btxtech.game.services.mgmt.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.gameengine.itemType.LauncherType;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import java.util.List;
@@ -24,7 +23,6 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -42,7 +40,7 @@ public class GenericBaseItem extends GenericItem {
     @Type(type = "index")
     @Columns(columns = {@Column(name = "xPosToBeBuilt"), @Column(name = "yPosToBeBuilt")})
     private Index positionToBeBuilt;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private DbBaseItemType toBeBuilt;
     private Integer health;
     private Integer createdChildCount;
@@ -50,14 +48,12 @@ public class GenericBaseItem extends GenericItem {
     private Boolean followTarget;
     private Double reloadProgress;
     @Type(type = "path")
-    @Column(name = "pathToAbsoluteDestination")
     private List<Index> pathToAbsoluteDestination;
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     private GenericBaseItem baseTarget;
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     private GenericResourceItem resourceTarget;
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "baseId")
     private Base base;
     private double buildup;
     private double angel;
@@ -66,19 +62,18 @@ public class GenericBaseItem extends GenericItem {
     private Index rallyPoint;
     private Boolean isUpgrading;
     private Double upgradeProgress;
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     private DbBaseItemType upgradingItemType;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private GenericBaseItem containedIn;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "containedIn")
+    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER, mappedBy = "containedIn")
     private Set<GenericBaseItem> containedItems;
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     private GenericBaseItem targetContainer;
     @Type(type = "index")
     @Columns(columns = {@Column(name = "xUnloadPos"), @Column(name = "yUnloadPos")})
     private Index unloadPos;
     private Double launcherBuildup;
-
 
 
     /**

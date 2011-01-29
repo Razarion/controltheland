@@ -77,8 +77,13 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
 
     @PostConstruct
     public void init() {
-        dbTerrainSettingCrudServiceHelper = new CrudServiceHelperHibernateImpl<DbTerrainSetting>(hibernateTemplate, DbTerrainSetting.class);
-        loadTerrain();
+        SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
+        try {
+            dbTerrainSettingCrudServiceHelper = new CrudServiceHelperHibernateImpl<DbTerrainSetting>(hibernateTemplate, DbTerrainSetting.class);
+            loadTerrain();
+        } finally {
+            SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
+        }
     }
 
     public CrudServiceHelper<DbTerrainSetting> getDbTerrainSettingCrudServiceHelper() {
@@ -86,50 +91,45 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     }
 
     private void loadTerrain() {
-        SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
-        try {
-            // Terrain settings
-            DbTerrainSetting dbTerrainSetting = getDbTerrainSetting4RealGame();
-            if (dbTerrainSetting == null) {
-                return;
-            }
-            setTerrainSettings(dbTerrainSetting.createTerrainSettings());
-
-            // Terrain image position
-            setTerrainImagePositions(new ArrayList<TerrainImagePosition>());
-            for (DbTerrainImagePosition dbTerrainImagePosition : dbTerrainSetting.getDbTerrainImagePositionCrudServiceHelper().readDbChildren()) {
-                addTerrainImagePosition(dbTerrainImagePosition.createTerrainImagePosition());
-            }
-
-            // Surface rectangles
-            setSurfaceRects(new ArrayList<SurfaceRect>());
-            for (DbSurfaceRect dbSurfaceRect : dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().readDbChildren()) {
-                addSurfaceRect(dbSurfaceRect.createSurfaceRect());
-            }
-
-            // Terrain images
-            @SuppressWarnings("unchecked")
-            List<DbTerrainImage> imageList = hibernateTemplate.loadAll(DbTerrainImage.class);
-            clearTerrainImages();
-            dbTerrainImages = new HashMap<Integer, DbTerrainImage>();
-            for (DbTerrainImage dbTerrainImage : imageList) {
-                dbTerrainImages.put(dbTerrainImage.getId(), dbTerrainImage);
-                putTerrainImage(dbTerrainImage.createTerrainImage());
-            }
-
-            // Surface images
-            @SuppressWarnings("unchecked")
-            List<DbSurfaceImage> surfaceList = hibernateTemplate.loadAll(DbSurfaceImage.class);
-            clearSurfaceImages();
-            dbSurfaceImages = new HashMap<Integer, DbSurfaceImage>();
-            for (DbSurfaceImage dbSurfaceImage : surfaceList) {
-                dbSurfaceImages.put(dbSurfaceImage.getId(), dbSurfaceImage);
-                putSurfaceImage(dbSurfaceImage.createSurfaceImage());
-            }
-            fireTerrainChanged();
-        } finally {
-            SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
+        // Terrain settings
+        DbTerrainSetting dbTerrainSetting = getDbTerrainSetting4RealGame();
+        if (dbTerrainSetting == null) {
+            return;
         }
+        setTerrainSettings(dbTerrainSetting.createTerrainSettings());
+
+        // Terrain image position
+        setTerrainImagePositions(new ArrayList<TerrainImagePosition>());
+        for (DbTerrainImagePosition dbTerrainImagePosition : dbTerrainSetting.getDbTerrainImagePositionCrudServiceHelper().readDbChildren()) {
+            addTerrainImagePosition(dbTerrainImagePosition.createTerrainImagePosition());
+        }
+
+        // Surface rectangles
+        setSurfaceRects(new ArrayList<SurfaceRect>());
+        for (DbSurfaceRect dbSurfaceRect : dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().readDbChildren()) {
+            addSurfaceRect(dbSurfaceRect.createSurfaceRect());
+        }
+
+        // Terrain images
+        @SuppressWarnings("unchecked")
+        List<DbTerrainImage> imageList = hibernateTemplate.loadAll(DbTerrainImage.class);
+        clearTerrainImages();
+        dbTerrainImages = new HashMap<Integer, DbTerrainImage>();
+        for (DbTerrainImage dbTerrainImage : imageList) {
+            dbTerrainImages.put(dbTerrainImage.getId(), dbTerrainImage);
+            putTerrainImage(dbTerrainImage.createTerrainImage());
+        }
+
+        // Surface images
+        @SuppressWarnings("unchecked")
+        List<DbSurfaceImage> surfaceList = hibernateTemplate.loadAll(DbSurfaceImage.class);
+        clearSurfaceImages();
+        dbSurfaceImages = new HashMap<Integer, DbSurfaceImage>();
+        for (DbSurfaceImage dbSurfaceImage : surfaceList) {
+            dbSurfaceImages.put(dbSurfaceImage.getId(), dbSurfaceImage);
+            putSurfaceImage(dbSurfaceImage.createSurfaceImage());
+        }
+        fireTerrainChanged();
     }
 
     private DbTerrainSetting getDbTerrainSetting4RealGame() {
@@ -351,18 +351,13 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
             gameInfo.setTerrainImages(getTerrainImages());
             gameInfo.setSurfaceRects(getSurfaceRects());
             gameInfo.setSurfaceImages(getSurfaceImages());
-        } else if (dbAbstractLevel instanceof DbSimulationLevel){
-            SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
-            try {
-                DbTerrainSetting terrainSetting = reattachDbTerrainSetting4Tutorial((DbSimulationLevel) dbAbstractLevel);
-                gameInfo.setTerrainSettings(terrainSetting.createTerrainSettings());// TODO cache
-                gameInfo.setTerrainImagePositions(getTerrainImagePositions(terrainSetting)); // TODO cache
-                gameInfo.setTerrainImages(getTerrainImages());
-                gameInfo.setSurfaceRects(getSurfaceRects(terrainSetting));// TODO cache
-                gameInfo.setSurfaceImages(getSurfaceImages());
-            } finally {
-                SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
-            }
+        } else if (dbAbstractLevel instanceof DbSimulationLevel) {
+            DbTerrainSetting terrainSetting = reattachDbTerrainSetting4Tutorial((DbSimulationLevel) dbAbstractLevel);
+            gameInfo.setTerrainSettings(terrainSetting.createTerrainSettings());// TODO cache
+            gameInfo.setTerrainImagePositions(getTerrainImagePositions(terrainSetting)); // TODO cache
+            gameInfo.setTerrainImages(getTerrainImages());
+            gameInfo.setSurfaceRects(getSurfaceRects(terrainSetting));// TODO cache
+            gameInfo.setSurfaceImages(getSurfaceImages());
         } else {
             throw new IllegalArgumentException("Unknown Level class: " + dbAbstractLevel);
         }
@@ -384,17 +379,12 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
 
     @Override
     public void setupTerrain(TerrainInfo terrainInfo, int terrainId) {
-        SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
-        try {
-            DbTerrainSetting dbTerrainSetting = dbTerrainSettingCrudServiceHelper.readDbChild(terrainId);
-            terrainInfo.setTerrainSettings(dbTerrainSetting.createTerrainSettings());
-            terrainInfo.setTerrainImagePositions(getTerrainImagePositions(dbTerrainSetting));
-            terrainInfo.setTerrainImages(getTerrainImages());
-            terrainInfo.setSurfaceRects(getSurfaceRects(dbTerrainSetting));
-            terrainInfo.setSurfaceImages(getSurfaceImages());
-        } finally {
-            SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
-        }
+        DbTerrainSetting dbTerrainSetting = dbTerrainSettingCrudServiceHelper.readDbChild(terrainId);
+        terrainInfo.setTerrainSettings(dbTerrainSetting.createTerrainSettings());
+        terrainInfo.setTerrainImagePositions(getTerrainImagePositions(dbTerrainSetting));
+        terrainInfo.setTerrainImages(getTerrainImages());
+        terrainInfo.setSurfaceRects(getSurfaceRects(dbTerrainSetting));
+        terrainInfo.setSurfaceImages(getSurfaceImages());
     }
 
     private Collection<TerrainImagePosition> getTerrainImagePositions(DbTerrainSetting dbTerrainSetting) {
@@ -416,6 +406,6 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     @Override
     @Transactional
     public void saveDbTerrainSetting(List<DbTerrainSetting> dbTerrainSettings) {
-       dbTerrainSettingCrudServiceHelper.updateDbChildren(dbTerrainSettings); 
+        dbTerrainSettingCrudServiceHelper.updateDbChildren(dbTerrainSettings);
     }
 }
