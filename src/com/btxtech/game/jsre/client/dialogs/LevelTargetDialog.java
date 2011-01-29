@@ -35,7 +35,7 @@ public class LevelTargetDialog extends Dialog {
         setShowCloseButton(true);
         setupDialog();
         getElement().getStyle().setWidth(300, Style.Unit.PX);
-        getElement().getStyle().setZIndex(Constants.Z_INDEX_USER_STAGE_DIALOG);
+        getElement().getStyle().setZIndex(Constants.Z_INDEX_LEVEL_DIALOG);
     }
 
     @Override

@@ -29,7 +29,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 public class LifecyclePanel extends Panel {
     public LifecyclePanel(String id, LifecycleTrackingInfo lifecycleTrackingInfo) {
         super(id);
-        add(new Label("userStage", lifecycleTrackingInfo.getUserStage()));        
+        add(new Label("level", lifecycleTrackingInfo.getLevel()));        
         add(new ListView<DbStartupTask>("startup", lifecycleTrackingInfo.getGameStartups()) {
             @Override
             protected void populateItem(ListItem<DbStartupTask> gameStartupListItem) {

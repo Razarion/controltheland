@@ -71,7 +71,6 @@
         <mapping class="com.btxtech.game.services.utg.DbSimulationLevel"/>
         <mapping class="com.btxtech.game.services.utg.DbRealGameLevel"/>
         <mapping class="com.btxtech.game.services.utg.DbScope"/>
-        <mapping class="com.btxtech.game.services.utg.DbUserStage"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbComparisonItemCount"/>
         <mapping class="com.btxtech.game.services.utg.DbLevelPromotion"/>
         <mapping class="com.btxtech.game.services.utg.UserLevelStatus"/>
@@ -102,7 +101,6 @@
         <mapping class="com.btxtech.game.services.territory.DbTerritoryRegion"/>
         <mapping class="com.btxtech.game.services.cms.DbCmsHomeText"/>
         <mapping class="com.btxtech.game.services.cms.DbCmsHomeLayout"/>
-        <mapping class="com.btxtech.game.services.cms.DbCmsUserStage"/>
         <mapping class="com.btxtech.game.services.tutorial.DbTutorialConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.DbTaskConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.DbItemTypeAndPosition"/>

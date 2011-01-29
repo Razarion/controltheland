@@ -123,7 +123,6 @@ public class MgmtPage extends WebPage {
         toolPages.add(new LinkAndName("TerritoryEditor", TerritoryEditor.class));
         toolPages.add(new LinkAndName("Tutorial", TutorialTable.class));
         toolPages.add(new LinkAndName("User", UserTable.class));
-        toolPages.add(new LinkAndName("User Stages", UserStageTable.class));
         toolPages.add(new LinkAndName("Online User States", OnlineUserStateTable.class));
 
     }

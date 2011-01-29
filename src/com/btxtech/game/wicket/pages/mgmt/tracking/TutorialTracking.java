@@ -45,7 +45,7 @@ public class TutorialTracking extends Panel {
         add(new LifecyclePanel("lifecycle", lifecycleTrackingInfo));
         TutorialTrackingInfo tutorialTrackingInfo = userTrackingService.getTutorialTrackingInfo(lifecycleTrackingInfo);
 
-        overview(tutorialTrackingInfo, lifecycleTrackingInfo.getUserStage());
+        overview(tutorialTrackingInfo, lifecycleTrackingInfo.getLevel());
         tutorialProgress(tutorialTrackingInfo);
     }
 
@@ -61,7 +61,7 @@ public class TutorialTracking extends Panel {
         });
     }
 
-    private void overview(TutorialTrackingInfo tutorialTrackingInfo, final String userStage) {
+    private void overview(TutorialTrackingInfo tutorialTrackingInfo, final String level) {
         final DbEventTrackingStart dbEventTrackingStart = tutorialTrackingInfo.getDbEventTrackingStart();
         if (dbEventTrackingStart != null) {
             Link link = new Link("link") {
@@ -71,7 +71,7 @@ public class TutorialTracking extends Panel {
                     HttpSession httpSession = ((WebRequest) getRequest()).getHttpServletRequest().getSession();
                     httpSession.setAttribute(PlaybackEntry.SESSION_ID, dbEventTrackingStart.getSessionId());
                     httpSession.setAttribute(PlaybackEntry.START_TIME, Long.toString(dbEventTrackingStart.getClientTimeStamp()));
-                    httpSession.setAttribute(PlaybackEntry.STAGE_NAME, userStage);
+                    httpSession.setAttribute(PlaybackEntry.LAVAL_NAME, level);
                     setResponsePage(new PlaybackPage());
                 }
             };

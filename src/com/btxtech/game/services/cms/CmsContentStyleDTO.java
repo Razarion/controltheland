@@ -14,7 +14,6 @@
 package com.btxtech.game.services.cms;
 
 import com.btxtech.game.controllers.CmsImageController;
-import com.btxtech.game.services.utg.DbUserStage;
 import java.io.Serializable;
 
 /**

@@ -41,7 +41,7 @@ public interface TerrainService extends AbstractTerrainService {
 
     void saveAndActivateTerrainImages(List<DbTerrainImage> dbTerrainImages, List<DbSurfaceImage> dbSurfaceImages);
 
-    void saveAndActivateTerrain(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int dbUserStage);
+    void saveAndActivateTerrain(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int terrainId);
 
     void setupTerrain(GameInfo gameInfo, DbAbstractLevel dbAbstractLevel);
 

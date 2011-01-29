@@ -29,14 +29,14 @@ public class LifecycleTrackingInfo implements Serializable {
     private long startupDuration;
     private String sessionId;
     private Date end;
-    private String userStage;
+    private String level;
 
     public LifecycleTrackingInfo(String sessionId, DbStartup startup) {
         this.sessionId = sessionId;
         start = new Date(startup.getClientTimeStamp());
         dbStartupTasks = (List<DbStartupTask>) startup.getGameStartupTasks();
         startupDuration = startup.getStartupDuration();
-        userStage = startup.getLevel();
+        level = startup.getLevel();
     }
 
     public Date getStart() {
@@ -63,7 +63,7 @@ public class LifecycleTrackingInfo implements Serializable {
         this.end = end;
     }
 
-    public String getUserStage() {
-        return userStage;
+    public String getLevel() {
+        return level;
     }
 }
