@@ -135,7 +135,7 @@ public abstract class ConditionServiceImpl<T> implements ConditionService<T> {
 
     @Override
     public void onIncreaseXp(SimpleBase base, int xp) {
-        // TODO
+        triggerValue(base, ConditionTrigger.XP_INCREASED, xp);
     }
 
     //------ Both Client and Server ------

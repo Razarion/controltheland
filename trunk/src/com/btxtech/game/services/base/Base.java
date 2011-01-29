@@ -188,14 +188,9 @@ public class Base implements Serializable {
         return abandoned;
     }
 
-    public void setAbandoned(boolean abandoned) {
-        this.abandoned = abandoned;
-    }
-
-    public void connectionClosed() {
-       if (userState == null || !userState.isRegistered()) {
-            abandoned = true;
-        }
+    public void setAbandoned() {
+        abandoned = true;
+        userState = null;
     }
 
     @Override
@@ -236,9 +231,5 @@ public class Base implements Serializable {
 
     public UserState getUserState() {
         return userState;
-    }
-
-    public void setUserState(UserState userState) {
-        this.userState = userState;
     }
 }

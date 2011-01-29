@@ -107,9 +107,6 @@ public class Connection implements Serializable {
 
     public void setClosed() {
         this.closed = true;
-        if(base != null) {
-          base.connectionClosed();
-        }
     }
 
     public boolean isClosed() {

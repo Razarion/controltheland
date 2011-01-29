@@ -41,7 +41,8 @@ public class ComparisonFactory {
         SYNC_ITEM_BUILT(ConditionTrigger.SYNC_ITEM_BUILT, DbSyncItemTypeComparisonConfig.class, DbSyncItemIdComparisonConfig.class, DbCountComparisonConfig.class),
         SCROLL(ConditionTrigger.SCROLL),
         COCKPIT_BUTTON_EVENT(ConditionTrigger.COCKPIT_BUTTON_EVENT, DbCockpitButtonClickedComparisonConfig.class),
-        MONEY_INCREASED(ConditionTrigger.MONEY_INCREASED, DbCountComparisonConfig.class);
+        MONEY_INCREASED(ConditionTrigger.MONEY_INCREASED, DbCountComparisonConfig.class),
+        XP_INCREASED(ConditionTrigger.XP_INCREASED, DbCountComparisonConfig.class);
 
         private ConditionTrigger conditionTrigger;
         private List<Class<? extends DbAbstractComparisonConfig>> comparisons;

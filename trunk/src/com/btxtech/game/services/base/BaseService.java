@@ -92,4 +92,6 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
     int getTotalHouseSpace();
 
     Base getBase(UserState userState);
+
+    void onSessionTimedOut(UserState userState);
 }
