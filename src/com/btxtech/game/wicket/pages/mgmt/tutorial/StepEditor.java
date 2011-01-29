@@ -49,7 +49,8 @@ public class StepEditor extends WebPage {
     private TutorialService tutorialService;
     private Class createChoice = DbHintConfig.ALL_HINTS[0];
 
-    public StepEditor(final int dbStepConfigId) {
+    public StepEditor(DbStepConfig dbStepConfig) {
+        final int dbStepConfigId = dbStepConfig.getId();
         add(new FeedbackPanel("msgs"));
 
         final Form<DbStepConfig> form = new Form<DbStepConfig>("stepForm", new CompoundPropertyModel<DbStepConfig>(new IModel<DbStepConfig>() {

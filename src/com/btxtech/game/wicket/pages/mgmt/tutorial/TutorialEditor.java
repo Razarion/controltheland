@@ -47,18 +47,19 @@ public class TutorialEditor extends WebPage {
     private SessionFactory sessionFactory;
     private Log log = LogFactory.getLog(TutorialEditor.class);
 
-    public TutorialEditor(final int dbTutorialConfigId) {
+    public TutorialEditor(DbTutorialConfig dbTutorialConfig) {
+        final int dbTutorialConfigId = dbTutorialConfig.getId(); 
         add(new FeedbackPanel("msgs"));
 
         final Form<DbTutorialConfig> form = new Form<DbTutorialConfig>("tutorialForm", new CompoundPropertyModel<DbTutorialConfig>(new IModel<DbTutorialConfig>() {
-            private DbTutorialConfig dbTaskConfig;
+            private DbTutorialConfig dbTutorialConfig;
 
             @Override
             public DbTutorialConfig getObject() {
-                if (dbTaskConfig == null) {
-                    dbTaskConfig = tutorialService.getDbTutorialConfig(dbTutorialConfigId);
+                if (dbTutorialConfig == null) {
+                    dbTutorialConfig = tutorialService.getDbTutorialConfig(dbTutorialConfigId);
                 }
-                return dbTaskConfig;
+                return dbTutorialConfig;
             }
 
             @Override
@@ -68,7 +69,7 @@ public class TutorialEditor extends WebPage {
 
             @Override
             public void detach() {
-                dbTaskConfig = null;
+                dbTutorialConfig = null;
             }
         }));
         add(form);
@@ -121,7 +122,7 @@ public class TutorialEditor extends WebPage {
 
             @Override
             protected void onEditSubmit(DbTaskConfig dbTaskConfig) {
-                setResponsePage(new TaskEditor(((DbTutorialConfig) form.getDefaultModelObject()).getId()));
+                setResponsePage(new TaskEditor(dbTaskConfig));
             }
         };
 
@@ -129,7 +130,7 @@ public class TutorialEditor extends WebPage {
 
             @Override
             public void onSubmit() {
-                tutorialService.saveTutorial((DbTutorialConfig) getDefaultModelObject());
+                tutorialService.saveTutorial((DbTutorialConfig) form.getDefaultModelObject());
             }
         });
         form.add(new Button("back") {

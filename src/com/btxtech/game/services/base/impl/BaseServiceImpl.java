@@ -451,7 +451,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         Base base = getBase(simpleBase);
         if (!isBot(simpleBase)) {
             base.depositMoney(price);
-            serverConditionService.onMoneyIncrease(base.getSimpleBase(), base.getAccountBalance());
+            serverConditionService.onMoneyIncrease(base.getSimpleBase(), price);
         }
     }
 
