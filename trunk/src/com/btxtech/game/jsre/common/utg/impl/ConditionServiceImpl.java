@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.CockpitButtonTrigger;
 import com.btxtech.game.jsre.common.utg.condition.SimpleConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.SyncItemConditionTrigger;
+import com.btxtech.game.jsre.common.utg.condition.ValueConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -78,6 +79,17 @@ public abstract class ConditionServiceImpl<T> implements ConditionService<T> {
         simpleConditionTrigger.onTrigger();
         if (simpleConditionTrigger.isFulfilled()) {
             conditionPassed(simpleConditionTrigger.getUserObject());
+        }
+    }
+
+    private void triggerValue(SimpleBase actor, ConditionTrigger conditionTrigger, double value) {
+        ValueConditionTrigger<T> valueConditionTrigger = getAbstractCondition(actor, conditionTrigger);
+        if (valueConditionTrigger == null) {
+            return;
+        }
+        valueConditionTrigger.onTriggerValue(value);
+        if (valueConditionTrigger.isFulfilled()) {
+            conditionPassed(valueConditionTrigger.getUserObject());
         }
     }
 
@@ -140,7 +152,7 @@ public abstract class ConditionServiceImpl<T> implements ConditionService<T> {
 
     @Override
     public void onMoneyIncrease(SimpleBase base, double accountBalance) {
-        // TODO
+        triggerValue(base, ConditionTrigger.MONEY_INCREASED, accountBalance);
     }
 
     //------ Only used for fail ------

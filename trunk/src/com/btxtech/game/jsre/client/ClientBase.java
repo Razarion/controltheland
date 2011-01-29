@@ -80,7 +80,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         if (this.simpleBase.equals(simpleBase)) {
             accountBalance += price;
             Cockpit.getInstance().updateMoney();
-            SimulationConditionServiceImpl.getInstance().onMoneyIncrease(simpleBase, accountBalance);
+            SimulationConditionServiceImpl.getInstance().onMoneyIncrease(simpleBase, price);
             if (depositResourceListener != null) {
                 depositResourceListener.onDeposit();
             }

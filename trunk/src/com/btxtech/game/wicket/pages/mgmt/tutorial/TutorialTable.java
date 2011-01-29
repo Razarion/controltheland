@@ -49,7 +49,7 @@ public class TutorialTable extends WebPage {
 
             @Override
             protected void onEditSubmit(DbTutorialConfig dbTutorialConfig) {
-                setResponsePage(new TutorialEditor(dbTutorialConfig.getId()));
+                setResponsePage(new TutorialEditor(dbTutorialConfig));
             }
 
             @Override

@@ -52,7 +52,8 @@ public class TaskEditor extends WebPage {
     private Log log = LogFactory.getLog(TaskEditor.class);
     private Collection<DbBaseItemType> itemTypes;
 
-    public TaskEditor(final int dbTaskConfigId) {
+    public TaskEditor(DbTaskConfig dbTaskConfig) {
+        final int dbTaskConfigId = dbTaskConfig.getId();
         itemTypes = itemService.getDbBaseItemTypes();
 
         add(new FeedbackPanel("msgs"));
@@ -183,7 +184,7 @@ public class TaskEditor extends WebPage {
 
             @Override
             protected void onEditSubmit(DbStepConfig dbStepConfig) {
-                setResponsePage(new StepEditor(dbStepConfig.getId()));
+                setResponsePage(new StepEditor(dbStepConfig));
             }
         };
 
