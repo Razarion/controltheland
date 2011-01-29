@@ -260,7 +260,7 @@ public class ServerMarketServiceImpl implements ServerMarketService {
         try {
             userItemTypeAccess.increaseXp(amount);
             baseService.sendXpUpdate(userItemTypeAccess, base);
-            serverConditionService.onIncreaseXp(base.getSimpleBase(), userItemTypeAccess.getXp());
+            serverConditionService.onIncreaseXp(base.getSimpleBase(), amount);
         } catch (Exception e) {
             log.error("", e);
         }

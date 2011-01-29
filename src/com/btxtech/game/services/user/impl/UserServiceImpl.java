@@ -255,6 +255,7 @@ public class UserServiceImpl implements UserService {
         synchronized (userStates) {
             hasBeenRemoved = userStates.remove(userState);
         }
+        baseService.onSessionTimedOut(userState);
         if (hasBeenRemoved) {
             log.error("UserState could not be found for session: " + sessionId);
         }

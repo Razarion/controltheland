@@ -65,6 +65,11 @@ public enum ConditionTrigger {
         @Override
         public <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison abstractComparison, T t) {
             return new ValueConditionTrigger<T>(this, abstractComparison, t);
+        }},
+    XP_INCREASED(true) {
+        @Override
+        public <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison abstractComparison, T t) {
+            return new ValueConditionTrigger<T>(this, abstractComparison, t);
         }};
 
 

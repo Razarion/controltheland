@@ -402,9 +402,8 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         setBaseAbandoned(base.getSimpleBase(), true);
         UserState userState = base.getUserState();
         userState.setBase(null);
-        base.setUserState(null);
         setBaseName(base.getSimpleBase(), setupBaseName(base));
-        base.setAbandoned(true);
+        base.setAbandoned();
         sendBaseChangedPacket(BaseChangedPacket.Type.CHANGED, base.getSimpleBase());
     }
 
@@ -543,5 +542,14 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     @Override
     public int getTotalHouseSpace() {
         return userGuidanceService.getDbLevel().getHouseSpace() + getBase().getHouseSpace();
+    }
+
+    @Override
+    public void onSessionTimedOut(UserState userState) {
+        Base base = userState.getBase();
+        if (base == null || userState.isRegistered()) {
+            return;
+        }
+        base.setAbandoned();
     }
 }
