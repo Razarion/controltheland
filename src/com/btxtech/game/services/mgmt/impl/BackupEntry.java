@@ -14,9 +14,11 @@
 package com.btxtech.game.services.mgmt.impl;
 
 import com.btxtech.game.services.base.Base;
+import com.btxtech.game.services.utg.condition.backup.DbAbstractComparisonBackup;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -35,7 +37,9 @@ public class BackupEntry {
     @GeneratedValue
     private Integer id;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "backupEntry", fetch = FetchType.EAGER)
-    private Collection<GenericItem> items;
+    private Set<GenericItem> items;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "backupEntry", fetch = FetchType.EAGER)
+    private Set<DbAbstractComparisonBackup> abstractComparison;
     private Date timeStamp;
 
     @Override
@@ -57,8 +61,16 @@ public class BackupEntry {
         return items;
     }
 
-    public void setItems(Collection<GenericItem> items) {
+    public void setItems(Set<GenericItem> items) {
         this.items = items;
+    }
+
+    public Collection<DbAbstractComparisonBackup> getAbstractComparison() {
+        return abstractComparison;
+    }
+
+    public void setAbstractComparison(Set<DbAbstractComparisonBackup> abstractComparison) {
+        this.abstractComparison = abstractComparison;
     }
 
     public Date getTimeStamp() {

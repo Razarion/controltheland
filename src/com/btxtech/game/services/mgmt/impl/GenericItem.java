@@ -49,8 +49,7 @@ public abstract class GenericItem {
     @Id
     @GeneratedValue
     private Integer id;
-    @ManyToOne
-    @JoinColumn(name = "backupEntryId", nullable = false)
+    @ManyToOne(optional = false)
     private BackupEntry backupEntry;
     @ManyToOne
     private DbItemType itemType;

@@ -103,7 +103,6 @@
         <mapping class="com.btxtech.game.services.tutorial.hint.DbTerrainPositionSpeechBubbleHintConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.hint.DbCockpitSpeechBubbleHintConfig"/>
         <!-- Backup -->
-        <mapping class="com.btxtech.game.services.utg.UserLevelStatus"/>
         <mapping class="com.btxtech.game.services.user.UserState"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.BackupEntry"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.GenericBaseItem"/>
@@ -111,6 +110,9 @@
         <mapping class="com.btxtech.game.services.mgmt.impl.GenericProjectileItem"/>
         <mapping class="com.btxtech.game.services.base.Base"/>
         <mapping class="com.btxtech.game.services.market.impl.UserItemTypeAccess"/>
+        <mapping class="com.btxtech.game.services.utg.condition.backup.DbCountComparisonBackup"/>
+        <mapping class="com.btxtech.game.services.utg.condition.backup.DbSyncItemIdComparisonBackup"/>
+        <mapping class="com.btxtech.game.services.utg.condition.backup.DbSyncItemTypeComparisonBackup"/>
 
     </session-factory>
 </hibernate-configuration>

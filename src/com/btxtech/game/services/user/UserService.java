@@ -57,7 +57,7 @@ public interface UserService {
 
     void onSessionTimedOut(UserState userState, String sessionId);
 
-    List<UserState> getOnlineUserStates();
+    List<UserState> getAllUserStates();
 
     void restore(Collection<UserState> userStates);
 }

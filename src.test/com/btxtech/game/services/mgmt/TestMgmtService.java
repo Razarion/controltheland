@@ -53,10 +53,21 @@ public class TestMgmtService extends AbstractJUnit4SpringContextTests {
     @Autowired
     private UserService userService;
 
-    @Test
+    //@Test
     public void testBackup() throws Exception {
         userGuidanceService.promote(userService.getUserState(), 5);
         mgmtService.backup();
+        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+    }
+
+    @Test
+    public void testBackup2() throws Exception {
+        userGuidanceService.promote(userService.getUserState(), 5);
+        userGuidanceService.promote(userService.getUserState(), 15);
+        mgmtService.backup();
+        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
     }
 
     // @Test

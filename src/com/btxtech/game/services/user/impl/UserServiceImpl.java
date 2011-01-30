@@ -46,7 +46,6 @@ import org.springframework.stereotype.Component;
 public class UserServiceImpl implements UserService {
     @Autowired
     private com.btxtech.game.services.connection.Session session;
-    private HibernateTemplate hibernateTemplate;
     @Autowired
     private ServerMarketService serverMarketService;
     @Autowired
@@ -55,6 +54,7 @@ public class UserServiceImpl implements UserService {
     private UserTrackingService userTrackingService;
     @Autowired
     private UserGuidanceService userGuidanceService;
+    private HibernateTemplate hibernateTemplate;
     private Map<DbBotConfig, UserState> botStates = new HashMap<DbBotConfig, UserState>();
     private final Collection<UserState> userStates = new ArrayList<UserState>();
     private Log log = LogFactory.getLog(UserServiceImpl.class);
@@ -251,18 +251,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void onSessionTimedOut(UserState userState, String sessionId) {
-        boolean hasBeenRemoved;
-        synchronized (userStates) {
-            hasBeenRemoved = userStates.remove(userState);
-        }
+        // TODO logout
         baseService.onSessionTimedOut(userState);
-        if (hasBeenRemoved) {
-            log.error("UserState could not be found for session: " + sessionId);
-        }
     }
 
     @Override
-    public List<UserState> getOnlineUserStates() {
+    public List<UserState> getAllUserStates() {
         ArrayList<UserState> userStateCopy;
         synchronized (userStates) {
             userStateCopy = new ArrayList<UserState>(userStates);

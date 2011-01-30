@@ -16,10 +16,8 @@ package com.btxtech.game.services.user;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
-import com.btxtech.game.services.utg.UserLevelStatus;
-import javax.persistence.CascadeType;
+import com.btxtech.game.services.utg.DbAbstractLevel;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -42,8 +40,8 @@ public class UserState {
     private User user;
     @OneToOne
     private Base base;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private UserLevelStatus userLevelStatus;
+    @ManyToOne(optional = false)
+    private DbAbstractLevel currentAbstractLevel;
     @Transient
     // TODO
     private UserItemTypeAccess userItemTypeAccess;
@@ -72,12 +70,12 @@ public class UserState {
         this.base = base;
     }
 
-    public void setUserLevelStatus(UserLevelStatus userLevelStatus) {
-        this.userLevelStatus = userLevelStatus;
+    public DbAbstractLevel getCurrentAbstractLevel() {
+        return currentAbstractLevel;
     }
 
-    public UserLevelStatus getUserLevelStatus() {
-        return userLevelStatus;
+    public void setCurrentAbstractLevel(DbAbstractLevel currentAbstractLevel) {
+        this.currentAbstractLevel = currentAbstractLevel;
     }
 
     public Base getBase() {
@@ -114,9 +112,6 @@ public class UserState {
 
     public void clearId() {
         id = null;
-        if(userLevelStatus != null) {
-            userLevelStatus.clearId();
-        }
         if(userItemTypeAccess != null) {
             userItemTypeAccess.clearId();
         }

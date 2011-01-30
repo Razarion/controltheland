@@ -25,6 +25,7 @@ import com.btxtech.game.services.mgmt.DbViewDTO;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.resource.ResourceService;
+import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import java.io.BufferedReader;
 import java.io.File;
@@ -255,6 +256,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         }
         BackupEntry backupEntry = list.get(0);
         genericItemConverter.restoreBackup(backupEntry);
+
         log.info("Restored to: " + date);
         log.info("Time used for restore: " + (System.currentTimeMillis() - time) + "ms. Items: " + backupEntry.getItemCount() + " Bases: " + backupEntry.getBaseCount());
         genericItemConverter.clear();
@@ -285,6 +287,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
             if (applicationEvent instanceof ContextRefreshedEvent &&
                     applicationEvent.getSource() instanceof AbstractApplicationContext &&
                     ((AbstractApplicationContext) applicationEvent.getSource()).getParent() == null) {
+                userGuidanceService.init2();
                 List<BackupSummary> backupSummaries = getBackupSummary();
                 if (!backupSummaries.isEmpty()) {
                     try {
@@ -293,7 +296,6 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
                         log.error("", e);
                     }
                 }
-                userGuidanceService.init2();
                 resourceService.resetAllResources();
                 // TODO botService.start();
             }

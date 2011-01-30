@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010.
+ * Copyright (c) 2011.
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -13,27 +13,10 @@
 
 package com.btxtech.game.jsre.common.utg.condition;
 
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import java.util.Collection;
-
 /**
  * User: beat
- * Date: 27.12.2010
- * Time: 16:31:29
+ * Date: 30.01.2011
+ * Time: 11:51:14
  */
-@Deprecated
-public class ValueComparison implements AbstractComparison {
-    private int value;
-    private int count;
-
-/*    @Override
-    public void onSyncItem(SyncItem syncItem) {
-        value++;
-    } */
-
-    @Override
-    public boolean isFulfilled() {
-        return value >= count;
-    }
+public interface BackupAbleComparison {
 }

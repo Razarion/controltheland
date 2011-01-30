@@ -21,25 +21,31 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
  * Time: 16:31:29
  */
 public class CountComparison implements AbstractSyncItemComparison {
-    private double value;
-    private int count;
+    private double count;
 
     public CountComparison(int count) {
         this.count = count;
-        value = 0.0;
     }
 
     @Override
     public void onSyncItem(SyncItem syncItem) {
-        value += 1.0;
+        count -= 1.0;
     }
 
     public void onValue(double value) {
-        this.value += value;
+        count -= value;
     }
 
     @Override
     public boolean isFulfilled() {
-        return value >= count;
+        return count <= 0.0;
+    }
+
+    public double getCount() {
+        return count;
+    }
+
+    public void setCount(double count) {
+        this.count = count;
     }
 }

@@ -33,7 +33,6 @@ import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.services.utg.DbSimulationLevel;
 import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import com.btxtech.game.services.utg.UserLevelStatus;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
@@ -86,7 +85,6 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     private TutorialService tutorialService;
     private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
-    @Deprecated
     private List<DbAbstractLevel> dbAbstractLevels = new ArrayList<DbAbstractLevel>();
     private CrudServiceHelper<DbAbstractLevel> crudServiceHelperHibernate;
 
@@ -148,8 +146,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
     @Override
     public void promote(UserState userState) {
-        UserLevelStatus userLevelStatus = userState.getUserLevelStatus();
-        DbAbstractLevel dbOldAbstractLevel = userLevelStatus.getCurrentLevel();
+        DbAbstractLevel dbOldAbstractLevel = userState.getCurrentAbstractLevel();
         DbAbstractLevel dbNextAbstractLevel = getNextDbLevel(dbOldAbstractLevel);
 
         promote(userState, dbNextAbstractLevel);
@@ -157,11 +154,8 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
     private void promote(UserState userState, DbAbstractLevel dbNextAbstractLevel) {
         // Prepare
-        UserLevelStatus userLevelStatus = userState.getUserLevelStatus();
-
-        DbAbstractLevel dbOldAbstractLevel = userLevelStatus.getCurrentLevel();
-
-        userLevelStatus.setCurrentLevel(dbNextAbstractLevel);
+        DbAbstractLevel dbOldAbstractLevel = userState.getCurrentAbstractLevel();
+        userState.setCurrentAbstractLevel(dbNextAbstractLevel);
 
         if (dbNextAbstractLevel instanceof DbRealGameLevel && ((DbRealGameLevel) dbNextAbstractLevel).isCreateRealBase()) {
             try {
@@ -203,9 +197,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     @Override
     public void setLevelForNewUser(UserState userState) {
         DbAbstractLevel dbAbstractLevel = dbAbstractLevels.get(0);
-        UserLevelStatus userLevelStatus = new UserLevelStatus();
-        userLevelStatus.setCurrentLevel(dbAbstractLevel);
-        userState.setUserLevelStatus(userLevelStatus);
+        userState.setCurrentAbstractLevel(dbAbstractLevel);
         activateCondition(userState, dbAbstractLevel);
     }
 
@@ -232,18 +224,28 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
     @Override
     public DbAbstractLevel getDbAbstractLevel() {
-        return userService.getUserState().getUserLevelStatus().getCurrentLevel();
+        return userService.getUserState().getCurrentAbstractLevel();
     }
 
     @Override
     public DbRealGameLevel getDbLevel(SimpleBase simpleBase) {
-        return (DbRealGameLevel) baseService.getUserState(simpleBase).getUserLevelStatus().getCurrentLevel();
+        return (DbRealGameLevel) baseService.getUserState(simpleBase).getCurrentAbstractLevel();
     }
 
     @Override
     public DbAbstractLevel getDbLevel(String levelName) {
         // TODO
         return null;
+    }
+
+    @Override
+    public DbAbstractLevel getDbLevel(int id) {
+        for (DbAbstractLevel dbAbstractLevel : dbAbstractLevels) {
+            if (dbAbstractLevel.getId() == id) {
+                return dbAbstractLevel;
+            }
+        }
+        throw new IllegalArgumentException("No DbLevel for id: " + id);
     }
 
     @Override
