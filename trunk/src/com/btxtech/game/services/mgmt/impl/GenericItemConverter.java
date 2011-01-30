@@ -31,6 +31,7 @@ import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -65,6 +66,8 @@ public class GenericItemConverter {
     private Services services;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ServerConditionService serverConditionService;
     private BackupEntry backupEntry;
     private HashMap<Id, GenericItem> genericItems = new HashMap<Id, GenericItem>();
     private HashMap<Id, SyncItem> syncItems = new HashMap<Id, SyncItem>();
@@ -91,8 +94,8 @@ public class GenericItemConverter {
         for (SyncItem item : syncItems) {
             postProcessBackup(item);
         }
-        backupEntry.setItems(genericItems.values());
-
+        backupEntry.setItems(new HashSet<GenericItem>(genericItems.values()));
+        serverConditionService.backup(backupEntry);
         return backupEntry;
     }
 
@@ -141,6 +144,7 @@ public class GenericItemConverter {
         serverEnergyService.pauseService(false);
         serverEnergyService.restoreItems(syncItems.values());
         userGuidanceService.restore(bases);
+        serverConditionService.restore(userStates, backupEntry);
         actionService.pause(false);
     }
 

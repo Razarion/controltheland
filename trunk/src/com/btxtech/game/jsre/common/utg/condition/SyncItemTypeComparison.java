@@ -49,4 +49,11 @@ public class SyncItemTypeComparison implements AbstractSyncItemComparison {
         return remaining.isEmpty();
     }
 
+    public Map<ItemType, Integer> getRemaining() {
+        return remaining;
+    }
+
+    public void setRemaining(Map<ItemType, Integer> remaining) {
+        this.remaining = remaining;
+    }
 }

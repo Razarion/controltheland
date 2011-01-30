@@ -44,6 +44,8 @@ public interface UserGuidanceService {
 
     DbAbstractLevel getDbLevel(String levelName);
 
+    DbAbstractLevel getDbLevel(int id);
+
     String getDbLevelHtml();
 
     void restore(Collection<Base> bases);

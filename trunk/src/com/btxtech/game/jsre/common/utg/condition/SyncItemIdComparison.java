@@ -37,4 +37,11 @@ public class SyncItemIdComparison implements AbstractSyncItemComparison {
         return syncItemIds.isEmpty();
     }
 
+    public Collection<Integer> getSyncItemIds() {
+        return syncItemIds;
+    }
+
+    public void setSyncItemIds(Collection<Integer> syncItemIds) {
+        this.syncItemIds = syncItemIds;
+    }
 }

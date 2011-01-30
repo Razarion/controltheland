@@ -43,7 +43,7 @@ public class OnlineUserStateTable extends WebPage {
         final ListProvider<UserState> userStateProvider = new ListProvider<UserState>() {
             @Override
             protected List<UserState> createList() {
-                return userService.getOnlineUserStates();
+                return userService.getAllUserStates();
             }
         };
 
