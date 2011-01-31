@@ -48,6 +48,8 @@ public interface ServerMarketService extends ItemTypeAccess {
 
     void increaseXp(Base actorBase, SyncBaseItem killedItem);
 
+    void increaseXp(Base base, int deltaXp);
+
     int getXp();
 
     void buy(MarketEntry marketEntry);

@@ -22,9 +22,9 @@ import java.io.Serializable;
  */
 public class Level implements Serializable {
     private String name;
-    private int itemLimit; // TODO
     private String html;
     private boolean realGame;
+    private int maxMoney;
 
     /**
      * Used by GWT
@@ -32,22 +32,16 @@ public class Level implements Serializable {
     public Level() {
     }
 
-    public Level(String name, String html, boolean realGame, int itemLimit) {
+    public Level(String name, String html, boolean realGame, int maxMoney) {
         this.name = name;
         this.html = html;
         this.realGame = realGame;
-        this.itemLimit = itemLimit;
+        this.maxMoney = maxMoney;
     }
 
     public String getName() {
         return name;
     }
-
-    @Deprecated
-    public int getItemLimit() {
-        return itemLimit;
-    }
-
 
     public String getHtml() {
         return html;
@@ -57,6 +51,10 @@ public class Level implements Serializable {
         return realGame;
     }
 
+    public int getMaxMoney() {
+        return maxMoney;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -64,9 +62,8 @@ public class Level implements Serializable {
 
         Level level = (Level) o;
 
-        if (name != null ? !name.equals(level.name) : level.name != null) return false;
+        return !(name != null ? !name.equals(level.name) : level.name != null);
 
-        return true;
     }
 
     @Override

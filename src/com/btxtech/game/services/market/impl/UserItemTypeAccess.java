@@ -89,6 +89,10 @@ public class UserItemTypeAccess implements Serializable {
         return xp;
     }
 
+    public void setXp(int xp) {
+        this.xp = xp;
+    }
+
     protected void increaseXp(int value) {
         xp += value;
     }
