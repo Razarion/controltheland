@@ -639,15 +639,13 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     @Override
     public void sellItem(Id id) throws ItemDoesNotExistException, IllegalAccessException {
         SyncBaseItem syncBaseItem = (SyncBaseItem) getItem(id);
-        Base base = baseService.getBase();
         baseService.checkBaseAccess(syncBaseItem);
         double health = syncBaseItem.getHealth();
         double fullHealth = syncBaseItem.getBaseItemType().getHealth();
         double price = syncBaseItem.getBaseItemType().getPrice();
         killSyncItem(syncBaseItem, null, true, false);
         double money = health / fullHealth * price * userGuidanceService.getDbLevel().getItemSellFactor();
-        base.depositMoney(money);
-        baseService.sendAccountBaseUpdate(base);
+        baseService.depositResource(money, syncBaseItem.getBase());
     }
 
     @Override

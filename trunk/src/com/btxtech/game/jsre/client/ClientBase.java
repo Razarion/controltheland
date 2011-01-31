@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
+import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.client.dialogs.UnfrequentDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.item.ItemViewContainer;
@@ -36,7 +37,6 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     private static final ClientBase INSTANCE = new ClientBase();
     private double accountBalance;
     private SimpleBase simpleBase;
-    private DepositResourceListener depositResourceListener;
     private int houseSpace;
     private int itemLimit;
 
@@ -78,12 +78,16 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     @Override
     public void depositResource(double price, SimpleBase simpleBase) {
         if (this.simpleBase.equals(simpleBase)) {
-            accountBalance += price;
+            if (Connection.getInstance().getGameInfo() instanceof RealityInfo) {
+                accountBalance += price;
+                if (accountBalance > Connection.getInstance().getGameInfo().getLevel().getMaxMoney()) {
+                    accountBalance = Connection.getInstance().getGameInfo().getLevel().getMaxMoney();
+                }
+            } else {
+                accountBalance += price;
+            }
             Cockpit.getInstance().updateMoney();
             SimulationConditionServiceImpl.getInstance().onMoneyIncrease(simpleBase, price);
-            if (depositResourceListener != null) {
-                depositResourceListener.onDeposit();
-            }
         }
     }
 
@@ -100,10 +104,6 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
             Cockpit.getInstance().updateMoney();
         }
         SimulationConditionServiceImpl.getInstance().onWithdrawalMoney();
-    }
-
-    public void setDepositResourceListener(DepositResourceListener depositResourceListener) {
-        this.depositResourceListener = depositResourceListener;
     }
 
     public String getOwnBaseName() {

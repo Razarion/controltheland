@@ -30,6 +30,7 @@ import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.market.XpSettings;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import java.sql.SQLException;
@@ -258,8 +259,7 @@ public class ServerMarketServiceImpl implements ServerMarketService {
 
     private void increaseXp(int amount, UserItemTypeAccess userItemTypeAccess, Base base) {
         try {
-            userItemTypeAccess.increaseXp(amount);
-            baseService.sendXpUpdate(userItemTypeAccess, base);
+            increaseXpInternal(base, amount, userItemTypeAccess);
             serverConditionService.onIncreaseXp(base.getSimpleBase(), amount);
         } catch (Exception e) {
             log.error("", e);
@@ -269,6 +269,27 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     @Override
     public void increaseXp(Base actorBase, SyncBaseItem killedItem) {
         xpPerKillQueueWorker.put(new XpPerKill(actorBase, killedItem));
+    }
+
+    @Override
+    public void increaseXp(Base base, int deltaXp) {
+        UserItemTypeAccess userItemTypeAccess = base.getUserState().getUserItemTypeAccess();
+        increaseXpInternal(base, deltaXp, userItemTypeAccess);
+    }
+
+    private void increaseXpInternal(Base base, int deltaXp, UserItemTypeAccess userItemTypeAccess) {
+        int xp = userItemTypeAccess.getXp();
+        DbRealGameLevel dbRealGameLevel = userGuidanceService.getDbLevel();
+        if (xp == dbRealGameLevel.getMaxXp()) {
+            return;
+        } else if (xp > dbRealGameLevel.getMaxXp()) {
+            userItemTypeAccess.setXp(dbRealGameLevel.getMaxXp());
+        } else if (xp + deltaXp > dbRealGameLevel.getMaxXp()) {
+            userItemTypeAccess.increaseXp(dbRealGameLevel.getMaxXp() - xp);
+        } else {
+            userItemTypeAccess.increaseXp(deltaXp);
+        }
+        baseService.sendXpUpdate(userItemTypeAccess, base);
     }
 
     private UserItemTypeAccess getUserItemTypeAccess4Base(SimpleBase simpleBase) {

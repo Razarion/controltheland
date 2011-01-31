@@ -83,6 +83,8 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     private ServerConditionService serverConditionService;
     @Autowired
     private TutorialService tutorialService;
+    @Autowired
+    private ServerMarketService marketService;
     private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
     private List<DbAbstractLevel> dbAbstractLevels = new ArrayList<DbAbstractLevel>();
@@ -148,7 +150,6 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     public void promote(UserState userState) {
         DbAbstractLevel dbOldAbstractLevel = userState.getCurrentAbstractLevel();
         DbAbstractLevel dbNextAbstractLevel = getNextDbLevel(dbOldAbstractLevel);
-
         promote(userState, dbNextAbstractLevel);
     }
 
@@ -157,12 +158,17 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         DbAbstractLevel dbOldAbstractLevel = userState.getCurrentAbstractLevel();
         userState.setCurrentAbstractLevel(dbNextAbstractLevel);
 
-        if (dbNextAbstractLevel instanceof DbRealGameLevel && ((DbRealGameLevel) dbNextAbstractLevel).isCreateRealBase()) {
-            try {
-                baseService.createNewBase();
-            } catch (Exception e) {
-                log.error("Can not create base for user: " + userState, e);
+        if (dbNextAbstractLevel instanceof DbRealGameLevel) {
+            DbRealGameLevel dbRealGameLevel = (DbRealGameLevel) dbNextAbstractLevel;
+            if(dbRealGameLevel.isCreateRealBase()) {
+                try {
+                    baseService.createNewBase();
+                } catch (Exception e) {
+                    log.error("Can not create base for user: " + userState, e);
+                }
             }
+            Base base = baseService.getBase(userState);
+            handleRewards(base, dbRealGameLevel);
         }
 
         // Prepare next level
@@ -180,6 +186,16 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         // Tracking
         // TODO userTrackingService.levelPromotion(userState, dbOldAbstractLevel);
         log.debug("User: " + userState + " has been promoted: " + dbOldAbstractLevel + " to " + dbNextAbstractLevel);
+    }
+
+    private void handleRewards(Base base, DbRealGameLevel dbRealGameLevel) {
+        if (dbRealGameLevel.getDeltaMoney() != 0) {
+            base.depositMoney(dbRealGameLevel.getDeltaMoney());
+            baseService.sendAccountBaseUpdate(base);
+        }
+        if (dbRealGameLevel.getDeltaXp() != 0) {
+            marketService.increaseXp(base, dbRealGameLevel.getDeltaXp());
+        }
     }
 
     private DbAbstractLevel getNextDbLevel(DbAbstractLevel dbAbstractLevel) {
@@ -219,7 +235,11 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
     @Override
     public DbRealGameLevel getDbLevel() {
-        return (DbRealGameLevel) getDbAbstractLevel();
+        DbAbstractLevel dbAbstractLevel = getDbAbstractLevel();
+        if(dbAbstractLevel instanceof DbRealGameLevel) {
+            return (DbRealGameLevel) dbAbstractLevel;
+        }
+        throw new IllegalStateException("Must fallback to last real game level");
     }
 
     @Override

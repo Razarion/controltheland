@@ -147,7 +147,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             base = new Base(baseColor, userService.getUserState(), lastBaseId);
             createBase(base.getSimpleBase(), setupBaseName(base), base.getBaseColor().getHtmlColor(), false);
             log.info("Base created: " + base);
-            base.setAccountBalance(dbRealGameLevel.getDeltaMoney());
             bases.put(base.getSimpleBase(), base);
         }
         BaseItemType startItem = (BaseItemType) itemService.getItemType(dbRealGameLevel.getStartItemType());
@@ -449,7 +448,17 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     public void depositResource(double price, SimpleBase simpleBase) {
         Base base = getBase(simpleBase);
         if (!isBot(simpleBase)) {
-            base.depositMoney(price);
+            DbRealGameLevel dbRealGameLevel = userGuidanceService.getDbLevel();
+            double money = base.getAccountBalance();
+            if (money == dbRealGameLevel.getMaxMoney()) {
+                return;
+            } else if (money > dbRealGameLevel.getMaxMoney()) {
+                base.setAccountBalance(dbRealGameLevel.getMaxMoney());
+            } else if (money + price > dbRealGameLevel.getMaxMoney()) {
+                base.depositMoney(dbRealGameLevel.getMaxMoney() - money);
+            } else {
+                base.depositMoney(price);
+            }
             serverConditionService.onMoneyIncrease(base.getSimpleBase(), price);
         }
     }

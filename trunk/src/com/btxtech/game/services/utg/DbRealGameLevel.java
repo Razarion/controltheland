@@ -20,17 +20,22 @@ import com.btxtech.game.services.common.db.RectangleUserType;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
+import com.btxtech.game.services.market.MarketEntry;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
+import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -46,16 +51,32 @@ import org.hibernate.annotations.TypeDef;
 public class DbRealGameLevel extends DbAbstractLevel {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private DbConditionConfig dbConditionConfig;
-    private int houseSpace;
-    private double deltaMoney;
+    // ----- New Base -----
+    private boolean createRealBase;
     @ManyToOne
     private DbBaseItemType startItemType;
     @Type(type = "rectangle")
     @Columns(columns = {@Column(name = "startX"), @Column(name = "startY"), @Column(name = "startWidth"), @Column(name = "startHeight")})
     private Rectangle startRectangle;
     private int startItemFreeRange;
-    private boolean createRealBase;
+    // ----- Scope -----
     private double itemSellFactor;
+    private int houseSpace;
+    // ----- Rewards -----
+    private int deltaMoney;
+    private int deltaXp;
+    // ----- Limitations -----
+    private int maxMoney;
+    private int maxXp;
+    @CollectionOfElements(fetch = FetchType.LAZY)
+    @JoinTable(name = "GUIDANCE_LEVEL_ITEM_LIMITATION")
+    // Does not work
+    @org.hibernate.annotations.MapKey(columns = @Column(name = "itemType"))
+    @Column(name = "count")
+    private Map<DbItemType, Integer> itemTypeLimitation;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "GUIDANCE_LEVEL_ITEM_LIMITATION")
+    private Set<MarketEntry> allowedMarketEntries;
 
     @Transient
     private Level level;
@@ -76,11 +97,11 @@ public class DbRealGameLevel extends DbAbstractLevel {
         this.houseSpace = houseSpace;
     }
 
-    public double getDeltaMoney() {
+    public int getDeltaMoney() {
         return deltaMoney;
     }
 
-    public void setDeltaMoney(double deltaMoney) {
+    public void setDeltaMoney(int deltaMoney) {
         this.deltaMoney = deltaMoney;
     }
 
@@ -124,9 +145,52 @@ public class DbRealGameLevel extends DbAbstractLevel {
         this.itemSellFactor = itemSellFactor;
     }
 
+    public int getDeltaXp() {
+        return deltaXp;
+    }
+
+    public void setDeltaXp(int deltaXp) {
+        this.deltaXp = deltaXp;
+    }
+
+    public int getMaxMoney() {
+        return maxMoney;
+    }
+
+    public void setMaxMoney(int maxMoney) {
+        this.maxMoney = maxMoney;
+    }
+
+    public int getMaxXp() {
+        return maxXp;
+    }
+
+    public void setMaxXp(int maxXp) {
+        this.maxXp = maxXp;
+    }
+
+    public Map<DbItemType, Integer> getItemTypeLimitation() {
+        if (itemTypeLimitation == null) {
+            itemTypeLimitation = new HashMap<DbItemType, Integer>();
+        }
+        return itemTypeLimitation;
+    }
+
+    public void createItemTypeLimitation() {
+        getItemTypeLimitation().put(null, 0);
+    }
+
+    public void deleteItemTypeLimitation(DbItemType dbItemType) {
+        getItemTypeLimitation().remove(dbItemType);
+    }
+
+    public void setItemTypeLimitation(DbItemType dbItemType, int limitation) {
+        getItemTypeLimitation().put(dbItemType, limitation);
+    }
+
     @Override
     protected ConditionConfig createConditionConfig(ItemService itemService) {
-        if(dbConditionConfig == null) {
+        if (dbConditionConfig == null) {
             throw new IllegalStateException("No condition config for DbRealGameLevel: " + getName());
         }
         return dbConditionConfig.createConditionConfig(itemService);
@@ -134,7 +198,7 @@ public class DbRealGameLevel extends DbAbstractLevel {
 
     public Level getLevel() {
         if (level == null) {
-            level = new Level(getName(), getHtml(), true, 0);
+            level = new Level(getName(), getHtml(), true, maxMoney);
         }
         return level;
     }
