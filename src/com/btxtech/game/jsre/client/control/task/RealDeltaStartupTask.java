@@ -21,7 +21,6 @@ import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
-import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 
 /**
  * User: beat
@@ -45,7 +44,6 @@ public class RealDeltaStartupTask extends GameEngineStartupTask {
         ClientItemTypeAccess.getInstance().setAllowedItemTypes(realityInfo.getAllowedItemTypes());
         RadarPanel.getInstance().updateEnergy(realityInfo.getEnergyGenerating(), realityInfo.getEnergyConsuming());
         ClientTerritoryService.getInstance().setTerritories(realityInfo.getTerritories());
-        ClientBase.getInstance().setItemLimit(realityInfo.getItemLimit());
         ClientBase.getInstance().setHouseSpace(realityInfo.getHouseSpace());
         Cockpit.getInstance().enableOnlinePanel(true);
     }

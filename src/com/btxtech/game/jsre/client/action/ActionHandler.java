@@ -34,6 +34,7 @@ import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionService;
+import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -170,8 +171,8 @@ public class ActionHandler implements CommonActionService {
         }
     }
 
-    public void buildFactory(Collection<ClientSyncItem> clientSyncItems, Index positionToBeBuild, BaseItemType toBeBuilt) {
-        if (!ClientBase.getInstance().checkItemLimit4ItemAddingDialog()) {
+    public void buildFactory(Collection<ClientSyncItem> clientSyncItems, Index positionToBeBuild, BaseItemType toBeBuilt) throws NoSuchItemTypeException {
+        if (!ClientBase.getInstance().checkItemLimit4ItemAddingDialog(toBeBuilt)) {
             return;
         }
 
@@ -247,8 +248,8 @@ public class ActionHandler implements CommonActionService {
         }
     }
 
-    public void build(Collection<ClientSyncItem> clientSyncItems, BaseItemType itemTypeToBuild) {
-        if (!ClientBase.getInstance().checkItemLimit4ItemAddingDialog()) {
+    public void build(Collection<ClientSyncItem> clientSyncItems, BaseItemType itemTypeToBuild) throws NoSuchItemTypeException {
+        if (!ClientBase.getInstance().checkItemLimit4ItemAddingDialog(itemTypeToBuild)) {
             return;
         }
 

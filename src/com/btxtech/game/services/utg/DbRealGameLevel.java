@@ -16,6 +16,9 @@ package com.btxtech.game.services.utg;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
+import com.btxtech.game.services.common.CrudParent;
+import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.common.CrudServiceHelperCollectionImpl;
 import com.btxtech.game.services.common.db.RectangleUserType;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
@@ -33,9 +36,9 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
-import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -48,7 +51,7 @@ import org.hibernate.annotations.TypeDef;
 @Entity
 @DiscriminatorValue("REAL_GAME")
 @TypeDef(name = "rectangle", typeClass = RectangleUserType.class)
-public class DbRealGameLevel extends DbAbstractLevel {
+public class DbRealGameLevel extends DbAbstractLevel implements CrudParent {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private DbConditionConfig dbConditionConfig;
     // ----- New Base -----
@@ -68,18 +71,13 @@ public class DbRealGameLevel extends DbAbstractLevel {
     // ----- Limitations -----
     private int maxMoney;
     private int maxXp;
-    @CollectionOfElements(fetch = FetchType.LAZY)
-    @JoinTable(name = "GUIDANCE_LEVEL_ITEM_LIMITATION")
-    // Does not work
-    @org.hibernate.annotations.MapKey(columns = @Column(name = "itemType"))
-    @Column(name = "count")
-    private Map<DbItemType, Integer> itemTypeLimitation;
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "dbRealGameLevel")
+    private Set<DbItemTypeLimitation> itemTypeLimitation;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "GUIDANCE_LEVEL_ITEM_LIMITATION")
     private Set<MarketEntry> allowedMarketEntries;
-
     @Transient
-    private Level level;
+    private CrudServiceHelper<DbItemTypeLimitation> dbItemTypeLimitationCrudServiceHelper;
 
     public DbConditionConfig getDbConditionConfig() {
         return dbConditionConfig;
@@ -169,25 +167,6 @@ public class DbRealGameLevel extends DbAbstractLevel {
         this.maxXp = maxXp;
     }
 
-    public Map<DbItemType, Integer> getItemTypeLimitation() {
-        if (itemTypeLimitation == null) {
-            itemTypeLimitation = new HashMap<DbItemType, Integer>();
-        }
-        return itemTypeLimitation;
-    }
-
-    public void createItemTypeLimitation() {
-        getItemTypeLimitation().put(null, 0);
-    }
-
-    public void deleteItemTypeLimitation(DbItemType dbItemType) {
-        getItemTypeLimitation().remove(dbItemType);
-    }
-
-    public void setItemTypeLimitation(DbItemType dbItemType, int limitation) {
-        getItemTypeLimitation().put(dbItemType, limitation);
-    }
-
     @Override
     protected ConditionConfig createConditionConfig(ItemService itemService) {
         if (dbConditionConfig == null) {
@@ -196,11 +175,13 @@ public class DbRealGameLevel extends DbAbstractLevel {
         return dbConditionConfig.createConditionConfig(itemService);
     }
 
-    public Level getLevel() {
-        if (level == null) {
-            level = new Level(getName(), getHtml(), true, maxMoney);
+    public Level createLevel() {
+        Map<Integer, Integer> itemTypeLimitation = new HashMap<Integer, Integer>();
+        for (DbItemTypeLimitation dbItemTypeLimitation : this.itemTypeLimitation) {
+            itemTypeLimitation.put(dbItemTypeLimitation.getDbBaseItemType().getId(), dbItemTypeLimitation.getCount());
         }
-        return level;
+        return new Level(getName(), getHtml(), true, maxMoney, itemTypeLimitation, houseSpace);
+
     }
 
     @Override
@@ -208,4 +189,10 @@ public class DbRealGameLevel extends DbAbstractLevel {
         return "Real Game";
     }
 
+    public CrudServiceHelper<DbItemTypeLimitation> getDbItemTypeLimitationCrudServiceHelper() {
+        if (dbItemTypeLimitationCrudServiceHelper == null) {
+            dbItemTypeLimitationCrudServiceHelper = new CrudServiceHelperCollectionImpl<DbItemTypeLimitation>(itemTypeLimitation, DbItemTypeLimitation.class, this);
+        }
+        return dbItemTypeLimitationCrudServiceHelper;
+    }
 }

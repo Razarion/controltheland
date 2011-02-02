@@ -46,6 +46,10 @@
             <td ><input wicket:id="deltaMoney" type="text" size="5"></td>
         </tr>
         <tr>
+            <td bgcolor="#dadada" valign="top">Delta Xp</td>
+            <td ><input wicket:id="deltaXp" type="text" size="5"></td>
+        </tr>
+        <tr>
             <td bgcolor="#aaaaaa" colspan="2" valign="top">Create Base</td>
         </tr>
         <tr>
@@ -67,9 +71,34 @@
         <tr>
             <td bgcolor="#aaaaaa" colspan="2" valign="top">Limitations</td>
         </tr>
-
-
-
+        <tr>
+            <td bgcolor="#dadada" valign="top">Max Money</td>
+            <td ><input wicket:id="maxMoney" type="text" size="10"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Max Xp</td>
+            <td ><input wicket:id="maxXp" type="text" size="10"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada" valign="top">Max Item Type</td>
+            <td >
+                <table cellpadding="1" cellspacing="1" border="0">
+                    <tr>
+                        <th bgcolor="#dadada">Item Type</th>
+                        <th bgcolor="#dadada">Count</th>
+                        <th bgcolor="#dadada">Delete</th>
+                    </tr>
+                    <tr wicket:id="itemTypeLimitation">
+                        <td wicket:id="dbBaseItemType" size="20"></td>
+                        <td><input type="text" wicket:id="count" size="4"></td>
+                        <td valign="center">
+                            <input type="submit" value="Delete" wicket:id="delete"/>
+                        </td>
+                    </tr>
+                </table>
+                <input type="submit" wicket:id="createItemTypeLimitation" value="Create">
+            </td>
+        </tr>
     </table>
 </wicket:panel>
 </body>

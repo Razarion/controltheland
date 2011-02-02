@@ -14,9 +14,14 @@
 package com.btxtech.game.jsre.common.gameengine.services.base.impl;
 
 import com.btxtech.game.jsre.client.AlreadyUsedException;
+import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
+import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -158,4 +163,13 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         baseAttributes.setBot(bot);
     }
 
+    public void checkItemLimit4ItemAdding(BaseItemType newItemType, SimpleBase simpleBase) throws ItemLimitExceededException, HouseSpaceExceededException, NoSuchItemTypeException {
+        Level level = getLevel(simpleBase);
+        if (getItemCount(simpleBase, newItemType.getId()) >= level.getLimitation4ItemType(newItemType.getId())) {
+            throw new ItemLimitExceededException();
+        }
+        if (getItemCount(simpleBase) >= getHouseSpace(simpleBase) + level.getHouseSpace()) {
+            throw new HouseSpaceExceededException();
+        }
+    }
 }

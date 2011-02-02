@@ -106,7 +106,6 @@ public class TaskEditor extends WebPage {
             }
         }));
         form.add(new TextField("accountBalance"));
-        form.add(new TextField("itemLimit"));
         form.add(new TextField("houseCount"));
         form.add(new FileUploadField("upload", new IModel<FileUpload>() {
 

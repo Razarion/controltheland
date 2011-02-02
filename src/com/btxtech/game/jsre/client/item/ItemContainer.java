@@ -139,8 +139,8 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
 
     @Override
     public SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
-        if (toBeBuilt instanceof BaseItemType && ClientBase.getInstance().isMyOwnBase(base) && !ClientBase.getInstance().isBot(base)) {
-            ClientBase.getInstance().checkItemLimit4ItemAdding();
+        if (toBeBuilt instanceof BaseItemType && ClientBase.getInstance().isMyOwnBase(base) && !ClientBase.getInstance().isBot(base) && Connection.getInstance().getGameInfo().hasServerCommunication()) {
+            ClientBase.getInstance().checkItemLimit4ItemAdding((BaseItemType)toBeBuilt);
         }
         ClientSyncItem itemView;
         if (Connection.getInstance().getGameInfo().hasServerCommunication()) {

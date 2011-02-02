@@ -13,8 +13,6 @@
 
 package com.btxtech.game.jsre.client.common.info;
 
-import com.btxtech.game.jsre.client.common.Level;
-import com.btxtech.game.jsre.client.common.OnlineBaseUpdate;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import java.util.Collection;
@@ -33,7 +31,6 @@ public class RealityInfo extends GameInfo {
     private int energyConsuming;
     private Collection<BaseAttributes> allBases;
     private int houseSpace;
-    private int itemLimit;
 
     public SimpleBase getBase() {
         return base;
@@ -92,11 +89,6 @@ public class RealityInfo extends GameInfo {
     }
 
     @Override
-    public boolean showMissionTargetDialog() {
-        return true;
-    }
-
-    @Override
     public boolean hasServerCommunication() {
         return true;
     }
@@ -107,13 +99,5 @@ public class RealityInfo extends GameInfo {
 
     public void setHouseSpace(int houseSpace) {
         this.houseSpace = houseSpace;
-    }
-
-    public int getItemLimit() {
-        return itemLimit;
-    }
-
-    public void setItemLimit(int itemLimit) {
-        this.itemLimit = itemLimit;
     }
 }

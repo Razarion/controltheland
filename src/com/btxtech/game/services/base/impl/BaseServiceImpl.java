@@ -15,6 +15,7 @@ package com.btxtech.game.services.base.impl;
 
 import com.btxtech.game.jsre.client.AlreadyUsedException;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
@@ -24,6 +25,7 @@ import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
@@ -229,6 +231,14 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     @Override
     public Base getBase(SimpleBase simpleBase) {
         return bases.get(simpleBase);
+    }
+
+    private Base getBaseThrow(SimpleBase simpleBase) {
+        Base base = getBase(simpleBase);
+        if (base == null) {
+            throw new NoConnectionException("Base does not exist", session.getSessionId());
+        }
+        return base;
     }
 
     @Override
@@ -502,15 +512,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public void checkItemLimit4ItemAdding(SimpleBase simpleBase) throws ItemLimitExceededException, HouseSpaceExceededException {
-        Base base = getBase(simpleBase);
-        if (base == null) {
-            throw new NoConnectionException("Base does not exist", session.getSessionId());
-        }
-        base.checkItemLimit4ItemAdding(userGuidanceService.getDbLevel(simpleBase));
-    }
-
-    @Override
     public void onItemChanged(Change change, SyncItem syncItem) {
         switch (change) {
             case BUILD: {
@@ -560,5 +561,26 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             return;
         }
         base.setAbandoned();
+    }
+
+    @Override
+    public int getHouseSpace(SimpleBase simpleBase) {
+        return getBaseThrow(simpleBase).getHouseSpace();
+    }
+
+    @Override
+    public int getItemCount(SimpleBase simpleBase) {
+        return getBaseThrow(simpleBase).getItemCount();
+    }
+
+    @Override
+    public int getItemCount(SimpleBase simpleBase, int itemTypeId) throws NoSuchItemTypeException {
+        ItemType itemType = itemService.getItemType(itemTypeId);
+        return getBaseThrow(simpleBase).getItemCount(itemType);
+    }
+
+    @Override
+    public Level getLevel(SimpleBase simpleBase) {
+        return userGuidanceService.getDbLevel(simpleBase).getLevel();
     }
 }

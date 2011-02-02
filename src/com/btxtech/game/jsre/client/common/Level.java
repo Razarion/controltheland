@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.common;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * User: beat
@@ -25,6 +26,8 @@ public class Level implements Serializable {
     private String html;
     private boolean realGame;
     private int maxMoney;
+    private Map<Integer, Integer> itemTypeLimitation;
+    private int houseSpace;
 
     /**
      * Used by GWT
@@ -32,11 +35,13 @@ public class Level implements Serializable {
     public Level() {
     }
 
-    public Level(String name, String html, boolean realGame, int maxMoney) {
+    public Level(String name, String html, boolean realGame, int maxMoney, Map<Integer, Integer> itemTypeLimitation, int houseSpace) {
         this.name = name;
         this.html = html;
         this.realGame = realGame;
         this.maxMoney = maxMoney;
+        this.itemTypeLimitation = itemTypeLimitation;
+        this.houseSpace = houseSpace;
     }
 
     public String getName() {
@@ -55,6 +60,15 @@ public class Level implements Serializable {
         return maxMoney;
     }
 
+    public int getLimitation4ItemType(int itemTypeId) {
+        Integer limitation = itemTypeLimitation.get(itemTypeId);
+        if (limitation != null) {
+            return limitation;
+        } else {
+            return 0;
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -69,5 +83,9 @@ public class Level implements Serializable {
     @Override
     public int hashCode() {
         return name != null ? name.hashCode() : 0;
+    }
+
+    public int getHouseSpace() {
+        return houseSpace;
     }
 }

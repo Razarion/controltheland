@@ -127,7 +127,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         SyncItem syncItem;
         synchronized (items) {
             if (toBeBuilt instanceof BaseItemType && !baseService.isBot(base)) {
-                baseService.checkItemLimit4ItemAdding(base);
+                baseService.checkItemLimit4ItemAdding((BaseItemType)toBeBuilt, base);
             }
             Id id = createId(creator, createdChildCount);
             syncItem = newSyncItem(id, position, toBeBuilt.getId(), base, services);
