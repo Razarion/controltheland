@@ -130,6 +130,10 @@ public abstract class DbAbstractLevel implements CrudChild, Serializable {
         level = createLevel();
     }
 
+    public void setLevel(Level level) {
+        this.level = level;
+    }
+
     protected abstract Level createLevel();
 
     protected abstract ConditionConfig createConditionConfig(ItemService itemService);

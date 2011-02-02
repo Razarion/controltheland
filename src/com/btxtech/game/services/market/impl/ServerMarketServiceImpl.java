@@ -23,6 +23,7 @@ import com.btxtech.game.services.common.QueueWorker;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.market.MarketCategory;
 import com.btxtech.game.services.market.MarketEntry;
 import com.btxtech.game.services.market.MarketFunction;
@@ -154,6 +155,9 @@ public class ServerMarketServiceImpl implements ServerMarketService {
 
     @Override
     public void buy(MarketEntry marketEntry) {
+       if(! userGuidanceService.isBaseItemTypeAllowedInLevel((DbBaseItemType) marketEntry.getItemType())) {
+          throw new IllegalStateException("Item type not allowed in level: " + userGuidanceService.getDbLevel() + " " +  marketEntry.getItemType());
+       }
         UserItemTypeAccess userItemTypeAccess = getUserItemTypeAccess();
         userItemTypeAccess.buy(marketEntry);
         if (connectionService.hasConnection()) {

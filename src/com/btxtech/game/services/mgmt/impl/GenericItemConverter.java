@@ -143,7 +143,6 @@ public class GenericItemConverter {
         itemService.restoreItems(syncItems.values());
         serverEnergyService.pauseService(false);
         serverEnergyService.restoreItems(syncItems.values());
-        userGuidanceService.restore(bases);
         serverConditionService.restore(userStates, backupEntry);
         actionService.pause(false);
     }

@@ -13,6 +13,7 @@
 
 package com.btxtech.game.wicket.pages.market;
 
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.market.MarketCategory;
@@ -20,6 +21,7 @@ import com.btxtech.game.services.market.MarketEntry;
 import com.btxtech.game.services.market.MarketFunction;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -45,6 +47,8 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 public class MarketCategoryPanel extends Panel {
     @SpringBean
     private ServerMarketService serverMarketService;
+    @SpringBean
+    private UserGuidanceService userGuidanceService;
     private MarketCategory marketCategory;
 
     public MarketCategoryPanel(String id, MarketCategory marketCategory) {
@@ -58,7 +62,7 @@ public class MarketCategoryPanel extends Panel {
 
         final DataView<MarketEntry> entries = new DataView<MarketEntry>("itemTypeAccessEntries", new ItemTypeAccessEntryProvider()) {
             protected void populateItem(final Item<MarketEntry> item) {
-                DbItemType itemType = item.getModelObject().getItemType();
+                DbBaseItemType itemType = (DbBaseItemType) item.getModelObject().getItemType();
                 // Name
                 item.add(new Label("name", itemType.getName()));
                 // Function
@@ -89,10 +93,18 @@ public class MarketCategoryPanel extends Panel {
                 UserItemTypeAccess userItemTypeAccess = serverMarketService.getUserItemTypeAccess();
                 boolean alreadyBought = userItemTypeAccess.contains(item.getModelObject());
                 if (alreadyBought) {
-                    button.setVisible(false);
-                    item.add(new Label("buyInfo", "Already bought"));
+                    if (!userGuidanceService.isBaseItemTypeAllowedInLevel(itemType)) {
+                        button.setVisible(false);
+                        item.add(new Label("buyInfo", "Not allowed in your level"));
+                    } else {
+                        button.setVisible(false);
+                        item.add(new Label("buyInfo", "Already bought"));
+                    }
                 } else {
-                    if (item.getModelObject().getPrice() > userItemTypeAccess.getXp()) {
+                    if (!userGuidanceService.isBaseItemTypeAllowedInLevel(itemType)) {
+                        button.setVisible(false);
+                        item.add(new Label("buyInfo", "Not allowed in your level"));
+                    } else if (item.getModelObject().getPrice() > userItemTypeAccess.getXp()) {
                         button.setVisible(false);
                         item.add(new Label("buyInfo", "Not enough XP"));
                     } else {

@@ -23,7 +23,6 @@ import com.btxtech.game.services.common.db.RectangleUserType;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
-import com.btxtech.game.services.market.MarketEntry;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,8 +32,6 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -73,9 +70,6 @@ public class DbRealGameLevel extends DbAbstractLevel implements CrudParent {
     private int maxXp;
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "dbRealGameLevel")
     private Set<DbItemTypeLimitation> itemTypeLimitation;
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "GUIDANCE_LEVEL_ITEM_LIMITATION")
-    private Set<MarketEntry> allowedMarketEntries;
     @Transient
     private CrudServiceHelper<DbItemTypeLimitation> dbItemTypeLimitationCrudServiceHelper;
 
@@ -187,6 +181,14 @@ public class DbRealGameLevel extends DbAbstractLevel implements CrudParent {
     @Override
     public String getDisplayType() {
         return "Real Game";
+    }
+
+    public Set<DbItemTypeLimitation> getItemTypeLimitation() {
+        return itemTypeLimitation;
+    }
+
+    public void setItemTypeLimitation(Set<DbItemTypeLimitation> itemTypeLimitation) {
+        this.itemTypeLimitation = itemTypeLimitation;
     }
 
     public CrudServiceHelper<DbItemTypeLimitation> getDbItemTypeLimitationCrudServiceHelper() {
