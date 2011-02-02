@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
@@ -49,8 +50,6 @@ public interface UserGuidanceService {
 
     String getDbLevelHtml();
 
-    void restore(Collection<Base> bases);
-
     void setLevelForNewUser(UserState userState);
 
     List<DbAbstractLevel> getDbLevels();
@@ -78,4 +77,6 @@ public interface UserGuidanceService {
     DbSyncItemTypeComparisonConfig getDbSyncItemTypeComparisonConfig(int dbSyncItemTypeComparisonConfigId);
 
     void createDbItemTypeLimitation(DbRealGameLevel dbRealGameLevel);
+
+    boolean isBaseItemTypeAllowedInLevel(DbBaseItemType itemType);
 }

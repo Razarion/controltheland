@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.utg.impl;
 
+import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -24,11 +25,13 @@ import com.btxtech.game.services.common.CrudServiceHelperHibernateImpl;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbAbstractLevel;
+import com.btxtech.game.services.utg.DbItemTypeLimitation;
 import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.services.utg.DbSimulationLevel;
 import com.btxtech.game.services.utg.ServerConditionService;
@@ -39,7 +42,7 @@ import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
@@ -89,6 +92,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
     private List<DbAbstractLevel> dbAbstractLevels = new ArrayList<DbAbstractLevel>();
     private CrudServiceHelper<DbAbstractLevel> crudServiceHelperHibernate;
+    private DbRealGameLevel dummyRealGameLevel;
 
     @PostConstruct
     public void init() {
@@ -160,7 +164,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
         if (dbNextAbstractLevel instanceof DbRealGameLevel) {
             DbRealGameLevel dbRealGameLevel = (DbRealGameLevel) dbNextAbstractLevel;
-            if(dbRealGameLevel.isCreateRealBase()) {
+            if (dbRealGameLevel.isCreateRealBase()) {
                 try {
                     baseService.createNewBase();
                 } catch (Exception e) {
@@ -198,18 +202,6 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         }
     }
 
-    private DbAbstractLevel getNextDbLevel(DbAbstractLevel dbAbstractLevel) {
-        int index = dbAbstractLevels.indexOf(dbAbstractLevel);
-        if (index < 0) {
-            throw new IllegalArgumentException("DbLevel not found: " + dbAbstractLevel);
-        }
-        index++;
-        if (index >= dbAbstractLevels.size()) {
-            throw new IllegalStateException("No next level for: " + dbAbstractLevel);
-        }
-        return dbAbstractLevels.get(index);
-    }
-
     @Override
     public void setLevelForNewUser(UserState userState) {
         DbAbstractLevel dbAbstractLevel = dbAbstractLevels.get(0);
@@ -233,13 +225,40 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         }
     }
 
+    private DbAbstractLevel getNextDbLevel(DbAbstractLevel dbAbstractLevel) {
+        int index = dbAbstractLevels.indexOf(dbAbstractLevel);
+        if (index < 0) {
+            throw new IllegalArgumentException("DbLevel not found: " + dbAbstractLevel);
+        }
+        index++;
+        if (index >= dbAbstractLevels.size()) {
+            throw new IllegalStateException("No next level for: " + dbAbstractLevel);
+        }
+        return dbAbstractLevels.get(index);
+    }
+
+    private DbRealGameLevel getDummyRealGameLevel() {
+        if (dummyRealGameLevel == null) {
+            dummyRealGameLevel = new DbRealGameLevel();
+            dummyRealGameLevel.setName("Dummy Level");
+            dummyRealGameLevel.setHtml("Dummy Level");
+            dummyRealGameLevel.setItemTypeLimitation(Collections.<DbItemTypeLimitation>emptySet());
+            dummyRealGameLevel.setLevel(dummyRealGameLevel.createLevel());
+        }
+        return dummyRealGameLevel;
+    }
+
     @Override
     public DbRealGameLevel getDbLevel() {
         DbAbstractLevel dbAbstractLevel = getDbAbstractLevel();
-        if(dbAbstractLevel instanceof DbRealGameLevel) {
+        if (dbAbstractLevel instanceof DbRealGameLevel) {
             return (DbRealGameLevel) dbAbstractLevel;
         }
-        throw new IllegalStateException("Must fallback to last real game level");
+        DbRealGameLevel dbRealGameLevel = getHighestPossibleRealGameLevel(dbAbstractLevel);
+        if (dbRealGameLevel != null) {
+            return dbRealGameLevel;
+        }
+        return getDummyRealGameLevel();
     }
 
     @Override
@@ -268,19 +287,30 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         throw new IllegalArgumentException("No DbLevel for id: " + id);
     }
 
-    @Override
-    public String getDbLevelHtml() {
-        return getDbAbstractLevel().getHtml();
-    }
-
-    @Override
-    public void restore(Collection<Base> bases) {
-        // TODO
+    private DbRealGameLevel getHighestPossibleRealGameLevel(DbAbstractLevel dbAbstractLevel) {
+        int index = dbAbstractLevels.indexOf(dbAbstractLevel);
+        if (index == -1) {
+            log.error("DbAbstractLevel can not be found: " + dbAbstractLevel);
+            return null;
+        }
+        index--;
+        for (int i = index; i >= 0; i--) {
+            DbAbstractLevel abstractLevel = dbAbstractLevels.get(i);
+            if (abstractLevel instanceof DbRealGameLevel) {
+                return (DbRealGameLevel) abstractLevel;
+            }
+        }
+        return null;
     }
 
     @Override
     public List<DbAbstractLevel> getDbLevels() {
         return dbAbstractLevels;
+    }
+
+    @Override
+    public String getDbLevelHtml() {
+        return getDbAbstractLevel().getHtml();
     }
 
     @Override
@@ -353,5 +383,11 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
             dbAbstractLevel.activate(itemService);
         }
         tutorialService.activate();
+    }
+
+    @Override
+    public boolean isBaseItemTypeAllowedInLevel(DbBaseItemType itemType) {
+        Level level = getDbLevel().getLevel();
+        return level.getLimitation4ItemType(itemType.getId()) > 0;
     }
 }
