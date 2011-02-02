@@ -330,6 +330,13 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     }
 
     @Override
+    @Transactional
+    public void createDbItemTypeLimitation(DbRealGameLevel dbRealGameLevel) {
+        dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
+        hibernateTemplate.update(dbRealGameLevel);
+    }
+
+    @Override
     public DbAbstractComparisonConfig getDbAbstractComparisonConfig(int dbAbstractComparisonConfigId) {
         return (DbAbstractComparisonConfig) hibernateTemplate.get(DbAbstractComparisonConfig.class, dbAbstractComparisonConfigId);
     }

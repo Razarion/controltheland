@@ -21,7 +21,6 @@ import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
 
 /**
  * User: beat
@@ -33,8 +32,6 @@ import javax.persistence.Transient;
 public class DbSimulationLevel extends DbAbstractLevel {
     @ManyToOne
     private DbTutorialConfig dbTutorialConfig;
-    @Transient
-    private Level level;
 
     public DbTutorialConfig getDbTutorialConfig() {
         return dbTutorialConfig;
@@ -42,13 +39,6 @@ public class DbSimulationLevel extends DbAbstractLevel {
 
     public void setDbTutorialConfig(DbTutorialConfig dbTutorialConfig) {
         this.dbTutorialConfig = dbTutorialConfig;
-    }
-
-    public Level getLevel() {
-        if (level == null) {
-            level = new Level(getName(), getHtml(), false, 0);
-        }
-        return level;
     }
 
     @Override
@@ -59,5 +49,10 @@ public class DbSimulationLevel extends DbAbstractLevel {
     @Override
     public String getDisplayType() {
         return "Simulation";
+    }
+
+    @Override
+    protected Level createLevel() {
+        return new Level(getName(), getHtml(), false, 0, null, 0);
     }
 }

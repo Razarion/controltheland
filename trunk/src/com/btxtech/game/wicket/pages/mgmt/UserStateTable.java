@@ -17,8 +17,6 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.wicket.uiservices.ListProvider;
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -32,12 +30,11 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 16.02.2010
  * Time: 21:35:44
  */
-public class OnlineUserStateTable extends WebPage {
+public class UserStateTable extends WebPage {
     @SpringBean
     private UserService userService;
-    private Log log = LogFactory.getLog(OnlineUserStateTable.class);
 
-    public OnlineUserStateTable() {
+    public UserStateTable() {
         add(new FeedbackPanel("msgs"));
 
         final ListProvider<UserState> userStateProvider = new ListProvider<UserState>() {
@@ -50,10 +47,10 @@ public class OnlineUserStateTable extends WebPage {
         add(new DataView<UserState>("userState", userStateProvider) {
             @Override
             protected void populateItem(final Item<UserState> item) {
-                item.add(new Label("userLevelStatus.currentAbstractLevel.name"));
+                item.add(new Label("currentAbstractLevel.name"));
                 item.add(new Label("sessionId"));
-                BookmarkablePageLink link = new BookmarkablePageLink<OnlineUserState>("userStateLink", OnlineUserState.class);
-                link.setParameter(OnlineUserState.SESSION_ID_KEY, item.getModelObject().getSessionId());
+                BookmarkablePageLink link = new BookmarkablePageLink<UserStateEditor>("userStateLink", UserStateEditor.class);
+                link.setParameter(UserStateEditor.SESSION_ID_KEY, item.getModelObject().getSessionId());
                 item.add(link);
             }
         });

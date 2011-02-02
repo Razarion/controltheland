@@ -14,6 +14,7 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
+import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.common.CrudServiceHelper;
@@ -75,4 +76,6 @@ public interface UserGuidanceService {
     DbAbstractComparisonConfig getDbAbstractComparisonConfig(int dbAbstractComparisonConfigId);
 
     DbSyncItemTypeComparisonConfig getDbSyncItemTypeComparisonConfig(int dbSyncItemTypeComparisonConfigId);
+
+    void createDbItemTypeLimitation(DbRealGameLevel dbRealGameLevel);
 }

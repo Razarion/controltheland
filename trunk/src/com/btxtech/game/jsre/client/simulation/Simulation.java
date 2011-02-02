@@ -91,7 +91,6 @@ public class Simulation {
         Cockpit.getInstance().enableFocusWidget(CockpitWidgetEnum.OPTION_BUTTON, taskConfig.isOptionAllowed());
         Cockpit.getInstance().enableFocusWidget(CockpitWidgetEnum.SELL_BUTTON, taskConfig.isSellingAllowed());
         ClientBase.getInstance().setHouseSpace(taskConfig.getHouseCount());
-        ClientBase.getInstance().setItemLimit(taskConfig.getItemLimit());
         Cockpit.getInstance().updateItemLimit();
 
         for (ItemTypeAndPosition itemTypeAndPosition : taskConfig.getOwnItems()) {

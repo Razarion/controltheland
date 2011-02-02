@@ -235,7 +235,7 @@ public class UserServiceImpl implements UserService {
     public UserState getUserState(String sessionId) {
         synchronized (userStates) {
             for (UserState userState : userStates) {
-                if (userState.getSessionId().equals(sessionId)) {
+                if (sessionId.equals(userState.getSessionId())) {
                     return userState;
                 }
             }

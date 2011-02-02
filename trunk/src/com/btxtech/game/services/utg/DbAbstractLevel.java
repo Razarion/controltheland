@@ -48,6 +48,8 @@ public abstract class DbAbstractLevel implements CrudChild, Serializable {
     private String html;
     @Transient
     private ConditionConfig conditionConfig;
+    @Transient
+    private Level level;
 
     public String getName() {
         return name;
@@ -87,8 +89,6 @@ public abstract class DbAbstractLevel implements CrudChild, Serializable {
         return id;
     }
 
-    public abstract Level getLevel();
-
     public abstract String getDisplayType();
 
     @Override
@@ -111,16 +111,26 @@ public abstract class DbAbstractLevel implements CrudChild, Serializable {
         return getClass().getSimpleName() + " " + getName();
     }
 
+    public Level getLevel() {
+        if (level == null) {
+            throw new IllegalStateException("Level was not built. Call createLevel() first.");
+        }
+        return level;
+    }
+
     public ConditionConfig getConditionConfig() {
-        if(conditionConfig == null) {
+        if (conditionConfig == null) {
             throw new IllegalStateException("Condition config was not created");
         }
         return conditionConfig;
     }
 
     public void activate(ItemService itemService) {
-       conditionConfig = createConditionConfig(itemService);
+        conditionConfig = createConditionConfig(itemService);
+        level = createLevel();
     }
+
+    protected abstract Level createLevel();
 
     protected abstract ConditionConfig createConditionConfig(ItemService itemService);
 }

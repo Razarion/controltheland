@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.base;
 
+import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -196,16 +197,6 @@ public class Base implements Serializable {
 
     public int getBaseId() {
         return baseId;
-    }
-
-
-    public void checkItemLimit4ItemAdding(DbRealGameLevel dbRealGameLevel) throws ItemLimitExceededException, HouseSpaceExceededException {
-        /* TODO if (getItemCount() >= dbAbstractLevel.getDbScope().getItemLimit()) {
-            throw new ItemLimitExceededException();
-        }*/
-        if (getItemCount() >= houseSpace + dbRealGameLevel.getHouseSpace()) {
-            throw new HouseSpaceExceededException();
-        }
     }
 
     public boolean updateHouseSpace() {

@@ -146,7 +146,11 @@ public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvide
             itemsToBuild.add(setupBuildupBlock(itemType, enabled, new MouseDownHandler() {
                 @Override
                 public void onMouseDown(MouseDownEvent event) {
-                    ActionHandler.getInstance().build(factories.getItems(), itemType);
+                    try {
+                        ActionHandler.getInstance().build(factories.getItems(), itemType);
+                    } catch (NoSuchItemTypeException e) {
+                        GwtCommon.handleException(e);
+                    }
                 }
             }));
         }

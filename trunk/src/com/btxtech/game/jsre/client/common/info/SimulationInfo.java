@@ -24,11 +24,6 @@ public class SimulationInfo extends GameInfo {
     private TutorialConfig tutorialConfig;
 
     @Override
-    public boolean showMissionTargetDialog() {
-        return false;
-    }
-
-    @Override
     public boolean hasServerCommunication() {
         return false;
     }

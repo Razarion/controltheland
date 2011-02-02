@@ -35,7 +35,6 @@ public class TaskConfig implements Serializable {
     private List<StepConfig> stepConfigs;
     private Collection<Integer> allowedItemTypes;
     private int houseCount;
-    private int itemLimit;
     private int accountBalance;
     private int finishImageDuration;
     private String name;
@@ -47,7 +46,7 @@ public class TaskConfig implements Serializable {
     public TaskConfig() {
     }
 
-    public TaskConfig(boolean clearGame, String taskText, ArrayList<ItemTypeAndPosition> ownItems, boolean scrollingAllowed, boolean sellingAllowed, boolean optionAllowed, Index scroll, ArrayList<StepConfig> stepConfigs, Collection<Integer> allowedItemTypes, int houseCount, int itemLimit, int accountBalance, int finishImageDuration, String name, Integer finishImageId) {
+    public TaskConfig(boolean clearGame, String taskText, ArrayList<ItemTypeAndPosition> ownItems, boolean scrollingAllowed, boolean sellingAllowed, boolean optionAllowed, Index scroll, ArrayList<StepConfig> stepConfigs, Collection<Integer> allowedItemTypes, int houseCount, int accountBalance, int finishImageDuration, String name, Integer finishImageId) {
         this.clearGame = clearGame;
         this.taskText = taskText;
         this.ownItems = ownItems;
@@ -58,7 +57,6 @@ public class TaskConfig implements Serializable {
         this.stepConfigs = stepConfigs;
         this.allowedItemTypes = allowedItemTypes;
         this.houseCount = houseCount;
-        this.itemLimit = itemLimit;
         this.accountBalance = accountBalance;
         this.finishImageDuration = finishImageDuration;
         this.name = name;
@@ -115,10 +113,6 @@ public class TaskConfig implements Serializable {
 
     public int getHouseCount() {
         return houseCount;
-    }
-
-    public int getItemLimit() {
-        return itemLimit;
     }
 
     public String getTaskText() {

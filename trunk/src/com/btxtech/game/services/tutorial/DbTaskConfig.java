@@ -92,7 +92,6 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
     private String finishedImageContentType;
     @Column(length = 500000)
     private byte[] finishImageData;
-    private int itemLimit;
     private int houseCount;
     private String taskText;
 
@@ -198,14 +197,6 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
         this.finishImageData = finishImageData;
     }
 
-    public int getItemLimit() {
-        return itemLimit;
-    }
-
-    public void setItemLimit(int itemLimit) {
-        this.itemLimit = itemLimit;
-    }
-
     public int getHouseCount() {
         return houseCount;
     }
@@ -270,7 +261,6 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
                 stepConfigs,
                 ItemsUtil.itemTypesToCollection(allowedItems),
                 houseCount,
-                itemLimit,
                 accountBalance,
                 finishImageDuration * 1000,
                 name,

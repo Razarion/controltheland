@@ -32,7 +32,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 26.01.2011
  * Time: 16:30:59
  */
-public class OnlineUserState extends WebPage {
+public class UserStateEditor extends WebPage {
     public static final String SESSION_ID_KEY = "sessionId";
     @SpringBean
     private UserService userService;
@@ -40,7 +40,7 @@ public class OnlineUserState extends WebPage {
     private UserGuidanceService userGuidanceService;
     private Integer dbLevelId;
 
-    public OnlineUserState(PageParameters parameters) {
+    public UserStateEditor(PageParameters parameters) {
         super(parameters);
         add(new FeedbackPanel("msgs"));
         final String sessionId = parameters.getString(SESSION_ID_KEY);
@@ -70,7 +70,7 @@ public class OnlineUserState extends WebPage {
             }
         }));
         add(form);
-        form.add(new Label("userLevelStatus.currentAbstractLevel.name"));
+        form.add(new Label("currentAbstractLevel.name"));
         form.add(new Label("sessionId"));
         form.add(new TextField<Integer>("newDbLevelId", new IModel<Integer>() {
             @Override
@@ -102,7 +102,7 @@ public class OnlineUserState extends WebPage {
 
             @Override
             public void onSubmit() {
-                setResponsePage(OnlineUserStateTable.class);
+                setResponsePage(UserStateTable.class);
             }
         });
 

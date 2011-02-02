@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
+import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.client.dialogs.UnfrequentDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -22,10 +23,13 @@ import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.impl.AbstractBaseServiceImpl;
+import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
 /**
@@ -38,7 +42,6 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     private double accountBalance;
     private SimpleBase simpleBase;
     private int houseSpace;
-    private int itemLimit;
 
     /**
      * Singleton
@@ -142,35 +145,63 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         this.houseSpace = houseSpace;
     }
 
-    public int getItemLimit() {
-        return itemLimit;
-    }
-
-    public void setItemLimit(int itemLimit) {
-        this.itemLimit = itemLimit;
-    }
-
-    public void checkItemLimit4ItemAdding() throws ItemLimitExceededException, HouseSpaceExceededException {
-        if (ItemContainer.getInstance().getOwnItemCount() >= itemLimit) {
+    public void checkItemLimit4ItemAdding(BaseItemType itemType) throws ItemLimitExceededException, HouseSpaceExceededException, NoSuchItemTypeException {
+        try {
+            checkItemLimit4ItemAdding(itemType, simpleBase);
+        } catch (ItemLimitExceededException e) {
             UnfrequentDialog.open(UnfrequentDialog.Type.ITEM_LIMIT, false);
             throw new ItemLimitExceededException();
-        }
-        if (ItemContainer.getInstance().getOwnItemCount() >= houseSpace) {
+
+        } catch (HouseSpaceExceededException e) {
             UnfrequentDialog.open(UnfrequentDialog.Type.SPACE_LIMIT, false);
             throw new HouseSpaceExceededException();
         }
     }
 
-    public boolean checkItemLimit4ItemAddingDialog() {
-        if (ItemContainer.getInstance().getOwnItemCount() >= itemLimit) {
-            UnfrequentDialog.open(UnfrequentDialog.Type.ITEM_LIMIT, true);
-            return false;
+    public boolean checkItemLimit4ItemAddingDialog(BaseItemType itemType) throws NoSuchItemTypeException {
+        if (!Connection.getInstance().getGameInfo().hasServerCommunication()) {
+            return true;
         }
-        if (ItemContainer.getInstance().getOwnItemCount() >= houseSpace) {
-            UnfrequentDialog.open(UnfrequentDialog.Type.SPACE_LIMIT, true);
+        try {
+            checkItemLimit4ItemAdding(itemType, simpleBase);
+        } catch (ItemLimitExceededException e) {
+            UnfrequentDialog.open(UnfrequentDialog.Type.ITEM_LIMIT, false);
+            return false;
+        } catch (HouseSpaceExceededException e) {
+            UnfrequentDialog.open(UnfrequentDialog.Type.SPACE_LIMIT, false);
             return false;
         }
         return true;
     }
 
+    private void check4OwnBase(SimpleBase simpleBase) {
+        if (!isMyOwnBase(simpleBase)) {
+            throw new IllegalArgumentException("Wrong base given: " + simpleBase + " expected base: " + this.simpleBase);
+        }
+    }
+
+    @Override
+    public int getHouseSpace(SimpleBase simpleBase) {
+        check4OwnBase(simpleBase);
+        return houseSpace;
+    }
+
+    @Override
+    public int getItemCount(SimpleBase simpleBase) {
+        check4OwnBase(simpleBase);
+        return ItemContainer.getInstance().getOwnItemCount();
+    }
+
+    @Override
+    public int getItemCount(SimpleBase simpleBase, int itemTypeId) throws NoSuchItemTypeException {
+        check4OwnBase(simpleBase);
+        ItemType itemType = ItemContainer.getInstance().getItemType(itemTypeId);
+        return ItemContainer.getInstance().getItems(itemType, simpleBase).size();
+    }
+
+    @Override
+    public Level getLevel(SimpleBase simpleBase) {
+        check4OwnBase(simpleBase);
+        return Connection.getInstance().getGameInfo().getLevel();
+    }
 }

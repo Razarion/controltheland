@@ -175,7 +175,6 @@ public class MovableServiceImpl implements MovableService {
             realityInfo.setLevel(userGuidanceService.getDbLevel().getLevel());
             realityInfo.setTerritories(territoryService.getTerritories());
             realityInfo.setAllBases(baseService.getAllBaseAttributes());
-            realityInfo.setItemLimit(100); // TODO
             realityInfo.setHouseSpace(baseService.getTotalHouseSpace());
             return realityInfo;
         } catch (com.btxtech.game.services.connection.NoConnectionException t) {

@@ -114,8 +114,6 @@ public abstract class GameInfo implements Serializable {
         this.itemTypes = itemTypes;
     }
 
-    public abstract boolean showMissionTargetDialog();
-
     public abstract boolean hasServerCommunication();
 
     public Level getLevel() {
