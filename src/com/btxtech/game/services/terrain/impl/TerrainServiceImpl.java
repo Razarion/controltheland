@@ -43,11 +43,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,11 +66,18 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     private CollisionService collisionService;
     @Autowired
     private ItemService itemService;
+    // @Autowired
+    // private PlatformTransactionManager txManager;
+    @Autowired
+    private ApplicationContext applicationContext;
+
     private HibernateTemplate hibernateTemplate;
     private HashMap<Integer, DbTerrainImage> dbTerrainImages = new HashMap<Integer, DbTerrainImage>();
     private HashMap<Integer, DbSurfaceImage> dbSurfaceImages = new HashMap<Integer, DbSurfaceImage>();
     private CrudServiceHelper<DbTerrainSetting> dbTerrainSettingCrudServiceHelper;
     private Log log = LogFactory.getLog(TerrainServiceImpl.class);
+    private CrudServiceHelper<DbTerrainImage> dbTerrainImageCrudServiceHelper;
+    private CrudServiceHelper<DbSurfaceImage> dbSurfaceImageCrudServiceHelper;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -77,10 +86,12 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
 
     @PostConstruct
     public void init() {
+        dbTerrainImageCrudServiceHelper = (CrudServiceHelper<DbTerrainImage>) applicationContext.getBean("crudServiceHelperSpringTransaction", new Object[]{DbTerrainImage.class});
+        dbSurfaceImageCrudServiceHelper = (CrudServiceHelper<DbSurfaceImage>) applicationContext.getBean("crudServiceHelperSpringTransaction", new Object[]{DbSurfaceImage.class});
+        dbTerrainSettingCrudServiceHelper = new CrudServiceHelperHibernateImpl<DbTerrainSetting>(hibernateTemplate, DbTerrainSetting.class);
         SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
         try {
-            dbTerrainSettingCrudServiceHelper = new CrudServiceHelperHibernateImpl<DbTerrainSetting>(hibernateTemplate, DbTerrainSetting.class);
-            loadTerrain();
+            activateTerrain();
         } finally {
             SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
         }
@@ -90,7 +101,18 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         return dbTerrainSettingCrudServiceHelper;
     }
 
-    private void loadTerrain() {
+    @Override
+    public CrudServiceHelper<DbTerrainImage> getDbTerrainImageCrudServiceHelper() {
+        return dbTerrainImageCrudServiceHelper;
+    }
+
+    @Override
+    public CrudServiceHelper<DbSurfaceImage> getDbSurfaceImageCrudServiceHelper() {
+        return dbSurfaceImageCrudServiceHelper;
+    }
+
+    @Override
+    public void activateTerrain() {
         // Terrain settings
         DbTerrainSetting dbTerrainSetting = getDbTerrainSetting4RealGame();
         if (dbTerrainSetting == null) {
@@ -111,8 +133,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         }
 
         // Terrain images
-        @SuppressWarnings("unchecked")
-        List<DbTerrainImage> imageList = hibernateTemplate.loadAll(DbTerrainImage.class);
+        Collection<DbTerrainImage> imageList = dbTerrainImageCrudServiceHelper.readDbChildren();
         clearTerrainImages();
         dbTerrainImages = new HashMap<Integer, DbTerrainImage>();
         for (DbTerrainImage dbTerrainImage : imageList) {
@@ -121,8 +142,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         }
 
         // Surface images
-        @SuppressWarnings("unchecked")
-        List<DbSurfaceImage> surfaceList = hibernateTemplate.loadAll(DbSurfaceImage.class);
+        Collection<DbSurfaceImage> surfaceList = dbSurfaceImageCrudServiceHelper.readDbChildren();
         clearSurfaceImages();
         dbSurfaceImages = new HashMap<Integer, DbSurfaceImage>();
         for (DbSurfaceImage dbSurfaceImage : surfaceList) {
@@ -170,11 +190,6 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     }
 
     @Override
-    public List<DbTerrainImage> getDbTerrainImagesCopy() {
-        return new ArrayList<DbTerrainImage>(dbTerrainImages.values());
-    }
-
-    @Override
     public int getDbTerrainImagesBitSize() {
         int size = 0;
         for (DbTerrainImage dbTerrainImage : dbTerrainImages.values()) {
@@ -185,20 +200,37 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         return size;
     }
 
-    @Override
-    public List<DbSurfaceImage> getDbSurfaceImagesCopy() {
-        return new ArrayList<DbSurfaceImage>(dbSurfaceImages.values());
-    }
 
+    /*@Override
+    public void saveAndActivateTerrainImages(Set<DbTerrainImage> newDbTerrainImages,
+                                             Set<DbTerrainImage> updatedDbTerrainImages,
+                                             Set<DbTerrainImage> deletedDbTerrainImages,
+                                             List<DbSurfaceImage> dbSurfaceImages) {
+        saveTerrainImages(newDbTerrainImages, updatedDbTerrainImages, deletedDbTerrainImages, dbSurfaceImages);
+        loadTerrain();
+    }*/
+
+    @Transactional
     @Override
-    public void saveAndActivateTerrainImages(List<DbTerrainImage> dbTerrainImages, List<DbSurfaceImage> dbSurfaceImages) {
+    public void saveTerrainImages(Set<DbTerrainImage> newDbTerrainImages, Set<DbTerrainImage> updatedDbTerrainImages, Set<DbTerrainImage> deletedDbTerrainImages, List<DbSurfaceImage> dbSurfaceImages) {
+        // TODO remove sysouts
+        System.out.println("newDbTerrainImages " + newDbTerrainImages);
+        System.out.println("updatedDbTerrainImages " + updatedDbTerrainImages);
+        System.out.println("deletedDbTerrainImages " + deletedDbTerrainImages);
+
         // DbTerrainImage
-        hibernateTemplate.saveOrUpdateAll(dbTerrainImages);
-        ArrayList<DbTerrainImage> doBeDeleted = new ArrayList<DbTerrainImage>(this.dbTerrainImages.values());
-        doBeDeleted.removeAll(dbTerrainImages);
-        if (!doBeDeleted.isEmpty()) {
-            hibernateTemplate.deleteAll(doBeDeleted);
+        if (!newDbTerrainImages.isEmpty()) {
+            hibernateTemplate.saveOrUpdateAll(newDbTerrainImages);
         }
+
+        if (!updatedDbTerrainImages.isEmpty()) {
+            hibernateTemplate.saveOrUpdateAll(updatedDbTerrainImages);
+        }
+
+        if (!deletedDbTerrainImages.isEmpty()) {
+            hibernateTemplate.deleteAll(deletedDbTerrainImages);
+        }
+
         // DbSurfaceImage
         hibernateTemplate.saveOrUpdateAll(dbSurfaceImages);
         ArrayList<DbSurfaceImage> doBeDeletedSurface = new ArrayList<DbSurfaceImage>(this.dbSurfaceImages.values());
@@ -206,8 +238,6 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         if (!doBeDeletedSurface.isEmpty()) {
             hibernateTemplate.deleteAll(doBeDeletedSurface);
         }
-
-        loadTerrain();
     }
 
     @Transactional
@@ -231,7 +261,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
 
         hibernateTemplate.saveOrUpdate(dbTerrainSetting);
         if (dbTerrainSetting.isRealGame()) {
-            loadTerrain();
+            activateTerrain();
         }
     }
 

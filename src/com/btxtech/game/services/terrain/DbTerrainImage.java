@@ -15,6 +15,7 @@ package com.btxtech.game.services.terrain;
 
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
+import com.btxtech.game.services.common.CrudChild;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +26,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * User: beat
@@ -32,7 +34,7 @@ import javax.persistence.OneToMany;
  * Time: 22:09:11
  */
 @Entity(name = "TERRAIN_IMAGE")
-public class DbTerrainImage implements Serializable {
+public class DbTerrainImage implements CrudChild, Serializable {
     @Id
     @GeneratedValue
     private Integer id;
@@ -41,10 +43,30 @@ public class DbTerrainImage implements Serializable {
     private String contentType;
     private int tileWidth;
     private int tileHeight;
-    @OneToMany(mappedBy = "dbTerrainImage", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "dbTerrainImage", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Collection<TerrainImageTileSurfaceType> surfaceTypes;
 
-    public int getId() {
+    @Override
+    public String getName() {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void setName(String name) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void init() {
+        // Ignore
+    }
+
+    @Override
+    public void setParent(Object o) {
+        // Ignore
+    }
+
+    public Integer getId() {
         return id;
     }
 
@@ -128,11 +150,11 @@ public class DbTerrainImage implements Serializable {
 
         DbTerrainImage that = (DbTerrainImage) o;
 
-        return !(id != null ? !id.equals(that.id) : that.id != null);
+        return id != null && id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 }

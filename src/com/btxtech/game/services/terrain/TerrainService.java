@@ -22,6 +22,7 @@ import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.utg.DbAbstractLevel;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * User: beat
@@ -33,13 +34,11 @@ public interface TerrainService extends AbstractTerrainService {
 
     DbSurfaceImage getDbSurfaceImage(int id);
 
-    List<DbTerrainImage> getDbTerrainImagesCopy();
-
     int getDbTerrainImagesBitSize();
 
-    List<DbSurfaceImage> getDbSurfaceImagesCopy();
+    void activateTerrain();
 
-    void saveAndActivateTerrainImages(List<DbTerrainImage> dbTerrainImages, List<DbSurfaceImage> dbSurfaceImages);
+    void saveTerrainImages(Set<DbTerrainImage> newDbTerrainImages, Set<DbTerrainImage> updatedDbTerrainImages, Set<DbTerrainImage> deletedDbTerrainImages, List<DbSurfaceImage> dbSurfaceImages);    
 
     void saveAndActivateTerrain(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int terrainId);
 
@@ -50,4 +49,8 @@ public interface TerrainService extends AbstractTerrainService {
     CrudServiceHelper<DbTerrainSetting> getDbTerrainSettingCrudServiceHelper();
 
     void saveDbTerrainSetting(List<DbTerrainSetting> dbTerrainSettings);
+
+    CrudServiceHelper<DbTerrainImage> getDbTerrainImageCrudServiceHelper();
+
+    CrudServiceHelper<DbSurfaceImage> getDbSurfaceImageCrudServiceHelper();
 }
