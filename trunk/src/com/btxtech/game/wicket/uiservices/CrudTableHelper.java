@@ -73,7 +73,7 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
                         public boolean isVisible() {
                             return canMoveUp(item);
                         }
-                    });
+                    }.setDefaultFormProcessing(false));
                     item.add(new Button("down") {
                         @Override
                         public void onSubmit() {
@@ -84,16 +84,18 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
                         public boolean isVisible() {
                             return canMoveDown(item);
                         }
-                    });
+                    }.setDefaultFormProcessing(false));
                 }
 
                 item.add(new Button("delete") {
-
+                    private Serializable id = item.getModelObject().getId();
                     @Override
                     public void onSubmit() {
-                        deleteChild(item.getModelObject());
+                        deleteChild(getCrudServiceHelper().readDbChild(id));
                     }
-                });
+
+
+                }.setDefaultFormProcessing(false));
 
             }
         });
@@ -126,7 +128,7 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
             public void onSubmit() {
                 getCrudServiceHelper().createDbChild();
             }
-        });
+        }.setDefaultFormProcessing(false));
     }
 
     /**

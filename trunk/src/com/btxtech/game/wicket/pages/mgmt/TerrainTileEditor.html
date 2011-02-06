@@ -38,7 +38,7 @@
                 <img border="1" wicket:id="image"/>
             </td>
             <td valign="center">
-                <input type="file" wicket:id="upload" />
+                <input type="file" wicket:id="upload"/>
             </td>
             <td wicket:id="size" align="right" valign="center"/>
             <td valign="center">
@@ -49,7 +49,8 @@
             </td>
         </tr>
     </table>
-    <input type="submit" wicket:id="addSurfaceImage" value="Add">
+    <input type="submit" wicket:id="createSurfaceImage" value="Add">
+    <input type="submit" wicket:id="updateSurfaceImages" value="Save">
 
     <h2>Terrain Images</h2>
     Total image size in K: <span wicket:id="totalSize">totalSize</span>
@@ -58,28 +59,33 @@
             <th bgcolor="#dadada">Image</th>
             <th bgcolor="#dadada">Upload</th>
             <th bgcolor="#dadada">Size in K</th>
+            <th bgcolor="#dadada">Edit</th>
             <th bgcolor="#dadada">Delete</th>
         </tr>
 
         <tr wicket:id="terrainImages">
             <td valign="center">
-                <a href="#" wicket:id="surfaceLink"><img border="1" wicket:id="image"/></a>
+                <img border="1" wicket:id="image"/>
             </td>
             <td valign="center">
-                <input type="file" wicket:id="upload" />
+                <input type="file" wicket:id="upload"/>
             </td>
             <td wicket:id="size" align="right" valign="center"/>
+            <td valign="center">
+                <input type="submit" value="Edit" wicket:id="edit"/>
+            </td>
             <td valign="center">
                 <input type="submit" value="Delete" wicket:id="delete"/>
             </td>
         </tr>
     </table>
-    <input type="submit" wicket:id="addTerrainImage" value="Add">
+    <input type="submit" wicket:id="createTerrainImage" value="Add">
+    <input type="submit" wicket:id="updateTerrainImages" value="Save">
     <br/>
     <br/>
     <br/>
 
-    <input type="submit" wicket:id="save" value="Save">
+    <input type="submit" wicket:id="activateTerrain" value="Activate">
 
 
 </form>

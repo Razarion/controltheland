@@ -15,11 +15,13 @@ package com.btxtech.game.services.terrain;
 
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+import com.btxtech.game.services.common.CrudChild;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * User: beat
@@ -27,7 +29,7 @@ import javax.persistence.Id;
  * Time: 22:09:11
  */
 @Entity(name = "TERRAIN_SURFACE_IMAGE")
-public class DbSurfaceImage implements Serializable {
+public class DbSurfaceImage implements CrudChild, Serializable {
     @Id
     @GeneratedValue
     private Integer id;
@@ -37,7 +39,27 @@ public class DbSurfaceImage implements Serializable {
     @Column(nullable = false)
     private SurfaceType surfaceType;
 
-    public int getId() {
+    @Override
+    public String getName() {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void setName(String name) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public void init() {
+        surfaceType = SurfaceType.LAND;
+    }
+
+    @Override
+    public void setParent(Object o) {
+        // Ignore
+    }
+
+    public Integer getId() {
         return id;
     }
 
@@ -76,13 +98,12 @@ public class DbSurfaceImage implements Serializable {
 
         DbSurfaceImage that = (DbSurfaceImage) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        return id != null && id.equals(that.id);
 
-        return true;
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 }

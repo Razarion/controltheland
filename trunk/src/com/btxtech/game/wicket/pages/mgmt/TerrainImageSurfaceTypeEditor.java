@@ -35,16 +35,35 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  */
 public class TerrainImageSurfaceTypeEditor extends WebPage {
     public static final int LINE_WIDTH = 2;
-    private DbTerrainImage dbTerrainImage;
     @SpringBean
     private TerrainService terrainService;
 
-    public TerrainImageSurfaceTypeEditor(final TerrainTileEditor terrainImage, final DbTerrainImage dbTerrainImage) {
-        this.dbTerrainImage = dbTerrainImage;
+    public TerrainImageSurfaceTypeEditor(DbTerrainImage dbTerrainImage) {
+        final int dbTerrainImageId = dbTerrainImage.getId();
         int cellWidth = terrainService.getTerrainSettings().getTileWidth() - LINE_WIDTH;
         int cellHeight = terrainService.getTerrainSettings().getTileHeight() - LINE_WIDTH;
 
-        Form form = new Form("form");
+        final Form<DbTerrainImage> form = new Form<DbTerrainImage>("form", new IModel<DbTerrainImage>() {
+            private DbTerrainImage dbTerrainImage;
+
+            @Override
+            public DbTerrainImage getObject() {
+                if (dbTerrainImage == null) {
+                    dbTerrainImage = terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(dbTerrainImageId);
+                }
+                return dbTerrainImage;
+            }
+
+            @Override
+            public void setObject(DbTerrainImage object) {
+                // Ignore
+            }
+
+            @Override
+            public void detach() {
+                dbTerrainImage = null;
+            }
+        });
         add(form);
 
         String bgImageUrl = ImageHandler.getTerrainImageUrl(dbTerrainImage.getId());
@@ -54,50 +73,52 @@ public class TerrainImageSurfaceTypeEditor extends WebPage {
         RepeatingView row = new RepeatingView("rows");
         table.add(row);
         for (int y = 0; y < dbTerrainImage.getTileHeight(); y++) {
+            final int finalY = y;
             WebMarkupContainer rowContainer = new WebMarkupContainer(row.newChildId());
             row.add(rowContainer);
             RepeatingView cell = new RepeatingView("cell");
             rowContainer.add(cell);
             for (int x = 0; x < dbTerrainImage.getTileWidth(); x++) {
+                final int finalX = x;
                 WebMarkupContainer cellContainer = new WebMarkupContainer(cell.newChildId());
                 cellContainer.add(new SimpleAttributeModifier("style", "border:solid black " + LINE_WIDTH / 2 + "px;width:" + cellWidth + "px;height:" + cellHeight + "px"));
                 cell.add(cellContainer);
-                DropDownChoice dropDownChoice = new DropDownChoice<SurfaceType>("surfaceType", new ComboSurfaceModel(x, y), Arrays.asList(SurfaceType.values()));
+                DropDownChoice dropDownChoice = new DropDownChoice<SurfaceType>("surfaceType", new IModel<SurfaceType>() {
+                    @Override
+                    public SurfaceType getObject() {
+                        return ((DbTerrainImage) form.getDefaultModelObject()).getSurfaceType(finalX, finalY);
+                    }
+
+                    @Override
+                    public void setObject(SurfaceType surfaceType) {
+                        ((DbTerrainImage) form.getDefaultModelObject()).setSurfaceType(finalX, finalY, surfaceType);
+                    }
+
+                    @Override
+                    public void detach() {
+                        // Ignore
+                    }
+                }, Arrays.asList(SurfaceType.values()));
                 cellContainer.add(dropDownChoice);
                 dropDownChoice.add(new SimpleAttributeModifier("style", "width:" + cellWidth + "px"));
             }
         }
+
+        form.add(new Button("save") {
+
+            @Override
+            public void onSubmit() {
+                terrainService.getDbTerrainImageCrudServiceHelper().updateDbChild((DbTerrainImage) form.getDefaultModelObject());
+            }
+        });
+
         form.add(new Button("back") {
 
             @Override
             public void onSubmit() {
-                setResponsePage(terrainImage);
+                setResponsePage(TerrainTileEditor.class);
             }
         });
     }
 
-    class ComboSurfaceModel implements IModel<SurfaceType> {
-        private int x;
-        private int y;
-
-        ComboSurfaceModel(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        @Override
-        public SurfaceType getObject() {
-            return dbTerrainImage.getSurfaceType(x, y);
-        }
-
-        @Override
-        public void setObject(SurfaceType surfaceType) {
-            dbTerrainImage.setSurfaceType(x, y, surfaceType);
-        }
-
-        @Override
-        public void detach() {
-            // Ignore
-        }
-    }
 }
