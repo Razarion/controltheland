@@ -13,23 +13,23 @@
 
 package com.btxtech.game.services.mgmt;
 
-import java.util.Date;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * User: beat
  * Date: Sep 23, 2009
  * Time: 3:39:22 PM
  */
-public class BackupSummary implements Serializable{
+public class BackupSummary implements Serializable {
     private Date date;
     private int itemCount;
     private int baseCount;
 
-    public BackupSummary(Date date, int itemCount, int baseCount) {
+    public BackupSummary(Date date, long itemCount, long baseCount) {
         this.date = date;
-        this.itemCount = itemCount;
-        this.baseCount = baseCount;
+        this.itemCount = (int) itemCount;
+        this.baseCount = (int) baseCount;
     }
 
     public Date getDate() {

@@ -235,7 +235,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         ArrayList<BackupSummary> result = new ArrayList<BackupSummary>();
         for (Object[] objects : list) {
             Date date = new Date(((Timestamp) objects[0]).getTime());
-            result.add(new BackupSummary(date, (Integer) objects[1], (Integer) objects[2]));
+            result.add(new BackupSummary(date, (Long) objects[1], (Long) objects[2]));
         }
         return result;
     }

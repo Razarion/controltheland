@@ -447,7 +447,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     private String setupBaseName(Base base) {
-        if (base.getUserState().isRegistered()) {
+        if (!base.isAbandoned() && base.getUserState().isRegistered()) {
             return userService.getUser(base.getUserState()).getName();
         } else {
             return DEFAULT_BASE_NAME_PREFIX + base.getBaseId();

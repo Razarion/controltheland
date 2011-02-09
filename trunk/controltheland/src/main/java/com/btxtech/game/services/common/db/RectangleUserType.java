@@ -21,7 +21,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 import org.hibernate.HibernateException;
 import org.hibernate.usertype.UserType;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 
 /**
  * User: beat
@@ -99,12 +99,12 @@ public class RectangleUserType implements UserType {
 
     @Override
     public Serializable disassemble(Object o) throws HibernateException {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Object assemble(Serializable serializable, Object o) throws HibernateException {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override

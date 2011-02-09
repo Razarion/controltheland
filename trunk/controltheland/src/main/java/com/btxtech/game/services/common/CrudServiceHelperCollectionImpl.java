@@ -18,7 +18,7 @@ import java.lang.reflect.Constructor;
 import java.util.Collection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 
 /**
  * User: beat
@@ -49,12 +49,12 @@ public class CrudServiceHelperCollectionImpl<T extends CrudChild> implements Cru
 
     @Override
     public void updateDbChildren(Collection<T> children) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void updateDbChild(T crudChild) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -64,7 +64,7 @@ public class CrudServiceHelperCollectionImpl<T extends CrudChild> implements Cru
 
     @Override
     public T readDbChild(Serializable id) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override

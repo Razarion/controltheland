@@ -28,7 +28,7 @@ import javax.persistence.ManyToOne;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 
 /**
  * User: beat
@@ -93,12 +93,12 @@ public class DbItemTypeAndPosition implements Serializable, CrudChild<DbTaskConf
 
     @Override
     public String getName() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setName(String name) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override

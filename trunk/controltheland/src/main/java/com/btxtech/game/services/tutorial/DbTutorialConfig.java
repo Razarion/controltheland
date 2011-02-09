@@ -37,7 +37,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import org.hibernate.annotations.Cascade;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 
 /**
  * User: beat
@@ -217,7 +217,7 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
 
     @Override
     public void setParent(Object crudParent) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override

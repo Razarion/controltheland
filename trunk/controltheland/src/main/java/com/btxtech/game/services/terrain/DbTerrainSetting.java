@@ -29,7 +29,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import org.hibernate.annotations.Cascade;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 
 /**
  * User: beat
@@ -167,6 +167,6 @@ public class DbTerrainSetting implements CrudParent, CrudChild, Serializable {
 
     @Override
     public void setParent(Object o) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 }
