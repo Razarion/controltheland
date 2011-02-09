@@ -26,7 +26,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 
 /**
  * User: beat
@@ -48,12 +48,12 @@ public class DbTerrainImage implements CrudChild, Serializable {
 
     @Override
     public String getName() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setName(String name) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override

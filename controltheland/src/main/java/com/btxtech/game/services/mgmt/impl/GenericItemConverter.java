@@ -16,11 +16,7 @@ package com.btxtech.game.services.mgmt.impl;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncProjectileItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.*;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.Base;
@@ -33,17 +29,12 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.*;
 
 /**
  * User: beat
@@ -111,7 +102,9 @@ public class GenericItemConverter {
                     SyncBaseItem syncItem = addSyncBaseItem((GenericBaseItem) genericItem);
                     Base base = ((GenericBaseItem) genericItem).getBase();
                     bases.add(base);
-                    userStates.add(base.getUserState());
+                    if (!base.isAbandoned()) {
+                        userStates.add(base.getUserState());
+                    }
                     base.addItem(syncItem);
                 } else if (genericItem instanceof GenericResourceItem) {
                     addSyncItem((GenericResourceItem) genericItem);

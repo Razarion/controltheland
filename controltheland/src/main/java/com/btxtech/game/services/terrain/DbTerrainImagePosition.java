@@ -22,7 +22,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 
 /**
  * User: beat
@@ -106,12 +106,12 @@ public class DbTerrainImagePosition implements Serializable, CrudChild<DbTerrain
 
     @Override
     public String getName() {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setName(String name) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override

@@ -17,11 +17,7 @@
 package com.google.gwt.gen2.widgetbase.client;
 
 import com.google.gwt.gen2.event.dom.client.DomEvent;
-import com.google.gwt.gen2.event.shared.AbstractEvent;
-import com.google.gwt.gen2.event.shared.EventHandler;
-import com.google.gwt.gen2.event.shared.HandlerManager;
-import com.google.gwt.gen2.event.shared.HandlerRegistration;
-import com.google.gwt.gen2.event.shared.HasHandlerManager;
+import com.google.gwt.gen2.event.shared.*;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -45,7 +41,7 @@ public abstract class Gen2Widget extends Widget implements HasHandlerManager {
    */
   public final HandlerManager getHandlerManager() {
     if (handlerManager == null) {
-      handlerManager = createHandlerManager();
+      //handlerManager = createHandlerManager();
     }
     return handlerManager;
   }
@@ -111,9 +107,9 @@ public abstract class Gen2Widget extends Widget implements HasHandlerManager {
    * @return the handler manager
    * 
    */
-  protected HandlerManager createHandlerManager() {
-    return new HandlerManager(this);
-  }
+  //protected HandlerManager createHandlerManager() {
+  //  return new HandlerManager(this);
+  //}
 
   /**
    * Fires an event.

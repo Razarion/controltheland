@@ -100,4 +100,16 @@ public class StringSourceWriter implements SourceWriter {
       }
     }
   }
+
+    public void indentln(String s, Object... objects) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void print(String s, Object... objects) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void println(String s, Object... objects) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 import org.hibernate.HibernateException;
 import org.hibernate.usertype.UserType;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * User: beat
@@ -110,17 +109,17 @@ public class PathUserType implements UserType {
 
     @Override
     public Serializable disassemble(Object o) throws HibernateException {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Object assemble(Serializable serializable, Object o) throws HibernateException {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Object replace(Object o, Object o1, Object o2) throws HibernateException {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
 }

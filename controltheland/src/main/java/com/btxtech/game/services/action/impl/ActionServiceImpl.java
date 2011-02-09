@@ -50,7 +50,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 
 /**
  * User: beat
@@ -366,7 +366,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
 
     @Override
     public void upgrade(SyncBaseItem item) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
