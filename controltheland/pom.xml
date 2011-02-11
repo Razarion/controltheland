@@ -297,7 +297,27 @@
                     <downloadSources>true</downloadSources>
                 </configuration>
             </plugin>
-
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>gwt-maven-plugin</artifactId>
+                <version>2.1.0-1</version>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <modules>
+                                <module>com.btxtech.game.jsre.Game</module>
+                                <module>com.btxtech.game.jsre.MapEditor</module>
+                                <module>com.btxtech.game.jsre.Pathfinding</module>
+                                <module>com.btxtech.game.jsre.MapView</module>
+                                <module>com.btxtech.game.jsre.Playback</module>
+                            </modules>
+                        </configuration>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
     <pluginRepositories>

@@ -11,20 +11,18 @@
   ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~   GNU General Public License for more details.
   -->
-
-<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.0.1//EN"
-        "http://google-web-toolkit.googlecode.com/svn/tags/2.0.1/distro-source/core/src/gwt-module.dtd">
 <module rename-to='mapview'>
-    <source path="mapview "/>
     <source path="client"/>
     <source path="mapeditor"/>
     <source path="common"/>
+    <source path="mapview "/>
 
     <!-- Inherit the core Web Toolkit stuff.                        -->
     <inherits name='com.google.gwt.user.User'/>
     <inherits name='com.google.gwt.user.theme.standard.Standard'/>
     <inherits name="com.google.gwt.widgetideas.HyperlinkOverride"/>
     <inherits name='com.google.gwt.widgetideas.GWTCanvas'/>
+    <inherits name='com.google.gwt.widgetideas.GlassPanel'/>
     <inherits name='com.allen_sauer.gwt.voices.gwt-voices'/>
     <!-- <inherits name='com.google.gwt.base.theme.chrome.Chrome'/> -->
     <!-- <inherits name='com.google.gwt.base.theme.dark.Dark'/>     -->
