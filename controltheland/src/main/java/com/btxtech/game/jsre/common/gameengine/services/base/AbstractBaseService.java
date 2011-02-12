@@ -17,8 +17,8 @@ import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+
 import java.util.Collection;
 
 /**
@@ -46,6 +46,10 @@ public interface AbstractBaseService {
     int getItemCount(SimpleBase simpleBase, int itemTypeId) throws NoSuchItemTypeException;
 
     void checkItemLimit4ItemAdding(BaseItemType newItemType, SimpleBase simpleBase) throws ItemLimitExceededException, HouseSpaceExceededException, NoSuchItemTypeException;
+
+    boolean isLevelLimitation4ItemTypeExceeded(BaseItemType newItemType, SimpleBase simpleBase) throws NoSuchItemTypeException;
+
+    boolean isHouseSpaceExceeded(SimpleBase simpleBase) throws NoSuchItemTypeException;
 
     Level getLevel(SimpleBase simpleBase);
 }

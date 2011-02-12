@@ -64,7 +64,27 @@
         <entry key="$PROJECT_DIR$">
           <value>
             <SvnBranchConfiguration>
-              <option name="trunkUrl" value="" />
+              <option name="branchMap">
+                <map>
+                  <entry key="https://controltheland.googlecode.com/svn/branches">
+                    <value>
+                      <list />
+                    </value>
+                  </entry>
+                  <entry key="https://controltheland.googlecode.com/svn/tags">
+                    <value>
+                      <list />
+                    </value>
+                  </entry>
+                </map>
+              </option>
+              <option name="branchUrls">
+                <list>
+                  <option value="https://controltheland.googlecode.com/svn/branches" />
+                  <option value="https://controltheland.googlecode.com/svn/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="https://controltheland.googlecode.com/svn/trunk" />
             </SvnBranchConfiguration>
           </value>
         </entry>

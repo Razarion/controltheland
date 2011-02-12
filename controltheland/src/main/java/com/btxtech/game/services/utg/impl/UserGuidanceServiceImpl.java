@@ -105,12 +105,12 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
                 @Override
                 protected void initChild(DbAbstractLevel dbAbstractLevel) {
-                    int rowCount = (Integer) hibernateTemplate.execute(new HibernateCallback() {
+                    int rowCount = hibernateTemplate.execute(new HibernateCallback<Integer>() {
                         @Override
-                        public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                        public Integer doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
                             Criteria criteria = session.createCriteria(DbAbstractLevel.class);
                             criteria.setProjection(Projections.rowCount());
-                            return criteria.list().get(0);
+                            return (Integer)criteria.list().get(0);
                         }
                     });
                     dbAbstractLevel.setOrderIndex(rowCount);
@@ -368,12 +368,12 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
     @Override
     public DbAbstractComparisonConfig getDbAbstractComparisonConfig(int dbAbstractComparisonConfigId) {
-        return (DbAbstractComparisonConfig) hibernateTemplate.get(DbAbstractComparisonConfig.class, dbAbstractComparisonConfigId);
+        return hibernateTemplate.get(DbAbstractComparisonConfig.class, dbAbstractComparisonConfigId);
     }
 
     @Override
     public DbSyncItemTypeComparisonConfig getDbSyncItemTypeComparisonConfig(int dbSyncItemTypeComparisonConfigId) {
-        return (DbSyncItemTypeComparisonConfig) hibernateTemplate.get(DbSyncItemTypeComparisonConfig.class, dbSyncItemTypeComparisonConfigId);
+        return hibernateTemplate.get(DbSyncItemTypeComparisonConfig.class, dbSyncItemTypeComparisonConfigId);
     }
 
     @Override
