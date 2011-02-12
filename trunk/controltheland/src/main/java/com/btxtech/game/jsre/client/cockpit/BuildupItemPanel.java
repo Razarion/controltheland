@@ -160,6 +160,7 @@ public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvide
 
     private Widget setupBuildupBlock(BaseItemType itemType, boolean enabled, MouseDownHandler mouseDownHandler) {
         VerticalPanel verticalPanel = new VerticalPanel();
+        verticalPanel.setTitle("xxxxYYYYccc");
         verticalPanel.setWidth("64px");
         Image image = ImageHandler.getItemTypeImage(itemType);
         image.setSize("64px", "64px");
