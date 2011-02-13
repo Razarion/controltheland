@@ -29,6 +29,14 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/META-INF" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/WEB-INF/classes" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/WEB-INF/lib" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/game" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/mapeditor" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/mapview" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/pathfinding" />
+      <excludeFolder url="file://$MODULE_DIR$/src/main/webapp/playback" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="module-library">
@@ -44,8 +52,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.persistence:persistence-api:1.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.gwt:gwt-servlet:2.1.1" level="project" />
-    <orderEntry type="library" name="Maven: com.google.gwt:gwt-user:2.1.1" level="project" />
-    <orderEntry type="library" name="Maven: com.google.gwt:gwt-dev:2.1.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.gwt:gwt-user:2.1.1" level="project" />
     <orderEntry type="library" name="Maven: com.allen_sauer.gwt.voices:gwt-voices:2.0.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.gwt:gwt-incubator:2.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.hibernate:hibernate-core:3.5.4-Final" level="project" />
