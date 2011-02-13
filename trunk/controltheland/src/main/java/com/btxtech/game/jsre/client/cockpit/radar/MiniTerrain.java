@@ -37,7 +37,7 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
 
     @Override
     public void onTerrainChanged() {
-        clear(getTerrainSettings().getPlayFieldXSize(), getTerrainSettings().getPlayFieldYSize());
+        clear();
 
         // Draw surface
         for (SurfaceRect surfaceRect : TerrainView.getInstance().getTerrainHandler().getSurfaceRects()) {
