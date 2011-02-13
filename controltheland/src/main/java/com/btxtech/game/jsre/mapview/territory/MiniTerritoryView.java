@@ -105,7 +105,7 @@ public class MiniTerritoryView extends MiniMap implements MiniMapMouseMoveListen
             return;
         }
 
-        clear(getTerrainSettings().getPlayFieldXSize(), getTerrainSettings().getPlayFieldYSize());
+        clear();
         setFillStyle(Color.ALPHA_RED);
         for (Index index : tiles) {
             Index absIndex = TerrainView.getInstance().getTerrainHandler().getAbsolutIndexForTerrainTileIndex(index);

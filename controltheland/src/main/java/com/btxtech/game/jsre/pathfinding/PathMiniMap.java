@@ -67,7 +67,7 @@ public class PathMiniMap extends MiniMap implements MiniMapMouseDownListener {
     }
 
     private void displayPath(Index start, List<Index> indexes) {
-        clear(getTerrainSettings().getPlayFieldXSize(), getTerrainSettings().getPlayFieldYSize());
+        clear();
         setStrokeStyle(Color.BLACK);
         setLineWidth(50);
 
