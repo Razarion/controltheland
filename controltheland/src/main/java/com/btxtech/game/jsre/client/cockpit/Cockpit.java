@@ -25,6 +25,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
+import com.btxtech.game.jsre.client.dialogs.LevelTargetDialog;
 import com.btxtech.game.jsre.client.dialogs.SendMessageDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
@@ -220,7 +221,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         ExtendedCustomButton mission = new ExtendedCustomButton("/images/cockpit/missionButton-up.png", "/images/cockpit/missionButton-down.png", false, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                // TODO MissionTarget.getInstance().showMissionTargetDialog();
+                LevelTargetDialog.showDialog();
             }
         });
         add(mission, MISSION_LEFT, MISSION_TOP);
