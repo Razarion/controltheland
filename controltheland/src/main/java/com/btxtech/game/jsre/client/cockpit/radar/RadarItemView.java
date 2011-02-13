@@ -50,7 +50,7 @@ public class RadarItemView extends MiniMap {
     }
 
     private void refreshItems() {
-        clear(getTerrainSettings().getPlayFieldXSize(), getTerrainSettings().getPlayFieldYSize());
+        clear();
         for (ClientSyncItem clientSyncItem : ItemContainer.getInstance().getItems()) {
             if (clientSyncItem.isSyncBaseItem()) {
                 Index pos = clientSyncItem.getSyncItem().getPosition();
