@@ -9,8 +9,6 @@
         </element>
         <element id="directory" name="lib">
           <element id="library" level="project" name="Maven: com.google.gwt:gwt-servlet:2.1.1" />
-          <element id="library" level="project" name="Maven: com.google.gwt:gwt-user:2.1.1" />
-          <element id="library" level="project" name="Maven: com.google.gwt:gwt-dev:2.1.1" />
           <element id="library" level="project" name="Maven: com.allen_sauer.gwt.voices:gwt-voices:2.0.0" />
           <element id="library" level="project" name="Maven: com.google.gwt:gwt-incubator:2.0.1" />
           <element id="library" level="project" name="Maven: org.hibernate:hibernate-core:3.5.4-Final" />

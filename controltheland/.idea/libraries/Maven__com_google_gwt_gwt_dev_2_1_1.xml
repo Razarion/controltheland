@@ -8,6 +8,7 @@
     </JAVADOC>
     <SOURCES>
       <root url="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-dev/2.1.1/gwt-dev-2.1.1-sources.jar!/" />
+      <root url="file://$PROJECT_DIR$/../../../tech/apache-tomcat-6.0.29-src/java" />
     </SOURCES>
   </library>
 </component>
