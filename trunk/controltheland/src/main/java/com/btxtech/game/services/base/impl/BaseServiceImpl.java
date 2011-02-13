@@ -17,13 +17,7 @@ import com.btxtech.game.jsre.client.AlreadyUsedException;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.Message;
-import com.btxtech.game.jsre.common.AccountBalancePacket;
-import com.btxtech.game.jsre.common.BaseChangedPacket;
-import com.btxtech.game.jsre.common.EnergyPacket;
-import com.btxtech.game.jsre.common.InsufficientFundsException;
-import com.btxtech.game.jsre.common.Packet;
-import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.XpBalancePacket;
+import com.btxtech.game.jsre.common.*;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
@@ -58,10 +52,6 @@ import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -71,6 +61,11 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * User: beat
@@ -314,13 +309,12 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             }
         }
 
-        hibernateTemplate.execute(new HibernateCallback() {
-            public Object doInHibernate(org.hibernate.Session session) {
+        hibernateTemplate.execute(new HibernateCallback<Void>() {
+            public Void doInHibernate(org.hibernate.Session session) {
                 while (!list.isEmpty()) {
                     int randIndex = (int) (Math.random() * list.size());
                     BaseColor baseColor = list.remove(randIndex);
                     session.saveOrUpdate(baseColor);
-
                 }
                 return null;
             }
@@ -458,7 +452,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     public void depositResource(double price, SimpleBase simpleBase) {
         Base base = getBase(simpleBase);
         if (!isBot(simpleBase)) {
-            DbRealGameLevel dbRealGameLevel = userGuidanceService.getDbLevel();
+            DbRealGameLevel dbRealGameLevel = userGuidanceService.getDbLevel(simpleBase);
             double money = base.getAccountBalance();
             if (money == dbRealGameLevel.getMaxMoney()) {
                 return;
