@@ -283,7 +283,7 @@ public class ServerMarketServiceImpl implements ServerMarketService {
 
     private void increaseXpInternal(Base base, int deltaXp, UserItemTypeAccess userItemTypeAccess) {
         int xp = userItemTypeAccess.getXp();
-        DbRealGameLevel dbRealGameLevel = userGuidanceService.getDbLevel();
+        DbRealGameLevel dbRealGameLevel = userGuidanceService.getDbLevel(base.getSimpleBase());
         if (xp == dbRealGameLevel.getMaxXp()) {
             return;
         } else if (xp > dbRealGameLevel.getMaxXp()) {

@@ -30,21 +30,10 @@ import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.utg.DbAbstractLevel;
-import com.btxtech.game.services.utg.DbItemTypeLimitation;
-import com.btxtech.game.services.utg.DbRealGameLevel;
-import com.btxtech.game.services.utg.DbSimulationLevel;
-import com.btxtech.game.services.utg.ServerConditionService;
-import com.btxtech.game.services.utg.UserGuidanceService;
-import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.services.utg.*;
 import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -57,6 +46,12 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.PostConstruct;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * User: beat
@@ -110,7 +105,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
                         public Integer doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
                             Criteria criteria = session.createCriteria(DbAbstractLevel.class);
                             criteria.setProjection(Projections.rowCount());
-                            return (Integer)criteria.list().get(0);
+                            return (Integer) criteria.list().get(0);
                         }
                     });
                     dbAbstractLevel.setOrderIndex(rowCount);
@@ -250,25 +245,17 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
     @Override
     public DbRealGameLevel getDbLevel() {
-        DbAbstractLevel dbAbstractLevel = getDbAbstractLevel();
-        if (dbAbstractLevel instanceof DbRealGameLevel) {
-            return (DbRealGameLevel) dbAbstractLevel;
-        }
-        DbRealGameLevel dbRealGameLevel = getHighestPossibleRealGameLevel(dbAbstractLevel);
-        if (dbRealGameLevel != null) {
-            return dbRealGameLevel;
-        }
-        return getDummyRealGameLevel();
+        return toHighestPossibleRealGameLevel(userService.getUserState().getCurrentAbstractLevel());
+    }
+
+    @Override
+    public DbRealGameLevel getDbLevel(SimpleBase simpleBase) {
+        return toHighestPossibleRealGameLevel(baseService.getUserState(simpleBase).getCurrentAbstractLevel());
     }
 
     @Override
     public DbAbstractLevel getDbAbstractLevel() {
         return userService.getUserState().getCurrentAbstractLevel();
-    }
-
-    @Override
-    public DbRealGameLevel getDbLevel(SimpleBase simpleBase) {
-        return (DbRealGameLevel) baseService.getUserState(simpleBase).getCurrentAbstractLevel();
     }
 
     @Override
@@ -285,6 +272,18 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
             }
         }
         throw new IllegalArgumentException("No DbLevel for id: " + id);
+    }
+
+
+    private DbRealGameLevel toHighestPossibleRealGameLevel(DbAbstractLevel dbAbstractLevel) {
+        if (dbAbstractLevel instanceof DbRealGameLevel) {
+            return (DbRealGameLevel) dbAbstractLevel;
+        }
+        DbRealGameLevel dbRealGameLevel = getHighestPossibleRealGameLevel(dbAbstractLevel);
+        if (dbRealGameLevel != null) {
+            return dbRealGameLevel;
+        }
+        return getDummyRealGameLevel();
     }
 
     private DbRealGameLevel getHighestPossibleRealGameLevel(DbAbstractLevel dbAbstractLevel) {
