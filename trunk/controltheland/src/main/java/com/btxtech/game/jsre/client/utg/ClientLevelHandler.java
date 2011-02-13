@@ -40,7 +40,7 @@ public class ClientLevelHandler {
 
     public void setLevel(Level level) {
         this.level = level;
-        Cockpit.getInstance().setLevel(level.getName());        
+        Cockpit.getInstance().setLevel(level.getName());
     }
 
 
@@ -50,7 +50,7 @@ public class ClientLevelHandler {
         }
         Level oldLevel = this.level;
         this.level = level;
-        LevelTargetDialog.showDialog(level.getHtml());        
+        LevelTargetDialog.showDialog(level.getHtml());
         if (oldLevel.isRealGame() && level.isRealGame()) {
             Cockpit.getInstance().setLevel(level.getName());
             // TODO set scope
@@ -77,5 +77,9 @@ public class ClientLevelHandler {
             }
             ClientRunner.getInstance().start(gameStartupSeq);
         }
+    }
+
+    public String getHtmlLevel() {
+        return level.getHtml();
     }
 }
