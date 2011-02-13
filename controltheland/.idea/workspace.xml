@@ -15,12 +15,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="aa425869-f3f3-412e-b776-9f3eeb27573b" name="Default" comment="">
-      <change type="DELETED" beforePath="C:\dev\projects\game\controltheland\.idea\runConfigurations\Server.xml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/base/impl/BaseServiceImpl.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/base/impl/BaseServiceImpl.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/impl/UserGuidanceServiceImpl.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/impl/UserGuidanceServiceImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/market/impl/ServerMarketServiceImpl.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/market/impl/ServerMarketServiceImpl.java" />
     </list>
     <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advlink/js/" />
     <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/gwt/" />
@@ -369,7 +364,7 @@
       <file leaf-file-name="BaseServiceImpl.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/base/impl/BaseServiceImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="317" column="0" selection-start="13148" selection-end="13148" vertical-scroll-proportion="0.5760518">
+            <state line="311" column="73" selection-start="12842" selection-end="12842" vertical-scroll-proportion="5.015901">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -996,11 +991,11 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1176" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38001958" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.38001958" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32908913" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32908913" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.36728698" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1010,9 +1005,9 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28609625" sideWeight="0.6640549" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28609625" sideWeight="0.6131244" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17593583" sideWeight="0.6640549" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17593583" sideWeight="0.6131244" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.36630753" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -1034,7 +1029,7 @@
     <option name="ENABLE_BACKGROUND_PROCESSES" value="false" />
     <option name="CHANGED_ON_SERVER_INTERVAL" value="60" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Cleanup" />
+    <option name="LAST_COMMIT_MESSAGE" value="Maven" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -1051,6 +1046,8 @@
     <MESSAGE value="Tooltip in buildup added&#10;GWT hoste mode running" />
     <MESSAGE value="Clean fixed" />
     <MESSAGE value="Cleanup" />
+    <MESSAGE value="Bugfix" />
+    <MESSAGE value="Maven" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -1169,7 +1166,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/base/impl/BaseServiceImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="317" column="0" selection-start="13148" selection-end="13148" vertical-scroll-proportion="0.5760518">
+        <state line="311" column="73" selection-start="12842" selection-end="12842" vertical-scroll-proportion="5.015901">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
