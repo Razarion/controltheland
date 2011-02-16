@@ -26,10 +26,11 @@ import com.google.gwt.user.client.ui.Image;
 public class ExtendedCustomButton extends CustomButton {
     private boolean toggle;
 
-    public ExtendedCustomButton(String upImage, String downImage, boolean toggle, ClickHandler handler) {
+    public ExtendedCustomButton(String upImage, String downImage, boolean toggle, String toolTip, ClickHandler handler) {
         super(new Image(upImage), new Image(downImage), handler);
         this.toggle = toggle;
         getElement().getStyle().setCursor(Style.Cursor.POINTER);
+        setTitle(toolTip);
     }
 
     @Override
