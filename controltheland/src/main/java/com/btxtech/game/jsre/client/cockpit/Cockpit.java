@@ -13,12 +13,7 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
-import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.ExtendedCustomButton;
-import com.btxtech.game.jsre.client.Game;
-import com.btxtech.game.jsre.client.ImageHandler;
-import com.btxtech.game.jsre.client.MenuPanel;
-import com.btxtech.game.jsre.client.TopMapPanel;
+import com.btxtech.game.jsre.client.*;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
@@ -33,20 +28,11 @@ import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.tutorial.CockpitSpeechBubbleHintConfig;
 import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseUpEvent;
-import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.FocusWidget;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
 import com.google.gwt.widgetideas.client.ProgressBar;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,8 +57,13 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
     private static final int BUTTON_SELL_TOP = 39;
     private static final int BUTTON_OPTION_LEFT = 623;
     private static final int BUTTON_OPTION_TOP = 39;
-    private static final int MISSION_LEFT = 716;
-    private static final int MISSION_TOP = 39;
+    private static final int LEVEL_TARGET_LEFT = 716;
+    private static final int LEVEL_TARGET_TOP = 39;
+    private static final String TOOL_TIP_OPTIONS = "Configuration, Statistics, Surrender, change color, etc";
+    private static final String TOOL_TIP_SCROLL_HOME = "Scroll home";
+    private static final String TOOL_TIP_SELL = "Activate sell mode for selling units and structures";
+    private static final String TOOL_TIP_LEVEL_TARGET = "Shows level target to move to the next level";
+
     // Label
     private static final int MONEY_LEFT = 644;
     private static final int MONEY_TOP = 114;
@@ -86,6 +77,12 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
     private static final int ENERGY_TOP = 197;
     private static final int ENERGY_BAR_LEFT = 775;
     private static final int ENERGY_BAR_TOP = 202;
+    private static final String TOOL_TIP_MONEY = "Your money";
+    private static final String TOOL_TIP_XP = "Your experience point. Additional units can be bought in he market.";
+    private static final String TOOL_TIP_ENERGY = "Base energy producing / consuming";
+    private static final String TOOL_TIP_LEVEL = "Your current level";
+    private static final String TOOL_TIP_UNITS = "Units amount / max";
+
     // Chat
     private static final int RECEIVED_TEXT_LEFT = 785;
     private static final int RECEIVED_TEXT_TOP = 55;
@@ -98,6 +95,9 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
     private static final int MAX_CHARS_RECEIVED_BOX = 1000;
     private static final int FLASHING_COUNT = 3;
     private static final int FLASHING_DELAY = 500;
+    private static final String TOOL_TIP_NAME_COLOR = "Your base name and color";
+    private static final String TOOL_TIP_SEND_MESSAGE = "Send a message";
+
     // Selection
     private static final int SELECTION_LEFT = 240;
     private static final int SELECTION_TOP = 26;
@@ -155,7 +155,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         receivedText.getElement().getStyle().setHeight(106, Style.Unit.PX);
         receivedText.getElement().getStyle().setWidth(202, Style.Unit.PX);
         add(receivedText, RECEIVED_TEXT_LEFT, RECEIVED_TEXT_TOP);
-        send = new ExtendedCustomButton("/images/cockpit/sendButton-up.png", "/images/cockpit/sendButton-down.png", false, new ClickHandler() {
+        send = new ExtendedCustomButton("/images/cockpit/sendButton-up.png", "/images/cockpit/sendButton-down.png", false, TOOL_TIP_SEND_MESSAGE, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 SendMessageDialog.showDialog();
@@ -168,20 +168,26 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         add(userColor, NAME_BG_LEFT, NAME_BG_TOP);
         userName = new Label();
         add(userName, NAME_LEFT, NAME_TOP);
+        userName.setTitle(TOOL_TIP_NAME_COLOR);
     }
 
     private void setupInfo() {
         money = new Label();
         add(money, MONEY_LEFT, MONEY_TOP);
+        money.setTitle(TOOL_TIP_MONEY);
         widgets.put(CockpitWidgetEnum.MONEY_FIELD, money);
         xp = new Label();
         add(xp, XP_LEFT, XP_TOP);
+        xp.setTitle(TOOL_TIP_XP);
         level = new Label();
         add(level, LEVEL_LEFT, LEVEL_TOP);
+        level.setTitle(TOOL_TIP_LEVEL);
         itemLimit = new Label();
         add(itemLimit, ITEM_LIMIT_LEFT, ITEM_LIMIT_TOP);
+        itemLimit.setTitle(TOOL_TIP_UNITS);
         energy = new Label("0/0");
         add(energy, ENERGY_LEFT, ENERGY_TOP);
+        energy.setTitle(TOOL_TIP_ENERGY);
         energyBar = new ProgressBar(0, 0);
         energyBar.setTextVisible(false);
         energyBar.setStyleName("gwt-EnergyBar-shell");
@@ -192,7 +198,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
     }
 
     private void setupButtons() {
-        ExtendedCustomButton scrollHome = new ExtendedCustomButton("/images/cockpit/scrollHomeButton-up.png", "/images/cockpit/scrollHomeButton-down.png", false, new ClickHandler() {
+        ExtendedCustomButton scrollHome = new ExtendedCustomButton("/images/cockpit/scrollHomeButton-up.png", "/images/cockpit/scrollHomeButton-down.png", false, TOOL_TIP_SCROLL_HOME, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 TerrainView.getInstance().moveToHome();
@@ -200,7 +206,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         });
         add(scrollHome, BUTTON_SCROLL_HOME_LEFT, BUTTON_SCROLL_HOME_TOP);
         widgets.put(CockpitWidgetEnum.SCROLL_HOME_BUTTON, scrollHome);
-        ExtendedCustomButton sell = new ExtendedCustomButton("/images/cockpit/sellButton-up.png", "/images/cockpit/sellButton-down.png", true, new ClickHandler() {
+        ExtendedCustomButton sell = new ExtendedCustomButton("/images/cockpit/sellButton-up.png", "/images/cockpit/sellButton-down.png", true, TOOL_TIP_SELL, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 ExtendedCustomButton btn = (ExtendedCustomButton) event.getSource();
@@ -209,7 +215,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         });
         add(sell, BUTTON_SELL_LEFT, BUTTON_SELL_TOP);
         widgets.put(CockpitWidgetEnum.SELL_BUTTON, sell);
-        ExtendedCustomButton option = new ExtendedCustomButton("/images/cockpit/optionButton-up.png", "/images/cockpit/optionButton-down.png", false, new ClickHandler() {
+        ExtendedCustomButton option = new ExtendedCustomButton("/images/cockpit/optionButton-up.png", "/images/cockpit/optionButton-down.png", false, TOOL_TIP_OPTIONS, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 MenuPanel menuPanel = new MenuPanel();
@@ -218,14 +224,14 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         });
         add(option, BUTTON_OPTION_LEFT, BUTTON_OPTION_TOP);
         widgets.put(CockpitWidgetEnum.OPTION_BUTTON, option);
-        ExtendedCustomButton mission = new ExtendedCustomButton("/images/cockpit/missionButton-up.png", "/images/cockpit/missionButton-down.png", false, new ClickHandler() {
+        ExtendedCustomButton levelTarget = new ExtendedCustomButton("/images/cockpit/missionButton-up.png", "/images/cockpit/missionButton-down.png", false, TOOL_TIP_LEVEL_TARGET, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 LevelTargetDialog.showDialog();
             }
         });
-        add(mission, MISSION_LEFT, MISSION_TOP);
-        widgets.put(CockpitWidgetEnum.MISSION_BUTTON, mission);
+        add(levelTarget, LEVEL_TARGET_LEFT, LEVEL_TARGET_TOP);
+        widgets.put(CockpitWidgetEnum.LEVEL_BUTTON, levelTarget);
     }
 
     private void setupRadar() {

@@ -31,6 +31,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * Time: 10:51:09
  */
 public class SpecialFunctionPanel extends VerticalPanel {
+    private static final String TOOL_TIP_UPGRADE = "Upgrade this structure or unit";
+    private static final String TOOL_TIP_UNLOAD = "Unload containing units";
+    private static final String TOOL_TIP_LAUNCH = "Launch the missile";
+
     private static final int WIDTH = 92;
     private static final int HEIGHT = 76;
 
@@ -55,7 +59,7 @@ public class SpecialFunctionPanel extends VerticalPanel {
     }
 
     private void addUpgradeable(final SyncBaseItem upgradeable) {
-        ExtendedCustomButton button = new ExtendedCustomButton("/images/cockpit/upgradeButton-up.png", "/images/cockpit/upgradeButton-down.png", false, new ClickHandler() {
+        ExtendedCustomButton button = new ExtendedCustomButton("/images/cockpit/upgradeButton-up.png", "/images/cockpit/upgradeButton-down.png", false, TOOL_TIP_UPGRADE, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 ActionHandler.getInstance().upgrade(upgradeable);
@@ -68,7 +72,7 @@ public class SpecialFunctionPanel extends VerticalPanel {
 
     private void addSyncItemContainer(SyncItemContainer syncItemContainer) {
         HorizontalPanel horizontalPanel = new HorizontalPanel();
-        ExtendedCustomButton button = new ExtendedCustomButton("/images/cockpit/unloadButton-up.png", "/images/cockpit/unloadButton-down.png", false, new ClickHandler() {
+        ExtendedCustomButton button = new ExtendedCustomButton("/images/cockpit/unloadButton-up.png", "/images/cockpit/unloadButton-down.png", false, TOOL_TIP_UNLOAD, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 Cockpit.getInstance().getCockpitMode().setUnloadMode();
@@ -80,7 +84,7 @@ public class SpecialFunctionPanel extends VerticalPanel {
     }
 
     private void addSyncLauncher() {
-        ExtendedCustomButton button = new ExtendedCustomButton("/images/cockpit/launchButton-up.png", "/images/cockpit/launchButton-down.png", false, new ClickHandler() {
+        ExtendedCustomButton button = new ExtendedCustomButton("/images/cockpit/launchButton-up.png", "/images/cockpit/launchButton-down.png", false, TOOL_TIP_LAUNCH, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 Cockpit.getInstance().getCockpitMode().setUnloadMode();

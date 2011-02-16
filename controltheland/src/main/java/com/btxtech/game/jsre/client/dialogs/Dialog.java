@@ -29,6 +29,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * Time: 3:19:00 PM
  */
 public abstract class Dialog extends DialogBox {
+    private static final String TOOL_TIP_CLOSE = "Close dialog";
     private boolean showCloseButton = true;
 
     protected Dialog() {
@@ -46,7 +47,7 @@ public abstract class Dialog extends DialogBox {
         dialogVPanel.setHorizontalAlignment(VerticalPanel.ALIGN_RIGHT);
         setWidget(dialogVPanel);
         if (showCloseButton) {
-            final ExtendedCustomButton closeButton = new ExtendedCustomButton("/images/gwtdialog/closeButton-up.png", "/images/gwtdialog/closeButton-down.png", false, new ClickHandler() {
+            final ExtendedCustomButton closeButton = new ExtendedCustomButton("/images/gwtdialog/closeButton-up.png", "/images/gwtdialog/closeButton-down.png", false, TOOL_TIP_CLOSE, new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
                     close();

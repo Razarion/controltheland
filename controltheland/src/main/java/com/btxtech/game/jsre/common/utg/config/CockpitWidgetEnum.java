@@ -25,7 +25,7 @@ public enum CockpitWidgetEnum {
     SCROLL_HOME_BUTTON(true, false),
     OPTION_BUTTON(true, false),
     SELL_BUTTON(true, false),
-    MISSION_BUTTON(true, false),
+    LEVEL_BUTTON(true, false),
     MONEY_FIELD(false, false),
     BUILDUP_ITEM(false, true),
     RADAR_PANEL(false, false);

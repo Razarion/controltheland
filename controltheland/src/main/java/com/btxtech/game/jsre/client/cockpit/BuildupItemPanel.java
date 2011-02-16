@@ -38,6 +38,9 @@ import java.util.Map;
  * Time: 14:12:18
  */
 public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvider {
+    private static final String TOOL_TIP_SCROLL_LEFT = "Scroll left";
+    private static final String TOOL_TIP_SCROLL_RIGHT = "Scroll right";
+
     private enum EnableState {
         ENABLE(true, "Build", null),
         DISABLED_LEVEL(false, "Build of", "not possible. Your are in the wrong level. Go to the next level!"),
@@ -88,14 +91,14 @@ public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvide
 
     public BuildupItemPanel() {
         setPixelSize(SelectedItemPanel.WIDTH, HEIGHT);
-        ExtendedCustomButton leftArrow = new ExtendedCustomButton("/images/cockpit/leftArrowButton-up.png", "/images/cockpit/leftArrowButton-down.png", false, new ClickHandler() {
+        ExtendedCustomButton leftArrow = new ExtendedCustomButton("/images/cockpit/leftArrowButton-up.png", "/images/cockpit/leftArrowButton-down.png", false, TOOL_TIP_SCROLL_LEFT, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 scrollPanel.setHorizontalScrollPosition(scrollPanel.getHorizontalScrollPosition() - SCROLL_STEP);
             }
         });
         add(leftArrow, ARROW_L_LEFT, ARROW_L_TOP);
-        ExtendedCustomButton rightArrow = new ExtendedCustomButton("/images/cockpit/rightArrowButton-up.png", "/images/cockpit/rightArrowButton-down.png", false, new ClickHandler() {
+        ExtendedCustomButton rightArrow = new ExtendedCustomButton("/images/cockpit/rightArrowButton-up.png", "/images/cockpit/rightArrowButton-down.png", false, TOOL_TIP_SCROLL_RIGHT, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 scrollPanel.setHorizontalScrollPosition(scrollPanel.getHorizontalScrollPosition() + SCROLL_STEP);
