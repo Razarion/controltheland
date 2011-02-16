@@ -15,287 +15,297 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="aa425869-f3f3-412e-b776-9f3eeb27573b" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/terrain/TerrainView.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/terrain/TerrainView.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/Game.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/Game.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controltheland.iml" afterPath="$PROJECT_DIR$/controltheland.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/artifacts/controltheland_war_exploded.xml" afterPath="$PROJECT_DIR$/.idea/artifacts/controltheland_war_exploded.xml" />
+      <change type="DELETED" beforePath="C:\dev\projects\game\controltheland\.idea\libraries\Maven__com_google_gwt_gwt_incubator_2_0_1.xml" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/wicket/pages/Game.html" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/wicket/pages/Game.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/runConfigurations/Tomcat_run.xml" afterPath="$PROJECT_DIR$/.idea/runConfigurations/Tomcat_run.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/runConfigurations/GWT_Hosted.xml" afterPath="$PROJECT_DIR$/.idea/runConfigurations/GWT_Hosted.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/wicket/pages/Game.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/wicket/pages/Game.java" />
     </list>
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advlink/js/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/gwt/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/syncObjects/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/simple/langs/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/utg/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/user/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/example/img/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/mgmt/tracking/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/save/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/pagebreak/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/advanced/skins/o2k7/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/advanced/skins/default/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/utg/condition/backup/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/paste/langs/" />
-    <ignored path="src/main/webapp/mapview/gwt/standard/images/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/simple/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/table/langs/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/collision/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/advanced/img/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/simple/skins/o2k7/img/" />
-    <ignored path=".idea/artifacts/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/inlinepopups/skins/clearlooks2/img/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/wicketsave/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/emotions/langs/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/table/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/utg/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/fullpage/css/" />
-    <ignored path=".idea/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/template/css/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/playback/impl/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/autosave/langs/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/utg/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/cms/" />
-    <ignored path="$USER_HOME_GRAILS$/" />
-    <ignored path="src/main/webapp/game/gwt/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advhr/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/advanced/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/playback/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advimage/js/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/item/itemType/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/itemType/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advimage/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/mapview/territory/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/controllers/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/fullpage/js/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/base/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/style/langs/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/xhtmlxtras/js/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/energy/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/" />
-    <ignored path="src/main/webapp/playback/gwt/standard/images/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/territory/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/paste/js/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/mgmt/tutorial/hint/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/example/js/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/layer/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/template/langs/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/simulation/" />
-    <ignored path="src/main/webapp/mapeditor/gwt/" />
     <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/example/langs/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/utils/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advlink/langs/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advimage/langs/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/pagebreak/img/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/debug/impl/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/legacyoutput/" />
-    <ignored path="src/main/webapp/game/gwt/standard/images/" />
-    <ignored path="war/game/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/contextmenu/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/mgmt/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/common/db/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advlist/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/fullpage/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/simple/skins/o2k7/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/mgmt/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/basepage/" />
-    <ignored path="src/main/webapp/game/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/preview/jscripts/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/user/" />
-    <ignored path="war/game/gwt/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/history/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/forum/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/searchreplace/js/" />
-    <ignored path="src/main/webapp/mapview/gwt/standard/" />
-    <ignored path="src/main/webapp/mapview/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/action/impl/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/territory/impl/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/debug/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/common/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/searchreplace/css/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/media/langs/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advhr/js/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/langs/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/resource/" />
-    <ignored path="src/main/webapp/mapeditor/gwt/standard/images/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/style/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/advanced/langs/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/terrain/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/advanced/skins/default/img/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/messenger/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/territory/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/utg/impl/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/timer/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/" />
-    <ignored path="src/main/webapp/mapeditor/gwt/standard/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/base/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/mgmt/tutorial/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/autoresize/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/cms/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/history/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/collision/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/dialogs/" />
-    <ignored path="src/main/webapp/META-INF/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/template/js/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/cockpit/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/utg/condition/" />
-    <ignored path="src/main/webapp/pathfinding/gwt/standard/images/ie6/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/statistics/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/utg/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advhr/langs/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/org/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/statistics/impl/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/" />
-    <ignored path="src/main/webapp/pathfinding/gwt/standard/images/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/mapview/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/action/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advlink/css/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/tutorial/hint/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/emotions/js/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/mapview/common/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/emotions/" />
-    <ignored path="src/main/webapp/game/gwt/standard/images/ie6/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/simple/skins/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/insertdatetime/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/terrain/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/bot/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/advanced/js/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advimage/img/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/itemTypeAccess/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/connection/impl/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/noneditable/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/" />
-    <ignored path="src/main/webapp/mapview/gwt/standard/images/ie6/" />
     <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/market/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/user/impl/" />
-    <ignored path="src/main/webapp/playback/gwt/standard/" />
-    <ignored path="src/main/webapp/WEB-INF/lib/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/item/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advlink/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/tutorial/impl/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/base/impl/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/bot/impl/" />
-    <ignored path="war/game/gwt/standard/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/mgmt/impl/" />
-    <ignored path="src/main/webapp/mapeditor/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/inlinepopups/skins/clearlooks2/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/visualchars/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/pagebreak/css/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/energy/impl/" />
-    <ignored path="src/main/webapp/mapview/gwt/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/ajax/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/example/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/base/impl/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/connection/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/inlinepopups/skins/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/fullscreen/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/table/css/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/utg/condition/" />
-    <ignored path=".idea/libraries/" />
-    <ignored path="src/main/webapp/playback/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/energy/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/advanced/skins/o2k7/img/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/xhtmlxtras/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/xhtmlxtras/css/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/print/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/xhtmlxtras/langs/" />
-    <ignored path=".idea/inspectionProfiles/" />
-    <ignored path=".idea/runConfigurations/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/forum/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/searchreplace/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/directionality/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/control/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/common/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/tutorial/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/playback/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/settings/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/table/js/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/common/info/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/spellchecker/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/org/gwtrpcspring/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advimage/css/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/market/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/tutorial/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/iespell/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/searchreplace/langs/" />
-    <ignored path="src/main/webapp/pathfinding/gwt/standard/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/item/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/advanced/skins/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/pathfinding/" />
-    <ignored path="$USER_HOME_GRIFFON$/" />
-    <ignored path="war/game/gwt/standard/images/ie6/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/" />
     <ignored path="src/main/webapp/mapeditor/gwt/standard/images/ie6/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/media/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/style/css/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/utg/impl/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/fullpage/langs/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/market/impl/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/cockpit/radar/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/spellchecker/css/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/user/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advhr/css/" />
-    <ignored path="src/main/webapp/game/gwt/standard/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/cms/impl/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/simple/img/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/style/js/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/media/js/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/emotions/img/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/bbcode/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/collision/impl/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/simulation/hint/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/simple/skins/default/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/uiservices/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/media/img/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/territory/impl/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/paste/js/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/common/info/" />
     <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/terrain/impl/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/syncObjects/command/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/syncObjects/syncInfos/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/messenger/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/spellchecker/img/" />
-    <ignored path="war/game/gwt/standard/images/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/jazzy/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/terrain/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/statistics/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/info/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/preview/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/forum/impl/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/mapeditor/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/paste/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/wordcount/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/inlinepopups/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/action/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/history/impl/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/control/task/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/autosave/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/items/impl/" />
-    <ignored path="src/main/webapp/pathfinding/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/items/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/media/css/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/template/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/item/impl/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/tabfocus/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/advanced/img/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/simple/skins/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/gwt/" />
+    <ignored path=".idea/artifacts/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advhr/langs/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advhr/css/" />
+    <ignored path="war/game/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/media/js/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/advanced/langs/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/playback/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/cockpit/radar/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/utg/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/autosave/langs/" />
+    <ignored path="src/main/webapp/game/gwt/standard/images/" />
+    <ignored path="src/main/webapp/mapview/gwt/standard/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/" />
     <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/utg/config/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/nonbreaking/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/messenger/impl/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/resource/impl/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/effects/" />
-    <ignored path="src/main/webapp/playback/gwt/" />
-    <ignored path="src/main/webapp/playback/gwt/standard/images/ie6/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/action/" />
-    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/connection/" />
-    <ignored path=".idea/copyright/" />
-    <ignored path="src/main/webapp/pathfinding/gwt/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/mapview/territory/" />
+    <ignored path="src/main/webapp/pathfinding/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/collision/impl/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/media/langs/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/statistics/" />
+    <ignored path="src/main/webapp/game/gwt/" />
+    <ignored path="war/game/gwt/standard/images/ie6/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/simple/skins/o2k7/img/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/forum/impl/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/template/js/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/tabfocus/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/jazzy/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/advanced/skins/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/style/css/" />
+    <ignored path="src/main/webapp/playback/gwt/standard/images/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advimage/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/mapview/common/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/history/impl/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/pathfinding/" />
     <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/mgmt/condition/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/template/css/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/bot/impl/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/advanced/skins/o2k7/img/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/directionality/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/common/db/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/pagebreak/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/tutorial/hint/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/noneditable/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/territory/impl/" />
+    <ignored path="src/main/webapp/mapeditor/gwt/standard/images/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/items/impl/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/items/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/mapeditor/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/inlinepopups/skins/clearlooks2/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/save/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/action/impl/" />
+    <ignored path="src/main/webapp/mapview/gwt/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/advanced/skins/o2k7/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/utg/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/fullpage/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/connection/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/user/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/mgmt/impl/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/preview/jscripts/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/simple/skins/o2k7/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/advanced/js/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/paste/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/fullpage/css/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/emotions/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/messenger/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/searchreplace/css/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/syncObjects/syncInfos/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/autoresize/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/itemType/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/media/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/inlinepopups/skins/clearlooks2/img/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/spellchecker/css/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/legacyoutput/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/connection/" />
+    <ignored path="src/main/webapp/pathfinding/gwt/" />
+    <ignored path="src/main/webapp/pathfinding/gwt/standard/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advhr/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/tutorial/impl/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/utg/impl/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advlist/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/emotions/js/" />
+    <ignored path="src/main/webapp/playback/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/example/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/table/css/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/template/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/mgmt/tutorial/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/resource/impl/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/autosave/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/style/js/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/history/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/action/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/pagebreak/css/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/uiservices/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/playback/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/xhtmlxtras/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/connection/impl/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/spellchecker/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advimage/img/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/messenger/" />
+    <ignored path=".idea/copyright/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/template/langs/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/basepage/" />
+    <ignored path="src/main/webapp/pathfinding/gwt/standard/images/ie6/" />
+    <ignored path=".idea/runConfigurations/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/bbcode/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advlink/css/" />
+    <ignored path=".idea/inspectionProfiles/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/energy/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/cms/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/simple/img/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/settings/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/mgmt/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/layer/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/timer/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/item/itemType/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/bot/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advimage/css/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/item/impl/" />
+    <ignored path="war/game/gwt/standard/images/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/table/langs/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/item/" />
+    <ignored path="src/main/webapp/mapeditor/gwt/standard/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/energy/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/action/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/terrain/" />
+    <ignored path="src/main/webapp/playback/gwt/standard/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/control/task/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/statistics/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/utg/condition/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/tutorial/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/advanced/skins/default/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/dialogs/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/wicketsave/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/debug/impl/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/paste/langs/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/emotions/langs/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/territory/impl/" />
+    <ignored path="src/main/webapp/META-INF/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/advanced/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/style/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/advanced/skins/default/img/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/cms/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/user/impl/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/energy/impl/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/utg/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/market/impl/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/fullscreen/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/wordcount/" />
+    <ignored path="src/main/webapp/game/gwt/standard/images/ie6/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/utg/impl/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/controllers/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/insertdatetime/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/inlinepopups/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advhr/js/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/mgmt/tracking/" />
+    <ignored path="src/main/webapp/game/gwt/standard/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/user/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/media/css/" />
+    <ignored path="war/game/gwt/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/simulation/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/xhtmlxtras/js/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/history/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/inlinepopups/skins/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/org/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advimage/langs/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/base/impl/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/simulation/hint/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/example/js/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/info/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/example/img/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advlink/js/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/collision/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/cockpit/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/terrain/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/common/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/preview/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/simple/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/base/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/utils/" />
+    <ignored path="src/main/webapp/mapview/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/user/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/org/gwtrpcspring/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/base/impl/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/mgmt/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/langs/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/media/img/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/spellchecker/img/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/action/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/tutorial/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/print/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/territory/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/fullpage/js/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/pagebreak/img/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/playback/impl/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/itemTypeAccess/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/forum/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/searchreplace/langs/" />
+    <ignored path="war/game/gwt/standard/" />
+    <ignored path="src/main/webapp/mapeditor/gwt/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/mapview/" />
+    <ignored path="src/main/webapp/mapview/gwt/standard/images/" />
     <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/territory/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/fullpage/langs/" />
+    <ignored path=".idea/libraries/" />
+    <ignored path=".idea/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/nonbreaking/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advlink/langs/" />
+    <ignored path="src/main/webapp/playback/gwt/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/forum/" />
+    <ignored path="src/main/webapp/game/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/utg/condition/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/base/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/searchreplace/" />
+    <ignored path="src/main/webapp/WEB-INF/lib/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/collision/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/terrain/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/effects/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/common/" />
+    <ignored path="src/main/webapp/mapview/gwt/standard/images/ie6/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/searchreplace/js/" />
+    <ignored path="$USER_HOME_GRIFFON$/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/table/js/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/client/control/" />
+    <ignored path="src/main/webapp/mapeditor/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/emotions/img/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/visualchars/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advlink/" />
     <ignored path="war/" />
+    <ignored path="src/main/webapp/pathfinding/gwt/standard/images/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/syncObjects/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/statistics/impl/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/table/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/simple/langs/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/themes/simple/skins/default/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/messenger/impl/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/ajax/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/syncObjects/command/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/wicket/pages/mgmt/tutorial/hint/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/jsre/common/gameengine/services/territory/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advimage/js/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/cms/impl/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/iespell/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/resource/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/xhtmlxtras/langs/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/utg/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/utg/condition/backup/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/item/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/debug/" />
+    <ignored path="src/main/webapp/playback/gwt/standard/images/ie6/" />
+    <ignored path="$USER_HOME_GRAILS$/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/xhtmlxtras/css/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/style/langs/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/contextmenu/" />
+    <ignored path="src/main/webapp/WEB-INF/classes/com/btxtech/game/services/market/" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -352,19 +362,28 @@
   <component name="FileColors" enabled="true" enabledForTabs="true" />
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="UserGuidanceServiceImpl.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/impl/UserGuidanceServiceImpl.java">
+      <file leaf-file-name="GWTCanvas.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../../tech/google-web-toolkit-incubator_1766/src/com/google/gwt/widgetideas/graphics/client/GWTCanvas.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="256" column="27" selection-start="10371" selection-end="10389" vertical-scroll-proportion="-9.96">
+            <state line="123" column="19" selection-start="3843" selection-end="3847" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BaseServiceImpl.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/base/impl/BaseServiceImpl.java">
+      <file leaf-file-name="UIObject.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-servlet/2.1.1/gwt-servlet-2.1.1-sources.jar!/com/google/gwt/user/client/ui/UIObject.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="311" column="73" selection-start="12842" selection-end="12842" vertical-scroll-proportion="5.015901">
+            <state line="853" column="17" selection-start="28819" selection-end="28819" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Game.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/Game.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="36" column="19" selection-start="1454" selection-end="1526" vertical-scroll-proportion="0.36764705">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -372,35 +391,8 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Void.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://$PROJECT_DIR$/../../../tech/sun/jdk1.6.0_17/src.zip!/java/lang/Void.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="19" column="6" selection-start="428" selection-end="428" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MovableServiceAsync.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/MovableServiceAsync.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="50" column="17" selection-start="2092" selection-end="2092" vertical-scroll-proportion="-14.96">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Connection.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/Connection.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="59" column="48" selection-start="2735" selection-end="2748" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ServerMarketServiceImpl.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/market/impl/ServerMarketServiceImpl.java">
+      <file leaf-file-name="Game.gwt.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/Game.gwt.xml">
           <provider selected="true" editor-type-id="text-editor">
             <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
               <folding />
@@ -408,40 +400,131 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="pom.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pom.xml">
+      <file leaf-file-name="Game.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/wicket/pages/Game.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="310" column="57" selection-start="11602" selection-end="11602" vertical-scroll-proportion="-6.76">
+            <state line="68" column="26" selection-start="3039" selection-end="3039" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="RadarItemView.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/cockpit/radar/RadarItemView.java">
+      <file leaf-file-name="Game.html" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/wicket/pages/Game.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="53" column="0" selection-start="1711" selection-end="1711" vertical-scroll-proportion="0.0">
+            <state line="29" column="0" selection-start="1138" selection-end="1138" vertical-scroll-proportion="-18.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MiniTerritoryView.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/mapview/territory/MiniTerritoryView.java">
+      <file leaf-file-name="EntryPoint.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-servlet/2.1.1/gwt-servlet-2.1.1-sources.jar!/com/google/gwt/core/client/EntryPoint.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="108" column="0" selection-start="3984" selection-end="3984" vertical-scroll-proportion="0.0">
+            <state line="27" column="7" selection-start="963" selection-end="963" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TerrainView.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/terrain/TerrainView.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="66" column="40" selection-start="3126" selection-end="3126" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GWTCanvasImpl.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../../tech/google-web-toolkit-incubator_1766/src/com/google/gwt/widgetideas/graphics/client/impl/GWTCanvasImpl.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="27" column="0" selection-start="896" selection-end="932" vertical-scroll-proportion="-6.92">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GWTCanvasImplDefault.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../../tech/google-web-toolkit-incubator_1766/src/com/google/gwt/widgetideas/graphics/client/impl/GWTCanvasImplDefault.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="26" column="48" selection-start="1005" selection-end="1005" vertical-scroll-proportion="-1.4">
               <folding>
-                <element signature="imports" expanded="true" />
+                <marker date="1297711955631" expanded="true" signature="1230:1380" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="1230:1380" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="1426:1538" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="1426:1538" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="1669:1781" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="1669:1781" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="1834:2058" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="1834:2058" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="2183:2322" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="2183:2322" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="2528:2728" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="2528:2728" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="2767:2874" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="2767:2874" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="2974:3111" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="2974:3111" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="3162:3281" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="3162:3281" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="3345:3477" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="3345:3477" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="3622:3737" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="3622:3737" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="3785:3901" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="3785:3901" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="3950:4067" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="3950:4067" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="4117:4235" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="4117:4235" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="4390:4502" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="4390:4502" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="4561:4673" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="4561:4673" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="4766:4896" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="4766:4896" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="4982:5105" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="4982:5105" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="5154:5264" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="5154:5264" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="5320:5434" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="5320:5434" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="5482:5589" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="5482:5589" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="5649:5760" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="5649:5760" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="6327:6448" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="6327:6448" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="6509:6629" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="6509:6629" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="6722:6878" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="6722:6878" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="6937:7055" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="6937:7055" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="7116:7236" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="7116:7236" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="7295:7413" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="7295:7413" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="7480:7604" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="7480:7604" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="8023:8146" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="8023:8146" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="8187:8296" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="8187:8296" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="8398:8537" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="8398:8537" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="8655:8788" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="8655:8788" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="8850:8965" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="8850:8965" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="9067:9208" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="9067:9208" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="9411:9651" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="9411:9651" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="9735:9976" placeholder="{...}" />
+                <marker date="1297711955631" expanded="true" signature="9735:9976" placeholder="{...}" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PathMiniMap.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/pathfinding/PathMiniMap.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="70" column="0" selection-start="2360" selection-end="2360" vertical-scroll-proportion="0.0">
-              <folding />
             </state>
           </provider>
         </entry>
@@ -460,15 +543,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/common/gameengine/services/base/AbstractBaseService.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/DbSimulationLevel.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/cockpit/BuildupItemPanel.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/market/impl/ServerMarketServiceImpl.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/gwt/MovableServiceImpl.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/google/gwt/libideas/resources/ext/ResourceGenerator.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/cms/impl/CmsServiceImpl.java" />
-        <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/cockpit/radar/MiniMap.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/cockpit/radar/RadarFrameView.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/cockpit/radar/MiniTerrain.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/cockpit/radar/RadarItemView.java" />
@@ -476,6 +550,15 @@
         <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/pathfinding/PathMiniMap.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/impl/UserGuidanceServiceImpl.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/base/impl/BaseServiceImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/cockpit/Cockpit.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/utg/ClientLevelHandler.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/dialogs/LevelTargetDialog.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/../../../tech/google-web-toolkit-incubator_1766/src/com/google/gwt/widgetideas/graphics/client/GWTCanvas.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/terrain/TerrainView.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/wicket/pages/Game.html" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/wicket/pages/Game.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/Game.java" />
       </list>
     </option>
   </component>
@@ -504,56 +587,6 @@
         <PATH_ELEMENT>
           <option name="myItemId" value="" />
           <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="Control the land" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
-        </PATH_ELEMENT>
-      </PATH>
-      <PATH>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="Control the land" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="Plugins" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$PluginsNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="tomcat" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$PluginNode" />
-        </PATH_ELEMENT>
-      </PATH>
-      <PATH>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="Control the land" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="Plugins" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$PluginsNode" />
-        </PATH_ELEMENT>
-      </PATH>
-      <PATH>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="Control the land" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="Lifecycle" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$LifecycleNode" />
         </PATH_ELEMENT>
       </PATH>
     </treeState>
@@ -593,9 +626,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Favorites" />
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -614,6 +644,196 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Maven: com.google.gwt:gwt-incubator:2.1.0" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt-incubator-2.1.0.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Maven: com.google.gwt:gwt-incubator:2.1.0" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt-incubator-2.1.0.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="examples" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Maven: com.google.gwt:gwt-incubator:2.1.0" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt-incubator-2.1.0.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="google" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="widgetideas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Maven: com.google.gwt:gwt-incubator:2.1.0" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt-incubator-2.1.0.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="google" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="widgetideas" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="client" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Maven: com.google.gwt:gwt-incubator:2.1.0" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt-incubator-2.1.0.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="google" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Maven: com.google.gwt:gwt-incubator:2.1.0" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt-incubator-2.1.0.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="google" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Maven: com.google.gwt:gwt-incubator:2.1.0" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.NamedLibraryElementNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gwt-incubator-2.1.0.jar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="com" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="controltheland" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -629,28 +849,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="webapp" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -694,8 +892,67 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="jsre" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
+      <pane id="Favorites" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -713,16 +970,116 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="dynamic.classpath" value="false" />
-    <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
+    <property name="dynamic.classpath" value="false" />
   </component>
-  <component name="RunManager" selected="Maven.Tomcat run">
+  <component name="RunManager" selected="Maven.GWT Hosted">
+    <configuration default="false" name="controltheland [org.codehaus.mojo:gwt-maven-plugin:2.1.0-1:clean]" type="MavenRunConfiguration" factoryName="Maven" temporary="true">
+      <MavenSettings>
+        <option name="myGeneralSettings">
+          <MavenGeneralSettings>
+            <option name="checksumPolicy" value="FAIL" />
+            <option name="failureBehavior" value="FAST" />
+            <option name="localRepository" value="" />
+            <option name="mavenHome" value="" />
+            <option name="mavenSettingsFile" value="" />
+            <option name="nonRecursive" value="false" />
+            <option name="pluginUpdatePolicy" value="DO_NOT_UPDATE" />
+            <option name="printErrorStackTraces" value="false" />
+            <option name="snapshotUpdatePolicy" value="ALWAYS_UPDATE" />
+            <option name="usePluginRegistry" value="false" />
+            <option name="workOffline" value="false" />
+          </MavenGeneralSettings>
+        </option>
+        <option name="myRunnerSettings">
+          <MavenRunnerSettings>
+            <option name="jreName" value="1.6" />
+            <option name="mavenProperties">
+              <map />
+            </option>
+            <option name="runMavenInBackground" value="true" />
+            <option name="skipTests" value="false" />
+            <option name="vmOptions" value="" />
+          </MavenRunnerSettings>
+        </option>
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="goals">
+              <list>
+                <option value="org.codehaus.mojo:gwt-maven-plugin:2.1.0-1:clean" />
+              </list>
+            </option>
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="workingDirPath" value="$PROJECT_DIR$" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <configuration default="false" name="controltheland [org.codehaus.mojo:gwt-maven-plugin:2.1.0-1:compile]" type="MavenRunConfiguration" factoryName="Maven" temporary="true">
+      <MavenSettings>
+        <option name="myGeneralSettings">
+          <MavenGeneralSettings>
+            <option name="checksumPolicy" value="FAIL" />
+            <option name="failureBehavior" value="FAST" />
+            <option name="localRepository" value="" />
+            <option name="mavenHome" value="" />
+            <option name="mavenSettingsFile" value="" />
+            <option name="nonRecursive" value="false" />
+            <option name="pluginUpdatePolicy" value="DO_NOT_UPDATE" />
+            <option name="printErrorStackTraces" value="false" />
+            <option name="snapshotUpdatePolicy" value="ALWAYS_UPDATE" />
+            <option name="usePluginRegistry" value="false" />
+            <option name="workOffline" value="false" />
+          </MavenGeneralSettings>
+        </option>
+        <option name="myRunnerSettings">
+          <MavenRunnerSettings>
+            <option name="jreName" value="1.6" />
+            <option name="mavenProperties">
+              <map />
+            </option>
+            <option name="runMavenInBackground" value="true" />
+            <option name="skipTests" value="false" />
+            <option name="vmOptions" value="" />
+          </MavenRunnerSettings>
+        </option>
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="goals">
+              <list>
+                <option value="org.codehaus.mojo:gwt-maven-plugin:2.1.0-1:compile" />
+              </list>
+            </option>
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="workingDirPath" value="$PROJECT_DIR$" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
     <configuration default="true" type="PhpRunConfigurationType" factoryName="PHP">
       <method>
         <option name="AntTarget" enabled="false" />
         <option name="BuildArtifacts" enabled="false" />
         <option name="FtpUpload" enabled="false" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+        <option name="ValidateXdebugSetup" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
         <option name="Maven.BeforeRunTask" enabled="false" />
         <option name="ValidateXdebugSetup" enabled="true" />
       </method>
@@ -772,14 +1129,6 @@
         <option name="BuildArtifacts" enabled="false" />
         <option name="Make" enabled="false" />
         <option name="Maven.BeforeRunTask" enabled="false" />
-      </method>
-    </configuration>
-    <configuration default="true" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
-      <method>
-        <option name="AntTarget" enabled="false" />
-        <option name="BuildArtifacts" enabled="false" />
-        <option name="Maven.BeforeRunTask" enabled="false" />
-        <option name="ValidateXdebugSetup" enabled="true" />
       </method>
     </configuration>
     <configuration default="true" type="Remote" factoryName="Remote">
@@ -924,10 +1273,15 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
-    <list size="3">
+    <list size="8">
       <item index="0" class="java.lang.String" itemvalue="Maven.GWT Hosted" />
       <item index="1" class="java.lang.String" itemvalue="Maven.Tomcat run war" />
       <item index="2" class="java.lang.String" itemvalue="Maven.Tomcat run" />
+      <item index="3" class="java.lang.String" itemvalue="Maven.war:inplace" />
+      <item index="4" class="java.lang.String" itemvalue="Maven.controltheland [org.codehaus.mojo:gwt-maven-plugin:2.1.0-1:clean]" />
+      <item index="5" class="java.lang.String" itemvalue="Maven.GWT Hosted Debug" />
+      <item index="6" class="java.lang.String" itemvalue="Maven.controltheland [org.codehaus.mojo:gwt-maven-plugin:2.1.0-1:compile]" />
+      <item index="7" class="java.lang.String" itemvalue="Remote.Debugger Hosted Mode" />
     </list>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
@@ -991,29 +1345,29 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1176" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
-      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.38001958" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38001958" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32908913" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.36728698" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.36728698" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32908913" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4946131" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32908913" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3712047" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28609625" sideWeight="0.6131244" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.1" sideWeight="0.625857" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17593583" sideWeight="0.6131244" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.36630753" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19625668" sideWeight="0.625857" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32419196" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="VcsManagerConfiguration">
@@ -1029,7 +1383,7 @@
     <option name="ENABLE_BACKGROUND_PROCESSES" value="false" />
     <option name="CHANGED_ON_SERVER_INTERVAL" value="60" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Maven" />
+    <option name="LAST_COMMIT_MESSAGE" value="Level target dialog" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -1048,6 +1402,7 @@
     <MESSAGE value="Cleanup" />
     <MESSAGE value="Bugfix" />
     <MESSAGE value="Maven" />
+    <MESSAGE value="Level target dialog" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -1057,116 +1412,237 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/UserGuidanceService.java">
+    <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="0" selection-start="1514" selection-end="1514" vertical-scroll-proportion="0.0">
+        <state line="306" column="69" selection-start="11448" selection-end="11448" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-incubator/2.0.1/gwt-incubator-2.0.1.jar!/com/google/gwt/widgetideas/graphics/client/GWTCanvas.class">
+    <entry file="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-servlet/2.1.1/gwt-servlet-2.1.1-sources.jar!/com/google/gwt/dom/client/Element.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="20" selection-start="1153" selection-end="1162" vertical-scroll-proportion="0.58093524">
-          <folding />
+        <state line="686" column="27" selection-start="19325" selection-end="19325" vertical-scroll-proportion="0.0">
+          <folding>
+            <marker date="1292511686000" expanded="true" signature="3124:3144" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="3989:4010" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="5704:5736" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="5988:6021" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="6267:6299" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="6463:6489" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="6914:6963" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="7417:7442" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="7863:7890" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="8236:8276" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="8474:8512" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="8718:8753" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="8948:8985" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="9104:9143" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="9372:9402" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="9628:9675" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="9897:9940" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="10169:10203" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="10429:10463" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="10682:10748" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="10865:10905" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="11381:11418" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="11533:11572" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="12033:12061" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="12689:12717" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="13700:13737" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="16404:16445" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="16823:16860" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="17032:17057" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="17302:17325" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="17460:17498" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="17777:17804" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="18046:18075" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="18314:18343" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="18578:18607" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="18849:18876" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="19115:19142" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="19374:19403" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="19753:19790" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="20076:20109" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="20217:20357" placeholder="{...}" />
+            <marker date="1292511686000" expanded="true" signature="20223:20322" placeholder="//..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-servlet/2.1.1/gwt-servlet-2.1.1-sources.jar!/com/google/gwt/dom/client/Style.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1431" column="13" selection-start="33091" selection-end="33091" vertical-scroll-proportion="0.0">
+          <folding>
+            <marker date="1292511684000" expanded="true" signature="35244:35270" placeholder="{...}" />
+            <marker date="1292511684000" expanded="true" signature="35399:35426" placeholder="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-servlet/2.1.1/gwt-servlet-2.1.1-sources.jar!/com/google/gwt/user/client/DOM.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1207" column="24" selection-start="36020" selection-end="36020" vertical-scroll-proportion="0.0">
+          <folding>
+            <marker date="1292511722000" expanded="true" signature="24767:24814" placeholder="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/ExtendedCanvas.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="0" selection-start="1162" selection-end="1162" vertical-scroll-proportion="0.0">
+        <state line="31" column="38" selection-start="1200" selection-end="1200" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/cockpit/radar/MiniMap.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/terrain/TerrainHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="60" column="87" selection-start="2553" selection-end="2553" vertical-scroll-proportion="0.0">
+        <state line="100" column="0" selection-start="4506" selection-end="4506" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/cockpit/radar/MiniTerrain.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/terrain/TerrainView.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="0" selection-start="1485" selection-end="1485" vertical-scroll-proportion="0.0">
+        <state line="66" column="40" selection-start="3126" selection-end="3126" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/cockpit/radar/RadarFrameView.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/wicket/pages/Game.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="13" selection-start="1461" selection-end="1478" vertical-scroll-proportion="0.0">
+        <state line="29" column="0" selection-start="1138" selection-end="1138" vertical-scroll-proportion="-18.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/cockpit/radar/RadarItemView.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="53" column="0" selection-start="1711" selection-end="1711" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/mapview/territory/MiniTerritoryView.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="108" column="0" selection-start="3984" selection-end="3984" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/pathfinding/PathMiniMap.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="70" column="0" selection-start="2360" selection-end="2360" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="310" column="57" selection-start="11602" selection-end="11602" vertical-scroll-proportion="-6.76">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/market/impl/ServerMarketServiceImpl.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/Game.gwt.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/impl/UserGuidanceServiceImpl.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/wicket/pages/Game.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="256" column="27" selection-start="10371" selection-end="10389" vertical-scroll-proportion="-9.96">
+        <state line="68" column="26" selection-start="3039" selection-end="3039" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/Connection.java">
+    <entry file="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-servlet/2.1.1/gwt-servlet-2.1.1-sources.jar!/com/google/gwt/user/client/ui/UIObject.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="59" column="48" selection-start="2735" selection-end="2748" vertical-scroll-proportion="0.0">
+        <state line="853" column="17" selection-start="28819" selection-end="28819" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/MovableServiceAsync.java">
+    <entry file="file://$PROJECT_DIR$/../../../tech/google-web-toolkit-incubator_1766/src/com/google/gwt/widgetideas/graphics/client/impl/GWTCanvasImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="50" column="17" selection-start="2092" selection-end="2092" vertical-scroll-proportion="-14.96">
+        <state line="27" column="0" selection-start="896" selection-end="932" vertical-scroll-proportion="-6.92">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="jar://$PROJECT_DIR$/../../../tech/sun/jdk1.6.0_17/src.zip!/java/lang/Void.java">
+    <entry file="file://$PROJECT_DIR$/../../../tech/google-web-toolkit-incubator_1766/src/com/google/gwt/widgetideas/graphics/client/impl/GWTCanvasImplDefault.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="6" selection-start="428" selection-end="428" vertical-scroll-proportion="0.0">
+        <state line="26" column="48" selection-start="1005" selection-end="1005" vertical-scroll-proportion="-1.4">
+          <folding>
+            <marker date="1297711955631" expanded="true" signature="1230:1380" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="1230:1380" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="1426:1538" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="1426:1538" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="1669:1781" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="1669:1781" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="1834:2058" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="1834:2058" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="2183:2322" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="2183:2322" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="2528:2728" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="2528:2728" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="2767:2874" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="2767:2874" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="2974:3111" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="2974:3111" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="3162:3281" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="3162:3281" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="3345:3477" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="3345:3477" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="3622:3737" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="3622:3737" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="3785:3901" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="3785:3901" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="3950:4067" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="3950:4067" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="4117:4235" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="4117:4235" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="4390:4502" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="4390:4502" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="4561:4673" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="4561:4673" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="4766:4896" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="4766:4896" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="4982:5105" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="4982:5105" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="5154:5264" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="5154:5264" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="5320:5434" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="5320:5434" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="5482:5589" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="5482:5589" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="5649:5760" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="5649:5760" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="6327:6448" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="6327:6448" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="6509:6629" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="6509:6629" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="6722:6878" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="6722:6878" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="6937:7055" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="6937:7055" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="7116:7236" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="7116:7236" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="7295:7413" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="7295:7413" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="7480:7604" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="7480:7604" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="8023:8146" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="8023:8146" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="8187:8296" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="8187:8296" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="8398:8537" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="8398:8537" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="8655:8788" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="8655:8788" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="8850:8965" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="8850:8965" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="9067:9208" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="9067:9208" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="9411:9651" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="9411:9651" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="9735:9976" placeholder="{...}" />
+            <marker date="1297711955631" expanded="true" signature="9735:9976" placeholder="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../tech/google-web-toolkit-incubator_1766/src/com/google/gwt/widgetideas/graphics/client/GWTCanvas.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="123" column="19" selection-start="3843" selection-end="3847" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/base/impl/BaseServiceImpl.java">
+    <entry file="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-servlet/2.1.1/gwt-servlet-2.1.1-sources.jar!/com/google/gwt/core/client/EntryPoint.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="311" column="73" selection-start="12842" selection-end="12842" vertical-scroll-proportion="5.015901">
+        <state line="27" column="7" selection-start="963" selection-end="963" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/Game.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="36" column="19" selection-start="1454" selection-end="1526" vertical-scroll-proportion="0.36764705">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
