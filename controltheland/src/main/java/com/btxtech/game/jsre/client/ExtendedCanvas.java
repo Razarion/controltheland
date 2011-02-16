@@ -31,10 +31,12 @@ import com.google.gwt.widgetideas.graphics.client.GWTCanvas;
  */
 public class ExtendedCanvas extends GWTCanvas {
     public ExtendedCanvas() {
+        setGlobalCompositeOperation(GWTCanvas.DESTINATION_OVER);
     }
 
     public ExtendedCanvas(int coordX, int coordY) {
         super(coordX, coordY);
+        setGlobalCompositeOperation(GWTCanvas.DESTINATION_OVER);
     }
 
     public HandlerRegistration addMouseDownHandler(MouseDownHandler handler) {

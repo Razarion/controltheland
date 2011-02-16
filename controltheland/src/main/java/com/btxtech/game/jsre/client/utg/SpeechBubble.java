@@ -31,7 +31,7 @@ import com.google.gwt.widgetideas.graphics.client.Color;
  * Time: 21:59:32
  */
 public class SpeechBubble extends AbsolutePanel {
-    public static final int LINE_SIZE = 5;
+    public static final int LINE_SIZE = 2;
     public static final int SPACING = 2;
     public static final int CURVE_SIZE = 20;
     public static final int HTML_OFFSET = CURVE_SIZE / 4 + LINE_SIZE;
