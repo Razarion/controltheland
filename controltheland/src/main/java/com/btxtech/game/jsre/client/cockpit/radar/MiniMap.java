@@ -22,6 +22,8 @@ import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.DOM;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,11 +56,16 @@ public class MiniMap extends ExtendedCanvas implements MouseMoveHandler, MouseDo
 
     public void onTerrainSettings(TerrainSettings terrainSettings) {
         this.terrainSettings = terrainSettings;
-        scale(1.0 / scale, 1.0 / scale);        
+
+        // Fix for clear bug in canvas library
+        setCoordSize(terrainSettings.getPlayFieldXSize(), terrainSettings.getPlayFieldYSize());
+        DOM.setElementProperty(getElement(), "width", String.valueOf(width));
+        DOM.setElementProperty(getElement(), "height", String.valueOf(height));
+
+        scale(1.0 / scale, 1.0 / scale);
         scale = Math.min((double) width / (double) terrainSettings.getPlayFieldXSize(),
                 (double) height / (double) terrainSettings.getPlayFieldYSize());
         scale(scale, scale);
-        setCoordSize(terrainSettings.getPlayFieldXSize(), terrainSettings.getPlayFieldYSize());
     }
 
     public TerrainSettings getTerrainSettings() {
