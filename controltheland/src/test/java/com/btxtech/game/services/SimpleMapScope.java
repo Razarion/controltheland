@@ -84,6 +84,11 @@ public class SimpleMapScope implements Scope {
         // nothing to do ... this is optional and not required
     }
 
+    @Override
+    public Object resolveContextualObject(String key) {
+        throw new UnsupportedOperationException("Don't know????");
+    }
+
     /**
      * {@inheritDoc}
      */

@@ -1,7 +1,9 @@
 package com.btxtech.game.services.user;
 
+import com.btxtech.game.jsre.client.AlreadyUsedException;
+import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
+import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.services.TestWebSessionContextLoader;
-import com.btxtech.game.services.base.AlreadyUsedException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,7 @@ public class TestUserService {
 
     @Test
     public void testAddUser() throws AlreadyUsedException, UserAlreadyExistsException, PasswordNotMatchException {
-        userService.createUserAndLoggin("testU13", "test", "test");
+        userService.createUserAndLoggin("testU13", "test", "test", "test", false);
     }
 
 
