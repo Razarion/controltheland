@@ -61,6 +61,7 @@ public class SimulationConditionServiceImpl extends ConditionServiceImpl<Object>
 
     @Override
     protected void conditionPassed(Object ignore) {
+        abstractConditionTrigger = null;
         Simulation.getInstance().conditionPassed();
     }
 }
