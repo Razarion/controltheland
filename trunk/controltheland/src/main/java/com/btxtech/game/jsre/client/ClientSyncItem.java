@@ -14,13 +14,9 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.item.ItemViewContainer;
+import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncProjectileItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.*;
 
 /**
  * User: beat
@@ -44,6 +40,11 @@ public class ClientSyncItem implements SyncItemListener {
         switch (change) {
             case POSITION:
                 checkVisibility();
+                break;
+            case BUILD:
+                if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).isReady()) {
+                    SimulationConditionServiceImpl.getInstance().onSyncItemBuilt(((SyncBaseItem) syncItem));
+                }
                 break;
         }
         if (clientSyncItemView != null) {

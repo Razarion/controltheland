@@ -228,9 +228,6 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
     public void onModelChange(SyncItemListener.Change change) {
         switch (change) {
             case BUILD:
-                if (clientSyncItem.getSyncBaseItem().isReady()) {
-                    SimulationConditionServiceImpl.getInstance().onSyncItemBuilt(clientSyncItem.getSyncBaseItem());
-                }
                 cursorItemState.setFinalizeBuild(!clientSyncItem.getSyncBaseItem().isReady());
                 setupImageSizeAndPos();
                 break;
