@@ -26,6 +26,7 @@ public class ClientRunnerDeferredStartupImpl implements DeferredStartup {
     private boolean isBackground;
     private AbstractStartupTask task;
     private ClientRunner clientRunner;
+    private boolean isFinished = false;
 
     public ClientRunnerDeferredStartupImpl(AbstractStartupTask task, ClientRunner clientRunner) {
         this.task = task;
@@ -39,18 +40,21 @@ public class ClientRunnerDeferredStartupImpl implements DeferredStartup {
 
     @Override
     public void finished() {
+        isFinished = true;
         task.correctDeferredDuration();
         clientRunner.onTaskFinished(task, this);
     }
 
     @Override
     public void failed(Throwable t) {
+        isFinished = true;
         task.correctDeferredDuration();
         clientRunner.onTaskFailed(task, t);
     }
 
     @Override
     public void failed(String error) {
+        isFinished = true;
         task.correctDeferredDuration();
         clientRunner.onTaskFailed(task, error);
     }
@@ -67,5 +71,9 @@ public class ClientRunnerDeferredStartupImpl implements DeferredStartup {
     @Override
     public boolean isBackground() {
         return isBackground;
+    }
+
+    public boolean isFinished() {
+        return isFinished;
     }
 }

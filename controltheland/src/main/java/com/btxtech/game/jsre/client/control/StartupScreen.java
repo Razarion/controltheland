@@ -49,7 +49,7 @@ public class StartupScreen {
     private StartupScreen() {
     }
 
-    public void setupScreen(StartupSeq startupSeq) {
+    public void setupScreen(StartupSeq startupSeq) {  // TODO don't forget me!!
         StartupSeq oldStartupSeq = this.startupSeq;
         this.startupSeq = startupSeq;
         if (parent == null) {
