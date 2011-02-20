@@ -13,11 +13,11 @@
 
 package com.btxtech.game.jsre.client.control;
 
-import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.client.control.task.DeferredStartup;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,7 +30,9 @@ import java.util.List;
 public class ClientRunner {
     private static ClientRunner INSTANCE = new ClientRunner();
     private long startupTimeStamp = System.currentTimeMillis();
+    private Collection<StartupProgressListener> listeners = new ArrayList<StartupProgressListener>();
 
+    @Deprecated
     public static ClientRunner getInstance() {
         return INSTANCE;
     }
@@ -39,19 +41,19 @@ public class ClientRunner {
     private List<DeferredStartup> deferredStartups = new ArrayList<DeferredStartup>();
     private List<AbstractStartupTask> finishedTasks = new ArrayList<AbstractStartupTask>();
     private boolean failed;
-    private boolean isBackEndMode;
 
-    /**
-     * Singleton
-     */
-    private ClientRunner() {
+    public void addStartupProgressListener(StartupProgressListener startupProgressListener) {
+        listeners.add(startupProgressListener);
+    }
+
+    public void removeStartupProgressListener(StartupProgressListener startupProgressListener) {
+        listeners.remove(startupProgressListener);
     }
 
     public void start(StartupSeq startupSeq) {
         failed = false;
-        isBackEndMode = startupSeq.isBackEndMode();
-        if (!isBackEndMode) {
-            StartupScreen.getInstance().setupScreen(startupSeq);
+        for (StartupProgressListener listener : listeners) {
+            listener.onStart();
         }
         setupStartupSeq(startupSeq);
         runNextTask();
@@ -66,8 +68,8 @@ public class ClientRunner {
         } else {
             AbstractStartupTask task = startupList.remove(0);
             ClientRunnerDeferredStartupImpl deferredStartup = new ClientRunnerDeferredStartupImpl(task, this);
-            if (!isBackEndMode) {
-                StartupScreen.getInstance().displayTaskRunning(task.getTaskEnum());
+            for (StartupProgressListener listener : listeners) {
+                listener.onNextTask(task.getTaskEnum());
             }
             try {
                 task.start(deferredStartup);
@@ -76,7 +78,15 @@ public class ClientRunner {
                 return;
             }
             if (deferredStartup.isDeferred()) {
-                deferredStartups.add(deferredStartup);
+                if (deferredStartup.isFinished()) {
+                    onTaskFinished(task);
+                    if (deferredStartup.isBackground()) {
+                        runNextTask();
+                    }
+                } else {
+                    deferredStartups.add(deferredStartup);
+                }
+
                 if (deferredStartup.isBackground()) {
                     runNextTask();
                 }
@@ -92,8 +102,8 @@ public class ClientRunner {
         deferredStartups.clear();
     }
 
-    private Collection<StartupTaskInfo> createTaskInfo(AbstractStartupTask failedTask, String error) {
-        Collection<StartupTaskInfo> infos = new ArrayList<StartupTaskInfo>();
+    private List<StartupTaskInfo> createTaskInfo(AbstractStartupTask failedTask, String error) {
+        List<StartupTaskInfo> infos = new ArrayList<StartupTaskInfo>();
         for (AbstractStartupTask finishedTask : finishedTasks) {
             infos.add(finishedTask.createStartupTaskInfo());
         }
@@ -111,11 +121,15 @@ public class ClientRunner {
             return;
         }
         if (deferredStartups.isEmpty()) {
-            if (!isBackEndMode) {
+            if (!listeners.isEmpty()) {
                 long totalTime = finishedTasks.isEmpty() ? 0 : System.currentTimeMillis() - finishedTasks.get(0).getStartTime();
-                Connection.getInstance().sendStartupFinished(createTaskInfo(null, null), totalTime);
-                StartupScreen.getInstance().showCloseButton();
-                StartupScreen.getInstance().hideStartScreen();
+                List<StartupTaskInfo> startupTaskInfos = createTaskInfo(null, null);
+                for (StartupProgressListener listener : listeners) {
+                    listener.onStartupFinished(startupTaskInfos, totalTime);
+                }
+                // TODO Connection.getInstance().sendStartupFinished(createTaskInfo(null, null), totalTime);
+                // TODO StartupScreen.getInstance().showCloseButton();
+                // TODO StartupScreen.getInstance().hideStartScreen();
             }
             cleanup();
         }
@@ -123,24 +137,21 @@ public class ClientRunner {
 
 
     void onTaskFinished(AbstractStartupTask task, DeferredStartup deferredStartup) {
-        deferredStartups.remove(deferredStartup);
-        onTaskFinished(task);
+        if (deferredStartups.remove(deferredStartup)) {
+            onTaskFinished(task);
+        }
     }
 
     void onTaskFinished(AbstractStartupTask abstractStartupTask) {
         if (failed) {
             return;
         }
-        try {
-            if (!isBackEndMode) {
-                StartupScreen.getInstance().displayTaskFinished(abstractStartupTask);
-            }
-        } catch (Throwable t) {
-            GwtCommon.handleException(t);
+        for (StartupProgressListener listener : listeners) {
+            listener.onTaskFinished(abstractStartupTask);
         }
 
         finishedTasks.add(abstractStartupTask);
-        if(!abstractStartupTask.isBackground()) {
+        if (!abstractStartupTask.isBackground()) {
             runNextTask();
         } else if (startupList.isEmpty()) {
             onStartupFinish();
@@ -152,15 +163,24 @@ public class ClientRunner {
             return;
         }
         failed = true;
-        cleanup();
-        if (isBackEndMode) {
+        if (listeners.isEmpty()) {
             GwtCommon.sendLogToServer(error);
         } else {
+            for (StartupProgressListener listener : listeners) {
+                listener.onTaskFailed(abstractStartupTask, error);
+            }
+
             long totalTime = System.currentTimeMillis() - (finishedTasks.isEmpty() ? abstractStartupTask.getStartTime() : finishedTasks.get(0).getStartTime());
-            Connection.getInstance().sendStartupFinished(createTaskInfo(abstractStartupTask, error), totalTime);
-            StartupScreen.getInstance().showCloseButton();
-            StartupScreen.getInstance().hideStartScreen();
+            Collection<StartupTaskInfo> startupTaskInfos = createTaskInfo(abstractStartupTask, error);
+            for (StartupProgressListener listener : listeners) {
+                listener.onStartupFailed(startupTaskInfos, totalTime);
+            }
+            // TODO StartupScreen.getInstance().displayTaskFailed(abstractStartupTask, error);
+            // TODO Connection.getInstance().sendStartupFinished(createTaskInfo(abstractStartupTask, error), totalTime);
+            // TODO StartupScreen.getInstance().showCloseButton();
+            //StartupScreen.getInstance().hideStartScreen();
         }
+        cleanup();
     }
 
     void onTaskFailed(AbstractStartupTask abstractStartupTask, Throwable t) {
