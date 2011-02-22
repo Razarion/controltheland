@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.client.control;
 
-import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.client.control.task.DeferredStartup;
 
 /**
@@ -21,16 +20,16 @@ import com.btxtech.game.jsre.client.control.task.DeferredStartup;
  * Date: 18.02.2010
  * Time: 12:50:50
  */
-public class TestSimpleExceptionStartupTask extends AbstractStartupTask {
-    public static final String ERROR_STRING = "crash in TestSimpleExceptionStartupTask";
-
-    public TestSimpleExceptionStartupTask(StartupTaskEnum taskEnum) {
+public class DeferredBackgroundStartupTestTask extends DeferredStartupTestTask {
+    public DeferredBackgroundStartupTestTask(StartupTaskEnum taskEnum) {
         super(taskEnum);
     }
 
     @Override
     protected void privateStart(final DeferredStartup deferredStartup) {
-        throw new RuntimeException(ERROR_STRING);
+        this.deferredStartup = deferredStartup;
+        deferredStartup.setDeferred();
+        deferredStartup.setBackground();
     }
 
 }

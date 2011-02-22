@@ -26,10 +26,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.test.context.support.AbstractContextLoader;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 
-public class TestWebContextLoader extends AbstractContextLoader {
+public class WebContextLoader extends AbstractContextLoader {
 
 	protected static final Log logger = LogFactory
-			.getLog(TestWebContextLoader.class);
+			.getLog(WebContextLoader.class);
 
 	public final ConfigurableApplicationContext loadContext(
 			final String... locations) throws Exception {

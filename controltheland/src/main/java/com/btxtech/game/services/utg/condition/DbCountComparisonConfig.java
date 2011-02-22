@@ -16,6 +16,8 @@ package com.btxtech.game.services.utg.condition;
 import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.CountComparisonConfig;
 import com.btxtech.game.services.item.ItemService;
+
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
@@ -27,6 +29,7 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("COUNT")
 public class DbCountComparisonConfig extends DbAbstractComparisonConfig {
+    @Column(name = "theCount")
     private int count;
 
     public int getCount() {

@@ -12,7 +12,7 @@ import java.util.List;
  * Time: 22:53:59
  */
 public interface StartupProgressListener {
-    void onStart();
+    void onStart(StartupSeq startupSeq);
 
     void onNextTask(StartupTaskEnum taskEnum);
 

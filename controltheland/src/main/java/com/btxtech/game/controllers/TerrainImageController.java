@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -32,6 +33,7 @@ import org.springframework.web.servlet.mvc.Controller;
  * Date: May 23, 2009
  * Time: 12:50:37 PM
  */
+@Component
 public class TerrainImageController implements Controller {
     @Autowired
     private TerrainService terrainService;

@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.utg;
 
+import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.control.ClientRunner;
@@ -75,7 +76,7 @@ public class ClientLevelHandler {
             } else {
                 gameStartupSeq = GameStartupSeq.WARM_SIMULATED;
             }
-            ClientRunner.getInstance().start(gameStartupSeq);
+            ClientServices.getInstance().getClientRunner().start(gameStartupSeq);
         }
     }
 

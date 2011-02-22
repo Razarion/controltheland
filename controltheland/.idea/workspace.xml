@@ -15,29 +15,70 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="aa425869-f3f3-412e-b776-9f3eeb27573b" name="Default" comment="Tooltip added">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/StartupProgressListener.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/StartupScreen.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/StartupScreen.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestDeferredBackgroundTaskEnum.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestClientRunner.java" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestClientRunner.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestDeferredFinishTaskEnum.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestDeferredFinishStartupTask.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestSimpleExceptionStartupTask.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestDeferredStartupTask.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestDeferredBackgroundStartupTask.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestSimpleExceptionTaskEnum.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controltheland.iml" afterPath="$PROJECT_DIR$/controltheland.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MOVED" beforePath="C:\dev\projects\game\controltheland\src\test\java\com\btxtech\game\jsre\client\control\TestDeferredBackgroundFinishStartupTask.java" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/DeferredBackgroundFinishStartupTestTask.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/webapp/WEB-INF/applicationContext.xml" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/applicationContext.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/condition/backup/DbCountComparisonBackup.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/condition/backup/DbCountComparisonBackup.java" />
+      <change type="MOVED" beforePath="C:\dev\projects\game\controltheland\src\test\java\com\btxtech\game\jsre\client\control\TestDeferredBackgroundFinishTaskEnum.java" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/DeferredBackgroundFinishTestTaskEnum.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/test/java/com/btxtech/game/services/base" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/com/btxtech/game/services/user/TestUserService.java" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/services/user/TestUserService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/base/impl/BaseServiceImpl.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/base/impl/BaseServiceImpl.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/resources/com/btxtech" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/resources/com/btxtech/game" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestSimpleTaskEnum.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestSimpleStartupTask.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/artifacts/controltheland_war_exploded.xml" afterPath="$PROJECT_DIR$/.idea/artifacts/controltheland_war_exploded.xml" />
+      <change type="MOVED" beforePath="C:\dev\projects\game\controltheland\src\test\java\com\btxtech\game\jsre\client\control\TestSimpleTaskEnum.java" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/SimpleTestTaskEnum.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/wicket/WicketAplication.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/wicket/WicketAplication.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/collision/impl/CollisionServiceImpl.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/collision/impl/CollisionServiceImpl.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/controllers/TerrainImageController.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/controllers/TerrainImageController.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/item/itemType/DbWeaponType.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/item/itemType/DbWeaponType.java" />
+      <change type="DELETED" beforePath="C:\dev\projects\game\controltheland\src\test\java\com\btxtech\game\services\base\TestBaseColors.java" afterPath="" />
+      <change type="MOVED" beforePath="C:\dev\projects\game\controltheland\src\test\java\com\btxtech\game\jsre\client\control\TestDeferredTaskEnum.java" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/DeferredTestTaskEnum.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/resource/DbRegionResource.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/resource/DbRegionResource.java" />
+      <change type="DELETED" beforePath="C:\dev\projects\game\controltheland\src\test\java\com\btxtech\game\services\utg\TestUserTracking.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/test/java/com/btxtech/game/services/item" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/ClientServices.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/ClientServices.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/utg/ClientUserTracker.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/utg/ClientUserTracker.java" />
+      <change type="MOVED" beforePath="C:\dev\projects\game\controltheland\src\test\java\com\btxtech\game\jsre\client\control\TestSimpleExceptionTaskEnum.java" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/SimpleExceptionTestTaskEnum.java" />
+      <change type="MOVED" beforePath="C:\dev\projects\game\controltheland\src\test\java\com\btxtech\game\jsre\client\control\TestDeferredFinishStartupTask.java" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/DeferredFinishStartupTestTask.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/condition/DbComparisonItemCount.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/condition/DbComparisonItemCount.java" />
+      <change type="MOVED" beforePath="C:\dev\projects\game\controltheland\src\test\java\com\btxtech\game\jsre\client\control\TestDeferredBackgroundTaskEnum.java" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/DeferredBackgroundTestTaskEnum.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/Game.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/Game.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/com/btxtech/game/services/mgmt/TestMgmtService.java" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/services/mgmt/TestMgmtService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/Connection.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/Connection.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/condition/backup/DbSyncItemTypeComparisonBackup.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/condition/backup/DbSyncItemTypeComparisonBackup.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/playback/PlaybackEntry.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/playback/PlaybackEntry.java" />
+      <change type="MOVED" beforePath="C:\dev\projects\game\controltheland\src\test\java\com\btxtech\game\jsre\client\control\TestStartupSeq.java" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/StartupTestSeq.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/test/java/com/btxtech/game/services/utg" afterPath="" />
+      <change type="MOVED" beforePath="C:\dev\projects\game\controltheland\src\test\java\com\btxtech\game\jsre\client\control\TestDeferredStartupTask.java" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/DeferredStartupTestTask.java" />
+      <change type="MOVED" beforePath="C:\dev\projects\game\controltheland\src\test\java\com\btxtech\game\jsre\client\control\TestDeferredBackgroundStartupTask.java" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/DeferredBackgroundStartupTestTask.java" />
+      <change type="DELETED" beforePath="C:\dev\projects\game\controltheland\src\test\java\com\btxtech\game\services\item\ItemServiceTest.java" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/bot/DbBotItemCount.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/bot/DbBotItemCount.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/DbItemTypeLimitation.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/DbItemTypeLimitation.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/services/BaseTestService.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestClientRunner.java" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestClientRunner.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/com/btxtech/game/services/terrain/TestTerrainService.java" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/services/terrain/TestTerrainService.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/resources" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/utg/ClientLevelHandler.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/utg/ClientLevelHandler.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/com/btxtech/game/services/collision/TestCollisionService.java" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/services/collision/TestCollisionService.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/resources/com/btxtech/game/services" />
+      <change type="MOVED" beforePath="C:\dev\projects\game\controltheland\src\test\java\com\btxtech\game\jsre\client\control\TestSimpleExceptionStartupTask.java" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/SimpleExceptionStartupTestTask.java" />
+      <change type="MOVED" beforePath="C:\dev\projects\game\controltheland\src\test\java\com\btxtech\game\services\TestWebContextLoader.java" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/services/WebContextLoader.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/resources/com" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/test/java/com/btxtech/game/services/history" afterPath="" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/resources/com/btxtech/game/services/BaseTestService-context.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/StartupScreen.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/StartupScreen.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/test/java/com/btxtech/game/services/from/TestForum.java" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/services/from/TestForum.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/connection/impl/SessionImpl.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/connection/impl/SessionImpl.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/terrain/impl/TerrainServiceImpl.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/terrain/impl/TerrainServiceImpl.java" />
+      <change type="MOVED" beforePath="C:\dev\projects\game\controltheland\src\test\java\com\btxtech\game\jsre\client\control\TestSimpleStartupTask.java" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/SimpleStartupTestTask.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controltheland.iml" afterPath="$PROJECT_DIR$/controltheland.iml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/resources/log4j.properties" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MOVED" beforePath="C:\dev\projects\game\controltheland\src\test\java\com\btxtech\game\jsre\client\control\TestDeferredFinishTaskEnum.java" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/DeferredFinishTestTaskEnum.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/ClientRunner.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/ClientRunner.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestDeferredBackgroundFinishTaskEnum.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestDeferredTaskEnum.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestStartupSeq.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestDeferredBackgroundFinishStartupTask.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/ClientRunnerDeferredStartupImpl.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/ClientRunnerDeferredStartupImpl.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" />
+      <change type="DELETED" beforePath="C:\dev\projects\game\controltheland\.idea\libraries\Maven__cglib_cglib_nodep_2_1_3.xml" afterPath="" />
+      <change type="MOVED" beforePath="C:\dev\projects\game\controltheland\src\test\java\com\btxtech\game\services\TestWebSessionContextLoader.java" afterPath="$PROJECT_DIR$/src/test/java/com/btxtech/game/services/WebSessionContextLoader.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/StartupProgressListener.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/StartupProgressListener.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/condition/DbCountComparisonConfig.java" afterPath="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/condition/DbCountComparisonConfig.java" />
     </list>
     <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/pagebreak/" />
     <ignored path="src/main/webapp/WEB-INF/classes/wicket/contrib/tinymce/tiny_mce/plugins/advimage/" />
@@ -385,14 +426,17 @@
     <splitter proportion="0.5" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/controltheland$TestClientRunner.ic" NAME="TestClientRunner Coverage Results" MODIFIED="1298222722595" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" MERGE_SUITE="TestClientRunner Coverage Results" RUNNER="emma" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
-      <FILTER>com.btxtech.game.jsre.client.control.ClientRunner</FILTER>
-    </SUITE>
     <SUITE FILE_PATH="coverage/controltheland$TestClientRunner_runSimple..es" NAME="TestClientRunner.runSimple Coverage Results" MODIFIED="1298158986781" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="emma" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
       <FILTER>com.btxtech.game.jsre.client.control.*</FILTER>
     </SUITE>
+    <SUITE FILE_PATH="coverage/controltheland$TestClientRunner.ic" NAME="TestClientRunner Coverage Results" MODIFIED="1298222722595" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" MERGE_SUITE="TestClientRunner Coverage Results" RUNNER="emma" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>com.btxtech.game.jsre.client.control.ClientRunner</FILTER>
+    </SUITE>
     <SUITE FILE_PATH="coverage/controltheland$TestClientRunner_runDeferredBackgroundFinished.ic" NAME="TestClientRunner.runDeferredBackgroundFinished Coverage Results" MODIFIED="1298162479925" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="true">
       <FILTER>com.btxtech.game.jsre.client.control.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/controltheland$TestClientRunner..es" NAME="TestClientRunner Coverage Results" MODIFIED="1298327999952" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="emma" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
+      <FILTER>com.btxtech.game.jsre.client.control.ClientRunner</FILTER>
     </SUITE>
     <SUITE FILE_PATH="coverage/controltheland$TestClientRunner_runSimple.ic" NAME="TestClientRunner.runSimple Coverage Results" MODIFIED="1298159372644" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">
       <FILTER>com.btxtech.game.jsre.client.control.*</FILTER>
@@ -407,7 +451,7 @@
   </component>
   <component name="DebuggerManager">
     <line_breakpoints>
-      <breakpoint url="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/ClientRunner.java" line="161" class="com.btxtech.game.jsre.client.control.ClientRunner" package="com.btxtech.game.jsre.client.control">
+      <breakpoint url="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/ClientRunner.java" line="151" class="com.btxtech.game.jsre.client.control.ClientRunner" package="com.btxtech.game.jsre.client.control">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="true" />
         <option name="LOG_EXPRESSION_ENABLED" value="false" />
@@ -420,7 +464,7 @@
         <option name="CONDITION" value="" />
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/ClientRunner.java" line="192" class="com.btxtech.game.jsre.client.control.ClientRunner" package="com.btxtech.game.jsre.client.control">
+      <breakpoint url="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/ClientRunner.java" line="179" class="com.btxtech.game.jsre.client.control.ClientRunner" package="com.btxtech.game.jsre.client.control">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="true" />
@@ -433,7 +477,7 @@
         <option name="CONDITION" value="" />
         <option name="LOG_MESSAGE" value="&quot;Fill Task : &quot; + startupTaskEnum" />
       </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/ClientRunner.java" line="145" class="com.btxtech.game.jsre.client.control.ClientRunner" package="com.btxtech.game.jsre.client.control">
+      <breakpoint url="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/ClientRunner.java" line="135" class="com.btxtech.game.jsre.client.control.ClientRunner" package="com.btxtech.game.jsre.client.control">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="true" />
@@ -446,7 +490,7 @@
         <option name="CONDITION" value="" />
         <option name="LOG_MESSAGE" value="&quot;Finished: &quot; + abstractStartupTask.getTaskEnum()" />
       </breakpoint>
-      <breakpoint url="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/ClientRunner.java" line="74" class="com.btxtech.game.jsre.client.control.ClientRunner" package="com.btxtech.game.jsre.client.control">
+      <breakpoint url="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/ClientRunner.java" line="67" class="com.btxtech.game.jsre.client.control.ClientRunner" package="com.btxtech.game.jsre.client.control">
         <option name="ENABLED" value="true" />
         <option name="LOG_ENABLED" value="false" />
         <option name="LOG_EXPRESSION_ENABLED" value="true" />
@@ -507,8 +551,8 @@
       <property name="field_breakpoints_groupByClasses" value="true" />
       <property name="method_breakpoints_groupByClasses" value="true" />
       <property name="exception_breakpoints_viewId" value="TABLE" />
-      <property name="field_breakpoints_viewId" value="TABLE" />
       <property name="exception_breakpoints_groupByClasses" value="true" />
+      <property name="field_breakpoints_viewId" value="TABLE" />
       <property name="method_breakpoints_groupByMethods" value="false" />
     </ui_properties>
   </component>
@@ -518,10 +562,10 @@
   <component name="FileColors" enabled="true" enabledForTabs="true" />
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="TestClientRunner.java" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestClientRunner.java">
+      <file leaf-file-name="TestMgmtService.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/services/mgmt/TestMgmtService.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="365" column="45" selection-start="17412" selection-end="17412" vertical-scroll-proportion="0.7779204">
+            <state line="66" column="8" selection-start="2645" selection-end="2645" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -529,82 +573,82 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TestDeferredBackgroundFinishStartupTask.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestDeferredBackgroundFinishStartupTask.java">
+      <file leaf-file-name="WebContextLoader.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/services/WebContextLoader.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="13" selection-start="687" selection-end="687" vertical-scroll-proportion="0.0">
+            <state line="28" column="20" selection-start="1260" selection-end="1260" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TestDeferredBackgroundFinishTaskEnum.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestDeferredBackgroundFinishTaskEnum.java">
+      <file leaf-file-name="WebSessionContextLoader.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/services/WebSessionContextLoader.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="12" selection-start="688" selection-end="688" vertical-scroll-proportion="0.0">
+            <state line="14" column="59" selection-start="535" selection-end="535" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TestDeferredFinishTaskEnum.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestDeferredFinishTaskEnum.java">
+      <file leaf-file-name="DbCountComparisonConfig.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/condition/DbCountComparisonConfig.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="12" selection-start="755" selection-end="755" vertical-scroll-proportion="0.0">
+            <state line="30" column="52" selection-start="1006" selection-end="1006" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TestStartupSeq.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestStartupSeq.java">
+      <file leaf-file-name="DbAbstractComparisonConfig.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/condition/DbAbstractComparisonConfig.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="45" column="33" selection-start="1304" selection-end="1304" vertical-scroll-proportion="0.0">
+            <state line="31" column="35" selection-start="1053" selection-end="1072" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TestDeferredBackgroundTaskEnum.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestDeferredBackgroundTaskEnum.java">
+      <file leaf-file-name="DbComparisonItemCount.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/condition/DbComparisonItemCount.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="45" column="4" selection-start="1612" selection-end="1612" vertical-scroll-proportion="0.0">
+            <state line="33" column="77" selection-start="1130" selection-end="1130" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="TestSimpleExceptionStartupTask.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestSimpleExceptionStartupTask.java">
+      <file leaf-file-name="DbItemTypeLimitation.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/DbItemTypeLimitation.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="23" column="43" selection-start="757" selection-end="787" vertical-scroll-proportion="0.0">
+            <state line="32" column="95" selection-start="982" selection-end="982" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="UserTrackingServiceImpl.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/impl/UserTrackingServiceImpl.java">
+      <file leaf-file-name="DbCountComparisonBackup.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/condition/backup/DbCountComparisonBackup.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="617" column="28" selection-start="28865" selection-end="28865" vertical-scroll-proportion="0.0">
+            <state line="32" column="56" selection-start="1116" selection-end="1116" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="StartupProgressListener.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/StartupProgressListener.java">
+      <file leaf-file-name="DbAbstractComparisonBackup.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/condition/backup/DbAbstractComparisonBackup.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="25" column="0" selection-start="669" selection-end="669" vertical-scroll-proportion="0.0">
+            <state line="34" column="39" selection-start="1204" selection-end="1227" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ClientRunner.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/ClientRunner.java">
+      <file leaf-file-name="StartupScreen.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/StartupScreen.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="120" column="22" selection-start="4102" selection-end="4109" vertical-scroll-proportion="0.0">
+            <state line="213" column="30" selection-start="9609" selection-end="9609" vertical-scroll-proportion="0.77715355">
               <folding />
             </state>
           </provider>
@@ -624,22 +668,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestDeferredTaskEnum.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestDeferredBackgroundTaskEnum.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestDeferredFinishStartupTask.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestDeferredBackgroundFinishStartupTask.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestDeferredFinishTaskEnum.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestDeferredBackgroundFinishTaskEnum.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/condition/DbCountComparisonConfig.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/condition/DbComparisonItemCount.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/DbItemTypeLimitation.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/resource/DbRegionResource.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/item/itemType/DbWeaponType.java" />
+        <option value="$PROJECT_DIR$/src/test/resources/com/btxtech/game/services/BaseTestService-context.xml" />
+        <option value="$PROJECT_DIR$/src/test/java/com/btxtech/game/services/user/TestUserService.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/DeferredBackgroundFinishStartupTestTask.java" />
+        <option value="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/DeferredBackgroundFinishTestTaskEnum.java" />
+        <option value="$PROJECT_DIR$/src/test/java/com/btxtech/game/services/collision/TestCollisionService.java" />
+        <option value="$PROJECT_DIR$/src/test/java/com/btxtech/game/services/terrain/TestTerrainService.java" />
+        <option value="$PROJECT_DIR$/src/test/java/com/btxtech/game/services/from/TestForum.java" />
+        <option value="$PROJECT_DIR$/src/test/java/com/btxtech/game/services/mgmt/TestMgmtService.java" />
+        <option value="$PROJECT_DIR$/src/test/java/com/btxtech/game/services/WebContextLoader.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/StartupScreen.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestSimpleExceptionStartupTask.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestSimpleExceptionTaskEnum.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestStartupSeq.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/common/StartupTaskInfo.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/DbStartupTask.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/impl/UserTrackingServiceImpl.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/ClientRunner.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/StartupProgressListener.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestClientRunner.java" />
       </list>
     </option>
   </component>
@@ -668,6 +712,56 @@
         <PATH_ELEMENT>
           <option name="myItemId" value="" />
           <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="Control the land" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="Control the land" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="Plugins" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$PluginsNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="Control the land" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="Plugins" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$PluginsNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="surefire-report" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$PluginNode" />
+        </PATH_ELEMENT>
+      </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="Control the land" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="Lifecycle" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$LifecycleNode" />
         </PATH_ELEMENT>
       </PATH>
     </treeState>
@@ -1021,8 +1115,7 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="Favorites" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -1030,6 +1123,10 @@
               <option name="myItemId" value="controltheland" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Libraries" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
+            </PATH_ELEMENT>
           </PATH>
           <PATH>
             <PATH_ELEMENT>
@@ -1038,6 +1135,254 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resources" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resources" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="services" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="services" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="services" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="user" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="services" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="terrain" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="services" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="mgmt" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="services" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="from" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controltheland" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="game" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="services" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="collision" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1078,196 +1423,13 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="game" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="control" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="game" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="game" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jsre" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="game" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jsre" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controltheland" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="java" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="game" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="jsre" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="client" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="control" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="Favorites" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -1286,84 +1448,135 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="dynamic.classpath" value="false" />
-    <property name="options.searchVisible" value="true" />
     <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
+    <property name="dynamic.classpath" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="com.btxtech.game.jsre.client.control" />
     </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\dev\projects\game\controltheland\src\test\resources" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\dev\projects\game\controltheland\src\test\resources\com\btxtech\game\services" />
+      <recent name="C:\dev\projects\game\controltheland\src\test\resources\com\btxtech\game" />
+    </key>
   </component>
-  <component name="RunManager" selected="JUnit.TestClientRunner">
-    <configuration default="false" name="TestClientRunner" type="JUnit" factoryName="JUnit" temporary="true">
-      <extension name="coverage" enabled="true" merge="true" sample_coverage="true" runner="emma">
-        <pattern>
-          <option name="PATTERN" value="com.btxtech.game.jsre.client.control.ClientRunner" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <extension name="snapshooter" />
-      <module name="controltheland" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
-      <option name="PACKAGE_NAME" value="com.btxtech.game.jsre.client.control" />
-      <option name="MAIN_CLASS_NAME" value="com.btxtech.game.jsre.client.control.TestClientRunner" />
-      <option name="METHOD_NAME" value="runSimple" />
-      <option name="TEST_OBJECT" value="class" />
-      <option name="VM_PARAMETERS" value="" />
-      <option name="PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="61090" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
-    <configuration default="false" name="TestClientRunner.runSimpleException" type="JUnit" factoryName="JUnit" temporary="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
-        <pattern>
-          <option name="PATTERN" value="com.btxtech.game.jsre.client.control.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <extension name="snapshooter" />
-      <module name="controltheland" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" value="" />
-      <option name="PACKAGE_NAME" value="com.btxtech.game.jsre.client.control" />
-      <option name="MAIN_CLASS_NAME" value="com.btxtech.game.jsre.client.control.TestClientRunner" />
-      <option name="METHOD_NAME" value="runSimpleException" />
-      <option name="TEST_OBJECT" value="method" />
-      <option name="VM_PARAMETERS" value="" />
-      <option name="PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <option name="TEST_SEARCH_SCOPE">
-        <value defaultName="moduleWithDependencies" />
-      </option>
-      <envs />
-      <RunnerSettings RunnerId="Debug">
-        <option name="DEBUG_PORT" value="52207" />
-        <option name="TRANSPORT" value="0" />
-        <option name="LOCAL" value="true" />
-      </RunnerSettings>
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Debug" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
+  <component name="RestoreUpdateTree">
+    <UpdateInfo date="20.02.11 18:33" ActionInfo="_Update">
+      <UpdatedFiles>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Updated from server" />
+          <option name="myStatusName" value="Changed on server" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="CHANGED_ON_SERVER" />
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Updated" />
+            <option name="myStatusName" value="Changed" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="false" />
+            <option name="myId" value="UPDATED" />
+          </FILE-GROUP>
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Created" />
+            <option name="myStatusName" value="Created" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="false" />
+            <option name="myId" value="CREATED" />
+          </FILE-GROUP>
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Deleted" />
+            <option name="myStatusName" value="Deleted" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="true" />
+            <option name="myId" value="REMOVED_FROM_REPOSITORY" />
+          </FILE-GROUP>
+          <FILE-GROUP>
+            <option name="myUpdateName" value="Restored" />
+            <option name="myStatusName" value="Will be restored" />
+            <option name="mySupportsDeletion" value="false" />
+            <option name="myCanBeAbsent" value="false" />
+            <option name="myId" value="RESTORED" />
+            <PATH vcs="svn" revision="924">C:\dev\projects\game\controltheland\.idea\libraries\Maven__cglib_cglib_nodep_2_1_3.xml</PATH>
+          </FILE-GROUP>
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Modified" />
+          <option name="myStatusName" value="Modified" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MODIFIED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Skipped" />
+          <option name="myStatusName" value="Skipped" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="SKIPPED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Merged with conflicts" />
+          <option name="myStatusName" value="Will be merged with conflicts" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MERGED_WITH_CONFLICTS" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Merged with tree conflicts" />
+          <option name="myStatusName" value="Merged with tree conflicts" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MERGED_WITH_TREE_CONFLICT" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Merged" />
+          <option name="myStatusName" value="Will be merged" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MERGED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Not in repository" />
+          <option name="myStatusName" value="Not in repository" />
+          <option name="mySupportsDeletion" value="true" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="UNKNOWN" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Locally added" />
+          <option name="myStatusName" value="Locally added" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="LOCALLY_ADDED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Locally removed" />
+          <option name="myStatusName" value="Locally removed" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="LOCALLY_REMOVED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Switched" />
+          <option name="myStatusName" value="Switched" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="SWITCHED" />
+        </FILE-GROUP>
+        <FILE-GROUP>
+          <option name="myUpdateName" value="Merged with property conflicts" />
+          <option name="myStatusName" value="Will be merged with property conflicts" />
+          <option name="mySupportsDeletion" value="false" />
+          <option name="myCanBeAbsent" value="false" />
+          <option name="myId" value="MERGED_WITH_PROPERTY_CONFLICT" />
+        </FILE-GROUP>
+      </UpdatedFiles>
+    </UpdateInfo>
+  </component>
+  <component name="RunManager" selected="Maven.Tomcat run">
     <configuration default="false" name="TestClientRunner.runDeferredBackgroundException" type="JUnit" factoryName="JUnit" temporary="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
@@ -1396,103 +1609,19 @@
       <ConfigurationWrapper RunnerId="Debug" />
       <method />
     </configuration>
-    <configuration default="false" name="controltheland [org.codehaus.mojo:gwt-maven-plugin:2.1.0-1:clean]" type="MavenRunConfiguration" factoryName="Maven" temporary="true">
-      <MavenSettings>
-        <option name="myGeneralSettings">
-          <MavenGeneralSettings>
-            <option name="checksumPolicy" value="FAIL" />
-            <option name="failureBehavior" value="FAST" />
-            <option name="localRepository" value="" />
-            <option name="mavenHome" value="" />
-            <option name="mavenSettingsFile" value="" />
-            <option name="nonRecursive" value="false" />
-            <option name="pluginUpdatePolicy" value="DO_NOT_UPDATE" />
-            <option name="printErrorStackTraces" value="false" />
-            <option name="snapshotUpdatePolicy" value="ALWAYS_UPDATE" />
-            <option name="usePluginRegistry" value="false" />
-            <option name="workOffline" value="false" />
-          </MavenGeneralSettings>
-        </option>
-        <option name="myRunnerSettings">
-          <MavenRunnerSettings>
-            <option name="jreName" value="1.6" />
-            <option name="mavenProperties">
-              <map />
-            </option>
-            <option name="runMavenInBackground" value="true" />
-            <option name="skipTests" value="false" />
-            <option name="vmOptions" value="" />
-          </MavenRunnerSettings>
-        </option>
-        <option name="myRunnerParameters">
-          <MavenRunnerParameters>
-            <option name="goals">
-              <list>
-                <option value="org.codehaus.mojo:gwt-maven-plugin:2.1.0-1:clean" />
-              </list>
-            </option>
-            <option name="profiles">
-              <set />
-            </option>
-            <option name="workingDirPath" value="$PROJECT_DIR$" />
-          </MavenRunnerParameters>
-        </option>
-      </MavenSettings>
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
-    <configuration default="false" name="controltheland [org.codehaus.mojo:gwt-maven-plugin:2.1.0-1:compile]" type="MavenRunConfiguration" factoryName="Maven" temporary="true">
-      <MavenSettings>
-        <option name="myGeneralSettings">
-          <MavenGeneralSettings>
-            <option name="checksumPolicy" value="FAIL" />
-            <option name="failureBehavior" value="FAST" />
-            <option name="localRepository" value="" />
-            <option name="mavenHome" value="" />
-            <option name="mavenSettingsFile" value="" />
-            <option name="nonRecursive" value="false" />
-            <option name="pluginUpdatePolicy" value="DO_NOT_UPDATE" />
-            <option name="printErrorStackTraces" value="false" />
-            <option name="snapshotUpdatePolicy" value="ALWAYS_UPDATE" />
-            <option name="usePluginRegistry" value="false" />
-            <option name="workOffline" value="false" />
-          </MavenGeneralSettings>
-        </option>
-        <option name="myRunnerSettings">
-          <MavenRunnerSettings>
-            <option name="jreName" value="1.6" />
-            <option name="mavenProperties">
-              <map />
-            </option>
-            <option name="runMavenInBackground" value="true" />
-            <option name="skipTests" value="false" />
-            <option name="vmOptions" value="" />
-          </MavenRunnerSettings>
-        </option>
-        <option name="myRunnerParameters">
-          <MavenRunnerParameters>
-            <option name="goals">
-              <list>
-                <option value="org.codehaus.mojo:gwt-maven-plugin:2.1.0-1:compile" />
-              </list>
-            </option>
-            <option name="profiles">
-              <set />
-            </option>
-            <option name="workingDirPath" value="$PROJECT_DIR$" />
-          </MavenRunnerParameters>
-        </option>
-      </MavenSettings>
-      <RunnerSettings RunnerId="Run" />
-      <ConfigurationWrapper RunnerId="Run" />
-      <method />
-    </configuration>
     <configuration default="true" type="PhpRunConfigurationType" factoryName="PHP">
       <method>
         <option name="AntTarget" enabled="false" />
         <option name="BuildArtifacts" enabled="false" />
         <option name="FtpUpload" enabled="false" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+        <option name="ValidateXdebugSetup" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
         <option name="Maven.BeforeRunTask" enabled="false" />
         <option name="ValidateXdebugSetup" enabled="true" />
       </method>
@@ -1542,14 +1671,6 @@
         <option name="BuildArtifacts" enabled="false" />
         <option name="Make" enabled="false" />
         <option name="Maven.BeforeRunTask" enabled="false" />
-      </method>
-    </configuration>
-    <configuration default="true" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
-      <method>
-        <option name="AntTarget" enabled="false" />
-        <option name="BuildArtifacts" enabled="false" />
-        <option name="Maven.BeforeRunTask" enabled="false" />
-        <option name="ValidateXdebugSetup" enabled="true" />
       </method>
     </configuration>
     <configuration default="true" type="Remote" factoryName="Remote">
@@ -1694,18 +1815,61 @@
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
-    <list size="11">
-      <item index="0" class="java.lang.String" itemvalue="JUnit.TestClientRunner" />
-      <item index="1" class="java.lang.String" itemvalue="JUnit.TestClientRunner.runSimpleException" />
-      <item index="2" class="java.lang.String" itemvalue="JUnit.TestClientRunner.runDeferredBackgroundException" />
-      <item index="3" class="java.lang.String" itemvalue="Maven.controltheland [org.codehaus.mojo:gwt-maven-plugin:2.1.0-1:clean]" />
-      <item index="4" class="java.lang.String" itemvalue="Maven.controltheland [org.codehaus.mojo:gwt-maven-plugin:2.1.0-1:compile]" />
-      <item index="5" class="java.lang.String" itemvalue="Maven.Tomcat run war" />
-      <item index="6" class="java.lang.String" itemvalue="Maven.GWT Hosted" />
-      <item index="7" class="java.lang.String" itemvalue="Maven.war:inplace" />
-      <item index="8" class="java.lang.String" itemvalue="Maven.Tomcat run" />
-      <item index="9" class="java.lang.String" itemvalue="Maven.GWT Hosted Debug" />
-      <item index="10" class="java.lang.String" itemvalue="Remote.Debugger Hosted Mode" />
+    <configuration default="false" name="surefire-report:report" type="MavenRunConfiguration" factoryName="Maven">
+      <MavenSettings>
+        <option name="myGeneralSettings">
+          <MavenGeneralSettings>
+            <option name="checksumPolicy" value="FAIL" />
+            <option name="failureBehavior" value="FAST" />
+            <option name="localRepository" value="" />
+            <option name="mavenHome" value="" />
+            <option name="mavenSettingsFile" value="" />
+            <option name="nonRecursive" value="false" />
+            <option name="pluginUpdatePolicy" value="DO_NOT_UPDATE" />
+            <option name="printErrorStackTraces" value="false" />
+            <option name="snapshotUpdatePolicy" value="ALWAYS_UPDATE" />
+            <option name="usePluginRegistry" value="false" />
+            <option name="workOffline" value="false" />
+          </MavenGeneralSettings>
+        </option>
+        <option name="myRunnerSettings">
+          <MavenRunnerSettings>
+            <option name="jreName" value="1.6" />
+            <option name="mavenProperties">
+              <map />
+            </option>
+            <option name="runMavenInBackground" value="true" />
+            <option name="skipTests" value="false" />
+            <option name="vmOptions" value="" />
+          </MavenRunnerSettings>
+        </option>
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="goals">
+              <list>
+                <option value="surefire-report:report" />
+              </list>
+            </option>
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="workingDirPath" value="$PROJECT_DIR$" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <RunnerSettings RunnerId="Run" />
+      <ConfigurationWrapper RunnerId="Run" />
+      <method />
+    </configuration>
+    <list size="8">
+      <item index="0" class="java.lang.String" itemvalue="JUnit.TestClientRunner.runDeferredBackgroundException" />
+      <item index="1" class="java.lang.String" itemvalue="Maven.Tomcat run war" />
+      <item index="2" class="java.lang.String" itemvalue="Maven.GWT Hosted" />
+      <item index="3" class="java.lang.String" itemvalue="Maven.war:inplace" />
+      <item index="4" class="java.lang.String" itemvalue="Maven.Tomcat run" />
+      <item index="5" class="java.lang.String" itemvalue="Maven.GWT Hosted Debug" />
+      <item index="6" class="java.lang.String" itemvalue="Maven.surefire-report:report" />
+      <item index="7" class="java.lang.String" itemvalue="Remote.Debugger Hosted Mode" />
     </list>
     <configuration name="&lt;template&gt;" type="WebApp" default="true" selected="false">
       <Host>localhost</Host>
@@ -1769,9 +1933,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.294809" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.72771794" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Persistence" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38021392" sideWeight="0.24094026" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38295788" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -1779,16 +1943,16 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.46523017" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32994652" sideWeight="0.5563173" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.71302646" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32908913" sideWeight="0.0" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.251714" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38021392" sideWeight="0.24094026" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38021392" sideWeight="0.24094026" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.06791444" sideWeight="0.8070519" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25347593" sideWeight="0.5670911" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5563173" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19304813" sideWeight="0.8070519" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18609206" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.06631016" sideWeight="0.5670911" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.4260529" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Coverage" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -1845,119 +2009,123 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestDeferredTaskEnum.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="12" selection-start="688" selection-end="688" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestSimpleExceptionTaskEnum.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="53" selection-start="1034" selection-end="1064" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/task/AbstractStartupTask.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="22" selection-start="749" selection-end="749" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/common/StartupTaskInfo.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="63" column="94" selection-start="1619" selection-end="1619" vertical-scroll-proportion="0.0">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/DbStartup.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="13" selection-start="1082" selection-end="1082" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/DbStartupTask.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="57" column="27" selection-start="1801" selection-end="1801" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/StartupProgressListener.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="0" selection-start="669" selection-end="669" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestDeferredBackgroundFinishStartupTask.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="13" selection-start="687" selection-end="687" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestDeferredBackgroundFinishTaskEnum.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="12" selection-start="688" selection-end="688" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestDeferredFinishTaskEnum.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="12" selection-start="755" selection-end="755" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestStartupSeq.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="45" column="33" selection-start="1304" selection-end="1304" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/ClientRunner.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="120" column="22" selection-start="4102" selection-end="4109" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestDeferredBackgroundTaskEnum.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="45" column="4" selection-start="1612" selection-end="1612" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestSimpleExceptionStartupTask.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="43" selection-start="757" selection-end="787" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/impl/UserTrackingServiceImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="617" column="28" selection-start="28865" selection-end="28865" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/TestClientRunner.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="365" column="45" selection-start="17412" selection-end="17412" vertical-scroll-proportion="0.7779204">
+        <state line="17" column="13" selection-start="399" selection-end="399" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/jsre/client/control/DeferredBackgroundFinishTestTaskEnum.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="112" selection-start="1026" selection-end="1026" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/services/collision/TestCollisionService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="31" column="10" selection-start="1028" selection-end="1028" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/services/terrain/TestTerrainService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="21" column="10" selection-start="622" selection-end="622" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/services/user/TestUserService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="20" selection-start="473" selection-end="473" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/services/from/TestForum.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="64" column="10" selection-start="2310" selection-end="2310" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/services/mgmt/TestMgmtService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="66" column="8" selection-start="2645" selection-end="2645" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/services/WebContextLoader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="20" selection-start="1260" selection-end="1260" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/btxtech/game/services/WebSessionContextLoader.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="59" selection-start="535" selection-end="535" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/condition/DbCountComparisonConfig.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="30" column="52" selection-start="1006" selection-end="1006" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/condition/DbAbstractComparisonConfig.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="31" column="35" selection-start="1053" selection-end="1072" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/condition/DbComparisonItemCount.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="77" selection-start="1130" selection-end="1130" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/DbItemTypeLimitation.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="32" column="95" selection-start="982" selection-end="982" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/condition/backup/DbCountComparisonBackup.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="32" column="56" selection-start="1116" selection-end="1116" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/services/utg/condition/backup/DbAbstractComparisonBackup.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="34" column="39" selection-start="1204" selection-end="1227" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/btxtech/game/jsre/client/control/StartupScreen.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="213" column="30" selection-start="9609" selection-end="9609" vertical-scroll-proportion="0.77715355">
+          <folding />
         </state>
       </provider>
     </entry>

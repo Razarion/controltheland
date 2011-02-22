@@ -19,11 +19,11 @@ package com.btxtech.game.jsre.client.control;
  * Date: 18.02.2011
  * Time: 14:35:33
  */
-public enum TestStartupSeq implements StartupSeq {
+public enum StartupTestSeq implements StartupSeq {
     TEST_SIMPLE {
         @Override
         public StartupTaskEnum[] getAbstractStartupTaskEnum() {
-            return TestSimpleTaskEnum.values();
+            return SimpleTestTaskEnum.values();
         }
         @Override
         public boolean isCold() {
@@ -33,7 +33,7 @@ public enum TestStartupSeq implements StartupSeq {
     TEST_DEFERRED {
         @Override
         public StartupTaskEnum[] getAbstractStartupTaskEnum() {
-            return TestDeferredTaskEnum.values();
+            return DeferredTestTaskEnum.values();
         }
         @Override
         public boolean isCold() {
@@ -43,7 +43,7 @@ public enum TestStartupSeq implements StartupSeq {
     TEST_BACKGROUND {
         @Override
         public StartupTaskEnum[] getAbstractStartupTaskEnum() {
-            return TestDeferredBackgroundTaskEnum.values();
+            return DeferredBackgroundTestTaskEnum.values();
         }
         @Override
         public boolean isCold() {
@@ -52,7 +52,7 @@ public enum TestStartupSeq implements StartupSeq {
     TEST_DEFERRED_FINISH {
         @Override
         public StartupTaskEnum[] getAbstractStartupTaskEnum() {
-            return TestDeferredFinishTaskEnum.values();
+            return DeferredFinishTestTaskEnum.values();
         }
         @Override
         public boolean isCold() {
@@ -62,7 +62,7 @@ public enum TestStartupSeq implements StartupSeq {
     TEST_DEFERRED_BACKGROUND_FINISH {
         @Override
         public StartupTaskEnum[] getAbstractStartupTaskEnum() {
-            return TestDeferredBackgroundFinishTaskEnum.values();
+            return DeferredBackgroundFinishTestTaskEnum.values();
         }
         @Override
         public boolean isCold() {
@@ -72,7 +72,7 @@ public enum TestStartupSeq implements StartupSeq {
     TEST_SIMPLE_EXCEPTION {
         @Override
         public StartupTaskEnum[] getAbstractStartupTaskEnum() {
-            return TestSimpleExceptionTaskEnum.values();
+            return SimpleExceptionTestTaskEnum.values();
         }
         @Override
         public boolean isCold() {

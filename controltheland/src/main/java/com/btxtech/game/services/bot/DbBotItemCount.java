@@ -16,10 +16,7 @@ package com.btxtech.game.services.bot;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 
 /**
@@ -34,6 +31,7 @@ public class DbBotItemCount implements CrudChild<DbBotConfig>, Serializable {
     private Integer id;
     @ManyToOne
     private DbBaseItemType baseItemType;
+    @Column(name = "theCount")
     private int count;
     private int type;
     @ManyToOne

@@ -28,15 +28,8 @@ import java.util.List;
  * Time: 10:56:33
  */
 public class ClientRunner {
-    private static ClientRunner INSTANCE = new ClientRunner();
     private long startupTimeStamp = System.currentTimeMillis();
     private Collection<StartupProgressListener> listeners = new ArrayList<StartupProgressListener>();
-
-    @Deprecated
-    public static ClientRunner getInstance() {
-        return INSTANCE;
-    }
-
     private List<AbstractStartupTask> startupList = new ArrayList<AbstractStartupTask>();
     private List<DeferredStartup> deferredStartups = new ArrayList<DeferredStartup>();
     private List<AbstractStartupTask> finishedTasks = new ArrayList<AbstractStartupTask>();
@@ -53,7 +46,7 @@ public class ClientRunner {
     public void start(StartupSeq startupSeq) {
         failed = false;
         for (StartupProgressListener listener : listeners) {
-            listener.onStart();
+            listener.onStart(startupSeq);
         }
         setupStartupSeq(startupSeq);
         runNextTask();
@@ -127,9 +120,6 @@ public class ClientRunner {
                 for (StartupProgressListener listener : listeners) {
                     listener.onStartupFinished(startupTaskInfos, totalTime);
                 }
-                // TODO Connection.getInstance().sendStartupFinished(createTaskInfo(null, null), totalTime);
-                // TODO StartupScreen.getInstance().showCloseButton();
-                // TODO StartupScreen.getInstance().hideStartScreen();
             }
             cleanup();
         }
@@ -175,10 +165,7 @@ public class ClientRunner {
             for (StartupProgressListener listener : listeners) {
                 listener.onStartupFailed(startupTaskInfos, totalTime);
             }
-            // TODO StartupScreen.getInstance().displayTaskFailed(abstractStartupTask, error);
             // TODO Connection.getInstance().sendStartupFinished(createTaskInfo(abstractStartupTask, error), totalTime);
-            // TODO StartupScreen.getInstance().showCloseButton();
-            //StartupScreen.getInstance().hideStartScreen();
         }
         cleanup();
     }

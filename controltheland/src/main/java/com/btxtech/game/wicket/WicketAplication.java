@@ -30,12 +30,14 @@ import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * User: beat
  * Date: May 31, 2009
  * Time: 9:51:34 PM
  */
+@Component
 public class WicketAplication extends WebApplication {
     @Autowired
     private Session session;

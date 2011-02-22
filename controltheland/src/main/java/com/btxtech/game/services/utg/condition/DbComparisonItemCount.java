@@ -16,11 +16,7 @@ package com.btxtech.game.services.utg.condition;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 
 /**
@@ -37,6 +33,7 @@ public class DbComparisonItemCount implements CrudChild<DbSyncItemTypeComparison
     private DbSyncItemTypeComparisonConfig dbSyncItemTypeComparisonConfig;
     @ManyToOne(fetch = FetchType.LAZY)
     private DbItemType itemType;
+    @Column(name = "theCount")
     private int count;
 
     public Integer getId() {

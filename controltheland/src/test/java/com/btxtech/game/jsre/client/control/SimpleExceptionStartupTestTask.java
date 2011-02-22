@@ -21,29 +21,16 @@ import com.btxtech.game.jsre.client.control.task.DeferredStartup;
  * Date: 18.02.2010
  * Time: 12:50:50
  */
-public class TestDeferredStartupTask extends AbstractStartupTask {
-    protected DeferredStartup deferredStartup;
+public class SimpleExceptionStartupTestTask extends AbstractStartupTask {
+    public static final String ERROR_STRING = "crash in SimpleExceptionStartupTestTask";
 
-    public TestDeferredStartupTask(StartupTaskEnum taskEnum) {
+    public SimpleExceptionStartupTestTask(StartupTaskEnum taskEnum) {
         super(taskEnum);
     }
 
     @Override
     protected void privateStart(final DeferredStartup deferredStartup) {
-        this.deferredStartup = deferredStartup;
-        deferredStartup.setDeferred();
-    }
-
-    public void finished() {
-        deferredStartup.finished();
-    }
-
-    public void failed(Throwable throwable) {
-        deferredStartup.failed(throwable);
-    }
-
-    public void failed(String error) {
-        deferredStartup.failed(error);
+        throw new RuntimeException(ERROR_STRING);
     }
 
 }

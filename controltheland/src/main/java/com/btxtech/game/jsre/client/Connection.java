@@ -21,6 +21,10 @@ import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
+import com.btxtech.game.jsre.client.control.StartupProgressListener;
+import com.btxtech.game.jsre.client.control.StartupSeq;
+import com.btxtech.game.jsre.client.control.StartupTaskEnum;
+import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.client.control.task.DeferredStartup;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
@@ -57,7 +61,7 @@ import java.util.List;
  * Date: Jul 4, 2009
  * Time: 11:23:52 AM
  */
-public class Connection implements AsyncCallback<Void> {
+public class Connection implements AsyncCallback<Void>, StartupProgressListener {
     public static final int MIN_DELAY_BETWEEN_POLL = 200;
     public static final int STATISTIC_DELAY = 10000;
     public static final Connection INSTANCE = new Connection();
@@ -362,5 +366,35 @@ public class Connection implements AsyncCallback<Void> {
         Collection<SyncItemInfo> tmp = syncInfos;
         syncInfos = null;
         return tmp;
+    }
+
+    @Override
+    public void onStart(StartupSeq startupSeq) {
+        // Ignore
+    }
+
+    @Override
+    public void onNextTask(StartupTaskEnum taskEnum) {
+        // Ignore
+    }
+
+    @Override
+    public void onTaskFinished(AbstractStartupTask task) {
+        // Ignore
+    }
+
+    @Override
+    public void onTaskFailed(AbstractStartupTask task, String error) {
+        // Ignore
+    }
+
+    @Override
+    public void onStartupFinished(List<StartupTaskInfo> taskInfo, long totalTime) {
+        sendStartupFinished(taskInfo, totalTime);
+    }
+
+    @Override
+    public void onStartupFailed(Collection<StartupTaskInfo> taskInfo, long totalTime) {
+        sendStartupFinished(taskInfo, totalTime);
     }
 }

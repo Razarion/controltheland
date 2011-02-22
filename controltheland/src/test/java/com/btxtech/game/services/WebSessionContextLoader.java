@@ -22,7 +22,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 
 
-public class TestWebSessionContextLoader extends TestWebContextLoader {
+public class WebSessionContextLoader extends WebContextLoader {
 
 	@Override
 	protected void customizeContext(final GenericWebApplicationContext context) {
