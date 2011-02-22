@@ -61,6 +61,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,6 +73,7 @@ import java.util.List;
  * Date: May 31, 2009
  * Time: 8:15:53 PM
  */
+@Component
 public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseService {
     private static final String DEFAULT_BASE_NAME_PREFIX = "Base ";
     private Log log = LogFactory.getLog(BaseServiceImpl.class);

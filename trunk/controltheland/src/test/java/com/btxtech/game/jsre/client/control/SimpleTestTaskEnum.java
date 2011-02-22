@@ -20,27 +20,27 @@ import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
  * Date: 18.12010
  * Time: 14:18:24
  */
-public enum TestSimpleTaskEnum implements StartupTaskEnum {
+public enum SimpleTestTaskEnum implements StartupTaskEnum {
     TEST_1("TEST_1") {
         @Override
         public AbstractStartupTask createTask() {
-            return new TestSimpleStartupTask(this);
+            return new SimpleStartupTestTask(this);
         }},
     TEST_2("TEST_2") {
         @Override
         public AbstractStartupTask createTask() {
-            return new TestSimpleStartupTask(this);
+            return new SimpleStartupTestTask(this);
         }},
     TEST_3("TEST_3") {
         @Override
         public AbstractStartupTask createTask() {
-            return new TestSimpleStartupTask(this);
+            return new SimpleStartupTestTask(this);
         }};
 
 
     private StartupTaskEnumHtmlHelper startupTaskEnumHtmlHelper;
 
-    TestSimpleTaskEnum(String niceText) {
+    SimpleTestTaskEnum(String niceText) {
         startupTaskEnumHtmlHelper = new StartupTaskEnumHtmlHelper(niceText, this);
     }
 

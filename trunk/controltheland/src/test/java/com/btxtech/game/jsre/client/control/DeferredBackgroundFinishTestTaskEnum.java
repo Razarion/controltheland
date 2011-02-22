@@ -20,58 +20,49 @@ import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
  * Date: 18.12010
  * Time: 14:18:24
  */
-public enum TestDeferredBackgroundTaskEnum implements StartupTaskEnum {
+public enum DeferredBackgroundFinishTestTaskEnum implements StartupTaskEnum {
     TEST_1("TEST_1") {
-        private TestDeferredStartupTask testDeferredStartupTask;
+        private DeferredStartupTestTask deferredStartupTestTask;
         @Override
         public AbstractStartupTask createTask() {
-            testDeferredStartupTask = new TestDeferredStartupTask(this);
-            return testDeferredStartupTask;
+            deferredStartupTestTask = new DeferredStartupTestTask(this);
+            return deferredStartupTestTask;
         }
-        public TestDeferredStartupTask getTestDeferredStartupTask() {
-            return testDeferredStartupTask;
+        public DeferredStartupTestTask getTestDeferredStartupTask() {
+            return deferredStartupTestTask;
         }
     },
     TEST_2_BACKGROUND("TEST_2_BACKGROUND") {
-        private TestDeferredStartupTask testDeferredStartupTask;
+        private DeferredStartupTestTask deferredStartupTestTask;
         @Override
         public AbstractStartupTask createTask() {
-            testDeferredStartupTask = new TestDeferredBackgroundStartupTask(this);
-            return testDeferredStartupTask;
+            deferredStartupTestTask = new DeferredBackgroundStartupTestTask(this);
+            return deferredStartupTestTask;
         }
-        public TestDeferredStartupTask getTestDeferredStartupTask() {
-            return testDeferredStartupTask;
+        public DeferredStartupTestTask getTestDeferredStartupTask() {
+            return deferredStartupTestTask;
         }
     },
-    TEST_3("TEST_3") {
-        private TestDeferredStartupTask testDeferredStartupTask;
+    TEST_3_DEFERRED_BACKGROUND_FINISH("TEST_3_DEFERRED_BACKGROUND_FINISH") {
         @Override
         public AbstractStartupTask createTask() {
-            testDeferredStartupTask = new TestDeferredStartupTask(this);
-            return testDeferredStartupTask;
-        }
-        public TestDeferredStartupTask getTestDeferredStartupTask() {
-            return testDeferredStartupTask;
+            return new DeferredBackgroundFinishStartupTestTask(this);
         }
     },
-    TEST_4("TEST_4") {
-        private TestDeferredStartupTask testDeferredStartupTask;
-
+    TEST_4_DEFERRED_FINISH("TEST_4_DEFERRED_FINISH") {
         @Override
         public AbstractStartupTask createTask() {
-            testDeferredStartupTask = new TestDeferredStartupTask(this);
-            return testDeferredStartupTask;
-        }
-        public TestDeferredStartupTask getTestDeferredStartupTask() {
-            return testDeferredStartupTask;
+            return new DeferredFinishStartupTestTask(this);
         }
     };
 
     private StartupTaskEnumHtmlHelper startupTaskEnumHtmlHelper;
 
-    public abstract TestDeferredStartupTask getTestDeferredStartupTask();
+    public DeferredStartupTestTask getTestDeferredStartupTask() {
+        return null;
+    }
 
-    TestDeferredBackgroundTaskEnum(String niceText) {
+    DeferredBackgroundFinishTestTaskEnum(String niceText) {
         startupTaskEnumHtmlHelper = new StartupTaskEnumHtmlHelper(niceText, this);
     }
 

@@ -20,19 +20,23 @@ import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.BrowserDetails;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.WebCommon;
-import java.io.Serializable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.stereotype.Component;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.io.Serializable;
 
 /**
  * User: beat
  * Date: May 31, 2009
  * Time: 8:45:09 PM
  */
-//@Component("session")
-//@Scope(value = "session", proxyMode=) // TODO use spring 3
+@Component
+@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class SessionImpl implements Session, Serializable {
     @Autowired
     private HttpServletRequest request;

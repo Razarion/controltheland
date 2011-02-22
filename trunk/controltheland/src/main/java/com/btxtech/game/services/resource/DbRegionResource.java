@@ -38,6 +38,7 @@ public class DbRegionResource implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
+    @Column(name = "theCount")
     private int count;
     private int minDistanceToItems;
     @Type(type = "rectangle")

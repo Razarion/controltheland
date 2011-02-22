@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.control;
 
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
+import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.google.gwt.dom.client.ButtonElement;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
@@ -22,12 +23,15 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
 
+import java.util.Collection;
+import java.util.List;
+
 /**
  * User: beat
  * Date: 19.06.2010
  * Time: 18:19:28
  */
-public class StartupScreen {
+public class StartupScreen implements StartupProgressListener {
     private static final String WORKING_IMG_SRC = "resources/com.btxtech.game.wicket.pages.Game/working.gif";
     private static final String FINISHED_IMG_SRC = "resources/com.btxtech.game.wicket.pages.Game/finished.png";
     private static final String FAILED_IMG_SRC = "resources/com.btxtech.game.wicket.pages.Game/failed.png";
@@ -49,7 +53,7 @@ public class StartupScreen {
     private StartupScreen() {
     }
 
-    public void setupScreen(StartupSeq startupSeq) {  // TODO don't forget me!!
+    public void setupScreen(StartupSeq startupSeq) {
         StartupSeq oldStartupSeq = this.startupSeq;
         this.startupSeq = startupSeq;
         if (parent == null) {
@@ -201,5 +205,36 @@ public class StartupScreen {
         if (!parent.getFirstChild().equals(startScreen)) {
             parent.insertFirst(startScreen);
         }
+    }
+
+    @Override
+    public void onStart(StartupSeq startupSeq) {
+        setupScreen(startupSeq);
+    }
+
+    @Override
+    public void onNextTask(StartupTaskEnum taskEnum) {
+        displayTaskRunning(taskEnum);
+    }
+
+    @Override
+    public void onTaskFinished(AbstractStartupTask task) {
+        displayTaskFinished(task);
+    }
+
+    @Override
+    public void onTaskFailed(AbstractStartupTask task, String error) {
+        displayTaskFailed(task, error);
+    }
+
+    @Override
+    public void onStartupFinished(List<StartupTaskInfo> taskInfo, long totalTime) {
+        showCloseButton();
+        hideStartScreen();
+    }
+
+    @Override
+    public void onStartupFailed(Collection<StartupTaskInfo> taskInfo, long totalTime) {
+        showCloseButton();
     }
 }

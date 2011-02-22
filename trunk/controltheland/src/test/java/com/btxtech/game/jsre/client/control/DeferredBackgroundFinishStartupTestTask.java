@@ -20,8 +20,8 @@ import com.btxtech.game.jsre.client.control.task.DeferredStartup;
  * Date: 18.02.2010
  * Time: 12:50:50
  */
-public class TestDeferredBackgroundFinishStartupTask extends TestDeferredStartupTask {
-    public TestDeferredBackgroundFinishStartupTask(StartupTaskEnum taskEnum) {
+public class DeferredBackgroundFinishStartupTestTask extends DeferredStartupTestTask {
+    public DeferredBackgroundFinishStartupTestTask(StartupTaskEnum taskEnum) {
         super(taskEnum);
     }
 

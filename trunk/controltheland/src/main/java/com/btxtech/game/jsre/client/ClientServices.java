@@ -14,6 +14,8 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.action.ActionHandler;
+import com.btxtech.game.jsre.client.control.ClientRunner;
+import com.btxtech.game.jsre.client.control.StartupScreen;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -37,6 +39,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
  */
 public class ClientServices implements Services {
     private static ClientServices INSTANCE = new ClientServices();
+    private ClientRunner clientRunner = new ClientRunner();
     private ConnectionService dummyConnectionService = new ConnectionService() {
         @Override
         public void sendSyncInfo(SyncItem syncItem) {
@@ -44,7 +47,12 @@ public class ClientServices implements Services {
         }
     };
 
+    /**
+     * Singleton
+     */
     private ClientServices() {
+        clientRunner.addStartupProgressListener(StartupScreen.getInstance());
+        clientRunner.addStartupProgressListener(Connection.getInstance());
     }
 
     @Override
@@ -94,5 +102,9 @@ public class ClientServices implements Services {
     @Override
     public AbstractTerritoryService getTerritoryService() {
         return ClientTerritoryService.getInstance();
+    }
+
+    public ClientRunner getClientRunner() {
+        return clientRunner;
     }
 }

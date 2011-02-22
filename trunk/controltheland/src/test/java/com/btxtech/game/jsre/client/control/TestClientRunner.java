@@ -21,47 +21,47 @@ public class TestClientRunner {
     @Test
     public void runSimple() {
         StartupProgressListener mockListener = createStrictMock(StartupProgressListener.class);
-        mockListener.onStart();
+        mockListener.onStart(StartupTestSeq.TEST_SIMPLE);
 
-        mockListener.onNextTask(TestSimpleTaskEnum.TEST_1);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestSimpleTaskEnum.TEST_1));
+        mockListener.onNextTask(SimpleTestTaskEnum.TEST_1);
+        mockListener.onTaskFinished(eqAbstractStartupTask(SimpleTestTaskEnum.TEST_1));
 
-        mockListener.onNextTask(TestSimpleTaskEnum.TEST_2);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestSimpleTaskEnum.TEST_2));
+        mockListener.onNextTask(SimpleTestTaskEnum.TEST_2);
+        mockListener.onTaskFinished(eqAbstractStartupTask(SimpleTestTaskEnum.TEST_2));
 
-        mockListener.onNextTask(TestSimpleTaskEnum.TEST_3);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestSimpleTaskEnum.TEST_3));
+        mockListener.onNextTask(SimpleTestTaskEnum.TEST_3);
+        mockListener.onTaskFinished(eqAbstractStartupTask(SimpleTestTaskEnum.TEST_3));
 
-        mockListener.onStartupFinished(eqStartupTaskInfo(TestStartupSeq.TEST_SIMPLE), geq(0L));
+        mockListener.onStartupFinished(eqStartupTaskInfo(StartupTestSeq.TEST_SIMPLE), geq(0L));
         replay(mockListener);
         ClientRunner clientRunner = new ClientRunner();
         clientRunner.addStartupProgressListener(mockListener);
-        clientRunner.start(TestStartupSeq.TEST_SIMPLE);
+        clientRunner.start(StartupTestSeq.TEST_SIMPLE);
         verify(mockListener);
     }
 
     @Test
     public void runDeferred() {
         StartupProgressListener mockListener = createStrictMock(StartupProgressListener.class);
-        mockListener.onStart();
+        mockListener.onStart(StartupTestSeq.TEST_DEFERRED);
 
-        mockListener.onNextTask(TestDeferredTaskEnum.TEST_1);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredTaskEnum.TEST_1));
+        mockListener.onNextTask(DeferredTestTaskEnum.TEST_1);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredTestTaskEnum.TEST_1));
 
-        mockListener.onNextTask(TestDeferredTaskEnum.TEST_2);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredTaskEnum.TEST_2));
+        mockListener.onNextTask(DeferredTestTaskEnum.TEST_2);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredTestTaskEnum.TEST_2));
 
-        mockListener.onNextTask(TestDeferredTaskEnum.TEST_3);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredTaskEnum.TEST_3));
+        mockListener.onNextTask(DeferredTestTaskEnum.TEST_3);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredTestTaskEnum.TEST_3));
 
-        mockListener.onStartupFinished(eqStartupTaskInfo(TestStartupSeq.TEST_DEFERRED), geq(0L));
+        mockListener.onStartupFinished(eqStartupTaskInfo(StartupTestSeq.TEST_DEFERRED), geq(0L));
         replay(mockListener);
         ClientRunner clientRunner = new ClientRunner();
         clientRunner.addStartupProgressListener(mockListener);
-        clientRunner.start(TestStartupSeq.TEST_DEFERRED);
-        TestDeferredTaskEnum.TEST_1.getTestDeferredStartupTask().finished();
-        TestDeferredTaskEnum.TEST_2.getTestDeferredStartupTask().finished();
-        TestDeferredTaskEnum.TEST_3.getTestDeferredStartupTask().finished();
+        clientRunner.start(StartupTestSeq.TEST_DEFERRED);
+        DeferredTestTaskEnum.TEST_1.getTestDeferredStartupTask().finished();
+        DeferredTestTaskEnum.TEST_2.getTestDeferredStartupTask().finished();
+        DeferredTestTaskEnum.TEST_3.getTestDeferredStartupTask().finished();
 
         verify(mockListener);
     }
@@ -69,35 +69,35 @@ public class TestClientRunner {
     @Test
     public void runDeferredBackground() {
         StartupProgressListener mockListener = createStrictMock(StartupProgressListener.class);
-        mockListener.onStart();
+        mockListener.onStart(StartupTestSeq.TEST_BACKGROUND);
 
-        mockListener.onNextTask(TestDeferredBackgroundTaskEnum.TEST_1);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredBackgroundTaskEnum.TEST_1));
+        mockListener.onNextTask(DeferredBackgroundTestTaskEnum.TEST_1);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredBackgroundTestTaskEnum.TEST_1));
 
-        mockListener.onNextTask(TestDeferredBackgroundTaskEnum.TEST_2_BACKGROUND);
+        mockListener.onNextTask(DeferredBackgroundTestTaskEnum.TEST_2_BACKGROUND);
 
-        mockListener.onNextTask(TestDeferredBackgroundTaskEnum.TEST_3);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredBackgroundTaskEnum.TEST_3));
+        mockListener.onNextTask(DeferredBackgroundTestTaskEnum.TEST_3);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredBackgroundTestTaskEnum.TEST_3));
 
-        mockListener.onNextTask(TestDeferredBackgroundTaskEnum.TEST_4);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredBackgroundTaskEnum.TEST_4));
+        mockListener.onNextTask(DeferredBackgroundTestTaskEnum.TEST_4);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredBackgroundTestTaskEnum.TEST_4));
 
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredBackgroundTaskEnum.TEST_2_BACKGROUND));
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredBackgroundTestTaskEnum.TEST_2_BACKGROUND));
 
 
-        mockListener.onStartupFinished(eqStartupTaskInfo(new StartupTaskEnum[]{TestDeferredBackgroundTaskEnum.TEST_1,
-                TestDeferredBackgroundTaskEnum.TEST_3,
-                TestDeferredBackgroundTaskEnum.TEST_4,
-                TestDeferredBackgroundTaskEnum.TEST_2_BACKGROUND}), geq(0L));
+        mockListener.onStartupFinished(eqStartupTaskInfo(new StartupTaskEnum[]{DeferredBackgroundTestTaskEnum.TEST_1,
+                DeferredBackgroundTestTaskEnum.TEST_3,
+                DeferredBackgroundTestTaskEnum.TEST_4,
+                DeferredBackgroundTestTaskEnum.TEST_2_BACKGROUND}), geq(0L));
 
         replay(mockListener);
         ClientRunner clientRunner = new ClientRunner();
         clientRunner.addStartupProgressListener(mockListener);
-        clientRunner.start(TestStartupSeq.TEST_BACKGROUND);
-        TestDeferredBackgroundTaskEnum.TEST_1.getTestDeferredStartupTask().finished();
-        TestDeferredBackgroundTaskEnum.TEST_3.getTestDeferredStartupTask().finished();
-        TestDeferredBackgroundTaskEnum.TEST_4.getTestDeferredStartupTask().finished();
-        TestDeferredBackgroundTaskEnum.TEST_2_BACKGROUND.getTestDeferredStartupTask().finished();
+        clientRunner.start(StartupTestSeq.TEST_BACKGROUND);
+        DeferredBackgroundTestTaskEnum.TEST_1.getTestDeferredStartupTask().finished();
+        DeferredBackgroundTestTaskEnum.TEST_3.getTestDeferredStartupTask().finished();
+        DeferredBackgroundTestTaskEnum.TEST_4.getTestDeferredStartupTask().finished();
+        DeferredBackgroundTestTaskEnum.TEST_2_BACKGROUND.getTestDeferredStartupTask().finished();
 
         verify(mockListener);
     }
@@ -105,59 +105,59 @@ public class TestClientRunner {
     @Test
     public void runDeferredFinished() {
         StartupProgressListener mockListener = createStrictMock(StartupProgressListener.class);
-        mockListener.onStart();
+        mockListener.onStart(StartupTestSeq.TEST_DEFERRED_FINISH);
 
-        mockListener.onNextTask(TestDeferredFinishTaskEnum.TEST_1);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredFinishTaskEnum.TEST_1));
+        mockListener.onNextTask(DeferredFinishTestTaskEnum.TEST_1);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredFinishTestTaskEnum.TEST_1));
 
-        mockListener.onNextTask(TestDeferredFinishTaskEnum.TEST_2_FINISH);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredFinishTaskEnum.TEST_2_FINISH));
+        mockListener.onNextTask(DeferredFinishTestTaskEnum.TEST_2_FINISH);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredFinishTestTaskEnum.TEST_2_FINISH));
 
-        mockListener.onNextTask(TestDeferredFinishTaskEnum.TEST_3);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredFinishTaskEnum.TEST_3));
+        mockListener.onNextTask(DeferredFinishTestTaskEnum.TEST_3);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredFinishTestTaskEnum.TEST_3));
 
 
-        mockListener.onStartupFinished(eqStartupTaskInfo(TestStartupSeq.TEST_DEFERRED_FINISH), geq(0L));
+        mockListener.onStartupFinished(eqStartupTaskInfo(StartupTestSeq.TEST_DEFERRED_FINISH), geq(0L));
 
         replay(mockListener);
         ClientRunner clientRunner = new ClientRunner();
         clientRunner.addStartupProgressListener(mockListener);
-        clientRunner.start(TestStartupSeq.TEST_DEFERRED_FINISH);
-        TestDeferredFinishTaskEnum.TEST_1.getTestDeferredStartupTask().finished();
-        TestDeferredFinishTaskEnum.TEST_3.getTestDeferredStartupTask().finished();
+        clientRunner.start(StartupTestSeq.TEST_DEFERRED_FINISH);
+        DeferredFinishTestTaskEnum.TEST_1.getTestDeferredStartupTask().finished();
+        DeferredFinishTestTaskEnum.TEST_3.getTestDeferredStartupTask().finished();
         verify(mockListener);
     }
 
     @Test
     public void runDeferredBackgroundFinished() {
         StartupProgressListener mockListener = createStrictMock(StartupProgressListener.class);
-        mockListener.onStart();
+        mockListener.onStart(StartupTestSeq.TEST_DEFERRED_BACKGROUND_FINISH);
 
-        mockListener.onNextTask(TestDeferredBackgroundFinishTaskEnum.TEST_1);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredBackgroundFinishTaskEnum.TEST_1));
+        mockListener.onNextTask(DeferredBackgroundFinishTestTaskEnum.TEST_1);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredBackgroundFinishTestTaskEnum.TEST_1));
 
-        mockListener.onNextTask(TestDeferredBackgroundFinishTaskEnum.TEST_2_BACKGROUND);
+        mockListener.onNextTask(DeferredBackgroundFinishTestTaskEnum.TEST_2_BACKGROUND);
 
-        mockListener.onNextTask(TestDeferredBackgroundFinishTaskEnum.TEST_3_DEFERRED_BACKGROUND_FINISH);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredBackgroundFinishTaskEnum.TEST_3_DEFERRED_BACKGROUND_FINISH));
+        mockListener.onNextTask(DeferredBackgroundFinishTestTaskEnum.TEST_3_DEFERRED_BACKGROUND_FINISH);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredBackgroundFinishTestTaskEnum.TEST_3_DEFERRED_BACKGROUND_FINISH));
 
-        mockListener.onNextTask(TestDeferredBackgroundFinishTaskEnum.TEST_4_DEFERRED_FINISH);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredBackgroundFinishTaskEnum.TEST_4_DEFERRED_FINISH));
+        mockListener.onNextTask(DeferredBackgroundFinishTestTaskEnum.TEST_4_DEFERRED_FINISH);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredBackgroundFinishTestTaskEnum.TEST_4_DEFERRED_FINISH));
 
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredBackgroundFinishTaskEnum.TEST_2_BACKGROUND));
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredBackgroundFinishTestTaskEnum.TEST_2_BACKGROUND));
 
-        mockListener.onStartupFinished(eqStartupTaskInfo(new StartupTaskEnum[]{TestDeferredBackgroundFinishTaskEnum.TEST_1,
-                TestDeferredBackgroundFinishTaskEnum.TEST_3_DEFERRED_BACKGROUND_FINISH,
-                TestDeferredBackgroundFinishTaskEnum.TEST_4_DEFERRED_FINISH,
-                TestDeferredBackgroundFinishTaskEnum.TEST_2_BACKGROUND
+        mockListener.onStartupFinished(eqStartupTaskInfo(new StartupTaskEnum[]{DeferredBackgroundFinishTestTaskEnum.TEST_1,
+                DeferredBackgroundFinishTestTaskEnum.TEST_3_DEFERRED_BACKGROUND_FINISH,
+                DeferredBackgroundFinishTestTaskEnum.TEST_4_DEFERRED_FINISH,
+                DeferredBackgroundFinishTestTaskEnum.TEST_2_BACKGROUND
         }), geq(0L));
 
         replay(mockListener);
         ClientRunner clientRunner = new ClientRunner();
         clientRunner.addStartupProgressListener(mockListener);
-        clientRunner.start(TestStartupSeq.TEST_DEFERRED_BACKGROUND_FINISH);
-        TestDeferredBackgroundFinishTaskEnum.TEST_1.getTestDeferredStartupTask().finished();
-        TestDeferredBackgroundFinishTaskEnum.TEST_2_BACKGROUND.getTestDeferredStartupTask().finished();
+        clientRunner.start(StartupTestSeq.TEST_DEFERRED_BACKGROUND_FINISH);
+        DeferredBackgroundFinishTestTaskEnum.TEST_1.getTestDeferredStartupTask().finished();
+        DeferredBackgroundFinishTestTaskEnum.TEST_2_BACKGROUND.getTestDeferredStartupTask().finished();
         verify(mockListener);
     }
 
@@ -165,90 +165,90 @@ public class TestClientRunner {
     public void runMultiple() {
         StartupProgressListener mockListener = createStrictMock(StartupProgressListener.class);
         // 1
-        mockListener.onStart();
+        mockListener.onStart(StartupTestSeq.TEST_SIMPLE);
 
-        mockListener.onNextTask(TestSimpleTaskEnum.TEST_1);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestSimpleTaskEnum.TEST_1));
+        mockListener.onNextTask(SimpleTestTaskEnum.TEST_1);
+        mockListener.onTaskFinished(eqAbstractStartupTask(SimpleTestTaskEnum.TEST_1));
 
-        mockListener.onNextTask(TestSimpleTaskEnum.TEST_2);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestSimpleTaskEnum.TEST_2));
+        mockListener.onNextTask(SimpleTestTaskEnum.TEST_2);
+        mockListener.onTaskFinished(eqAbstractStartupTask(SimpleTestTaskEnum.TEST_2));
 
-        mockListener.onNextTask(TestSimpleTaskEnum.TEST_3);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestSimpleTaskEnum.TEST_3));
+        mockListener.onNextTask(SimpleTestTaskEnum.TEST_3);
+        mockListener.onTaskFinished(eqAbstractStartupTask(SimpleTestTaskEnum.TEST_3));
 
-        mockListener.onStartupFinished(eqStartupTaskInfo(TestStartupSeq.TEST_SIMPLE), geq(0L));
+        mockListener.onStartupFinished(eqStartupTaskInfo(StartupTestSeq.TEST_SIMPLE), geq(0L));
 
         // 2
-        mockListener.onStart();
+        mockListener.onStart(StartupTestSeq.TEST_DEFERRED);
 
-        mockListener.onNextTask(TestDeferredTaskEnum.TEST_1);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredTaskEnum.TEST_1));
+        mockListener.onNextTask(DeferredTestTaskEnum.TEST_1);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredTestTaskEnum.TEST_1));
 
-        mockListener.onNextTask(TestDeferredTaskEnum.TEST_2);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredTaskEnum.TEST_2));
+        mockListener.onNextTask(DeferredTestTaskEnum.TEST_2);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredTestTaskEnum.TEST_2));
 
-        mockListener.onNextTask(TestDeferredTaskEnum.TEST_3);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredTaskEnum.TEST_3));
+        mockListener.onNextTask(DeferredTestTaskEnum.TEST_3);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredTestTaskEnum.TEST_3));
 
-        mockListener.onStartupFinished(eqStartupTaskInfo(TestStartupSeq.TEST_DEFERRED), geq(0L));
+        mockListener.onStartupFinished(eqStartupTaskInfo(StartupTestSeq.TEST_DEFERRED), geq(0L));
 
         // 3
-        mockListener.onStart();
+        mockListener.onStart(StartupTestSeq.TEST_BACKGROUND);
 
-        mockListener.onNextTask(TestDeferredBackgroundTaskEnum.TEST_1);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredBackgroundTaskEnum.TEST_1));
+        mockListener.onNextTask(DeferredBackgroundTestTaskEnum.TEST_1);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredBackgroundTestTaskEnum.TEST_1));
 
-        mockListener.onNextTask(TestDeferredBackgroundTaskEnum.TEST_2_BACKGROUND);
+        mockListener.onNextTask(DeferredBackgroundTestTaskEnum.TEST_2_BACKGROUND);
 
-        mockListener.onNextTask(TestDeferredBackgroundTaskEnum.TEST_3);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredBackgroundTaskEnum.TEST_3));
+        mockListener.onNextTask(DeferredBackgroundTestTaskEnum.TEST_3);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredBackgroundTestTaskEnum.TEST_3));
 
-        mockListener.onNextTask(TestDeferredBackgroundTaskEnum.TEST_4);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredBackgroundTaskEnum.TEST_4));
+        mockListener.onNextTask(DeferredBackgroundTestTaskEnum.TEST_4);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredBackgroundTestTaskEnum.TEST_4));
 
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredBackgroundTaskEnum.TEST_2_BACKGROUND));
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredBackgroundTestTaskEnum.TEST_2_BACKGROUND));
 
 
-        mockListener.onStartupFinished(eqStartupTaskInfo(new StartupTaskEnum[]{TestDeferredBackgroundTaskEnum.TEST_1,
-                TestDeferredBackgroundTaskEnum.TEST_3,
-                TestDeferredBackgroundTaskEnum.TEST_4,
-                TestDeferredBackgroundTaskEnum.TEST_2_BACKGROUND}), geq(0L));
+        mockListener.onStartupFinished(eqStartupTaskInfo(new StartupTaskEnum[]{DeferredBackgroundTestTaskEnum.TEST_1,
+                DeferredBackgroundTestTaskEnum.TEST_3,
+                DeferredBackgroundTestTaskEnum.TEST_4,
+                DeferredBackgroundTestTaskEnum.TEST_2_BACKGROUND}), geq(0L));
 
         // 4
-        mockListener.onStart();
+        mockListener.onStart(StartupTestSeq.TEST_DEFERRED_FINISH);
 
-        mockListener.onNextTask(TestDeferredFinishTaskEnum.TEST_1);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredFinishTaskEnum.TEST_1));
+        mockListener.onNextTask(DeferredFinishTestTaskEnum.TEST_1);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredFinishTestTaskEnum.TEST_1));
 
-        mockListener.onNextTask(TestDeferredFinishTaskEnum.TEST_2_FINISH);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredFinishTaskEnum.TEST_2_FINISH));
+        mockListener.onNextTask(DeferredFinishTestTaskEnum.TEST_2_FINISH);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredFinishTestTaskEnum.TEST_2_FINISH));
 
-        mockListener.onNextTask(TestDeferredFinishTaskEnum.TEST_3);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredFinishTaskEnum.TEST_3));
+        mockListener.onNextTask(DeferredFinishTestTaskEnum.TEST_3);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredFinishTestTaskEnum.TEST_3));
 
 
-        mockListener.onStartupFinished(eqStartupTaskInfo(TestStartupSeq.TEST_DEFERRED_FINISH), geq(0L));
+        mockListener.onStartupFinished(eqStartupTaskInfo(StartupTestSeq.TEST_DEFERRED_FINISH), geq(0L));
 
         // 5
-        mockListener.onStart();
+        mockListener.onStart(StartupTestSeq.TEST_DEFERRED_BACKGROUND_FINISH);
 
-        mockListener.onNextTask(TestDeferredBackgroundFinishTaskEnum.TEST_1);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredBackgroundFinishTaskEnum.TEST_1));
+        mockListener.onNextTask(DeferredBackgroundFinishTestTaskEnum.TEST_1);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredBackgroundFinishTestTaskEnum.TEST_1));
 
-        mockListener.onNextTask(TestDeferredBackgroundFinishTaskEnum.TEST_2_BACKGROUND);
+        mockListener.onNextTask(DeferredBackgroundFinishTestTaskEnum.TEST_2_BACKGROUND);
 
-        mockListener.onNextTask(TestDeferredBackgroundFinishTaskEnum.TEST_3_DEFERRED_BACKGROUND_FINISH);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredBackgroundFinishTaskEnum.TEST_3_DEFERRED_BACKGROUND_FINISH));
+        mockListener.onNextTask(DeferredBackgroundFinishTestTaskEnum.TEST_3_DEFERRED_BACKGROUND_FINISH);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredBackgroundFinishTestTaskEnum.TEST_3_DEFERRED_BACKGROUND_FINISH));
 
-        mockListener.onNextTask(TestDeferredBackgroundFinishTaskEnum.TEST_4_DEFERRED_FINISH);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredBackgroundFinishTaskEnum.TEST_4_DEFERRED_FINISH));
+        mockListener.onNextTask(DeferredBackgroundFinishTestTaskEnum.TEST_4_DEFERRED_FINISH);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredBackgroundFinishTestTaskEnum.TEST_4_DEFERRED_FINISH));
 
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredBackgroundFinishTaskEnum.TEST_2_BACKGROUND));
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredBackgroundFinishTestTaskEnum.TEST_2_BACKGROUND));
 
-        mockListener.onStartupFinished(eqStartupTaskInfo(new StartupTaskEnum[]{TestDeferredBackgroundFinishTaskEnum.TEST_1,
-                TestDeferredBackgroundFinishTaskEnum.TEST_3_DEFERRED_BACKGROUND_FINISH,
-                TestDeferredBackgroundFinishTaskEnum.TEST_4_DEFERRED_FINISH,
-                TestDeferredBackgroundFinishTaskEnum.TEST_2_BACKGROUND
+        mockListener.onStartupFinished(eqStartupTaskInfo(new StartupTaskEnum[]{DeferredBackgroundFinishTestTaskEnum.TEST_1,
+                DeferredBackgroundFinishTestTaskEnum.TEST_3_DEFERRED_BACKGROUND_FINISH,
+                DeferredBackgroundFinishTestTaskEnum.TEST_4_DEFERRED_FINISH,
+                DeferredBackgroundFinishTestTaskEnum.TEST_2_BACKGROUND
         }), geq(0L));
 
         replay(mockListener);
@@ -256,30 +256,30 @@ public class TestClientRunner {
         clientRunner.addStartupProgressListener(mockListener);
 
         // 1
-        clientRunner.start(TestStartupSeq.TEST_SIMPLE);
+        clientRunner.start(StartupTestSeq.TEST_SIMPLE);
 
         // 2
-        clientRunner.start(TestStartupSeq.TEST_DEFERRED);
-        TestDeferredTaskEnum.TEST_1.getTestDeferredStartupTask().finished();
-        TestDeferredTaskEnum.TEST_2.getTestDeferredStartupTask().finished();
-        TestDeferredTaskEnum.TEST_3.getTestDeferredStartupTask().finished();
+        clientRunner.start(StartupTestSeq.TEST_DEFERRED);
+        DeferredTestTaskEnum.TEST_1.getTestDeferredStartupTask().finished();
+        DeferredTestTaskEnum.TEST_2.getTestDeferredStartupTask().finished();
+        DeferredTestTaskEnum.TEST_3.getTestDeferredStartupTask().finished();
 
         // 3
-        clientRunner.start(TestStartupSeq.TEST_BACKGROUND);
-        TestDeferredBackgroundTaskEnum.TEST_1.getTestDeferredStartupTask().finished();
-        TestDeferredBackgroundTaskEnum.TEST_3.getTestDeferredStartupTask().finished();
-        TestDeferredBackgroundTaskEnum.TEST_4.getTestDeferredStartupTask().finished();
-        TestDeferredBackgroundTaskEnum.TEST_2_BACKGROUND.getTestDeferredStartupTask().finished();
+        clientRunner.start(StartupTestSeq.TEST_BACKGROUND);
+        DeferredBackgroundTestTaskEnum.TEST_1.getTestDeferredStartupTask().finished();
+        DeferredBackgroundTestTaskEnum.TEST_3.getTestDeferredStartupTask().finished();
+        DeferredBackgroundTestTaskEnum.TEST_4.getTestDeferredStartupTask().finished();
+        DeferredBackgroundTestTaskEnum.TEST_2_BACKGROUND.getTestDeferredStartupTask().finished();
 
         // 4
-        clientRunner.start(TestStartupSeq.TEST_DEFERRED_FINISH);
-        TestDeferredFinishTaskEnum.TEST_1.getTestDeferredStartupTask().finished();
-        TestDeferredFinishTaskEnum.TEST_3.getTestDeferredStartupTask().finished();
+        clientRunner.start(StartupTestSeq.TEST_DEFERRED_FINISH);
+        DeferredFinishTestTaskEnum.TEST_1.getTestDeferredStartupTask().finished();
+        DeferredFinishTestTaskEnum.TEST_3.getTestDeferredStartupTask().finished();
 
         // 5
-        clientRunner.start(TestStartupSeq.TEST_DEFERRED_BACKGROUND_FINISH);
-        TestDeferredBackgroundFinishTaskEnum.TEST_1.getTestDeferredStartupTask().finished();
-        TestDeferredBackgroundFinishTaskEnum.TEST_2_BACKGROUND.getTestDeferredStartupTask().finished();
+        clientRunner.start(StartupTestSeq.TEST_DEFERRED_BACKGROUND_FINISH);
+        DeferredBackgroundFinishTestTaskEnum.TEST_1.getTestDeferredStartupTask().finished();
+        DeferredBackgroundFinishTestTaskEnum.TEST_2_BACKGROUND.getTestDeferredStartupTask().finished();
 
         verify(mockListener);
     }
@@ -287,48 +287,48 @@ public class TestClientRunner {
     @Test
     public void runSimpleException() {
         StartupProgressListener mockListener = createStrictMock(StartupProgressListener.class);
-        mockListener.onStart();
+        mockListener.onStart(StartupTestSeq.TEST_SIMPLE_EXCEPTION);
 
-        mockListener.onNextTask(TestSimpleExceptionTaskEnum.TEST_1);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestSimpleExceptionTaskEnum.TEST_1));
+        mockListener.onNextTask(SimpleExceptionTestTaskEnum.TEST_1);
+        mockListener.onTaskFinished(eqAbstractStartupTask(SimpleExceptionTestTaskEnum.TEST_1));
 
-        mockListener.onNextTask(TestSimpleExceptionTaskEnum.TEST_2_EXCEPTION);
-        mockListener.onTaskFailed(eqAbstractStartupTask(TestSimpleExceptionTaskEnum.TEST_2_EXCEPTION), contains(TestSimpleExceptionStartupTask.ERROR_STRING));
+        mockListener.onNextTask(SimpleExceptionTestTaskEnum.TEST_2_EXCEPTION);
+        mockListener.onTaskFailed(eqAbstractStartupTask(SimpleExceptionTestTaskEnum.TEST_2_EXCEPTION), contains(SimpleExceptionStartupTestTask.ERROR_STRING));
 
-        mockListener.onStartupFailed(eqStartupTaskInfo(new StartupTaskEnum[]{TestSimpleExceptionTaskEnum.TEST_1, TestSimpleExceptionTaskEnum.TEST_2_EXCEPTION}), geq(0L));
+        mockListener.onStartupFailed(eqStartupTaskInfo(new StartupTaskEnum[]{SimpleExceptionTestTaskEnum.TEST_1, SimpleExceptionTestTaskEnum.TEST_2_EXCEPTION}), geq(0L));
         replay(mockListener);
         ClientRunner clientRunner = new ClientRunner();
         clientRunner.addStartupProgressListener(mockListener);
-        clientRunner.start(TestStartupSeq.TEST_SIMPLE_EXCEPTION);
+        clientRunner.start(StartupTestSeq.TEST_SIMPLE_EXCEPTION);
         verify(mockListener);
     }
 
     @Test
     public void runDeferredException() {
         StartupProgressListener mockListener = createStrictMock(StartupProgressListener.class);
-        mockListener.onStart();
+        mockListener.onStart(StartupTestSeq.TEST_BACKGROUND);
 
-        mockListener.onNextTask(TestDeferredBackgroundTaskEnum.TEST_1);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredBackgroundTaskEnum.TEST_1));
+        mockListener.onNextTask(DeferredBackgroundTestTaskEnum.TEST_1);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredBackgroundTestTaskEnum.TEST_1));
 
-        mockListener.onNextTask(TestDeferredBackgroundTaskEnum.TEST_2_BACKGROUND);
+        mockListener.onNextTask(DeferredBackgroundTestTaskEnum.TEST_2_BACKGROUND);
 
-        mockListener.onNextTask(TestDeferredBackgroundTaskEnum.TEST_3);
-        mockListener.onTaskFailed(eqAbstractStartupTask(TestDeferredBackgroundTaskEnum.TEST_3), contains(ERROR_TEXT));
+        mockListener.onNextTask(DeferredBackgroundTestTaskEnum.TEST_3);
+        mockListener.onTaskFailed(eqAbstractStartupTask(DeferredBackgroundTestTaskEnum.TEST_3), contains(ERROR_TEXT));
 
 
-        mockListener.onStartupFailed(eqStartupTaskInfo(new StartupTaskEnum[]{TestDeferredBackgroundTaskEnum.TEST_1,
-                TestDeferredBackgroundTaskEnum.TEST_3,
-                TestDeferredBackgroundTaskEnum.TEST_4}),
+        mockListener.onStartupFailed(eqStartupTaskInfo(new StartupTaskEnum[]{DeferredBackgroundTestTaskEnum.TEST_1,
+                DeferredBackgroundTestTaskEnum.TEST_3,
+                DeferredBackgroundTestTaskEnum.TEST_4}),
                 geq(0L));
 
         replay(mockListener);
         ClientRunner clientRunner = new ClientRunner();
         clientRunner.addStartupProgressListener(mockListener);
-        clientRunner.start(TestStartupSeq.TEST_BACKGROUND);
-        TestDeferredBackgroundTaskEnum.TEST_1.getTestDeferredStartupTask().finished();
-        TestDeferredBackgroundTaskEnum.TEST_3.getTestDeferredStartupTask().failed(ERROR_TEXT);
-        TestDeferredBackgroundTaskEnum.TEST_2_BACKGROUND.getTestDeferredStartupTask().finished();
+        clientRunner.start(StartupTestSeq.TEST_BACKGROUND);
+        DeferredBackgroundTestTaskEnum.TEST_1.getTestDeferredStartupTask().finished();
+        DeferredBackgroundTestTaskEnum.TEST_3.getTestDeferredStartupTask().failed(ERROR_TEXT);
+        DeferredBackgroundTestTaskEnum.TEST_2_BACKGROUND.getTestDeferredStartupTask().finished();
 
         verify(mockListener);
     }
@@ -336,34 +336,34 @@ public class TestClientRunner {
     @Test
     public void runDeferredBackgroundException() {
         StartupProgressListener mockListener = createStrictMock(StartupProgressListener.class);
-        mockListener.onStart();
+        mockListener.onStart(StartupTestSeq.TEST_BACKGROUND);
 
-        mockListener.onNextTask(TestDeferredBackgroundTaskEnum.TEST_1);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredBackgroundTaskEnum.TEST_1));
+        mockListener.onNextTask(DeferredBackgroundTestTaskEnum.TEST_1);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredBackgroundTestTaskEnum.TEST_1));
 
-        mockListener.onNextTask(TestDeferredBackgroundTaskEnum.TEST_2_BACKGROUND);
+        mockListener.onNextTask(DeferredBackgroundTestTaskEnum.TEST_2_BACKGROUND);
 
-        mockListener.onNextTask(TestDeferredBackgroundTaskEnum.TEST_3);
-        mockListener.onTaskFinished(eqAbstractStartupTask(TestDeferredBackgroundTaskEnum.TEST_3));
+        mockListener.onNextTask(DeferredBackgroundTestTaskEnum.TEST_3);
+        mockListener.onTaskFinished(eqAbstractStartupTask(DeferredBackgroundTestTaskEnum.TEST_3));
 
-        mockListener.onNextTask(TestDeferredBackgroundTaskEnum.TEST_4);
+        mockListener.onNextTask(DeferredBackgroundTestTaskEnum.TEST_4);
 
-        mockListener.onTaskFailed(eqAbstractStartupTask(TestDeferredBackgroundTaskEnum.TEST_2_BACKGROUND), contains(ERROR_TEXT));
+        mockListener.onTaskFailed(eqAbstractStartupTask(DeferredBackgroundTestTaskEnum.TEST_2_BACKGROUND), contains(ERROR_TEXT));
 
 
-        mockListener.onStartupFailed(eqStartupTaskInfo(new StartupTaskEnum[]{TestDeferredBackgroundTaskEnum.TEST_1,
-                TestDeferredBackgroundTaskEnum.TEST_3,
-                TestDeferredBackgroundTaskEnum.TEST_2_BACKGROUND}),
+        mockListener.onStartupFailed(eqStartupTaskInfo(new StartupTaskEnum[]{DeferredBackgroundTestTaskEnum.TEST_1,
+                DeferredBackgroundTestTaskEnum.TEST_3,
+                DeferredBackgroundTestTaskEnum.TEST_2_BACKGROUND}),
                 geq(0L));
 
         replay(mockListener);
         ClientRunner clientRunner = new ClientRunner();
         clientRunner.addStartupProgressListener(mockListener);
-        clientRunner.start(TestStartupSeq.TEST_BACKGROUND);
-        TestDeferredBackgroundTaskEnum.TEST_1.getTestDeferredStartupTask().finished();
-        TestDeferredBackgroundTaskEnum.TEST_3.getTestDeferredStartupTask().finished();
-        TestDeferredBackgroundTaskEnum.TEST_2_BACKGROUND.getTestDeferredStartupTask().failed(ERROR_TEXT);
-        TestDeferredBackgroundTaskEnum.TEST_4.getTestDeferredStartupTask().finished();
+        clientRunner.start(StartupTestSeq.TEST_BACKGROUND);
+        DeferredBackgroundTestTaskEnum.TEST_1.getTestDeferredStartupTask().finished();
+        DeferredBackgroundTestTaskEnum.TEST_3.getTestDeferredStartupTask().finished();
+        DeferredBackgroundTestTaskEnum.TEST_2_BACKGROUND.getTestDeferredStartupTask().failed(ERROR_TEXT);
+        DeferredBackgroundTestTaskEnum.TEST_4.getTestDeferredStartupTask().finished();
 
         verify(mockListener);
     }

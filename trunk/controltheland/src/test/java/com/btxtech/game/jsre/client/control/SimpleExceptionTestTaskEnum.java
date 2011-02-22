@@ -20,47 +20,27 @@ import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
  * Date: 18.12010
  * Time: 14:18:24
  */
-public enum TestDeferredTaskEnum implements StartupTaskEnum {
+public enum SimpleExceptionTestTaskEnum implements StartupTaskEnum {
     TEST_1("TEST_1") {
-        private TestDeferredStartupTask testDeferredStartupTask;
         @Override
         public AbstractStartupTask createTask() {
-            testDeferredStartupTask = new TestDeferredStartupTask(this);
-            return testDeferredStartupTask;
-        }
-        public TestDeferredStartupTask getTestDeferredStartupTask() {
-            return testDeferredStartupTask;
-        }
-    },
-    TEST_2("TEST_2") {
-        private TestDeferredStartupTask testDeferredStartupTask;
+            return new SimpleStartupTestTask(this);
+        }},
+    TEST_2_EXCEPTION("TEST_2_EXCEPTION") {
         @Override
         public AbstractStartupTask createTask() {
-            testDeferredStartupTask = new TestDeferredStartupTask(this);
-            return testDeferredStartupTask;
-        }
-        public TestDeferredStartupTask getTestDeferredStartupTask() {
-            return testDeferredStartupTask;
-        }
-    },
+            return new SimpleExceptionStartupTestTask(this);
+        }},
     TEST_3("TEST_3") {
-        private TestDeferredStartupTask testDeferredStartupTask;
-
         @Override
         public AbstractStartupTask createTask() {
-            testDeferredStartupTask = new TestDeferredStartupTask(this);
-            return testDeferredStartupTask;
-        }
-        public TestDeferredStartupTask getTestDeferredStartupTask() {
-            return testDeferredStartupTask;
-        }
-    };
+            return new SimpleStartupTestTask(this);
+        }};
+
 
     private StartupTaskEnumHtmlHelper startupTaskEnumHtmlHelper;
 
-    public abstract TestDeferredStartupTask getTestDeferredStartupTask();
-
-    TestDeferredTaskEnum(String niceText) {
+    SimpleExceptionTestTaskEnum(String niceText) {
         startupTaskEnumHtmlHelper = new StartupTaskEnumHtmlHelper(niceText, this);
     }
 

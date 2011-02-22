@@ -59,7 +59,7 @@ public class DbWeaponType implements Serializable {
     private int muzzleFlashWidth;
     @Column(nullable = false, columnDefinition = "INT default '0'")
     private int muzzleFlashLength;
-    @Column(nullable = false, columnDefinition = "bit default b'0'")
+    @Column(nullable = false)
     private boolean stretchMuzzleFlashToTarget;
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "ITEM_WEAPON_TYPE_ALLOWED_ITEM_TYPE",

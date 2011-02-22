@@ -40,12 +40,14 @@ import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * User: beat
  * Date: May 24, 2009
  * Time: 6:44:01 PM
  */
+@Component
 public class CollisionServiceImpl implements CollisionService, TerrainListener {
     private static final int MAX_RANGE_RALLY_POINT = 300;
     private static final int STEPS_ANGEL = 30;

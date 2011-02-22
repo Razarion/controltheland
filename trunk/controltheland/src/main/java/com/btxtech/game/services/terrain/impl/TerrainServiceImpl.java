@@ -52,6 +52,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -59,6 +60,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Date: May 22, 2009
  * Time: 11:56:20 AM
  */
+@Component
 public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements TerrainService {
     @Autowired
     private UserGuidanceService userGuidanceService;

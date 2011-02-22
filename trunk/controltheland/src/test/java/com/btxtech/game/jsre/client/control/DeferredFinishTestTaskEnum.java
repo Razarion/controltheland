@@ -19,28 +19,45 @@ import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
  * User: beat
  * Date: 18.12010
  * Time: 14:18:24
- */
-public enum TestSimpleExceptionTaskEnum implements StartupTaskEnum {
+ */                                                                   
+public enum DeferredFinishTestTaskEnum implements StartupTaskEnum {
     TEST_1("TEST_1") {
+        private DeferredStartupTestTask deferredStartupTestTask;
         @Override
         public AbstractStartupTask createTask() {
-            return new TestSimpleStartupTask(this);
-        }},
-    TEST_2_EXCEPTION("TEST_2_EXCEPTION") {
+            deferredStartupTestTask = new DeferredStartupTestTask(this);
+            return deferredStartupTestTask;
+        }
+        public DeferredStartupTestTask getTestDeferredStartupTask() {
+            return deferredStartupTestTask;
+        }
+    },
+    TEST_2_FINISH("TEST_2_FINISH") {
         @Override
         public AbstractStartupTask createTask() {
-            return new TestSimpleExceptionStartupTask(this);
-        }},
+            return new DeferredFinishStartupTestTask(this);
+        }
+    },
     TEST_3("TEST_3") {
+        private DeferredStartupTestTask deferredStartupTestTask;
+
         @Override
         public AbstractStartupTask createTask() {
-            return new TestSimpleStartupTask(this);
-        }};
-
+            deferredStartupTestTask = new DeferredStartupTestTask(this);
+            return deferredStartupTestTask;
+        }
+        public DeferredStartupTestTask getTestDeferredStartupTask() {
+            return deferredStartupTestTask;
+        }
+    };
 
     private StartupTaskEnumHtmlHelper startupTaskEnumHtmlHelper;
 
-    TestSimpleExceptionTaskEnum(String niceText) {
+    public DeferredStartupTestTask getTestDeferredStartupTask() {
+        return null;
+    }
+
+    DeferredFinishTestTaskEnum(String niceText) {
         startupTaskEnumHtmlHelper = new StartupTaskEnumHtmlHelper(niceText, this);
     }
 

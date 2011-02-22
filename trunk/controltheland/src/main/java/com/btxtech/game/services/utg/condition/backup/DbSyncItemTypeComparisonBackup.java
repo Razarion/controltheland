@@ -41,7 +41,7 @@ public class DbSyncItemTypeComparisonBackup extends DbAbstractComparisonBackup {
     @JoinTable(name = "BACKUP_LEVEL_COMPARISON_SYNC_ITEM_TYPE")
     // Does not work
     @org.hibernate.annotations.MapKey(columns = @Column(name = "itemType"))
-    @Column(name = "count")
+    @Column(name = "theCount")
     private Map<DbItemType, Integer> itemTypeCount;
 
     /**

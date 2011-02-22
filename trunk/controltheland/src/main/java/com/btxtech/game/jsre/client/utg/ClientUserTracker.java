@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.utg;
 
+import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ParametrisedRunnable;
@@ -20,7 +21,6 @@ import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.cockpit.SelectionListener;
 import com.btxtech.game.jsre.client.common.Level;
-import com.btxtech.game.jsre.client.control.ClientRunner;
 import com.btxtech.game.jsre.client.simulation.Step;
 import com.btxtech.game.jsre.client.simulation.Task;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
@@ -36,6 +36,7 @@ import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
             public void onClose(CloseEvent<Window> windowCloseEvent) {
                 sendEventTrackerItems();
                 long time = System.currentTimeMillis();
-                Connection.getInstance().sendCloseWindow(time - ClientRunner.getInstance().getStartupTimeStamp(), time);
+                Connection.getInstance().sendCloseWindow(time - ClientServices.getInstance().getClientRunner().getStartupTimeStamp(), time);
             }
         });
     }
