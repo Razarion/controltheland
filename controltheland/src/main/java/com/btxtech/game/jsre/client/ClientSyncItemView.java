@@ -22,7 +22,6 @@ import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.effects.AttackEffectHandler;
 import com.btxtech.game.jsre.client.item.ItemContainer;
-import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -50,7 +49,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
     private Image image;
     private ClientSyncItem clientSyncItem;
     private CursorItemState cursorItemState;
-    private ProgressBar healthBar;
+    private ExtendedProgressBar healthBar;
     private ProgressBar factorizeBar;
     private ProgressBar projectileBar;
     private SimplePanel marker;
@@ -296,7 +295,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
 
     private void setupHealthBar() {
         if (healthBar == null) {
-            healthBar = new ProgressBar(0.0, clientSyncItem.getSyncBaseItem().getBaseItemType().getHealth());
+            healthBar = new ExtendedProgressBar(1.0, clientSyncItem.getSyncBaseItem().getBaseItemType().getHealth());
             healthBar.setTextVisible(false);
             healthBar.getElement().getStyle().setZIndex(2);
             healthBar.getElement().getStyle().setHeight(3, Style.Unit.PX);
@@ -432,10 +431,12 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
     }
 
     public void setSelected(boolean selected) {
-        if (selected) {
-            setStyleName("gwt-marked");
-        } else {
-            setStyleName("gwt-unmarked");
+        if(clientSyncItem.isSyncBaseItem()) {
+            if (selected) {
+                healthBar.setColor("#00FF00", "#FF0000");
+            } else {
+                healthBar.setColor("#006600", "#660000");
+            }
         }
     }
 }
