@@ -24,6 +24,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.widgetideas.graphics.client.Color;
+import com.google.gwt.widgetideas.graphics.client.GWTCanvas;
 
 /**
  * User: beat
@@ -389,6 +390,7 @@ public class SpeechBubble extends AbsolutePanel {
     }
 
     public void blink() {
+        extendedCanvas.setGlobalCompositeOperation(GWTCanvas.SOURCE_OVER);        
         if (blink) {
             extendedCanvas.setFillStyle(Color.WHITE);
         } else {
@@ -396,11 +398,14 @@ public class SpeechBubble extends AbsolutePanel {
         }
         blink = !blink;
         extendedCanvas.fill();
+        extendedCanvas.setGlobalCompositeOperation(GWTCanvas.DESTINATION_OVER);
     }
 
     public void blinkOff() {
+        extendedCanvas.setGlobalCompositeOperation(GWTCanvas.SOURCE_OVER);
         extendedCanvas.setFillStyle(Color.WHITE);
         blink = false;
         extendedCanvas.fill();
+        extendedCanvas.setGlobalCompositeOperation(GWTCanvas.DESTINATION_OVER);
     }
 }
