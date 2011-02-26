@@ -73,7 +73,7 @@ public class MenuPanel extends TopMapPanel {
 
             @Override
             public void run() {
-                StartupScreen.getInstance().showStartScreen();
+                StartupScreen.getInstance().attachStartScreen();
             }
         });
         addRow("Base Color", "color", new Runnable() {

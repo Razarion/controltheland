@@ -22,6 +22,7 @@ import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
+import com.google.gwt.user.client.Timer;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,20 +33,26 @@ import java.util.List;
  * Time: 18:19:28
  */
 public class StartupScreen implements StartupProgressListener {
+    private static final double FADE_STEP = 0.15;
+    private static final int SCHEDULE = 50;
     private static final String WORKING_IMG_SRC = "resources/com.btxtech.game.wicket.pages.Game/working.gif";
     private static final String FINISHED_IMG_SRC = "resources/com.btxtech.game.wicket.pages.Game/finished.png";
     private static final String FAILED_IMG_SRC = "resources/com.btxtech.game.wicket.pages.Game/failed.png";
+    private static final String TABLE_ID = "startupTaskTable";
     private final static StartupScreen INSTANCE = new StartupScreen();
-
-    public static StartupScreen getInstance() {
-        return INSTANCE;
-    }
-
+    private Timer fadeTimer;
+    private double currentFade;
+    private Runnable afterFade;
     private Element parent;
     private Element startScreen;
     private ButtonElement closeButton;
     private com.google.gwt.user.client.Element closeButtonElement;
     private StartupSeq startupSeq;
+
+    public static StartupScreen getInstance() {
+        return INSTANCE;
+    }
+
 
     /**
      * Singleton
@@ -62,7 +69,7 @@ public class StartupScreen implements StartupProgressListener {
             setupCloseButton();
         }
         hideCloseButton();
-        showStartScreen();
+        attachStartScreen();
         if (!startupSeq.isCold()) {
             setupTable(startupSeq, oldStartupSeq);
         }
@@ -130,7 +137,7 @@ public class StartupScreen implements StartupProgressListener {
         DOM.setEventListener(closeButtonElement, new EventListener() {
             @Override
             public void onBrowserEvent(Event event) {
-                hideStartScreen();
+                detachStartScreen();
             }
         });
         // connect the foreign element to the GWT event dispatcher
@@ -197,14 +204,79 @@ public class StartupScreen implements StartupProgressListener {
     }
 
 
-    public void hideStartScreen() {
+    private void detachStartScreen() {
         parent.removeChild(startScreen);
     }
 
-    public void showStartScreen() {
+    public void attachStartScreen() {
         if (!parent.getFirstChild().equals(startScreen)) {
             parent.insertFirst(startScreen);
         }
+    }
+
+    private void setTableVisibility(boolean visible) {
+        Element tableElement = DOM.getElementById(TABLE_ID);
+        tableElement.getStyle().setVisibility(visible ? Style.Visibility.VISIBLE : Style.Visibility.HIDDEN);
+    }
+
+    private void stopFade() {
+        if (fadeTimer != null) {
+            fadeTimer.cancel();
+            fadeTimer = null;
+        }
+    }
+
+    private void startFadeOut() {
+        stopFade();
+        currentFade = 0;
+        setTableVisibility(false);
+        fadeTimer = new Timer() {
+            @Override
+            public void run() {
+                currentFade += FADE_STEP;
+                if (currentFade >= 1.0) {
+                    stopFade();
+                    setOpacity(1.0);
+                    setTableVisibility(true);
+                    if (afterFade != null) {
+                        afterFade.run();
+                    }
+                } else {
+                    setOpacity(currentFade);
+                }
+            }
+        };
+        fadeTimer.scheduleRepeating(SCHEDULE);
+    }
+
+    private void startFadeIn() {
+        stopFade();
+        currentFade = 1.0;
+        fadeTimer = new Timer() {
+            @Override
+            public void run() {
+                currentFade -= FADE_STEP;
+                if (currentFade <= 0.0) {
+                    stopFade();
+                    setOpacity(0.0);
+                    detachStartScreen();
+                } else {
+                    setOpacity(currentFade);
+                }
+            }
+        };
+        fadeTimer.scheduleRepeating(SCHEDULE);
+    }
+
+    private void setOpacity(double opacity) {
+        startScreen.getStyle().setProperty("filter", "alpha(opacity=" + (int) (opacity * 100.0) + ")");
+        startScreen.getStyle().setProperty("opacity", Double.toString(opacity));
+    }
+
+    public void fadeOut(Runnable afterFade) {
+        this.afterFade = afterFade;
+        attachStartScreen();
+        startFadeOut();
     }
 
     @Override
@@ -229,8 +301,8 @@ public class StartupScreen implements StartupProgressListener {
 
     @Override
     public void onStartupFinished(List<StartupTaskInfo> taskInfo, long totalTime) {
+        startFadeIn();
         showCloseButton();
-        hideStartScreen();
     }
 
     @Override

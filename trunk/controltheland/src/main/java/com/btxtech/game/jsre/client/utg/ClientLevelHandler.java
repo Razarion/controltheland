@@ -16,8 +16,8 @@ package com.btxtech.game.jsre.client.utg;
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.common.Level;
-import com.btxtech.game.jsre.client.control.ClientRunner;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
+import com.btxtech.game.jsre.client.control.StartupScreen;
 import com.btxtech.game.jsre.client.dialogs.LevelTargetDialog;
 
 /**
@@ -54,29 +54,19 @@ public class ClientLevelHandler {
         LevelTargetDialog.showDialog(level.getHtml());
         if (oldLevel.isRealGame() && level.isRealGame()) {
             Cockpit.getInstance().setLevel(level.getName());
-            // TODO set scope
-            // TODO LevelTargetDialog.showDialog(level.getHtml());
-            // TODO ClientBase.getInstance().setItemLimit(levelPacket.getLevel().getItemLimit());
-            // TODO Cockpit.getInstance().updateItemLimit();
-            // TODO loadingRequired = true;
-            // TODO String oldLevel = level.getName();
-            // TODO setLevel(levelPacket.getLevel());
-            // TODO PromotionDialog promotionDialog = PromotionDialog.showPromotion(oldLevel, level.getName());
-            // TODO promotionDialog.addCloseHandler(new CloseHandler<PopupPanel>() {
-            // TODO     @Override
-            // TODO     public void onClose(CloseEvent<PopupPanel> popupPanelCloseEvent) {
-            // TODO         // TODO
-            // TODO         showMissionTargetDialog();
-            // TODO     }
-            // TODO });
         } else {
-            GameStartupSeq gameStartupSeq;
-            if (level.isRealGame()) {
-                gameStartupSeq = GameStartupSeq.WARM_REAL;
-            } else {
-                gameStartupSeq = GameStartupSeq.WARM_SIMULATED;
-            }
-            ClientServices.getInstance().getClientRunner().start(gameStartupSeq);
+            StartupScreen.getInstance().fadeOut(new Runnable() {
+                @Override
+                public void run() {
+                    GameStartupSeq gameStartupSeq;
+                    if (ClientLevelHandler.this.level.isRealGame()) {
+                        gameStartupSeq = GameStartupSeq.WARM_REAL;
+                    } else {
+                        gameStartupSeq = GameStartupSeq.WARM_SIMULATED;
+                    }
+                    ClientServices.getInstance().getClientRunner().start(gameStartupSeq);
+                }
+            });
         }
     }
 
