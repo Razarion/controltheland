@@ -18,9 +18,7 @@ import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.widgetideas.client.GlassPanel;
 
 /**
  * User: beat
@@ -29,7 +27,6 @@ import com.google.gwt.widgetideas.client.GlassPanel;
  */
 public class LevelTargetDialog extends Dialog {
     private String html;
-    private GlassPanel glassPanel;
 
     public LevelTargetDialog(String html) {
         this.html = html;
@@ -44,21 +41,12 @@ public class LevelTargetDialog extends Dialog {
         dialogVPanel.add(new HTML(html));
     }
 
-    public static void showDialog(String html) {
-        showDialog(html, true);
-    }
-
     public static void showDialog() {
-        showDialog(ClientLevelHandler.getInstance().getHtmlLevel(), false);
+        showDialog(ClientLevelHandler.getInstance().getHtmlLevel());
     }
 
-    public static void showDialog(String html, boolean showGlassPanel) {
+    public static void showDialog(String html) {
         final LevelTargetDialog levelTargetDialog = new LevelTargetDialog(html);
-        if (showGlassPanel) {
-            levelTargetDialog.glassPanel = new GlassPanel(false);
-            levelTargetDialog.glassPanel.getElement().getStyle().setZIndex(Constants.Z_INDEX_GLASS_PANEL);
-            RootPanel.get().add(levelTargetDialog.glassPanel, 0, 0);
-        }
         levelTargetDialog.setPopupPositionAndShow(new PositionCallback() {
             @Override
             public void setPosition(int offsetWidth, int offsetHeight) {
@@ -71,9 +59,6 @@ public class LevelTargetDialog extends Dialog {
 
     @Override
     public void close() {
-        if (glassPanel != null) {
-            RootPanel.get().remove(glassPanel);
-        }
         super.close();
     }
 }

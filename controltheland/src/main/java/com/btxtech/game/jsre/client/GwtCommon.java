@@ -56,7 +56,6 @@ public class GwtCommon {
         if (t instanceof StatusCodeException) {
             System.out.println("StatusCodeException status code: " + ((StatusCodeException) t).getStatusCode());
         }
-        t.printStackTrace();
         if (showDialog) {
             if (exceptionDialog != null) {
                 exceptionDialog.hide(true);
@@ -102,8 +101,6 @@ public class GwtCommon {
             builder.append(((StatusCodeException) throwable).getStatusCode());
             builder.append("\n");
         }
-        builder.append(throwable.getMessage());
-        builder.append("\n");
         builder.append(throwable.toString());
         builder.append("\n");
         for (Object element : throwable.getStackTrace()) {
@@ -115,7 +112,6 @@ public class GwtCommon {
 
     public static void sendLogToServer(String logMessage) {
         System.out.println(logMessage);
-        Connection.getInstance().log(logMessage, new Date());
         try {
             if (Connection.isConnected()) {
                 Connection.getInstance().log(logMessage, new Date());
