@@ -78,6 +78,16 @@ public enum StartupTestSeq implements StartupSeq {
         public boolean isCold() {
             return true;
         }
+    },
+    TEST_MULTI {
+        @Override
+        public StartupTaskEnum[] getAbstractStartupTaskEnum() {
+            return MultiTestTaskEnum.values();
+        }
+        @Override
+        public boolean isCold() {
+            return true;
+        }
     };
 
 

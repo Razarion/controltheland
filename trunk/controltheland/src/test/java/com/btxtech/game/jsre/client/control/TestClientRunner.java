@@ -368,6 +368,36 @@ public class TestClientRunner {
         verify(mockListener);
     }
 
+    @Test
+    public void runMultiStartup() {
+        StartupProgressListener mockListener = createStrictMock(StartupProgressListener.class);
+        mockListener.onStart(StartupTestSeq.TEST_MULTI);
+
+        mockListener.onNextTask(MultiTestTaskEnum.SIMPLE);
+        mockListener.onTaskFinished(eqAbstractStartupTask(MultiTestTaskEnum.SIMPLE));
+
+        mockListener.onNextTask(MultiTestTaskEnum.DEFERRED);
+        mockListener.onTaskFinished(eqAbstractStartupTask(MultiTestTaskEnum.DEFERRED));
+
+        mockListener.onNextTask(MultiTestTaskEnum.SIMPLE_2);
+        mockListener.onTaskFinished(eqAbstractStartupTask(MultiTestTaskEnum.SIMPLE_2));
+
+        mockListener.onNextTask(MultiTestTaskEnum.DEFERRED_BACKGROUND_FINISH);
+        mockListener.onTaskFinished(eqAbstractStartupTask(MultiTestTaskEnum.DEFERRED_BACKGROUND_FINISH));
+
+        mockListener.onNextTask(MultiTestTaskEnum.SIMPLE_3);
+        mockListener.onTaskFinished(eqAbstractStartupTask(MultiTestTaskEnum.SIMPLE_3));
+
+        mockListener.onStartupFinished(eqStartupTaskInfo(StartupTestSeq.TEST_MULTI), geq(0L));
+
+        replay(mockListener);
+        ClientRunner clientRunner = new ClientRunner();
+        clientRunner.addStartupProgressListener(mockListener);
+        clientRunner.start(StartupTestSeq.TEST_MULTI);
+        MultiTestTaskEnum.DEFERRED.getTestDeferredStartupTask().finished();
+        verify(mockListener);
+    }
+
     public static List<StartupTaskInfo> eqStartupTaskInfo(StartupSeq startupSeq) {
         EasyMock.reportMatcher(new StartupTaskInfoEquals(startupSeq));
         return null;

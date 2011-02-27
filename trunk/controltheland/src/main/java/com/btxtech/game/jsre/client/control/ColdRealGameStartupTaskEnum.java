@@ -64,7 +64,7 @@ public enum ColdRealGameStartupTaskEnum implements StartupTaskEnum {
         public AbstractStartupTask createTask() {
             return new InitItemStartupTask(this);
         }},
-    LOAD_MAP_IMAGES("Run real Game") {
+    RUN_REAL_GAME("Run real Game") {
         @Override
         public AbstractStartupTask createTask() {
             return new RunRealGameStartupTask(this);

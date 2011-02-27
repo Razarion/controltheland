@@ -52,7 +52,7 @@ public enum ColdSimulatedGameStartupTaskEnum implements StartupTaskEnum {
         public AbstractStartupTask createTask() {
             return new LoadMapImageStartupTask(this);
         }},
-    LOAD_UNITS("Run simulated Game") {
+    RUN_SIMULATED_GAME("Run simulated Game") {
         @Override
         public AbstractStartupTask createTask() {
             return new RunSimulationStartupTask(this);

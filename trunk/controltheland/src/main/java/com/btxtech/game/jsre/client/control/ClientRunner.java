@@ -73,9 +73,6 @@ public class ClientRunner {
             if (deferredStartup.isDeferred()) {
                 if (deferredStartup.isFinished()) {
                     onTaskFinished(task);
-                    if (deferredStartup.isBackground()) {
-                        runNextTask();
-                    }
                 } else {
                     deferredStartups.add(deferredStartup);
                 }
