@@ -14,47 +14,58 @@
 package com.btxtech.game.jsre.client.control;
 
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
-import com.btxtech.game.jsre.client.control.task.ClearGame;
-import com.btxtech.game.jsre.client.control.task.LoadGameInfoStartupTask;
-import com.btxtech.game.jsre.client.control.task.LoadMapImageStartupTask;
-import com.btxtech.game.jsre.client.control.task.RunSimulationStartupTask;
-import com.btxtech.game.jsre.client.control.task.SimulationDeltaStartupTask;
 
 /**
  * User: beat
- * Date: 19.06.2010
- * Time: 18:21:15
+ * Date: 18.12010
+ * Time: 14:18:24
  */
-public enum WarmSimulatedGameStartupTaskEnum implements StartupTaskEnum {
-    CLEAR_GAME("Clear game") {
+public enum MultiTestTaskEnum implements StartupTaskEnum {
+    SIMPLE("SIMPLE") {
         @Override
         public AbstractStartupTask createTask() {
-            return new ClearGame(this);
+            return new SimpleStartupTestTask(this);
         }},
-    DOWNLOAD_GAME_INFO("Load game information") {
+    DEFERRED("DEFERRED") {
+        private DeferredStartupTestTask deferredStartupTestTask;
+
         @Override
         public AbstractStartupTask createTask() {
-            return new LoadGameInfoStartupTask(this);
+            deferredStartupTestTask = new DeferredStartupTestTask(this);
+            return deferredStartupTestTask;
+        }
+        public DeferredStartupTestTask getTestDeferredStartupTask() {
+            return deferredStartupTestTask;
+        }
+    },
+    SIMPLE_2("SIMPLE_2") {
+        @Override
+        public AbstractStartupTask createTask() {
+            return new SimpleStartupTestTask(this);
         }},
-    INIT_GAME("Delta init simulated Game") {
+    DEFERRED_BACKGROUND_FINISH("DEFERRED_BACKGROUND_FINISH") {
         @Override
         public AbstractStartupTask createTask() {
-            return new SimulationDeltaStartupTask(this);
-        }},
-    LOAD_MAP("Load delta Map") {
+            return new DeferredBackgroundFinishStartupTestTask(this);
+        }
+    },
+    SIMPLE_3("SIMPLE_3") {
+
         @Override
         public AbstractStartupTask createTask() {
-            return new LoadMapImageStartupTask(this);
-        }},
-    RUN_SIMULATED_GAME("Run simulated Game") {
-        @Override
-        public AbstractStartupTask createTask() {
-            return new RunSimulationStartupTask(this);
-        }};
+            return new SimpleStartupTestTask(this);
+
+        }
+    };
+
 
     private StartupTaskEnumHtmlHelper startupTaskEnumHtmlHelper;
 
-    WarmSimulatedGameStartupTaskEnum(String niceText) {
+    public DeferredStartupTestTask getTestDeferredStartupTask() {
+        return null;
+    }
+
+    MultiTestTaskEnum(String niceText) {
         startupTaskEnumHtmlHelper = new StartupTaskEnumHtmlHelper(niceText, this);
     }
 
@@ -67,6 +78,4 @@ public enum WarmSimulatedGameStartupTaskEnum implements StartupTaskEnum {
     public StartupTaskEnumHtmlHelper getStartupTaskEnumHtmlHelper() {
         return startupTaskEnumHtmlHelper;
     }
-
-
 }
