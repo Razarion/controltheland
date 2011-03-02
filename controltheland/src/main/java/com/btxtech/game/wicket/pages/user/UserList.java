@@ -37,9 +37,9 @@ public class UserList extends BorderPanel {
             @Override
             protected void populateItem(final ListItem<User> listItem) {
                 BookmarkablePageLink<UserPage> link = new BookmarkablePageLink<UserPage>("userLink", UserPage.class);
-                link.setParameter(UserPage.KEY_VIEW_USER_NAME, listItem.getModelObject().getName());
+                link.setParameter(UserPage.KEY_VIEW_USER_NAME, listItem.getModelObject().getUsername());
                 listItem.add(link);
-                link.add(new Label("userName", listItem.getModelObject().getName()));
+                link.add(new Label("userName", listItem.getModelObject().getUsername()));
             }
         };
         add(userList);

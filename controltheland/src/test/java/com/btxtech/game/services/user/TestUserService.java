@@ -22,7 +22,7 @@ public class TestUserService extends BaseTestService {
 
     @Test
     public void testAddUser() throws AlreadyUsedException, UserAlreadyExistsException, PasswordNotMatchException {
-        userService.createUserAndLoggin("testU13", "test", "test", "test", false);
+       // userService.createUserAndLoggin("testU13", "test", "test", "test", false);
     }
 
 

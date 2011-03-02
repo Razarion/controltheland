@@ -13,34 +13,35 @@
 
 package com.btxtech.game.services.user;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import javax.persistence.CascadeType;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Set;
 
 @Entity(name = "USER")
-public class User implements Serializable {
+public class User implements UserDetails, Serializable {
     @Id
     private String name;
     private String password;
     private String email;
+    private boolean accountNonExpired = true;
     private Date registerDate;
     private Date lastLoginDate;
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "USER_ARQ",
-            joinColumns = @JoinColumn(name = "user_name"),
-            inverseJoinColumns = @JoinColumn(name = "arq_name")
-    )
-    private Set<Arq> arqs;
+    private boolean accountNonLocked = true;
+    private boolean credentialsNonExpired = true;
+    private boolean enabled = true;
+    @ElementCollection
+    private Set<String> roles;
 
-    public String getName() {
+    public String getUsername() {
         return name;
     }
 
@@ -71,17 +72,6 @@ public class User implements Serializable {
         return lastLoginDate;
     }
 
-    public boolean hasArq(Arq arq) {
-        return arqs != null && arqs.contains(arq);
-    }
-
-    public void addArq(Arq arq) {
-        if (arqs == null) {
-            arqs = new HashSet<Arq>();
-        }
-        arqs.add(arq);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -99,6 +89,36 @@ public class User implements Serializable {
         } else {
             return System.identityHashCode(this);
         }
+    }
+
+    @Override
+    public Collection<GrantedAuthority> getAuthorities() {
+        Collection<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
+        grantedAuthorities.add(new GrantedAuthorityImpl(SecurityRoles.ROLE_USER));
+        for (String role : roles) {
+            grantedAuthorities.add(new GrantedAuthorityImpl(role));
+        }
+        return grantedAuthorities;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return accountNonExpired;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return accountNonLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return credentialsNonExpired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
     @Override

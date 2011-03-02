@@ -46,7 +46,7 @@ public class DbLevelPromotion {
     public DbLevelPromotion(String sessionId, User user, DbAbstractLevel oldAbstractLevel) {
         this.sessionId = sessionId;
         level = oldAbstractLevel.getName();
-        this.user = user.getName();
+        this.user = user.getUsername();
         niceTimeStamp = new Date();
         timeStamp = niceTimeStamp.getTime();
     }

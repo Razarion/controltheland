@@ -29,6 +29,7 @@ import com.btxtech.game.services.market.MarketEntry;
 import com.btxtech.game.services.market.MarketFunction;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.market.XpSettings;
+import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbRealGameLevel;
@@ -53,6 +54,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 
 /**
@@ -243,16 +245,19 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveItemTypeAccessEntries(ArrayList<MarketEntry> marketEntries) {
         hibernateTemplate.saveOrUpdateAll(marketEntries);
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void createNewItemTypeAccessEntry() {
         hibernateTemplate.saveOrUpdate(new MarketEntry());
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void deleteItemTypeAccessEntry(MarketEntry marketEntry) {
         hibernateTemplate.delete(marketEntry);
     }
@@ -324,11 +329,13 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void addMarketCategory() {
         hibernateTemplate.save(new MarketCategory());
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void addMarketFunction() {
         hibernateTemplate.save(new MarketFunction());
     }
@@ -347,21 +354,25 @@ public class ServerMarketServiceImpl implements ServerMarketService {
 
     @Override
     @SuppressWarnings("unchecked")
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void deleteMarketCategory(MarketCategory category) {
         hibernateTemplate.delete(category);
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveMarketCategories(ArrayList<MarketCategory> marketCategories) {
         hibernateTemplate.saveOrUpdateAll(marketCategories);
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void deleteMarketFunction(MarketFunction marketFunction) {
         hibernateTemplate.delete(marketFunction);
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveMarketFunctions(ArrayList<MarketFunction> marketFunctions) {
         hibernateTemplate.saveOrUpdateAll(marketFunctions);
     }

@@ -202,7 +202,7 @@ public class MovableServiceImpl implements MovableService {
     }
 
     public static void setCommonInfo(GameInfo gameInfo, UserService userService, ItemService itemService, MgmtService mgmtService) {
-        gameInfo.setRegistered(userService.isLoggedin());
+        gameInfo.setRegistered(userService.isRegistered());
         gameInfo.setItemTypes(itemService.getItemTypes());
         StartupData startupData = mgmtService.getStartupData();
         gameInfo.setRegisterDialogDelay(startupData.getRegisterDialogDelay());

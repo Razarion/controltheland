@@ -19,11 +19,10 @@ import com.btxtech.game.wicket.pages.PageExpired;
 import com.btxtech.game.wicket.pages.cms.Home;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.wicket.Application;
-import org.apache.wicket.Page;
-import org.apache.wicket.Request;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.Response;
+import org.apache.wicket.*;
+import org.apache.wicket.authentication.AuthenticatedWebApplication;
+import org.apache.wicket.authentication.AuthenticatedWebSession;
+import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.PageExpiredException;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebRequest;
@@ -38,7 +37,7 @@ import org.springframework.stereotype.Component;
  * Time: 9:51:34 PM
  */
 @Component
-public class WicketAplication extends WebApplication {
+public class WicketAplication extends AuthenticatedWebApplication {
     @Autowired
     private Session session;
     @Autowired
@@ -48,7 +47,19 @@ public class WicketAplication extends WebApplication {
 
     @Override
     protected void init() {
+        super.init();
         addComponentInstantiationListener(new SpringComponentInjector(this));
+        getApplicationSettings().setAccessDeniedPage(Home.class);
+    }
+
+    @Override
+    protected Class<? extends AuthenticatedWebSession> getWebSessionClass() {
+        return WicketAuthenticatedWebSession.class;
+    }
+
+    @Override
+    protected Class<? extends WebPage> getSignInPageClass() {
+        return Home.class;
     }
 
     public Class<Home> getHomePage() {
@@ -91,10 +102,10 @@ public class WicketAplication extends WebApplication {
                 log.error("User Agent: " + session.getUserAgent());
                 // TODO log.error("User: " + session.getUser());
                 log.error("Session Id: " + session.getSessionId());
-                return new PageExpired();                
+                return new PageExpired();
             } else {
                 log.error("", e);
-                return new Home();                
+                return new Home();
             }
         }
     }

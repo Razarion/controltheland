@@ -84,7 +84,7 @@ public class HistoryServiceImpl implements HistoryService {
             public Object doInHibernate(Session session) {
                 Criteria criteria = session.createCriteria(HistoryElement.class);
                 criteria.setMaxResults(count);
-                criteria.add(Restrictions.or(Restrictions.eq("user", user), Restrictions.eq("targetUser", user)));
+                criteria.add(Restrictions.or(Restrictions.eq("actorUserName", user.getUsername()), Restrictions.eq("targetUserName", user.getUsername())));
                 criteria.addOrder(Property.forName("timeStampMs").desc());
                 return criteria.list();
             }
@@ -97,7 +97,7 @@ public class HistoryServiceImpl implements HistoryService {
 
     private DisplayHistoryElement convert(User user, HistoryElement historyElement) {
         DisplayHistoryElement displayHistoryElement = new DisplayHistoryElement(historyElement.getTimeStamp());
-        String userName = user.getName();
+        String userName = user.getUsername();
         switch (historyElement.getType()) {
             case BASE_STARTED:
                 displayHistoryElement.setMessage("Base created: " + historyElement.getActorBaseName());

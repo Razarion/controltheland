@@ -13,20 +13,15 @@
 
 package com.btxtech.game.wicket.pages.forum;
 
-import com.btxtech.game.services.forum.AbstractForumEntry;
-import com.btxtech.game.services.forum.Category;
-import com.btxtech.game.services.forum.ForumService;
-import com.btxtech.game.services.forum.ForumThread;
-import com.btxtech.game.services.forum.Post;
-import com.btxtech.game.services.forum.SubForum;
+import com.btxtech.game.services.forum.*;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.apache.wicket.PageParameters;
 import wicket.contrib.tinymce.TinyMceBehavior;
 import wicket.contrib.tinymce.settings.TinyMCESettings;
 
@@ -59,22 +54,27 @@ public class AddEntryForm extends BasePage {
                 abstractForumEntry.setTitle(title.getObject());
                 abstractForumEntry.setContent(content.getObject());
                 int parentid = parent != null ? parent.getId() : -1;
-                forumService.insertForumEntry(parentid, abstractForumEntry);
-                if (abstractForumEntry instanceof Category || abstractForumEntry instanceof SubForum) {
+                if (abstractForumEntry instanceof Category) {
+                    forumService.insertCategoryEntry(parentid, (Category) abstractForumEntry);
                     setResponsePage(ForumView.class);
-                    return;
-                } else if (abstractForumEntry instanceof ForumThread) {
+                } else if (abstractForumEntry instanceof SubForum) {
+                    forumService.insertSubForumEntry((SubForum) abstractForumEntry);
                     PageParameters pageParameters = new PageParameters();
                     pageParameters.add(CategoryView.ID, Integer.toString(abstractForumEntry.getId()));
                     setResponsePage(ForumThreadView.class, pageParameters);
-                    return;
+                } else if (abstractForumEntry instanceof ForumThread) {
+                    forumService.insertForumThreadEntry(parentid, (ForumThread) abstractForumEntry);
+                    PageParameters pageParameters = new PageParameters();
+                    pageParameters.add(CategoryView.ID, Integer.toString(abstractForumEntry.getId()));
+                    setResponsePage(ForumThreadView.class, pageParameters);
                 } else if (abstractForumEntry instanceof Post) {
+                    forumService.insertPostEntry(parentid, (Post) abstractForumEntry);
                     PageParameters pageParameters = new PageParameters();
                     pageParameters.add(CategoryView.ID, Integer.toString(parentid));
                     setResponsePage(ForumThreadView.class, pageParameters);
-                    return;
+                } else {
+                    throw new IllegalArgumentException("Unknown: " + abstractForumEntry);
                 }
-                throw new IllegalArgumentException("Unknown: " + abstractForumEntry);
             }
         });
         add(form);

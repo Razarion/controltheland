@@ -22,7 +22,6 @@ import com.btxtech.game.wicket.pages.basepage.BasePage;
 import com.btxtech.game.wicket.pages.info.Info;
 import com.btxtech.game.wicket.pages.user.LoggedinBox;
 import com.btxtech.game.wicket.pages.user.LoginBox;
-import javax.servlet.http.Cookie;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
@@ -35,6 +34,8 @@ import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.resource.ByteArrayResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import javax.servlet.http.Cookie;
 
 /**
  * User: beat
@@ -54,12 +55,8 @@ public class Home extends WebPage implements IHeaderContributor {
         if (WebCommon.getCookieId(cookies) == null) {
             WebCommon.generateAndSetCookieId(((WebResponse) getRequestCycle().getResponse()).getHttpServletResponse());
         }
-        // TODO this is ugly
-        if (userService.isLoggedin()) {
-            add(new LoggedinBox());
-        } else {
-            add(new LoginBox());
-        }
+        add(new LoggedinBox("loggedinBox"));
+        add(new LoginBox("loginBox"));
 
         ///////////////////////////////
         add(new Label("style", new PropertyModel(cmsService.getHomeContentStyleDTO(), "style")));
@@ -112,14 +109,6 @@ public class Home extends WebPage implements IHeaderContributor {
     protected void onBeforeRender() {
         super.onBeforeRender();
         userTrackingService.pageAccess(getClass());
-
-        // TODO this is ugly
-        remove("signinBox");
-        if (userService.isLoggedin()) {
-            add(new LoggedinBox());
-        } else {
-            add(new LoginBox());
-        }
     }
 
     @Override

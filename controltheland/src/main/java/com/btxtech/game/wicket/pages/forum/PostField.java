@@ -15,7 +15,7 @@ package com.btxtech.game.wicket.pages.forum;
 
 import com.btxtech.game.services.forum.ForumService;
 import com.btxtech.game.services.forum.Post;
-import com.btxtech.game.services.user.ArqEnum;
+import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.WebCommon;
 import java.text.SimpleDateFormat;
@@ -39,7 +39,7 @@ public class PostField extends Panel {
         super(id);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(WebCommon.DATE_TIME_FORMAT_STRING);
         add(new Label("date", simpleDateFormat.format(category.getDate())));
-        add(new Label("user", category.getUser().getName()));
+        add(new Label("user", category.getUser().getUsername()));
         add(new Label("title", category.getTitle()));
         add(new Label("content", category.getContent()).setEscapeModelStrings(false));
         Form form = new Form("deletePostForm") {
@@ -49,7 +49,7 @@ public class PostField extends Panel {
                 forumService.delete(category);
             }
         };
-        form.setVisible(userService.isAuthorized(ArqEnum.FORUM_ADMIN));
+        form.setVisible(WebCommon.isAuthorized(SecurityRoles.ROLE_FORUM_ADMINISTRATOR));
         add(form);
 
 

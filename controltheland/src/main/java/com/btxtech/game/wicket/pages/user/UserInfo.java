@@ -28,7 +28,7 @@ public class UserInfo extends BorderPanel {
     public UserInfo(String id, User user) {
         super(id);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(WebCommon.DATE_FORMAT_STRING);
-        add(new Label("titleUserName", user.getName()));
+        add(new Label("titleUserName", user.getUsername()));
         add(new Label("registered", simpleDateFormat.format(user.getRegisterDate())));
         add(new Label("lastLogin", simpleDateFormat.format(user.getLastLoginDate())));
     }

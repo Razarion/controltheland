@@ -16,7 +16,6 @@ package com.btxtech.game.wicket.pages.mgmt;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -33,42 +32,16 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Time: 16:30:59
  */
 public class UserStateEditor extends WebPage {
-    public static final String SESSION_ID_KEY = "sessionId";
     @SpringBean
     private UserService userService;
     @SpringBean
     private UserGuidanceService userGuidanceService;
     private Integer dbLevelId;
 
-    public UserStateEditor(PageParameters parameters) {
-        super(parameters);
+    public UserStateEditor(UserState userState) {
         add(new FeedbackPanel("msgs"));
-        final String sessionId = parameters.getString(SESSION_ID_KEY);
-        if (sessionId == null) {
-            throw new IllegalStateException("No session id");
-        }
 
-        final Form<UserState> form = new Form<UserState>("form", new CompoundPropertyModel<UserState>(new IModel<UserState>() {
-            private UserState userState;
-
-            @Override
-            public UserState getObject() {
-                if (userState == null) {
-                    userState = userService.getUserState(sessionId);
-                }
-                return userState;
-            }
-
-            @Override
-            public void setObject(UserState object) {
-                // Ignore
-            }
-
-            @Override
-            public void detach() {
-                userState = null;
-            }
-        }));
+        final Form<UserState> form = new Form<UserState>("form", new CompoundPropertyModel<UserState>(userState));
         add(form);
         form.add(new Label("currentAbstractLevel.name"));
         form.add(new Label("sessionId"));

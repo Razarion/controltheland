@@ -15,15 +15,17 @@ package com.btxtech.game.wicket.pages.forum;
 
 import com.btxtech.game.services.forum.ForumService;
 import com.btxtech.game.services.forum.SubForum;
-import com.btxtech.game.services.user.ArqEnum;
+import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
-import java.util.List;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import java.util.List;
 
 /**
  * User: beat
@@ -72,7 +74,7 @@ public class ForumView extends BasePage {
                 setResponsePage(new AddEntryForm(null, SubForum.class, false));
             }
         };
-        addSubForum.setVisible(userService.isAuthorized(ArqEnum.FORUM_ADMIN));
+        addSubForum.setVisible(WebCommon.isAuthorized(SecurityRoles.ROLE_FORUM_ADMINISTRATOR));
         add(addSubForum);
     }
 }

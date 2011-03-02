@@ -15,22 +15,17 @@ package com.btxtech.game.services.user.impl;
 
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
+import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.DbBotConfig;
+import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.market.ServerMarketService;
-import com.btxtech.game.services.user.Arq;
-import com.btxtech.game.services.user.ArqEnum;
+import com.btxtech.game.services.user.NotAuthorizedException;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -38,9 +33,20 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+
+import java.util.*;
 
 @Component("userService")
 public class UserServiceImpl implements UserService {
@@ -54,6 +60,9 @@ public class UserServiceImpl implements UserService {
     private UserTrackingService userTrackingService;
     @Autowired
     private UserGuidanceService userGuidanceService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     private HibernateTemplate hibernateTemplate;
     private Map<DbBotConfig, UserState> botStates = new HashMap<DbBotConfig, UserState>();
     private final Collection<UserState> userStates = new ArrayList<UserState>();
@@ -65,29 +74,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean login(String name, String password) {
-        /* TODO if (getUser().isLoggedIn()) {
-           throw new IllegalStateException("The user is already logged in: " + getUser());
-       }
-
-       User user = getUser(name);
-       if (user == null) {
-           return false;
-       }
-       if (user.getPassword().equals(password)) {
-           loginUser(user, false);
-           return true;
-       } else {
-           return false;
-       } */
-        return true;
+    public boolean login(String userName, String password) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, password));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            if (authentication.isAuthenticated()) {
+                loginUser((User) authentication.getPrincipal());
+                return true;
+            } else {
+                return false;
+            }
+        } catch (AuthenticationException authenticationException) {
+            log.error("", authenticationException);
+            return false;
+        }
     }
 
-    private void loginUser(User user, boolean keepGame) {
-        /* TODO if (keepGame) {
-            baseService.onUserRegistered();
-        }
-        userState.setLoggedIn();
+    private void loginUser(User user) {
         user.setLastLoginDate(new Date());
         save(user);
         try {
@@ -95,43 +98,89 @@ public class UserServiceImpl implements UserService {
         } catch (NoConnectionException e) {
             // Ignore
             userTrackingService.onUserLoggedIn(user, null);
-        } */
-    }
-
-    @Override
-    public User getUser() {
-        return null;
-        /* TODO User user = session.getUser();
-      if (user == null) {
-          user = new User();
-          userGuidanceService.setLevelForNewUser(user);
-          session.setUser(user);
-      }
-      return user; */
+        }
     }
 
     @Override
     public void logout() {
-        /* TODO if (!getUser().isLoggedIn()) {
-            throw new IllegalStateException("The user is not logged in: " + getUser());
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        SecurityContextHolder.getContext().setAuthentication(null);
+        if (user != null) {
+            userTrackingService.onUserLoggedOut(user);
         }
-
-        getUser().setLoggedIn(false);
-        session.setUser(null);*/
+        if (session.getUserState() != null) {
+            session.getUserState().setSessionId(null);
+        }
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
+    public void onSessionTimedOut(UserState userState, String sessionId) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        SecurityContextHolder.getContext().setAuthentication(null);
+        if (userState != null) {
+            userState.setSessionId(null);
+            baseService.onSessionTimedOut(userState);
+        }
+        if (user != null) {
+            userTrackingService.onUserLoggedOut(user);
+        }
+    }
+
+    @Override
+    public void createUserAndLoggin(String name, String password, String confirmPassword, String email, boolean keepGame) throws UserAlreadyExistsException, PasswordNotMatchException {
+        if (getUser() != null) {
+            throw new IllegalStateException("The user is already logged in: " + getUser());
+        }
+
+        if (getUser(name) != null) {
+            throw new UserAlreadyExistsException();
+        }
+
+        if (!password.equals(confirmPassword)) {
+            throw new PasswordNotMatchException();
+        }
+
+        User user = new User();
+        user.registerUser(name, password, email); // TODO encode password
+        save(user);
+        userTrackingService.onUserCreated(user);
+
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(name, password));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        if (keepGame) {
+            baseService.onUserRegistered();
+        }
+
+        loginUser(user);
+    }
+
+    @Override
+    public boolean isRegistered() {
+        return getUserState().isRegistered();
+    }
+
+    @Override
+    public User getUser() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
+        return getUser(username);
+    }
+
     @Override
     public User getUser(final String name) {
-        Object result = hibernateTemplate.execute(new HibernateCallback() {
-            public Object doInHibernate(Session session) {
+        List<User> users = hibernateTemplate.execute(new HibernateCallback<List<User>>() {
+            @SuppressWarnings("unchecked")
+            public List<User> doInHibernate(Session session) {
                 Criteria criteria = session.createCriteria(User.class);
                 criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
                 criteria.add(Restrictions.eq("name", name));
                 return criteria.list();
             }
         });
-        List<User> users = (List<User>) result;
         if (users == null || users.isEmpty()) {
             return null;
         } else {
@@ -158,52 +207,48 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void createUserAndLoggin(String name, String password, String confirmPassword, String email, boolean keepGame) throws UserAlreadyExistsException, PasswordNotMatchException {
-        /* TODO User user = getUser();
-        if(user.isLoggedIn()) {
-            throw new IllegalStateException("The user is already logged in: " + getUser());
+    public Collection<GrantedAuthority> getAuthorities() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return Collections.emptyList();
         }
-
-        if (getUser(name) != null) {
-            throw new UserAlreadyExistsException();
-        }
-
-        if (!password.equals(confirmPassword)) {
-            throw new PasswordNotMatchException();
-        }
-        user.registerUser(name, password, email);
-        userTrackingService.onUserCreated(user);
-        loginUser(user, keepGame);
-        save(user);*/
+        return authentication.getAuthorities();
     }
 
     @Override
-    public boolean isAuthorized(ArqEnum arq) {
-        // TODO  return getUser().hasArq(getArq(arq));
+    public boolean isAuthorized(String role) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return false;
+        }
+        for (GrantedAuthority grantedAuthority : authentication.getAuthorities()) {
+            if (grantedAuthority.getAuthority().equals(role)) {
+                return true;
+            }
+        }
         return false;
     }
 
     @Override
-    public void checkAuthorized(ArqEnum arq) {
-        /* TODO if (!isAuthorized(arq)) {
-          throw new AccessDeniedException(session.getUser(), arq);
-      }  */
+    public void checkAuthorized(String role) {
+        if (!isAuthorized(role)) {
+            throw new NotAuthorizedException();
+        }
     }
 
-    @Override
-    public Arq getArq(ArqEnum arq) {
-        return (Arq) hibernateTemplate.get(Arq.class, arq.name());
-    }
-
-    @Override
-    public boolean isLoggedin() {
-        return getUserState().isLoggedIn();
-    }
 
     @Override
     public User getUser(UserState userState) {
-        return null;
-        // TODO
+        return userState.getUser();
+    }
+
+    @Override
+    public Base getSimpleBase(User user) { // TODO used?
+        UserState userState = getUserState(user);
+        if (userState == null) {
+            return null;
+        }
+        return userState.getBase();
     }
 
     @Override
@@ -221,6 +266,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserState getUserState(User user) {
+        synchronized (userStates) {
+            for (UserState userState : userStates) {
+                if (user.equals(userState.getUser())) {
+                    return userState;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
     public UserState getUserState(DbBotConfig botConfig) {
         UserState userState = botStates.get(botConfig);
         if (userState == null) {
@@ -229,30 +286,6 @@ public class UserServiceImpl implements UserService {
             botStates.put(botConfig, userState);
         }
         return userState;
-    }
-
-    @Override
-    public UserState getUserState(String sessionId) {
-        synchronized (userStates) {
-            for (UserState userState : userStates) {
-                if (sessionId.equals(userState.getSessionId())) {
-                    return userState;
-                }
-            }
-        }
-        throw new IllegalArgumentException("No user state for session id:" + sessionId + " The session was may closed");
-    }
-
-    @Override
-    public SyncBaseObject getUserState(User user) {
-        // TODO
-        return null;
-    }
-
-    @Override
-    public void onSessionTimedOut(UserState userState, String sessionId) {
-        // TODO logout
-        baseService.onSessionTimedOut(userState);
     }
 
     @Override
