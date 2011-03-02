@@ -13,18 +13,9 @@
 
 package com.btxtech.game.services.forum.impl;
 
-import com.btxtech.game.services.forum.AbstractForumEntry;
-import com.btxtech.game.services.forum.Category;
-import com.btxtech.game.services.forum.ForumService;
-import com.btxtech.game.services.forum.ForumThread;
-import com.btxtech.game.services.forum.Post;
-import com.btxtech.game.services.forum.SubForum;
-import com.btxtech.game.services.user.ArqEnum;
+import com.btxtech.game.services.forum.*;
+import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.UserService;
-import java.sql.SQLException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -36,7 +27,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 /**
  * User: beat
@@ -57,9 +55,9 @@ public class ForumServiceImpl implements ForumService {
 
     @Override
     public List<SubForum> getSubForums() {
-        return hibernateTemplate.executeFind(new HibernateCallback() {
+        return hibernateTemplate.executeFind(new HibernateCallback<List<SubForum>>() {
             @Override
-            public Object doInHibernate(Session session) throws HibernateException, SQLException {
+            public List<SubForum> doInHibernate(Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(SubForum.class);
                 criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
                 return criteria.list();
@@ -69,7 +67,7 @@ public class ForumServiceImpl implements ForumService {
 
     @Override
     public Category getCategory(int categoryId) {
-        return (Category) hibernateTemplate.get(Category.class, categoryId);
+        return hibernateTemplate.get(Category.class, categoryId);
     }
 
     @Override
@@ -96,7 +94,7 @@ public class ForumServiceImpl implements ForumService {
 
     @Override
     public ForumThread getForumThread(int forumThreadId) {
-        return (ForumThread) hibernateTemplate.get(ForumThread.class, forumThreadId);
+        return hibernateTemplate.get(ForumThread.class, forumThreadId);
     }
 
     @Override
@@ -142,76 +140,85 @@ public class ForumServiceImpl implements ForumService {
     }
 
     @Override
-    public void insertForumEntry(final int parentId, final AbstractForumEntry abstractForumEntry) {
-        abstractForumEntry.setUser(userService.getUser());
-        if (abstractForumEntry instanceof SubForum) {
-            userService.checkAuthorized(ArqEnum.FORUM_ADMIN);
-            abstractForumEntry.setDate();
-            hibernateTemplate.save(abstractForumEntry);
-        } else if (abstractForumEntry instanceof Category) {
-            userService.checkAuthorized(ArqEnum.FORUM_ADMIN);
-            hibernateTemplate.execute(new HibernateCallback() {
-                @Override
-                public Object doInHibernate(Session session) throws HibernateException, SQLException {
-                    Criteria criteria = session.createCriteria(SubForum.class);
-                    criteria.add(Restrictions.eq("id", parentId));
-                    List<SubForum> subForums = (List<SubForum>) criteria.list();
-                    if (subForums == null || subForums.isEmpty()) {
-                        throw new IllegalArgumentException("SubForum not found: " + parentId);
-                    }
-                    Category category = (Category) abstractForumEntry;
-                    SubForum subForum = subForums.get(0);
-                    subForum.addCategory(category);
-                    session.saveOrUpdate(subForum);
-                    return null;
+    @Secured(SecurityRoles.ROLE_FORUM_ADMINISTRATOR)
+    @Transactional
+    public void insertSubForumEntry(final SubForum subForum) {
+        subForum.setUser(userService.getUser());
+        subForum.setDate();
+        hibernateTemplate.save(subForum);
+    }
+
+    @Override
+    @Secured(SecurityRoles.ROLE_FORUM_ADMINISTRATOR)
+    @Transactional
+    public void insertCategoryEntry(final int parentId, final Category category) {
+        category.setUser(userService.getUser());
+        hibernateTemplate.execute(new HibernateCallback<Void>() {
+            @Override
+            public Void doInHibernate(Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(SubForum.class);
+                criteria.add(Restrictions.eq("id", parentId));
+                List<SubForum> subForums = (List<SubForum>) criteria.list();
+                if (subForums == null || subForums.isEmpty()) {
+                    throw new IllegalArgumentException("SubForum not found: " + parentId);
                 }
-            });
-        } else if (abstractForumEntry instanceof ForumThread) {
-            userService.checkAuthorized(ArqEnum.FORUM_POST);
-            hibernateTemplate.execute(new HibernateCallback() {
-                @Override
-                public Object doInHibernate(Session session) throws HibernateException, SQLException {
-                    Criteria criteria = session.createCriteria(Category.class);
-                    criteria.add(Restrictions.eq("id", parentId));
-                    List<Category> categories = (List<Category>) criteria.list();
-                    if (categories == null || categories.isEmpty()) {
-                        throw new IllegalArgumentException("Category not found: " + parentId);
-                    }
-                    ForumThread forumThread = (ForumThread) abstractForumEntry;
-                    String content = forumThread.getContent();
-                    forumThread.setContent("");
-                    Post post = new Post();
-                    post.setTitle(forumThread.getTitle());
-                    post.setContent(content);
-                    post.setUser(abstractForumEntry.getUser());
-                    forumThread.addPost(post);
-                    Category category = categories.get(0);
-                    category.addForumThread(forumThread);
-                    session.saveOrUpdate(category);
-                    return null;
+                SubForum subForum = subForums.get(0);
+                subForum.addCategory(category);
+                session.saveOrUpdate(subForum);
+                return null;
+            }
+        });
+    }
+
+    @Override
+    @Secured(SecurityRoles.ROLE_USER)
+    @Transactional
+    public void insertForumThreadEntry(final int parentId, final ForumThread forumThread) {
+        forumThread.setUser(userService.getUser());
+        hibernateTemplate.execute(new HibernateCallback<Void>() {
+            @Override
+            public Void doInHibernate(Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(Category.class);
+                criteria.add(Restrictions.eq("id", parentId));
+                List<Category> categories = (List<Category>) criteria.list();
+                if (categories == null || categories.isEmpty()) {
+                    throw new IllegalArgumentException("Category not found: " + parentId);
                 }
-            });
-        } else if (abstractForumEntry instanceof Post) {
-            userService.checkAuthorized(ArqEnum.FORUM_POST);
-            hibernateTemplate.execute(new HibernateCallback() {
-                @Override
-                public Object doInHibernate(Session session) throws HibernateException, SQLException {
-                    Criteria criteria = session.createCriteria(ForumThread.class);
-                    criteria.add(Restrictions.eq("id", parentId));
-                    List<ForumThread> forumThreads = (List<ForumThread>) criteria.list();
-                    if (forumThreads == null || forumThreads.isEmpty()) {
-                        throw new IllegalArgumentException("ForumThread not found: " + parentId);
-                    }
-                    Post post = (Post) abstractForumEntry;
-                    ForumThread forumThread = forumThreads.get(0);
-                    forumThread.addPost(post);
-                    session.saveOrUpdate(forumThread);
-                    return null;
+                String content = forumThread.getContent();
+                forumThread.setContent("");
+                Post post = new Post();
+                post.setTitle(forumThread.getTitle());
+                post.setContent(content);
+                post.setUser(forumThread.getUser());
+                forumThread.addPost(post);
+                Category category = categories.get(0);
+                category.addForumThread(forumThread);
+                session.saveOrUpdate(category);
+                return null;
+            }
+        });
+    }
+
+    @Override
+    @Secured(SecurityRoles.ROLE_USER)
+    @Transactional
+    public void insertPostEntry(final int parentId, final Post post) {
+        post.setUser(userService.getUser());        
+        hibernateTemplate.execute(new HibernateCallback<Void>() {
+            @Override
+            public Void doInHibernate(Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(ForumThread.class);
+                criteria.add(Restrictions.eq("id", parentId));
+                List<ForumThread> forumThreads = (List<ForumThread>) criteria.list();
+                if (forumThreads == null || forumThreads.isEmpty()) {
+                    throw new IllegalArgumentException("ForumThread not found: " + parentId);
                 }
-            });
-        } else {
-            throw new IllegalArgumentException("Unknown abstractForumEntry: " + abstractForumEntry);
-        }
+                ForumThread forumThread = forumThreads.get(0);
+                forumThread.addPost(post);
+                session.saveOrUpdate(forumThread);
+                return null;
+            }
+        });
     }
 
     private Date getLatestPost(Category category) {
@@ -237,8 +244,9 @@ public class ForumServiceImpl implements ForumService {
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_FORUM_ADMINISTRATOR)
+    @Transactional
     public void delete(AbstractForumEntry abstractForumEntry) {
-        userService.checkAuthorized(ArqEnum.FORUM_ADMIN);
         try {
             hibernateTemplate.delete(abstractForumEntry);
         } catch (DataAccessException e) {

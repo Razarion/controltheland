@@ -29,7 +29,6 @@
         <mapping class="com.btxtech.game.services.terrain.DbSurfaceImage"/>
         <mapping class="com.btxtech.game.services.terrain.DbTerrainSetting"/>
         <mapping class="com.btxtech.game.services.user.User"/>
-        <mapping class="com.btxtech.game.services.user.Arq"/>
         <mapping class="com.btxtech.game.services.base.BaseColor"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.SavedQuery"/>
         <mapping class="com.btxtech.game.services.mgmt.StartupData"/>

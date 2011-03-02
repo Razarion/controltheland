@@ -16,8 +16,9 @@ package com.btxtech.game.wicket.pages.forum;
 import com.btxtech.game.services.forum.ForumService;
 import com.btxtech.game.services.forum.ForumThread;
 import com.btxtech.game.services.forum.Post;
-import com.btxtech.game.services.user.ArqEnum;
+import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import java.util.List;
 import org.apache.wicket.markup.html.form.Form;
@@ -76,7 +77,7 @@ public class ForumThreadView extends BasePage {
                 setResponsePage(new AddEntryForm(forumThread, Post.class, true));
             }
         };
-        addPostForm.setVisible(userService.isAuthorized(ArqEnum.FORUM_POST));
+        addPostForm.setVisible(WebCommon.isAuthorized(SecurityRoles.ROLE_USER));
         add(addPostForm);
 
     }

@@ -16,8 +16,7 @@ package com.btxtech.game.wicket.pages.forum;
 import com.btxtech.game.services.forum.Category;
 import com.btxtech.game.services.forum.ForumService;
 import com.btxtech.game.services.forum.ForumThread;
-import com.btxtech.game.services.forum.Post;
-import com.btxtech.game.services.user.ArqEnum;
+import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
@@ -91,7 +90,7 @@ public class CategoryView extends BasePage {
                 setResponsePage(new AddEntryForm(category, ForumThread.class, true));
             }
         };
-        addForumThread.setVisible(userService.isAuthorized(ArqEnum.FORUM_POST));
+        addForumThread.setVisible(WebCommon.isAuthorized(SecurityRoles.ROLE_USER));
         add(addForumThread);
     }
 }

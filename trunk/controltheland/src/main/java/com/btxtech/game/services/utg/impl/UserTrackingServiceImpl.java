@@ -15,17 +15,8 @@ package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.UserMessage;
-import com.btxtech.game.jsre.common.EventTrackingItem;
-import com.btxtech.game.jsre.common.EventTrackingStart;
-import com.btxtech.game.jsre.common.ScrollTrackingItem;
-import com.btxtech.game.jsre.common.SelectionTrackingItem;
-import com.btxtech.game.jsre.common.StartupTaskInfo;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
+import com.btxtech.game.jsre.common.*;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.*;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
@@ -34,40 +25,9 @@ import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.utg.BrowserDetails;
-import com.btxtech.game.services.utg.DbAbstractLevel;
-import com.btxtech.game.services.utg.DbCloseWindow;
-import com.btxtech.game.services.utg.DbCommand;
-import com.btxtech.game.services.utg.DbEventTrackingItem;
-import com.btxtech.game.services.utg.DbEventTrackingStart;
-import com.btxtech.game.services.utg.DbLevelPromotion;
-import com.btxtech.game.services.utg.DbScrollTrackingItem;
-import com.btxtech.game.services.utg.DbSelectionTrackingItem;
-import com.btxtech.game.services.utg.DbStartup;
-import com.btxtech.game.services.utg.DbStartupTask;
-import com.btxtech.game.services.utg.DbTutorialProgress;
-import com.btxtech.game.services.utg.DbUserMessage;
-import com.btxtech.game.services.utg.GameTrackingInfo;
-import com.btxtech.game.services.utg.LifecycleTrackingInfo;
-import com.btxtech.game.services.utg.PageAccess;
-import com.btxtech.game.services.utg.ServerConditionService;
-import com.btxtech.game.services.utg.TutorialTrackingInfo;
-import com.btxtech.game.services.utg.UserCommand;
-import com.btxtech.game.services.utg.UserGuidanceService;
-import com.btxtech.game.services.utg.UserHistory;
-import com.btxtech.game.services.utg.UserTrackingFilter;
-import com.btxtech.game.services.utg.UserTrackingService;
-import com.btxtech.game.services.utg.VisitorDetailInfo;
-import com.btxtech.game.services.utg.VisitorInfo;
+import com.btxtech.game.services.utg.*;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -80,6 +40,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
+
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * User: beat
@@ -393,14 +356,14 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public void onUserLoggedOut(UserState user) {
-       /* TODO try {
+    public void onUserLoggedOut(User user) {
+        try {
             UserHistory userHistory = new UserHistory(user);
             userHistory.setLoggedOut();
             hibernateTemplate.saveOrUpdate(userHistory);
         } catch (Throwable t) {
             log.error("", t);
-        }*/
+        }
     }
 
     @Override
@@ -619,7 +582,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         DbStartup dbStartup = new DbStartup(totalTime, infos.iterator().next().getStartTime(), userGuidanceService.getDbAbstractLevel(), session.getSessionId());
         for (StartupTaskInfo info : infos) {
             dbStartup.addGameStartupTasks(new DbStartupTask(info, dbStartup));
-            if(info.getError() != null) {
+            if (info.getError() != null) {
                 log.debug("Startup failed: " + info.getTaskEnum().getStartupTaskEnumHtmlHelper().getNiceText() + " Error: " + info.getError());
             }
         }

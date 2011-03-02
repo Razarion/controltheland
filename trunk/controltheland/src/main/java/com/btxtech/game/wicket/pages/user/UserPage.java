@@ -75,8 +75,8 @@ public class UserPage extends BasePage {
             viewUser = userService.getUser(viewUserName);
         }
 
-        /* TODO User loggedinUser = userService.getUser();
-        if (loggedinUser.isLoggedIn()) {
+        User loggedinUser = userService.getUser();
+        if (loggedinUser != null) {
             if (viewUser == null) {
                 // Clicks on mySite from menu
                 canEditSite = true;
@@ -88,13 +88,13 @@ public class UserPage extends BasePage {
         }
         if (viewUser == null) {
             throw new IllegalArgumentException("No such viewUser: " + viewUserName);
-        }*/
+        }
     }
 
     @Override
     public String getAdditionalPageInfo() {
         if (viewUser != null) {
-            return viewUser.getName();
+            return viewUser.getUsername();
         } else {
             return "???";
         }

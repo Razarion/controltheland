@@ -16,8 +16,9 @@ package com.btxtech.game.wicket.pages.forum;
 import com.btxtech.game.services.forum.Category;
 import com.btxtech.game.services.forum.ForumService;
 import com.btxtech.game.services.forum.SubForum;
-import com.btxtech.game.services.user.ArqEnum;
+import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.wicket.WebCommon;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -53,7 +54,7 @@ public class SubForumField extends Panel {
             }
         });
 
-        form.setVisible(userService.isAuthorized(ArqEnum.FORUM_ADMIN));
+        form.setVisible(WebCommon.isAuthorized(SecurityRoles.ROLE_FORUM_ADMINISTRATOR));
         add(form);
     }
 }

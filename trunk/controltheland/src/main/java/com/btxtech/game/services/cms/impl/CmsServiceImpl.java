@@ -17,6 +17,7 @@ import com.btxtech.game.services.cms.CmsContentStyleDTO;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbCmsHomeLayout;
 import com.btxtech.game.services.cms.DbCmsHomeText;
+import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import java.sql.SQLException;
 import java.util.List;
@@ -31,6 +32,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 
 /**
@@ -111,21 +113,25 @@ public class CmsServiceImpl implements CmsService {
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void removeDbCmsHomeText(DbCmsHomeText dbCmsHomeText) {
         hibernateTemplate.delete(dbCmsHomeText);
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveDbCmsHomeText(DbCmsHomeText dbCmsHomeText) {
         hibernateTemplate.saveOrUpdate(dbCmsHomeText);
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveDbCmsHomeTexts(List<DbCmsHomeText> dbCmsHomeTexts) {
         hibernateTemplate.saveOrUpdateAll(dbCmsHomeTexts);
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void createDbCmsHomeText() {
         hibernateTemplate.save(new DbCmsHomeText());
     }
@@ -137,21 +143,25 @@ public class CmsServiceImpl implements CmsService {
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void removeDbCmsHomeLayout(DbCmsHomeLayout dbCmsHomeLayout) {
         hibernateTemplate.delete(dbCmsHomeLayout);
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveDbCmsHomeLayout(DbCmsHomeLayout dbCmsHomeLayout) {
         hibernateTemplate.saveOrUpdate(dbCmsHomeLayout);
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveDbCmsHomeLayouts(List<DbCmsHomeLayout> dbCmsHomeLayouts) {
         hibernateTemplate.saveOrUpdateAll(dbCmsHomeLayouts);
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void createDbCmsHomeLayout() {
         hibernateTemplate.save(new DbCmsHomeLayout());
     }

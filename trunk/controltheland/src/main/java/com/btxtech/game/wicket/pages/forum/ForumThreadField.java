@@ -15,8 +15,11 @@ package com.btxtech.game.wicket.pages.forum;
 
 import com.btxtech.game.services.forum.ForumService;
 import com.btxtech.game.services.forum.ForumThread;
-import com.btxtech.game.services.user.ArqEnum;
+import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.wicket.WebCommon;
+import org.apache.wicket.authorization.Action;
+import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
@@ -48,7 +51,7 @@ public class ForumThreadField extends Panel {
                 forumService.delete(forumThread);
             }
         };
-        form.setVisible(userService.isAuthorized(ArqEnum.FORUM_ADMIN));
+        form.setVisible(WebCommon.isAuthorized(SecurityRoles.ROLE_FORUM_ADMINISTRATOR));
         add(form);
 
     }

@@ -25,13 +25,17 @@
     <tr>
         <th bgcolor="#dadada">Session Id</th>
         <th bgcolor="#dadada">Level</th>
-        <th bgcolor="#dadada">Details</th>
+        <th bgcolor="#dadada">Online</th>
+        <th bgcolor="#dadada">Registered</th>
+        <th bgcolor="#dadada">Edit</th>
     </tr>
     <tr wicket:id="userState">
         <td wicket:id="sessionId"/>
         <td wicket:id="currentAbstractLevel.name"/>
-        <td align="right">
-            <a href="" wicket:id="userStateLink">Details</a>
+        <td wicket:id="online"/>
+        <td wicket:id="registered"/>
+        <td valign="center">
+            <input type="submit" value="Edit" wicket:id="edit"/>
         </td>
     </tr>
 </table>

@@ -16,16 +16,19 @@ package com.btxtech.game.services.user;
 
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
+import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.bot.DbBotConfig;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetailsService;
+
 import java.util.Collection;
 import java.util.List;
 
-public interface UserService {
+public interface UserService extends UserDetailsService {
 
-    boolean login(String name, String password);
+    boolean login(String userName, String password);
 
-    boolean isLoggedin();
+    boolean isRegistered();
 
     User getUser();
 
@@ -39,21 +42,21 @@ public interface UserService {
 
     void createUserAndLoggin(String name, String password, String confirmPassword, String email, boolean keepGame) throws UserAlreadyExistsException, PasswordNotMatchException;
 
-    boolean isAuthorized(ArqEnum arq);
-
-    void checkAuthorized(ArqEnum arq);
-
-    Arq getArq(ArqEnum arq);
-
     User getUser(UserState userState);
+
+    Collection<GrantedAuthority> getAuthorities();
+
+    boolean isAuthorized(String role);
+
+    void checkAuthorized(String role);
 
     UserState getUserState();
 
+    UserState getUserState(User user);
+
     UserState getUserState(DbBotConfig botConfig);
 
-    UserState getUserState(String sessionId);
-
-    SyncBaseObject getUserState(User user);
+    Base getSimpleBase(User user);
 
     void onSessionTimedOut(UserState userState, String sessionId);
 

@@ -51,7 +51,7 @@ public interface UserTrackingService {
 
     void onUserLoggedIn(User user, Base base);
 
-    void onUserLoggedOut(UserState user);
+    void onUserLoggedOut(User user);
 
     void onBaseCreated(User user, Base base);
 

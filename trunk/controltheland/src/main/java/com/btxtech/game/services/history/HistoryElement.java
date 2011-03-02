@@ -62,14 +62,14 @@ public class HistoryElement implements Serializable {
         timeStamp = new Date();
         timeStampMs = timeStamp.getTime();
         this.type = type;
-        this.actorUserName = actorUser.getName();
+        this.actorUserName = actorUser.getUsername();
         this.actorBaseName = actorBaseName;
         if (actorItem != null) {
             actorItemName = actorItem.getBaseItemType().getName();
         }
         this.targetBaseName = targetBase;
         if(targetUser != null) {
-           this.targetUserName = targetUser.getName();
+           this.targetUserName = targetUser.getUsername();
         }
         if (targetItem != null) {
             targetItemName = targetItem.getBaseItemType().getName();

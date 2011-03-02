@@ -16,13 +16,9 @@ package com.btxtech.game.services.messenger.impl;
 import com.btxtech.game.services.messenger.InvalidFieldException;
 import com.btxtech.game.services.messenger.Mail;
 import com.btxtech.game.services.messenger.MessengerService;
+import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.StringTokenizer;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -33,7 +29,14 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * User: beat
@@ -52,23 +55,24 @@ public class MessengerServiceImpl implements MessengerService {
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_USER)
     public int getUnreadMails() {
         final User user = userService.getUser();
-        List<Integer> list = (List<Integer>) hibernateTemplate.execute(new HibernateCallback() {
+        return hibernateTemplate.execute(new HibernateCallback<Integer>() {
             @Override
-            public Object doInHibernate(Session session) throws HibernateException, SQLException {
+            public Integer doInHibernate(Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(Mail.class);
                 criteria.add(Restrictions.eq("user", user));
                 criteria.add(Restrictions.eq("read", false));
                 criteria.setProjection(Projections.rowCount());
                 criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                return criteria.list();
+                return (int) ((Number) criteria.list().get(0)).longValue();
             }
         });
-        return list.get(0);
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_USER)
     public List<Mail> getMails() {
         final User user = userService.getUser();
         return (List<Mail>) hibernateTemplate.executeFind(new HibernateCallback() {
@@ -84,6 +88,7 @@ public class MessengerServiceImpl implements MessengerService {
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_USER)
     public void sendMail(String to, String subject, String body) throws InvalidFieldException {
         final User fromUser = userService.getUser();
         if (to == null || to.isEmpty()) {
@@ -98,6 +103,7 @@ public class MessengerServiceImpl implements MessengerService {
 
         List<User> users;
         if (to.equalsIgnoreCase(ALL_USERS)) {
+            userService.checkAuthorized(SecurityRoles.ROLE_ADMINISTRATOR);
             users = userService.getAllUsers();
         } else {
             users = getUsers(to);
@@ -127,7 +133,7 @@ public class MessengerServiceImpl implements MessengerService {
         Mail mail = new Mail();
         mail.setSubject(subject);
         mail.setBody(body);
-        mail.setFromUser(from.getName());
+        mail.setFromUser(from.getUsername());
         mail.setRead(false);
         mail.setToUsers(toString);
         mail.setSent(new Date());

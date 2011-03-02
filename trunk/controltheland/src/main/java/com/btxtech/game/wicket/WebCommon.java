@@ -13,6 +13,8 @@
 
 package com.btxtech.game.wicket;
 
+import org.apache.wicket.authentication.AuthenticatedWebSession;
+
 import java.util.Date;
 import java.util.UUID;
 import javax.servlet.http.Cookie;
@@ -69,6 +71,11 @@ public class WebCommon {
         Cookie cookie = new Cookie(COOKIE_ID, UUID.randomUUID().toString().toUpperCase());
         cookie.setMaxAge(Integer.MAX_VALUE);
         response.addCookie(cookie);
+    }
+
+    public static boolean isAuthorized(String role) {
+        AuthenticatedWebSession session = AuthenticatedWebSession.get();
+        return session.getRoles().hasRole(role);
     }
 
 }

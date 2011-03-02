@@ -13,39 +13,41 @@
 
 package com.btxtech.game.wicket.pages.user;
 
-import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.wicket.pages.Info;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.authentication.AuthenticatedWebSession;
+import org.apache.wicket.authorization.Action;
+import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
  * User: beat
  * Date: 18.01.2009
  * Time: 12:37:58
  */
+@AuthorizeAction(action = Action.RENDER, deny = SecurityRoles.ROLE_USER)
 public class LoginBox extends Panel {
     private String loginName = "User name";
     private String loginPassowrd = "12345678";
-    @SpringBean
-    private UserService userService;
 
-    public LoginBox() {
-        super("signinBox");
+    public LoginBox(String id) {
+        super(id);
         Form form = new Form<LoginBox>("loginForm", new CompoundPropertyModel<LoginBox>(this)) {
             @Override
             protected void onSubmit() {
-                if (!userService.login(loginName, loginPassowrd)) {
+                AuthenticatedWebSession session = AuthenticatedWebSession.get();
+                if (session.signIn(loginName, loginPassowrd)) {
+                    setResponsePage(UserPage.class);
+                } else {
                     PageParameters parameters = new PageParameters();
                     parameters.add(Info.KEY_MESSAGE, "Login failed. Please try again");
                     setResponsePage(Info.class, parameters);
-                } else {
-                    setResponsePage(UserPage.class);
                 }
             }
         };

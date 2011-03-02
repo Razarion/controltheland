@@ -16,14 +16,15 @@ package com.btxtech.game.wicket.pages.mgmt;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.wicket.uiservices.ListProvider;
-import java.util.List;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import java.util.List;
 
 /**
  * User: beat
@@ -49,9 +50,15 @@ public class UserStateTable extends WebPage {
             protected void populateItem(final Item<UserState> item) {
                 item.add(new Label("currentAbstractLevel.name"));
                 item.add(new Label("sessionId"));
-                BookmarkablePageLink link = new BookmarkablePageLink<UserStateEditor>("userStateLink", UserStateEditor.class);
-                link.setParameter(UserStateEditor.SESSION_ID_KEY, item.getModelObject().getSessionId());
-                item.add(link);
+                item.add(new Label("online"));
+                item.add(new Label("registered"));
+                item.add(new Button("edit") {
+
+                    @Override
+                    public void onSubmit() {
+                        setResponsePage(new UserStateEditor(item.getModelObject()));
+                    }
+                });
             }
         });
     }

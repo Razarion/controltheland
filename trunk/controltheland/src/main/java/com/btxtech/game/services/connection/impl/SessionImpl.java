@@ -79,7 +79,6 @@ public class SessionImpl implements Session, Serializable {
     @PreDestroy
     public void destroy() {
         if (userState != null) {
-            userTrackingService.onUserLoggedOut(userState);
             userService.onSessionTimedOut(userState, sessionId);
         }
     }

@@ -13,9 +13,6 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.cms.DbCmsHomeText;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.uiservices.ListProvider;
@@ -23,15 +20,9 @@ import java.util.List;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -61,7 +52,7 @@ public class UserTable extends WebPage {
 
                     @Override
                     public void onSubmit() {
-                        setResponsePage(new UserEditor(item.getModelObject().getName()));
+                        setResponsePage(new UserEditor(item.getModelObject().getUsername()));
                     }
                 });
             }

@@ -23,8 +23,6 @@ import com.btxtech.game.wicket.pages.statistics.StatisticsPage;
 import com.btxtech.game.wicket.pages.user.LoggedinBox;
 import com.btxtech.game.wicket.pages.user.LoginBox;
 import com.btxtech.game.wicket.pages.user.UserListPage;
-import java.io.Serializable;
-import java.util.ArrayList;
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
@@ -36,6 +34,9 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * User: beat
@@ -55,12 +56,8 @@ public class BasePage extends WebPage implements IHeaderContributor {
 
     public BasePage(PageParameters pageParameters) {
         super(pageParameters);
-        // TODO this is ugly
-        if (userService.isLoggedin()) {
-            add(new LoggedinBox());
-        } else {
-            add(new LoginBox());
-        }
+        add(new LoggedinBox("loggedinBox"));
+        add(new LoginBox("loginBox"));
 
         ArrayList<MenuItem> menuItems = new ArrayList<MenuItem>();
         menuItems.add(new MenuItem("home", Home.class, this));
@@ -97,14 +94,6 @@ public class BasePage extends WebPage implements IHeaderContributor {
     @Override
     protected void onBeforeRender() {
         userTrackingService.pageAccess(this);
-
-        // TODO this is ugly
-        remove("signinBox");
-        if (userService.isLoggedin()) {
-            add(new LoggedinBox());
-        } else {
-            add(new LoginBox());
-        }
         super.onBeforeRender();
     }
 
