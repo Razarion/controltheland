@@ -75,9 +75,9 @@ public class MessengerServiceImpl implements MessengerService {
     @Secured(SecurityRoles.ROLE_USER)
     public List<Mail> getMails() {
         final User user = userService.getUser();
-        return (List<Mail>) hibernateTemplate.executeFind(new HibernateCallback() {
+        return hibernateTemplate.execute(new HibernateCallback<List<Mail>>() {
             @Override
-            public Object doInHibernate(Session session) throws HibernateException, SQLException {
+            public List<Mail> doInHibernate(Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(Mail.class);
                 criteria.add(Restrictions.eq("user", user));
                 criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
@@ -92,13 +92,13 @@ public class MessengerServiceImpl implements MessengerService {
     public void sendMail(String to, String subject, String body) throws InvalidFieldException {
         final User fromUser = userService.getUser();
         if (to == null || to.isEmpty()) {
-            throw new InvalidFieldException("To no allowed to be empty");
+            throw new InvalidFieldException("To not allowed to be empty");
         }
         if (subject == null || subject.isEmpty()) {
-            throw new InvalidFieldException("Subject no allowed to be empty");
+            throw new InvalidFieldException("Subject not allowed to be empty");
         }
         if (body == null || body.isEmpty()) {
-            throw new InvalidFieldException("Body no allowed to be empty");
+            throw new InvalidFieldException("Body not allowed to be empty");
         }
 
         List<User> users;
