@@ -132,7 +132,7 @@ public class TutorialServiceImpl implements TutorialService, ResourceHintManager
 
     @Override
     public DbStepConfig getDbStepConfig(int dbStepConfigId) {
-        return (DbStepConfig) hibernateTemplate.get(DbStepConfig.class, dbStepConfigId);
+        return hibernateTemplate.get(DbStepConfig.class, dbStepConfigId);
     }
 
     @Override
@@ -143,12 +143,12 @@ public class TutorialServiceImpl implements TutorialService, ResourceHintManager
 
     @Override
     public DbTaskConfig getDbTaskConfig(int dbTaskConfigId) {
-        return (DbTaskConfig) hibernateTemplate.get(DbTaskConfig.class, dbTaskConfigId);
+        return hibernateTemplate.get(DbTaskConfig.class, dbTaskConfigId);
     }
 
     @Override
     public DbTutorialConfig getDbTutorialConfig(int dbTutorialConfigId) {
-        return (DbTutorialConfig) hibernateTemplate.get(DbTutorialConfig.class, dbTutorialConfigId);
+        return hibernateTemplate.get(DbTutorialConfig.class, dbTutorialConfigId);
     }
 
     @Override

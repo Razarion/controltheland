@@ -116,6 +116,10 @@ public class TaskEditor extends WebPage {
 
             @Override
             public void setObject(FileUpload fileUpload) {
+                if(fileUpload == null) {
+                    // I don't know why this is null
+                    return;
+                }
                 ((DbTaskConfig)form.getDefaultModelObject()).setFinishImageData(fileUpload.getBytes());
                 ((DbTaskConfig)form.getDefaultModelObject()).setFinishedImageContentType(fileUpload.getContentType());
             }
