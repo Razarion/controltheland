@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ImageSizeCallback;
@@ -51,6 +52,7 @@ public class TutorialGui {
                 int top = (TerrainView.getInstance().getViewHeight() - height) / 2;
                 if (MapWindow.getAbsolutePanel().getWidgetIndex(image) == -1) {
                     MapWindow.getAbsolutePanel().add(image, left, top);
+                    image.getElement().getStyle().setZIndex(Constants.Z_INDEX_SPEECH_BUBBLE);
                 }
             }
         });

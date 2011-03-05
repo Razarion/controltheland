@@ -162,7 +162,6 @@ public class ClientRunner {
             for (StartupProgressListener listener : listeners) {
                 listener.onStartupFailed(startupTaskInfos, totalTime);
             }
-            // TODO Connection.getInstance().sendStartupFinished(createTaskInfo(abstractStartupTask, error), totalTime);
         }
         cleanup();
     }
