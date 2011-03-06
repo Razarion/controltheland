@@ -20,9 +20,9 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosi
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.utg.DbAbstractLevel;
+
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  * User: beat
@@ -37,8 +37,6 @@ public interface TerrainService extends AbstractTerrainService {
     int getDbTerrainImagesBitSize();
 
     void activateTerrain();
-
-    void saveTerrainImages(Set<DbTerrainImage> newDbTerrainImages, Set<DbTerrainImage> updatedDbTerrainImages, Set<DbTerrainImage> deletedDbTerrainImages, List<DbSurfaceImage> dbSurfaceImages);    
 
     void saveAndActivateTerrain(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int terrainId);
 

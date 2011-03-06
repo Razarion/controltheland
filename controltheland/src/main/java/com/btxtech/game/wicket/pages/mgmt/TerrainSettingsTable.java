@@ -78,6 +78,11 @@ public class TerrainSettingsTable extends WebPage {
                 item.add(new BookmarkablePageLink<TerrainFieldEditor>("editorLink", TerrainFieldEditor.class, pageParameters));
             }
         };
-
+        form.add(new Button("activate") {
+            @Override
+            public void onSubmit() {
+                terrainService.activateTerrain();
+            }
+        });
     }
 }
