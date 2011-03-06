@@ -17,34 +17,19 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainServiceImpl;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.*;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelperHibernateImpl;
-import com.btxtech.game.services.terrain.DbSurfaceImage;
-import com.btxtech.game.services.terrain.DbSurfaceRect;
-import com.btxtech.game.services.terrain.DbTerrainImage;
-import com.btxtech.game.services.terrain.DbTerrainImagePosition;
-import com.btxtech.game.services.terrain.DbTerrainSetting;
-import com.btxtech.game.services.terrain.TerrainService;
+import com.btxtech.game.services.terrain.*;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.utg.DbAbstractLevel;
 import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.services.utg.DbSimulationLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
@@ -54,6 +39,9 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.PostConstruct;
+import java.util.*;
 
 /**
  * User: beat
@@ -248,22 +236,52 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         DbTerrainSetting dbTerrainSetting = dbTerrainSettingCrudServiceHelper.readDbChild(terrainId);
 
         // Terrain Image Position
-        dbTerrainSetting.getDbTerrainImagePositionCrudServiceHelper().deleteAllChildren();
+        Map<ImagePositionKey, TerrainImagePosition> newImagePosition = new HashMap<ImagePositionKey, TerrainImagePosition>(terrainImagePositions.size());
         for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
+            newImagePosition.put(new ImagePositionKey(terrainImagePosition), terrainImagePosition);
+        }
+        Collection<DbTerrainImagePosition> dbTerrainImagePositions = dbTerrainSetting.getDbTerrainImagePositionCrudServiceHelper().readDbChildren();
+        // Remove Same
+        for (Iterator<DbTerrainImagePosition> iterator = dbTerrainImagePositions.iterator(); iterator.hasNext();) {
+            DbTerrainImagePosition dbTerrainImagePosition = iterator.next();
+            ImagePositionKey key = new ImagePositionKey(dbTerrainImagePosition);
+            if (newImagePosition.containsKey(key)) {
+                newImagePosition.remove(key);
+            } else {
+                iterator.remove();
+            }
+        }
+        // Add new
+        for (TerrainImagePosition terrainImagePosition : newImagePosition.values()) {
             DbTerrainImage dbTerrainImage = getDbTerrainImage(terrainImagePosition.getImageId());
             dbTerrainSetting.getDbTerrainImagePositionCrudServiceHelper().addChild(new DbTerrainImagePosition(terrainImagePosition.getTileIndex(), dbTerrainImage));
         }
 
         // Surface Rects
-        dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().deleteAllChildren();
+        Map<SurfaceRectKey, SurfaceRect> newSurfaceRect = new HashMap<SurfaceRectKey, SurfaceRect>(surfaceRects.size());
         for (SurfaceRect surfaceRect : surfaceRects) {
+            newSurfaceRect.put(new SurfaceRectKey(surfaceRect), surfaceRect);
+        }
+        Collection<DbSurfaceRect> dbSurfaceRects = dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().readDbChildren();
+        // Remove Same
+        for (Iterator<DbSurfaceRect> iterator = dbSurfaceRects.iterator(); iterator.hasNext();) {
+            DbSurfaceRect dbSurfaceRect = iterator.next();
+            SurfaceRectKey key = new SurfaceRectKey(dbSurfaceRect);
+            if (newSurfaceRect.containsKey(key)) {
+                newSurfaceRect.remove(key);
+            } else {
+                iterator.remove();
+            }
+        }
+        // Add new
+        for (SurfaceRect surfaceRect : newSurfaceRect.values()) {
             DbSurfaceImage dbSurfaceImage = getDbSurfaceImage(surfaceRect.getSurfaceImageId());
             dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(surfaceRect.getTileRectangle(), dbSurfaceImage));
         }
 
         hibernateTemplate.saveOrUpdate(dbTerrainSetting);
         if (dbTerrainSetting.isRealGame()) {
-            activateTerrain();
+            //activateTerrain();
         }
     }
 

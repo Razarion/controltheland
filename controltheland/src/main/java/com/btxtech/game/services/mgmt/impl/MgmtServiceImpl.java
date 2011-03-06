@@ -25,7 +25,6 @@ import com.btxtech.game.services.mgmt.DbViewDTO;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.resource.ResourceService;
-import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import java.io.BufferedReader;
 import java.io.File;

@@ -16,12 +16,9 @@ package com.btxtech.game.services.terrain;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.services.common.CrudChild;
+
+import javax.persistence.*;
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
 
 /**
@@ -30,6 +27,7 @@ import javax.persistence.OneToOne;
  * Time: 14:02:37
  */
 @Entity(name = "TERRAIN_SURFACE_RECT")
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tileX", "tileY", "tileWidth", "tileHeight", "dbSurfaceImage_id", "dbTerrainSetting_id"}))
 public class DbSurfaceRect implements CrudChild<DbTerrainSetting>, Serializable {
     @Id
     @GeneratedValue
