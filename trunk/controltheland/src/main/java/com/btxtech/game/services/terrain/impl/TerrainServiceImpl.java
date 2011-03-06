@@ -190,46 +190,6 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         return size;
     }
 
-
-    /*@Override
-    public void saveAndActivateTerrainImages(Set<DbTerrainImage> newDbTerrainImages,
-                                             Set<DbTerrainImage> updatedDbTerrainImages,
-                                             Set<DbTerrainImage> deletedDbTerrainImages,
-                                             List<DbSurfaceImage> dbSurfaceImages) {
-        saveTerrainImages(newDbTerrainImages, updatedDbTerrainImages, deletedDbTerrainImages, dbSurfaceImages);
-        loadTerrain();
-    }*/
-
-    @Transactional
-    @Override
-    public void saveTerrainImages(Set<DbTerrainImage> newDbTerrainImages, Set<DbTerrainImage> updatedDbTerrainImages, Set<DbTerrainImage> deletedDbTerrainImages, List<DbSurfaceImage> dbSurfaceImages) {
-        // TODO remove sysouts
-        System.out.println("newDbTerrainImages " + newDbTerrainImages);
-        System.out.println("updatedDbTerrainImages " + updatedDbTerrainImages);
-        System.out.println("deletedDbTerrainImages " + deletedDbTerrainImages);
-
-        // DbTerrainImage
-        if (!newDbTerrainImages.isEmpty()) {
-            hibernateTemplate.saveOrUpdateAll(newDbTerrainImages);
-        }
-
-        if (!updatedDbTerrainImages.isEmpty()) {
-            hibernateTemplate.saveOrUpdateAll(updatedDbTerrainImages);
-        }
-
-        if (!deletedDbTerrainImages.isEmpty()) {
-            hibernateTemplate.deleteAll(deletedDbTerrainImages);
-        }
-
-        // DbSurfaceImage
-        hibernateTemplate.saveOrUpdateAll(dbSurfaceImages);
-        ArrayList<DbSurfaceImage> doBeDeletedSurface = new ArrayList<DbSurfaceImage>(this.dbSurfaceImages.values());
-        doBeDeletedSurface.removeAll(dbSurfaceImages);
-        if (!doBeDeletedSurface.isEmpty()) {
-            hibernateTemplate.deleteAll(doBeDeletedSurface);
-        }
-    }
-
     @Transactional
     @Override
     public void saveAndActivateTerrain(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int terrainId) {
@@ -280,9 +240,6 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         }
 
         hibernateTemplate.saveOrUpdate(dbTerrainSetting);
-        if (dbTerrainSetting.isRealGame()) {
-            //activateTerrain();
-        }
     }
 
 
