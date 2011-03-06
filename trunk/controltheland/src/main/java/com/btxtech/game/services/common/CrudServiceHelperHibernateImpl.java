@@ -57,7 +57,7 @@ public class CrudServiceHelperHibernateImpl<T extends CrudChild> implements Crud
     @Override
     @SuppressWarnings("unchecked")
     public T readDbChild(Serializable id) {
-        T t = (T) hibernateTemplate.get(childClass, id);
+        T t = hibernateTemplate.get(childClass, id);
         if (t == null) {
             throw new IllegalArgumentException("No child found for: " + id);
         }

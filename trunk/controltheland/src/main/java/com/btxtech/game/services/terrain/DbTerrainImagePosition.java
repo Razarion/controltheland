@@ -16,12 +16,9 @@ package com.btxtech.game.services.terrain;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.services.common.CrudChild;
+
+import javax.persistence.*;
 import java.io.Serializable;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
 
 /**
@@ -30,6 +27,7 @@ import javax.persistence.OneToOne;
  * Time: 22:25:25
  */
 @Entity(name = "TERRAIN_IMAGE_POSITION")
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tileX", "tileY", "dbTerrainImage_id", "dbTerrainSetting_id"}))
 public class DbTerrainImagePosition implements Serializable, CrudChild<DbTerrainSetting> {
     @Id
     @GeneratedValue
