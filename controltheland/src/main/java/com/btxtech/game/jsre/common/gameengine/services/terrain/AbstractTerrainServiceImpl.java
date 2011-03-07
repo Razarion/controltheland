@@ -185,6 +185,7 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
 
     @Override
     public TerrainImagePosition getTerrainImagePosition(Index tileIndex) {
+        // TODO slow!!!
         for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
             if (getTerrainImagePositionRectangle(terrainImagePosition).containsExclusive(tileIndex)) {
                 return terrainImagePosition;
