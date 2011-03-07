@@ -21,24 +21,29 @@
 
 <span wicket:id="msgs"/>
 
-<table cellpadding="1" cellspacing="1" border="0">
-    <tr>
-        <th bgcolor="#dadada">Session Id</th>
-        <th bgcolor="#dadada">Level</th>
-        <th bgcolor="#dadada">Online</th>
-        <th bgcolor="#dadada">Registered</th>
-        <th bgcolor="#dadada">Edit</th>
-    </tr>
-    <tr wicket:id="userState">
-        <td wicket:id="sessionId"/>
-        <td wicket:id="currentAbstractLevel.name"/>
-        <td wicket:id="online"/>
-        <td wicket:id="registered"/>
-        <td valign="center">
-            <input type="submit" value="Edit" wicket:id="edit"/>
-        </td>
-    </tr>
-</table>
+<form wicket:id="form">
+
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Session Id</th>
+            <th bgcolor="#dadada">Level</th>
+            <th bgcolor="#dadada">Online</th>
+            <th bgcolor="#dadada">Registered</th>
+            <th bgcolor="#dadada">Edit</th>
+        </tr>
+        <tr wicket:id="userState">
+            <td wicket:id="sessionId"/>
+            <td wicket:id="currentAbstractLevel.name"/>
+            <td wicket:id="online"/>
+            <td wicket:id="registered"/>
+            <td valign="center">
+                <input type="submit" value="Edit" wicket:id="edit"/>
+            </td>
+        </tr>
+    </table>
+
+</form>
+
 <body>
 </body>
 </html>
