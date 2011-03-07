@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -48,15 +49,28 @@ public class TutorialGui {
         finishImage = ImageHandler.getTutorialImage(imageId, new ImageSizeCallback() {
             @Override
             public void onImageSize(Image image, int width, int height) {
-                int left = (TerrainView.getInstance().getViewWidth() - width) / 2;
-                int top = (TerrainView.getInstance().getViewHeight() - height) / 2;
-                if (MapWindow.getAbsolutePanel().getWidgetIndex(image) == -1) {
-                    MapWindow.getAbsolutePanel().add(image, left, top);
-                    image.getElement().getStyle().setZIndex(Constants.Z_INDEX_SPEECH_BUBBLE);
-                }
+                centerImage(image, width, height);
             }
         });
+        MapWindow.getAbsolutePanel().add(finishImage, 0, 0);
+        finishImage.getElement().getStyle().setZIndex(Constants.Z_INDEX_SPEECH_BUBBLE);
+        if (finishImage.getWidth() > 0 && finishImage.getHeight() > 0) {
+            centerImage(finishImage, finishImage.getWidth(), finishImage.getHeight());
+        }
+
         flashFinishImage(duration);
+    }
+
+    private void centerImage(Image image, int width, int height) {
+        int left = (TerrainView.getInstance().getViewWidth() - width) / 2;
+        int top = (TerrainView.getInstance().getViewHeight() - height - Cockpit.HEIGHT) / 2;
+        if(left < 0) {
+            left = 0;
+        }
+        if(top < 0) {
+            top = 0;
+        }
+        MapWindow.getAbsolutePanel().setWidgetPosition(image, left, top);
     }
 
     private void removeFinishImage() {

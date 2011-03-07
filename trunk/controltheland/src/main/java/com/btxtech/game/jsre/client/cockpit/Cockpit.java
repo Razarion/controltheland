@@ -44,7 +44,7 @@ import java.util.Map;
 public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
     private static final Cockpit INSTANCE = new Cockpit();
     private static final int WIDTH = 1015;
-    private static final int HEIGHT = 230;
+    public static final int HEIGHT = 230;
     // Radar
     private static final int RADAR_WIDTH = 198;
     private static final int RADAR_HEIGHT = 198;

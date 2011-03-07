@@ -190,6 +190,12 @@ public class ImageHandler {
         return createImageIE6TransparencyProblem("/" + IMAGES + "/" + ICONS + "/" + icon + PNG_SUFFIX, 16, 16);
     }
 
+    /**
+     *
+     * @param id image id
+     * @param imageSizeCallback called when the image was loaded. If the image is already loaded is is not called
+     * @return Image
+     */
     public static Image getTutorialImage(int id, final ImageSizeCallback imageSizeCallback) {
         StringBuilder url = new StringBuilder();
         url.append(Constants.TUTORIAL_RESOURCE_URL);
@@ -208,9 +214,6 @@ public class ImageHandler {
             });
         }
         image.setUrl(urlStr);
-        if (image.getWidth() > 0 && image.getHeight() > 0 && imageSizeCallback != null) {
-            imageSizeCallback.onImageSize(image, image.getWidth(), image.getHeight());
-        }
         loadImage(urlStr);
         return image;
     }
