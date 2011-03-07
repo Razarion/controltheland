@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.mapview.common;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -32,31 +33,28 @@ public class GeometricalUtil {
             return rectangles;
         }
         Collection<Index> remainingTiles = new HashSet<Index>(tiles);
-        removeRectangles(remainingTiles, rectangles, tiles.iterator().next(), terrainSettings);
+        removeRectangles(remainingTiles, rectangles, terrainSettings);
         return rectangles;
     }
 
-    public static void removeRectangles(Collection<Index> remainingTiles, ArrayList<Rectangle> rectangles, Index start, TerrainSettings terrainSettings) {
-        Rectangle rectangle = findBiggestRectangle(start.getX(), start.getY(), remainingTiles, terrainSettings);
-        rectangles.add(rectangle);
+    public static void removeRectangles(Collection<Index> remainingTiles, ArrayList<Rectangle> rectangles, TerrainSettings terrainSettings) {
+        while (!remainingTiles.isEmpty()) {
+            Index start = remainingTiles.iterator().next();
 
-        // remove used atoms
-        for (int x = rectangle.getStart().getX(); x <= rectangle.getEnd().getX(); x++) {
-            for (int y = rectangle.getStart().getY(); y <= rectangle.getEnd().getY(); y++) {
-                Index indexToRemove = new Index(x, y);
-                remainingTiles.remove(indexToRemove);
+            Rectangle rectangle = findBiggestRectangle(start.getX(), start.getY(), remainingTiles, terrainSettings);
+            rectangles.add(rectangle);
+
+            // remove used atoms
+            for (int x = rectangle.getStart().getX(); x <= rectangle.getEnd().getX(); x++) {
+                for (int y = rectangle.getStart().getY(); y <= rectangle.getEnd().getY(); y++) {
+                    Index indexToRemove = new Index(x, y);
+                    remainingTiles.remove(indexToRemove);
+                }
             }
+            // Make inclusive
+            rectangle.growEast(1);
+            rectangle.growSouth(1);
         }
-        // Make inclusive
-        rectangle.growEast(1);
-        rectangle.growSouth(1);
-
-        if (remainingTiles.isEmpty()) {
-            return;
-        }
-
-        Index newStart = remainingTiles.iterator().next();
-        removeRectangles(remainingTiles, rectangles, newStart, terrainSettings);
     }
 
     static public Rectangle findBiggestRectangle(int startX, int startY, Collection<Index> tiles, TerrainSettings terrainSettings) {
