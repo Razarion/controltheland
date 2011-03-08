@@ -14,13 +14,14 @@
 package com.btxtech.game.services.common.db;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
+import org.hibernate.HibernateException;
+import org.hibernate.usertype.UserType;
+
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import org.hibernate.HibernateException;
-import org.hibernate.usertype.UserType;
 
 
 /**
@@ -89,12 +90,16 @@ public class RectangleUserType implements UserType {
 
     @Override
     public Object deepCopy(Object value) throws HibernateException {
-        return value;
+        if (value != null) {
+            return ((Rectangle) value).copy();
+        } else {
+            return null;
+        }
     }
 
     @Override
     public boolean isMutable() {
-        return false;
+        return true;
     }
 
     @Override

@@ -24,19 +24,12 @@ import com.btxtech.game.services.common.CrudServiceHelperCollectionImpl;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.tutorial.hint.ResourceHintManager;
+import org.hibernate.annotations.Cascade;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-import org.hibernate.annotations.Cascade;
 
 
 /**
@@ -87,6 +80,14 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 
     public int getOwnBaseId() {
@@ -145,7 +146,7 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
         this.failOnOwnItemsLost = failOnOwnItemsLost;
     }
 
-    public Integer getFailOnMoneyBelowAndNoAttackUnits() {
+    public Integer isFailOnMoneyBelowAndNoAttackUnits() {
         return failOnMoneyBelowAndNoAttackUnits;
     }
 

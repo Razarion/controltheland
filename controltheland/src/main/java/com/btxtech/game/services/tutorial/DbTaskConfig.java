@@ -65,7 +65,6 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
     private String name;
     private boolean clearGame;
     @OneToMany(mappedBy = "dbTaskConfig", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private Set<DbItemTypeAndPosition> items;
     private boolean isScrollingAllowed;
     private boolean isSellingAllowed;
