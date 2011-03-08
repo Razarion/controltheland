@@ -25,14 +25,8 @@ import com.btxtech.game.services.playback.PlaybackService;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.services.utg.DbCommand;
-import com.btxtech.game.services.utg.DbEventTrackingItem;
-import com.btxtech.game.services.utg.DbEventTrackingStart;
-import com.btxtech.game.services.utg.DbAbstractLevel;
-import com.btxtech.game.services.utg.DbScrollTrackingItem;
-import com.btxtech.game.services.utg.DbSelectionTrackingItem;
-import com.btxtech.game.services.utg.UserGuidanceService;
-import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.services.utg.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.logging.Log;
@@ -71,7 +65,7 @@ public class PlaybackServiceImpl implements PlaybackService {
             // Tutorial
             MovableServiceImpl.setCommonInfo(playbackInfo, userService, itemService, mgmtService);
             DbAbstractLevel dbAbstractLevel = userGuidanceService.getDbLevel(levelName);
-            playbackInfo.setTutorialConfig(tutorialService.getTutorialConfig(dbAbstractLevel));
+            playbackInfo.setTutorialConfig(tutorialService.getTutorialConfig((DbSimulationLevel) dbAbstractLevel));
             terrainService.setupTerrain(playbackInfo, dbAbstractLevel);
 
             // Mouse tracker

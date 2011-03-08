@@ -26,8 +26,9 @@ public class TestTerrainService extends BaseTestService {
     @Test
     @DirtiesContext
     public void testSaveEmptyMap() {
-        Assert.assertEquals(1, getTerrainTileCount());
-        Assert.assertEquals(1, getSurfaceRectCount());
+        setupMinimalTerrain();
+        Assert.assertEquals(0, getTerrainTileCount());
+        Assert.assertEquals(0, getSurfaceRectCount());
 
         Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
         Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
@@ -40,8 +41,9 @@ public class TestTerrainService extends BaseTestService {
     @Test
     @DirtiesContext
     public void testUniqueImagePosition() {
-        Assert.assertEquals(1, getTerrainTileCount());
-        Assert.assertEquals(1, getSurfaceRectCount());
+        setupMinimalTerrain();
+        Assert.assertEquals(0, getTerrainTileCount());
+        Assert.assertEquals(0, getSurfaceRectCount());
 
         Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
         terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), 1));
@@ -56,8 +58,9 @@ public class TestTerrainService extends BaseTestService {
     @Test
     @DirtiesContext
     public void testUniqueSurfaceRect() {
-        Assert.assertEquals(1, getTerrainTileCount());
-        Assert.assertEquals(1, getSurfaceRectCount());
+        setupMinimalTerrain();
+        Assert.assertEquals(0, getTerrainTileCount());
+        Assert.assertEquals(0, getSurfaceRectCount());
 
         Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
         Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
@@ -72,8 +75,9 @@ public class TestTerrainService extends BaseTestService {
     @Test
     @DirtiesContext
     public void testSaveNewMap() {
-        Assert.assertEquals(1, getTerrainTileCount());
-        Assert.assertEquals(1, getSurfaceRectCount());
+        setupMinimalTerrain();
+        Assert.assertEquals(0, getTerrainTileCount());
+        Assert.assertEquals(0, getSurfaceRectCount());
 
         Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
         terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), 1));
@@ -88,8 +92,9 @@ public class TestTerrainService extends BaseTestService {
     @Test
     @DirtiesContext
     public void testSaveImagePositionMulti() {
-        Assert.assertEquals(1, getTerrainTileCount());
-        Assert.assertEquals(1, getSurfaceRectCount());
+        setupMinimalTerrain();
+        Assert.assertEquals(0, getTerrainTileCount());
+        Assert.assertEquals(0, getSurfaceRectCount());
 
         // Fill with 1600 tiles. Override the original first tile
         Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
@@ -132,8 +137,9 @@ public class TestTerrainService extends BaseTestService {
     @Test
     @DirtiesContext
     public void testSaveSurfaceRectMulti() {
-        Assert.assertEquals(1, getTerrainTileCount());
-        Assert.assertEquals(1, getSurfaceRectCount());
+        setupMinimalTerrain();
+        Assert.assertEquals(0, getTerrainTileCount());
+        Assert.assertEquals(0, getSurfaceRectCount());
 
         // Fill with 1600 tiles. Override the original first tile
         Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();

@@ -17,16 +17,10 @@ import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.item.ItemService;
+import org.hibernate.annotations.IndexColumn;
+
 import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 /**
  * User: beat
@@ -42,7 +36,7 @@ public abstract class DbAbstractLevel implements CrudChild, Serializable {
     private Integer id;
     @Column(unique = true)
     private String name;
-    @Column(unique = true)
+    @OrderBy
     private int orderIndex;
     @Column(length = 50000)
     private String html;

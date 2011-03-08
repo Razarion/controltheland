@@ -66,7 +66,7 @@ public class MessengerServiceImpl implements MessengerService {
                 criteria.add(Restrictions.eq("read", false));
                 criteria.setProjection(Projections.rowCount());
                 criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                return (int) ((Number) criteria.list().get(0)).longValue();
+                return ((Number) criteria.list().get(0)).intValue();
             }
         });
     }

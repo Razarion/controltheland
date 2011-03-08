@@ -42,27 +42,11 @@ public class DbLevelTable extends WebPage {
         Form form = new Form("levelForm");
         add(form);
 
-        new CrudTableHelper<DbAbstractLevel>("levels", "save", null, true, form, false) {
+        new CrudTableHelper<DbAbstractLevel>("levels", "save", null, true, form, true) {
 
             @Override
             protected CrudServiceHelper<DbAbstractLevel> getCrudServiceHelper() {
                 return userGuidanceService.getDbLevelCrudServiceHelper();
-            }
-
-            @Override
-            protected void setupSave(WebMarkupContainer markupContainer, String saveId) {
-                markupContainer.add(new Button(saveId) {
-
-                    @Override
-                    public void onSubmit() {
-                        userGuidanceService.saveDbLevels(getLastModifiedList());
-                    }
-                });
-            }
-
-            @Override
-            protected void deleteChild(DbAbstractLevel child) {
-                userGuidanceService.deleteDbLevel(child);
             }
 
             @Override
@@ -78,35 +62,21 @@ public class DbLevelTable extends WebPage {
                     public void onSubmit() {
                         getCrudServiceHelper().createDbChild(DbRealGameLevel.class);
                     }
-                });
+                }.setDefaultFormProcessing(false));
                 markupContainer.add(new Button("createSimulation") {
 
                     @Override
                     public void onSubmit() {
                         getCrudServiceHelper().createDbChild(DbSimulationLevel.class);
                     }
-                });
+                }.setDefaultFormProcessing(false));
             }
 
             @Override
             protected void extendedPopulateItem(final Item<DbAbstractLevel> dbLevelItem) {
-                dbLevelItem.add(new Label("id"));                
                 super.extendedPopulateItem(dbLevelItem);
+                dbLevelItem.add(new Label("id"));                
                 dbLevelItem.add(new Label("displayType"));
-                dbLevelItem.add(new Button("up") {
-
-                    @Override
-                    public void onSubmit() {
-                        // TODO  userGuidanceService.moveUpDbLevel(dbLevelItem.getModelObject());
-                    }
-                });
-                dbLevelItem.add(new Button("down") {
-
-                    @Override
-                    public void onSubmit() {
-                        // TODO  userGuidanceService.moveDownDbLevel(dbLevelItem.getModelObject());
-                    }
-                });
             }
         };
         form.add(new Button("activate") {

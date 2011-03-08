@@ -21,7 +21,7 @@ import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelperHibernateImpl;
+import com.btxtech.game.services.common.CrudServiceHelperSpringTransactionImpl;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.ItemService;
@@ -36,19 +36,14 @@ import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.HibernateCallback;
+import org.springframework.context.ApplicationContext;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -83,6 +78,8 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     private TutorialService tutorialService;
     @Autowired
     private ServerMarketService marketService;
+    @Autowired
+    private ApplicationContext applicationContext;
     private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
     private List<DbAbstractLevel> dbAbstractLevels = new ArrayList<DbAbstractLevel>();
@@ -92,25 +89,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     @PostConstruct
     public void init() {
         try {
-            crudServiceHelperHibernate = new CrudServiceHelperHibernateImpl<DbAbstractLevel>(hibernateTemplate, DbAbstractLevel.class) {
-                @Override
-                protected void addAdditionalReadCriteria(Criteria criteria) {
-                    criteria.addOrder(Order.asc("orderIndex"));
-                }
-
-                @Override
-                protected void initChild(DbAbstractLevel dbAbstractLevel) {
-                    int rowCount = hibernateTemplate.execute(new HibernateCallback<Integer>() {
-                        @Override
-                        public Integer doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                            Criteria criteria = session.createCriteria(DbAbstractLevel.class);
-                            criteria.setProjection(Projections.rowCount());
-                            return (Integer) criteria.list().get(0);
-                        }
-                    });
-                    dbAbstractLevel.setOrderIndex(rowCount);
-                }
-            };
+            crudServiceHelperHibernate = CrudServiceHelperSpringTransactionImpl.create(applicationContext, DbAbstractLevel.class, "orderIndex");
         } catch (Throwable t) {
             log.error("", t);
         }
@@ -314,30 +293,8 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
     @Override
     @Transactional
-    public void saveDbLevels(List<DbAbstractLevel> dbAbstractLevels) {
-        int orderIndex = 0;
-        for (DbAbstractLevel dbAbstractLevel : dbAbstractLevels) {
-            dbAbstractLevel.setOrderIndex(orderIndex++);
-        }
-        crudServiceHelperHibernate.updateDbChildren(dbAbstractLevels);
-    }
-
-    @Override
-    @Transactional
     public void saveDbLevel(DbAbstractLevel dbAbstractLevel) {
         crudServiceHelperHibernate.updateDbChild(dbAbstractLevel);
-    }
-
-    @Override
-    @Transactional
-    public void createDbLevel() {
-        crudServiceHelperHibernate.createDbChild();
-    }
-
-    @Override
-    @Transactional
-    public void deleteDbLevel(DbAbstractLevel dbAbstractLevel) {
-        crudServiceHelperHibernate.deleteDbChild(dbAbstractLevel);
     }
 
     @Override

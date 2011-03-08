@@ -54,17 +54,11 @@ public interface UserGuidanceService {
 
     List<DbAbstractLevel> getDbLevels();
 
-    void saveDbLevels(List<DbAbstractLevel> dbAbstractLevels);
-
     void saveDbLevel(DbAbstractLevel dbAbstractLevel);
 
     void activateLevels();
 
     void init2();
-
-    void createDbLevel();
-
-    void deleteDbLevel(DbAbstractLevel dbAbstractLevel);
 
     CrudServiceHelper<DbAbstractLevel> getDbLevelCrudServiceHelper();
 

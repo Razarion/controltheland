@@ -15,7 +15,6 @@ package com.btxtech.game.wicket.uiservices;
 
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.tutorial.DbTaskConfig;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -164,7 +163,7 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
     }
 
     public void moveChildDown(Item<T> item) {
-        if (item.getIndex() + 1 < rowCount()) {
+        if (item.getIndex() + 1 >= rowCount()) {
             return;
         }
         swapRow(item.getIndex(), item.getIndex() + 1);

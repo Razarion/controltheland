@@ -30,6 +30,7 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
  * Date: 24.07.2010
  * Time: 11:56:11
  */
+@Deprecated
 public class CrudServiceHelperHibernateImpl<T extends CrudChild> implements CrudServiceHelper<T> {
     private HibernateTemplate hibernateTemplate;
     private Class<T> childClass;
