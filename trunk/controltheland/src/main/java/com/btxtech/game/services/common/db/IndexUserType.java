@@ -19,6 +19,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+
+import com.btxtech.game.jsre.client.common.Rectangle;
 import org.hibernate.HibernateException;
 import org.hibernate.usertype.UserType;
 
@@ -41,13 +43,7 @@ public class IndexUserType implements UserType {
 
     @Override
     public boolean equals(Object o1, Object o2) throws HibernateException {
-        if (o1 == o2) {
-            return true;
-        } else if (o1 == null || o2 == null) {
-            return false;
-        } else {
-            return o1.equals(o2);
-        }
+        return o1 == o2 || !(o1 == null || o2 == null) && o1.equals(o2);
     }
 
     @Override
@@ -82,12 +78,16 @@ public class IndexUserType implements UserType {
 
     @Override
     public Object deepCopy(Object value) throws HibernateException {
-        return value;
+        if (value != null) {
+            return ((Index)value).getCopy();
+        } else {
+            return null;
+        }
     }
 
     @Override
     public boolean isMutable() {
-        return false;
+        return true;
     }
 
     @Override

@@ -24,6 +24,8 @@ import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.wicket.pages.mgmt.ItemsUtil;
 import com.btxtech.game.wicket.uiservices.CrudTableHelper;
 import java.util.Collection;
+
+import com.btxtech.game.wicket.uiservices.IndexPanel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.markup.html.WebPage;
@@ -86,8 +88,7 @@ public class TaskEditor extends WebPage {
         form.add(new CheckBox("isScrollingAllowed"));
         form.add(new CheckBox("isOptionAllowed"));
         form.add(new CheckBox("isSellingAllowed"));
-        form.add(new TextField("scroll.x"));
-        form.add(new TextField("scroll.y"));
+        form.add(new IndexPanel("scroll"));
         form.add(new TextField<String>("allowedItemTypeIds", new IModel<String>() {
 
             @Override
@@ -172,8 +173,7 @@ public class TaskEditor extends WebPage {
                     }
                 }, Integer.class));
                 dbTaskConfigItem.add(new TextField("syncItemId"));
-                dbTaskConfigItem.add(new TextField("position.x"));
-                dbTaskConfigItem.add(new TextField("position.y"));
+                dbTaskConfigItem.add(new IndexPanel("position"));
                 dbTaskConfigItem.add(new TextField("angel"));
                 dbTaskConfigItem.add(new TextField<Integer>("baseId"));
 

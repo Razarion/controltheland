@@ -16,8 +16,6 @@ package com.btxtech.game.services.common;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -29,7 +27,6 @@ public class CrudServiceHelperCollectionImpl<T extends CrudChild> implements Cru
     private Collection<T> children;
     private Class<T> childClass;
     private CrudParent crudParent;
-    private Log log = LogFactory.getLog(CrudServiceHelperCollectionImpl.class);
 
     public CrudServiceHelperCollectionImpl(Collection<T> children, Class<T> childClass, CrudParent crudParent) {
         this.children = children;
@@ -74,7 +71,7 @@ public class CrudServiceHelperCollectionImpl<T extends CrudChild> implements Cru
             T t = constructor.newInstance();
             addChild(t);
         } catch (Exception e) {
-            log.error("", e);
+            throw new RuntimeException(e);
         }
     }
 

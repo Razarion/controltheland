@@ -46,12 +46,8 @@
             <td><input wicket:id="isSellingAllowed" type="checkbox"></td>
         </tr>
         <tr>
-            <td bgcolor="#dadada">Scroll X</td>
-            <td><input wicket:id="scroll.x" type="text" size="6"></td>
-        </tr>
-        <tr>
-            <td bgcolor="#dadada">Scroll Y</td>
-            <td><input wicket:id="scroll.y" type="text" size="6"></td>
+            <td bgcolor="#dadada">Scroll</td>
+            <td wicket:id="scroll"/>
         </tr>
         <tr>
             <td bgcolor="#dadada">Allowed Item Ids (Factory, Builder) [;]</td>
@@ -68,7 +64,7 @@
         <tr>
             <td bgcolor="#dadada">Upload Finish Image</td>
             <td valign="top"><input type="file" wicket:id="upload"/></td>
-        </tr>        
+        </tr>
         <tr>
             <td bgcolor="#dadada">Finish Image Duration [s]</td>
             <td><input wicket:id="finishImageDuration" type="text" size="10"></td>
@@ -79,8 +75,7 @@
         <tr>
             <th bgcolor="#dadada">Item Type</th>
             <th bgcolor="#dadada">Id (Engine)</th>
-            <th bgcolor="#dadada">X Pos</th>
-            <th bgcolor="#dadada">Y Pos</th>
+            <th bgcolor="#dadada">Position</th>
             <th bgcolor="#dadada">Angel</th>
             <th bgcolor="#dadada">Base Id</th>
             <th bgcolor="#dadada">Delete</th>
@@ -88,8 +83,7 @@
         <tr wicket:id="itemTable">
             <td><input type="text" wicket:id="itemTypeId" size="6"></td>
             <td><input type="text" wicket:id="syncItemId" size="6"></td>
-            <td><input type="text" wicket:id="position.x" size="6"/></td>
-            <td><input type="text" wicket:id="position.y" size="6"/></td>
+            <td wicket:id="position"/>
             <td><input type="text" wicket:id="angel" size="5"/></td>
             <td><input type="text" wicket:id="baseId"></td>
             <td valign="center">
