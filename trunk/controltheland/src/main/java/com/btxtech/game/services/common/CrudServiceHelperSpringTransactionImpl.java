@@ -13,20 +13,25 @@
 
 package com.btxtech.game.services.common;
 
-import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.sql.SQLException;
-import java.util.Collection;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.sql.SQLException;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -38,9 +43,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class CrudServiceHelperSpringTransactionImpl<T extends CrudChild> implements CrudServiceHelper<T> {
     private HibernateTemplate hibernateTemplate;
     private Class<T> childClass;
+    private String orderColumn;
 
-    public CrudServiceHelperSpringTransactionImpl(Class<T> childClass) {
+    public static <T extends CrudChild> CrudServiceHelper<T> create(ApplicationContext applicationContext, Class<T> clazz) {
+        return create(applicationContext, clazz, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends CrudChild> CrudServiceHelper<T> create(ApplicationContext applicationContext, Class<T> clazz, String orderColumn) {
+        return (CrudServiceHelper<T>) applicationContext.getBean("crudServiceHelperSpringTransaction", clazz, orderColumn);
+    }
+
+    public CrudServiceHelperSpringTransactionImpl(Class<T> childClass, String orderColumn) {
         this.childClass = childClass;
+        this.orderColumn = orderColumn;
     }
 
     @Autowired
@@ -57,6 +73,9 @@ public class CrudServiceHelperSpringTransactionImpl<T extends CrudChild> impleme
             public Object doInHibernate(Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(childClass);
                 criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                if (orderColumn != null) {
+                    criteria.addOrder(Order.asc(orderColumn));
+                }
                 return criteria.list();
             }
         });
@@ -66,7 +85,7 @@ public class CrudServiceHelperSpringTransactionImpl<T extends CrudChild> impleme
     @Transactional(readOnly = true)
     @SuppressWarnings("unchecked")
     public T readDbChild(Serializable id) {
-        T t = (T) hibernateTemplate.get(childClass, id);
+        T t = hibernateTemplate.get(childClass, id);
         if (t == null) {
             throw new IllegalArgumentException("No child found for: " + id);
         }
@@ -82,6 +101,20 @@ public class CrudServiceHelperSpringTransactionImpl<T extends CrudChild> impleme
     @Override
     @Transactional
     public void updateDbChildren(Collection<T> children) {
+        if (orderColumn != null) {
+            int index = 0;
+            for (T child : children) {
+                try {
+                    Field field = childClass.getDeclaredField(orderColumn);
+                    field.setAccessible(true);
+                    field.set(child, index);
+                    field.setAccessible(false);
+                    index++;
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
         hibernateTemplate.saveOrUpdateAll(children);
     }
 
@@ -119,6 +152,29 @@ public class CrudServiceHelperSpringTransactionImpl<T extends CrudChild> impleme
     @Transactional
     public void addChild(T t) {
         t.init();
+        if (orderColumn != null) {
+            int nextFreeIndex = hibernateTemplate.execute(new HibernateCallback<Integer>() {
+                @Override
+                public Integer doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                    Criteria criteria = session.createCriteria(childClass);
+                    criteria.setProjection(Projections.max(orderColumn));
+                    Number number = (Number) criteria.list().get(0);
+                    if (number != null) {
+                        return number.intValue() + 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            });
+            try {
+                Field field = childClass.getDeclaredField(orderColumn);
+                field.setAccessible(true);
+                field.set(t, nextFreeIndex);
+                field.setAccessible(false);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
         hibernateTemplate.save(t);
     }
 }

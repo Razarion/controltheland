@@ -83,9 +83,6 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
 
     @Override
     public TerrainSettings getTerrainSettings() {
-        if(terrainSettings == null) {
-            throw new IllegalStateException("TerrainSettings is null");
-        }
         return terrainSettings;
     }
 

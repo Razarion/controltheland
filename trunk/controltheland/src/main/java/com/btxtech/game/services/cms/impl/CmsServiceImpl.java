@@ -74,7 +74,8 @@ public class CmsServiceImpl implements CmsService {
             }
         });
         if (dbCmsHomeTexts.isEmpty()) {
-            throw new IllegalStateException("No active DbCmsHomeText found");
+            log.error("No active DbCmsHomeText found");
+            return;
         }
         if (dbCmsHomeTexts.size() > 1) {
             log.info("More the one active DbCmsHomeText found. Take first one.");
@@ -91,7 +92,8 @@ public class CmsServiceImpl implements CmsService {
             }
         });
         if (dbCmsHomeLayouts.isEmpty()) {
-            throw new IllegalStateException("No active DbCmsHomeLayout found");
+            log.error("No active DbCmsHomeLayout found");
+            return;
         }
         if (dbCmsHomeLayouts.size() > 1) {
             log.info("More the one active DbCmsHomeLayout found. Take first one.");

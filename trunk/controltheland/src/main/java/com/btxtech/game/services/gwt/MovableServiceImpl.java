@@ -148,9 +148,9 @@ public class MovableServiceImpl implements MovableService {
         try {
             DbAbstractLevel dbAbstractLevel = userGuidanceService.getDbAbstractLevel();
             if (dbAbstractLevel instanceof DbRealGameLevel) {
-                return createRealInfo(dbAbstractLevel);
+                return createRealInfo((DbRealGameLevel) dbAbstractLevel);
             } else if (dbAbstractLevel instanceof DbSimulationLevel) {
-                return createSimulationInfo(dbAbstractLevel);
+                return createSimulationInfo((DbSimulationLevel) dbAbstractLevel);
             } else {
                 throw new IllegalArgumentException("Unknown DbAbstractLevel " + dbAbstractLevel);
             }
@@ -160,7 +160,7 @@ public class MovableServiceImpl implements MovableService {
         return null;
     }
 
-    private GameInfo createRealInfo(DbAbstractLevel dbAbstractLevel) {
+    private GameInfo createRealInfo(DbRealGameLevel dbRealGameLevel) {
         try {
             baseService.continueBase();
             RealityInfo realityInfo = new RealityInfo();
@@ -171,7 +171,7 @@ public class MovableServiceImpl implements MovableService {
             realityInfo.setXp(serverMarketService.getXp());
             realityInfo.setEnergyConsuming(serverEnergyService.getConsuming());
             realityInfo.setEnergyGenerating(serverEnergyService.getGenerating());
-            terrainService.setupTerrain(realityInfo, dbAbstractLevel);
+            terrainService.setupTerrain(realityInfo, dbRealGameLevel);
             realityInfo.setLevel(userGuidanceService.getDbLevel().getLevel());
             realityInfo.setTerritories(territoryService.getTerritories());
             realityInfo.setAllBases(baseService.getAllBaseAttributes());
@@ -185,15 +185,15 @@ public class MovableServiceImpl implements MovableService {
         return null;
     }
 
-    private SimulationInfo createSimulationInfo(DbAbstractLevel dbAbstractLevel) {
+    private SimulationInfo createSimulationInfo(DbSimulationLevel dbSimulationLevel) {
         try {
             SimulationInfo simulationInfo = new SimulationInfo();
-            simulationInfo.setLevel(dbAbstractLevel.getLevel());
+            simulationInfo.setLevel(dbSimulationLevel.getLevel());
             // Common
             setCommonInfo(simulationInfo, userService, itemService, mgmtService);
-            simulationInfo.setTutorialConfig(tutorialService.getTutorialConfig(dbAbstractLevel));
+            simulationInfo.setTutorialConfig(tutorialService.getTutorialConfig(dbSimulationLevel));
             // Terrain
-            terrainService.setupTerrain(simulationInfo, dbAbstractLevel);
+            terrainService.setupTerrain(simulationInfo, dbSimulationLevel);
             return simulationInfo;
         } catch (Throwable t) {
             log.error("", t);

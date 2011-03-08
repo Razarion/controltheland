@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.tutorial.hint.DbResourceHintConfig;
 import com.btxtech.game.services.utg.DbAbstractLevel;
+import com.btxtech.game.services.utg.DbSimulationLevel;
 
 /**
  * User: beat
@@ -28,7 +29,7 @@ public interface TutorialService {
 
     void activate();
 
-    TutorialConfig getTutorialConfig(DbAbstractLevel dbAbstractLevel);
+    TutorialConfig getTutorialConfig(DbSimulationLevel dbSimulationLevel);
 
     DbResourceHintConfig getDbResourceHintConfig(int id);
 

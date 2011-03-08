@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelperHibernateImpl;
+import com.btxtech.game.services.common.CrudServiceHelperSpringTransactionImpl;
 import com.btxtech.game.services.terrain.*;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.utg.DbAbstractLevel;
@@ -56,8 +57,6 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     private CollisionService collisionService;
     @Autowired
     private ItemService itemService;
-    // @Autowired
-    // private PlatformTransactionManager txManager;
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -76,9 +75,9 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
 
     @PostConstruct
     public void init() {
-        dbTerrainImageCrudServiceHelper = (CrudServiceHelper<DbTerrainImage>) applicationContext.getBean("crudServiceHelperSpringTransaction", new Object[]{DbTerrainImage.class});
-        dbSurfaceImageCrudServiceHelper = (CrudServiceHelper<DbSurfaceImage>) applicationContext.getBean("crudServiceHelperSpringTransaction", new Object[]{DbSurfaceImage.class});
-        dbTerrainSettingCrudServiceHelper = new CrudServiceHelperHibernateImpl<DbTerrainSetting>(hibernateTemplate, DbTerrainSetting.class);
+        dbTerrainImageCrudServiceHelper = CrudServiceHelperSpringTransactionImpl.create(applicationContext, DbTerrainImage.class);
+        dbSurfaceImageCrudServiceHelper = CrudServiceHelperSpringTransactionImpl.create(applicationContext, DbSurfaceImage.class);
+        dbTerrainSettingCrudServiceHelper = CrudServiceHelperSpringTransactionImpl.create(applicationContext, DbTerrainSetting.class);
         SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
         try {
             activateTerrain();
@@ -106,6 +105,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         // Terrain settings
         DbTerrainSetting dbTerrainSetting = getDbTerrainSetting4RealGame();
         if (dbTerrainSetting == null) {
+            log.error("No terrain settings for real game.");
             return;
         }
         setTerrainSettings(dbTerrainSetting.createTerrainSettings());

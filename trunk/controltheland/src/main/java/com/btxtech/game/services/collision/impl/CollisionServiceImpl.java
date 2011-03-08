@@ -83,6 +83,10 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
 
     private SurfaceType[][] getSurfaceTypeField() {
         TerrainSettings terrainSettings = terrainService.getTerrainSettings();
+        if(terrainSettings == null) {
+            log.error("No terrain settings for real game available");
+            return new SurfaceType[0][0];
+        }
         SurfaceType[][] surfaceTypeFiled = new SurfaceType[terrainSettings.getTileXCount()][terrainSettings.getTileYCount()];
         for (int x = 0; x < terrainSettings.getTileXCount(); x++) {
             for (int y = 0; y < terrainSettings.getTileYCount(); y++) {
