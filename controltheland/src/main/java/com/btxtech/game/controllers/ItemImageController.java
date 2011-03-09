@@ -16,9 +16,14 @@ package com.btxtech.game.controllers;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
+
+import java.io.IOException;
 import java.io.OutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
@@ -28,11 +33,11 @@ import org.springframework.web.servlet.mvc.Controller;
 public class ItemImageController implements Controller {
     @Autowired
     private ItemService itemService;
+    private Log log = LogFactory.getLog(ItemImageController.class);
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
-
-
+        try {
         int itemTypeId = Integer.parseInt(httpServletRequest.getParameter(Constants.ITEM_IMAGE_ID));
         int index = Integer.parseInt(httpServletRequest.getParameter(Constants.ITEM_IMAGE_INDEX));
 
@@ -42,6 +47,11 @@ public class ItemImageController implements Controller {
         OutputStream out = httpServletResponse.getOutputStream();
         out.write(itemTypeImage.getData());
         out.close();
+        } catch (IOException e) {
+            // Connection lost -> ignore
+        } catch (Exception e) {
+            log.error("", e);
+        }
 
         return null;
     }

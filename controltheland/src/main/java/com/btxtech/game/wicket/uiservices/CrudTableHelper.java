@@ -87,10 +87,9 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
                 }
 
                 item.add(new Button("delete") {
-                    private Serializable id = item.getModelObject().getId();
                     @Override
                     public void onSubmit() {
-                        deleteChild(getCrudServiceHelper().readDbChild(id));
+                        getCrudServiceHelper().deleteDbChild(item.getModelObject());
                     }
 
 
@@ -104,10 +103,6 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
         }
         setupCreate(markupContainer, createId);
 
-    }
-
-    protected void deleteChild(T child) {
-        getCrudServiceHelper().deleteDbChild(child);
     }
 
     protected void setupSave(WebMarkupContainer markupContainer, String saveId) {
