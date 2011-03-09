@@ -32,10 +32,10 @@ public class CockpitSpeechBubbleHint extends SpeechBubbleHint {
             Widget widget = Cockpit.getInstance().getHintWidget(cockpitSpeechBubbleHintConfig);
             int left = widget.getAbsoluteLeft() + widget.getOffsetWidth() / 2;
             int top = widget.getAbsoluteTop();
-            setSpeechBubble(new SpeechBubble(left, top, cockpitSpeechBubbleHintConfig.getHtml()), cockpitSpeechBubbleHintConfig);
+            setSpeechBubble(new SpeechBubble(left, top, cockpitSpeechBubbleHintConfig.getHtml(), false), cockpitSpeechBubbleHintConfig);
         } catch (HintWidgetException e) {
             GwtCommon.handleException(e);
-            setSpeechBubble(new SpeechBubble(0, 0, "???"), cockpitSpeechBubbleHintConfig);
+            setSpeechBubble(new SpeechBubble(0, 0, "???", false), cockpitSpeechBubbleHintConfig);
         }
     }
 }
