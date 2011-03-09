@@ -15,7 +15,6 @@ package com.btxtech.game.services.user.impl;
 
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
-import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.connection.NoConnectionException;
@@ -29,15 +28,18 @@ import com.btxtech.game.services.utg.UserTrackingService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
@@ -46,6 +48,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import java.sql.SQLException;
 import java.util.*;
 
 @Component("userService")
@@ -62,6 +66,9 @@ public class UserServiceImpl implements UserService {
     private UserGuidanceService userGuidanceService;
     @Autowired
     private AuthenticationManager authenticationManager;
+    @Autowired
+    @Value(value = "${security.md5salt}")
+    private String md5HashSalt;
 
     private HibernateTemplate hibernateTemplate;
     private Map<DbBotConfig, UserState> botStates = new HashMap<DbBotConfig, UserState>();
@@ -71,6 +78,31 @@ public class UserServiceImpl implements UserService {
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
         hibernateTemplate = new HibernateTemplate(sessionFactory);
+    }
+
+    @PostConstruct
+    public void convertToMd5Password() {
+        // TODO remove if users are converted
+        try {
+            hibernateTemplate.execute(new HibernateCallback<Void>() {
+                @Override
+                public Void doInHibernate(Session session) throws HibernateException, SQLException {
+                    Md5PasswordEncoder encoder = new Md5PasswordEncoder();
+                    Criteria criteria = session.createCriteria(User.class);
+                    criteria.add(Restrictions.or(Restrictions.isNotNull("oldPassword"), Restrictions.eq("oldPassword", "")));
+                    List<User> userToConvert = criteria.list();
+                    for (User user : userToConvert) {
+                        String passwordHash = encoder.encodePassword(user.getOldPassword(), md5HashSalt);
+                        user.setPassword(passwordHash);
+                        user.setOldPassword(null);
+                        session.update(user);
+                    }
+                    return null;
+                }
+            });
+        } catch (Exception e) {
+            log.error("", e);
+        }
     }
 
     @Override
@@ -141,7 +173,8 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = new User();
-        user.registerUser(name, password, email); // TODO encode password
+        String passwordHash = new Md5PasswordEncoder().encodePassword(password, md5HashSalt);
+        user.registerUser(name, passwordHash, email);
         save(user);
         userTrackingService.onUserCreated(user);
 
@@ -163,7 +196,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication == null) {
+        if (authentication == null) {
             return null;
         }
         return (User) authentication.getPrincipal();
@@ -244,15 +277,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUser(UserState userState) {
         return userState.getUser();
-    }
-
-    @Override
-    public Base getSimpleBase(User user) { // TODO used?
-        UserState userState = getUserState(user);
-        if (userState == null) {
-            return null;
-        }
-        return userState.getBase();
     }
 
     @Override

@@ -28,6 +28,10 @@ import java.util.Set;
 public class User implements UserDetails, Serializable {
     @Id
     private String name;
+    @Deprecated
+    @Column(name = "password")
+    private String oldPassword;
+    @Column(name = "passwordHash")
     private String password;
     private String email;
     private boolean accountNonExpired = true;
@@ -37,8 +41,8 @@ public class User implements UserDetails, Serializable {
     private boolean credentialsNonExpired = true;
     private boolean enabled = true;
     @ElementCollection
-    @CollectionTable(name="USER_SECURITY_ROLE")
-    @Column(name="role")
+    @CollectionTable(name = "USER_SECURITY_ROLE")
+    @Column(name = "role")
     private Set<String> roles;
 
     public String getUsername() {
@@ -47,6 +51,20 @@ public class User implements UserDetails, Serializable {
 
     public String getPassword() {
         return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Deprecated
+    public String getOldPassword() {
+        return oldPassword;
+    }
+
+    @Deprecated
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
     }
 
     public String getEmail() {
@@ -95,8 +113,10 @@ public class User implements UserDetails, Serializable {
     public Collection<GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> grantedAuthorities = new ArrayList<GrantedAuthority>();
         grantedAuthorities.add(new GrantedAuthorityImpl(SecurityRoles.ROLE_USER));
-        for (String role : roles) {
-            grantedAuthorities.add(new GrantedAuthorityImpl(role));
+        if (roles != null) {
+            for (String role : roles) {
+                grantedAuthorities.add(new GrantedAuthorityImpl(role));
+            }
         }
         return grantedAuthorities;
     }
