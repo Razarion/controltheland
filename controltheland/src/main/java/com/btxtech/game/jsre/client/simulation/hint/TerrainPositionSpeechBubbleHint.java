@@ -13,6 +13,8 @@
 
 package com.btxtech.game.jsre.client.simulation.hint;
 
+import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.SpeechBubble;
 import com.btxtech.game.jsre.common.tutorial.TerrainPositionSpeechBubbleHintConfig;
 
@@ -23,9 +25,8 @@ import com.btxtech.game.jsre.common.tutorial.TerrainPositionSpeechBubbleHintConf
  */
 public class TerrainPositionSpeechBubbleHint extends SpeechBubbleHint {
     public TerrainPositionSpeechBubbleHint(TerrainPositionSpeechBubbleHintConfig terrainPositionSpeechBubbleHintConfig) {
-        setSpeechBubble(new SpeechBubble(terrainPositionSpeechBubbleHintConfig.getPosition().getX(),
-                terrainPositionSpeechBubbleHintConfig.getPosition().getY(),
-                terrainPositionSpeechBubbleHintConfig.getHtml()),
+        Index relPos = TerrainView.getInstance().toRelativeIndex(terrainPositionSpeechBubbleHintConfig.getPosition());
+        setSpeechBubble(new SpeechBubble(relPos.getX(), relPos.getY(), terrainPositionSpeechBubbleHintConfig.getHtml(), true),
                 terrainPositionSpeechBubbleHintConfig);
     }
 }

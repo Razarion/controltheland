@@ -13,27 +13,19 @@
 
 package com.btxtech.game.jsre.client.terrain;
 
-import com.btxtech.game.jsre.client.ClientSyncItem;
-import com.btxtech.game.jsre.client.ClientSyncItemView;
+import com.btxtech.game.jsre.client.*;
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
-import com.btxtech.game.jsre.client.ExtendedAbsolutePanel;
-import com.btxtech.game.jsre.client.Game;
-import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.item.ItemViewContainer;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseMoveHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseUpEvent;
-import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.Widget;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -52,6 +44,7 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
     private TerrainMouseMoveListener terrainMouseMoveListener;
     private boolean scrollingAllowed = true;
     private boolean isTrackingEvents = false;
+    private Collection<Widget> scrollAbleWidget = new ArrayList<Widget>();
 
     private enum ScrollDirection {
         NORTH,
@@ -222,6 +215,23 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
     @Override
     public void onScroll(int left, int top, int width, int height, int deltaLeft, int deltaTop) {
         displayVisibleItems();
+        scrollOtherElements(deltaLeft, deltaTop);
+    }
+
+    private void scrollOtherElements(int deltaLeft, int deltaTop) {
+        for (Widget widget : scrollAbleWidget) {
+            int newLeft = MapWindow.getAbsolutePanel().getWidgetLeft(widget) - deltaLeft;
+            int newtop = MapWindow.getAbsolutePanel().getWidgetTop(widget) - deltaTop;
+            MapWindow.getAbsolutePanel().setWidgetPosition(widget, newLeft, newtop);
+        }
+    }
+
+    public void addToScrollElements(Widget widget) {
+        scrollAbleWidget.add(widget);
+    }
+
+    public void removeToScrollElements(Widget widget) {
+        scrollAbleWidget.remove(widget);
     }
 
     public void displayVisibleItems() {

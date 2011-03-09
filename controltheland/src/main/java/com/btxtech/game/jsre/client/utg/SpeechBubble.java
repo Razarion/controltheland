@@ -40,6 +40,7 @@ public class SpeechBubble extends AbsolutePanel {
     public static final int BEAK_WIDTH = 10;
     private ExtendedCanvas extendedCanvas;
     private boolean blink = false;
+    private boolean scrollWithTerrain;
 
     enum Direction {
         TOP,
@@ -48,7 +49,8 @@ public class SpeechBubble extends AbsolutePanel {
         RIGHT
     }
 
-    public SpeechBubble(SyncItem item, String html) {
+    public SpeechBubble(SyncItem item, String html, boolean scrollWithTerrain) {
+        this.scrollWithTerrain = scrollWithTerrain;
         Index htmlSize = getHtmlSize(html);
         Index relative = TerrainView.getInstance().toRelativeIndex(item.getPosition());
         Direction direction = getBeakDirection(relative.getX(), relative.getY(), htmlSize.getX(), htmlSize.getY());
@@ -71,7 +73,8 @@ public class SpeechBubble extends AbsolutePanel {
         }
     }
 
-    public SpeechBubble(int beakRelX, int beakRelY, String html) {
+    public SpeechBubble(int beakRelX, int beakRelY, String html, boolean scrollWithTerrain) {
+        this.scrollWithTerrain = scrollWithTerrain;
         Index htmlSize = getHtmlSize(html);
         setup(beakRelX, beakRelY, html, htmlSize.getX(), htmlSize.getY(), null);
     }
@@ -149,6 +152,9 @@ public class SpeechBubble extends AbsolutePanel {
         setPixelSize(totalBubbleWidth, totalBubbleHeight);
         getElement().getStyle().setZIndex(Constants.Z_INDEX_SPEECH_BUBBLE);
         MapWindow.getAbsolutePanel().add(this, left, top);
+        if (scrollWithTerrain) {
+            MapWindow.getInstance().addToScrollElements(this);
+        }
         // HTML content
         VerticalPanel verticalPanel = new VerticalPanel();
         HTML htmlContent = new HTML(html);
@@ -386,11 +392,14 @@ public class SpeechBubble extends AbsolutePanel {
     }
 
     public void close() {
+        if (scrollWithTerrain) {
+            MapWindow.getInstance().removeToScrollElements(this);
+        }
         MapWindow.getAbsolutePanel().remove(this);
     }
 
     public void blink() {
-        extendedCanvas.setGlobalCompositeOperation(GWTCanvas.SOURCE_OVER);        
+        extendedCanvas.setGlobalCompositeOperation(GWTCanvas.SOURCE_OVER);
         if (blink) {
             extendedCanvas.setFillStyle(Color.WHITE);
         } else {

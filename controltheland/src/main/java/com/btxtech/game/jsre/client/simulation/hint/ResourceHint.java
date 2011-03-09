@@ -15,7 +15,9 @@ package com.btxtech.game.jsre.client.simulation.hint;
 
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
+import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.tutorial.ResourceHintConfig;
 import com.google.gwt.user.client.ui.Image;
 
@@ -30,10 +32,13 @@ public class ResourceHint implements Hint {
     public ResourceHint(ResourceHintConfig resourceHintConfig) {
         image = ImageHandler.getTutorialImage(resourceHintConfig.getImageId(), null);
         image.getElement().getStyle().setZIndex(Constants.Z_INDEX_BELOW_BUILDING);
-        MapWindow.getAbsolutePanel().add(image, resourceHintConfig.getPosition().getX(), resourceHintConfig.getPosition().getY());
+        Index relPos = TerrainView.getInstance().toRelativeIndex(resourceHintConfig.getPosition());
+        MapWindow.getAbsolutePanel().add(image, relPos.getX(), relPos.getY());
+        MapWindow.getInstance().addToScrollElements(image);
     }
 
     public void dispose() {
+        MapWindow.getInstance().removeToScrollElements(image);        
         MapWindow.getAbsolutePanel().remove(image);
     }
 }

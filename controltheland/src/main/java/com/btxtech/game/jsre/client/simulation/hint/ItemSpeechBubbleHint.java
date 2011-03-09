@@ -26,6 +26,6 @@ import com.btxtech.game.jsre.common.tutorial.ItemSpeechBubbleHintConfig;
 public class ItemSpeechBubbleHint extends SpeechBubbleHint {
     public ItemSpeechBubbleHint(ItemSpeechBubbleHintConfig itemSpeechBubbleHintConfig) {
         ClientSyncItem clientSyncItem = ItemContainer.getInstance().getSimulationItem(itemSpeechBubbleHintConfig.getSyncItemId());
-        setSpeechBubble(new SpeechBubble(clientSyncItem.getSyncItem(), itemSpeechBubbleHintConfig.getHtml()), itemSpeechBubbleHintConfig);
+        setSpeechBubble(new SpeechBubble(clientSyncItem.getSyncItem(), itemSpeechBubbleHintConfig.getHtml(), true), itemSpeechBubbleHintConfig);
     }
 }
