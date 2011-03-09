@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
  * Date: Aug 2, 2009
  * Time: 1:15:59 PM
  */
-public class ConfirmRestorePage extends WebPage {
+public class ConfirmRestorePage extends MgmtWebPage {
     @SpringBean
     private MgmtService mgmtService;
 

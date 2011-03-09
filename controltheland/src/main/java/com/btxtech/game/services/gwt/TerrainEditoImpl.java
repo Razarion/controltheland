@@ -54,7 +54,7 @@ public class TerrainEditoImpl implements TerrainEditor {
     @Override
     public void saveTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int terrainId) {
         try {
-            terrainService.saveAndActivateTerrain(terrainImagePositions, surfaceRects, terrainId);
+            terrainService.saveTerrain(terrainImagePositions, surfaceRects, terrainId);
         } catch (Throwable t) {
             log.error("", t);
         }

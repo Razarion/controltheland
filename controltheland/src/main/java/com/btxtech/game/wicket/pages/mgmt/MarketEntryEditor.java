@@ -46,7 +46,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: Sep 4, 2009
  * Time: 10:35:35 PM
  */
-public class MarketEntryEditor extends WebPage {
+public class MarketEntryEditor extends MgmtWebPage {
     @SpringBean
     private ServerMarketService serverMarketService;
     @SpringBean

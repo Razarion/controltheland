@@ -35,7 +35,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 13.10.2010
  * Time: 12:55:51
  */
-public class ProjectileItemTypeEditor extends WebPage {
+public class ProjectileItemTypeEditor extends MgmtWebPage {
     @SpringBean
     private ItemService itemService;
 

@@ -20,5 +20,5 @@ import org.apache.wicket.markup.html.WebPage;
  * Date: Sep 2, 2009
  * Time: 6:46:05 PM
  */
-public class TerrainFieldEditor extends WebPage {
+public class TerrainFieldEditor extends MgmtWebPage {
 }

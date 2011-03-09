@@ -33,7 +33,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 27.04.2010
  * Time: 17:12:33
  */
-public class TerrainImageSurfaceTypeEditor extends WebPage {
+public class TerrainImageSurfaceTypeEditor extends MgmtWebPage {
     public static final int LINE_WIDTH = 2;
     @SpringBean
     private TerrainService terrainService;

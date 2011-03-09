@@ -36,7 +36,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: Aug 2, 2009
  * Time: 1:37:14 PM
  */
-public class MgmtPage extends WebPage {
+public class MgmtPage extends MgmtWebPage {
     private static final ArrayList<LinkAndName> toolPages;
     @SpringBean
     private MgmtService mgmtService;
@@ -85,9 +85,9 @@ public class MgmtPage extends WebPage {
 
     static class LinkAndName implements Serializable {
         private String name;
-        private Class<? extends WebPage> clazz;
+        private Class<? extends MgmtWebPage> clazz;
 
-        LinkAndName(String name, Class<? extends WebPage> clazz) {
+        LinkAndName(String name, Class<? extends MgmtWebPage> clazz) {
             this.name = name;
             this.clazz = clazz;
         }
@@ -96,7 +96,7 @@ public class MgmtPage extends WebPage {
             return name;
         }
 
-        public Class<? extends WebPage> getClazz() {
+        public Class<? extends MgmtWebPage> getClazz() {
             return clazz;
         }
     }

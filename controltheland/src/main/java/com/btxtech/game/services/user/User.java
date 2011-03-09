@@ -17,9 +17,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,6 +37,8 @@ public class User implements UserDetails, Serializable {
     private boolean credentialsNonExpired = true;
     private boolean enabled = true;
     @ElementCollection
+    @CollectionTable(name="USER_SECURITY_ROLE")
+    @Column(name="role")
     private Set<String> roles;
 
     public String getUsername() {

@@ -23,10 +23,10 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelperHibernateImpl;
 import com.btxtech.game.services.common.CrudServiceHelperSpringTransactionImpl;
 import com.btxtech.game.services.terrain.*;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
+import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.utg.DbAbstractLevel;
 import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.services.utg.DbSimulationLevel;
@@ -38,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -192,7 +193,8 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
 
     @Transactional
     @Override
-    public void saveAndActivateTerrain(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int terrainId) {
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
+    public void saveTerrain(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int terrainId) {
         DbTerrainSetting dbTerrainSetting = dbTerrainSettingCrudServiceHelper.readDbChild(terrainId);
 
         // Terrain Image Position
@@ -412,6 +414,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
 
     @Override
     @Transactional
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveDbTerrainSetting(List<DbTerrainSetting> dbTerrainSettings) {
         dbTerrainSettingCrudServiceHelper.updateDbChildren(dbTerrainSettings);
     }

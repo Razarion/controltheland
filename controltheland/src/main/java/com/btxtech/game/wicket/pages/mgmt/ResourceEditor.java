@@ -36,7 +36,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 09.05.2010
  * Time: 15:49:16
  */
-public class ResourceEditor extends WebPage {
+public class ResourceEditor extends MgmtWebPage {
     @SpringBean
     private ResourceService resourceService;
     @SpringBean

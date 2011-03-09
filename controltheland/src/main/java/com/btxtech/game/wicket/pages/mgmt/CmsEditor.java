@@ -33,7 +33,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 07.07.2010
  * Time: 21:23:15
  */
-public class CmsEditor extends WebPage {
+public class CmsEditor extends MgmtWebPage {
     @SpringBean
     private CmsService cmsService;
 

@@ -16,6 +16,7 @@ package com.btxtech.game.wicket.pages.mgmt.tutorial;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
+import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CrudTableHelper;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -30,7 +31,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 23.07.2010
  * Time: 23:29:54
  */
-public class TutorialTable extends WebPage {
+public class TutorialTable extends MgmtWebPage {
     @SpringBean
     private TutorialService tutorialService;
 

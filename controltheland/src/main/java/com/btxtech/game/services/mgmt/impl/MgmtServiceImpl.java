@@ -25,6 +25,7 @@ import com.btxtech.game.services.mgmt.DbViewDTO;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.resource.ResourceService;
+import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import java.io.BufferedReader;
 import java.io.File;
@@ -64,6 +65,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 
 /**
@@ -131,6 +133,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public DbViewDTO queryDb(String sql) {
         final DbViewDTO dbViewDTO = new DbViewDTO();
         readonlyJdbcTemplate.setMaxRows(1000);
@@ -156,6 +159,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveQuery(final String query) {
         hibernateTemplate.execute(new HibernateCallback() {
             public Object doInHibernate(Session session) {
@@ -168,6 +172,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public List<String> getSavedQueris() {
         @SuppressWarnings("unchecked")
         List<SavedQuery> list = (List<SavedQuery>) hibernateTemplate.execute(new HibernateCallback() {
@@ -184,6 +189,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void removeSavedQuery(final String query) {
         hibernateTemplate.execute(new HibernateCallback() {
             public Object doInHibernate(Session session) {
@@ -200,11 +206,13 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public List<File> getLogFiles() {
         return Arrays.asList(LOG_DIR.listFiles());
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void backup() {
         long time = System.currentTimeMillis();
         BackupEntry backupEntry = genericItemConverter.generateBackupEntry();
@@ -215,6 +223,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public List<BackupSummary> getBackupSummary() {
         @SuppressWarnings("unchecked")
         List<Object[]> list = (List<Object[]>) hibernateTemplate.execute(new HibernateCallback() {
@@ -240,6 +249,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void restore(final Date date) throws NoSuchItemTypeException {
         long time = System.currentTimeMillis();
         @SuppressWarnings("unchecked")
@@ -328,10 +338,10 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         }
     }
 
-    // TODO change to a DB property service
 
     @Override
     public StartupData getStartupData() {
+        // TODO change to a DB property service
         if (startupData == null) {
             @SuppressWarnings("unchecked")
             List<StartupData> startups = hibernateTemplate.loadAll(StartupData.class);

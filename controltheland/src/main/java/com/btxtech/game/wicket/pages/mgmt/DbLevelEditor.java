@@ -35,7 +35,7 @@ import wicket.contrib.tinymce.settings.TinyMCESettings;
  * Date: 14.05.2010
  * Time: 14:53:19
  */
-public class DbLevelEditor extends WebPage {
+public class DbLevelEditor extends MgmtWebPage {
     @SpringBean
     private UserGuidanceService userGuidanceService;
 

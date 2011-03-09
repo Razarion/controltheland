@@ -13,18 +13,22 @@
 
 package com.btxtech.game.wicket.pages.basepage;
 
+import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.pages.cms.Home;
 import com.btxtech.game.wicket.pages.forum.ForumView;
 import com.btxtech.game.wicket.pages.info.Info;
 import com.btxtech.game.wicket.pages.market.MarketPage;
+import com.btxtech.game.wicket.pages.mgmt.MgmtPage;
 import com.btxtech.game.wicket.pages.statistics.StatisticsPage;
 import com.btxtech.game.wicket.pages.user.LoggedinBox;
 import com.btxtech.game.wicket.pages.user.LoginBox;
 import com.btxtech.game.wicket.pages.user.UserListPage;
 import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.authorization.Action;
+import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
@@ -60,13 +64,13 @@ public class BasePage extends WebPage implements IHeaderContributor {
         add(new LoginBox("loginBox"));
 
         ArrayList<MenuItem> menuItems = new ArrayList<MenuItem>();
-        menuItems.add(new MenuItem("home", Home.class, this));
-        menuItems.add(new MenuItem("info", Info.class, this));
-        menuItems.add(new MenuItem("market", MarketPage.class, this));
-        menuItems.add(new MenuItem("users", UserListPage.class, this));
-        menuItems.add(new MenuItem("statistics", StatisticsPage.class, this));
-        menuItems.add(new MenuItem("forum", ForumView.class, this));
-        //menuItems.add(new MenuItem("mgmt", MgmtPage.class, this));
+        menuItems.add(new MenuItem("home", Home.class, this, false));
+        menuItems.add(new MenuItem("info", Info.class, this, false));
+        menuItems.add(new MenuItem("market", MarketPage.class, this, false));
+        menuItems.add(new MenuItem("users", UserListPage.class, this, false));
+        menuItems.add(new MenuItem("statistics", StatisticsPage.class, this, false));
+        menuItems.add(new MenuItem("forum", ForumView.class, this, false));
+        menuItems.add(new MenuItem("mgmt", MgmtPage.class, this, true));
         buildMenu(menuItems);
     }
 
@@ -77,7 +81,12 @@ public class BasePage extends WebPage implements IHeaderContributor {
     private void buildMenu(ArrayList<MenuItem> menuItems) {
         ListView<MenuItem> history = new ListView<MenuItem>("menu", menuItems) {
             protected void populateItem(final ListItem<MenuItem> linkItem) {
-                BookmarkablePageLink<WebPage> link = new BookmarkablePageLink<WebPage>("link", linkItem.getModelObject().destination);
+                BookmarkablePageLink<WebPage> link;
+                if (linkItem.getModelObject().isAdminOnly()) {
+                    link = new AdminBookmarkablePageLink<WebPage>("link", linkItem.getModelObject().destination);
+                } else {
+                    link = new BookmarkablePageLink<WebPage>("link", linkItem.getModelObject().destination);
+                }
                 if (linkItem.getModelObject().isSelected()) {
                     SimpleAttributeModifier classModifier = new SimpleAttributeModifier("class", "menuItemSelected");
                     linkItem.add(classModifier);
@@ -108,14 +117,27 @@ public class BasePage extends WebPage implements IHeaderContributor {
         }
     }
 
+    @AuthorizeAction(action = Action.RENDER, roles = SecurityRoles.ROLE_ADMINISTRATOR)
+    class AdminBookmarkablePageLink<T> extends BookmarkablePageLink<T> {
+        public <C extends Page> AdminBookmarkablePageLink(String id, Class<C> pageClass) {
+            super(id, pageClass);
+        }
+
+        public <C extends Page> AdminBookmarkablePageLink(String id, Class<C> pageClass, PageParameters parameters) {
+            super(id, pageClass, parameters);
+        }
+    }
+
     class MenuItem implements Serializable {
         private Class<? extends Page> destination;
         private String name;
         private boolean isSelected;
+        private boolean adminOnly;
 
-        MenuItem(String name, Class<? extends Page> destination, Object thisObject) {
+        MenuItem(String name, Class<? extends Page> destination, Object thisObject, boolean adminOnly) {
             this.destination = destination;
             this.name = name;
+            this.adminOnly = adminOnly;
             isSelected = destination.equals(thisObject.getClass());
         }
 
@@ -130,5 +152,10 @@ public class BasePage extends WebPage implements IHeaderContributor {
         public boolean isSelected() {
             return isSelected;
         }
+
+        public boolean isAdminOnly() {
+            return adminOnly;
+        }
     }
+
 }

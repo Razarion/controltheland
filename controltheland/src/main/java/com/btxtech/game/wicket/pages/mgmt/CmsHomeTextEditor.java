@@ -29,7 +29,7 @@ import wicket.contrib.tinymce.settings.TinyMCESettings;
  * Date: 10.07.2010
  * Time: 13:11:59
  */
-public class CmsHomeTextEditor extends WebPage {
+public class CmsHomeTextEditor extends MgmtWebPage {
     @SpringBean
     private CmsService cmsService;
 

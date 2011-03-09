@@ -32,7 +32,7 @@ import java.util.List;
  * Date: 16.02.2010
  * Time: 21:35:44
  */
-public class UserStateTable extends WebPage {
+public class UserStateTable extends MgmtWebPage {
     @SpringBean
     private UserService userService;
 

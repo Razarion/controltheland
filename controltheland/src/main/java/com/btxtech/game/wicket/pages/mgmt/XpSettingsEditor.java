@@ -26,7 +26,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 16.02.2010
  * Time: 21:35:44
  */
-public class XpSettingsEditor extends WebPage {
+public class XpSettingsEditor extends MgmtWebPage {
     @SpringBean
     private ServerMarketService serverMarketService;
 

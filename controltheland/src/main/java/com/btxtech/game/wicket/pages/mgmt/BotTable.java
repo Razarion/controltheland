@@ -28,7 +28,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 19.05.2010
  * Time: 22:13:43
  */
-public class BotTable extends WebPage {
+public class BotTable extends MgmtWebPage {
     @SpringBean
     private BotService botService;
 

@@ -53,7 +53,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: Sep 4, 2009
  * Time: 10:35:35 PM
  */
-public class BaseItemTypeEditor extends WebPage {
+public class BaseItemTypeEditor extends MgmtWebPage {
     @SpringBean
     private ItemService itemService;
     private DbBaseItemType dbBaseItemType;

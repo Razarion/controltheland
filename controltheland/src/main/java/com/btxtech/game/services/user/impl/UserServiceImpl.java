@@ -162,7 +162,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUser() {
-        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication == null) {
+            return null;
+        }
+        return (User) authentication.getPrincipal();
     }
 
     @Override

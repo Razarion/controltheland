@@ -27,7 +27,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 03.11.2009
  * Time: 22:13:26
  */
-public class QuerySelector extends WebPage {
+public class QuerySelector extends MgmtWebPage {
     @SpringBean
     private MgmtService mgmtService;
     public QuerySelector() {

@@ -36,7 +36,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 28.11.2010
  * Time: 14:50:22
  */
-public class TerrainSettingsTable extends WebPage {
+public class TerrainSettingsTable extends MgmtWebPage {
     @SpringBean
     private TerrainService terrainService;
 

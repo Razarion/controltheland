@@ -21,6 +21,8 @@ import com.btxtech.game.services.utg.VisitorDetailInfo;
 import com.btxtech.game.wicket.WebCommon;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -32,7 +34,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: Aug 4, 2009
  * Time: 10:31:43 PM
  */
-public class VisitorDetails extends WebPage {
+public class VisitorDetails extends MgmtWebPage {
     @SpringBean
     private UserTrackingService userTrackingService;
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(WebCommon.DATE_TIME_FORMAT_STRING);

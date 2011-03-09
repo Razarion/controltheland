@@ -19,6 +19,8 @@ import com.btxtech.game.services.utg.VisitorInfo;
 import com.btxtech.game.wicket.WebCommon;
 import java.text.SimpleDateFormat;
 import java.util.List;
+
+import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -38,7 +40,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: Aug 4, 2009
  * Time: 10:31:43 PM
  */
-public class UserTracking extends WebPage {
+public class UserTracking extends MgmtWebPage {
     @SpringBean
     private UserTrackingService userTrackingService;
     private UserTrackingFilter userTrackingFilter;

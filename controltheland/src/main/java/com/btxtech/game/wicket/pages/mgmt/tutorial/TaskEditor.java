@@ -22,6 +22,7 @@ import com.btxtech.game.services.tutorial.DbStepConfig;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.wicket.pages.mgmt.ItemsUtil;
+import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CrudTableHelper;
 import java.util.Collection;
 
@@ -46,7 +47,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 23.07.2010
  * Time: 23:29:54
  */
-public class TaskEditor extends WebPage {
+public class TaskEditor extends MgmtWebPage {
     @SpringBean
     private TutorialService tutorialService;
     @SpringBean

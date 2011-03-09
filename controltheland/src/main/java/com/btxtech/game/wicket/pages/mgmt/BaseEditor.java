@@ -48,7 +48,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 16.02.2010
  * Time: 21:35:44
  */
-public class BaseEditor extends WebPage {
+public class BaseEditor extends MgmtWebPage {
     public static final String NO_POS = "-";
     @SpringBean
     private ItemService itemService;

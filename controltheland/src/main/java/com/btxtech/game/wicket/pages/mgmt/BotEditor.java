@@ -39,7 +39,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 25.09.2010
  * Time: 14:04:26
  */
-public class BotEditor extends WebPage {
+public class BotEditor extends MgmtWebPage {
     @SpringBean
     private BotService botService;
     @SpringBean

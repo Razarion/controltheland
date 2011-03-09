@@ -33,7 +33,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 12.05.2010
  * Time: 20:26:33
  */
-public class DbLevelTable extends WebPage {
+public class DbLevelTable extends MgmtWebPage {
     @SpringBean
     private UserGuidanceService userGuidanceService;
 

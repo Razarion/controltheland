@@ -35,7 +35,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: Aug 4, 2009
  * Time: 10:31:43 PM
  */
-public class BackupRestore extends WebPage {
+public class BackupRestore extends MgmtWebPage {
     @SpringBean
     private MgmtService mgmtService;
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(WebCommon.DATE_TIME_FORMAT_STRING);
