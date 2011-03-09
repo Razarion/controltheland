@@ -74,9 +74,7 @@ public class TerrainImageController implements Controller {
         } catch (Exception e) {
             log.error("", e);
             handleBadRequest(httpServletResponse);
-            return null;
         }
-
         return null;
     }
 

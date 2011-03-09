@@ -14,14 +14,16 @@
 package com.btxtech.game.controllers;
 
 import com.btxtech.game.services.utg.UserTrackingService;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Component(value = "statisticsController")
 public class StatisticsController implements Controller {
@@ -33,11 +35,10 @@ public class StatisticsController implements Controller {
     public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
         try {
             userTrackingService.onJavaScriptDetected();
-            return null;
         } catch (Exception e) {
             log.error("", e);
-            throw e;
         }
+        return null;
     }
 
 }

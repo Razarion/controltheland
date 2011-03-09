@@ -512,7 +512,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         }
         DbItemTypeImage itemTypeImage = indexImages.get(index);
         if (itemTypeImage == null) {
-            throw new IllegalArgumentException("Item Type index does not exist: " + index);
+            throw new IllegalArgumentException("Item Type index does not exist: " + index + ". ItemTypeId: " + itemTypeId);
         }
         return itemTypeImage;
     }

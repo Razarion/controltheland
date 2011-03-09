@@ -37,11 +37,10 @@ public class LoadScriptCommunicationController implements Controller {
             log.error(httpServletRequest.getParameter(Constants.ERROR_KEY));
             log.error("User Agent: " + session.getUserAgent());
             log.error("Session Id: " + session.getSessionId());
-            return null;
         } catch (Exception e) {
             log.error("", e);
-            throw e;
         }
+        return null;
     }
 
 }
