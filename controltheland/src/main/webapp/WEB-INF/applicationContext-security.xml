@@ -26,10 +26,9 @@
 
     <authentication-manager alias="authenticationManager">
         <authentication-provider user-service-ref="userService">
-            <!-- TODO user-service hash salt -->
-            <!-- user-service>
-                <user name="u1" password="1234" authorities="ROLE_USER"/>
-            </user-service -->
+            <password-encoder hash="md5">
+                <salt-source system-wide="${security.md5salt}"/>
+            </password-encoder>
         </authentication-provider>
     </authentication-manager>
 
