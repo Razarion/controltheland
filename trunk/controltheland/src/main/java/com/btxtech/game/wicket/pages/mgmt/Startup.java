@@ -27,7 +27,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 30.03.2010
  * Time: 23:03:10
  */
-public class Startup extends WebPage {
+public class Startup extends MgmtWebPage {
     @SpringBean
     private MgmtService mgmtService;
 

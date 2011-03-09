@@ -19,6 +19,7 @@ import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
+import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CrudTableHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,7 +39,7 @@ import org.hibernate.SessionFactory;
  * Date: 23.07.2010
  * Time: 23:29:54
  */
-public class TutorialEditor extends WebPage {
+public class TutorialEditor extends MgmtWebPage {
     @SpringBean
     private TutorialService tutorialService;
     @SpringBean

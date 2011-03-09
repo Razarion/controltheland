@@ -21,6 +21,7 @@ import com.btxtech.game.services.tutorial.hint.DbHintConfig;
 import com.btxtech.game.services.tutorial.hint.DbItemSpeechBubbleHintConfig;
 import com.btxtech.game.services.tutorial.hint.DbResourceHintConfig;
 import com.btxtech.game.services.tutorial.hint.DbTerrainPositionSpeechBubbleHintConfig;
+import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.pages.mgmt.condition.ConditionConfigPanel;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.hint.CockpitSpeechBubbleHintConfigPanel;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.hint.ItemSpeechBubbleHintConfigPanel;
@@ -44,7 +45,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 27.07.2010
  * Time: 23:29:54
  */
-public class StepEditor extends WebPage {
+public class StepEditor extends MgmtWebPage {
     @SpringBean
     private TutorialService tutorialService;
     private Class createChoice = DbHintConfig.ALL_HINTS[0];

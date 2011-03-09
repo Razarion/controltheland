@@ -28,6 +28,7 @@ import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.tutorial.TutorialService;
+import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.*;
@@ -40,6 +41,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -293,6 +295,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
     @Override
     @Transactional
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveDbLevel(DbAbstractLevel dbAbstractLevel) {
         crudServiceHelperHibernate.updateDbChild(dbAbstractLevel);
     }

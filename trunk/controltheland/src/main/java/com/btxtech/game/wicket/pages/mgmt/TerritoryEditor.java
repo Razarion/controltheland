@@ -45,7 +45,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 23.05.2010
  * Time: 16:28:44
  */
-public class TerritoryEditor extends WebPage {
+public class TerritoryEditor extends MgmtWebPage {
     @SpringBean
     private TerritoryService territoryService;
     @SpringBean

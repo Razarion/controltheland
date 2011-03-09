@@ -33,7 +33,7 @@ import org.apache.wicket.util.resource.IResourceStream;
  * Date: Aug 4, 2009
  * Time: 10:31:43 PM
  */
-public class LogView extends WebPage {
+public class LogView extends MgmtWebPage {
     @SpringBean
     private MgmtService mgmtService;
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(WebCommon.DATE_TIME_FORMAT_STRING);

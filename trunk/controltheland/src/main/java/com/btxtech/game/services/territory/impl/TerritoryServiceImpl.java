@@ -23,6 +23,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+
+import com.btxtech.game.services.user.SecurityRoles;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -32,6 +34,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 
 /**
@@ -61,18 +64,21 @@ public class TerritoryServiceImpl extends AbstractTerritoryServiceImpl implement
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void addDbTerritory() {
         hibernateTemplate.save(new DbTerritory());
         updateTerritories();
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void removeDbTerritory(DbTerritory dbTerritory) {
         hibernateTemplate.delete(dbTerritory);
         updateTerritories();
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveDbTerritory(List<DbTerritory> dbTerritories) {
         for (DbTerritory dbTerritory : dbTerritories) {
             hibernateTemplate.merge(dbTerritory);
@@ -126,6 +132,7 @@ public class TerritoryServiceImpl extends AbstractTerritoryServiceImpl implement
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)        
     public void saveTerritory(Territory territory) {
         DbTerritory dbTerritory = getDbTerritory(territory.getName());
         dbTerritory.addDbTerritoryRegion(territory.getTerritoryTileRegions());

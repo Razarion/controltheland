@@ -22,7 +22,7 @@ import org.apache.wicket.markup.html.WebPage;
  * Date: 22.05.2010
  * Time: 15:22:28
  */
-public class TerritoryDesigner extends WebPage {
+public class TerritoryDesigner extends MgmtWebPage {
     public TerritoryDesigner(DbTerritory dbTerritory) {
 
     }

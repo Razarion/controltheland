@@ -31,7 +31,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 26.01.2011
  * Time: 16:30:59
  */
-public class UserStateEditor extends WebPage {
+public class UserStateEditor extends MgmtWebPage {
     @SpringBean
     private UserService userService;
     @SpringBean

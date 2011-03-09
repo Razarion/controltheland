@@ -23,6 +23,7 @@ import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.tutorial.hint.DbResourceHintConfig;
 import com.btxtech.game.services.tutorial.hint.ResourceHintManager;
+import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.utg.DbAbstractLevel;
 import com.btxtech.game.services.utg.DbSimulationLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -32,6 +33,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -131,6 +133,7 @@ public class TutorialServiceImpl implements TutorialService, ResourceHintManager
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveTutorial(DbTutorialConfig dbTutorialConfig) {
         tutorialCrudServiceHelper.updateDbChild(dbTutorialConfig);
     }
@@ -142,6 +145,7 @@ public class TutorialServiceImpl implements TutorialService, ResourceHintManager
 
     @Override
     @Transactional
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveDbStepConfig(DbStepConfig dbStepConfig) {
         hibernateTemplate.update(dbStepConfig);
     }

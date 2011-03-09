@@ -38,7 +38,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 23.05.2010
  * Time: 16:28:44
  */
-public class AttackMatrix extends WebPage {
+public class AttackMatrix extends MgmtWebPage {
     @SpringBean
     private ItemService itemService;
 

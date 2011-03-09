@@ -32,7 +32,7 @@ public class TestTerrainService extends BaseTestService {
 
         Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
         Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
-        terrainService.saveAndActivateTerrain(terrainImagePositions, surfaceRects, 1);
+        terrainService.saveTerrain(terrainImagePositions, surfaceRects, 1);
 
         Assert.assertEquals(0, getTerrainTileCount());
         Assert.assertEquals(0, getSurfaceRectCount());
@@ -49,7 +49,7 @@ public class TestTerrainService extends BaseTestService {
         terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), 1));
         terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), 1));
         Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
-        terrainService.saveAndActivateTerrain(terrainImagePositions, surfaceRects, 1);
+        terrainService.saveTerrain(terrainImagePositions, surfaceRects, 1);
 
         Assert.assertEquals(1, getTerrainTileCount());
         Assert.assertEquals(0, getSurfaceRectCount());
@@ -66,7 +66,7 @@ public class TestTerrainService extends BaseTestService {
         Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
         surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 100, 100), 1));
         surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 100, 100), 1));
-        terrainService.saveAndActivateTerrain(terrainImagePositions, surfaceRects, 1);
+        terrainService.saveTerrain(terrainImagePositions, surfaceRects, 1);
 
         Assert.assertEquals(0, getTerrainTileCount());
         Assert.assertEquals(1, getSurfaceRectCount());
@@ -83,7 +83,7 @@ public class TestTerrainService extends BaseTestService {
         terrainImagePositions.add(new TerrainImagePosition(new Index(0, 0), 1));
         Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
         surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 100, 100), 1));
-        terrainService.saveAndActivateTerrain(terrainImagePositions, surfaceRects, 1);
+        terrainService.saveTerrain(terrainImagePositions, surfaceRects, 1);
 
         Assert.assertEquals(1, getTerrainTileCount());
         Assert.assertEquals(1, getSurfaceRectCount());
@@ -104,7 +104,7 @@ public class TestTerrainService extends BaseTestService {
             }
         }
         Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
-        terrainService.saveAndActivateTerrain(terrainImagePositions, surfaceRects, 1);
+        terrainService.saveTerrain(terrainImagePositions, surfaceRects, 1);
         Assert.assertEquals(1600, getTerrainTileCount());
         Assert.assertEquals(0, getSurfaceRectCount());
         verifyImagePositions(0, 40, 0, 40);
@@ -116,7 +116,7 @@ public class TestTerrainService extends BaseTestService {
                 terrainImagePositions.add(new TerrainImagePosition(new Index(x, y), 1));
             }
         }
-        terrainService.saveAndActivateTerrain(terrainImagePositions, surfaceRects, 1);
+        terrainService.saveTerrain(terrainImagePositions, surfaceRects, 1);
         Assert.assertEquals(1600, getTerrainTileCount());
         Assert.assertEquals(0, getSurfaceRectCount());
         verifyImagePositions(0, 40, 0, 40);
@@ -128,7 +128,7 @@ public class TestTerrainService extends BaseTestService {
                 terrainImagePositions.add(new TerrainImagePosition(new Index(x, y), 1));
             }
         }
-        terrainService.saveAndActivateTerrain(terrainImagePositions, surfaceRects, 1);
+        terrainService.saveTerrain(terrainImagePositions, surfaceRects, 1);
         Assert.assertEquals(1600, getTerrainTileCount());
         Assert.assertEquals(0, getSurfaceRectCount());
         verifyImagePositions(20, 60, 20, 60);
@@ -149,7 +149,7 @@ public class TestTerrainService extends BaseTestService {
             }
         }
         Collection<TerrainImagePosition> imagePositions = new ArrayList<TerrainImagePosition>();
-        terrainService.saveAndActivateTerrain(imagePositions, surfaceRects, 1);
+        terrainService.saveTerrain(imagePositions, surfaceRects, 1);
         Assert.assertEquals(0, getTerrainTileCount());
         Assert.assertEquals(1600, getSurfaceRectCount());
         verifySurfaceRects(0, 40, 0, 40, 1, 1);
@@ -161,7 +161,7 @@ public class TestTerrainService extends BaseTestService {
                 surfaceRects.add(new SurfaceRect(new Rectangle(x, y, 1, 1), 1));
             }
         }
-        terrainService.saveAndActivateTerrain(imagePositions, surfaceRects, 1);
+        terrainService.saveTerrain(imagePositions, surfaceRects, 1);
         Assert.assertEquals(0, getTerrainTileCount());
         Assert.assertEquals(1600, getSurfaceRectCount());
         verifySurfaceRects(0, 40, 0, 40, 1, 1);
@@ -173,7 +173,7 @@ public class TestTerrainService extends BaseTestService {
                 surfaceRects.add(new SurfaceRect(new Rectangle(x, y, 1, 1), 1));
             }
         }
-        terrainService.saveAndActivateTerrain(imagePositions, surfaceRects, 1);
+        terrainService.saveTerrain(imagePositions, surfaceRects, 1);
         Assert.assertEquals(0, getTerrainTileCount());
         Assert.assertEquals(1600, getSurfaceRectCount());
         verifySurfaceRects(20, 60, 20, 60, 1, 1);

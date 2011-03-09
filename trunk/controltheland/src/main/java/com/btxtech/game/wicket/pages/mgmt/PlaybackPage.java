@@ -25,7 +25,7 @@ import org.apache.wicket.protocol.http.WebRequest;
  * Date: 04.08.2010
  * Time: 11:21:21
  */
-public class PlaybackPage extends WebPage {
+public class PlaybackPage extends MgmtWebPage {
     public PlaybackPage() {
         HttpSession httpSession = ((WebRequest) getRequest()).getHttpServletRequest().getSession();
         Label startupSeqLabel = new Label("info", "");

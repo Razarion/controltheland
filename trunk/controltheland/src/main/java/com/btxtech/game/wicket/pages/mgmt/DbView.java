@@ -32,7 +32,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: Aug 2, 2009
  * Time: 1:15:59 PM
  */
-public class DbView extends WebPage {
+public class DbView extends MgmtWebPage {
     @SpringBean
     private MgmtService mgmtService;
     private String sqlField;

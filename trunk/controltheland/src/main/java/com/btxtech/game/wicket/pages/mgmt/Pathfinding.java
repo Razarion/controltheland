@@ -20,5 +20,5 @@ import org.apache.wicket.markup.html.WebPage;
  * Date: Aug 4, 2009
  * Time: 10:31:43 PM
  */
-public class Pathfinding extends WebPage {
+public class Pathfinding extends MgmtWebPage {
 }
