@@ -30,6 +30,7 @@ public class Game implements EntryPoint {
             GwtCommon.setUncaughtExceptionHandler();
             isDebug = Boolean.parseBoolean(Window.Location.getParameter(DEBUG_PARAM));
             LevelTargetDialog.showDialog(getLevelHtml());
+            ClientServices.getInstance().connectStartupListeners();
             ClientServices.getInstance().getClientRunner().start(getStartupSeqFromHtml());
         } catch (Throwable t) {
             GwtCommon.handleException(t);

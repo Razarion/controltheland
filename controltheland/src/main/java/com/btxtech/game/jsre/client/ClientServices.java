@@ -47,10 +47,17 @@ public class ClientServices implements Services {
         }
     };
 
+    public static ClientServices getInstance() {
+        return INSTANCE;
+    }
+
     /**
      * Singleton
      */
     private ClientServices() {
+    }
+
+    public void connectStartupListeners() {
         clientRunner.addStartupProgressListener(StartupScreen.getInstance());
         clientRunner.addStartupProgressListener(Connection.getInstance());
     }
@@ -68,10 +75,6 @@ public class ClientServices implements Services {
     @Override
     public AbstractBaseService getBaseService() {
         return ClientBase.getInstance();
-    }
-
-    public static ClientServices getInstance() {
-        return INSTANCE;
     }
 
     @Override
