@@ -22,17 +22,15 @@ import com.btxtech.game.wicket.pages.basepage.BasePage;
 import com.btxtech.game.wicket.pages.info.Info;
 import com.btxtech.game.wicket.pages.user.LoggedinBox;
 import com.btxtech.game.wicket.pages.user.LoginBox;
+import com.btxtech.game.wicket.uiservices.CmsImageResource;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
-import org.apache.wicket.resource.ByteArrayResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import javax.servlet.http.Cookie;
@@ -58,51 +56,16 @@ public class Home extends WebPage implements IHeaderContributor {
         add(new LoggedinBox("loggedinBox"));
         add(new LoginBox("loginBox"));
 
-        ///////////////////////////////
         add(new Label("style", new PropertyModel(cmsService.getHomeContentStyleDTO(), "style")));
         add(new Label("text", new PropertyModel(cmsService.getHomeContentStyleDTO(), "text")).setEscapeModelStrings(false));
 
         BookmarkablePageLink<WebPage> startLink = new BookmarkablePageLink<WebPage>("startLink", Game.class);
         add(startLink);
-        startLink.add(new Image("startImage", new IModel<ByteArrayResource>() {
-
-            @Override
-            public ByteArrayResource getObject() {
-                return new ByteArrayResource(cmsService.getHomeContentStyleDTO().getDbCmsHomeLayout().getStartImageContentType(),
-                        cmsService.getHomeContentStyleDTO().getDbCmsHomeLayout().getStartImage());
-            }
-
-            @Override
-            public void setObject(ByteArrayResource object) {
-                // Ignore
-            }
-
-            @Override
-            public void detach() {
-                // Ignore
-            }
-        }));
+        startLink.add(CmsImageResource.createImage("startImage", CmsImageResource.ImageId.START));
 
         BookmarkablePageLink<WebPage> infoLink = new BookmarkablePageLink<WebPage>("infoLink", Info.class);
         add(infoLink);
-        infoLink.add(new Image("infoImage", new IModel<ByteArrayResource>() {
-
-            @Override
-            public ByteArrayResource getObject() {
-                return new ByteArrayResource(cmsService.getHomeContentStyleDTO().getDbCmsHomeLayout().getInfoImageContentType(),
-                        cmsService.getHomeContentStyleDTO().getDbCmsHomeLayout().getInfoImage());
-            }
-
-            @Override
-            public void setObject(ByteArrayResource object) {
-                // Ignore
-            }
-
-            @Override
-            public void detach() {
-                // Ignore
-            }
-        }));
+        infoLink.add(CmsImageResource.createImage("infoImage", CmsImageResource.ImageId.INFO));
     }
 
     @Override

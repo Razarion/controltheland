@@ -17,6 +17,7 @@ import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.wicket.pages.PageExpired;
 import com.btxtech.game.wicket.pages.cms.Home;
+import com.btxtech.game.wicket.uiservices.CmsImageResource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.*;
@@ -37,19 +38,20 @@ import org.springframework.stereotype.Component;
  * Time: 9:51:34 PM
  */
 @Component
-public class WicketAplication extends AuthenticatedWebApplication {
+public class WicketApplication extends AuthenticatedWebApplication {
     @Autowired
     private Session session;
     @Autowired
     private MgmtService mgmtService;
     private String configurationType;
-    private Log log = LogFactory.getLog(WicketAplication.class);
+    private Log log = LogFactory.getLog(WicketApplication.class);
 
     @Override
     protected void init() {
         super.init();
         addComponentInstantiationListener(new SpringComponentInjector(this));
         getApplicationSettings().setAccessDeniedPage(Home.class);
+        getSharedResources().add(CmsImageResource.CMS_SHARED_IMAGE_RESOURCES, new CmsImageResource());
     }
 
     @Override
