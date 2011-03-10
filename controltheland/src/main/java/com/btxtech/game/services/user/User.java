@@ -28,9 +28,6 @@ import java.util.Set;
 public class User implements UserDetails, Serializable {
     @Id
     private String name;
-    @Deprecated
-    @Column(name = "password")
-    private String oldPassword;
     @Column(name = "passwordHash")
     private String password;
     private String email;
@@ -55,16 +52,6 @@ public class User implements UserDetails, Serializable {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    @Deprecated
-    public String getOldPassword() {
-        return oldPassword;
-    }
-
-    @Deprecated
-    public void setOldPassword(String oldPassword) {
-        this.oldPassword = oldPassword;
     }
 
     public String getEmail() {
