@@ -28,7 +28,6 @@ import com.btxtech.game.services.utg.UserTrackingService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -48,8 +47,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import java.sql.SQLException;
 import java.util.*;
 
 @Component("userService")
@@ -78,31 +75,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
         hibernateTemplate = new HibernateTemplate(sessionFactory);
-    }
-
-    @PostConstruct
-    public void convertToMd5Password() {
-        // TODO remove if users are converted
-        try {
-            hibernateTemplate.execute(new HibernateCallback<Void>() {
-                @Override
-                public Void doInHibernate(Session session) throws HibernateException, SQLException {
-                    Md5PasswordEncoder encoder = new Md5PasswordEncoder();
-                    Criteria criteria = session.createCriteria(User.class);
-                    criteria.add(Restrictions.or(Restrictions.isNotNull("oldPassword"), Restrictions.eq("oldPassword", "")));
-                    List<User> userToConvert = criteria.list();
-                    for (User user : userToConvert) {
-                        String passwordHash = encoder.encodePassword(user.getOldPassword(), md5HashSalt);
-                        user.setPassword(passwordHash);
-                        user.setOldPassword(null);
-                        session.update(user);
-                    }
-                    return null;
-                }
-            });
-        } catch (Exception e) {
-            log.error("", e);
-        }
     }
 
     @Override
