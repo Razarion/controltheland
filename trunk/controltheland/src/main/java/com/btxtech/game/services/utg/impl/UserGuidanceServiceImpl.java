@@ -241,8 +241,12 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
 
     @Override
     public DbAbstractLevel getDbLevel(String levelName) {
-        // TODO
-        return null;
+        for (DbAbstractLevel dbAbstractLevel : dbAbstractLevels) {
+            if (dbAbstractLevel.getName().equals(levelName)) {
+                return dbAbstractLevel;
+            }
+        }
+        throw new IllegalArgumentException("No DbLevel for levelName: " + levelName);
     }
 
     @Override

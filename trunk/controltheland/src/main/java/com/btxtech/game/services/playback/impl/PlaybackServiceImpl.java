@@ -66,6 +66,7 @@ public class PlaybackServiceImpl implements PlaybackService {
             MovableServiceImpl.setCommonInfo(playbackInfo, userService, itemService, mgmtService);
             DbAbstractLevel dbAbstractLevel = userGuidanceService.getDbLevel(levelName);
             playbackInfo.setTutorialConfig(tutorialService.getTutorialConfig((DbSimulationLevel) dbAbstractLevel));
+            playbackInfo.setLevel(dbAbstractLevel.getLevel());
             terrainService.setupTerrain(playbackInfo, dbAbstractLevel);
 
             // Mouse tracker
