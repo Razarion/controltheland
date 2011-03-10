@@ -20,6 +20,8 @@ import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.BrowserDetails;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.WebCommon;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -51,6 +53,7 @@ public class SessionImpl implements Session, Serializable {
     private BrowserDetails browserDetails;
     private UserState userState;
     private Connection connection;
+    private Log log = LogFactory.getLog(SessionImpl.class);
 
     @Override
     public Connection getConnection() {
@@ -78,8 +81,12 @@ public class SessionImpl implements Session, Serializable {
 
     @PreDestroy
     public void destroy() {
-        if (userState != null) {
-            userService.onSessionTimedOut(userState, sessionId);
+        try {
+            if (userState != null) {
+                userService.onSessionTimedOut(userState, sessionId);
+            }
+        } catch (Exception e) {
+            log.error("", e);
         }
     }
 
