@@ -81,7 +81,7 @@ public class BaseTestService {
         SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
     }
 
-    protected void beforeOpenSessionInViewFilter() {
+    protected void beginOpenSessionInViewFilter() {
         if (sessionHolder != null) {
             throw new IllegalStateException("SessionHolder is NOT null. afterOpenSessionInViewFilter() was not called.");
         }
@@ -92,7 +92,7 @@ public class BaseTestService {
         TransactionSynchronizationManager.bindResource(getHibernateTemplate().getSessionFactory(), sessionHolder);
     }
 
-    protected void afterOpenSessionInViewFilter() {
+    protected void endOpenSessionInViewFilter() {
         if (sessionHolder == null) {
             throw new IllegalStateException("SessionHolder is null. Call beforeOpenSessionInViewFilter() first.");
         }
@@ -135,6 +135,17 @@ public class BaseTestService {
         ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).requestCompleted();
         RequestContextHolder.resetRequestAttributes();
         mockHttpServletRequest = null;
+    }
+
+    protected void beginHttpRequestAndOpenSessionInViewFilter() {
+        beginHttpRequest();
+        beginOpenSessionInViewFilter();
+    }
+
+
+    protected void endHttpRequestAndOpenSessionInViewFilter() {
+        endOpenSessionInViewFilter();
+        endHttpRequest();
     }
 
 }
