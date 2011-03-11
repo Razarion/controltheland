@@ -216,6 +216,18 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         return base;
     }
 
+    private boolean hasBase() {
+        Connection connection = session.getConnection();
+        if (connection == null) {
+            return false;
+        }
+        Base base = connection.getBase();
+        if (base == null) {
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public Base getBase(SyncBaseObject syncBaseObject) {
         Base base = bases.get(syncBaseObject.getBase());
@@ -400,10 +412,9 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
 
     @Override
     public void surrenderBase(Base base) {
-        /* TODO if (base.getUser() != null) {
-            historyService.addBaseSurrenderedEntry(base.getSimpleBase());
-            userTrackingService.onBaseSurrender(base.getUser(), base);
-        }*/
+        historyService.addBaseSurrenderedEntry(base.getSimpleBase());
+        userTrackingService.onBaseSurrender(userService.getUser(), base);
+        userService.onSurrenderBase();
         setBaseAbandoned(base.getSimpleBase(), true);
         UserState userState = base.getUserState();
         userState.setBase(null);
@@ -491,6 +502,9 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
 
     @Override
     public void onUserRegistered() {
+        if (!hasBase()) {
+            return;
+        }
         Base base = getBase();
         setBaseName(base.getSimpleBase(), setupBaseName(base));
         sendBaseChangedPacket(BaseChangedPacket.Type.CHANGED, base.getSimpleBase());

@@ -16,7 +16,6 @@ package com.btxtech.game.services.base;
 import com.btxtech.game.jsre.client.AlreadyUsedException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
@@ -27,6 +26,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.btxtech.game.services.energy.impl.BaseEnergy;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.user.UserState;
+
 import java.util.Collection;
 import java.util.List;
 
