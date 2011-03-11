@@ -119,14 +119,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void onSessionTimedOut(UserState userState, String sessionId) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        SecurityContextHolder.getContext().setAuthentication(null);
         if (userState != null) {
             userState.setSessionId(null);
             baseService.onSessionTimedOut(userState);
         }
-        if (user != null) {
-            userTrackingService.onUserLoggedOut(user);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication != null) {
+            User user = (User) authentication.getPrincipal();
+            if (user != null) {
+                userTrackingService.onUserLoggedOut(user);
+            }
+            SecurityContextHolder.getContext().setAuthentication(null);
         }
     }
 
