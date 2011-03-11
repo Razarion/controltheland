@@ -46,6 +46,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.*;
 
@@ -64,6 +69,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
+    private PlatformTransactionManager transactionManager;
     @Value(value = "${security.md5salt}")
     private String md5HashSalt;
 
@@ -96,7 +102,7 @@ public class UserServiceImpl implements UserService {
 
     private void loginUser(User user) {
         user.setLastLoginDate(new Date());
-        save(user);
+        privateSave(user);
         try {
             userTrackingService.onUserLoggedIn(user, baseService.getBase());
         } catch (NoConnectionException e) {
@@ -124,7 +130,7 @@ public class UserServiceImpl implements UserService {
             baseService.onSessionTimedOut(userState);
         }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication != null) {
+        if (authentication != null) {
             User user = (User) authentication.getPrincipal();
             if (user != null) {
                 userTrackingService.onUserLoggedOut(user);
@@ -134,7 +140,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void createUserAndLoggin(String name, String password, String confirmPassword, String email, boolean keepGame) throws UserAlreadyExistsException, PasswordNotMatchException {
+    public void onSurrenderBase() {
+        getUserState().setUser(null);
+        if (session.getUserState() != null) {
+            session.getUserState().setSessionId(null);
+        }
+    }
+
+    @Override
+    public void createUserAndLoggin(String name, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException {
         if (getUser() != null) {
             throw new IllegalStateException("The user is already logged in: " + getUser());
         }
@@ -150,15 +164,14 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         String passwordHash = new Md5PasswordEncoder().encodePassword(password, md5HashSalt);
         user.registerUser(name, passwordHash, email);
-        save(user);
+        privateSave(user);
         userTrackingService.onUserCreated(user);
 
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(name, password));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        if (keepGame) {
-            baseService.onUserRegistered();
-        }
+        baseService.onUserRegistered();
+        getUserState().setUser(user);
 
         loginUser(user);
     }
@@ -201,9 +214,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void save(User user) {
         hibernateTemplate.saveOrUpdate(user);
     }
+
+    private void privateSave(final User user) {
+        // @Transactional not working here
+        // It's an limitation with Spring AOP. (dynamic objects and CGLIB)
+        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            public void doInTransactionWithoutResult(TransactionStatus status) {
+                hibernateTemplate.saveOrUpdate(user);
+            }
+        });
+    }
+
 
     @SuppressWarnings("unchecked")
     @Override
@@ -259,6 +285,7 @@ public class UserServiceImpl implements UserService {
         if (session.getUserState() == null) {
             UserState userState = new UserState();
             userState.setSessionId(session.getSessionId());
+            userState.setUser(getUser());
             session.setUserState(userState);
             synchronized (userStates) {
                 userStates.add(userState);

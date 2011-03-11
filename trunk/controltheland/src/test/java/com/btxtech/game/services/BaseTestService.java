@@ -2,17 +2,28 @@ package com.btxtech.game.services;
 
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainService;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.orm.hibernate3.SessionHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.ServletRequest;
 
 /**
  * User: beat
@@ -24,19 +35,36 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 public class BaseTestService {
     private HibernateTemplate hibernateTemplate;
     @Autowired
+    private UserGuidanceService userGuidanceService;
+    @Autowired
     private TerrainService terrainService;
+    @Autowired
+    private ConfigurableListableBeanFactory configurableListableBeanFactory;
     private SessionHolder sessionHolder;
+    private MockHttpServletRequest mockHttpServletRequest;
+    private MockHttpSession mockHttpSession;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
         hibernateTemplate = new HibernateTemplate(sessionFactory);
     }
 
-    public HibernateTemplate getHibernateTemplate() {
+    @Before
+    public void setup() {
+        configurableListableBeanFactory.registerResolvableDependency(ServletRequest.class, new ObjectFactory<ServletRequest>() {
+            // This is used to inject HttpServletRequest into SessionImpl
+            @Override
+            public ServletRequest getObject() throws BeansException {
+                return mockHttpServletRequest;
+            }
+        });
+    }
+
+    protected HibernateTemplate getHibernateTemplate() {
         return hibernateTemplate;
     }
 
-    public void setupMinimalTerrain() {
+    protected void setupMinimalTerrain() {
         terrainService.getDbTerrainSettingCrudServiceHelper().createDbChild();
         DbTerrainSetting dbTerrainSetting = terrainService.getDbTerrainSettingCrudServiceHelper().readDbChildren().iterator().next();
         dbTerrainSetting.setRealGame(true);
@@ -53,8 +81,8 @@ public class BaseTestService {
         SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
     }
 
-    public void beforeOpenSessionInViewFilter() {
-        if(sessionHolder != null) {
+    protected void beforeOpenSessionInViewFilter() {
+        if (sessionHolder != null) {
             throw new IllegalStateException("SessionHolder is NOT null. afterOpenSessionInViewFilter() was not called.");
         }
 
@@ -64,13 +92,49 @@ public class BaseTestService {
         TransactionSynchronizationManager.bindResource(getHibernateTemplate().getSessionFactory(), sessionHolder);
     }
 
-    public void afterOpenSessionInViewFilter() {
-        if(sessionHolder == null) {
+    protected void afterOpenSessionInViewFilter() {
+        if (sessionHolder == null) {
             throw new IllegalStateException("SessionHolder is null. Call beforeOpenSessionInViewFilter() first.");
         }
         SessionFactoryUtils.closeSession(sessionHolder.getSession());
         TransactionSynchronizationManager.unbindResource(getHibernateTemplate().getSessionFactory());
         sessionHolder = null;
+    }
+
+    protected void beginHttpSession() {
+        if (mockHttpSession != null) {
+            throw new IllegalStateException("mockHttpSession is not null");
+        }
+        mockHttpSession = new MockHttpSession();
+    }
+
+    protected void endHttpSession() {
+        if (mockHttpSession == null) {
+            throw new IllegalStateException("mockHttpSession is null");
+        }
+        mockHttpSession.invalidate();
+        mockHttpSession = null;
+    }
+
+    protected void beginHttpRequest() {
+        if (mockHttpServletRequest != null) {
+            throw new IllegalStateException("mockHttpServletRequest is not null");
+        }
+        if (mockHttpSession == null) {
+            throw new IllegalStateException("mockHttpSession is null");
+        }
+        mockHttpServletRequest = new MockHttpServletRequest();
+        mockHttpServletRequest.setSession(mockHttpSession);
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(mockHttpServletRequest));
+    }
+
+    protected void endHttpRequest() {
+        if (mockHttpServletRequest == null) {
+            throw new IllegalStateException("mockHttpServletRequest not null");
+        }
+        ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).requestCompleted();
+        RequestContextHolder.resetRequestAttributes();
+        mockHttpServletRequest = null;
     }
 
 }

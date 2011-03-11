@@ -44,7 +44,7 @@ public class NewUser extends BasePage {
                 }
 
                 try {
-                    userService.createUserAndLoggin(name, password, confirmPassword, email, false);
+                    userService.createUserAndLoggin(name, password, confirmPassword, email);
                     setResponsePage(UserPage.class);
                 } catch (UserAlreadyExistsException e) {
                     PageParameters parameters = new PageParameters();

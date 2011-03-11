@@ -40,7 +40,7 @@ public interface UserService extends UserDetailsService {
 
     List<User> getAllUsers();
 
-    void createUserAndLoggin(String name, String password, String confirmPassword, String email, boolean keepGame) throws UserAlreadyExistsException, PasswordNotMatchException;
+    void createUserAndLoggin(String name, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException;
 
     User getUser(UserState userState);
 
@@ -61,4 +61,6 @@ public interface UserService extends UserDetailsService {
     List<UserState> getAllUserStates();
 
     void restore(Collection<UserState> userStates);
+
+    void onSurrenderBase();
 }
