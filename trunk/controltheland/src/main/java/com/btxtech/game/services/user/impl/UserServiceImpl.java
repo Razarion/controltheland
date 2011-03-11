@@ -120,6 +120,7 @@ public class UserServiceImpl implements UserService {
         }
         if (session.getUserState() != null) {
             session.getUserState().setSessionId(null);
+            session.setUserState(null);
         }
     }
 
@@ -141,10 +142,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void onSurrenderBase() {
-        getUserState().setUser(null);
-        if (session.getUserState() != null) {
-            session.getUserState().setSessionId(null);
+        if (session.getUserState() == null) {
+            throw new IllegalStateException("No user state");
         }
+        session.getUserState().setUser(null);
+        session.setUserState(null);
     }
 
     @Override
