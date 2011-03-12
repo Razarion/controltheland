@@ -14,6 +14,8 @@
 package com.btxtech.game.services.resource;
 
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
+import com.btxtech.game.services.common.CrudServiceHelper;
+
 import java.util.List;
 
 /**
@@ -22,15 +24,9 @@ import java.util.List;
  * Time: 21:57:02
  */
 public interface ResourceService {
-    void resetAllResources();
+    void activate();
 
     void resourceItemDeleted(SyncResourceItem syncResourceItem);
 
-    List<DbRegionResource> getDbRegionResources();
-
-    void addDbRegionResource();
-
-    void saveDbRegionResource(List<DbRegionResource> dbRegionResource);
-
-    void deleteDbRegionResource(DbRegionResource modelObject);
+    CrudServiceHelper<DbRegionResource> getDbRegionResourceCrudServiceHelper();
 }

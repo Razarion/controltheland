@@ -14,6 +14,7 @@
 package com.btxtech.game.services.resource;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.db.RectangleUserType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import java.io.Serializable;
@@ -34,7 +35,7 @@ import org.hibernate.annotations.TypeDef;
  */
 @Entity(name = "RESOURCE_REGION_RESOURCE")
 @TypeDef(name = "rectangle", typeClass = RectangleUserType.class)
-public class DbRegionResource implements Serializable {
+public class DbRegionResource implements CrudChild {
     @Id
     @GeneratedValue
     private Integer id;
@@ -45,8 +46,17 @@ public class DbRegionResource implements Serializable {
     @Columns(columns = {@Column(name = "x"), @Column(name = "y"), @Column(name = "width"), @Column(name = "height")})    
     private Rectangle region;
     private String name;
-    @ManyToOne(optional = true, fetch = FetchType.EAGER)
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
     private DbResourceItemType resourceItemType;
+
+    @Override
+    public Serializable getId() {
+        return id;
+    }
+
+    @Override
+    public void init() {
+    }
 
     public String getName() {
         return name;
@@ -89,6 +99,11 @@ public class DbRegionResource implements Serializable {
 
     public void setResourceItemType(DbResourceItemType resourceItemType) {
         this.resourceItemType = resourceItemType;
+    }
+
+    @Override
+    public void setParent(Object o) {
+        // Np parent
     }
 
     @Override

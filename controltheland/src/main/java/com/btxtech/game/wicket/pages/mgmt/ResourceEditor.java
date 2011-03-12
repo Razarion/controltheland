@@ -13,22 +13,18 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
+import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.services.resource.DbRegionResource;
 import com.btxtech.game.services.resource.ResourceService;
-import java.util.Iterator;
-import java.util.List;
-import org.apache.wicket.markup.html.WebPage;
+import com.btxtech.game.wicket.uiservices.CrudTableHelper;
+import com.btxtech.game.wicket.uiservices.RectanglePanel;
+import com.btxtech.game.wicket.uiservices.ResourceItemTypePanel;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
-import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -41,116 +37,36 @@ public class ResourceEditor extends MgmtWebPage {
     private ResourceService resourceService;
     @SpringBean
     private ItemService itemService;
-    private List<DbRegionResource> modifiedDbRegionResources;
 
     public ResourceEditor() {
         add(new FeedbackPanel("msgs"));
         Form form = new Form("regionResourceForm");
         add(form);
-        final RegionResourceProvider regionResourceProvider = new RegionResourceProvider();
-        form.add(new DataView<DbRegionResource>("regionResources", regionResourceProvider) {
+
+        new CrudTableHelper<DbRegionResource>("regionResources", "save", "create", false, form, false) {
 
             @Override
-            protected void populateItem(final Item<DbRegionResource> item) {
-                item.add(new TextField<String>("name"));
+            protected CrudServiceHelper<DbRegionResource> getCrudServiceHelper() {
+                return resourceService.getDbRegionResourceCrudServiceHelper();
+            }
+
+            @Override
+            protected void extendedPopulateItem(final Item<DbRegionResource> item) {
+                super.extendedPopulateItem(item);
                 item.add(new TextField<String>("count"));
-                item.add(new TextField<Integer>("resourceItemType", new IModel<Integer>() {
-
-                    @Override
-                    public Integer getObject() {
-                        DbResourceItemType dbResourceItemType = item.getModelObject().getResourceItemType();
-                        if (dbResourceItemType != null) {
-                            return dbResourceItemType.getId();
-                        } else {
-                            return null;
-                        }
-                    }
-
-                    @Override
-                    public void setObject(Integer id) {
-                        if (id != null) {
-                            item.getModelObject().setResourceItemType((DbResourceItemType) itemService.getDbItemType(id));
-                        } else {
-                            item.getModelObject().setResourceItemType(null);
-                        }
-                    }
-
-                    @Override
-                    public void detach() {
-                        //Ignore 
-                    }
-                }, Integer.class));
-                item.add(new TextField<String>("region.x"));
-                item.add(new TextField<String>("region.y"));
-                item.add(new TextField<String>("region.width"));
-                item.add(new TextField<String>("region.height"));
+                item.add(new ResourceItemTypePanel("resourceItemType"));
+                item.add(new RectanglePanel("region"));
                 item.add(new TextField<String>("minDistanceToItems"));
-
-                item.add(new Button("delete") {
-
-                    @Override
-                    public void onSubmit() {
-                        resourceService.deleteDbRegionResource(item.getModelObject());
-                    }
-                });
             }
-        });
-        form.add(new Button("addRegionResource") {
+        };
+
+        form.add(new Button("activate") {
 
             @Override
             public void onSubmit() {
-                resourceService.addDbRegionResource();
-            }
-        });
-        form.add(new Button("saveRegionResource") {
-
-            @Override
-            public void onSubmit() {
-                if (modifiedDbRegionResources == null) {
-                    throw new NullPointerException();
-                }
-                resourceService.saveDbRegionResource(modifiedDbRegionResources);
-            }
-        });
-        form.add(new Button("activateRegionResource") {
-
-            @Override
-            public void onSubmit() {
-                resourceService.resetAllResources();
+                resourceService.activate();
             }
         });
 
-    }
-
-    class RegionResourceProvider implements IDataProvider<DbRegionResource> {
-        private List<DbRegionResource> dbRegionResources;
-
-        @Override
-        public Iterator<? extends DbRegionResource> iterator(int first, int count) {
-            return getDbRegionResource().subList(first, first + count).iterator();
-        }
-
-        @Override
-        public int size() {
-            return getDbRegionResource().size();
-        }
-
-        @Override
-        public IModel<DbRegionResource> model(DbRegionResource dbRegionResource) {
-            return new CompoundPropertyModel<DbRegionResource>(dbRegionResource);
-        }
-
-        @Override
-        public void detach() {
-            dbRegionResources = null;
-        }
-
-        public List<DbRegionResource> getDbRegionResource() {
-            if (dbRegionResources == null) {
-                dbRegionResources = resourceService.getDbRegionResources();
-                modifiedDbRegionResources = dbRegionResources;
-            }
-            return dbRegionResources;
-        }
     }
 }

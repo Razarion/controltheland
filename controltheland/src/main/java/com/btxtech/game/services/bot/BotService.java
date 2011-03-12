@@ -13,9 +13,7 @@
 
 package com.btxtech.game.services.bot;
 
-import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.services.common.CrudServiceHelper;
-import java.util.Collection;
 
 /**
  * User: beat

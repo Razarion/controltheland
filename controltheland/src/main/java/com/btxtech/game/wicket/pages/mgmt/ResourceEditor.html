@@ -21,6 +21,7 @@
 <h1>Resource</h1>
 
 <span wicket:id="msgs"/>
+
 <form wicket:id="regionResourceForm">
     <h2>Region Resource</h2>
     <table cellpadding="1" cellspacing="1" border="0">
@@ -28,10 +29,7 @@
             <th bgcolor="#dadada">Name [internal only]</th>
             <th bgcolor="#dadada">Count</th>
             <th bgcolor="#dadada">Resource item type</th>
-            <th bgcolor="#dadada">Start X</th>
-            <th bgcolor="#dadada">Start Y</th>
-            <th bgcolor="#dadada">Width</th>
-            <th bgcolor="#dadada">Height</th>
+            <th bgcolor="#dadada">Region</th>
             <th bgcolor="#dadada">Item free range</th>
             <th bgcolor="#dadada">Delete</th>
         </tr>
@@ -39,20 +37,18 @@
         <tr wicket:id="regionResources">
             <td><input type="text" wicket:id="name" size="20" maxlength="500"/></td>
             <td><input type="text" wicket:id="count" size="5" maxlength="20"/></td>
-            <td><input type="text" wicket:id="resourceItemType" size="5" maxlength="20"/></td>
-            <td><input type="text" wicket:id="region.x" size="5" maxlength="20"/></td>
-            <td><input type="text" wicket:id="region.y" size="5" maxlength="20"/></td>
-            <td><input type="text" wicket:id="region.width" size="5" maxlength="20"/></td>
-            <td><input type="text" wicket:id="region.height" size="5" maxlength="20"/></td>
+            <td wicket:id="resourceItemType"/>
+            <td wicket:id="region"/>
             <td><input type="text" wicket:id="minDistanceToItems" size="5" maxlength="20"/></td>
             <td valign="center">
                 <input type="submit" value="Delete" wicket:id="delete"/>
             </td>
         </tr>
     </table>
-    <input type="submit" wicket:id="addRegionResource" value="Add">
-    <input type="submit" wicket:id="saveRegionResource" value="Save">
-    <input type="submit" wicket:id="activateRegionResource" value="Activate">
+    <input type="submit" wicket:id="create" value="Create">
+    <input type="submit" wicket:id="save" value="Save">
+    <br>
+    <input type="submit" wicket:id="activate" value="Activate">
 
 </form>
 </body>
