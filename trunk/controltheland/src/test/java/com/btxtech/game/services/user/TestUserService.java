@@ -192,6 +192,36 @@ public class TestUserService extends BaseTestService {
         endHttpSession();
     }
 
+    @Test
+    @DirtiesContext
+    public void createLoginInGame() throws Exception {
+        beginHttpSession();
+        // Create account
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUserAndLoggin("U1", "test", "test", "test");
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        UserState userState1 = userService.getUserState();
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        // Log out
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.logout();
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        // Log in
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertSame(userState1, userService.getUserState());
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        endHttpSession();
+    }
+
     public static UserGuidanceService createUserGuidanceServiceMock() {
         return createNiceMock(UserGuidanceService.class);
     }
