@@ -62,6 +62,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
     private ExtendedCanvas canvas = new ExtendedCanvas();
     private AbsolutePanel parent;
     private TerrainHandler terrainHandler = new TerrainHandler();
+    public static boolean uglySuppressRadar = false;
 
     /**
      * Singleton
@@ -94,7 +95,9 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
             return;
         }
         terrainHandler.setupTerrain(terrainSettings, terrainImagePositions, surfaceRects, surfaceImages, terrainImages);
-        RadarPanel.getInstance().onTerrainSettings(terrainSettings);
+        if(!uglySuppressRadar) {
+            RadarPanel.getInstance().onTerrainSettings(terrainSettings);
+        }
     }
 
     public static TerrainView getInstance() {

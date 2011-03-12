@@ -15,6 +15,8 @@ package com.btxtech.game.services.territory;
 
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.services.territory.AbstractTerritoryService;
+import com.btxtech.game.services.common.CrudServiceHelper;
+
 import java.util.List;
 
 /**
@@ -23,13 +25,13 @@ import java.util.List;
  * Time: 14:56:42
  */
 public interface TerritoryService extends AbstractTerritoryService {
-    void addDbTerritory();
-
-    void removeDbTerritory(DbTerritory dbTerritory);
+    CrudServiceHelper<DbTerritory> getDbTerritoryCrudServiceHelper();
 
     void saveDbTerritory(List<DbTerritory> dbTerritories);
 
     List<DbTerritory> getDbTerritories();
 
     void saveTerritory(Territory territory);
+
+    void activate();
 }

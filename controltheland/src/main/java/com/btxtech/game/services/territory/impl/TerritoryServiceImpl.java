@@ -16,14 +16,11 @@ package com.btxtech.game.services.territory.impl;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.territory.impl.AbstractTerritoryServiceImpl;
+import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.common.CrudServiceHelperSpringTransactionImpl;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.DbTerritory;
 import com.btxtech.game.services.territory.TerritoryService;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import javax.annotation.PostConstruct;
-
 import com.btxtech.game.services.user.SecurityRoles;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,10 +29,17 @@ import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * User: beat
@@ -46,39 +50,35 @@ import org.springframework.stereotype.Component;
 public class TerritoryServiceImpl extends AbstractTerritoryServiceImpl implements TerritoryService {
     @Autowired
     private TerrainService terrainService;
+    @Autowired
+    private ApplicationContext applicationContext;
     private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(TerritoryServiceImpl.class);
-
-    @PostConstruct
-    public void setup() {
-        try {
-            updateTerritories();
-        } catch (Throwable t) {
-            log.error("", t);
-        }
-    }
+    private CrudServiceHelper<DbTerritory> dbTerritoryCrudServiceHelper;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
         hibernateTemplate = new HibernateTemplate(sessionFactory);
     }
 
+    @PostConstruct
+    public void setup() {
+        try {
+            dbTerritoryCrudServiceHelper = CrudServiceHelperSpringTransactionImpl.create(applicationContext, DbTerritory.class);
+            updateTerritories();
+        } catch (Throwable t) {
+            log.error("", t);
+        }
+    }
+
     @Override
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void addDbTerritory() {
-        hibernateTemplate.save(new DbTerritory());
-        updateTerritories();
+    public CrudServiceHelper<DbTerritory> getDbTerritoryCrudServiceHelper() {
+        return dbTerritoryCrudServiceHelper;
     }
 
     @Override
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void removeDbTerritory(DbTerritory dbTerritory) {
-        hibernateTemplate.delete(dbTerritory);
-        updateTerritories();
-    }
-
-    @Override
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
+    @Deprecated
     public void saveDbTerritory(List<DbTerritory> dbTerritories) {
         for (DbTerritory dbTerritory : dbTerritories) {
             hibernateTemplate.merge(dbTerritory);
@@ -88,6 +88,7 @@ public class TerritoryServiceImpl extends AbstractTerritoryServiceImpl implement
 
     @SuppressWarnings("unchecked")
     @Override
+    @Deprecated
     public List<DbTerritory> getDbTerritories() {
         return (List<DbTerritory>) hibernateTemplate.executeFind(new HibernateCallback() {
             @Override
@@ -121,7 +122,7 @@ public class TerritoryServiceImpl extends AbstractTerritoryServiceImpl implement
 
     private void updateTerritories() {
         ArrayList<Territory> territories = new ArrayList<Territory>();
-        List<DbTerritory> dbTerritories = getDbTerritories();
+        Collection<DbTerritory> dbTerritories = dbTerritoryCrudServiceHelper.readDbChildren();
         for (DbTerritory dbTerritory : dbTerritories) {
             if (dbTerritory.getName() == null || dbTerritory.getName().trim().isEmpty()) {
                 continue;
@@ -132,7 +133,8 @@ public class TerritoryServiceImpl extends AbstractTerritoryServiceImpl implement
     }
 
     @Override
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)        
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
+    @Deprecated
     public void saveTerritory(Territory territory) {
         DbTerritory dbTerritory = getDbTerritory(territory.getName());
         dbTerritory.addDbTerritoryRegion(territory.getTerritoryTileRegions());
@@ -143,5 +145,10 @@ public class TerritoryServiceImpl extends AbstractTerritoryServiceImpl implement
     @Override
     protected AbstractTerrainService getTerrainService() {
         return terrainService;
+    }
+
+    @Override
+    public void activate() {
+        updateTerritories();
     }
 }
