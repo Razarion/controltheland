@@ -38,6 +38,8 @@ public interface TerrainService extends AbstractTerrainService {
 
     void activateTerrain();
 
+    DbTerrainSetting getDbTerrainSetting4RealGame();
+
     void saveTerrain(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int terrainId);
 
     void setupTerrain(GameInfo gameInfo, DbAbstractLevel dbAbstractLevel);

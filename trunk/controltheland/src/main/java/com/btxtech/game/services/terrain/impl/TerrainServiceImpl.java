@@ -143,7 +143,8 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         fireTerrainChanged();
     }
 
-    private DbTerrainSetting getDbTerrainSetting4RealGame() {
+    @Override
+    public DbTerrainSetting getDbTerrainSetting4RealGame() {
         Collection<DbTerrainSetting> dbTerrainSettings = dbTerrainSettingCrudServiceHelper.readDbChildren();
         DbTerrainSetting realGame = null;
         for (DbTerrainSetting dbTerrainSetting : dbTerrainSettings) {

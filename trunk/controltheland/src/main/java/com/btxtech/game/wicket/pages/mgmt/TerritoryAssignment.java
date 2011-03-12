@@ -13,11 +13,13 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
+import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.territory.DbTerritory;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
  * User: beat
@@ -25,19 +27,21 @@ import org.apache.wicket.model.IModel;
  * Time: 23:04:46
  */
 public class TerritoryAssignment extends Panel {
-    public TerritoryAssignment
-            (String id, final DbBaseItemType dbBaseItemType, final DbTerritory dbTerritory) {
+    @SpringBean
+    private ItemService itemService;
+
+    public TerritoryAssignment(String id, final int dbBaseItemTypeId, final IModel<DbTerritory> model) {
         super(id);
         add(new CheckBox("check", new IModel<Boolean>() {
 
             @Override
             public Boolean getObject() {
-                return dbTerritory.isItemAllowed(dbBaseItemType);
+                return model.getObject().isItemAllowed((DbBaseItemType) itemService.getDbItemType(dbBaseItemTypeId));
             }
 
             @Override
             public void setObject(Boolean allowed) {
-                dbTerritory.setItemAllowed(dbBaseItemType, allowed);
+                model.getObject().setItemAllowed((DbBaseItemType) itemService.getDbItemType(dbBaseItemTypeId), allowed);
             }
 
             @Override

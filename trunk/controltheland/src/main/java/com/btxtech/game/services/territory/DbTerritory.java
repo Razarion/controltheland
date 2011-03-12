@@ -15,6 +15,7 @@ package com.btxtech.game.services.territory;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.Territory;
+import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ import org.hibernate.annotations.Cascade;
  * Time: 14:41:45
  */
 @Entity(name = "TERRITORY_TERRITORY")
-public class DbTerritory implements Serializable {
+public class DbTerritory implements CrudChild {
     @Id
     @GeneratedValue
     private Integer id;
@@ -54,6 +55,11 @@ public class DbTerritory implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "itemTypeId")
     )
     private Set<DbBaseItemType> allowedItemTypes;
+
+    @Override
+    public Serializable getId() {
+        return id;
+    }
 
     public String getName() {
         return name;
@@ -122,5 +128,14 @@ public class DbTerritory implements Serializable {
         } else {
             allowedItemTypes.remove(dbBaseItemType);
         }
+    }
+
+    @Override
+    public void init() {
+    }
+
+    @Override
+    public void setParent(Object o) {
+        // No parent
     }
 }

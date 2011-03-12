@@ -47,6 +47,8 @@ public class MapView implements EntryPoint {
         GwtCommon.setUncaughtExceptionHandler();
         GwtCommon.disableBrowserContextMenuJSNI();
 
+        TerrainView.uglySuppressRadar = true;
+
         int terrainId = Integer.parseInt(Window.Location.getParameter(TerrainEditorAsync.TERRAIN_SETTING_ID));
 
         AbsolutePanel absolutePanel = new AbsolutePanel();
