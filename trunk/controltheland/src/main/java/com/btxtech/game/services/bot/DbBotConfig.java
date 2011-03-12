@@ -19,7 +19,6 @@ import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelperCollectionImpl;
 import com.btxtech.game.services.common.db.RectangleUserType;
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -45,7 +44,7 @@ import org.hibernate.annotations.Where;
  */
 @Entity(name = "BOT_CONFIG")
 @TypeDef(name = "rectangle", typeClass = RectangleUserType.class)
-public class DbBotConfig implements CrudChild, Serializable, CrudParent {
+public class DbBotConfig implements CrudChild, CrudParent {
     private static final int BASE_FUNDAMENTAL = 0;
     private static final int BASE_BUILDUP = 1;
     private static final int DEFENSE = 2;
