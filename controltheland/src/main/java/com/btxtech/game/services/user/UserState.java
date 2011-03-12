@@ -36,9 +36,9 @@ public class UserState {
     private User user;
     @OneToOne
     private Base base;
-    @ManyToOne(optional = false)
+    @ManyToOne
     private DbAbstractLevel currentAbstractLevel;
-    @OneToOne(optional = false)
+    @OneToOne
     private UserItemTypeAccess userItemTypeAccess;
     @Transient
     private String sessionId;
