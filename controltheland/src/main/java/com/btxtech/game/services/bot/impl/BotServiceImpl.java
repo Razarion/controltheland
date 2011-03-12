@@ -18,20 +18,15 @@ import com.btxtech.game.services.base.GameFullException;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelperHibernateImpl;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.annotation.PostConstruct;
+import com.btxtech.game.services.common.CrudServiceHelperSpringTransactionImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import java.util.*;
 
 /**
  * User: beat
@@ -45,19 +40,13 @@ public class BotServiceImpl implements BotService {
     @Autowired
     private ApplicationContext applicationContext;
     private CrudServiceHelper<DbBotConfig> dbBotConfigCrudServiceHelper;
-    private HibernateTemplate hibernateTemplate;
     final private Map<DbBotConfig, BotRunner> botRunners = new HashMap<DbBotConfig, BotRunner>();
     private Log log = LogFactory.getLog(BotServiceImpl.class);
-
-    @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        hibernateTemplate = new HibernateTemplate(sessionFactory);
-    }
 
     @PostConstruct
     public void init() {
         try {
-            dbBotConfigCrudServiceHelper = new CrudServiceHelperHibernateImpl<DbBotConfig>(hibernateTemplate, DbBotConfig.class);
+            dbBotConfigCrudServiceHelper = CrudServiceHelperSpringTransactionImpl.create(applicationContext, DbBotConfig.class);
         } catch (Exception e) {
             log.error("", e);
         }
