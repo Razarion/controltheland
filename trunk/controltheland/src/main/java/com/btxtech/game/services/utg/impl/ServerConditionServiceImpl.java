@@ -14,11 +14,7 @@
 package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
-import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
-import com.btxtech.game.jsre.common.utg.condition.CountComparison;
-import com.btxtech.game.jsre.common.utg.condition.SyncItemIdComparison;
-import com.btxtech.game.jsre.common.utg.condition.SyncItemTypeComparison;
+import com.btxtech.game.jsre.common.utg.condition.*;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.impl.ConditionServiceImpl;
 import com.btxtech.game.services.base.BaseService;
@@ -33,13 +29,12 @@ import com.btxtech.game.services.utg.condition.backup.DbAbstractComparisonBackup
 import com.btxtech.game.services.utg.condition.backup.DbCountComparisonBackup;
 import com.btxtech.game.services.utg.condition.backup.DbSyncItemIdComparisonBackup;
 import com.btxtech.game.services.utg.condition.backup.DbSyncItemTypeComparisonBackup;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.*;
 
 /**
  * User: beat
@@ -57,6 +52,7 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState> 
     @Autowired
     private ItemService itemService;
     private final Map<UserState, AbstractConditionTrigger<UserState>> triggerMap = new HashMap<UserState, AbstractConditionTrigger<UserState>>();
+    private Log log = LogFactory.getLog(ServerConditionServiceImpl.class);
 
     @Override
     protected void saveAbstractConditionTrigger(AbstractConditionTrigger<UserState> abstractConditionTrigger) {
@@ -109,8 +105,12 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState> 
             for (DbAbstractComparisonBackup dbAbstractComparisonBackup : backupEntry.getAbstractComparison()) {
                 UserState userState = dbAbstractComparisonBackup.getUserState();
                 AbstractConditionTrigger abstractConditionTrigger = triggerMap.get(userState);
-                AbstractComparison abstractComparison = abstractConditionTrigger.getAbstractComparison();
-                dbAbstractComparisonBackup.restore(abstractComparison, itemService);
+                if (abstractConditionTrigger != null) {
+                    AbstractComparison abstractComparison = abstractConditionTrigger.getAbstractComparison();
+                    dbAbstractComparisonBackup.restore(abstractComparison, itemService);
+                } else {
+                    log.error("Restore conditions: abstractConditionTrigger==null. UserState: " + userState);
+                }
             }
         }
     }

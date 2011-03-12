@@ -14,12 +14,13 @@
 package com.btxtech.game.wicket.uiservices;
 
 import com.btxtech.game.services.common.CrudChild;
-import java.io.Serializable;
-import java.util.Iterator;
-import java.util.List;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
+
+import java.io.Serializable;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * User: beat
@@ -28,7 +29,6 @@ import org.apache.wicket.model.IModel;
  */
 public abstract class CrudTableListProvider<T extends CrudChild> implements IDataProvider<T> {
     private List<T> list;
-    private List<T> lastModifiedList;
 
     @Override
     public Iterator<? extends T> iterator(int first, int count) {
@@ -42,36 +42,7 @@ public abstract class CrudTableListProvider<T extends CrudChild> implements IDat
 
     @Override
     public IModel<T> model(final T object) {
-        return new CompoundPropertyModel<T>(new IModel<T>() {
-            private T modelObject = object;
-            private Serializable serializable = object.getId();
-
-            @Override
-            public T getObject() {
-                if (modelObject == null) {
-                    for (T t : getList()) {
-                        if (t.getId().equals(serializable)) {
-                            modelObject = t;
-                            return modelObject;
-                        }
-                    }
-                    throw new IllegalStateException("CRUD child does not exist: " + serializable);
-                }
-
-                return modelObject;
-            }
-
-            @Override
-            public void setObject(T object) {
-                modelObject = object;
-                serializable = object.getId();
-            }
-
-            @Override
-            public void detach() {
-                modelObject = null;
-            }
-        });
+        return new CompoundPropertyModel<T>(new SerializableModel(object));
     }
 
     @Override
@@ -82,18 +53,57 @@ public abstract class CrudTableListProvider<T extends CrudChild> implements IDat
     private List<T> getList() {
         if (list == null) {
             list = createList();
-            lastModifiedList = list;
         }
         return list;
     }
 
     public List<T> getLastModifiedList() {
-        if (lastModifiedList == null) {
-            throw new NullPointerException();
+        if (list == null) {
+            throw new IllegalStateException("CrudTableListProvider: List is null");
         }
+        return list;
+    }
 
-        return lastModifiedList;
+    public void refresh() {
+        list = createList();
     }
 
     abstract protected List<T> createList();
+
+    private class SerializableModel implements IModel<T> {
+        private T modelObject;
+        private Serializable serializable;
+
+        private SerializableModel(T modelObject) {
+            this.modelObject = modelObject;
+            serializable = modelObject.getId();
+        }
+
+        @Override
+        public T getObject() {
+            if (modelObject == null) {
+                for (T t : getList()) {
+                    if (t.getId().equals(serializable)) {
+                        modelObject = t;
+                        return modelObject;
+                    }
+                }
+                throw new IllegalStateException("CRUD child does not exist: " + serializable);
+            }
+
+            return modelObject;
+        }
+
+        @Override
+        public void setObject(T object) {
+            modelObject = object;
+            serializable = object.getId();
+        }
+
+        @Override
+        public void detach() {
+            modelObject = null;
+        }
+    }
+
 }

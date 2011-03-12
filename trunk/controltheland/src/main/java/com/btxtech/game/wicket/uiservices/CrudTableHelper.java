@@ -15,16 +15,17 @@ package com.btxtech.game.wicket.uiservices;
 
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudServiceHelper;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * User: beat
@@ -61,7 +62,7 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
                     });
                 }
 
-                if(showOrderButtons) {
+                if (showOrderButtons) {
                     item.add(new Button("up") {
                         @Override
                         public void onSubmit() {
@@ -90,9 +91,8 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
                     @Override
                     public void onSubmit() {
                         getCrudServiceHelper().deleteDbChild(item.getModelObject());
+                        provider.refresh();
                     }
-
-
                 }.setDefaultFormProcessing(false));
 
             }
@@ -137,7 +137,7 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
     abstract protected CrudServiceHelper<T> getCrudServiceHelper();
 
     /**
-     * Overide in subclasses
+     * Override in subclasses
      *
      * @param t the item to edit
      */

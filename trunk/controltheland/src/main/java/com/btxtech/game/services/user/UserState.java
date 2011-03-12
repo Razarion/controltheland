@@ -109,4 +109,9 @@ public class UserState {
             userItemTypeAccess.clearId();
         }
     }
+
+    @Override
+    public String toString() {
+        return "UserState: user=" + user;
+    }
 }

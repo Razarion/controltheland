@@ -27,22 +27,6 @@ import com.btxtech.game.services.mgmt.StartupData;
 import com.btxtech.game.services.resource.ResourceService;
 import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
-import javax.sql.DataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Level;
@@ -67,6 +51,23 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+import javax.sql.DataSource;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * User: beat
@@ -305,8 +306,8 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
                         log.error("", e);
                     }
                 }
-                resourceService.resetAllResources();
-                // TODO botService.start();
+                resourceService.activate();
+                botService.start();
             }
         } catch (Throwable t) {
             log.error("", t);

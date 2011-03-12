@@ -17,23 +17,25 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.collision.CollisionServiceChangedListener;
+import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.common.CrudServiceHelperSpringTransactionImpl;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.resource.DbRegionResource;
 import com.btxtech.game.services.resource.ResourceService;
 import com.btxtech.game.services.terrain.TerrainService;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.HibernateCallback;
+import org.springframework.context.ApplicationContext;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * User: beat
@@ -48,9 +50,12 @@ public class ResourceServiceImpl implements ResourceService, CollisionServiceCha
     private ItemService itemService;
     @Autowired
     private TerrainService terrainService;
+    @Autowired
+    private ApplicationContext applicationContext;
     private HibernateTemplate hibernateTemplate;
     private ArrayList<RegionResource> regionResources = new ArrayList<RegionResource>();
     private Log log = LogFactory.getLog(ResourceServiceImpl.class);
+    private CrudServiceHelper<DbRegionResource> dbRegionResourceCrudServiceHelper;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -59,8 +64,13 @@ public class ResourceServiceImpl implements ResourceService, CollisionServiceCha
 
     @PostConstruct
     public void start() {
-        loadDbRegionResources();
+        dbRegionResourceCrudServiceHelper = CrudServiceHelperSpringTransactionImpl.create(applicationContext, DbRegionResource.class);
         collisionService.addCollisionServiceChangedListener(this);
+    }
+
+    @Override
+    public CrudServiceHelper<DbRegionResource> getDbRegionResourceCrudServiceHelper() {
+        return dbRegionResourceCrudServiceHelper;
     }
 
     @Override
@@ -71,7 +81,7 @@ public class ResourceServiceImpl implements ResourceService, CollisionServiceCha
     }
 
     @Override
-    public void resetAllResources() {
+    public void activate() {
         loadDbRegionResources();
         setupResources();
     }
@@ -88,7 +98,7 @@ public class ResourceServiceImpl implements ResourceService, CollisionServiceCha
     private void loadDbRegionResources() {
         regionResources.clear();
         @SuppressWarnings("unchecked")
-        List<DbRegionResource> dbRegionResources = getDbRegionResources();
+        Collection<DbRegionResource> dbRegionResources = dbRegionResourceCrudServiceHelper.readDbChildren();
         if (dbRegionResources.isEmpty()) {
             log.info("No DbRegionResource specified");
             return;
@@ -114,39 +124,10 @@ public class ResourceServiceImpl implements ResourceService, CollisionServiceCha
         return true;
     }
 
-    @Override
-    public List<DbRegionResource> getDbRegionResources() {
-        @SuppressWarnings("unchecked")
-        List<DbRegionResource> dbRegionResources = hibernateTemplate.executeFind(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbRegionResource.class);
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                return criteria.list();
-            }
-        });
-        return dbRegionResources;
-    }
-
     private void setupResources() {
         for (RegionResource regionResource : regionResources) {
             List<SyncResourceItem> resourceItems = (List<SyncResourceItem>) itemService.getItems(regionResource.getResourceItemType(), null);
             regionResource.adjust(resourceItems);
         }
-    }
-
-    @Override
-    public void addDbRegionResource() {
-        hibernateTemplate.save(new DbRegionResource());
-    }
-
-    @Override
-    public void saveDbRegionResource(List<DbRegionResource> dbRegionResource) {
-        hibernateTemplate.saveOrUpdateAll(dbRegionResource);
-    }
-
-    @Override
-    public void deleteDbRegionResource(DbRegionResource dbRegionResource) {
-        hibernateTemplate.delete(dbRegionResource);
     }
 }
