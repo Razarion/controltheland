@@ -46,7 +46,9 @@ public class DbLevelEditor extends MgmtWebPage {
         add(form);
 
         TextArea<String> contentArea = new TextArea<String>("html");
-        TinyMCESettings tinyMCESettings = new TinyMCESettings();
+        TinyMCESettings tinyMCESettings = new TinyMCESettings(TinyMCESettings.Theme.advanced);
+        tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.link, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after);
+        tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.unlink, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after);
         contentArea.add(new TinyMceBehavior(tinyMCESettings));
         form.add(contentArea);
 

@@ -58,10 +58,7 @@ public abstract class CrudTableListProvider<T extends CrudChild> implements IDat
     }
 
     public List<T> getLastModifiedList() {
-        if (list == null) {
-            throw new IllegalStateException("CrudTableListProvider: List is null");
-        }
-        return list;
+        return getList();
     }
 
     public void refresh() {

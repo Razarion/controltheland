@@ -98,6 +98,9 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState> 
             triggerMap.clear();
             for (UserState userState : userStates) {
                 DbAbstractLevel dbAbstractLevel = userState.getCurrentAbstractLevel();
+                if(dbAbstractLevel == null) {
+                    continue;
+                }
                 dbAbstractLevel = userGuidanceService.getDbLevel(dbAbstractLevel.getId());
                 userState.setCurrentAbstractLevel(dbAbstractLevel);
                 activateCondition(dbAbstractLevel.getConditionConfig(), userState);
