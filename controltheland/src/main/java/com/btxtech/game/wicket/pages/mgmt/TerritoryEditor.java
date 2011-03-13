@@ -122,7 +122,7 @@ public class TerritoryEditor extends MgmtWebPage {
         form.add(new Button("saveMatrix") {
             @Override
             public void onSubmit() {
-                territoryService.getDbTerritoryCrudServiceHelper().updateDbChildren(territoryProvider.getLastModifiedList());
+                territoryService.getDbTerritoryCrudServiceHelper().updateDbChildren(territoryProvider.getList());
             }
         });
 

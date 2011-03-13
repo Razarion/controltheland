@@ -110,7 +110,7 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
 
             @Override
             public void onSubmit() {
-                getCrudServiceHelper().updateDbChildren(getLastModifiedList());
+                getCrudServiceHelper().updateDbChildren(getList());
             }
         });
     }
@@ -146,8 +146,8 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
     }
 
     public void swapRow(int i, int j) {
-        Collections.swap(provider.getLastModifiedList(), i, j);
-        getCrudServiceHelper().updateDbChildren(provider.getLastModifiedList());
+        Collections.swap(provider.getList(), i, j);
+        getCrudServiceHelper().updateDbChildren(provider.getList());
     }
 
     public void moveChildUp(Item<T> item) {
@@ -173,11 +173,11 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
     }
 
     public int rowCount() {
-        return provider.getLastModifiedList().size();
+        return provider.getList().size();
     }
 
-    public List<T> getLastModifiedList() {
-        return provider.getLastModifiedList();
+    public List<T> getList() {
+        return provider.getList();
     }
 
 }
