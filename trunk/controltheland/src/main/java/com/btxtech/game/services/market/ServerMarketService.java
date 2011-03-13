@@ -28,8 +28,6 @@ import java.util.List;
  * Time: 21:07:42
  */
 public interface ServerMarketService extends ItemTypeAccess {
-    boolean isAllowed(int itemTypeId, Base base);
-
     public Collection<Integer> getAllowedItemTypes();
 
     List<MarketEntry> getItemTypeAccessEntries();
