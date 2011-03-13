@@ -24,27 +24,13 @@ import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.services.market.MarketCategory;
-import com.btxtech.game.services.market.MarketEntry;
-import com.btxtech.game.services.market.MarketFunction;
-import com.btxtech.game.services.market.ServerMarketService;
-import com.btxtech.game.services.market.XpSettings;
+import com.btxtech.game.services.market.*;
 import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -56,6 +42,11 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * User: beat
@@ -150,16 +141,10 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     }
 
     @Override
-    public boolean isAllowed(int itemTypeId, Base base) {
-        UserItemTypeAccess userItemTypeAccess = getUserItemTypeAccess(base);
-        return userItemTypeAccess != null && userItemTypeAccess.contains(itemTypeId);
-    }
-
-    @Override
     public void buy(MarketEntry marketEntry) {
-       if(! userGuidanceService.isBaseItemTypeAllowedInLevel((DbBaseItemType) marketEntry.getItemType())) {
-          throw new IllegalStateException("Item type not allowed in level: " + userGuidanceService.getDbLevel() + " " +  marketEntry.getItemType());
-       }
+        if (!userGuidanceService.isBaseItemTypeAllowedInLevel((DbBaseItemType) marketEntry.getItemType())) {
+            throw new IllegalStateException("Item type not allowed in level: " + userGuidanceService.getDbLevel() + " " + marketEntry.getItemType());
+        }
         UserItemTypeAccess userItemTypeAccess = getUserItemTypeAccess();
         userItemTypeAccess.buy(marketEntry);
         if (connectionService.hasConnection()) {
@@ -172,11 +157,7 @@ public class ServerMarketServiceImpl implements ServerMarketService {
 
     @Override
     public UserItemTypeAccess getUserItemTypeAccess() {
-        UserItemTypeAccess userItemTypeAccess = userService.getUserState().getUserItemTypeAccess();
-        if (userItemTypeAccess == null) {
-            userItemTypeAccess = createOrGetUserItemTypeAccess(userService.getUserState());
-        }
-        return userItemTypeAccess;
+        return createOrGetUserItemTypeAccess(userService.getUserState());
     }
 
     @Override
@@ -188,7 +169,7 @@ public class ServerMarketServiceImpl implements ServerMarketService {
         return createOrGetUserItemTypeAccess(userState);
     }
 
-    public UserItemTypeAccess createOrGetUserItemTypeAccess(UserState userState) {
+    private UserItemTypeAccess createOrGetUserItemTypeAccess(UserState userState) {
         if (userState != null) {
             UserItemTypeAccess access = userState.getUserItemTypeAccess();
             if (access != null) {
@@ -282,7 +263,7 @@ public class ServerMarketServiceImpl implements ServerMarketService {
 
     @Override
     public void increaseXp(Base base, int deltaXp) {
-        UserItemTypeAccess userItemTypeAccess = base.getUserState().getUserItemTypeAccess();
+        UserItemTypeAccess userItemTypeAccess = createOrGetUserItemTypeAccess(base.getUserState());
         increaseXpInternal(base, deltaXp, userItemTypeAccess);
     }
 
@@ -308,11 +289,7 @@ public class ServerMarketServiceImpl implements ServerMarketService {
             return null;
         }
 
-        if (userState.getUserItemTypeAccess() != null) {
-            return userState.getUserItemTypeAccess();
-        } else {
-            return createOrGetUserItemTypeAccess(userState);
-        }
+        return createOrGetUserItemTypeAccess(userState);
     }
 
     public XpSettings getXpPointSettings() {
