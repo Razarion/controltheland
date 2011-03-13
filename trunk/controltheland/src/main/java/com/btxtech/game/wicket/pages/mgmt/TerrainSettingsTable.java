@@ -20,7 +20,6 @@ import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.wicket.uiservices.CrudTableHelper;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -59,7 +58,7 @@ public class TerrainSettingsTable extends MgmtWebPage {
 
                     @Override
                     public void onSubmit() {
-                        terrainService.saveDbTerrainSetting(getLastModifiedList());
+                        terrainService.saveDbTerrainSetting(getList());
                     }
                 });
             }

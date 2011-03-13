@@ -50,15 +50,11 @@ public abstract class CrudTableListProvider<T extends CrudChild> implements IDat
         list = null;
     }
 
-    private List<T> getList() {
+    public List<T> getList() {
         if (list == null) {
             list = createList();
         }
         return list;
-    }
-
-    public List<T> getLastModifiedList() {
-        return getList();
     }
 
     public void refresh() {
