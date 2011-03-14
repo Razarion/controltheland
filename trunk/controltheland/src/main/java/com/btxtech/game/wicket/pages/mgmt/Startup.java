@@ -44,16 +44,7 @@ public class Startup extends MgmtWebPage {
             }
         };
 
-        form.add(new TextField<String>("startMoney"));
-        form.add(new TextField<String>("tutorialTimeout"));
         form.add(new TextField<String>("registerDialogDelay"));
-        form.add(new TextField<String>("userActionCollectionTime"));
-        form.add(new TextField<String>("startRectangle.x"));
-        form.add(new TextField<String>("startRectangle.y"));
-        form.add(new TextField<String>("startRectangle.width"));
-        form.add(new TextField<String>("startRectangle.height"));
-        form.add(new TextField<String>("startItemFreeRange"));
-        form.add(new TextField<String>("itemSellFactor"));
 
         add(form);
     }
