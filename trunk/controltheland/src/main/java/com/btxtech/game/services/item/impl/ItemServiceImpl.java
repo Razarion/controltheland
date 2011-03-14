@@ -479,24 +479,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
     @Override
     public DbItemType getDbItemType(final int itemTypeId) {
-/*        @SuppressWarnings("unchecked")
-        List<DbItemType> list = (List<DbItemType>) hibernateTemplate.execute(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbItemType.class);
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                criteria.add(Restrictions.eq("id", itemTypeId));
-                return criteria.list();
-            }
-        });
-        if (list.isEmpty()) {
-            throw new IllegalArgumentException("Item type does not exist: " + itemTypeId);
-        }
-        if (list.size() > 1) {
-            throw new IllegalArgumentException("More then one entry found: " + itemTypeId);
-        }
-        return list.get(0);*/
-        return (DbItemType) hibernateTemplate.get(DbItemType.class, itemTypeId);
+        return hibernateTemplate.get(DbItemType.class, itemTypeId);
     }
 
     @Override

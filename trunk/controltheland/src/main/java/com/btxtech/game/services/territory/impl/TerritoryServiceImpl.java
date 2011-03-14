@@ -16,8 +16,8 @@ package com.btxtech.game.services.territory.impl;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.territory.impl.AbstractTerritoryServiceImpl;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelperSpringTransactionImpl;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.DbTerritory;
 import com.btxtech.game.services.territory.TerritoryService;
@@ -52,9 +52,10 @@ public class TerritoryServiceImpl extends AbstractTerritoryServiceImpl implement
     private TerrainService terrainService;
     @Autowired
     private ApplicationContext applicationContext;
+    @Autowired
+    private CrudRootServiceHelper<DbTerritory> dbTerritoryCrudServiceHelper;
     private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(TerritoryServiceImpl.class);
-    private CrudServiceHelper<DbTerritory> dbTerritoryCrudServiceHelper;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -64,7 +65,7 @@ public class TerritoryServiceImpl extends AbstractTerritoryServiceImpl implement
     @PostConstruct
     public void setup() {
         try {
-            dbTerritoryCrudServiceHelper = CrudServiceHelperSpringTransactionImpl.create(applicationContext, DbTerritory.class);
+            dbTerritoryCrudServiceHelper.init(DbTerritory.class);
             updateTerritories();
         } catch (Throwable t) {
             log.error("", t);
@@ -72,7 +73,7 @@ public class TerritoryServiceImpl extends AbstractTerritoryServiceImpl implement
     }
 
     @Override
-    public CrudServiceHelper<DbTerritory> getDbTerritoryCrudServiceHelper() {
+    public CrudRootServiceHelper<DbTerritory> getDbTerritoryCrudServiceHelper() {
         return dbTerritoryCrudServiceHelper;
     }
 

@@ -142,7 +142,6 @@ public class BaseTestService {
         beginOpenSessionInViewFilter();
     }
 
-
     protected void endHttpRequestAndOpenSessionInViewFilter() {
         endOpenSessionInViewFilter();
         endHttpRequest();

@@ -13,11 +13,11 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.resource.DbRegionResource;
 import com.btxtech.game.services.resource.ResourceService;
-import com.btxtech.game.wicket.uiservices.CrudTableHelper;
+import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import com.btxtech.game.wicket.uiservices.RectanglePanel;
 import com.btxtech.game.wicket.uiservices.ResourceItemTypePanel;
 import org.apache.wicket.markup.html.form.Button;
@@ -43,10 +43,10 @@ public class ResourceEditor extends MgmtWebPage {
         Form form = new Form("regionResourceForm");
         add(form);
 
-        new CrudTableHelper<DbRegionResource>("regionResources", "save", "create", false, form, false) {
+        new CrudRootTableHelper<DbRegionResource>("regionResources", "save", "create", false, form, false) {
 
             @Override
-            protected CrudServiceHelper<DbRegionResource> getCrudServiceHelper() {
+            protected CrudRootServiceHelper<DbRegionResource> _getCrudRootServiceHelperImpl() {
                 return resourceService.getDbRegionResourceCrudServiceHelper();
             }
 

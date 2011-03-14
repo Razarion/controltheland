@@ -18,7 +18,7 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelperCollectionImpl;
+import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.db.RectangleUserType;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
@@ -193,7 +193,7 @@ public class DbRealGameLevel extends DbAbstractLevel implements CrudParent {
 
     public CrudServiceHelper<DbItemTypeLimitation> getDbItemTypeLimitationCrudServiceHelper() {
         if (dbItemTypeLimitationCrudServiceHelper == null) {
-            dbItemTypeLimitationCrudServiceHelper = new CrudServiceHelperCollectionImpl<DbItemTypeLimitation>(itemTypeLimitation, DbItemTypeLimitation.class, this);
+            dbItemTypeLimitationCrudServiceHelper = new CrudChildServiceHelper<DbItemTypeLimitation>(itemTypeLimitation, DbItemTypeLimitation.class, this);
         }
         return dbItemTypeLimitationCrudServiceHelper;
     }

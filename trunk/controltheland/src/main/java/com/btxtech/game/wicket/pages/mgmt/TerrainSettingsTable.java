@@ -14,10 +14,10 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.jsre.mapeditor.TerrainEditorAsync;
-import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainService;
-import com.btxtech.game.wicket.uiservices.CrudTableHelper;
+import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -45,10 +45,10 @@ public class TerrainSettingsTable extends MgmtWebPage {
         Form form = new Form("from");
         add(form);
 
-        new CrudTableHelper<DbTerrainSetting>("terrainSettingTable", "saveTerrainSetting", "createTerrainSetting", false, form, false) {
+        new CrudRootTableHelper<DbTerrainSetting>("terrainSettingTable", "saveTerrainSetting", "createTerrainSetting", false, form, false) {
 
             @Override
-            protected CrudServiceHelper<DbTerrainSetting> getCrudServiceHelper() {
+            protected CrudRootServiceHelper<DbTerrainSetting> _getCrudRootServiceHelperImpl() {
                 return terrainService.getDbTerrainSettingCrudServiceHelper();
             }
 

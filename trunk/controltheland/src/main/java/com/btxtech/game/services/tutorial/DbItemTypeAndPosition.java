@@ -37,7 +37,7 @@ import org.hibernate.annotations.TypeDef;
  */
 @Entity(name = "TUTORIAL_ITEM_TYPE_POSITION")
 @TypeDef(name = "index", typeClass = IndexUserType.class)
-public class DbItemTypeAndPosition implements Serializable, CrudChild<DbTaskConfig> {
+public class DbItemTypeAndPosition implements CrudChild<DbTaskConfig> {
     @Id
     @GeneratedValue
     private Integer id;

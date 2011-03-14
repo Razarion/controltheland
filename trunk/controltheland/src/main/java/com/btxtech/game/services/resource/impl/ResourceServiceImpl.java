@@ -18,7 +18,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.collision.CollisionServiceChangedListener;
 import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelperSpringTransactionImpl;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.resource.DbRegionResource;
 import com.btxtech.game.services.resource.ResourceService;
@@ -29,7 +29,6 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -51,11 +50,10 @@ public class ResourceServiceImpl implements ResourceService, CollisionServiceCha
     @Autowired
     private TerrainService terrainService;
     @Autowired
-    private ApplicationContext applicationContext;
+    private CrudRootServiceHelper<DbRegionResource> dbRegionResourceCrudServiceHelper;
     private HibernateTemplate hibernateTemplate;
     private ArrayList<RegionResource> regionResources = new ArrayList<RegionResource>();
     private Log log = LogFactory.getLog(ResourceServiceImpl.class);
-    private CrudServiceHelper<DbRegionResource> dbRegionResourceCrudServiceHelper;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -64,12 +62,12 @@ public class ResourceServiceImpl implements ResourceService, CollisionServiceCha
 
     @PostConstruct
     public void start() {
-        dbRegionResourceCrudServiceHelper = CrudServiceHelperSpringTransactionImpl.create(applicationContext, DbRegionResource.class);
+        dbRegionResourceCrudServiceHelper.init(DbRegionResource.class);
         collisionService.addCollisionServiceChangedListener(this);
     }
 
     @Override
-    public CrudServiceHelper<DbRegionResource> getDbRegionResourceCrudServiceHelper() {
+    public CrudRootServiceHelper<DbRegionResource> getDbRegionResourceCrudServiceHelper() {
         return dbRegionResourceCrudServiceHelper;
     }
 

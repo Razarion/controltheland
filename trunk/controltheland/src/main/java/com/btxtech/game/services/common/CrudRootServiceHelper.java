@@ -38,23 +38,29 @@ import java.util.Collection;
  * Date: 06.02.2011
  * Time: 15:08:50
  */
-@Component(value = "crudServiceHelperSpringTransaction")
+@Component(value = "crudRootServiceHelper")
 @Scope("prototype")
-public class CrudServiceHelperSpringTransactionImpl<T extends CrudChild> implements CrudServiceHelper<T> {
+public class CrudRootServiceHelper<T extends CrudChild> {
     private HibernateTemplate hibernateTemplate;
     private Class<T> childClass;
     private String orderColumn;
 
+    @Deprecated
     public static <T extends CrudChild> CrudServiceHelper<T> create(ApplicationContext applicationContext, Class<T> clazz) {
         return create(applicationContext, clazz, null);
     }
 
     @SuppressWarnings("unchecked")
+    @Deprecated
     public static <T extends CrudChild> CrudServiceHelper<T> create(ApplicationContext applicationContext, Class<T> clazz, String orderColumn) {
-        return (CrudServiceHelper<T>) applicationContext.getBean("crudServiceHelperSpringTransaction", clazz, orderColumn);
+        return null;
     }
 
-    public CrudServiceHelperSpringTransactionImpl(Class<T> childClass, String orderColumn) {
+    public void init(Class<T> childClass) {
+        init(childClass, null);
+    }
+
+    public void init(Class<T> childClass, String orderColumn) {
         this.childClass = childClass;
         this.orderColumn = orderColumn;
     }
@@ -64,7 +70,6 @@ public class CrudServiceHelperSpringTransactionImpl<T extends CrudChild> impleme
         hibernateTemplate = new HibernateTemplate(sessionFactory);
     }
 
-    @Override
     @Transactional(readOnly = true)
     @SuppressWarnings("unchecked")
     public Collection<T> readDbChildren() {
@@ -81,9 +86,7 @@ public class CrudServiceHelperSpringTransactionImpl<T extends CrudChild> impleme
         });
     }
 
-    @Override
     @Transactional(readOnly = true)
-    @SuppressWarnings("unchecked")
     public T readDbChild(Serializable id) {
         T t = hibernateTemplate.get(childClass, id);
         if (t == null) {
@@ -92,13 +95,11 @@ public class CrudServiceHelperSpringTransactionImpl<T extends CrudChild> impleme
         return t;
     }
 
-    @Override
     @Transactional
     public void deleteDbChild(T child) {
         hibernateTemplate.delete(child);
     }
 
-    @Override
     @Transactional
     public void updateDbChildren(Collection<T> children) {
         if (orderColumn != null) {
@@ -118,19 +119,16 @@ public class CrudServiceHelperSpringTransactionImpl<T extends CrudChild> impleme
         hibernateTemplate.saveOrUpdateAll(children);
     }
 
-    @Override
     @Transactional
     public void updateDbChild(T t) {
         hibernateTemplate.update(t);
     }
 
-    @Override
     @Transactional
     public void createDbChild() {
         createDbChild(childClass);
     }
 
-    @Override
     @Transactional
     public void createDbChild(Class<? extends T> createClass) {
         try {
@@ -142,13 +140,11 @@ public class CrudServiceHelperSpringTransactionImpl<T extends CrudChild> impleme
         }
     }
 
-    @Override
     @Transactional
     public void deleteAllChildren() {
         hibernateTemplate.deleteAll(readDbChildren());
     }
 
-    @Override
     @Transactional
     public void addChild(T t) {
         t.init();

@@ -21,7 +21,7 @@ import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.DbTerritory;
 import com.btxtech.game.services.territory.TerritoryService;
-import com.btxtech.game.wicket.uiservices.CrudTableHelper;
+import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import com.btxtech.game.wicket.uiservices.CrudTableListProvider;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
@@ -57,11 +57,11 @@ public class TerritoryEditor extends MgmtWebPage {
         Form form = new Form("territoryForm");
         add(form);
 
-        new CrudTableHelper<DbTerritory>("territories", "save", "create", true, form, false) {
+        new CrudRootTableHelper<DbTerritory>("territories", "save", "create", true, form, false) {
 
             @Override
-            protected CrudServiceHelper<DbTerritory> getCrudServiceHelper() {
-                return territoryService.getDbTerritoryCrudServiceHelper();
+            protected CrudServiceHelper<DbTerritory> getCrudRootServiceHelperImpl() {
+                return /*territoryService.getDbTerritoryCrudServiceHelper()*/ null; // TODO
             }
 
             @Override

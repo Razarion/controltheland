@@ -16,28 +16,18 @@ package com.btxtech.game.services.tutorial;
 import com.btxtech.game.jsre.common.tutorial.HintConfig;
 import com.btxtech.game.jsre.common.tutorial.StepConfig;
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
-import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelperCollectionImpl;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.tutorial.hint.DbHintConfig;
 import com.btxtech.game.services.tutorial.hint.ResourceHintManager;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
-import java.io.Serializable;
+import org.hibernate.annotations.Cascade;
+
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Transient;
-import org.hibernate.annotations.Cascade;
 
 /**
  * User: beat
@@ -45,7 +35,7 @@ import org.hibernate.annotations.Cascade;
  * Time: 19:12:10
  */
 @Entity(name = "TUTORIAL_STEP_CONFIG")
-public class DbStepConfig implements Serializable, CrudParent, CrudChild<DbTaskConfig> {
+public class DbStepConfig implements CrudParent, CrudChild<DbTaskConfig> {
     @Id
     @GeneratedValue
     private Integer id;
@@ -60,7 +50,7 @@ public class DbStepConfig implements Serializable, CrudParent, CrudChild<DbTaskC
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private Set<DbHintConfig> dbHintConfigs;
     @Transient
-    private CrudServiceHelper<DbHintConfig> hintConfigCrudHelper;
+    private CrudChildServiceHelper<DbHintConfig> hintConfigCrudHelper;
 
     public Integer getId() {
         return id;
@@ -94,9 +84,9 @@ public class DbStepConfig implements Serializable, CrudParent, CrudChild<DbTaskC
         this.conditionConfig = conditionConfig;
     }
 
-    public CrudServiceHelper<DbHintConfig> getHintConfigCrudServiceHelper() {
+    public CrudChildServiceHelper<DbHintConfig> getHintConfigCrudServiceHelper() {
         if (hintConfigCrudHelper == null) {
-            hintConfigCrudHelper = new CrudServiceHelperCollectionImpl<DbHintConfig>(dbHintConfigs, DbHintConfig.class, this);
+            hintConfigCrudHelper = new CrudChildServiceHelper<DbHintConfig>(dbHintConfigs, DbHintConfig.class, this);
         }
         return hintConfigCrudHelper;
     }

@@ -14,15 +14,12 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
-import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.services.terrain.TerrainService;
-import com.btxtech.game.wicket.uiservices.CrudTableHelper;
-import java.util.Arrays;
-import javax.swing.ImageIcon;
+import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -35,6 +32,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.resource.ByteArrayResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import javax.swing.*;
+import java.util.Arrays;
 
 /**
  * User: beat
@@ -49,10 +49,10 @@ public class TerrainTileEditor extends MgmtWebPage {
         Form form = new Form("tileForm");
         add(form);
 
-        new CrudTableHelper<DbSurfaceImage>("surfaceImages", "updateSurfaceImages", "createSurfaceImage", false, form, false) {
+        new CrudRootTableHelper<DbSurfaceImage>("surfaceImages", "updateSurfaceImages", "createSurfaceImage", false, form, false) {
 
             @Override
-            protected CrudServiceHelper<DbSurfaceImage> getCrudServiceHelper() {
+            protected CrudRootServiceHelper<DbSurfaceImage> _getCrudRootServiceHelperImpl() {
                 return terrainService.getDbSurfaceImageCrudServiceHelper();
             }
 
@@ -127,9 +127,9 @@ public class TerrainTileEditor extends MgmtWebPage {
             }
         }));
 
-        new CrudTableHelper<DbTerrainImage>("terrainImages", "updateTerrainImages", "createTerrainImage", true, form, false) {
+        new CrudRootTableHelper<DbTerrainImage>("terrainImages", "updateTerrainImages", "createTerrainImage", true, form, false) {
             @Override
-            protected CrudServiceHelper<DbTerrainImage> getCrudServiceHelper() {
+            protected CrudRootServiceHelper<DbTerrainImage> _getCrudRootServiceHelperImpl() {
                 return terrainService.getDbTerrainImageCrudServiceHelper();
             }
 

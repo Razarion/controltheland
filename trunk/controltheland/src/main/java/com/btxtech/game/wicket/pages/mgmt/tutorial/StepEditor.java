@@ -13,24 +13,19 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tutorial;
 
-import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.common.CrudChildServiceHelper;
+import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.tutorial.DbStepConfig;
-import com.btxtech.game.services.tutorial.TutorialService;
-import com.btxtech.game.services.tutorial.hint.DbCockpitSpeechBubbleHintConfig;
-import com.btxtech.game.services.tutorial.hint.DbHintConfig;
-import com.btxtech.game.services.tutorial.hint.DbItemSpeechBubbleHintConfig;
-import com.btxtech.game.services.tutorial.hint.DbResourceHintConfig;
-import com.btxtech.game.services.tutorial.hint.DbTerrainPositionSpeechBubbleHintConfig;
+import com.btxtech.game.services.tutorial.hint.*;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.pages.mgmt.condition.ConditionConfigPanel;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.hint.CockpitSpeechBubbleHintConfigPanel;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.hint.ItemSpeechBubbleHintConfigPanel;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.hint.ResourceHintConfigPanel;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.hint.TerrainPositionSpeechBubbleHintConfigPanel;
-import com.btxtech.game.wicket.uiservices.CrudTableHelper;
-import java.util.Arrays;
+import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
+import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -40,6 +35,8 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
+import java.util.Arrays;
+
 /**
  * User: beat
  * Date: 27.07.2010
@@ -47,40 +44,35 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  */
 public class StepEditor extends MgmtWebPage {
     @SpringBean
-    private TutorialService tutorialService;
+    private RuServiceHelper<DbStepConfig> ruStepServiceHelper;
     private Class createChoice = DbHintConfig.ALL_HINTS[0];
 
     public StepEditor(DbStepConfig dbStepConfig) {
-        final int dbStepConfigId = dbStepConfig.getId();
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbStepConfig> form = new Form<DbStepConfig>("stepForm", new CompoundPropertyModel<DbStepConfig>(new IModel<DbStepConfig>() {
-            private DbStepConfig dbStepConfig;
-
+        final Form<DbStepConfig> form = new Form<DbStepConfig>("stepForm", new CompoundPropertyModel<DbStepConfig>(new RuModel<DbStepConfig>(dbStepConfig, DbStepConfig.class) {
             @Override
-            public DbStepConfig getObject() {
-                if (dbStepConfig == null) {
-                    dbStepConfig = tutorialService.getDbStepConfig(dbStepConfigId);
-                }
-                return dbStepConfig;
-            }
-
-            @Override
-            public void setObject(DbStepConfig object) {
-                // Ignore
-            }
-
-            @Override
-            public void detach() {
-                dbStepConfig = null;
+            protected RuServiceHelper<DbStepConfig> getRuServiceHelper() {
+                return ruStepServiceHelper;
             }
         }));
         add(form);
 
         form.add(new ConditionConfigPanel("conditionConfig"));
-        new CrudTableHelper<DbHintConfig>("hints", null, "createHint", false, form, false) {
+        new CrudChildTableHelper<DbStepConfig, DbHintConfig>("hints", null, "createHint", false, form, false) {
+
             @Override
-            protected CrudServiceHelper<DbHintConfig> getCrudServiceHelper() {
+            protected RuServiceHelper<DbStepConfig> getRuServiceHelper() {
+                return ruStepServiceHelper;
+            }
+
+            @Override
+            protected DbStepConfig getParent() {
+                return (DbStepConfig) form.getDefaultModelObject();
+            }
+
+            @Override
+            protected CrudChildServiceHelper<DbHintConfig> getCrudChildServiceHelperImpl() {
                 return ((DbStepConfig) form.getDefaultModelObject()).getHintConfigCrudServiceHelper();
             }
 
@@ -105,11 +97,11 @@ public class StepEditor extends MgmtWebPage {
                 markupContainer.add(new Button(createId) {
 
                     @Override
+                    @SuppressWarnings("unchecked")
                     public void onSubmit() {
-                        getCrudServiceHelper().createDbChild(createChoice);
+                        createDbChild(createChoice);
                     }
-                });
-
+                }.setDefaultFormProcessing(false));
             }
 
             @Override
@@ -132,7 +124,7 @@ public class StepEditor extends MgmtWebPage {
 
             @Override
             public void onSubmit() {
-                tutorialService.saveDbStepConfig((DbStepConfig) form.getDefaultModelObject());
+                ruStepServiceHelper.updateDbEntity((DbStepConfig) form.getDefaultModelObject());
             }
         });
         form.add(new Button("back") {

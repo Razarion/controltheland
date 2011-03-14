@@ -1,7 +1,7 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.services.BaseTestService;
-import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class TestLevel extends BaseTestService {
     @Test
     @DirtiesContext
     public void simple() {
-        CrudServiceHelper<DbAbstractLevel> crudServiceHelper = userGuidanceService.getDbLevelCrudServiceHelper();
+        CrudRootServiceHelper<DbAbstractLevel> crudServiceHelper = userGuidanceService.getDbLevelCrudServiceHelper();
         userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbSimulationLevel.class);
         userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbRealGameLevel.class);
 
@@ -32,7 +32,7 @@ public class TestLevel extends BaseTestService {
     @Test
     @DirtiesContext
     public void simpleMoveLevels() {
-        CrudServiceHelper<DbAbstractLevel> crudServiceHelper = userGuidanceService.getDbLevelCrudServiceHelper();
+        CrudRootServiceHelper<DbAbstractLevel> crudServiceHelper = userGuidanceService.getDbLevelCrudServiceHelper();
         userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbSimulationLevel.class);
         userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbRealGameLevel.class);
         Assert.assertEquals(2, crudServiceHelper.readDbChildren().size());
@@ -42,7 +42,7 @@ public class TestLevel extends BaseTestService {
         Assert.assertTrue(dbAbstractLevels.get(1) instanceof DbRealGameLevel);
         Collections.swap(dbAbstractLevels, 0, 1);
         crudServiceHelper.updateDbChildren(dbAbstractLevels);
-        
+
         dbAbstractLevels = (List<DbAbstractLevel>) crudServiceHelper.readDbChildren();
         Assert.assertTrue(dbAbstractLevels.get(0) instanceof DbRealGameLevel);
         Assert.assertTrue(dbAbstractLevels.get(1) instanceof DbSimulationLevel);
@@ -52,7 +52,7 @@ public class TestLevel extends BaseTestService {
     @Test
     @DirtiesContext
     public void simpleMoveLevels2() {
-        CrudServiceHelper<DbAbstractLevel> crudServiceHelper = userGuidanceService.getDbLevelCrudServiceHelper();
+        CrudRootServiceHelper<DbAbstractLevel> crudServiceHelper = userGuidanceService.getDbLevelCrudServiceHelper();
         userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbSimulationLevel.class);
         userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbRealGameLevel.class);
         userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbSimulationLevel.class);

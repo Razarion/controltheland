@@ -13,23 +13,15 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tutorial;
 
-import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.common.CrudChildServiceHelper;
+import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.tutorial.DbItemTypeAndPosition;
 import com.btxtech.game.services.tutorial.DbStepConfig;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
-import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.wicket.pages.mgmt.ItemsUtil;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
-import com.btxtech.game.wicket.uiservices.CrudTableHelper;
-import java.util.Collection;
-
-import com.btxtech.game.wicket.uiservices.IndexPanel;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.wicket.markup.html.WebPage;
+import com.btxtech.game.wicket.uiservices.*;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
@@ -49,37 +41,19 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  */
 public class TaskEditor extends MgmtWebPage {
     @SpringBean
-    private TutorialService tutorialService;
+    private RuServiceHelper<DbTaskConfig> ruTaskServiceHelper;
     @SpringBean
     private ItemService itemService;
-    private Log log = LogFactory.getLog(TaskEditor.class);
-    private Collection<DbBaseItemType> itemTypes;
+    @SpringBean
+    private ServiceHelper serviceHelper;
 
     public TaskEditor(DbTaskConfig dbTaskConfig) {
-        final int dbTaskConfigId = dbTaskConfig.getId();
-        itemTypes = itemService.getDbBaseItemTypes();
-
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbTaskConfig> form = new Form<DbTaskConfig>("taskForm", new CompoundPropertyModel<DbTaskConfig>(new IModel<DbTaskConfig>() {
-            private DbTaskConfig dbTaskConfig;
-
+        final Form<DbTaskConfig> form = new Form<DbTaskConfig>("taskForm", new CompoundPropertyModel<DbTaskConfig>(new RuModel<DbTaskConfig>(dbTaskConfig, DbTaskConfig.class) {
             @Override
-            public DbTaskConfig getObject() {
-                if (dbTaskConfig == null) {
-                    dbTaskConfig = tutorialService.getDbTaskConfig(dbTaskConfigId);
-                }
-                return dbTaskConfig;
-            }
-
-            @Override
-            public void setObject(DbTaskConfig object) {
-                // Ignore
-            }
-
-            @Override
-            public void detach() {
-                dbTaskConfig = null;
+            protected RuServiceHelper<DbTaskConfig> getRuServiceHelper() {
+                return ruTaskServiceHelper;
             }
         }));
         add(form);
@@ -94,12 +68,12 @@ public class TaskEditor extends MgmtWebPage {
 
             @Override
             public String getObject() {
-                return ItemsUtil.itemTypesToString(((DbTaskConfig)form.getDefaultModelObject()).getAllowedItems());
+                return serviceHelper.itemTypesToString(((DbTaskConfig) form.getDefaultModelObject()).getAllowedItems());
             }
 
             @Override
             public void setObject(String s) {
-                ((DbTaskConfig)form.getDefaultModelObject()).setAllowedItems(ItemsUtil.stringToItemTypes(s, itemTypes));
+                ((DbTaskConfig) form.getDefaultModelObject()).setAllowedItems(serviceHelper.stringToItemTypes(s));
             }
 
             @Override
@@ -118,12 +92,12 @@ public class TaskEditor extends MgmtWebPage {
 
             @Override
             public void setObject(FileUpload fileUpload) {
-                if(fileUpload == null) {
+                if (fileUpload == null) {
                     // I don't know why this is null
                     return;
                 }
-                ((DbTaskConfig)form.getDefaultModelObject()).setFinishImageData(fileUpload.getBytes());
-                ((DbTaskConfig)form.getDefaultModelObject()).setFinishedImageContentType(fileUpload.getContentType());
+                ((DbTaskConfig) form.getDefaultModelObject()).setFinishImageData(fileUpload.getBytes());
+                ((DbTaskConfig) form.getDefaultModelObject()).setFinishedImageContentType(fileUpload.getContentType());
             }
 
             @Override
@@ -133,46 +107,25 @@ public class TaskEditor extends MgmtWebPage {
         form.add(new TextField("finishImageDuration"));
 
 
-        new CrudTableHelper<DbItemTypeAndPosition>("itemTable", null, "createItem", false, form, false) {
+        new CrudChildTableHelper<DbTaskConfig, DbItemTypeAndPosition>("itemTable", null, "createItem", false, form, false) {
+            @Override
+            protected RuServiceHelper<DbTaskConfig> getRuServiceHelper() {
+                return ruTaskServiceHelper;
+            }
 
             @Override
-            protected CrudServiceHelper<DbItemTypeAndPosition> getCrudServiceHelper() {
-                return ((DbTaskConfig)form.getDefaultModelObject()).getItemCrudServiceHelper();
+            protected DbTaskConfig getParent() {
+                return (DbTaskConfig) form.getDefaultModelObject();
+            }
+
+            @Override
+            protected CrudChildServiceHelper<DbItemTypeAndPosition> getCrudChildServiceHelperImpl() {
+                return ((DbTaskConfig) form.getDefaultModelObject()).getItemCrudServiceHelper();
             }
 
             @Override
             protected void extendedPopulateItem(final Item<DbItemTypeAndPosition> dbTaskConfigItem) {
-                dbTaskConfigItem.add(new TextField<Integer>("itemTypeId", new IModel<Integer>() {
-
-                    @Override
-                    public Integer getObject() {
-                        DbItemType itemType = dbTaskConfigItem.getModelObject().getItemType();
-                        if (itemType != null) {
-                            return itemType.getId();
-                        } else {
-                            return null;
-                        }
-                    }
-
-                    @Override
-                    public void setObject(Integer id) {
-                        if (id != null) {
-                            try {
-                                dbTaskConfigItem.getModelObject().setItemType(itemService.getDbItemType(id));
-                            } catch (Throwable t) {
-                                log.error("", t);
-                                error(t.getMessage());
-                            }
-                        } else {
-                            dbTaskConfigItem.getModelObject().setItemType(null);
-                        }
-                    }
-
-                    @Override
-                    public void detach() {
-                        //Ignore
-                    }
-                }, Integer.class));
+                dbTaskConfigItem.add(new ItemTypePanel("itemType"));
                 dbTaskConfigItem.add(new TextField("syncItemId"));
                 dbTaskConfigItem.add(new IndexPanel("position"));
                 dbTaskConfigItem.add(new TextField("angel"));
@@ -180,15 +133,25 @@ public class TaskEditor extends MgmtWebPage {
 
             }
         };
-        new CrudTableHelper<DbStepConfig>("stepTable", null, "createStep", true, form, true) {
-            @Override
-            protected CrudServiceHelper<DbStepConfig> getCrudServiceHelper() {
-                return ((DbTaskConfig)form.getDefaultModelObject()).getStepConfigCrudServiceHelper();
-            }
-
+        new CrudChildTableHelper<DbTaskConfig, DbStepConfig>("stepTable", null, "createStep", true, form, true) {
             @Override
             protected void onEditSubmit(DbStepConfig dbStepConfig) {
                 setResponsePage(new StepEditor(dbStepConfig));
+            }
+
+            @Override
+            protected RuServiceHelper<DbTaskConfig> getRuServiceHelper() {
+                return ruTaskServiceHelper;
+            }
+
+            @Override
+            protected DbTaskConfig getParent() {
+                return (DbTaskConfig) form.getDefaultModelObject();
+            }
+
+            @Override
+            protected CrudChildServiceHelper<DbStepConfig> getCrudChildServiceHelperImpl() {
+                return ((DbTaskConfig) form.getDefaultModelObject()).getStepConfigCrudServiceHelper();
             }
         };
 
@@ -197,7 +160,7 @@ public class TaskEditor extends MgmtWebPage {
 
             @Override
             public void onSubmit() {
-                tutorialService.saveDbTaskConfig(((DbTaskConfig)form.getDefaultModelObject()));
+                ruTaskServiceHelper.updateDbEntity((DbTaskConfig) form.getDefaultModelObject());
             }
         });
         form.add(new Button("back") {

@@ -13,19 +13,11 @@
 
 package com.btxtech.game.wicket.pages.mgmt.condition;
 
-import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import com.btxtech.game.services.utg.condition.DbComparisonItemCount;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
-import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
-import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
-import com.btxtech.game.wicket.uiservices.CrudTableHelper;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;

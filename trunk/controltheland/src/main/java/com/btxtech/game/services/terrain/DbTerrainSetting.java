@@ -17,7 +17,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelperCollectionImpl;
+import com.btxtech.game.services.common.CrudChildServiceHelper;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -132,14 +132,14 @@ public class DbTerrainSetting implements CrudParent, CrudChild, Serializable {
 
     public CrudServiceHelper<DbTerrainImagePosition> getDbTerrainImagePositionCrudServiceHelper() {
         if (dbTerrainImagePositionCrudServiceHelper == null) {
-            dbTerrainImagePositionCrudServiceHelper = new CrudServiceHelperCollectionImpl<DbTerrainImagePosition>(dbTerrainImagePositions, DbTerrainImagePosition.class, this);
+            dbTerrainImagePositionCrudServiceHelper = new CrudChildServiceHelper<DbTerrainImagePosition>(dbTerrainImagePositions, DbTerrainImagePosition.class, this);
         }
         return dbTerrainImagePositionCrudServiceHelper;
     }
 
     public CrudServiceHelper<DbSurfaceRect> getDbSurfaceRectCrudServiceHelper() {
         if (dbSurfaceRectCrudServiceHelper == null) {
-            dbSurfaceRectCrudServiceHelper = new CrudServiceHelperCollectionImpl<DbSurfaceRect>(dbSurfaceRects, DbSurfaceRect.class, this);
+            dbSurfaceRectCrudServiceHelper = new CrudChildServiceHelper<DbSurfaceRect>(dbSurfaceRects, DbSurfaceRect.class, this);
         }
         return dbSurfaceRectCrudServiceHelper;
     }

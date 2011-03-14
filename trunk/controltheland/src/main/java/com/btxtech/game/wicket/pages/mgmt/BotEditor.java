@@ -20,7 +20,7 @@ import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
-import com.btxtech.game.wicket.uiservices.CrudTableHelper;
+import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import com.btxtech.game.wicket.uiservices.RectanglePanel;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -77,10 +77,10 @@ public class BotEditor extends MgmtWebPage {
         form.add(new RectanglePanel("realm"));
         form.add(new TextField("realmSuperiority"));
 
-        new CrudTableHelper<DbBotItemCount>("baseFundamental", null, "createBaseFundamentalItem", false, form, false) {
+        new CrudRootTableHelper<DbBotItemCount>("baseFundamental", null, "createBaseFundamentalItem", false, form, false) {
 
             @Override
-            protected CrudServiceHelper<DbBotItemCount> getCrudServiceHelper() {
+            protected CrudServiceHelper<DbBotItemCount> getCrudRootServiceHelperImpl() {
                 return ((DbBotConfig) form.getDefaultModelObject()).getBaseFundamentalCrudServiceHelper();
             }
 
@@ -91,10 +91,10 @@ public class BotEditor extends MgmtWebPage {
             }
         };
 
-        new CrudTableHelper<DbBotItemCount>("baseBuildup", null, "createBaseBuildupItem", false, form, false) {
+        new CrudRootTableHelper<DbBotItemCount>("baseBuildup", null, "createBaseBuildupItem", false, form, false) {
 
             @Override
-            protected CrudServiceHelper<DbBotItemCount> getCrudServiceHelper() {
+            protected CrudServiceHelper<DbBotItemCount> getCrudRootServiceHelperImpl() {
                 return ((DbBotConfig) form.getDefaultModelObject()).getBaseFundamentalCrudServiceHelper();
             }
 
@@ -105,10 +105,10 @@ public class BotEditor extends MgmtWebPage {
             }
         };
 
-        new CrudTableHelper<DbBotItemCount>("defence", null, "createDefenceItem", false, form, false) {
+        new CrudRootTableHelper<DbBotItemCount>("defence", null, "createDefenceItem", false, form, false) {
 
             @Override
-            protected CrudServiceHelper<DbBotItemCount> getCrudServiceHelper() {
+            protected CrudServiceHelper<DbBotItemCount> getCrudRootServiceHelperImpl() {
                 return ((DbBotConfig) form.getDefaultModelObject()).getBaseFundamentalCrudServiceHelper();
             }
 
@@ -123,7 +123,7 @@ public class BotEditor extends MgmtWebPage {
 
             @Override
             public void onSubmit() {
-                botService.getDbBotConfigCrudServiceHelper().updateDbChild((DbBotConfig) form.getDefaultModelObject());
+                // TODO botService.getDbBotConfigCrudServiceHelper().updateDbChild((DbBotConfig) form.getDefaultModelObject());
             }
         });
         form.add(new Button("back") {

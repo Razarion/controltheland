@@ -19,7 +19,7 @@ import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.pages.mgmt.condition.ConditionConfigPanel;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
-import com.btxtech.game.wicket.uiservices.CrudTableHelper;
+import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import com.btxtech.game.wicket.uiservices.RectanglePanel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Button;
@@ -61,10 +61,10 @@ public class RealGameLevelEditor extends Panel {
         add(new TextField("maxMoney"));
         add(new TextField("maxXp"));
 
-        new CrudTableHelper<DbItemTypeLimitation>("itemTypeLimitation", null, "createItemTypeLimitation", false, this, false) {
+        new CrudRootTableHelper<DbItemTypeLimitation>("itemTypeLimitation", null, "createItemTypeLimitation", false, this, false) {
 
             @Override
-            protected CrudServiceHelper<DbItemTypeLimitation> getCrudServiceHelper() {
+            protected CrudServiceHelper<DbItemTypeLimitation> getCrudRootServiceHelperImpl() {
                 return ((DbRealGameLevel) RealGameLevelEditor.this.getParent().getDefaultModelObject()).getDbItemTypeLimitationCrudServiceHelper();
             }
 

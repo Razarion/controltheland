@@ -22,6 +22,7 @@ import java.util.Collection;
  * Date: 23.07.2010
  * Time: 23:51:06
  */
+@Deprecated
 public interface CrudServiceHelper<T extends CrudChild> {
     Collection<T> readDbChildren();
 
@@ -30,8 +31,6 @@ public interface CrudServiceHelper<T extends CrudChild> {
     void deleteDbChild(T child);
 
     void updateDbChildren(Collection<T> children);
-
-    void updateDbChild(T t);
 
     void createDbChild();
 

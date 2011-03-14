@@ -17,11 +17,12 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.base.GameFullException;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelperSpringTransactionImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -38,18 +39,15 @@ public class BotServiceImpl implements BotService {
     @Autowired
     private BaseService baseService;
     @Autowired
+    private CrudRootServiceHelper<DbBotConfig> dbBotConfigCrudServiceHelper;
+    @Autowired
     private ApplicationContext applicationContext;
-    private CrudServiceHelper<DbBotConfig> dbBotConfigCrudServiceHelper;
     final private Map<DbBotConfig, BotRunner> botRunners = new HashMap<DbBotConfig, BotRunner>();
     private Log log = LogFactory.getLog(BotServiceImpl.class);
 
     @PostConstruct
     public void init() {
-        try {
-            dbBotConfigCrudServiceHelper = CrudServiceHelperSpringTransactionImpl.create(applicationContext, DbBotConfig.class);
-        } catch (Exception e) {
-            log.error("", e);
-        }
+        dbBotConfigCrudServiceHelper.init(DbBotConfig.class);
     }
 
     @Override
@@ -65,7 +63,7 @@ public class BotServiceImpl implements BotService {
 
     @Override
     public CrudServiceHelper<DbBotConfig> getDbBotConfigCrudServiceHelper() {
-        return dbBotConfigCrudServiceHelper;
+        return null;
     }
 
     private void startBot(DbBotConfig botConfig) throws GameFullException {

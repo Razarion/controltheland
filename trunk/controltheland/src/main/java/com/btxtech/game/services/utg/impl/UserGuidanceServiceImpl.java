@@ -20,8 +20,8 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelperSpringTransactionImpl;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.ItemService;
@@ -39,7 +39,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
@@ -81,20 +80,15 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     @Autowired
     private ServerMarketService marketService;
     @Autowired
-    private ApplicationContext applicationContext;
+    private CrudRootServiceHelper<DbAbstractLevel> crudServiceHelperHibernate;
     private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
     private List<DbAbstractLevel> dbAbstractLevels = new ArrayList<DbAbstractLevel>();
-    private CrudServiceHelper<DbAbstractLevel> crudServiceHelperHibernate;
     private DbRealGameLevel dummyRealGameLevel;
 
     @PostConstruct
     public void init() {
-        try {
-            crudServiceHelperHibernate = CrudServiceHelperSpringTransactionImpl.create(applicationContext, DbAbstractLevel.class, "orderIndex");
-        } catch (Throwable t) {
-            log.error("", t);
-        }
+        crudServiceHelperHibernate.init(DbAbstractLevel.class, "orderIndex");
     }
 
     @Override
@@ -305,7 +299,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     }
 
     @Override
-    public CrudServiceHelper<DbAbstractLevel> getDbLevelCrudServiceHelper() {
+    public CrudRootServiceHelper<DbAbstractLevel> getDbLevelCrudServiceHelper() {
         return crudServiceHelperHibernate;
     }
 

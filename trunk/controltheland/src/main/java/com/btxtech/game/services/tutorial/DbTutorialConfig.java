@@ -18,9 +18,8 @@ import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
-import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelperCollectionImpl;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.tutorial.hint.ResourceHintManager;
@@ -38,7 +37,7 @@ import java.util.List;
  * Time: 11:33:59
  */
 @Entity(name = "TUTORIAL_CONFIG")
-public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
+public class DbTutorialConfig implements CrudChild, CrudParent {
     @Id
     @GeneratedValue
     private Integer id;
@@ -49,7 +48,7 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private List<DbTaskConfig> dbTaskConfigs;
     @Transient
-    private CrudServiceHelper<DbTaskConfig> crudServiceHelper;
+    private CrudChildServiceHelper<DbTaskConfig> dbTaskConfigCrudChildServiceHelper;
     private int width;
     private int height;
     private int ownBaseId;
@@ -146,7 +145,7 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
         this.failOnOwnItemsLost = failOnOwnItemsLost;
     }
 
-    public Integer isFailOnMoneyBelowAndNoAttackUnits() {
+    public Integer getFailOnMoneyBelowAndNoAttackUnits() {
         return failOnMoneyBelowAndNoAttackUnits;
     }
 
@@ -226,11 +225,11 @@ public class DbTutorialConfig implements Serializable, CrudChild, CrudParent {
         return id != null ? id.hashCode() : 0;
     }
 
-    public CrudServiceHelper<DbTaskConfig> getCrudServiceHelper() {
-        if (crudServiceHelper == null) {
-            crudServiceHelper = new CrudServiceHelperCollectionImpl<DbTaskConfig>(dbTaskConfigs, DbTaskConfig.class, this);
+    public CrudChildServiceHelper<DbTaskConfig> getDbTaskConfigCrudChildServiceHelper() {
+        if (dbTaskConfigCrudChildServiceHelper == null) {
+            dbTaskConfigCrudChildServiceHelper = new CrudChildServiceHelper<DbTaskConfig>(dbTaskConfigs, DbTaskConfig.class, this);
         }
-        return crudServiceHelper;
+        return dbTaskConfigCrudChildServiceHelper;
     }
 
     public void moveTaskUp(DbTaskConfig task) {

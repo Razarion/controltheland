@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.services.base.Base;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.user.UserState;
@@ -60,7 +61,7 @@ public interface UserGuidanceService {
 
     void init2();
 
-    CrudServiceHelper<DbAbstractLevel> getDbLevelCrudServiceHelper();
+    CrudRootServiceHelper<DbAbstractLevel> getDbLevelCrudServiceHelper();
 
     void updateDbConditionConfig(DbConditionConfig dbConditionConfig);
 

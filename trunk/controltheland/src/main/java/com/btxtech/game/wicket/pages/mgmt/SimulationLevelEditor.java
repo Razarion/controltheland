@@ -48,7 +48,7 @@ public class SimulationLevelEditor extends Panel {
             @Override
             public void setObject(Integer id) {
                 try {
-                    DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudServiceHelper().readDbChild(id);
+                    DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().readDbChild(id);
                     dbSimulationLevel.setDbTutorialConfig(dbTutorialConfig);
                 } catch (Throwable t) {
                     log.error("", t);

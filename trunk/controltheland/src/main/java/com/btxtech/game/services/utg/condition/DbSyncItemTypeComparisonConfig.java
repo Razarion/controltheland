@@ -18,7 +18,7 @@ import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.SyncItemTypeComparisonConfig;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelperCollectionImpl;
+import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -62,7 +62,7 @@ public class DbSyncItemTypeComparisonConfig extends DbAbstractComparisonConfig i
             if (dbComparisonItemCounts == null) {
                 dbComparisonItemCounts = new HashSet<DbComparisonItemCount>();
             }
-            dbComparisonItemCountCrudServiceHelper = new CrudServiceHelperCollectionImpl<DbComparisonItemCount>(dbComparisonItemCounts, DbComparisonItemCount.class, this);
+            dbComparisonItemCountCrudServiceHelper = new CrudChildServiceHelper<DbComparisonItemCount>(dbComparisonItemCounts, DbComparisonItemCount.class, this);
         }
         return dbComparisonItemCountCrudServiceHelper;
     }
