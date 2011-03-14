@@ -18,7 +18,10 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainS
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.common.RuServiceHelper;
+import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.utg.DbAbstractLevel;
 
 import java.util.Collection;
@@ -44,13 +47,13 @@ public interface TerrainService extends AbstractTerrainService {
 
     void setupTerrain(GameInfo gameInfo, DbAbstractLevel dbAbstractLevel);
 
-    void setupTerrain(TerrainInfo terrainInfo, int terrainId);
-
-    CrudServiceHelper<DbTerrainSetting> getDbTerrainSettingCrudServiceHelper();
-
     void saveDbTerrainSetting(List<DbTerrainSetting> dbTerrainSettings);
 
-    CrudServiceHelper<DbTerrainImage> getDbTerrainImageCrudServiceHelper();
+    void setupTerrain(TerrainInfo terrainInfo, int terrainId);
 
-    CrudServiceHelper<DbSurfaceImage> getDbSurfaceImageCrudServiceHelper();
+    CrudRootServiceHelper<DbTerrainSetting> getDbTerrainSettingCrudServiceHelper();
+
+    CrudRootServiceHelper<DbTerrainImage> getDbTerrainImageCrudServiceHelper();
+
+    CrudRootServiceHelper<DbSurfaceImage> getDbSurfaceImageCrudServiceHelper();
 }

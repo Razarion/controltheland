@@ -14,9 +14,8 @@
 package com.btxtech.game.services.tutorial;
 
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
-import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.tutorial.hint.DbResourceHintConfig;
-import com.btxtech.game.services.utg.DbAbstractLevel;
 import com.btxtech.game.services.utg.DbSimulationLevel;
 
 /**
@@ -25,23 +24,11 @@ import com.btxtech.game.services.utg.DbSimulationLevel;
  * Time: 11:32:53
  */
 public interface TutorialService {
-    CrudServiceHelper<DbTutorialConfig> getDbTutorialCrudServiceHelper();
+    CrudRootServiceHelper<DbTutorialConfig> getDbTutorialCrudRootServiceHelper();
 
     void activate();
 
     TutorialConfig getTutorialConfig(DbSimulationLevel dbSimulationLevel);
 
     DbResourceHintConfig getDbResourceHintConfig(int id);
-
-    void saveTutorial(DbTutorialConfig dbTutorialConfig);
-
-    DbStepConfig getDbStepConfig(int dbStepConfigId);
-
-    void saveDbStepConfig(DbStepConfig dbStepConfig);
-
-    DbTaskConfig getDbTaskConfig(int dbTaskConfigId);
-
-    DbTutorialConfig getDbTutorialConfig(int dbTutorialConfigId);
-
-    void saveDbTaskConfig(DbTaskConfig dbTaskConfig);
 }

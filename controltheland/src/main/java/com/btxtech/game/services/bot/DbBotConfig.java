@@ -17,7 +17,7 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelperCollectionImpl;
+import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.db.RectangleUserType;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,7 +29,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Columns;
@@ -190,7 +189,7 @@ public class DbBotConfig implements CrudChild, CrudParent {
 
     public CrudServiceHelper<DbBotItemCount> getBaseBuildupCrudServiceHelper() {
         if (baseBuildupCrudServiceHelper == null) {
-            baseBuildupCrudServiceHelper = new CrudServiceHelperCollectionImpl<DbBotItemCount>(baseBuildup, DbBotItemCount.class, this) {
+            baseBuildupCrudServiceHelper = new CrudChildServiceHelper<DbBotItemCount>(baseBuildup, DbBotItemCount.class, this) {
                 @Override
                 protected void initChild(DbBotItemCount dbBotItemCount) {
                     dbBotItemCount.setType(BASE_BUILDUP);
@@ -202,7 +201,7 @@ public class DbBotConfig implements CrudChild, CrudParent {
 
     public CrudServiceHelper<DbBotItemCount> getBaseFundamentalCrudServiceHelper() {
         if (baseFundamentalCrudServiceHelper == null) {
-            baseFundamentalCrudServiceHelper = new CrudServiceHelperCollectionImpl<DbBotItemCount>(baseFundamental, DbBotItemCount.class, this) {
+            baseFundamentalCrudServiceHelper = new CrudChildServiceHelper<DbBotItemCount>(baseFundamental, DbBotItemCount.class, this) {
                 @Override
                 protected void initChild(DbBotItemCount dbBotItemCount) {
                     dbBotItemCount.setType(BASE_FUNDAMENTAL);
@@ -214,7 +213,7 @@ public class DbBotConfig implements CrudChild, CrudParent {
 
     public CrudServiceHelper<DbBotItemCount> getDefenceCrudServiceHelper() {
         if (defenceCrudServiceHelper == null) {
-            defenceCrudServiceHelper = new CrudServiceHelperCollectionImpl<DbBotItemCount>(defence, DbBotItemCount.class, this) {
+            defenceCrudServiceHelper = new CrudChildServiceHelper<DbBotItemCount>(defence, DbBotItemCount.class, this) {
                 @Override
                 protected void initChild(DbBotItemCount dbBotItemCount) {
                     dbBotItemCount.setType(DEFENSE);

@@ -14,9 +14,7 @@
 package com.btxtech.game.services.resource;
 
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
-import com.btxtech.game.services.common.CrudServiceHelper;
-
-import java.util.List;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 
 /**
  * User: beat
@@ -28,5 +26,5 @@ public interface ResourceService {
 
     void resourceItemDeleted(SyncResourceItem syncResourceItem);
 
-    CrudServiceHelper<DbRegionResource> getDbRegionResourceCrudServiceHelper();
+    CrudRootServiceHelper<DbRegionResource> getDbRegionResourceCrudServiceHelper();
 }

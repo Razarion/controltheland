@@ -13,14 +13,14 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.utg.DbAbstractLevel;
 import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.services.utg.DbSimulationLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import com.btxtech.game.wicket.uiservices.CrudTableHelper;
+import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -42,10 +42,10 @@ public class DbLevelTable extends MgmtWebPage {
         Form form = new Form("levelForm");
         add(form);
 
-        new CrudTableHelper<DbAbstractLevel>("levels", "save", null, true, form, true) {
+        new CrudRootTableHelper<DbAbstractLevel>("levels", "save", null, true, form, true) {
 
             @Override
-            protected CrudServiceHelper<DbAbstractLevel> getCrudServiceHelper() {
+            protected CrudRootServiceHelper<DbAbstractLevel> _getCrudRootServiceHelperImpl() {
                 return userGuidanceService.getDbLevelCrudServiceHelper();
             }
 
@@ -60,14 +60,14 @@ public class DbLevelTable extends MgmtWebPage {
 
                     @Override
                     public void onSubmit() {
-                        getCrudServiceHelper().createDbChild(DbRealGameLevel.class);
+                        getCrudRootServiceHelperImpl().createDbChild(DbRealGameLevel.class);
                     }
                 }.setDefaultFormProcessing(false));
                 markupContainer.add(new Button("createSimulation") {
 
                     @Override
                     public void onSubmit() {
-                        getCrudServiceHelper().createDbChild(DbSimulationLevel.class);
+                        getCrudRootServiceHelperImpl().createDbChild(DbSimulationLevel.class);
                     }
                 }.setDefaultFormProcessing(false));
             }

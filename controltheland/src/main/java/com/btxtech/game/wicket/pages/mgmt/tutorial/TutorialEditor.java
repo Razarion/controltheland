@@ -13,17 +13,18 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tutorial;
 
-import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.common.CrudChildServiceHelper;
+import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
-import com.btxtech.game.wicket.uiservices.CrudTableHelper;
+import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
+import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
@@ -32,7 +33,6 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-import org.hibernate.SessionFactory;
 
 /**
  * User: beat
@@ -45,32 +45,17 @@ public class TutorialEditor extends MgmtWebPage {
     @SpringBean
     private TerrainService terrainService;
     @SpringBean
-    private SessionFactory sessionFactory;
+    private RuServiceHelper<DbTutorialConfig> ruServiceHelper;
+
     private Log log = LogFactory.getLog(TutorialEditor.class);
 
     public TutorialEditor(DbTutorialConfig dbTutorialConfig) {
-        final int dbTutorialConfigId = dbTutorialConfig.getId(); 
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbTutorialConfig> form = new Form<DbTutorialConfig>("tutorialForm", new CompoundPropertyModel<DbTutorialConfig>(new IModel<DbTutorialConfig>() {
-            private DbTutorialConfig dbTutorialConfig;
-
+        final Form<DbTutorialConfig> form = new Form<DbTutorialConfig>("tutorialForm", new CompoundPropertyModel<DbTutorialConfig>(new RuModel<DbTutorialConfig>(dbTutorialConfig, DbTutorialConfig.class) {
             @Override
-            public DbTutorialConfig getObject() {
-                if (dbTutorialConfig == null) {
-                    dbTutorialConfig = tutorialService.getDbTutorialConfig(dbTutorialConfigId);
-                }
-                return dbTutorialConfig;
-            }
-
-            @Override
-            public void setObject(DbTutorialConfig object) {
-                // Ignore
-            }
-
-            @Override
-            public void detach() {
-                dbTutorialConfig = null;
+            protected RuServiceHelper<DbTutorialConfig> getRuServiceHelper() {
+                return ruServiceHelper;
             }
         }));
         add(form);
@@ -114,16 +99,26 @@ public class TutorialEditor extends MgmtWebPage {
             }
         }, Integer.class));
 
-        new CrudTableHelper<DbTaskConfig>("taskTable", null, "createTask", true, form, true) {
-
-            @Override
-            protected CrudServiceHelper<DbTaskConfig> getCrudServiceHelper() {
-                return ((DbTutorialConfig) form.getDefaultModelObject()).getCrudServiceHelper();
-            }
+        new CrudChildTableHelper<DbTutorialConfig, DbTaskConfig>("taskTable", null, "createTask", true, form, true) {
 
             @Override
             protected void onEditSubmit(DbTaskConfig dbTaskConfig) {
                 setResponsePage(new TaskEditor(dbTaskConfig));
+            }
+
+            @Override
+            protected RuServiceHelper<DbTutorialConfig> getRuServiceHelper() {
+                return ruServiceHelper;
+            }
+
+            @Override
+            protected DbTutorialConfig getParent() {
+                return (DbTutorialConfig) form.getDefaultModelObject();
+            }
+
+            @Override
+            protected CrudChildServiceHelper<DbTaskConfig> getCrudChildServiceHelperImpl() {
+                return ((DbTutorialConfig) form.getDefaultModelObject()).getDbTaskConfigCrudChildServiceHelper();
             }
         };
 
@@ -131,7 +126,7 @@ public class TutorialEditor extends MgmtWebPage {
 
             @Override
             public void onSubmit() {
-                tutorialService.saveTutorial((DbTutorialConfig) form.getDefaultModelObject());
+                ruServiceHelper.updateDbEntity((DbTutorialConfig) form.getDefaultModelObject());
             }
         });
         form.add(new Button("back") {

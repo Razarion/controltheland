@@ -1,20 +1,6 @@
-/*
- * Copyright (c) 2010.
- *
- *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation; version 2 of the License.
- *
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- */
-
 package com.btxtech.game.wicket.uiservices;
 
 import com.btxtech.game.services.common.CrudChild;
-import com.btxtech.game.services.common.CrudServiceHelper;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.TextField;
@@ -29,18 +15,17 @@ import java.util.List;
 
 /**
  * User: beat
- * Date: 23.07.2010
- * Time: 23:48:39
+ * Date: 14.03.2011
+ * Time: 12:42:45
  */
-public abstract class CrudTableHelper<T extends CrudChild> implements Serializable {
-    public static final String NAME = "name";
+abstract public class AbstractCrudRootTableHelper<T extends CrudChild> implements Serializable {
     private CrudTableListProvider<T> provider;
 
-    public CrudTableHelper(String tableId, String saveId, String createId, final boolean showEdit, WebMarkupContainer markupContainer, final boolean showOrderButtons) {
+    public AbstractCrudRootTableHelper(String tableId, String saveId, String createId, final boolean showEdit, WebMarkupContainer markupContainer, final boolean showOrderButtons) {
         provider = new CrudTableListProvider<T>() {
             @Override
             protected List<T> createList() {
-                Collection<T> collection = getCrudServiceHelper().readDbChildren();
+                Collection<T> collection = readDbChildren();
                 if (collection instanceof List) {
                     return (List<T>) collection;
                 } else {
@@ -48,6 +33,9 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
                 }
             }
         };
+
+
+
         markupContainer.add(new DataView<T>(tableId, provider) {
             @Override
             protected void populateItem(final Item<T> item) {
@@ -90,7 +78,7 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
                 item.add(new Button("delete") {
                     @Override
                     public void onSubmit() {
-                        getCrudServiceHelper().deleteDbChild(item.getModelObject());
+                        deleteChild(item.getModelObject());
                         provider.refresh();
                     }
                 }.setDefaultFormProcessing(false));
@@ -102,7 +90,26 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
             setupSave(markupContainer, saveId);
         }
         setupCreate(markupContainer, createId);
+    }
 
+    protected abstract Collection<T> readDbChildren();
+
+    protected abstract void deleteChild(T modelObject);
+
+    protected abstract void updateDbChildren(List<T> children);
+
+    protected abstract void createDbChild();
+
+    protected abstract void createDbChild(Class<? extends T> createClass);
+
+    protected void setupCreate(WebMarkupContainer markupContainer, String createId) {
+        markupContainer.add(new Button(createId) {
+
+            @Override
+            public void onSubmit() {
+                createDbChild();
+            }
+        }.setDefaultFormProcessing(false));
     }
 
     protected void setupSave(WebMarkupContainer markupContainer, String saveId) {
@@ -110,19 +117,9 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
 
             @Override
             public void onSubmit() {
-                getCrudServiceHelper().updateDbChildren(getList());
+                updateDbChildren(getList());
             }
         });
-    }
-
-    protected void setupCreate(WebMarkupContainer markupContainer, String createId) {
-        markupContainer.add(new Button(createId) {
-
-            @Override
-            public void onSubmit() {
-                getCrudServiceHelper().createDbChild();
-            }
-        }.setDefaultFormProcessing(false));
     }
 
     /**
@@ -133,8 +130,6 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
     protected void extendedPopulateItem(Item<T> item) {
         item.add(new TextField<String>("name"));
     }
-
-    abstract protected CrudServiceHelper<T> getCrudServiceHelper();
 
     /**
      * Override in subclasses
@@ -147,7 +142,7 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
 
     public void swapRow(int i, int j) {
         Collections.swap(provider.getList(), i, j);
-        getCrudServiceHelper().updateDbChildren(provider.getList());
+        updateDbChildren(provider.getList());
     }
 
     public void moveChildUp(Item<T> item) {
@@ -179,5 +174,6 @@ public abstract class CrudTableHelper<T extends CrudChild> implements Serializab
     public List<T> getList() {
         return provider.getList();
     }
+
 
 }

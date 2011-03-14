@@ -14,28 +14,19 @@
 package com.btxtech.game.services.tutorial.impl;
 
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
-import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelperSpringTransactionImpl;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.tutorial.DbStepConfig;
-import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.tutorial.hint.DbResourceHintConfig;
 import com.btxtech.game.services.tutorial.hint.ResourceHintManager;
-import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.utg.DbAbstractLevel;
 import com.btxtech.game.services.utg.DbSimulationLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
@@ -49,36 +40,25 @@ import java.util.Map;
  */
 @Component("tutorialService")
 public class TutorialServiceImpl implements TutorialService, ResourceHintManager {
-    private HibernateTemplate hibernateTemplate;
-    private CrudServiceHelper<DbTutorialConfig> tutorialCrudServiceHelper;
-    private final Map<DbSimulationLevel, TutorialConfig> tutorialConfigMap = new HashMap<DbSimulationLevel, TutorialConfig>();
-    private int imageId;
-    private HashMap<Integer, DbResourceHintConfig> resourceHints = new HashMap<Integer, DbResourceHintConfig>();
-    private Log log = LogFactory.getLog(TutorialServiceImpl.class);
+    @Autowired
+    private CrudRootServiceHelper<DbTutorialConfig> dbTutorialConfigCrudRootServiceHelper;
     @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired
     private ItemService itemService;
-    @Autowired
-    private ApplicationContext applicationContext;
-
-    @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        hibernateTemplate = new HibernateTemplate(sessionFactory);
-    }
+    private final Map<DbSimulationLevel, TutorialConfig> tutorialConfigMap = new HashMap<DbSimulationLevel, TutorialConfig>();
+    private int imageId;
+    private HashMap<Integer, DbResourceHintConfig> resourceHints = new HashMap<Integer, DbResourceHintConfig>();
+    private Log log = LogFactory.getLog(TutorialServiceImpl.class);
 
     @PostConstruct
-    public void init() {
-        try {
-            tutorialCrudServiceHelper = CrudServiceHelperSpringTransactionImpl.create(applicationContext, DbTutorialConfig.class);
-        } catch (Exception e) {
-            log.error("", e);
-        }
+    public void ini() {
+        dbTutorialConfigCrudRootServiceHelper.init(DbTutorialConfig.class);
     }
 
     @Override
-    public CrudServiceHelper<DbTutorialConfig> getDbTutorialCrudServiceHelper() {
-        return tutorialCrudServiceHelper;
+    public CrudRootServiceHelper<DbTutorialConfig> getDbTutorialCrudRootServiceHelper() {
+        return dbTutorialConfigCrudRootServiceHelper;
     }
 
     @Override
@@ -95,7 +75,7 @@ public class TutorialServiceImpl implements TutorialService, ResourceHintManager
             for (DbAbstractLevel dbAbstractLevel : dbAbstractLevels) {
                 if (dbAbstractLevel instanceof DbSimulationLevel) {
                     DbSimulationLevel dbSimulationLevel = (DbSimulationLevel) dbAbstractLevel;
-                    DbTutorialConfig dbTutorialConfig = tutorialCrudServiceHelper.readDbChild(dbSimulationLevel.getDbTutorialConfig().getId());
+                    DbTutorialConfig dbTutorialConfig = dbTutorialConfigCrudRootServiceHelper.readDbChild(dbSimulationLevel.getDbTutorialConfig().getId());
                     if (dbTutorialConfig == null) {
                         log.warn("No DbTutorialConfig for level: " + dbSimulationLevel);
                         continue;
@@ -130,39 +110,5 @@ public class TutorialServiceImpl implements TutorialService, ResourceHintManager
             throw new IllegalArgumentException("No DbResourceHintConfig for id: " + id);
         }
         return dbResourceHintConfig;
-    }
-
-    @Override
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void saveTutorial(DbTutorialConfig dbTutorialConfig) {
-        tutorialCrudServiceHelper.updateDbChild(dbTutorialConfig);
-    }
-
-    @Override
-    public DbStepConfig getDbStepConfig(int dbStepConfigId) {
-        return hibernateTemplate.get(DbStepConfig.class, dbStepConfigId);
-    }
-
-    @Override
-    @Transactional
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void saveDbStepConfig(DbStepConfig dbStepConfig) {
-        hibernateTemplate.update(dbStepConfig);
-    }
-
-    @Override
-    public DbTaskConfig getDbTaskConfig(int dbTaskConfigId) {
-        return hibernateTemplate.get(DbTaskConfig.class, dbTaskConfigId);
-    }
-
-    @Override
-    public DbTutorialConfig getDbTutorialConfig(int dbTutorialConfigId) {
-        return hibernateTemplate.get(DbTutorialConfig.class, dbTutorialConfigId);
-    }
-
-    @Override
-    @Transactional
-    public void saveDbTaskConfig(DbTaskConfig dbTaskConfig) {
-        hibernateTemplate.update(dbTaskConfig);
     }
 }

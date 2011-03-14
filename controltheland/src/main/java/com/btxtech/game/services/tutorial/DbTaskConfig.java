@@ -18,38 +18,24 @@ import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.jsre.common.tutorial.StepConfig;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
-import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelperCollectionImpl;
 import com.btxtech.game.services.common.db.IndexUserType;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.tutorial.hint.DbResourceHintConfig;
 import com.btxtech.game.services.tutorial.hint.ResourceHintManager;
 import com.btxtech.game.wicket.pages.mgmt.ItemsUtil;
+import org.hibernate.annotations.*;
+
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Columns;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
 
 /**
  * User: beat
@@ -58,13 +44,13 @@ import org.hibernate.annotations.TypeDefs;
  */
 @Entity(name = "TUTORIAL_TASK_CONFIG")
 @TypeDefs({@TypeDef(name = "index", typeClass = IndexUserType.class)})
-public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutorialConfig> {
+public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     @Id
     @GeneratedValue
     private Integer id;
     private String name;
     private boolean clearGame;
-    @OneToMany(mappedBy = "dbTaskConfig", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "dbTaskConfig", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<DbItemTypeAndPosition> items;
     private boolean isScrollingAllowed;
     private boolean isSellingAllowed;
@@ -95,9 +81,9 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
     private String taskText;
 
     @Transient
-    private CrudServiceHelper<DbItemTypeAndPosition> itemTypeAndPositionCrudHelper;
+    private CrudChildServiceHelper<DbItemTypeAndPosition> itemTypeAndPositionCrudHelper;
     @Transient
-    private CrudServiceHelper<DbStepConfig> stepConfigCrudHelper;
+    private CrudChildServiceHelper<DbStepConfig> stepConfigCrudHelper;
 
     public Integer getId() {
         return id;
@@ -128,6 +114,10 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
 
     public void setClearGame(boolean clearGame) {
         this.clearGame = clearGame;
+    }
+
+    public boolean isClearGame() {
+        return clearGame;
     }
 
     public boolean isScrollingAllowed() {
@@ -266,16 +256,16 @@ public class DbTaskConfig implements Serializable, CrudParent, CrudChild<DbTutor
                 finishImageId);
     }
 
-    public CrudServiceHelper<DbItemTypeAndPosition> getItemCrudServiceHelper() {
+    public CrudChildServiceHelper<DbItemTypeAndPosition> getItemCrudServiceHelper() {
         if (itemTypeAndPositionCrudHelper == null) {
-            itemTypeAndPositionCrudHelper = new CrudServiceHelperCollectionImpl<DbItemTypeAndPosition>(items, DbItemTypeAndPosition.class, this);
+            itemTypeAndPositionCrudHelper = new CrudChildServiceHelper<DbItemTypeAndPosition>(items, DbItemTypeAndPosition.class, this);
         }
         return itemTypeAndPositionCrudHelper;
     }
 
-    public CrudServiceHelper<DbStepConfig> getStepConfigCrudServiceHelper() {
+    public CrudChildServiceHelper<DbStepConfig> getStepConfigCrudServiceHelper() {
         if (stepConfigCrudHelper == null) {
-            stepConfigCrudHelper = new CrudServiceHelperCollectionImpl<DbStepConfig>(stepConfigs, DbStepConfig.class, this);
+            stepConfigCrudHelper = new CrudChildServiceHelper<DbStepConfig>(stepConfigs, DbStepConfig.class, this);
         }
         return stepConfigCrudHelper;
     }

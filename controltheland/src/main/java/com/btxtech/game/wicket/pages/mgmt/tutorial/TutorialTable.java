@@ -13,12 +13,12 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tutorial;
 
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
-import com.btxtech.game.wicket.uiservices.CrudTableHelper;
-import org.apache.wicket.markup.html.WebPage;
+import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -41,11 +41,11 @@ public class TutorialTable extends MgmtWebPage {
         Form form = new Form("tutorialForm");
         add(form);
 
-        new CrudTableHelper<DbTutorialConfig>("tutorialTable", "save", "create", true, form, false) {
+        new CrudRootTableHelper<DbTutorialConfig>("tutorialTable", "save", "create", true, form, false) {
 
             @Override
-            protected CrudServiceHelper<DbTutorialConfig> getCrudServiceHelper() {
-                return tutorialService.getDbTutorialCrudServiceHelper();
+            protected CrudRootServiceHelper<DbTutorialConfig> _getCrudRootServiceHelperImpl() {
+                return tutorialService.getDbTutorialCrudRootServiceHelper();
             }
 
             @Override

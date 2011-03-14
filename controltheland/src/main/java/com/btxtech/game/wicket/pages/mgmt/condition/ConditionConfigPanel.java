@@ -16,22 +16,18 @@ package com.btxtech.game.wicket.pages.mgmt.condition;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
-import com.btxtech.game.services.utg.condition.DbCockpitButtonClickedComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
-import com.btxtech.game.services.utg.condition.DbSyncItemIdComparisonConfig;
-import com.btxtech.game.services.utg.condition.DbSyncItemIdPositionComparisonConfig;
-import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
-import java.util.Arrays;
-import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.IFormModelUpdateListener;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * User: beat

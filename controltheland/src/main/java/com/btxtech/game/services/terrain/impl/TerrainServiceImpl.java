@@ -22,8 +22,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.btxtech.game.services.collision.CollisionService;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelperSpringTransactionImpl;
 import com.btxtech.game.services.terrain.*;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.user.SecurityRoles;
@@ -59,15 +59,16 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     @Autowired
     private ItemService itemService;
     @Autowired
-    private ApplicationContext applicationContext;
+    private CrudRootServiceHelper<DbTerrainSetting> dbTerrainSettingCrudServiceHelper;
+    @Autowired
+    private CrudRootServiceHelper<DbTerrainImage> dbTerrainImageCrudServiceHelper;
+    @Autowired
+    private CrudRootServiceHelper<DbSurfaceImage> dbSurfaceImageCrudServiceHelper;
 
     private HibernateTemplate hibernateTemplate;
     private HashMap<Integer, DbTerrainImage> dbTerrainImages = new HashMap<Integer, DbTerrainImage>();
     private HashMap<Integer, DbSurfaceImage> dbSurfaceImages = new HashMap<Integer, DbSurfaceImage>();
-    private CrudServiceHelper<DbTerrainSetting> dbTerrainSettingCrudServiceHelper;
     private Log log = LogFactory.getLog(TerrainServiceImpl.class);
-    private CrudServiceHelper<DbTerrainImage> dbTerrainImageCrudServiceHelper;
-    private CrudServiceHelper<DbSurfaceImage> dbSurfaceImageCrudServiceHelper;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -76,9 +77,9 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
 
     @PostConstruct
     public void init() {
-        dbTerrainImageCrudServiceHelper = CrudServiceHelperSpringTransactionImpl.create(applicationContext, DbTerrainImage.class);
-        dbSurfaceImageCrudServiceHelper = CrudServiceHelperSpringTransactionImpl.create(applicationContext, DbSurfaceImage.class);
-        dbTerrainSettingCrudServiceHelper = CrudServiceHelperSpringTransactionImpl.create(applicationContext, DbTerrainSetting.class);
+        dbTerrainImageCrudServiceHelper.init(DbTerrainImage.class);
+        dbSurfaceImageCrudServiceHelper.init(DbSurfaceImage.class);
+        dbTerrainSettingCrudServiceHelper.init(DbTerrainSetting.class);
         SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
         try {
             activateTerrain();
@@ -87,17 +88,17 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         }
     }
 
-    public CrudServiceHelper<DbTerrainSetting> getDbTerrainSettingCrudServiceHelper() {
+    public CrudRootServiceHelper<DbTerrainSetting> getDbTerrainSettingCrudServiceHelper() {
         return dbTerrainSettingCrudServiceHelper;
     }
 
     @Override
-    public CrudServiceHelper<DbTerrainImage> getDbTerrainImageCrudServiceHelper() {
+    public CrudRootServiceHelper<DbTerrainImage> getDbTerrainImageCrudServiceHelper() {
         return dbTerrainImageCrudServiceHelper;
     }
 
     @Override
-    public CrudServiceHelper<DbSurfaceImage> getDbSurfaceImageCrudServiceHelper() {
+    public CrudRootServiceHelper<DbSurfaceImage> getDbSurfaceImageCrudServiceHelper() {
         return dbSurfaceImageCrudServiceHelper;
     }
 

@@ -16,6 +16,7 @@ package com.btxtech.game.services.common;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
+import java.util.NoSuchElementException;
 
 
 /**
@@ -23,12 +24,12 @@ import java.util.Collection;
  * Date: 25.07.2010
  * Time: 12:50:08
  */
-public class CrudServiceHelperCollectionImpl<T extends CrudChild> implements CrudServiceHelper<T>, Serializable {
+public class CrudChildServiceHelper<T extends CrudChild> implements CrudServiceHelper<T>, Serializable {
     private Collection<T> children;
     private Class<T> childClass;
     private CrudParent crudParent;
 
-    public CrudServiceHelperCollectionImpl(Collection<T> children, Class<T> childClass, CrudParent crudParent) {
+    public CrudChildServiceHelper(Collection<T> children, Class<T> childClass, CrudParent crudParent) {
         this.children = children;
         this.childClass = childClass;
         this.crudParent = crudParent;
@@ -40,28 +41,32 @@ public class CrudServiceHelperCollectionImpl<T extends CrudChild> implements Cru
     }
 
     @Override
+    public T readDbChild(Serializable id) {
+        for (T child : children) {
+            if (child.getId().equals(id)) {
+                return child;
+            }
+        }
+        throw new NoSuchElementException("Id: " + id);
+    }
+
+    @Override
     public void deleteDbChild(T child) {
         children.remove(child);
     }
 
     @Override
     public void updateDbChildren(Collection<T> children) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void updateDbChild(T crudChild) {
-        throw new UnsupportedOperationException();
+        this.children.clear();
+        for (T child : this.children) {
+            child.setParent(crudParent);
+            children.add(child);
+        }
     }
 
     @Override
     public void createDbChild() {
         createDbChild(childClass);
-    }
-
-    @Override
-    public T readDbChild(Serializable id) {
-        throw new UnsupportedOperationException();
     }
 
     @Override
