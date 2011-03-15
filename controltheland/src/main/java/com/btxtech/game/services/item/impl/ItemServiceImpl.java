@@ -24,12 +24,7 @@ import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededE
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.items.impl.AbstractItemService;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.*;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.Base;
@@ -39,24 +34,13 @@ import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.services.item.itemType.DbItemType;
-import com.btxtech.game.services.item.itemType.DbItemTypeData;
-import com.btxtech.game.services.item.itemType.DbItemTypeImage;
-import com.btxtech.game.services.item.itemType.DbProjectileItemType;
+import com.btxtech.game.services.item.itemType.*;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.resource.ResourceService;
+import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -67,8 +51,13 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.PostConstruct;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * User: beat
@@ -127,7 +116,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         SyncItem syncItem;
         synchronized (items) {
             if (toBeBuilt instanceof BaseItemType && !baseService.isBot(base)) {
-                baseService.checkItemLimit4ItemAdding((BaseItemType)toBeBuilt, base);
+                baseService.checkItemLimit4ItemAdding((BaseItemType) toBeBuilt, base);
             }
             Id id = createId(creator, createdChildCount);
             syncItem = newSyncItem(id, position, toBeBuilt.getId(), base, services);
@@ -335,11 +324,15 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
+    @Transactional
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveDbItemTypes(Collection<DbItemType> itemTypes) {
         hibernateTemplate.saveOrUpdateAll(itemTypes);
     }
 
     @Override
+    @Transactional
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveAttackMatrix(Collection<DbBaseItemType> weaponDbItemTypes) {
         for (DbBaseItemType weaponDbItemType : weaponDbItemTypes) {
             hibernateTemplate.merge(weaponDbItemType);
@@ -348,6 +341,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
     @Override
     @Transactional
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveDbItemType(DbItemType dbItemType) {
         hibernateTemplate.saveOrUpdate(dbItemType);
     }
@@ -483,6 +477,8 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
+    @Transactional
     public void deleteItemType(DbItemType dbItemType) {
         hibernateTemplate.delete(dbItemType);
     }
