@@ -14,7 +14,6 @@
 package com.btxtech.game.services.bot;
 
 import com.btxtech.game.services.common.CrudRootServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelper;
 
 /**
  * User: beat

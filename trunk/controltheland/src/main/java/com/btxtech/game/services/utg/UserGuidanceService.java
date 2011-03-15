@@ -14,17 +14,14 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
-import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
-import java.util.Collection;
+
 import java.util.List;
 
 /**

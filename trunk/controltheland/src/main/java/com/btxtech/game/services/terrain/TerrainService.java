@@ -19,9 +19,6 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelper;
-import com.btxtech.game.services.common.RuServiceHelper;
-import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.utg.DbAbstractLevel;
 
 import java.util.Collection;
