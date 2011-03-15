@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.market;
 
+import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -26,7 +27,7 @@ import java.io.Serializable;
  * Time: 22:19:08
  */
 @Entity(name = "ITEM_TYPE_ACCESS_ENTRY")
-public class MarketEntry implements Serializable{
+public class MarketEntry implements CrudChild, Serializable{
     @Id
     @GeneratedValue
     private Integer id;
@@ -35,12 +36,9 @@ public class MarketEntry implements Serializable{
     private DbItemType itemType;
     private int price;
     @ManyToOne
-    private MarketEntry precondition;
-    @ManyToOne
     private MarketFunction marketFunction;
     @ManyToOne
     private MarketCategory marketCategory;
-
 
     @Override
     public boolean equals(Object o) {
@@ -49,9 +47,27 @@ public class MarketEntry implements Serializable{
 
         MarketEntry that = (MarketEntry) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        return !(id != null ? !id.equals(that.id) : that.id != null);
 
-        return true;
+    }
+
+    @Override
+    public String getName() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setName(String name) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void init() {
+    }
+
+    @Override
+    public void setParent(Object o) {
+        // Np parent
     }
 
     @Override
@@ -85,14 +101,6 @@ public class MarketEntry implements Serializable{
 
     public void setPrice(int price) {
         this.price = price;
-    }
-
-    public MarketEntry getPrecondition() {
-        return precondition;
-    }
-
-    public void setPrecondition(MarketEntry precondition) {
-        this.precondition = precondition;
     }
 
     public MarketFunction getMarketFunction() {

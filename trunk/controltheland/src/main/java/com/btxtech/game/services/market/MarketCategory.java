@@ -13,6 +13,8 @@
 
 package com.btxtech.game.services.market;
 
+import com.btxtech.game.services.common.CrudChild;
+
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,11 +26,16 @@ import javax.persistence.Id;
  * Time: 18:11:59
  */
 @Entity(name = "MARKET_CATEGORY")
-public class MarketCategory implements Serializable {
+public class MarketCategory implements CrudChild, Serializable {
     @Id
     @GeneratedValue
     private Integer id;
     private String name;
+
+    @Override
+    public Serializable getId() {
+        return id;
+    }
 
     public String getName() {
         return name;
@@ -36,6 +43,15 @@ public class MarketCategory implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public void init() {
+    }
+
+    @Override
+    public void setParent(Object o) {
+        // No parents
     }
 
     @Override
