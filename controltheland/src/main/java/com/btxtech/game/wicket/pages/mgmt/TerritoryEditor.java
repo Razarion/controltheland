@@ -16,7 +16,6 @@ package com.btxtech.game.wicket.pages.mgmt;
 import com.btxtech.game.jsre.mapeditor.TerrainEditorAsync;
 import com.btxtech.game.jsre.mapview.territory.TerritoryEditModel;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.terrain.TerrainService;
@@ -105,7 +104,7 @@ public class TerritoryEditor extends MgmtWebPage {
             });
         }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked", "SuspiciousToArrayCall"})
         IColumn<DbTerritory>[] columnArray = (IColumn<DbTerritory>[]) columnList.toArray(new IColumn[columnList.size()]);
         final CrudTableListProvider<DbTerritory> territoryProvider = new CrudTableListProvider<DbTerritory>() {
             @Override
