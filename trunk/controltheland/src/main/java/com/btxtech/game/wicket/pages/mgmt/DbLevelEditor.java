@@ -13,14 +13,11 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.utg.DbAbstractLevel;
 import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.services.utg.DbSimulationLevel;
-import com.btxtech.game.services.utg.UserGuidanceService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.wicket.markup.html.WebPage;
+import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
@@ -37,12 +34,18 @@ import wicket.contrib.tinymce.settings.TinyMCESettings;
  */
 public class DbLevelEditor extends MgmtWebPage {
     @SpringBean
-    private UserGuidanceService userGuidanceService;
+    private RuServiceHelper<DbAbstractLevel> ruServiceHelper;
 
-    public DbLevelEditor(final DbAbstractLevel dbAbstractLevel) {
+    public DbLevelEditor(DbAbstractLevel dbAbstractLevel) {
         add(new FeedbackPanel("msgs"));
 
-        Form<DbAbstractLevel> form = new Form<DbAbstractLevel>("form", new CompoundPropertyModel<DbAbstractLevel>(dbAbstractLevel));
+        final Form<DbAbstractLevel> form = new Form<DbAbstractLevel>("form", new CompoundPropertyModel<DbAbstractLevel>(new RuModel<DbAbstractLevel>(dbAbstractLevel, DbAbstractLevel.class) {
+
+            @Override
+            protected RuServiceHelper<DbAbstractLevel> getRuServiceHelper() {
+                return ruServiceHelper;
+            }
+        }));
         add(form);
 
         TextArea<String> contentArea = new TextArea<String>("html");
@@ -53,16 +56,16 @@ public class DbLevelEditor extends MgmtWebPage {
         form.add(contentArea);
 
         if (dbAbstractLevel instanceof DbRealGameLevel) {
-           form.add(new RealGameLevelEditor("levelDetail"));
+            form.add(new RealGameLevelEditor("levelDetail"));
         } else if (dbAbstractLevel instanceof DbSimulationLevel) {
-            form.add(new SimulationLevelEditor("levelDetail", (DbSimulationLevel)dbAbstractLevel));
+            form.add(new SimulationLevelEditor("levelDetail"));
         } else {
             throw new IllegalArgumentException("Unknown level: " + dbAbstractLevel);
         }
         form.add(new Button("save") {
             @Override
             public void onSubmit() {
-                userGuidanceService.saveDbLevel(dbAbstractLevel);
+                ruServiceHelper.updateDbEntity(form.getModelObject());
             }
         });
         form.add(new Button("back") {
@@ -71,6 +74,9 @@ public class DbLevelEditor extends MgmtWebPage {
                 setResponsePage(DbLevelTable.class);
             }
         });
+    }
 
+    public RuServiceHelper<DbAbstractLevel> getRuServiceHelper() {
+        return ruServiceHelper;
     }
 }

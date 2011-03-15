@@ -33,13 +33,14 @@ public class SimulationLevelEditor extends Panel {
     private TutorialService tutorialService;
     private Log log = LogFactory.getLog(DbLevelTable.class);
 
-    public SimulationLevelEditor(String id, final DbSimulationLevel dbSimulationLevel) {
+    public SimulationLevelEditor(String id) {
         super(id);
         add(new TextField<Integer>("dbTutorialConfig", new IModel<Integer>() {
             @Override
             public Integer getObject() {
-                if (dbSimulationLevel.getDbTutorialConfig() != null) {
-                    return dbSimulationLevel.getDbTutorialConfig().getId();
+                DbTutorialConfig dbTutorialConfig = ((DbSimulationLevel) SimulationLevelEditor.this.getParent().getDefaultModelObject()).getDbTutorialConfig();
+                if (dbTutorialConfig != null) {
+                    return dbTutorialConfig.getId();
                 } else {
                     return null;
                 }
@@ -48,6 +49,7 @@ public class SimulationLevelEditor extends Panel {
             @Override
             public void setObject(Integer id) {
                 try {
+                    DbSimulationLevel dbSimulationLevel = (DbSimulationLevel) SimulationLevelEditor.this.getParent().getDefaultModelObject();
                     DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().readDbChild(id);
                     dbSimulationLevel.setDbTutorialConfig(dbTutorialConfig);
                 } catch (Throwable t) {

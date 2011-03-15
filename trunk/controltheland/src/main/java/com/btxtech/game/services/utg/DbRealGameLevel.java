@@ -16,29 +16,21 @@ package com.btxtech.game.services.utg;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
-import com.btxtech.game.services.common.CrudParent;
-import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
+import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.db.RectangleUserType;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Transient;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+
+import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * User: beat
@@ -68,10 +60,10 @@ public class DbRealGameLevel extends DbAbstractLevel implements CrudParent {
     // ----- Limitations -----
     private int maxMoney;
     private int maxXp;
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "dbRealGameLevel")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "dbRealGameLevel", orphanRemoval = true)
     private Set<DbItemTypeLimitation> itemTypeLimitation;
     @Transient
-    private CrudServiceHelper<DbItemTypeLimitation> dbItemTypeLimitationCrudServiceHelper;
+    private CrudChildServiceHelper<DbItemTypeLimitation> dbItemTypeLimitationCrudServiceHelper;
 
     public DbConditionConfig getDbConditionConfig() {
         return dbConditionConfig;
@@ -191,7 +183,7 @@ public class DbRealGameLevel extends DbAbstractLevel implements CrudParent {
         this.itemTypeLimitation = itemTypeLimitation;
     }
 
-    public CrudServiceHelper<DbItemTypeLimitation> getDbItemTypeLimitationCrudServiceHelper() {
+    public CrudChildServiceHelper<DbItemTypeLimitation> getDbItemTypeLimitationCrudServiceHelper() {
         if (dbItemTypeLimitationCrudServiceHelper == null) {
             dbItemTypeLimitationCrudServiceHelper = new CrudChildServiceHelper<DbItemTypeLimitation>(itemTypeLimitation, DbItemTypeLimitation.class, this);
         }
