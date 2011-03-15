@@ -17,11 +17,9 @@ import com.btxtech.game.services.cms.CmsContentStyleDTO;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbCmsHomeLayout;
 import com.btxtech.game.services.cms.DbCmsHomeText;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import java.sql.SQLException;
-import java.util.List;
-import javax.annotation.PostConstruct;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -35,6 +33,10 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+import java.sql.SQLException;
+import java.util.List;
+
 /**
  * User: beat
  * Date: 06.07.2010
@@ -47,6 +49,10 @@ public class CmsServiceImpl implements CmsService {
     private Log log = LogFactory.getLog(CmsServiceImpl.class);
     @Autowired
     private UserGuidanceService userGuidanceService;
+    @Autowired
+    private CrudRootServiceHelper<DbCmsHomeText> dbCmsHomeTextCrudRootServiceHelper;
+    @Autowired
+    private CrudRootServiceHelper<DbCmsHomeLayout> dbCmsHomeLayoutCrudRootServiceHelper;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -55,6 +61,8 @@ public class CmsServiceImpl implements CmsService {
 
     @PostConstruct
     public void init() {
+        dbCmsHomeTextCrudRootServiceHelper.init(DbCmsHomeText.class);
+        dbCmsHomeLayoutCrudRootServiceHelper.init(DbCmsHomeLayout.class);
         try {
             activateHome();
         } catch (Throwable t) {
@@ -109,45 +117,9 @@ public class CmsServiceImpl implements CmsService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<DbCmsHomeText> getDbCmsHomeTexts() {
-        return hibernateTemplate.loadAll(DbCmsHomeText.class);
-    }
-
-    @Override
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void removeDbCmsHomeText(DbCmsHomeText dbCmsHomeText) {
-        hibernateTemplate.delete(dbCmsHomeText);
-    }
-
-    @Override
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveDbCmsHomeText(DbCmsHomeText dbCmsHomeText) {
         hibernateTemplate.saveOrUpdate(dbCmsHomeText);
-    }
-
-    @Override
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void saveDbCmsHomeTexts(List<DbCmsHomeText> dbCmsHomeTexts) {
-        hibernateTemplate.saveOrUpdateAll(dbCmsHomeTexts);
-    }
-
-    @Override
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void createDbCmsHomeText() {
-        hibernateTemplate.save(new DbCmsHomeText());
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<DbCmsHomeLayout> getDbCmsHomeLayouts() {
-        return hibernateTemplate.loadAll(DbCmsHomeLayout.class);
-    }
-
-    @Override
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void removeDbCmsHomeLayout(DbCmsHomeLayout dbCmsHomeLayout) {
-        hibernateTemplate.delete(dbCmsHomeLayout);
     }
 
     @Override
@@ -157,14 +129,12 @@ public class CmsServiceImpl implements CmsService {
     }
 
     @Override
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void saveDbCmsHomeLayouts(List<DbCmsHomeLayout> dbCmsHomeLayouts) {
-        hibernateTemplate.saveOrUpdateAll(dbCmsHomeLayouts);
+    public CrudRootServiceHelper<DbCmsHomeText> getCmsHomeTextCrudRootServiceHelper() {
+        return dbCmsHomeTextCrudRootServiceHelper;
     }
 
     @Override
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void createDbCmsHomeLayout() {
-        hibernateTemplate.save(new DbCmsHomeLayout());
+    public CrudRootServiceHelper<DbCmsHomeLayout> getCmsHomeLayoutCrudRootServiceHelper() {
+        return dbCmsHomeLayoutCrudRootServiceHelper;
     }
 }

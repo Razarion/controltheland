@@ -13,9 +13,10 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbCmsHomeText;
-import org.apache.wicket.markup.html.WebPage;
+import com.btxtech.game.services.common.RuServiceHelper;
+import com.btxtech.game.wicket.uiservices.RuModel;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -31,18 +32,31 @@ import wicket.contrib.tinymce.settings.TinyMCESettings;
  */
 public class CmsHomeTextEditor extends MgmtWebPage {
     @SpringBean
-    private CmsService cmsService;
+    private RuServiceHelper<DbCmsHomeText> ruServiceHelper;
 
-    public CmsHomeTextEditor(final DbCmsHomeText dbCmsHomeText) {
+    public CmsHomeTextEditor(DbCmsHomeText dbCmsHomeText) {
         add(new FeedbackPanel("msgs"));
-        Form<DbCmsHomeText> form = new Form<DbCmsHomeText>("form", new CompoundPropertyModel<DbCmsHomeText>(dbCmsHomeText)) {
+        final Form<DbCmsHomeText> form = new Form<DbCmsHomeText>("form", new CompoundPropertyModel<DbCmsHomeText>(new RuModel<DbCmsHomeText>(dbCmsHomeText, DbCmsHomeText.class) {
 
             @Override
-            protected void onSubmit() {
-                cmsService.saveDbCmsHomeText(dbCmsHomeText);
+            protected RuServiceHelper<DbCmsHomeText> getRuServiceHelper() {
+                return ruServiceHelper;
+            }
+        }));
+
+        add(new Button("save") {
+            @Override
+            public void onSubmit() {
+                ruServiceHelper.updateDbEntity(form.getModelObject());
+            }
+        });
+
+        add(new Button("back") {
+            @Override
+            public void onSubmit() {
                 setResponsePage(CmsEditor.class);
             }
-        };
+        });
         add(form);
 
         TextArea<String> contentArea = new TextArea<String>("text");

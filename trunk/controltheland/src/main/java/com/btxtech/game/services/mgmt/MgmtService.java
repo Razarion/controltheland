@@ -46,6 +46,8 @@ public interface MgmtService {
 
     StartupData getStartupData();
 
+    StartupData readStartupData();
+
     void saveStartupData(StartupData startupData);
 
 }

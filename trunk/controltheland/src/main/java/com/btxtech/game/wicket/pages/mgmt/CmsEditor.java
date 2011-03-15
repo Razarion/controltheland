@@ -16,16 +16,12 @@ package com.btxtech.game.wicket.pages.mgmt;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbCmsHomeLayout;
 import com.btxtech.game.services.cms.DbCmsHomeText;
-import com.btxtech.game.wicket.uiservices.ListProvider;
-import java.util.List;
-import org.apache.wicket.markup.html.WebPage;
-import org.apache.wicket.markup.html.form.Button;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -54,98 +50,46 @@ public class CmsEditor extends MgmtWebPage {
         Form form = new Form("textForm");
         add(form);
 
-        final ListProvider<DbCmsHomeText> textProvider = new ListProvider<DbCmsHomeText>() {
+        new CrudRootTableHelper<DbCmsHomeText>("textTable", "save", "add", true, form, false) {
             @Override
-            protected List<DbCmsHomeText> createList() {
-                return cmsService.getDbCmsHomeTexts();
+            protected CrudRootServiceHelper<DbCmsHomeText> _getCrudRootServiceHelperImpl() {
+                return cmsService.getCmsHomeTextCrudRootServiceHelper();
+            }
+
+            @Override
+            protected void extendedPopulateItem(Item<DbCmsHomeText> dbCmsHomeTextItem) {
+                super.extendedPopulateItem(dbCmsHomeTextItem);
+                dbCmsHomeTextItem.add(new CheckBox("isActive"));
+            }
+
+            @Override
+            protected void onEditSubmit(DbCmsHomeText dbCmsHomeText) {
+                setResponsePage(new CmsHomeTextEditor(dbCmsHomeText));
             }
         };
-        form.add(new DataView<DbCmsHomeText>("textTable", textProvider) {
-            @Override
-            protected void populateItem(final Item<DbCmsHomeText> item) {
-                item.add(new TextField<String>("internalName"));
-                item.add(new CheckBox("isActive"));
-                item.add(new Button("edit") {
-
-                    @Override
-                    public void onSubmit() {
-                        setResponsePage(new CmsHomeTextEditor(item.getModelObject()));
-                    }
-                });
-                item.add(new Button("delete") {
-
-                    @Override
-                    public void onSubmit() {
-                        cmsService.removeDbCmsHomeText(item.getModelObject());
-                    }
-                });
-
-            }
-        });
-
-        form.add(new Button("save") {
-
-            @Override
-            public void onSubmit() {
-                cmsService.saveDbCmsHomeTexts(textProvider.getLastModifiedList());
-            }
-        });
-        form.add(new Button("add") {
-
-            @Override
-            public void onSubmit() {
-                cmsService.createDbCmsHomeText();
-            }
-        });
     }
 
     private void createLayoutTable() {
         Form form = new Form("layoutForm");
         add(form);
 
-        final ListProvider<DbCmsHomeLayout> layoutProvider = new ListProvider<DbCmsHomeLayout>() {
+        new CrudRootTableHelper<DbCmsHomeLayout>("layoutTable", "save", "add", true, form, false) {
             @Override
-            protected List<DbCmsHomeLayout> createList() {
-                return cmsService.getDbCmsHomeLayouts();
+            protected CrudRootServiceHelper<DbCmsHomeLayout> _getCrudRootServiceHelperImpl() {
+                return cmsService.getCmsHomeLayoutCrudRootServiceHelper();
+            }
+
+            @Override
+            protected void extendedPopulateItem(Item<DbCmsHomeLayout> dbCmsHomeLayoutItem) {
+                super.extendedPopulateItem(dbCmsHomeLayoutItem);
+                dbCmsHomeLayoutItem.add(new CheckBox("isActive"));
+            }
+
+            @Override
+            protected void onEditSubmit(DbCmsHomeLayout dbCmsHomeLayout) {
+                setResponsePage(new CmsHomeLayoutEditor(dbCmsHomeLayout));
             }
         };
-        form.add(new DataView<DbCmsHomeLayout>("layoutTable", layoutProvider) {
-            @Override
-            protected void populateItem(final Item<DbCmsHomeLayout> item) {
-                item.add(new TextField<String>("internalName"));
-                item.add(new CheckBox("isActive"));
-                item.add(new Button("edit") {
-
-                    @Override
-                    public void onSubmit() {
-                        setResponsePage(new CmsHomeLayoutEditor(item.getModelObject()));
-                    }
-                });
-                item.add(new Button("delete") {
-
-                    @Override
-                    public void onSubmit() {
-                        cmsService.removeDbCmsHomeLayout(item.getModelObject());
-                    }
-                });
-
-            }
-        });
-
-        form.add(new Button("save") {
-
-            @Override
-            public void onSubmit() {
-                cmsService.saveDbCmsHomeLayouts(layoutProvider.getLastModifiedList());
-            }
-        });
-        form.add(new Button("add") {
-
-            @Override
-            public void onSubmit() {
-                cmsService.createDbCmsHomeLayout();
-            }
-        });
     }
 
 }

@@ -13,6 +13,8 @@
 
 package com.btxtech.game.services.cms;
 
+import com.btxtech.game.services.common.CrudChild;
+
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +27,7 @@ import javax.persistence.Id;
  * Time: 20:47:23
  */
 @Entity(name = "CMS_HOME_TEXT")
-public class DbCmsHomeText implements Serializable {
+public class DbCmsHomeText implements CrudChild {
     @Id
     @GeneratedValue
     private Integer id;
@@ -33,6 +35,11 @@ public class DbCmsHomeText implements Serializable {
     private String internalName;
     @Column(length = 50000)
     private String text;
+
+    @Override
+    public Serializable getId() {
+        return id;
+    }
 
     public boolean isActive() {
         return isActive;
@@ -42,11 +49,11 @@ public class DbCmsHomeText implements Serializable {
         isActive = active;
     }
 
-    public String getInternalName() {
+    public String getName() {
         return internalName;
     }
 
-    public void setInternalName(String internalName) {
+    public void setName(String internalName) {
         this.internalName = internalName;
     }
 
@@ -56,6 +63,15 @@ public class DbCmsHomeText implements Serializable {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    @Override
+    public void init() {
+    }
+
+    @Override
+    public void setParent(Object o) {
+        // Np parent
     }
 
     @Override
