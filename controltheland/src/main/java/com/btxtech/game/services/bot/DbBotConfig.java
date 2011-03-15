@@ -15,26 +15,16 @@ package com.btxtech.game.services.bot;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.services.common.CrudChild;
-import com.btxtech.game.services.common.CrudParent;
-import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
+import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.db.RectangleUserType;
+import org.hibernate.annotations.*;
+
+import javax.persistence.CascadeType;
+import javax.persistence.*;
+import javax.persistence.Entity;
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.Columns;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.Where;
 
 /**
  * User: beat
@@ -51,20 +41,20 @@ public class DbBotConfig implements CrudChild, CrudParent {
     @GeneratedValue
     private Integer id;
     private int actionDelay;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "parent_id")
     @Where(clause = "type=" + BASE_BUILDUP)
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbBotItemCount> baseBuildup;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "parent_id")
     @Where(clause = "type=" + BASE_FUNDAMENTAL)
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbBotItemCount> baseFundamental;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "parent_id")
     @Where(clause = "type=" + DEFENSE)
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbBotItemCount> defence;
     @Type(type = "rectangle")
     @Columns(columns = {@Column(name = "coreRectX"), @Column(name = "coreRectY"), @Column(name = "coreRectWidth"), @Column(name = "coreRectHeight")})
@@ -76,11 +66,11 @@ public class DbBotConfig implements CrudChild, CrudParent {
     private int realmSuperiority;
     private String name;
     @Transient
-    private CrudServiceHelper<DbBotItemCount> baseBuildupCrudServiceHelper;
+    private CrudChildServiceHelper<DbBotItemCount> baseBuildupCrudServiceHelper;
     @Transient
-    private CrudServiceHelper<DbBotItemCount> baseFundamentalCrudServiceHelper;
+    private CrudChildServiceHelper<DbBotItemCount> baseFundamentalCrudServiceHelper;
     @Transient
-    private CrudServiceHelper<DbBotItemCount> defenceCrudServiceHelper;
+    private CrudChildServiceHelper<DbBotItemCount> defenceCrudServiceHelper;
 
     public Integer getId() {
         return id;
@@ -187,7 +177,7 @@ public class DbBotConfig implements CrudChild, CrudParent {
         // Ignore
     }
 
-    public CrudServiceHelper<DbBotItemCount> getBaseBuildupCrudServiceHelper() {
+    public CrudChildServiceHelper<DbBotItemCount> getBaseBuildupCrudServiceHelper() {
         if (baseBuildupCrudServiceHelper == null) {
             baseBuildupCrudServiceHelper = new CrudChildServiceHelper<DbBotItemCount>(baseBuildup, DbBotItemCount.class, this) {
                 @Override
@@ -199,7 +189,7 @@ public class DbBotConfig implements CrudChild, CrudParent {
         return baseBuildupCrudServiceHelper;
     }
 
-    public CrudServiceHelper<DbBotItemCount> getBaseFundamentalCrudServiceHelper() {
+    public CrudChildServiceHelper<DbBotItemCount> getBaseFundamentalCrudServiceHelper() {
         if (baseFundamentalCrudServiceHelper == null) {
             baseFundamentalCrudServiceHelper = new CrudChildServiceHelper<DbBotItemCount>(baseFundamental, DbBotItemCount.class, this) {
                 @Override
@@ -211,7 +201,7 @@ public class DbBotConfig implements CrudChild, CrudParent {
         return baseFundamentalCrudServiceHelper;
     }
 
-    public CrudServiceHelper<DbBotItemCount> getDefenceCrudServiceHelper() {
+    public CrudChildServiceHelper<DbBotItemCount> getDefenceCrudServiceHelper() {
         if (defenceCrudServiceHelper == null) {
             defenceCrudServiceHelper = new CrudChildServiceHelper<DbBotItemCount>(defence, DbBotItemCount.class, this) {
                 @Override

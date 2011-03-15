@@ -18,11 +18,9 @@ import com.btxtech.game.services.base.GameFullException;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -62,8 +60,8 @@ public class BotServiceImpl implements BotService {
     }
 
     @Override
-    public CrudServiceHelper<DbBotConfig> getDbBotConfigCrudServiceHelper() {
-        return null;
+    public CrudRootServiceHelper<DbBotConfig> getDbBotConfigCrudServiceHelper() {
+        return dbBotConfigCrudServiceHelper;
     }
 
     private void startBot(DbBotConfig botConfig) throws GameFullException {
