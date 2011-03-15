@@ -17,7 +17,6 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.collision.CollisionServiceChangedListener;
-import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.resource.DbRegionResource;
@@ -25,10 +24,7 @@ import com.btxtech.game.services.resource.ResourceService;
 import com.btxtech.game.services.terrain.TerrainService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -51,14 +47,8 @@ public class ResourceServiceImpl implements ResourceService, CollisionServiceCha
     private TerrainService terrainService;
     @Autowired
     private CrudRootServiceHelper<DbRegionResource> dbRegionResourceCrudServiceHelper;
-    private HibernateTemplate hibernateTemplate;
     private ArrayList<RegionResource> regionResources = new ArrayList<RegionResource>();
     private Log log = LogFactory.getLog(ResourceServiceImpl.class);
-
-    @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        hibernateTemplate = new HibernateTemplate(sessionFactory);
-    }
 
     @PostConstruct
     public void start() {
