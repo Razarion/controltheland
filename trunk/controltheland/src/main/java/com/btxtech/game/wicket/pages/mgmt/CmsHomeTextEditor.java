@@ -44,14 +44,14 @@ public class CmsHomeTextEditor extends MgmtWebPage {
             }
         }));
 
-        add(new Button("save") {
+        form.add(new Button("save") {
             @Override
             public void onSubmit() {
                 ruServiceHelper.updateDbEntity(form.getModelObject());
             }
         });
 
-        add(new Button("back") {
+        form.add(new Button("back") {
             @Override
             public void onSubmit() {
                 setResponsePage(CmsEditor.class);
