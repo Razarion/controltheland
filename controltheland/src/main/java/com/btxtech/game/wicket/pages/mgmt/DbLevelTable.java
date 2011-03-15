@@ -14,7 +14,6 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.services.common.CrudRootServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.utg.DbAbstractLevel;
 import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.services.utg.DbSimulationLevel;
@@ -75,7 +74,7 @@ public class DbLevelTable extends MgmtWebPage {
             @Override
             protected void extendedPopulateItem(final Item<DbAbstractLevel> dbLevelItem) {
                 super.extendedPopulateItem(dbLevelItem);
-                dbLevelItem.add(new Label("id"));                
+                dbLevelItem.add(new Label("id"));
                 dbLevelItem.add(new Label("displayType"));
             }
         };

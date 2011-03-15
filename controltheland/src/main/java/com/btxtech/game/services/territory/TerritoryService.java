@@ -16,9 +16,6 @@ package com.btxtech.game.services.territory;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.services.territory.AbstractTerritoryService;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelper;
-
-import java.util.List;
 
 /**
  * User: beat
