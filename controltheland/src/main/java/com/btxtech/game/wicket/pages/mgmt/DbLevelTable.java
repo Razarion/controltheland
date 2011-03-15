@@ -60,14 +60,14 @@ public class DbLevelTable extends MgmtWebPage {
 
                     @Override
                     public void onSubmit() {
-                        getCrudRootServiceHelperImpl().createDbChild(DbRealGameLevel.class);
+                        createDbChild(DbRealGameLevel.class);
                     }
                 }.setDefaultFormProcessing(false));
                 markupContainer.add(new Button("createSimulation") {
 
                     @Override
                     public void onSubmit() {
-                        getCrudRootServiceHelperImpl().createDbChild(DbSimulationLevel.class);
+                        createDbChild(DbSimulationLevel.class);
                     }
                 }.setDefaultFormProcessing(false));
             }
