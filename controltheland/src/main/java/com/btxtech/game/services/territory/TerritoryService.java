@@ -28,10 +28,6 @@ import java.util.List;
 public interface TerritoryService extends AbstractTerritoryService {
     CrudRootServiceHelper<DbTerritory> getDbTerritoryCrudServiceHelper();
 
-    void saveDbTerritory(List<DbTerritory> dbTerritories);
-
-    List<DbTerritory> getDbTerritories();
-
     void saveTerritory(Territory territory);
 
     void activate();

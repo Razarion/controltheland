@@ -15,6 +15,7 @@ package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.jsre.mapeditor.TerrainEditorAsync;
 import com.btxtech.game.jsre.mapview.territory.TerritoryEditModel;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
@@ -58,10 +59,9 @@ public class TerritoryEditor extends MgmtWebPage {
         add(form);
 
         new CrudRootTableHelper<DbTerritory>("territories", "save", "create", true, form, false) {
-
             @Override
-            protected CrudServiceHelper<DbTerritory> getCrudRootServiceHelperImpl() {
-                return /*territoryService.getDbTerritoryCrudServiceHelper()*/ null; // TODO
+            protected CrudRootServiceHelper<DbTerritory> _getCrudRootServiceHelperImpl() {
+                return territoryService.getDbTerritoryCrudServiceHelper();
             }
 
             @Override

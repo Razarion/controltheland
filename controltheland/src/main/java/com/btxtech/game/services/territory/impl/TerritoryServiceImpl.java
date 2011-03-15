@@ -17,7 +17,6 @@ import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.territory.impl.AbstractTerritoryServiceImpl;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.DbTerritory;
 import com.btxtech.game.services.territory.TerritoryService;
@@ -77,30 +76,6 @@ public class TerritoryServiceImpl extends AbstractTerritoryServiceImpl implement
         return dbTerritoryCrudServiceHelper;
     }
 
-    @Override
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    @Deprecated
-    public void saveDbTerritory(List<DbTerritory> dbTerritories) {
-        for (DbTerritory dbTerritory : dbTerritories) {
-            hibernateTemplate.merge(dbTerritory);
-        }
-        updateTerritories();
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    @Deprecated
-    public List<DbTerritory> getDbTerritories() {
-        return (List<DbTerritory>) hibernateTemplate.executeFind(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbTerritory.class);
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                return criteria.list();
-            }
-        });
-    }
-
     @SuppressWarnings("unchecked")
     private DbTerritory getDbTerritory(final String name) {
         List<DbTerritory> dbTerritories = hibernateTemplate.executeFind(new HibernateCallback() {
@@ -135,7 +110,6 @@ public class TerritoryServiceImpl extends AbstractTerritoryServiceImpl implement
 
     @Override
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    @Deprecated
     public void saveTerritory(Territory territory) {
         DbTerritory dbTerritory = getDbTerritory(territory.getName());
         dbTerritory.addDbTerritoryRegion(territory.getTerritoryTileRegions());
