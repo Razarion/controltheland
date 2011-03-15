@@ -15,11 +15,12 @@ package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.mgmt.StartupData;
-import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -35,17 +36,44 @@ public class Startup extends MgmtWebPage {
         FeedbackPanel feedbackPanel = new FeedbackPanel("msgs");
         add(feedbackPanel);
 
-        final StartupData startupData = mgmtService.getStartupData();
-        Form<StartupData> form = new Form<StartupData>("form", new CompoundPropertyModel<StartupData>(startupData)) {
+        final Form<StartupData> form = new Form<StartupData>("form", new CompoundPropertyModel<StartupData>(new IModel<StartupData>() {
+            private StartupData startupData;
 
             @Override
-            protected void onSubmit() {
-                mgmtService.saveStartupData(startupData);
+            public StartupData getObject() {
+                if (startupData == null) {
+                    startupData = mgmtService.readStartupData();
+                }
+                return startupData;
             }
-        };
+
+            @Override
+            public void setObject(StartupData object) {
+                // Ignore
+            }
+
+            @Override
+            public void detach() {
+                startupData = null;
+            }
+        }));
 
         form.add(new TextField<String>("registerDialogDelay"));
-
         add(form);
+
+        form.add(new Button("save") {
+            @Override
+            public void onSubmit() {
+                mgmtService.saveStartupData(form.getModelObject());
+            }
+        });
+
+        form.add(new Button("back") {
+            @Override
+            public void onSubmit() {
+                setResponsePage(MgmtPage.class);
+            }
+        });
+
     }
 }

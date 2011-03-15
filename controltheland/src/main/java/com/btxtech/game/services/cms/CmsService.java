@@ -13,6 +13,8 @@
 
 package com.btxtech.game.services.cms;
 
+import com.btxtech.game.services.common.CrudRootServiceHelper;
+
 import java.util.List;
 
 /**
@@ -25,23 +27,11 @@ public interface CmsService {
 
     CmsContentStyleDTO getHomeContentStyleDTO();
 
-    List<DbCmsHomeText> getDbCmsHomeTexts();
-
-    void removeDbCmsHomeText(DbCmsHomeText dbCmsHomeText);
-
     void saveDbCmsHomeText(DbCmsHomeText dbCmsHomeText);
-
-    void saveDbCmsHomeTexts(List<DbCmsHomeText> dbCmsHomeTexts);
-
-    void createDbCmsHomeText();
-
-    List<DbCmsHomeLayout> getDbCmsHomeLayouts();
-
-    void removeDbCmsHomeLayout(DbCmsHomeLayout dbCmsHomeLayout);
 
     void saveDbCmsHomeLayout(DbCmsHomeLayout dbCmsHomeLayout);
 
-    void saveDbCmsHomeLayouts(List<DbCmsHomeLayout> dbCmsHomeLayouts);
+    CrudRootServiceHelper<DbCmsHomeText> getCmsHomeTextCrudRootServiceHelper();
 
-    void createDbCmsHomeLayout();
+    CrudRootServiceHelper<DbCmsHomeLayout> getCmsHomeLayoutCrudRootServiceHelper();
 }

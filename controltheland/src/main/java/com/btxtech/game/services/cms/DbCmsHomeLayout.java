@@ -13,6 +13,8 @@
 
 package com.btxtech.game.services.cms;
 
+import com.btxtech.game.services.common.CrudChild;
+
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +27,7 @@ import javax.persistence.Id;
  * Time: 20:48:15
  */
 @Entity(name = "CMS_HOME_LAYOUT")
-public class DbCmsHomeLayout implements Serializable {
+public class DbCmsHomeLayout implements Serializable, CrudChild {
     @Id
     @GeneratedValue
     private Integer id;
@@ -51,6 +53,11 @@ public class DbCmsHomeLayout implements Serializable {
     private byte[] infoImage;
     private String infoImageContentType;
     private String internalName;
+
+    @Override
+    public Serializable getId() {
+        return id;
+    }
 
     public String getBodyBackgroundColor() {
         return bodyBackgroundColor;
@@ -196,12 +203,21 @@ public class DbCmsHomeLayout implements Serializable {
         isActive = active;
     }
 
-    public String getInternalName() {
+    public String getName() {
         return internalName;
     }
 
-    public void setInternalName(String internalName) {
+    public void setName(String internalName) {
         this.internalName = internalName;
+    }
+
+    @Override
+    public void init() {
+    }
+
+    @Override
+    public void setParent(Object o) {
+        //No parent
     }
 
     @Override

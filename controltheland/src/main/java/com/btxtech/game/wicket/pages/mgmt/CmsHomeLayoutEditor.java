@@ -13,10 +13,10 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbCmsHomeLayout;
-import javax.swing.ImageIcon;
-import org.apache.wicket.markup.html.WebPage;
+import com.btxtech.game.services.common.RuServiceHelper;
+import com.btxtech.game.wicket.uiservices.RuModel;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -26,6 +26,8 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
+import javax.swing.*;
+
 /**
  * User: beat
  * Date: 10.07.2010
@@ -33,18 +35,17 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  */
 public class CmsHomeLayoutEditor extends MgmtWebPage {
     @SpringBean
-    private CmsService cmsService;
+    private RuServiceHelper<DbCmsHomeLayout> ruServiceHelper;
 
-    public CmsHomeLayoutEditor(final DbCmsHomeLayout cmsHomeLayout) {
+    public CmsHomeLayoutEditor(DbCmsHomeLayout cmsHomeLayout) {
         add(new FeedbackPanel("msgs"));
-        Form<DbCmsHomeLayout> form = new Form<DbCmsHomeLayout>("form", new CompoundPropertyModel<DbCmsHomeLayout>(cmsHomeLayout)) {
+        final Form<DbCmsHomeLayout> form = new Form<DbCmsHomeLayout>("form", new CompoundPropertyModel<DbCmsHomeLayout>(new RuModel<DbCmsHomeLayout>(cmsHomeLayout, DbCmsHomeLayout.class) {
 
             @Override
-            protected void onSubmit() {
-                cmsService.saveDbCmsHomeLayout(cmsHomeLayout);
-                setResponsePage(CmsEditor.class);
+            protected RuServiceHelper<DbCmsHomeLayout> getRuServiceHelper() {
+                return ruServiceHelper;
             }
-        };
+        }));
         add(form);
 
         form.add(new TextField<String>("bodyBackgroundColor"));
@@ -58,10 +59,10 @@ public class CmsHomeLayoutEditor extends MgmtWebPage {
             @Override
             public void setObject(FileUpload fileUpload) {
                 ImageIcon image = new ImageIcon(fileUpload.getBytes());
-                cmsHomeLayout.setBgImageWidth(image.getIconWidth());
-                cmsHomeLayout.setBgImageHeight(image.getIconHeight());
-                cmsHomeLayout.setBgImageContentType(fileUpload.getContentType());
-                cmsHomeLayout.setBgImage(fileUpload.getBytes());
+                form.getModelObject().setBgImageWidth(image.getIconWidth());
+                form.getModelObject().setBgImageHeight(image.getIconHeight());
+                form.getModelObject().setBgImageContentType(fileUpload.getContentType());
+                form.getModelObject().setBgImage(fileUpload.getBytes());
             }
 
             @Override
@@ -81,8 +82,8 @@ public class CmsHomeLayoutEditor extends MgmtWebPage {
 
             @Override
             public void setObject(FileUpload fileUpload) {
-                cmsHomeLayout.setStartImage(fileUpload.getBytes());
-                cmsHomeLayout.setStartImageContentType(fileUpload.getContentType());
+                form.getModelObject().setStartImage(fileUpload.getBytes());
+                form.getModelObject().setStartImageContentType(fileUpload.getContentType());
             }
 
             @Override
@@ -101,8 +102,8 @@ public class CmsHomeLayoutEditor extends MgmtWebPage {
 
             @Override
             public void setObject(FileUpload fileUpload) {
-                cmsHomeLayout.setInfoImage(fileUpload.getBytes());
-                cmsHomeLayout.setInfoImageContentType(fileUpload.getContentType());
+                form.getModelObject().setInfoImage(fileUpload.getBytes());
+                form.getModelObject().setInfoImageContentType(fileUpload.getContentType());
             }
 
             @Override
@@ -112,5 +113,20 @@ public class CmsHomeLayoutEditor extends MgmtWebPage {
         }));
         form.add(new TextField<Integer>("infoLinkLeft"));
         form.add(new TextField<Integer>("infoLinkTop"));
+
+        add(new Button("save") {
+            @Override
+            public void onSubmit() {
+                ruServiceHelper.updateDbEntity(form.getModelObject());
+            }
+        });
+
+        add(new Button("back") {
+            @Override
+            public void onSubmit() {
+                setResponsePage(CmsEditor.class);
+            }
+        });
+
     }
 }

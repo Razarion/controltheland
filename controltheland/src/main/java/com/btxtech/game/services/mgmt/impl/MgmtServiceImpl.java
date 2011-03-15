@@ -51,6 +51,7 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -333,7 +334,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
             if (!testMode) {
                 LogManager.getLogger("com.btxtech").setLevel(Level.INFO);
             }
-            getStartupData();
+            startupData = readStartupData();
         } catch (Throwable t) {
             log.error("", t);
         }
@@ -342,25 +343,30 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
 
     @Override
     public StartupData getStartupData() {
-        // TODO change to a DB property service
-        if (startupData == null) {
-            @SuppressWarnings("unchecked")
-            List<StartupData> startups = hibernateTemplate.loadAll(StartupData.class);
-            if (startups.isEmpty()) {
-                log.info("Startup data does not exist. Create default.");
-                startupData = new StartupData();
-                startupData.setRegisterDialogDelay(2 * 60);
-                saveStartupData(startupData);
-            } else if (startups.size() > 1) {
-                log.error("More than one startup data detected.");
-            } else {
-                startupData = startups.get(0);
-            }
-        }
         return startupData;
     }
 
     @Override
+    public StartupData readStartupData() {
+        @SuppressWarnings("unchecked")
+        List<StartupData> startups = hibernateTemplate.loadAll(StartupData.class);
+        if (startups.isEmpty()) {
+            log.info("Startup data does not exist. Create default.");
+            StartupData startupData = new StartupData();
+            startupData.setRegisterDialogDelay(2 * 60);
+            saveStartupData(startupData);
+            return startupData;
+        } else {
+            if (startups.size() > 1) {
+                log.error("More than one startup data detected. Get first");
+            }
+            return startups.get(0);
+        }
+    }
+
+    @Override
+    @Transactional
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveStartupData(StartupData startupData) {
         this.startupData = startupData;
         hibernateTemplate.saveOrUpdate(startupData);
