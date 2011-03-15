@@ -19,13 +19,13 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.QueueWorker;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.market.*;
-import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbRealGameLevel;
@@ -40,8 +40,8 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -69,6 +69,12 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     private UserGuidanceService userGuidanceService;
     @Autowired
     private ServerConditionService serverConditionService;
+    @Autowired
+    private CrudRootServiceHelper<MarketCategory> marketCategoryCrudRootServiceHelper;
+    @Autowired
+    private CrudRootServiceHelper<MarketFunction> marketFunctionCrudRootServiceHelper;
+    @Autowired
+    private CrudRootServiceHelper<MarketEntry> marketEntryCrudRootServiceHelper;
     private HibernateTemplate hibernateTemplate;
     private Timer timer;
     private XpSettings xpSettings;
@@ -90,6 +96,9 @@ public class ServerMarketServiceImpl implements ServerMarketService {
 
     @PostConstruct
     public void start() {
+        marketCategoryCrudRootServiceHelper.init(MarketCategory.class);
+        marketFunctionCrudRootServiceHelper.init(MarketFunction.class);
+        marketEntryCrudRootServiceHelper.init(MarketEntry.class);
         loadXpPointSettings();
         if (xpSettings.getPeriodMilliSeconds() > 0) {
             timer = new Timer(getClass().getName(), true);
@@ -98,7 +107,6 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     }
 
     private void loadXpPointSettings() {
-        @SuppressWarnings("unchecked")
         List<XpSettings> settings = hibernateTemplate.loadAll(XpSettings.class);
         if (settings.isEmpty()) {
             log.warn("No XpSettings found in DB. Will be created.");
@@ -160,15 +168,6 @@ public class ServerMarketServiceImpl implements ServerMarketService {
         return createOrGetUserItemTypeAccess(userService.getUserState());
     }
 
-    @Override
-    public UserItemTypeAccess getUserItemTypeAccess(Base base) {
-        if (base.isAbandoned()) {
-            return null;
-        }
-        UserState userState = baseService.getUserState(base.getSimpleBase());
-        return createOrGetUserItemTypeAccess(userState);
-    }
-
     private UserItemTypeAccess createOrGetUserItemTypeAccess(UserState userState) {
         if (userState != null) {
             UserItemTypeAccess access = userState.getUserItemTypeAccess();
@@ -199,16 +198,18 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public List<MarketEntry> getItemTypeAccessEntries() {
-        return (List<MarketEntry>) hibernateTemplate.executeFind(new HibernateCallback() {
-            @Override
-            public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(MarketEntry.class);
-                criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                return criteria.list();
-            }
-        });
+    public CrudRootServiceHelper<MarketCategory> getCrudMarketCategoryService() {
+        return marketCategoryCrudRootServiceHelper;
+    }
+
+    @Override
+    public CrudRootServiceHelper<MarketFunction> getCrudMarketFunctionService() {
+        return marketFunctionCrudRootServiceHelper;
+    }
+
+    @Override
+    public CrudRootServiceHelper<MarketEntry> getCrudMarketEntryService() {
+        return marketEntryCrudRootServiceHelper;
     }
 
     @Override
@@ -223,24 +224,6 @@ public class ServerMarketServiceImpl implements ServerMarketService {
                 return criteria.list();
             }
         });
-    }
-
-    @Override
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void saveItemTypeAccessEntries(ArrayList<MarketEntry> marketEntries) {
-        hibernateTemplate.saveOrUpdateAll(marketEntries);
-    }
-
-    @Override
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void createNewItemTypeAccessEntry() {
-        hibernateTemplate.saveOrUpdate(new MarketEntry());
-    }
-
-    @Override
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void deleteItemTypeAccessEntry(MarketEntry marketEntry) {
-        hibernateTemplate.delete(marketEntry);
     }
 
     public int getXp() {
@@ -300,21 +283,10 @@ public class ServerMarketServiceImpl implements ServerMarketService {
         }
     }
 
+    @Transactional
     public void saveXpPointSettings(XpSettings xpSettings) {
         hibernateTemplate.saveOrUpdate(xpSettings);
         start();
-    }
-
-    @Override
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void addMarketCategory() {
-        hibernateTemplate.save(new MarketCategory());
-    }
-
-    @Override
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void addMarketFunction() {
-        hibernateTemplate.save(new MarketFunction());
     }
 
     @Override
@@ -327,31 +299,6 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     @SuppressWarnings("unchecked")
     public List<MarketFunction> getMarketFunctions() {
         return hibernateTemplate.loadAll(MarketFunction.class);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void deleteMarketCategory(MarketCategory category) {
-        hibernateTemplate.delete(category);
-    }
-
-    @Override
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void saveMarketCategories(ArrayList<MarketCategory> marketCategories) {
-        hibernateTemplate.saveOrUpdateAll(marketCategories);
-    }
-
-    @Override
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void deleteMarketFunction(MarketFunction marketFunction) {
-        hibernateTemplate.delete(marketFunction);
-    }
-
-    @Override
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void saveMarketFunctions(ArrayList<MarketFunction> marketFunctions) {
-        hibernateTemplate.saveOrUpdateAll(marketFunctions);
     }
 
     @Override

@@ -16,9 +16,9 @@ package com.btxtech.game.services.market;
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccess;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.Base;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
-import com.btxtech.game.services.user.User;
-import java.util.ArrayList;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -30,19 +30,9 @@ import java.util.List;
 public interface ServerMarketService extends ItemTypeAccess {
     public Collection<Integer> getAllowedItemTypes();
 
-    List<MarketEntry> getItemTypeAccessEntries();
-
     List<MarketEntry> getMarketEntries(MarketCategory marketCategory);
 
-    void createNewItemTypeAccessEntry();
-
-    void saveItemTypeAccessEntries(ArrayList<MarketEntry> marketEntries);
-
-    void deleteItemTypeAccessEntry(MarketEntry marketEntry);
-
     UserItemTypeAccess getUserItemTypeAccess();
-
-    UserItemTypeAccess getUserItemTypeAccess(Base base);
 
     void increaseXp(Base actorBase, SyncBaseItem killedItem);
 
@@ -56,21 +46,15 @@ public interface ServerMarketService extends ItemTypeAccess {
 
     void saveXpPointSettings(XpSettings xpSettings);
 
-    void addMarketCategory();
-
-    void addMarketFunction();
-
     List<MarketCategory> getUsedMarketCategories();
 
     List<MarketCategory> getMarketCategories();
 
     List<MarketFunction> getMarketFunctions();
 
-    void deleteMarketCategory(MarketCategory category);
+    CrudRootServiceHelper<MarketCategory> getCrudMarketCategoryService();
 
-    void saveMarketCategories(ArrayList<MarketCategory> marketCategories);
+    CrudRootServiceHelper<MarketFunction> getCrudMarketFunctionService();
 
-    void deleteMarketFunction(MarketFunction marketFunction);
-
-    void saveMarketFunctions(ArrayList<MarketFunction> marketFunctions);
+    CrudRootServiceHelper<MarketEntry> getCrudMarketEntryService();
 }
