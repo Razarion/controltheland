@@ -15,20 +15,14 @@ package com.btxtech.game.services.terrain;
 
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.services.common.CrudChild;
-import com.btxtech.game.services.common.CrudParent;
-import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
+import com.btxtech.game.services.common.CrudParent;
+import org.hibernate.annotations.Cascade;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
-import org.hibernate.annotations.Cascade;
 
 
 /**
@@ -45,18 +39,18 @@ public class DbTerrainSetting implements CrudParent, CrudChild, Serializable {
     private int tileYCount;
     private int tileHeight;
     private int tileWidth;
-    @OneToMany(mappedBy = "dbTerrainSetting", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})    
+    @OneToMany(mappedBy = "dbTerrainSetting", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbTerrainImagePosition> dbTerrainImagePositions;
-    @OneToMany(mappedBy = "dbTerrainSetting", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "dbTerrainSetting", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private Set<DbSurfaceRect> dbSurfaceRects;
     private String name;
     private boolean isRealGame;
     @Transient
-    private CrudServiceHelper<DbTerrainImagePosition> dbTerrainImagePositionCrudServiceHelper;
+    private CrudChildServiceHelper<DbTerrainImagePosition> dbTerrainImagePositionCrudServiceHelper;
     @Transient
-    private CrudServiceHelper<DbSurfaceRect> dbSurfaceRectCrudServiceHelper;
+    private CrudChildServiceHelper<DbSurfaceRect> dbSurfaceRectCrudServiceHelper;
 
     public Integer getId() {
         return id;
@@ -130,14 +124,14 @@ public class DbTerrainSetting implements CrudParent, CrudChild, Serializable {
         return id != null ? id.hashCode() : 0;
     }
 
-    public CrudServiceHelper<DbTerrainImagePosition> getDbTerrainImagePositionCrudServiceHelper() {
+    public CrudChildServiceHelper<DbTerrainImagePosition> getDbTerrainImagePositionCrudServiceHelper() {
         if (dbTerrainImagePositionCrudServiceHelper == null) {
             dbTerrainImagePositionCrudServiceHelper = new CrudChildServiceHelper<DbTerrainImagePosition>(dbTerrainImagePositions, DbTerrainImagePosition.class, this);
         }
         return dbTerrainImagePositionCrudServiceHelper;
     }
 
-    public CrudServiceHelper<DbSurfaceRect> getDbSurfaceRectCrudServiceHelper() {
+    public CrudChildServiceHelper<DbSurfaceRect> getDbSurfaceRectCrudServiceHelper() {
         if (dbSurfaceRectCrudServiceHelper == null) {
             dbSurfaceRectCrudServiceHelper = new CrudChildServiceHelper<DbSurfaceRect>(dbSurfaceRects, DbSurfaceRect.class, this);
         }
