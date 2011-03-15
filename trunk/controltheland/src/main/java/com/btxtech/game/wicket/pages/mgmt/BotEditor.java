@@ -16,19 +16,20 @@ package com.btxtech.game.wicket.pages.mgmt;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.bot.DbBotItemCount;
-import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.common.CrudChildServiceHelper;
+import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
-import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
+import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
 import com.btxtech.game.wicket.uiservices.RectanglePanel;
+import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -43,31 +44,18 @@ public class BotEditor extends MgmtWebPage {
     private UserService userService;
     @SpringBean
     private ItemService itemService;
+    @SpringBean
+    private RuServiceHelper<DbBotConfig> dbBotConfigRuServiceHelper;
+
 
     public BotEditor(DbBotConfig dbBotConfig) {
-        final int dbBotConfigId = dbBotConfig.getId();
 
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbBotConfig> form = new Form<DbBotConfig>("from", new CompoundPropertyModel<DbBotConfig>(new IModel<DbBotConfig>() {
-            private DbBotConfig dbBotConfig;
-
+        final Form<DbBotConfig> form = new Form<DbBotConfig>("from", new CompoundPropertyModel<DbBotConfig>(new RuModel<DbBotConfig>(dbBotConfig, DbBotConfig.class) {
             @Override
-            public DbBotConfig getObject() {
-                if (dbBotConfig == null) {
-                    dbBotConfig = botService.getDbBotConfigCrudServiceHelper().readDbChild(dbBotConfigId);
-                }
-                return dbBotConfig;
-            }
-
-            @Override
-            public void setObject(DbBotConfig object) {
-                // Ignore
-            }
-
-            @Override
-            public void detach() {
-                dbBotConfig = null;
+            protected RuServiceHelper<DbBotConfig> getRuServiceHelper() {
+                return dbBotConfigRuServiceHelper;
             }
         }));
         add(form);
@@ -77,11 +65,44 @@ public class BotEditor extends MgmtWebPage {
         form.add(new RectanglePanel("realm"));
         form.add(new TextField("realmSuperiority"));
 
-        new CrudRootTableHelper<DbBotItemCount>("baseFundamental", null, "createBaseFundamentalItem", false, form, false) {
+        new CrudChildTableHelper<DbBotConfig, DbBotItemCount>("baseFundamental", null, "createBaseFundamentalItem", false, form, false) {
 
             @Override
-            protected CrudServiceHelper<DbBotItemCount> getCrudRootServiceHelperImpl() {
-                return ((DbBotConfig) form.getDefaultModelObject()).getBaseFundamentalCrudServiceHelper();
+            protected void extendedPopulateItem(final Item<DbBotItemCount> item) {
+                item.add(new BaseItemTypePanel("baseItemType"));
+                item.add(new TextField("count"));
+            }
+
+            @Override
+            protected RuServiceHelper<DbBotConfig> getRuServiceHelper() {
+                return dbBotConfigRuServiceHelper;
+            }
+
+            @Override
+            protected DbBotConfig getParent() {
+                return form.getModelObject();
+            }
+
+            @Override
+            protected CrudChildServiceHelper<DbBotItemCount> getCrudChildServiceHelperImpl() {
+                return getParent().getBaseFundamentalCrudServiceHelper();
+            }
+        };
+
+        new CrudChildTableHelper<DbBotConfig, DbBotItemCount>("baseBuildup", null, "createBaseBuildupItem", false, form, false) {
+            @Override
+            protected RuServiceHelper<DbBotConfig> getRuServiceHelper() {
+                return dbBotConfigRuServiceHelper;
+            }
+
+            @Override
+            protected DbBotConfig getParent() {
+                return form.getModelObject();
+            }
+
+            @Override
+            protected CrudChildServiceHelper<DbBotItemCount> getCrudChildServiceHelperImpl() {
+                return getParent().getBaseBuildupCrudServiceHelper();
             }
 
             @Override
@@ -91,31 +112,26 @@ public class BotEditor extends MgmtWebPage {
             }
         };
 
-        new CrudRootTableHelper<DbBotItemCount>("baseBuildup", null, "createBaseBuildupItem", false, form, false) {
-
-            @Override
-            protected CrudServiceHelper<DbBotItemCount> getCrudRootServiceHelperImpl() {
-                return ((DbBotConfig) form.getDefaultModelObject()).getBaseFundamentalCrudServiceHelper();
-            }
-
+        new CrudChildTableHelper<DbBotConfig, DbBotItemCount>("defence", null, "createDefenceItem", false, form, false) {
             @Override
             protected void extendedPopulateItem(final Item<DbBotItemCount> item) {
                 item.add(new BaseItemTypePanel("baseItemType"));
                 item.add(new TextField("count"));
             }
-        };
-
-        new CrudRootTableHelper<DbBotItemCount>("defence", null, "createDefenceItem", false, form, false) {
 
             @Override
-            protected CrudServiceHelper<DbBotItemCount> getCrudRootServiceHelperImpl() {
-                return ((DbBotConfig) form.getDefaultModelObject()).getBaseFundamentalCrudServiceHelper();
+            protected RuServiceHelper<DbBotConfig> getRuServiceHelper() {
+                return dbBotConfigRuServiceHelper;
             }
 
             @Override
-            protected void extendedPopulateItem(final Item<DbBotItemCount> item) {
-                item.add(new BaseItemTypePanel("baseItemType"));
-                item.add(new TextField("count"));
+            protected DbBotConfig getParent() {
+                return form.getModelObject();
+            }
+
+            @Override
+            protected CrudChildServiceHelper<DbBotItemCount> getCrudChildServiceHelperImpl() {
+                return getParent().getDefenceCrudServiceHelper();
             }
         };
 
@@ -123,7 +139,7 @@ public class BotEditor extends MgmtWebPage {
 
             @Override
             public void onSubmit() {
-                // TODO botService.getDbBotConfigCrudServiceHelper().updateDbChild((DbBotConfig) form.getDefaultModelObject());
+                dbBotConfigRuServiceHelper.updateDbEntity(form.getModelObject());
             }
         });
         form.add(new Button("back") {

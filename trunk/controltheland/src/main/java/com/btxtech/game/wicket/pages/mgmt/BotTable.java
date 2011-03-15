@@ -15,6 +15,7 @@ package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import org.apache.wicket.markup.html.form.Button;
@@ -40,12 +41,12 @@ public class BotTable extends MgmtWebPage {
 
          new CrudRootTableHelper<DbBotConfig>("bots", "save", "create", true, form, false) {
 
-            @Override
-            protected CrudServiceHelper<DbBotConfig> getCrudRootServiceHelperImpl() {
-                return botService.getDbBotConfigCrudServiceHelper();
-            }
+             @Override
+             protected CrudRootServiceHelper<DbBotConfig> _getCrudRootServiceHelperImpl() {
+                 return botService.getDbBotConfigCrudServiceHelper();
+             }
 
-            @Override
+             @Override
             protected void onEditSubmit(DbBotConfig dbBotConfig) {
                 setResponsePage(new BotEditor(dbBotConfig));
             }

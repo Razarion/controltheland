@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.bot;
 
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.CrudServiceHelper;
 
 /**
@@ -21,7 +22,7 @@ import com.btxtech.game.services.common.CrudServiceHelper;
  * Time: 17:17:01
  */
 public interface BotService {
-    CrudServiceHelper<DbBotConfig> getDbBotConfigCrudServiceHelper();
+    CrudRootServiceHelper<DbBotConfig> getDbBotConfigCrudServiceHelper();
 
     void start();
 
