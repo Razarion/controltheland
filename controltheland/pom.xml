@@ -267,7 +267,7 @@
         </dependency>
     </dependencies>
     <build>
-        <finalName>ROOT</finalName>         
+        <finalName>ROOT</finalName>
         <resources>
             <resource>
                 <filtering>false</filtering>
@@ -341,7 +341,7 @@
                     <runTarget>http://localhost:8080</runTarget>
                     <noServer>true</noServer>
                     <debugPort>1974</debugPort>
-                    <style>DETAILED</style>
+                    <!--style>DETAILED</style-->
                     <inplace>true</inplace>
                 </configuration>
                 <executions>
