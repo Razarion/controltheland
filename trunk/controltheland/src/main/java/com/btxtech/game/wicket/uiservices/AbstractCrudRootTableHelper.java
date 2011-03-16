@@ -35,7 +35,6 @@ abstract public class AbstractCrudRootTableHelper<T extends CrudChild> implement
         };
 
 
-
         markupContainer.add(new DataView<T>(tableId, provider) {
             @Override
             protected void populateItem(final Item<T> item) {
@@ -55,33 +54,35 @@ abstract public class AbstractCrudRootTableHelper<T extends CrudChild> implement
                         @Override
                         public void onSubmit() {
                             moveChildUp(item);
+                            refresh();
                         }
 
                         @Override
                         public boolean isVisible() {
                             return canMoveUp(item);
                         }
-                    }.setDefaultFormProcessing(false));
+                    });
                     item.add(new Button("down") {
                         @Override
                         public void onSubmit() {
                             moveChildDown(item);
+                            refresh();
                         }
 
                         @Override
                         public boolean isVisible() {
                             return canMoveDown(item);
                         }
-                    }.setDefaultFormProcessing(false));
+                    });
                 }
 
                 item.add(new Button("delete") {
                     @Override
                     public void onSubmit() {
                         deleteChild(item.getModelObject());
-                        provider.refresh();
+                        refresh();
                     }
-                }.setDefaultFormProcessing(false));
+                });
 
             }
         });
@@ -108,8 +109,9 @@ abstract public class AbstractCrudRootTableHelper<T extends CrudChild> implement
             @Override
             public void onSubmit() {
                 createDbChild();
+                refresh();
             }
-        }.setDefaultFormProcessing(false));
+        });
     }
 
     protected void setupSave(WebMarkupContainer markupContainer, String saveId) {
@@ -173,6 +175,10 @@ abstract public class AbstractCrudRootTableHelper<T extends CrudChild> implement
 
     public List<T> getList() {
         return provider.getList();
+    }
+
+    protected void refresh() {
+        provider.refresh();
     }
 
 

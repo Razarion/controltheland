@@ -60,7 +60,7 @@ public class MarketEntryEditor extends MgmtWebPage {
 
         new CrudRootTableHelper<MarketCategory>("categories", "save", "add", false, form, false) {
             @Override
-            protected CrudRootServiceHelper<MarketCategory> _getCrudRootServiceHelperImpl() {
+            protected CrudRootServiceHelper<MarketCategory> getCrudRootServiceHelperImpl() {
                 return serverMarketService.getCrudMarketCategoryService();
             }
         };
@@ -72,7 +72,7 @@ public class MarketEntryEditor extends MgmtWebPage {
 
         new CrudRootTableHelper<MarketFunction>("functions", "save", "add", false, form, false) {
             @Override
-            protected CrudRootServiceHelper<MarketFunction> _getCrudRootServiceHelperImpl() {
+            protected CrudRootServiceHelper<MarketFunction> getCrudRootServiceHelperImpl() {
                 return serverMarketService.getCrudMarketFunctionService();
             }
         };
@@ -84,7 +84,7 @@ public class MarketEntryEditor extends MgmtWebPage {
 
         new CrudRootTableHelper<MarketEntry>("itemTypeAccessEntries", "save", "add", false, form, false) {
             @Override
-            protected CrudRootServiceHelper<MarketEntry> _getCrudRootServiceHelperImpl() {
+            protected CrudRootServiceHelper<MarketEntry> getCrudRootServiceHelperImpl() {
                 return serverMarketService.getCrudMarketEntryService();
             }
 

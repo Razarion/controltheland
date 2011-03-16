@@ -59,7 +59,7 @@ public class TerritoryEditor extends MgmtWebPage {
 
         new CrudRootTableHelper<DbTerritory>("territories", "save", "create", true, form, false) {
             @Override
-            protected CrudRootServiceHelper<DbTerritory> _getCrudRootServiceHelperImpl() {
+            protected CrudRootServiceHelper<DbTerritory> getCrudRootServiceHelperImpl() {
                 return territoryService.getDbTerritoryCrudServiceHelper();
             }
 

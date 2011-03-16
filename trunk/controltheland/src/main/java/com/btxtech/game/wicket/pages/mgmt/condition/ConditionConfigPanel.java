@@ -83,7 +83,7 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
 
         @Override
         public void detach() {
-            // Ignore
+            dbAbstractComparisonConfig = null;
         }
     };
     private Log log = LogFactory.getLog(ConditionConfigPanel.class);
@@ -153,7 +153,7 @@ public class ConditionConfigPanel extends Panel implements IFormModelUpdateListe
 
                 boolean createComparisonConfig = false;
                 if (dbConditionConfig.getDbAbstractComparisonConfig() != null) {
-                    if (dbConditionConfig.getDbAbstractComparisonConfig().getClass().equals(comparisonModel.getObject())) {
+                    if (!dbConditionConfig.getDbAbstractComparisonConfig().getClass().equals(comparisonModel.getObject())) {
                         createComparisonConfig = true;
                     }
                 } else {

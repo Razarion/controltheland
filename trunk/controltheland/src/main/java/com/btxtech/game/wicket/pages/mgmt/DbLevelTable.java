@@ -44,7 +44,7 @@ public class DbLevelTable extends MgmtWebPage {
         new CrudRootTableHelper<DbAbstractLevel>("levels", "save", null, true, form, true) {
 
             @Override
-            protected CrudRootServiceHelper<DbAbstractLevel> _getCrudRootServiceHelperImpl() {
+            protected CrudRootServiceHelper<DbAbstractLevel> getCrudRootServiceHelperImpl() {
                 return userGuidanceService.getDbLevelCrudServiceHelper();
             }
 
@@ -60,15 +60,17 @@ public class DbLevelTable extends MgmtWebPage {
                     @Override
                     public void onSubmit() {
                         createDbChild(DbRealGameLevel.class);
+                        refresh();
                     }
-                }.setDefaultFormProcessing(false));
-                markupContainer.add(new Button("createSimulation") {
+                });
+                markupContainer.add(new Button("createSimulation") { 
 
                     @Override
                     public void onSubmit() {
                         createDbChild(DbSimulationLevel.class);
+                        refresh();
                     }
-                }.setDefaultFormProcessing(false));
+                });
             }
 
             @Override

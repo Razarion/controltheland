@@ -52,7 +52,7 @@ public class CmsEditor extends MgmtWebPage {
 
         new CrudRootTableHelper<DbCmsHomeText>("textTable", "save", "add", true, form, false) {
             @Override
-            protected CrudRootServiceHelper<DbCmsHomeText> _getCrudRootServiceHelperImpl() {
+            protected CrudRootServiceHelper<DbCmsHomeText> getCrudRootServiceHelperImpl() {
                 return cmsService.getCmsHomeTextCrudRootServiceHelper();
             }
 
@@ -75,7 +75,7 @@ public class CmsEditor extends MgmtWebPage {
 
         new CrudRootTableHelper<DbCmsHomeLayout>("layoutTable", "save", "add", true, form, false) {
             @Override
-            protected CrudRootServiceHelper<DbCmsHomeLayout> _getCrudRootServiceHelperImpl() {
+            protected CrudRootServiceHelper<DbCmsHomeLayout> getCrudRootServiceHelperImpl() {
                 return cmsService.getCmsHomeLayoutCrudRootServiceHelper();
             }
 

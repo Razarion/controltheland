@@ -15,7 +15,6 @@ package com.btxtech.game.wicket.uiservices;
 
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
-import com.btxtech.game.services.common.CrudServiceHelper;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 
 import java.util.Collection;
@@ -32,38 +31,33 @@ public abstract class CrudRootTableHelper<T extends CrudChild> extends AbstractC
         super(tableId, saveId, createId, showEdit, markupContainer, showOrderButtons);
     }
 
-    @Deprecated
-    protected CrudServiceHelper<T> getCrudRootServiceHelperImpl() {
-        return null;
-    }
-
-    protected CrudRootServiceHelper<T> _getCrudRootServiceHelperImpl() {
+    protected CrudRootServiceHelper<T> getCrudRootServiceHelperImpl() {
         return null;
     }
 
     @Override
     protected Collection<T> readDbChildren() {
-        return _getCrudRootServiceHelperImpl().readDbChildren();
+        return getCrudRootServiceHelperImpl().readDbChildren();
     }
 
     @Override
     protected void deleteChild(T modelObject) {
-        _getCrudRootServiceHelperImpl().deleteDbChild(modelObject);
+        getCrudRootServiceHelperImpl().deleteDbChild(modelObject);
     }
 
     @Override
     protected void updateDbChildren(List<T> children) {
-        _getCrudRootServiceHelperImpl().updateDbChildren(children);
+        getCrudRootServiceHelperImpl().updateDbChildren(children);
     }
 
     @Override
     protected void createDbChild() {
-        _getCrudRootServiceHelperImpl().createDbChild();
+        getCrudRootServiceHelperImpl().createDbChild();
     }
 
     @Override
     protected void createDbChild(Class<? extends T> createClass) {
-        _getCrudRootServiceHelperImpl().createDbChild(createClass);
+        getCrudRootServiceHelperImpl().createDbChild(createClass);
     }
 
 }

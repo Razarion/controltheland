@@ -52,7 +52,7 @@ public class TerrainTileEditor extends MgmtWebPage {
         new CrudRootTableHelper<DbSurfaceImage>("surfaceImages", "updateSurfaceImages", "createSurfaceImage", false, form, false) {
 
             @Override
-            protected CrudRootServiceHelper<DbSurfaceImage> _getCrudRootServiceHelperImpl() {
+            protected CrudRootServiceHelper<DbSurfaceImage> getCrudRootServiceHelperImpl() {
                 return terrainService.getDbSurfaceImageCrudServiceHelper();
             }
 
@@ -129,7 +129,7 @@ public class TerrainTileEditor extends MgmtWebPage {
 
         new CrudRootTableHelper<DbTerrainImage>("terrainImages", "updateTerrainImages", "createTerrainImage", true, form, false) {
             @Override
-            protected CrudRootServiceHelper<DbTerrainImage> _getCrudRootServiceHelperImpl() {
+            protected CrudRootServiceHelper<DbTerrainImage> getCrudRootServiceHelperImpl() {
                 return terrainService.getDbTerrainImageCrudServiceHelper();
             }
 

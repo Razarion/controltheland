@@ -41,7 +41,7 @@ public class BotTable extends MgmtWebPage {
         new CrudRootTableHelper<DbBotConfig>("bots", "save", "create", true, form, false) {
 
             @Override
-            protected CrudRootServiceHelper<DbBotConfig> _getCrudRootServiceHelperImpl() {
+            protected CrudRootServiceHelper<DbBotConfig> getCrudRootServiceHelperImpl() {
                 return botService.getDbBotConfigCrudServiceHelper();
             }
 
