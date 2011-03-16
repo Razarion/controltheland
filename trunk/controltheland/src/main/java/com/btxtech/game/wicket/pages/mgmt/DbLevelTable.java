@@ -14,10 +14,7 @@
 package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.services.common.CrudRootServiceHelper;
-import com.btxtech.game.services.utg.DbAbstractLevel;
-import com.btxtech.game.services.utg.DbRealGameLevel;
-import com.btxtech.game.services.utg.DbSimulationLevel;
-import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.*;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -63,7 +60,7 @@ public class DbLevelTable extends MgmtWebPage {
                         refresh();
                     }
                 });
-                markupContainer.add(new Button("createSimulation") { 
+                markupContainer.add(new Button("createSimulation") {
 
                     @Override
                     public void onSubmit() {
@@ -84,7 +81,11 @@ public class DbLevelTable extends MgmtWebPage {
 
             @Override
             public void onSubmit() {
-                userGuidanceService.activateLevels();
+                try {
+                    userGuidanceService.activateLevels();
+                } catch (LevelActivationException e) {
+                    error(e.getNiceMessage());
+                }
             }
         });
 
