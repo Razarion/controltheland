@@ -54,7 +54,7 @@ public interface UserGuidanceService {
 
     void saveDbLevel(DbAbstractLevel dbAbstractLevel);
 
-    void activateLevels();
+    void activateLevels() throws LevelActivationException;
 
     void init2();
 

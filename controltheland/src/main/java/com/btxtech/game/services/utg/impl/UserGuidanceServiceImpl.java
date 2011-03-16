@@ -333,7 +333,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     }
 
     @Override
-    public void activateLevels() {
+    public void activateLevels() throws LevelActivationException {
         dbAbstractLevels = (List<DbAbstractLevel>) crudServiceHelperHibernate.readDbChildren();
         for (DbAbstractLevel dbAbstractLevel : dbAbstractLevels) {
             dbAbstractLevel.activate(itemService);

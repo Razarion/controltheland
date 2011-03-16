@@ -60,18 +60,21 @@ public class DbSimulationLevel extends DbAbstractLevel {
     }
 
     @Override
-    protected Level createLevel() {
+    protected Level createLevel() throws LevelActivationException {
         // Get all needed ItemTypes
         Map<Integer, Integer> itemTypeLimitation = new HashMap<Integer, Integer>();
+        if (dbTutorialConfig == null) {
+            throw new LevelActivationException("No tutorial set");
+        }
         for (DbTaskConfig dbTaskConfig : dbTutorialConfig.getDbTaskConfigs()) {
             for (DbStepConfig dbStepConfig : dbTaskConfig.getStepConfigCrudServiceHelper().readDbChildren()) {
-               DbConditionConfig dbConditionConfig = dbStepConfig.getConditionConfig();
-                if(dbConditionConfig.getConditionTrigger() == ConditionTrigger.SYNC_ITEM_BUILT) {
-                    DbSyncItemTypeComparisonConfig dbSyncItemTypeComparisonConfig = (DbSyncItemTypeComparisonConfig)dbConditionConfig.getDbAbstractComparisonConfig();
+                DbConditionConfig dbConditionConfig = dbStepConfig.getConditionConfig();
+                if (dbConditionConfig.getConditionTrigger() == ConditionTrigger.SYNC_ITEM_BUILT) {
+                    DbSyncItemTypeComparisonConfig dbSyncItemTypeComparisonConfig = (DbSyncItemTypeComparisonConfig) dbConditionConfig.getDbAbstractComparisonConfig();
                     for (DbComparisonItemCount dbComparisonItemCount : dbSyncItemTypeComparisonConfig.getCrudDbComparisonItemCount().readDbChildren()) {
-                       Integer count = itemTypeLimitation.get(dbComparisonItemCount.getItemType().getId());
-                        if(count == null) {
-                          count = 0;
+                        Integer count = itemTypeLimitation.get(dbComparisonItemCount.getItemType().getId());
+                        if (count == null) {
+                            count = 0;
                         }
                         Integer newCount = count + dbComparisonItemCount.getCount();
                         itemTypeLimitation.put(dbComparisonItemCount.getItemType().getId(), newCount);
