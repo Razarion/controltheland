@@ -46,7 +46,7 @@ public class ResourceEditor extends MgmtWebPage {
         new CrudRootTableHelper<DbRegionResource>("regionResources", "save", "create", false, form, false) {
 
             @Override
-            protected CrudRootServiceHelper<DbRegionResource> _getCrudRootServiceHelperImpl() {
+            protected CrudRootServiceHelper<DbRegionResource> getCrudRootServiceHelperImpl() {
                 return resourceService.getDbRegionResourceCrudServiceHelper();
             }
 

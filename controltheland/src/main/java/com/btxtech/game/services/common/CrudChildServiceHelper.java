@@ -24,7 +24,7 @@ import java.util.NoSuchElementException;
  * Date: 25.07.2010
  * Time: 12:50:08
  */
-public class CrudChildServiceHelper<T extends CrudChild> implements CrudServiceHelper<T>, Serializable {
+public class CrudChildServiceHelper<T extends CrudChild> implements Serializable {
     private Collection<T> children;
     private Class<T> childClass;
     private CrudParent crudParent;
@@ -35,12 +35,10 @@ public class CrudChildServiceHelper<T extends CrudChild> implements CrudServiceH
         this.crudParent = crudParent;
     }
 
-    @Override
     public Collection<T> readDbChildren() {
         return children;
     }
 
-    @Override
     public T readDbChild(Serializable id) {
         for (T child : children) {
             if (child.getId().equals(id)) {
@@ -50,12 +48,10 @@ public class CrudChildServiceHelper<T extends CrudChild> implements CrudServiceH
         throw new NoSuchElementException("Id: " + id);
     }
 
-    @Override
     public void deleteDbChild(T child) {
         children.remove(child);
     }
 
-    @Override
     public void updateDbChildren(Collection<T> children) {
         this.children.clear();
         for (T child : this.children) {
@@ -64,12 +60,10 @@ public class CrudChildServiceHelper<T extends CrudChild> implements CrudServiceH
         }
     }
 
-    @Override
     public void createDbChild() {
         createDbChild(childClass);
     }
 
-    @Override
     public void createDbChild(Class<? extends T> createClass) {
         try {
             Constructor<? extends T> constructor = createClass.getConstructor();
@@ -83,12 +77,10 @@ public class CrudChildServiceHelper<T extends CrudChild> implements CrudServiceH
     protected void initChild(T t) {
     }
 
-    @Override
     public void deleteAllChildren() {
         children.clear();
     }
 
-    @Override
     public void addChild(T t) {
         t.setParent(crudParent);
         t.init();

@@ -43,7 +43,7 @@ public class TutorialTable extends MgmtWebPage {
         new CrudRootTableHelper<DbTutorialConfig>("tutorialTable", "save", "create", true, form, false) {
 
             @Override
-            protected CrudRootServiceHelper<DbTutorialConfig> _getCrudRootServiceHelperImpl() {
+            protected CrudRootServiceHelper<DbTutorialConfig> getCrudRootServiceHelperImpl() {
                 return tutorialService.getDbTutorialCrudRootServiceHelper();
             }
 

@@ -20,7 +20,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -44,17 +43,6 @@ public class CrudRootServiceHelper<T extends CrudChild> {
     private HibernateTemplate hibernateTemplate;
     private Class<T> childClass;
     private String orderColumn;
-
-    @Deprecated
-    public static <T extends CrudChild> CrudServiceHelper<T> create(ApplicationContext applicationContext, Class<T> clazz) {
-        return create(applicationContext, clazz, null);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public static <T extends CrudChild> CrudServiceHelper<T> create(ApplicationContext applicationContext, Class<T> clazz, String orderColumn) {
-        return null;
-    }
 
     public void init(Class<T> childClass) {
         init(childClass, null);

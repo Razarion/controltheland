@@ -17,7 +17,6 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.SyncItemTypeComparisonConfig;
 import com.btxtech.game.services.common.CrudParent;
-import com.btxtech.game.services.common.CrudServiceHelper;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import java.util.HashMap;
@@ -40,11 +39,11 @@ import org.hibernate.annotations.Cascade;
 @Entity
 @DiscriminatorValue("ITEM_TYPE")
 public class DbSyncItemTypeComparisonConfig extends DbAbstractComparisonConfig implements CrudParent {
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "dbSyncItemTypeComparisonConfig")
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "dbSyncItemTypeComparisonConfig", orphanRemoval = true)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbComparisonItemCount> dbComparisonItemCounts;
     @Transient
-    private CrudServiceHelper<DbComparisonItemCount> dbComparisonItemCountCrudServiceHelper;
+    private CrudChildServiceHelper<DbComparisonItemCount> dbComparisonItemCountCrudServiceHelper;
 
     public Set<DbComparisonItemCount> getDbComparisonItemCounts() {
         if (dbComparisonItemCounts == null) {
@@ -57,7 +56,7 @@ public class DbSyncItemTypeComparisonConfig extends DbAbstractComparisonConfig i
         this.dbComparisonItemCounts = dbComparisonItemCounts;
     }
 
-    public CrudServiceHelper<DbComparisonItemCount> getCrudDbComparisonItemCount() {
+    public CrudChildServiceHelper<DbComparisonItemCount> getCrudDbComparisonItemCount() {
         if (dbComparisonItemCountCrudServiceHelper == null) {
             if (dbComparisonItemCounts == null) {
                 dbComparisonItemCounts = new HashSet<DbComparisonItemCount>();

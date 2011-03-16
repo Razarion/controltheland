@@ -13,13 +13,14 @@
 
 package com.btxtech.game.wicket.pages.mgmt.condition;
 
-import com.btxtech.game.services.common.CrudServiceHelper;
+import com.btxtech.game.services.common.CrudChildServiceHelper;
+import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.condition.DbComparisonItemCount;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
-import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
+import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.TextField;
@@ -37,6 +38,8 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 public class SyncItemTypeComparisonConfigPanel extends Panel {
     @SpringBean
     private UserGuidanceService userGuidanceService;
+    @SpringBean
+    private RuServiceHelper<DbSyncItemTypeComparisonConfig> ruServiceHelper;
 
     public SyncItemTypeComparisonConfigPanel(String id) {
         super(id);
@@ -59,7 +62,8 @@ public class SyncItemTypeComparisonConfigPanel extends Panel {
             }
         }));
 
-        new CrudRootTableHelper<DbComparisonItemCount>("itemCounts", null, "createItemCount", false, this, false) {
+        new CrudChildTableHelper<DbSyncItemTypeComparisonConfig, DbComparisonItemCount>("itemCounts", null, "createItemCount", false, this, false) {
+
 
             @Override
             protected void extendedPopulateItem(Item<DbComparisonItemCount> dbComparisonItemCountItem) {
@@ -68,19 +72,18 @@ public class SyncItemTypeComparisonConfigPanel extends Panel {
             }
 
             @Override
-            protected CrudServiceHelper<DbComparisonItemCount> getCrudRootServiceHelperImpl() {
-                return ((DbSyncItemTypeComparisonConfig) getDefaultModelObject()).getCrudDbComparisonItemCount();
+            protected RuServiceHelper<DbSyncItemTypeComparisonConfig> getRuServiceHelper() {
+                return ruServiceHelper;
             }
 
             @Override
-            protected void setupCreate(WebMarkupContainer markupContainer, String createId) {
-                markupContainer.add(new Button(createId) {
+            protected DbSyncItemTypeComparisonConfig getParent() {
+                return (DbSyncItemTypeComparisonConfig) getDefaultModelObject();
+            }
 
-                    @Override
-                    public void onSubmit() {
-                         userGuidanceService.createDbComparisonItemCount((DbSyncItemTypeComparisonConfig)SyncItemTypeComparisonConfigPanel.this.getDefaultModelObject());
-                    }
-                });
+            @Override
+            protected CrudChildServiceHelper<DbComparisonItemCount> getCrudChildServiceHelperImpl() {
+                return getParent().getCrudDbComparisonItemCount();
             }
         };
     }

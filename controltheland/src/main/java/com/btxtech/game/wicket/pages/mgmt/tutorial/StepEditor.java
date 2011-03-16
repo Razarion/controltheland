@@ -100,8 +100,9 @@ public class StepEditor extends MgmtWebPage {
                     @SuppressWarnings("unchecked")
                     public void onSubmit() {
                         createDbChild(createChoice);
+                        refresh();                        
                     }
-                }.setDefaultFormProcessing(false));
+                });
             }
 
             @Override

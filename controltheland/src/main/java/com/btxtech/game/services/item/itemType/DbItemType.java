@@ -40,7 +40,7 @@ import org.hibernate.annotations.Cascade;
 @Entity(name = "ITEM_TYPE")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
-public abstract class DbItemType implements Serializable {
+public abstract class DbItemType implements Serializable, DbItemTypeI {
     @Id
     @GeneratedValue
     private Integer id;
@@ -55,42 +55,52 @@ public abstract class DbItemType implements Serializable {
     private Set<DbItemTypeImage> itemTypeImages;
     private TerrainType terrainType;
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public int getHeight() {
         return height;
     }
 
+    @Override
     public void setHeight(int height) {
         this.height = height;
     }
 
+    @Override
     public int getWidth() {
         return width;
     }
 
+    @Override
     public void setWidth(int width) {
         this.width = width;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public Set<DbItemTypeImage> getItemTypeImages() {
         if (itemTypeImages == null) {
             itemTypeImages = new HashSet<DbItemTypeImage>();
@@ -98,6 +108,7 @@ public abstract class DbItemType implements Serializable {
         return itemTypeImages;
     }
 
+    @Override
     public void setItemTypeImages(Collection<DbItemTypeImage> itemTypeImages) {
         getItemTypeImages().clear();
         for (DbItemTypeImage itemTypeImage : itemTypeImages) {
@@ -105,26 +116,32 @@ public abstract class DbItemType implements Serializable {
         }
     }
 
+    @Override
     public String getProDescription() {
         return proDescription;
     }
 
+    @Override
     public void setProDescription(String proDescription) {
         this.proDescription = proDescription;
     }
 
+    @Override
     public String getContraDescription() {
         return contraDescription;
     }
 
+    @Override
     public void setContraDescription(String contraDescription) {
         this.contraDescription = contraDescription;
     }
 
+    @Override
     public TerrainType getTerrainType() {
         return terrainType;
     }
 
+    @Override
     public void setTerrainType(TerrainType terrainType) {
         this.terrainType = terrainType;
     }

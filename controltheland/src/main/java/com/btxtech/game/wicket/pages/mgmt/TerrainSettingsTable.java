@@ -48,7 +48,7 @@ public class TerrainSettingsTable extends MgmtWebPage {
         new CrudRootTableHelper<DbTerrainSetting>("terrainSettingTable", "saveTerrainSetting", "createTerrainSetting", false, form, false) {
 
             @Override
-            protected CrudRootServiceHelper<DbTerrainSetting> _getCrudRootServiceHelperImpl() {
+            protected CrudRootServiceHelper<DbTerrainSetting> getCrudRootServiceHelperImpl() {
                 return terrainService.getDbTerrainSettingCrudServiceHelper();
             }
 

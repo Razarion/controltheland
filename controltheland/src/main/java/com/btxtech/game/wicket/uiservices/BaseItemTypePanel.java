@@ -15,6 +15,8 @@ package com.btxtech.game.wicket.uiservices;
 
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.item.itemType.DbBaseItemTypeI;
+import com.btxtech.game.services.item.itemType.DbItemTypeI;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -35,9 +37,11 @@ public class BaseItemTypePanel extends Panel {
 
             @Override
             public Integer getObject() {
-                DbBaseItemType baseItemType = (DbBaseItemType) getDefaultModelObject();
-                if (baseItemType != null) {
-                    return baseItemType.getId();
+                DbItemTypeI itemType = (DbItemTypeI) getDefaultModelObject();
+                // Using DbItemTypeI instead of DbBaseItemTypeI
+                // java.lang.ClassCastException: com.btxtech.game.services.item.itemType.DbItemType_$$_javassist_1 cannot be cast to com.btxtech.game.services.item.itemType.DbBaseItemTypeI
+                if (itemType != null) {
+                    return itemType.getId();
                 } else {
                     return null;
                 }
@@ -45,8 +49,16 @@ public class BaseItemTypePanel extends Panel {
 
             @Override
             public void setObject(Integer integer) {
-                DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemType(integer);
-                setDefaultModelObject(dbBaseItemType);
+                DbItemTypeI dbItemTypeI = itemService.getDbItemType(integer);
+                if(dbItemTypeI == null) {
+                    error("Item type does not exist: " + integer);
+                    return;
+                }
+                if(!(dbItemTypeI instanceof DbBaseItemTypeI)) {
+                    error("Item type is not a base item type");
+                    return;
+                }
+                setDefaultModelObject(dbItemTypeI);
             }
 
             @Override
