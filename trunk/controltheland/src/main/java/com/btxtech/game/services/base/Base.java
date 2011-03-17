@@ -13,19 +13,13 @@
 
 package com.btxtech.game.services.base;
 
-import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
-import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.utg.DbRealGameLevel;
-import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,6 +27,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.HashSet;
 
 /**
  * User: beat

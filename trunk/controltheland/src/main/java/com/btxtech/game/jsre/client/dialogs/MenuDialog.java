@@ -11,43 +11,44 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.client;
+package com.btxtech.game.jsre.client.dialogs;
 
+import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.control.StartupScreen;
-import com.btxtech.game.jsre.client.dialogs.ChangeColorDialog;
-import com.btxtech.game.jsre.client.dialogs.YesNoDialog;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
  * User: beat
  * Date: 25.03.2010
  * Time: 17:24:31
  */
-public class MenuPanel extends TopMapPanel {
-    private FlexTable flexTable;
+public class MenuDialog extends Dialog {
+    public MenuDialog() {
+        setShowCloseButton(true);
+        setupDialog();
+        getElement().getStyle().setWidth(300, Style.Unit.PX);
+    }
 
     @Override
-    protected Widget createBody() {
-        flexTable = new FlexTable();
+    protected void setupPanel(VerticalPanel dialogVPanel) {
+        FlexTable flexTable = new FlexTable();
         flexTable.setCellSpacing(6);
 
-        addRow("Market", "box", "/?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.market.MarketPage");
+        addRow(flexTable, "Market", "box", "/?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.market.MarketPage");
         if (Connection.getInstance().isRegistered()) {
-            addRow("User Page", "user", "/?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.user.UserPage");
+            addRow(flexTable, "User Page", "user", "/?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.user.UserPage");
         }
-        addRow("Statistics", "chart", "/?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.statistics.StatisticsPage");
-        addRow("Game instruction", "lifebuoy", "/?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.forum.CategoryView&id=2");
-        addRow("Quit", "control-power", new Runnable() {
+        addRow(flexTable, "Statistics", "chart", "/?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.statistics.StatisticsPage");
+        addRow(flexTable, "Game instruction", "lifebuoy", "/?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.forum.CategoryView&id=2");
+        addRow(flexTable, "Quit", "control-power", new Runnable() {
             @Override
             public void run() {
                 Connection.getInstance().closeConnection();
@@ -55,7 +56,7 @@ public class MenuPanel extends TopMapPanel {
             }
         });
         if (Connection.getInstance().isRegistered()) {
-            addRow("Surrender Base", "cross", new Runnable() {
+            addRow(flexTable, "Surrender Base", "cross", new Runnable() {
                 @Override
                 public void run() {
                     YesNoDialog.show("Do you really want to surrender and lose your base?", new Runnable() {
@@ -69,38 +70,22 @@ public class MenuPanel extends TopMapPanel {
                 }
             });
         }
-        addRow("Startup screen", "clock-select", new Runnable() {
+        addRow(flexTable, "Startup screen", "clock-select", new Runnable() {
 
             @Override
             public void run() {
                 StartupScreen.getInstance().attachStartScreen();
             }
         });
-        addRow("Base Color", "color", new Runnable() {
+        addRow(flexTable, "Base Color", "color", new Runnable() {
 
             @Override
             public void run() {
                 ChangeColorDialog.doShow();
             }
         });
-        
-        addCloseButton();
-        flexTable.getElement().getStyle().setColor("orange");
-        return flexTable;
-    }
 
-    private void addCloseButton() {
-        int row = flexTable.getRowCount();
-        flexTable.getFlexCellFormatter().setColSpan(row, 0, 2);
-        flexTable.getFlexCellFormatter().setAlignment(row, 0, HasHorizontalAlignment.ALIGN_CENTER, HasVerticalAlignment.ALIGN_MIDDLE);
-        Button button = new Button("Close");
-        button.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                close();
-            }
-        });
-        flexTable.setWidget(row, 0, button);
+        dialogVPanel.add(flexTable);
     }
 
     private void closeWindow() {
@@ -111,8 +96,8 @@ public class MenuPanel extends TopMapPanel {
         }
     }
 
-    private void addRow(String name, String icon, final String url) {
-        addRow(name, icon, new Runnable() {
+    private void addRow(FlexTable flexTable, String name, String icon, final String url) {
+        addRow(flexTable, name, icon, new Runnable() {
             @Override
             public void run() {
                 Window.open(url, "_blank", "");
@@ -120,7 +105,7 @@ public class MenuPanel extends TopMapPanel {
         });
     }
 
-    private void addRow(String name, String icon, final Runnable runnable) {
+    private void addRow(FlexTable flexTable, String name, String icon, final Runnable runnable) {
         int row = flexTable.getRowCount();
         Image image = ImageHandler.getIcon16(icon);
         image.addClickHandler(new ClickHandler() {
@@ -143,6 +128,10 @@ public class MenuPanel extends TopMapPanel {
         });
         label.getElement().getStyle().setCursor(Style.Cursor.POINTER);
         flexTable.setWidget(row, 1, label);
+    }
+
+    public static void showDialog() {
+        new MenuDialog();
     }
 
 }

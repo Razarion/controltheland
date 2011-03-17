@@ -26,6 +26,10 @@ import com.google.gwt.user.client.ui.PopupPanel;
  * Date: May 18, 2010
  * Time: 3:23:47 PM
  */
+
+/**
+ * UNUSED
+ */
 public class PromotionDialog extends PopupPanel {
 
     private PromotionDialog(String oldLevel, String newLevel) {

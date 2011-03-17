@@ -21,9 +21,9 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.client.dialogs.LevelTargetDialog;
+import com.btxtech.game.jsre.client.dialogs.MenuDialog;
 import com.btxtech.game.jsre.client.dialogs.SendMessageDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
-import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.tutorial.CockpitSpeechBubbleHintConfig;
 import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
@@ -218,8 +218,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         ExtendedCustomButton option = new ExtendedCustomButton("/images/cockpit/optionButton-up.png", "/images/cockpit/optionButton-down.png", false, TOOL_TIP_OPTIONS, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                MenuPanel menuPanel = new MenuPanel();
-                menuPanel.addToParent(MapWindow.getAbsolutePanel(), TopMapPanel.Direction.CENTER, 0);
+                MenuDialog.showDialog();
             }
         });
         add(option, BUTTON_OPTION_LEFT, BUTTON_OPTION_TOP);
