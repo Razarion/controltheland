@@ -324,7 +324,7 @@ public class ServerMarketServiceImpl implements ServerMarketService {
                 if (syncItem instanceof SyncBaseItem) {
                     SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
                     Base base = baseService.getBase(syncBaseItem.getBase());
-                    if (base == null || base.isAbandoned()) {
+                    if (base == null || base.isAbandoned() || base.getUserState().isBot()) {
                         // Base is may be killed in the mean time
                         continue;
                     }
