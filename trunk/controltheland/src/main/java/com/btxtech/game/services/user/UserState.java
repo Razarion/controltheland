@@ -18,7 +18,13 @@ import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.utg.DbAbstractLevel;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
+import java.io.Serializable;
 
 /**
  * User: beat
@@ -26,7 +32,7 @@ import javax.persistence.*;
  * Time: 10:42:00
  */
 @Entity(name = "BACKUP_USER_STATUS")
-public class UserState {
+public class UserState implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;

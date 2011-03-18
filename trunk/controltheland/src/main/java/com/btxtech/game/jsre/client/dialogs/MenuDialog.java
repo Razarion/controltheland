@@ -74,7 +74,7 @@ public class MenuDialog extends Dialog {
 
             @Override
             public void run() {
-                StartupScreen.getInstance().attachStartScreen();
+                StartupScreen.getInstance().showStartScreen();
             }
         });
         addRow(flexTable, "Base Color", "color", new Runnable() {
