@@ -18,16 +18,22 @@ import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.tutorial.DbItemTypeAndPosition;
 import com.btxtech.game.services.tutorial.DbStepConfig;
+import com.btxtech.game.services.tutorial.DbTaskAllowedItem;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
-import com.btxtech.game.wicket.pages.mgmt.ItemsUtil;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
-import com.btxtech.game.wicket.uiservices.*;
+import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
+import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
+import com.btxtech.game.wicket.uiservices.IndexPanel;
+import com.btxtech.game.wicket.uiservices.ItemTypePanel;
+import com.btxtech.game.wicket.uiservices.RuModel;
+import com.btxtech.game.wicket.uiservices.ServiceHelper;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
+import org.apache.wicket.markup.html.pages.BrowserInfoPage;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -64,23 +70,6 @@ public class TaskEditor extends MgmtWebPage {
         form.add(new CheckBox("isOptionAllowed"));
         form.add(new CheckBox("isSellingAllowed"));
         form.add(new IndexPanel("scroll"));
-        form.add(new TextField<String>("allowedItemTypeIds", new IModel<String>() {
-
-            @Override
-            public String getObject() {
-                return serviceHelper.itemTypesToString(((DbTaskConfig) form.getDefaultModelObject()).getAllowedItems());
-            }
-
-            @Override
-            public void setObject(String s) {
-                ((DbTaskConfig) form.getDefaultModelObject()).setAllowedItems(serviceHelper.stringToItemTypes(s));
-            }
-
-            @Override
-            public void detach() {
-                // Ignored
-            }
-        }));
         form.add(new TextField("accountBalance"));
         form.add(new TextField("houseCount"));
         form.add(new FileUploadField("upload", new IModel<FileUpload>() {
@@ -105,6 +94,29 @@ public class TaskEditor extends MgmtWebPage {
             }
         }));
         form.add(new TextField("finishImageDuration"));
+
+        new CrudChildTableHelper<DbTaskConfig, DbTaskAllowedItem>("allowedItemTable", null, "createAllowedItem", false, form, false) {
+            @Override
+            protected RuServiceHelper<DbTaskConfig> getRuServiceHelper() {
+                return ruTaskServiceHelper;
+            }
+
+            @Override
+            protected DbTaskConfig getParent() {
+                return (DbTaskConfig) form.getDefaultModelObject();
+            }
+
+            @Override
+            protected CrudChildServiceHelper<DbTaskAllowedItem> getCrudChildServiceHelperImpl() {
+                return ((DbTaskConfig) form.getDefaultModelObject()).getAllowedItemHelper();
+            }
+
+            @Override
+            protected void extendedPopulateItem(Item<DbTaskAllowedItem> dbTaskAllowedItemItem) {
+                dbTaskAllowedItemItem.add(new BaseItemTypePanel("dbBaseItemType"));
+                dbTaskAllowedItemItem.add(new TextField("count"));
+            }
+        };
 
 
         new CrudChildTableHelper<DbTaskConfig, DbItemTypeAndPosition>("itemTable", null, "createItem", false, form, false) {

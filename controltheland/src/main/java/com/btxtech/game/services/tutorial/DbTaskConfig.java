@@ -22,17 +22,26 @@ import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.db.IndexUserType;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.tutorial.hint.DbResourceHintConfig;
 import com.btxtech.game.services.tutorial.hint.ResourceHintManager;
-import com.btxtech.game.wicket.pages.mgmt.ItemsUtil;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.CascadeType;
-import javax.persistence.*;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import java.io.Serializable;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -58,17 +67,15 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     @Type(type = "index")
     @Columns(columns = {@Column(name = "xScroll"), @Column(name = "yScroll")})
     private Index scroll;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @org.hibernate.annotations.IndexColumn(name = "orderIndex", nullable = false, base = 0)
     @JoinColumn(name = "dbTaskConfig", nullable = false)
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private List<DbStepConfig> stepConfigs;
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "TUTORIAL_TASK_CONFIG_ALLOWED_ITEMS",
-            joinColumns = @JoinColumn(name = "factoryId"),
-            inverseJoinColumns = @JoinColumn(name = "itemTypeId")
-    )
-    private Set<DbBaseItemType> allowedItems;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "dbTaskConfig", nullable = false)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+    private Set<DbTaskAllowedItem> dbTaskAllowedItems;
     private int accountBalance;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "dbTutorialConfig", insertable = false, updatable = false, nullable = false)
@@ -84,6 +91,8 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     private CrudChildServiceHelper<DbItemTypeAndPosition> itemTypeAndPositionCrudHelper;
     @Transient
     private CrudChildServiceHelper<DbStepConfig> stepConfigCrudHelper;
+    @Transient
+    private CrudChildServiceHelper<DbTaskAllowedItem> allowedItemHelper;
 
     public Integer getId() {
         return id;
@@ -104,7 +113,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         items = new HashSet<DbItemTypeAndPosition>();
         scroll = new Index(0, 0);
         stepConfigs = new ArrayList<DbStepConfig>();
-        allowedItems = new HashSet<DbBaseItemType>();
+        dbTaskAllowedItems = new HashSet<DbTaskAllowedItem>();
     }
 
     @Override
@@ -134,14 +143,6 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
 
     public void setScroll(Index scroll) {
         this.scroll = scroll;
-    }
-
-    public Set<DbBaseItemType> getAllowedItems() {
-        return allowedItems;
-    }
-
-    public void setAllowedItems(Set<DbBaseItemType> allowedItems) {
-        this.allowedItems = allowedItems;
     }
 
     public int getAccountBalance() {
@@ -248,7 +249,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
                 isOptionAllowed,
                 scroll,
                 stepConfigs,
-                ItemsUtil.itemTypesToCollection(allowedItems),
+                convertAllowedItems(),
                 houseCount,
                 accountBalance,
                 finishImageDuration * 1000,
@@ -268,6 +269,22 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
             stepConfigCrudHelper = new CrudChildServiceHelper<DbStepConfig>(stepConfigs, DbStepConfig.class, this);
         }
         return stepConfigCrudHelper;
+    }
+
+
+    private Collection<Integer> convertAllowedItems() {
+        List<Integer> result = new ArrayList<Integer>();
+        for (DbTaskAllowedItem dbTaskAllowedItem : dbTaskAllowedItems) {
+            result.add(dbTaskAllowedItem.getDbBaseItemType().getId());
+        }
+        return result;
+    }
+
+    public CrudChildServiceHelper<DbTaskAllowedItem> getAllowedItemHelper() {
+        if (allowedItemHelper == null) {
+            allowedItemHelper = new CrudChildServiceHelper<DbTaskAllowedItem>(dbTaskAllowedItems, DbTaskAllowedItem.class, this);
+        }
+        return allowedItemHelper;
     }
 
     public void moveTaskUp(DbStepConfig stepConfig) {

@@ -17,12 +17,9 @@ import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.tutorial.DbStepConfig;
+import com.btxtech.game.services.tutorial.DbTaskAllowedItem;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
-import com.btxtech.game.services.utg.condition.DbComparisonItemCount;
-import com.btxtech.game.services.utg.condition.DbConditionConfig;
-import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -62,27 +59,25 @@ public class DbSimulationLevel extends DbAbstractLevel {
     @Override
     protected Level createLevel() throws LevelActivationException {
         // Get all needed ItemTypes
-        Map<Integer, Integer> itemTypeLimitation = new HashMap<Integer, Integer>();
         if (dbTutorialConfig == null) {
             throw new LevelActivationException("No tutorial set");
         }
+
+        return new Level(getName(), getHtml(), false, 0, createLimitationMap(), 0);
+    }
+
+    private Map<Integer, Integer> createLimitationMap() {
+        Map<Integer, Integer> itemTypeLimitation = new HashMap<Integer, Integer>();
         for (DbTaskConfig dbTaskConfig : dbTutorialConfig.getDbTaskConfigs()) {
-            for (DbStepConfig dbStepConfig : dbTaskConfig.getStepConfigCrudServiceHelper().readDbChildren()) {
-                DbConditionConfig dbConditionConfig = dbStepConfig.getConditionConfig();
-                if (dbConditionConfig.getConditionTrigger() == ConditionTrigger.SYNC_ITEM_BUILT) {
-                    DbSyncItemTypeComparisonConfig dbSyncItemTypeComparisonConfig = (DbSyncItemTypeComparisonConfig) dbConditionConfig.getDbAbstractComparisonConfig();
-                    for (DbComparisonItemCount dbComparisonItemCount : dbSyncItemTypeComparisonConfig.getCrudDbComparisonItemCount().readDbChildren()) {
-                        Integer count = itemTypeLimitation.get(dbComparisonItemCount.getItemType().getId());
-                        if (count == null) {
-                            count = 0;
-                        }
-                        Integer newCount = count + dbComparisonItemCount.getCount();
-                        itemTypeLimitation.put(dbComparisonItemCount.getItemType().getId(), newCount);
-                    }
+            for (DbTaskAllowedItem dbTaskAllowedItem : dbTaskConfig.getAllowedItemHelper().readDbChildren()) {
+                Integer count = itemTypeLimitation.get(dbTaskAllowedItem.getDbBaseItemType().getId());
+                if (count == null) {
+                    count = 0;
                 }
+                Integer newCount = count + dbTaskAllowedItem.getCount();
+                itemTypeLimitation.put(dbTaskAllowedItem.getDbBaseItemType().getId(), newCount);
             }
         }
-
-        return new Level(getName(), getHtml(), false, 0, itemTypeLimitation, 0);
+        return itemTypeLimitation;
     }
 }
