@@ -137,7 +137,7 @@ public class StartupScreen implements StartupProgressListener {
         DOM.setEventListener(closeButtonElement, new EventListener() {
             @Override
             public void onBrowserEvent(Event event) {
-                detachStartScreen();
+                hideStartScreen();
             }
         });
         // connect the foreign element to the GWT event dispatcher
@@ -208,11 +208,25 @@ public class StartupScreen implements StartupProgressListener {
         parent.removeChild(startScreen);
     }
 
-    public void attachStartScreen() {
+    private void attachStartScreen() {
         if (!parent.getFirstChild().equals(startScreen)) {
             parent.insertFirst(startScreen);
         }
     }
+
+    public void showStartScreen() {
+        if (!parent.getFirstChild().equals(startScreen)) {
+            parent.insertFirst(startScreen);
+        }
+        setTableVisibility(true);
+        setOpacity(1.0);
+    }
+
+    private void hideStartScreen() {
+        setOpacity(0.0);
+        detachStartScreen();
+    }
+
 
     private void setTableVisibility(boolean visible) {
         Element tableElement = DOM.getElementById(TABLE_ID);
