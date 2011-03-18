@@ -75,11 +75,11 @@ public class TutorialServiceImpl implements TutorialService, ResourceHintManager
             for (DbAbstractLevel dbAbstractLevel : dbAbstractLevels) {
                 if (dbAbstractLevel instanceof DbSimulationLevel) {
                     DbSimulationLevel dbSimulationLevel = (DbSimulationLevel) dbAbstractLevel;
-                    DbTutorialConfig dbTutorialConfig = dbTutorialConfigCrudRootServiceHelper.readDbChild(dbSimulationLevel.getDbTutorialConfig().getId());
-                    if (dbTutorialConfig == null) {
+                    if (dbSimulationLevel.getDbTutorialConfig() == null) {
                         log.warn("No DbTutorialConfig for level: " + dbSimulationLevel);
                         continue;
                     }
+                    DbTutorialConfig dbTutorialConfig = dbTutorialConfigCrudRootServiceHelper.readDbChild(dbSimulationLevel.getDbTutorialConfig().getId());
                     TutorialConfig tutorialConfig = dbTutorialConfig.createTutorialConfig(this, itemService);
                     tutorialConfigMap.put(dbSimulationLevel, tutorialConfig);
                 }
