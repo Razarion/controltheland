@@ -16,6 +16,7 @@ package com.btxtech.game.wicket.pages.mgmt.tutorial;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
+import com.btxtech.game.wicket.pages.mgmt.DbLevelTable;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import org.apache.wicket.markup.html.basic.Label;
@@ -63,7 +64,7 @@ public class TutorialTable extends MgmtWebPage {
 
             @Override
             public void onSubmit() {
-                tutorialService.activate();
+                setResponsePage(DbLevelTable.class);
             }
         });
     }

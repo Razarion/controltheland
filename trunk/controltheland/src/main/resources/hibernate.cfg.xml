@@ -96,6 +96,7 @@
         <mapping class="com.btxtech.game.services.cms.DbCmsHomeLayout"/>
         <mapping class="com.btxtech.game.services.tutorial.DbTutorialConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.DbTaskConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.DbTaskAllowedItem"/>
         <mapping class="com.btxtech.game.services.tutorial.DbItemTypeAndPosition"/>
         <mapping class="com.btxtech.game.services.tutorial.DbStepConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.hint.DbItemSpeechBubbleHintConfig"/>

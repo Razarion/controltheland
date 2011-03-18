@@ -50,10 +50,6 @@
             <td wicket:id="scroll"/>
         </tr>
         <tr>
-            <td bgcolor="#dadada">Allowed Item Ids (Factory, Builder) [;]</td>
-            <td><input wicket:id="allowedItemTypeIds" type="text" size="10"></td>
-        </tr>
-        <tr>
             <td bgcolor="#dadada">Money</td>
             <td><input wicket:id="accountBalance" type="text" size="10"></td>
         </tr>
@@ -70,6 +66,23 @@
             <td><input wicket:id="finishImageDuration" type="text" size="10"></td>
         </tr>
     </table>
+    <h2>Allowed Items</h2>
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Item Type</th>
+            <th bgcolor="#dadada">Count</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+        <tr wicket:id="allowedItemTable">
+            <td wicket:id="dbBaseItemType"/>
+            <td><input type="text" wicket:id="count" size="6"></td>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <input type="submit" wicket:id="createAllowedItem" value="Create">
+
     <h2>Items</h2>
     <table cellpadding="1" cellspacing="1" border="0">
         <tr>

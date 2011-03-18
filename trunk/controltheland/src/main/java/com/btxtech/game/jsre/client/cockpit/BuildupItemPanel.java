@@ -46,8 +46,8 @@ public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvide
         DISABLED_LEVEL(false, "Build of", "not possible. Your are in the wrong level. Go to the next level!"),
         DISABLED_LEVEL_EXCEEDED(false, "Build of", "not possible. Item limit exceeded. Go to the next level!"),
         DISABLED_HOUSE_SPACE_EXCEEDED(false, "Build of", "not possible. Item limit exceeded. Build more houses!"),
-        DISABLED_MARKED(false, "Build of", "not possible in this territory. Buy it in the market!"),
-        DISABLED_MONEY(false, "Build of", "not possible buy it in the market first. Earn more money!");
+        DISABLED_MARKED(false, "Build of", "not possible. Buy it in the market!"),
+        DISABLED_MONEY(false, "Build of", "not possible. Not enough money. Earn more money!");
 
         private boolean enabled;
         private String text1;
