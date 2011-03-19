@@ -56,9 +56,4 @@ public class LevelTargetDialog extends Dialog {
             }
         });
     }
-
-    @Override
-    public void close() {
-        super.close();
-    }
 }
