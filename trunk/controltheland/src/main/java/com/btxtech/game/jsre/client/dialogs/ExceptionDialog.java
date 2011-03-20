@@ -23,7 +23,6 @@ public class ExceptionDialog extends Dialog {
 
     public ExceptionDialog(Throwable throwable) {
         this.throwable = throwable;
-        setupDialog();
     }
 
     protected void setupPanel(VerticalPanel parent) {

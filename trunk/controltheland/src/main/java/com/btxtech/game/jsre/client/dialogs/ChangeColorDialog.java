@@ -64,10 +64,6 @@ public class ChangeColorDialog extends Dialog {
         }
     }
 
-    public ChangeColorDialog() {
-        setupDialog();
-    }
-
     @Override
     protected void setupPanel(VerticalPanel dialogVPanel) {
         colorGrid = new Grid(ROWS, COLUMNS);
@@ -114,10 +110,4 @@ public class ChangeColorDialog extends Dialog {
             }
         });
     }
-
-    public static void doShow() {
-        new ChangeColorDialog();
-    }
-
-
 }

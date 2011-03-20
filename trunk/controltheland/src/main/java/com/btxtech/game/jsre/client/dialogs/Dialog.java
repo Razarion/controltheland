@@ -17,10 +17,9 @@ import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
@@ -33,7 +32,15 @@ public abstract class Dialog extends DialogBox {
     private boolean showCloseButton = true;
 
     protected Dialog() {
-        setStyleName("ctl-DialogBox");        
+        setStyleName("ctl-DialogBox");
+        setPopupPositionAndShow(new PositionCallback() {
+            @Override
+            public void setPosition(int offsetWidth, int offsetHeight) {
+                int left = (Window.getClientWidth() - offsetWidth) / 2;
+                int top = (Window.getClientHeight() - offsetHeight) / 2;
+                setPopupPosition(left, top);
+            }
+        });
     }
 
     protected void setShowCloseButton(boolean showCloseButton) {
@@ -58,8 +65,13 @@ public abstract class Dialog extends DialogBox {
             closeButton.setFocus(true);
         }
         center();
-        getElement().getStyle().setZIndex(Constants.Z_INDEX_DIALOG);
+        getElement().getStyle().setZIndex(getZIndex());
     }
+
+    protected int getZIndex() {
+        return Constants.Z_INDEX_DIALOG;
+    }
+
 
     public void close() {
         hide(true);

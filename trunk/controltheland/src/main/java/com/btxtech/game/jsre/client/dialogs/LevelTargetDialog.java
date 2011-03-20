@@ -14,9 +14,7 @@
 package com.btxtech.game.jsre.client.dialogs;
 
 import com.btxtech.game.jsre.client.common.Constants;
-import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -31,9 +29,7 @@ public class LevelTargetDialog extends Dialog {
     public LevelTargetDialog(String html) {
         this.html = html;
         setShowCloseButton(true);
-        setupDialog();
         getElement().getStyle().setWidth(300, Style.Unit.PX);
-        getElement().getStyle().setZIndex(Constants.Z_INDEX_LEVEL_DIALOG);
     }
 
     @Override
@@ -41,19 +37,8 @@ public class LevelTargetDialog extends Dialog {
         dialogVPanel.add(new HTML(html));
     }
 
-    public static void showDialog() {
-        showDialog(ClientLevelHandler.getInstance().getHtmlLevel());
-    }
-
-    public static void showDialog(String html) {
-        final LevelTargetDialog levelTargetDialog = new LevelTargetDialog(html);
-        levelTargetDialog.setPopupPositionAndShow(new PositionCallback() {
-            @Override
-            public void setPosition(int offsetWidth, int offsetHeight) {
-                int left = (Window.getClientWidth() - offsetWidth) / 2;
-                int top = (Window.getClientHeight() - offsetHeight) / 2;
-                levelTargetDialog.setPopupPosition(left, top);
-            }
-        });
+    @Override
+    protected int getZIndex() {
+        return Constants.Z_INDEX_LEVEL_DIALOG;
     }
 }

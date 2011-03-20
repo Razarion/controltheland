@@ -40,7 +40,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class SendMessageDialog extends Dialog {
     public SendMessageDialog() {
         setShowCloseButton(true);
-        setupDialog();
         getElement().getStyle().setWidth(300, Style.Unit.PX);
     }
 
@@ -60,9 +59,4 @@ public class SendMessageDialog extends Dialog {
         });
         dialogVPanel.add(send);
     }
-
-    public static void showDialog() {
-        new SendMessageDialog();
-    }
-
 }

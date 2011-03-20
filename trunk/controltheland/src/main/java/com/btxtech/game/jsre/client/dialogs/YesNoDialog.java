@@ -64,8 +64,4 @@ public class YesNoDialog extends Dialog {
         horizontalPanel.setCellHorizontalAlignment(yes, HasHorizontalAlignment.ALIGN_CENTER);
         dialogVPanel.add(horizontalPanel);
     }
-
-    public static void show(String message, Runnable onYesBtn) {
-        new YesNoDialog(message, onYesBtn);
-    }
 }

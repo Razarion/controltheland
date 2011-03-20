@@ -20,11 +20,13 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
+import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.LevelTargetDialog;
 import com.btxtech.game.jsre.client.dialogs.MenuDialog;
 import com.btxtech.game.jsre.client.dialogs.SendMessageDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.tutorial.CockpitSpeechBubbleHintConfig;
 import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
 import com.google.gwt.dom.client.Style;
@@ -158,7 +160,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         send = new ExtendedCustomButton("/images/cockpit/sendButton-up.png", "/images/cockpit/sendButton-down.png", false, TOOL_TIP_SEND_MESSAGE, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                SendMessageDialog.showDialog();
+                DialogManager.showDialog(new SendMessageDialog(), DialogManager.Type.PROMPTLY);
             }
         });
         send.getUpDisabledFace().setImage(new Image("/images/cockpit/sendButton-disabled-up.png"));
@@ -218,7 +220,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         ExtendedCustomButton option = new ExtendedCustomButton("/images/cockpit/optionButton-up.png", "/images/cockpit/optionButton-down.png", false, TOOL_TIP_OPTIONS, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                MenuDialog.showDialog();
+                DialogManager.showDialog(new MenuDialog(), DialogManager.Type.PROMPTLY);
             }
         });
         add(option, BUTTON_OPTION_LEFT, BUTTON_OPTION_TOP);
@@ -226,7 +228,8 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         ExtendedCustomButton levelTarget = new ExtendedCustomButton("/images/cockpit/missionButton-up.png", "/images/cockpit/missionButton-down.png", false, TOOL_TIP_LEVEL_TARGET, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                LevelTargetDialog.showDialog();
+                DialogManager.showDialog(new LevelTargetDialog(ClientLevelHandler.getInstance().getHtmlLevel()), DialogManager.Type.PROMPTLY);
+
             }
         });
         add(levelTarget, LEVEL_TARGET_LEFT, LEVEL_TARGET_TOP);

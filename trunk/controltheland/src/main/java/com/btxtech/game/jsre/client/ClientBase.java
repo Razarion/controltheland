@@ -100,7 +100,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
             return;
         }
         if (Math.round(price) > Math.round(accountBalance)) {
-            UnfrequentDialog.open(UnfrequentDialog.Type.NO_MONEY, false);
+            UnfrequentDialog.open(UnfrequentDialog.Type.NO_MONEY);
             throw new InsufficientFundsException();
         } else {
             accountBalance -= price;
@@ -149,11 +149,11 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         try {
             checkItemLimit4ItemAdding(itemType, simpleBase);
         } catch (ItemLimitExceededException e) {
-            UnfrequentDialog.open(UnfrequentDialog.Type.ITEM_LIMIT, false);
+            UnfrequentDialog.open(UnfrequentDialog.Type.ITEM_LIMIT);
             throw new ItemLimitExceededException();
 
         } catch (HouseSpaceExceededException e) {
-            UnfrequentDialog.open(UnfrequentDialog.Type.SPACE_LIMIT, false);
+            UnfrequentDialog.open(UnfrequentDialog.Type.SPACE_LIMIT);
             throw new HouseSpaceExceededException();
         }
     }
@@ -165,10 +165,10 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         try {
             checkItemLimit4ItemAdding(itemType, simpleBase);
         } catch (ItemLimitExceededException e) {
-            UnfrequentDialog.open(UnfrequentDialog.Type.ITEM_LIMIT, false);
+            UnfrequentDialog.open(UnfrequentDialog.Type.ITEM_LIMIT);
             return false;
         } catch (HouseSpaceExceededException e) {
-            UnfrequentDialog.open(UnfrequentDialog.Type.SPACE_LIMIT, false);
+            UnfrequentDialog.open(UnfrequentDialog.Type.SPACE_LIMIT);
             return false;
         }
         return true;
