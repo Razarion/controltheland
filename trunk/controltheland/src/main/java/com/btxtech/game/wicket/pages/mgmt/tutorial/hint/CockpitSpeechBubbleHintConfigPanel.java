@@ -15,9 +15,8 @@ package com.btxtech.game.wicket.pages.mgmt.tutorial.hint;
 
 import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.tutorial.hint.DbCockpitSpeechBubbleHintConfig;
-import java.util.Arrays;
+import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -26,8 +25,9 @@ import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.AbstractPropertyModel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import java.util.Arrays;
 
 /**
  * User: beat
@@ -43,36 +43,7 @@ public class CockpitSpeechBubbleHintConfigPanel extends Panel {
         super(id);
         add(new CheckBox("closeOnTaskEnd"));
         add(new DropDownChoice<CockpitWidgetEnum>("cockpitWidgetEnum", Arrays.asList(CockpitWidgetEnum.values())));
-        add(new TextField<Integer>("baseItemType", new IModel<Integer>() {
-
-            @Override
-            public Integer getObject() {
-                if (getCockpitSpeechBubbleHintConfig().getBaseItemType() != null) {
-                    return getCockpitSpeechBubbleHintConfig().getBaseItemType().getId();
-                } else {
-                    return null;
-                }
-            }
-
-            @Override
-            public void setObject(Integer id) {
-                if (id != null) {
-                    try {
-                        getCockpitSpeechBubbleHintConfig().setBaseItemType((DbBaseItemType) itemService.getDbItemType(id));
-                    } catch (Throwable t) {
-                        log.error("", t);
-                        error(t.getMessage());
-                    }
-                } else {
-                    getCockpitSpeechBubbleHintConfig().setBaseItemType(null);
-                }
-            }
-
-            @Override
-            public void detach() {
-                // Ignore
-            }
-        }, Integer.class) {
+        add(new BaseItemTypePanel("baseItemType") {
             @Override
             public boolean isVisible() {
                 return getCockpitSpeechBubbleHintConfig().getCockpitWidgetEnum().isItemTypeNeeded();
