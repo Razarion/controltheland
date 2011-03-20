@@ -20,6 +20,8 @@ import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsEx
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -28,6 +30,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -47,7 +50,7 @@ public class RegisterDialog extends Dialog {
     private PasswordTextBox password;
     private PasswordTextBox confirmPassword;
 
-    public RegisterDialog() {
+    private RegisterDialog() {
         setShowCloseButton(false);
         getElement().getStyle().setWidth(300, Style.Unit.PX);
     }
@@ -63,7 +66,7 @@ public class RegisterDialog extends Dialog {
         skip.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent clickEvent) {
-                closeDialog();
+                hide(true);
             }
         });
         grid.getFlexCellFormatter().setColSpan(0, 0, 2);
@@ -92,6 +95,14 @@ public class RegisterDialog extends Dialog {
         grid.getFlexCellFormatter().setColSpan(6, 0, 2);
         grid.getFlexCellFormatter().setHorizontalAlignment(6, 0, HasHorizontalAlignment.ALIGN_CENTER);
         dialogVPanel.add(grid);
+        addCloseHandler(new CloseHandler<PopupPanel>() {
+            @Override
+            public void onClose(CloseEvent<PopupPanel> popupPanelCloseEvent) {
+                if (!Connection.getInstance().isRegistered()) {
+                    timer.schedule(Connection.getInstance().getGameInfo().getRegisterDialogDelayInS());
+                }
+            }
+        });
     }
 
     private void register() {
@@ -120,16 +131,9 @@ public class RegisterDialog extends Dialog {
             @Override
             public void onSuccess(Void aVoid) {
                 Connection.getInstance().setRegistered(true);
-                closeDialog();
+                hide(true);
             }
         });
-    }
-
-    private void closeDialog() {
-        hide(true);
-        if (!Connection.getInstance().isRegistered()) {
-            timer.schedule(Connection.getInstance().getGameInfo().getRegisterDialogDelayInS());
-        }
     }
 
     public static void showDialogRepeating() {

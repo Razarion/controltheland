@@ -74,7 +74,7 @@ public class DialogManager implements CloseHandler<PopupPanel> {
             if (dialogQueue.isEmpty()) {
                 return;
             }
-            showDialog(dialogQueue.get(0));
+            showDialog(dialogQueue.remove(0));
         } else if (stackedDialogs.contains(dialog)) {
             stackedDialogs.remove(dialog);
         }

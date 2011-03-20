@@ -33,14 +33,6 @@ public abstract class Dialog extends DialogBox {
 
     protected Dialog() {
         setStyleName("ctl-DialogBox");
-        setPopupPositionAndShow(new PositionCallback() {
-            @Override
-            public void setPosition(int offsetWidth, int offsetHeight) {
-                int left = (Window.getClientWidth() - offsetWidth) / 2;
-                int top = (Window.getClientHeight() - offsetHeight) / 2;
-                setPopupPosition(left, top);
-            }
-        });
     }
 
     protected void setShowCloseButton(boolean showCloseButton) {

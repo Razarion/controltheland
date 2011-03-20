@@ -33,7 +33,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class MenuDialog extends Dialog {
     public MenuDialog() {
         setShowCloseButton(true);
-        setupDialog();
         getElement().getStyle().setWidth(300, Style.Unit.PX);
     }
 

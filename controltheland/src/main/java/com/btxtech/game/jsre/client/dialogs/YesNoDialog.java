@@ -35,7 +35,6 @@ public class YesNoDialog extends Dialog {
         this.message = message;
         this.onYesBtn = onYesBtn;
         setShowCloseButton(false);
-        setupDialog();
     }
 
     @Override
