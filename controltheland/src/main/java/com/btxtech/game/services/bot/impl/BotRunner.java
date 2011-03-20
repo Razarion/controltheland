@@ -32,15 +32,16 @@ import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
@@ -113,6 +114,9 @@ public class BotRunner {
         defence = createBotItemContainer(botConfig.getDefence());
         realmDefense = new BotDefenseContainer(defence, botConfig.getRealmSuperiority(), null, botConfig.getCore());
         coreDefense = new BotDefenseContainer(defence, botConfig.getRealmSuperiority(), realmDefense, botConfig.getRealm());
+        if (base != null && baseService.isAlive(base.getSimpleBase())) {
+            baseService.changeBotBaseName(base, botConfig.getName());
+        }
     }
 
     private void runBot() {
@@ -189,7 +193,7 @@ public class BotRunner {
             base = baseService.getBase(userState);
             if (base == null) {
                 try {
-                    base = baseService.createBotBase(userState);
+                    base = baseService.createBotBase(userState, botConfig.getName());
                 } catch (GameFullException e) {
                     log.error("", e);
                 }

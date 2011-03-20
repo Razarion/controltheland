@@ -175,7 +175,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public Base createBotBase(UserState userState) throws GameFullException {
+    public Base createBotBase(UserState userState, String name) throws GameFullException {
         synchronized (bases) {
             List<BaseColor> baseColors = getFreeBaseColors(0, 1);
             if (baseColors.isEmpty()) {
@@ -183,7 +183,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             }
             lastBaseId++;
             Base base = new Base(baseColors.get(0), userState, lastBaseId);
-            createBase(base.getSimpleBase(), setupBaseName(base), base.getBaseColor().getHtmlColor(), false);
+            createBase(base.getSimpleBase(), name, base.getBaseColor().getHtmlColor(), false);
             log.info("Bot Base created: " + base);
             bases.put(base.getSimpleBase(), base);
             return base;
@@ -507,6 +507,12 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         }
         Base base = getBase();
         setBaseName(base.getSimpleBase(), setupBaseName(base));
+        sendBaseChangedPacket(BaseChangedPacket.Type.CHANGED, base.getSimpleBase());
+    }
+
+    @Override
+    public void changeBotBaseName(Base base, String name) {
+        setBaseName(base.getSimpleBase(), name);
         sendBaseChangedPacket(BaseChangedPacket.Type.CHANGED, base.getSimpleBase());
     }
 
