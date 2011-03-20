@@ -13,7 +13,12 @@
 
 package com.btxtech.game.services.forum.impl;
 
-import com.btxtech.game.services.forum.*;
+import com.btxtech.game.services.forum.AbstractForumEntry;
+import com.btxtech.game.services.forum.Category;
+import com.btxtech.game.services.forum.ForumService;
+import com.btxtech.game.services.forum.ForumThread;
+import com.btxtech.game.services.forum.Post;
+import com.btxtech.game.services.forum.SubForum;
 import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.UserService;
 import org.apache.commons.logging.Log;
@@ -55,7 +60,7 @@ public class ForumServiceImpl implements ForumService {
 
     @Override
     public List<SubForum> getSubForums() {
-        return hibernateTemplate.executeFind(new HibernateCallback<List<SubForum>>() {
+        return hibernateTemplate.execute(new HibernateCallback<List<SubForum>>() {
             @Override
             public List<SubForum> doInHibernate(Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(SubForum.class);
@@ -72,17 +77,13 @@ public class ForumServiceImpl implements ForumService {
 
     @Override
     public List<Category> getCategories(final SubForum subForumId) {
-        List<Category> categories = hibernateTemplate.executeFind(new HibernateCallback() {
+        List<Category> categories = hibernateTemplate.execute(new HibernateCallback<List<Category>>() {
             @Override
-            public Object doInHibernate(Session session) throws HibernateException, SQLException {
+            public List<Category> doInHibernate(Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(Category.class);
                 criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
                 criteria.add(Restrictions.eq("subForum", subForumId));
-                List<Category> categories = criteria.list();
-                for (Category category : categories) {
-                    hibernateTemplate.initialize(category.getForumThreads());
-                }
-                return categories;
+                return criteria.list();
             }
         });
         for (Category category : categories) {
@@ -99,17 +100,13 @@ public class ForumServiceImpl implements ForumService {
 
     @Override
     public List<ForumThread> getForumThreads(final Category category) {
-        List<ForumThread> forumThreads = hibernateTemplate.executeFind(new HibernateCallback() {
+        List<ForumThread> forumThreads = hibernateTemplate.execute(new HibernateCallback<List<ForumThread>>() {
             @Override
-            public Object doInHibernate(Session session) throws HibernateException, SQLException {
+            public List<ForumThread> doInHibernate(Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(ForumThread.class);
                 criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
                 criteria.add(Restrictions.eq("category", category));
-                List<ForumThread> forumThreads = criteria.list();
-                for (ForumThread forumThread : forumThreads) {
-                    hibernateTemplate.initialize(forumThread.getPosts());
-                }
-                return forumThreads;
+                return criteria.list();
             }
         });
         Collections.sort(forumThreads, new LastPostComparator());
@@ -118,9 +115,9 @@ public class ForumServiceImpl implements ForumService {
 
     @Override
     public List<Post> getPosts(final ForumThread forumThread) {
-        return hibernateTemplate.executeFind(new HibernateCallback() {
+        return hibernateTemplate.execute(new HibernateCallback<List<Post>>() {
             @Override
-            public Object doInHibernate(Session session) throws HibernateException, SQLException {
+            public List<Post> doInHibernate(Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(Post.class);
                 criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
                 criteria.add(Restrictions.eq("forumThread", forumThread));
@@ -203,7 +200,7 @@ public class ForumServiceImpl implements ForumService {
     @Secured(SecurityRoles.ROLE_USER)
     @Transactional
     public void insertPostEntry(final int parentId, final Post post) {
-        post.setUser(userService.getUser());        
+        post.setUser(userService.getUser());
         hibernateTemplate.execute(new HibernateCallback<Void>() {
             @Override
             public Void doInHibernate(Session session) throws HibernateException, SQLException {
