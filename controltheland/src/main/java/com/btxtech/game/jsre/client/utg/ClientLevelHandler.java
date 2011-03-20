@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.control.StartupScreen;
+import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.LevelTargetDialog;
 
 /**
@@ -51,7 +52,7 @@ public class ClientLevelHandler {
         }
         Level oldLevel = this.level;
         this.level = level;
-        LevelTargetDialog.showDialog(level.getHtml());
+        DialogManager.showDialog(new LevelTargetDialog(level.getHtml()), DialogManager.Type.PROMPTLY);
         if (oldLevel.isRealGame() && level.isRealGame()) {
             Cockpit.getInstance().setLevel(level.getName());
         } else {

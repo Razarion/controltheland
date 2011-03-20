@@ -49,7 +49,6 @@ public class RegisterDialog extends Dialog {
 
     public RegisterDialog() {
         setShowCloseButton(false);
-        setupDialog();
         getElement().getStyle().setWidth(300, Style.Unit.PX);
     }
 
@@ -97,12 +96,12 @@ public class RegisterDialog extends Dialog {
 
     private void register() {
         if (userName.getText().isEmpty() || password.getText().isEmpty() || confirmPassword.getText().isEmpty()) {
-            MessageDialog.show(REGISTRATION_FILLED);
+            DialogManager.showDialog(new MessageDialog(REGISTRATION_FILLED), DialogManager.Type.STACK_ABLE);
             return;
         }
 
         if (!password.getText().equals(confirmPassword.getText())) {
-            MessageDialog.show(REGISTRATION_MATCH);
+            DialogManager.showDialog(new MessageDialog(REGISTRATION_MATCH), DialogManager.Type.STACK_ABLE);
             return;
         }
 
@@ -110,9 +109,9 @@ public class RegisterDialog extends Dialog {
             @Override
             public void onFailure(Throwable throwable) {
                 if (throwable instanceof UserAlreadyExistsException) {
-                    MessageDialog.show(REGISTRATION_EXISTS);
+                    DialogManager.showDialog(new MessageDialog(REGISTRATION_EXISTS), DialogManager.Type.STACK_ABLE);
                 } else if (throwable instanceof PasswordNotMatchException) {
-                    MessageDialog.show(REGISTRATION_MATCH);
+                    DialogManager.showDialog(new MessageDialog(REGISTRATION_MATCH), DialogManager.Type.STACK_ABLE);
                 } else {
                     GwtCommon.handleException(throwable);
                 }
@@ -146,7 +145,7 @@ public class RegisterDialog extends Dialog {
             @Override
             public void run() {
                 if (!Connection.getInstance().isRegistered()) {
-                    new RegisterDialog();
+                    DialogManager.showDialog(new RegisterDialog(), DialogManager.Type.QUEUE_ABLE);
                 }
             }
         };

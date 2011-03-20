@@ -42,7 +42,6 @@ public class UnfrequentDialog extends Dialog {
 
     private UnfrequentDialog(Type type) {
         this.message = type.message;
-        setupDialog();
     }
 
     @Override
@@ -50,24 +49,22 @@ public class UnfrequentDialog extends Dialog {
         dialogVPanel.add(new HTML(message, false));
     }
 
-    public static void open(Type type, boolean noDelayCheck) {
+    public static void open(Type type) {
         UnfrequentDialog unfrequentDialog = dialogHashMap.get(type);
         if (unfrequentDialog == null) {
             unfrequentDialog = new UnfrequentDialog(type);
+            DialogManager.showDialog(unfrequentDialog, DialogManager.Type.UNIMPORTANT);
             dialogHashMap.put(type, unfrequentDialog);
             unfrequentDialog.lastShowTimeStamp = System.currentTimeMillis();
             return;
         }
 
-        if (!noDelayCheck && unfrequentDialog.lastShowTimeStamp + type.delay > System.currentTimeMillis()) {
+        if (unfrequentDialog.lastShowTimeStamp + type.delay > System.currentTimeMillis()) {
             return;
         }
 
         if (!unfrequentDialog.isShowing()) {
-            unfrequentDialog.show();
-            if (!noDelayCheck) {
-                unfrequentDialog.lastShowTimeStamp = System.currentTimeMillis();
-            }
+            DialogManager.showDialog(unfrequentDialog, DialogManager.Type.UNIMPORTANT);
         }
     }
 }

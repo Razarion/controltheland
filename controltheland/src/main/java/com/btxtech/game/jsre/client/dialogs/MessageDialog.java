@@ -35,21 +35,4 @@ public class MessageDialog extends Dialog {
     protected void setupPanel(VerticalPanel dialogVPanel) {
         dialogVPanel.add(new HTML(message, false));
     }
-
-    public static void show(String message) {
-        new MessageDialog(message);
-    }
-
-    public static void showOnCursorPosition(String message, final MouseDownEvent event) {
-        final MessageDialog messageDialog = new MessageDialog(message);
-        messageDialog.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
-            public void setPosition(int offsetWidth, int offsetHeight) {
-                int left = event.getClientX() - offsetWidth / 2;
-                int top = event.getClientY() - offsetHeight / 2;
-                messageDialog.setPopupPosition(left, top);
-            }
-        });
-
-    }
-
 }

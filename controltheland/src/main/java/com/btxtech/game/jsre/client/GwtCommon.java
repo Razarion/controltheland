@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.ExceptionDialog;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
@@ -61,6 +62,7 @@ public class GwtCommon {
                 exceptionDialog.hide(true);
             }
             exceptionDialog = new ExceptionDialog(t);
+            DialogManager.showDialog(exceptionDialog, DialogManager.Type.PROMPTLY);
         }
         sendExceptionToServer(message, t);
     }

@@ -59,7 +59,7 @@ public class MenuDialog extends Dialog {
             addRow(flexTable, "Surrender Base", "cross", new Runnable() {
                 @Override
                 public void run() {
-                    YesNoDialog.show("Do you really want to surrender and lose your base?", new Runnable() {
+                    YesNoDialog yesNoDialog = new YesNoDialog("Do you really want to surrender and lose your base?", new Runnable() {
 
                         @Override
                         public void run() {
@@ -67,6 +67,7 @@ public class MenuDialog extends Dialog {
                             closeWindow();
                         }
                     });
+                    DialogManager.showDialog(yesNoDialog, DialogManager.Type.PROMPTLY);
                 }
             });
         }
@@ -81,7 +82,7 @@ public class MenuDialog extends Dialog {
 
             @Override
             public void run() {
-                ChangeColorDialog.doShow();
+                DialogManager.showDialog(new ChangeColorDialog(), DialogManager.Type.PROMPTLY);
             }
         });
 
@@ -112,7 +113,6 @@ public class MenuDialog extends Dialog {
             @Override
             public void onClick(ClickEvent event) {
                 runnable.run();
-                close();
             }
         });
         image.getElement().getStyle().setCursor(Style.Cursor.POINTER);
@@ -123,15 +123,9 @@ public class MenuDialog extends Dialog {
             @Override
             public void onClick(ClickEvent event) {
                 runnable.run();
-                close();
             }
         });
         label.getElement().getStyle().setCursor(Style.Cursor.POINTER);
         flexTable.setWidget(row, 1, label);
     }
-
-    public static void showDialog() {
-        new MenuDialog();
-    }
-
 }

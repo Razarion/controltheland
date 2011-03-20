@@ -13,8 +13,8 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.jsre.client.control.ClientRunner;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
+import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.LevelTargetDialog;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Window;
@@ -29,7 +29,7 @@ public class Game implements EntryPoint {
         try {
             GwtCommon.setUncaughtExceptionHandler();
             isDebug = Boolean.parseBoolean(Window.Location.getParameter(DEBUG_PARAM));
-            LevelTargetDialog.showDialog(getLevelHtml());
+            DialogManager.showDialog(new LevelTargetDialog(getLevelHtml()), DialogManager.Type.PROMPTLY);
             ClientServices.getInstance().connectStartupListeners();
             ClientServices.getInstance().getClientRunner().start(getStartupSeqFromHtml());
         } catch (Throwable t) {

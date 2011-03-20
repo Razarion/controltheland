@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -53,6 +54,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UnloadContainerCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UpgradeCommand;
 import com.google.gwt.user.client.Timer;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -280,7 +282,7 @@ public class ActionHandler implements CommonActionService {
             factory.executeCommand(factoryCommand);
             executeCommand(factory, factoryCommand);
         } catch (InsufficientFundsException e) {
-            MessageDialog.show("You do not have enough money. You have to Collect more money");
+            DialogManager.showDialog(new MessageDialog("You do not have enough money. You have to Collect more money"), DialogManager.Type.QUEUE_ABLE);
         } catch (Exception e) {
             GwtCommon.handleException(e);
         }
@@ -367,7 +369,7 @@ public class ActionHandler implements CommonActionService {
             executeCommand(item, upgradeCommand);
             Connection.getInstance().sendCommandQueue();
         } catch (InsufficientFundsException e) {
-            MessageDialog.show("You do not have enough money. You have to Collect more money");
+            DialogManager.showDialog(new MessageDialog("You do not have enough money. You have to Collect more money"), DialogManager.Type.QUEUE_ABLE);
         } catch (Exception e) {
             GwtCommon.handleException(e);
         }

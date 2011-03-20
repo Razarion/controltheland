@@ -26,6 +26,7 @@ import com.btxtech.game.jsre.client.control.StartupSeq;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.client.control.task.DeferredStartup;
+import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -189,7 +190,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
                     ItemContainer.getInstance().sychronize((SyncItemInfo) packet);
                 } else if (packet instanceof Message) {
                     Message message = (Message) packet;
-                    MessageDialog.show("<h1>" + message.getMessage() + "</h1>");
+                    DialogManager.showDialog(new MessageDialog("<h1>" + message.getMessage() + "</h1>"), DialogManager.Type.QUEUE_ABLE);
                 } else if (packet instanceof AccountBalancePacket) {
                     AccountBalancePacket balancePacket = (AccountBalancePacket) packet;
                     ClientBase.getInstance().setAccountBalance(balancePacket.getAccountBalance());
@@ -335,9 +336,9 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
     private void handleDisconnection(Throwable throwable) {
         movableServiceAsync = null;
         if (throwable instanceof NotYourBaseException) {
-            MessageDialog.show("Not your Base: Most likely you start another<br />base in another browser window");
+            DialogManager.showDialog(new MessageDialog("Not your Base: Most likely you start another<br />base in another browser window"), DialogManager.Type.PROMPTLY);
         } else if (throwable instanceof NoConnectionException) {
-            MessageDialog.show("No Connection: Most likely you start another<br />base in another browser window: " + throwable.getMessage());
+            DialogManager.showDialog(new MessageDialog("No Connection: Most likely you start another<br />base in another browser window: " + throwable.getMessage()), DialogManager.Type.PROMPTLY);
         } else {
             GwtCommon.handleException(throwable);
         }
