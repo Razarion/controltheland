@@ -28,7 +28,6 @@ public class MessageDialog extends Dialog {
 
     public MessageDialog(String message) {
         this.message = message;
-        setupDialog();
     }
 
     @Override
