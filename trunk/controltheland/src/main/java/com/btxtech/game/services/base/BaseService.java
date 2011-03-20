@@ -60,7 +60,7 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     Base createNewBase() throws AlreadyUsedException, NoSuchItemTypeException, GameFullException, ItemLimitExceededException, HouseSpaceExceededException;
 
-    Base createBotBase(UserState userState) throws GameFullException;
+    Base createBotBase(UserState userState, String name) throws GameFullException;
 
     void continueBase();
 
@@ -81,6 +81,8 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
     void restoreBases(Collection<Base> bases);
 
     void onUserRegistered();
+
+    void changeBotBaseName(Base base, String name);
 
     void setBaseColor(String color) throws AlreadyUsedException;
 
