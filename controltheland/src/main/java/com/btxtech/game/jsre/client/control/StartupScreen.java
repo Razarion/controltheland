@@ -326,7 +326,6 @@ public class StartupScreen implements StartupProgressListener {
     @Override
     public void onStartupFinished(List<StartupTaskInfo> taskInfo, long totalTime) {
         startFadeIn();
-        showCloseButton();
     }
 
     @Override
