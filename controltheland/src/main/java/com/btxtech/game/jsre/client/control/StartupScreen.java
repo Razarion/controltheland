@@ -39,6 +39,7 @@ public class StartupScreen implements StartupProgressListener {
     private static final String FINISHED_IMG_SRC = "resources/com.btxtech.game.wicket.pages.Game/finished.png";
     private static final String FAILED_IMG_SRC = "resources/com.btxtech.game.wicket.pages.Game/failed.png";
     private static final String TABLE_ID = "startupTaskTable";
+    private static final String MINI_LOADING_TABLE_ID = "miniLoading";
     private final static StartupScreen INSTANCE = new StartupScreen();
     private Timer fadeTimer;
     private double currentFade;
@@ -73,6 +74,21 @@ public class StartupScreen implements StartupProgressListener {
         if (!startupSeq.isCold()) {
             setupTable(startupSeq, oldStartupSeq);
         }
+        showMiniLoading();
+    }
+
+    private void showMiniLoading() {
+        Element miniLoadingTable = DOM.getElementById(MINI_LOADING_TABLE_ID);
+        miniLoadingTable.getStyle().setVisibility(Style.Visibility.VISIBLE);
+        Element detailTable = DOM.getElementById(TABLE_ID);
+        detailTable.getStyle().setVisibility(Style.Visibility.HIDDEN);
+    }
+
+    private void showTaskTableLoading() {
+        Element miniLoadingTable = DOM.getElementById(MINI_LOADING_TABLE_ID);
+        miniLoadingTable.getStyle().setVisibility(Style.Visibility.HIDDEN);
+        Element detailTable = DOM.getElementById(TABLE_ID);
+        detailTable.getStyle().setVisibility(Style.Visibility.VISIBLE);
     }
 
     private void setupTable(StartupSeq newStartupSeq, StartupSeq oldStartupSeq) {
@@ -218,7 +234,7 @@ public class StartupScreen implements StartupProgressListener {
         if (!parent.getFirstChild().equals(startScreen)) {
             parent.insertFirst(startScreen);
         }
-        setTableVisibility(true);
+        showTaskTableLoading();
         setOpacity(1.0);
     }
 
@@ -227,11 +243,6 @@ public class StartupScreen implements StartupProgressListener {
         detachStartScreen();
     }
 
-
-    private void setTableVisibility(boolean visible) {
-        Element tableElement = DOM.getElementById(TABLE_ID);
-        tableElement.getStyle().setVisibility(visible ? Style.Visibility.VISIBLE : Style.Visibility.HIDDEN);
-    }
 
     private void stopFade() {
         if (fadeTimer != null) {
@@ -243,7 +254,6 @@ public class StartupScreen implements StartupProgressListener {
     private void startFadeOut() {
         stopFade();
         currentFade = 0;
-        setTableVisibility(false);
         fadeTimer = new Timer() {
             @Override
             public void run() {
@@ -251,7 +261,6 @@ public class StartupScreen implements StartupProgressListener {
                 if (currentFade >= 1.0) {
                     stopFade();
                     setOpacity(1.0);
-                    setTableVisibility(true);
                     if (afterFade != null) {
                         afterFade.run();
                     }
@@ -310,6 +319,7 @@ public class StartupScreen implements StartupProgressListener {
 
     @Override
     public void onTaskFailed(AbstractStartupTask task, String error) {
+        showTaskTableLoading();
         displayTaskFailed(task, error);
     }
 

@@ -74,6 +74,7 @@ public class MenuDialog extends Dialog {
 
             @Override
             public void run() {
+                close();
                 StartupScreen.getInstance().showStartScreen();
             }
         });
