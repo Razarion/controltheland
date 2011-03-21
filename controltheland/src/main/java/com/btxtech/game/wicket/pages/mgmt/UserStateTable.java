@@ -54,7 +54,7 @@ public class UserStateTable extends MgmtWebPage {
                 item.add(new Label("currentAbstractLevel.name"));
                 item.add(new Label("sessionId"));
                 item.add(new Label("online"));
-                item.add(new Label("registered"));
+                item.add(new Label("user.name"));
                 item.add(new Button("edit") {
 
                     @Override
