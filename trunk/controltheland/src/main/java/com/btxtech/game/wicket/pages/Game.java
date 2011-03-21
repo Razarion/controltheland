@@ -17,7 +17,6 @@ import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
-import java.util.Arrays;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebPage;
@@ -26,6 +25,8 @@ import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import java.util.Arrays;
 
 /**
  * User: beat
@@ -36,6 +37,7 @@ public class Game extends WebPage {
     private static final String WORKING = "working.gif";
     private static final String FINISHED = "finished.png";
     private static final String FAILED = "failed.png";
+    private static final String WORKING_BLACK = "working_black.gif";
 
     @SpringBean
     private UserTrackingService userTrackingService;
@@ -44,6 +46,8 @@ public class Game extends WebPage {
 
     public Game() {
         GameStartupSeq gameStartupSeq = userGuidanceService.getColdStartupSeq();
+
+        add(new Image("miniLoading", WORKING_BLACK));
 
         setupStartupSeq(gameStartupSeq);
 
