@@ -106,6 +106,7 @@ public class SessionImpl implements Session, Serializable {
         return userAgent;
     }
 
+    @Override
     public HttpServletRequest getRequest() {
         return request;
     }

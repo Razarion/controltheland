@@ -40,7 +40,7 @@ public interface UserService extends UserDetailsService {
 
     List<User> getAllUsers();
 
-    void createUserAndLoggin(String name, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException;
+    void createUser(String name, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException;
 
     User getUser(UserState userState);
 

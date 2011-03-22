@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchExc
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
 import com.btxtech.game.wicket.pages.Info;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import org.apache.wicket.PageParameters;
@@ -44,7 +45,8 @@ public class NewUser extends BasePage {
                 }
 
                 try {
-                    userService.createUserAndLoggin(name, password, confirmPassword, email);
+                    userService.createUser(name, password, confirmPassword, email);
+                    WicketAuthenticatedWebSession.get().signIn(name, password);
                     setResponsePage(UserPage.class);
                 } catch (UserAlreadyExistsException e) {
                     PageParameters parameters = new PageParameters();

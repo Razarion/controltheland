@@ -38,6 +38,7 @@ import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.ConnectionService;
+import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.market.ServerMarketService;
@@ -57,6 +58,7 @@ import java.util.Date;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -88,6 +90,8 @@ public class MovableServiceImpl implements MovableService {
     private TerritoryService territoryService;
     @Autowired
     private TutorialService tutorialService;
+    @Autowired
+    private Session session;
 
     private Log log = LogFactory.getLog(MovableServiceImpl.class);
 
@@ -220,7 +224,12 @@ public class MovableServiceImpl implements MovableService {
     @Override
     public void register(String userName, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException {
         try {
-            userService.createUserAndLoggin(userName, password, confirmPassword, email);
+            userService.createUser(userName, password, confirmPassword, email);
+            Object o = session.getRequest().getSession().getAttribute("wicket:wicket:" + org.apache.wicket.Session.SESSION_ATTRIBUTE_NAME);
+            if(o == null) {
+                throw new Exception("Wicket session not found");
+            }
+            ((AuthenticatedWebSession)o).signIn(userName, password);
         } catch (UserAlreadyExistsException e) {
             throw e;
         } catch (PasswordNotMatchException e) {
