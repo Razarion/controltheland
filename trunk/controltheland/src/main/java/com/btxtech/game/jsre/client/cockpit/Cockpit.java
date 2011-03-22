@@ -196,6 +196,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         energyBar.getElement().getStyle().setHeight(10, Style.Unit.PX);
         energyBar.getElement().getStyle().setWidth(210, Style.Unit.PX);
         energyBar.getElement().getStyle().setColor("#000000");
+        widgets.put(CockpitWidgetEnum.ENERGY, energyBar);        
         add(energyBar, ENERGY_BAR_LEFT, ENERGY_BAR_TOP);
     }
 
@@ -326,7 +327,6 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
     public void setGameInfo(RealityInfo realityInfo) {
         money.setText(Integer.toString((int) Math.round(realityInfo.getAccountBalance())));
         xp.setText(Integer.toString(realityInfo.getXp()));
-        updateEnergy(realityInfo.getEnergyGenerating(), realityInfo.getEnergyConsuming());
         updateBase();
     }
 

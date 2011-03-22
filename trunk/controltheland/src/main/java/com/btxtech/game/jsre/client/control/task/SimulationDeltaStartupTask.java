@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientEnergyService;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
@@ -33,6 +34,7 @@ public class SimulationDeltaStartupTask extends GameEngineStartupTask {
 
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
+        ClientEnergyService.getInstance().init(false);        
         SimulationInfo simulationInfo = (SimulationInfo) Connection.getInstance().getGameInfo();
         deltaSetupGameStructure(simulationInfo);
         ClientBase.getInstance().setAllBaseAttributes(simulationInfo.getTutorialConfig().getBaseAttributes());

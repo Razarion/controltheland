@@ -89,7 +89,7 @@ public class ClientServices implements Services {
 
     @Override
     public EnergyService getEnergyService() {
-        return EnergyHandler.getInstance();
+        return ClientEnergyService.getInstance();
     }
 
     @Override

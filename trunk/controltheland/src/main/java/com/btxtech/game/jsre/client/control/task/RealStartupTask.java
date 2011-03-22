@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientEnergyService;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
@@ -42,7 +43,8 @@ public class RealStartupTask extends GameEngineStartupTask {
         ClientBase.getInstance().setAccountBalance(realityInfo.getAccountBalance());
         Cockpit.getInstance().setGameInfo(realityInfo);
         ClientItemTypeAccess.getInstance().setAllowedItemTypes(realityInfo.getAllowedItemTypes());
-        RadarPanel.getInstance().updateEnergy(realityInfo.getEnergyGenerating(), realityInfo.getEnergyConsuming());
+        ClientEnergyService.getInstance().init(true);
+        ClientEnergyService.getInstance().onEnergyPacket(realityInfo.getEnergyGenerating(), realityInfo.getEnergyConsuming());
         ClientTerritoryService.getInstance().setTerritories(realityInfo.getTerritories());
         ClientBase.getInstance().setHouseSpace(realityInfo.getHouseSpace());
         Cockpit.getInstance().enableOnlinePanel(true);

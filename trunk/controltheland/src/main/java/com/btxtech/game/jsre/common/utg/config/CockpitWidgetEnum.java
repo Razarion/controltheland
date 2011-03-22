@@ -28,7 +28,8 @@ public enum CockpitWidgetEnum {
     LEVEL_BUTTON(true, false),
     MONEY_FIELD(false, false),
     BUILDUP_ITEM(false, true),
-    RADAR_PANEL(false, false);
+    RADAR_PANEL(false, false),
+    ENERGY(false, false);
 
     private boolean itemTypeNeeded;
     private boolean button;
