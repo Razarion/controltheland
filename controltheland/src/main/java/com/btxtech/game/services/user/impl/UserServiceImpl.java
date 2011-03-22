@@ -52,7 +52,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component("userService")
 public class UserServiceImpl implements UserService {
@@ -151,7 +157,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void createUserAndLoggin(String name, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException {
+    public void createUser(String name, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException {
         if (getUser() != null) {
             throw new IllegalStateException("The user is already logged in: " + getUser());
         }
@@ -170,13 +176,8 @@ public class UserServiceImpl implements UserService {
         privateSave(user);
         userTrackingService.onUserCreated(user);
 
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(name, password));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        baseService.onUserRegistered();
         getUserState().setUser(user);
-
-        loginUser(user);
+        baseService.onUserRegistered();
     }
 
     @Override

@@ -15,6 +15,8 @@ package com.btxtech.game.services.connection;
 
 import com.btxtech.game.services.user.UserState;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * User: beat
  * Date: May 31, 2009
@@ -38,4 +40,6 @@ public interface Session {
     UserState getUserState();
 
     void setUserState(UserState userState);
+
+    HttpServletRequest getRequest();
 }
