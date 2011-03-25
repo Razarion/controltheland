@@ -126,13 +126,13 @@ public class SyncFactory extends SyncBaseAbility {
             throw new IllegalArgumentException(this + " can not fabricate: " + factoryCommand.getToBeBuilt());
         }
         if (!getServices().getBaseService().isBot(getSyncBaseItem().getBase()) && !getServices().getItemTypeAccess().isAllowed(factoryCommand.getToBeBuilt())) {
-            throw new IllegalArgumentException(this + " user is not allowed to fabricate: " + factoryCommand.getToBeBuilt());
+            throw new IllegalArgumentException(this + " user is not allowed (ItemTypeAccess) to fabricate: " + factoryCommand.getToBeBuilt());
         }
         if (!getServices().getTerritoryService().isAllowed(getSyncBaseItem().getPosition(), getSyncBaseItem())) {
-            throw new IllegalArgumentException(this + " Factory not allowed to build on territory: " + getSyncBaseItem().getPosition() + "  " + getSyncBaseItem());
+            throw new IllegalArgumentException(this + " Factory not allowed to build on (TerritoryService) territory: " + getSyncBaseItem().getPosition() + "  " + getSyncBaseItem());
         }
         if (!getServices().getTerritoryService().isAllowed(getSyncBaseItem().getPosition(), factoryCommand.getToBeBuilt())) {
-            throw new IllegalArgumentException(this + " Item can not be built on territory: " + getSyncBaseItem().getPosition() + "  " + factoryCommand.getToBeBuilt());
+            throw new IllegalArgumentException(this + " Item can not be built on (TerritoryService) territory: " + getSyncBaseItem().getPosition() + "  " + factoryCommand.getToBeBuilt());
         }
         if (toBeBuiltType == null) {
             toBeBuiltType = (BaseItemType) getServices().getItemService().getItemType(factoryCommand.getToBeBuilt());

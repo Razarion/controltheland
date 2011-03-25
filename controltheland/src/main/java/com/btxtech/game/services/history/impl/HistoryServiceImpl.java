@@ -16,12 +16,12 @@ package com.btxtech.game.services.history.impl;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.history.DbHistoryElement;
 import com.btxtech.game.services.history.DisplayHistoryElement;
-import com.btxtech.game.services.history.HistoryElement;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.user.User;
-import java.util.ArrayList;
-import java.util.List;
+import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.DbAbstractLevel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -34,6 +34,9 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * User: beat
  * Date: Jul 5, 2009
@@ -45,6 +48,8 @@ public class HistoryServiceImpl implements HistoryService {
     private HibernateTemplate hibernateTemplate;
     @Autowired
     private BaseService baseService;
+    @Autowired
+    private UserService userService;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -53,84 +58,134 @@ public class HistoryServiceImpl implements HistoryService {
 
     @Override
     public void addBaseStartEntry(SimpleBase simpleBase) {
-        // TODO save(new HistoryElement(HistoryElement.Type.BASE_STARTED, baseService.getBaseName(simpleBase), baseService.getUserState(simpleBase), null, null, null, null));
+        save(new DbHistoryElement(DbHistoryElement.Type.BASE_STARTED,
+                userService.getUser(simpleBase),
+                null,
+                simpleBase,
+                null,
+                null,
+                null,
+                baseService));
     }
 
     @Override
     public void addBaseDefeatedEntry(SimpleBase actor, SimpleBase target) {
-        // TODO save(new HistoryElement(HistoryElement.Type.BASE_DEFEATED, baseService.getBaseName(actor), baseService.getUserState(actor), null, baseService.getBaseName(target), baseService.getUserState(target), null));
+        save(new DbHistoryElement(DbHistoryElement.Type.BASE_DEFEATED,
+                userService.getUser(actor),
+                userService.getUser(target),
+                actor,
+                target,
+                null,
+                null,
+                baseService));
     }
 
     @Override
     public void addBaseSurrenderedEntry(SimpleBase simpleBase) {
-        // TODO save(new HistoryElement(HistoryElement.Type.BASE_SURRENDERED, baseService.getBaseName(simpleBase), baseService.getUserState(simpleBase), null, null, null, null));
+        save(new DbHistoryElement(DbHistoryElement.Type.BASE_SURRENDERED,
+                userService.getUser(simpleBase),
+                null,
+                simpleBase,
+                null,
+                null,
+                null,
+                baseService));
     }
 
     @Override
     public void addItemCreatedEntry(SyncBaseItem syncBaseItem) {
-        // TODO save(new HistoryElement(HistoryElement.Type.ITEM_CREATED, baseService.getBaseName(syncBaseItem.getBase()), baseService.getUserState(syncBaseItem.getBase()), syncBaseItem, null, null, null));
+        save(new DbHistoryElement(DbHistoryElement.Type.ITEM_CREATED,
+                userService.getUser(syncBaseItem.getBase()),
+                null,
+                syncBaseItem.getBase(),
+                null,
+                syncBaseItem,
+                null,
+                baseService));
     }
 
     @Override
     public void addItemDestroyedEntry(SimpleBase actor, SyncBaseItem target) {
-        // TODO save(new HistoryElement(HistoryElement.Type.ITEM_DESTROYED, baseService.getBaseName(actor), baseService.getUserState(actor), null, baseService.getBaseName(target.getBase()), baseService.getUserState(target.getBase()), target));
+        save(new DbHistoryElement(DbHistoryElement.Type.ITEM_DESTROYED,
+                userService.getUser(actor),
+                userService.getUser(target.getBase()),
+                actor,
+                target.getBase(),
+                target,
+                null,
+                baseService));
+    }
+
+    @Override
+    public void addLevelPromotionEntry(User user, DbAbstractLevel level) {
+        save(new DbHistoryElement(DbHistoryElement.Type.LEVEL_PROMOTION,
+                user,
+                null,
+                null,
+                null,
+                null,
+                level,
+                baseService));
     }
 
     @Override
     public List<DisplayHistoryElement> getNewestHistoryElements(final User user, final int count) {
         ArrayList<DisplayHistoryElement> displayHistoryElements = new ArrayList<DisplayHistoryElement>();
         @SuppressWarnings("unchecked")
-        List<HistoryElement> historyElements = (List<HistoryElement>) hibernateTemplate.execute(new HibernateCallback() {
-            public Object doInHibernate(Session session) {
-                Criteria criteria = session.createCriteria(HistoryElement.class);
+        List<DbHistoryElement> dbHistoryElements = hibernateTemplate.execute(new HibernateCallback<List<DbHistoryElement>>() {
+            public List<DbHistoryElement> doInHibernate(Session session) {
+                Criteria criteria = session.createCriteria(DbHistoryElement.class);
                 criteria.setMaxResults(count);
                 criteria.add(Restrictions.or(Restrictions.eq("actorUserName", user.getUsername()), Restrictions.eq("targetUserName", user.getUsername())));
                 criteria.addOrder(Property.forName("timeStampMs").desc());
                 return criteria.list();
             }
         });
-        for (HistoryElement historyElement : historyElements) {
-            displayHistoryElements.add(convert(user, historyElement));
+        for (DbHistoryElement dbHistoryElement : dbHistoryElements) {
+            displayHistoryElements.add(convert(user, dbHistoryElement));
         }
         return displayHistoryElements;
     }
 
-    private DisplayHistoryElement convert(User user, HistoryElement historyElement) {
-        DisplayHistoryElement displayHistoryElement = new DisplayHistoryElement(historyElement.getTimeStamp());
+    private DisplayHistoryElement convert(User user, DbHistoryElement dbHistoryElement) {
+        DisplayHistoryElement displayHistoryElement = new DisplayHistoryElement(dbHistoryElement.getTimeStamp());
         String userName = user.getUsername();
-        switch (historyElement.getType()) {
+        switch (dbHistoryElement.getType()) {
             case BASE_STARTED:
-                displayHistoryElement.setMessage("Base created: " + historyElement.getActorBaseName());
+                displayHistoryElement.setMessage("Base created: " + dbHistoryElement.getActorBaseName());
                 break;
             case BASE_DEFEATED:
-                if (userName.equals(historyElement.getActorUserName())) {
-                    displayHistoryElement.setMessage("Base destroyed: " + historyElement.getTargetBaseName());
+                if (userName.equals(dbHistoryElement.getActorUserName())) {
+                    displayHistoryElement.setMessage("Base destroyed: " + dbHistoryElement.getTargetBaseName());
                 } else {
-                    displayHistoryElement.setMessage("Your base " + historyElement.getTargetBaseName() + " has been destroyed by " + historyElement.getTargetBaseName());
+                    displayHistoryElement.setMessage("Your base has been destroyed by " + dbHistoryElement.getActorBaseName());
                 }
                 break;
             case BASE_SURRENDERED:
-                displayHistoryElement.setMessage("Base surrendered: " + historyElement.getActorBaseName());
+                displayHistoryElement.setMessage("Base surrendered");
                 break;
             case ITEM_CREATED:
-                displayHistoryElement.setMessage("Item created: " + historyElement.getActorItemName());
+                displayHistoryElement.setMessage("Item created: " + dbHistoryElement.getItemTypeName());
                 break;
             case ITEM_DESTROYED:
-                if (userName.equals(historyElement.getActorUserName())) {
-                    displayHistoryElement.setMessage("Destroyed a " + historyElement.getTargetItemName() + " from " + historyElement.getTargetBaseName());
+                if (userName.equals(dbHistoryElement.getActorUserName())) {
+                    displayHistoryElement.setMessage("Destroyed a " + dbHistoryElement.getItemTypeName() + " from " + dbHistoryElement.getTargetBaseName());
                 } else {
-                    displayHistoryElement.setMessage(historyElement.getActorBaseName() + " destroyed your " + historyElement.getTargetItemName());
+                    displayHistoryElement.setMessage(dbHistoryElement.getActorBaseName() + " destroyed your " + dbHistoryElement.getItemTypeName());
                 }
                 break;
+            case LEVEL_PROMOTION:
+                displayHistoryElement.setMessage("Level reached: " + dbHistoryElement.getLevelName());
+                break;
             default:
-                throw new IllegalArgumentException("Unknown: " + historyElement.getType());
+                throw new IllegalArgumentException("Unknown: " + dbHistoryElement.getType());
         }
         return displayHistoryElement;
     }
 
-    private void save(HistoryElement historyElement) {
+    private void save(DbHistoryElement dbHistoryElement) {
         try {
-            hibernateTemplate.saveOrUpdate(historyElement);
+            hibernateTemplate.save(dbHistoryElement);
         } catch (Throwable t) {
             log.error("", t);
         }

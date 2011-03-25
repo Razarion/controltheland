@@ -40,4 +40,9 @@ public class DisplayHistoryElement implements Serializable {
     public Date getTimeStamp() {
         return timeStamp;
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " | " + timeStamp + " | " + message;
+    }
 }

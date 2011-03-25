@@ -1,22 +1,17 @@
 package com.btxtech.game.services.user;
 
 import com.btxtech.game.services.BaseTestService;
-import com.btxtech.game.services.utg.UserGuidanceService;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-
-import static org.easymock.EasyMock.createNiceMock;
 
 /**
  * User: beat
  * Date: Jul 11, 2009
  * Time: 12:00:44 PM
  */
-@ContextConfiguration(locations = {"classpath:UtgMockTestService-context.xml"})
 public class TestUserService extends BaseTestService {
     @Autowired
     private UserService userService;
@@ -24,6 +19,7 @@ public class TestUserService extends BaseTestService {
     @Test
     @DirtiesContext
     public void createLoginLogoutTimeOut() throws Exception {
+        configureMinimalGame();
         beginHttpSession();
         // Create account
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -84,6 +80,7 @@ public class TestUserService extends BaseTestService {
     @Test
     @DirtiesContext
     public void createCreateEnterLeaveGame() throws Exception {
+        configureMinimalGame();
         beginHttpSession();
         // Create account
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -121,6 +118,7 @@ public class TestUserService extends BaseTestService {
     @Test
     @DirtiesContext
     public void createEnterGameRegister() throws Exception {
+        configureMinimalGame();
         beginHttpSession();
         // Enter Game
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -165,6 +163,7 @@ public class TestUserService extends BaseTestService {
     @Test
     @DirtiesContext
     public void createEnterGameUnRegTimeout() throws Exception {
+        configureMinimalGame();
         beginHttpSession();
         // Enter Game
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -194,6 +193,7 @@ public class TestUserService extends BaseTestService {
     @Test
     @DirtiesContext
     public void createEnterGameRegTimeout() throws Exception {
+        configureMinimalGame();
         beginHttpSession();
         // Create account
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -237,6 +237,7 @@ public class TestUserService extends BaseTestService {
     @Test
     @DirtiesContext
     public void createLoginInGame() throws Exception {
+        configureMinimalGame();
         beginHttpSession();
         // Create account
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -272,10 +273,6 @@ public class TestUserService extends BaseTestService {
         endHttpRequestAndOpenSessionInViewFilter();
 
         endHttpSession();
-    }
-
-    public static UserGuidanceService createUserGuidanceServiceMock() {
-        return createNiceMock(UserGuidanceService.class);
     }
 
     private void assertLoggedIn() {

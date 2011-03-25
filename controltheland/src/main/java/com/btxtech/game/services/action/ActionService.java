@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+
 import java.util.List;
 
 /**
@@ -40,4 +41,6 @@ public interface ActionService extends CommonActionService, SyncItemListener {
     void reload();
 
     void pause(boolean pause);
+
+    boolean isBusy();
 }

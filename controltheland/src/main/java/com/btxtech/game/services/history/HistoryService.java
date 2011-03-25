@@ -16,6 +16,8 @@ package com.btxtech.game.services.history;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.utg.DbAbstractLevel;
+
 import java.util.List;
 
 /**
@@ -35,4 +37,6 @@ public interface HistoryService {
     void addItemDestroyedEntry(SimpleBase actor, SyncBaseItem target);
 
     List<DisplayHistoryElement> getNewestHistoryElements(User user, int count);
+
+    void addLevelPromotionEntry(User user, DbAbstractLevel level);
 }

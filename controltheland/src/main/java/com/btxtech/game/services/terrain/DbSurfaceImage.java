@@ -104,6 +104,9 @@ public class DbSurfaceImage implements CrudChild, Serializable {
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : System.identityHashCode(this);
+        int hash = id != null ? id.hashCode() : System.identityHashCode(this);
+        System.out.println("***DbSurfaceImage Hash: " + hash + "--" + System.identityHashCode(this));
+        return hash;
+
     }
 }

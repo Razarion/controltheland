@@ -163,6 +163,9 @@ public class Base implements Serializable {
         return items.size();
     }
 
+    /**
+     * Only used in Save
+     */
     public void clearId() {
         id = null;
         if (userState != null) {

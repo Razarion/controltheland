@@ -113,16 +113,17 @@ public class CrudRootServiceHelper<T extends CrudChild> {
     }
 
     @Transactional
-    public void createDbChild() {
-        createDbChild(childClass);
+    public T createDbChild() {
+        return createDbChild(childClass);
     }
 
     @Transactional
-    public void createDbChild(Class<? extends T> createClass) {
+    public T createDbChild(Class<? extends T> createClass) {
         try {
             Constructor<? extends T> constructor = createClass.getConstructor();
             T t = constructor.newInstance();
             addChild(t);
+            return t;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

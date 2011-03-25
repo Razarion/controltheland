@@ -13,28 +13,33 @@
 
 package com.btxtech.game.services.history;
 
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.user.User;
-import java.io.Serializable;
-import java.util.Date;
+import com.btxtech.game.services.utg.DbAbstractLevel;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * User: beat
  * Date: Jul 5, 2009
  * Time: 7:28:46 PM
  */
-@Entity(name = "TRACKER_HISTORY")
-public class HistoryElement implements Serializable {
+@Entity(name = "GAME_HISTORY")
+public class DbHistoryElement implements Serializable {
     public enum Type {
         BASE_STARTED,
         BASE_DEFEATED,
         BASE_SURRENDERED,
         ITEM_CREATED,
-        ITEM_DESTROYED
+        ITEM_DESTROYED,
+        LEVEL_PROMOTION
     }
 
     @Id
@@ -45,37 +50,32 @@ public class HistoryElement implements Serializable {
     private long timeStampMs;
     @Column(nullable = false)
     private Type type;
-    private String actorBaseName;
+
     private String actorUserName;
-    private String actorItemName;
-    private String targetBaseName;
     private String targetUserName;
-    private String targetItemName;
+    private String actorBaseName;
+    private String targetBaseName;
+    private String itemTypeName;
+    private String levelName;
 
     /**
      * Used by hibernate
      */
-    protected HistoryElement() {
+    protected DbHistoryElement() {
     }
 
-    public HistoryElement(Type type, String actorBaseName, User actorUser, SyncBaseItem actorItem, String targetBase, User targetUser, SyncBaseItem targetItem) {
+    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncBaseItem syncBaseItem, DbAbstractLevel level, BaseService baseService) {
         timeStamp = new Date();
         timeStampMs = timeStamp.getTime();
         this.type = type;
-        this.actorUserName = actorUser.getUsername();
-        this.actorBaseName = actorBaseName;
-        if (actorItem != null) {
-            actorItemName = actorItem.getBaseItemType().getName();
-        }
-        this.targetBaseName = targetBase;
-        if(targetUser != null) {
-           this.targetUserName = targetUser.getUsername();
-        }
-        if (targetItem != null) {
-            targetItemName = targetItem.getBaseItemType().getName();
-        }
+        actorUserName = actorUser != null ? actorUser.getUsername() : null;
+        targetUserName = targetUser != null ? targetUser.getUsername() : null;
+        actorBaseName = actorBase != null ? baseService.getBaseName(actorBase) : null;
+        targetBaseName = targetBase != null ? baseService.getBaseName(targetBase) : null;
+        itemTypeName = syncBaseItem != null ? syncBaseItem.getBaseItemType().getName() : null;
+        levelName = level != null ? level.getName() : null;
     }
-    
+
     public String getActorBaseName() {
         return actorBaseName;
     }
@@ -96,10 +96,6 @@ public class HistoryElement implements Serializable {
         return type;
     }
 
-    public String getActorItemName() {
-        return actorItemName;
-    }
-
     public String getTargetBaseName() {
         return targetBaseName;
     }
@@ -108,12 +104,16 @@ public class HistoryElement implements Serializable {
         return targetUserName;
     }
 
-    public String getTargetItemName() {
-        return targetItemName;
-    }
-
     public long getTimeStampMs() {
         return timeStampMs;
+    }
+
+    public String getItemTypeName() {
+        return itemTypeName;
+    }
+
+    public String getLevelName() {
+        return levelName;
     }
 
     @Override
@@ -121,7 +121,7 @@ public class HistoryElement implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        HistoryElement that = (HistoryElement) o;
+        DbHistoryElement that = (DbHistoryElement) o;
 
         return !(id != null ? !id.equals(that.id) : that.id != null);
 

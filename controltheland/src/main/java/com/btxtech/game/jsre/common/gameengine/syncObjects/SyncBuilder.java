@@ -146,7 +146,7 @@ public class SyncBuilder extends SyncBaseAbility {
         }
 
         if (!getServices().getBaseService().isBot(getSyncBaseItem().getBase()) && !getServices().getItemTypeAccess().isAllowed(builderCommand.getToBeBuilt())) {
-            throw new IllegalArgumentException(this + " user is not allowed to build: " + builderCommand.getToBeBuilt());
+            throw new IllegalArgumentException(this + " user is not allowed (ItemTypeAccess) to build: " + builderCommand.getToBeBuilt());
         }
 
         BaseItemType tmpToBeBuiltType = (BaseItemType) getServices().getItemService().getItemType(builderCommand.getToBeBuilt());
@@ -155,11 +155,11 @@ public class SyncBuilder extends SyncBaseAbility {
         }
 
         if (!getServices().getTerritoryService().isAllowed(builderCommand.getPositionToBeBuilt(), getSyncBaseItem())) {
-            throw new IllegalArgumentException(this + " Builder not allowed to build on territory: " + builderCommand.getPositionToBeBuilt() + "  " + getSyncBaseItem());
+            throw new IllegalArgumentException(this + " Builder not allowed (TerritoryService) to build on territory: " + builderCommand.getPositionToBeBuilt() + "  " + getSyncBaseItem());
         }
 
         if (!getServices().getTerritoryService().isAllowed(builderCommand.getPositionToBeBuilt(), builderCommand.getToBeBuilt())) {
-            throw new IllegalArgumentException(this + " Item can not be built on territory: " + builderCommand.getPositionToBeBuilt() + "  " + builderCommand.getToBeBuilt());
+            throw new IllegalArgumentException(this + " Item can not be built (TerritoryService) on territory: " + builderCommand.getPositionToBeBuilt() + "  " + builderCommand.getToBeBuilt());
         }
 
         toBeBuiltType = tmpToBeBuiltType;

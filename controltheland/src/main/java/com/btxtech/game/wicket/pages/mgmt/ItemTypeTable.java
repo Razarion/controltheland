@@ -21,7 +21,6 @@ import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import java.util.Iterator;
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -83,7 +82,7 @@ public class ItemTypeTable extends MgmtWebPage {
             @Override
             public void onSubmit() {
                 // TODO put to a service -> MGMT
-                itemService.loadItemType();
+                itemService.activate();
                 energyService.recalculateEnergy();
             }
         });

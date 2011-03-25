@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.user.impl;
 
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.services.base.BaseService;
@@ -156,6 +157,20 @@ public class UserServiceImpl implements UserService {
         session.setUserState(null);
     }
 
+    /**
+     *
+     * @param name User name
+     * @param password password
+     * @param confirmPassword confirm password
+     * @param email email
+     * @throws UserAlreadyExistsException
+     * @throws PasswordNotMatchException
+     *
+     * This method creates a user and connect it to the current Base and UserStatus
+     *
+     * After this method login must be called immediately!
+     *
+     */
     @Override
     public void createUser(String name, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException {
         if (getUser() != null) {
@@ -218,6 +233,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUser(UserState userState) {
+        return userState.getUser();
+    }
+
+    @Override
+    public User getUser(SimpleBase simpleBase) {
+        UserState userState = baseService.getUserState(simpleBase);
+        if(userState == null) {
+            return null;
+        }
+        return userState.getUser();
+    }
+
+    @Override
     @Transactional
     public void save(User user) {
         hibernateTemplate.saveOrUpdate(user);
@@ -276,12 +305,6 @@ public class UserServiceImpl implements UserService {
         if (!isAuthorized(role)) {
             throw new NotAuthorizedException();
         }
-    }
-
-
-    @Override
-    public User getUser(UserState userState) {
-        return userState.getUser();
     }
 
     @Override

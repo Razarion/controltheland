@@ -29,6 +29,7 @@ import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -154,6 +155,11 @@ public class DbRealGameLevel extends DbAbstractLevel implements CrudParent {
     }
 
     @Override
+    public void init() {
+        itemTypeLimitation = new HashSet<DbItemTypeLimitation>();
+    }
+
+    @Override
     protected ConditionConfig createConditionConfig(ItemService itemService) {
         if (dbConditionConfig == null) {
             throw new IllegalStateException("No condition config for DbRealGameLevel: " + getName());
@@ -161,7 +167,10 @@ public class DbRealGameLevel extends DbAbstractLevel implements CrudParent {
         return dbConditionConfig.createConditionConfig(itemService);
     }
 
-    public Level createLevel() {
+    public Level createLevel() throws LevelActivationException {
+        if(this.itemTypeLimitation == null) {
+           throw new LevelActivationException("Item Type Limitations is null"); 
+        }
         Map<Integer, Integer> itemTypeLimitation = new HashMap<Integer, Integer>();
         for (DbItemTypeLimitation dbItemTypeLimitation : this.itemTypeLimitation) {
             itemTypeLimitation.put(dbItemTypeLimitation.getDbBaseItemType().getId(), dbItemTypeLimitation.getCount());
