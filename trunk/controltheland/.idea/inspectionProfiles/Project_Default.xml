@@ -13,8 +13,9 @@
       <option name="REPORT_PARAMETER_FOR_PUBLIC_METHODS" value="true" />
       <option name="INJECTION_ANNOS">
         <value>
-          <list size="1">
+          <list size="2">
             <item index="0" class="java.lang.String" itemvalue="org.apache.wicket.spring.injection.annot.SpringBean" />
+            <item index="1" class="java.lang.String" itemvalue="org.springframework.beans.factory.annotation.Value" />
           </list>
         </value>
       </option>
