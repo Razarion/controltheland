@@ -441,25 +441,6 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    @Transactional
-    public void levelPromotion(User user, DbAbstractLevel oldAbstractLevel) {
-        try {
-            String sessionId = null;
-            try {
-                sessionId = session.getSessionId();
-            } catch (Throwable t) {
-                // Ignore
-                // Error creating bean with name 'scopedTarget.user': Scope 'session' is not active for the current thread
-                // This happens when the methode is called from the server side (e.g. XP increase timer)
-            }
-            DbLevelPromotion dbLevelPromotion = new DbLevelPromotion(sessionId, user, oldAbstractLevel);
-            hibernateTemplate.saveOrUpdate(dbLevelPromotion);
-        } catch (Throwable t) {
-            log.error("", t);
-        }
-    }
-
-    @Override
     public void onJavaScriptDetected() {
         session.onJavaScriptDetected();
     }

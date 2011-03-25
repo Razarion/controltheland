@@ -37,6 +37,13 @@ import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.utg.UserTrackingService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -44,12 +51,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 
 /**
@@ -428,9 +429,14 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
             try {
                 executeCommand(baseCommand, false);
             } catch (Throwable t) {
-                log.debug(" ", t);
+                log.debug("", t);
             }
         }
+    }
+
+    @Override
+    public boolean isBusy() {
+        return !activeItems.isEmpty() || !tmpActiveItems.isEmpty();
     }
 
     private void finalizeCommand(SyncBaseItem syncItem) {

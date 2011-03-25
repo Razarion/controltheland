@@ -65,8 +65,6 @@ public interface UserTrackingService {
 
     void trackUserMessage(UserMessage userMessage);
 
-    void levelPromotion(User user, DbAbstractLevel oldAbstractLevel);
-
     void onJavaScriptDetected();
 
     boolean isJavaScriptDetected();

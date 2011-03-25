@@ -60,15 +60,16 @@ public class CrudChildServiceHelper<T extends CrudChild> implements Serializable
         }
     }
 
-    public void createDbChild() {
-        createDbChild(childClass);
+    public T createDbChild() {
+        return createDbChild(childClass);
     }
 
-    public void createDbChild(Class<? extends T> createClass) {
+    public T createDbChild(Class<? extends T> createClass) {
         try {
             Constructor<? extends T> constructor = createClass.getConstructor();
             T t = constructor.newInstance();
             addChild(t);
+            return t;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

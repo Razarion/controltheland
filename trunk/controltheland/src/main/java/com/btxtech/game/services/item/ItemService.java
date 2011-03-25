@@ -58,7 +58,7 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
 
     Collection<DbBaseItemType> getWeaponDbBaseItemTypes();
 
-    void loadItemType();
+    void activate();
 
     DbItemType getDbItemType(int itemTypeId);
 

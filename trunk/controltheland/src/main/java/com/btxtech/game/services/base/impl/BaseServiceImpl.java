@@ -17,7 +17,13 @@ import com.btxtech.game.jsre.client.AlreadyUsedException;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.Message;
-import com.btxtech.game.jsre.common.*;
+import com.btxtech.game.jsre.common.AccountBalancePacket;
+import com.btxtech.game.jsre.common.BaseChangedPacket;
+import com.btxtech.game.jsre.common.EnergyPacket;
+import com.btxtech.game.jsre.common.InsufficientFundsException;
+import com.btxtech.game.jsre.common.Packet;
+import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
@@ -148,6 +154,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             log.info("Base created: " + base);
             bases.put(base.getSimpleBase(), base);
         }
+        historyService.addBaseStartEntry(base.getSimpleBase());
         BaseItemType startItem = (BaseItemType) itemService.getItemType(dbRealGameLevel.getStartItemType());
         sendBaseChangedPacket(BaseChangedPacket.Type.CREATED, base.getSimpleBase());
         Index startPoint = collisionService.getFreeRandomPosition(startItem, dbRealGameLevel.getStartRectangle(), dbRealGameLevel.getStartItemFreeRange());
@@ -156,7 +163,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         if (syncBaseItem.hasSyncTurnable()) {
             syncBaseItem.getSyncTurnable().setAngel(Math.PI / 4.0); // Cosmetics shows vehicle from side
         }
-        historyService.addBaseStartEntry(base.getSimpleBase());
         // TODO userTrackingService.onBaseCreated(userService.getUser(), base);
         return base;
     }
@@ -222,10 +228,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             return false;
         }
         Base base = connection.getBase();
-        if (base == null) {
-            return false;
-        }
-        return true;
+        return base != null;
     }
 
     @Override
@@ -357,7 +360,9 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             //     userTrackingService.onBaseDefeated(base.getUser(), base);
             // }
             deleteBase(base);
-            base.getUserState().setBase(null);
+            if (!base.isAbandoned()) {
+                base.getUserState().setBase(null);
+            }
         } else {
             if (syncItem.hasSyncHouse()) {
                 handleHouseSpaceChanged(base);
@@ -404,10 +409,10 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
 
     @Override
     public void sendEnergyUpdate(BaseEnergy baseEnergy, Base base) {
-        EnergyPacket packt = new EnergyPacket();
-        packt.setConsuming(baseEnergy.getConsuming());
-        packt.setGenerating(baseEnergy.getGenerating());
-        connectionService.sendPacket(base.getSimpleBase(), packt);
+        EnergyPacket packet = new EnergyPacket();
+        packet.setConsuming(baseEnergy.getConsuming());
+        packet.setGenerating(baseEnergy.getGenerating());
+        connectionService.sendPacket(base.getSimpleBase(), packet);
     }
 
     @Override

@@ -23,6 +23,7 @@ import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.Session;
+import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.market.ServerMarketService;
@@ -79,6 +80,8 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     @Autowired
     private ServerMarketService marketService;
     @Autowired
+    private HistoryService historyService;
+    @Autowired
     private CrudRootServiceHelper<DbAbstractLevel> crudServiceHelperHibernate;
     private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
@@ -130,6 +133,9 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         // Prepare
         DbAbstractLevel dbOldAbstractLevel = userState.getCurrentAbstractLevel();
         userState.setCurrentAbstractLevel(dbNextAbstractLevel);
+        // Tracking
+        historyService.addLevelPromotionEntry(userState.getUser(), dbNextAbstractLevel);
+        log.debug("User: " + userState + " has been promoted: " + dbOldAbstractLevel + " to " + dbNextAbstractLevel);
 
         if (dbNextAbstractLevel instanceof DbRealGameLevel) {
             DbRealGameLevel dbRealGameLevel = (DbRealGameLevel) dbNextAbstractLevel;
@@ -155,10 +161,6 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
             connectionService.sendPacket(base.getSimpleBase(), levelPacket);
             // TODO baseService.sendHouseSpacePacket(base);
         }
-
-        // Tracking
-        // TODO userTrackingService.levelPromotion(userState, dbOldAbstractLevel);
-        log.debug("User: " + userState + " has been promoted: " + dbOldAbstractLevel + " to " + dbNextAbstractLevel);
     }
 
     private void handleRewards(Base base, DbRealGameLevel dbRealGameLevel) {
@@ -212,7 +214,11 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
             dummyRealGameLevel.setName("Dummy Level");
             dummyRealGameLevel.setHtml("Dummy Level");
             dummyRealGameLevel.setItemTypeLimitation(Collections.<DbItemTypeLimitation>emptySet());
-            dummyRealGameLevel.setLevel(dummyRealGameLevel.createLevel());
+            try {
+                dummyRealGameLevel.setLevel(dummyRealGameLevel.createLevel());
+            } catch (LevelActivationException e) {
+                throw new RuntimeException(e);
+            }
         }
         return dummyRealGameLevel;
     }

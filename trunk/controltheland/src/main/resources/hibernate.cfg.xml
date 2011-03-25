@@ -19,7 +19,7 @@
 
 <hibernate-configuration>
     <session-factory>
-        <mapping class="com.btxtech.game.services.history.HistoryElement"/>
+        <mapping class="com.btxtech.game.services.history.DbHistoryElement"/>
         <mapping class="com.btxtech.game.services.connection.ConnectionStatistics"/>
         <mapping class="com.btxtech.game.services.connection.ClientLogEntry"/>
         <mapping class="com.btxtech.game.services.terrain.DbTerrainImagePosition"/>
@@ -66,7 +66,6 @@
         <mapping class="com.btxtech.game.services.utg.DbItemTypeLimitation"/>
         <mapping class="com.btxtech.game.services.utg.DbScope"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbComparisonItemCount"/>
-        <mapping class="com.btxtech.game.services.utg.DbLevelPromotion"/>
         <mapping class="com.btxtech.game.services.utg.DbTutorialProgress"/>
         <mapping class="com.btxtech.game.services.utg.DbEventTrackingStart"/>
         <mapping class="com.btxtech.game.services.utg.DbEventTrackingItem"/>

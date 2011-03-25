@@ -100,7 +100,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     @PostConstruct
     public void setup() {
         try {
-            loadItemType();
+            activate();
         } catch (Throwable t) {
             log.error("", t);
         }
@@ -400,7 +400,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public void loadItemType() {
+    public void activate() {
         Collection<DbItemType> dbItemTypes = getDbItemTypes();
         ArrayList<ItemType> itemTypes = new ArrayList<ItemType>();
         itemTypeImages.clear();
