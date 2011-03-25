@@ -134,22 +134,22 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public Base createNewBase() throws AlreadyUsedException, NoSuchItemTypeException, GameFullException, ItemLimitExceededException, HouseSpaceExceededException {
+    public Base createNewBase(UserState userState) throws AlreadyUsedException, NoSuchItemTypeException, GameFullException, ItemLimitExceededException, HouseSpaceExceededException {
         synchronized (bases) {
             List<BaseColor> baseColors = getFreeBaseColors(0, 1);
             if (baseColors.isEmpty()) {
                 throw new GameFullException();
             }
-            return createNewBase(baseColors.get(0));
+            return createNewBase(baseColors.get(0), userState);
         }
     }
 
-    private Base createNewBase(BaseColor baseColor) throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
-        DbRealGameLevel dbRealGameLevel = userGuidanceService.getDbLevel();
+    private Base createNewBase(BaseColor baseColor, UserState userState) throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
+        DbRealGameLevel dbRealGameLevel = (DbRealGameLevel) userState.getCurrentAbstractLevel();
         Base base;
         synchronized (bases) {
             lastBaseId++;
-            base = new Base(baseColor, userService.getUserState(), lastBaseId);
+            base = new Base(baseColor, userState, lastBaseId);
             createBase(base.getSimpleBase(), setupBaseName(base), base.getBaseColor().getHtmlColor(), false);
             log.info("Base created: " + base);
             bases.put(base.getSimpleBase(), base);
