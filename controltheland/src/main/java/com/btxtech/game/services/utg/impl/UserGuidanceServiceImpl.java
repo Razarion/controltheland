@@ -113,6 +113,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         for (DbAbstractLevel dbAbstractLevel : dbAbstractLevels) {
             if (dbAbstractLevel.getId() == newDbLevelId) {
                 dbNextAbstractLevel = dbAbstractLevel;
+                break;
             }
         }
         if (dbNextAbstractLevel == null) {
@@ -141,7 +142,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
             DbRealGameLevel dbRealGameLevel = (DbRealGameLevel) dbNextAbstractLevel;
             if (dbRealGameLevel.isCreateRealBase()) {
                 try {
-                    baseService.createNewBase();
+                    baseService.createNewBase(userState);
                 } catch (Exception e) {
                     log.error("Can not create base for user: " + userState, e);
                 }
