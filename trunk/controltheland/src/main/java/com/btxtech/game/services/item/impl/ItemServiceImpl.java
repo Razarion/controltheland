@@ -472,8 +472,18 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public DbItemType getDbItemType(final int itemTypeId) {
+    public DbItemType getDbItemType(int itemTypeId) {
         return hibernateTemplate.get(DbItemType.class, itemTypeId);
+    }
+
+    @Override
+    public DbBaseItemType getDbBaseItemType(int itemBaseTypeId) {
+        return hibernateTemplate.get(DbBaseItemType.class, itemBaseTypeId);
+    }
+
+    @Override
+    public DbResourceItemType getDbResourceItemType(int resourceItemType) {
+        return hibernateTemplate.get(DbResourceItemType.class, resourceItemType);
     }
 
     @Override

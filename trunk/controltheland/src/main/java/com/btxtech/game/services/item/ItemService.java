@@ -25,6 +25,8 @@ import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeData;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
+import com.btxtech.game.services.item.itemType.DbResourceItemType;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -61,6 +63,10 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
     void activate();
 
     DbItemType getDbItemType(int itemTypeId);
+
+    DbBaseItemType getDbBaseItemType(int itemBaseTypeId);
+
+    DbResourceItemType getDbResourceItemType(int resourceItemType);
 
     void deleteItemType(DbItemType dbItemType);
     

@@ -49,16 +49,16 @@ public class BaseItemTypePanel extends Panel {
 
             @Override
             public void setObject(Integer integer) {
-                DbItemTypeI dbItemTypeI = itemService.getDbItemType(integer);
-                if(dbItemTypeI == null) {
-                    error("Item type does not exist: " + integer);
-                    return;
+                if (integer != null) {
+                    DbBaseItemType dbItemTypeI = itemService.getDbBaseItemType(integer);
+                    if (dbItemTypeI == null) {
+                        error("Item type does not exist: " + integer);
+                        return;
+                    }
+                    setDefaultModelObject(dbItemTypeI);
+                } else {
+                    setDefaultModelObject(null);
                 }
-                if(!(dbItemTypeI instanceof DbBaseItemTypeI)) {
-                    error("Item type is not a base item type");
-                    return;
-                }
-                setDefaultModelObject(dbItemTypeI);
             }
 
             @Override

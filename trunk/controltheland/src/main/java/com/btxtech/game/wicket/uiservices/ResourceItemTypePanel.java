@@ -15,6 +15,8 @@ package com.btxtech.game.wicket.uiservices;
 
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.item.itemType.DbItemType;
+import com.btxtech.game.services.item.itemType.DbItemTypeI;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -36,9 +38,11 @@ public class ResourceItemTypePanel extends Panel {
 
             @Override
             public Integer getObject() {
-                DbResourceItemType resourceItemType = (DbResourceItemType) getDefaultModelObject();
-                if (resourceItemType != null) {
-                    return resourceItemType.getId();
+                DbItemType itemType = (DbItemType) getDefaultModelObject();
+                // Using DbItemTypeI instead of DbResourceItemTypeI
+                // java.lang.ClassCastException: com.btxtech.game.services.item.itemType.DbItemType_$$_javassist_1 cannot be cast to com.btxtech.game.services.item.itemType.DbBaseItemTypeI
+                if (itemType != null) {
+                    return itemType.getId();
                 } else {
                     return null;
                 }
@@ -46,8 +50,19 @@ public class ResourceItemTypePanel extends Panel {
 
             @Override
             public void setObject(Integer integer) {
-                DbResourceItemType resourceItemType = (DbResourceItemType) itemService.getDbItemType(integer);
-                setDefaultModelObject(resourceItemType);
+                if (integer != null) {
+                    DbResourceItemType dbResourceItemType = itemService.getDbResourceItemType(integer);
+                    if (dbResourceItemType == null) {
+                        error("Item type does not exist: " + integer);
+                        return;
+                    }
+                    setDefaultModelObject(dbResourceItemType);
+                } else {
+                    setDefaultModelObject(null);
+                }
+
+
+
             }
 
             @Override
