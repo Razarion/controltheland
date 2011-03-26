@@ -45,8 +45,12 @@ public class ItemTypePanel extends Panel {
 
             @Override
             public void setObject(Integer integer) {
-                DbItemType itemType = itemService.getDbItemType(integer);
-                setDefaultModelObject(itemType);
+                if (integer != null) {
+                    DbItemType itemType = itemService.getDbItemType(integer);
+                    setDefaultModelObject(itemType);
+                } else {
+                    setDefaultModelObject(null);
+                }
             }
 
             @Override
