@@ -120,4 +120,20 @@ public class UserState implements Serializable {
     public String toString() {
         return "UserState: user=" + user;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserState)) return false;
+
+        UserState userState = (UserState) o;
+
+        return id != null && id.equals(userState.id);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : System.identityHashCode(this);
+    }
 }

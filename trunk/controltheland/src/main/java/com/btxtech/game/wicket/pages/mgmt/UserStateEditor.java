@@ -16,7 +16,6 @@ package com.btxtech.game.wicket.pages.mgmt;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -39,9 +38,30 @@ public class UserStateEditor extends MgmtWebPage {
     private Integer dbLevelId;
 
     public UserStateEditor(UserState userState) {
+        final int userStateHash = userState.hashCode();
         add(new FeedbackPanel("msgs"));
 
-        final Form<UserState> form = new Form<UserState>("form", new CompoundPropertyModel<UserState>(userState));
+        final Form<UserState> form = new Form<UserState>("form", new CompoundPropertyModel<UserState>(new IModel<UserState>() {
+            private UserState userState;
+
+            @Override
+            public UserState getObject() {
+                if (userState == null) {
+                    userState = userService.getUserState4Hash(userStateHash);
+                }
+                return userState;
+            }
+
+            @Override
+            public void setObject(UserState object) {
+                // Ignore
+            }
+
+            @Override
+            public void detach() {
+                userState = null;
+            }
+        }));
         add(form);
         form.add(new Label("currentAbstractLevel.name"));
         form.add(new Label("sessionId"));
