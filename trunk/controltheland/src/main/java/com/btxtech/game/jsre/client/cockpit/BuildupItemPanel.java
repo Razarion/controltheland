@@ -13,7 +13,13 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
-import com.btxtech.game.jsre.client.*;
+import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientServices;
+import com.btxtech.game.jsre.client.ClientSyncItem;
+import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.ExtendedCustomButton;
+import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
@@ -26,7 +32,14 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -203,7 +216,7 @@ public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvide
     }
 
     @Override
-    public Widget getHintWidget(CockpitSpeechBubbleHintConfig config) throws HintWidgetException {
+    public Widget getHintWidgetAndEnsureVisible(CockpitSpeechBubbleHintConfig config) throws HintWidgetException {
         if (config.getCockpitWidgetEnum() != CockpitWidgetEnum.BUILDUP_ITEM) {
             throw new HintWidgetException(this + " Only BUILDUP_ITEM supported", config);
         }
@@ -212,6 +225,7 @@ public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvide
         }
         Widget widget = builupItem.get(config.getBaseItemTypeId());
         if (widget != null) {
+            scrollPanel.setHorizontalScrollPosition(widget.getAbsoluteLeft() - scrollPanel.getAbsoluteLeft());
             return widget;
         } else {
             throw new HintWidgetException(this + " no such item type id: " + config.getBaseItemTypeId(), config);

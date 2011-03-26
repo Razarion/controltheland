@@ -23,5 +23,5 @@ import com.google.gwt.user.client.ui.Widget;
  * Time: 19:51:27
  */
 public interface HintWidgetProvider {
-    Widget getHintWidget(CockpitSpeechBubbleHintConfig config) throws HintWidgetException;
+    Widget getHintWidgetAndEnsureVisible(CockpitSpeechBubbleHintConfig config) throws HintWidgetException;
 }

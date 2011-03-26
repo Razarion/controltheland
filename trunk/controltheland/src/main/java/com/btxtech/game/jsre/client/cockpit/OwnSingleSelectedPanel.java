@@ -86,7 +86,7 @@ public class OwnSingleSelectedPanel extends AbsolutePanel implements HintWidgetP
     }
 
     @Override
-    public Widget getHintWidget(CockpitSpeechBubbleHintConfig config) throws HintWidgetException {
-        return buildupItemPanel.getHintWidget(config);
+    public Widget getHintWidgetAndEnsureVisible(CockpitSpeechBubbleHintConfig config) throws HintWidgetException {
+        return buildupItemPanel.getHintWidgetAndEnsureVisible(config);
     }
 }

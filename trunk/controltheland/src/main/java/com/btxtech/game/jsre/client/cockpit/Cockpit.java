@@ -407,13 +407,13 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
     }
 
     @Override
-    public Widget getHintWidget(CockpitSpeechBubbleHintConfig config) throws HintWidgetException {
+    public Widget getHintWidgetAndEnsureVisible(CockpitSpeechBubbleHintConfig config) throws HintWidgetException {
         Widget widget = widgets.get(config.getCockpitWidgetEnum());
         if (widget != null) {
             return widget;
         } else {
             if (selectedItemPanel.isVisible()) {
-                return selectedItemPanel.getHintWidget(config);
+                return selectedItemPanel.getHintWidgetAndEnsureVisible(config);
             } else {
                 throw new HintWidgetException(this + " selectedItemPanel is not visible", config);
             }

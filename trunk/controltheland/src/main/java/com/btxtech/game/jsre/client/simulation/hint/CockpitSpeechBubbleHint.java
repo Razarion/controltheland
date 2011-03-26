@@ -29,7 +29,7 @@ public class CockpitSpeechBubbleHint extends SpeechBubbleHint {
 
     public CockpitSpeechBubbleHint(CockpitSpeechBubbleHintConfig cockpitSpeechBubbleHintConfig) {
         try {
-            Widget widget = Cockpit.getInstance().getHintWidget(cockpitSpeechBubbleHintConfig);
+            Widget widget = Cockpit.getInstance().getHintWidgetAndEnsureVisible(cockpitSpeechBubbleHintConfig);
             int left = widget.getAbsoluteLeft() + widget.getOffsetWidth() / 2;
             int top = widget.getAbsoluteTop();
             setSpeechBubble(new SpeechBubble(left, top, cockpitSpeechBubbleHintConfig.getHtml(), false), cockpitSpeechBubbleHintConfig);

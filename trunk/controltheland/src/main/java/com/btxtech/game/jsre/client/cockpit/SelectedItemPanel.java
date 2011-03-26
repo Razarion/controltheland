@@ -81,9 +81,9 @@ public class SelectedItemPanel extends AbsolutePanel implements HintWidgetProvid
     }
 
     @Override
-    public Widget getHintWidget(CockpitSpeechBubbleHintConfig config) throws HintWidgetException {
+    public Widget getHintWidgetAndEnsureVisible(CockpitSpeechBubbleHintConfig config) throws HintWidgetException {
         if (activeHintWidgetProvider != null) {
-            return activeHintWidgetProvider.getHintWidget(config);
+            return activeHintWidgetProvider.getHintWidgetAndEnsureVisible(config);
         } else {
             throw new HintWidgetException(this + " activeHintWidgetProvider == null", config);
         }
