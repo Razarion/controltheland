@@ -158,18 +158,14 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     *
-     * @param name User name
-     * @param password password
+     * @param name            User name
+     * @param password        password
      * @param confirmPassword confirm password
-     * @param email email
+     * @param email           email
      * @throws UserAlreadyExistsException
-     * @throws PasswordNotMatchException
-     *
-     * This method creates a user and connect it to the current Base and UserStatus
-     *
-     * After this method login must be called immediately!
-     *
+     * @throws PasswordNotMatchException  This method creates a user and connect it to the current Base and UserStatus
+     *                                    <p/>
+     *                                    After this method login must be called immediately!
      */
     @Override
     public void createUser(String name, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException {
@@ -238,9 +234,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserState getUserState4Hash(int userStateHash) {
+        for (UserState userState : userStates) {
+            if (userState.hashCode() == userStateHash) {
+                return userState;
+            }
+        }
+        throw new IllegalArgumentException("No UserState for hash: " + userStateHash);
+    }
+
+    @Override
     public User getUser(SimpleBase simpleBase) {
         UserState userState = baseService.getUserState(simpleBase);
-        if(userState == null) {
+        if (userState == null) {
             return null;
         }
         return userState.getUser();

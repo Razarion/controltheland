@@ -44,6 +44,8 @@ public interface UserService extends UserDetailsService {
 
     User getUser(UserState userState);
 
+    UserState getUserState4Hash(int userStateHash);
+
     User getUser(SimpleBase simpleBase);
 
     Collection<GrantedAuthority> getAuthorities();

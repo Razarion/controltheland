@@ -15,14 +15,16 @@ package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
 import com.btxtech.game.wicket.uiservices.ListProvider;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.util.List;
@@ -39,10 +41,15 @@ public class UserStateTable extends MgmtWebPage {
     public UserStateTable() {
         add(new FeedbackPanel("msgs"));
 
-        final ListProvider<UserState> userStateProvider = new ListProvider<UserState>() {
+        final DetachHashListProvider<UserState> userStateProvider = new DetachHashListProvider<UserState>() {
             @Override
             protected List<UserState> createList() {
                 return userService.getAllUserStates();
+            }
+
+            @Override
+            protected UserState getObject4Hash(int hash) {
+                return userService.getUserState4Hash(hash);
             }
         };
 
