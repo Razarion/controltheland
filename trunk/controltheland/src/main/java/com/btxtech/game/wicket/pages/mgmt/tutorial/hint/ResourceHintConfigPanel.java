@@ -19,6 +19,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.AbstractPropertyModel;
 import org.apache.wicket.model.IModel;
 
 /**
@@ -27,7 +28,7 @@ import org.apache.wicket.model.IModel;
  * Time: 22:48:35
  */
 public class ResourceHintConfigPanel extends Panel {
-    public ResourceHintConfigPanel(String id, final DbResourceHintConfig dbResourceHintConfig) {
+    public ResourceHintConfigPanel(String id) {
         super(id);
         add(new CheckBox("closeOnTaskEnd"));
         add(new TextField<Integer>("position.x"));
@@ -42,6 +43,8 @@ public class ResourceHintConfigPanel extends Panel {
 
             @Override
             public void setObject(FileUpload fileUpload) {
+                AbstractPropertyModel propertyModel = (AbstractPropertyModel) ResourceHintConfigPanel.this.getDefaultModel();
+                DbResourceHintConfig dbResourceHintConfig = (DbResourceHintConfig) propertyModel.getTarget();
                 dbResourceHintConfig.setData(fileUpload.getBytes());
                 dbResourceHintConfig.setContentType(fileUpload.getContentType());
             }

@@ -35,7 +35,7 @@ import javax.persistence.ManyToOne;
 @Entity(name = "TUTORIAL_HINT")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
-abstract public class DbHintConfig implements CrudChild<DbStepConfig>, Serializable {
+abstract public class DbHintConfig implements CrudChild<DbStepConfig> {
     public static Class[] ALL_HINTS = {
             DbItemSpeechBubbleHintConfig.class,
             DbResourceHintConfig.class,

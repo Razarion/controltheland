@@ -84,7 +84,7 @@ public class DbLevelTable extends MgmtWebPage {
                 try {
                     userGuidanceService.activateLevels();
                 } catch (LevelActivationException e) {
-                    error(e.getNiceMessage());
+                    error(e.getMessage());
                 }
             }
         });

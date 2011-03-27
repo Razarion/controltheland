@@ -111,7 +111,7 @@ public class StepEditor extends MgmtWebPage {
                 if (dbHintConfigItem.getModelObject() instanceof DbItemSpeechBubbleHintConfig) {
                     dbHintConfigItem.add(new ItemSpeechBubbleHintConfigPanel("hint"));
                 } else if (dbHintConfigItem.getModelObject() instanceof DbResourceHintConfig) {
-                    dbHintConfigItem.add(new ResourceHintConfigPanel("hint", (DbResourceHintConfig) dbHintConfigItem.getModelObject()));
+                    dbHintConfigItem.add(new ResourceHintConfigPanel("hint"));
                 } else if (dbHintConfigItem.getModelObject() instanceof DbTerrainPositionSpeechBubbleHintConfig) {
                     dbHintConfigItem.add(new TerrainPositionSpeechBubbleHintConfigPanel("hint"));
                 } else if (dbHintConfigItem.getModelObject() instanceof DbCockpitSpeechBubbleHintConfig) {

@@ -21,8 +21,8 @@ public class LevelActivationException extends Exception {
         hierarchy.append(parent);
     }
 
-    public String getNiceMessage() {
+    @Override
+    public String getMessage() {
         return "Error activating level: " + hierarchy + " (" + text + ")";
     }
-
 }
