@@ -6,7 +6,7 @@ import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.tutorial.hint.DbResourceHintConfig;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +26,8 @@ public class TestTutorialService extends BaseTestService {
     private RuServiceHelper<DbTutorialConfig> ruTutorialServiceHelper;
     @Autowired
     private RuServiceHelper<DbTaskConfig> ruTaskServiceHelper;
+    @Autowired
+    private RuServiceHelper<DbStepConfig> ruStepServiceHelper;
 
 
     @Test
@@ -39,15 +41,7 @@ public class TestTutorialService extends BaseTestService {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        tutorialCrud.createDbChild();
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertEquals(1, tutorialCrud.readDbChildren().size());
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-        DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().readDbChildren().iterator().next();
+        DbTutorialConfig dbTutorialConfig = tutorialCrud.createDbChild();
         dbTutorialConfig.setTracking(true);
         dbTutorialConfig.setEnemyBaseColor("red");
         dbTutorialConfig.setEnemyBaseName("enemy");
@@ -78,7 +72,7 @@ public class TestTutorialService extends BaseTestService {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().readDbChildren().iterator().next();
+        dbTutorialConfig = ruTutorialServiceHelper.readDbChild(dbTutorialConfig.getId(), DbTutorialConfig.class);
         tutorialService.getDbTutorialCrudRootServiceHelper().deleteDbChild(dbTutorialConfig);
         endHttpRequestAndOpenSessionInViewFilter();
 
@@ -96,23 +90,19 @@ public class TestTutorialService extends BaseTestService {
 
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbTutorialConfig> tutorialCrud = tutorialService.getDbTutorialCrudRootServiceHelper();
-        tutorialCrud.createDbChild();
+        DbTutorialConfig dbTutorialConfig = tutorialCrud.createDbChild();
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().readDbChildren().iterator().next();
-        CrudChildServiceHelper crudChildServiceHelper = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper();
-        crudChildServiceHelper.createDbChild();
+        dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().readDbChild(dbTutorialConfig.getId());
+        CrudChildServiceHelper<DbTaskConfig> crudChildServiceHelper = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper();
+        DbTaskConfig dbTaskConfig = crudChildServiceHelper.createDbChild();
         ruTutorialServiceHelper.updateDbEntity(dbTutorialConfig);
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().readDbChildren().iterator().next();
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        beginHttpRequestAndOpenSessionInViewFilter();
         dbTutorialConfig = ruTutorialServiceHelper.readDbChild(dbTutorialConfig.getId(), DbTutorialConfig.class);
-        DbTaskConfig dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChildren().iterator().next();
+        dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig.getId());
         dbTaskConfig.setFinishedImageContentType("finish");
         dbTaskConfig.setAccountBalance(100);
         dbTaskConfig.setName("name1");
@@ -130,7 +120,7 @@ public class TestTutorialService extends BaseTestService {
 
         beginHttpRequestAndOpenSessionInViewFilter();
         dbTutorialConfig = ruTutorialServiceHelper.readDbChild(dbTutorialConfig.getId(), DbTutorialConfig.class);
-        dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChildren().iterator().next();
+        dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig.getId());
         dbTaskConfig.setFinishedImageContentType("finish");
         dbTaskConfig.setAccountBalance(100);
         dbTaskConfig.setName("name1");
@@ -148,7 +138,7 @@ public class TestTutorialService extends BaseTestService {
 
         beginHttpRequestAndOpenSessionInViewFilter();
         dbTutorialConfig = ruTutorialServiceHelper.readDbChild(dbTutorialConfig.getId(), DbTutorialConfig.class);
-        dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChildren().iterator().next();
+        dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().readDbChild(dbTaskConfig.getId());
         Assert.assertEquals("finish", dbTaskConfig.getFinishedImageContentType());
         Assert.assertEquals(100, dbTaskConfig.getAccountBalance());
         Assert.assertEquals("name1", dbTaskConfig.getName());
@@ -165,4 +155,48 @@ public class TestTutorialService extends BaseTestService {
 
         endHttpSession();
     }
+
+    @Test
+    @DirtiesContext
+    public void createStep() {
+        beginHttpSession();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbTutorialConfig> tutorialCrud = tutorialService.getDbTutorialCrudRootServiceHelper();
+        DbTutorialConfig dbTutorialConfig = tutorialCrud.createDbChild();
+        DbTaskConfig dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().createDbChild();
+        DbStepConfig dbStepConfig = dbTaskConfig.getStepConfigCrudServiceHelper().createDbChild();
+        ruTutorialServiceHelper.updateDbEntity(dbTutorialConfig);
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbStepConfig = ruStepServiceHelper.readDbChild(dbStepConfig.getId(), DbStepConfig.class);
+        DbResourceHintConfig dbResourceHintConfig = (DbResourceHintConfig) dbStepConfig.getHintConfigCrudServiceHelper().createDbChild(DbResourceHintConfig.class);
+        ruStepServiceHelper.updateDbEntity(dbStepConfig);
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbStepConfig = ruStepServiceHelper.readDbChild(dbStepConfig.getId(), DbStepConfig.class);
+        dbResourceHintConfig = (DbResourceHintConfig) dbStepConfig.getHintConfigCrudServiceHelper().readDbChild(dbResourceHintConfig.getId());
+        dbResourceHintConfig.setCloseOnTaskEnd(false);
+        dbResourceHintConfig.setName("test1");
+        dbResourceHintConfig.setContentType("test2");
+        dbResourceHintConfig.setData(new byte[]{4, 3, 2, 1});
+        dbResourceHintConfig.setPosition(new Index(9,7));
+        ruStepServiceHelper.updateDbEntity(dbStepConfig);
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbStepConfig = ruStepServiceHelper.readDbChild(dbStepConfig.getId(), DbStepConfig.class);
+        dbResourceHintConfig = (DbResourceHintConfig) dbStepConfig.getHintConfigCrudServiceHelper().readDbChild(dbResourceHintConfig.getId());
+        Assert.assertFalse(dbResourceHintConfig.isCloseOnTaskEnd());
+        Assert.assertEquals("test1", dbResourceHintConfig.getName());
+        Assert.assertEquals("test2", dbResourceHintConfig.getContentType());
+        Assert.assertArrayEquals(new byte[]{4, 3, 2, 1}, dbResourceHintConfig.getData());
+        Assert.assertEquals(new Index(9,7), dbResourceHintConfig.getPosition());
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        endHttpSession();
+    }
+
 }
