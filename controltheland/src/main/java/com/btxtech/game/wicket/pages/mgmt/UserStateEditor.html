@@ -37,6 +37,22 @@
             <td bgcolor="#dadada">New Level</td>
             <td><input type="text" wicket:id="newDbLevelId" size="4"/></td>
         </tr>
+        <tr>
+            <td bgcolor="#dadada">XP</td>
+            <td>
+                <input wicket:id="userItemTypeAccess.xp" type="text" size="30"/>
+            </td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Items Types</td>
+            <td>
+                <table border="1">
+                    <tr wicket:id="allowedItemTypes">
+                        <td wicket:id="itemType"/>
+                    </tr>
+                </table>
+            </td>
+        </tr>        
     </table>
     <br/>
     <br/>

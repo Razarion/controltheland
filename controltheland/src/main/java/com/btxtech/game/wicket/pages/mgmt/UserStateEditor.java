@@ -13,6 +13,7 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
+import com.btxtech.game.services.market.MarketEntry;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -20,10 +21,14 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import java.util.ArrayList;
 
 /**
  * User: beat
@@ -81,6 +86,15 @@ public class UserStateEditor extends MgmtWebPage {
                 dbLevelId = null;
             }
         }, Integer.class));
+        form.add(new TextField<Integer>("userItemTypeAccess.xp"));
+        form.add(new ListView<MarketEntry>("allowedItemTypes", new ArrayList<MarketEntry>(form.getModelObject().getUserItemTypeAccess().getAllowedItemTypes())) {
+
+            @Override
+            protected void populateItem(ListItem<MarketEntry> marketEntryListItem) {
+                marketEntryListItem.add(new Label("itemType", marketEntryListItem.getModelObject().getItemType().getName()));
+            }
+        });
+
 
         form.add(new Button("activate") {
 

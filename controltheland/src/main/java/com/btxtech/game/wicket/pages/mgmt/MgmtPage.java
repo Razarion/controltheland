@@ -24,7 +24,7 @@ import java.lang.management.MemoryUsage;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import org.apache.wicket.markup.html.WebPage;
+
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -122,7 +122,6 @@ public class MgmtPage extends MgmtWebPage {
         toolPages.add(new LinkAndName("Bot editor", BotTable.class));
         toolPages.add(new LinkAndName("TerritoryEditor", TerritoryEditor.class));
         toolPages.add(new LinkAndName("Tutorial", TutorialTable.class));
-        toolPages.add(new LinkAndName("User", UserTable.class));
         toolPages.add(new LinkAndName("User States", UserStateTable.class));
 
     }
