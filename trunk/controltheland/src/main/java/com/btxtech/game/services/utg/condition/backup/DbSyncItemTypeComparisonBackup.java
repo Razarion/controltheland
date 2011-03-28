@@ -50,8 +50,8 @@ public class DbSyncItemTypeComparisonBackup extends DbAbstractComparisonBackup {
     public DbSyncItemTypeComparisonBackup() {
     }
 
-    public DbSyncItemTypeComparisonBackup(BackupEntry backupEntry, UserState userState, SyncItemTypeComparison syncItemTypeComparison, ItemService itemService) {
-        super(backupEntry, userState);
+    public DbSyncItemTypeComparisonBackup(UserState userState, SyncItemTypeComparison syncItemTypeComparison, ItemService itemService) {
+        super(userState);
         itemTypeCount = new HashMap<DbItemType, Integer>();
         for (Map.Entry<ItemType, Integer> entry : syncItemTypeComparison.getRemaining().entrySet()) {
             DbItemType dbItemType = itemService.getDbItemType(entry.getKey().getId());

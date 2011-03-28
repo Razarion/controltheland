@@ -137,6 +137,11 @@ public class UserServiceImpl implements UserService {
         if (userState != null) {
             userState.setSessionId(null);
             baseService.onSessionTimedOut(userState);
+            if (!userState.isRegistered()) {
+                synchronized (userStates) {
+                    userStates.remove(userState);
+                }
+            }
         }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {

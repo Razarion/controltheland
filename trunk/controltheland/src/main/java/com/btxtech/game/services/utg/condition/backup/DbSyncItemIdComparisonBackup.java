@@ -38,8 +38,8 @@ public class DbSyncItemIdComparisonBackup extends DbAbstractComparisonBackup {
     public DbSyncItemIdComparisonBackup() {
     }
 
-    public DbSyncItemIdComparisonBackup(BackupEntry backupEntry, UserState userState, SyncItemIdComparison syncItemIdComparison) {
-        super(backupEntry, userState);
+    public DbSyncItemIdComparisonBackup(UserState userState, SyncItemIdComparison syncItemIdComparison) {
+        super(userState);
         idString = Utils.integerToSting(syncItemIdComparison.getSyncItemIds());
     }
 

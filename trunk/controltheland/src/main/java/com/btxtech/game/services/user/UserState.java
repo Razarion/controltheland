@@ -16,7 +16,9 @@ package com.btxtech.game.services.user;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
+import com.btxtech.game.services.mgmt.impl.BackupEntry;
 import com.btxtech.game.services.utg.DbAbstractLevel;
+import com.btxtech.game.services.utg.condition.backup.DbAbstractComparisonBackup;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -46,8 +48,12 @@ public class UserState implements Serializable {
     private DbAbstractLevel currentAbstractLevel;
     @OneToOne
     private UserItemTypeAccess userItemTypeAccess;
+    @ManyToOne(optional = false)
+    private BackupEntry backupEntry;    
     @Transient
     private String sessionId;
+    @OneToOne
+    private DbAbstractComparisonBackup dbAbstractComparisonBackup;
 
     public boolean isRegistered() {
         return user != null;
@@ -109,7 +115,16 @@ public class UserState implements Serializable {
         this.user = user;
     }
 
-    public void clearId() {
+    public void setDbAbstractComparisonBackup(DbAbstractComparisonBackup dbAbstractComparisonBackup) {
+        this.dbAbstractComparisonBackup = dbAbstractComparisonBackup;
+    }
+
+    public DbAbstractComparisonBackup getDbAbstractComparisonBackup() {
+        return dbAbstractComparisonBackup;
+    }
+    
+    public void prepareForBackup(BackupEntry backupEntry) {
+        this.backupEntry = backupEntry;
         id = null;
         if (userItemTypeAccess != null) {
             userItemTypeAccess.clearId();

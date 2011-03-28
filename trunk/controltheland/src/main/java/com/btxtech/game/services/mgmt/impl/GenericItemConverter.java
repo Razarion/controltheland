@@ -16,7 +16,11 @@ package com.btxtech.game.services.mgmt.impl;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.*;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncProjectileItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.Base;
@@ -34,7 +38,14 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * User: beat
@@ -86,7 +97,17 @@ public class GenericItemConverter {
             postProcessBackup(item);
         }
         backupEntry.setItems(new HashSet<GenericItem>(genericItems.values()));
-        serverConditionService.backup(backupEntry);
+        serverConditionService.backup();
+
+        Set<UserState> userStates = new HashSet<UserState>();
+        for (UserState userState : userService.getAllUserStates()) {
+            userState.prepareForBackup(backupEntry);
+            if (userState.isRegistered() || userState.isBot()) {
+                userStates.add(userState);
+            }
+        }
+
+        backupEntry.setUserStates(userStates);
         return backupEntry;
     }
 
@@ -94,18 +115,22 @@ public class GenericItemConverter {
         actionService.pause(true);
         serverEnergyService.pauseService(true);
         Collection<GenericItem> genericItems = backupEntry.getItems();
+        Collection<UserState> userStateAbandoned = new ArrayList<UserState>();
         Collection<Base> bases = new HashSet<Base>();
-        Collection<UserState> userStates = new HashSet<UserState>();
         for (GenericItem genericItem : genericItems) {
             try {
                 if (genericItem instanceof GenericBaseItem) {
                     SyncBaseItem syncItem = addSyncBaseItem((GenericBaseItem) genericItem);
                     Base base = ((GenericBaseItem) genericItem).getBase();
                     bases.add(base);
-                    if (!base.isAbandoned()) {
-                        userStates.add(base.getUserState());
+                    UserState userState = base.getUserState();
+                    if (userState != null) {
+                        if (!userState.isRegistered() && !userState.isBot()) {
+                            base.setAbandoned();
+                            userStateAbandoned.add(userState);
+                        }
                     }
-                    base.addItem(syncItem);
+                    base.addItemNoCreateCount(syncItem);
                 } else if (genericItem instanceof GenericResourceItem) {
                     addSyncItem((GenericResourceItem) genericItem);
                 } else if (genericItem instanceof GenericProjectileItem) {
@@ -117,7 +142,7 @@ public class GenericItemConverter {
                 log.error("Error restoring GenericItem: " + genericItem.getItemId(), t);
             }
         }
-
+        backupEntry.getUserStates().removeAll(userStateAbandoned);
         // post process
         for (Iterator<GenericItem> iterator = genericItems.iterator(); iterator.hasNext();) {
             GenericItem genericItem = iterator.next();
@@ -131,12 +156,12 @@ public class GenericItemConverter {
             }
         }
 
-        userService.restore(userStates);
+        userService.restore(backupEntry.getUserStates());
         baseService.restoreBases(bases);
         itemService.restoreItems(syncItems.values());
         serverEnergyService.pauseService(false);
         serverEnergyService.restoreItems(syncItems.values());
-        serverConditionService.restore(userStates, backupEntry);
+        serverConditionService.restore(backupEntry.getUserStates());
         actionService.pause(false);
     }
 

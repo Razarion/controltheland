@@ -88,9 +88,12 @@ public class Base implements Serializable {
     }
 
     public void addItem(SyncBaseItem syncItem) {
+        addItemNoCreateCount(syncItem);
+    }
+
+    public void addItemNoCreateCount(SyncBaseItem syncItem) {
         synchronized (items) {
             items.add(syncItem);
-            created++;
         }
     }
 
@@ -168,9 +171,6 @@ public class Base implements Serializable {
      */
     public void clearId() {
         id = null;
-        if (userState != null) {
-            userState.clearId();
-        }
     }
 
     public void increaseKills() {

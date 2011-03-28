@@ -40,8 +40,8 @@ public class DbCountComparisonBackup extends DbAbstractComparisonBackup {
     public DbCountComparisonBackup() {
     }
 
-    public DbCountComparisonBackup(BackupEntry backupEntry, UserState userState, CountComparison countComparison) {
-        super(backupEntry, userState);
+    public DbCountComparisonBackup(UserState userState, CountComparison countComparison) {
+        super(userState);
         count = countComparison.getCount();
     }
 
