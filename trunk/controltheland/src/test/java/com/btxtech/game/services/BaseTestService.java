@@ -14,6 +14,9 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryComman
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.action.ActionService;
+import com.btxtech.game.services.bot.BotService;
+import com.btxtech.game.services.bot.DbBotConfig;
+import com.btxtech.game.services.bot.DbBotItemCount;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBuilderType;
@@ -101,6 +104,8 @@ public class BaseTestService {
     private ActionService actionService;
     @Autowired
     private MovableService movableService;
+    @Autowired
+    private BotService botService;
     private SessionHolder sessionHolder;
     private MockHttpServletRequest mockHttpServletRequest;
     private MockHttpSession mockHttpSession;
@@ -405,6 +410,29 @@ public class BaseTestService {
         userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbSimulationLevel);
     }
 
+    // ------------------- Setup minimal bot --------------------
+
+    protected DbBotConfig setupMinimalBot() {
+        DbBotConfig dbBotConfig = botService.getDbBotConfigCrudServiceHelper().createDbChild();
+        dbBotConfig.setActionDelay(10);
+        dbBotConfig.setRealm(new Rectangle(4000, 4000, 3000, 3000));
+        dbBotConfig.setCore(new Rectangle(5000, 5000, 1000, 1000));
+        dbBotConfig.setCoreSuperiority(2);
+        dbBotConfig.setRealmSuperiority(1);
+        DbBotItemCount fundamental = dbBotConfig.getBaseFundamentalCrudServiceHelper().createDbChild();
+        fundamental.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        fundamental.setCount(1);
+        DbBotItemCount baseBuildup = dbBotConfig.getBaseBuildupCrudServiceHelper().createDbChild();
+        baseBuildup.setBaseItemType(itemService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
+        baseBuildup.setCount(1);
+        DbBotItemCount defence = dbBotConfig.getDefenceCrudServiceHelper().createDbChild();
+        defence.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        defence.setCount(1);
+        botService.getDbBotConfigCrudServiceHelper().updateDbChild(dbBotConfig);
+        botService.activate();
+        return dbBotConfig;
+    }
+
     // ------------------- Session Config --------------------
 
     private void beginOpenSessionInViewFilter() {
@@ -432,7 +460,7 @@ public class BaseTestService {
             throw new IllegalStateException("mockHttpSession is not null");
         }
         mockHttpSession = new MockHttpSession();
-        securityContext = SecurityContextHolder.createEmptyContext();;        
+        securityContext = SecurityContextHolder.createEmptyContext();
     }
 
     protected void endHttpSession() {

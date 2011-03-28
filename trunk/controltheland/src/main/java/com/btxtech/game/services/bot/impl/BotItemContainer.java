@@ -49,7 +49,7 @@ public class BotItemContainer {
         for (Integer needCount : needs.values()) {
             totalNeedCount += needCount;
         }
-        return totalNeedCount <= buildingItems.size();
+        return totalNeedCount <= botSyncBaseItems.size() && buildingItems.isEmpty();
     }
 
     public HashMap<BaseItemType, Integer> getNeeds() {

@@ -81,6 +81,14 @@ public class Rectangle implements Serializable {
         return index.getDelta(end);
     }
 
+    public boolean contains(Rectangle rectangle) {
+        return contains(rectangle.getStart()) && contains(rectangle.getEnd());
+    }
+
+    public boolean containsExclusive(Rectangle rectangle) {
+        return containsExclusive(rectangle.getStart()) && containsExclusive(rectangle.getEnd());
+    }
+
     /*
      * Adjoin or contains
      * The minLength specifies how long min containg height of weight must be

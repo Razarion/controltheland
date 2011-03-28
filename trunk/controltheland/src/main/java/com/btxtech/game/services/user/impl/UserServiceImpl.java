@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
     private String md5HashSalt;
 
     private HibernateTemplate hibernateTemplate;
-    private Map<DbBotConfig, UserState> botStates = new HashMap<DbBotConfig, UserState>();
+    private final Map<DbBotConfig, UserState> botStates = new HashMap<DbBotConfig, UserState>();
     private final Collection<UserState> userStates = new ArrayList<UserState>();
     private Log log = LogFactory.getLog(UserServiceImpl.class);
 
@@ -364,6 +364,16 @@ public class UserServiceImpl implements UserService {
         }
         return userStateCopy;
     }
+
+    @Override
+    public List<UserState> getAllBotUserStates() {
+        ArrayList<UserState> userStateCopy;
+        synchronized (botStates) {
+            userStateCopy = new ArrayList<UserState>(botStates.values());
+        }
+        return userStateCopy;
+    }
+
 
     @Override
     public void restore(Collection<UserState> restoreUserStates) {
