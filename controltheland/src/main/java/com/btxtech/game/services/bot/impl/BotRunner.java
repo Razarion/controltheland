@@ -117,6 +117,15 @@ public class BotRunner {
         if (base != null && baseService.isAlive(base.getSimpleBase())) {
             baseService.changeBotBaseName(base, botConfig.getName());
         }
+        if (!botConfig.getRealm().contains(botConfig.getCore())) {
+            throw new IllegalArgumentException("Realm must contain core. Realm: " + botConfig.getRealm() + " Core: " + botConfig.getCore());
+        }
+    }
+
+    public boolean isBuildup() {
+        return baseFundamental != null && baseFundamental.isFulfilled()
+                && baseBuilders != null && baseBuilders.isFulfilled()
+                && defence != null && defence.isFulfilled();
     }
 
     private void runBot() {

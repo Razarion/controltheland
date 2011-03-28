@@ -20,6 +20,7 @@ import com.btxtech.game.services.mgmt.impl.BackupEntry;
 import com.btxtech.game.services.utg.DbAbstractLevel;
 import com.btxtech.game.services.utg.condition.backup.DbAbstractComparisonBackup;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -46,13 +47,13 @@ public class UserState implements Serializable {
     private Base base;
     @ManyToOne
     private DbAbstractLevel currentAbstractLevel;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private UserItemTypeAccess userItemTypeAccess;
     @ManyToOne(optional = false)
     private BackupEntry backupEntry;    
     @Transient
     private String sessionId;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private DbAbstractComparisonBackup dbAbstractComparisonBackup;
 
     public boolean isRegistered() {

@@ -170,6 +170,8 @@ public class DbBotConfig implements CrudChild, CrudParent {
     public void init() {
         actionDelay = 3000;
         baseBuildup = new HashSet<DbBotItemCount>();
+        baseFundamental = new HashSet<DbBotItemCount>();
+        defence = new HashSet<DbBotItemCount>();
     }
 
     @Override

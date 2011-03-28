@@ -16,6 +16,7 @@ import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.BaseTestService;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.market.MarketEntry;
@@ -58,12 +59,14 @@ public class TestMgmtService extends BaseTestService {
     private UserService userService;
     @Autowired
     private MovableService movableService;
+    @Autowired
+    private BotService botService;
 
     @Test
     @DirtiesContext
     public void twoRegUserOneUnregUserAllOffline() throws Exception {
         configureMinimalGame();
-        System.out.println("**** testBackup ****");
+        System.out.println("**** twoRegUserOneUnregUserAllOffline ****");
 
         // U1 no real base, first level
         beginHttpSession();
@@ -125,13 +128,39 @@ public class TestMgmtService extends BaseTestService {
         verifyBases(newBases, oldBases);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        newBases = baseService.getBases();
+        newUserStates = userService.getAllUserStates();
+        Assert.assertEquals(2, newBases.size());
+        Assert.assertEquals(2, newUserStates.size());
+        verifyUserStates(newUserStates, oldUserStates);
+        verifyBases(newBases, oldBases);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test
     @DirtiesContext
     public void onlineUnregUser() throws Exception {
         configureMinimalGame();
-        System.out.println("**** testBackup ****");
+        System.out.println("**** onlineUnregUser ****");
 
         // Unreg user online, second level
         beginHttpSession();
@@ -162,21 +191,96 @@ public class TestMgmtService extends BaseTestService {
         endHttpSession();
     }
 
+    @Test
+    @DirtiesContext
+    public void bot() throws Exception {
+        configureMinimalGame();
+        System.out.println("**** bot ****");
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbBotConfig dbBotConfig = setupMinimalBot();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        while (!botService.getBotRunner(dbBotConfig).isBuildup()) {
+            Thread.sleep(100);
+        }
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(1, baseService.getBases().size());
+        Assert.assertEquals(3, baseService.getBases().get(0).getItems().size());
+        Assert.assertTrue(baseService.getBases().get(0).getUserState().isBot());
+        Assert.assertEquals(0, userService.getAllUserStates().size());
+        Assert.assertEquals(1, userService.getAllBotUserStates().size());
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        Assert.assertEquals(1, baseService.getBases().size());
+        Assert.assertTrue(baseService.getBases().get(0).getUserState().isBot());
+        Assert.assertEquals(0, userService.getAllUserStates().size());
+        Assert.assertEquals(1, userService.getAllBotUserStates().size());
+        Assert.assertEquals(3, baseService.getBases().get(0).getItems().size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        Assert.assertEquals(1, baseService.getBases().size());
+        Assert.assertTrue(baseService.getBases().get(0).getUserState().isBot());
+        Assert.assertEquals(0, userService.getAllUserStates().size());
+        Assert.assertEquals(1, userService.getAllBotUserStates().size());
+        Assert.assertEquals(3, baseService.getBases().get(0).getItems().size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void shutdownTest() throws Exception {
+        configureMinimalGame();
+        System.out.println("**** preconditionForShutdownTest ****");
+
+        // U1 real base, second level
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U1", "test", "test", "test");
+        userService.login("U1", "test");
+        movableService.getGameInfo();
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
     private void verifyUserStates(List<UserState> newUserStates, List<UserState> oldUserStates) {
         Assert.assertEquals(oldUserStates.size(), newUserStates.size());
         for (UserState oldUserState : oldUserStates) {
-            User oldUsr = oldUserState.getUser();
+            User oldUser = oldUserState.getUser();
             DbBotConfig oldBotConfig = oldUserState.getBotConfig();
             UserState newUserState = findUserState(oldUserState, newUserStates);
-            User newUsr = newUserState.getUser();
+            User newUser = newUserState.getUser();
             DbBotConfig newBotConfig = oldUserState.getBotConfig();
-            if (newUsr != null && newBotConfig != null) {
+            if (newUser != null && newBotConfig != null) {
                 Assert.fail("UserState is not allowed to have a User and a DbBotConfig");
             }
-            if (newUsr == null && newBotConfig == null) {
+            if (newUser == null && newBotConfig == null) {
                 Assert.fail("UserState is not allowed to have neither a User nor a DbBotConfig");
             }
-            Assert.assertEquals(oldUsr, newUsr);
+            Assert.assertEquals(oldUser, newUser);
             Assert.assertEquals(oldBotConfig, newBotConfig);
             Assert.assertEquals(oldUserState.getCurrentAbstractLevel(), newUserState.getCurrentAbstractLevel());
             verifyUserItemTypeAccess(oldUserState.getUserItemTypeAccess(), newUserState.getUserItemTypeAccess());
@@ -267,7 +371,6 @@ public class TestMgmtService extends BaseTestService {
         Assert.assertEquals(oldBase.getStartTime(), newBase.getStartTime());
         Assert.assertEquals(oldBase.getTotalEarned(), newBase.getTotalEarned(), 0.0);
         Assert.assertEquals(oldBase.getTotalSpent(), newBase.getTotalSpent(), 0.0);
-        Assert.assertEquals(oldBase.getUptime(), newBase.getUptime());
         verifyItems(oldBase.getItems(), newBase.getItems());
     }
 

@@ -25,7 +25,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
@@ -115,4 +119,7 @@ public class BotServiceImpl implements BotService {
         }
     }
 
+    public BotRunner getBotRunner(DbBotConfig dbBotConfig) {
+        return botRunners.get(dbBotConfig);
+    }
 }

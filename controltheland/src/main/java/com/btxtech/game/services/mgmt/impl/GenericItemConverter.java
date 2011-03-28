@@ -102,9 +102,11 @@ public class GenericItemConverter {
         Set<UserState> userStates = new HashSet<UserState>();
         for (UserState userState : userService.getAllUserStates()) {
             userState.prepareForBackup(backupEntry);
-            if (userState.isRegistered() || userState.isBot()) {
-                userStates.add(userState);
-            }
+            userStates.add(userState);
+        }
+        for (UserState userState : userService.getAllBotUserStates()) {
+            userState.prepareForBackup(backupEntry);
+            userStates.add(userState);
         }
 
         backupEntry.setUserStates(userStates);
@@ -129,6 +131,9 @@ public class GenericItemConverter {
                             base.setAbandoned();
                             userStateAbandoned.add(userState);
                         }
+                    } else {
+                        // Due to an error in the UserServiceImpl.onSessionTimedOut()
+                        base.setAbandoned();
                     }
                     base.addItemNoCreateCount(syncItem);
                 } else if (genericItem instanceof GenericResourceItem) {
