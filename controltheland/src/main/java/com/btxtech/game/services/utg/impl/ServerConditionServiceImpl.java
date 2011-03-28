@@ -14,12 +14,15 @@
 package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.utg.condition.*;
+import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
+import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
+import com.btxtech.game.jsre.common.utg.condition.CountComparison;
+import com.btxtech.game.jsre.common.utg.condition.SyncItemIdComparison;
+import com.btxtech.game.jsre.common.utg.condition.SyncItemTypeComparison;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.impl.ConditionServiceImpl;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.mgmt.impl.BackupEntry;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbAbstractLevel;
@@ -29,12 +32,12 @@ import com.btxtech.game.services.utg.condition.backup.DbAbstractComparisonBackup
 import com.btxtech.game.services.utg.condition.backup.DbCountComparisonBackup;
 import com.btxtech.game.services.utg.condition.backup.DbSyncItemIdComparisonBackup;
 import com.btxtech.game.services.utg.condition.backup.DbSyncItemTypeComparisonBackup;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: beat
@@ -52,7 +55,6 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState> 
     @Autowired
     private ItemService itemService;
     private final Map<UserState, AbstractConditionTrigger<UserState>> triggerMap = new HashMap<UserState, AbstractConditionTrigger<UserState>>();
-    private Log log = LogFactory.getLog(ServerConditionServiceImpl.class);
 
     @Override
     protected void saveAbstractConditionTrigger(AbstractConditionTrigger<UserState> abstractConditionTrigger) {
@@ -93,50 +95,47 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState> 
         triggerSimple(ConditionTrigger.TUTORIAL);
     }
 
-    public void restore(Collection<UserState> userStates, BackupEntry backupEntry) {
+    public void restore(Collection<UserState> userStates) {
         synchronized (triggerMap) {
             triggerMap.clear();
             for (UserState userState : userStates) {
-                DbAbstractLevel dbAbstractLevel = userState.getCurrentAbstractLevel();
-                if(dbAbstractLevel == null) {
+                if (userState.isBot()) {
                     continue;
                 }
+                DbAbstractLevel dbAbstractLevel = userState.getCurrentAbstractLevel();
                 dbAbstractLevel = userGuidanceService.getDbLevel(dbAbstractLevel.getId());
                 userState.setCurrentAbstractLevel(dbAbstractLevel);
                 activateCondition(dbAbstractLevel.getConditionConfig(), userState);
-            }
-            for (DbAbstractComparisonBackup dbAbstractComparisonBackup : backupEntry.getAbstractComparison()) {
-                UserState userState = dbAbstractComparisonBackup.getUserState();
-                AbstractConditionTrigger abstractConditionTrigger = triggerMap.get(userState);
-                if (abstractConditionTrigger != null) {
+
+                DbAbstractComparisonBackup dbAbstractComparisonBackup = userState.getDbAbstractComparisonBackup();
+                if (dbAbstractComparisonBackup != null) {
+                    AbstractConditionTrigger abstractConditionTrigger = triggerMap.get(userState);
                     AbstractComparison abstractComparison = abstractConditionTrigger.getAbstractComparison();
                     dbAbstractComparisonBackup.restore(abstractComparison, itemService);
-                } else {
-                    log.error("Restore conditions: abstractConditionTrigger==null. UserState: " + userState);
+                    userState.setDbAbstractComparisonBackup(null);
                 }
+
             }
         }
     }
 
-    public void backup(BackupEntry backupEntry) {
-        Set<DbAbstractComparisonBackup> comparisonBackups = new HashSet<DbAbstractComparisonBackup>();
+    public void backup() {
         synchronized (triggerMap) {
             for (Map.Entry<UserState, AbstractConditionTrigger<UserState>> entry : triggerMap.entrySet()) {
                 AbstractComparison abstractComparison = entry.getValue().getAbstractComparison();
                 DbAbstractComparisonBackup dbAbstractComparisonBackup = null;
                 if (abstractComparison instanceof CountComparison) {
-                    dbAbstractComparisonBackup = new DbCountComparisonBackup(backupEntry, entry.getKey(), (CountComparison) abstractComparison);
+                    dbAbstractComparisonBackup = new DbCountComparisonBackup(entry.getKey(), (CountComparison) abstractComparison);
                 } else if (abstractComparison instanceof SyncItemIdComparison) {
-                    dbAbstractComparisonBackup = new DbSyncItemIdComparisonBackup(backupEntry, entry.getKey(), (SyncItemIdComparison) abstractComparison);
+                    dbAbstractComparisonBackup = new DbSyncItemIdComparisonBackup(entry.getKey(), (SyncItemIdComparison) abstractComparison);
                 } else if (abstractComparison instanceof SyncItemTypeComparison) {
-                    dbAbstractComparisonBackup = new DbSyncItemTypeComparisonBackup(backupEntry, entry.getKey(), (SyncItemTypeComparison) abstractComparison, itemService);
+                    dbAbstractComparisonBackup = new DbSyncItemTypeComparisonBackup(entry.getKey(), (SyncItemTypeComparison) abstractComparison, itemService);
                 }
 
                 if (dbAbstractComparisonBackup != null) {
-                    comparisonBackups.add(dbAbstractComparisonBackup);
+                    entry.getKey().setDbAbstractComparisonBackup(dbAbstractComparisonBackup);
                 }
             }
         }
-        backupEntry.setAbstractComparison(comparisonBackups);
     }
 }

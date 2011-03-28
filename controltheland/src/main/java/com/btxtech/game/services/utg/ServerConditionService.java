@@ -14,8 +14,8 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.common.utg.ConditionService;
-import com.btxtech.game.services.mgmt.impl.BackupEntry;
 import com.btxtech.game.services.user.UserState;
+
 import java.util.Collection;
 
 /**
@@ -26,7 +26,7 @@ import java.util.Collection;
 public interface ServerConditionService extends ConditionService<UserState> {
     void onTutorialFinished(UserState userState);
 
-    void backup(BackupEntry backupEntry);
+    void backup();
 
-    void restore(Collection<UserState> userStates, BackupEntry backupEntry);
+    void restore(Collection<UserState> userStates);
 }

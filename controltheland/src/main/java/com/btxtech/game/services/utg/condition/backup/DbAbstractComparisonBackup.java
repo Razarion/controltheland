@@ -42,8 +42,6 @@ public abstract class DbAbstractComparisonBackup {
     @OneToOne
     // (optional = false) does not work
     private UserState userState;
-    @ManyToOne(optional = false)
-    private BackupEntry backupEntry;
 
     /**
      * Used by hibernate
@@ -51,8 +49,7 @@ public abstract class DbAbstractComparisonBackup {
     protected DbAbstractComparisonBackup() {
     }
 
-    protected DbAbstractComparisonBackup(BackupEntry backupEntry, UserState userState) {
-        this.backupEntry = backupEntry;
+    protected DbAbstractComparisonBackup(UserState userState) {
         this.userState = userState;
     }
 

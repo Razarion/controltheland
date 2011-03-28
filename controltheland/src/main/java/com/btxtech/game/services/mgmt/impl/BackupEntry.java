@@ -14,17 +14,18 @@
 package com.btxtech.game.services.mgmt.impl;
 
 import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.utg.condition.backup.DbAbstractComparisonBackup;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import com.btxtech.game.services.user.UserState;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * User: beat
@@ -38,9 +39,9 @@ public class BackupEntry {
     private Integer id;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "backupEntry", fetch = FetchType.EAGER)
     private Set<GenericItem> items;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "backupEntry", fetch = FetchType.EAGER)
-    private Set<DbAbstractComparisonBackup> abstractComparison;
     private Date timeStamp;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "backupEntry", fetch = FetchType.EAGER)
+    private Set<UserState> userStates;
 
     @Override
     public boolean equals(Object o) {
@@ -63,14 +64,6 @@ public class BackupEntry {
 
     public void setItems(Set<GenericItem> items) {
         this.items = items;
-    }
-
-    public Collection<DbAbstractComparisonBackup> getAbstractComparison() {
-        return abstractComparison;
-    }
-
-    public void setAbstractComparison(Set<DbAbstractComparisonBackup> abstractComparison) {
-        this.abstractComparison = abstractComparison;
     }
 
     public Date getTimeStamp() {
@@ -101,5 +94,13 @@ public class BackupEntry {
         } else {
             return 0;
         }
+    }
+
+    public Set<UserState> getUserStates() {
+        return userStates;
+    }
+
+    public void setUserStates(Set<UserState> userStates) {
+        this.userStates = userStates;
     }
 }
