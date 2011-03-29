@@ -32,8 +32,6 @@ import java.util.List;
 public interface UserGuidanceService {
     GameStartupSeq getColdStartupSeq();
 
-    void promote(UserState userState);
-
     void promote(UserState userState, int newDbLevelId);
 
     DbRealGameLevel getDbLevel();

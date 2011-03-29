@@ -87,6 +87,14 @@ public class OwnSingleSelectedPanel extends AbsolutePanel implements HintWidgetP
 
     @Override
     public Widget getHintWidgetAndEnsureVisible(CockpitSpeechBubbleHintConfig config) throws HintWidgetException {
-        return buildupItemPanel.getHintWidgetAndEnsureVisible(config);
+        Widget widget = buildupItemPanel.getHintWidgetAndEnsureVisible(config);
+        if (widget != null) {
+            return widget;
+        }
+        widget = specialFunctionPanel.getHintWidgetAndEnsureVisible(config);
+        if (widget != null) {
+            return widget;
+        }
+        throw new HintWidgetException("OwnSingleSelectedPanel: unknown Button", config);
     }
 }

@@ -3,6 +3,7 @@ package com.btxtech.game.services.tutorial;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -23,6 +24,7 @@ public class DbTaskAllowedItem implements CrudChild<DbTaskConfig> {
     private Integer id;
     @ManyToOne(fetch = FetchType.LAZY)
     private DbBaseItemType dbBaseItemType;
+    @Column(name = "theCount")
     private int count;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "dbTaskConfig", insertable = false, updatable = false, nullable = false)

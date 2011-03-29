@@ -28,9 +28,6 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Time: 23:13:41
  */
 public class CountComparisonConfigPanel extends Panel {
-    @SpringBean
-    private UserGuidanceService userGuidanceService;
-
     public CountComparisonConfigPanel(String id) {
         super(id);
         setDefaultModel(new CompoundPropertyModel<DbCountComparisonConfig>(new IModel<DbCountComparisonConfig>() {

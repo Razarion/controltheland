@@ -65,7 +65,6 @@
         <mapping class="com.btxtech.game.services.utg.DbRealGameLevel"/>
         <mapping class="com.btxtech.game.services.utg.DbItemTypeLimitation"/>
         <mapping class="com.btxtech.game.services.utg.DbScope"/>
-        <mapping class="com.btxtech.game.services.utg.condition.DbComparisonItemCount"/>
         <mapping class="com.btxtech.game.services.utg.DbTutorialProgress"/>
         <mapping class="com.btxtech.game.services.utg.DbEventTrackingStart"/>
         <mapping class="com.btxtech.game.services.utg.DbEventTrackingItem"/>
@@ -74,12 +73,14 @@
         <mapping class="com.btxtech.game.services.utg.DbCommand"/>
         <mapping class="com.btxtech.game.services.utg.DbSelectionTrackingItem"/>
         <mapping class="com.btxtech.game.services.utg.DbScrollTrackingItem"/>
+        <mapping class="com.btxtech.game.services.utg.condition.DbComparisonItemCount"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbConditionConfig"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbCountComparisonConfig"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbSyncItemIdComparisonConfig"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbCockpitButtonClickedComparisonConfig"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbSyncItemIdPositionComparisonConfig"/>
+        <mapping class="com.btxtech.game.services.utg.condition.DbContainedInComparisonConfig"/>
         <mapping class="com.btxtech.game.services.forum.AbstractForumEntry"/>
         <mapping class="com.btxtech.game.services.forum.SubForum"/>
         <mapping class="com.btxtech.game.services.forum.Category"/>

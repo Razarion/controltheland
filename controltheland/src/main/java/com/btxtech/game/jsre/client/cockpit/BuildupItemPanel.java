@@ -218,7 +218,7 @@ public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvide
     @Override
     public Widget getHintWidgetAndEnsureVisible(CockpitSpeechBubbleHintConfig config) throws HintWidgetException {
         if (config.getCockpitWidgetEnum() != CockpitWidgetEnum.BUILDUP_ITEM) {
-            throw new HintWidgetException(this + " Only BUILDUP_ITEM supported", config);
+            return null;
         }
         if (!isVisible()) {
             throw new HintWidgetException(this + " BuildupItemPanel not visible", config);
@@ -228,7 +228,7 @@ public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvide
             scrollPanel.setHorizontalScrollPosition(widget.getAbsoluteLeft() - scrollPanel.getAbsoluteLeft());
             return widget;
         } else {
-            throw new HintWidgetException(this + " no such item type id: " + config.getBaseItemTypeId(), config);
+            return null;
         }
     }
 

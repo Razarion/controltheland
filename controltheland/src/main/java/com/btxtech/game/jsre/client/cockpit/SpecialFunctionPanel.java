@@ -18,25 +18,30 @@ import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemContainer;
+import com.btxtech.game.jsre.common.tutorial.CockpitSpeechBubbleHintConfig;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * User: beat
  * Date: 18.11.2010
  * Time: 10:51:09
  */
-public class SpecialFunctionPanel extends VerticalPanel {
+public class SpecialFunctionPanel extends VerticalPanel implements HintWidgetProvider {
     private static final String TOOL_TIP_UPGRADE = "Upgrade this structure or unit";
     private static final String TOOL_TIP_UNLOAD = "Unload containing units";
     private static final String TOOL_TIP_LAUNCH = "Launch the missile";
 
     private static final int WIDTH = 92;
     private static final int HEIGHT = 76;
+    private Widget unload;
+    private Widget upgrade;
+    private Widget launch;
 
     public SpecialFunctionPanel() {
         setPixelSize(WIDTH, HEIGHT);
@@ -67,6 +72,7 @@ public class SpecialFunctionPanel extends VerticalPanel {
         });
         button.getUpDisabledFace().setImage(new Image("/images/cockpit/upgradeButton-disabled-up.png"));
         button.setEnabled(ClientServices.getInstance().getItemTypeAccess().isAllowed(upgradeable.getBaseItemType().getUpgradeable()));
+        upgrade = button;
         add(button);
     }
 
@@ -80,6 +86,7 @@ public class SpecialFunctionPanel extends VerticalPanel {
         });
         horizontalPanel.add(button);
         horizontalPanel.add(new HTML("&nbsp;Items: " + syncItemContainer.getContainedItems().size()));
+        unload = button;
         add(horizontalPanel);
     }
 
@@ -90,6 +97,29 @@ public class SpecialFunctionPanel extends VerticalPanel {
                 Cockpit.getInstance().getCockpitMode().setUnloadMode();
             }
         });
+        launch = button;
         add(button);
+    }
+
+    @Override
+    public Widget getHintWidgetAndEnsureVisible(CockpitSpeechBubbleHintConfig config) throws HintWidgetException {
+        switch (config.getCockpitWidgetEnum()) {
+            case UNLOAD:
+                if (unload == null) {
+                    throw new HintWidgetException("Unload button is not initialised", config);
+                }
+                return unload;
+            case LAUNCH:
+                if (upgrade == null) {
+                    throw new HintWidgetException("Upgrade button is not initialised", config);
+                }
+                return upgrade;
+            case UPGRADE:
+                if (launch == null) {
+                    throw new HintWidgetException("Launch button is not initialised", config);
+                }
+                return launch;
+        }
+        return null;
     }
 }

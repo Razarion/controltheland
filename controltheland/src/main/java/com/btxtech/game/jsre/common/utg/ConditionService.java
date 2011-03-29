@@ -51,4 +51,5 @@ public interface ConditionService<T> {
 
     void onBaseDeleted(SimpleBase base);
 
+    void setConditionServiceListener(ConditionServiceListener<T> conditionServiceListener);
 }
