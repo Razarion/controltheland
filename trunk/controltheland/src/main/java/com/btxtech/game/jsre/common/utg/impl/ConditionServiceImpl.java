@@ -19,9 +19,11 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.utg.ConditionService;
+import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.CockpitButtonTrigger;
+import com.btxtech.game.jsre.common.utg.condition.ContainedInTrigger;
 import com.btxtech.game.jsre.common.utg.condition.SimpleConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.SyncItemConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.ValueConditionTrigger;
@@ -35,12 +37,26 @@ import com.google.gwt.event.dom.client.ClickEvent;
  * Time: 17:21:24
  */
 public abstract class ConditionServiceImpl<T> implements ConditionService<T> {
+    private ConditionServiceListener<T> conditionServiceListener;
 
     protected abstract void saveAbstractConditionTrigger(AbstractConditionTrigger<T> abstractConditionTrigger);
 
     protected abstract AbstractConditionTrigger<T> getAbstractConditionPrivate(SimpleBase simpleBase, ConditionTrigger conditionTrigger);
 
-    protected abstract void conditionPassed(T t);
+    protected void cleanup() {
+
+    }
+
+    protected void conditionPassed(T t) {
+        cleanup();
+        if(conditionServiceListener != null) {
+            conditionServiceListener.conditionPassed(t);
+        }
+    }
+
+    public void setConditionServiceListener(ConditionServiceListener<T> conditionServiceListener) {
+        this.conditionServiceListener = conditionServiceListener;
+    }
 
     @Override
     public void activateCondition(ConditionConfig conditionConfig, T t) {
@@ -130,6 +146,19 @@ public abstract class ConditionServiceImpl<T> implements ConditionService<T> {
             conditionPassed(cockpitButtonTrigger.getUserObject());
         }
     }
+
+
+    public void onContainedInChanged(boolean containedIn) {
+        ContainedInTrigger<T> containedInTrigger = getAbstractCondition(null, ConditionTrigger.CONTAINED_IN);
+        if (containedInTrigger == null) {
+            return;
+        }
+        containedInTrigger.onContainedInChanged(containedIn);
+        if (containedInTrigger.isFulfilled()) {
+            conditionPassed(containedInTrigger.getUserObject());
+        }
+    }
+    
 
     //------ Server------
 

@@ -116,10 +116,6 @@ public class DbItemTypeAndPosition implements CrudChild<DbTaskConfig> {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public Integer getBaseId() {
         return baseId;
     }

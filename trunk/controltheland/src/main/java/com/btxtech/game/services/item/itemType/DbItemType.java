@@ -150,6 +150,9 @@ public abstract class DbItemType implements Serializable, DbItemTypeI {
 
     protected Collection<Integer> toInt(Collection<DbBaseItemType> items) {
         ArrayList<Integer> ints = new ArrayList<Integer>();
+        if(items == null) {
+            return ints;
+        }
         for (DbBaseItemType item : items) {
             ints.add(item.getId());
         }

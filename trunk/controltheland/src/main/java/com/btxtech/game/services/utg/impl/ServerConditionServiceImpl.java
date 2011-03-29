@@ -86,11 +86,6 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState> 
     }
 
     @Override
-    protected void conditionPassed(UserState userState) {
-        userGuidanceService.promote(userState);
-    }
-
-    @Override
     public void onTutorialFinished(UserState userState) {
         triggerSimple(ConditionTrigger.TUTORIAL);
     }

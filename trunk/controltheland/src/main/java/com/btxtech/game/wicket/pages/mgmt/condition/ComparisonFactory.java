@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbCockpitButtonClickedComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
+import com.btxtech.game.services.utg.condition.DbContainedInComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemIdComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemIdPositionComparisonConfig;
@@ -42,7 +43,8 @@ public class ComparisonFactory {
         SCROLL(ConditionTrigger.SCROLL),
         COCKPIT_BUTTON_EVENT(ConditionTrigger.COCKPIT_BUTTON_EVENT, DbCockpitButtonClickedComparisonConfig.class),
         MONEY_INCREASED(ConditionTrigger.MONEY_INCREASED, DbCountComparisonConfig.class),
-        XP_INCREASED(ConditionTrigger.XP_INCREASED, DbCountComparisonConfig.class);
+        XP_INCREASED(ConditionTrigger.XP_INCREASED, DbCountComparisonConfig.class),
+        CONTAINED_IN(ConditionTrigger.CONTAINED_IN, DbContainedInComparisonConfig.class);
 
         private ConditionTrigger conditionTrigger;
         private List<Class<? extends DbAbstractComparisonConfig>> comparisons;
@@ -83,6 +85,8 @@ public class ComparisonFactory {
                 return new SyncItemIdPositionComparisonConfigPanel(id);
             } else if (config instanceof DbCountComparisonConfig) {
                 return new CountComparisonConfigPanel(id);
+            } else if (config instanceof DbContainedInComparisonConfig) {
+                return new ContainedInComparisonConfigPanel(id);
             } else {
                 throw new IllegalArgumentException("No panel for " + config);
             }

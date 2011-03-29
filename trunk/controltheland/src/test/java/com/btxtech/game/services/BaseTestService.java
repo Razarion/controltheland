@@ -21,6 +21,7 @@ import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBuilderType;
 import com.btxtech.game.services.item.itemType.DbFactoryType;
+import com.btxtech.game.services.item.itemType.DbItemContainerType;
 import com.btxtech.game.services.item.itemType.DbMovableType;
 import com.btxtech.game.services.item.itemType.DbWeaponType;
 import com.btxtech.game.services.market.MarketEntry;
@@ -30,6 +31,7 @@ import com.btxtech.game.services.terrain.DbSurfaceRect;
 import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainService;
+import com.btxtech.game.services.tutorial.DbItemTypeAndPosition;
 import com.btxtech.game.services.tutorial.DbStepConfig;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
@@ -40,6 +42,7 @@ import com.btxtech.game.services.utg.DbSimulationLevel;
 import com.btxtech.game.services.utg.LevelActivationException;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
+import com.btxtech.game.services.utg.condition.DbContainedInComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
@@ -84,6 +87,8 @@ public class BaseTestService {
     protected static int TEST_FACTORY_ITEM_ID = -1;
     protected static final String TEST_ATTACK_ITEM = "TestAttackItem";
     protected static int TEST_ATTACK_ITEM_ID = -1;
+    protected static final String TEST_CONTAINER_ITEM = "TestContainerItem";
+    protected static int TEST_CONTAINER_ITEM_ID = -1;
     protected static final String TEST_SIMULATED_LEVEL = "TestSimulatedLevel";
     protected static final String TEST_REAL_GAME_CREATE_BASE_LEVEL = "TestRealGameCreateBaseLevel";
 
@@ -182,9 +187,11 @@ public class BaseTestService {
 
         // Item Types
         createAttackBaseItemType();
+        createContainerBaseItemType();
         createFactoryBaseItemType();
         createBuilderBaseItemType();
         finishAttackBaseItemType();
+        finishContainerBaseItemType();
         // Terrain
         setupMinimalTerrain();
         // Level
@@ -239,6 +246,7 @@ public class BaseTestService {
         dbFactoryType.setProgress(1000);
         Set<DbBaseItemType> ableToBuild = new HashSet<DbBaseItemType>();
         ableToBuild.add((DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID));
+        ableToBuild.add((DbBaseItemType) itemService.getDbItemType(TEST_CONTAINER_ITEM_ID));
         dbFactoryType.setAbleToBuild(ableToBuild);
         dbBaseItemType.setFactoryType(dbFactoryType);
 
@@ -285,6 +293,40 @@ public class BaseTestService {
         itemService.activate();
     }
 
+    protected DbBaseItemType createContainerBaseItemType() {
+        DbBaseItemType dbBaseItemType = new DbBaseItemType();
+        dbBaseItemType.setName(TEST_CONTAINER_ITEM);
+        dbBaseItemType.setTerrainType(TerrainType.LAND);
+        dbBaseItemType.setWidth(100);
+        dbBaseItemType.setHeight(100);
+        dbBaseItemType.setHealth(10);
+        dbBaseItemType.setBuildup(10);
+        // DbItemContainerType
+        DbItemContainerType dbItemContainerType = new DbItemContainerType();
+        dbItemContainerType.setMaxCount(1);
+        dbBaseItemType.setDbItemContainerType(dbItemContainerType);
+        // DbMovableType
+        DbMovableType dbMovableType = new DbMovableType();
+        dbMovableType.setSpeed(1000);
+        dbMovableType.setTerrainType(SurfaceType.LAND);
+        dbBaseItemType.setMovableType(dbMovableType);
+
+        itemService.saveDbItemType(dbBaseItemType);
+        itemService.activate();
+        TEST_CONTAINER_ITEM_ID = dbBaseItemType.getId();
+        return dbBaseItemType;
+    }
+
+    private void finishContainerBaseItemType() {
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemType(TEST_CONTAINER_ITEM_ID);
+        // DbItemContainerType
+        Set<DbBaseItemType> ableToContain = new HashSet<DbBaseItemType>();
+        ableToContain.add(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        dbBaseItemType.getDbItemContainerType().setAbleToContain(ableToContain);
+
+        itemService.saveDbItemType(dbBaseItemType);
+        itemService.activate();
+    }
 
     // ------------------- Setup Market --------------------
 
@@ -408,6 +450,44 @@ public class BaseTestService {
         dbStepConfig.setConditionConfig(dbConditionConfig);
 
         userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbSimulationLevel);
+    }
+
+    protected DbSimulationLevel setupContainedInSimulationLevel(boolean containedIn) throws LevelActivationException {
+        DbSimulationLevel dbSimulationLevel = (DbSimulationLevel) userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbSimulationLevel.class);
+        dbSimulationLevel.setName("Test");
+        // Tutorial
+        DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().createDbChild();
+        dbTutorialConfig.setOwnBaseId(1);
+        dbSimulationLevel.setDbTutorialConfig(dbTutorialConfig);
+        // Terrain
+        DbTerrainSetting dbTerrainSetting = setupMinimalSimulatedTerrain();
+        dbTutorialConfig.setDbTerrainSetting(dbTerrainSetting);
+        // Task
+        DbTaskConfig dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().createDbChild();
+        DbItemTypeAndPosition bulldozer = dbTaskConfig.getItemCrudServiceHelper().createDbChild();
+        bulldozer.setSyncItemId(1);
+        bulldozer.setPosition(new Index(100, 100));
+        bulldozer.setItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        bulldozer.setBaseId(1);
+        DbItemTypeAndPosition container = dbTaskConfig.getItemCrudServiceHelper().createDbChild();
+        container.setSyncItemId(2);
+        container.setPosition(new Index(150, 150));
+        container.setItemType(itemService.getDbBaseItemType(TEST_CONTAINER_ITEM_ID));
+        container.setBaseId(1);
+        // Step
+        DbStepConfig dbStepConfig = dbTaskConfig.getStepConfigCrudServiceHelper().createDbChild();
+        // Condition
+        DbConditionConfig dbConditionConfig = new DbConditionConfig();
+        dbConditionConfig.setConditionTrigger(ConditionTrigger.CONTAINED_IN);
+        DbContainedInComparisonConfig containedInComparisonConfig = new DbContainedInComparisonConfig();
+        containedInComparisonConfig.setContainedIn(containedIn);
+        dbConditionConfig.setDbAbstractComparisonConfig(containedInComparisonConfig);
+        dbStepConfig.setConditionConfig(dbConditionConfig);
+        tutorialService.getDbTutorialCrudRootServiceHelper().updateDbChild(dbTutorialConfig);
+
+        userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbSimulationLevel);
+        userGuidanceService.activateLevels();
+        return dbSimulationLevel;
     }
 
     // ------------------- Setup minimal bot --------------------

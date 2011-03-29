@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
@@ -55,7 +56,7 @@ import java.util.List;
  * Time: 22:04:02
  */
 @Component("userGuidanceService")
-public class UserGuidanceServiceImpl implements UserGuidanceService {
+public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionServiceListener<UserState> {
     public static final String NO_MISSION_TARGET = "<center>There are no new mission targets.<br><h1>Please check back later</h1></center>";
     @Autowired
     private BaseService baseService;
@@ -91,6 +92,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
     @PostConstruct
     public void init() {
         crudServiceHelperHibernate.init(DbAbstractLevel.class, "orderIndex");
+        serverConditionService.setConditionServiceListener(this);
     }
 
     @Override
@@ -123,8 +125,9 @@ public class UserGuidanceServiceImpl implements UserGuidanceService {
         promote(userState, dbNextAbstractLevel);
     }
 
+
     @Override
-    public void promote(UserState userState) {
+    public void conditionPassed(UserState userState) {
         DbAbstractLevel dbOldAbstractLevel = userState.getCurrentAbstractLevel();
         DbAbstractLevel dbNextAbstractLevel = getNextDbLevel(dbOldAbstractLevel);
         promote(userState, dbNextAbstractLevel);

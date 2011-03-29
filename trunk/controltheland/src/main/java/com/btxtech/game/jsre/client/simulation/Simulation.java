@@ -28,6 +28,7 @@ import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
@@ -40,7 +41,7 @@ import java.util.List;
  * Date: 17.07.2010
  * Time: 17:21:24
  */
-public class Simulation {
+public class Simulation implements ConditionServiceListener<Object> {
     private static final Simulation SIMULATION = new Simulation();
     private SimulationInfo simulationInfo;
     private Task activeTask;
@@ -69,6 +70,7 @@ public class Simulation {
             TerrainView.getInstance().addTerrainScrollListener(SimulationConditionServiceImpl.getInstance());
             tutorialGui = new TutorialGui();
         }
+        SimulationConditionServiceImpl.getInstance().setConditionServiceListener(this);
         ClientBase.getInstance().setBase(tutorialConfig.getOwnBase());
         Cockpit.getInstance().updateBase();
         tutorialTime = System.currentTimeMillis();
@@ -162,10 +164,10 @@ public class Simulation {
         }
         SelectionHandler.getInstance().removeSelectionListener(SimulationConditionServiceImpl.getInstance());
         TerrainView.getInstance().removeTerrainScrollListener(SimulationConditionServiceImpl.getInstance());
-
+        SimulationConditionServiceImpl.getInstance().setConditionServiceListener(null);
     }
 
-    public void conditionPassed() {
+    public void conditionPassed(Object ignore) {
         activeTask.runNextStep();
         if (activeTask.isFulfilled()) {
             long time = System.currentTimeMillis();
