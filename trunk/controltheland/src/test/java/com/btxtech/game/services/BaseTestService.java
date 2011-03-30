@@ -16,7 +16,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
-import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.bot.BotService;
@@ -46,10 +45,12 @@ import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.services.utg.DbSimulationLevel;
 import com.btxtech.game.services.utg.LevelActivationException;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.condition.DbComparisonItemCount;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbContainedInComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig;
+import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import org.easymock.EasyMock;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
@@ -142,11 +143,19 @@ public class BaseTestService {
         return new SyncBaseItem(new Id(1, -100, -100), new Index(100, 100), (BaseItemType) itemService.getItemType(itemTypeId), services, new SimpleBase(1));
     }
 
+    protected Id getFirstSynItemId(SimpleBase simpleBase, int itemTypeId) {
+        for (SyncItemInfo syncItemInfo : movableService.getAllSyncInfo()) {
+            if (syncItemInfo.getBase().equals(simpleBase) && syncItemInfo.getItemTypeId() == itemTypeId) {
+                return syncItemInfo.getId();
+            }
+        }
+        throw new IllegalStateException("No such sync item: ItemTypeID=" + itemTypeId + " simpleBase=" + simpleBase);
+    }
 
     // ------------------- Action Service --------------------
 
-    protected void waitForActionServiceDone(long timeout) throws TimeoutException, InterruptedException {
-        long maxTime = System.currentTimeMillis() + timeout;
+    protected void waitForActionServiceDone() throws TimeoutException, InterruptedException {
+        long maxTime = System.currentTimeMillis() + 100000;
         while (actionService.isBusy()) {
             if (System.currentTimeMillis() > maxTime) {
                 throw new TimeoutException();
@@ -185,15 +194,6 @@ public class BaseTestService {
         attackCommand.setTimeStamp();
         baseCommands.add(attackCommand);
         movableService.sendCommands(baseCommands);
-    }
-
-    protected Id getFirstSynItemId(SimpleBase simpleBase, int itemTypeId) {
-        for (SyncItemInfo syncItemInfo : movableService.getAllSyncInfo()) {
-            if (syncItemInfo.getBase().equals(simpleBase) && syncItemInfo.getItemTypeId() == itemTypeId) {
-                return syncItemInfo.getId();
-            }
-        }
-        throw new IllegalStateException("No such sync item: ItemTypeID=" + itemTypeId + " simpleBase=" + simpleBase);
     }
 
     // ------------------- Setup Minimal Game Config --------------------            
@@ -241,7 +241,7 @@ public class BaseTestService {
         dbBaseItemType.setBuilderType(dbBuilderType);
         // DbMovableType
         DbMovableType dbMovableType = new DbMovableType();
-        dbMovableType.setSpeed(1000);
+        dbMovableType.setSpeed(10000);
         dbMovableType.setTerrainType(SurfaceType.LAND);
         dbBaseItemType.setMovableType(dbMovableType);
 
@@ -290,7 +290,7 @@ public class BaseTestService {
         dbBaseItemType.setWeaponType(dbWeaponType);
         // DbMovableType
         DbMovableType dbMovableType = new DbMovableType();
-        dbMovableType.setSpeed(1000);
+        dbMovableType.setSpeed(10000);
         dbMovableType.setTerrainType(SurfaceType.LAND);
         dbBaseItemType.setMovableType(dbMovableType);
 
@@ -325,7 +325,7 @@ public class BaseTestService {
         dbBaseItemType.setDbItemContainerType(dbItemContainerType);
         // DbMovableType
         DbMovableType dbMovableType = new DbMovableType();
-        dbMovableType.setSpeed(1000);
+        dbMovableType.setSpeed(10000);
         dbMovableType.setTerrainType(SurfaceType.LAND);
         dbBaseItemType.setMovableType(dbMovableType);
 
@@ -413,6 +413,7 @@ public class BaseTestService {
     protected void setupLevels() throws LevelActivationException {
         setupSimulationLevel(TEST_SIMULATED_LEVEL);
         setupRealGameCreateBaseLevel();
+        setupRealGameBuildFactoryLevel();
         userGuidanceService.activateLevels();
     }
 
@@ -422,7 +423,8 @@ public class BaseTestService {
         // Create Base
         dbRealGameLevel.setCreateRealBase(true);
         dbRealGameLevel.setStartItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
-        dbRealGameLevel.setStartRectangle(new Rectangle(0, 0, 100, 100));
+        dbRealGameLevel.setStartRectangle(new Rectangle(0, 0, 10000, 10000));
+        dbRealGameLevel.setStartItemFreeRange(300);
         // Scope
         dbRealGameLevel.setHouseSpace(20);
         // Condition
@@ -431,6 +433,34 @@ public class BaseTestService {
         DbCountComparisonConfig dbCountComparisonConfig = new DbCountComparisonConfig();
         dbCountComparisonConfig.setCount(100);
         dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
+        dbRealGameLevel.setDbConditionConfig(dbConditionConfig);
+        // Limitation
+        DbItemTypeLimitation builder = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
+        builder.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
+        builder.setCount(10);
+        DbItemTypeLimitation factory = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
+        factory.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_FACTORY_ITEM_ID));
+        factory.setCount(10);
+        DbItemTypeLimitation attacker = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
+        attacker.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID));
+        attacker.setCount(10);
+
+        userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbRealGameLevel);
+    }
+
+    private void setupRealGameBuildFactoryLevel() {
+        DbRealGameLevel dbRealGameLevel = (DbRealGameLevel) userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbRealGameLevel.class);
+        dbRealGameLevel.setName("BuildFactory");
+        // Scope
+        dbRealGameLevel.setHouseSpace(20);
+        // Condition
+        DbConditionConfig dbConditionConfig = new DbConditionConfig();
+        dbConditionConfig.setConditionTrigger(ConditionTrigger.SYNC_ITEM_BUILT);
+        DbSyncItemTypeComparisonConfig dbSyncItemTypeComparisonConfig = new DbSyncItemTypeComparisonConfig();
+        DbComparisonItemCount dbComparisonItemCount = dbSyncItemTypeComparisonConfig.getCrudDbComparisonItemCount().createDbChild();
+        dbComparisonItemCount.setItemType(itemService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
+        dbComparisonItemCount.setCount(1);
+        dbConditionConfig.setDbAbstractComparisonConfig(dbSyncItemTypeComparisonConfig);
         dbRealGameLevel.setDbConditionConfig(dbConditionConfig);
         // Limitation
         DbItemTypeLimitation builder = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
@@ -585,6 +615,17 @@ public class BaseTestService {
         SessionFactoryUtils.closeSession(sessionHolder.getSession());
         TransactionSynchronizationManager.unbindResource(getHibernateTemplate().getSessionFactory());
         sessionHolder = null;
+    }
+
+    protected Session getSessionFromSessionInViewFilter() {
+        if (sessionHolder == null) {
+            throw new IllegalStateException("SessionHolder is null. Call beforeOpenSessionInViewFilter() first.");
+        }
+        Session session = sessionHolder.getSession();
+        if (session == null) {
+            throw new IllegalStateException("Session is null");
+        }
+        return session;
     }
 
     protected void beginHttpSession() {
