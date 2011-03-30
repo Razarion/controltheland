@@ -215,6 +215,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
 
     @Override
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
+    @Transactional
     public void backup() {
         long time = System.currentTimeMillis();
         BackupEntry backupEntry = genericItemConverter.generateBackupEntry();

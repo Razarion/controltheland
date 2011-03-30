@@ -38,7 +38,7 @@ public class UserItemTypeAccess implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "BACKUP_USER_ITEM_TYPE_ACCESS_BOUGHT",
             joinColumns = @JoinColumn(name = "itemTypeAccessId"),
             inverseJoinColumns = @JoinColumn(name = "userItemTypeId")

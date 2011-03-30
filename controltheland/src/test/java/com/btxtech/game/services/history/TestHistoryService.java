@@ -2,11 +2,13 @@ package com.btxtech.game.services.history;
 
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.BaseTestService;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.user.UserService;
 import org.junit.Assert;
@@ -32,6 +34,8 @@ public class TestHistoryService extends BaseTestService {
     private MovableService movableService;
     @Autowired
     private ItemService itemService;
+    @Autowired
+    private CollisionService collisionService;
 
     @Test
     @DirtiesContext
@@ -94,11 +98,12 @@ public class TestHistoryService extends BaseTestService {
 
         // Build Factory
         System.out.println("---- build unit ---");
-        sendBuildCommand(movableService.getAllSyncInfo().iterator().next().getId(), new Index(100, 100), TEST_FACTORY_ITEM_ID);
+        Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400);
+        sendBuildCommand(movableService.getAllSyncInfo().iterator().next().getId(), buildPos, TEST_FACTORY_ITEM_ID);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        waitForActionServiceDone(1000);
+        waitForActionServiceDone();
 
         // Verify
         beginHttpSession();
@@ -141,12 +146,13 @@ public class TestHistoryService extends BaseTestService {
         userService.login("Actor", "test");
         movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "xx", "xx", 0, 0);
         SimpleBase actorBase = ((RealityInfo) movableService.getGameInfo()).getBase();
-        sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), new Index(400, 400), TEST_FACTORY_ITEM_ID);
-        waitForActionServiceDone(1000);
+        Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400);
+        sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(actorBase, TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
-        waitForActionServiceDone(1000);
+        waitForActionServiceDone();
         sendAttackCommand(getFirstSynItemId(actorBase, TEST_ATTACK_ITEM_ID), getFirstSynItemId(targetBase, TEST_START_BUILDER_ITEM_ID));
-        waitForActionServiceDone(1000000);
+        waitForActionServiceDone();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -201,12 +207,13 @@ public class TestHistoryService extends BaseTestService {
         userService.login("Actor", "test");
         movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "xx", "xx", 0, 0);
         SimpleBase actorBase = ((RealityInfo) movableService.getGameInfo()).getBase();
-        sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), new Index(400, 400), TEST_FACTORY_ITEM_ID);
-        waitForActionServiceDone(1000);
+        Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400);
+        sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(actorBase, TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
-        waitForActionServiceDone(1000);
+        waitForActionServiceDone();
         sendAttackCommand(getFirstSynItemId(actorBase, TEST_ATTACK_ITEM_ID), getFirstSynItemId(targetBase, TEST_START_BUILDER_ITEM_ID));
-        waitForActionServiceDone(1000000);
+        waitForActionServiceDone();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -248,12 +255,13 @@ public class TestHistoryService extends BaseTestService {
         beginHttpRequestAndOpenSessionInViewFilter();
         movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "xx", "xx", 0, 0);
         SimpleBase actorBase = ((RealityInfo) movableService.getGameInfo()).getBase();
-        sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), new Index(400, 400), TEST_FACTORY_ITEM_ID);
-        waitForActionServiceDone(1000);
+        Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400);
+        sendBuildCommand(getFirstSynItemId(actorBase, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(actorBase, TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
-        waitForActionServiceDone(1000);
+        waitForActionServiceDone();
         sendAttackCommand(getFirstSynItemId(actorBase, TEST_ATTACK_ITEM_ID), getFirstSynItemId(targetBase, TEST_START_BUILDER_ITEM_ID));
-        waitForActionServiceDone(1000000);
+        waitForActionServiceDone();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

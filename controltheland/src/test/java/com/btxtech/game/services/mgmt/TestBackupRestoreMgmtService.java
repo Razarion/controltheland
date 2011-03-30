@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.AlreadyUsedException;
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
@@ -41,7 +42,7 @@ import java.util.List;
  * Date: Jul 11, 2009
  * Time: 12:00:44 PM
  */
-public class TestMgmtService extends BaseTestService {
+public class TestBackupRestoreMgmtService extends BaseTestService {
     public static final int ITEM_COUNT = 100000;
     @Autowired
     private MgmtService mgmtService;
@@ -77,6 +78,15 @@ public class TestMgmtService extends BaseTestService {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
+        // Unregistered base, second level -> will be willed
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        movableService.getGameInfo();
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
+        SimpleBase unregKillBase = ((RealityInfo) movableService.getGameInfo()).getBase();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
         // U2 real base, second level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -84,8 +94,28 @@ public class TestMgmtService extends BaseTestService {
         userService.login("U2", "test");
         movableService.getGameInfo();
         movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
+        SimpleBase u2Base = ((RealityInfo) movableService.getGameInfo()).getBase();
+        Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID),new Rectangle(0,0,100000,100000), 400);
+        sendBuildCommand(getFirstSynItemId(u2Base, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
+        sendFactoryCommand(getFirstSynItemId(u2Base, TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
+        sendAttackCommand(getFirstSynItemId(u2Base, TEST_ATTACK_ITEM_ID), getFirstSynItemId(unregKillBase, TEST_START_BUILDER_ITEM_ID));
+        waitForActionServiceDone();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+
+        // U3 real base, second level
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U3", "test", "test", "test");
+        userService.login("U3", "test");
+        movableService.getGameInfo();
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
+        movableService.getGameInfo();        
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
 
         // Unregistered base, fist level
         beginHttpSession();
@@ -101,6 +131,8 @@ public class TestMgmtService extends BaseTestService {
         movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+
+        waitForActionServiceDone();        
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -122,8 +154,8 @@ public class TestMgmtService extends BaseTestService {
         beginHttpRequestAndOpenSessionInViewFilter();
         List<Base> newBases = baseService.getBases();
         List<UserState> newUserStates = userService.getAllUserStates();
-        Assert.assertEquals(2, newBases.size());
-        Assert.assertEquals(2, newUserStates.size());
+        Assert.assertEquals(3, newBases.size());
+        Assert.assertEquals(3, newUserStates.size());
         verifyUserStates(newUserStates, oldUserStates);
         verifyBases(newBases, oldBases);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -148,12 +180,12 @@ public class TestMgmtService extends BaseTestService {
         mgmtService.restore(backupSummaries.get(0).getDate());
         newBases = baseService.getBases();
         newUserStates = userService.getAllUserStates();
-        Assert.assertEquals(2, newBases.size());
-        Assert.assertEquals(2, newUserStates.size());
+        Assert.assertEquals(3, newBases.size());
+        Assert.assertEquals(3, newUserStates.size());
         verifyUserStates(newUserStates, oldUserStates);
         verifyBases(newBases, oldBases);
         endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
+        endHttpSession(); 
     }
 
     @Test
