@@ -19,6 +19,7 @@ import com.btxtech.game.services.utg.condition.DbCockpitButtonClickedComparisonC
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbContainedInComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
+import com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemIdComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemIdPositionComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
@@ -38,7 +39,7 @@ public class ComparisonFactory {
         SYNC_ITEM_KILLED(ConditionTrigger.SYNC_ITEM_KILLED, DbSyncItemTypeComparisonConfig.class, DbSyncItemIdComparisonConfig.class, DbCountComparisonConfig.class),
         TUTORIAL(ConditionTrigger.TUTORIAL),
         SYNC_ITEM_SELECT(ConditionTrigger.SYNC_ITEM_SELECT, DbSyncItemTypeComparisonConfig.class, DbSyncItemIdComparisonConfig.class, DbCountComparisonConfig.class),
-        SYNC_ITEM_DEACTIVATE(ConditionTrigger.SYNC_ITEM_DEACTIVATE, DbSyncItemTypeComparisonConfig.class, DbSyncItemIdComparisonConfig.class, DbSyncItemIdPositionComparisonConfig.class),
+        SYNC_ITEM_DEACTIVATE(ConditionTrigger.SYNC_ITEM_DEACTIVATE, DbSyncItemIdPositionComparisonConfig.class, DbItemTypePositionComparisonConfig.class),
         SYNC_ITEM_BUILT(ConditionTrigger.SYNC_ITEM_BUILT, DbSyncItemTypeComparisonConfig.class, DbSyncItemIdComparisonConfig.class, DbCountComparisonConfig.class),
         SCROLL(ConditionTrigger.SCROLL),
         COCKPIT_BUTTON_EVENT(ConditionTrigger.COCKPIT_BUTTON_EVENT, DbCockpitButtonClickedComparisonConfig.class),
@@ -87,6 +88,8 @@ public class ComparisonFactory {
                 return new CountComparisonConfigPanel(id);
             } else if (config instanceof DbContainedInComparisonConfig) {
                 return new ContainedInComparisonConfigPanel(id);
+            } else if (config instanceof DbItemTypePositionComparisonConfig) {
+                return new ItemTypePositionComparisonConfigPanel(id);
             } else {
                 throw new IllegalArgumentException("No panel for " + config);
             }

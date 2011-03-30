@@ -17,7 +17,7 @@ import org.springframework.test.annotation.DirtiesContext;
  * Date: March 08, 2011
  * Time: 12:00:44 PM
  */
-public class TestTutorialService extends BaseTestService {
+public class TestTutorialConfiguration extends BaseTestService {
     @Autowired
     private TutorialService tutorialService;
     @Autowired

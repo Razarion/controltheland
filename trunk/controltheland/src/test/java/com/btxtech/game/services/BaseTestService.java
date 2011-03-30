@@ -4,14 +4,19 @@ import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.bot.BotService;
@@ -44,6 +49,8 @@ import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbContainedInComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
+import com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig;
+import org.easymock.EasyMock;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -124,6 +131,17 @@ public class BaseTestService {
     protected HibernateTemplate getHibernateTemplate() {
         return hibernateTemplate;
     }
+
+    // ------------------- Sync Items --------------------
+
+    protected SyncBaseItem createSyncBaseItem(int itemTypeId) throws Exception {
+        Services services = EasyMock.createNiceMock(Services.class);
+        AbstractTerrainService terrainService = EasyMock.createNiceMock(AbstractTerrainService.class);
+        EasyMock.expect(services.getTerrainService()).andReturn(terrainService);
+        EasyMock.replay(services);
+        return new SyncBaseItem(new Id(1, -100, -100), new Index(100, 100), (BaseItemType) itemService.getItemType(itemTypeId), services, new SimpleBase(1));
+    }
+
 
     // ------------------- Action Service --------------------
 
@@ -482,6 +500,40 @@ public class BaseTestService {
         DbContainedInComparisonConfig containedInComparisonConfig = new DbContainedInComparisonConfig();
         containedInComparisonConfig.setContainedIn(containedIn);
         dbConditionConfig.setDbAbstractComparisonConfig(containedInComparisonConfig);
+        dbStepConfig.setConditionConfig(dbConditionConfig);
+        tutorialService.getDbTutorialCrudRootServiceHelper().updateDbChild(dbTutorialConfig);
+
+        userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbSimulationLevel);
+        userGuidanceService.activateLevels();
+        return dbSimulationLevel;
+    }
+
+    protected DbSimulationLevel setupItemTypePositionLevel() throws LevelActivationException {
+        DbSimulationLevel dbSimulationLevel = (DbSimulationLevel) userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbSimulationLevel.class);
+        dbSimulationLevel.setName("Test");
+        // Tutorial
+        DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().createDbChild();
+        dbTutorialConfig.setOwnBaseId(1);
+        dbSimulationLevel.setDbTutorialConfig(dbTutorialConfig);
+        // Terrain
+        DbTerrainSetting dbTerrainSetting = setupMinimalSimulatedTerrain();
+        dbTutorialConfig.setDbTerrainSetting(dbTerrainSetting);
+        // Task
+        DbTaskConfig dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().createDbChild();
+        DbItemTypeAndPosition bulldozer = dbTaskConfig.getItemCrudServiceHelper().createDbChild();
+        bulldozer.setSyncItemId(1);
+        bulldozer.setPosition(new Index(100, 100));
+        bulldozer.setItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        bulldozer.setBaseId(1);
+        // Step
+        DbStepConfig dbStepConfig = dbTaskConfig.getStepConfigCrudServiceHelper().createDbChild();
+        // Condition
+        DbConditionConfig dbConditionConfig = new DbConditionConfig();
+        dbConditionConfig.setConditionTrigger(ConditionTrigger.SYNC_ITEM_DEACTIVATE);
+        DbItemTypePositionComparisonConfig itemTypePositionComparisonConfig = new DbItemTypePositionComparisonConfig();
+        itemTypePositionComparisonConfig.setDbItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        itemTypePositionComparisonConfig.setRegion(new Rectangle(300, 300, 200, 200));
+        dbConditionConfig.setDbAbstractComparisonConfig(itemTypePositionComparisonConfig);
         dbStepConfig.setConditionConfig(dbConditionConfig);
         tutorialService.getDbTutorialCrudRootServiceHelper().updateDbChild(dbTutorialConfig);
 
