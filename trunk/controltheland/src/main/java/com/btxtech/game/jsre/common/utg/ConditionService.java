@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.google.gwt.event.dom.client.ClickEvent;
 
@@ -27,7 +28,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
  * Time: 18:14:41
  */
 public interface ConditionService<T> {
-    void activateCondition(ConditionConfig conditionConfig, T t);
+    AbstractConditionTrigger<T> activateCondition(ConditionConfig conditionConfig, T t);
 
     void onOwnSelectionChanged(Group selectedGroup);
 

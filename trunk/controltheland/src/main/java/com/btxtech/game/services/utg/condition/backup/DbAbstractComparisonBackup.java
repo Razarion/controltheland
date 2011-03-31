@@ -15,8 +15,8 @@ package com.btxtech.game.services.utg.condition.backup;
 
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.mgmt.impl.BackupEntry;
-import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.services.mgmt.impl.DbUserState;
+
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
@@ -24,7 +24,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 /**
@@ -41,7 +40,7 @@ public abstract class DbAbstractComparisonBackup {
     private Integer id;
     @OneToOne
     // (optional = false) does not work
-    private UserState userState;
+    private DbUserState userState;
 
     /**
      * Used by hibernate
@@ -49,11 +48,11 @@ public abstract class DbAbstractComparisonBackup {
     protected DbAbstractComparisonBackup() {
     }
 
-    protected DbAbstractComparisonBackup(UserState userState) {
+    protected DbAbstractComparisonBackup(DbUserState userState) {
         this.userState = userState;
     }
 
-    public UserState getUserState() {
+    public DbUserState getUserState() {
         return userState;
     }
 

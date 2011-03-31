@@ -14,10 +14,10 @@
 package com.btxtech.game.services.mgmt.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import java.util.List;
-import java.util.Set;
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.Type;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -26,8 +26,8 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import org.hibernate.annotations.Columns;
-import org.hibernate.annotations.Type;
+import java.util.List;
+import java.util.Set;
 
 /**
  * User: beat
@@ -54,7 +54,7 @@ public class GenericBaseItem extends GenericItem {
     @OneToOne(fetch = FetchType.EAGER)
     private GenericResourceItem resourceTarget;
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Base base;
+    private DbBase base;
     private double buildup;
     private double angel;
     @Type(type = "index")
@@ -118,8 +118,7 @@ public class GenericBaseItem extends GenericItem {
         this.baseTarget = target;
     }
 
-    public void setBase(Base base) {
-        base.clearId();
+    public void setBase(DbBase base) {
         this.base = base;
     }
 
@@ -155,7 +154,7 @@ public class GenericBaseItem extends GenericItem {
         return baseTarget;
     }
 
-    public Base getBase() {
+    public DbBase getBase() {
         return base;
     }
 

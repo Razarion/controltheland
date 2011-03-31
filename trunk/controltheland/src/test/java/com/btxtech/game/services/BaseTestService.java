@@ -97,8 +97,9 @@ public class BaseTestService {
     protected static int TEST_ATTACK_ITEM_ID = -1;
     protected static final String TEST_CONTAINER_ITEM = "TestContainerItem";
     protected static int TEST_CONTAINER_ITEM_ID = -1;
-    protected static final String TEST_SIMULATED_LEVEL = "TestSimulatedLevel";
-    protected static final String TEST_REAL_GAME_CREATE_BASE_LEVEL = "TestRealGameCreateBaseLevel";
+    protected static final String TEST_LEVEL_1_SIMULATED = "TEST_LEVEL_1_SIMULATED";
+    protected static final String TEST_LEVEL_2_REAL = "TEST_LEVEL_2_REAL";
+    protected static final String TEST_LEVEL_3_REAL = "TEST_LEVEL_3_REAL";
 
     private HibernateTemplate hibernateTemplate;
     @Autowired
@@ -411,7 +412,7 @@ public class BaseTestService {
     // ------------------- Setup Levels --------------------
 
     protected void setupLevels() throws LevelActivationException {
-        setupSimulationLevel(TEST_SIMULATED_LEVEL);
+        setupSimulationLevel(TEST_LEVEL_1_SIMULATED);
         setupRealGameCreateBaseLevel();
         setupRealGameBuildFactoryLevel();
         userGuidanceService.activateLevels();
@@ -419,7 +420,7 @@ public class BaseTestService {
 
     private void setupRealGameCreateBaseLevel() {
         DbRealGameLevel dbRealGameLevel = (DbRealGameLevel) userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbRealGameLevel.class);
-        dbRealGameLevel.setName(TEST_REAL_GAME_CREATE_BASE_LEVEL);
+        dbRealGameLevel.setName(TEST_LEVEL_2_REAL);
         // Create Base
         dbRealGameLevel.setCreateRealBase(true);
         dbRealGameLevel.setStartItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
@@ -450,7 +451,7 @@ public class BaseTestService {
 
     private void setupRealGameBuildFactoryLevel() {
         DbRealGameLevel dbRealGameLevel = (DbRealGameLevel) userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbRealGameLevel.class);
-        dbRealGameLevel.setName("BuildFactory");
+        dbRealGameLevel.setName(TEST_LEVEL_3_REAL);
         // Scope
         dbRealGameLevel.setHouseSpace(20);
         // Condition

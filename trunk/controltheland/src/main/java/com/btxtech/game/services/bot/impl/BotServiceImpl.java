@@ -47,6 +47,8 @@ public class BotServiceImpl implements BotService {
     final private Map<DbBotConfig, BotRunner> botRunners = new HashMap<DbBotConfig, BotRunner>();
     private Log log = LogFactory.getLog(BotServiceImpl.class);
 
+    // TODO save & restore
+
     @PostConstruct
     public void init() {
         dbBotConfigCrudServiceHelper.init(DbBotConfig.class);

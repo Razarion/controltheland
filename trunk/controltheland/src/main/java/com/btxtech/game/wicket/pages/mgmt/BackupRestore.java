@@ -55,6 +55,7 @@ public class BackupRestore extends MgmtWebPage {
                 baseItem.add(new Label("date", simpleDateFormat.format(baseItem.getModelObject().getDate())));
                 baseItem.add(new Label("items", Integer.toString(baseItem.getModelObject().getItemCount())));
                 baseItem.add(new Label("bases", Integer.toString(baseItem.getModelObject().getBaseCount())));
+                baseItem.add(new Label("userStates", Integer.toString(baseItem.getModelObject().getUserStateCount())));
                 baseItem.add(new Button("button") {
 
                     @Override

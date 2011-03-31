@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.common.utg.condition.SyncItemTypeComparison;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.mgmt.impl.BackupEntry;
+import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.user.UserState;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,7 +51,7 @@ public class DbSyncItemTypeComparisonBackup extends DbAbstractComparisonBackup {
     public DbSyncItemTypeComparisonBackup() {
     }
 
-    public DbSyncItemTypeComparisonBackup(UserState userState, SyncItemTypeComparison syncItemTypeComparison, ItemService itemService) {
+    public DbSyncItemTypeComparisonBackup(DbUserState userState, SyncItemTypeComparison syncItemTypeComparison, ItemService itemService) {
         super(userState);
         itemTypeCount = new HashMap<DbItemType, Integer>();
         for (Map.Entry<ItemType, Integer> entry : syncItemTypeComparison.getRemaining().entrySet()) {

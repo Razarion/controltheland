@@ -43,7 +43,7 @@ import org.hibernate.annotations.TypeDefs;
 @DiscriminatorValue("PROJECTILE")
 public class GenericProjectileItem extends GenericItem{
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private Base base;
+    private DbBase base;
     @Type(type = "index")
     @Columns(columns = {@Column(name = "xUnloadPos"), @Column(name = "yUnloadPos")})
     private Index targetPosition;
@@ -58,11 +58,11 @@ public class GenericProjectileItem extends GenericItem{
         super(backupEntry);
     }
 
-    public Base getBase() {
+    public DbBase getBase() {
         return base;
     }
 
-    public void setBase(Base base) {
+    public void setBase(DbBase base) {
         this.base = base;
     }
 

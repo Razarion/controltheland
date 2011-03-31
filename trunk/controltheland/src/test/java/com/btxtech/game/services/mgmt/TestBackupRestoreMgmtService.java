@@ -283,17 +283,40 @@ public class TestBackupRestoreMgmtService extends BaseTestService {
 
     @Test
     @DirtiesContext
-    public void shutdownTest() throws Exception {
+    public void conditionServiceImpl() throws Exception {
         configureMinimalGame();
-        System.out.println("**** preconditionForShutdownTest ****");
+        System.out.println("**** twoRegUserOneUnregUserAllOffline ****");
 
-        // U1 real base, second level
+        // U1 no real base, second level
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("U1", "test", "test", "test");
         userService.login("U1", "test");
-        movableService.getGameInfo();
+        Assert.assertEquals(TEST_LEVEL_1_SIMULATED, movableService.getGameInfo().getLevel().getName());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        Assert.assertEquals(TEST_LEVEL_1_SIMULATED, movableService.getGameInfo().getLevel().getName());        
         movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
+        Assert.assertEquals(TEST_LEVEL_2_REAL, movableService.getGameInfo().getLevel().getName());
+
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -315,9 +338,12 @@ public class TestBackupRestoreMgmtService extends BaseTestService {
             Assert.assertEquals(oldUser, newUser);
             Assert.assertEquals(oldBotConfig, newBotConfig);
             Assert.assertEquals(oldUserState.getCurrentAbstractLevel(), newUserState.getCurrentAbstractLevel());
+            Assert.assertEquals(oldUserState.getCurrentAbstractLevel().getLevel(), newUserState.getCurrentAbstractLevel().getLevel());
             verifyUserItemTypeAccess(oldUserState.getUserItemTypeAccess(), newUserState.getUserItemTypeAccess());
             if (oldUserState.getBase() != null) {
                 Assert.assertEquals(oldUserState.getBase().getSimpleBase(), newUserState.getBase().getSimpleBase());
+            } else {
+                Assert.assertNull(newUserState.getBase());
             }
         }
     }
@@ -394,7 +420,7 @@ public class TestBackupRestoreMgmtService extends BaseTestService {
 
     private void verifyBase(Base newBase, Base oldBase) {
         Assert.assertEquals(oldBase.getAccountBalance(), newBase.getAccountBalance(), 0.0);
-        Assert.assertEquals(oldBase.getBaseColor(), newBase.getBaseColor());
+        Assert.assertEquals(oldBase.getBaseHtmlColor(), newBase.getBaseHtmlColor());
         Assert.assertEquals(oldBase.getBaseId(), newBase.getBaseId());
         Assert.assertEquals(oldBase.getCreated(), newBase.getCreated());
         Assert.assertEquals(oldBase.getHouseSpace(), newBase.getHouseSpace());
@@ -411,7 +437,7 @@ public class TestBackupRestoreMgmtService extends BaseTestService {
         // TODO compare and verify items
     }
 
-    // TODO Bot
+    // TODO Bot save and restore
     // TODO XP + Market bought
     // TODO more items
     // TODO Current condition (DbAbstractComparisonBackup)

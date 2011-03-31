@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.CountComparison;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.impl.BackupEntry;
+import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.user.UserState;
 
 import javax.persistence.Column;
@@ -40,7 +41,7 @@ public class DbCountComparisonBackup extends DbAbstractComparisonBackup {
     public DbCountComparisonBackup() {
     }
 
-    public DbCountComparisonBackup(UserState userState, CountComparison countComparison) {
+    public DbCountComparisonBackup(DbUserState userState, CountComparison countComparison) {
         super(userState);
         count = countComparison.getCount();
     }

@@ -25,11 +25,13 @@ public class BackupSummary implements Serializable {
     private Date date;
     private int itemCount;
     private int baseCount;
+    private int userStateCount;
 
-    public BackupSummary(Date date, long itemCount, long baseCount) {
+    public BackupSummary(Date date, long itemCount, long baseCount, long userStateCount) {
         this.date = date;
         this.itemCount = (int) itemCount;
         this.baseCount = (int) baseCount;
+        this.userStateCount = (int) userStateCount;
     }
 
     public Date getDate() {
@@ -42,5 +44,9 @@ public class BackupSummary implements Serializable {
 
     public int getBaseCount() {
         return baseCount;
+    }
+
+    public int getUserStateCount() {
+        return userStateCount;
     }
 }
