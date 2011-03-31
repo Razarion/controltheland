@@ -20,12 +20,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.user.UserState;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
@@ -36,14 +30,9 @@ import java.util.HashSet;
  * Date: May 31, 2009
  * Time: 8:16:46 PM
  */
-@Entity(name = "BACKUP_BASE")
 public class Base implements Serializable {
-    @Id
-    @GeneratedValue
-    private Integer id;
     private double accountBalance;
-    @OneToOne
-    private BaseColor baseColor;
+    private String baseHtmlColor;
     private Date startTime;
     private int kills;
     private int created;
@@ -52,7 +41,6 @@ public class Base implements Serializable {
     private double totalEarned;
     private boolean abandoned = false;
     private int baseId;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "base", fetch = FetchType.LAZY)
     private UserState userState;
     @Transient
     private final Object syncObject = new Object();
@@ -69,13 +57,37 @@ public class Base implements Serializable {
     public Base() {
     }
 
-    public Base(BaseColor baseColor, UserState userState, int baseId) {
-        this.baseColor = baseColor;
+    public Base(String baseHtmlColor, UserState userState, int baseId) {
+        this.baseHtmlColor = baseHtmlColor;
         this.userState = userState;
         userState.setBase(this);
         startTime = new Date();
         abandoned = false;
         this.baseId = baseId;
+    }
+
+    public Base(double accountBalance,
+                String baseHtmlColor,
+                Date startTime,
+                int kills,
+                int created,
+                int lost,
+                double totalSpent,
+                double totalEarned,
+                boolean abandoned,
+                int baseId,
+                UserState userState) {
+        this.accountBalance = accountBalance;
+        this.baseHtmlColor = baseHtmlColor;
+        this.startTime = startTime;
+        this.kills = kills;
+        this.created = created;
+        this.lost = lost;
+        this.totalSpent = totalSpent;
+        this.totalEarned = totalEarned;
+        this.abandoned = abandoned;
+        this.baseId = baseId;
+        this.userState = userState;
     }
 
     public void removeItem(SyncBaseItem syncItem) {
@@ -105,12 +117,12 @@ public class Base implements Serializable {
         return items;
     }
 
-    public BaseColor getBaseColor() {
-        return baseColor;
+    public String getBaseHtmlColor() {
+        return baseHtmlColor;
     }
 
-    public void setBaseColor(BaseColor baseColor) {
-        this.baseColor = baseColor;
+    public void setBaseHtmlColor(String baseHtmlColor) {
+        this.baseHtmlColor = baseHtmlColor;
     }
 
     public SimpleBase getSimpleBase() {
@@ -164,13 +176,6 @@ public class Base implements Serializable {
 
     public int getItemCount() {
         return items.size();
-    }
-
-    /**
-     * Only used in Save
-     */
-    public void clearId() {
-        id = null;
     }
 
     public void increaseKills() {

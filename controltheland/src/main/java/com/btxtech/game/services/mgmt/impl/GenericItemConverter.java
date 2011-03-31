@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.mgmt.impl;
 
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -45,6 +46,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -74,6 +76,7 @@ public class GenericItemConverter {
     private HashMap<Id, GenericItem> genericItems = new HashMap<Id, GenericItem>();
     private HashMap<Id, SyncItem> syncItems = new HashMap<Id, SyncItem>();
     private HashMap<Integer, DbItemType> dbItemTypeCache = new HashMap<Integer, DbItemType>();
+    private HashMap<Base, DbBase> bases = new HashMap<Base, DbBase>();
     private Log log = LogFactory.getLog(GenericItemConverter.class);
 
     public void clear() {
@@ -81,6 +84,7 @@ public class GenericItemConverter {
         genericItems.clear();
         syncItems.clear();
         dbItemTypeCache.clear();
+        bases.clear();
     }
 
     public BackupEntry generateBackupEntry() {
@@ -97,49 +101,61 @@ public class GenericItemConverter {
             postProcessBackup(item);
         }
         backupEntry.setItems(new HashSet<GenericItem>(genericItems.values()));
-        serverConditionService.backup();
 
-        Set<UserState> userStates = new HashSet<UserState>();
+        // User state
+        Set<DbUserState> dbUserStates = new HashSet<DbUserState>();
         for (UserState userState : userService.getAllUserStates()) {
-            userState.prepareForBackup(backupEntry);
-            userStates.add(userState);
+            if(!userState.isRegistered()) {
+              continue;  
+            }
+            DbUserState dbUserState = createDbUserState(userState);
+            dbUserState.setDbAbstractComparisonBackup(serverConditionService.createBackup(dbUserState, userState));
+            dbUserStates.add(dbUserState);
         }
         for (UserState userState : userService.getAllBotUserStates()) {
-            userState.prepareForBackup(backupEntry);
-            userStates.add(userState);
+            dbUserStates.add(createDbUserState(userState));
         }
 
-        backupEntry.setUserStates(userStates);
+        backupEntry.setUserStates(dbUserStates);
         return backupEntry;
+    }
+
+    private DbUserState createDbUserState(UserState userState) {
+        DbUserState dbUserState = new DbUserState(backupEntry, userState);
+        if(userState.getBase() != null) {
+            DbBase dbBase = bases.get(userState.getBase());
+            dbBase.setUserState(dbUserState);
+            dbUserState.setBase(dbBase);
+        }
+        return dbUserState;
     }
 
     public void restoreBackup(BackupEntry backupEntry) throws NoSuchItemTypeException {
         actionService.pause(true);
         serverEnergyService.pauseService(true);
+
+        Map<DbUserState, UserState> userStates = new HashMap<DbUserState, UserState>();
+        for (DbUserState dbUserState : backupEntry.getUserStates()) {
+            UserState userState = dbUserState.createUserState(userGuidanceService);
+            userStates.put(dbUserState, userState);
+        }
+
         Collection<GenericItem> genericItems = backupEntry.getItems();
         Collection<UserState> userStateAbandoned = new ArrayList<UserState>();
-        Collection<Base> bases = new HashSet<Base>();
+        Map<DbBase, Base> dbBases = new HashMap<DbBase, Base>();
         for (GenericItem genericItem : genericItems) {
             try {
                 if (genericItem instanceof GenericBaseItem) {
-                    SyncBaseItem syncItem = addSyncBaseItem((GenericBaseItem) genericItem);
-                    Base base = ((GenericBaseItem) genericItem).getBase();
-                    bases.add(base);
-                    UserState userState = base.getUserState();
-                    if (userState != null) {
-                        if (!userState.isRegistered() && !userState.isBot()) {
-                            base.setAbandoned();
-                            userStateAbandoned.add(userState);
-                        }
-                    } else {
-                        // Due to an error in the UserServiceImpl.onSessionTimedOut()
-                        base.setAbandoned();
-                    }
+                    DbBase dBbase = ((GenericBaseItem) genericItem).getBase();
+                    Base base = getBase(userStates, dbBases, dBbase);
+                    SyncBaseItem syncItem = addSyncBaseItem((GenericBaseItem) genericItem, base);
                     base.addItemNoCreateCount(syncItem);
                 } else if (genericItem instanceof GenericResourceItem) {
                     addSyncItem((GenericResourceItem) genericItem);
                 } else if (genericItem instanceof GenericProjectileItem) {
-                    addSyncItem((GenericProjectileItem) genericItem);
+                    DbBase dBbase = ((GenericProjectileItem) genericItem).getBase();
+                    Base base = getBase(userStates, dbBases, dBbase);
+                    addSyncItem((GenericProjectileItem) genericItem, base);
                 } else {
                     log.error("restoreBackup: unknown type: " + genericItem);
                 }
@@ -161,13 +177,26 @@ public class GenericItemConverter {
             }
         }
 
-        userService.restore(backupEntry.getUserStates());
-        baseService.restoreBases(bases);
+        userService.restore(userStates.values());
+        baseService.restoreBases(dbBases.values());
         itemService.restoreItems(syncItems.values());
+        serverConditionService.restoreBackup(userStates, itemService);
         serverEnergyService.pauseService(false);
         serverEnergyService.restoreItems(syncItems.values());
-        serverConditionService.restore(backupEntry.getUserStates());
         actionService.pause(false);
+    }
+
+    private Base getBase(Map<DbUserState, UserState> userStates, Map<DbBase, Base> dbBases, DbBase dBbase) {
+        Base base = dbBases.get(dBbase);
+        if (base == null) {
+            UserState userState = userStates.get(dBbase.getUserState());
+            base = dBbase.createBase(userState);
+            if(userState != null) {
+               userState.setBase(base);
+            }
+            dbBases.put(dBbase, base);
+        }
+        return base;
     }
 
     private void fillHelperCache() {
@@ -201,11 +230,7 @@ public class GenericItemConverter {
         }
         GenericProjectileItem genericProjectileItem = new GenericProjectileItem(backupEntry);
         fillGenericItem(item, genericProjectileItem);
-        Base base = baseService.getBase(item.getBase());
-        if (base == null) {
-            throw new IllegalStateException("No base for " + item.getBase());
-        }
-        genericProjectileItem.setBase(base);
+        genericProjectileItem.setBase(getDbBase(item.getBase()));
         genericProjectileItem.setTargetPosition(item.getTarget());
         genericItems.put(item.getId(), genericProjectileItem);
     }
@@ -217,11 +242,8 @@ public class GenericItemConverter {
 
         genericItem.setHealth((int) item.getHealth());
         genericItem.setBuildup(item.getBuildup());
-        Base base = baseService.getBase(item.getBase());
-        if (base == null) {
-            throw new IllegalStateException("No base for " + item.getBase());
-        }
-        genericItem.setBase(base);
+        DbBase dbBase = getDbBase(item.getBase());
+        genericItem.setBase(dbBase);
         genericItem.setUpgrading(item.isUpgrading());
         if (item.getUpgradingItemType() != null) {
             genericItem.setUpgradingItemType((DbBaseItemType) dbItemTypeCache.get(item.getUpgradingItemType().getId()));
@@ -260,6 +282,20 @@ public class GenericItemConverter {
         }
         genericItems.put(item.getId(), genericItem);
 
+    }
+
+    private DbBase getDbBase(SimpleBase simpleBase) {
+        Base base = baseService.getBase(simpleBase);
+        if (base == null) {
+            throw new IllegalStateException("No base for " + simpleBase);
+        }
+
+        DbBase dbBase = bases.get(base);
+        if (dbBase == null) {
+            dbBase = new DbBase(base, baseService.getBaseColor4HtmlColor(base.getBaseHtmlColor()));
+            bases.put(base, dbBase);
+        }
+        return dbBase;
     }
 
     private void fillGenericItem(SyncItem item, GenericItem genericItem) {
@@ -322,8 +358,8 @@ public class GenericItemConverter {
         }
     }
 
-    private SyncBaseItem addSyncBaseItem(GenericBaseItem genericItem) throws NoSuchItemTypeException {
-        SyncBaseItem item = (SyncBaseItem) itemService.newSyncItem(genericItem.getItemId(), genericItem.getPosition(), genericItem.getDbItemTyp().getId(), genericItem.getBase().getSimpleBase(), services);
+    private SyncBaseItem addSyncBaseItem(GenericBaseItem genericItem, Base base) throws NoSuchItemTypeException {
+        SyncBaseItem item = (SyncBaseItem) itemService.newSyncItem(genericItem.getItemId(), genericItem.getPosition(), genericItem.getDbItemTyp().getId(), base.getSimpleBase(), services);
 
         item.setHealth(genericItem.getHealth());
         item.setBuildup(genericItem.getBuildup());
@@ -385,8 +421,8 @@ public class GenericItemConverter {
         syncItems.put(genericItem.getItemId(), item);
     }
 
-    private void addSyncItem(GenericProjectileItem genericItem) throws NoSuchItemTypeException {
-        SyncProjectileItem item = (SyncProjectileItem) itemService.newSyncItem(genericItem.getItemId(), genericItem.getPosition(), genericItem.getDbItemTyp().getId(), genericItem.getBase().getSimpleBase(), services);
+    private void addSyncItem(GenericProjectileItem genericItem, Base base) throws NoSuchItemTypeException {
+        SyncProjectileItem item = (SyncProjectileItem) itemService.newSyncItem(genericItem.getItemId(), genericItem.getPosition(), genericItem.getDbItemTyp().getId(), base.getSimpleBase(), services);
         item.setTarget(genericItem.getTargetPosition());
         syncItems.put(genericItem.getItemId(), item);
     }

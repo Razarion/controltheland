@@ -23,6 +23,7 @@ import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.impl.ConditionServiceImpl;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbAbstractLevel;
@@ -35,7 +36,6 @@ import com.btxtech.game.services.utg.condition.backup.DbSyncItemTypeComparisonBa
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -90,47 +90,44 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState> 
         triggerSimple(ConditionTrigger.TUTORIAL);
     }
 
-    public void restore(Collection<UserState> userStates) {
+    @Override
+    public void restoreBackup(Map<DbUserState, UserState> userStates, ItemService itemService) {
         synchronized (triggerMap) {
             triggerMap.clear();
-            for (UserState userState : userStates) {
-                if (userState.isBot()) {
+            for (Map.Entry<DbUserState, UserState> entry : userStates.entrySet()) {
+                if (entry.getValue().isBot()) {
                     continue;
                 }
-                DbAbstractLevel dbAbstractLevel = userState.getCurrentAbstractLevel();
-                dbAbstractLevel = userGuidanceService.getDbLevel(dbAbstractLevel.getId());
-                userState.setCurrentAbstractLevel(dbAbstractLevel);
-                activateCondition(dbAbstractLevel.getConditionConfig(), userState);
-
-                DbAbstractComparisonBackup dbAbstractComparisonBackup = userState.getDbAbstractComparisonBackup();
-                if (dbAbstractComparisonBackup != null) {
-                    AbstractConditionTrigger abstractConditionTrigger = triggerMap.get(userState);
-                    AbstractComparison abstractComparison = abstractConditionTrigger.getAbstractComparison();
-                    dbAbstractComparisonBackup.restore(abstractComparison, itemService);
-                    userState.setDbAbstractComparisonBackup(null);
+                DbAbstractLevel dbAbstractLevel = userGuidanceService.getDbLevel(entry.getValue().getCurrentAbstractLevel().getId());
+                AbstractConditionTrigger<UserState> abstractConditionTrigger = activateCondition(dbAbstractLevel.getConditionConfig(), entry.getValue());
+                if (entry.getKey().getDbAbstractComparisonBackup() != null) {
+                    entry.getKey().getDbAbstractComparisonBackup().restore(abstractConditionTrigger.getAbstractComparison(), itemService);
                 }
-
             }
         }
     }
 
-    public void backup() {
+    @Override
+    public DbAbstractComparisonBackup createBackup(DbUserState dbUserState, UserState userState) {
+        if (userState.isBot()) {
+            return null;
+        }
+        AbstractConditionTrigger abstractConditionTrigger;
         synchronized (triggerMap) {
-            for (Map.Entry<UserState, AbstractConditionTrigger<UserState>> entry : triggerMap.entrySet()) {
-                AbstractComparison abstractComparison = entry.getValue().getAbstractComparison();
-                DbAbstractComparisonBackup dbAbstractComparisonBackup = null;
-                if (abstractComparison instanceof CountComparison) {
-                    dbAbstractComparisonBackup = new DbCountComparisonBackup(entry.getKey(), (CountComparison) abstractComparison);
-                } else if (abstractComparison instanceof SyncItemIdComparison) {
-                    dbAbstractComparisonBackup = new DbSyncItemIdComparisonBackup(entry.getKey(), (SyncItemIdComparison) abstractComparison);
-                } else if (abstractComparison instanceof SyncItemTypeComparison) {
-                    dbAbstractComparisonBackup = new DbSyncItemTypeComparisonBackup(entry.getKey(), (SyncItemTypeComparison) abstractComparison, itemService);
-                }
-
-                if (dbAbstractComparisonBackup != null) {
-                    entry.getKey().setDbAbstractComparisonBackup(dbAbstractComparisonBackup);
-                }
-            }
+            abstractConditionTrigger = triggerMap.get(userState);
+        }
+        AbstractComparison abstractComparison = abstractConditionTrigger.getAbstractComparison();
+        if (abstractComparison == null) {
+            return null;
+        }
+        if (abstractComparison instanceof CountComparison) {
+            return new DbCountComparisonBackup(dbUserState, (CountComparison) abstractComparison);
+        } else if (abstractComparison instanceof SyncItemIdComparison) {
+            return new DbSyncItemIdComparisonBackup(dbUserState, (SyncItemIdComparison) abstractComparison);
+        } else if (abstractComparison instanceof SyncItemTypeComparison) {
+            return new DbSyncItemTypeComparisonBackup(dbUserState, (SyncItemTypeComparison) abstractComparison, itemService);
+        } else {
+            throw new IllegalArgumentException("Unknown AbstractComparison: " + abstractComparison);
         }
     }
 }

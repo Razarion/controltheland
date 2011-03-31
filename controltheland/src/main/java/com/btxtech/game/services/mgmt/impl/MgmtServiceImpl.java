@@ -34,6 +34,7 @@ import org.apache.log4j.LogManager;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
@@ -221,7 +222,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         BackupEntry backupEntry = genericItemConverter.generateBackupEntry();
         // Save to db
         hibernateTemplate.save(backupEntry);
-        log.info("Time used for backup: " + (System.currentTimeMillis() - time) + "ms. Items: " + backupEntry.getItemCount() + " Bases: " + backupEntry.getBaseCount());
+        log.info("Time used for backup: " + (System.currentTimeMillis() - time) + "ms. Items: " + backupEntry.getItemCount() + " Bases: " + backupEntry.getBaseCount() + " UserStates: " + backupEntry.getUserStateCount());
         genericItemConverter.clear();
     }
 
@@ -232,11 +233,13 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         List<Object[]> list = (List<Object[]>) hibernateTemplate.execute(new HibernateCallback() {
             public Object doInHibernate(Session session) {
                 Criteria criteriaEntries = session.createCriteria(BackupEntry.class);
-                criteriaEntries.createCriteria("items", "genericItems");
+                criteriaEntries.createCriteria("items", "genericItems", CriteriaSpecification.LEFT_JOIN);
+                criteriaEntries.createCriteria("userStates", "userStates", CriteriaSpecification.LEFT_JOIN);
                 ProjectionList entryProjectionList = Projections.projectionList();
                 entryProjectionList.add(Projections.groupProperty("timeStamp"));
                 entryProjectionList.add(Projections.count("items"));
                 entryProjectionList.add(Projections.countDistinct("genericItems.base"));
+                entryProjectionList.add(Projections.count("userStates"));
                 criteriaEntries.setProjection(entryProjectionList);
                 criteriaEntries.addOrder(Order.desc("timeStamp"));
                 return criteriaEntries.list();
@@ -246,7 +249,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         ArrayList<BackupSummary> result = new ArrayList<BackupSummary>();
         for (Object[] objects : list) {
             Date date = new Date(((Timestamp) objects[0]).getTime());
-            result.add(new BackupSummary(date, (Long) objects[1], (Long) objects[2]));
+            result.add(new BackupSummary(date, (Long) objects[1], (Long) objects[2], (Long) objects[3]));
         }
         return result;
     }
@@ -270,7 +273,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         genericItemConverter.restoreBackup(backupEntry);
 
         log.info("Restored to: " + date);
-        log.info("Time used for restore: " + (System.currentTimeMillis() - time) + "ms. Items: " + backupEntry.getItemCount() + " Bases: " + backupEntry.getBaseCount());
+        log.info("Time used for restore: " + (System.currentTimeMillis() - time) + "ms. Items: " + backupEntry.getItemCount() + " Bases: " + backupEntry.getBaseCount() + " UserStates: " + backupEntry.getUserStateCount());
         genericItemConverter.clear();
     }
 

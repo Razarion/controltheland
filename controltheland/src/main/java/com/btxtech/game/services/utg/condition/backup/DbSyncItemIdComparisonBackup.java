@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.common.utg.condition.SyncItemIdComparison;
 import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.impl.BackupEntry;
+import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.user.UserState;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -38,7 +39,7 @@ public class DbSyncItemIdComparisonBackup extends DbAbstractComparisonBackup {
     public DbSyncItemIdComparisonBackup() {
     }
 
-    public DbSyncItemIdComparisonBackup(UserState userState, SyncItemIdComparison syncItemIdComparison) {
+    public DbSyncItemIdComparisonBackup(DbUserState userState, SyncItemIdComparison syncItemIdComparison) {
         super(userState);
         idString = Utils.integerToSting(syncItemIdComparison.getSyncItemIds());
     }

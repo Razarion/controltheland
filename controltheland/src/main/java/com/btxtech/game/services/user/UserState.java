@@ -16,17 +16,8 @@ package com.btxtech.game.services.user;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
-import com.btxtech.game.services.mgmt.impl.BackupEntry;
 import com.btxtech.game.services.utg.DbAbstractLevel;
-import com.btxtech.game.services.utg.condition.backup.DbAbstractComparisonBackup;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Transient;
 import java.io.Serializable;
 
 /**
@@ -34,27 +25,13 @@ import java.io.Serializable;
  * Date: 19.01.2011
  * Time: 10:42:00
  */
-@Entity(name = "BACKUP_USER_STATUS")
 public class UserState implements Serializable {
-    @Id
-    @GeneratedValue
-    private Integer id;
-    @ManyToOne
     private DbBotConfig botConfig;
-    @ManyToOne
     private User user;
-    @OneToOne
     private Base base;
-    @ManyToOne
     private DbAbstractLevel currentAbstractLevel;
-    @OneToOne(cascade = CascadeType.ALL)
     private UserItemTypeAccess userItemTypeAccess;
-    @ManyToOne(optional = false)
-    private BackupEntry backupEntry;    
-    @Transient
     private String sessionId;
-    @OneToOne(cascade = CascadeType.ALL)
-    private DbAbstractComparisonBackup dbAbstractComparisonBackup;
 
     public boolean isRegistered() {
         return user != null;
@@ -116,40 +93,8 @@ public class UserState implements Serializable {
         this.user = user;
     }
 
-    public void setDbAbstractComparisonBackup(DbAbstractComparisonBackup dbAbstractComparisonBackup) {
-        this.dbAbstractComparisonBackup = dbAbstractComparisonBackup;
-    }
-
-    public DbAbstractComparisonBackup getDbAbstractComparisonBackup() {
-        return dbAbstractComparisonBackup;
-    }
-    
-    public void prepareForBackup(BackupEntry backupEntry) {
-        this.backupEntry = backupEntry;
-        id = null;
-        if (userItemTypeAccess != null) {
-            userItemTypeAccess.clearId();
-        }
-    }
-
     @Override
     public String toString() {
         return "UserState: user=" + user;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof UserState)) return false;
-
-        UserState userState = (UserState) o;
-
-        return id != null && id.equals(userState.id);
-
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 }

@@ -107,7 +107,7 @@ public abstract class DbAbstractLevel implements CrudChild, Serializable {
 
     public Level getLevel() {
         if (level == null) {
-            throw new IllegalStateException("Level was not built. Call createLevel() first.");
+            throw new IllegalStateException("Level was not built. Call createLevel() first: " + name);
         }
         return level;
     }

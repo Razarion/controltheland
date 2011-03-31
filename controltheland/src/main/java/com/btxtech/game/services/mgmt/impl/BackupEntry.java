@@ -13,9 +13,6 @@
 
 package com.btxtech.game.services.mgmt.impl;
 
-import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.user.UserState;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -41,7 +38,7 @@ public class BackupEntry {
     private Set<GenericItem> items;
     private Date timeStamp;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "backupEntry", fetch = FetchType.EAGER)
-    private Set<UserState> userStates;
+    private Set<DbUserState> userStates;
 
     @Override
     public boolean equals(Object o) {
@@ -82,9 +79,17 @@ public class BackupEntry {
         }
     }
 
+    public int getUserStateCount() {
+        if (userStates != null) {
+            return userStates.size();
+        } else {
+            return 0;
+        }
+    }
+
     public int getBaseCount() {
         if (items != null) {
-            HashSet<Base> bases = new HashSet<Base>();
+            HashSet<DbBase> bases = new HashSet<DbBase>();
             for (GenericItem item : items) {
                 if (item instanceof GenericBaseItem) {
                     bases.add(((GenericBaseItem) item).getBase());
@@ -96,11 +101,11 @@ public class BackupEntry {
         }
     }
 
-    public Set<UserState> getUserStates() {
+    public Set<DbUserState> getUserStates() {
         return userStates;
     }
 
-    public void setUserStates(Set<UserState> userStates) {
+    public void setUserStates(Set<DbUserState> userStates) {
         this.userStates = userStates;
     }
 }

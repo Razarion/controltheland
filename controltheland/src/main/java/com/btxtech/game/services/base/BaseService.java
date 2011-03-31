@@ -86,6 +86,8 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     void setBaseColor(String color) throws AlreadyUsedException;
 
+    BaseColor getBaseColor4HtmlColor(final String htmlColor);
+
     void sendHouseSpacePacket(Base base);
 
     void setBot(Base simpleBase, boolean isBot);

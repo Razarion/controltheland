@@ -14,9 +14,14 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.common.utg.ConditionService;
+import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.services.utg.condition.backup.DbAbstractComparisonBackup;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * User: beat
@@ -26,7 +31,8 @@ import java.util.Collection;
 public interface ServerConditionService extends ConditionService<UserState> {
     void onTutorialFinished(UserState userState);
 
-    void backup();
+    DbAbstractComparisonBackup createBackup(DbUserState dbUserState, UserState userState);
 
-    void restore(Collection<UserState> userStates);
+    void restoreBackup(Map<DbUserState, UserState> userStates, ItemService itemService);
+
 }

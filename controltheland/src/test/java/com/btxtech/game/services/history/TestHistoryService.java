@@ -73,7 +73,7 @@ public class TestHistoryService extends BaseTestService {
         Assert.assertEquals("Base created: U1", displayHistoryElements.get(1).getMessage());
 
         Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp().getTime() >= displayHistoryElements.get(2).getTimeStamp().getTime());
-        Assert.assertEquals("Level reached: " + TEST_REAL_GAME_CREATE_BASE_LEVEL, displayHistoryElements.get(2).getMessage());
+        Assert.assertEquals("Level reached: " + TEST_LEVEL_2_REAL, displayHistoryElements.get(2).getMessage());
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -295,7 +295,7 @@ public class TestHistoryService extends BaseTestService {
         userService.createUser("Actor", "test", "test", "test");
         userService.login("Actor", "test");
         movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "xx", "xx", 0, 0);
-        SimpleBase targetBase = ((RealityInfo) movableService.getGameInfo()).getBase();
+        ((RealityInfo) movableService.getGameInfo()).getBase();
         movableService.surrenderBase();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

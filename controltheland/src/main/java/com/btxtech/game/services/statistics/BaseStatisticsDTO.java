@@ -29,7 +29,7 @@ public class BaseStatisticsDTO implements Serializable {
 
     public BaseStatisticsDTO(int rank, Base base, String baseName, String data) {
         this.rank = rank;
-        this.color = base.getBaseColor().getHtmlColor();
+        this.color = base.getBaseHtmlColor();
         this.baseName = baseName;
         this.data = data;
     }

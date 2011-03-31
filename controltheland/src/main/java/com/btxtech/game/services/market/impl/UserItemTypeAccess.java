@@ -14,43 +14,21 @@
 package com.btxtech.game.services.market.impl;
 
 import com.btxtech.game.services.market.MarketEntry;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.io.Serializable;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 
 /**
  * User: beat
  * Date: 19.12.2009
  * Time: 13:00:19
  */
-@Entity(name = "BACKUP_USER_ITEM_TYPE_ACCESS")
 public class UserItemTypeAccess implements Serializable {
-    @Id
-    @GeneratedValue
-    private Integer id;
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "BACKUP_USER_ITEM_TYPE_ACCESS_BOUGHT",
-            joinColumns = @JoinColumn(name = "itemTypeAccessId"),
-            inverseJoinColumns = @JoinColumn(name = "userItemTypeId")
-    )
     private Set<MarketEntry> allowedItemTypes;
     private int xp = 0;
-
-    /**
-     * Used by Hibernate
-     */
-    public UserItemTypeAccess() {
-    }
 
     public UserItemTypeAccess(Collection<MarketEntry> allowedItemTypes) {
         this.allowedItemTypes = new HashSet<MarketEntry>(allowedItemTypes);
@@ -103,35 +81,5 @@ public class UserItemTypeAccess implements Serializable {
         }
         xp -= marketEntry.getPrice();
         allowedItemTypes.add(marketEntry);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        UserItemTypeAccess that = (UserItemTypeAccess) o;
-
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + " id: " + id + " xp: " + xp;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void clearId() {
-        id = null;
     }
 }

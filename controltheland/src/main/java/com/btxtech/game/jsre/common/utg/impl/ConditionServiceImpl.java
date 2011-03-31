@@ -59,13 +59,14 @@ public abstract class ConditionServiceImpl<T> implements ConditionService<T> {
     }
 
     @Override
-    public void activateCondition(ConditionConfig conditionConfig, T t) {
+    public AbstractConditionTrigger<T> activateCondition(ConditionConfig conditionConfig, T t) {
         AbstractComparison abstractComparison = null;
         if (conditionConfig.getConditionTrigger().isComparisonNeeded()) {
             abstractComparison = conditionConfig.getAbstractComparisonConfig().createAbstractComparison();
         }
         AbstractConditionTrigger<T> abstractConditionTrigger = conditionConfig.getConditionTrigger().createAbstractConditionTrigger(abstractComparison, t);
         saveAbstractConditionTrigger(abstractConditionTrigger);
+        return abstractConditionTrigger;
     }
 
     private <U extends AbstractConditionTrigger<T>> U getAbstractCondition(SimpleBase actor, ConditionTrigger conditionTrigger) {
