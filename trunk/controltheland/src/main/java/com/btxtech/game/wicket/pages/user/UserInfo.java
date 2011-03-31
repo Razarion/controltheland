@@ -30,6 +30,10 @@ public class UserInfo extends BorderPanel {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(WebCommon.DATE_FORMAT_STRING);
         add(new Label("titleUserName", user.getUsername()));
         add(new Label("registered", simpleDateFormat.format(user.getRegisterDate())));
-        add(new Label("lastLogin", simpleDateFormat.format(user.getLastLoginDate())));
+        if(user.getLastLoginDate() != null) {
+            add(new Label("lastLogin", simpleDateFormat.format(user.getLastLoginDate())));
+        } else {
+            add(new Label("lastLogin", ""));
+        }
     }
 }
