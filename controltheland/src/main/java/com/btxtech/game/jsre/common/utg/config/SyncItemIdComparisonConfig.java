@@ -23,6 +23,7 @@ import java.util.Collection;
  * Time: 21:06:41
  */
 public class SyncItemIdComparisonConfig implements AbstractComparisonConfig {
+    private Integer excludedTerritoryId;
     private Collection<Integer> syncItemId;
 
     /**
@@ -31,12 +32,13 @@ public class SyncItemIdComparisonConfig implements AbstractComparisonConfig {
     public SyncItemIdComparisonConfig() {
     }
 
-    public SyncItemIdComparisonConfig(Collection<Integer> syncItemId) {
+    public SyncItemIdComparisonConfig(Integer excludedTerritoryId, Collection<Integer> syncItemId) {
+        this.excludedTerritoryId = excludedTerritoryId;
         this.syncItemId = syncItemId;
     }
 
     @Override
     public AbstractComparison createAbstractComparison() {
-        return new SyncItemIdComparison(syncItemId);
+        return new SyncItemIdComparison(excludedTerritoryId, syncItemId);
     }
 }

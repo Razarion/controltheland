@@ -21,8 +21,7 @@ import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
-import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.form.Button;
+import com.btxtech.game.wicket.uiservices.TerritoryPanel;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
@@ -86,5 +85,6 @@ public class SyncItemTypeComparisonConfigPanel extends Panel {
                 return getParent().getCrudDbComparisonItemCount();
             }
         };
+        add(new TerritoryPanel("excludedDbTerritory"));
     }
 }

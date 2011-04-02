@@ -57,6 +57,6 @@ public class DbSyncItemIdPositionComparisonConfig extends DbAbstractComparisonCo
 
     @Override
     public AbstractComparisonConfig createComparisonConfig(ItemService itemService) {
-        return new SyncItemIdPositionComparisonConfig(syncItemId, region);
+        return new SyncItemIdPositionComparisonConfig(getExcludedTerritoryId(), syncItemId, region);
     }
 }

@@ -40,7 +40,7 @@ public class TestTutorialConditions extends BaseTestService {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbSimulationLevel dbSimulationLevel = setupContainedInSimulationLevel(true);
+        DbSimulationLevel dbSimulationLevel = setupContainedInSimulationLevel("test", true);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -71,7 +71,7 @@ public class TestTutorialConditions extends BaseTestService {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbSimulationLevel dbSimulationLevel = setupContainedInSimulationLevel(false);
+        DbSimulationLevel dbSimulationLevel = setupContainedInSimulationLevel("test", false);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -102,7 +102,7 @@ public class TestTutorialConditions extends BaseTestService {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbSimulationLevel dbSimulationLevel = setupContainedInSimulationLevel(true);
+        DbSimulationLevel dbSimulationLevel = setupContainedInSimulationLevel("test", true);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -132,7 +132,7 @@ public class TestTutorialConditions extends BaseTestService {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbSimulationLevel dbSimulationLevel = setupItemTypePositionLevel();
+        DbSimulationLevel dbSimulationLevel = setupItemTypePositionSimulationLevel("test");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -154,7 +154,7 @@ public class TestTutorialConditions extends BaseTestService {
         SyncBaseItem syncItem = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID);
         //
         SimulationConditionServiceImpl.getInstance().activateCondition(simulationInfo.getTutorialConfig().getTasks().get(0).getStepConfigs().get(0).getConditionConfig(), null);
-        SimulationConditionServiceImpl.getInstance().setConditionServiceListener(conditionServiceListener);        
+        SimulationConditionServiceImpl.getInstance().setConditionServiceListener(conditionServiceListener);
         syncItem.setPosition(new Index(400, 400));
         SimulationConditionServiceImpl.getInstance().onSyncItemDeactivated(syncItem);
         EasyMock.verify(conditionServiceListener);
@@ -167,7 +167,7 @@ public class TestTutorialConditions extends BaseTestService {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbSimulationLevel dbSimulationLevel = setupItemTypePositionLevel();
+        DbSimulationLevel dbSimulationLevel = setupItemTypePositionSimulationLevel("test");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -201,7 +201,7 @@ public class TestTutorialConditions extends BaseTestService {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbSimulationLevel dbSimulationLevel = setupItemTypePositionLevel();
+        DbSimulationLevel dbSimulationLevel = setupItemTypePositionSimulationLevel("test");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

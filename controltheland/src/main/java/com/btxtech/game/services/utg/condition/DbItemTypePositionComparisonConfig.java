@@ -16,7 +16,6 @@ package com.btxtech.game.services.utg.condition;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.ItemTypePositionComparisonConfig;
-import com.btxtech.game.jsre.common.utg.config.SyncItemIdPositionComparisonConfig;
 import com.btxtech.game.services.common.db.RectangleUserType;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbItemType;
@@ -62,6 +61,6 @@ public class DbItemTypePositionComparisonConfig extends DbAbstractComparisonConf
 
     @Override
     public AbstractComparisonConfig createComparisonConfig(ItemService itemService) {
-        return new ItemTypePositionComparisonConfig(itemService.getItemType(dbItemType), region);
+        return new ItemTypePositionComparisonConfig(getExcludedTerritoryId(), itemService.getItemType(dbItemType), region);
     }
 }

@@ -20,15 +20,16 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
  * Date: 27.12.2010
  * Time: 16:31:29
  */
-public class CountComparison implements AbstractSyncItemComparison {
+public class CountComparison extends AbstractSyncItemComparison {
     private double count;
 
-    public CountComparison(int count) {
+    public CountComparison(Integer excludedTerritoryId, int count) {
+        super(excludedTerritoryId);
         this.count = count;
     }
 
     @Override
-    public void onSyncItem(SyncItem syncItem) {
+    protected void privateOnSyncItem(SyncItem syncItem) {
         count -= 1.0;
     }
 

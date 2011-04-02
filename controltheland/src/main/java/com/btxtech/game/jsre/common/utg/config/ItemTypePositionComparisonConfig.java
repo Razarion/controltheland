@@ -25,6 +25,7 @@ import com.btxtech.game.jsre.common.utg.condition.SyncItemIdPositionComparison;
  * Time: 21:06:41
  */
 public class ItemTypePositionComparisonConfig implements AbstractComparisonConfig {
+    private Integer excludedTerritoryId;
     private ItemType itemType;
     private Rectangle region;
 
@@ -34,13 +35,14 @@ public class ItemTypePositionComparisonConfig implements AbstractComparisonConfi
     public ItemTypePositionComparisonConfig() {
     }
 
-    public ItemTypePositionComparisonConfig(ItemType itemType, Rectangle region) {
+    public ItemTypePositionComparisonConfig(Integer excludedTerritoryId, ItemType itemType, Rectangle region) {
+        this.excludedTerritoryId = excludedTerritoryId;
         this.itemType = itemType;
         this.region = region;
     }
 
     @Override
     public AbstractComparison createAbstractComparison() {
-        return new ItemTypePositionComparison(itemType, region);
+        return new ItemTypePositionComparison(excludedTerritoryId, itemType, region);
     }
 }

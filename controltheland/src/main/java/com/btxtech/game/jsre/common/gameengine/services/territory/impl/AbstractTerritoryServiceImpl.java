@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ProjectileItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.territory.AbstractTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+
 import java.util.Collection;
 import java.util.Collections;
 
@@ -53,10 +54,12 @@ public abstract class AbstractTerritoryServiceImpl implements AbstractTerritoryS
         return null;
     }
 
+    @Override
     public Territory getTerritory(int absX, int absY) {
         return getTerritory(new Index(absX, absY));
     }
 
+    @Override
     public Territory getTerritory(Index absPos) {
         Index tile = getTerrainService().getTerrainTileIndexForAbsPosition(absPos);
         return getTerritoryTile(tile);
@@ -103,6 +106,19 @@ public abstract class AbstractTerritoryServiceImpl implements AbstractTerritoryS
         return false;
     }
 
+    @Override
+    public boolean isTerritory(int territoryId, int absX, int absY) {
+        return isTerritory(territoryId, new Index(absX, absY));
+    }
+
+    @Override
+    public boolean isTerritory(int territoryId, Index absPos) {
+        Territory territory = getTerritory(absPos);
+        if (territory == null) {
+            return false;
+        }
+        return territory.compareId(territoryId);
+    }
 
     protected abstract AbstractTerrainService getTerrainService();
 }

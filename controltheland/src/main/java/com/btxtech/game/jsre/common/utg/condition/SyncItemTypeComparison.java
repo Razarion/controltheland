@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.common.utg.condition;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,15 +24,16 @@ import java.util.Map;
  * Date: 18.07.2010
  * Time: 21:06:41
  */
-public class SyncItemTypeComparison implements AbstractSyncItemComparison {
+public class SyncItemTypeComparison extends AbstractSyncItemComparison {
     private Map<ItemType, Integer> remaining;
 
-    public SyncItemTypeComparison(Map<ItemType, Integer> itemType) {
+    public SyncItemTypeComparison(Integer excludedTerritoryId, Map<ItemType, Integer> itemType) {
+        super(excludedTerritoryId);
         remaining = new HashMap<ItemType, Integer>(itemType);
     }
 
     @Override
-    public void onSyncItem(SyncItem syncItem) {
+    protected void privateOnSyncItem(SyncItem syncItem) {
         Integer remainingCount = remaining.get(syncItem.getItemType());
         if (remainingCount == null) {
             return;

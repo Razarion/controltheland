@@ -17,11 +17,8 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,7 +29,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import org.hibernate.annotations.Cascade;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * User: beat
@@ -57,7 +58,7 @@ public class DbTerritory implements CrudChild {
     private Set<DbBaseItemType> allowedItemTypes;
 
     @Override
-    public Serializable getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -86,22 +87,18 @@ public class DbTerritory implements CrudChild {
     }
 
     public Territory createTerritory() {
-        Territory territory = new Territory();
-        territory.setName(name);
         ArrayList<Rectangle> rectangles = new ArrayList<Rectangle>();
         for (DbTerritoryRegion dbTerritoryRegion : dbTerritoryRegions) {
             rectangles.add(dbTerritoryRegion.getTileRectangle());
         }
-        territory.setTerritoryTileRegions(rectangles);
         HashSet<Integer> allowedItemTypes = new HashSet<Integer>();
         for (DbBaseItemType dbBaseItemType : this.allowedItemTypes) {
             allowedItemTypes.add(dbBaseItemType.getId());
         }
-        territory.setAllowedItemTypes(allowedItemTypes);
-        return territory;
+        return new Territory(id, name, rectangles, allowedItemTypes);
     }
 
-    public void addDbTerritoryRegion(Collection<Rectangle> territoryRegions) {
+    public void setDbTerritoryRegion(Collection<Rectangle> territoryRegions) {
         if (dbTerritoryRegions == null) {
             dbTerritoryRegions = new HashSet<DbTerritoryRegion>();
         } else {
@@ -132,6 +129,8 @@ public class DbTerritory implements CrudChild {
 
     @Override
     public void init() {
+        allowedItemTypes = new HashSet<DbBaseItemType>();
+        dbTerritoryRegions = new HashSet<DbTerritoryRegion>();
     }
 
     @Override

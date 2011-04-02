@@ -25,7 +25,11 @@ import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import com.btxtech.game.wicket.uiservices.CrudTableListProvider;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.*;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.HeadersToolbar;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.NoRecordsToolbar;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -69,6 +73,12 @@ public class TerritoryEditor extends MgmtWebPage {
                 pageParameters.add(TerrainEditorAsync.TERRAIN_SETTING_ID, terrainService.getDbTerrainSetting4RealGame().getId().toString());
                 pageParameters.put(TerritoryEditModel.TERRITORY_TO_EDIT, dbTerritory.getName());
                 setResponsePage(TerritoryDesigner.class, pageParameters);
+            }
+
+            @Override
+            protected void extendedPopulateItem(Item<DbTerritory> dbTerritoryItem) {
+                dbTerritoryItem.add(new Label("id"));
+                super.extendedPopulateItem(dbTerritoryItem);
             }
         };
 

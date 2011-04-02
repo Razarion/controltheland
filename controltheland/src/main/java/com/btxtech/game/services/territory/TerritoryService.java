@@ -13,9 +13,12 @@
 
 package com.btxtech.game.services.territory;
 
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.services.territory.AbstractTerritoryService;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+
+import java.util.Collection;
 
 /**
  * User: beat
@@ -25,7 +28,7 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
 public interface TerritoryService extends AbstractTerritoryService {
     CrudRootServiceHelper<DbTerritory> getDbTerritoryCrudServiceHelper();
 
-    void saveTerritory(Territory territory);
+    void saveTerritory(int territoryId, Collection<Rectangle> territoryTileRegions);
 
     void activate();
 }

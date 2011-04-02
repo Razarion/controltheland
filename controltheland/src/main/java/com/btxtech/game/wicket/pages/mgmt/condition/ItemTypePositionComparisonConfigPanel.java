@@ -19,6 +19,7 @@ import com.btxtech.game.services.utg.condition.DbSyncItemIdPositionComparisonCon
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.ItemTypePanel;
 import com.btxtech.game.wicket.uiservices.RectanglePanel;
+import com.btxtech.game.wicket.uiservices.TerritoryPanel;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -53,5 +54,6 @@ public class ItemTypePositionComparisonConfigPanel extends Panel {
         }));
         add(new ItemTypePanel("dbItemType"));
         add(new RectanglePanel("region"));
+        add(new TerritoryPanel("excludedDbTerritory"));        
     }
 }

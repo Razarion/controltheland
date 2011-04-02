@@ -16,20 +16,21 @@ package com.btxtech.game.services.utg.condition;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.SyncItemTypeComparisonConfig;
-import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
+import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.item.ItemService;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
-import org.hibernate.annotations.Cascade;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * User: beat
@@ -73,6 +74,6 @@ public class DbSyncItemTypeComparisonConfig extends DbAbstractComparisonConfig i
             itemTypeCount.put(itemService.getItemType(dbComparisonItemCount.getItemType()), dbComparisonItemCount.getCount());
         }
 
-        return new SyncItemTypeComparisonConfig(itemTypeCount);
+        return new SyncItemTypeComparisonConfig(getExcludedTerritoryId(), itemTypeCount);
     }
 }

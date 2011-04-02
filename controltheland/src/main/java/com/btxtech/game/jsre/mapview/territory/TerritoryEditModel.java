@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.mapeditor.TerrainEditorAsync;
 import com.btxtech.game.jsre.mapview.common.GeometricalUtil;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -41,8 +42,7 @@ public class TerritoryEditModel {
         territoryCockpit.disableSaveButton();
         miniTerritoryView.getTiles();
         ArrayList<Rectangle> territoryRectangles = GeometricalUtil.separateIntoRectangles(miniTerritoryView.getTiles(), terrainSettings);
-        territory.setTerritoryTileRegions(territoryRectangles);
-        terrainEditor.saveTerritory(territory, new AsyncCallback<Void>() {
+        terrainEditor.saveTerritory(territory.getId(), territoryRectangles, new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable caught) {
                 territoryCockpit.enableSaveButton();
@@ -74,12 +74,9 @@ public class TerritoryEditModel {
 
     public void setTerritories(Collection<Territory> territories) {
         territoryCockpit.setTerritoryName("???");
-        String territoryName = Window.Location.getParameter(TERRITORY_TO_EDIT);
-        if (territoryName == null || territoryName.trim().isEmpty()) {
-            return;
-        }
+        int territoryId = Integer.parseInt(Window.Location.getParameter(TERRITORY_TO_EDIT));
         for (Territory territory : territories) {
-            if (territory.getName().equals(territoryName)) {
+            if (territory.compareId(territoryId)) {
                 this.territory = territory;
                 territoryCockpit.setTerritoryName(territory.getName());
                 break;

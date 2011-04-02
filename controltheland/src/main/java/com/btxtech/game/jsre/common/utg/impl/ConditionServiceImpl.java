@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.common.utg.impl;
 
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
@@ -22,6 +23,7 @@ import com.btxtech.game.jsre.common.utg.ConditionService;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
+import com.btxtech.game.jsre.common.utg.condition.AbstractSyncItemComparison;
 import com.btxtech.game.jsre.common.utg.condition.CockpitButtonTrigger;
 import com.btxtech.game.jsre.common.utg.condition.ContainedInTrigger;
 import com.btxtech.game.jsre.common.utg.condition.SimpleConditionTrigger;
@@ -43,13 +45,15 @@ public abstract class ConditionServiceImpl<T> implements ConditionService<T> {
 
     protected abstract AbstractConditionTrigger<T> getAbstractConditionPrivate(SimpleBase simpleBase, ConditionTrigger conditionTrigger);
 
+    protected abstract Services getServices();
+    
     protected void cleanup() {
 
     }
 
     protected void conditionPassed(T t) {
         cleanup();
-        if(conditionServiceListener != null) {
+        if (conditionServiceListener != null) {
             conditionServiceListener.conditionPassed(t);
         }
     }
@@ -63,6 +67,9 @@ public abstract class ConditionServiceImpl<T> implements ConditionService<T> {
         AbstractComparison abstractComparison = null;
         if (conditionConfig.getConditionTrigger().isComparisonNeeded()) {
             abstractComparison = conditionConfig.getAbstractComparisonConfig().createAbstractComparison();
+            if (abstractComparison instanceof AbstractSyncItemComparison) {
+                ((AbstractSyncItemComparison) abstractComparison).setServices(getServices());
+            }
         }
         AbstractConditionTrigger<T> abstractConditionTrigger = conditionConfig.getConditionTrigger().createAbstractConditionTrigger(abstractComparison, t);
         saveAbstractConditionTrigger(abstractConditionTrigger);
@@ -159,7 +166,7 @@ public abstract class ConditionServiceImpl<T> implements ConditionService<T> {
             conditionPassed(containedInTrigger.getUserObject());
         }
     }
-    
+
 
     //------ Server------
 

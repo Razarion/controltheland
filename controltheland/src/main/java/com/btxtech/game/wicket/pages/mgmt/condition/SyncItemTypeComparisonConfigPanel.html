@@ -21,19 +21,33 @@
 <wicket:panel>
     <table border="0">
         <tr>
-            <th bgcolor="#dadada">Item Type</th>
-            <th bgcolor="#dadada">Count</th>
-            <th bgcolor="#dadada">Delete</th>
-        </tr>
-        <tr wicket:id="itemCounts">
-            <td wicket:id="itemType"/>
-            <td><input type="text" wicket:id="count" size="6"></td>
-            <td valign="center">
-                <input type="submit" value="Delete" wicket:id="delete"/>
+            <td colspan="2">
+                <table border="0">
+                    <tr>
+                        <th bgcolor="#dadada">Item Type</th>
+                        <th bgcolor="#dadada">Count</th>
+                        <th bgcolor="#dadada">Delete</th>
+                    </tr>
+                    <tr wicket:id="itemCounts">
+                        <td wicket:id="itemType"/>
+                        <td><input type="text" wicket:id="count" size="6"></td>
+                        <td valign="center">
+                            <input type="submit" value="Delete" wicket:id="delete"/>
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
+        <tr>
+            <td colspan="2">
+                <input type="submit" wicket:id="createItemCount" value="Create">
+            </td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Excluded Territory</td>
+            <td wicket:id="excludedDbTerritory"/>
+        </tr>
     </table>
-    <input type="submit" wicket:id="createItemCount" value="Create">
 </wicket:panel>
 </body>
 </html>

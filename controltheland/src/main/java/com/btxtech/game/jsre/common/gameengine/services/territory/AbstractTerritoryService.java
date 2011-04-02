@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ProjectileItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+
 import java.util.Collection;
 
 /**
@@ -39,4 +40,13 @@ public interface AbstractTerritoryService {
     boolean isAtLeastOneAllowed(Index absIndex, Collection<SyncBaseItem> items);
 
     boolean isAtLeastOneAllowed(Collection<SyncBaseItem> items);
+
+    Territory getTerritory(int absX, int absY);
+
+    Territory getTerritory(Index absPos);
+
+    boolean isTerritory(int territoryId, int absX, int absY);
+
+    boolean isTerritory(int territoryId, Index absPos);
+
 }
