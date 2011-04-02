@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.common.utg.condition;
 
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+
 import java.util.Collection;
 
 /**
@@ -21,14 +22,16 @@ import java.util.Collection;
  * Date: 18.07.2010
  * Time: 21:06:41
  */
-public class SyncItemIdComparison implements AbstractSyncItemComparison {
+public class SyncItemIdComparison extends AbstractSyncItemComparison {
     private Collection<Integer> syncItemIds;
 
-    public SyncItemIdComparison(Collection<Integer> syncItemIds) {
+    public SyncItemIdComparison(Integer excludedTerritoryId, Collection<Integer> syncItemIds) {
+        super(excludedTerritoryId);
         this.syncItemIds = syncItemIds;
     }
 
-    public void onSyncItem(SyncItem syncItem) {
+    @Override
+    protected void privateOnSyncItem(SyncItem syncItem) {
         syncItemIds.remove(syncItem.getId().getId());
     }
 

@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.common;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -24,41 +25,51 @@ import java.util.Collection;
  * Time: 11:35:30
  */
 public class Territory implements Serializable {
+    private int id;
     private String name;
     private Collection<Rectangle> territoryTileRegions;
     private Collection<Integer> allowedItemTypes;
 
-    public String getName() {
-        return name;
+    /**
+     * Used by GWT
+     */
+    public Territory() {
     }
 
-    public void setName(String name) {
+    public Territory(int id, String name, Collection<Rectangle> territoryTileRegions, Collection<Integer> allowedItemTypes) {
+        this.id = id;
         this.name = name;
+        this.territoryTileRegions = territoryTileRegions;
+        this.allowedItemTypes = allowedItemTypes;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public Collection<Rectangle> getTerritoryTileRegions() {
         return territoryTileRegions;
     }
 
-    public void setTerritoryTileRegions(Collection<Rectangle> territoryTileRegions) {
-        this.territoryTileRegions = territoryTileRegions;
-    }
-
     public boolean contains(Index tile) {
         for (Rectangle rectangle : territoryTileRegions) {
-            if(rectangle.containsExclusive(tile)) {
+            if (rectangle.containsExclusive(tile)) {
                 return true;
             }
         }
         return false;
     }
 
-    public void setAllowedItemTypes(Collection<Integer> allowedItemTypes) {
-        this.allowedItemTypes = allowedItemTypes;
-    }
-
     public boolean isItemAllowed(int itemTypeId) {
         return allowedItemTypes.contains(itemTypeId);
+    }
+
+    public boolean compareId(int id) {
+        return this.id == id;
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override
@@ -68,13 +79,12 @@ public class Territory implements Serializable {
 
         Territory territory = (Territory) o;
 
-        if (name != null ? !name.equals(territory.name) : territory.name != null) return false;
+        return id == territory.id;
 
-        return true;
     }
 
     @Override
     public int hashCode() {
-        return name != null ? name.hashCode() : 0;
+        return id;
     }
 }

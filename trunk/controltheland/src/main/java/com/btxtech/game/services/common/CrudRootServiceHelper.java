@@ -74,11 +74,11 @@ public class CrudRootServiceHelper<T extends CrudChild> {
         });
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, noRollbackFor = NoSuchChildException.class)
     public T readDbChild(Serializable id) {
         T t = hibernateTemplate.get(childClass, id);
         if (t == null) {
-            throw new IllegalArgumentException("No child found for: " + id);
+            throw new NoSuchChildException(id);
         }
         return t;
     }

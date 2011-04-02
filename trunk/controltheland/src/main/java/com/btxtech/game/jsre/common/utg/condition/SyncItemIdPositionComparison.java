@@ -14,27 +14,26 @@
 package com.btxtech.game.jsre.common.utg.condition;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import java.util.Collection;
 
 /**
  * User: beat
  * Date: 18.07.2010
  * Time: 21:06:41
  */
-public class SyncItemIdPositionComparison implements AbstractSyncItemComparison {
+public class SyncItemIdPositionComparison extends AbstractSyncItemComparison {
     private int syncObjectId;
     private Rectangle region;
     private boolean isFulfilled = false;
 
-    public SyncItemIdPositionComparison(int syncObjectId, Rectangle region) {
+    public SyncItemIdPositionComparison(Integer excludedTerritoryId, int syncObjectId, Rectangle region) {
+        super(excludedTerritoryId);
         this.syncObjectId = syncObjectId;
         this.region = region;
     }
 
     @Override
-    public void onSyncItem(SyncItem syncItem) {
+    protected void privateOnSyncItem(SyncItem syncItem) {
         if (syncItem.getId().getId() == syncObjectId) {
             isFulfilled = region.contains(syncItem.getPosition());
         }

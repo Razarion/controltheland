@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.common.utg.config;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.SyncItemTypeComparison;
+
 import java.util.Map;
 
 /**
@@ -24,6 +25,7 @@ import java.util.Map;
  * Time: 21:06:41
  */
 public class SyncItemTypeComparisonConfig implements AbstractComparisonConfig {
+    private Integer excludedTerritoryId;
     private Map<ItemType, Integer> itemTypeCount;
 
 
@@ -33,12 +35,13 @@ public class SyncItemTypeComparisonConfig implements AbstractComparisonConfig {
     public SyncItemTypeComparisonConfig() {
     }
 
-    public SyncItemTypeComparisonConfig(Map<ItemType, Integer> itemTypeCount) {
+    public SyncItemTypeComparisonConfig(Integer excludedTerritoryId, Map<ItemType, Integer> itemTypeCount) {
+        this.excludedTerritoryId = excludedTerritoryId;
         this.itemTypeCount = itemTypeCount;
     }
 
     @Override
     public AbstractComparison createAbstractComparison() {
-        return new SyncItemTypeComparison(itemTypeCount);
+        return new SyncItemTypeComparison(excludedTerritoryId, itemTypeCount);
     }
 }

@@ -16,7 +16,6 @@ package com.btxtech.game.services.common;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
-import java.util.NoSuchElementException;
 
 
 /**
@@ -45,7 +44,7 @@ public class CrudChildServiceHelper<T extends CrudChild> implements Serializable
                 return child;
             }
         }
-        throw new NoSuchElementException("Id: " + id);
+        throw new NoSuchChildException("Id: " + id);
     }
 
     public void deleteDbChild(T child) {

@@ -3,6 +3,7 @@ package com.btxtech.game.services;
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
@@ -35,6 +36,8 @@ import com.btxtech.game.services.terrain.DbSurfaceRect;
 import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainService;
+import com.btxtech.game.services.territory.DbTerritory;
+import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.tutorial.DbItemTypeAndPosition;
 import com.btxtech.game.services.tutorial.DbStepConfig;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
@@ -76,6 +79,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.ServletRequest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -99,6 +103,7 @@ public class BaseTestService {
     protected static int TEST_CONTAINER_ITEM_ID = -1;
     protected static final String TEST_LEVEL_1_SIMULATED = "TEST_LEVEL_1_SIMULATED";
     protected static final String TEST_LEVEL_2_REAL = "TEST_LEVEL_2_REAL";
+    protected static int TEST_LEVEL_2_REAL_ID;
     protected static final String TEST_LEVEL_3_REAL = "TEST_LEVEL_3_REAL";
 
     private HibernateTemplate hibernateTemplate;
@@ -120,6 +125,8 @@ public class BaseTestService {
     private MovableService movableService;
     @Autowired
     private BotService botService;
+    @Autowired
+    private TerritoryService territoryService;
     private SessionHolder sessionHolder;
     private MockHttpServletRequest mockHttpServletRequest;
     private MockHttpSession mockHttpSession;
@@ -144,10 +151,29 @@ public class BaseTestService {
         return new SyncBaseItem(new Id(1, -100, -100), new Index(100, 100), (BaseItemType) itemService.getItemType(itemTypeId), services, new SimpleBase(1));
     }
 
+    protected Id getFirstSynItemId(int itemTypeId) {
+        return getFirstSynItemId(itemTypeId, null);
+    }
+
+    protected Id getFirstSynItemId(int itemTypeId, Rectangle region) {
+        SimpleBase simpleBase = ((RealityInfo) movableService.getGameInfo()).getBase();
+        return getFirstSynItemId(simpleBase, itemTypeId, region);
+    }
+
     protected Id getFirstSynItemId(SimpleBase simpleBase, int itemTypeId) {
+        return getFirstSynItemId(simpleBase, itemTypeId, null);
+    }
+
+    protected Id getFirstSynItemId(SimpleBase simpleBase, int itemTypeId, Rectangle region) {
         for (SyncItemInfo syncItemInfo : movableService.getAllSyncInfo()) {
             if (syncItemInfo.getBase().equals(simpleBase) && syncItemInfo.getItemTypeId() == itemTypeId) {
-                return syncItemInfo.getId();
+                if (region != null) {
+                    if (region.contains(syncItemInfo.getPosition())) {
+                        return syncItemInfo.getId();
+                    }
+                } else {
+                    return syncItemInfo.getId();
+                }
             }
         }
         throw new IllegalStateException("No such sync item: ItemTypeID=" + itemTypeId + " simpleBase=" + simpleBase);
@@ -412,13 +438,13 @@ public class BaseTestService {
     // ------------------- Setup Levels --------------------
 
     protected void setupLevels() throws LevelActivationException {
-        setupSimulationLevel(TEST_LEVEL_1_SIMULATED);
-        setupRealGameCreateBaseLevel();
-        setupRealGameBuildFactoryLevel();
+        setupSimulationLevel();
+        setupCreateBaseRealGameLevel();
+        setupBuildFactoryRealGameLevel();
         userGuidanceService.activateLevels();
     }
 
-    private void setupRealGameCreateBaseLevel() {
+    private void setupCreateBaseRealGameLevel() {
         DbRealGameLevel dbRealGameLevel = (DbRealGameLevel) userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbRealGameLevel.class);
         dbRealGameLevel.setName(TEST_LEVEL_2_REAL);
         // Create Base
@@ -447,9 +473,10 @@ public class BaseTestService {
         attacker.setCount(10);
 
         userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbRealGameLevel);
+        TEST_LEVEL_2_REAL_ID = dbRealGameLevel.getId();
     }
 
-    private void setupRealGameBuildFactoryLevel() {
+    private void setupBuildFactoryRealGameLevel() {
         DbRealGameLevel dbRealGameLevel = (DbRealGameLevel) userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbRealGameLevel.class);
         dbRealGameLevel.setName(TEST_LEVEL_3_REAL);
         // Scope
@@ -477,9 +504,33 @@ public class BaseTestService {
         userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbRealGameLevel);
     }
 
-    private void setupSimulationLevel(String name) {
+    protected DbRealGameLevel setupGameLevel(String name, DbConditionConfig dbConditionConfig) throws LevelActivationException {
+        DbRealGameLevel dbRealGameLevel = (DbRealGameLevel) userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbRealGameLevel.class);
+        dbRealGameLevel.setName(name);
+        // Scope
+        dbRealGameLevel.setHouseSpace(20);
+        // Condition
+        dbRealGameLevel.setDbConditionConfig(dbConditionConfig);
+        // Limitation
+        DbItemTypeLimitation builder = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
+        builder.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
+        builder.setCount(10);
+        DbItemTypeLimitation factory = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
+        factory.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_FACTORY_ITEM_ID));
+        factory.setCount(10);
+        DbItemTypeLimitation attacker = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
+        attacker.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID));
+        attacker.setCount(10);
+
+        userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbRealGameLevel);
+        userGuidanceService.activateLevels();
+        return dbRealGameLevel;
+    }
+
+
+    private void setupSimulationLevel() {
         DbSimulationLevel dbSimulationLevel = (DbSimulationLevel) userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbSimulationLevel.class);
-        dbSimulationLevel.setName(name);
+        dbSimulationLevel.setName(TEST_LEVEL_1_SIMULATED);
         // Tutorial
         DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().createDbChild();
         dbSimulationLevel.setDbTutorialConfig(dbTutorialConfig);
@@ -501,9 +552,9 @@ public class BaseTestService {
         userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbSimulationLevel);
     }
 
-    protected DbSimulationLevel setupContainedInSimulationLevel(boolean containedIn) throws LevelActivationException {
+    protected DbSimulationLevel setupContainedInSimulationLevel(String name, boolean containedIn) throws LevelActivationException {
         DbSimulationLevel dbSimulationLevel = (DbSimulationLevel) userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbSimulationLevel.class);
-        dbSimulationLevel.setName("Test");
+        dbSimulationLevel.setName(name);
         // Tutorial
         DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().createDbChild();
         dbTutorialConfig.setOwnBaseId(1);
@@ -539,9 +590,9 @@ public class BaseTestService {
         return dbSimulationLevel;
     }
 
-    protected DbSimulationLevel setupItemTypePositionLevel() throws LevelActivationException {
+    protected DbSimulationLevel setupItemTypePositionSimulationLevel(String name) throws LevelActivationException {
         DbSimulationLevel dbSimulationLevel = (DbSimulationLevel) userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbSimulationLevel.class);
-        dbSimulationLevel.setName("Test");
+        dbSimulationLevel.setName(name);
         // Tutorial
         DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().createDbChild();
         dbTutorialConfig.setOwnBaseId(1);
@@ -594,6 +645,21 @@ public class BaseTestService {
         botService.getDbBotConfigCrudServiceHelper().updateDbChild(dbBotConfig);
         botService.activate();
         return dbBotConfig;
+    }
+
+    // ------------------- Territory Config --------------------
+
+    protected DbTerritory setupTerritory(String name, int[] allowedItems, Rectangle... regions) {
+        DbTerritory dbTerritory = territoryService.getDbTerritoryCrudServiceHelper().createDbChild();
+        dbTerritory.setName(name);
+        if (allowedItems != null) {
+            for (int allowedItem : allowedItems) {
+                dbTerritory.setItemAllowed(itemService.getDbBaseItemType(allowedItem), true);
+            }
+        }
+        territoryService.saveTerritory(dbTerritory.getId(), Arrays.asList(regions));
+        territoryService.activate();
+        return dbTerritory;
     }
 
     // ------------------- Session Config --------------------

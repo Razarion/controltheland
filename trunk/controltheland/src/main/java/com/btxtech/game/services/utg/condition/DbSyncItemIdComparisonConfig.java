@@ -41,6 +41,6 @@ public class DbSyncItemIdComparisonConfig extends DbAbstractComparisonConfig {
 
     @Override
     public AbstractComparisonConfig createComparisonConfig(ItemService itemService) {
-        return new SyncItemIdComparisonConfig(Utils.stringToIntegers(syncItemIdsString));
+        return new SyncItemIdComparisonConfig(getExcludedTerritoryId(), Utils.stringToIntegers(syncItemIdsString));
     }
 }

@@ -15,8 +15,14 @@ package com.btxtech.game.services.utg.condition;
 
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.item.itemType.DbItemType;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
-import javax.persistence.*;
 
 
 /**
@@ -63,12 +69,12 @@ public class DbComparisonItemCount implements CrudChild<DbSyncItemTypeComparison
 
         DbComparisonItemCount that = (DbComparisonItemCount) o;
 
-        return !(id != null ? !id.equals(that.id) : that.id != null);
+        return id != null && id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 
     @Override

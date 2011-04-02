@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.gwt;
 
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
@@ -61,9 +62,9 @@ public class TerrainEditoImpl implements TerrainEditor {
     }
 
     @Override
-    public void saveTerritory(Territory territory) {
+    public void saveTerritory(int territoryId, Collection<Rectangle> territoryTileRegions) {
         try {
-            territoryService.saveTerritory(territory);
+            territoryService.saveTerritory(territoryId, territoryTileRegions);
         } catch (Throwable t) {
             log.error("", t);
         }

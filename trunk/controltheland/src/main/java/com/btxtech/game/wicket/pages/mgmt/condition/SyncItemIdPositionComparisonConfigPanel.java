@@ -21,6 +21,7 @@ import com.btxtech.game.services.utg.condition.DbSyncItemIdComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemIdPositionComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 import com.btxtech.game.wicket.uiservices.RectanglePanel;
+import com.btxtech.game.wicket.uiservices.TerritoryPanel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.markup.html.form.TextField;
@@ -58,5 +59,6 @@ public class SyncItemIdPositionComparisonConfigPanel extends Panel {
         }));
         add(new TextField("syncItemId"));
         add(new RectanglePanel("region"));
+        add(new TerritoryPanel("excludedDbTerritory"));        
     }
 }

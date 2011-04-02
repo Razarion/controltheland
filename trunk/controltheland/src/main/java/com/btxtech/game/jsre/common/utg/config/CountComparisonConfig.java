@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.common.utg.condition.CountComparison;
  * Time: 14:04:29
  */
 public class CountComparisonConfig implements AbstractComparisonConfig {
+    private Integer excludedTerritoryId;
     private int count;
 
     /**
@@ -30,12 +31,13 @@ public class CountComparisonConfig implements AbstractComparisonConfig {
     public CountComparisonConfig() {
     }
 
-    public CountComparisonConfig(int count) {
+    public CountComparisonConfig(Integer excludedTerritoryId, int count) {
+        this.excludedTerritoryId = excludedTerritoryId;
         this.count = count;
     }
 
     @Override
     public AbstractComparison createAbstractComparison() {
-        return new CountComparison(count);
+        return new CountComparison(excludedTerritoryId, count);
     }
 }

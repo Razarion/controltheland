@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.mapeditor;
 
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
@@ -32,7 +33,7 @@ public interface TerrainEditorAsync extends RemoteService {
 
     void saveTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int terrainId, AsyncCallback<Void> async);
 
-    void saveTerritory(Territory territory, AsyncCallback<Void> async);
+    void saveTerritory(int territoryId, Collection<Rectangle> territoryTileRegions, AsyncCallback<Void> async);
 
     void getTerritories(AsyncCallback<Collection<Territory>> asyncCallback);
 

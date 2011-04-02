@@ -14,6 +14,7 @@
 package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.CountComparison;
@@ -22,6 +23,7 @@ import com.btxtech.game.jsre.common.utg.condition.SyncItemTypeComparison;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.jsre.common.utg.impl.ConditionServiceImpl;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.impl.DbUserState;
 import com.btxtech.game.services.user.UserService;
@@ -54,6 +56,8 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState> 
     private UserService userService;
     @Autowired
     private ItemService itemService;
+    @Autowired
+    private ServerServices serverServices;
     private final Map<UserState, AbstractConditionTrigger<UserState>> triggerMap = new HashMap<UserState, AbstractConditionTrigger<UserState>>();
 
     @Override
@@ -129,5 +133,10 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState> 
         } else {
             throw new IllegalArgumentException("Unknown AbstractComparison: " + abstractComparison);
         }
+    }
+
+    @Override
+    protected Services getServices() {
+        return serverServices;
     }
 }

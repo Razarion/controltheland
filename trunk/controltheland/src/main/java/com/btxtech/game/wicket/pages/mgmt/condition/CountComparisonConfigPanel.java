@@ -16,6 +16,7 @@ package com.btxtech.game.wicket.pages.mgmt.condition;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
+import com.btxtech.game.wicket.uiservices.TerritoryPanel;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -49,5 +50,6 @@ public class CountComparisonConfigPanel extends Panel {
             }
         }));
         add(new TextField("count"));
+        add(new TerritoryPanel("excludedDbTerritory"));
     }
 }

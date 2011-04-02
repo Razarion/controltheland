@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.utg.condition;
 
+import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 /**
@@ -20,7 +21,30 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
  * Date: 12.01.2011
  * Time: 12:05:40
  */
-public abstract interface AbstractSyncItemComparison extends AbstractComparison {
-    public abstract void onSyncItem(SyncItem syncItem);
+public abstract class AbstractSyncItemComparison implements AbstractComparison {
+    private Services services;
+    private Integer excludedTerritoryId;
 
+    protected abstract void privateOnSyncItem(SyncItem syncItem);
+
+    protected AbstractSyncItemComparison(Integer excludedTerritoryId) {
+        this.excludedTerritoryId = excludedTerritoryId;
+    }
+
+    public final void onSyncItem(SyncItem syncItem) {
+        if (excludedTerritoryId != null) {
+            if (getServices().getTerritoryService().isTerritory(excludedTerritoryId, syncItem.getPosition())) {
+                return;
+            }
+        }
+        privateOnSyncItem(syncItem);
+    }
+
+    protected Services getServices() {
+        return services;
+    }
+
+    public void setServices(Services services) {
+        this.services = services;
+    }
 }

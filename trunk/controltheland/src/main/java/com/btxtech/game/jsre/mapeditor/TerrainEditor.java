@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.mapeditor;
 
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
@@ -31,7 +32,7 @@ public interface TerrainEditor extends RemoteService {
 
     void saveTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int terrainId);
 
-    void saveTerritory(Territory territory);
+    void saveTerritory(int territoryId, Collection<Rectangle> territoryTileRegions);
 
     Collection<Territory> getTerritories();
 

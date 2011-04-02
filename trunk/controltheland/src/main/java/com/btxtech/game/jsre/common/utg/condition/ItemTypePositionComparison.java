@@ -22,18 +22,19 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
  * Date: 18.07.2010
  * Time: 21:06:41
  */
-public class ItemTypePositionComparison implements AbstractSyncItemComparison {
+public class ItemTypePositionComparison extends AbstractSyncItemComparison {
     private ItemType itemType;
     private Rectangle region;
     private boolean isFulfilled = false;
 
-    public ItemTypePositionComparison(ItemType itemType, Rectangle region) {
+    public ItemTypePositionComparison(Integer excludedTerritoryId, ItemType itemType, Rectangle region) {
+        super(excludedTerritoryId);
         this.itemType = itemType;
         this.region = region;
     }
 
     @Override
-    public void onSyncItem(SyncItem syncItem) {
+    protected void privateOnSyncItem(SyncItem syncItem) {
         if (syncItem.getItemType().equals(itemType)) {
             isFulfilled = region.contains(syncItem.getPosition());
         }
