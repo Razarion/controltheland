@@ -15,10 +15,11 @@ package com.btxtech.game.wicket;
 
 import org.apache.wicket.authentication.AuthenticatedWebSession;
 
-import java.util.Date;
-import java.util.UUID;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * User: beat
@@ -31,7 +32,6 @@ public class WebCommon {
     public static final String COOKIE_ID = "cookieId";
 
     /**
-     *
      * @param duration time in ms
      * @return String representing time h:mm:ss
      */
@@ -41,12 +41,20 @@ public class WebCommon {
     }
 
     /**
-     *
      * @param duration time in ms
      * @return String representing time s:ms
      */
     static public String formatDurationMilis(long duration) {
         return String.format("%.2f", duration / 1000.0);
+    }
+
+    static public String formatTime(Date date) {
+        if (date != null) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_TIME_FORMAT_STRING);
+            return simpleDateFormat.format(date);
+        } else {
+            return "-";
+        }
     }
 
     public static String getTimeDiff(Date start, Date end) {
@@ -56,7 +64,7 @@ public class WebCommon {
     }
 
     public static String getCookieId(Cookie[] cookies) {
-        if(cookies == null) {
+        if (cookies == null) {
             return null;
         }
         for (Cookie cookie : cookies) {

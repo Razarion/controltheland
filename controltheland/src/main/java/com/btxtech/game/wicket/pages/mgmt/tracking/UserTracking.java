@@ -17,13 +17,8 @@ import com.btxtech.game.services.utg.UserTrackingFilter;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.VisitorInfo;
 import com.btxtech.game.wicket.WebCommon;
-import java.text.SimpleDateFormat;
-import java.util.List;
-
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RadioChoice;
 import org.apache.wicket.markup.html.form.TextField;
@@ -34,6 +29,9 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 /**
  * User: beat
@@ -91,6 +89,7 @@ public class UserTracking extends MgmtWebPage {
                 listItem.add(new Label("pageHits", Integer.toString(listItem.getModelObject().getPageHits())));
                 listItem.add(new Label("enterGame", Integer.toString(listItem.getModelObject().getEnterGameHits())));
                 listItem.add(new Label("successfulStarts", Integer.toString(listItem.getModelObject().getSuccessfulStarts())));
+                listItem.add(new Label("startupFailure", listItem.getModelObject().isStartupFailure() ? "!" : ""));
                 listItem.add(new Label("commands", Integer.toString(listItem.getModelObject().getCommands())));
                 listItem.add(new Label("tasks", Integer.toString(listItem.getModelObject().getTasks())));
                 listItem.add(new Label("cookie", listItem.getModelObject().isCookie() ? "Yes" : ""));

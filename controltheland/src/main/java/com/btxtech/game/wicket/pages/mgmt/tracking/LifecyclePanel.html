@@ -38,16 +38,26 @@
             <td bgcolor="#dadada">Level</td>
             <td wicket:id="level"/>
         </tr>
+        <tr>
+            <td bgcolor="#dadada">Startup Begin</td>
+            <td wicket:id="startTime"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Startup Finished</td>
+            <td wicket:id="endTime"/>
+        </tr>
     </table>
     <h3>Startup</h3>
     <table border="0">
         <tr>
             <th bgcolor="#dadada">Task</th>
             <th bgcolor="#dadada">Time [s]</th>
+            <th bgcolor="#dadada">Error</th>
         </tr>
         <tr wicket:id="startup">
             <td wicket:id="task"/>
             <td wicket:id="time" align="right"/>
+            <td wicket:id="failureText"/>
         </tr>
         <tr>
             <td><b>Total</b></td>

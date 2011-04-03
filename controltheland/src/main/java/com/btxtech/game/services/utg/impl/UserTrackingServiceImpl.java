@@ -140,10 +140,11 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             }
 
             int successfulStarts = getSuccessfulStarts(sessionId);
+            boolean failure = hasFailureStarts(sessionId);
             int enterGameHits = getGameAttempts(sessionId);
             int commands = getUserCommandCount(sessionId, null, null, null);
             int tasks = getTaskCount(sessionId, null, null);
-            visitorInfos.add(new VisitorInfo(timeStamp, sessionId, hits, enterGameHits, successfulStarts, commands, tasks, cookie, referer));
+            visitorInfos.add(new VisitorInfo(timeStamp, sessionId, hits, enterGameHits, successfulStarts, failure, commands, tasks, cookie, referer));
         }
         return visitorInfos;
     }
@@ -156,6 +157,20 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 criteria.add(Restrictions.eq("sessionId", sessionId));
                 criteria.setProjection(Projections.rowCount());
                 return ((Number)criteria.list().get(0)).intValue();
+            }
+        });
+    }
+
+    private boolean hasFailureStarts(final String sessionId) {
+        return hibernateTemplate.execute(new HibernateCallback<Boolean>() {
+            @Override
+            public Boolean doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbStartup.class);
+                criteria.add(Restrictions.eq("sessionId", sessionId));
+                Criteria dbStartupTaskCriteria = criteria.createCriteria("dbStartupTasks", "dbStartupTasksAlias");
+                dbStartupTaskCriteria.add(Restrictions.isNotNull("failureText"));
+                criteria.setProjection(Projections.rowCount());
+                return ((Number)criteria.list().get(0)).intValue() > 0;
             }
         });
     }
