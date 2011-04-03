@@ -105,8 +105,8 @@ public class GenericItemConverter {
         // User state
         Set<DbUserState> dbUserStates = new HashSet<DbUserState>();
         for (UserState userState : userService.getAllUserStates()) {
-            if(!userState.isRegistered()) {
-              continue;  
+            if (!userState.isRegistered()) {
+                continue;
             }
             DbUserState dbUserState = createDbUserState(userState);
             dbUserState.setDbAbstractComparisonBackup(serverConditionService.createBackup(dbUserState, userState));
@@ -122,10 +122,14 @@ public class GenericItemConverter {
 
     private DbUserState createDbUserState(UserState userState) {
         DbUserState dbUserState = new DbUserState(backupEntry, userState);
-        if(userState.getBase() != null) {
+        if (userState.getBase() != null) {
             DbBase dbBase = bases.get(userState.getBase());
-            dbBase.setUserState(dbUserState);
-            dbUserState.setBase(dbBase);
+            if (dbBase != null) {
+                dbBase.setUserState(dbUserState);
+                dbUserState.setBase(dbBase);
+            } else {
+                log.error("dbBase == null for base: " + userState.getBase() + " UserState: " + userState);
+            }
         }
         return dbUserState;
     }
@@ -191,8 +195,8 @@ public class GenericItemConverter {
         if (base == null) {
             UserState userState = userStates.get(dBbase.getUserState());
             base = dBbase.createBase(userState);
-            if(userState != null) {
-               userState.setBase(base);
+            if (userState != null) {
+                userState.setBase(base);
             }
             dbBases.put(dBbase, base);
         }
