@@ -19,15 +19,13 @@ import com.btxtech.game.services.utg.PageAccess;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.VisitorDetailInfo;
 import com.btxtech.game.wicket.WebCommon;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import java.util.Date;
 
 /**
  * User: beat
@@ -37,7 +35,6 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 public class VisitorDetails extends MgmtWebPage {
     @SpringBean
     private UserTrackingService userTrackingService;
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(WebCommon.DATE_TIME_FORMAT_STRING);
 
     public VisitorDetails(String sessionId) {
         VisitorDetailInfo visitorDetailInfo = userTrackingService.getVisitorDetails(sessionId);
@@ -57,7 +54,7 @@ public class VisitorDetails extends MgmtWebPage {
 
             @Override
             protected void populateItem(ListItem<PageAccess> listItem) {
-                listItem.add(new Label("time", simpleDateFormat.format(listItem.getModelObject().getTimeStamp())));
+                listItem.add(new Label("time", WebCommon.formatTime(listItem.getModelObject().getTimeStamp())));
                 if (previous != null) {
                     listItem.add(new Label("delta", WebCommon.getTimeDiff(previous, listItem.getModelObject().getTimeStamp())));
                 } else {
@@ -75,11 +72,7 @@ public class VisitorDetails extends MgmtWebPage {
         ListView<LifecycleTrackingInfo> gameTrackingInfoList = new ListView<LifecycleTrackingInfo>("detailTrackings", visitorDetailInfo.getLifecycleTrackingInfos()) {
             @Override
             protected void populateItem(ListItem<LifecycleTrackingInfo> listItem) {
-                // if (listItem.getModelObject().isTutorial()) {
                 listItem.add(new TutorialTracking("detailTracking", listItem.getModelObject()));
-                // } else {
-                //     listItem.add(new GameTracking("detailTracking", listItem.getModelObject()));
-                // }
             }
         };
         add(gameTrackingInfoList);
@@ -88,7 +81,7 @@ public class VisitorDetails extends MgmtWebPage {
     private void userInfo(String sessionId, VisitorDetailInfo visitorDetailInfo) {
         BrowserDetails browserDetails = visitorDetailInfo.getUserDetails();
         add(new Label("sessionId", sessionId));
-        add(new Label("timeStamp", simpleDateFormat.format(browserDetails.getTimeStamp())));
+        add(new Label("timeStamp", WebCommon.formatTime(browserDetails.getTimeStamp())));
         add(new Label("userAgent", browserDetails.getUserAgent()));
         add(new Label("language", browserDetails.getLanguage()));
         add(new Label("remoteHost", browserDetails.getRemoteHost()));
@@ -99,7 +92,6 @@ public class VisitorDetails extends MgmtWebPage {
     }
 
     private void gameOverview(VisitorDetailInfo visitorDetailInfo) {
-        //add(new Label("totalTime", WebCommon.formatDuration(visitorDetailInfo.getTotalTime())));
         add(new Label("gameAttempts", Integer.toString(visitorDetailInfo.getGameAttempts())));
         add(new Label("moveCommands", Integer.toString(visitorDetailInfo.getMoveCommands())));
         add(new Label("builderCommands", Integer.toString(visitorDetailInfo.getBuilderCommands())));

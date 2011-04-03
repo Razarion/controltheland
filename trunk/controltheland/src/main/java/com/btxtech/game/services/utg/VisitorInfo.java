@@ -27,6 +27,7 @@ public class VisitorInfo {
     private int pageHits;
     private int enterGameHits;
     private int successfulStarts;
+    private boolean startupFailure;
     private int commands;
     private int tasks;
     private boolean cookie;
@@ -37,7 +38,7 @@ public class VisitorInfo {
                        int pageHits,
                        int enterGameHits,
                        int successfulStarts,
-                       int commands,
+                       boolean startupFailure, int commands,
                        int tasks,
                        boolean cookie,
                        String referer) {
@@ -46,6 +47,7 @@ public class VisitorInfo {
         this.pageHits = pageHits;
         this.enterGameHits = enterGameHits;
         this.successfulStarts = successfulStarts;
+        this.startupFailure = startupFailure;
         this.commands = commands;
         this.tasks = tasks;
         this.cookie = cookie;
@@ -90,5 +92,9 @@ public class VisitorInfo {
 
     public int getSuccessfulStarts() {
         return successfulStarts;
+    }
+
+    public boolean isStartupFailure() {
+        return startupFailure;
     }
 }

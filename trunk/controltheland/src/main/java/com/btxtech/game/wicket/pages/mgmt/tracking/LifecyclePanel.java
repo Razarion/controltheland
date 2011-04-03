@@ -29,12 +29,15 @@ import org.apache.wicket.markup.html.panel.Panel;
 public class LifecyclePanel extends Panel {
     public LifecyclePanel(String id, LifecycleTrackingInfo lifecycleTrackingInfo) {
         super(id);
-        add(new Label("level", lifecycleTrackingInfo.getLevel()));        
+        add(new Label("level", lifecycleTrackingInfo.getLevel()));
+        add(new Label("startTime", WebCommon.formatTime(lifecycleTrackingInfo.getStart())));
+        add(new Label("endTime", WebCommon.formatTime(lifecycleTrackingInfo.getEnd())));
         add(new ListView<DbStartupTask>("startup", lifecycleTrackingInfo.getGameStartups()) {
             @Override
             protected void populateItem(ListItem<DbStartupTask> gameStartupListItem) {
                 gameStartupListItem.add(new Label("task", gameStartupListItem.getModelObject().getTask()));
                 gameStartupListItem.add(new Label("time", WebCommon.formatDurationMilis(gameStartupListItem.getModelObject().getDuration())));
+                gameStartupListItem.add(new Label("failureText", gameStartupListItem.getModelObject().getFailureText()));
             }
         });
         add(new Label("totalStartup", WebCommon.formatDurationMilis(lifecycleTrackingInfo.getStartupDuration())));
