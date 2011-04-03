@@ -58,13 +58,13 @@ public class MiniMap extends ExtendedCanvas implements MouseMoveHandler, MouseDo
         this.terrainSettings = terrainSettings;
 
         // Fix for clear bug in canvas library
-        setCoordSize(terrainSettings.getPlayFieldXSize(), terrainSettings.getPlayFieldYSize());
+        setCoordSize(terrainSettings.getTileXCount(), terrainSettings.getTileYCount());
         DOM.setElementProperty(getElement(), "width", String.valueOf(width));
         DOM.setElementProperty(getElement(), "height", String.valueOf(height));
 
         saveContext();
-        scale = Math.min((double) width / (double) terrainSettings.getPlayFieldXSize(),
-                (double) height / (double) terrainSettings.getPlayFieldYSize());
+        scale = Math.min((double) width / (double) terrainSettings.getTileXCount(),
+                (double) height / (double) terrainSettings.getTileYCount());
         scale(scale, scale);
     }
 
@@ -169,5 +169,13 @@ public class MiniMap extends ExtendedCanvas implements MouseMoveHandler, MouseDo
         for (MiniMapMouseUpListener miniMapMouseUpListener : miniMapMouseUpListeners) {
             miniMapMouseUpListener.onMouseUp(x, y, event);
         }
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
     }
 }
