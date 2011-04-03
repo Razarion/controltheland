@@ -38,7 +38,9 @@ public class RadarItemView extends MiniMap {
     @Override
     public void onTerrainSettings(TerrainSettings terrainSettings) {
         super.onTerrainSettings(terrainSettings);
-        setLineWidth(2.0 / getScale());
+        double scale = Math.min((double) getWidth() / (double) getTerrainSettings().getPlayFieldXSize(),
+                (double) getHeight() / (double) getTerrainSettings().getPlayFieldYSize()) / getScale();
+        setLineWidth(2.0 / scale);
         Timer timer = new Timer() {
 
             @Override
@@ -51,6 +53,10 @@ public class RadarItemView extends MiniMap {
 
     private void refreshItems() {
         clear();
+        saveContext();
+        double scale = Math.min((double) getWidth() / (double) getTerrainSettings().getPlayFieldXSize(),
+                (double) getHeight() / (double) getTerrainSettings().getPlayFieldYSize()) / getScale();
+        scale(scale, scale);
         for (ClientSyncItem clientSyncItem : ItemContainer.getInstance().getItems()) {
             if (clientSyncItem.isSyncBaseItem()) {
                 Index pos = clientSyncItem.getSyncItem().getPosition();
@@ -65,5 +71,6 @@ public class RadarItemView extends MiniMap {
                 strokeRect(pos.getX(), pos.getY(), RESOURCE_ITEM_SIZE, RESOURCE_ITEM_SIZE);
             }
         }
+        restoreContext();        
     }
 }
