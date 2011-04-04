@@ -24,7 +24,12 @@ import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededE
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.items.impl.AbstractItemService;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.*;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.Base;
@@ -34,7 +39,12 @@ import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.item.itemType.*;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.item.itemType.DbItemType;
+import com.btxtech.game.services.item.itemType.DbItemTypeData;
+import com.btxtech.game.services.item.itemType.DbItemTypeImage;
+import com.btxtech.game.services.item.itemType.DbProjectileItemType;
+import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.resource.ResourceService;
@@ -57,7 +67,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
@@ -632,9 +647,11 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         double health = syncBaseItem.getHealth();
         double fullHealth = syncBaseItem.getBaseItemType().getHealth();
         double price = syncBaseItem.getBaseItemType().getPrice();
+        double buildup = syncBaseItem.getBuildup();
         killSyncItem(syncBaseItem, null, true, false);
-        double money = health / fullHealth * price * userGuidanceService.getDbLevel().getItemSellFactor();
+        double money = health / fullHealth * buildup * price * userGuidanceService.getDbLevel().getItemSellFactor();
         baseService.depositResource(money, syncBaseItem.getBase());
+        baseService.sendAccountBaseUpdate(baseService.getBase());
     }
 
     @Override

@@ -151,13 +151,20 @@ public class BaseTestService {
         return new SyncBaseItem(new Id(1, -100, -100), new Index(100, 100), (BaseItemType) itemService.getItemType(itemTypeId), services, new SimpleBase(1));
     }
 
+    /**
+     * Attention: closes the current connection!!!
+     * @return Simple Base
+     */
+    protected SimpleBase getMyBase() {
+        return ((RealityInfo) movableService.getGameInfo()).getBase();
+    }
+
     protected Id getFirstSynItemId(int itemTypeId) {
         return getFirstSynItemId(itemTypeId, null);
     }
 
     protected Id getFirstSynItemId(int itemTypeId, Rectangle region) {
-        SimpleBase simpleBase = ((RealityInfo) movableService.getGameInfo()).getBase();
-        return getFirstSynItemId(simpleBase, itemTypeId, region);
+        return getFirstSynItemId(getMyBase(), itemTypeId, region);
     }
 
     protected Id getFirstSynItemId(SimpleBase simpleBase, int itemTypeId) {
@@ -258,6 +265,7 @@ public class BaseTestService {
         dbBaseItemType.setHeight(100);
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
+        dbBaseItemType.setPrice(1);
         // DbBuilderType
         DbBuilderType dbBuilderType = new DbBuilderType();
         dbBuilderType.setProgress(1000);
@@ -286,6 +294,7 @@ public class BaseTestService {
         dbBaseItemType.setHeight(100);
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
+        dbBaseItemType.setPrice(2);
         // DbBuilderType
         DbFactoryType dbFactoryType = new DbFactoryType();
         dbFactoryType.setProgress(1000);
@@ -309,6 +318,7 @@ public class BaseTestService {
         dbBaseItemType.setHeight(100);
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
+        dbBaseItemType.setPrice(3);
         // DbWeaponType
         DbWeaponType dbWeaponType = new DbWeaponType();
         dbWeaponType.setRange(100);
@@ -452,8 +462,12 @@ public class BaseTestService {
         dbRealGameLevel.setStartItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
         dbRealGameLevel.setStartRectangle(new Rectangle(0, 0, 10000, 10000));
         dbRealGameLevel.setStartItemFreeRange(300);
+        // Rewards
+        dbRealGameLevel.setDeltaMoney(1000);
         // Scope
         dbRealGameLevel.setHouseSpace(20);
+        dbRealGameLevel.setMaxMoney(10000);
+        dbRealGameLevel.setItemSellFactor(0.5);
         // Condition
         DbConditionConfig dbConditionConfig = new DbConditionConfig();
         dbConditionConfig.setConditionTrigger(ConditionTrigger.MONEY_INCREASED);
