@@ -69,13 +69,4 @@ public class ForumThread extends AbstractForumEntry {
     public void setCategory(Category category) {
         this.category = category;
     }
-
-    @Override
-    public Date getLastPost() {
-        if (posts.isEmpty()) {
-            return null;
-        } else {
-            return getPosts().get(getPostCount() - 1).getDate();
-        }
-    }
 }

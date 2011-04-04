@@ -25,13 +25,13 @@ public interface ForumService {
 
     Category getCategory(int categoryId);
 
-    List<Category> getCategories(SubForum subForumId);
+    List<Category> getCategories(SubForum subForum);
 
     ForumThread getForumThread(int forumThreadId);
 
     List<ForumThread> getForumThreads(Category category);
 
-    List<Post> getPosts(final ForumThread forumThread);
+    List<Post> getPosts(ForumThread forumThread);
 
     AbstractForumEntry createForumEntry(Class<? extends AbstractForumEntry> aClass);
 
