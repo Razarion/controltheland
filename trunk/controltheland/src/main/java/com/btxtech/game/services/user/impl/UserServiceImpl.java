@@ -110,7 +110,9 @@ public class UserServiceImpl implements UserService {
     private void loginUser(User user) {
         user.setLastLoginDate(new Date());
         privateSave(user);
-        session.setUserState(getUserState(user));
+        UserState userState = getUserState(user);
+        userState.setSessionId(session.getSessionId());
+        session.setUserState(userState);
         try {
             userTrackingService.onUserLoggedIn(user, baseService.getBase());
         } catch (NoConnectionException e) {
