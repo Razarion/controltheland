@@ -68,6 +68,12 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
     }
 
     @Override
+    public boolean isAbandoned(SimpleBase simpleBase) {
+        BaseAttributes baseAttributes = bases.get(simpleBase);
+        return baseAttributes == null || baseAttributes.isAbandoned();
+    }
+
+    @Override
     public Collection<BaseAttributes> getAllBaseAttributes() {
         return new ArrayList<BaseAttributes>(bases.values());
     }

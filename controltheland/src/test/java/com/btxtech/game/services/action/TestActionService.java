@@ -1,9 +1,10 @@
-package com.btxtech.game.services;
+package com.btxtech.game.services.action;
 
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
+import com.btxtech.game.services.BaseTestService;
 import com.btxtech.game.services.user.UserService;
 import org.junit.Assert;
 import org.junit.Test;
