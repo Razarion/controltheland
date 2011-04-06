@@ -31,6 +31,7 @@ import com.btxtech.game.services.item.itemType.DbMovableType;
 import com.btxtech.game.services.item.itemType.DbWeaponType;
 import com.btxtech.game.services.market.MarketEntry;
 import com.btxtech.game.services.market.ServerMarketService;
+import com.btxtech.game.services.market.XpSettings;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbSurfaceRect;
 import com.btxtech.game.services.terrain.DbTerrainImage;
@@ -127,6 +128,8 @@ public class BaseTestService {
     private BotService botService;
     @Autowired
     private TerritoryService territoryService;
+    @Autowired
+    private ServerMarketService serverMarketServic;
     private SessionHolder sessionHolder;
     private MockHttpServletRequest mockHttpServletRequest;
     private MockHttpSession mockHttpSession;
@@ -153,6 +156,7 @@ public class BaseTestService {
 
     /**
      * Attention: closes the current connection!!!
+     *
      * @return Simple Base
      */
     protected SimpleBase getMyBase() {
@@ -250,6 +254,7 @@ public class BaseTestService {
         setupLevels();
         // Market
         setupMinimalMarket();
+        setupXpSettings();
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -468,6 +473,7 @@ public class BaseTestService {
         dbRealGameLevel.setHouseSpace(20);
         dbRealGameLevel.setMaxMoney(10000);
         dbRealGameLevel.setItemSellFactor(0.5);
+        dbRealGameLevel.setMaxXp(1000);
         // Condition
         DbConditionConfig dbConditionConfig = new DbConditionConfig();
         dbConditionConfig.setConditionTrigger(ConditionTrigger.MONEY_INCREASED);
@@ -674,6 +680,17 @@ public class BaseTestService {
         territoryService.saveTerritory(dbTerritory.getId(), Arrays.asList(regions));
         territoryService.activate();
         return dbTerritory;
+    }
+
+    // ------------------- XpSettings Config --------------------
+
+    protected XpSettings setupXpSettings() {
+        XpSettings xpSettings =serverMarketServic.getXpPointSettings();
+        xpSettings.setPeriodMinutes(0);
+        xpSettings.setPeriodItemFactor(0);
+        xpSettings.setKillPriceFactor(1);
+        serverMarketServic.saveXpPointSettings(xpSettings);
+        return xpSettings;
     }
 
     // ------------------- Session Config --------------------

@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class QueueWorker<T> {
     private static final int MAX_QUEUE_SIZE = 10000;
-    private static final int INTERVAL = 10000;
+    private static final int INTERVAL = 2000;
     private Buffer buffer;
     private Timer timer;
     private Log log = LogFactory.getLog(QueueWorker.class);
