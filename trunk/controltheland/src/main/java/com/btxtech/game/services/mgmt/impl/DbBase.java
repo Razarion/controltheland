@@ -62,7 +62,7 @@ public class DbBase {
         created = base.getCreated();
         lost = base.getLost();
         totalSpent = base.getTotalSpent();
-        totalEarned = base.getTotalSpent();
+        totalEarned = base.getTotalEarned();
         abandoned = base.isAbandoned();
         baseId = base.getBaseId();
         this.baseColor = baseColor;

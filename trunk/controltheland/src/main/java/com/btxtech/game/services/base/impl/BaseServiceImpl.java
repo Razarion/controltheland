@@ -421,6 +421,10 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         historyService.addBaseSurrenderedEntry(base.getSimpleBase());
         userTrackingService.onBaseSurrender(userService.getUser(), base);
         userService.onSurrenderBase();
+        makeBaseAbandoned(base);
+    }
+
+    private void makeBaseAbandoned(Base base) {
         setBaseAbandoned(base.getSimpleBase(), true);
         UserState userState = base.getUserState();
         userState.setBase(null);
@@ -582,7 +586,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         if (base == null || userState.isRegistered()) {
             return;
         }
-        base.setAbandoned();
+        makeBaseAbandoned(base);
     }
 
     @Override

@@ -130,7 +130,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     public SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
         SyncItem syncItem;
         synchronized (items) {
-            if (toBeBuilt instanceof BaseItemType && !baseService.isBot(base)) {
+            if (toBeBuilt instanceof BaseItemType && !baseService.isBot(base) && !baseService.isAbandoned(base)) {
                 baseService.checkItemLimit4ItemAdding((BaseItemType) toBeBuilt, base);
             }
             Id id = createId(creator, createdChildCount);

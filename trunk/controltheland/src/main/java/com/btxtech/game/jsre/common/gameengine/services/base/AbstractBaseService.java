@@ -37,6 +37,8 @@ public interface AbstractBaseService {
 
     boolean isBot(SimpleBase simpleBase);
 
+    boolean isAbandoned(SimpleBase simpleBase);
+
     Collection<BaseAttributes> getAllBaseAttributes();
 
     int getHouseSpace(SimpleBase simpleBase);
