@@ -16,13 +16,13 @@ package com.btxtech.game.jsre.client.cockpit;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.ClientSyncItem;
-import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
+import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.tutorial.CockpitSpeechBubbleHintConfig;
@@ -233,7 +233,7 @@ public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvide
     }
 
     private EnableState getEnableState(BaseItemType itemType) {
-        Level level = Connection.getInstance().getGameInfo().getLevel();
+        Level level = ClientLevelHandler.getInstance().getLevel();
         if (level.getLimitation4ItemType(itemType.getId()) == 0) {
             return EnableState.DISABLED_LEVEL;
         }

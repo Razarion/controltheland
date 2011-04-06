@@ -4,13 +4,18 @@ import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
+import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.tutorial.HouseSpacePacket;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.BaseTestService;
+import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.DbRealGameLevel;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +33,10 @@ import java.util.List;
 public class PacketSendingTest extends BaseTestService {
     @Autowired
     private MovableService movableService;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
+    @Autowired
+    private UserService userService;
 
     @Test
     @DirtiesContext
@@ -101,6 +110,35 @@ public class PacketSendingTest extends BaseTestService {
         endHttpSession();
     }
 
+    @Test
+    @DirtiesContext
+    public void testLevelUp() throws Exception {
+        configureMinimalGame();
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // Create target
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
+        RealityInfo realityInfo = (RealityInfo) movableService.getGameInfo(); // Connection is created here. Don't call movableService.getGameInfo() again!
+        SimpleBase simpleBase = realityInfo.getBase();
+        clearPackets(simpleBase);
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_3_REAL_ID);
+
+        DbRealGameLevel dbRealGameLevel = userGuidanceService.getDbLevel();
+        LevelPacket levelPacket = new LevelPacket();
+        levelPacket.setLevel(dbRealGameLevel.getLevel());
+
+        AccountBalancePacket accountBalancePacket = new AccountBalancePacket();
+        accountBalancePacket.setAccountBalance(1500);
+
+        XpBalancePacket xpBalancePacket = new XpBalancePacket();
+        xpBalancePacket.setXp(500);        
+
+        assertPackagesIgnoreSyncItemInfoAndClear(simpleBase, levelPacket, accountBalancePacket, xpBalancePacket);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+    }
+
     private void clearPackets(SimpleBase simpleBase) throws Exception {
         movableService.getSyncInfo(simpleBase);
     }
@@ -134,6 +172,16 @@ public class PacketSendingTest extends BaseTestService {
             XpBalancePacket expected = (XpBalancePacket) expectedPacket;
             XpBalancePacket received = (XpBalancePacket) receivedPacket;
             Assert.assertEquals(expected.getXp(), received.getXp());
+            return;
+        } else if(expectedPacket instanceof LevelPacket) {
+            LevelPacket expected = (LevelPacket) expectedPacket;
+            LevelPacket received = (LevelPacket) receivedPacket;
+            Assert.assertEquals(expected.getLevel(), received.getLevel());
+            return;
+        } else if(expectedPacket instanceof HouseSpacePacket) {
+            HouseSpacePacket expected = (HouseSpacePacket) expectedPacket;
+            HouseSpacePacket received = (HouseSpacePacket) receivedPacket;
+            Assert.assertEquals(expected.getHouseSpace(), received.getHouseSpace());
             return;
         }
         Assert.fail("Unhandled packet: " + expectedPacket);

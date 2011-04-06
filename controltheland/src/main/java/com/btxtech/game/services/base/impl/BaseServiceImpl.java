@@ -565,7 +565,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
 
     public void sendHouseSpacePacket(Base base) {
         HouseSpacePacket houseSpacePacket = new HouseSpacePacket();
-        houseSpacePacket.setHouseSpace(getTotalHouseSpace());
+        houseSpacePacket.setHouseSpace(base.getHouseSpace());
         connectionService.sendPacket(houseSpacePacket);
     }
 

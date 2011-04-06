@@ -32,7 +32,14 @@ import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.utg.*;
+import com.btxtech.game.services.utg.DbAbstractLevel;
+import com.btxtech.game.services.utg.DbItemTypeLimitation;
+import com.btxtech.game.services.utg.DbRealGameLevel;
+import com.btxtech.game.services.utg.DbSimulationLevel;
+import com.btxtech.game.services.utg.LevelActivationException;
+import com.btxtech.game.services.utg.ServerConditionService;
+import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
@@ -158,12 +165,11 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         activateCondition(userState, dbNextAbstractLevel);
 
         // Send level update packet
-        if (dbOldAbstractLevel instanceof DbRealGameLevel && baseService.getBase(userState) != null) {
+        if (dbOldAbstractLevel instanceof DbRealGameLevel && dbNextAbstractLevel instanceof DbRealGameLevel && baseService.getBase(userState) != null) {
             Base base = baseService.getBase(userState);
             LevelPacket levelPacket = new LevelPacket();
             levelPacket.setLevel(dbNextAbstractLevel.getLevel());
             connectionService.sendPacket(base.getSimpleBase(), levelPacket);
-            // TODO baseService.sendHouseSpacePacket(base);
         }
     }
 

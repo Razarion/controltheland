@@ -106,6 +106,7 @@ public class BaseTestService {
     protected static final String TEST_LEVEL_2_REAL = "TEST_LEVEL_2_REAL";
     protected static int TEST_LEVEL_2_REAL_ID;
     protected static final String TEST_LEVEL_3_REAL = "TEST_LEVEL_3_REAL";
+    protected static int TEST_LEVEL_3_REAL_ID;
 
     private HibernateTemplate hibernateTemplate;
     @Autowired
@@ -500,7 +501,13 @@ public class BaseTestService {
         DbRealGameLevel dbRealGameLevel = (DbRealGameLevel) userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbRealGameLevel.class);
         dbRealGameLevel.setName(TEST_LEVEL_3_REAL);
         // Scope
-        dbRealGameLevel.setHouseSpace(20);
+        dbRealGameLevel.setHouseSpace(40);
+        dbRealGameLevel.setMaxMoney(2000);
+        dbRealGameLevel.setItemSellFactor(1);
+        dbRealGameLevel.setMaxXp(2000);
+        // Rewards
+        dbRealGameLevel.setDeltaMoney(500);
+        dbRealGameLevel.setDeltaXp(500);
         // Condition
         DbConditionConfig dbConditionConfig = new DbConditionConfig();
         dbConditionConfig.setConditionTrigger(ConditionTrigger.SYNC_ITEM_BUILT);
@@ -513,15 +520,16 @@ public class BaseTestService {
         // Limitation
         DbItemTypeLimitation builder = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
         builder.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
-        builder.setCount(10);
+        builder.setCount(20);
         DbItemTypeLimitation factory = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
         factory.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_FACTORY_ITEM_ID));
-        factory.setCount(10);
+        factory.setCount(20);
         DbItemTypeLimitation attacker = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
         attacker.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID));
-        attacker.setCount(10);
+        attacker.setCount(20);
 
         userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbRealGameLevel);
+        TEST_LEVEL_3_REAL_ID = dbRealGameLevel.getId();
     }
 
     protected DbRealGameLevel setupGameLevel(String name, DbConditionConfig dbConditionConfig) throws LevelActivationException {
@@ -685,7 +693,7 @@ public class BaseTestService {
     // ------------------- XpSettings Config --------------------
 
     protected XpSettings setupXpSettings() {
-        XpSettings xpSettings =serverMarketServic.getXpPointSettings();
+        XpSettings xpSettings = serverMarketServic.getXpPointSettings();
         xpSettings.setPeriodMinutes(0);
         xpSettings.setPeriodItemFactor(0);
         xpSettings.setKillPriceFactor(1);

@@ -53,14 +53,15 @@ import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.services.utg.DbSimulationLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 @Component("movableService")
 public class MovableServiceImpl implements MovableService {
@@ -179,7 +180,7 @@ public class MovableServiceImpl implements MovableService {
             realityInfo.setLevel(userGuidanceService.getDbLevel().getLevel());
             realityInfo.setTerritories(territoryService.getTerritories());
             realityInfo.setAllBases(baseService.getAllBaseAttributes());
-            realityInfo.setHouseSpace(baseService.getTotalHouseSpace());
+            realityInfo.setHouseSpace(baseService.getBase().getHouseSpace());
             return realityInfo;
         } catch (com.btxtech.game.services.connection.NoConnectionException t) {
             log.error(t.getMessage() + ", SessionId: " + t.getSessionId());
@@ -226,10 +227,10 @@ public class MovableServiceImpl implements MovableService {
         try {
             userService.createUser(userName, password, confirmPassword, email);
             Object o = session.getRequest().getSession().getAttribute("wicket:wicket:" + org.apache.wicket.Session.SESSION_ATTRIBUTE_NAME);
-            if(o == null) {
+            if (o == null) {
                 throw new Exception("Wicket session not found");
             }
-            ((AuthenticatedWebSession)o).signIn(userName, password);
+            ((AuthenticatedWebSession) o).signIn(userName, password);
         } catch (UserAlreadyExistsException e) {
             throw e;
         } catch (PasswordNotMatchException e) {

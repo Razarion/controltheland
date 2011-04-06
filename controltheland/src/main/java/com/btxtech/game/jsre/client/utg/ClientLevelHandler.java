@@ -55,6 +55,7 @@ public class ClientLevelHandler {
         DialogManager.showDialog(new LevelTargetDialog(level.getHtml()), DialogManager.Type.PROMPTLY);
         if (oldLevel.isRealGame() && level.isRealGame()) {
             Cockpit.getInstance().setLevel(level.getName());
+            Cockpit.getInstance().updateItemLimit();
         } else {
             StartupScreen.getInstance().fadeOut(new Runnable() {
                 @Override
@@ -73,5 +74,9 @@ public class ClientLevelHandler {
 
     public String getHtmlLevel() {
         return level.getHtml();
+    }
+
+    public Level getLevel() {
+        return level;
     }
 }
