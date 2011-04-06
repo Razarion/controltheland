@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.client.dialogs.UnfrequentDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.item.ItemViewContainer;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
+import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -83,8 +84,8 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         if (this.simpleBase.equals(simpleBase)) {
             if (Connection.getInstance().getGameInfo() instanceof RealityInfo) {
                 accountBalance += price;
-                if (accountBalance > Connection.getInstance().getGameInfo().getLevel().getMaxMoney()) {
-                    accountBalance = Connection.getInstance().getGameInfo().getLevel().getMaxMoney();
+                if (accountBalance > ClientLevelHandler.getInstance().getLevel().getMaxMoney()) {
+                    accountBalance = ClientLevelHandler.getInstance().getLevel().getMaxMoney();
                 }
             } else {
                 accountBalance += price;
@@ -138,12 +139,19 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     }
 
     public int getHouseSpace() {
-        return houseSpace;
+        return houseSpace + ClientLevelHandler.getInstance().getLevel().getHouseSpace();
     }
 
     public void setHouseSpace(int houseSpace) {
         this.houseSpace = houseSpace;
     }
+
+    @Override
+    public int getHouseSpace(SimpleBase simpleBase) {
+        check4OwnBase(simpleBase);
+        return getHouseSpace();
+    }
+
 
     public void checkItemLimit4ItemAdding(BaseItemType itemType) throws ItemLimitExceededException, HouseSpaceExceededException, NoSuchItemTypeException {
         try {
@@ -181,12 +189,6 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     }
 
     @Override
-    public int getHouseSpace(SimpleBase simpleBase) {
-        check4OwnBase(simpleBase);
-        return houseSpace;
-    }
-
-    @Override
     public int getItemCount(SimpleBase simpleBase) {
         check4OwnBase(simpleBase);
         return ItemContainer.getInstance().getOwnItemCount();
@@ -202,6 +204,6 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     @Override
     public Level getLevel(SimpleBase simpleBase) {
         check4OwnBase(simpleBase);
-        return Connection.getInstance().getGameInfo().getLevel();
+        return ClientLevelHandler.getInstance().getLevel();
     }
 }
