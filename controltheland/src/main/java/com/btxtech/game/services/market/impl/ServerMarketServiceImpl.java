@@ -25,7 +25,11 @@ import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.services.market.*;
+import com.btxtech.game.services.market.MarketCategory;
+import com.btxtech.game.services.market.MarketEntry;
+import com.btxtech.game.services.market.MarketFunction;
+import com.btxtech.game.services.market.ServerMarketService;
+import com.btxtech.game.services.market.XpSettings;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbRealGameLevel;
@@ -46,7 +50,12 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * User: beat
@@ -79,7 +88,9 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     private Timer timer;
     private XpSettings xpSettings;
     private Log log = LogFactory.getLog(ServerMarketServiceImpl.class);
-    private QueueWorker<XpPerKill> xpPerKillQueueWorker = new QueueWorker<XpPerKill>() {
+    private XpPerKillQueueWorker xpPerKillQueueWorker;
+
+    class XpPerKillQueueWorker extends QueueWorker<XpPerKill> {
         @Override
         protected void processEntries(List<XpPerKill> xpPerKills) {
             HashMap<SimpleBase, Integer> baseXpHashMap = new HashMap<SimpleBase, Integer>();
@@ -92,7 +103,9 @@ public class ServerMarketServiceImpl implements ServerMarketService {
 
             increaseXpPerBase(baseXpHashMap);
         }
-    };
+    }
+
+    ;
 
     @PostConstruct
     public void start() {
@@ -100,27 +113,12 @@ public class ServerMarketServiceImpl implements ServerMarketService {
         marketFunctionCrudRootServiceHelper.init(MarketFunction.class);
         marketEntryCrudRootServiceHelper.init(MarketEntry.class);
         loadXpPointSettings();
+        stop();
         if (xpSettings.getPeriodMilliSeconds() > 0) {
             timer = new Timer(getClass().getName(), true);
             timer.scheduleAtFixedRate(new XpPeriodTask(), xpSettings.getPeriodMilliSeconds(), xpSettings.getPeriodMilliSeconds());
         }
-    }
-
-    private void loadXpPointSettings() {
-        List<XpSettings> settings = hibernateTemplate.loadAll(XpSettings.class);
-        if (settings.isEmpty()) {
-            log.warn("No XpSettings found in DB. Will be created.");
-            xpSettings = new XpSettings();
-            xpSettings.setKillPriceFactor(0.1);
-            xpSettings.setPeriodItemFactor(0.001);
-            xpSettings.setPeriodMinutes(10);
-            hibernateTemplate.saveOrUpdate(xpSettings);
-        } else if (settings.size() != 1) {
-            log.warn("More then one XpSettings found in DB.");
-            xpSettings = settings.get(0);
-        } else {
-            xpSettings = settings.get(0);
-        }
+        xpPerKillQueueWorker = new XpPerKillQueueWorker();
     }
 
     @PreDestroy
@@ -129,7 +127,10 @@ public class ServerMarketServiceImpl implements ServerMarketService {
             timer.cancel();
             timer = null;
         }
-        xpPerKillQueueWorker.stop();
+        if (xpPerKillQueueWorker != null) {
+            xpPerKillQueueWorker.stop();
+            xpPerKillQueueWorker = null;
+        }
     }
 
     @Autowired
@@ -276,12 +277,28 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     }
 
     public XpSettings getXpPointSettings() {
-        try {
-            return (XpSettings) xpSettings.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
+        XpSettings xpSettings;
+        List<XpSettings> settings = hibernateTemplate.loadAll(XpSettings.class);
+        if (settings.isEmpty()) {
+            log.warn("No XpSettings found in DB. Will be created.");
+            xpSettings = new XpSettings();
+            xpSettings.setKillPriceFactor(0.1);
+            xpSettings.setPeriodItemFactor(0.001);
+            xpSettings.setPeriodMinutes(10);
+            hibernateTemplate.saveOrUpdate(xpSettings);
+        } else if (settings.size() != 1) {
+            log.warn("More then one XpSettings found in DB.");
+            xpSettings = settings.get(0);
+        } else {
+            xpSettings = settings.get(0);
         }
+        return xpSettings;
     }
+
+    private void loadXpPointSettings() {
+        xpSettings = getXpPointSettings();
+    }
+
 
     @Transactional
     public void saveXpPointSettings(XpSettings xpSettings) {

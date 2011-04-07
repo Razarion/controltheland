@@ -30,7 +30,7 @@ public class XpSettings implements Serializable, Cloneable {
     private Integer id;
     private double killPriceFactor;
     private double periodItemFactor;
-    private int periodMinutes;
+    private int periodMilliSeconds;
 
     public double getKillPriceFactor() {
         return killPriceFactor;
@@ -49,15 +49,19 @@ public class XpSettings implements Serializable, Cloneable {
     }
 
     public int getPeriodMinutes() {
-        return periodMinutes;
+        return periodMilliSeconds / 1000 / 60;
     }
 
     public void setPeriodMinutes(int periodMinutes) {
-        this.periodMinutes = periodMinutes;
+        periodMilliSeconds = periodMinutes  * 1000 * 60;
     }
 
     public long getPeriodMilliSeconds() {
-        return periodMinutes * 1000 * 60;
+        return periodMilliSeconds;
+    }
+
+    public void setPeriodMilliSeconds(int periodMilliSeconds) {
+        this.periodMilliSeconds = periodMilliSeconds;
     }
 
     @Override

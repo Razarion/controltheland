@@ -15,10 +15,10 @@ package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.market.XpSettings;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -31,7 +31,27 @@ public class XpSettingsEditor extends MgmtWebPage {
     private ServerMarketService serverMarketService;
 
     public XpSettingsEditor() {
-        Form<XpSettings> form = new Form<XpSettings>("form", new CompoundPropertyModel<XpSettings>(serverMarketService.getXpPointSettings())) {
+        Form<XpSettings> form = new Form<XpSettings>("form", new CompoundPropertyModel<XpSettings>(new IModel<XpSettings>() {
+            private XpSettings xpSettings;
+
+            @Override
+            public XpSettings getObject() {
+                if (xpSettings == null) {
+                    xpSettings = serverMarketService.getXpPointSettings();
+                }
+                return xpSettings;
+            }
+
+            @Override
+            public void setObject(XpSettings object) {
+              // Ignore
+            }
+
+            @Override
+            public void detach() {
+                xpSettings = null;
+            }
+        })) {
             @Override
             protected void onSubmit() {
                 serverMarketService.saveXpPointSettings(getModelObject());

@@ -770,6 +770,15 @@ public class BaseTestService {
         return xpSettings;
     }
 
+    protected XpSettings setupXpSettings(int msForPeriod, double periodItemFactor) {
+        XpSettings xpSettings = serverMarketServic.getXpPointSettings();
+        xpSettings.setPeriodMilliSeconds(msForPeriod);
+        xpSettings.setPeriodItemFactor(periodItemFactor);
+        xpSettings.setKillPriceFactor(1);
+        serverMarketServic.saveXpPointSettings(xpSettings);
+        return xpSettings;
+    }
+
     // ------------------- Session Config --------------------
 
     private void beginOpenSessionInViewFilter() {
