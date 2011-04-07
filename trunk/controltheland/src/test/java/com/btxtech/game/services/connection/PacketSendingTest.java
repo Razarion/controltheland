@@ -74,6 +74,7 @@ public class PacketSendingTest extends BaseTestService {
     @DirtiesContext
     public void testKillXp() throws Exception {
         configureMinimalGame();
+        System.out.println("****** testKillXp ******");
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         // Create target

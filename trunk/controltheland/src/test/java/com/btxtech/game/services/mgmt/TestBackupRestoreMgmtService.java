@@ -78,7 +78,7 @@ public class TestBackupRestoreMgmtService extends BaseTestService {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        // Unregistered base, second level -> will be willed
+        // Unregistered base, second level -> will be killed
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         movableService.getGameInfo();
@@ -133,6 +133,7 @@ public class TestBackupRestoreMgmtService extends BaseTestService {
         endHttpSession();
 
         waitForActionServiceDone();        
+        Thread.sleep(3000); // Wait for XP 
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -145,6 +146,7 @@ public class TestBackupRestoreMgmtService extends BaseTestService {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        assertBackupSummery(1, 5, 3, 3);
         mgmtService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -164,12 +166,14 @@ public class TestBackupRestoreMgmtService extends BaseTestService {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         mgmtService.backup();
+        assertBackupSummery(2, 5, 3, 3);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         mgmtService.backup();
+        assertBackupSummery(3, 5, 3, 3);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -205,6 +209,8 @@ public class TestBackupRestoreMgmtService extends BaseTestService {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        assertBackupSummery(1, 1, 1, 0);
+
         List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
         mgmtService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -252,6 +258,8 @@ public class TestBackupRestoreMgmtService extends BaseTestService {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        assertBackupSummery(1, 3, 1, 1);
+
         List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
         mgmtService.restore(backupSummaries.get(0).getDate());
         Assert.assertEquals(1, baseService.getBases().size());
@@ -270,6 +278,7 @@ public class TestBackupRestoreMgmtService extends BaseTestService {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        assertBackupSummery(2, 3, 1, 1);        
         backupSummaries = mgmtService.getBackupSummary();
         mgmtService.restore(backupSummaries.get(0).getDate());
         Assert.assertEquals(1, baseService.getBases().size());
@@ -304,6 +313,7 @@ public class TestBackupRestoreMgmtService extends BaseTestService {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
+        assertBackupSummery(1, 0, 0, 1);
         List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
         mgmtService.restore(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
@@ -494,5 +504,15 @@ public class TestBackupRestoreMgmtService extends BaseTestService {
     public ItemType getRandomItemType() {
         int index = (int) (Math.random() * itemService.getItemTypes().size());
         return itemService.getItemTypes().get(index);
+    }
+
+
+    private void assertBackupSummery(int backupCount, int itemCount, int baseCount, int userStateCount) {
+        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        Assert.assertEquals(backupCount, backupSummaries.size());
+        BackupSummary backupSummary = backupSummaries.get(0);
+        Assert.assertEquals(itemCount, backupSummary.getItemCount());
+        Assert.assertEquals(baseCount, backupSummary.getBaseCount());
+        Assert.assertEquals(userStateCount, backupSummary.getUserStateCount());
     }
 }
