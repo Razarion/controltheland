@@ -233,13 +233,13 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         List<Object[]> list = (List<Object[]>) hibernateTemplate.execute(new HibernateCallback() {
             public Object doInHibernate(Session session) {
                 Criteria criteriaEntries = session.createCriteria(BackupEntry.class);
-                criteriaEntries.createCriteria("items", "genericItems", CriteriaSpecification.LEFT_JOIN);
-                criteriaEntries.createCriteria("userStates", "userStates", CriteriaSpecification.LEFT_JOIN);
+                criteriaEntries.createCriteria("items", "itemAlias", CriteriaSpecification.LEFT_JOIN);
+                criteriaEntries.createCriteria("userStates", "userStateAlias", CriteriaSpecification.LEFT_JOIN);
                 ProjectionList entryProjectionList = Projections.projectionList();
                 entryProjectionList.add(Projections.groupProperty("timeStamp"));
-                entryProjectionList.add(Projections.count("items"));
-                entryProjectionList.add(Projections.countDistinct("genericItems.base"));
-                entryProjectionList.add(Projections.count("userStates"));
+                entryProjectionList.add(Projections.countDistinct("itemAlias.id"));
+                entryProjectionList.add(Projections.countDistinct("itemAlias.base"));
+                entryProjectionList.add(Projections.countDistinct("userStateAlias.id"));
                 criteriaEntries.setProjection(entryProjectionList);
                 criteriaEntries.addOrder(Order.desc("timeStamp"));
                 return criteriaEntries.list();
