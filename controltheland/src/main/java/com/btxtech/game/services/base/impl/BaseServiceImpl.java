@@ -531,7 +531,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     public void setBaseColor(String color) throws AlreadyUsedException {
         Base base = getBase();
         base.setBaseHtmlColor(color);
-        hibernateTemplate.save(base);
         SimpleBase simpleBase = base.getSimpleBase();
         setBaseColor(simpleBase, color);
         sendBaseChangedPacket(BaseChangedPacket.Type.CHANGED, simpleBase);

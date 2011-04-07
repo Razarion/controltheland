@@ -4,7 +4,12 @@ import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
+import com.btxtech.game.jsre.common.AccountBalancePacket;
+import com.btxtech.game.jsre.common.BaseChangedPacket;
+import com.btxtech.game.jsre.common.LevelPacket;
+import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
@@ -17,6 +22,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.jsre.common.tutorial.HouseSpacePacket;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.bot.BotService;
@@ -59,6 +65,7 @@ import org.easymock.EasyMock;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeansException;
@@ -82,6 +89,7 @@ import javax.servlet.ServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeoutException;
@@ -189,6 +197,67 @@ public class BaseTestService {
             }
         }
         throw new IllegalStateException("No such sync item: ItemTypeID=" + itemTypeId + " simpleBase=" + simpleBase);
+    }
+
+    // ------------------- Connection --------------------
+
+    protected void clearPackets(SimpleBase simpleBase) throws Exception {
+        movableService.getSyncInfo(simpleBase);
+    }
+
+    protected void assertPackagesIgnoreSyncItemInfoAndClear(SimpleBase simpleBase, Packet... expectedPackets) throws Exception {
+        List<Packet> receivedPackets = new ArrayList<Packet>(movableService.getSyncInfo(simpleBase));
+        for (Iterator<Packet> iterator = receivedPackets.iterator(); iterator.hasNext();) {
+            if (iterator.next() instanceof SyncItemInfo) {
+                iterator.remove();
+            }
+
+        }
+        Assert.assertEquals(expectedPackets.length, receivedPackets.size());
+
+        for (Packet expectedPacket : expectedPackets) {
+            int index = receivedPackets.indexOf(expectedPacket);
+            if (index < 0) {
+                Assert.fail("Packet was not sent: " + expectedPacket);
+            }
+            comparePacket(expectedPacket, receivedPackets.get(index));
+        }
+    }
+
+    protected void comparePacket(Packet expectedPacket, Packet receivedPacket) {
+        if (expectedPacket instanceof AccountBalancePacket) {
+            AccountBalancePacket expected = (AccountBalancePacket) expectedPacket;
+            AccountBalancePacket received = (AccountBalancePacket) receivedPacket;
+            Assert.assertEquals(expected.getAccountBalance(), received.getAccountBalance(), 0.1);
+            return;
+        } else if (expectedPacket instanceof XpBalancePacket) {
+            XpBalancePacket expected = (XpBalancePacket) expectedPacket;
+            XpBalancePacket received = (XpBalancePacket) receivedPacket;
+            Assert.assertEquals(expected.getXp(), received.getXp());
+            return;
+        } else if (expectedPacket instanceof LevelPacket) {
+            LevelPacket expected = (LevelPacket) expectedPacket;
+            LevelPacket received = (LevelPacket) receivedPacket;
+            Assert.assertEquals(expected.getLevel(), received.getLevel());
+            return;
+        } else if (expectedPacket instanceof HouseSpacePacket) {
+            HouseSpacePacket expected = (HouseSpacePacket) expectedPacket;
+            HouseSpacePacket received = (HouseSpacePacket) receivedPacket;
+            Assert.assertEquals(expected.getHouseSpace(), received.getHouseSpace());
+            return;
+        } else if (expectedPacket instanceof BaseChangedPacket) {
+            BaseChangedPacket expected = (BaseChangedPacket) expectedPacket;
+            BaseChangedPacket received = (BaseChangedPacket) receivedPacket;
+            Assert.assertEquals(expected.getType(), received.getType());
+            Assert.assertEquals(expected.getBaseAttributes().getSimpleBase(), received.getBaseAttributes().getSimpleBase());
+            Assert.assertEquals(expected.getBaseAttributes().getSimpleBase(), received.getBaseAttributes().getSimpleBase());
+            Assert.assertEquals(expected.getBaseAttributes().getName(), received.getBaseAttributes().getName());
+            Assert.assertEquals(expected.getBaseAttributes().getHtmlColor(), received.getBaseAttributes().getHtmlColor());
+            Assert.assertEquals(expected.getBaseAttributes().isBot(), received.getBaseAttributes().isBot());
+            Assert.assertEquals(expected.getBaseAttributes().isAbandoned(), received.getBaseAttributes().isAbandoned());
+            return;
+        }
+        Assert.fail("Unhandled packet: " + expectedPacket);
     }
 
     // ------------------- Action Service --------------------
