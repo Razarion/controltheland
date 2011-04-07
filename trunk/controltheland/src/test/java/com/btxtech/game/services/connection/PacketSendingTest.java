@@ -5,25 +5,17 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.LevelPacket;
-import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
-import com.btxtech.game.jsre.common.tutorial.HouseSpacePacket;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.BaseTestService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * User: beat
@@ -132,59 +124,11 @@ public class PacketSendingTest extends BaseTestService {
         accountBalancePacket.setAccountBalance(1500);
 
         XpBalancePacket xpBalancePacket = new XpBalancePacket();
-        xpBalancePacket.setXp(500);        
+        xpBalancePacket.setXp(500);
 
         assertPackagesIgnoreSyncItemInfoAndClear(simpleBase, levelPacket, accountBalancePacket, xpBalancePacket);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-    }
-
-    private void clearPackets(SimpleBase simpleBase) throws Exception {
-        movableService.getSyncInfo(simpleBase);
-    }
-
-    private void assertPackagesIgnoreSyncItemInfoAndClear(SimpleBase simpleBase, Packet... expectedPackets) throws Exception {
-        List<Packet> receivedPackets = new ArrayList<Packet>(movableService.getSyncInfo(simpleBase));
-        for (Iterator<Packet> iterator = receivedPackets.iterator(); iterator.hasNext();) {
-            if (iterator.next() instanceof SyncItemInfo) {
-                iterator.remove();
-            }
-
-        }
-        Assert.assertEquals(expectedPackets.length, receivedPackets.size());
-
-        for (Packet expectedPacket : expectedPackets) {
-            int index = receivedPackets.indexOf(expectedPacket);
-            if (index < 0) {
-                Assert.fail("Packet was not sent: " + expectedPacket);
-            }
-            comparePacket(expectedPacket, receivedPackets.get(index));
-        }
-    }
-
-    private void comparePacket(Packet expectedPacket, Packet receivedPacket) {
-        if (expectedPacket instanceof AccountBalancePacket) {
-            AccountBalancePacket expected = (AccountBalancePacket) expectedPacket;
-            AccountBalancePacket received = (AccountBalancePacket) receivedPacket;
-            Assert.assertEquals(expected.getAccountBalance(), received.getAccountBalance(), 0.1);
-            return;
-        } else if(expectedPacket instanceof XpBalancePacket) {
-            XpBalancePacket expected = (XpBalancePacket) expectedPacket;
-            XpBalancePacket received = (XpBalancePacket) receivedPacket;
-            Assert.assertEquals(expected.getXp(), received.getXp());
-            return;
-        } else if(expectedPacket instanceof LevelPacket) {
-            LevelPacket expected = (LevelPacket) expectedPacket;
-            LevelPacket received = (LevelPacket) receivedPacket;
-            Assert.assertEquals(expected.getLevel(), received.getLevel());
-            return;
-        } else if(expectedPacket instanceof HouseSpacePacket) {
-            HouseSpacePacket expected = (HouseSpacePacket) expectedPacket;
-            HouseSpacePacket received = (HouseSpacePacket) receivedPacket;
-            Assert.assertEquals(expected.getHouseSpace(), received.getHouseSpace());
-            return;
-        }
-        Assert.fail("Unhandled packet: " + expectedPacket);
     }
 }
