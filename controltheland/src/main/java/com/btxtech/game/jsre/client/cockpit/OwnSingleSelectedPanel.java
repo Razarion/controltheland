@@ -97,4 +97,13 @@ public class OwnSingleSelectedPanel extends AbsolutePanel implements HintWidgetP
         }
         throw new HintWidgetException("OwnSingleSelectedPanel: unknown Button", config);
     }
+
+    public void onMoneyChanged(double accountBalance) {
+        buildupItemPanel.onMoneyChanged(accountBalance);
+    }
+
+    public void onStateChanged() {
+        buildupItemPanel.onStateChanged();
+    }
+
 }

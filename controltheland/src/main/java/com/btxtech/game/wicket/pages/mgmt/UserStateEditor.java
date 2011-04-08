@@ -88,18 +88,21 @@ public class UserStateEditor extends MgmtWebPage {
                 dbLevelId = null;
             }
         }, Integer.class));
-        form.add(new TextField<Integer>("userItemTypeAccess.xp"));
+        boolean enabled = false;
         List<MarketEntry> marketEntries = Collections.emptyList();
         if (form.getModelObject().getUserItemTypeAccess() != null) {
             marketEntries = new ArrayList<MarketEntry>(form.getModelObject().getUserItemTypeAccess().getAllowedItemTypes());
+            enabled = true;
         }
+
+        form.add(new TextField<Integer>("userItemTypeAccess.xp").setEnabled(enabled));
         form.add(new ListView<MarketEntry>("allowedItemTypes", marketEntries) {
 
             @Override
             protected void populateItem(ListItem<MarketEntry> marketEntryListItem) {
                 marketEntryListItem.add(new Label("itemType", marketEntryListItem.getModelObject().getItemType().getName()));
             }
-        });
+        }.setEnabled(enabled));
 
 
         form.add(new Button("activate") {

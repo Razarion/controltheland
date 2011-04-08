@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+
 import java.util.Collection;
 import java.util.Map;
 
@@ -66,5 +67,13 @@ public class OwnMultiSelectedPanel extends AbsolutePanel {
         }
         buildupItemPanel.display(selectedGroup);
 
+    }
+
+    public void onMoneyChanged(double accountBalance) {
+        buildupItemPanel.onMoneyChanged(accountBalance);
+    }
+
+    public void onStateChanged() {
+        buildupItemPanel.onStateChanged();
     }
 }

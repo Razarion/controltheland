@@ -88,4 +88,22 @@ public class SelectedItemPanel extends AbsolutePanel implements HintWidgetProvid
             throw new HintWidgetException(this + " activeHintWidgetProvider == null", config);
         }
     }
+
+
+    public void onMoneyChanged(double accountBalance) {
+        if (ownSingleSelectedPanel.isVisible()) {
+            ownSingleSelectedPanel.onMoneyChanged(accountBalance);
+        } else if (ownMultiSelectedPanel.isVisible()) {
+            ownMultiSelectedPanel.onMoneyChanged(accountBalance);
+        }
+    }
+
+    public void onStateChanged() {
+        if (ownSingleSelectedPanel.isVisible()) {
+            ownSingleSelectedPanel.onStateChanged();
+        } else if (ownMultiSelectedPanel.isVisible()) {
+            ownMultiSelectedPanel.onStateChanged();
+        }
+    }
+
 }

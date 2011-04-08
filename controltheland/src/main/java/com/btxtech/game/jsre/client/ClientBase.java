@@ -139,7 +139,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     }
 
     public int getHouseSpace() {
-        return houseSpace + ClientLevelHandler.getInstance().getLevel().getHouseSpace();
+        return houseSpace;
     }
 
     public void setHouseSpace(int houseSpace) {
