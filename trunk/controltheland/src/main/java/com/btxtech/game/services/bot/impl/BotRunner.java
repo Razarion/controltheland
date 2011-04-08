@@ -145,7 +145,7 @@ public class BotRunner {
                             setupBaseBuildup(baseFundamental, new BotItemFactory() {
                                 @Override
                                 public BotSyncBaseItem createItem(BaseItemType toBeBuilt) throws ItemLimitExceededException, HouseSpaceExceededException, NoSuchItemTypeException {
-                                    Index position = collisionService.getFreeRandomPosition(toBeBuilt, botConfig.getCore(), 100);
+                                    Index position = collisionService.getFreeRandomPosition(toBeBuilt, botConfig.getCore(), 100, false);
                                     SyncBaseItem newItem = (SyncBaseItem) itemService.createSyncObject(toBeBuilt, position, null, base.getSimpleBase(), 0);
                                     newItem.setBuildup(1.0);
                                     return null;
@@ -159,7 +159,7 @@ public class BotRunner {
                                     if (botSyncBaseItem == null) {
                                         return null;
                                     }
-                                    Index position = collisionService.getFreeRandomPosition(toBeBuilt, botConfig.getCore(), 0);
+                                    Index position = collisionService.getFreeRandomPosition(toBeBuilt, botConfig.getCore(), 0, false);
                                     botSyncBaseItem.buildBuilding(position, toBeBuilt);
                                     return botSyncBaseItem;
                                 }
@@ -266,5 +266,9 @@ public class BotRunner {
 
     public Base getBase() {
         return base;
+    }
+
+    public boolean isInRealm(Index point) {
+        return botConfig.getRealm().contains(point);
     }
 }

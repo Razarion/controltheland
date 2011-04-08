@@ -95,7 +95,7 @@ public class TestBackupRestoreMgmtService extends BaseTestService {
         movableService.getGameInfo();
         movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
         SimpleBase u2Base = ((RealityInfo) movableService.getGameInfo()).getBase();
-        Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID),new Rectangle(0,0,100000,100000), 400);
+        Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID),new Rectangle(0,0,100000,100000), 400, true);
         sendBuildCommand(getFirstSynItemId(u2Base, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(u2Base, TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
@@ -237,7 +237,7 @@ public class TestBackupRestoreMgmtService extends BaseTestService {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbBotConfig dbBotConfig = setupMinimalBot();
+        DbBotConfig dbBotConfig = setupMinimalBot(new Rectangle(4000, 4000, 3000, 3000), new Rectangle(5000, 5000, 1000, 1000));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -478,7 +478,6 @@ public class TestBackupRestoreMgmtService extends BaseTestService {
     }
 
     // @Test
-
     public void testBigBackup() throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
         for (int i = 0; i < ITEM_COUNT; i++) {
             ItemType itemType = getRandomItemType();
@@ -498,7 +497,7 @@ public class TestBackupRestoreMgmtService extends BaseTestService {
 
     private Index getRandomPosition(ItemType itemType) {
         Rectangle rectangle = new Rectangle(0, 0, terrainService.getTerrainSettings().getPlayFieldXSize(), terrainService.getTerrainSettings().getPlayFieldYSize());
-        return collisionService.getFreeRandomPosition(itemType, rectangle, 200);
+        return collisionService.getFreeRandomPosition(itemType, rectangle, 200, true);
     }
 
     public ItemType getRandomItemType() {

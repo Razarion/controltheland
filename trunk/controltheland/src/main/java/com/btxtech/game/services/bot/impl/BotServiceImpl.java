@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.bot.impl;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.base.GameFullException;
 import com.btxtech.game.services.bot.BotService;
@@ -123,5 +124,17 @@ public class BotServiceImpl implements BotService {
 
     public BotRunner getBotRunner(DbBotConfig dbBotConfig) {
         return botRunners.get(dbBotConfig);
+    }
+
+    @Override
+    public boolean isInRealm(Index point) {
+       synchronized (botRunners) {
+           for (BotRunner botRunner : botRunners.values()) {
+               if(botRunner.isInRealm(point)) {
+                   return true;
+               }
+           }
+       }
+        return false;
     }
 }
