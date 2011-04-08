@@ -13,7 +13,10 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
-import com.btxtech.game.jsre.client.*;
+import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ExtendedCustomButton;
+import com.btxtech.game.jsre.client.Game;
+import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
@@ -30,9 +33,19 @@ import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.tutorial.CockpitSpeechBubbleHintConfig;
 import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.*;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.*;
+import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.FocusWidget;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.widgetideas.client.ProgressBar;
 
 import java.util.HashMap;
@@ -196,7 +209,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         energyBar.getElement().getStyle().setHeight(10, Style.Unit.PX);
         energyBar.getElement().getStyle().setWidth(210, Style.Unit.PX);
         energyBar.getElement().getStyle().setColor("#000000");
-        widgets.put(CockpitWidgetEnum.ENERGY, energyBar);        
+        widgets.put(CockpitWidgetEnum.ENERGY, energyBar);
         add(energyBar, ENERGY_BAR_LEFT, ENERGY_BAR_TOP);
     }
 
@@ -283,7 +296,9 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
 
     public void updateMoney() {
         if (money != null) {
-            money.setText(Integer.toString((int) Math.round(ClientBase.getInstance().getAccountBalance())));
+            double accountBalance = ClientBase.getInstance().getAccountBalance();
+            money.setText(Integer.toString((int) Math.round(accountBalance)));
+            selectedItemPanel.onMoneyChanged(accountBalance);
         }
     }
 
@@ -295,6 +310,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
 
     public void setLevel(String level) {
         this.level.setText(level);
+        onStateChanged();
     }
 
     public void updateItemLimit() {
@@ -305,8 +321,9 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         StringBuilder builder = new StringBuilder();
         builder.append(ItemContainer.getInstance().getOwnItemCount());
         builder.append("/");
-        builder.append(ClientBase.getInstance().getHouseSpace());
+        builder.append(ClientBase.getInstance().getHouseSpace() + ClientLevelHandler.getInstance().getLevel().getHouseSpace());
         itemLimit.setText(builder.toString());
+        onStateChanged();
     }
 
     public void updateEnergy(int generating, int consuming) {
@@ -418,5 +435,9 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
                 throw new HintWidgetException(this + " selectedItemPanel is not visible", config);
             }
         }
+    }
+
+    public void onStateChanged() {
+        selectedItemPanel.onStateChanged();
     }
 }

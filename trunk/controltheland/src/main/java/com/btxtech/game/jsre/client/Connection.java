@@ -199,7 +199,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
                 } else if (packet instanceof ItemTypeAccessSyncInfo) {
                     ItemTypeAccessSyncInfo itemTypeAccessSyncInfo = (ItemTypeAccessSyncInfo) packet;
                     ClientItemTypeAccess.getInstance().setAllowedItemTypes(itemTypeAccessSyncInfo.getAllowedItemTypes());
-                    SelectionHandler.getInstance().refresh();
+                    Cockpit.getInstance().onStateChanged();
                 } else if (packet instanceof EnergyPacket) {
                     ClientEnergyService.getInstance().onEnergyPacket((EnergyPacket)packet);
                 } else if (packet instanceof UserMessage) {
