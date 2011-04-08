@@ -29,6 +29,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * User: beat
@@ -87,7 +89,11 @@ public class UserStateEditor extends MgmtWebPage {
             }
         }, Integer.class));
         form.add(new TextField<Integer>("userItemTypeAccess.xp"));
-        form.add(new ListView<MarketEntry>("allowedItemTypes", new ArrayList<MarketEntry>(form.getModelObject().getUserItemTypeAccess().getAllowedItemTypes())) {
+        List<MarketEntry> marketEntries = Collections.emptyList();
+        if (form.getModelObject().getUserItemTypeAccess() != null) {
+            marketEntries = new ArrayList<MarketEntry>(form.getModelObject().getUserItemTypeAccess().getAllowedItemTypes());
+        }
+        form.add(new ListView<MarketEntry>("allowedItemTypes", marketEntries) {
 
             @Override
             protected void populateItem(ListItem<MarketEntry> marketEntryListItem) {
