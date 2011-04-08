@@ -723,11 +723,11 @@ public class BaseTestService {
 
     // ------------------- Setup minimal bot --------------------
 
-    protected DbBotConfig setupMinimalBot() {
+    protected DbBotConfig setupMinimalBot(Rectangle realm, Rectangle core) {
         DbBotConfig dbBotConfig = botService.getDbBotConfigCrudServiceHelper().createDbChild();
         dbBotConfig.setActionDelay(10);
-        dbBotConfig.setRealm(new Rectangle(4000, 4000, 3000, 3000));
-        dbBotConfig.setCore(new Rectangle(5000, 5000, 1000, 1000));
+        dbBotConfig.setRealm(realm);
+        dbBotConfig.setCore(core);
         dbBotConfig.setCoreSuperiority(2);
         dbBotConfig.setRealmSuperiority(1);
         DbBotItemCount fundamental = dbBotConfig.getBaseFundamentalCrudServiceHelper().createDbChild();

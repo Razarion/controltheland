@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.bot;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.services.bot.impl.BotRunner;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 
@@ -29,4 +30,6 @@ public interface BotService {
     void activate();
 
     BotRunner getBotRunner(DbBotConfig dbBotConfig);
+
+    boolean isInRealm(Index point);
 }

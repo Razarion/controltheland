@@ -23,6 +23,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.mapview.common.GeometricalUtil;
+import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.collision.CollisionServiceChangedListener;
 import com.btxtech.game.services.collision.PassableRectangle;
@@ -30,17 +31,18 @@ import com.btxtech.game.services.collision.Path;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.terrain.TerrainService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import javax.annotation.PostConstruct;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * User: beat
@@ -59,6 +61,8 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     private ItemService itemService;
     @Autowired
     private MgmtService mgmtService;
+    @Autowired
+    private BotService botService;
     private HashMap<TerrainType, List<PassableRectangle>> passableRectangles4TerrainType = new HashMap<TerrainType, List<PassableRectangle>>();
     private Log log = LogFactory.getLog(CollisionServiceImpl.class);
     private ArrayList<CollisionServiceChangedListener> collisionServiceChangedListeners = new ArrayList<CollisionServiceChangedListener>();
@@ -83,7 +87,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
 
     private SurfaceType[][] getSurfaceTypeField() {
         TerrainSettings terrainSettings = terrainService.getTerrainSettings();
-        if(terrainSettings == null) {
+        if (terrainSettings == null) {
             log.error("No terrain settings for real game available");
             return new SurfaceType[0][0];
         }
@@ -160,12 +164,16 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     }
 
     @Override
-    public Index getFreeRandomPosition(ItemType itemType, Rectangle region, int itemFreeRange) {
+    public Index getFreeRandomPosition(ItemType itemType, Rectangle region, int itemFreeRange, boolean botFree) {
         Random random = new Random();
         for (int i = 0; i < MAX_TRIES; i++) {
             int x = random.nextInt(region.getWidth()) + region.getX();
             int y = random.nextInt(region.getHeight()) + region.getY();
             Index point = new Index(x, y);
+            if (botFree && botService.isInRealm(point)) {
+                continue;
+            }
+
             if (!terrainService.isFree(point, itemType)) {
                 continue;
             }

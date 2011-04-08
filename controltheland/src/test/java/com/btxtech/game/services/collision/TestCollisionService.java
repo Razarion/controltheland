@@ -1,13 +1,13 @@
 package com.btxtech.game.services.collision;
 
-import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.services.BaseTestService;
+import com.btxtech.game.services.item.ItemService;
+import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.annotation.DirtiesContext;
 
 /**
  * User: beat
@@ -17,19 +17,31 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class TestCollisionService extends BaseTestService {
     @Autowired
     private CollisionService collisionService;
+    @Autowired
+    private ItemService itemService;
 
     @Test
-    public void testPathfinder1() {
-        Index start = new Index(439, 412);
-        Index end = new Index(19497, 1597);
-        //collisionService.setupPathToDestination(start,end, TerrainType.LAND);
-    }
+    @DirtiesContext
+    public void testPathfinder1() throws Exception {
+        configureMinimalGame();
 
-    @Test
-    public void testPathfinder2() {
-        Index start = new Index(7481, 20);
-        Index end = new Index(19380, 19946);
-        //collisionService.setupPathToDestination(start,end, TerrainType.LAND);
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        setupMinimalBot(new Rectangle(1, 1, 3000, 3000), new Rectangle(1000, 1000, 1000, 1000));
+        setupMinimalBot(new Rectangle(4000, 4000, 3000, 3000), new Rectangle(5000, 5000, 1000, 1000));
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        ItemType itemType = itemService.getItemType(TEST_START_BUILDER_ITEM_ID);
+        collisionService.getFreeRandomPosition(itemType, new Rectangle(8000, 8000, 1000, 1000), 100, true);
+        try {
+            collisionService.getFreeRandomPosition(itemType, new Rectangle(4050, 4050, 1000, 1000), 100, true);
+            Assert.fail("Exception expected");
+        } catch (IllegalStateException e) {
+            // Expceted
+        }
     }
 
 }

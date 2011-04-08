@@ -157,7 +157,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         historyService.addBaseStartEntry(base.getSimpleBase());
         BaseItemType startItem = (BaseItemType) itemService.getItemType(dbRealGameLevel.getStartItemType());
         sendBaseChangedPacket(BaseChangedPacket.Type.CREATED, base.getSimpleBase());
-        Index startPoint = collisionService.getFreeRandomPosition(startItem, dbRealGameLevel.getStartRectangle(), dbRealGameLevel.getStartItemFreeRange());
+        Index startPoint = collisionService.getFreeRandomPosition(startItem, dbRealGameLevel.getStartRectangle(), dbRealGameLevel.getStartItemFreeRange(), true);
         SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(startItem, startPoint, null, base.getSimpleBase(), 0);
         syncBaseItem.setBuildup(1.0);
         if (syncBaseItem.hasSyncTurnable()) {
