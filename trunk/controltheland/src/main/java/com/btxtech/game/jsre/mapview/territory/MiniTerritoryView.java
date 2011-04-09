@@ -27,6 +27,7 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.widgetideas.graphics.client.Color;
+
 import java.util.HashSet;
 
 /**
@@ -35,7 +36,7 @@ import java.util.HashSet;
  * Time: 13:54:34
  */
 public class MiniTerritoryView extends MiniMap implements MiniMapMouseMoveListener, MiniMapMouseDownListener, MiniMapMouseUpListener {
-    private int brushSize = 10;
+    private static final int BRUSH_SIZE = 10;
     private HashSet<Index> tiles = new HashSet<Index>();
     private boolean drawMode = false;
     private boolean eraseMode = false;
@@ -49,14 +50,14 @@ public class MiniTerritoryView extends MiniMap implements MiniMapMouseMoveListen
     }
 
     @Override
-    public void onMouseMove(int absX, int absY) {
+    public void onMouseMove(int tileX, int tileY) {
         if (!drawMode && !eraseMode) {
             return;
         }
         int tmpSize = tiles.size();
-        Index tile = TerrainView.getInstance().getTerrainHandler().getTerrainTileIndexForAbsPosition(absX, absY);
-        for (int x = -brushSize / 2; x < brushSize / 2; x++) {
-            for (int y = -brushSize / 2; y < brushSize / 2; y++) {
+        Index tile = new Index(tileX, tileY);
+        for (int x = -BRUSH_SIZE / 2; x < BRUSH_SIZE / 2; x++) {
+            for (int y = -BRUSH_SIZE / 2; y < BRUSH_SIZE / 2; y++) {
                 int newX = tile.getX() + x;
                 if (newX < 0) {
                     newX = 0;
@@ -108,15 +109,13 @@ public class MiniTerritoryView extends MiniMap implements MiniMapMouseMoveListen
         clear();
         setFillStyle(Color.ALPHA_RED);
         for (Index index : tiles) {
-            Index absIndex = TerrainView.getInstance().getTerrainHandler().getAbsolutIndexForTerrainTileIndex(index);
-            fillRect(absIndex.getX(), absIndex.getY(), getTerrainSettings().getTileWidth(), getTerrainSettings().getTileHeight());
+            fillRect(index.getX(), index.getY(), 1, 1);
         }
         setFillStyle(Color.ALPHA_GREY);
         for (Territory territory : ClientTerritoryService.getInstance().getTerritories()) {
             if (!territory.equals(this.territory)) {
                 for (Rectangle rectangle : territory.getTerritoryTileRegions()) {
-                    Rectangle absRect = TerrainView.getInstance().getTerrainHandler().convertToAbsolutePosition(rectangle);
-                    fillRect(absRect.getX(), absRect.getY(), absRect.getWidth(), absRect.getHeight());
+                    fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
                 }
             }
         }

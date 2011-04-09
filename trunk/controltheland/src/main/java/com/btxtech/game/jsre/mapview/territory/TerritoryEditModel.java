@@ -31,7 +31,7 @@ import java.util.Collection;
  * Time: 11:14:37
  */
 public class TerritoryEditModel {
-    public static final String TERRITORY_TO_EDIT = "territory";
+    public static final String TERRITORY_TO_EDIT_ID = "territory_id";
     private MiniTerritoryView miniTerritoryView;
     private TerrainSettings terrainSettings;
     private Territory territory;
@@ -74,7 +74,7 @@ public class TerritoryEditModel {
 
     public void setTerritories(Collection<Territory> territories) {
         territoryCockpit.setTerritoryName("???");
-        int territoryId = Integer.parseInt(Window.Location.getParameter(TERRITORY_TO_EDIT));
+        int territoryId = Integer.parseInt(Window.Location.getParameter(TERRITORY_TO_EDIT_ID));
         for (Territory territory : territories) {
             if (territory.compareId(territoryId)) {
                 this.territory = territory;

@@ -36,6 +36,8 @@ public class PathfindingEntry implements EntryPoint {
         GwtCommon.setUncaughtExceptionHandler();
         GwtCommon.disableBrowserContextMenuJSNI();
 
+        TerrainView.uglySuppressRadar = true;        
+
         AbsolutePanel absolutePanel = new AbsolutePanel();
         absolutePanel.setSize("100%", "100%");
         RootPanel.get().add(absolutePanel);
