@@ -19,5 +19,5 @@ package com.btxtech.game.jsre.client.cockpit.radar;
  * Time: 13:41:35
  */
 public interface MiniMapMouseMoveListener {
-    void onMouseMove(int absX, int absY);
+    void onMouseMove(int tileX, int tileY);
 }

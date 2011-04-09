@@ -71,7 +71,7 @@ public class TerritoryEditor extends MgmtWebPage {
             protected void onEditSubmit(DbTerritory dbTerritory) {
                 PageParameters pageParameters = new PageParameters();
                 pageParameters.add(TerrainEditorAsync.TERRAIN_SETTING_ID, terrainService.getDbTerrainSetting4RealGame().getId().toString());
-                pageParameters.put(TerritoryEditModel.TERRITORY_TO_EDIT, dbTerritory.getName());
+                pageParameters.put(TerritoryEditModel.TERRITORY_TO_EDIT_ID, dbTerritory.getId().toString());
                 setResponsePage(TerritoryDesigner.class, pageParameters);
             }
 
