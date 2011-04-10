@@ -20,6 +20,8 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -59,24 +61,24 @@ public class SpeechBubble extends AbsolutePanel {
 
         switch (direction) {
             case BOTTOM:
-                setup(relative.getX(), relative.getY() - deltaY, html, htmlSize.getX(), htmlSize.getY(), direction);
+                setup(relative.getX(), relative.getY() - deltaY, html, htmlSize.getX(), htmlSize.getY(), direction, false);
                 break;
             case LEFT:
-                setup(relative.getX() + deltaX, relative.getY(), html, htmlSize.getX(), htmlSize.getY(), direction);
+                setup(relative.getX() + deltaX, relative.getY(), html, htmlSize.getX(), htmlSize.getY(), direction, false);
                 break;
             case RIGHT:
-                setup(relative.getX() - deltaX, relative.getY(), html, htmlSize.getX(), htmlSize.getY(), direction);
+                setup(relative.getX() - deltaX, relative.getY(), html, htmlSize.getX(), htmlSize.getY(), direction, false);
                 break;
             case TOP:
-                setup(relative.getX(), relative.getY() + deltaY, html, htmlSize.getX(), htmlSize.getY(), direction);
+                setup(relative.getX(), relative.getY() + deltaY, html, htmlSize.getX(), htmlSize.getY(), direction, false);
                 break;
         }
     }
 
-    public SpeechBubble(int beakRelX, int beakRelY, String html, boolean scrollWithTerrain) {
+    public SpeechBubble(int beakRelX, int beakRelY, String html, boolean scrollWithTerrain, boolean bottomRelative) {
         this.scrollWithTerrain = scrollWithTerrain;
         Index htmlSize = getHtmlSize(html);
-        setup(beakRelX, beakRelY, html, htmlSize.getX(), htmlSize.getY(), null);
+        setup(beakRelX, beakRelY, html, htmlSize.getX(), htmlSize.getY(), null, bottomRelative);
     }
 
     private Index getHtmlSize(String html) {
@@ -104,7 +106,7 @@ public class SpeechBubble extends AbsolutePanel {
         return size;
     }
 
-    private void setup(int beakRelX, int beakRelY, String html, int htmlWidth, int htmlHeight, Direction direction) {
+    private void setup(int beakRelX, int beakRelY, String html, int htmlWidth, int htmlHeight, Direction direction, boolean bottomRelative) {
         if (direction == null) {
             direction = getBeakDirection(beakRelX, beakRelY, htmlWidth, htmlHeight);
         }
@@ -152,6 +154,7 @@ public class SpeechBubble extends AbsolutePanel {
         setPixelSize(totalBubbleWidth, totalBubbleHeight);
         getElement().getStyle().setZIndex(Constants.Z_INDEX_SPEECH_BUBBLE);
         MapWindow.getAbsolutePanel().add(this, left, top);
+
         if (scrollWithTerrain) {
             MapWindow.getInstance().addToScrollElements(this);
         }
@@ -177,6 +180,12 @@ public class SpeechBubble extends AbsolutePanel {
         }
 
         buildBubble(LINE_SIZE, LINE_SIZE, totalBubbleWidth - LINE_SIZE, totalBubbleHeight - LINE_SIZE, beakOffset, direction);
+        if(bottomRelative) {
+            int bottom = Document.get().getScrollHeight() - top  - totalBubbleHeight;
+            getElement().getStyle().setProperty("top", "");
+            getElement().getStyle().setProperty("bottom", bottom + "px");
+        }
+
     }
 
     private int getBubbleSize(int htmlSize) {
