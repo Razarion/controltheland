@@ -38,7 +38,7 @@ public class UnfrequentDialog extends Dialog {
 
     private static HashMap<Type, UnfrequentDialog> dialogHashMap = new HashMap<Type, UnfrequentDialog>();
     private String message;
-    private long lastShowTimeStamp = 0;
+    private long lastShowTimeStamp = 0;  // Can not be converted to local variable
 
     private UnfrequentDialog(Type type) {
         this.message = type.message;
@@ -64,6 +64,7 @@ public class UnfrequentDialog extends Dialog {
         }
 
         if (!unfrequentDialog.isShowing()) {
+            unfrequentDialog.lastShowTimeStamp = System.currentTimeMillis();
             DialogManager.showDialog(unfrequentDialog, DialogManager.Type.UNIMPORTANT);
         }
     }
