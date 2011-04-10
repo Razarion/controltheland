@@ -26,7 +26,7 @@ import com.btxtech.game.jsre.common.tutorial.TerrainPositionSpeechBubbleHintConf
 public class TerrainPositionSpeechBubbleHint extends SpeechBubbleHint {
     public TerrainPositionSpeechBubbleHint(TerrainPositionSpeechBubbleHintConfig terrainPositionSpeechBubbleHintConfig) {
         Index relPos = TerrainView.getInstance().toRelativeIndex(terrainPositionSpeechBubbleHintConfig.getPosition());
-        setSpeechBubble(new SpeechBubble(relPos.getX(), relPos.getY(), terrainPositionSpeechBubbleHintConfig.getHtml(), true),
+        setSpeechBubble(new SpeechBubble(relPos.getX(), relPos.getY(), terrainPositionSpeechBubbleHintConfig.getHtml(), true, false),
                 terrainPositionSpeechBubbleHintConfig);
     }
 }
