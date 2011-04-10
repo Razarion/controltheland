@@ -145,7 +145,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         DbAbstractLevel dbOldAbstractLevel = userState.getCurrentAbstractLevel();
         userState.setCurrentAbstractLevel(dbNextAbstractLevel);
         // Tracking
-        historyService.addLevelPromotionEntry(userState.getUser(), dbNextAbstractLevel);
+        historyService.addLevelPromotionEntry(userState, dbNextAbstractLevel);
         log.debug("User: " + userState + " has been promoted: " + dbOldAbstractLevel + " to " + dbNextAbstractLevel);
 
         if (dbNextAbstractLevel instanceof DbRealGameLevel) {

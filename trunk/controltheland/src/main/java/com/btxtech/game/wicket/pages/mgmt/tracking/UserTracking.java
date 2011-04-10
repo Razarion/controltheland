@@ -91,7 +91,7 @@ public class UserTracking extends MgmtWebPage {
                 listItem.add(new Label("successfulStarts", Integer.toString(listItem.getModelObject().getSuccessfulStarts())));
                 listItem.add(new Label("startupFailure", listItem.getModelObject().isStartupFailure() ? "!" : ""));
                 listItem.add(new Label("commands", Integer.toString(listItem.getModelObject().getCommands())));
-                listItem.add(new Label("tasks", Integer.toString(listItem.getModelObject().getTasks())));
+                listItem.add(new Label("levelPromotions", Integer.toString(listItem.getModelObject().getLevelPromotions())));
                 listItem.add(new Label("cookie", listItem.getModelObject().isCookie() ? "Yes" : ""));
                 Link link = new Link("visitorLink") {
 

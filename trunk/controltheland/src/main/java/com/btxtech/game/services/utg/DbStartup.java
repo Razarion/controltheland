@@ -13,10 +13,8 @@
 
 package com.btxtech.game.services.utg;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +23,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import org.hibernate.annotations.Cascade;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 
 /**
  * User: beat
@@ -44,11 +45,12 @@ public class DbStartup implements Serializable {
     private String sessionId;
     private long startupDuration;
     private long clientTimeStamp;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @org.hibernate.annotations.IndexColumn(name = "orderIndex", nullable = false, base = 0)
     @JoinColumn(name = "dbStartup", nullable = false)
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Collection<DbStartupTask> dbStartupTasks;
+    private boolean realGame;
 
     /**
      * Used by Hibernate
@@ -62,6 +64,13 @@ public class DbStartup implements Serializable {
         this.sessionId = sessionId;
         this.startupDuration = startupDuration;
         timeStamp = new Date();
+        if (abstractLevel instanceof DbRealGameLevel) {
+            realGame = true;
+        } else if (abstractLevel instanceof DbSimulationLevel) {
+            realGame = false;
+        } else {
+            throw new IllegalArgumentException("Unknown level type: " + abstractLevel);
+        }
     }
 
     public Date getTimeStamp() {
@@ -93,6 +102,10 @@ public class DbStartup implements Serializable {
 
     public String getLevel() {
         return level;
+    }
+
+    public boolean isRealGame() {
+        return realGame;
     }
 
     @Override

@@ -54,7 +54,7 @@ public class VisitorDetails extends MgmtWebPage {
 
             @Override
             protected void populateItem(ListItem<PageAccess> listItem) {
-                listItem.add(new Label("time", WebCommon.formatTime(listItem.getModelObject().getTimeStamp())));
+                listItem.add(new Label("time", WebCommon.formatDateTime(listItem.getModelObject().getTimeStamp())));
                 if (previous != null) {
                     listItem.add(new Label("delta", WebCommon.getTimeDiff(previous, listItem.getModelObject().getTimeStamp())));
                 } else {
@@ -72,7 +72,11 @@ public class VisitorDetails extends MgmtWebPage {
         ListView<LifecycleTrackingInfo> gameTrackingInfoList = new ListView<LifecycleTrackingInfo>("detailTrackings", visitorDetailInfo.getLifecycleTrackingInfos()) {
             @Override
             protected void populateItem(ListItem<LifecycleTrackingInfo> listItem) {
-                listItem.add(new TutorialTracking("detailTracking", listItem.getModelObject()));
+                if(listItem.getModelObject().isRealGame()) {
+                    listItem.add(new RealGameTracking("detailTracking", listItem.getModelObject()));
+                } else {
+                    listItem.add(new TutorialTracking("detailTracking", listItem.getModelObject()));
+                }
             }
         };
         add(gameTrackingInfoList);
@@ -81,7 +85,7 @@ public class VisitorDetails extends MgmtWebPage {
     private void userInfo(String sessionId, VisitorDetailInfo visitorDetailInfo) {
         BrowserDetails browserDetails = visitorDetailInfo.getUserDetails();
         add(new Label("sessionId", sessionId));
-        add(new Label("timeStamp", WebCommon.formatTime(browserDetails.getTimeStamp())));
+        add(new Label("timeStamp", WebCommon.formatDateTime(browserDetails.getTimeStamp())));
         add(new Label("userAgent", browserDetails.getUserAgent()));
         add(new Label("language", browserDetails.getLanguage()));
         add(new Label("remoteHost", browserDetails.getRemoteHost()));

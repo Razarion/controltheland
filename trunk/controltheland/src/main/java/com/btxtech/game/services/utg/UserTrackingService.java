@@ -24,7 +24,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.user.User;
-import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import java.util.Collection;
 import java.util.List;
@@ -83,7 +82,7 @@ public interface UserTrackingService {
 
     void onCloseWindow(long totalRunningTime, long clientTimeStamp);
 
-    GameTrackingInfo getGameTracking(LifecycleTrackingInfo lifecycleTrackingInfo);
+    RealGameTrackingInfo getGameTracking(LifecycleTrackingInfo lifecycleTrackingInfo);
 
     TutorialTrackingInfo getTutorialTrackingInfo(LifecycleTrackingInfo lifecycleTrackingInfo);
 

@@ -30,8 +30,8 @@ public class LifecyclePanel extends Panel {
     public LifecyclePanel(String id, LifecycleTrackingInfo lifecycleTrackingInfo) {
         super(id);
         add(new Label("level", lifecycleTrackingInfo.getLevel()));
-        add(new Label("startTime", WebCommon.formatTime(lifecycleTrackingInfo.getStart())));
-        add(new Label("endTime", WebCommon.formatTime(lifecycleTrackingInfo.getEnd())));
+        add(new Label("startTime", WebCommon.formatDateTime(lifecycleTrackingInfo.getStart())));
+        add(new Label("endTime", WebCommon.formatDateTime(lifecycleTrackingInfo.getEnd())));
         add(new ListView<DbStartupTask>("startup", lifecycleTrackingInfo.getGameStartups()) {
             @Override
             protected void populateItem(ListItem<DbStartupTask> gameStartupListItem) {
