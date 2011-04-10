@@ -829,6 +829,13 @@ public class BaseTestService {
         securityContext = null;
     }
 
+    protected String getHttpSessionId() {
+        if (mockHttpSession == null) {
+            throw new IllegalStateException("mockHttpSession is null");
+        }
+        return mockHttpSession.getId();
+    }
+
     private void beginHttpRequest() {
         if (mockHttpServletRequest != null) {
             throw new IllegalStateException("mockHttpServletRequest is not null");

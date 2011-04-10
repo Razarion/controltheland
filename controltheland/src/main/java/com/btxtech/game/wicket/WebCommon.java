@@ -28,6 +28,7 @@ import java.util.UUID;
  */
 public class WebCommon {
     public static final String DATE_TIME_FORMAT_STRING = "dd.MM.yyyy HH:mm:ss";
+    public static final String TIME_FORMAT_STRING = "HH:mm:ss";
     public static final String DATE_FORMAT_STRING = "dd.MM.yyyy";
     public static final String COOKIE_ID = "cookieId";
 
@@ -48,9 +49,27 @@ public class WebCommon {
         return String.format("%.2f", duration / 1000.0);
     }
 
-    static public String formatTime(Date date) {
+    static public String formatDateTime(Date date) {
         if (date != null) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_TIME_FORMAT_STRING);
+            return simpleDateFormat.format(date);
+        } else {
+            return "-";
+        }
+    }
+
+    static public String formatDate(Date date) {
+        if (date != null) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT_STRING);
+            return simpleDateFormat.format(date);
+        } else {
+            return "-";
+        }
+    }
+
+    static public String formatTime(Date date) {
+        if (date != null) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(TIME_FORMAT_STRING);
             return simpleDateFormat.format(date);
         } else {
             return "-";

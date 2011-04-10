@@ -30,6 +30,7 @@ public class LifecycleTrackingInfo implements Serializable {
     private String sessionId;
     private Date end;
     private String level;
+    private boolean realGame;
 
     public LifecycleTrackingInfo(String sessionId, DbStartup startup) {
         this.sessionId = sessionId;
@@ -37,6 +38,7 @@ public class LifecycleTrackingInfo implements Serializable {
         dbStartupTasks = (List<DbStartupTask>) startup.getGameStartupTasks();
         startupDuration = startup.getStartupDuration();
         level = startup.getLevel();
+        realGame = startup.isRealGame();
     }
 
     public Date getStart() {
@@ -65,5 +67,9 @@ public class LifecycleTrackingInfo implements Serializable {
 
     public String getLevel() {
         return level;
+    }
+
+    public boolean isRealGame() {
+        return realGame;
     }
 }

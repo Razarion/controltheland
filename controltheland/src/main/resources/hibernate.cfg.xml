@@ -56,15 +56,12 @@
         <mapping class="com.btxtech.game.services.utg.PageAccess"/>
         <mapping class="com.btxtech.game.services.utg.BrowserDetails"/>
         <mapping class="com.btxtech.game.services.utg.DbStartupTask"/>
-        <mapping class="com.btxtech.game.services.utg.DbUserAction"/>
-        <mapping class="com.btxtech.game.services.utg.DbMissionAction"/>
-        <mapping class="com.btxtech.game.services.utg.UserCommand"/>
+        <mapping class="com.btxtech.game.services.utg.DbUserCommand"/>
         <mapping class="com.btxtech.game.services.utg.UserHistory"/>
         <mapping class="com.btxtech.game.services.utg.DbUserMessage"/>
         <mapping class="com.btxtech.game.services.utg.DbSimulationLevel"/>
         <mapping class="com.btxtech.game.services.utg.DbRealGameLevel"/>
         <mapping class="com.btxtech.game.services.utg.DbItemTypeLimitation"/>
-        <mapping class="com.btxtech.game.services.utg.DbScope"/>
         <mapping class="com.btxtech.game.services.utg.DbTutorialProgress"/>
         <mapping class="com.btxtech.game.services.utg.DbEventTrackingStart"/>
         <mapping class="com.btxtech.game.services.utg.DbEventTrackingItem"/>

@@ -29,7 +29,7 @@ public class VisitorInfo {
     private int successfulStarts;
     private boolean startupFailure;
     private int commands;
-    private int tasks;
+    private int levelPromotions;
     private boolean cookie;
     private String referer;
 
@@ -39,7 +39,7 @@ public class VisitorInfo {
                        int enterGameHits,
                        int successfulStarts,
                        boolean startupFailure, int commands,
-                       int tasks,
+                       int levelPromotions,
                        boolean cookie,
                        String referer) {
         this.date = date;
@@ -49,7 +49,7 @@ public class VisitorInfo {
         this.successfulStarts = successfulStarts;
         this.startupFailure = startupFailure;
         this.commands = commands;
-        this.tasks = tasks;
+        this.levelPromotions = levelPromotions;
         this.cookie = cookie;
         if (referer != null && referer.length() > MAX_REFERER_LENGTH) {
             this.referer = referer.substring(0, MAX_REFERER_LENGTH);
@@ -86,8 +86,8 @@ public class VisitorInfo {
         return referer;
     }
 
-    public int getTasks() {
-        return tasks;
+    public int getLevelPromotions() {
+        return levelPromotions;
     }
 
     public int getSuccessfulStarts() {

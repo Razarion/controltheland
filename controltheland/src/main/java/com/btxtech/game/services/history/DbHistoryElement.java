@@ -50,13 +50,13 @@ public class DbHistoryElement implements Serializable {
     private long timeStampMs;
     @Column(nullable = false)
     private Type type;
-
     private String actorUserName;
     private String targetUserName;
     private String actorBaseName;
     private String targetBaseName;
     private String itemTypeName;
     private String levelName;
+    private String sessionId;
 
     /**
      * Used by hibernate
@@ -64,7 +64,8 @@ public class DbHistoryElement implements Serializable {
     protected DbHistoryElement() {
     }
 
-    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncBaseItem syncBaseItem, DbAbstractLevel level, BaseService baseService) {
+    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncBaseItem syncBaseItem, DbAbstractLevel level, BaseService baseService, String sessionId) {
+        this.sessionId = sessionId;
         timeStamp = new Date();
         timeStampMs = timeStamp.getTime();
         this.type = type;
@@ -114,6 +115,10 @@ public class DbHistoryElement implements Serializable {
 
     public String getLevelName() {
         return levelName;
+    }
+
+    public String getSessionId() {
+        return sessionId;
     }
 
     @Override

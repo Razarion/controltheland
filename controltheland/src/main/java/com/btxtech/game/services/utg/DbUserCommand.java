@@ -28,7 +28,7 @@ import javax.persistence.Id;
  * Time: 11:09:27 AM
  */
 @Entity(name = "TRACKER_USER_COMMAND")
-public class UserCommand implements Serializable {
+public class DbUserCommand implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
@@ -48,10 +48,10 @@ public class UserCommand implements Serializable {
     /**
      * Used by hibernate
      */
-    public UserCommand() {
+    public DbUserCommand() {
     }
 
-    public UserCommand(Connection connection, BaseCommand baseCommand, String baseName) {
+    public DbUserCommand(Connection connection, BaseCommand baseCommand, String baseName) {
         this.baseName = baseName;
         sessionId = connection.getSessionId();
         this.interaction = baseCommand.toString();
@@ -89,7 +89,7 @@ public class UserCommand implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        UserCommand that = (UserCommand) o;
+        DbUserCommand that = (DbUserCommand) o;
 
         return !(id != null ? !id.equals(that.id) : that.id != null);
 

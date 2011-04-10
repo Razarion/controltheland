@@ -23,6 +23,7 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.connection.Session;
+import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.*;
@@ -64,6 +65,8 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     private ServerConditionService serverConditionService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private HistoryService historyService;
     private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(UserTrackingServiceImpl.class);
 
@@ -143,8 +146,8 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             boolean failure = hasFailureStarts(sessionId);
             int enterGameHits = getGameAttempts(sessionId);
             int commands = getUserCommandCount(sessionId, null, null, null);
-            int tasks = getTaskCount(sessionId, null, null);
-            visitorInfos.add(new VisitorInfo(timeStamp, sessionId, hits, enterGameHits, successfulStarts, failure, commands, tasks, cookie, referer));
+            int levelPromotions = historyService.getLevelPromotionCount(sessionId);
+            visitorInfos.add(new VisitorInfo(timeStamp, sessionId, hits, enterGameHits, successfulStarts, failure, commands, levelPromotions, cookie, referer));
         }
         return visitorInfos;
     }
@@ -204,7 +207,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         return hibernateTemplate.execute(new HibernateCallback<Integer>() {
             @Override
             public Integer doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(UserCommand.class);
+                Criteria criteria = session.createCriteria(DbUserCommand.class);
                 criteria.add(Restrictions.eq("sessionId", sessionId));
                 if (command != null) {
                     criteria.add(Restrictions.eq("interactionClass", command.getName()));
@@ -217,6 +220,23 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 }
                 criteria.setProjection(Projections.rowCount());
                 return ((Number)criteria.list().get(0)).intValue();
+            }
+        });
+    }
+
+    private List<DbUserCommand> getUserCommand(final String sessionId, final Date from, final Date to) {
+        return hibernateTemplate.execute(new HibernateCallback<List<DbUserCommand>>() {
+            @Override
+            public List<DbUserCommand> doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbUserCommand.class);
+                criteria.add(Restrictions.eq("sessionId", sessionId));
+                if (from != null) {
+                    criteria.add(Restrictions.ge("clientTimeStamp", from));
+                }
+                if (to != null) {
+                    criteria.add(Restrictions.lt("clientTimeStamp", to));
+                }
+                return (List<DbUserCommand>) criteria.list();
             }
         });
     }
@@ -274,17 +294,11 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public GameTrackingInfo getGameTracking(LifecycleTrackingInfo lifecycleTrackingInfo) {
-/*        GameTrackingInfo trackingInfo = new GameTrackingInfo();
-        trackingInfo.setAttackCommandCount(getUserCommandCount(lifecycleTrackingInfo.getSessionId(), AttackCommand.class, lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
-        trackingInfo.setMoveCommandCount(getUserCommandCount(lifecycleTrackingInfo.getSessionId(), MoveCommand.class, lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
-        trackingInfo.setBuilderCommandCount(getUserCommandCount(lifecycleTrackingInfo.getSessionId(), BuilderCommand.class, lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
-        trackingInfo.setFactoryCommandCount(getUserCommandCount(lifecycleTrackingInfo.getSessionId(), FactoryCommand.class, lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
-        trackingInfo.setMoneyCollectCommandCount(getUserCommandCount(lifecycleTrackingInfo.getSessionId(), MoneyCollectCommand.class, lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
-        trackingInfo.setUserActions(getUserActions(lifecycleTrackingInfo.getSessionId(), lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
-        trackingInfo.setUserCommands(getUserCommands(lifecycleTrackingInfo.getSessionId(), lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
-        return trackingInfo; */
-        return null;
+    public RealGameTrackingInfo getGameTracking(LifecycleTrackingInfo lifecycleTrackingInfo) {
+        RealGameTrackingInfo trackingInfoReal = new RealGameTrackingInfo();
+        trackingInfoReal.setUserCommands(getUserCommand(lifecycleTrackingInfo.getSessionId(), lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
+        trackingInfoReal.setHistoryElements(historyService.getHistoryElements(lifecycleTrackingInfo.getSessionId(), lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
+        return trackingInfoReal;
     }
 
     @Override
@@ -330,9 +344,9 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     @Transactional
     public void saveUserCommand(BaseCommand baseCommand) {
         try {
-            UserCommand userUserCommand = new UserCommand(session.getConnection(), baseCommand, baseService.getBaseName(baseService.getBase().getSimpleBase()));
-            // log.debug("User Command: " + userUserCommand);
-            hibernateTemplate.saveOrUpdate(userUserCommand);
+            DbUserCommand dbUserCommand = new DbUserCommand(session.getConnection(), baseCommand, baseService.getBaseName(baseService.getBase().getSimpleBase()));
+            // log.debug("User Command: " + dbUserCommand);
+            hibernateTemplate.saveOrUpdate(dbUserCommand);
         } catch (Throwable t) {
             log.error("", t);
         }
