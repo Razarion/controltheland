@@ -17,7 +17,6 @@ import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.item.ItemService;
-import org.hibernate.annotations.IndexColumn;
 
 import java.io.Serializable;
 import javax.persistence.*;
@@ -40,6 +39,8 @@ public abstract class DbAbstractLevel implements CrudChild, Serializable {
     private int orderIndex;
     @Column(length = 50000)
     private String html;
+    @Column(length = 1000)
+    private String internalDescription;
     @Transient
     private ConditionConfig conditionConfig;
     @Transient
@@ -67,6 +68,14 @@ public abstract class DbAbstractLevel implements CrudChild, Serializable {
 
     public void setHtml(String html) {
         this.html = html;
+    }
+
+    public String getInternalDescription() {
+        return internalDescription;
+    }
+
+    public void setInternalDescription(String internalDescription) {
+        this.internalDescription = internalDescription;
     }
 
     @Override
