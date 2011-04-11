@@ -208,7 +208,7 @@ public class TestUserState extends BaseTestService {
         userStateTest = getRegUserState("U1");
         Assert.assertFalse(userStateTest.isOnline());
         Assert.assertNull(userStateTest.getSessionId());
-        Assert.assertEquals(userStateTest.getCurrentAbstractLevel().getLevel().getName(), TEST_LEVEL_1_SIMULATED);        
+        Assert.assertEquals(userStateTest.getCurrentAbstractLevel().getLevel().getName(), TEST_LEVEL_1_SIMULATED);
 
     }
 

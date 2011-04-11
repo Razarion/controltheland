@@ -15,7 +15,7 @@ package com.btxtech.game.wicket.pages.user;
 
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
-import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.WicketAuthenticatedWebSession;
 import com.btxtech.game.wicket.pages.Info;
@@ -39,15 +39,14 @@ public class NewUser extends BasePage {
         Form form = new Form<NewUser>("newUserForm", new CompoundPropertyModel<NewUser>(this)) {
             @Override
             protected void onSubmit() {
-                User user = userService.getUser();
-                if (user != null) {
-                    throw new IllegalStateException("The user is already logged in: " + user);
-                }
-
                 try {
                     userService.createUser(name, password, confirmPassword, email);
                     WicketAuthenticatedWebSession.get().signIn(name, password);
                     setResponsePage(UserPage.class);
+                } catch (AlreadyLoggedInException e) {
+                    PageParameters parameters = new PageParameters();
+                    parameters.add(Info.KEY_MESSAGE, e.getMessage());
+                    setResponsePage(Info.class, parameters);
                 } catch (UserAlreadyExistsException e) {
                     PageParameters parameters = new PageParameters();
                     parameters.add(Info.KEY_MESSAGE, "The user already exists");

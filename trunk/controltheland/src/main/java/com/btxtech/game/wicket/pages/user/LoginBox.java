@@ -13,6 +13,7 @@
 
 package com.btxtech.game.wicket.pages.user;
 
+import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.wicket.pages.Info;
 import org.apache.wicket.PageParameters;
@@ -41,12 +42,18 @@ public class LoginBox extends Panel {
         Form form = new Form<LoginBox>("loginForm", new CompoundPropertyModel<LoginBox>(this)) {
             @Override
             protected void onSubmit() {
-                AuthenticatedWebSession session = AuthenticatedWebSession.get();
-                if (session.signIn(loginName, loginPassowrd)) {
-                    setResponsePage(UserPage.class);
-                } else {
+                try {
+                    AuthenticatedWebSession session = AuthenticatedWebSession.get();
+                    if (session.signIn(loginName, loginPassowrd)) {
+                        setResponsePage(UserPage.class);
+                    } else {
+                        PageParameters parameters = new PageParameters();
+                        parameters.add(Info.KEY_MESSAGE, "Login failed. Please try again");
+                        setResponsePage(Info.class, parameters);
+                    }
+                } catch (AlreadyLoggedInException e) {
                     PageParameters parameters = new PageParameters();
-                    parameters.add(Info.KEY_MESSAGE, "Login failed. Please try again");
+                    parameters.add(Info.KEY_MESSAGE, e.getMessage());
                     setResponsePage(Info.class, parameters);
                 }
             }
@@ -55,6 +62,7 @@ public class LoginBox extends Panel {
         form.add(new TextField<String>("loginName"));
         form.add(new PasswordTextField("loginPassowrd"));
         form.add(new BookmarkablePageLink<NewUser>("createAccountLink", NewUser.class));
+
         add(form);
     }
 
