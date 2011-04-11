@@ -20,6 +20,7 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.market.ServerMarketService;
+import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.NotAuthorizedException;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
@@ -91,7 +92,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean login(String userName, String password) {
+    public boolean login(String userName, String password) throws AlreadyLoggedInException {
+        if (getUser() != null) {
+            throw new AlreadyLoggedInException(getUser());
+        }
+
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userName, password));
             SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -175,9 +180,9 @@ public class UserServiceImpl implements UserService {
      *                                    After this method login must be called immediately!
      */
     @Override
-    public void createUser(String name, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException {
+    public void createUser(String name, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, AlreadyLoggedInException {
         if (getUser() != null) {
-            throw new IllegalStateException("The user is already logged in: " + getUser());
+            throw new AlreadyLoggedInException(getUser());
         }
 
         if (getUser(name) != null) {

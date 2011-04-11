@@ -275,6 +275,44 @@ public class TestUserService extends BaseTestService {
         endHttpSession();
     }
 
+    @Test
+    @DirtiesContext
+    public void testLoginTwice() throws Exception {
+        configureMinimalGame();
+        // U1 no real base, first level
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U1", "test", "test", "test");
+        userService.login("U1", "test");
+        try {
+            userService.login("U1", "test");
+            Assert.fail("AlreadyLoggedInException expected");
+        } catch (AlreadyLoggedInException e) {
+            // Expected
+        }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testCreateUserTwice() throws Exception {
+        configureMinimalGame();
+        // U1 no real base, first level
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U1", "test", "test", "test");
+        userService.login("U1", "test");
+        try {
+            userService.createUser("U1", "test", "test", "test");
+            Assert.fail("AlreadyLoggedInException expected");
+        } catch (AlreadyLoggedInException e) {
+            // Expected
+        }
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
     private void assertLoggedIn() {
         for (GrantedAuthority grantedAuthority : userService.getAuthorities()) {
             if (grantedAuthority.getAuthority().equals(SecurityRoles.ROLE_USER)) {

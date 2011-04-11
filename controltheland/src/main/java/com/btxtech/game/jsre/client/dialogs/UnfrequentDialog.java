@@ -64,8 +64,8 @@ public class UnfrequentDialog extends Dialog {
         }
 
         if (!unfrequentDialog.isShowing()) {
-            unfrequentDialog.lastShowTimeStamp = System.currentTimeMillis();
             DialogManager.showDialog(unfrequentDialog, DialogManager.Type.UNIMPORTANT);
         }
+        unfrequentDialog.lastShowTimeStamp = System.currentTimeMillis();
     }
 }

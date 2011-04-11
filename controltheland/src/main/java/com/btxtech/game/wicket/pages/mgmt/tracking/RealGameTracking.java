@@ -50,7 +50,7 @@ public class RealGameTracking extends Panel {
 
             @Override
             protected void populateItem(ListItem<UserCommandHistoryElement> listItem) {
-                listItem.add(new Label("timeStamp", WebCommon.formatDate(listItem.getModelObject().getTimeStamp())));
+                listItem.add(new Label("timeStamp", WebCommon.formatTime(listItem.getModelObject().getTimeStamp())));
 
                 if (previous != null) {
                     listItem.add(new Label("timeDelta", WebCommon.getTimeDiff(previous, listItem.getModelObject().getTimeStamp())));
@@ -59,7 +59,7 @@ public class RealGameTracking extends Panel {
                 }
                 previous = listItem.getModelObject().getTimeStamp();
                 if (listItem.getModelObject().getClientTimeStamp() != null) {
-                    listItem.add(new Label("clientTimeStamp", WebCommon.formatDate(listItem.getModelObject().getClientTimeStamp())));
+                    listItem.add(new Label("clientTimeStamp", WebCommon.formatTime(listItem.getModelObject().getClientTimeStamp())));
                 } else {
                     listItem.add(new Label("clientTimeStamp", ""));
                 }

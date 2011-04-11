@@ -26,7 +26,7 @@ import java.util.List;
 
 public interface UserService extends UserDetailsService {
 
-    boolean login(String userName, String password);
+    boolean login(String userName, String password) throws AlreadyLoggedInException;
 
     boolean isRegistered();
 
@@ -40,7 +40,7 @@ public interface UserService extends UserDetailsService {
 
     List<User> getAllUsers();
 
-    void createUser(String name, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException;
+    void createUser(String name, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, AlreadyLoggedInException;
 
     User getUser(UserState userState);
 
