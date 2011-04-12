@@ -200,6 +200,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         itemLimit = new Label();
         add(itemLimit, ITEM_LIMIT_LEFT, ITEM_LIMIT_TOP);
         itemLimit.setTitle(TOOL_TIP_UNITS);
+        widgets.put(CockpitWidgetEnum.ITEM_LIMIT, itemLimit);        
         energy = new Label("0/0");
         add(energy, ENERGY_LEFT, ENERGY_TOP);
         energy.setTitle(TOOL_TIP_ENERGY);

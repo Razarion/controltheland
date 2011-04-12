@@ -43,6 +43,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     private double accountBalance;
     private SimpleBase simpleBase;
     private int houseSpace;
+    private boolean connectedToServer = true;
 
     /**
      * Singleton
@@ -205,5 +206,23 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     public Level getLevel(SimpleBase simpleBase) {
         check4OwnBase(simpleBase);
         return ClientLevelHandler.getInstance().getLevel();
+    }
+
+    public void recalculate4FakedHouseSpace(SyncBaseItem affectedSyncItem) {
+        if (connectedToServer || !isMyOwnProperty(affectedSyncItem)) {
+            return;
+        }
+        houseSpace = 0;
+        for (ClientSyncItem clientSyncItem : ItemContainer.getInstance().getOwnItems()) {
+            SyncBaseItem syncBaseItem = clientSyncItem.getSyncBaseItem();
+            if (syncBaseItem.hasSyncHouse()) {
+                houseSpace += syncBaseItem.getSyncHouse().getSpace();
+            }
+        }
+        Cockpit.getInstance().updateItemLimit();
+    }
+
+    public void setConnectedToServer4FakedHouseSpace(boolean connectedToServer) {
+        this.connectedToServer = connectedToServer;
     }
 }

@@ -88,4 +88,9 @@ public class Level implements Serializable {
     public int getHouseSpace() {
         return houseSpace;
     }
+
+    public void setHouseSpace(int houseSpace) {
+        // This shall only be set in the Simulated mode
+        this.houseSpace = houseSpace;
+    }
 }

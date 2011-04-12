@@ -43,6 +43,7 @@ public class RealDeltaStartupTask extends GameEngineStartupTask {
         Cockpit.getInstance().setGameInfo(realityInfo);
         ClientItemTypeAccess.getInstance().setAllowedItemTypes(realityInfo.getAllowedItemTypes());
         ClientEnergyService.getInstance().init(true);
+        ClientBase.getInstance().setConnectedToServer4FakedHouseSpace(true);
         ClientEnergyService.getInstance().onEnergyPacket(realityInfo.getEnergyGenerating(), realityInfo.getEnergyConsuming());
         ClientTerritoryService.getInstance().setTerritories(realityInfo.getTerritories());
         ClientBase.getInstance().setHouseSpace(realityInfo.getHouseSpace());

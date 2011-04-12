@@ -32,7 +32,8 @@ public enum CockpitWidgetEnum {
     ENERGY(false, false),
     UNLOAD(true, false),
     LAUNCH(true, false),
-    UPGRADE(true, false);
+    UPGRADE(true, false),
+    ITEM_LIMIT(false, false);
 
     private boolean itemTypeNeeded;
     private boolean button;
