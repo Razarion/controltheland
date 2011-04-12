@@ -17,8 +17,10 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.items.BaseDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
@@ -38,8 +40,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -95,16 +99,16 @@ public class BotRunner {
         runBot();
     }
 
-    public void stop() {
+    public void kill() {
         if (botThread == null) {
             throw new IllegalStateException("Bot thread is not running");
         }
         Thread tmp = botThread;
         botThread = null;
         tmp.interrupt();
-        if (base != null) {
-            baseService.setBot(base, false);
-        }
+
+        itemService.killSyncItems(new ArrayList<SyncItem>(botItems.keySet()));
+        userService.deleteUserState(botConfig);
     }
 
     private void setupBot() {
@@ -141,6 +145,7 @@ public class BotRunner {
                     while (botThread != null) {
                         try {
                             checkBase();
+                            removeDeadBotItems();
                             // Fundamentals
                             setupBaseBuildup(baseFundamental, new BotItemFactory() {
                                 @Override
@@ -183,6 +188,8 @@ public class BotRunner {
                             log.error("Bot " + botConfig.getName() + ": " + e.getMessage());
                         } catch (HouseSpaceExceededException e) {
                             log.error("Bot " + botConfig.getName() + ": " + e.getMessage());
+                        } catch (BaseDoesNotExistException e) {
+                            log.error("Bot " + botConfig.getName() + ": " + e.getMessage());
                         }
                     }
                 } catch (InterruptedException ignore) {
@@ -223,7 +230,6 @@ public class BotRunner {
     }
 
     private void setupBaseBuildup(BotItemContainer botItemContainer, BotItemFactory botItemFactory) throws ItemLimitExceededException, HouseSpaceExceededException, NoSuchItemTypeException {
-        botItemContainer.updateState();
         if (botItemContainer.isFulfilled()) {
             return;
         }
@@ -263,6 +269,16 @@ public class BotRunner {
             }
         }
     }
+
+    private void removeDeadBotItems() {
+        for (Iterator<SyncBaseItem> iterator = botItems.keySet().iterator(); iterator.hasNext();) {
+            SyncBaseItem syncBaseItem = iterator.next();
+            if (!syncBaseItem.isAlive()) {
+                iterator.remove();
+            }
+        }
+    }
+
 
     public Base getBase() {
         return base;

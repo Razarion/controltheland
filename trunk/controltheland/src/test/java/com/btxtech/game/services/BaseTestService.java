@@ -199,6 +199,10 @@ public class BaseTestService {
         throw new IllegalStateException("No such sync item: ItemTypeID=" + itemTypeId + " simpleBase=" + simpleBase);
     }
 
+    protected void assertWholeItemTypeCount(int count) {
+        Assert.assertEquals(count, itemService.getItemsCopy().size());
+    }
+
     // ------------------- Connection --------------------
 
     protected void clearPackets(SimpleBase simpleBase) throws Exception {
@@ -213,7 +217,17 @@ public class BaseTestService {
             }
 
         }
-        Assert.assertEquals(expectedPackets.length, receivedPackets.size());
+        if(expectedPackets.length != receivedPackets.size()) {
+            StringBuilder expectedBuilder = new StringBuilder();
+            for (Packet expectedPacket : expectedPackets) {
+                expectedBuilder.append("[");
+                expectedBuilder.append(expectedPacket);
+                expectedBuilder.append("] ");
+            }
+            System.out.println("Expected: " + expectedBuilder);
+            System.out.println("Received: " + receivedPackets);
+            Assert.assertEquals(expectedPackets.length, receivedPackets.size());
+        }
 
         for (Packet expectedPacket : expectedPackets) {
             int index = receivedPackets.indexOf(expectedPacket);
@@ -742,6 +756,12 @@ public class BaseTestService {
         botService.getDbBotConfigCrudServiceHelper().updateDbChild(dbBotConfig);
         botService.activate();
         return dbBotConfig;
+    }
+
+    protected void waitForBotToBuildup(DbBotConfig dbBotConfig) throws InterruptedException {
+        while (!botService.getBotRunner(dbBotConfig).isBuildup()) {
+            Thread.sleep(100);
+        }
     }
 
     // ------------------- Territory Config --------------------

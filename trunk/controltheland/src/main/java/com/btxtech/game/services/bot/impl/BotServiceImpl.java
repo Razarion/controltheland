@@ -80,7 +80,7 @@ public class BotServiceImpl implements BotService {
         }
     }
 
-    private void stopBot(DbBotConfig botConfig) {
+    private void killBot(DbBotConfig botConfig) {
         BotRunner botRunner;
         synchronized (botRunners) {
             botRunner = botRunners.remove(botConfig);
@@ -89,7 +89,7 @@ public class BotServiceImpl implements BotService {
             throw new IllegalArgumentException("Can not stop bot. No such bot " + botConfig.getName());
         }
 
-        botRunner.stop();
+        botRunner.kill();
     }
 
     @Override
@@ -118,7 +118,7 @@ public class BotServiceImpl implements BotService {
         List<DbBotConfig> oldDbBotConfigs = new ArrayList<DbBotConfig>(botRunners.keySet());
         oldDbBotConfigs.removeAll(dbBotConfigs);
         for (DbBotConfig botConfig : oldDbBotConfigs) {
-            stopBot(botConfig);
+            killBot(botConfig);
         }
     }
 

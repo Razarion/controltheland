@@ -116,7 +116,9 @@ public class UserServiceImpl implements UserService {
         user.setLastLoginDate(new Date());
         privateSave(user);
         UserState userState = getUserState(user);
-        userState.setSessionId(session.getSessionId());
+        if (userState != null) {
+            userState.setSessionId(session.getSessionId());
+        }
         session.setUserState(userState);
         try {
             userTrackingService.onUserLoggedIn(user, baseService.getBase());
@@ -361,6 +363,11 @@ public class UserServiceImpl implements UserService {
             botStates.put(botConfig, userState);
         }
         return userState;
+    }
+
+    @Override
+    public void deleteUserState(DbBotConfig botConfig) {
+        botStates.remove(botConfig);
     }
 
     @Override

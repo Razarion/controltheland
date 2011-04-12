@@ -23,10 +23,6 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -41,6 +37,11 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * User: beat
@@ -319,14 +320,7 @@ public class BaseEditor extends MgmtWebPage {
         form.add(new Button("killSelected") {
             @Override
             public void onSubmit() {
-                for (Id id : itemsToKill) {
-                    try {
-                        itemService.killSyncItem(itemService.getItem(id), null, true, false);
-
-                    } catch (Exception e) {
-                        // Ignore
-                    }
-                }
+                itemService.killSyncItemIds(itemsToKill);
                 if (baseService.getBase(simpleBase) == null) {
                     setResponsePage(BasesTable.class);
                 }

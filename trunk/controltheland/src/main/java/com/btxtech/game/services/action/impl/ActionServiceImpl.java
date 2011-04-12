@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.services.items.BaseDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
@@ -152,6 +153,10 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
                                 baseService.sendAccountBaseUpdate((SyncBaseItem) activeItem);
                             }
                         }
+                    } catch (BaseDoesNotExistException e) {
+                        log.info("BaseDoesNotExistException: " + e.getMessage());
+                        activeItem.stop();
+                        iterator.remove();
                     } catch (PositionTakenException ife) {
                         log.info("PositionTakenException: " + ife.getMessage());
                         activeItem.stop();

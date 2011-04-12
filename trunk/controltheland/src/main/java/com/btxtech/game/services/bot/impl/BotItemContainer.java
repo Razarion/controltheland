@@ -45,6 +45,7 @@ public class BotItemContainer {
     }
 
     public boolean isFulfilled() {
+        updateState();
         int totalNeedCount = 0;
         for (Integer needCount : needs.values()) {
             totalNeedCount += needCount;
@@ -72,7 +73,7 @@ public class BotItemContainer {
         return null;
     }
 
-    public void updateState() {
+    private void updateState() {
         for (Iterator<BotSyncBaseItem> itemIterator = botSyncBaseItems.iterator(); itemIterator.hasNext();) {
             BotSyncBaseItem botSyncBaseItem = itemIterator.next();
             if (botSyncBaseItem.isAlive()) {
