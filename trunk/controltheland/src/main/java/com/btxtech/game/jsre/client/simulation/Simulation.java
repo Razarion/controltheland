@@ -92,7 +92,7 @@ public class Simulation implements ConditionServiceListener<Object> {
         Cockpit.getInstance().enableFocusWidget(CockpitWidgetEnum.SCROLL_HOME_BUTTON, taskConfig.isScrollingAllowed());
         Cockpit.getInstance().enableFocusWidget(CockpitWidgetEnum.OPTION_BUTTON, taskConfig.isOptionAllowed());
         Cockpit.getInstance().enableFocusWidget(CockpitWidgetEnum.SELL_BUTTON, taskConfig.isSellingAllowed());
-        ClientBase.getInstance().setHouseSpace(taskConfig.getHouseCount());
+        ClientLevelHandler.getInstance().getLevel().setHouseSpace(taskConfig.getHouseCount());
         Cockpit.getInstance().updateItemLimit();
 
         for (ItemTypeAndPosition itemTypeAndPosition : taskConfig.getOwnItems()) {

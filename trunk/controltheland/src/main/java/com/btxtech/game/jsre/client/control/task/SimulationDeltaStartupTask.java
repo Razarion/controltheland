@@ -34,7 +34,8 @@ public class SimulationDeltaStartupTask extends GameEngineStartupTask {
 
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
-        ClientEnergyService.getInstance().init(false);        
+        ClientEnergyService.getInstance().init(false);
+        ClientBase.getInstance().setConnectedToServer4FakedHouseSpace(false);        
         SimulationInfo simulationInfo = (SimulationInfo) Connection.getInstance().getGameInfo();
         deltaSetupGameStructure(simulationInfo);
         ClientBase.getInstance().setAllBaseAttributes(simulationInfo.getTutorialConfig().getBaseAttributes());

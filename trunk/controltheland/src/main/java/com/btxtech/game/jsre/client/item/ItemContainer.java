@@ -47,6 +47,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInf
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Timer;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -140,7 +141,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
     @Override
     public SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
         if (toBeBuilt instanceof BaseItemType && ClientBase.getInstance().isMyOwnBase(base) && !ClientBase.getInstance().isBot(base) && Connection.getInstance().getGameInfo().hasServerCommunication()) {
-            ClientBase.getInstance().checkItemLimit4ItemAdding((BaseItemType)toBeBuilt);
+            ClientBase.getInstance().checkItemLimit4ItemAdding((BaseItemType) toBeBuilt);
         }
         ClientSyncItem itemView;
         if (Connection.getInstance().getGameInfo().hasServerCommunication()) {
@@ -250,6 +251,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         if (itemView.isMyOwnProperty()) {
             ownItemCount--;
             Cockpit.getInstance().updateItemLimit();
+            ClientBase.getInstance().recalculate4FakedHouseSpace(itemView.getSyncBaseItem());
         }
         checkSpecialRemoved(itemView);
         seeminglyDeadItems.remove(itemView.getSyncItem().getId());

@@ -44,6 +44,7 @@ public class ClientSyncItem implements SyncItemListener {
             case BUILD:
                 if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).isReady()) {
                     SimulationConditionServiceImpl.getInstance().onSyncItemBuilt(((SyncBaseItem) syncItem));
+                    ClientBase.getInstance().recalculate4FakedHouseSpace((SyncBaseItem) syncItem);
                 }
                 break;
             case CONTAINED_IN_CHANGED:

@@ -19,7 +19,6 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
-import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 
 /**
  * User: beat
@@ -35,6 +34,7 @@ public class SimulationStartupTask extends GameEngineStartupTask {
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
         ClientEnergyService.getInstance().init(false);
+        ClientBase.getInstance().setConnectedToServer4FakedHouseSpace(false);
         SimulationInfo simulationInfo = (SimulationInfo) Connection.getInstance().getGameInfo();
         setupGameStructure(simulationInfo);
         ClientBase.getInstance().setAllBaseAttributes(simulationInfo.getTutorialConfig().getBaseAttributes());
