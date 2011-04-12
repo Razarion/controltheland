@@ -192,6 +192,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             createBase(base.getSimpleBase(), name, base.getBaseHtmlColor(), false);
             log.info("Bot Base created: " + base);
             bases.put(base.getSimpleBase(), base);
+            sendBaseChangedPacket(BaseChangedPacket.Type.CREATED, base.getSimpleBase());            
             return base;
         }
     }

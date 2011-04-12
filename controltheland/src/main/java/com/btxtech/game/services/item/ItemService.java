@@ -79,4 +79,8 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
     void sellItem(Id id) throws ItemDoesNotExistException, IllegalAccessException;
 
     ItemType getItemType(DbItemType dbItemType);
+
+    void killSyncItems(Collection<SyncItem> itemsToKill);
+
+    void killSyncItemIds(Collection<Id> itemsToKill);    
 }

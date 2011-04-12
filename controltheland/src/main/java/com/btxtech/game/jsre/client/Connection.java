@@ -14,7 +14,6 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
-import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
@@ -51,6 +50,7 @@ import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -185,7 +185,9 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
         }
         for (Packet packet : packets) {
             try {
-                if (packet instanceof SyncItemInfo) {
+                if (packet instanceof BaseChangedPacket) {
+                    ClientBase.getInstance().onBaseChangedPacket((BaseChangedPacket) packet);
+                } else if (packet instanceof SyncItemInfo) {
                     ItemContainer.getInstance().sychronize((SyncItemInfo) packet);
                 } else if (packet instanceof Message) {
                     Message message = (Message) packet;
@@ -201,13 +203,11 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
                     ClientItemTypeAccess.getInstance().setAllowedItemTypes(itemTypeAccessSyncInfo.getAllowedItemTypes());
                     Cockpit.getInstance().onStateChanged();
                 } else if (packet instanceof EnergyPacket) {
-                    ClientEnergyService.getInstance().onEnergyPacket((EnergyPacket)packet);
+                    ClientEnergyService.getInstance().onEnergyPacket((EnergyPacket) packet);
                 } else if (packet instanceof UserMessage) {
                     Cockpit.getInstance().onMessageReceived((UserMessage) packet);
                 } else if (packet instanceof LevelPacket) {
                     ClientLevelHandler.getInstance().onLevelChanged(((LevelPacket) packet).getLevel());
-                } else if (packet instanceof BaseChangedPacket) {
-                    ClientBase.getInstance().onBaseChangedPacket((BaseChangedPacket) packet);
                 } else if (packet instanceof HouseSpacePacket) {
                     HouseSpacePacket houseSpacePacket = (HouseSpacePacket) packet;
                     ClientBase.getInstance().setHouseSpace(houseSpacePacket.getHouseSpace());

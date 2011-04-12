@@ -241,9 +241,7 @@ public class TestBackupRestoreMgmtService extends BaseTestService {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        while (!botService.getBotRunner(dbBotConfig).isBuildup()) {
-            Thread.sleep(100);
-        }
+        waitForBotToBuildup(dbBotConfig);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

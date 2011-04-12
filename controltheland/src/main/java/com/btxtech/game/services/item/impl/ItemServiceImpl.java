@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.items.BaseDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.items.impl.AbstractItemService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -128,6 +129,10 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
     @Override
     public SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
+        if(!baseService.isAlive(base)) {
+            throw new BaseDoesNotExistException(base);
+        }
+
         SyncItem syncItem;
         synchronized (items) {
             if (toBeBuilt instanceof BaseItemType && !baseService.isBot(base) && !baseService.isAbandoned(base)) {
@@ -136,6 +141,9 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             Id id = createId(creator, createdChildCount);
             syncItem = newSyncItem(id, position, toBeBuilt.getId(), base, services);
             items.put(id, syncItem);
+            if(syncItem instanceof SyncBaseItem) {
+                baseService.itemCreated((SyncBaseItem) syncItem);
+            }
         }
 
         if (syncItem instanceof SyncBaseObject) {
@@ -152,7 +160,6 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             actionService.addGuardingBaseItem(syncBaseItem);
             syncItem.addSyncItemListener(actionService);
             syncItem.addSyncItemListener(baseService);
-            baseService.itemCreated(syncBaseItem);
             actionService.interactionGuardingItems(syncBaseItem);
         }
 
@@ -222,6 +229,10 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             if (items.remove(killedItem.getId()) == null) {
                 throw new IllegalStateException("Id does not exist: " + killedItem);
             }
+            if (killedItem instanceof SyncBaseItem) {
+                historyService.addItemDestroyedEntry(actor, (SyncBaseItem) killedItem);
+                baseService.itemDeleted((SyncBaseItem) killedItem, actor);                
+            }
         }
         killedItem.setExplode(explode);
         if (log.isInfoEnabled()) {
@@ -232,20 +243,43 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         if (killedItem instanceof SyncBaseItem) {
             actionService.removeGuardingBaseItem((SyncBaseItem) killedItem);
             if (actor != null) {
-                historyService.addItemDestroyedEntry(actor, (SyncBaseItem) killedItem);
                 Base actorBase = baseService.getBase(actor);
                 actorBase.increaseKills();
                 serverMarketService.increaseXp(actorBase, (SyncBaseItem) killedItem);
                 serverConditionService.onSyncItemKilled(actor, (SyncBaseItem) killedItem);
 
             }
-            baseService.itemDeleted((SyncBaseItem) killedItem, actor);
             serverEnergyService.onBaseItemKilled((SyncBaseItem) killedItem);
             killContainedItems((SyncBaseItem) killedItem, actor);
         } else if (killedItem instanceof SyncResourceItem) {
             resourceService.resourceItemDeleted((SyncResourceItem) killedItem);
         }
 
+    }
+
+    @Override
+    public void killSyncItems(Collection<SyncItem> itemsToKill) {
+        for (SyncItem syncItem : itemsToKill) {
+            try {
+                killSyncItem(syncItem, null, true, false);
+
+            } catch (Exception e) {
+                log.error("", e);
+            }
+        }
+    }
+
+    @Override
+    public void killSyncItemIds(Collection<Id> itemsToKill) {
+        Collection<SyncItem> syncItems = new ArrayList<SyncItem>();
+        for (Id id : itemsToKill) {
+            try {
+                syncItems.add(getItem(id));
+            } catch (ItemDoesNotExistException e) {
+                log.error("", e);
+            }
+        }
+        killSyncItems(syncItems);
     }
 
     private void killContainedItems(SyncBaseItem syncBaseItem, SimpleBase actor) {
@@ -644,15 +678,15 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     public void sellItem(Id id) throws ItemDoesNotExistException, IllegalAccessException {
         SyncBaseItem syncBaseItem = (SyncBaseItem) getItem(id);
         baseService.checkBaseAccess(syncBaseItem);
-        SimpleBase simpleBase = syncBaseItem.getBase();
+        double health = syncBaseItem.getHealth();
+        double fullHealth = syncBaseItem.getBaseItemType().getHealth();
+        double price = syncBaseItem.getBaseItemType().getPrice();
+        double buildup = syncBaseItem.getBuildup();
         killSyncItem(syncBaseItem, null, true, false);
-        Base base = baseService.getBase();
+        SimpleBase simpleBase = syncBaseItem.getBase();
         // May last item sold
-        if (base != null && baseService.isAlive(simpleBase)) {
-            double health = syncBaseItem.getHealth();
-            double fullHealth = syncBaseItem.getBaseItemType().getHealth();
-            double price = syncBaseItem.getBaseItemType().getPrice();
-            double buildup = syncBaseItem.getBuildup();
+        if (baseService.isAlive(simpleBase)) {
+            Base base = baseService.getBase(simpleBase);
             double money = health / fullHealth * buildup * price * userGuidanceService.getDbLevel().getItemSellFactor();
             baseService.depositResource(money, simpleBase);
             baseService.sendAccountBaseUpdate(base);

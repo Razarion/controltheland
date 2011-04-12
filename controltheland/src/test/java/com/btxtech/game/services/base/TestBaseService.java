@@ -64,15 +64,18 @@ public class TestBaseService extends BaseTestService {
         userService.createUser("U1", "test", "test", "test");
         userService.login("U1", "test");
         movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
+        // $1000
         SimpleBase simpleBase = getMyBase(); // Setup connection
-        String color = baseService.getBaseHtmlColor(simpleBase);
         Id id = getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID);
         sendBuildCommand(id, new Index(400, 400), TEST_FACTORY_ITEM_ID);
+        // $998
         waitForActionServiceDone();
+        Assert.assertEquals(998, baseService.getBase(simpleBase).getAccountBalance(), 0.1);
         movableService.sellItem(id);
 
+        // $999
         AccountBalancePacket accountBalancePacket = new AccountBalancePacket();
-        accountBalancePacket.setAccountBalance(998);
+        accountBalancePacket.setAccountBalance(998.5);
         assertPackagesIgnoreSyncItemInfoAndClear(simpleBase, accountBalancePacket);
 
         endHttpRequestAndOpenSessionInViewFilter();
@@ -93,9 +96,8 @@ public class TestBaseService extends BaseTestService {
         SimpleBase simpleBase = getMyBase(); // Setup connection
         String color = baseService.getBaseHtmlColor(simpleBase);
         Id id = getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID);
+        clearPackets(simpleBase);
         movableService.sellItem(id);
-
-        Thread.sleep(1000);
 
         BaseChangedPacket baseChangedPacket = new BaseChangedPacket();
         baseChangedPacket.setType(BaseChangedPacket.Type.REMOVED);
