@@ -644,14 +644,19 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     public void sellItem(Id id) throws ItemDoesNotExistException, IllegalAccessException {
         SyncBaseItem syncBaseItem = (SyncBaseItem) getItem(id);
         baseService.checkBaseAccess(syncBaseItem);
-        double health = syncBaseItem.getHealth();
-        double fullHealth = syncBaseItem.getBaseItemType().getHealth();
-        double price = syncBaseItem.getBaseItemType().getPrice();
-        double buildup = syncBaseItem.getBuildup();
+        SimpleBase simpleBase = syncBaseItem.getBase();
         killSyncItem(syncBaseItem, null, true, false);
-        double money = health / fullHealth * buildup * price * userGuidanceService.getDbLevel().getItemSellFactor();
-        baseService.depositResource(money, syncBaseItem.getBase());
-        baseService.sendAccountBaseUpdate(baseService.getBase());
+        Base base = baseService.getBase();
+        // May last item sold
+        if (base != null && baseService.isAlive(simpleBase)) {
+            double health = syncBaseItem.getHealth();
+            double fullHealth = syncBaseItem.getBaseItemType().getHealth();
+            double price = syncBaseItem.getBaseItemType().getPrice();
+            double buildup = syncBaseItem.getBuildup();
+            double money = health / fullHealth * buildup * price * userGuidanceService.getDbLevel().getItemSellFactor();
+            baseService.depositResource(money, simpleBase);
+            baseService.sendAccountBaseUpdate(base);
+        }
     }
 
     @Override

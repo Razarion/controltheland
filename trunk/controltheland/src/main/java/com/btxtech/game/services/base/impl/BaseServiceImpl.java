@@ -388,6 +388,9 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
 
     @Override
     public void sendAccountBaseUpdate(SyncBaseObject syncBaseObject) {
+        if (!isAlive(syncBaseObject.getBase())) {
+            return;
+        }
         Base base = getBase(syncBaseObject);
         AccountBalancePacket packet = new AccountBalancePacket();
         packet.setAccountBalance(base.getAccountBalance());
