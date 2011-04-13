@@ -42,6 +42,17 @@ public class DbComparisonItemCount implements CrudChild<DbSyncItemTypeComparison
     @Column(name = "theCount")
     private int count;
 
+    /**
+     * Used by hibernate
+     */
+    public DbComparisonItemCount() {
+    }
+
+    public DbComparisonItemCount(DbComparisonItemCount original) {
+        itemType = original.itemType;
+        count = original.count;
+    }
+
     public Integer getId() {
         return id;
     }

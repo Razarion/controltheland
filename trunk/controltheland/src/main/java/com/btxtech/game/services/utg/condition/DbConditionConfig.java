@@ -17,14 +17,15 @@ import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.item.ItemService;
-import java.io.Serializable;
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
-import org.hibernate.annotations.Cascade;
+import java.io.Serializable;
 
 /**
  * User: beat
@@ -36,12 +37,24 @@ public class DbConditionConfig implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
-    @OneToOne(cascade = CascadeType.ALL)
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private DbAbstractComparisonConfig dbAbstractComparisonConfig; // DELETE_ORPHAN does not work
     private ConditionTrigger conditionTrigger;
     @Transient
     private ConditionConfig conditionConfig;
+
+    public DbConditionConfig() {
+    }
+
+    public DbConditionConfig(DbConditionConfig dbConditionConfig) {
+        dbAbstractComparisonConfig = dbConditionConfig.dbAbstractComparisonConfig.copy();
+        conditionTrigger = dbConditionConfig.conditionTrigger;
+    }
+
+    public Integer getId() {
+        return id;
+    }
 
     public DbAbstractComparisonConfig getDbAbstractComparisonConfig() {
         return dbAbstractComparisonConfig;

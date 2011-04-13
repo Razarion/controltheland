@@ -44,4 +44,11 @@ public class DbCountComparisonConfig extends DbAbstractComparisonConfig {
     public AbstractComparisonConfig createComparisonConfig(ItemService itemService) {
         return new CountComparisonConfig(getExcludedTerritoryId(), count);
     }
+
+    @Override
+    protected DbAbstractComparisonConfig createCopy() {
+        DbCountComparisonConfig copy = new DbCountComparisonConfig();
+        copy.setCount(count);
+        return copy;
+    }
 }

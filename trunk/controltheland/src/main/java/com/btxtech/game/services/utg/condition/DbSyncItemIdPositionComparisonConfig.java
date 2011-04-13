@@ -18,12 +18,13 @@ import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.SyncItemIdPositionComparisonConfig;
 import com.btxtech.game.services.common.db.RectangleUserType;
 import com.btxtech.game.services.item.ItemService;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
 /**
  * User: beat
@@ -58,5 +59,13 @@ public class DbSyncItemIdPositionComparisonConfig extends DbAbstractComparisonCo
     @Override
     public AbstractComparisonConfig createComparisonConfig(ItemService itemService) {
         return new SyncItemIdPositionComparisonConfig(getExcludedTerritoryId(), syncItemId, region);
+    }
+
+    @Override
+    protected DbAbstractComparisonConfig createCopy() {
+        DbSyncItemIdPositionComparisonConfig copy = new DbSyncItemIdPositionComparisonConfig();
+        copy.setRegion(region);
+        copy.setSyncItemId(syncItemId);
+        return copy;
     }
 }

@@ -23,41 +23,49 @@
 <span wicket:id="msgs"/>
 
 <form wicket:id="levelForm">
-    <table cellpadding="1" cellspacing="1" border="0">
-        <tr>
-            <th bgcolor="#dadada">Id</th>
-            <th bgcolor="#dadada">Level</th>
-            <th bgcolor="#dadada">Type</th>
-            <th bgcolor="#dadada">Internal description</th>
-            <th bgcolor="#dadada">Move up</th>
-            <th bgcolor="#dadada">Move down</th>
-            <th bgcolor="#dadada">Edit</th>
-            <th bgcolor="#dadada">Delete</th>
-        </tr>
-        <tr wicket:id="levels">
-            <td wicket:id="id"/>
-            <td><input type="text" wicket:id="name" size="20" maxlength="500"/></td>
-            <td wicket:id="displayType"></td>
-            <td><input type="text" wicket:id="internalDescription" size="50"/></td>
-            <td valign="center">
-                <input type="submit" value="Up" wicket:id="up"/>
-            </td>
-            <td valign="center">
-                <input type="submit" value="Down" wicket:id="down"/>
-            </td>
-            <td align="center">
-                <input type="submit" value="Edit" wicket:id="edit"/>
-            </td>
-            <td valign="center">
-                <input type="submit" value="Delete" wicket:id="delete"/>
-            </td>
-        </tr>
-    </table>
-    <br>
-    <input wicket:id="createRealGame" type="submit" value="Add Real Game">
-    <input wicket:id="createSimulation" type="submit" value="Add Simulated">
-    <br>
-    <input wicket:id="save" type="submit" value="Save">
+    <span wicket:id="copyRadioChoiceGroup">
+         <table cellpadding="1" cellspacing="1" border="0">
+             <tr>
+                 <th bgcolor="#dadada">Id</th>
+                 <th bgcolor="#dadada">Level</th>
+                 <th bgcolor="#dadada">Type</th>
+                 <th bgcolor="#dadada">Internal description</th>
+                 <th bgcolor="#dadada">Move up</th>
+                 <th bgcolor="#dadada">Move down</th>
+                 <th bgcolor="#dadada">Edit</th>
+                 <th bgcolor="#dadada">Delete</th>
+                 <th bgcolor="#dadada">Copy from</th>
+             </tr>
+             <tr wicket:id="levels">
+                 <td wicket:id="id"/>
+                 <td><input type="text" wicket:id="name" size="20" maxlength="500"/></td>
+                 <td wicket:id="displayType"></td>
+                 <td><input type="text" wicket:id="internalDescription" size="50"/></td>
+                 <td valign="center">
+                     <input type="submit" value="Up" wicket:id="up"/>
+                 </td>
+                 <td valign="center">
+                     <input type="submit" value="Down" wicket:id="down"/>
+                 </td>
+                 <td align="center">
+                     <input type="submit" value="Edit" wicket:id="edit"/>
+                 </td>
+                 <td valign="center">
+                     <input type="submit" value="Delete" wicket:id="delete"/>
+                 </td>
+                 <td align="center">
+                     <input type="radio" wicket:id="copyRadioChoice"/>
+                 </td>
+             </tr>
+         </table>
+        <br>
+        <input wicket:id="createRealGame" type="submit" value="Add Real Game">
+        <input wicket:id="createSimulation" type="submit" value="Add Simulated">
+        <br>
+        <input wicket:id="copy" type="submit" value="Copy">
+        <br>
+        <input wicket:id="save" type="submit" value="Save">
+      </span>
     <br>
     <input wicket:id="activate" type="submit" value="Activate">
 </form>

@@ -77,4 +77,12 @@ public abstract class DbAbstractComparisonConfig implements Serializable {
         }
         return excludedDbTerritory.getId();
     }
+
+    public DbAbstractComparisonConfig copy() {
+        DbAbstractComparisonConfig copy = createCopy();
+        copy.setExcludedDbTerritory(excludedDbTerritory);
+        return copy;
+    }
+
+    protected abstract DbAbstractComparisonConfig createCopy();
 }

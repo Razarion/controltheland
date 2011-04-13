@@ -76,4 +76,12 @@ public class DbSyncItemTypeComparisonConfig extends DbAbstractComparisonConfig i
 
         return new SyncItemTypeComparisonConfig(getExcludedTerritoryId(), itemTypeCount);
     }
+
+    @Override
+    protected DbAbstractComparisonConfig createCopy() {
+        DbSyncItemTypeComparisonConfig copy = new DbSyncItemTypeComparisonConfig();
+        copy.dbComparisonItemCounts = new HashSet<DbComparisonItemCount>();
+        getCrudDbComparisonItemCount().copyTo(copy.getCrudDbComparisonItemCount());
+        return copy;
+    }
 }
