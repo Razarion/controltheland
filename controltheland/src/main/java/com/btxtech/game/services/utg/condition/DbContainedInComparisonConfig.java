@@ -15,10 +15,8 @@ package com.btxtech.game.services.utg.condition;
 
 import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.ContainedInComparisonConfig;
-import com.btxtech.game.jsre.common.utg.config.CountComparisonConfig;
 import com.btxtech.game.services.item.ItemService;
 
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
@@ -43,5 +41,12 @@ public class DbContainedInComparisonConfig extends DbAbstractComparisonConfig {
     @Override
     public AbstractComparisonConfig createComparisonConfig(ItemService itemService) {
         return new ContainedInComparisonConfig(containedIn);
+    }
+
+    @Override
+    protected DbAbstractComparisonConfig createCopy() {
+        DbContainedInComparisonConfig copy = new DbContainedInComparisonConfig();
+        copy.setContainedIn(containedIn);
+        return copy;
     }
 }

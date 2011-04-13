@@ -22,6 +22,7 @@ import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -69,4 +70,6 @@ public interface UserGuidanceService {
     void createDbItemTypeLimitation(DbRealGameLevel dbRealGameLevel);
 
     boolean isBaseItemTypeAllowedInLevel(DbBaseItemType itemType);
+
+    DbAbstractLevel copyDbAbstractLevel(Serializable copyFromId);
 }

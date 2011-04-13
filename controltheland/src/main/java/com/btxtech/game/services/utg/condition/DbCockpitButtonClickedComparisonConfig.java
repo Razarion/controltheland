@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.CockpitButtonClickedComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
 import com.btxtech.game.services.item.ItemService;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
@@ -41,5 +42,12 @@ public class DbCockpitButtonClickedComparisonConfig extends DbAbstractComparison
     @Override
     public AbstractComparisonConfig createComparisonConfig(ItemService itemService) {
         return new CockpitButtonClickedComparisonConfig(cockpitWidgetEnum);
+    }
+
+    @Override
+    protected DbAbstractComparisonConfig createCopy() {
+        DbCockpitButtonClickedComparisonConfig dbCockpitButtonClickedComparisonConfig = new DbCockpitButtonClickedComparisonConfig();
+        dbCockpitButtonClickedComparisonConfig.setCockpitWidgetEnum(cockpitWidgetEnum);
+        return dbCockpitButtonClickedComparisonConfig;
     }
 }

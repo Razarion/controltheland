@@ -63,4 +63,12 @@ public class DbItemTypePositionComparisonConfig extends DbAbstractComparisonConf
     public AbstractComparisonConfig createComparisonConfig(ItemService itemService) {
         return new ItemTypePositionComparisonConfig(getExcludedTerritoryId(), itemService.getItemType(dbItemType), region);
     }
+
+    @Override
+    protected DbAbstractComparisonConfig createCopy() {
+        DbItemTypePositionComparisonConfig copy = new DbItemTypePositionComparisonConfig();
+        copy.setDbItemType(dbItemType);
+        copy.setRegion(region);
+        return copy;
+    }
 }

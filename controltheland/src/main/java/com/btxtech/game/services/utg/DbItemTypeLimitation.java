@@ -16,7 +16,11 @@ package com.btxtech.game.services.utg;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 
 /**
@@ -35,6 +39,14 @@ public class DbItemTypeLimitation implements CrudChild<DbRealGameLevel> {
     private int count;
     @ManyToOne
     private DbRealGameLevel dbRealGameLevel;
+
+    public DbItemTypeLimitation() {
+    }
+
+    public DbItemTypeLimitation(DbItemTypeLimitation original) {
+        dbBaseItemType = original.dbBaseItemType;
+        count = original.count;
+    }
 
     @Override
     public Integer getId() {

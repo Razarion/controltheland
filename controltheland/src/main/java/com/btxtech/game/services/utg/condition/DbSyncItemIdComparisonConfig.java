@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.utg.config.AbstractComparisonConfig;
 import com.btxtech.game.jsre.common.utg.config.SyncItemIdComparisonConfig;
 import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.item.ItemService;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
@@ -38,9 +39,15 @@ public class DbSyncItemIdComparisonConfig extends DbAbstractComparisonConfig {
         this.syncItemIdsString = syncItemIdsString;
     }
 
-
     @Override
     public AbstractComparisonConfig createComparisonConfig(ItemService itemService) {
         return new SyncItemIdComparisonConfig(getExcludedTerritoryId(), Utils.stringToIntegers(syncItemIdsString));
+    }
+
+    @Override
+    protected DbAbstractComparisonConfig createCopy() {
+        DbSyncItemIdComparisonConfig copy = new DbSyncItemIdComparisonConfig();
+        copy.setSyncItemIdsString(syncItemIdsString);
+        return copy;
     }
 }

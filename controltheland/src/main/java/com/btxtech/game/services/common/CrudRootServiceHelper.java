@@ -122,6 +122,7 @@ public class CrudRootServiceHelper<T extends CrudChild> {
         try {
             Constructor<? extends T> constructor = createClass.getConstructor();
             T t = constructor.newInstance();
+            t.init();
             addChild(t);
             return t;
         } catch (Exception e) {
@@ -129,14 +130,29 @@ public class CrudRootServiceHelper<T extends CrudChild> {
         }
     }
 
+
+    @Transactional
+    public T copyDbChild(Serializable copyFromId) {
+        T copyFrom = readDbChild(copyFromId);
+        Class<? extends CrudChild> copyFromClass = copyFrom.getClass();
+        try {
+            Constructor<? extends CrudChild> constructor = copyFromClass.getConstructor(copyFromClass);
+            T t = (T) constructor.newInstance(copyFrom);
+            addChild(t);
+            return t;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     @Transactional
     public void deleteAllChildren() {
         hibernateTemplate.deleteAll(readDbChildren());
     }
 
     @Transactional
-    public void addChild(T t) {
-        t.init();
+    private void addChild(T t) {
         if (orderColumn != null) {
             int nextFreeIndex = hibernateTemplate.execute(new HibernateCallback<Integer>() {
                 @Override

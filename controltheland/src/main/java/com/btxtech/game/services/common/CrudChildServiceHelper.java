@@ -87,4 +87,19 @@ public class CrudChildServiceHelper<T extends CrudChild> implements Serializable
         initChild(t);
         children.add(t);
     }
+
+    public void copyTo(CrudChildServiceHelper<T> crudChildServiceHelper) {
+        crudChildServiceHelper.children.clear();
+        try {
+            for (T child : children) {
+                Class childClass = child.getClass();
+                Constructor<? extends T> constructor = childClass.getConstructor(childClass);
+                T t = constructor.newInstance(child);
+                t.setParent(crudChildServiceHelper.crudParent);
+                crudChildServiceHelper.children.add(t);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

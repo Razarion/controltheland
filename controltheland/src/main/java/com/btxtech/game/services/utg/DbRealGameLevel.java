@@ -27,7 +27,15 @@ import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -65,6 +73,31 @@ public class DbRealGameLevel extends DbAbstractLevel implements CrudParent {
     private Set<DbItemTypeLimitation> itemTypeLimitation;
     @Transient
     private CrudChildServiceHelper<DbItemTypeLimitation> dbItemTypeLimitationCrudServiceHelper;
+
+    /**
+     * Used by hibernate & dummyRealGameLevel
+     */
+    public DbRealGameLevel() {
+    }
+
+    public DbRealGameLevel(DbRealGameLevel copyFrom) {
+        super(copyFrom);
+        itemTypeLimitation = new HashSet<DbItemTypeLimitation>();
+        dbConditionConfig = new DbConditionConfig(copyFrom.dbConditionConfig);
+        copyFrom.getDbItemTypeLimitationCrudServiceHelper().copyTo(getDbItemTypeLimitationCrudServiceHelper());
+        createRealBase = copyFrom.createRealBase;
+        startItemType = copyFrom.startItemType;
+        if (startRectangle != null) {
+            startRectangle = copyFrom.startRectangle.copy();
+        }
+        startItemFreeRange = copyFrom.startItemFreeRange;
+        itemSellFactor = copyFrom.itemSellFactor;
+        houseSpace = copyFrom.houseSpace;
+        deltaMoney = copyFrom.deltaMoney;
+        deltaXp = copyFrom.deltaXp;
+        maxMoney = copyFrom.maxMoney;
+        maxXp = copyFrom.maxXp;
+    }
 
     public DbConditionConfig getDbConditionConfig() {
         return dbConditionConfig;
@@ -168,8 +201,8 @@ public class DbRealGameLevel extends DbAbstractLevel implements CrudParent {
     }
 
     public Level createLevel() throws LevelActivationException {
-        if(this.itemTypeLimitation == null) {
-           throw new LevelActivationException("Item Type Limitations is null"); 
+        if (this.itemTypeLimitation == null) {
+            throw new LevelActivationException("Item Type Limitations is null");
         }
         Map<Integer, Integer> itemTypeLimitation = new HashMap<Integer, Integer>();
         for (DbItemTypeLimitation dbItemTypeLimitation : this.itemTypeLimitation) {

@@ -53,6 +53,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -362,4 +363,10 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         Level level = getDbLevel().getLevel();
         return level.getLimitation4ItemType(itemType.getId()) > 0;
     }
+
+    @Override
+    public DbAbstractLevel copyDbAbstractLevel(Serializable copyFromId) {
+        return crudServiceHelperHibernate.copyDbChild(copyFromId);
+    }
+
 }

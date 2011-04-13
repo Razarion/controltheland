@@ -18,8 +18,17 @@ import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.item.ItemService;
 
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.OrderBy;
+import javax.persistence.Transient;
 import java.io.Serializable;
-import javax.persistence.*;
 
 /**
  * User: beat
@@ -30,6 +39,7 @@ import javax.persistence.*;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
 public abstract class DbAbstractLevel implements CrudChild, Serializable {
+    protected static final String COPY = "Copy ";
     @Id
     @GeneratedValue
     private Integer id;
@@ -45,6 +55,18 @@ public abstract class DbAbstractLevel implements CrudChild, Serializable {
     private ConditionConfig conditionConfig;
     @Transient
     private Level level;
+
+    /**
+     * Used by hibernate
+     */
+    protected DbAbstractLevel() {
+    }
+
+    public DbAbstractLevel(DbAbstractLevel copyFrom) {
+        name = COPY + copyFrom.name;
+        html = copyFrom.html;
+        internalDescription = copyFrom.internalDescription;
+    }
 
     public String getName() {
         return name;

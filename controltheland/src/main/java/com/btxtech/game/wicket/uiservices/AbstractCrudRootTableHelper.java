@@ -177,7 +177,7 @@ abstract public class AbstractCrudRootTableHelper<T extends CrudChild> implement
         return provider.getList();
     }
 
-    protected void refresh() {
+    public void refresh() {
         provider.refresh();
     }
 
