@@ -129,7 +129,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
     @Override
     public SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
-        if(!baseService.isAlive(base)) {
+        if(base != null && !baseService.isAlive(base)) {
             throw new BaseDoesNotExistException(base);
         }
 

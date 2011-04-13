@@ -70,33 +70,45 @@ public class TestBotService extends BaseTestService {
         assertWholeItemTypeCount(3);
 
         // Kill all bot items
+        dbBotConfig.setActionDelay(50); // UGLY
+        Thread.sleep(20);
         itemService.killSyncItems(itemService.getItemsCopy());
         assertWholeItemTypeCount(0);
+        dbBotConfig.setActionDelay(10); // UGLY
 
         // Wait for bot to complete
         waitForBotToBuildup(dbBotConfig);
         assertWholeItemTypeCount(3);
 
         // Kill all bot items
+        dbBotConfig.setActionDelay(50); // UGLY
+        Thread.sleep(20);
         itemService.killSyncItems(itemService.getItemsCopy());
         assertWholeItemTypeCount(0);
+        dbBotConfig.setActionDelay(10); // UGLY
 
         // Wait for bot to complete
         waitForBotToBuildup(dbBotConfig);
         assertWholeItemTypeCount(3);
 
         // Kill all bot items
+        dbBotConfig.setActionDelay(50); // UGLY
+        Thread.sleep(20);
         itemService.killSyncItems(itemService.getItemsCopy());
         assertWholeItemTypeCount(0);
+        dbBotConfig.setActionDelay(10); // UGLY
 
         // Wait for bot to complete
         waitForBotToBuildup(dbBotConfig);
         assertWholeItemTypeCount(3);
 
         // Kill all bot items
+        dbBotConfig.setActionDelay(50); // UGLY
+        Thread.sleep(20);
         itemService.killSyncItems(itemService.getItemsCopy());
         assertWholeItemTypeCount(0);
-
+        dbBotConfig.setActionDelay(10); // UGLY
+        
         // Wait for bot to complete
         waitForBotToBuildup(dbBotConfig);
         assertWholeItemTypeCount(3);

@@ -87,7 +87,7 @@ public class DbRealGameLevel extends DbAbstractLevel implements CrudParent {
         copyFrom.getDbItemTypeLimitationCrudServiceHelper().copyTo(getDbItemTypeLimitationCrudServiceHelper());
         createRealBase = copyFrom.createRealBase;
         startItemType = copyFrom.startItemType;
-        if (startRectangle != null) {
+        if (copyFrom.startRectangle != null) {
             startRectangle = copyFrom.startRectangle.copy();
         }
         startItemFreeRange = copyFrom.startItemFreeRange;
