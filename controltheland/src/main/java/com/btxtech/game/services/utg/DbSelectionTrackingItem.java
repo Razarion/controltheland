@@ -13,7 +13,7 @@
 
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.common.SelectionTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.services.common.Utils;
 import java.io.Serializable;
 import java.util.Date;

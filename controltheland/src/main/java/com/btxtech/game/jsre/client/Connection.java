@@ -32,13 +32,14 @@ import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
 import com.btxtech.game.jsre.common.EnergyPacket;
-import com.btxtech.game.jsre.common.EventTrackingItem;
-import com.btxtech.game.jsre.common.EventTrackingStart;
+import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
-import com.btxtech.game.jsre.common.ScrollTrackingItem;
-import com.btxtech.game.jsre.common.SelectionTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
+import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccessSyncInfo;
@@ -269,9 +270,9 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
         }
     }
 
-    public void sendEventTrackerItems(List<EventTrackingItem> eventTrackingItems, List<BaseCommand> baseCommands, List<SelectionTrackingItem> selectionTrackingItems, List<ScrollTrackingItem> scrollTrackingItems) {
+    public void sendEventTrackerItems(List<EventTrackingItem> eventTrackingItems, List<BaseCommand> baseCommands, List<SelectionTrackingItem> selectionTrackingItems, List<TerrainScrollTracking> terrainScrollTrackings, List<BrowserWindowTracking> browserWindowTrackings) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.sendEventTrackerItems(eventTrackingItems, baseCommands, selectionTrackingItems, scrollTrackingItems, this);
+            movableServiceAsync.sendEventTrackerItems(eventTrackingItems, baseCommands, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings, this);
         }
     }
 

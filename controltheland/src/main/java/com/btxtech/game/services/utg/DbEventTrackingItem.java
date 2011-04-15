@@ -13,7 +13,8 @@
 
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.common.EventTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
+
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;

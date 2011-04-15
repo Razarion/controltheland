@@ -17,12 +17,13 @@ import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
-import com.btxtech.game.jsre.common.EventTrackingItem;
-import com.btxtech.game.jsre.common.EventTrackingStart;
+import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
-import com.btxtech.game.jsre.common.ScrollTrackingItem;
-import com.btxtech.game.jsre.common.SelectionTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
+import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
@@ -66,7 +67,11 @@ public interface MovableService extends RemoteService {
 
     void sendEventTrackingStart(EventTrackingStart eventTrackingStart);
 
-    void sendEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<BaseCommand> baseCommands, Collection<SelectionTrackingItem> selectionTrackingItems, List<ScrollTrackingItem> scrollTrackingItems);
+    void sendEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems,
+                               Collection<BaseCommand> baseCommands,
+                               Collection<SelectionTrackingItem> selectionTrackingItems,
+                               Collection<TerrainScrollTracking> terrainScrollTrackings,
+                               Collection<BrowserWindowTracking> browserWindowTrackings);
 
     void sendCloseWindow(long totalRunningTime, long clientTimeStamp);
 

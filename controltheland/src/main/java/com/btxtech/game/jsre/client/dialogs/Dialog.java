@@ -32,6 +32,7 @@ public abstract class Dialog extends DialogBox {
     private boolean showCloseButton = true;
 
     protected Dialog() {
+        super(false, false);
         setStyleName("ctl-DialogBox");
     }
 

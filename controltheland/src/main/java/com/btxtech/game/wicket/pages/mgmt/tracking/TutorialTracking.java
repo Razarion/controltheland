@@ -76,7 +76,7 @@ public class TutorialTracking extends Panel {
                 }
             };
             add(link);
-            add(new Label("resolution", dbEventTrackingStart.getxResolution() + " x " + dbEventTrackingStart.getyResolution()));
+            add(new Label("resolution", dbEventTrackingStart.getClientWidth() + " x " + dbEventTrackingStart.getClientHeight()));
         } else {
             BookmarkablePageLink<PlaybackPage> pageLink = new BookmarkablePageLink<PlaybackPage>("link", PlaybackPage.class, null);
             pageLink.setEnabled(false);

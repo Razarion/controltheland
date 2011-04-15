@@ -13,13 +13,14 @@
 
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.common.EventTrackingStart;
-import java.io.Serializable;
-import java.util.Date;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * User: beat
@@ -36,8 +37,12 @@ public class DbEventTrackingStart implements Serializable {
     @Column(nullable = false)
     private String sessionId;
     private long clientTimeStamp;
-    private int xResolution;
-    private int yResolution;
+    private int clientWidth;
+    private int clientHeight;
+    private int scrollLeft;
+    private int scrollTop;
+    private int scrollWidth;
+    private int scrollHeight;
 
     /**
      * Used by Hibernate
@@ -49,8 +54,17 @@ public class DbEventTrackingStart implements Serializable {
         timeStamp = new Date();
         this.sessionId = sessionId;
         clientTimeStamp = eventTrackingStart.getClientTimeStamp();
-        xResolution = eventTrackingStart.getXResolution();
-        yResolution = eventTrackingStart.getYResolution();
+        clientWidth = eventTrackingStart.getClientWidth();
+        clientHeight = eventTrackingStart.getClientHeight();
+        scrollLeft = eventTrackingStart.getScrollLeft();
+        scrollTop = eventTrackingStart.getScrollTop();
+        scrollWidth = eventTrackingStart.getScrollWidth();
+        scrollHeight = eventTrackingStart.getScrollHeight();
+        clientTimeStamp = eventTrackingStart.getClientTimeStamp();
+    }
+
+    public EventTrackingStart createEventTrackingStart() {
+        return new EventTrackingStart(clientWidth, clientHeight, scrollLeft, scrollTop, scrollWidth, scrollHeight, clientTimeStamp);
     }
 
     public Date getTimeStamp() {
@@ -65,12 +79,12 @@ public class DbEventTrackingStart implements Serializable {
         return clientTimeStamp;
     }
 
-    public int getxResolution() {
-        return xResolution;
+    public int getClientWidth() {
+        return clientWidth;
     }
 
-    public int getyResolution() {
-        return yResolution;
+    public int getClientHeight() {
+        return clientHeight;
     }
 
     @Override
@@ -86,9 +100,5 @@ public class DbEventTrackingStart implements Serializable {
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : 0;
-    }
-
-    public EventTrackingStart createEventTrackingStart() {
-        return new EventTrackingStart(xResolution, yResolution, clientTimeStamp);
     }
 }

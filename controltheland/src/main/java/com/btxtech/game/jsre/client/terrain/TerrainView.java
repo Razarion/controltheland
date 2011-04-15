@@ -311,20 +311,21 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
     public void addToParent(final AbsolutePanel parent) {
         this.parent = parent;
         parent.add(canvas);
+        updateSize();
+        Window.addResizeHandler(new ResizeHandler() {
+            @Override
+            public void onResize(ResizeEvent resizeEvent) {
+                updateSize();
+                fireScrollEvent(0, 0);
+            }
+        });
+    }
+
+    public void updateSize() {
         viewWidth = parent.getOffsetWidth();
         viewHeight = parent.getOffsetHeight();
         canvas.resize(viewWidth, viewHeight);
         onTerrainChanged();
-        Window.addResizeHandler(new ResizeHandler() {
-            @Override
-            public void onResize(ResizeEvent resizeEvent) {
-                viewWidth = parent.getOffsetWidth();
-                viewHeight = parent.getOffsetHeight();
-                canvas.resize(viewWidth, viewHeight);
-                onTerrainChanged();
-                fireScrollEvent(0, 0);
-            }
-        });
     }
 
     private void fireScrollEvent(int deltaLeft, int deltaTop) {
