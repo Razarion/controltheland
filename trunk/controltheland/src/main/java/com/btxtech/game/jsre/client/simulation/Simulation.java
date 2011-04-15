@@ -28,12 +28,13 @@ import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
-import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
+import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
+import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
 import com.google.gwt.user.client.Timer;
+
 import java.util.List;
 
 /**
@@ -74,8 +75,7 @@ public class Simulation implements ConditionServiceListener<Object> {
         ClientBase.getInstance().setBase(tutorialConfig.getOwnBase());
         Cockpit.getInstance().updateBase();
         tutorialTime = System.currentTimeMillis();
-        MapWindow.getAbsolutePanel().getElement().getStyle().setProperty("minWidth", tutorialConfig.getWidth() + "px");
-        MapWindow.getAbsolutePanel().getElement().getStyle().setProperty("minHeight", tutorialConfig.getHeight() + "px");
+        MapWindow.getInstance().setMinimalSize(tutorialConfig.getWidth(), tutorialConfig.getHeight());
         if (tutorialConfig.isEventTracking()) {
             ClientUserTracker.getInstance().startEventTracking();
         }

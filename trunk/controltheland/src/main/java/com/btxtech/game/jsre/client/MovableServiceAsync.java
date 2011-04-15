@@ -16,18 +16,20 @@ package com.btxtech.game.jsre.client;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
-import com.btxtech.game.jsre.common.EventTrackingItem;
-import com.btxtech.game.jsre.common.EventTrackingStart;
 import com.btxtech.game.jsre.common.Packet;
-import com.btxtech.game.jsre.common.ScrollTrackingItem;
-import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
+import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
+import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -58,7 +60,12 @@ public interface MovableServiceAsync {
 
     void sendEventTrackingStart(EventTrackingStart eventTrackingStart, AsyncCallback<Void> asyncCallback);
 
-    void sendEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<BaseCommand> baseCommands, Collection<SelectionTrackingItem> selectionTrackingItems, List<ScrollTrackingItem> scrollTrackingItems, AsyncCallback<Void> asyncCallback);
+    void sendEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems,
+                               Collection<BaseCommand> baseCommands,
+                               Collection<SelectionTrackingItem> selectionTrackingItems,
+                               Collection<TerrainScrollTracking> terrainScrollTrackings,
+                               Collection<BrowserWindowTracking> browserWindowTrackings,
+                               AsyncCallback<Void> asyncCallback);
 
     void sendCloseWindow(long totalRunningTime, long clientTimeStamp, AsyncCallback<Void> asyncCallback);
 

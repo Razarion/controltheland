@@ -34,9 +34,9 @@ public class InitStartupTask extends GameEngineStartupTask {
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
         PlaybackInfo playbackInfo = (PlaybackInfo) Connection.getInstance().getGameInfo();
-        PlaybackControl.getInstance().init(playbackInfo);
+        PlaybackVisualisation.getInstance().init(playbackInfo);
         MapWindow.getAbsolutePanel().getElement().getStyle().setZIndex(1);
-        MapWindow.getAbsolutePanel().setPixelSize(playbackInfo.getEventTrackingStart().getXResolution(), playbackInfo.getEventTrackingStart().getYResolution());
+        MapWindow.getAbsolutePanel().setPixelSize(playbackInfo.getEventTrackingStart().getScrollWidth(), playbackInfo.getEventTrackingStart().getScrollHeight());
         ClientBase.getInstance().setAllBaseAttributes(playbackInfo.getTutorialConfig().getBaseAttributes());
         setupGameStructure(playbackInfo);
     }

@@ -32,6 +32,6 @@ public class RunPlaybackStartupTask extends AbstractStartupTask {
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
         Simulation.getInstance().start();
-        PlaybackControl.getInstance().play();
+        PlaybackVisualisation.getInstance().play();
     }
 }

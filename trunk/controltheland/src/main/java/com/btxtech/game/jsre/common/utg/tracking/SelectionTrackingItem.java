@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.common;
+package com.btxtech.game.jsre.common.utg.tracking;
 
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.cockpit.Group;

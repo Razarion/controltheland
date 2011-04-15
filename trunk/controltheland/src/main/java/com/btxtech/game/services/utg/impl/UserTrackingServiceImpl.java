@@ -15,9 +15,19 @@ package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.UserMessage;
-import com.btxtech.game.jsre.common.*;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.*;
+import com.btxtech.game.jsre.common.StartupTaskInfo;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
+import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
+import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.connection.ConnectionService;
@@ -26,7 +36,30 @@ import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.services.utg.*;
+import com.btxtech.game.services.utg.BrowserDetails;
+import com.btxtech.game.services.utg.DbBrowserWindowTracking;
+import com.btxtech.game.services.utg.DbCloseWindow;
+import com.btxtech.game.services.utg.DbCommand;
+import com.btxtech.game.services.utg.DbEventTrackingItem;
+import com.btxtech.game.services.utg.DbEventTrackingStart;
+import com.btxtech.game.services.utg.DbScrollTrackingItem;
+import com.btxtech.game.services.utg.DbSelectionTrackingItem;
+import com.btxtech.game.services.utg.DbStartup;
+import com.btxtech.game.services.utg.DbStartupTask;
+import com.btxtech.game.services.utg.DbTutorialProgress;
+import com.btxtech.game.services.utg.DbUserCommand;
+import com.btxtech.game.services.utg.DbUserMessage;
+import com.btxtech.game.services.utg.LifecycleTrackingInfo;
+import com.btxtech.game.services.utg.PageAccess;
+import com.btxtech.game.services.utg.RealGameTrackingInfo;
+import com.btxtech.game.services.utg.ServerConditionService;
+import com.btxtech.game.services.utg.TutorialTrackingInfo;
+import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.UserHistory;
+import com.btxtech.game.services.utg.UserTrackingFilter;
+import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.services.utg.VisitorDetailInfo;
+import com.btxtech.game.services.utg.VisitorInfo;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import org.apache.commons.logging.Log;
@@ -44,7 +77,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 /**
  * User: beat
@@ -159,7 +196,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 Criteria criteria = session.createCriteria(DbStartup.class);
                 criteria.add(Restrictions.eq("sessionId", sessionId));
                 criteria.setProjection(Projections.rowCount());
-                return ((Number)criteria.list().get(0)).intValue();
+                return ((Number) criteria.list().get(0)).intValue();
             }
         });
     }
@@ -173,7 +210,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 Criteria dbStartupTaskCriteria = criteria.createCriteria("dbStartupTasks", "dbStartupTasksAlias");
                 dbStartupTaskCriteria.add(Restrictions.isNotNull("failureText"));
                 criteria.setProjection(Projections.rowCount());
-                return ((Number)criteria.list().get(0)).intValue() > 0;
+                return ((Number) criteria.list().get(0)).intValue() > 0;
             }
         });
     }
@@ -185,7 +222,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 Criteria criteria = session.createCriteria(PageAccess.class);
                 criteria.add(Restrictions.eq("sessionId", sessionId));
                 criteria.setProjection(Projections.rowCount());
-                return ((Number)criteria.list().get(0)).intValue();
+                return ((Number) criteria.list().get(0)).intValue();
             }
         });
     }
@@ -198,7 +235,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                 criteria.add(Restrictions.eq("sessionId", sessionId));
                 criteria.add(Restrictions.eq("page", Game.class.getName()));
                 criteria.setProjection(Projections.rowCount());
-                return ((Number)criteria.list().get(0)).intValue();
+                return ((Number) criteria.list().get(0)).intValue();
             }
         });
     }
@@ -219,7 +256,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                     criteria.add(Restrictions.lt("clientTimeStamp", to));
                 }
                 criteria.setProjection(Projections.rowCount());
-                return ((Number)criteria.list().get(0)).intValue();
+                return ((Number) criteria.list().get(0)).intValue();
             }
         });
     }
@@ -503,7 +540,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                     criteria.add(Restrictions.lt("clientTimeStamp", to.getTime()));
                 }
                 criteria.setProjection(Projections.rowCount());
-                return ((Number)criteria.list().get(0)).intValue();
+                return ((Number) criteria.list().get(0)).intValue();
             }
         });
     }
@@ -516,11 +553,12 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     @Transactional
-    public void onEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<BaseCommand> baseCommands, Collection<SelectionTrackingItem> selectionTrackingItems, List<ScrollTrackingItem> scrollTrackingItems) {
+    public void onEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<BaseCommand> baseCommands, Collection<SelectionTrackingItem> selectionTrackingItems, Collection<TerrainScrollTracking> terrainScrollTrackings, Collection<BrowserWindowTracking> browserWindowTrackings) {
         onEventTrackerItems(eventTrackingItems);
         saveCommand(baseCommands);
         saveSelections(selectionTrackingItems);
-        saveScrollTrackingItems(scrollTrackingItems);
+        saveScrollTrackingItems(terrainScrollTrackings);
+        saveBrowserWindowTrackings(browserWindowTrackings);
     }
 
     @Transactional
@@ -548,12 +586,20 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         hibernateTemplate.saveOrUpdateAll(dbSelectionTrackingItems);
     }
 
-    private void saveScrollTrackingItems(List<ScrollTrackingItem> scrollTrackingItems) {
+    private void saveScrollTrackingItems(Collection<TerrainScrollTracking> terrainScrollTrackings) {
         ArrayList<DbScrollTrackingItem> dbScrollTrackingItems = new ArrayList<DbScrollTrackingItem>();
-        for (ScrollTrackingItem scroll : scrollTrackingItems) {
-            dbScrollTrackingItems.add(new DbScrollTrackingItem(scroll, session.getSessionId()));
+        for (TerrainScrollTracking terrainScroll : terrainScrollTrackings) {
+            dbScrollTrackingItems.add(new DbScrollTrackingItem(terrainScroll, session.getSessionId()));
         }
         hibernateTemplate.saveOrUpdateAll(dbScrollTrackingItems);
+    }
+
+    private void saveBrowserWindowTrackings(Collection<BrowserWindowTracking> browserWindowTrackings) {
+        ArrayList<DbBrowserWindowTracking> dbBrowserWindowTrackings = new ArrayList<DbBrowserWindowTracking>();
+        for (BrowserWindowTracking browserWindowTracking : browserWindowTrackings) {
+            dbBrowserWindowTrackings.add(new DbBrowserWindowTracking(browserWindowTracking, session.getSessionId()));
+        }
+        hibernateTemplate.saveOrUpdateAll(dbBrowserWindowTrackings);
     }
 
     @Override
@@ -686,4 +732,22 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             }
         });
     }
+
+    @Override
+    public List<DbBrowserWindowTracking> getDbBrowserWindowTrackings(final String sessionId, final long startTime, final Long endTime) {
+        return hibernateTemplate.execute(new HibernateCallback<List<DbBrowserWindowTracking>>() {
+            @Override
+            public List<DbBrowserWindowTracking> doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbBrowserWindowTracking.class);
+                criteria.add(Restrictions.eq("sessionId", sessionId));
+                criteria.add(Restrictions.ge("clientTimeStamp", startTime));
+                if (endTime != null) {
+                    criteria.add(Restrictions.lt("clientTimeStamp", endTime));
+                }
+                criteria.addOrder(Order.asc("clientTimeStamp"));
+                return criteria.list();
+            }
+        });
+    }
+
 }

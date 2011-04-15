@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.common;
+package com.btxtech.game.jsre.common.utg.tracking;
 
 import java.io.Serializable;
 
@@ -20,20 +20,22 @@ import java.io.Serializable;
  * Date: 24.12.2010
  * Time: 12:30:41
  */
-public class ScrollTrackingItem implements Serializable {
+public class TerrainScrollTracking implements Serializable {
     private int left;
     private int top;
+    @Deprecated
     private int width;
+    @Deprecated
     private int height;
     private long clientTimeStamp;
 
     /**
      * Used by GWT
      */
-    public ScrollTrackingItem() {
+    public TerrainScrollTracking() {
     }
 
-    public ScrollTrackingItem(int left, int top, int width, int height) {
+    public TerrainScrollTracking(int left, int top, int width, int height) {
         this.left = left;
         this.top = top;
         this.width = width;
@@ -41,7 +43,7 @@ public class ScrollTrackingItem implements Serializable {
         clientTimeStamp = System.currentTimeMillis();
     }
 
-    public ScrollTrackingItem(int left, int top, int width, int height, long clientTimeStamp) {
+    public TerrainScrollTracking(int left, int top, int width, int height, long clientTimeStamp) {
         this.left = left;
         this.top = top;
         this.width = width;
@@ -57,10 +59,12 @@ public class ScrollTrackingItem implements Serializable {
         return top;
     }
 
+    @Deprecated
     public int getWidth() {
         return width;
     }
 
+    @Deprecated
     public int getHeight() {
         return height;
     }

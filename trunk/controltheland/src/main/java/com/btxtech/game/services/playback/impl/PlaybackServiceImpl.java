@@ -13,9 +13,10 @@
 
 package com.btxtech.game.services.playback.impl;
 
-import com.btxtech.game.jsre.common.EventTrackingItem;
-import com.btxtech.game.jsre.common.ScrollTrackingItem;
-import com.btxtech.game.jsre.common.SelectionTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
+import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.playback.PlaybackInfo;
 import com.btxtech.game.services.gwt.MovableServiceImpl;
@@ -110,11 +111,18 @@ public class PlaybackServiceImpl implements PlaybackService {
             playbackInfo.setCommands(baseCommands);
 
             // Scrolling
-            ArrayList<ScrollTrackingItem> scrollTrackingItems = new ArrayList<ScrollTrackingItem>();
+            ArrayList<TerrainScrollTracking> terrainScrollTrackings = new ArrayList<TerrainScrollTracking>();
             for (DbScrollTrackingItem dbScrollTrackingItem : userTrackingService.getDbScrollTrackingItems(sessionId, startTime, endTime)) {
-                scrollTrackingItems.add(dbScrollTrackingItem.createScrollTrackingItem());
+                terrainScrollTrackings.add(dbScrollTrackingItem.createScrollTrackingItem());
             }
-            playbackInfo.setScrollTrackingItems(scrollTrackingItems);
+            playbackInfo.setScrollTrackingItems(terrainScrollTrackings);
+
+            // Scrolling
+            ArrayList<BrowserWindowTracking> browserWindowTrackings = new ArrayList<BrowserWindowTracking>();
+            for (DbBrowserWindowTracking dbBrowserWindowTracking : userTrackingService.getDbBrowserWindowTrackings(sessionId, startTime, endTime)) {
+                browserWindowTrackings.add(dbBrowserWindowTracking.createBrowserWindowTracking());
+            }
+            playbackInfo.setBrowserWindowTrackings(browserWindowTrackings);
 
             return playbackInfo;
         } catch (Throwable t) {

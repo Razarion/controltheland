@@ -29,10 +29,10 @@ import com.google.gwt.user.client.ui.Widget;
 public class PlaybackControlPanel extends TopMapPanel {
     private Label state;
     private Label time;
-    private PlaybackControl playbackControl;
+    private PlaybackVisualisation playbackVisualisation;
 
-    public PlaybackControlPanel(PlaybackControl playbackControl) {
-        this.playbackControl = playbackControl;
+    public PlaybackControlPanel(PlaybackVisualisation playbackVisualisation) {
+        this.playbackVisualisation = playbackVisualisation;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class PlaybackControlPanel extends TopMapPanel {
         verticalPanel.add(new Button("Replay", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                playbackControl.play();
+                playbackVisualisation.play();
             }
         }));
 
@@ -59,7 +59,7 @@ public class PlaybackControlPanel extends TopMapPanel {
         verticalPanel.add(new Button("Skip", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                playbackControl.skip();
+                playbackVisualisation.skip();
             }
         }));
 

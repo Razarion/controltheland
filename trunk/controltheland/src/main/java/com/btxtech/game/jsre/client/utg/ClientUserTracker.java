@@ -26,14 +26,19 @@ import com.btxtech.game.jsre.client.simulation.Task;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainScrollListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.common.EventTrackingItem;
-import com.btxtech.game.jsre.common.EventTrackingStart;
-import com.btxtech.game.jsre.common.ScrollTrackingItem;
-import com.btxtech.game.jsre.common.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
+import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
+import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 
@@ -49,11 +54,14 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
     private static final int SEND_TIMEOUT = 1000 * 30;
     private static final ClientUserTracker INSTANCE = new ClientUserTracker();
     private List<EventTrackingItem> eventTrackingItems = new ArrayList<EventTrackingItem>();
+    private List<BrowserWindowTracking> browserWindowTrackings = new ArrayList<BrowserWindowTracking>();
     private List<SelectionTrackingItem> selectionTrackingItems = new ArrayList<SelectionTrackingItem>();
-    private List<ScrollTrackingItem> scrollTrackingItems = new ArrayList<ScrollTrackingItem>();
+    private List<TerrainScrollTracking> terrainScrollTrackings = new ArrayList<TerrainScrollTracking>();
     private List<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
     private Timer timer;
     private boolean isCollecting = false;
+    private HandlerRegistration scrollHandlerRegistration;
+    private HandlerRegistration resizeHandlerRegistration;
 
     public static ClientUserTracker getInstance() {
         return INSTANCE;
@@ -77,11 +85,6 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
         Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, null, null, duration, clientTimeStamp, runnable);
     }
 
-    // TODO
-    /*   public void onTutorialFailed(long duration, long clientTimeStamp, Runnable runnable) {
-       Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL_FAILED, null, null, duration, clientTimeStamp, runnable);
-   } */
-
     public void onTaskFinished(Task task, long duration, long clientTimeStamp) {
         Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TASK, task.getTaskConfig().getName(), null, duration, clientTimeStamp, null);
     }
@@ -103,7 +106,24 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
         SelectionHandler.getInstance().addSelectionListener(this);
         MapWindow.getInstance().setTrackingEvents(true);
         TerrainView.getInstance().addTerrainScrollListener(this);
-        Connection.getInstance().sendEventTrackingStart(new EventTrackingStart(Window.getClientWidth(), Window.getClientHeight()));
+        Connection.getInstance().sendEventTrackingStart(new EventTrackingStart(Window.getClientWidth(),
+                Window.getClientHeight(),
+                Window.getScrollLeft(),
+                Window.getScrollTop(),
+                Document.get().getScrollWidth(),
+                Document.get().getScrollHeight()));
+        scrollHandlerRegistration = Window.addWindowScrollHandler(new Window.ScrollHandler() {
+            @Override
+            public void onWindowScroll(Window.ScrollEvent event) {
+                addBrowserWindowTracking();
+            }
+        });
+        resizeHandlerRegistration = Window.addResizeHandler(new ResizeHandler() {
+            @Override
+            public void onResize(ResizeEvent event) {
+                addBrowserWindowTracking();
+            }
+        });
     }
 
     public void stopEventTracking() {
@@ -115,12 +135,33 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
         SelectionHandler.getInstance().removeSelectionListener(this);
         MapWindow.getInstance().setTrackingEvents(false);
         TerrainView.getInstance().removeTerrainScrollListener(this);
+        if (scrollHandlerRegistration != null) {
+            scrollHandlerRegistration.removeHandler();
+            scrollHandlerRegistration = null;
+        }
+        if (resizeHandlerRegistration != null) {
+            resizeHandlerRegistration.removeHandler();
+            resizeHandlerRegistration = null;
+        }
         sendEventTrackerItems();
     }
 
     public void addEventTrackingItem(int xPos, int yPos, int eventType) {
         if (isCollecting) {
             eventTrackingItems.add(new EventTrackingItem(xPos, yPos, eventType));
+        }
+    }
+
+    public void addBrowserWindowTracking() {
+        if (isCollecting) {
+            BrowserWindowTracking wind = new BrowserWindowTracking(Window.getClientWidth(),
+                    Window.getClientHeight(),
+                    Window.getScrollLeft(),
+                    Window.getScrollTop(),
+                    Document.get().getScrollWidth(),
+                    Document.get().getScrollHeight());
+
+            browserWindowTrackings.add(wind);
         }
     }
 
@@ -131,10 +172,10 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
     }
 
     private void sendEventTrackerItems() {
-        if (eventTrackingItems.isEmpty() && baseCommands.isEmpty() && selectionTrackingItems.isEmpty() && scrollTrackingItems.isEmpty()) {
+        if (eventTrackingItems.isEmpty() && baseCommands.isEmpty() && selectionTrackingItems.isEmpty() && terrainScrollTrackings.isEmpty() && browserWindowTrackings.isEmpty()) {
             return;
         }
-        Connection.getInstance().sendEventTrackerItems(eventTrackingItems, baseCommands, selectionTrackingItems, scrollTrackingItems);
+        Connection.getInstance().sendEventTrackerItems(eventTrackingItems, baseCommands, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings);
         clearTracking();
     }
 
@@ -142,7 +183,8 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
         eventTrackingItems = new ArrayList<EventTrackingItem>();
         baseCommands = new ArrayList<BaseCommand>();
         selectionTrackingItems = new ArrayList<SelectionTrackingItem>();
-        scrollTrackingItems = new ArrayList<ScrollTrackingItem>();
+        terrainScrollTrackings = new ArrayList<TerrainScrollTracking>();
+        browserWindowTrackings = new ArrayList<BrowserWindowTracking>();
     }
 
     @Override
@@ -169,7 +211,7 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
     @Override
     public void onScroll(int left, int top, int width, int height, int deltaLeft, int deltaTop) {
         if (isCollecting) {
-            scrollTrackingItems.add(new ScrollTrackingItem(left, top, width, height));
+            terrainScrollTrackings.add(new TerrainScrollTracking(left, top, width, height));
         }
     }
 }

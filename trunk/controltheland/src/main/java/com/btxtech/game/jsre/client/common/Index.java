@@ -236,4 +236,14 @@ public class Index implements Serializable {
         int newY = (int) (-normY * cosinus + normX * sinus);
         return new Index(center.x + newX, center.y + newY);
     }
+
+    public static Index createSaveIndex(int x, int y) {
+        if (x < 0) {
+            x = 0;
+        }
+        if (y < 0) {
+            y = 0;
+        }
+        return new Index(x, y);
+    }
 }

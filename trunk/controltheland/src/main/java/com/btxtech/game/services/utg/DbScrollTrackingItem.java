@@ -13,7 +13,8 @@
 
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.jsre.common.ScrollTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
+
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,7 +38,9 @@ public class DbScrollTrackingItem implements Serializable {
     @Column(name = "leftPos")
     private int left;
     private int top;
+    @Deprecated
     private int width;
+    @Deprecated
     private int height;
 
     /**
@@ -46,17 +49,17 @@ public class DbScrollTrackingItem implements Serializable {
     public DbScrollTrackingItem() {
     }
 
-    public DbScrollTrackingItem(ScrollTrackingItem scrollTrackingItem, String sessionId) {
+    public DbScrollTrackingItem(TerrainScrollTracking terrainScrollTracking, String sessionId) {
         this.sessionId = sessionId;
-        clientTimeStamp = scrollTrackingItem.getClientTimeStamp();
-        left = scrollTrackingItem.getLeft();
-        top = scrollTrackingItem.getTop();
-        width = scrollTrackingItem.getWidth();
-        height = scrollTrackingItem.getHeight();
+        clientTimeStamp = terrainScrollTracking.getClientTimeStamp();
+        left = terrainScrollTracking.getLeft();
+        top = terrainScrollTracking.getTop();
+        width = terrainScrollTracking.getWidth();
+        height = terrainScrollTracking.getHeight();
     }
 
-    public ScrollTrackingItem createScrollTrackingItem() {
-        return new ScrollTrackingItem(left, top, width, height, clientTimeStamp);
+    public TerrainScrollTracking createScrollTrackingItem() {
+        return new TerrainScrollTracking(left, top, width, height, clientTimeStamp);
     }
 
     @Override

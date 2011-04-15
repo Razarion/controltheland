@@ -18,9 +18,10 @@ import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.common.EventTrackingItem;
-import com.btxtech.game.jsre.common.ScrollTrackingItem;
-import com.btxtech.game.jsre.common.SelectionTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.google.gwt.user.client.Timer;
 import java.util.ArrayList;
@@ -38,11 +39,11 @@ public class Player {
     private int nextFrameIndex = 0;
     private Frame nextFrame;
     private long startTime;
-    private PlaybackControl playbackControl;
+    private PlaybackVisualisation playbackVisualisation;
 
-    public Player(PlaybackControlPanel playbackControlPanel, PlaybackControl playbackControl) {
+    public Player(PlaybackControlPanel playbackControlPanel, PlaybackVisualisation playbackVisualisation) {
         this.playbackControlPanel = playbackControlPanel;
-        this.playbackControl = playbackControl;
+        this.playbackVisualisation = playbackVisualisation;
     }
 
     public void init(PlaybackInfo playbackInfo) {
@@ -57,8 +58,11 @@ public class Player {
         for (BaseCommand baseCommand : playbackInfo.getBaseCommands()) {
             frames.add(new Frame(baseCommand.getTimeStamp().getTime(), baseCommand));
         }
-        for (ScrollTrackingItem scrollTrackingItem : playbackInfo.getScrollTrackingItems()) {
-            frames.add(new Frame(scrollTrackingItem.getClientTimeStamp(), scrollTrackingItem));
+        for (TerrainScrollTracking terrainScrollTracking : playbackInfo.getScrollTrackingItems()) {
+            frames.add(new Frame(terrainScrollTracking.getClientTimeStamp(), terrainScrollTracking));
+        }
+        for (BrowserWindowTracking browserWindowTracking : playbackInfo.getBrowserWindowTrackings()) {
+            frames.add(new Frame(browserWindowTracking.getClientTimeStamp(), browserWindowTracking));
         }
         Collections.sort(frames);
     }
@@ -99,8 +103,10 @@ public class Player {
             displaySelectionTrackingItemFrame((SelectionTrackingItem) object);
         } else if (object instanceof BaseCommand) {
             displayBaseCommandFrame((BaseCommand) object);
-        } else if (object instanceof ScrollTrackingItem) {
-            displayScrollingFrame((ScrollTrackingItem) object);
+        } else if (object instanceof TerrainScrollTracking) {
+            displayScrollingFrame((TerrainScrollTracking) object);
+        } else if (object instanceof BrowserWindowTracking) {
+            displayBrowserWindowFrame((BrowserWindowTracking) object);
         } else {
             throw new IllegalArgumentException(this + " Unknown Frame: " + object);
         }
@@ -118,12 +124,16 @@ public class Player {
     }
 
     private void displayEventTrackingItemFrame(EventTrackingItem eventTrackingItem) {
-        playbackControl.displayMouseTracking(eventTrackingItem);
+        playbackVisualisation.displayMouseTracking(eventTrackingItem);
     }
 
-    private void displayScrollingFrame(ScrollTrackingItem scrollTrackingItem) {
-        MapWindow.getAbsolutePanel().setPixelSize(scrollTrackingItem.getWidth(), scrollTrackingItem.getHeight());
-        TerrainView.getInstance().moveAbsolute(new Index(scrollTrackingItem.getLeft(), scrollTrackingItem.getTop()));
+    private void displayScrollingFrame(TerrainScrollTracking terrainScrollTracking) {
+        TerrainView.getInstance().moveAbsolute(new Index(terrainScrollTracking.getLeft(), terrainScrollTracking.getTop()));
+    }
+
+    private void displayBrowserWindowFrame(BrowserWindowTracking browserWindowTracking) {
+        MapWindow.getAbsolutePanel().setPixelSize(browserWindowTracking.getScrollWidth(), browserWindowTracking.getScrollHeight());
+        playbackVisualisation.displayBrowserWindow(browserWindowTracking);
     }
 
     private void loadNextItem() {

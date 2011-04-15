@@ -15,10 +15,11 @@ package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.UserMessage;
-import com.btxtech.game.jsre.common.EventTrackingItem;
-import com.btxtech.game.jsre.common.EventTrackingStart;
-import com.btxtech.game.jsre.common.ScrollTrackingItem;
-import com.btxtech.game.jsre.common.SelectionTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
+import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
@@ -72,7 +73,7 @@ public interface UserTrackingService {
 
     void onEventTrackingStart(EventTrackingStart eventTrackingStart);
 
-    void onEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<BaseCommand> baseCommands, Collection<SelectionTrackingItem> selectionTrackingItems, List<ScrollTrackingItem> scrollTrackingItems);
+    void onEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<BaseCommand> baseCommands, Collection<SelectionTrackingItem> selectionTrackingItems, Collection<TerrainScrollTracking> terrainScrollTrackings, Collection<BrowserWindowTracking> browserWindowTrackings);
 
     List<DbEventTrackingStart> getDbEventTrackingStart(String sessionId);
 
@@ -91,4 +92,6 @@ public interface UserTrackingService {
     List<DbCommand> getDbCommands(String sessionId, long startTime, Long endTime);
 
     List<DbScrollTrackingItem> getDbScrollTrackingItems(final String sessionId, final long startTime, final Long endTime);
+
+    List<DbBrowserWindowTracking> getDbBrowserWindowTrackings(final String sessionId, final long startTime, final Long endTime);   
 }

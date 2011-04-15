@@ -14,11 +14,13 @@
 package com.btxtech.game.jsre.playback;
 
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
-import com.btxtech.game.jsre.common.EventTrackingItem;
-import com.btxtech.game.jsre.common.EventTrackingStart;
-import com.btxtech.game.jsre.common.ScrollTrackingItem;
-import com.btxtech.game.jsre.common.SelectionTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
+import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
+import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +34,8 @@ public class PlaybackInfo extends SimulationInfo {
     private List<EventTrackingItem> eventTrackingItems;
     private List<SelectionTrackingItem> selectionTrackingItems;
     private ArrayList<BaseCommand> baseCommands;
-    private ArrayList<ScrollTrackingItem> scrollTrackingItems;
+    private ArrayList<TerrainScrollTracking> terrainScrollTrackings;
+    private ArrayList<BrowserWindowTracking> browserWindowTrackings;
 
     public EventTrackingStart getEventTrackingStart() {
         return eventTrackingStart;
@@ -66,11 +69,19 @@ public class PlaybackInfo extends SimulationInfo {
         return baseCommands;
     }
 
-    public void setScrollTrackingItems(ArrayList<ScrollTrackingItem> scrollTrackingItems) {
-        this.scrollTrackingItems = scrollTrackingItems;
+    public void setScrollTrackingItems(ArrayList<TerrainScrollTracking> terrainScrollTrackings) {
+        this.terrainScrollTrackings = terrainScrollTrackings;
     }
 
-    public ArrayList<ScrollTrackingItem> getScrollTrackingItems() {
-        return scrollTrackingItems;
+    public ArrayList<TerrainScrollTracking> getScrollTrackingItems() {
+        return terrainScrollTrackings;
+    }
+
+    public void setBrowserWindowTrackings(ArrayList<BrowserWindowTracking> browserWindowTrackings) {
+        this.browserWindowTrackings = browserWindowTrackings;
+    }
+
+    public ArrayList<BrowserWindowTracking> getBrowserWindowTrackings() {
+        return browserWindowTrackings;
     }
 }
