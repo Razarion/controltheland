@@ -125,7 +125,7 @@ public class TestLevel extends BaseTestService {
         Assert.assertEquals(original.getDeltaMoney(), copy.getDeltaMoney());
         Assert.assertEquals(original.getStartItemFreeRange(), copy.getStartItemFreeRange());
         Assert.assertEquals(original.getStartItemType(), copy.getStartItemType());
-        Assert.assertEquals(original.getStartRectangle(), copy.getStartRectangle());
+        Assert.assertEquals(original.getStartTerritory(), copy.getStartTerritory());
 
         Assert.assertFalse(original.getId().intValue() == copy.getId().intValue());
         Assert.assertTrue(copy.getOrderIndex() == userGuidanceService.getDbLevels().get(userGuidanceService.getDbLevels().size() - 1).getOrderIndex());

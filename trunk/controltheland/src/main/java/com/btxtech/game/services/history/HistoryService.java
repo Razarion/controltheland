@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbAbstractLevel;
+import com.btxtech.game.services.utg.DbResurrection;
 
 import java.util.Date;
 import java.util.List;
@@ -37,6 +38,8 @@ public interface HistoryService {
     void addItemCreatedEntry(SyncBaseItem syncBaseItem);
 
     void addItemDestroyedEntry(SimpleBase actor, SyncBaseItem target);
+
+    void addResurrectionEntry(UserState userState, DbResurrection dbResurrection, SimpleBase simpleBase);
 
     List<DisplayHistoryElement> getNewestHistoryElements(User user, int count);
 

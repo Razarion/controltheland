@@ -29,6 +29,8 @@ import java.util.Collection;
 public interface AbstractTerritoryService {
     Collection<Territory> getTerritories();
 
+    Territory getTerritory(int id);
+
     boolean isAllowed(Index position, SyncBaseItem syncBaseItem);
 
     boolean isAllowed(Index target, ProjectileItemType projectileItemType);

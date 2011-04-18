@@ -48,14 +48,14 @@ public class PacketSendingTest extends BaseTestService {
 
         AccountBalancePacket accountBalancePacket = new AccountBalancePacket();
         accountBalancePacket.setAccountBalance(998);
-        assertPackagesIgnoreSyncItemInfoAndClear(simpleBase, accountBalancePacket);
+        assertPackagesIgnoreSyncItemInfoAndClear(accountBalancePacket);
 
         // Sell
         movableService.sellItem(getFirstSynItemId(simpleBase, TEST_FACTORY_ITEM_ID));
         waitForActionServiceDone();
         accountBalancePacket = new AccountBalancePacket();
         accountBalancePacket.setAccountBalance(999);
-        assertPackagesIgnoreSyncItemInfoAndClear(simpleBase, accountBalancePacket);
+        assertPackagesIgnoreSyncItemInfoAndClear(accountBalancePacket);
 
         System.out.println("----- testSimple end -----");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -89,7 +89,7 @@ public class PacketSendingTest extends BaseTestService {
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(simpleBase, TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
         waitForActionServiceDone();
-        clearPackets(simpleBase);
+        clearPackets();
 
         sendAttackCommand(getFirstSynItemId(simpleBase, TEST_ATTACK_ITEM_ID), target);
         waitForActionServiceDone();
@@ -97,7 +97,7 @@ public class PacketSendingTest extends BaseTestService {
         XpBalancePacket xpBalancePacket = new XpBalancePacket();
         xpBalancePacket.setXp(1);
         Thread.sleep(3000);
-        assertPackagesIgnoreSyncItemInfoAndClear(simpleBase, xpBalancePacket);
+        assertPackagesIgnoreSyncItemInfoAndClear(xpBalancePacket);
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -113,7 +113,7 @@ public class PacketSendingTest extends BaseTestService {
         movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
         RealityInfo realityInfo = (RealityInfo) movableService.getGameInfo(); // Connection is created here. Don't call movableService.getGameInfo() again!
         SimpleBase simpleBase = realityInfo.getBase();
-        clearPackets(simpleBase);
+        clearPackets();
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_3_REAL_ID);
 
         DbRealGameLevel dbRealGameLevel = userGuidanceService.getDbLevel();
@@ -126,7 +126,7 @@ public class PacketSendingTest extends BaseTestService {
         XpBalancePacket xpBalancePacket = new XpBalancePacket();
         xpBalancePacket.setXp(500);
 
-        assertPackagesIgnoreSyncItemInfoAndClear(simpleBase, levelPacket, accountBalancePacket, xpBalancePacket);
+        assertPackagesIgnoreSyncItemInfoAndClear(levelPacket, accountBalancePacket, xpBalancePacket);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 

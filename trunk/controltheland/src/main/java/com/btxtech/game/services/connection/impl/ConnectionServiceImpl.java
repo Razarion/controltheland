@@ -27,7 +27,17 @@ import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.ConnectionStatistics;
 import com.btxtech.game.services.connection.Session;
+import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -35,14 +45,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.stereotype.Component;
 
 /**
  * User: beat
@@ -60,6 +62,8 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     private BotService botService;
     @Autowired
     private BaseService baseService;
+    @Autowired
+    private UserService userService;
     private Timer timer;
     private Log log = LogFactory.getLog(ConnectionServiceImpl.class);
     private HibernateTemplate hibernateTemplate;
@@ -188,13 +192,13 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     public void createConnection(Base base) {
         Connection connection = session.getConnection();
         if (connection != null) {
-            log.info("Existing connection will be terminated");
+            log.warn("Existing connection will be terminated");
             closeConnection();
         }
         connection = new Connection(session.getSessionId());
         connection.setBase(base);
         session.setConnection(connection);
-        log.debug("Connection established");        
+        log.debug("Connection established");
         synchronized (onlineConnection) {
             onlineConnection.add(connection);
         }
@@ -214,11 +218,32 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         //}
         connection.setClosed();
         session.setConnection(null);
-        log.debug("Connection closed");
+        log.debug("Connection closed 1");
         synchronized (onlineConnection) {
             onlineConnection.remove(connection);
         }
     }
+
+    @Override
+    public void closeConnection(SimpleBase simpleBase) {
+        Connection connection = null;
+        synchronized (onlineConnection) {
+            for (Iterator<Connection> iterator = onlineConnection.iterator(); iterator.hasNext();) {
+                Connection online = iterator.next();
+                if (online.getBase().getSimpleBase().equals(simpleBase)) {
+                    connection = online;
+                    iterator.remove();
+                }
+            }
+        }
+        if (connection == null) {
+            throw new IllegalStateException("Online connection does not exist for base: " + simpleBase);
+        }
+
+        connection.setClosed();
+        log.debug("Connection closed 2");
+    }
+
 
     @Override
     public Connection getConnection() throws NoConnectionException {
@@ -236,6 +261,18 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
     public boolean hasConnection() {
         Connection connection = session.getConnection();
         return connection != null && !connection.isClosed();
+    }
+
+    @Override
+    public boolean hasConnection(SimpleBase simpleBase) {
+        synchronized (onlineConnection) {
+            for (Connection connection : onlineConnection) {
+                if (connection.getBase().getSimpleBase().equals(simpleBase)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override

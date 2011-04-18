@@ -61,6 +61,7 @@
         <mapping class="com.btxtech.game.services.utg.DbUserMessage"/>
         <mapping class="com.btxtech.game.services.utg.DbSimulationLevel"/>
         <mapping class="com.btxtech.game.services.utg.DbRealGameLevel"/>
+        <mapping class="com.btxtech.game.services.utg.DbResurrection"/>
         <mapping class="com.btxtech.game.services.utg.DbItemTypeLimitation"/>
         <mapping class="com.btxtech.game.services.utg.DbTutorialProgress"/>
         <mapping class="com.btxtech.game.services.utg.DbEventTrackingStart"/>

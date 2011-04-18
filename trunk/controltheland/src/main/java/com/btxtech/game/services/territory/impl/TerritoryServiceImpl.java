@@ -72,6 +72,11 @@ public class TerritoryServiceImpl extends AbstractTerritoryServiceImpl implement
         return dbTerritoryCrudServiceHelper;
     }
 
+    @Override
+    public Territory getTerritory(DbTerritory dbTerritory) {
+        return getTerritory(dbTerritory.getId());
+    }
+
     private void updateTerritories() {
         ArrayList<Territory> territories = new ArrayList<Territory>();
         Collection<DbTerritory> dbTerritories = dbTerritoryCrudServiceHelper.readDbChildren();

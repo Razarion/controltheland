@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.Base;
+
 import java.util.Collection;
 import java.util.Date;
 
@@ -32,17 +33,21 @@ public interface ConnectionService extends com.btxtech.game.jsre.common.gameengi
 
     boolean hasConnection();
 
+    boolean hasConnection(SimpleBase simpleBase);
+
     Connection getConnection() throws NoConnectionException;
 
     void createConnection(Base base);
 
     void closeConnection();
 
+    void closeConnection(SimpleBase simpleBase);
+
     void sendPacket(SimpleBase base, Packet packet);
 
-    void sendSyncInfos(Collection<SyncBaseItem> syncItem);
-
     void sendPacket(Packet packet);
+
+    void sendSyncInfos(Collection<SyncBaseItem> syncItem);
 
     void sendUserMessage(UserMessage userMessage);
 

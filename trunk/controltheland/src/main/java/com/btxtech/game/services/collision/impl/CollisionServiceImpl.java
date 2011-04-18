@@ -16,6 +16,7 @@ package com.btxtech.game.services.collision.impl;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
+import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
@@ -185,6 +186,39 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
             return point;
         }
         throw new IllegalStateException("Can not find free position. itemType: " + itemType + " region: " + region + " itemFreeRange: " + itemFreeRange);
+    }
+
+    @Override
+    public Index getFreeRandomPosition(ItemType itemType, Territory territory, int itemFreeRange, boolean botFree) {
+        if (!territory.isItemAllowed(itemType.getId())) {
+            throw new IllegalArgumentException("Item Type '" + itemType + "' not allowed on territory: " + territory);
+        }
+
+        Random random = new Random();
+        List<Rectangle> territoryRectangles = new ArrayList<Rectangle>(territory.getTerritoryTileRegions());
+
+        for (int i = 0; i < MAX_TRIES; i++) {
+            int territoryRectIndex = random.nextInt(territoryRectangles.size());
+            Rectangle tileRectangle = territoryRectangles.get(territoryRectIndex);
+            Rectangle absoluteRectangle = terrainService.convertToAbsolutePosition(tileRectangle);
+            int x = random.nextInt(absoluteRectangle.getWidth());
+            int y = random.nextInt(absoluteRectangle.getHeight());
+            Index point = new Index(x, y);
+            if (botFree && botService.isInRealm(point)) {
+                continue;
+            }
+
+            if (!terrainService.isFree(point, itemType)) {
+                continue;
+            }
+            Index start = point.sub(new Index(itemFreeRange / 2, itemFreeRange / 2));
+            Rectangle rectangle = new Rectangle(start.getX(), start.getY(), itemFreeRange, itemFreeRange);
+            if (itemService.hasItemsInRectangle(rectangle)) {
+                continue;
+            }
+            return point;
+        }
+        throw new IllegalStateException("Can not find free position. itemType: " + itemType + " territory: " + territory + " itemFreeRange: " + itemFreeRange);
     }
 
     @Override

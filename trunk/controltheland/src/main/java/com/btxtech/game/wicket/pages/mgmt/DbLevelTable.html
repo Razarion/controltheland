@@ -23,6 +23,7 @@
 <span wicket:id="msgs"/>
 
 <form wicket:id="levelForm">
+    <h1>Level Table</h1>
     <span wicket:id="copyRadioChoiceGroup">
          <table cellpadding="1" cellspacing="1" border="0">
              <tr>
@@ -64,8 +65,41 @@
         <br>
         <input wicket:id="copy" type="submit" value="Copy">
         <br>
-        <input wicket:id="save" type="submit" value="Save">
+        <input wicket:id="save" type="submit" value="Save Resurrection">
       </span>
+    <br>
+    <hr>
+    <br>
+
+    <h1>Resurrection Table</h1>
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Id</th>
+            <th bgcolor="#dadada">Name [Intenal]</th>
+            <th bgcolor="#dadada">Start Item Type</th>
+            <th bgcolor="#dadada">Start Item Free Range</th>
+            <th bgcolor="#dadada">Start Territory</th>
+            <th bgcolor="#dadada">Money</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+        <tr wicket:id="resurrections">
+            <td wicket:id="id"/>
+            <td><input type="text" wicket:id="name" size="20"/></td>
+            <td wicket:id="startItemType"></td>
+            <td><input type="text" wicket:id="startItemFreeRange" size="20"/></td>
+            <td wicket:id="dbTerritory"></td>
+            <td><input type="text" wicket:id="money" size="20"/></td>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <input wicket:id="createResurrection" type="submit" value="Add Resurrection">
+    <br>
+    <input wicket:id="saveResurrection" type="submit" value="Save Resurrection">
+    <br>
+    <br>
     <br>
     <input wicket:id="activate" type="submit" value="Activate">
 </form>

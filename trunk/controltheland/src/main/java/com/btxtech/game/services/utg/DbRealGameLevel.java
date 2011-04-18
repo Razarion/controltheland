@@ -21,7 +21,7 @@ import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.db.RectangleUserType;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.services.item.itemType.DbItemType;
+import com.btxtech.game.services.territory.DbTerritory;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
@@ -56,10 +56,9 @@ public class DbRealGameLevel extends DbAbstractLevel implements CrudParent {
     private boolean createRealBase;
     @ManyToOne
     private DbBaseItemType startItemType;
-    @Type(type = "rectangle")
-    @Columns(columns = {@Column(name = "startX"), @Column(name = "startY"), @Column(name = "startWidth"), @Column(name = "startHeight")})
-    private Rectangle startRectangle;
     private int startItemFreeRange;
+    @ManyToOne
+    private DbTerritory startTerritory;
     // ----- Scope -----
     private double itemSellFactor;
     private int houseSpace;
@@ -73,6 +72,8 @@ public class DbRealGameLevel extends DbAbstractLevel implements CrudParent {
     private Set<DbItemTypeLimitation> itemTypeLimitation;
     @Transient
     private CrudChildServiceHelper<DbItemTypeLimitation> dbItemTypeLimitationCrudServiceHelper;
+    @ManyToOne
+    private DbResurrection dbResurrection;
 
     /**
      * Used by hibernate & dummyRealGameLevel
@@ -87,16 +88,15 @@ public class DbRealGameLevel extends DbAbstractLevel implements CrudParent {
         copyFrom.getDbItemTypeLimitationCrudServiceHelper().copyTo(getDbItemTypeLimitationCrudServiceHelper());
         createRealBase = copyFrom.createRealBase;
         startItemType = copyFrom.startItemType;
-        if (copyFrom.startRectangle != null) {
-            startRectangle = copyFrom.startRectangle.copy();
-        }
         startItemFreeRange = copyFrom.startItemFreeRange;
+        startTerritory = copyFrom.startTerritory;
         itemSellFactor = copyFrom.itemSellFactor;
         houseSpace = copyFrom.houseSpace;
         deltaMoney = copyFrom.deltaMoney;
         deltaXp = copyFrom.deltaXp;
         maxMoney = copyFrom.maxMoney;
         maxXp = copyFrom.maxXp;
+        dbResurrection = copyFrom.dbResurrection;
     }
 
     public DbConditionConfig getDbConditionConfig() {
@@ -123,20 +123,12 @@ public class DbRealGameLevel extends DbAbstractLevel implements CrudParent {
         this.deltaMoney = deltaMoney;
     }
 
-    public DbItemType getStartItemType() {
+    public DbBaseItemType getStartItemType() {
         return startItemType;
     }
 
     public void setStartItemType(DbBaseItemType startItemType) {
         this.startItemType = startItemType;
-    }
-
-    public Rectangle getStartRectangle() {
-        return startRectangle;
-    }
-
-    public void setStartRectangle(Rectangle startRectangle) {
-        this.startRectangle = startRectangle;
     }
 
     public int getStartItemFreeRange() {
@@ -145,6 +137,14 @@ public class DbRealGameLevel extends DbAbstractLevel implements CrudParent {
 
     public void setStartItemFreeRange(int startItemFreeRange) {
         this.startItemFreeRange = startItemFreeRange;
+    }
+
+    public DbTerritory getStartTerritory() {
+        return startTerritory;
+    }
+
+    public void setStartTerritory(DbTerritory startTerritory) {
+        this.startTerritory = startTerritory;
     }
 
     public boolean isCreateRealBase() {
@@ -230,5 +230,13 @@ public class DbRealGameLevel extends DbAbstractLevel implements CrudParent {
             dbItemTypeLimitationCrudServiceHelper = new CrudChildServiceHelper<DbItemTypeLimitation>(itemTypeLimitation, DbItemTypeLimitation.class, this);
         }
         return dbItemTypeLimitationCrudServiceHelper;
+    }
+
+    public DbResurrection getDbResurrection() {
+        return dbResurrection;
+    }
+
+    public void setDbResurrection(DbResurrection dbResurrection) {
+        this.dbResurrection = dbResurrection;
     }
 }

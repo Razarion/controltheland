@@ -2,6 +2,7 @@ package com.btxtech.game.services;
 
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
@@ -52,6 +53,7 @@ import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.utg.DbItemTypeLimitation;
 import com.btxtech.game.services.utg.DbRealGameLevel;
+import com.btxtech.game.services.utg.DbResurrection;
 import com.btxtech.game.services.utg.DbSimulationLevel;
 import com.btxtech.game.services.utg.LevelActivationException;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -112,9 +114,17 @@ public class BaseTestService {
     protected static int TEST_CONTAINER_ITEM_ID = -1;
     protected static final String TEST_LEVEL_1_SIMULATED = "TEST_LEVEL_1_SIMULATED";
     protected static final String TEST_LEVEL_2_REAL = "TEST_LEVEL_2_REAL";
-    protected static int TEST_LEVEL_2_REAL_ID;
+    protected static int TEST_LEVEL_2_REAL_ID = -1;
     protected static final String TEST_LEVEL_3_REAL = "TEST_LEVEL_3_REAL";
-    protected static int TEST_LEVEL_3_REAL_ID;
+    protected static int TEST_LEVEL_3_REAL_ID = -1;
+    protected static final String TEST_LEVEL_4_SIMULATED = "TEST_LEVEL_4_SIMULATED";
+    protected static int TEST_LEVEL_4_SIMULATED_ID = -1;
+    protected static final String TEST_LEVEL_5_REAL = "TEST_LEVEL_5_REAL";
+    protected static int TEST_LEVEL_5_REAL_ID = -1;
+    protected static final String TEST_NOOB_TERRITORY = "TEST_NOOB_TERRITORY";
+    protected static int TEST_NOOB_TERRITORY_ID = -1;
+    protected static final String TEST_NOOB_RESURRECTION = "NOOB_RESURRECTION";
+    protected static int TEST_NOOB_RESURRECTION_ID = -1;
 
     private HibernateTemplate hibernateTemplate;
     @Autowired
@@ -205,19 +215,25 @@ public class BaseTestService {
 
     // ------------------- Connection --------------------
 
-    protected void clearPackets(SimpleBase simpleBase) throws Exception {
-        movableService.getSyncInfo(simpleBase);
+    protected void clearPackets() throws Exception {
+        movableService.getSyncInfo();
     }
 
-    protected void assertPackagesIgnoreSyncItemInfoAndClear(SimpleBase simpleBase, Packet... expectedPackets) throws Exception {
-        List<Packet> receivedPackets = new ArrayList<Packet>(movableService.getSyncInfo(simpleBase));
+    protected List<Packet> getPackagesIgnoreSyncItemInfoAndClear() throws Exception {
+        List<Packet> receivedPackets = new ArrayList<Packet>(movableService.getSyncInfo());
         for (Iterator<Packet> iterator = receivedPackets.iterator(); iterator.hasNext();) {
             if (iterator.next() instanceof SyncItemInfo) {
                 iterator.remove();
             }
 
         }
-        if(expectedPackets.length != receivedPackets.size()) {
+        return receivedPackets;
+    }
+
+    protected void assertPackagesIgnoreSyncItemInfoAndClear(Packet... expectedPackets) throws Exception {
+        List<Packet> receivedPackets = getPackagesIgnoreSyncItemInfoAndClear();
+
+        if (expectedPackets.length != receivedPackets.size()) {
             StringBuilder expectedBuilder = new StringBuilder();
             for (Packet expectedPacket : expectedPackets) {
                 expectedBuilder.append("[");
@@ -243,22 +259,22 @@ public class BaseTestService {
             AccountBalancePacket expected = (AccountBalancePacket) expectedPacket;
             AccountBalancePacket received = (AccountBalancePacket) receivedPacket;
             Assert.assertEquals(expected.getAccountBalance(), received.getAccountBalance(), 0.1);
-            return;
         } else if (expectedPacket instanceof XpBalancePacket) {
             XpBalancePacket expected = (XpBalancePacket) expectedPacket;
             XpBalancePacket received = (XpBalancePacket) receivedPacket;
             Assert.assertEquals(expected.getXp(), received.getXp());
-            return;
         } else if (expectedPacket instanceof LevelPacket) {
             LevelPacket expected = (LevelPacket) expectedPacket;
             LevelPacket received = (LevelPacket) receivedPacket;
             Assert.assertEquals(expected.getLevel(), received.getLevel());
-            return;
         } else if (expectedPacket instanceof HouseSpacePacket) {
             HouseSpacePacket expected = (HouseSpacePacket) expectedPacket;
             HouseSpacePacket received = (HouseSpacePacket) receivedPacket;
             Assert.assertEquals(expected.getHouseSpace(), received.getHouseSpace());
-            return;
+        } else if (expectedPacket instanceof Message) {
+            Message expected = (Message) expectedPacket;
+            Message received = (Message) receivedPacket;
+            Assert.assertEquals(expected.getMessage(), received.getMessage());
         } else if (expectedPacket instanceof BaseChangedPacket) {
             BaseChangedPacket expected = (BaseChangedPacket) expectedPacket;
             BaseChangedPacket received = (BaseChangedPacket) receivedPacket;
@@ -269,9 +285,9 @@ public class BaseTestService {
             Assert.assertEquals(expected.getBaseAttributes().getHtmlColor(), received.getBaseAttributes().getHtmlColor());
             Assert.assertEquals(expected.getBaseAttributes().isBot(), received.getBaseAttributes().isBot());
             Assert.assertEquals(expected.getBaseAttributes().isAbandoned(), received.getBaseAttributes().isAbandoned());
-            return;
+        } else {
+            Assert.fail("Unhandled packet: " + expectedPacket);
         }
-        Assert.fail("Unhandled packet: " + expectedPacket);
     }
 
     // ------------------- Action Service --------------------
@@ -334,6 +350,8 @@ public class BaseTestService {
         finishContainerBaseItemType();
         // Terrain
         setupMinimalTerrain();
+        // Setup territory
+        setupNoobTerritory();
         // Level
         setupLevels();
         // Market
@@ -537,19 +555,34 @@ public class BaseTestService {
     // ------------------- Setup Levels --------------------
 
     protected void setupLevels() throws LevelActivationException {
+        setupResurrection();
         setupSimulationLevel();
         setupCreateBaseRealGameLevel();
         setupBuildFactoryRealGameLevel();
+        setupSimulationLevel4();
+        setupBuildRealGameLevel5();
         userGuidanceService.activateLevels();
+    }
+
+    private void setupResurrection() {
+        DbResurrection dbResurrection = userGuidanceService.getCrudRootDbResurrection().createDbChild();
+        dbResurrection.setDbTerritory(territoryService.getDbTerritoryCrudServiceHelper().readDbChild(TEST_NOOB_TERRITORY_ID));
+        dbResurrection.setMoney(1000);
+        dbResurrection.setName(TEST_NOOB_RESURRECTION);
+        dbResurrection.setStartItemFreeRange(100);
+        dbResurrection.setStartItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
+        userGuidanceService.getCrudRootDbResurrection().updateDbChild(dbResurrection);
+        TEST_NOOB_RESURRECTION_ID = dbResurrection.getId();
     }
 
     private void setupCreateBaseRealGameLevel() {
         DbRealGameLevel dbRealGameLevel = (DbRealGameLevel) userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbRealGameLevel.class);
         dbRealGameLevel.setName(TEST_LEVEL_2_REAL);
+        dbRealGameLevel.setDbResurrection(userGuidanceService.getCrudRootDbResurrection().readDbChild(TEST_NOOB_RESURRECTION_ID));
         // Create Base
         dbRealGameLevel.setCreateRealBase(true);
         dbRealGameLevel.setStartItemType((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID));
-        dbRealGameLevel.setStartRectangle(new Rectangle(0, 0, 10000, 10000));
+        dbRealGameLevel.setStartTerritory(territoryService.getDbTerritoryCrudServiceHelper().readDbChild(TEST_NOOB_TERRITORY_ID));
         dbRealGameLevel.setStartItemFreeRange(300);
         // Rewards
         dbRealGameLevel.setDeltaMoney(1000);
@@ -613,6 +646,25 @@ public class BaseTestService {
 
         userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbRealGameLevel);
         TEST_LEVEL_3_REAL_ID = dbRealGameLevel.getId();
+    }
+
+    private void setupBuildRealGameLevel5() throws LevelActivationException {
+        // Condition
+        DbConditionConfig dbConditionConfig = new DbConditionConfig();
+        dbConditionConfig.setConditionTrigger(ConditionTrigger.SYNC_ITEM_BUILT);
+        DbSyncItemTypeComparisonConfig dbSyncItemTypeComparisonConfig = new DbSyncItemTypeComparisonConfig();
+        DbComparisonItemCount dbComparisonItemCount = dbSyncItemTypeComparisonConfig.getCrudDbComparisonItemCount().createDbChild();
+        dbComparisonItemCount.setItemType(itemService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
+        dbComparisonItemCount.setCount(1);
+        dbConditionConfig.setDbAbstractComparisonConfig(dbSyncItemTypeComparisonConfig);
+        // Create
+        DbRealGameLevel dbRealGameLevel = setupGameLevel(TEST_LEVEL_5_REAL, dbConditionConfig);
+        dbRealGameLevel.setDbResurrection(userGuidanceService.getCrudRootDbResurrection().readDbChild(TEST_NOOB_RESURRECTION_ID));
+        // Rewards
+        dbRealGameLevel.setDeltaMoney(100);
+        dbRealGameLevel.setDeltaXp(50);
+        userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbRealGameLevel);
+        TEST_LEVEL_5_REAL_ID = dbRealGameLevel.getId();
     }
 
     protected DbRealGameLevel setupGameLevel(String name, DbConditionConfig dbConditionConfig) throws LevelActivationException {
@@ -701,6 +753,31 @@ public class BaseTestService {
         return dbSimulationLevel;
     }
 
+    private void setupSimulationLevel4() {
+        DbSimulationLevel dbSimulationLevel = (DbSimulationLevel) userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbSimulationLevel.class);
+        dbSimulationLevel.setName(TEST_LEVEL_4_SIMULATED);
+        // Tutorial
+        DbTutorialConfig dbTutorialConfig = tutorialService.getDbTutorialCrudRootServiceHelper().createDbChild();
+        dbSimulationLevel.setDbTutorialConfig(dbTutorialConfig);
+        // Terrain
+        DbTerrainSetting dbTerrainSetting = setupMinimalSimulatedTerrain();
+        dbTutorialConfig.setDbTerrainSetting(dbTerrainSetting);
+        // Task
+        DbTaskConfig dbTaskConfig = dbTutorialConfig.getDbTaskConfigCrudChildServiceHelper().createDbChild();
+        // Step
+        DbStepConfig dbStepConfig = dbTaskConfig.getStepConfigCrudServiceHelper().createDbChild();
+        // Condition
+        DbConditionConfig dbConditionConfig = new DbConditionConfig();
+        dbConditionConfig.setConditionTrigger(ConditionTrigger.MONEY_INCREASED);
+        DbCountComparisonConfig dbCountComparisonConfig = new DbCountComparisonConfig();
+        dbCountComparisonConfig.setCount(100);
+        dbConditionConfig.setDbAbstractComparisonConfig(dbCountComparisonConfig);
+        dbStepConfig.setConditionConfig(dbConditionConfig);
+
+        userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbSimulationLevel);
+        TEST_LEVEL_4_SIMULATED_ID = dbSimulationLevel.getId();
+    }
+
     protected DbSimulationLevel setupItemTypePositionSimulationLevel(String name) throws LevelActivationException {
         DbSimulationLevel dbSimulationLevel = (DbSimulationLevel) userGuidanceService.getDbLevelCrudServiceHelper().createDbChild(DbSimulationLevel.class);
         dbSimulationLevel.setName(name);
@@ -766,7 +843,14 @@ public class BaseTestService {
 
     // ------------------- Territory Config --------------------
 
-    protected DbTerritory setupTerritory(String name, int[] allowedItems, Rectangle... regions) {
+    protected void setupNoobTerritory() {
+        DbTerritory dbTerritory = setupTerritory(TEST_NOOB_TERRITORY,
+                new int[]{TEST_START_BUILDER_ITEM_ID, TEST_ATTACK_ITEM_ID, TEST_CONTAINER_ITEM_ID, TEST_FACTORY_ITEM_ID},
+                new Rectangle(50, 50, 50, 50));
+        TEST_NOOB_TERRITORY_ID = dbTerritory.getId();
+    }
+
+    protected DbTerritory setupTerritory(String name, int[] allowedItems, Rectangle... tileRegions) {
         DbTerritory dbTerritory = territoryService.getDbTerritoryCrudServiceHelper().createDbChild();
         dbTerritory.setName(name);
         if (allowedItems != null) {
@@ -774,7 +858,7 @@ public class BaseTestService {
                 dbTerritory.setItemAllowed(itemService.getDbBaseItemType(allowedItem), true);
             }
         }
-        territoryService.saveTerritory(dbTerritory.getId(), Arrays.asList(regions));
+        territoryService.saveTerritory(dbTerritory.getId(), Arrays.asList(tileRegions));
         territoryService.activate();
         return dbTerritory;
     }
