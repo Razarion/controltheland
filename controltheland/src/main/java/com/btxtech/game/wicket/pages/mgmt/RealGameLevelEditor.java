@@ -21,12 +21,12 @@ import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.wicket.pages.mgmt.condition.ConditionConfigPanel;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
-import com.btxtech.game.wicket.uiservices.RectanglePanel;
+import com.btxtech.game.wicket.uiservices.ResurrectionPanel;
+import com.btxtech.game.wicket.uiservices.TerritoryPanel;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
  * User: beat
@@ -50,7 +50,7 @@ public class RealGameLevelEditor extends Panel {
         // Create Base
         add(new CheckBox("createRealBase"));
         add(new BaseItemTypePanel("startItemType"));
-        add(new RectanglePanel("startRectangle"));
+        add(new TerritoryPanel("startTerritory"));
         add(new TextField("startItemFreeRange"));
 
         // Limitations
@@ -67,7 +67,7 @@ public class RealGameLevelEditor extends Panel {
 
             @Override
             protected RuServiceHelper<DbAbstractLevel> getRuServiceHelper() {
-                return ((DbLevelEditor)RealGameLevelEditor.this.getParent().getParent()).getRuServiceHelper();
+                return ((DbLevelEditor) RealGameLevelEditor.this.getParent().getParent()).getRuServiceHelper();
             }
 
             @Override
@@ -81,5 +81,6 @@ public class RealGameLevelEditor extends Panel {
             }
         };
 
+        add(new ResurrectionPanel("dbResurrection"));
     }
 }

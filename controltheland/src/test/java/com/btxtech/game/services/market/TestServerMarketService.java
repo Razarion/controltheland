@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
+import com.btxtech.game.services.BaseTestService;
 import com.btxtech.game.services.base.TestBaseService;
 import com.btxtech.game.services.user.UserService;
 import org.junit.Assert;
@@ -16,7 +17,7 @@ import org.springframework.test.annotation.DirtiesContext;
  * Date: 07.04.2011
  * Time: 14:32:44
  */
-public class TestServerMarketService extends TestBaseService {
+public class TestServerMarketService extends BaseTestService {
     @Autowired
     private ServerMarketService serverMarketService;
     @Autowired
@@ -34,7 +35,7 @@ public class TestServerMarketService extends TestBaseService {
         movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
         SimpleBase simpleBase = getMyBase(); // Get connection
         Thread.sleep(100); // Wait for packet to be sent
-        clearPackets(simpleBase);
+        clearPackets();
         Assert.assertEquals(0, userService.getUserState().getUserItemTypeAccess().getXp());
         setupXpSettings(100, 1.0);
         Thread.sleep(120);
@@ -44,7 +45,7 @@ public class TestServerMarketService extends TestBaseService {
 
         XpBalancePacket xpBalancePacket = new XpBalancePacket();
         xpBalancePacket.setXp(1);
-        assertPackagesIgnoreSyncItemInfoAndClear(simpleBase, xpBalancePacket);
+        assertPackagesIgnoreSyncItemInfoAndClear(xpBalancePacket);
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

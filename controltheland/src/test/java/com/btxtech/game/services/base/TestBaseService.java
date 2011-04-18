@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
+import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -41,13 +42,13 @@ public class TestBaseService extends BaseTestService {
         movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
         SimpleBase simpleBase = getMyBase(); // Setup connection
         String color = movableService.getFreeColors(0, 1).get(0);
-        clearPackets(simpleBase);
+        clearPackets();
         movableService.setBaseColor(color);
 
         BaseChangedPacket baseChangedPacket = new BaseChangedPacket();
         baseChangedPacket.setType(BaseChangedPacket.Type.CHANGED);
         baseChangedPacket.setBaseAttributes(new BaseAttributes(simpleBase, "U1", color, false));
-        assertPackagesIgnoreSyncItemInfoAndClear(simpleBase, baseChangedPacket);
+        assertPackagesIgnoreSyncItemInfoAndClear(baseChangedPacket);
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -76,7 +77,7 @@ public class TestBaseService extends BaseTestService {
         // $999
         AccountBalancePacket accountBalancePacket = new AccountBalancePacket();
         accountBalancePacket.setAccountBalance(998.5);
-        assertPackagesIgnoreSyncItemInfoAndClear(simpleBase, accountBalancePacket);
+        assertPackagesIgnoreSyncItemInfoAndClear(accountBalancePacket);
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -94,16 +95,16 @@ public class TestBaseService extends BaseTestService {
         userService.login("U1", "test");
         movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
         SimpleBase simpleBase = getMyBase(); // Setup connection
-        String color = baseService.getBaseHtmlColor(simpleBase);
         Id id = getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID);
-        clearPackets(simpleBase);
+        clearPackets();
         movableService.sellItem(id);
 
-        BaseChangedPacket baseChangedPacket = new BaseChangedPacket();
-        baseChangedPacket.setType(BaseChangedPacket.Type.REMOVED);
-        baseChangedPacket.setBaseAttributes(new BaseAttributes(simpleBase, "U1", color, false));
-        assertPackagesIgnoreSyncItemInfoAndClear(simpleBase, baseChangedPacket);
-
+        try {
+            movableService.getSyncInfo();
+            Assert.fail("NoConnectionException expected");
+        } catch (NoConnectionException e) {
+            // OK
+        }
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

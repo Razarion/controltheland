@@ -21,8 +21,10 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainS
 import com.btxtech.game.jsre.common.gameengine.services.territory.AbstractTerritoryService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: beat
@@ -30,15 +32,27 @@ import java.util.Collections;
  * Time: 13:37:42
  */
 public abstract class AbstractTerritoryServiceImpl implements AbstractTerritoryService {
-    private Collection<Territory> territories = Collections.emptyList();
+    private Map<Integer, Territory> territories = new HashMap<Integer, Territory>();
 
     @Override
     public Collection<Territory> getTerritories() {
-        return territories;
+        return new ArrayList<Territory>(territories.values());
+    }
+
+    @Override
+    public Territory getTerritory(int id) {
+        Territory territory = territories.get(id);
+        if (territory == null) {
+            throw new IllegalArgumentException("No territory for id: " + id);
+        }
+        return territory;
     }
 
     public void setTerritories(Collection<Territory> territories) {
-        this.territories = territories;
+        this.territories.clear();
+        for (Territory territory : territories) {
+            this.territories.put(territory.getId(), territory);
+        }
     }
 
     public Territory getTerritoryTile(int tileX, int tileY) {
@@ -46,7 +60,7 @@ public abstract class AbstractTerritoryServiceImpl implements AbstractTerritoryS
     }
 
     public Territory getTerritoryTile(Index tile) {
-        for (Territory territory : territories) {
+        for (Territory territory : territories.values()) {
             if (territory.contains(tile)) {
                 return territory;
             }
@@ -114,10 +128,7 @@ public abstract class AbstractTerritoryServiceImpl implements AbstractTerritoryS
     @Override
     public boolean isTerritory(int territoryId, Index absPos) {
         Territory territory = getTerritory(absPos);
-        if (territory == null) {
-            return false;
-        }
-        return territory.compareId(territoryId);
+        return territory != null && territory.compareId(territoryId);
     }
 
     protected abstract AbstractTerrainService getTerrainService();

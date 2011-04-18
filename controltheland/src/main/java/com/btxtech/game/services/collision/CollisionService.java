@@ -15,6 +15,7 @@ package com.btxtech.game.services.collision;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
@@ -32,6 +33,8 @@ public interface CollisionService extends CommonCollisionService {
     Map<TerrainType, List<PassableRectangle>> getPassableRectangles();
 
     Index getFreeRandomPosition(ItemType itemType, Rectangle region, int itemFreeRange, boolean botFree);
+
+    Index getFreeRandomPosition(ItemType itemType, Territory territory, int itemFreeRange, boolean botFree);
 
     Index getFreeSyncMovableRandomPositionIfTaken(SyncItem syncItem, int targetMaxRange);
 

@@ -49,7 +49,7 @@ public interface MovableService extends RemoteService {
 
     void sendCommands(List<BaseCommand> baseCommands);
 
-    Collection<Packet> getSyncInfo(SimpleBase simpleBase) throws NotYourBaseException, NoConnectionException;
+    Collection<Packet> getSyncInfo() throws NoConnectionException;
 
     Collection<SyncItemInfo> getAllSyncInfo();
 

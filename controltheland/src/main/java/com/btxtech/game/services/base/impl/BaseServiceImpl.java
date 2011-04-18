@@ -23,6 +23,7 @@ import com.btxtech.game.jsre.common.EnergyPacket;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -49,6 +50,7 @@ import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.energy.impl.BaseEnergy;
 import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.mgmt.MgmtService;
@@ -134,18 +136,17 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public Base createNewBase(UserState userState) throws AlreadyUsedException, NoSuchItemTypeException, GameFullException, ItemLimitExceededException, HouseSpaceExceededException {
+    public Base createNewBase(UserState userState, DbBaseItemType dbBaseItemType, Territory territory, int startItemFreeRange) throws AlreadyUsedException, NoSuchItemTypeException, GameFullException, ItemLimitExceededException, HouseSpaceExceededException {
         synchronized (bases) {
             List<BaseColor> baseColors = getFreeBaseColors(0, 1);
             if (baseColors.isEmpty()) {
                 throw new GameFullException();
             }
-            return createNewBase(baseColors.get(0).getHtmlColor(), userState);
+            return createNewBase(baseColors.get(0).getHtmlColor(), userState, dbBaseItemType, territory, startItemFreeRange);
         }
     }
 
-    private Base createNewBase(String baseColor, UserState userState) throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
-        DbRealGameLevel dbRealGameLevel = (DbRealGameLevel) userState.getCurrentAbstractLevel();
+    private Base createNewBase(String baseColor, UserState userState, DbBaseItemType dbBaseItemType, Territory territory, int startItemFreeRange) throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
         Base base;
         synchronized (bases) {
             lastBaseId++;
@@ -155,9 +156,9 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             bases.put(base.getSimpleBase(), base);
         }
         historyService.addBaseStartEntry(base.getSimpleBase());
-        BaseItemType startItem = (BaseItemType) itemService.getItemType(dbRealGameLevel.getStartItemType());
+        BaseItemType startItem = (BaseItemType) itemService.getItemType(dbBaseItemType);
         sendBaseChangedPacket(BaseChangedPacket.Type.CREATED, base.getSimpleBase());
-        Index startPoint = collisionService.getFreeRandomPosition(startItem, dbRealGameLevel.getStartRectangle(), dbRealGameLevel.getStartItemFreeRange(), true);
+        Index startPoint = collisionService.getFreeRandomPosition(startItem, territory, startItemFreeRange, true);
         SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(startItem, startPoint, null, base.getSimpleBase(), 0);
         syncBaseItem.setBuildup(1.0);
         if (syncBaseItem.hasSyncTurnable()) {
@@ -173,11 +174,22 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         if (userState == null) {
             throw new IllegalStateException("No UserState available.");
         }
+        boolean sendResurrectionMessage = false;
         Base base = userState.getBase();
+        if (base == null) {
+            userGuidanceService.executeResurrection(userState);
+            sendResurrectionMessage = true;
+        }
+
+        base = userState.getBase();
         if (base == null) {
             throw new IllegalStateException("No Base in user UserState: " + userState);
         }
+
         connectionService.createConnection(base);
+        if (sendResurrectionMessage) {
+            userGuidanceService.sendResurrectionMessage(base.getSimpleBase());
+        }
     }
 
     @Override
@@ -192,13 +204,14 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             createBase(base.getSimpleBase(), name, base.getBaseHtmlColor(), false);
             log.info("Bot Base created: " + base);
             bases.put(base.getSimpleBase(), base);
-            sendBaseChangedPacket(BaseChangedPacket.Type.CREATED, base.getSimpleBase());            
+            sendBaseChangedPacket(BaseChangedPacket.Type.CREATED, base.getSimpleBase());
             return base;
         }
     }
 
     private void deleteBase(Base base) {
         log.info("Base deleted: " + base);
+        boolean isBot = isBot(base.getSimpleBase());
         synchronized (bases) {
             if (bases.remove(base.getSimpleBase()) == null) {
                 throw new IllegalArgumentException("Base does not exist: " + getBaseName(base.getSimpleBase()));
@@ -207,7 +220,9 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             removeBase(base.getSimpleBase());
             serverEnergyService.onBaseKilled(base);
         }
-        serverConditionService.onBaseDeleted(base.getSimpleBase());
+        if (!isBot) {
+            userGuidanceService.onBaseDeleted(base.getSimpleBase(), base.getUserState());
+        }
     }
 
     @Override
@@ -374,9 +389,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
 
     private void sendDefeatedMessage(SyncBaseItem victim, SimpleBase actor) {
         Message message = new Message();
-        message.setMessage("You have been defeated by " + getBaseName(actor));
-        connectionService.sendPacket(victim.getBase(), message);
-        message = new Message();
         message.setMessage("You defeated " + getBaseName(victim.getBase()));
         connectionService.sendPacket(actor, message);
     }

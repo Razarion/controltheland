@@ -14,15 +14,13 @@
 package com.btxtech.game.services.connection;
 
 import com.btxtech.game.jsre.common.Packet;
-import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.services.base.Base;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * User: beat
@@ -37,7 +35,7 @@ public class Connection implements Serializable {
     private String sessionId;
     private int noTickCount = 0;
     private boolean closed = false;
-    private Log log = LogFactory.getLog(Connection.class);
+    //private Log log = LogFactory.getLog(Connection.class);
 
     public Connection(String sessionId) {
         this.sessionId = sessionId;
@@ -54,7 +52,7 @@ public class Connection implements Serializable {
     public Collection<Packet> getAndRemovePendingPackets() {
         tickCount++;
         HashSet<Packet> packets;
-        
+
         synchronized (pendingPackets) {
             packets = new HashSet<Packet>(pendingPackets);
             pendingPackets.clear();
@@ -111,9 +109,5 @@ public class Connection implements Serializable {
 
     public boolean isClosed() {
         return closed;
-    }
-
-    public boolean checkBase(SimpleBase simpleBase) {
-        return getBase().getSimpleBase().equals(simpleBase);
     }
 }

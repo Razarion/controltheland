@@ -51,7 +51,7 @@ public interface UserGuidanceService {
 
     List<DbAbstractLevel> getDbLevels();
 
-    void saveDbLevel(DbAbstractLevel dbAbstractLevel);
+    CrudRootServiceHelper<DbResurrection> getCrudRootDbResurrection();
 
     void activateLevels() throws LevelActivationException;
 
@@ -72,4 +72,10 @@ public interface UserGuidanceService {
     boolean isBaseItemTypeAllowedInLevel(DbBaseItemType itemType);
 
     DbAbstractLevel copyDbAbstractLevel(Serializable copyFromId);
+
+    void onBaseDeleted(SimpleBase simpleBase, UserState userState);
+
+    void executeResurrection(UserState userState);
+
+    void sendResurrectionMessage(SimpleBase simpleBase);
 }

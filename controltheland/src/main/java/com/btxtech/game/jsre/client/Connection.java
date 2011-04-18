@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
+import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.control.StartupProgressListener;
 import com.btxtech.game.jsre.client.control.StartupSeq;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
@@ -32,14 +33,9 @@ import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
 import com.btxtech.game.jsre.common.EnergyPacket;
-import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
-import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
-import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
-import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
-import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeAccessSyncInfo;
@@ -48,6 +44,11 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.HouseSpacePacket;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
+import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
+import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
+import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -161,7 +162,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
         if (movableServiceAsync == null) {
             return;
         }
-        movableServiceAsync.getSyncInfo(ClientBase.getInstance().getSimpleBase(), new AsyncCallback<Collection<Packet>>() {
+        movableServiceAsync.getSyncInfo(new AsyncCallback<Collection<Packet>>() {
             @Override
             public void onFailure(Throwable throwable) {
                 handleDisconnection(throwable);
@@ -332,12 +333,13 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
     }
 
     private void handleDisconnection(Throwable throwable) {
-        movableServiceAsync = null;
         if (throwable instanceof NotYourBaseException) {
+            movableServiceAsync = null;
             DialogManager.showDialog(new MessageDialog("Not your Base: Most likely you start another<br />base in another browser window"), DialogManager.Type.PROMPTLY);
         } else if (throwable instanceof NoConnectionException) {
-            DialogManager.showDialog(new MessageDialog("No Connection: Most likely you start another<br />base in another browser window: " + throwable.getMessage()), DialogManager.Type.PROMPTLY);
+            ClientServices.getInstance().getClientRunner().start(GameStartupSeq.WARM_REAL);
         } else {
+            movableServiceAsync = null;
             GwtCommon.handleException(throwable);
         }
     }

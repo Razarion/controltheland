@@ -14,9 +14,11 @@
 package com.btxtech.game.services.utg.impl;
 
 import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
@@ -28,13 +30,14 @@ import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.market.ServerMarketService;
+import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.tutorial.TutorialService;
-import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbAbstractLevel;
 import com.btxtech.game.services.utg.DbItemTypeLimitation;
 import com.btxtech.game.services.utg.DbRealGameLevel;
+import com.btxtech.game.services.utg.DbResurrection;
 import com.btxtech.game.services.utg.DbSimulationLevel;
 import com.btxtech.game.services.utg.LevelActivationException;
 import com.btxtech.game.services.utg.ServerConditionService;
@@ -48,7 +51,6 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateTemplate;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -92,6 +94,10 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     private HistoryService historyService;
     @Autowired
     private CrudRootServiceHelper<DbAbstractLevel> crudServiceHelperHibernate;
+    @Autowired
+    private CrudRootServiceHelper<DbResurrection> crudRootDbResurrection;
+    @Autowired
+    private TerritoryService territoryService;
     private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
     private List<DbAbstractLevel> dbAbstractLevels = new ArrayList<DbAbstractLevel>();
@@ -99,6 +105,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
 
     @PostConstruct
     public void init() {
+        crudRootDbResurrection.init(DbResurrection.class);
         crudServiceHelperHibernate.init(DbAbstractLevel.class, "orderIndex");
         serverConditionService.setConditionServiceListener(this);
     }
@@ -115,6 +122,50 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
         hibernateTemplate = new HibernateTemplate(sessionFactory);
+    }
+
+    @Override
+    public void onBaseDeleted(SimpleBase simpleBase, UserState userState) {
+        serverConditionService.onBaseDeleted(simpleBase);
+
+        if (connectionService.hasConnection(simpleBase)) {
+            connectionService.closeConnection(simpleBase);
+        }
+    }
+
+    @Override
+    public void executeResurrection(UserState userState) {
+        DbRealGameLevel lastRealGameLevel = toHighestPossibleRealGameLevel(userState.getCurrentAbstractLevel());
+        DbResurrection dbResurrection = lastRealGameLevel.getDbResurrection();
+        if (dbResurrection == null) {
+            throw new IllegalStateException("No DbResurrection found on DbRealGameLevel: " + lastRealGameLevel);
+        }
+
+        Territory territory = territoryService.getTerritory(dbResurrection.getDbTerritory());
+
+        try {
+            baseService.createNewBase(userState, dbResurrection.getStartItemType(), territory, dbResurrection.getStartItemFreeRange());
+        } catch (Exception e) {
+            log.error("Can not create base for user: " + userState, e);
+        }
+
+        Base base = baseService.getBase(userState);
+        base.setAccountBalance(dbResurrection.getMoney());
+        baseService.sendAccountBaseUpdate(base);
+
+        historyService.addResurrectionEntry(userState, dbResurrection, base.getSimpleBase());
+        log.debug("User: " + userState + " will be resurrected: " + dbResurrection);
+
+        // Prepare next level
+        activateCondition(userState, userState.getCurrentAbstractLevel());
+
+    }
+
+    @Override
+    public void sendResurrectionMessage(SimpleBase simpleBase) {
+        Message message = new Message();
+        message.setMessage("You lost your base. A new base was created.");
+        connectionService.sendPacket(simpleBase, message);
     }
 
     @Override
@@ -153,13 +204,17 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
             DbRealGameLevel dbRealGameLevel = (DbRealGameLevel) dbNextAbstractLevel;
             if (dbRealGameLevel.isCreateRealBase()) {
                 try {
-                    baseService.createNewBase(userState);
+                    Territory territory = territoryService.getTerritory(dbRealGameLevel.getStartTerritory());
+                    baseService.createNewBase(userState, dbRealGameLevel.getStartItemType(), territory, dbRealGameLevel.getStartItemFreeRange());
                 } catch (Exception e) {
                     log.error("Can not create base for user: " + userState, e);
                 }
             }
             Base base = baseService.getBase(userState);
-            handleRewards(base, dbRealGameLevel);
+            if (base != null) {
+                // Offline and base was killed -> No rewards
+                handleRewards(base, dbRealGameLevel);
+            }
         }
 
         // Prepare next level
@@ -308,13 +363,6 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     }
 
     @Override
-    @Transactional
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void saveDbLevel(DbAbstractLevel dbAbstractLevel) {
-        crudServiceHelperHibernate.updateDbChild(dbAbstractLevel);
-    }
-
-    @Override
     public CrudRootServiceHelper<DbAbstractLevel> getDbLevelCrudServiceHelper() {
         return crudServiceHelperHibernate;
     }
@@ -369,4 +417,8 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         return crudServiceHelperHibernate.copyDbChild(copyFromId);
     }
 
+    @Override
+    public CrudRootServiceHelper<DbResurrection> getCrudRootDbResurrection() {
+        return crudRootDbResurrection;
+    }
 }

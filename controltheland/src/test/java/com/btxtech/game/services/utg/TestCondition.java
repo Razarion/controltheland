@@ -46,7 +46,7 @@ public class TestCondition extends BaseTestService {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Id id = ProceedToTerritoryLevel(dbRealGameLevel);
+        Id id = proceedToTerritoryLevel(dbRealGameLevel);
 
         sendBuildCommand(id, new Index(2000, 2000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -66,7 +66,7 @@ public class TestCondition extends BaseTestService {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Id id = ProceedToTerritoryLevel(dbRealGameLevel);
+        Id id = proceedToTerritoryLevel(dbRealGameLevel);
 
         sendBuildCommand(id, new Index(500, 500), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -87,7 +87,7 @@ public class TestCondition extends BaseTestService {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Id id = ProceedToTerritoryLevel(dbRealGameLevel);
+        Id id = proceedToTerritoryLevel(dbRealGameLevel);
 
         sendBuildCommand(id, new Index(100, 3000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -107,7 +107,7 @@ public class TestCondition extends BaseTestService {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Id id = ProceedToTerritoryLevel(dbRealGameLevel);
+        Id id = proceedToTerritoryLevel(dbRealGameLevel);
 
         sendBuildCommand(id, new Index(2000, 2000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -136,7 +136,7 @@ public class TestCondition extends BaseTestService {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Id id = ProceedToTerritoryLevel(dbRealGameLevel);
+        Id id = proceedToTerritoryLevel(dbRealGameLevel);
 
         sendBuildCommand(id, new Index(2000, 2000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -159,7 +159,7 @@ public class TestCondition extends BaseTestService {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Id id = ProceedToTerritoryLevel(dbRealGameLevel);
+        Id id = proceedToTerritoryLevel(dbRealGameLevel);
 
         sendBuildCommand(id, new Index(2000, 2000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -186,7 +186,7 @@ public class TestCondition extends BaseTestService {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Id id = ProceedToTerritoryLevel(dbRealGameLevel);
+        Id id = proceedToTerritoryLevel(dbRealGameLevel);
 
         sendBuildCommand(id, new Index(2000, 2000), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -213,7 +213,7 @@ public class TestCondition extends BaseTestService {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Id id = ProceedToTerritoryLevel(dbRealGameLevel);
+        Id id = proceedToTerritoryLevel(dbRealGameLevel);
 
         sendBuildCommand(id, new Index(200, 200), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
@@ -242,7 +242,7 @@ public class TestCondition extends BaseTestService {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Id bulldozer = ProceedToTerritoryLevel(dbRealGameLevel);
+        Id bulldozer = proceedToTerritoryLevel(dbRealGameLevel);
         sendBuildCommand(bulldozer, new Index(200, 200), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         sendBuildCommand(bulldozer, new Index(400, 400), TEST_FACTORY_ITEM_ID);
@@ -275,7 +275,7 @@ public class TestCondition extends BaseTestService {
         endHttpSession();
     }
 
-    private Id ProceedToTerritoryLevel(DbRealGameLevel dbRealGameLevel) {
+    private Id proceedToTerritoryLevel(DbRealGameLevel dbRealGameLevel) {
         // 1. Level
         movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
         // 2. Level

@@ -16,6 +16,7 @@ package com.btxtech.game.services.base;
 import com.btxtech.game.jsre.client.AlreadyUsedException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
@@ -24,6 +25,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.btxtech.game.services.energy.impl.BaseEnergy;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.user.UserState;
 
@@ -58,7 +60,7 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     Base getBase();
 
-    Base createNewBase(UserState userState) throws AlreadyUsedException, NoSuchItemTypeException, GameFullException, ItemLimitExceededException, HouseSpaceExceededException;
+    Base createNewBase(UserState userState, DbBaseItemType dbBaseItemType, Territory territory, int startItemFreeRange) throws AlreadyUsedException, NoSuchItemTypeException, GameFullException, ItemLimitExceededException, HouseSpaceExceededException;
 
     Base createBotBase(UserState userState, String name) throws GameFullException;
 
@@ -97,4 +99,6 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
     Base getBase(UserState userState);
 
     void onSessionTimedOut(UserState userState);
+
+    //void sendResurrectionPacket(SimpleBase oldBase, SimpleBase newBase);
 }

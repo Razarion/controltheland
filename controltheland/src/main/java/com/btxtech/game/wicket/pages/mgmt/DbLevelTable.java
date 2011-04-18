@@ -16,10 +16,13 @@ package com.btxtech.game.wicket.pages.mgmt;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.utg.DbAbstractLevel;
 import com.btxtech.game.services.utg.DbRealGameLevel;
+import com.btxtech.game.services.utg.DbResurrection;
 import com.btxtech.game.services.utg.DbSimulationLevel;
 import com.btxtech.game.services.utg.LevelActivationException;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
+import com.btxtech.game.wicket.uiservices.TerritoryPanel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -132,6 +135,25 @@ public class DbLevelTable extends MgmtWebPage {
                 }
             }
         });
+
+       new CrudRootTableHelper<DbResurrection>("resurrections", "saveResurrection", "createResurrection", false, form, false) {
+
+            @Override
+            protected CrudRootServiceHelper<DbResurrection> getCrudRootServiceHelperImpl() {
+                return userGuidanceService.getCrudRootDbResurrection();
+            }
+
+            @Override
+            protected void extendedPopulateItem(final Item<DbResurrection> item) {
+                super.extendedPopulateItem(item);
+                item.add(new Label("id"));
+                item.add(new BaseItemTypePanel("startItemType"));
+                item.add(new TerritoryPanel("dbTerritory"));
+                item.add(new TextField("startItemFreeRange"));
+                item.add(new TextField("money"));
+            }
+        };
+
 
     }
 

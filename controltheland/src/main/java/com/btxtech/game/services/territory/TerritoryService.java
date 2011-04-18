@@ -31,4 +31,6 @@ public interface TerritoryService extends AbstractTerritoryService {
     void saveTerritory(int territoryId, Collection<Rectangle> territoryTileRegions);
 
     void activate();
+
+    Territory getTerritory(DbTerritory dbTerritory);
 }
