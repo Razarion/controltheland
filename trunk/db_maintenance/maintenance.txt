@@ -135,3 +135,8 @@ SELECT count(*) FROM TERRAIN_IMAGE_POSITION group by tileX, tileY, dbTerrainSett
 INSERT INTO USER_SECURITY_ROLE VALUE('Markus','ROLE_ADMINISTRATOR')
 
 ALTER TABLE `gamedb`.`TUTORIAL_TASK_ALLOWED_ITEMS` CHANGE COLUMN `count` `theCount` INT(11) NOT NULL;
+
+------------------
+Tracking
+ALTER TABLE `gamedb`.`TRACKER_EVENT_START` DROP COLUMN `xResolution`,
+ DROP COLUMN `yResolution`;
