@@ -14,6 +14,7 @@
 package com.btxtech.game.wicket.pages.cms;
 
 import com.btxtech.game.services.cms.CmsService;
+import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.WebCommon;
@@ -22,13 +23,13 @@ import com.btxtech.game.wicket.pages.basepage.BasePage;
 import com.btxtech.game.wicket.pages.info.Info;
 import com.btxtech.game.wicket.pages.user.LoggedinBox;
 import com.btxtech.game.wicket.pages.user.LoginBox;
+import com.btxtech.game.wicket.pages.user.NewUser;
 import com.btxtech.game.wicket.uiservices.CmsImageResource;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -53,11 +54,10 @@ public class Home extends WebPage implements IHeaderContributor {
         if (WebCommon.getCookieId(cookies) == null) {
             WebCommon.generateAndSetCookieId(((WebResponse) getRequestCycle().getResponse()).getHttpServletResponse());
         }
-        add(new LoggedinBox("loggedinBox"));
-        add(new LoginBox("loginBox"));
+        add(new LoginBox("loginBox", false));
 
-        add(new Label("style", new PropertyModel(cmsService.getHomeContentStyleDTO(), "style")));
-        add(new Label("text", new PropertyModel(cmsService.getHomeContentStyleDTO(), "text")).setEscapeModelStrings(false));
+        add(new Label("style", cmsService.getDbCmsHomeLayout().getCssString()));
+        add(new Label("text", cmsService.getDbCmsHomeText().getText()).setEscapeModelStrings(false));
 
         BookmarkablePageLink<WebPage> startLink = new BookmarkablePageLink<WebPage>("startLink", Game.class);
         add(startLink);
@@ -66,6 +66,11 @@ public class Home extends WebPage implements IHeaderContributor {
         BookmarkablePageLink<WebPage> infoLink = new BookmarkablePageLink<WebPage>("infoLink", Info.class);
         add(infoLink);
         infoLink.add(CmsImageResource.createImage("infoImage", CmsImageResource.ImageId.INFO));
+
+        BookmarkablePageLink<WebPage> registerLink = new BookmarkablePageLink<WebPage>("registerLink", NewUser.class);
+        registerLink.setEnabled(!WebCommon.isAuthorized(SecurityRoles.ROLE_USER));
+        add(registerLink);
+        registerLink.add(CmsImageResource.createImage("registerImage", CmsImageResource.ImageId.REGISTER));
     }
 
     @Override

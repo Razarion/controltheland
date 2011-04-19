@@ -15,8 +15,6 @@ package com.btxtech.game.services.cms;
 
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 
-import java.util.List;
-
 /**
  * User: beat
  * Date: 06.07.2010
@@ -25,11 +23,9 @@ import java.util.List;
 public interface CmsService {
     void activateHome();
 
-    CmsContentStyleDTO getHomeContentStyleDTO();
+    DbCmsHomeText getDbCmsHomeText();
 
-    void saveDbCmsHomeText(DbCmsHomeText dbCmsHomeText);
-
-    void saveDbCmsHomeLayout(DbCmsHomeLayout dbCmsHomeLayout);
+    DbCmsHomeLayout getDbCmsHomeLayout();
 
     CrudRootServiceHelper<DbCmsHomeText> getCmsHomeTextCrudRootServiceHelper();
 

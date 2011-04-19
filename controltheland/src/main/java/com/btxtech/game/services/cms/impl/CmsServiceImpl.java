@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.cms.impl;
 
-import com.btxtech.game.services.cms.CmsContentStyleDTO;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbCmsHomeLayout;
 import com.btxtech.game.services.cms.DbCmsHomeText;
@@ -44,7 +43,6 @@ import java.util.List;
  */
 @Component("cmsServiceImpl")
 public class CmsServiceImpl implements CmsService {
-    private CmsContentStyleDTO homeContentStyleDTO = new CmsContentStyleDTO();
     private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(CmsServiceImpl.class);
     @Autowired
@@ -53,6 +51,8 @@ public class CmsServiceImpl implements CmsService {
     private CrudRootServiceHelper<DbCmsHomeText> dbCmsHomeTextCrudRootServiceHelper;
     @Autowired
     private CrudRootServiceHelper<DbCmsHomeLayout> dbCmsHomeLayoutCrudRootServiceHelper;
+    private DbCmsHomeText dbCmsHomeText;
+    private DbCmsHomeLayout dbCmsHomeLayout;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -88,7 +88,7 @@ public class CmsServiceImpl implements CmsService {
         if (dbCmsHomeTexts.size() > 1) {
             log.info("More the one active DbCmsHomeText found. Take first one.");
         }
-        DbCmsHomeText dbCmsHomeText = dbCmsHomeTexts.get(0);
+        dbCmsHomeText = dbCmsHomeTexts.get(0);
 
         @SuppressWarnings("unchecked")
         List<DbCmsHomeLayout> dbCmsHomeLayouts = hibernateTemplate.executeFind(new HibernateCallback() {
@@ -106,26 +106,7 @@ public class CmsServiceImpl implements CmsService {
         if (dbCmsHomeLayouts.size() > 1) {
             log.info("More the one active DbCmsHomeLayout found. Take first one.");
         }
-        DbCmsHomeLayout dbCmsHomeLayout = dbCmsHomeLayouts.get(0);
-
-        homeContentStyleDTO.update(dbCmsHomeText, dbCmsHomeLayout);
-    }
-
-    @Override
-    public CmsContentStyleDTO getHomeContentStyleDTO() {
-        return homeContentStyleDTO;
-    }
-
-    @Override
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void saveDbCmsHomeText(DbCmsHomeText dbCmsHomeText) {
-        hibernateTemplate.saveOrUpdate(dbCmsHomeText);
-    }
-
-    @Override
-    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    public void saveDbCmsHomeLayout(DbCmsHomeLayout dbCmsHomeLayout) {
-        hibernateTemplate.saveOrUpdate(dbCmsHomeLayout);
+        dbCmsHomeLayout = dbCmsHomeLayouts.get(0);
     }
 
     @Override
@@ -136,5 +117,15 @@ public class CmsServiceImpl implements CmsService {
     @Override
     public CrudRootServiceHelper<DbCmsHomeLayout> getCmsHomeLayoutCrudRootServiceHelper() {
         return dbCmsHomeLayoutCrudRootServiceHelper;
+    }
+
+    @Override
+    public DbCmsHomeText getDbCmsHomeText() {
+        return dbCmsHomeText;
+    }
+
+    @Override
+    public DbCmsHomeLayout getDbCmsHomeLayout() {
+        return dbCmsHomeLayout;
     }
 }

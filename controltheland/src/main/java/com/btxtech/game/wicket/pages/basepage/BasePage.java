@@ -61,7 +61,7 @@ public class BasePage extends WebPage implements IHeaderContributor {
     public BasePage(PageParameters pageParameters) {
         super(pageParameters);
         add(new LoggedinBox("loggedinBox"));
-        add(new LoginBox("loginBox"));
+        add(new LoginBox("loginBox", true));
 
         ArrayList<MenuItem> menuItems = new ArrayList<MenuItem>();
         menuItems.add(new MenuItem("home", Home.class, this, false));

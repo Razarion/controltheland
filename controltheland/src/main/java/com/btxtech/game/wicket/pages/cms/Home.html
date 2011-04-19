@@ -20,18 +20,19 @@
     <style type="text/css" wicket:id="style"></style>
 </head>
 <body>
-<div id="main">
-    <div id="absoluteContainer">
-        <div id="text" wicket:id="text"></div>
-        <a href="#" id="startLink" wicket:id="startLink"><img border="0" wicket:id="startImage" src="#" alt="start"></a>
-        <a href="#" id="infoLink" wicket:id="infoLink"><img border="0" wicket:id="infoImage" src="#" alt="info"></a>
+
+
+<div id="container">
+    <div id="cell">
+        <div id="content">
+            <div id="login"><span wicket:id="loginBox"></span></div>
+            <div id="text" wicket:id="text"></div>
+            <a href="#" id="play_btn" wicket:id="startLink"><img border="0" wicket:id="startImage" src="#" alt="Play now!"></a>
+            <a href="#" id="info_btn" wicket:id="infoLink"><img border="0" wicket:id="infoImage" src="#" alt="Info"></a>
+            <a href="#" id="register_btn" wicket:id="registerLink"><img border="0" wicket:id="registerImage" src="#" alt="Register"></a>
+        </div>
     </div>
 </div>
-
-<table width="100%"><tr align="center"><td>
-    <div wicket:id="loggedinBox">loggedinBox</div>
-    <div wicket:id="loginBox">loginBox</div>
-</td></tr></table>
 
 </body>
 </html>
