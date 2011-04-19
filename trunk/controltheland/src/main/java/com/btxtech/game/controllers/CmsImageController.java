@@ -14,16 +14,17 @@
 package com.btxtech.game.controllers;
 
 import com.btxtech.game.services.cms.CmsService;
-import java.io.IOException;
-import java.io.OutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * User: beat
@@ -34,6 +35,7 @@ import org.springframework.web.servlet.mvc.Controller;
 public class CmsImageController implements Controller {
     public static final String IMG_PARAMETER = "img";
     public static final String IMG_START = "start";
+    public static final String IMG_BORDER = "border";
     public static final String CONTROLLER = "/spring/cms";
     @Autowired
     private CmsService cmsService;
@@ -44,18 +46,20 @@ public class CmsImageController implements Controller {
     public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
         try {
             String imgParam = httpServletRequest.getParameter(IMG_PARAMETER);
+            byte[] img;
             if (IMG_START.equalsIgnoreCase(imgParam)) {
-                byte[] img = cmsService.getHomeContentStyleDTO().getDbCmsHomeLayout().getBgImage();
-                if (img != null) {
-                    httpServletResponse.setContentLength(img.length);
-                    httpServletResponse.setContentType(cmsService.getHomeContentStyleDTO().getDbCmsHomeLayout().getBgImageContentType());
-                    OutputStream out = httpServletResponse.getOutputStream();
-                    out.write(img);
-                    out.close();
-                }
+                img = cmsService.getDbCmsHomeLayout().getBgImage();
+                httpServletResponse.setContentType(cmsService.getDbCmsHomeLayout().getBgImageContentType());
+            } else if (IMG_BORDER.equalsIgnoreCase(imgParam)) {
+                img = cmsService.getDbCmsHomeLayout().getBorderImage();
+                httpServletResponse.setContentType(cmsService.getDbCmsHomeLayout().getBorderImageContentType());
             } else {
                 throw new IllegalArgumentException("Unknown image parameter: " + imgParam);
             }
+            httpServletResponse.setContentLength(img.length);
+            OutputStream out = httpServletResponse.getOutputStream();
+            out.write(img);
+            out.close();
         } catch (IOException e) {
             // Connection lost -> ignore
         } catch (Exception e) {

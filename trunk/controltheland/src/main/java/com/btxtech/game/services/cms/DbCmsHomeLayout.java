@@ -15,11 +15,11 @@ package com.btxtech.game.services.cms;
 
 import com.btxtech.game.services.common.CrudChild;
 
-import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.io.Serializable;
 
 /**
  * User: beat
@@ -32,39 +32,28 @@ public class DbCmsHomeLayout implements Serializable, CrudChild {
     @GeneratedValue
     private Integer id;
     private boolean isActive;
-    private String bodyBackgroundColor;
     @Column(length = 500000)
     private byte[] bgImage;
     private String bgImageContentType;
-    private int bgImageWidth;
-    private int bgImageHeight;
-    private String textColor;
-    private int textTop;
-    private int textLeft;
-    private int textRight;
-    private int startLinkLeft;
-    private int startLinkTop;
-    private int infoLinkLeft;
-    private int infoLinkTop;
     @Column(length = 500000)
     private byte[] startImage;
     private String startImageContentType;
     @Column(length = 500000)
     private byte[] infoImage;
     private String infoImageContentType;
+    @Column(length = 500000)
+    private byte[] registerImage;
+    private String registerImageContentType;
+    @Column(length = 500000)
+    private byte[] borderImage;
+    private String borderImageContentType;
     private String internalName;
+    @Column(length = 500000)
+    private String cssString;
 
     @Override
     public Serializable getId() {
         return id;
-    }
-
-    public String getBodyBackgroundColor() {
-        return bodyBackgroundColor;
-    }
-
-    public void setBodyBackgroundColor(String bodyBackgroundColor) {
-        this.bodyBackgroundColor = bodyBackgroundColor;
     }
 
     public byte[] getBgImage() {
@@ -81,86 +70,6 @@ public class DbCmsHomeLayout implements Serializable, CrudChild {
 
     public String getBgImageContentType() {
         return bgImageContentType;
-    }
-
-    public int getBgImageWidth() {
-        return bgImageWidth;
-    }
-
-    public void setBgImageWidth(int bgImageWidth) {
-        this.bgImageWidth = bgImageWidth;
-    }
-
-    public int getBgImageHeight() {
-        return bgImageHeight;
-    }
-
-    public void setBgImageHeight(int bgImageHeight) {
-        this.bgImageHeight = bgImageHeight;
-    }
-
-    public String getTextColor() {
-        return textColor;
-    }
-
-    public void setTextColor(String textColor) {
-        this.textColor = textColor;
-    }
-
-    public int getTextTop() {
-        return textTop;
-    }
-
-    public void setTextTop(int textTop) {
-        this.textTop = textTop;
-    }
-
-    public int getTextLeft() {
-        return textLeft;
-    }
-
-    public void setTextLeft(int textLeft) {
-        this.textLeft = textLeft;
-    }
-
-    public int getTextRight() {
-        return textRight;
-    }
-
-    public void setTextRight(int textRight) {
-        this.textRight = textRight;
-    }
-
-    public int getStartLinkLeft() {
-        return startLinkLeft;
-    }
-
-    public void setStartLinkLeft(int startLinkLeft) {
-        this.startLinkLeft = startLinkLeft;
-    }
-
-    public int getStartLinkTop() {
-        return startLinkTop;
-    }
-
-    public void setStartLinkTop(int startLinkTop) {
-        this.startLinkTop = startLinkTop;
-    }
-
-    public int getInfoLinkLeft() {
-        return infoLinkLeft;
-    }
-
-    public void setInfoLinkLeft(int infoLinkLeft) {
-        this.infoLinkLeft = infoLinkLeft;
-    }
-
-    public int getInfoLinkTop() {
-        return infoLinkTop;
-    }
-
-    public void setInfoLinkTop(int infoLinkTop) {
-        this.infoLinkTop = infoLinkTop;
     }
 
     public byte[] getStartImage() {
@@ -211,6 +120,54 @@ public class DbCmsHomeLayout implements Serializable, CrudChild {
         this.internalName = internalName;
     }
 
+    public byte[] getRegisterImage() {
+        return registerImage;
+    }
+
+    public void setRegisterImage(byte[] registerImage) {
+        this.registerImage = registerImage;
+    }
+
+    public String getRegisterImageContentType() {
+        return registerImageContentType;
+    }
+
+    public void setRegisterImageContentType(String registerImageContentType) {
+        this.registerImageContentType = registerImageContentType;
+    }
+
+    public String getInternalName() {
+        return internalName;
+    }
+
+    public void setInternalName(String internalName) {
+        this.internalName = internalName;
+    }
+
+    public String getCssString() {
+        return cssString;
+    }
+
+    public void setCssString(String cssString) {
+        this.cssString = cssString;
+    }
+
+    public byte[] getBorderImage() {
+        return borderImage;
+    }
+
+    public void setBorderImage(byte[] borderImage) {
+        this.borderImage = borderImage;
+    }
+
+    public String getBorderImageContentType() {
+        return borderImageContentType;
+    }
+
+    public void setBorderImageContentType(String borderImageContentType) {
+        this.borderImageContentType = borderImageContentType;
+    }
+
     @Override
     public void init() {
     }
@@ -227,12 +184,12 @@ public class DbCmsHomeLayout implements Serializable, CrudChild {
 
         DbCmsHomeLayout that = (DbCmsHomeLayout) o;
 
-        return !(id != null ? !id.equals(that.id) : that.id != null);
+        return id != null && id.equals(that.id);
 
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 }

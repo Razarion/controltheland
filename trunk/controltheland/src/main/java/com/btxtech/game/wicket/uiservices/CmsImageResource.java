@@ -21,7 +21,8 @@ public class CmsImageResource extends WebResource {
 
     public enum ImageId {
         START,
-        INFO
+        INFO,
+        REGISTER
     }
 
     @SpringBean
@@ -43,13 +44,13 @@ public class CmsImageResource extends WebResource {
 
         switch (imageId) {
             case START:
-                return new ByteArrayResource(cmsService.getHomeContentStyleDTO().getDbCmsHomeLayout().getStartImageContentType(),
-                        cmsService.getHomeContentStyleDTO().getDbCmsHomeLayout().getStartImage()).getResourceStream();
+                return new ByteArrayResource(cmsService.getDbCmsHomeLayout().getStartImageContentType(), cmsService.getDbCmsHomeLayout().getStartImage()).getResourceStream();
             case INFO:
-                return new ByteArrayResource(cmsService.getHomeContentStyleDTO().getDbCmsHomeLayout().getInfoImageContentType(),
-                        cmsService.getHomeContentStyleDTO().getDbCmsHomeLayout().getInfoImage()).getResourceStream();
+                return new ByteArrayResource(cmsService.getDbCmsHomeLayout().getInfoImageContentType(), cmsService.getDbCmsHomeLayout().getInfoImage()).getResourceStream();
+            case REGISTER:
+                return new ByteArrayResource(cmsService.getDbCmsHomeLayout().getRegisterImageContentType(), cmsService.getDbCmsHomeLayout().getRegisterImage()).getResourceStream();
             default:
-                throw new IllegalArgumentException("Unknown ImageId: " + imageId);
+                throw new IllegalArgumentException("Unknown Image Id: " + imageId);
         }
 
     }

@@ -37,7 +37,7 @@ public class LoginBox extends Panel {
     private String loginName = "User name";
     private String loginPassowrd = "12345678";
 
-    public LoginBox(String id) {
+    public LoginBox(String id, boolean showRegisterLink) {
         super(id);
         Form form = new Form<LoginBox>("loginForm", new CompoundPropertyModel<LoginBox>(this)) {
             @Override
@@ -61,7 +61,7 @@ public class LoginBox extends Panel {
 
         form.add(new TextField<String>("loginName"));
         form.add(new PasswordTextField("loginPassowrd"));
-        form.add(new BookmarkablePageLink<NewUser>("createAccountLink", NewUser.class));
+        form.add(new BookmarkablePageLink<NewUser>("createAccountLink", NewUser.class).setVisible(showRegisterLink));
 
         add(form);
     }
