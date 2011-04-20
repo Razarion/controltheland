@@ -142,19 +142,6 @@ public class HistoryServiceImpl implements HistoryService {
                 userState.getSessionId()));
     }
 
-    @Override
-    public void addResurrectionEntry(UserState userState, DbResurrection dbResurrection, SimpleBase simpleBase) {
-        save(new DbHistoryElement(DbHistoryElement.Type.RESURRECTION,
-                userState.getUser(),
-                null,
-                simpleBase,
-                null,
-                null,
-                null,
-                baseService,
-                userState.getSessionId()));
-    }
-
     private String getSessionId(SimpleBase simpleBase) {
         UserState userState = baseService.getUserState(simpleBase);
         if (userState != null && userState.getSessionId() != null) {
@@ -254,15 +241,14 @@ public class HistoryServiceImpl implements HistoryService {
                     displayHistoryElement.setMessage("Destroyed a " + dbHistoryElement.getItemTypeName() + " from " + dbHistoryElement.getTargetBaseName());
                 } else if (userName.equals(dbHistoryElement.getActorUserName())) {
                     displayHistoryElement.setMessage("Destroyed a " + dbHistoryElement.getItemTypeName() + " from " + dbHistoryElement.getTargetBaseName());
-                } else {
+                } else if(dbHistoryElement.getActorBaseName() != null){
                     displayHistoryElement.setMessage(dbHistoryElement.getActorBaseName() + " destroyed your " + dbHistoryElement.getItemTypeName());
+                } else {
+                    displayHistoryElement.setMessage(dbHistoryElement.getItemTypeName() + " has been sold");
                 }
                 break;
             case LEVEL_PROMOTION:
                 displayHistoryElement.setMessage("Level reached: " + dbHistoryElement.getLevelName());
-                break;
-            case RESURRECTION:
-                displayHistoryElement.setMessage("Base resurrection: " + dbHistoryElement.getActorBaseName());
                 break;
             default:
                 throw new IllegalArgumentException("Unknown: " + dbHistoryElement.getType());

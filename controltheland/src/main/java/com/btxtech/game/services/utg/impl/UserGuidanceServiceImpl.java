@@ -153,7 +153,6 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         base.setAccountBalance(dbResurrection.getMoney());
         baseService.sendAccountBaseUpdate(base);
 
-        historyService.addResurrectionEntry(userState, dbResurrection, base.getSimpleBase());
         log.debug("User: " + userState + " will be resurrected: " + dbResurrection);
 
         // Prepare next level

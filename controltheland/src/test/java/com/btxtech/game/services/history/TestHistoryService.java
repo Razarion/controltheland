@@ -265,6 +265,14 @@ public class TestHistoryService extends BaseTestService {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("Target", "test");
+        getMyBase(); // Connection -> resurrection
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -275,11 +283,19 @@ public class TestHistoryService extends BaseTestService {
             System.out.println(displayHistoryElement);
         }
         System.out.println("----- Target End -----");
-        Assert.assertEquals(5, displayHistoryElements.size());
+        Assert.assertEquals(7, displayHistoryElements.size());
+
+
+        Assert.assertTrue(displayHistoryElements.get(3).getTimeStamp().getTime() >= displayHistoryElements.get(4).getTimeStamp().getTime());
+        Assert.assertEquals("Base 2 destroyed your " + TEST_START_BUILDER_ITEM, displayHistoryElements.get(3).getMessage());
+        Assert.assertTrue(displayHistoryElements.get(2).getTimeStamp().getTime() >= displayHistoryElements.get(3).getTimeStamp().getTime());
+        Assert.assertEquals("Your base has been destroyed by Base 2", displayHistoryElements.get(2).getMessage());
         Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp().getTime() >= displayHistoryElements.get(2).getTimeStamp().getTime());
-        Assert.assertEquals("Base 2 destroyed your " + TEST_START_BUILDER_ITEM, displayHistoryElements.get(1).getMessage());
+        Assert.assertEquals("Base created: Target", displayHistoryElements.get(1).getMessage());
         Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp().getTime() >= displayHistoryElements.get(1).getTimeStamp().getTime());
-        Assert.assertEquals("Your base has been destroyed by Base 2", displayHistoryElements.get(0).getMessage());
+        Assert.assertEquals("Item created: " + TEST_START_BUILDER_ITEM, displayHistoryElements.get(0).getMessage());
+
+
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -297,6 +313,49 @@ public class TestHistoryService extends BaseTestService {
         movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "xx", "xx", 0, 0);
         ((RealityInfo) movableService.getGameInfo()).getBase();
         movableService.surrenderBase();
+
+        getMyBase(); // Connection -> resurrection
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        List<DisplayHistoryElement> displayHistoryElements = historyService.getNewestHistoryElements(userService.getUser("Actor"), 1000);
+        System.out.println("----- Actor Target-----");
+        for (DisplayHistoryElement displayHistoryElement : displayHistoryElements) {
+            System.out.println(displayHistoryElement);
+        }
+        System.out.println("----- Actor End -----");
+        Assert.assertEquals(6, displayHistoryElements.size());
+        Assert.assertTrue(displayHistoryElements.get(2).getTimeStamp().getTime() >= displayHistoryElements.get(3).getTimeStamp().getTime());
+        Assert.assertEquals("Base surrendered", displayHistoryElements.get(2).getMessage());
+        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp().getTime() >= displayHistoryElements.get(2).getTimeStamp().getTime());
+        // Time different to short to assure the correct order of the two out-commented entries below
+        //Assert.assertEquals("Base created: Actor", displayHistoryElements.get(1).getMessage());
+        //Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp().getTime() >= displayHistoryElements.get(1).getTimeStamp().getTime());
+        //Assert.assertEquals("Item created: " + TEST_START_BUILDER_ITEM, displayHistoryElements.get(0).getMessage());
+
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testSellItem() throws Exception {
+        configureMinimalGame();
+
+        System.out.println("**** testSellItem ****");
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("Actor", "test", "test", "test");
+        userService.login("Actor", "test");
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "xx", "xx", 0, 0);
+        SimpleBase simpleBase = getMyBase();
+        movableService.sellItem(getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -312,7 +371,7 @@ public class TestHistoryService extends BaseTestService {
         System.out.println("----- Actor End -----");
         Assert.assertEquals(4, displayHistoryElements.size());
         Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp().getTime() >= displayHistoryElements.get(1).getTimeStamp().getTime());
-        Assert.assertEquals("Base surrendered", displayHistoryElements.get(0).getMessage());
+        Assert.assertEquals(TEST_START_BUILDER_ITEM  + " has been sold", displayHistoryElements.get(0).getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
