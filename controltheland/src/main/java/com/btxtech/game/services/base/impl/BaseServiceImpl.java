@@ -436,7 +436,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     public void surrenderBase(Base base) {
         historyService.addBaseSurrenderedEntry(base.getSimpleBase());
         userTrackingService.onBaseSurrender(userService.getUser(), base);
-        userService.onSurrenderBase();
         makeBaseAbandoned(base);
     }
 

@@ -162,15 +162,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    @Override
-    public void onSurrenderBase() {
-        if (session.getUserState() == null) {
-            throw new IllegalStateException("No user state");
-        }
-        session.getUserState().setUser(null);
-        session.setUserState(null);
-    }
-
     /**
      * @param name            User name
      * @param password        password

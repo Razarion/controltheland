@@ -296,6 +296,9 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
 
     @Override
     public DbRealGameLevel getDbLevel(SimpleBase simpleBase) {
+        if(baseService.isAbandoned(simpleBase)) {
+            return getDummyRealGameLevel();
+        }
         return toHighestPossibleRealGameLevel(baseService.getUserState(simpleBase).getCurrentAbstractLevel());
     }
 
