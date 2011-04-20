@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.HouseSpacePacket;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
@@ -33,12 +34,16 @@ import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBuilderType;
 import com.btxtech.game.services.item.itemType.DbFactoryType;
+import com.btxtech.game.services.item.itemType.DbHarvesterType;
 import com.btxtech.game.services.item.itemType.DbItemContainerType;
 import com.btxtech.game.services.item.itemType.DbMovableType;
+import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.services.item.itemType.DbWeaponType;
 import com.btxtech.game.services.market.MarketEntry;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.market.XpSettings;
+import com.btxtech.game.services.resource.DbRegionResource;
+import com.btxtech.game.services.resource.ResourceService;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbSurfaceRect;
 import com.btxtech.game.services.terrain.DbTerrainImage;
@@ -112,6 +117,10 @@ public class BaseTestService {
     protected static int TEST_ATTACK_ITEM_ID = -1;
     protected static final String TEST_CONTAINER_ITEM = "TestContainerItem";
     protected static int TEST_CONTAINER_ITEM_ID = -1;
+    protected static final String TEST_RESOURCE_ITEM = "TestResourceItem";
+    protected static int TEST_RESOURCE_ITEM_ID = -1;
+    protected static final String TEST_HARVESTER_ITEM = "TEST_HARVESTER_ITEM";
+    protected static int TEST_HARVESTER_ITEM_ID = -1;
     protected static final String TEST_LEVEL_1_SIMULATED = "TEST_LEVEL_1_SIMULATED";
     protected static final String TEST_LEVEL_2_REAL = "TEST_LEVEL_2_REAL";
     protected static int TEST_LEVEL_2_REAL_ID = -1;
@@ -149,6 +158,8 @@ public class BaseTestService {
     private TerritoryService territoryService;
     @Autowired
     private ServerMarketService serverMarketServic;
+    @Autowired
+    private ResourceService resourceService;
     private SessionHolder sessionHolder;
     private MockHttpServletRequest mockHttpServletRequest;
     private MockHttpSession mockHttpSession;
@@ -196,7 +207,15 @@ public class BaseTestService {
 
     protected Id getFirstSynItemId(SimpleBase simpleBase, int itemTypeId, Rectangle region) {
         for (SyncItemInfo syncItemInfo : movableService.getAllSyncInfo()) {
-            if (syncItemInfo.getBase().equals(simpleBase) && syncItemInfo.getItemTypeId() == itemTypeId) {
+            if (syncItemInfo.getBase() == null && syncItemInfo.getItemTypeId() == itemTypeId) {
+                if (region != null) {
+                    if (region.contains(syncItemInfo.getPosition())) {
+                        return syncItemInfo.getId();
+                    }
+                } else {
+                    return syncItemInfo.getId();
+                }
+            } else if (syncItemInfo.getBase() != null &&syncItemInfo.getBase().equals(simpleBase) && syncItemInfo.getItemTypeId() == itemTypeId) {
                 if (region != null) {
                     if (region.contains(syncItemInfo.getPosition())) {
                         return syncItemInfo.getId();
@@ -334,6 +353,16 @@ public class BaseTestService {
         movableService.sendCommands(baseCommands);
     }
 
+    protected void sendCollectCommand(Id harvesterId, Id resourceId) {
+        List<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
+        MoneyCollectCommand moneyCollectCommand = new MoneyCollectCommand();
+        moneyCollectCommand.setId(harvesterId);
+        moneyCollectCommand.setTarget(resourceId);
+        moneyCollectCommand.setTimeStamp();
+        baseCommands.add(moneyCollectCommand);
+        movableService.sendCommands(baseCommands);
+    }
+
     // ------------------- Setup Minimal Game Config --------------------            
 
     protected void configureMinimalGame() throws Exception {
@@ -342,12 +371,14 @@ public class BaseTestService {
         beginHttpRequestAndOpenSessionInViewFilter();
 
         // Item Types
+        createHarvesterItemType();
         createAttackBaseItemType();
         createContainerBaseItemType();
         createFactoryBaseItemType();
         createBuilderBaseItemType();
         finishAttackBaseItemType();
         finishContainerBaseItemType();
+        createMoney();
         // Terrain
         setupMinimalTerrain();
         // Setup territory
@@ -408,6 +439,7 @@ public class BaseTestService {
         Set<DbBaseItemType> ableToBuild = new HashSet<DbBaseItemType>();
         ableToBuild.add((DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID));
         ableToBuild.add((DbBaseItemType) itemService.getDbItemType(TEST_CONTAINER_ITEM_ID));
+        ableToBuild.add((DbBaseItemType) itemService.getDbItemType(TEST_HARVESTER_ITEM_ID));
         dbFactoryType.setAbleToBuild(ableToBuild);
         dbBaseItemType.setFactoryType(dbFactoryType);
 
@@ -490,17 +522,63 @@ public class BaseTestService {
         itemService.activate();
     }
 
+    private DbResourceItemType createMoney() {
+        DbResourceItemType dbResourceItemType = new DbResourceItemType();
+        dbResourceItemType.setName(TEST_RESOURCE_ITEM);
+        dbResourceItemType.setTerrainType(TerrainType.LAND);
+        dbResourceItemType.setWidth(100);
+        dbResourceItemType.setHeight(100);
+        dbResourceItemType.setAmount(3);
+
+        itemService.saveDbItemType(dbResourceItemType);
+        itemService.activate();
+        TEST_RESOURCE_ITEM_ID = dbResourceItemType.getId();
+        return dbResourceItemType;
+    }
+
+    protected DbBaseItemType createHarvesterItemType() {
+        DbBaseItemType dbBaseItemType = new DbBaseItemType();
+        dbBaseItemType.setName(TEST_HARVESTER_ITEM);
+        dbBaseItemType.setTerrainType(TerrainType.LAND);
+        dbBaseItemType.setWidth(100);
+        dbBaseItemType.setHeight(100);
+        dbBaseItemType.setHealth(10);
+        dbBaseItemType.setBuildup(10);
+        dbBaseItemType.setPrice(4);
+        // DbWeaponType
+        DbHarvesterType dbHarvesterType = new DbHarvesterType();
+        dbHarvesterType.setRange(100);
+        dbHarvesterType.setProgress(1);
+        dbBaseItemType.setHarvesterType(dbHarvesterType);
+        // DbMovableType
+        DbMovableType dbMovableType = new DbMovableType();
+        dbMovableType.setSpeed(10000);
+        dbMovableType.setTerrainType(SurfaceType.LAND);
+        dbBaseItemType.setMovableType(dbMovableType);
+        
+        itemService.saveDbItemType(dbBaseItemType);
+        itemService.activate();
+        TEST_HARVESTER_ITEM_ID = dbBaseItemType.getId();
+        return dbBaseItemType;
+    }
+
     // ------------------- Setup Market --------------------
 
     protected void setupMinimalMarket() {
         MarketEntry factory = serverMarketService.getCrudMarketEntryService().createDbChild();
         factory.setAlwaysAllowed(true);
         factory.setItemType(itemService.getDbItemType(TEST_FACTORY_ITEM_ID));
+        serverMarketService.getCrudMarketEntryService().updateDbChild(factory);
+
         MarketEntry attacker = serverMarketService.getCrudMarketEntryService().createDbChild();
         attacker.setAlwaysAllowed(true);
         attacker.setItemType(itemService.getDbItemType(TEST_ATTACK_ITEM_ID));
+        serverMarketService.getCrudMarketEntryService().updateDbChild(attacker);
 
-        serverMarketService.getCrudMarketEntryService().updateDbChild(factory);
+        MarketEntry harvester = serverMarketService.getCrudMarketEntryService().createDbChild();
+        harvester.setAlwaysAllowed(true);
+        harvester.setItemType(itemService.getDbItemType(TEST_HARVESTER_ITEM_ID));
+        serverMarketService.getCrudMarketEntryService().updateDbChild(harvester);
     }
 
     // ------------------- Setup Terrain --------------------
@@ -608,6 +686,9 @@ public class BaseTestService {
         DbItemTypeLimitation attacker = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
         attacker.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID));
         attacker.setCount(10);
+        DbItemTypeLimitation harvester = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
+        harvester.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_HARVESTER_ITEM_ID));
+        harvester.setCount(10);
 
         userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbRealGameLevel);
         TEST_LEVEL_2_REAL_ID = dbRealGameLevel.getId();
@@ -845,7 +926,7 @@ public class BaseTestService {
 
     protected void setupNoobTerritory() {
         DbTerritory dbTerritory = setupTerritory(TEST_NOOB_TERRITORY,
-                new int[]{TEST_START_BUILDER_ITEM_ID, TEST_ATTACK_ITEM_ID, TEST_CONTAINER_ITEM_ID, TEST_FACTORY_ITEM_ID},
+                new int[]{TEST_START_BUILDER_ITEM_ID, TEST_ATTACK_ITEM_ID, TEST_CONTAINER_ITEM_ID, TEST_FACTORY_ITEM_ID, TEST_HARVESTER_ITEM_ID},
                 new Rectangle(50, 50, 50, 50));
         TEST_NOOB_TERRITORY_ID = dbTerritory.getId();
     }
@@ -881,6 +962,20 @@ public class BaseTestService {
         xpSettings.setKillPriceFactor(1);
         serverMarketServic.saveXpPointSettings(xpSettings);
         return xpSettings;
+    }
+
+    // ------------------- Setup Resource --------------------
+
+    protected DbRegionResource setupResource() {
+        DbRegionResource dbRegionResource = resourceService.getDbRegionResourceCrudServiceHelper().createDbChild();
+        dbRegionResource.setResourceItemType(itemService.getDbResourceItemType(TEST_RESOURCE_ITEM_ID));
+        dbRegionResource.setCount(10);
+        dbRegionResource.setMinDistanceToItems(100);
+        dbRegionResource.setRegion(new Rectangle(5000, 5000, 10000, 10000));
+
+        resourceService.getDbRegionResourceCrudServiceHelper().updateDbChild(dbRegionResource);
+        resourceService.activate();
+        return dbRegionResource;
     }
 
     // ------------------- Session Config --------------------

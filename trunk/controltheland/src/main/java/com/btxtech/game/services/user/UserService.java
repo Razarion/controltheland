@@ -69,6 +69,4 @@ public interface UserService extends UserDetailsService {
     List<UserState> getAllBotUserStates();
 
     void restore(Collection<UserState> userStates);
-
-    void onSurrenderBase();
 }

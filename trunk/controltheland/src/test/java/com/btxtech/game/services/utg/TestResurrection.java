@@ -85,7 +85,7 @@ public class TestResurrection extends BaseTestService {
     public void testOffline() throws Exception {
         configureMinimalGame();
 
-        System.out.println("***** testOnlineSell *****");
+        System.out.println("***** testOffline *****");
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -207,6 +207,47 @@ public class TestResurrection extends BaseTestService {
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testSurrender() throws Exception {
+        configureMinimalGame();
+
+        System.out.println("***** testSurrender *****");
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
+        SimpleBase simpleBase = getMyBase(); // Connection
+        movableService.surrenderBase();
+
+        try {
+            movableService.getSyncInfo();
+            Assert.fail("Disconnection expected");
+        } catch (NoConnectionException e) {
+            // OK
+        }
+
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(1, baseService.getBases().size());
+        assertWholeItemTypeCount(1);
+
+        SimpleBase newBase = getMyBase(); // Connection
+        Assert.assertFalse(simpleBase.equals(newBase));
+        Assert.assertEquals(2, baseService.getBases().size());
+        Message message2 = new Message();
+        message2.setMessage("You lost your base. A new base was created.");
+        assertPackagesIgnoreSyncItemInfoAndClear(message2);
+        assertWholeItemTypeCount(2);
+
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        endHttpSession();
+
     }
 
 
