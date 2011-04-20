@@ -36,6 +36,7 @@ public class TutorialConfig implements Serializable {
     private SimpleBase ownBase;
     private int width;
     private int height;
+    private boolean showWindowTooSmall;
     private Collection<BaseAttributes> baseAttributes;
     private boolean failOnOwnItemsLost;
     private Integer failOnMoneyBelowAndNoAttackUnits;
@@ -54,7 +55,8 @@ public class TutorialConfig implements Serializable {
                           Collection<BaseAttributes> baseAttributes,
                           boolean failOnOwnItemsLost,
                           Integer failOnMoneyBelowAndNoAttackUnits,
-                          boolean eventTracking) {
+                          boolean eventTracking,
+                          boolean showWindowTooSmall) {
         this.taskConfigs = taskConfigs;
         this.ownBase = ownBase;
         this.width = width;
@@ -63,6 +65,7 @@ public class TutorialConfig implements Serializable {
         this.failOnOwnItemsLost = failOnOwnItemsLost;
         this.failOnMoneyBelowAndNoAttackUnits = failOnMoneyBelowAndNoAttackUnits;
         this.eventTracking = eventTracking;
+        this.showWindowTooSmall = showWindowTooSmall;
     }
 
     public List<TaskConfig> getTasks() {
@@ -95,5 +98,9 @@ public class TutorialConfig implements Serializable {
 
     public boolean isEventTracking() {
         return eventTracking;
+    }
+
+    public boolean isShowWindowTooSmall() {
+        return showWindowTooSmall;
     }
 }

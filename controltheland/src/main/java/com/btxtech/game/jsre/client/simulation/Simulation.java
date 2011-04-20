@@ -22,6 +22,8 @@ import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
+import com.btxtech.game.jsre.client.dialogs.DialogManager;
+import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -33,7 +35,9 @@ import com.btxtech.game.jsre.common.tutorial.TaskConfig;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 
 import java.util.List;
 
@@ -78,6 +82,10 @@ public class Simulation implements ConditionServiceListener<Object> {
         MapWindow.getInstance().setMinimalSize(tutorialConfig.getWidth(), tutorialConfig.getHeight());
         if (tutorialConfig.isEventTracking()) {
             ClientUserTracker.getInstance().startEventTracking();
+        }
+        if(tutorialConfig.isShowWindowTooSmall() && (Window.getClientWidth() < tutorialConfig.getWidth() || Window.getClientHeight() < tutorialConfig.getHeight())) {
+            MessageDialog messageDialog = new MessageDialog("Your window is too small!");
+            DialogManager.showDialog(messageDialog, DialogManager.Type.QUEUE_ABLE);
         }
         runNextTask(activeTask);
     }
