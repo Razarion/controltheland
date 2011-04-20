@@ -142,7 +142,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
 
     private void pupateToSyncProjectileItem() {
         pupateCommon();
-        cursorItemState = new CursorItemState();        
+        cursorItemState = new CursorItemState();
         getElement().getStyle().setZIndex(Constants.Z_INDEX_PROJECTILE);
         if (healthBar != null) {
             healthBar.setVisible(false);
@@ -270,6 +270,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
         if (SelectionHandler.getInstance().isSellMode()) {
             if (clientSyncItem.isMyOwnProperty()) {
                 Connection.getInstance().sendSellItem(clientSyncItem.getSyncItem());
+                SelectionHandler.getInstance().setSellMode(false);
             }
         } else if (Cockpit.getInstance().getCockpitMode().isLaunchMode() && !clientSyncItem.isMyOwnProperty()) {
             int x = mouseDownEvent.getRelativeX(TerrainView.getInstance().getCanvas().getElement()) + TerrainView.getInstance().getViewOriginLeft();
@@ -431,7 +432,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
     }
 
     public void setSelected(boolean selected) {
-        if(clientSyncItem.isSyncBaseItem()) {
+        if (clientSyncItem.isSyncBaseItem()) {
             if (selected) {
                 healthBar.setColor("#00FF00", "#FF0000");
             } else {

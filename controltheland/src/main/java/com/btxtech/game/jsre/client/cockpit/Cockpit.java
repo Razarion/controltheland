@@ -137,6 +137,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
     private Map<CockpitWidgetEnum, Widget> widgets = new HashMap<CockpitWidgetEnum, Widget>();
     private SelectedItemPanel selectedItemPanel;
     private Label debugPosition;
+    private ExtendedCustomButton sellButton;
 
     public static Cockpit getInstance() {
         return INSTANCE;
@@ -200,7 +201,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         itemLimit = new Label();
         add(itemLimit, ITEM_LIMIT_LEFT, ITEM_LIMIT_TOP);
         itemLimit.setTitle(TOOL_TIP_UNITS);
-        widgets.put(CockpitWidgetEnum.ITEM_LIMIT, itemLimit);        
+        widgets.put(CockpitWidgetEnum.ITEM_LIMIT, itemLimit);
         energy = new Label("0/0");
         add(energy, ENERGY_LEFT, ENERGY_TOP);
         energy.setTitle(TOOL_TIP_ENERGY);
@@ -223,15 +224,15 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         });
         add(scrollHome, BUTTON_SCROLL_HOME_LEFT, BUTTON_SCROLL_HOME_TOP);
         widgets.put(CockpitWidgetEnum.SCROLL_HOME_BUTTON, scrollHome);
-        ExtendedCustomButton sell = new ExtendedCustomButton("/images/cockpit/sellButton-up.png", "/images/cockpit/sellButton-down.png", true, TOOL_TIP_SELL, new ClickHandler() {
+        sellButton = new ExtendedCustomButton("/images/cockpit/sellButton-up.png", "/images/cockpit/sellButton-down.png", true, TOOL_TIP_SELL, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 ExtendedCustomButton btn = (ExtendedCustomButton) event.getSource();
                 SelectionHandler.getInstance().setSellMode(btn.isDown());
             }
         });
-        add(sell, BUTTON_SELL_LEFT, BUTTON_SELL_TOP);
-        widgets.put(CockpitWidgetEnum.SELL_BUTTON, sell);
+        add(sellButton, BUTTON_SELL_LEFT, BUTTON_SELL_TOP);
+        widgets.put(CockpitWidgetEnum.SELL_BUTTON, sellButton);
         ExtendedCustomButton option = new ExtendedCustomButton("/images/cockpit/optionButton-up.png", "/images/cockpit/optionButton-down.png", false, TOOL_TIP_OPTIONS, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -441,4 +442,13 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
     public void onStateChanged() {
         selectedItemPanel.onStateChanged();
     }
+
+    public void clearSellMode() {
+        if (sellButton == null) {
+            // May not initialized
+            return;
+        }
+        sellButton.setDownState(false);
+    }
+
 }
