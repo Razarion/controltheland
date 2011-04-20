@@ -20,6 +20,8 @@ import com.btxtech.game.services.common.db.IndexUserType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+
+import com.btxtech.game.services.item.ItemService;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -77,7 +79,7 @@ public class DbResourceHintConfig extends DbHintConfig {
     }
 
     @Override
-    public HintConfig createHintConfig(ResourceHintManager resourceHintManager) {
+    public HintConfig createHintConfig(ResourceHintManager resourceHintManager, ItemService itemService) {
         if (data == null || data.length == 0 || contentType == null) {
             return null;
         }

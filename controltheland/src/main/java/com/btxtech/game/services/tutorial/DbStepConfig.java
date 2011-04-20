@@ -118,7 +118,7 @@ public class DbStepConfig implements CrudParent, CrudChild<DbTaskConfig> {
         }
         ArrayList<HintConfig> hintConfigs = new ArrayList<HintConfig>();
         for (DbHintConfig dbHintConfig : dbHintConfigs) {
-            HintConfig hintConfig = dbHintConfig.createHintConfig(resourceHintManager);
+            HintConfig hintConfig = dbHintConfig.createHintConfig(resourceHintManager, itemService);
             if (hintConfig != null) {
                 hintConfigs.add(hintConfig);
             }

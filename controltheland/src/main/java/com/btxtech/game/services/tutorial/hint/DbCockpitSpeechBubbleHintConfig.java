@@ -16,6 +16,7 @@ package com.btxtech.game.services.tutorial.hint;
 import com.btxtech.game.jsre.common.tutorial.CockpitSpeechBubbleHintConfig;
 import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
 import com.btxtech.game.jsre.common.tutorial.HintConfig;
+import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -86,7 +87,7 @@ public class DbCockpitSpeechBubbleHintConfig extends DbHintConfig {
     }
 
     @Override
-    public HintConfig createHintConfig(ResourceHintManager resourceHintManager) {
+    public HintConfig createHintConfig(ResourceHintManager resourceHintManager, ItemService itemService) {
         int itemTypeId = 0;
         if (cockpitWidgetEnum.isItemTypeNeeded()) {
             if (baseItemType != null) {
