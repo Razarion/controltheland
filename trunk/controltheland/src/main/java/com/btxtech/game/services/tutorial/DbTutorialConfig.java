@@ -42,10 +42,10 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
     @GeneratedValue
     private Integer id;
     private String name;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @org.hibernate.annotations.IndexColumn(name = "orderIndex", nullable = false, base = 0)
     @JoinColumn(name = "dbTutorialConfig", nullable = false)
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private List<DbTaskConfig> dbTaskConfigs;
     @Transient
     private CrudChildServiceHelper<DbTaskConfig> dbTaskConfigCrudChildServiceHelper;
@@ -62,6 +62,7 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
     private boolean tracking;
     @ManyToOne(fetch = FetchType.LAZY)
     private DbTerrainSetting dbTerrainSetting;
+    private boolean showWindowTooSmall;
 
     @Override
     public String getName() {
@@ -181,6 +182,14 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
         this.dbTerrainSetting = dbTerrainSetting;
     }
 
+    public boolean isShowWindowTooSmall() {
+        return showWindowTooSmall;
+    }
+
+    public void setShowWindowTooSmall(boolean showWindowTooSmall) {
+        this.showWindowTooSmall = showWindowTooSmall;
+    }
+
     public TutorialConfig createTutorialConfig(ResourceHintManager resourceHintManager, ItemService itemService) {
         ArrayList<BaseAttributes> baseAttributes = new ArrayList<BaseAttributes>();
         SimpleBase ownBase = new SimpleBase(ownBaseId);
@@ -192,7 +201,7 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
             taskConfigs.add(dbTaskConfig.createTaskConfig(resourceHintManager, itemService));
         }
 
-        return new TutorialConfig(taskConfigs, ownBase, width, height, baseAttributes, failOnOwnItemsLost, failOnMoneyBelowAndNoAttackUnits, tracking);
+        return new TutorialConfig(taskConfigs, ownBase, width, height, baseAttributes, failOnOwnItemsLost, failOnMoneyBelowAndNoAttackUnits, tracking, showWindowTooSmall);
     }
 
     public void init() {
