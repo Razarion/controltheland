@@ -39,8 +39,7 @@ public class DbHistoryElement implements Serializable {
         BASE_SURRENDERED,
         ITEM_CREATED,
         ITEM_DESTROYED,
-        LEVEL_PROMOTION,
-        RESURRECTION
+        LEVEL_PROMOTION
     }
 
     @Id

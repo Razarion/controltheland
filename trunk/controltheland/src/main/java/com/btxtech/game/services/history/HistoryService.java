@@ -39,8 +39,6 @@ public interface HistoryService {
 
     void addItemDestroyedEntry(SimpleBase actor, SyncBaseItem target);
 
-    void addResurrectionEntry(UserState userState, DbResurrection dbResurrection, SimpleBase simpleBase);
-
     List<DisplayHistoryElement> getNewestHistoryElements(User user, int count);
 
     List<DisplayHistoryElement> getHistoryElements(final String sessionId, final Date from, final Date to);
