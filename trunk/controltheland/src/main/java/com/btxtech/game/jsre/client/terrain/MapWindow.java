@@ -140,18 +140,22 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
             switch (event.getNativeEvent().getKeyCode()) {
                 case KeyCodes.KEY_LEFT: {
                     TerrainView.getInstance().moveDelta(-SCROLL_DISTANCE_KEY, 0);
+                    event.cancel(); // Prevent from scrolling the browser window
                     break;
                 }
                 case KeyCodes.KEY_RIGHT: {
                     TerrainView.getInstance().moveDelta(SCROLL_DISTANCE_KEY, 0);
+                    event.cancel();
                     break;
                 }
                 case KeyCodes.KEY_UP: {
                     TerrainView.getInstance().moveDelta(0, -SCROLL_DISTANCE_KEY);
+                    event.cancel();
                     break;
                 }
                 case KeyCodes.KEY_DOWN: {
                     TerrainView.getInstance().moveDelta(0, SCROLL_DISTANCE_KEY);
+                    event.cancel();
                     break;
                 }
             }
