@@ -63,5 +63,10 @@ public class ExtendedCustomButton extends CustomButton {
         return super.isDown();
     }
 
+    public void setDownState(boolean isDown) {
+        if (toggle) {
+            setDown(isDown);
+        }
+    }
 
 }
