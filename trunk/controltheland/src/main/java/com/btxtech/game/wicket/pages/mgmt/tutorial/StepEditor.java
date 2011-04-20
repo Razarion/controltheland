@@ -21,6 +21,7 @@ import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.pages.mgmt.condition.ConditionConfigPanel;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.hint.CockpitSpeechBubbleHintConfigPanel;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.hint.ItemSpeechBubbleHintConfigPanel;
+import com.btxtech.game.wicket.pages.mgmt.tutorial.hint.ItemTypeSpeechBubbleHintConfigPanel;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.hint.ResourceHintConfigPanel;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.hint.TerrainPositionSpeechBubbleHintConfigPanel;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
@@ -110,6 +111,8 @@ public class StepEditor extends MgmtWebPage {
                 super.extendedPopulateItem(dbHintConfigItem);
                 if (dbHintConfigItem.getModelObject() instanceof DbItemSpeechBubbleHintConfig) {
                     dbHintConfigItem.add(new ItemSpeechBubbleHintConfigPanel("hint"));
+                } else if (dbHintConfigItem.getModelObject() instanceof DbItemTypeSpeechBubbleHintConfig) {
+                    dbHintConfigItem.add(new ItemTypeSpeechBubbleHintConfigPanel("hint"));
                 } else if (dbHintConfigItem.getModelObject() instanceof DbResourceHintConfig) {
                     dbHintConfigItem.add(new ResourceHintConfigPanel("hint"));
                 } else if (dbHintConfigItem.getModelObject() instanceof DbTerrainPositionSpeechBubbleHintConfig) {

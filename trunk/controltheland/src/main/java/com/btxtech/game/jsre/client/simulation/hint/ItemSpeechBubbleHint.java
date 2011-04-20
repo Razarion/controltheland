@@ -14,9 +14,14 @@
 package com.btxtech.game.jsre.client.simulation.hint;
 
 import com.btxtech.game.jsre.client.ClientSyncItem;
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.utg.SpeechBubble;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.tutorial.ItemSpeechBubbleHintConfig;
+import com.btxtech.game.jsre.common.tutorial.ItemTypeSpeechBubbleHintConfig;
+
+import java.util.List;
 
 /**
  * User: beat
@@ -27,5 +32,14 @@ public class ItemSpeechBubbleHint extends SpeechBubbleHint {
     public ItemSpeechBubbleHint(ItemSpeechBubbleHintConfig itemSpeechBubbleHintConfig) {
         ClientSyncItem clientSyncItem = ItemContainer.getInstance().getSimulationItem(itemSpeechBubbleHintConfig.getSyncItemId());
         setSpeechBubble(new SpeechBubble(clientSyncItem.getSyncItem(), itemSpeechBubbleHintConfig.getHtml(), true), itemSpeechBubbleHintConfig);
+    }
+
+    public ItemSpeechBubbleHint(ItemTypeSpeechBubbleHintConfig itemTypeSpeechBubbleHintConfig) {
+        List<? extends SyncItem> syncItems = ItemContainer.getInstance().getItems(itemTypeSpeechBubbleHintConfig.getItemType(), null);
+        if (syncItems.isEmpty()) {
+            GwtCommon.sendLogToServer("ItemSpeechBubbleHint: Not sync item found for ItemType: " + itemTypeSpeechBubbleHintConfig.getItemType());
+            return;
+        }
+        setSpeechBubble(new SpeechBubble(syncItems.get(0), itemTypeSpeechBubbleHintConfig.getHtml(), true), itemTypeSpeechBubbleHintConfig);
     }
 }

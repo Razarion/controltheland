@@ -19,6 +19,8 @@ import com.btxtech.game.services.common.db.IndexUserType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+
+import com.btxtech.game.services.item.ItemService;
 import org.hibernate.annotations.TypeDef;
 
 /**
@@ -75,7 +77,7 @@ public class DbItemSpeechBubbleHintConfig extends DbHintConfig {
     }
 
     @Override
-    public HintConfig createHintConfig(ResourceHintManager resourceHintManager) {
+    public HintConfig createHintConfig(ResourceHintManager resourceHintManager, ItemService itemService) {
         return new ItemSpeechBubbleHintConfig(isCloseOnTaskEnd(), syncItemId, html, blinkDelay, blinkInterval);
     }
 }

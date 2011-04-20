@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client.simulation.hint;
 import com.btxtech.game.jsre.common.tutorial.CockpitSpeechBubbleHintConfig;
 import com.btxtech.game.jsre.common.tutorial.HintConfig;
 import com.btxtech.game.jsre.common.tutorial.ItemSpeechBubbleHintConfig;
+import com.btxtech.game.jsre.common.tutorial.ItemTypeSpeechBubbleHintConfig;
 import com.btxtech.game.jsre.common.tutorial.ResourceHintConfig;
 import com.btxtech.game.jsre.common.tutorial.TerrainPositionSpeechBubbleHintConfig;
 
@@ -30,6 +31,8 @@ public class HintFactory {
             return new ResourceHint((ResourceHintConfig) hintConfig);
         } else if (hintConfig instanceof ItemSpeechBubbleHintConfig) {
             return new ItemSpeechBubbleHint((ItemSpeechBubbleHintConfig) hintConfig);
+        } else if (hintConfig instanceof ItemTypeSpeechBubbleHintConfig) {
+            return new ItemSpeechBubbleHint((ItemTypeSpeechBubbleHintConfig) hintConfig);
         } else if (hintConfig instanceof TerrainPositionSpeechBubbleHintConfig) {
             return new TerrainPositionSpeechBubbleHint((TerrainPositionSpeechBubbleHintConfig) hintConfig);
         } else if (hintConfig instanceof CockpitSpeechBubbleHintConfig) {

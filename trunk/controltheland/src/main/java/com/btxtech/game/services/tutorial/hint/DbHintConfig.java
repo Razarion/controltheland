@@ -15,6 +15,7 @@ package com.btxtech.game.services.tutorial.hint;
 
 import com.btxtech.game.jsre.common.tutorial.HintConfig;
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.tutorial.DbStepConfig;
 import java.io.Serializable;
 import javax.persistence.DiscriminatorColumn;
@@ -40,8 +41,8 @@ abstract public class DbHintConfig implements CrudChild<DbStepConfig> {
             DbItemSpeechBubbleHintConfig.class,
             DbResourceHintConfig.class,
             DbTerrainPositionSpeechBubbleHintConfig.class,
-            DbCockpitSpeechBubbleHintConfig.class
-
+            DbCockpitSpeechBubbleHintConfig.class,
+            DbItemTypeSpeechBubbleHintConfig.class
     };
     @Id
     @GeneratedValue
@@ -79,7 +80,7 @@ abstract public class DbHintConfig implements CrudChild<DbStepConfig> {
         }
     }
 
-    abstract public HintConfig createHintConfig(ResourceHintManager resourceHintManager);
+    abstract public HintConfig createHintConfig(ResourceHintManager resourceHintManager, ItemService itemService);
 
     @Override
     public String getName() {
