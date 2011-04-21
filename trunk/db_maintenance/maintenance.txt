@@ -140,3 +140,12 @@ ALTER TABLE `gamedb`.`TUTORIAL_TASK_ALLOWED_ITEMS` CHANGE COLUMN `count` `theCou
 Tracking
 ALTER TABLE `gamedb`.`TRACKER_EVENT_START` DROP COLUMN `xResolution`,
  DROP COLUMN `yResolution`;
+
+------------------
+History
+ SELECT * FROM GAME_HISTORY where type = 6
+ 
+ UPDATE TUTORIAL_TASK_CONFIG T
+ INNER JOIN TUTORIAL_TASK_CONFIG S
+ SET T.finishImageData = S.finishImageData
+WHERE S.id = 12
