@@ -107,8 +107,8 @@ import java.util.concurrent.TimeoutException;
  * Time: 20:41:45
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:BaseTestService-context.xml")
-public class BaseTestService {
+@ContextConfiguration(locations = "classpath:AbstractServiceTest-context.xml")
+abstract public class AbstractServiceTest {
     protected static final String TEST_START_BUILDER_ITEM = "TestStartBuilderItem";
     protected static int TEST_START_BUILDER_ITEM_ID = -1;
     protected static final String TEST_FACTORY_ITEM = "TestFactoryItem";

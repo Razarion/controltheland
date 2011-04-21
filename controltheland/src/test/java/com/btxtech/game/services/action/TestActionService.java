@@ -4,7 +4,7 @@ import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
-import com.btxtech.game.services.BaseTestService;
+import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.user.UserService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -16,7 +16,7 @@ import org.springframework.test.annotation.DirtiesContext;
  * Date: 04.04.2011
  * Time: 22:57:38
  */
-public class TestActionService extends BaseTestService {
+public class TestActionService extends AbstractServiceTest {
     @Autowired
     private MovableService movableService;
     @Autowired

@@ -1,6 +1,6 @@
 package com.btxtech.game.services.utg;
 
-import com.btxtech.game.services.BaseTestService;
+import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.utg.condition.DbAbstractComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
@@ -21,7 +21,7 @@ import java.util.Set;
  * Date: 07.03.2011
  * Time: 17:15:43
  */
-public class TestLevel extends BaseTestService {
+public class TestLevel extends AbstractServiceTest {
     @Autowired
     private UserGuidanceService userGuidanceService;
 

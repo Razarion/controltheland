@@ -6,7 +6,7 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
-import com.btxtech.game.services.BaseTestService;
+import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.item.ItemService;
@@ -23,7 +23,7 @@ import java.util.List;
  * Date: 23.03.2011
  * Time: 15:46:35
  */
-public class TestHistoryService extends BaseTestService {
+public class TestHistoryService extends AbstractServiceTest {
     @Autowired
     private HistoryService historyService;
     @Autowired

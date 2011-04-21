@@ -2,7 +2,7 @@ package com.btxtech.game.services.bot;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.services.BaseTestService;
+import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.user.UserService;
@@ -16,7 +16,7 @@ import org.springframework.test.annotation.DirtiesContext;
  * Date: 28.03.2011
  * Time: 17:10:51
  */
-public class TestBotService extends BaseTestService {
+public class TestBotService extends AbstractServiceTest {
     @Autowired
     private BotService botService;
     @Autowired

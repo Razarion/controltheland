@@ -2,7 +2,7 @@ package com.btxtech.game.services.user;
 
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
-import com.btxtech.game.services.BaseTestService;
+import com.btxtech.game.services.AbstractServiceTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.util.List;
  * Date: 28.03.2011
  * Time: 00:31:20
  */
-public class TestUserState extends BaseTestService {
+public class TestUserState extends AbstractServiceTest {
     @Autowired
     private UserService userService;
     @Autowired

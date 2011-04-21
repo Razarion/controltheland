@@ -11,7 +11,7 @@ import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
-import com.btxtech.game.services.BaseTestService;
+import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
@@ -25,7 +25,7 @@ import org.springframework.test.annotation.DirtiesContext;
  * Date: 16.04.2011
  * Time: 12:33:58
  */
-public class TestResurrection extends BaseTestService {
+public class TestResurrection extends AbstractServiceTest {
     @Autowired
     private MovableService movableService;
     @Autowired

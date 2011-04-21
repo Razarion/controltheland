@@ -12,7 +12,7 @@
  */
 package com.btxtech.game.services.forum;
 
-import com.btxtech.game.services.BaseTestService;
+import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.user.UserService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,7 +27,7 @@ import java.util.List;
  * Time: 19:13:42
  */
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class TestForum extends BaseTestService {
+public class TestForum extends AbstractServiceTest {
     @Autowired
     private ForumService forumService;
     @Autowired

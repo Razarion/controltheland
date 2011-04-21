@@ -5,7 +5,7 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
-import com.btxtech.game.services.BaseTestService;
+import com.btxtech.game.services.AbstractServiceTest;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import java.util.Collection;
  * Date: Jul 11, 2009
  * Time: 12:00:44 PM
  */
-public class TestTerrainService extends BaseTestService {
+public class TestTerrainService extends AbstractServiceTest {
     @Autowired
     private TerrainService terrainService;
 
