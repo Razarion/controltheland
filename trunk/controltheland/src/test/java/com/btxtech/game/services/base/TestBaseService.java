@@ -10,7 +10,7 @@ import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
-import com.btxtech.game.services.BaseTestService;
+import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.user.UserService;
 import junit.framework.Assert;
@@ -23,7 +23,7 @@ import org.springframework.test.annotation.DirtiesContext;
  * Date: 07.04.2011
  * Time: 13:28:45
  */
-public class TestBaseService extends BaseTestService {
+public class TestBaseService extends AbstractServiceTest {
     @Autowired
     private UserService userService;
     @Autowired

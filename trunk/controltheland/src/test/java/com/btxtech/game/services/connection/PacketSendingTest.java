@@ -9,7 +9,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
-import com.btxtech.game.services.BaseTestService;
+import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -22,7 +22,7 @@ import org.springframework.test.annotation.DirtiesContext;
  * Date: 04.04.2011
  * Time: 16:26:59
  */
-public class PacketSendingTest extends BaseTestService {
+public class PacketSendingTest extends AbstractServiceTest {
     @Autowired
     private MovableService movableService;
     @Autowired

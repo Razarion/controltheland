@@ -14,7 +14,7 @@ import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
-import com.btxtech.game.services.BaseTestService;
+import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.BotService;
@@ -42,7 +42,7 @@ import java.util.List;
  * Date: Jul 11, 2009
  * Time: 12:00:44 PM
  */
-public class TestBackupRestoreMgmtService extends BaseTestService {
+public class TestBackupRestoreMgmtService extends AbstractServiceTest {
     public static final int ITEM_COUNT = 100000;
     @Autowired
     private MgmtService mgmtService;

@@ -1,6 +1,6 @@
 package com.btxtech.game.services.user;
 
-import com.btxtech.game.services.BaseTestService;
+import com.btxtech.game.services.AbstractServiceTest;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import org.springframework.test.annotation.DirtiesContext;
  * Date: Jul 11, 2009
  * Time: 12:00:44 PM
  */
-public class TestUserService extends BaseTestService {
+public class TestUserService extends AbstractServiceTest {
     @Autowired
     private UserService userService;
 

@@ -6,7 +6,7 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
-import com.btxtech.game.services.BaseTestService;
+import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.territory.DbTerritory;
 import com.btxtech.game.services.user.UserService;
@@ -24,7 +24,7 @@ import org.springframework.test.annotation.DirtiesContext;
  * Date: 01.04.2011
  * Time: 14:17:33
  */
-public class TestCondition extends BaseTestService {
+public class TestCondition extends AbstractServiceTest {
     private static final String LAST_LEVEL = "LastLevel";
     private static final String TERRITORY_LEVEL = "TerritoryLevel";
 

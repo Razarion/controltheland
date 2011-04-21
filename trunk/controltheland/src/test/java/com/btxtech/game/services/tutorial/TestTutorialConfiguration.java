@@ -1,7 +1,7 @@
 package com.btxtech.game.services.tutorial;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.services.BaseTestService;
+import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
@@ -17,7 +17,7 @@ import org.springframework.test.annotation.DirtiesContext;
  * Date: March 08, 2011
  * Time: 12:00:44 PM
  */
-public class TestTutorialConfiguration extends BaseTestService {
+public class TestTutorialConfiguration extends AbstractServiceTest {
     @Autowired
     private TutorialService tutorialService;
     @Autowired

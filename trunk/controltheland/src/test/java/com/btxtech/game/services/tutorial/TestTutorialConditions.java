@@ -6,7 +6,7 @@ import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
-import com.btxtech.game.services.BaseTestService;
+import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.DbSimulationLevel;
@@ -21,7 +21,7 @@ import org.springframework.test.annotation.DirtiesContext;
  * Date: 29.03.2011
  * Time: 13:55:41
  */
-public class TestTutorialConditions extends BaseTestService {
+public class TestTutorialConditions extends AbstractServiceTest {
     @Autowired
     private UserGuidanceService userGuidanceService;
     @Autowired

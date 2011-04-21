@@ -2,7 +2,7 @@ package com.btxtech.game.services.collision;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.services.BaseTestService;
+import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.item.ItemService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -14,7 +14,7 @@ import org.springframework.test.annotation.DirtiesContext;
  * Date: Jul 19, 2009
  * Time: 5:46:45 PM
  */
-public class TestCollisionService extends BaseTestService {
+public class TestCollisionService extends AbstractServiceTest {
     @Autowired
     private CollisionService collisionService;
     @Autowired

@@ -4,8 +4,7 @@ import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
-import com.btxtech.game.services.BaseTestService;
-import com.btxtech.game.services.base.TestBaseService;
+import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.user.UserService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -17,7 +16,7 @@ import org.springframework.test.annotation.DirtiesContext;
  * Date: 07.04.2011
  * Time: 14:32:44
  */
-public class TestServerMarketService extends BaseTestService {
+public class TestServerMarketService extends AbstractServiceTest {
     @Autowired
     private ServerMarketService serverMarketService;
     @Autowired
