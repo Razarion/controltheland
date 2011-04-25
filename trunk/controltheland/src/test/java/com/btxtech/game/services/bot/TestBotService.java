@@ -46,8 +46,8 @@ public class TestBotService extends AbstractServiceTest {
         Assert.assertTrue(botService.isInRealm(new Index(6999, 6999)));
 
         Assert.assertFalse(botService.isInRealm(new Index(3002, 3002)));
-        Assert.assertFalse(botService.isInRealm(new Index(3999, 3999)));
-        Assert.assertFalse(botService.isInRealm(new Index(7001, 7001)));
+        Assert.assertFalse(botService.isInRealm(new Index(3998, 3998)));
+        Assert.assertFalse(botService.isInRealm(new Index(7002, 7002)));
         Assert.assertFalse(botService.isInRealm(new Index(8000, 8000)));
 
     }

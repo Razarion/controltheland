@@ -24,7 +24,7 @@
           </option>
           <option name="runMavenInBackground" value="true" />
           <option name="skipTests" value="false" />
-          <option name="vmOptions" value="-Xmx1400M" />
+          <option name="vmOptions" value="-Xmx1500M" />
         </MavenRunnerSettings>
       </option>
       <option name="myRunnerParameters">

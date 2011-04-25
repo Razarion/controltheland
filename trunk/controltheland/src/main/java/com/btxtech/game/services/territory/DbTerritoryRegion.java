@@ -15,15 +15,16 @@ package com.btxtech.game.services.territory;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.services.common.db.RectangleUserType;
-import java.io.Serializable;
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import org.hibernate.annotations.Columns;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
+import java.io.Serializable;
 
 /**
  * User: beat
@@ -65,27 +66,11 @@ public class DbTerritoryRegion implements Serializable {
 
         DbTerritoryRegion that = (DbTerritoryRegion) o;
 
-        if (id != null && that.id != null) {
-            return id.equals(that.id);
-        }
-
-        if (tileRectangle == null) {
-            return that.tileRectangle == null;
-        }
-
-        return tileRectangle.equals(that.tileRectangle);
+        return id != null && !id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        if (id != null) {
-            return id.hashCode();
-        } else {
-            if (tileRectangle != null) {
-                return tileRectangle.hashCode();
-            } else {
-                return 0;
-            }
-        }
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 }

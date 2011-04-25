@@ -15,7 +15,6 @@ package com.btxtech.game.jsre.mapview.common;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,21 +26,21 @@ import java.util.HashSet;
  * Time: 11:07:15
  */
 public class GeometricalUtil {
-    public static ArrayList<Rectangle> separateIntoRectangles(Collection<Index> tiles, TerrainSettings terrainSettings) {
+    public static ArrayList<Rectangle> separateIntoRectangles(Collection<Index> tiles) {
         ArrayList<Rectangle> rectangles = new ArrayList<Rectangle>();
         if (tiles.isEmpty()) {
             return rectangles;
         }
         Collection<Index> remainingTiles = new HashSet<Index>(tiles);
-        removeRectangles(remainingTiles, rectangles, terrainSettings);
+        removeRectangles(remainingTiles, rectangles);
         return rectangles;
     }
 
-    public static void removeRectangles(Collection<Index> remainingTiles, ArrayList<Rectangle> rectangles, TerrainSettings terrainSettings) {
+    private static void removeRectangles(Collection<Index> remainingTiles, ArrayList<Rectangle> rectangles) {
         while (!remainingTiles.isEmpty()) {
             Index start = remainingTiles.iterator().next();
 
-            Rectangle rectangle = findBiggestRectangle(start.getX(), start.getY(), remainingTiles, terrainSettings);
+            Rectangle rectangle = findBiggestRectangle(start.getX(), start.getY(), remainingTiles);
             rectangles.add(rectangle);
 
             // remove used atoms
@@ -57,7 +56,7 @@ public class GeometricalUtil {
         }
     }
 
-    static public Rectangle findBiggestRectangle(int startX, int startY, Collection<Index> tiles, TerrainSettings terrainSettings) {
+    static private Rectangle findBiggestRectangle(int startX, int startY, Collection<Index> tiles) {
         Index index = new Index(startX, startY);
         if (!tiles.contains(index)) {
             throw new IllegalArgumentException("Invalid start point");
@@ -69,17 +68,9 @@ public class GeometricalUtil {
         boolean canGrowSouth = true;
         boolean canGrowWest = true;
 
-        while (canGrowNorth | canGrowEast | canGrowSouth | canGrowWest) {
+        while (canGrowNorth || canGrowEast || canGrowSouth || canGrowWest) {
             if (rectangle.getStart().getY() == 0) {
                 canGrowNorth = false;
-            }
-
-            if (rectangle.getEnd().getX() == terrainSettings.getPlayFieldXSize() - 1) {
-                canGrowEast = false;
-            }
-
-            if (rectangle.getEnd().getY() == terrainSettings.getPlayFieldYSize() - 1) {
-                canGrowSouth = false;
             }
 
             if (rectangle.getStart().getX() == 0) {
@@ -151,6 +142,12 @@ public class GeometricalUtil {
         return true;
     }
 
+    /**
+     * Splits Rectangles into smaller Rectangles with 1*1 size (indexes)
+     *
+     * @param tileRectangle input rectangle
+     * @return Collection with Indexes
+     */
     public static Collection<Index> splitIntoTiles(Collection<Rectangle> tileRectangle) {
         ArrayList<Index> tiles = new ArrayList<Index>();
         for (Rectangle rectangle : tileRectangle) {

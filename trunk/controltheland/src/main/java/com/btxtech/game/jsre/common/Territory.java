@@ -73,6 +73,11 @@ public class Territory implements Serializable {
     }
 
     @Override
+    public String toString() {
+        return "Territory: " + name + " id: " + id;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Territory)) return false;

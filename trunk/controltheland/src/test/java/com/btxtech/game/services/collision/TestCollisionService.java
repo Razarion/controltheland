@@ -1,9 +1,12 @@
 package com.btxtech.game.services.collision;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.territory.TerritoryService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +22,12 @@ public class TestCollisionService extends AbstractServiceTest {
     private CollisionService collisionService;
     @Autowired
     private ItemService itemService;
+    @Autowired
+    private TerritoryService territoryService;
 
     @Test
     @DirtiesContext
-    public void testPathfinder1() throws Exception {
+    public void testRandomPositionInRectangleWithBot() throws Exception {
         configureMinimalGame();
 
         beginHttpSession();
@@ -44,4 +49,24 @@ public class TestCollisionService extends AbstractServiceTest {
         }
     }
 
+    @Test
+    @DirtiesContext
+    public void testRandomPositionInTerritory() throws Exception {
+        configureComplexGame();
+
+        ItemType itemType = itemService.getItemType(TEST_START_BUILDER_ITEM_ID);
+        Territory territory = territoryService.getTerritory(COMPLEX_TERRITORY_ID);
+        // 16 * 18 Tiles (100*100) = 288 Possible position for gold (100*100)
+        // Minus Terrain Images 4*10 + 10*4 = 80
+        // 208 possible positions if placed nicely
+        //  => 180 (tolerance)
+
+        for (int i = 0; i < 180; i++) {
+            Index index = collisionService.getFreeRandomPosition(itemType, territory, 100, false);
+            Index indexWithOffset = index.add(50, 50);
+            Assert.assertEquals(COMPLEX_TERRITORY_ID, territoryService.getTerritory(index).getId());
+            itemService.createSyncObject(itemService.getItemType(TEST_RESOURCE_ITEM_ID), indexWithOffset, null, null, 0);
+            System.out.println("Gold Placed: " + i);
+        }
+    }
 }

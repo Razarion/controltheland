@@ -58,42 +58,25 @@ public class Rectangle implements Serializable {
         return end.getCopy();
     }
 
-    public boolean contains(Index position) {
-        return position != null && position.getX() >= start.getX() && position.getY() >= start.getY() && position.getX() <= end.getX() && position.getY() <= end.getY();
+    /**
+     * Returns true if the given position is in the rectangle or adjoins the rectangle
+     *
+     * @param position to check
+     * @return true if adjoins or contains position
+     */
+    public boolean contains(Index position) { // TODO rename: adjoinsOrContains
+        return position != null && position.getX() + 1 >= start.getX() && position.getY() + 1 >= start.getY() && position.getX() <= end.getX() && position.getY() <= end.getY();
     }
 
-    public boolean containsExclusive(Index position) {
+    /**
+     * Returns true if the given position is in the rectangle. If the rectangle just adjoins it returns false.
+     *
+     * @param position to check
+     * @return true if the position is inside the rectangle
+     */
+    public boolean containsExclusive(Index position) { // TODO rename: contains
         return position.getX() >= start.getX() && position.getY() >= start.getY() && position.getX() < end.getX() && position.getY() < end.getY();
     }
-
-    public Index getOffestToStart(Index index) {
-        if (!contains(index)) {
-            return null;
-        }
-
-        return start.getDelta(index);
-    }
-
-    public Index getOffsetToEnd(Index index) {
-        if (!contains(index)) {
-            return null;
-        }
-        return index.getDelta(end);
-    }
-
-    public boolean contains(Rectangle rectangle) {
-        return contains(rectangle.getStart()) && contains(rectangle.getEnd());
-    }
-
-    public boolean containsExclusive(Rectangle rectangle) {
-        return containsExclusive(rectangle.getStart()) && containsExclusive(rectangle.getEnd());
-    }
-
-    /*
-     * Adjoin or contains
-     * The minLength specifies how long min containg height of weight must be
-     * 0 means only two corners adjoins
-     */
 
     public boolean adjoins(Rectangle rectangle) {
         int startX = Math.max(start.getX(), rectangle.start.getX());
@@ -179,7 +162,7 @@ public class Rectangle implements Serializable {
 
     @Override
     public String toString() {
-        return "Start " + start + " End " + end;
+        return "Start " + start + " End " + end + " Width: " + getWidth() + " Height: " + getHeight();
     }
 
     public int getWidth() {
@@ -266,23 +249,22 @@ public class Rectangle implements Serializable {
         return getHeight() >= minSize || getWidth() >= minSize;
     }
 
+    /**
+     * Splits the rectangle into smaller rectangles.
+     * The result rectangles will always have the given width and height. If the area of this rectangle is not width * height
+     * the returning result will be rounded up (e.g. thr returned rectangles have a bigger area then this rectangle).
+     *
+     * @param width of the split tiles
+     * @param height of the split tiles
+     * @return Collection with split rectangles
+     */
     public Collection<Rectangle> split(int width, int height) {
         ArrayList<Rectangle> split = new ArrayList<Rectangle>();
         int xCount = (int) Math.ceil((double) getWidth() / (double) width);
         int yCount = (int) Math.ceil((double) getHeight() / (double) height);
         for (int x = 0; x < xCount; x++) {
-            int tmpWidth = width;
-            if (x == xCount - 1) {
-                // Last one
-                tmpWidth = width - getWidth() % width;
-            }
             for (int y = 0; y < yCount; y++) {
-                int tmpHeight = height;
-                if (y == yCount - 1) {
-                    // Last one
-                    tmpHeight = height - getHeight() % height;
-                }
-                split.add(new Rectangle(getStart().getX() + x * width, getStart().getY() + y * height, tmpWidth, tmpHeight));
+                split.add(new Rectangle(getStart().getX() + x * width, getStart().getY() + y * height, width, height));
             }
         }
         return split;

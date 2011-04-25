@@ -87,7 +87,6 @@ public class MapView implements EntryPoint {
                 TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(new SimpleDeferredStartup());
                 miniTerrain.onTerrainSettings(terrainInfo.getTerrainSettings());
                 miniTerritoryView.onTerrainSettings(terrainInfo.getTerrainSettings());
-                territoryEditModel.setTerrainSettings(terrainInfo.getTerrainSettings());
                 miniTerritoryView.drawTiles();
             }
         });

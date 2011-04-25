@@ -47,6 +47,7 @@ import com.btxtech.game.services.resource.ResourceService;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbSurfaceRect;
 import com.btxtech.game.services.terrain.DbTerrainImage;
+import com.btxtech.game.services.terrain.DbTerrainImagePosition;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.territory.DbTerritory;
@@ -95,6 +96,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.ServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -134,6 +136,14 @@ abstract public class AbstractServiceTest {
     protected static int TEST_NOOB_TERRITORY_ID = -1;
     protected static final String TEST_NOOB_RESURRECTION = "NOOB_RESURRECTION";
     protected static int TEST_NOOB_RESURRECTION_ID = -1;
+    // Terrain
+    protected static int TERRAIN_IMAGE_4x10 = -1;
+    protected static int TERRAIN_IMAGE_10x4 = -1;
+    protected static int TERRAIN_IMAGE_4x4 = -1;
+    protected static int TERRAIN_IMAGE_10x10 = -1;
+    // Territories
+    protected static String COMPLEX_TERRITORY = "ComplexTerritory";
+    protected static int COMPLEX_TERRITORY_ID = -1;
 
     private HibernateTemplate hibernateTemplate;
     @Autowired
@@ -215,7 +225,7 @@ abstract public class AbstractServiceTest {
                 } else {
                     return syncItemInfo.getId();
                 }
-            } else if (syncItemInfo.getBase() != null &&syncItemInfo.getBase().equals(simpleBase) && syncItemInfo.getItemTypeId() == itemTypeId) {
+            } else if (syncItemInfo.getBase() != null && syncItemInfo.getBase().equals(simpleBase) && syncItemInfo.getItemTypeId() == itemTypeId) {
                 if (region != null) {
                     if (region.contains(syncItemInfo.getPosition())) {
                         return syncItemInfo.getId();
@@ -363,7 +373,7 @@ abstract public class AbstractServiceTest {
         movableService.sendCommands(baseCommands);
     }
 
-    // ------------------- Setup Minimal Game Config --------------------            
+    // -------------------  Game Config --------------------
 
     protected void configureMinimalGame() throws Exception {
         System.out.println("---- Configure minimal Game ---");
@@ -388,6 +398,34 @@ abstract public class AbstractServiceTest {
         // Market
         setupMinimalMarket();
         setupXpSettings();
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    protected void configureComplexGame() throws Exception {
+        System.out.println("---- Configure complex Game ---");
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        // Item Types
+        createHarvesterItemType();
+        createAttackBaseItemType();
+        createContainerBaseItemType();
+        createFactoryBaseItemType();
+        createBuilderBaseItemType();
+        finishAttackBaseItemType();
+        finishContainerBaseItemType();
+        createMoney();
+        // Terrain
+        setupComplexTerrain();
+        // Setup territory
+        setupComplexTerritory();
+        // Level
+        //setupLevels();
+        // Market
+        //setupMinimalMarket();
+        //setupXpSettings();
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -555,7 +593,7 @@ abstract public class AbstractServiceTest {
         dbMovableType.setSpeed(10000);
         dbMovableType.setTerrainType(SurfaceType.LAND);
         dbBaseItemType.setMovableType(dbMovableType);
-        
+
         itemService.saveDbItemType(dbBaseItemType);
         itemService.activate();
         TEST_HARVESTER_ITEM_ID = dbBaseItemType.getId();
@@ -582,6 +620,35 @@ abstract public class AbstractServiceTest {
     }
 
     // ------------------- Setup Terrain --------------------
+
+    protected DbTerrainSetting setupComplexTerrain() {
+        setupTerrainImages();
+        DbTerrainSetting dbTerrainSetting = setupComplexRealGameTerrain(createDbSurfaceImage(SurfaceType.LAND));
+        terrainService.activateTerrain();
+        return dbTerrainSetting;
+    }
+
+    protected void setupTerrainImages() {
+        DbTerrainImage dbTerrainImage = terrainService.getDbTerrainImageCrudServiceHelper().createDbChild();
+        dbTerrainImage.setTiles(4, 10);
+        terrainService.getDbTerrainImageCrudServiceHelper().updateDbChild(dbTerrainImage);
+        TERRAIN_IMAGE_4x10 = dbTerrainImage.getId();
+
+        dbTerrainImage = terrainService.getDbTerrainImageCrudServiceHelper().createDbChild();
+        dbTerrainImage.setTiles(10, 4);
+        terrainService.getDbTerrainImageCrudServiceHelper().updateDbChild(dbTerrainImage);
+        TERRAIN_IMAGE_10x4 = dbTerrainImage.getId();
+
+        dbTerrainImage = terrainService.getDbTerrainImageCrudServiceHelper().createDbChild();
+        dbTerrainImage.setTiles(4, 4);
+        terrainService.getDbTerrainImageCrudServiceHelper().updateDbChild(dbTerrainImage);
+        TERRAIN_IMAGE_4x4 = dbTerrainImage.getId();
+
+        dbTerrainImage = terrainService.getDbTerrainImageCrudServiceHelper().createDbChild();
+        dbTerrainImage.setTiles(10, 10);
+        terrainService.getDbTerrainImageCrudServiceHelper().updateDbChild(dbTerrainImage);
+        TERRAIN_IMAGE_10x10 = dbTerrainImage.getId();
+    }
 
     protected DbTerrainSetting setupMinimalTerrain() {
         DbTerrainSetting dbTerrainSetting = setupMinimalRealGameTerrain(createDbSurfaceImage(SurfaceType.LAND));
@@ -627,6 +694,25 @@ abstract public class AbstractServiceTest {
         dbTerrainSetting.setTileHeight(100);
         terrainService.getDbTerrainSettingCrudServiceHelper().updateDbChild(dbTerrainSetting);
         terrainService.activateTerrain();
+        return dbTerrainSetting;
+    }
+
+    protected DbTerrainSetting setupComplexRealGameTerrain(DbSurfaceImage dbSurfaceImage) {
+        DbTerrainSetting dbTerrainSetting = terrainService.getDbTerrainSettingCrudServiceHelper().createDbChild();
+        dbTerrainSetting.setRealGame(true);
+        dbTerrainSetting.setTileXCount(100);
+        dbTerrainSetting.setTileYCount(100);
+        dbTerrainSetting.setTileWidth(100);
+        dbTerrainSetting.setTileHeight(100);
+        DbSurfaceRect dbSurfaceRect = new DbSurfaceRect(new Rectangle(0, 0, 100, 100), dbSurfaceImage);
+        dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(dbSurfaceRect);
+        // Setup Terrain Images
+        Collection<DbTerrainImagePosition> dbTerrainImagePositions  = new ArrayList<DbTerrainImagePosition>();
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(10,0), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_4x10)));
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(0,12), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_10x4)));
+        dbTerrainSetting.getDbTerrainImagePositionCrudServiceHelper().updateDbChildren(dbTerrainImagePositions);
+
+        terrainService.getDbTerrainSettingCrudServiceHelper().updateDbChild(dbTerrainSetting);
         return dbTerrainSetting;
     }
 
@@ -929,6 +1015,15 @@ abstract public class AbstractServiceTest {
                 new int[]{TEST_START_BUILDER_ITEM_ID, TEST_ATTACK_ITEM_ID, TEST_CONTAINER_ITEM_ID, TEST_FACTORY_ITEM_ID, TEST_HARVESTER_ITEM_ID},
                 new Rectangle(50, 50, 50, 50));
         TEST_NOOB_TERRITORY_ID = dbTerritory.getId();
+    }
+
+    protected void setupComplexTerritory() {
+        DbTerritory dbTerritory = setupTerritory(COMPLEX_TERRITORY,
+                new int[]{TEST_START_BUILDER_ITEM_ID, TEST_ATTACK_ITEM_ID, TEST_CONTAINER_ITEM_ID, TEST_FACTORY_ITEM_ID, TEST_HARVESTER_ITEM_ID},
+                new Rectangle(0, 0, 16, 6),
+                new Rectangle(0, 6, 5, 6), new Rectangle(5, 6, 11, 7),
+                new Rectangle(0, 12, 5, 6), new Rectangle(5, 13, 11, 5));
+        COMPLEX_TERRITORY_ID = dbTerritory.getId();
     }
 
     protected DbTerritory setupTerritory(String name, int[] allowedItems, Rectangle... tileRegions) {
