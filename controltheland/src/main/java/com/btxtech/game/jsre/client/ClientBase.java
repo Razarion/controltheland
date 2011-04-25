@@ -27,6 +27,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
+import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.impl.AbstractBaseServiceImpl;
@@ -39,6 +40,10 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
  * Time: 5:07:34 PM
  */
 public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseService {
+    private final static String OWN_BASE_COLOR = "#ffd800";
+    private final static String ENEMY_BASE_COLOR = "#FF0000";
+    private final static String BOT_BASE_COLOR = "#000000";
+    private final static String UNKNOWN_BASE_COLOR = "#888888";
     private static final ClientBase INSTANCE = new ClientBase();
     private double accountBalance;
     private SimpleBase simpleBase;
@@ -115,8 +120,25 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
         return getBaseName(simpleBase);
     }
 
+
+    public String getBaseHtmlColor(SimpleBase base) {
+        if (isMyOwnBase(base)) {
+            return getOwnBaseHtmlColor();
+        }
+        BaseAttributes baseAttributes = getBaseAttributes(base);
+        if (baseAttributes == null) {
+            return UNKNOWN_BASE_COLOR;
+        }
+
+        if (baseAttributes.isBot()) {
+            return BOT_BASE_COLOR;
+        }
+        return ENEMY_BASE_COLOR;
+    }
+
+
     public String getOwnBaseHtmlColor() {
-        return getBaseHtmlColor(simpleBase);
+        return OWN_BASE_COLOR;
     }
 
     public void onBaseChangedPacket(BaseChangedPacket baseChangedPacket) {

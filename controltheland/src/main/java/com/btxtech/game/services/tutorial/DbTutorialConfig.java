@@ -25,8 +25,15 @@ import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.tutorial.hint.ResourceHintManager;
 import org.hibernate.annotations.Cascade;
 
-import javax.persistence.*;
-import java.io.Serializable;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,10 +60,8 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
     private int height;
     private int ownBaseId;
     private String ownBaseName;
-    private String ownBaseColor;
     private int enemyBaseId;
     private String enemyBaseName;
-    private String enemyBaseColor;
     private boolean failOnOwnItemsLost;
     private Integer failOnMoneyBelowAndNoAttackUnits;
     private boolean tracking;
@@ -106,14 +111,6 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
         this.ownBaseName = ownBaseName;
     }
 
-    public String getOwnBaseColor() {
-        return ownBaseColor;
-    }
-
-    public void setOwnBaseColor(String ownBaseColor) {
-        this.ownBaseColor = ownBaseColor;
-    }
-
     public int getEnemyBaseId() {
         return enemyBaseId;
     }
@@ -128,14 +125,6 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
 
     public void setEnemyBaseName(String enemyBaseName) {
         this.enemyBaseName = enemyBaseName;
-    }
-
-    public String getEnemyBaseColor() {
-        return enemyBaseColor;
-    }
-
-    public void setEnemyBaseColor(String enemyBaseColor) {
-        this.enemyBaseColor = enemyBaseColor;
     }
 
     public boolean isFailOnOwnItemsLost() {
@@ -193,8 +182,8 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
     public TutorialConfig createTutorialConfig(ResourceHintManager resourceHintManager, ItemService itemService) {
         ArrayList<BaseAttributes> baseAttributes = new ArrayList<BaseAttributes>();
         SimpleBase ownBase = new SimpleBase(ownBaseId);
-        baseAttributes.add(new BaseAttributes(ownBase, ownBaseName, ownBaseColor, false));
-        baseAttributes.add(new BaseAttributes(new SimpleBase(enemyBaseId), enemyBaseName, enemyBaseColor, false));
+        baseAttributes.add(new BaseAttributes(ownBase, ownBaseName, false));
+        baseAttributes.add(new BaseAttributes(new SimpleBase(enemyBaseId), enemyBaseName, false));
 
         ArrayList<TaskConfig> taskConfigs = new ArrayList<TaskConfig>();
         for (DbTaskConfig dbTaskConfig : dbTaskConfigs) {
@@ -207,10 +196,8 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
     public void init() {
         ownBaseId = 1;
         ownBaseName = "My Base";
-        ownBaseColor = "#0000FF";
         enemyBaseId = 2;
         enemyBaseName = "Enemy";
-        enemyBaseColor = "#FF0000";
         dbTaskConfigs = new ArrayList<DbTaskConfig>();
     }
 

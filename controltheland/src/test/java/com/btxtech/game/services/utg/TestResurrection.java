@@ -95,7 +95,6 @@ public class TestResurrection extends AbstractServiceTest {
         userService.login("U1", "test");
         movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
         SimpleBase targetBase = ((RealityInfo) movableService.getGameInfo()).getBase();
-        String targetColor = baseService.getBaseHtmlColor(targetBase);
         String targetName = baseService.getBaseName(targetBase);
         Id target = getFirstSynItemId(targetBase, TEST_START_BUILDER_ITEM_ID);
         clearPackets();
@@ -130,7 +129,7 @@ public class TestResurrection extends AbstractServiceTest {
 
         BaseChangedPacket baseChangedPacket = new BaseChangedPacket();
         baseChangedPacket.setType(BaseChangedPacket.Type.REMOVED);
-        baseChangedPacket.setBaseAttributes(new BaseAttributes(targetBase, targetName, targetColor, false));
+        baseChangedPacket.setBaseAttributes(new BaseAttributes(targetBase, targetName, false));
 
         XpBalancePacket xpBalancePacket = new XpBalancePacket();
         xpBalancePacket.setXp(1);

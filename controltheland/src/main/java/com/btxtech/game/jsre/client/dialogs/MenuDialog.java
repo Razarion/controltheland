@@ -78,13 +78,6 @@ public class MenuDialog extends Dialog {
                 StartupScreen.getInstance().showStartScreen();
             }
         });
-        addRow(flexTable, "Base Color", "color", new Runnable() {
-
-            @Override
-            public void run() {
-                DialogManager.showDialog(new ChangeColorDialog(), DialogManager.Type.PROMPTLY);
-            }
-        });
 
         dialogVPanel.add(flexTable);
     }

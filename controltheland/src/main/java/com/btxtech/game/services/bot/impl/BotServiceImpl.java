@@ -15,7 +15,6 @@ package com.btxtech.game.services.bot.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.base.GameFullException;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
@@ -71,7 +70,7 @@ public class BotServiceImpl implements BotService {
         return dbBotConfigCrudServiceHelper;
     }
 
-    private void startBot(DbBotConfig botConfig) throws GameFullException {
+    private void startBot(DbBotConfig botConfig) {
         BotRunner botRunner = (BotRunner) applicationContext.getBean("botRunner");
         botRunner.setBotConfig(botConfig);
         botRunner.start();

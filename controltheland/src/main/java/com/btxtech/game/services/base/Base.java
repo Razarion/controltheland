@@ -32,7 +32,6 @@ import java.util.HashSet;
  */
 public class Base implements Serializable {
     private double accountBalance;
-    private String baseHtmlColor;
     private Date startTime;
     private int kills;
     private int created;
@@ -57,8 +56,7 @@ public class Base implements Serializable {
     public Base() {
     }
 
-    public Base(String baseHtmlColor, UserState userState, int baseId) {
-        this.baseHtmlColor = baseHtmlColor;
+    public Base(UserState userState, int baseId) {
         this.userState = userState;
         userState.setBase(this);
         startTime = new Date();
@@ -67,7 +65,6 @@ public class Base implements Serializable {
     }
 
     public Base(double accountBalance,
-                String baseHtmlColor,
                 Date startTime,
                 int kills,
                 int created,
@@ -78,7 +75,6 @@ public class Base implements Serializable {
                 int baseId,
                 UserState userState) {
         this.accountBalance = accountBalance;
-        this.baseHtmlColor = baseHtmlColor;
         this.startTime = startTime;
         this.kills = kills;
         this.created = created;
@@ -115,14 +111,6 @@ public class Base implements Serializable {
 
     public HashSet<SyncBaseItem> getItems() {
         return items;
-    }
-
-    public String getBaseHtmlColor() {
-        return baseHtmlColor;
-    }
-
-    public void setBaseHtmlColor(String baseHtmlColor) {
-        this.baseHtmlColor = baseHtmlColor;
     }
 
     public SimpleBase getSimpleBase() {

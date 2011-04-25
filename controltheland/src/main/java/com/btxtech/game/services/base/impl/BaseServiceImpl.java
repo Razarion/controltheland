@@ -37,9 +37,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.tutorial.HouseSpacePacket;
 import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.base.BaseColor;
 import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.base.GameFullException;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.connection.Connection;
@@ -62,13 +60,7 @@ import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate3.HibernateCallback;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -113,13 +105,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     private ServerConditionService serverConditionService;
     private final HashMap<SimpleBase, Base> bases = new HashMap<SimpleBase, Base>();
     private int lastBaseId = 0;
-    private HibernateTemplate hibernateTemplate;
-
-    @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        hibernateTemplate = new HibernateTemplate(sessionFactory);
-    }
-
 
     @Override
     public void checkBaseAccess(SyncBaseItem item) throws IllegalAccessException {
@@ -136,22 +121,12 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public Base createNewBase(UserState userState, DbBaseItemType dbBaseItemType, Territory territory, int startItemFreeRange) throws AlreadyUsedException, NoSuchItemTypeException, GameFullException, ItemLimitExceededException, HouseSpaceExceededException {
-        synchronized (bases) {
-            List<BaseColor> baseColors = getFreeBaseColors(0, 1);
-            if (baseColors.isEmpty()) {
-                throw new GameFullException();
-            }
-            return createNewBase(baseColors.get(0).getHtmlColor(), userState, dbBaseItemType, territory, startItemFreeRange);
-        }
-    }
-
-    private Base createNewBase(String baseColor, UserState userState, DbBaseItemType dbBaseItemType, Territory territory, int startItemFreeRange) throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
+    public Base createNewBase(UserState userState, DbBaseItemType dbBaseItemType, Territory territory, int startItemFreeRange) throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
         Base base;
         synchronized (bases) {
             lastBaseId++;
-            base = new Base(baseColor, userState, lastBaseId);
-            createBase(base.getSimpleBase(), setupBaseName(base), base.getBaseHtmlColor(), false);
+            base = new Base(userState, lastBaseId);
+            createBase(base.getSimpleBase(), setupBaseName(base), false);
             log.info("Base created: " + base);
             bases.put(base.getSimpleBase(), base);
         }
@@ -193,15 +168,11 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public Base createBotBase(UserState userState, String name) throws GameFullException {
+    public Base createBotBase(UserState userState, String name) {
         synchronized (bases) {
-            List<BaseColor> baseColors = getFreeBaseColors(0, 1);
-            if (baseColors.isEmpty()) {
-                throw new GameFullException();
-            }
             lastBaseId++;
-            Base base = new Base(baseColors.get(0).getHtmlColor(), userState, lastBaseId);
-            createBase(base.getSimpleBase(), name, base.getBaseHtmlColor(), false);
+            Base base = new Base(userState, lastBaseId);
+            createBase(base.getSimpleBase(), name, false);
             log.info("Bot Base created: " + base);
             bases.put(base.getSimpleBase(), base);
             sendBaseChangedPacket(BaseChangedPacket.Type.CREATED, base.getSimpleBase());
@@ -286,73 +257,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     @Override
     public boolean isAlive(SimpleBase simpleBase) {
         return bases.containsKey(simpleBase);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<String> getFreeColors(final int index, final int count) {
-        ArrayList<String> colors = new ArrayList<String>();
-        for (BaseColor baseColor : getFreeBaseColors(index, count)) {
-            colors.add(baseColor.getHtmlColor());
-        }
-        return colors;
-    }
-
-    @Override
-    public BaseColor getBaseColor4HtmlColor(final String htmlColor) {
-        @SuppressWarnings("unchecked")
-        List<BaseColor> baseColors = (List<BaseColor>) hibernateTemplate.execute(new HibernateCallback() {
-            public Object doInHibernate(org.hibernate.Session session) {
-                Criteria criteria = session.createCriteria(BaseColor.class);
-                criteria.add(Restrictions.eq("htmlColor", htmlColor));
-                return criteria.list();
-            }
-        });
-        if (baseColors.isEmpty()) {
-            throw new IllegalArgumentException("HTML color does not exist: " + htmlColor);
-        }
-        return baseColors.get(0);
-    }
-
-
-    @SuppressWarnings("unchecked")
-    private List<BaseColor> getFreeBaseColors(final int index, final int count) {
-        return (List<BaseColor>) hibernateTemplate.execute(new HibernateCallback() {
-            public Object doInHibernate(org.hibernate.Session session) {
-                Criteria criteria = session.createCriteria(BaseColor.class);
-                Collection<String> colorsUsed = getHtmlColors();
-                if (!colorsUsed.isEmpty()) {
-                    criteria.add(Restrictions.not(Restrictions.in("htmlColor", colorsUsed)));
-                }
-                criteria.setMaxResults(count);
-                criteria.setFirstResult(index);
-                criteria.addOrder(Order.asc("id"));
-                return criteria.list();
-            }
-        });
-    }
-
-    public void fillBaseColors() {
-        final ArrayList<BaseColor> list = new ArrayList<BaseColor>();
-        for (int red = 1; red < 5; red++) {
-            for (int green = 1; green < 5; green++) {
-                for (int blue = 1; blue < 5; blue++) {
-                    BaseColor baseColor = new BaseColor(red * 64 - 1, green * 64 - 1, blue * 64 - 1);
-                    list.add(baseColor);
-                }
-            }
-        }
-
-        hibernateTemplate.execute(new HibernateCallback<Void>() {
-            public Void doInHibernate(org.hibernate.Session session) {
-                while (!list.isEmpty()) {
-                    int randIndex = (int) (Math.random() * list.size());
-                    BaseColor baseColor = list.remove(randIndex);
-                    session.saveOrUpdate(baseColor);
-                }
-                return null;
-            }
-        });
     }
 
     @Override
@@ -470,7 +374,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             clear();
             for (Base newBase : newBases) {
                 bases.put(newBase.getSimpleBase(), newBase);
-                createBase(newBase.getSimpleBase(), setupBaseName(newBase), newBase.getBaseHtmlColor(), newBase.isAbandoned());
+                createBase(newBase.getSimpleBase(), setupBaseName(newBase), newBase.isAbandoned());
                 if (newBase.getBaseId() > lastBaseId) {
                     lastBaseId = newBase.getBaseId();
                 }
@@ -540,15 +444,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     public void changeBotBaseName(Base base, String name) {
         setBaseName(base.getSimpleBase(), name);
         sendBaseChangedPacket(BaseChangedPacket.Type.CHANGED, base.getSimpleBase());
-    }
-
-    @Override
-    public void setBaseColor(String color) throws AlreadyUsedException {
-        Base base = getBase();
-        base.setBaseHtmlColor(color);
-        SimpleBase simpleBase = base.getSimpleBase();
-        setBaseColor(simpleBase, color);
-        sendBaseChangedPacket(BaseChangedPacket.Type.CHANGED, simpleBase);
     }
 
     @Override

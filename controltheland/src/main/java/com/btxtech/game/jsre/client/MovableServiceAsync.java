@@ -69,10 +69,6 @@ public interface MovableServiceAsync {
 
     void sendCloseWindow(long totalRunningTime, long clientTimeStamp, AsyncCallback<Void> asyncCallback);
 
-    void getFreeColors(int index, int count, AsyncCallback<List<String>> asyncCallback);
-
-    void setBaseColor(String color, AsyncCallback<Void> asyncCallback);
-
     void sellItem(Id id, AsyncCallback<Void> asyncCallback);
 
     void sendStartupInfo(Collection<StartupTaskInfo> infos, long totalTime, AsyncCallback<Void> asyncCallback);

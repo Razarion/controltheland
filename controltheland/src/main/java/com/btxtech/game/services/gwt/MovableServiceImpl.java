@@ -294,25 +294,6 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public List<String> getFreeColors(int index, int count) {
-        try {
-            return baseService.getFreeColors(index, count);
-        } catch (Throwable t) {
-            log.error("", t);
-            return null;
-        }
-    }
-
-    @Override
-    public void setBaseColor(String color) {
-        try {
-            baseService.setBaseColor(color);
-        } catch (Throwable t) {
-            log.error("", t);
-        }
-    }
-
-    @Override
     public void sellItem(Id id) {
         try {
             itemService.sellItem(id);

@@ -64,7 +64,6 @@ public class UserBaseInfo extends BorderPanel {
                 }
                 baseInfos.add(new BaseInfo("Base since:", WebCommon.formatDuration(base.getUptime())));
                 baseInfos.add(new BaseInfo("Base name:", baseService.getBaseName(base.getSimpleBase())));
-                baseInfos.add(new BaseInfo("Base color:", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", baseService.getBaseHtmlColor(base.getSimpleBase())));
                 baseInfos.add(new BaseInfo("Money:", Integer.toString((int) base.getAccountBalance())));
                 for (ItemType itemType : itemService.getItemTypes()) {
                     int count = base.getItemCount(itemType);

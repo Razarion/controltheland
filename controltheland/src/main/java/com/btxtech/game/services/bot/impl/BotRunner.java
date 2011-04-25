@@ -24,7 +24,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.base.GameFullException;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.bot.DbBotItemCount;
@@ -209,11 +208,7 @@ public class BotRunner {
         if (base == null || !baseService.isAlive(base.getSimpleBase())) {
             base = baseService.getBase(userState);
             if (base == null) {
-                try {
-                    base = baseService.createBotBase(userState, botConfig.getName());
-                } catch (GameFullException e) {
-                    log.error("", e);
-                }
+                base = baseService.createBotBase(userState, botConfig.getName());
             }
             baseService.setBot(base, true);
         }

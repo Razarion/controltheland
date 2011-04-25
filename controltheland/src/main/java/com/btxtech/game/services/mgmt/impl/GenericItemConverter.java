@@ -296,7 +296,7 @@ public class GenericItemConverter {
 
         DbBase dbBase = bases.get(base);
         if (dbBase == null) {
-            dbBase = new DbBase(base, baseService.getBaseColor4HtmlColor(base.getBaseHtmlColor()));
+            dbBase = new DbBase(base);
             bases.put(base, dbBase);
         }
         return dbBase;
