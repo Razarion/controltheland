@@ -24,13 +24,15 @@ import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.user.SecurityRoles;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -48,14 +50,23 @@ public class TerritoryServiceImpl extends AbstractTerritoryServiceImpl implement
     @Autowired
     private CrudRootServiceHelper<DbTerritory> dbTerritoryCrudServiceHelper;
     private Log log = LogFactory.getLog(TerritoryServiceImpl.class);
+    private HibernateTemplate hibernateTemplate;
+
+    @Autowired
+    public void setSessionFactory(SessionFactory sessionFactory) {
+        hibernateTemplate = new HibernateTemplate(sessionFactory);
+    }
 
     @PostConstruct
     public void setup() {
+        SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
         try {
             dbTerritoryCrudServiceHelper.init(DbTerritory.class);
             updateTerritories();
         } catch (Throwable t) {
             log.error("", t);
+        } finally {
+            SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
         }
     }
 
@@ -80,7 +91,6 @@ public class TerritoryServiceImpl extends AbstractTerritoryServiceImpl implement
 
     @Override
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
-    @Transient
     public void saveTerritory(int territoryId, Collection<Rectangle> territoryTileRegions) {
         DbTerritory dbTerritory = dbTerritoryCrudServiceHelper.readDbChild(territoryId);
         dbTerritory.setDbTerritoryRegion(territoryTileRegions);
