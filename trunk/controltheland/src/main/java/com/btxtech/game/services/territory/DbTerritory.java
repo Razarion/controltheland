@@ -49,7 +49,7 @@ public class DbTerritory implements CrudChild {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "dbTerritory")
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE, org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
     private Set<DbTerritoryRegion> dbTerritoryRegions;
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "TERRITORY_TERRITORY_ALLOWED_ITEM_TYPES",
             joinColumns = @JoinColumn(name = "territoryId"),
             inverseJoinColumns = @JoinColumn(name = "itemTypeId")
@@ -116,10 +116,22 @@ public class DbTerritory implements CrudChild {
         return dbTerritoryRegions;
     }
 
+    /**
+     * Only call within a valid hibernate session
+     *
+     * @param dbBaseItemType base item type
+     * @return if allowed on territory
+     */
     public Boolean isItemAllowed(DbBaseItemType dbBaseItemType) {
         return allowedItemTypes != null && allowedItemTypes.contains(dbBaseItemType);
     }
 
+    /**
+     * Only call within a valid hibernate session
+     *
+     * @param dbBaseItemType base item type
+     * @param allowed allowed on territory
+     */
     public void setItemAllowed(DbBaseItemType dbBaseItemType, boolean allowed) {
         if (allowedItemTypes == null) {
             allowedItemTypes = new HashSet<DbBaseItemType>();

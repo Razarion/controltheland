@@ -24,7 +24,7 @@ public class DbResurrection implements CrudChild {
     // ----- New Base -----
     @ManyToOne
     private DbBaseItemType startItemType;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private DbTerritory dbTerritory;
     private int startItemFreeRange;
     private int money;
