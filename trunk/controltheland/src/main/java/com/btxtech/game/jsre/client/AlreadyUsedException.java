@@ -13,8 +13,6 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.btxtech.game.services.base.BaseColor;
-
 /**
  * User: beat
  * Date: Jun 6, 2009

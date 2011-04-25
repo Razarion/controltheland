@@ -18,12 +18,13 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.statistics.BaseStatisticsDTO;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.wicket.WebCommon;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * User: beat
@@ -57,7 +58,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         ArrayList<BaseStatisticsDTO> dtos = new ArrayList<BaseStatisticsDTO>();
         int rank = 1;
         for (Base base : bases) {
-            BaseStatisticsDTO dto = new BaseStatisticsDTO(rank, base, baseService.getBaseName(base.getSimpleBase()), WebCommon.formatDuration(base.getUptime()));
+            BaseStatisticsDTO dto = new BaseStatisticsDTO(rank, baseService.getBaseName(base.getSimpleBase()), WebCommon.formatDuration(base.getUptime()));
             dtos.add(dto);
             rank++;
         }
@@ -85,7 +86,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         ArrayList<BaseStatisticsDTO> dtos = new ArrayList<BaseStatisticsDTO>();
         int rank = 1;
         for (Base base : bases) {
-            BaseStatisticsDTO dto = new BaseStatisticsDTO(rank, base, baseService.getBaseName(base.getSimpleBase()), "$" + Integer.toString((int) base.getAccountBalance()));
+            BaseStatisticsDTO dto = new BaseStatisticsDTO(rank, baseService.getBaseName(base.getSimpleBase()), "$" + Integer.toString((int) base.getAccountBalance()));
             dtos.add(dto);
             rank++;
         }
@@ -114,7 +115,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         ArrayList<BaseStatisticsDTO> dtos = new ArrayList<BaseStatisticsDTO>();
         int rank = 1;
         for (Base base : bases) {
-            BaseStatisticsDTO dto = new BaseStatisticsDTO(rank, base, baseService.getBaseName(base.getSimpleBase()), Integer.toString(base.getItems().size()));
+            BaseStatisticsDTO dto = new BaseStatisticsDTO(rank, baseService.getBaseName(base.getSimpleBase()), Integer.toString(base.getItems().size()));
             dtos.add(dto);
             rank++;
         }
@@ -144,7 +145,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         ArrayList<BaseStatisticsDTO> dtos = new ArrayList<BaseStatisticsDTO>();
         int rank = 1;
         for (Base base : bases) {
-            BaseStatisticsDTO dto = new BaseStatisticsDTO(rank, base, baseService.getBaseName(base.getSimpleBase()), Integer.toString(base.getKills()));
+            BaseStatisticsDTO dto = new BaseStatisticsDTO(rank, baseService.getBaseName(base.getSimpleBase()), Integer.toString(base.getKills()));
             dtos.add(dto);
             rank++;
         }

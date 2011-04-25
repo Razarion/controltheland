@@ -62,10 +62,8 @@ public class TutorialEditor extends MgmtWebPage {
 
         form.add(new TextField<Integer>("ownBaseId"));
         form.add(new TextField<String>("ownBaseName"));
-        form.add(new TextField<String>("ownBaseColor"));
         form.add(new TextField<Integer>("enemyBaseId"));
         form.add(new TextField<String>("enemyBaseName"));
-        form.add(new TextField<String>("enemyBaseColor"));
         form.add(new CheckBox("showWindowTooSmall"));
         form.add(new TextField<String>("width"));
         form.add(new TextField<String>("height"));

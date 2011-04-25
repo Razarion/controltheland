@@ -43,13 +43,11 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         DbTutorialConfig dbTutorialConfig = tutorialCrud.createDbChild();
         dbTutorialConfig.setTracking(true);
-        dbTutorialConfig.setEnemyBaseColor("red");
         dbTutorialConfig.setEnemyBaseName("enemy");
         dbTutorialConfig.setFailOnMoneyBelowAndNoAttackUnits(100);
         dbTutorialConfig.setFailOnOwnItemsLost(true);
         dbTutorialConfig.setHeight(100);
         dbTutorialConfig.setName("test");
-        dbTutorialConfig.setOwnBaseColor("green");
         dbTutorialConfig.setOwnBaseId(1);
         dbTutorialConfig.setOwnBaseName("ownbase");
         dbTutorialConfig.setWidth(200);
@@ -59,13 +57,11 @@ public class TestTutorialConfiguration extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         dbTutorialConfig = ruTutorialServiceHelper.readDbChild(dbTutorialConfig.getId(), DbTutorialConfig.class);
         Assert.assertTrue(dbTutorialConfig.isTracking());
-        Assert.assertEquals("red", dbTutorialConfig.getEnemyBaseColor());
         Assert.assertEquals("enemy", dbTutorialConfig.getEnemyBaseName());
         Assert.assertEquals((Integer) 100, dbTutorialConfig.getFailOnMoneyBelowAndNoAttackUnits());
         Assert.assertTrue(dbTutorialConfig.isFailOnOwnItemsLost());
         Assert.assertEquals(100, dbTutorialConfig.getHeight());
         Assert.assertEquals("test", dbTutorialConfig.getName());
-        Assert.assertEquals("green", dbTutorialConfig.getOwnBaseColor());
         Assert.assertEquals(1, dbTutorialConfig.getOwnBaseId());
         Assert.assertEquals("ownbase", dbTutorialConfig.getOwnBaseName());
         Assert.assertEquals(200, dbTutorialConfig.getWidth());

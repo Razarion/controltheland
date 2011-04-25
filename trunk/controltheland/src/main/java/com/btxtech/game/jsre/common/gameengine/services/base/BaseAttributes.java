@@ -24,7 +24,6 @@ import java.io.Serializable;
 public class BaseAttributes implements Serializable {
     private SimpleBase simpleBase;
     private String name;
-    private String htmlColor;
     private boolean bot = false;
     private boolean abandoned;
 
@@ -34,10 +33,9 @@ public class BaseAttributes implements Serializable {
     public BaseAttributes() {
     }
 
-    public BaseAttributes(SimpleBase simpleBase, String name, String htmlColor, boolean abandoned) {
+    public BaseAttributes(SimpleBase simpleBase, String name, boolean abandoned) {
         this.simpleBase = simpleBase;
         this.name = name;
-        this.htmlColor = htmlColor;
         this.abandoned = abandoned;
     }
 
@@ -47,14 +45,6 @@ public class BaseAttributes implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getHtmlColor() {
-        return htmlColor;
-    }
-
-    public void setHtmlColor(String htmlColor) {
-        this.htmlColor = htmlColor;
     }
 
     public boolean isBot() {

@@ -14,7 +14,6 @@
 package com.btxtech.game.services.mgmt.impl;
 
 import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.base.BaseColor;
 import com.btxtech.game.services.user.UserState;
 
 import javax.persistence.CascadeType;
@@ -36,8 +35,6 @@ public class DbBase {
     @GeneratedValue
     private Integer id;
     private double accountBalance;
-    @OneToOne
-    private BaseColor baseColor;
     private Date startTime;
     private int kills;
     private int created;
@@ -55,7 +52,7 @@ public class DbBase {
     public DbBase() {
     }
 
-    public DbBase(Base base, BaseColor baseColor) {
+    public DbBase(Base base) {
         accountBalance = base.getAccountBalance();
         startTime = base.getStartTime();
         kills = base.getKills();
@@ -65,12 +62,10 @@ public class DbBase {
         totalEarned = base.getTotalEarned();
         abandoned = base.isAbandoned();
         baseId = base.getBaseId();
-        this.baseColor = baseColor;
     }
 
     public Base createBase(UserState userState) {
         return new Base(accountBalance,
-                baseColor.getHtmlColor(),
                 startTime,
                 kills,
                 created,

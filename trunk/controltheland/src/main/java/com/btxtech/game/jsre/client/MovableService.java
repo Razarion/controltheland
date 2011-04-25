@@ -75,9 +75,5 @@ public interface MovableService extends RemoteService {
 
     void sendCloseWindow(long totalRunningTime, long clientTimeStamp);
 
-    List<String> getFreeColors(int index, int count);
-
-    void setBaseColor(String color);
-
     void sellItem(Id id);
 }

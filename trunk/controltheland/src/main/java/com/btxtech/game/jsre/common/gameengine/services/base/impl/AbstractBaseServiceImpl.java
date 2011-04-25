@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.base.impl;
 
-import com.btxtech.game.jsre.client.AlreadyUsedException;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -34,7 +33,6 @@ import java.util.HashMap;
  */
 abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
     private static final String UNDEFINED_NAME = "undefined";
-    private static final String UNDEFINED_COLOR = "#888888";
     final private HashMap<SimpleBase, BaseAttributes> bases = new HashMap<SimpleBase, BaseAttributes>();
 
     @Override
@@ -48,16 +46,6 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
             }
         } else {
             return UNDEFINED_NAME;
-        }
-    }
-
-    @Override
-    public String getBaseHtmlColor(SimpleBase simpleBase) {
-        BaseAttributes baseAttributes = bases.get(simpleBase);
-        if (baseAttributes != null) {
-            return baseAttributes.getHtmlColor();
-        } else {
-            return UNDEFINED_COLOR;
         }
     }
 
@@ -87,8 +75,8 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         }
     }
 
-    protected void createBase(SimpleBase simpleBase, String name, String htmlColor, boolean abandoned) {
-        createBase(new BaseAttributes(simpleBase, name, htmlColor, abandoned));
+    protected void createBase(SimpleBase simpleBase, String name, boolean abandoned) {
+        createBase(new BaseAttributes(simpleBase, name, abandoned));
     }
 
     protected void clear() {
@@ -124,14 +112,6 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         bases.put(baseAttributes.getSimpleBase(), baseAttributes);
     }
 
-    protected Collection<String> getHtmlColors() {
-        ArrayList<String> colors = new ArrayList<String>(bases.size());
-        for (BaseAttributes baseAttributes : bases.values()) {
-            colors.add(baseAttributes.getHtmlColor());
-        }
-        return colors;
-    }
-
     protected void setBaseAbandoned(SimpleBase simpleBase, boolean abandoned) {
         BaseAttributes baseAttributes = getBaseAttributes(simpleBase);
         if (baseAttributes == null) {
@@ -147,20 +127,6 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         }
         baseAttributes.setName(name);
     }
-
-    protected void setBaseColor(SimpleBase simpleBase, String color) throws AlreadyUsedException {
-        BaseAttributes baseAttributes = getBaseAttributes(simpleBase);
-        if (baseAttributes == null) {
-            throw new IllegalArgumentException(this + " base does not exits " + simpleBase);
-        }
-        for (BaseAttributes attributes : bases.values()) {
-            if (attributes.getHtmlColor().equals(color)) {
-                throw new AlreadyUsedException(null, color);
-            }
-        }
-        baseAttributes.setHtmlColor(color);
-    }
-
 
     protected void setBot(SimpleBase simpleBase, boolean bot) {
         BaseAttributes baseAttributes = getBaseAttributes(simpleBase);

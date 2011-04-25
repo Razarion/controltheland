@@ -41,7 +41,6 @@ public class BaseSize extends Panel {
                 baseItem.add(new Label("rank", baseItem.getModelObject().getRankAsString()));
                 baseItem.add(new Label("base", baseItem.getModelObject().getBaseName()));
                 baseItem.add(new Label("items", baseItem.getModelObject().getData()));
-                baseItem.add(ColorField.create("color", baseItem.getModelObject().getColor()));
             }
         };
         add(tileList);

@@ -42,8 +42,6 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     void checkCanBeAttack(SyncBaseItem victim);
 
-    List<String> getFreeColors(int index, int count);
-
     void itemCreated(SyncBaseItem syncItem);
 
     void itemDeleted(SyncBaseItem syncItem, SimpleBase actor);
@@ -60,9 +58,9 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     Base getBase();
 
-    Base createNewBase(UserState userState, DbBaseItemType dbBaseItemType, Territory territory, int startItemFreeRange) throws AlreadyUsedException, NoSuchItemTypeException, GameFullException, ItemLimitExceededException, HouseSpaceExceededException;
+    Base createNewBase(UserState userState, DbBaseItemType dbBaseItemType, Territory territory, int startItemFreeRange) throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException;
 
-    Base createBotBase(UserState userState, String name) throws GameFullException;
+    Base createBotBase(UserState userState, String name);
 
     void continueBase();
 
@@ -86,10 +84,6 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     void changeBotBaseName(Base base, String name);
 
-    void setBaseColor(String color) throws AlreadyUsedException;
-
-    BaseColor getBaseColor4HtmlColor(final String htmlColor);
-
     void sendHouseSpacePacket(Base base);
 
     void setBot(Base simpleBase, boolean isBot);
@@ -99,6 +93,4 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
     Base getBase(UserState userState);
 
     void onSessionTimedOut(UserState userState);
-
-    //void sendResurrectionPacket(SimpleBase oldBase, SimpleBase newBase);
 }

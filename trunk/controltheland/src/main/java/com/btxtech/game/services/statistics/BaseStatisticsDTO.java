@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.statistics;
 
-import com.btxtech.game.services.base.Base;
 import java.io.Serializable;
 
 /**
@@ -25,11 +24,9 @@ public class BaseStatisticsDTO implements Serializable {
     private int rank;
     private String baseName;
     private String data;
-    private String color;
 
-    public BaseStatisticsDTO(int rank, Base base, String baseName, String data) {
+    public BaseStatisticsDTO(int rank, String baseName, String data) {
         this.rank = rank;
-        this.color = base.getBaseHtmlColor();
         this.baseName = baseName;
         this.data = data;
     }
@@ -48,10 +45,6 @@ public class BaseStatisticsDTO implements Serializable {
 
     public String getRankAsString() {
         return Integer.toString(rank);
-    }
-
-    public String getColor() {
-        return color;
     }
 }
 

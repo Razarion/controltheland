@@ -32,6 +32,12 @@ import java.util.List;
  * Date: 25.08.2010
  * Time: 15:53:14
  */
+
+/**
+ * This class is not used any longer since the color are now fix
+ * This class may be used later if the user can change his color on his client only
+ */
+@Deprecated
 public class ChangeColorDialog extends Dialog {
     private static final int COLUMNS = 5;
     private static final int ROWS = 5;
@@ -48,7 +54,7 @@ public class ChangeColorDialog extends Dialog {
 
         @Override
         public void onMouseDown(MouseDownEvent event) {
-            Connection.getMovableServiceAsync().setBaseColor(color, new AsyncCallback<Void>() {
+        /*    Connection.getMovableServiceAsync().setBaseColor(color, new AsyncCallback<Void>() {
 
                 @Override
                 public void onFailure(Throwable caught) {
@@ -60,7 +66,7 @@ public class ChangeColorDialog extends Dialog {
                 public void onSuccess(Void result) {
                     close();
                 }
-            });
+            });  */
         }
     }
 
@@ -80,7 +86,7 @@ public class ChangeColorDialog extends Dialog {
     }
 
     private void setupColors() {
-        Connection.getMovableServiceAsync().getFreeColors(index, COUNT, new AsyncCallback<List<String>>() {
+      /*  Connection.getMovableServiceAsync().getFreeColors(index, COUNT, new AsyncCallback<List<String>>() {
 
             @Override
             public void onFailure(Throwable caught) {
@@ -108,6 +114,6 @@ public class ChangeColorDialog extends Dialog {
                     }
                 }
             }
-        });
+        }); */
     }
 }

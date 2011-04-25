@@ -35,31 +35,6 @@ public class TestBaseService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void testBaseColor() throws Exception {
-        configureMinimalGame();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertNull(userService.getUser());
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
-        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
-        SimpleBase simpleBase = getMyBase(); // Setup connection
-        String color = movableService.getFreeColors(0, 1).get(0);
-        clearPackets();
-        movableService.setBaseColor(color);
-
-        BaseChangedPacket baseChangedPacket = new BaseChangedPacket();
-        baseChangedPacket.setType(BaseChangedPacket.Type.CHANGED);
-        baseChangedPacket.setBaseAttributes(new BaseAttributes(simpleBase, "U1", color, false));
-        assertPackagesIgnoreSyncItemInfoAndClear(baseChangedPacket);
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
     public void testSellBaseItem() throws Exception {
         configureMinimalGame();
 

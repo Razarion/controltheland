@@ -33,8 +33,6 @@ public interface AbstractBaseService {
 
     String getBaseName(SimpleBase simpleBase);
 
-    String getBaseHtmlColor(SimpleBase simpleBase);
-
     boolean isBot(SimpleBase simpleBase);
 
     boolean isAbandoned(SimpleBase simpleBase);

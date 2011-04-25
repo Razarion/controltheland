@@ -311,7 +311,6 @@ abstract public class AbstractServiceTest {
             Assert.assertEquals(expected.getBaseAttributes().getSimpleBase(), received.getBaseAttributes().getSimpleBase());
             Assert.assertEquals(expected.getBaseAttributes().getSimpleBase(), received.getBaseAttributes().getSimpleBase());
             Assert.assertEquals(expected.getBaseAttributes().getName(), received.getBaseAttributes().getName());
-            Assert.assertEquals(expected.getBaseAttributes().getHtmlColor(), received.getBaseAttributes().getHtmlColor());
             Assert.assertEquals(expected.getBaseAttributes().isBot(), received.getBaseAttributes().isBot());
             Assert.assertEquals(expected.getBaseAttributes().isAbandoned(), received.getBaseAttributes().isAbandoned());
         } else {
