@@ -129,7 +129,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
     @Override
     public SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
-        if(base != null && !baseService.isAlive(base)) {
+        if (base != null && !baseService.isAlive(base)) {
             throw new BaseDoesNotExistException(base);
         }
 
@@ -141,7 +141,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             Id id = createId(creator, createdChildCount);
             syncItem = newSyncItem(id, position, toBeBuilt.getId(), base, services);
             items.put(id, syncItem);
-            if(syncItem instanceof SyncBaseItem) {
+            if (syncItem instanceof SyncBaseItem) {
                 baseService.itemCreated((SyncBaseItem) syncItem);
             }
         }
@@ -231,7 +231,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             }
             if (killedItem instanceof SyncBaseItem) {
                 historyService.addItemDestroyedEntry(actor, (SyncBaseItem) killedItem);
-                baseService.itemDeleted((SyncBaseItem) killedItem, actor);                
+                baseService.itemDeleted((SyncBaseItem) killedItem, actor);
             }
         }
         killedItem.setExplode(explode);
@@ -298,12 +298,13 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
     @Override
     public boolean hasItemsInRectangle(Rectangle rectangle) {
+        // TODO slow
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
                 if (syncItem.getPosition() == null) {
                     continue;
                 }
-                if (rectangle.contains(syncItem.getPosition())) {
+                if (rectangle.adjoins(syncItem.getRectangle())) {
                     return true;
                 }
             }

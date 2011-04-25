@@ -108,7 +108,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
             return;
         }
         for (Map.Entry<TerrainType, Collection<Index>> entry : tiles.entrySet()) {
-            ArrayList<Rectangle> mapAsRectangles = GeometricalUtil.separateIntoRectangles(entry.getValue(), terrainService.getTerrainSettings());
+            ArrayList<Rectangle> mapAsRectangles = GeometricalUtil.separateIntoRectangles(entry.getValue());
             List<PassableRectangle> passableRectangles = buildPassableRectangleList(mapAsRectangles);
             passableRectangles4TerrainType.put(entry.getKey(), passableRectangles);
         }
@@ -201,8 +201,8 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
             int territoryRectIndex = random.nextInt(territoryRectangles.size());
             Rectangle tileRectangle = territoryRectangles.get(territoryRectIndex);
             Rectangle absoluteRectangle = terrainService.convertToAbsolutePosition(tileRectangle);
-            int x = random.nextInt(absoluteRectangle.getWidth());
-            int y = random.nextInt(absoluteRectangle.getHeight());
+            int x = random.nextInt(absoluteRectangle.getWidth()) + absoluteRectangle.getX();
+            int y = random.nextInt(absoluteRectangle.getHeight()) + absoluteRectangle.getY();
             Index point = new Index(x, y);
             if (botFree && botService.isInRealm(point)) {
                 continue;
@@ -280,7 +280,6 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
         int delta = (targetMaxRange - targetMinRange) / STEPS_DISTANCE;
         for (int distance = 0; distance < (targetMaxRange - targetMinRange); distance += delta) {
             for (double angel = 0.0; angel < 2.0 * Math.PI; angel += (2.0 * Math.PI / STEPS_ANGEL)) {
-                //System.out.println("distance + targetMinRange:" + (distance + targetMinRange) + " angel:" + angel);
                 Index point = origin.getPointFromAngelToNord(angel, distance + targetMinRange);
 
                 if (point.getX() >= terrainService.getTerrainSettings().getPlayFieldXSize()) {

@@ -98,7 +98,7 @@ public class PassableRectangle {
     }
 
     public boolean containAbsoluteIndex(Index absoluteIndex, TerrainSettings terrainSettings) {
-        return getPixelRectangle(terrainSettings).contains(absoluteIndex);
+        return getPixelRectangle(terrainSettings).contains(absoluteIndex); // TODO contains() method in rectangle changed !!!
     }
 
     public Path findAllPossiblePassableRectanglePaths(PassableRectangle destinationRect, Index absDestination) {
@@ -144,7 +144,7 @@ public class PassableRectangle {
             }
             Rectangle absRectNeighbor = terrainService.convertToAbsolutePosition(neighbor.getRectangle());
             int d;
-            if (absRectNeighbor.contains(absDestination)) {
+            if (absRectNeighbor.contains(absDestination)) {// TODO contains() method in rectangle changed !!!
                 d = 0;
             } else {
                 d = absRectNeighbor.getNearestPoint(absDestination).getDistance(absDestination);

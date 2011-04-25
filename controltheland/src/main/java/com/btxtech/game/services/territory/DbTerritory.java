@@ -29,7 +29,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -77,13 +76,13 @@ public class DbTerritory implements CrudChild {
 
         DbTerritory that = (DbTerritory) o;
 
-        return !(id != null ? !id.equals(that.id) : that.id != null);
+        return id != null && id.equals(that.id);
 
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 
     public Territory createTerritory() {
@@ -105,11 +104,16 @@ public class DbTerritory implements CrudChild {
             dbTerritoryRegions.clear();
         }
         for (Rectangle rectangle : territoryRegions) {
+            // TODO use CrudHelper
             DbTerritoryRegion dbTerritoryRegion = new DbTerritoryRegion();
             dbTerritoryRegion.setDbTerritory(this);
             dbTerritoryRegion.setTileRectangle(rectangle);
             dbTerritoryRegions.add(dbTerritoryRegion);
         }
+    }
+
+    public Set<DbTerritoryRegion> getDbTerritoryRegions() {
+        return dbTerritoryRegions;
     }
 
     public Boolean isItemAllowed(DbBaseItemType dbBaseItemType) {

@@ -121,7 +121,8 @@ public class BotRunner {
         if (base != null && baseService.isAlive(base.getSimpleBase())) {
             baseService.changeBotBaseName(base, botConfig.getName());
         }
-        if (!botConfig.getRealm().contains(botConfig.getCore())) {
+
+        if (!botConfig.getRealm().adjoins(botConfig.getCore())) {
             throw new IllegalArgumentException("Realm must contain core. Realm: " + botConfig.getRealm() + " Core: " + botConfig.getCore());
         }
     }

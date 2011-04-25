@@ -24,10 +24,8 @@ import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.user.SecurityRoles;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 
@@ -49,13 +47,7 @@ public class TerritoryServiceImpl extends AbstractTerritoryServiceImpl implement
     private ApplicationContext applicationContext;
     @Autowired
     private CrudRootServiceHelper<DbTerritory> dbTerritoryCrudServiceHelper;
-    private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(TerritoryServiceImpl.class);
-
-    @Autowired
-    public void setSessionFactory(SessionFactory sessionFactory) {
-        hibernateTemplate = new HibernateTemplate(sessionFactory);
-    }
 
     @PostConstruct
     public void setup() {
@@ -81,9 +73,6 @@ public class TerritoryServiceImpl extends AbstractTerritoryServiceImpl implement
         ArrayList<Territory> territories = new ArrayList<Territory>();
         Collection<DbTerritory> dbTerritories = dbTerritoryCrudServiceHelper.readDbChildren();
         for (DbTerritory dbTerritory : dbTerritories) {
-            if (dbTerritory.getName() == null || dbTerritory.getName().trim().isEmpty()) {
-                continue;
-            }
             territories.add(dbTerritory.createTerritory());
         }
         setTerritories(territories);
@@ -95,7 +84,7 @@ public class TerritoryServiceImpl extends AbstractTerritoryServiceImpl implement
     public void saveTerritory(int territoryId, Collection<Rectangle> territoryTileRegions) {
         DbTerritory dbTerritory = dbTerritoryCrudServiceHelper.readDbChild(territoryId);
         dbTerritory.setDbTerritoryRegion(territoryTileRegions);
-        hibernateTemplate.update(dbTerritory);
+        dbTerritoryCrudServiceHelper.updateDbChild(dbTerritory);
         updateTerritories();
     }
 
