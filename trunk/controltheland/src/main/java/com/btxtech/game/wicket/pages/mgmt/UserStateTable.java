@@ -13,18 +13,18 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
+import com.btxtech.game.services.base.Base;
+import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
-import com.btxtech.game.wicket.uiservices.ListProvider;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
-import org.apache.wicket.model.CompoundPropertyModel;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.util.List;
@@ -37,6 +37,10 @@ import java.util.List;
 public class UserStateTable extends MgmtWebPage {
     @SpringBean
     private UserService userService;
+    @SpringBean
+    private BaseService baseService;
+    @SpringBean
+    private ConnectionService connectionService;
 
     public UserStateTable() {
         add(new FeedbackPanel("msgs"));
@@ -62,6 +66,12 @@ public class UserStateTable extends MgmtWebPage {
                 item.add(new Label("sessionId"));
                 item.add(new Label("online"));
                 item.add(new Label("user.name"));
+                Base base = baseService.getBase(item.getModelObject());
+                if (base != null && connectionService.hasConnection(base.getSimpleBase())) {
+                    item.add(new Label("inGame", "yes"));
+                } else {
+                    item.add(new Label("inGame", ""));
+                }
                 item.add(new Button("edit") {
 
                     @Override
