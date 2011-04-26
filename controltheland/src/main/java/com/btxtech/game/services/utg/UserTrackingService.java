@@ -53,7 +53,7 @@ public interface UserTrackingService {
 
     void onUserLoggedOut(User user);
 
-    void onBaseCreated(User user, Base base);
+    void onBaseCreated(User user, String baseName);
 
     void onBaseDefeated(User user, Base base);
 

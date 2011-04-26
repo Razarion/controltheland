@@ -152,9 +152,9 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
                 int tickCount = connection.resetAndGetTickCount();
                 if (connection.getNoTickCount() > MAX_NO_TICK_COUNT) {
                     log.info("User kicked due timeout: " + baseService.getBaseName(connection.getBase().getSimpleBase()));
-                    // TODO if (connection.getBase() != null && connection.getBase().getUser().isRegistered()) {
-                    //    userTrackingService.onUserLeftGame(connection.getBase().getUser());
-                    //}
+                    if (connection.getBase() != null && connection.getBase().getUserState() != null && connection.getBase().getUserState().getUser() != null) {
+                        userTrackingService.onUserLeftGame(connection.getBase().getUserState().getUser());
+                    }
                     connection.setClosed();
                     it.remove();
                 } else {
@@ -202,9 +202,9 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         synchronized (onlineConnection) {
             onlineConnection.add(connection);
         }
-        // TODO if (base.getUser() != null) {
-        //    userTrackingService.onUserEnterGame(base.getUser());
-        //}
+        if (base.getUserState() != null && base.getUserState().getUser() != null) {
+            userTrackingService.onUserEnterGame(base.getUserState().getUser());
+        }
     }
 
     @Override
@@ -213,9 +213,9 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         if (connection == null) {
             throw new IllegalStateException("Connection does not exist");
         }
-        // TODO if (connection.getBase() != null && connection.getBase().getUser() != null) {
-        //    userTrackingService.onUserLeftGame(connection.getBase().getUser());
-        //}
+        if (connection.getBase() != null && connection.getBase().getUserState() != null && connection.getBase().getUserState().getUser() != null) {
+            userTrackingService.onUserLeftGame(connection.getBase().getUserState().getUser());
+        }
         connection.setClosed();
         session.setConnection(null);
         log.debug("Connection closed 1");

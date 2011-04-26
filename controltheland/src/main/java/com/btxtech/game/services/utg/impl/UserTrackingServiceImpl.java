@@ -434,11 +434,11 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     @Transactional
-    public void onBaseCreated(User user, Base base) {
+    public void onBaseCreated(User user, String baseName) {
         try {
             UserHistory userHistory = new UserHistory(user);
             userHistory.setBaseCreated();
-            userHistory.setBaseName(baseService.getBaseName(baseService.getBase().getSimpleBase()));
+            userHistory.setBaseName(baseName);
             hibernateTemplate.saveOrUpdate(userHistory);
         } catch (Throwable t) {
             log.error("", t);
