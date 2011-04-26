@@ -41,7 +41,7 @@ public interface HistoryService {
 
     List<DisplayHistoryElement> getNewestHistoryElements(User user, int count);
 
-    List<DisplayHistoryElement> getHistoryElements(final String sessionId, final Date from, final Date to);
+    List<DisplayHistoryElement> getHistoryElements(Long from, Long to, String sessionId, Integer baseId);
 
     void addLevelPromotionEntry(UserState user, DbAbstractLevel level);
 

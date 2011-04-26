@@ -52,7 +52,9 @@ public class DbHistoryElement implements Serializable {
     private Type type;
     private String actorUserName;
     private String targetUserName;
+    private Integer actorBaseId;
     private String actorBaseName;
+    private Integer targetBaseId;
     private String targetBaseName;
     private String itemTypeName;
     private String levelName;
@@ -71,7 +73,9 @@ public class DbHistoryElement implements Serializable {
         this.type = type;
         actorUserName = actorUser != null ? actorUser.getUsername() : null;
         targetUserName = targetUser != null ? targetUser.getUsername() : null;
+        actorBaseId = actorBase != null ? actorBase.getId() : null;
         actorBaseName = actorBase != null ? baseService.getBaseName(actorBase) : null;
+        targetBaseId = targetBase != null ? targetBase.getId() : null;
         targetBaseName = targetBase != null ? baseService.getBaseName(targetBase) : null;
         itemTypeName = syncBaseItem != null ? syncBaseItem.getBaseItemType().getName() : null;
         levelName = level != null ? level.getName() : null;
@@ -87,10 +91,6 @@ public class DbHistoryElement implements Serializable {
 
     public String getTargetUserName() {
         return targetUserName;
-    }
-
-    public Date getTimeStamp() {
-        return timeStamp;
     }
 
     public Type getType() {
@@ -119,6 +119,14 @@ public class DbHistoryElement implements Serializable {
 
     public String getSessionId() {
         return sessionId;
+    }
+
+    public Integer getActorBaseId() {
+        return actorBaseId;
+    }
+
+    public Integer getTargetBaseId() {
+        return targetBaseId;
     }
 
     @Override

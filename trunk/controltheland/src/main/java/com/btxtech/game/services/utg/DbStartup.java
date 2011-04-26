@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.utg;
 
+import com.btxtech.game.services.base.Base;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
@@ -45,12 +46,15 @@ public class DbStartup implements Serializable {
     private String sessionId;
     private long startupDuration;
     private long clientTimeStamp;
+    private long serverTimeStamp;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @org.hibernate.annotations.IndexColumn(name = "orderIndex", nullable = false, base = 0)
     @JoinColumn(name = "dbStartup", nullable = false)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Collection<DbStartupTask> dbStartupTasks;
     private boolean realGame;
+    private String baseName;
+    private Integer baseId;
 
     /**
      * Used by Hibernate
@@ -58,8 +62,9 @@ public class DbStartup implements Serializable {
     public DbStartup() {
     }
 
-    public DbStartup(long startupDuration, long clientTimeStamp, DbAbstractLevel abstractLevel, String sessionId) {
+    public DbStartup(long startupDuration, long clientTimeStamp, DbAbstractLevel abstractLevel, String sessionId, String baseName, Integer baseId) {
         this.clientTimeStamp = clientTimeStamp;
+        serverTimeStamp = System.currentTimeMillis();
         this.level = abstractLevel.getName();
         this.sessionId = sessionId;
         this.startupDuration = startupDuration;
@@ -71,7 +76,11 @@ public class DbStartup implements Serializable {
         } else {
             throw new IllegalArgumentException("Unknown level type: " + abstractLevel);
         }
+        this.baseName = baseName;
+        this.baseId = baseId;
     }
+
+
 
     public Date getTimeStamp() {
         return timeStamp;
@@ -85,8 +94,8 @@ public class DbStartup implements Serializable {
         return startupDuration;
     }
 
-    public long getClientTimeStamp() {
-        return clientTimeStamp;
+    public long getServerTimeStamp() {
+        return serverTimeStamp;
     }
 
     public Collection<DbStartupTask> getGameStartupTasks() {
@@ -106,6 +115,14 @@ public class DbStartup implements Serializable {
 
     public boolean isRealGame() {
         return realGame;
+    }
+
+    public String getBaseName() {
+        return baseName;
+    }
+
+    public Integer getBaseId() {
+        return baseId;
     }
 
     @Override

@@ -79,7 +79,7 @@ public interface UserTrackingService {
 
     List<DbEventTrackingItem> getDbEventTrackingItem(DbEventTrackingStart begin, DbEventTrackingStart end);
 
-    void startUpTaskFinished(Collection<StartupTaskInfo> infos, long totalTime);
+    void startUpTaskFinished(List<StartupTaskInfo> infos, long totalTime);
 
     void onCloseWindow(long totalRunningTime, long clientTimeStamp);
 

@@ -15,7 +15,6 @@ package com.btxtech.game.services.utg;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -25,23 +24,28 @@ import java.util.List;
  */
 public class LifecycleTrackingInfo implements Serializable {
     private List<DbStartupTask> dbStartupTasks = new ArrayList<DbStartupTask>();
-    private Date start;
+    private long start;
     private long startupDuration;
     private String sessionId;
-    private Date end;
+    private Long end;
     private String level;
     private boolean realGame;
+    private String baseName;
+    private Integer baseId;
+
 
     public LifecycleTrackingInfo(String sessionId, DbStartup startup) {
         this.sessionId = sessionId;
-        start = new Date(startup.getClientTimeStamp());
+        start = startup.getServerTimeStamp();
         dbStartupTasks = (List<DbStartupTask>) startup.getGameStartupTasks();
         startupDuration = startup.getStartupDuration();
         level = startup.getLevel();
         realGame = startup.isRealGame();
+        baseName = startup.getBaseName();
+        baseId = startup.getBaseId();
     }
 
-    public Date getStart() {
+    public long getStart() {
         return start;
     }
 
@@ -57,11 +61,11 @@ public class LifecycleTrackingInfo implements Serializable {
         return sessionId;
     }
 
-    public Date getEnd() {
+    public Long getEnd() {
         return end;
     }
 
-    public void setEnd(Date end) {
+    public void setEnd(long end) {
         this.end = end;
     }
 
@@ -71,5 +75,13 @@ public class LifecycleTrackingInfo implements Serializable {
 
     public boolean isRealGame() {
         return realGame;
+    }
+
+    public String getBaseName() {
+        return baseName;
+    }
+
+    public Integer getBaseId() {
+        return baseId;
     }
 }

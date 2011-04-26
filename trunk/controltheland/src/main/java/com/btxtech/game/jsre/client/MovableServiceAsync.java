@@ -71,5 +71,5 @@ public interface MovableServiceAsync {
 
     void sellItem(Id id, AsyncCallback<Void> asyncCallback);
 
-    void sendStartupInfo(Collection<StartupTaskInfo> infos, long totalTime, AsyncCallback<Void> asyncCallback);
+    void sendStartupInfo(List<StartupTaskInfo> infos, long totalTime, AsyncCallback<Void> asyncCallback);
 }

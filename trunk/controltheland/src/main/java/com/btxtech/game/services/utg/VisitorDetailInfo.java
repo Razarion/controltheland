@@ -30,7 +30,6 @@ public class VisitorDetailInfo {
     private int factoryCommands;
     private int moneyCollectCommands;
     private int gameAttempts;
-    private int tasks;
     private List<LifecycleTrackingInfo> lifecycleTrackingInfos = new ArrayList<LifecycleTrackingInfo>();
 
     public VisitorDetailInfo(BrowserDetails browserDetails) {
@@ -95,14 +94,6 @@ public class VisitorDetailInfo {
 
     public void setMoneyCollectCommands(int moneyCollectCommands) {
         this.moneyCollectCommands = moneyCollectCommands;
-    }
-
-    public int getTasks() {
-        return tasks;
-    }
-
-    public void setTasks(int tasks) {
-        this.tasks = tasks;
     }
 
     public void setLifecycleTrackingInfos(List<LifecycleTrackingInfo> lifecycleTrackingInfos) {

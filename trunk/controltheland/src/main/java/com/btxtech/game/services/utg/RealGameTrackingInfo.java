@@ -28,13 +28,9 @@ import java.util.List;
 public class RealGameTrackingInfo implements Serializable {
     private List<DbUserCommand> dbUserCommands = new ArrayList<DbUserCommand>();
     private List<DisplayHistoryElement> historyElements;
-    private String baseName;
 
     public void setUserCommands(List<DbUserCommand> dbUserCommands) {
         this.dbUserCommands = dbUserCommands;
-        for (DbUserCommand dbUserCommand : dbUserCommands) {
-            baseName = dbUserCommand.getBaseName();
-        }
     }
 
     public void setHistoryElements(List<DisplayHistoryElement> historyElements) {
@@ -51,9 +47,5 @@ public class RealGameTrackingInfo implements Serializable {
         }
         Collections.sort(userCommands);
         return userCommands;
-    }
-
-    public String getBaseName() {
-        return baseName;
     }
 }

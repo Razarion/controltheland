@@ -22,5 +22,5 @@ public interface StartupProgressListener {
 
     void onStartupFinished(List<StartupTaskInfo> taskInfo, long totalTime);
 
-    void onStartupFailed(Collection<StartupTaskInfo> taskInfo, long totalTime);
+    void onStartupFailed(List<StartupTaskInfo> taskInfo, long totalTime);
 }

@@ -261,17 +261,17 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         });
     }
 
-    private List<DbUserCommand> getUserCommand(final String sessionId, final Date from, final Date to) {
+    private List<DbUserCommand> getUserCommand(final String sessionId, final Long from, final Long to) {
         return hibernateTemplate.execute(new HibernateCallback<List<DbUserCommand>>() {
             @Override
             public List<DbUserCommand> doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(DbUserCommand.class);
                 criteria.add(Restrictions.eq("sessionId", sessionId));
                 if (from != null) {
-                    criteria.add(Restrictions.ge("clientTimeStamp", from));
+                    criteria.add(Restrictions.ge("timeStampMs", from));
                 }
                 if (to != null) {
-                    criteria.add(Restrictions.lt("clientTimeStamp", to));
+                    criteria.add(Restrictions.lt("timeStampMs", to));
                 }
                 return (List<DbUserCommand>) criteria.list();
             }
@@ -300,7 +300,6 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         visitorDetailInfo.setBuilderCommands(getUserCommandCount(sessionId, BuilderCommand.class, null, null));
         visitorDetailInfo.setFactoryCommands(getUserCommandCount(sessionId, FactoryCommand.class, null, null));
         visitorDetailInfo.setMoneyCollectCommands(getUserCommandCount(sessionId, MoneyCollectCommand.class, null, null));
-        visitorDetailInfo.setTasks(getTaskCount(sessionId, null, null));
         visitorDetailInfo.setGameAttempts(getGameAttempts(sessionId));
         return visitorDetailInfo;
     }
@@ -324,7 +323,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             lifecycleTrackingInfos.add(lifecycleTrackingInfo);
             if (i + 1 < startups.size()) {
                 DbStartup nextStartup = startups.get(i + 1);
-                lifecycleTrackingInfo.setEnd(new Date(nextStartup.getClientTimeStamp()));
+                lifecycleTrackingInfo.setEnd(nextStartup.getServerTimeStamp());
             }
         }
         return lifecycleTrackingInfos;
@@ -334,29 +333,28 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     public RealGameTrackingInfo getGameTracking(LifecycleTrackingInfo lifecycleTrackingInfo) {
         RealGameTrackingInfo trackingInfoReal = new RealGameTrackingInfo();
         trackingInfoReal.setUserCommands(getUserCommand(lifecycleTrackingInfo.getSessionId(), lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
-        trackingInfoReal.setHistoryElements(historyService.getHistoryElements(lifecycleTrackingInfo.getSessionId(), lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
+        trackingInfoReal.setHistoryElements(historyService.getHistoryElements(lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd(), lifecycleTrackingInfo.getSessionId(), lifecycleTrackingInfo.getBaseId()));
         return trackingInfoReal;
     }
 
     @Override
     public TutorialTrackingInfo getTutorialTrackingInfo(LifecycleTrackingInfo lifecycleTrackingInfo) {
         TutorialTrackingInfo tutorialTrackingInfo = new TutorialTrackingInfo();
-        tutorialTrackingInfo.setTaskCount(getTaskCount(lifecycleTrackingInfo.getSessionId(), lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
         tutorialTrackingInfo.setDbEventTrackingStart(getDbEventTrackingStart(lifecycleTrackingInfo.getSessionId(), lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
         tutorialTrackingInfo.setDbTutorialProgresss(getDbTutorialProgresses(lifecycleTrackingInfo.getSessionId(), lifecycleTrackingInfo.getStart(), lifecycleTrackingInfo.getEnd()));
         return tutorialTrackingInfo;
     }
 
     @SuppressWarnings("unchecked")
-    private List<DbTutorialProgress> getDbTutorialProgresses(final String sessionId, final Date begin, final Date end) {
+    private List<DbTutorialProgress> getDbTutorialProgresses(final String sessionId, final long begin, final Long end) {
         return hibernateTemplate.executeFind(new HibernateCallback() {
             @Override
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(DbTutorialProgress.class);
                 criteria.add(Restrictions.eq("sessionId", sessionId));
-                criteria.add(Restrictions.ge("clientTimeStamp", begin.getTime()));
+                criteria.add(Restrictions.ge("timeStamp", begin));
                 if (end != null) {
-                    criteria.add(Restrictions.lt("clientTimeStamp", end.getTime()));
+                    criteria.add(Restrictions.lt("timeStamp", end));
                 }
                 criteria.addOrder(Order.asc("clientTimeStamp"));
                 return criteria.list();
@@ -526,25 +524,6 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         return userGuidanceService.getDbAbstractLevel().getLevel();
     }
 
-    private int getTaskCount(final String sessionId, final Date from, final Date to) {
-        return hibernateTemplate.execute(new HibernateCallback<Integer>() {
-            @Override
-            public Integer doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbTutorialProgress.class);
-                criteria.add(Restrictions.eq("sessionId", sessionId));
-                criteria.add(Restrictions.eq("type", TutorialConfig.TYPE.TASK.name()));
-                if (from != null) {
-                    criteria.add(Restrictions.ge("clientTimeStamp", from.getTime()));
-                }
-                if (to != null) {
-                    criteria.add(Restrictions.lt("clientTimeStamp", to.getTime()));
-                }
-                criteria.setProjection(Projections.rowCount());
-                return ((Number) criteria.list().get(0)).intValue();
-            }
-        });
-    }
-
     @Override
     @Transactional
     public void onEventTrackingStart(EventTrackingStart eventTrackingStart) {
@@ -623,16 +602,16 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
 
-    private DbEventTrackingStart getDbEventTrackingStart(final String sessionId, final Date begin, final Date end) {
+    private DbEventTrackingStart getDbEventTrackingStart(final String sessionId, final long begin, final Long end) {
         @SuppressWarnings("unchecked")
         List<DbEventTrackingStart> dbEventTrackingStarts = hibernateTemplate.executeFind(new HibernateCallback() {
             @Override
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(DbEventTrackingStart.class);
                 criteria.add(Restrictions.eq("sessionId", sessionId));
-                criteria.add(Restrictions.ge("clientTimeStamp", begin.getTime()));
+                criteria.add(Restrictions.ge("timeStampMs", begin));
                 if (end != null) {
-                    criteria.add(Restrictions.lt("clientTimeStamp", end.getTime()));
+                    criteria.add(Restrictions.lt("timeStampMs", end));
                 }
                 criteria.addOrder(Order.asc("clientTimeStamp"));
                 return criteria.list();
@@ -647,8 +626,20 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     @Transactional
-    public void startUpTaskFinished(Collection<StartupTaskInfo> infos, long totalTime) {
-        DbStartup dbStartup = new DbStartup(totalTime, infos.iterator().next().getStartTime(), userGuidanceService.getDbAbstractLevel(), session.getSessionId());
+    public void startUpTaskFinished(List<StartupTaskInfo> infos, long totalTime) {
+        Integer baseId;
+        String baseName;
+
+        try {
+            Base base = baseService.getBase();
+            baseId = base.getBaseId();
+            baseName = baseService.getBaseName(base.getSimpleBase());
+        } catch (NoConnectionException e) {
+            baseId = null;
+            baseName = null;
+        }
+
+        DbStartup dbStartup = new DbStartup(totalTime, infos.get(0).getStartTime(), userGuidanceService.getDbAbstractLevel(), session.getSessionId(), baseName, baseId);
         for (StartupTaskInfo info : infos) {
             dbStartup.addGameStartupTasks(new DbStartupTask(info, dbStartup));
             if (info.getError() != null) {

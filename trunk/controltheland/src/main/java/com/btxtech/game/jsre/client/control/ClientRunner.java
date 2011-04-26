@@ -158,7 +158,7 @@ public class ClientRunner {
             }
 
             long totalTime = System.currentTimeMillis() - (finishedTasks.isEmpty() ? abstractStartupTask.getStartTime() : finishedTasks.get(0).getStartTime());
-            Collection<StartupTaskInfo> startupTaskInfos = createTaskInfo(abstractStartupTask, error);
+            List<StartupTaskInfo> startupTaskInfos = createTaskInfo(abstractStartupTask, error);
             for (StartupProgressListener listener : listeners) {
                 listener.onStartupFailed(startupTaskInfos, totalTime);
             }
