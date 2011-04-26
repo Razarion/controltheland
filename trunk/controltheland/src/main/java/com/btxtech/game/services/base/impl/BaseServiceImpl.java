@@ -139,7 +139,9 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         if (syncBaseItem.hasSyncTurnable()) {
             syncBaseItem.getSyncTurnable().setAngel(Math.PI / 4.0); // Cosmetics shows vehicle from side
         }
-        // TODO userTrackingService.onBaseCreated(userService.getUser(), base);
+        if (userService.getUser() != null) {
+            userTrackingService.onBaseCreated(userService.getUser(), setupBaseName(base));
+        }
         return base;
     }
 
@@ -277,9 +279,9 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
                 historyService.addBaseDefeatedEntry(actor, base.getSimpleBase());
                 sendDefeatedMessage(syncItem, actor);
             }
-            // TODO if (base.getUser() != null) {
-            //     userTrackingService.onBaseDefeated(base.getUser(), base);
-            // }
+            if (base.getUserState() != null && base.getUserState().getUser() != null) {
+                userTrackingService.onBaseDefeated(base.getUserState().getUser(), base);
+            }
             deleteBase(base);
             if (!base.isAbandoned()) {
                 base.getUserState().setBase(null);
