@@ -15,12 +15,13 @@ package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.services.connection.Connection;
-import java.util.Date;
-import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * User: beat
@@ -34,6 +35,7 @@ public class DbUserCommand implements Serializable {
     private Integer id;
     @Column(nullable = false)
     private Date timeStamp;
+    private long timeStampMs;
     @Column(nullable = false)
     private Date clientTimeStamp;
     @Column(nullable = false)
@@ -58,6 +60,7 @@ public class DbUserCommand implements Serializable {
         interactionClass = baseCommand.getClass().getName();
         clientTimeStamp = baseCommand.getTimeStamp();
         timeStamp = new Date();
+        timeStampMs = timeStamp.getTime();
     }
 
     public String getBaseName() {
@@ -82,6 +85,10 @@ public class DbUserCommand implements Serializable {
 
     public String getInteractionClass() {
         return interactionClass;
+    }
+
+    public long getTimeStampMs() {
+        return timeStampMs;
     }
 
     @Override

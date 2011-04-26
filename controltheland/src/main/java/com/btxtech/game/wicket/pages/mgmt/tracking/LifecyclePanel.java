@@ -21,6 +21,8 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 
+import java.util.Date;
+
 /**
  * User: beat
  * Date: 08.08.2010
@@ -30,8 +32,8 @@ public class LifecyclePanel extends Panel {
     public LifecyclePanel(String id, LifecycleTrackingInfo lifecycleTrackingInfo) {
         super(id);
         add(new Label("level", lifecycleTrackingInfo.getLevel()));
-        add(new Label("startTime", WebCommon.formatDateTime(lifecycleTrackingInfo.getStart())));
-        add(new Label("endTime", WebCommon.formatDateTime(lifecycleTrackingInfo.getEnd())));
+        add(new Label("startTime", WebCommon.formatDateTime(new Date(lifecycleTrackingInfo.getStart()))));
+        add(new Label("endTime", WebCommon.formatDateTime(lifecycleTrackingInfo.getEnd() != null ? new Date(lifecycleTrackingInfo.getEnd()) : null)));
         add(new ListView<DbStartupTask>("startup", lifecycleTrackingInfo.getGameStartups()) {
             @Override
             protected void populateItem(ListItem<DbStartupTask> gameStartupListItem) {

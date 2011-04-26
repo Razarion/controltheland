@@ -32,8 +32,7 @@ public class DbEventTrackingStart implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
-    @Column(nullable = false)
-    private Date timeStamp;
+    private long timeStampMs;
     @Column(nullable = false)
     private String sessionId;
     private long clientTimeStamp;
@@ -51,7 +50,7 @@ public class DbEventTrackingStart implements Serializable {
     }
 
     public DbEventTrackingStart(EventTrackingStart eventTrackingStart, String sessionId) {
-        timeStamp = new Date();
+        timeStampMs = System.currentTimeMillis();
         this.sessionId = sessionId;
         clientTimeStamp = eventTrackingStart.getClientTimeStamp();
         clientWidth = eventTrackingStart.getClientWidth();
@@ -65,10 +64,6 @@ public class DbEventTrackingStart implements Serializable {
 
     public EventTrackingStart createEventTrackingStart() {
         return new EventTrackingStart(clientWidth, clientHeight, scrollLeft, scrollTop, scrollWidth, scrollHeight, clientTimeStamp);
-    }
-
-    public Date getTimeStamp() {
-        return timeStamp;
     }
 
     public String getSessionId() {
@@ -85,6 +80,10 @@ public class DbEventTrackingStart implements Serializable {
 
     public int getClientHeight() {
         return clientHeight;
+    }
+
+    public long getTimeStampMs() {
+        return timeStampMs;
     }
 
     @Override

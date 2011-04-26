@@ -277,7 +277,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
         }
     }
 
-    public void sendStartupFinished(Collection<StartupTaskInfo> infos, long totalTime) {
+    public void sendStartupFinished(List<StartupTaskInfo> infos, long totalTime) {
         if (movableServiceAsync != null) {
             movableServiceAsync.sendStartupInfo(infos, totalTime, this);
         }
@@ -395,7 +395,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
     }
 
     @Override
-    public void onStartupFailed(Collection<StartupTaskInfo> taskInfo, long totalTime) {
+    public void onStartupFailed(List<StartupTaskInfo> taskInfo, long totalTime) {
         sendStartupFinished(taskInfo, totalTime);
     }
 }

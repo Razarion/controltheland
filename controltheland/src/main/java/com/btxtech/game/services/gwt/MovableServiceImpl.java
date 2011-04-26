@@ -127,7 +127,7 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public void sendStartupInfo(Collection<StartupTaskInfo> infos, long totalTime) {
+    public void sendStartupInfo(List<StartupTaskInfo> infos, long totalTime) {
         try {
             userTrackingService.startUpTaskFinished(infos, totalTime);
         } catch (Throwable t) {

@@ -61,7 +61,7 @@ public interface MovableService extends RemoteService {
 
     void closeConnection();
 
-    void sendStartupInfo(Collection<StartupTaskInfo> infos, long totalTime);
+    void sendStartupInfo(List<StartupTaskInfo> infos, long totalTime);
 
     Level sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp);
 

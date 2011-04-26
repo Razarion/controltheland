@@ -23,15 +23,10 @@ import java.util.List;
  */
 public class TutorialTrackingInfo implements Serializable {
     private DbEventTrackingStart dbEventTrackingStart;
-    private int taskCount;
     private List<DbTutorialProgress> dbTutorialProgresss;
 
     public void setDbEventTrackingStart(DbEventTrackingStart dbEventTrackingStart) {
         this.dbEventTrackingStart = dbEventTrackingStart;
-    }
-
-    public void setTaskCount(int taskCount) {
-        this.taskCount = taskCount;
     }
 
     public void setDbTutorialProgresss(List<DbTutorialProgress> dbTutorialProgresss) {
@@ -40,10 +35,6 @@ public class TutorialTrackingInfo implements Serializable {
 
     public DbEventTrackingStart getDbEventTrackingStart() {
         return dbEventTrackingStart;
-    }
-
-    public int getTaskCount() {
-        return taskCount;
     }
 
     public List<DbTutorialProgress> getDbTutorialProgresss() {

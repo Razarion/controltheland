@@ -329,7 +329,7 @@ public class StartupScreen implements StartupProgressListener {
     }
 
     @Override
-    public void onStartupFailed(Collection<StartupTaskInfo> taskInfo, long totalTime) {
+    public void onStartupFailed(List<StartupTaskInfo> taskInfo, long totalTime) {
         showCloseButton();
     }
 }

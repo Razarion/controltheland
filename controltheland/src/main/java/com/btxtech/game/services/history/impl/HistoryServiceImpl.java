@@ -23,7 +23,6 @@ import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbAbstractLevel;
-import com.btxtech.game.services.utg.DbResurrection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -135,7 +134,7 @@ public class HistoryServiceImpl implements HistoryService {
                 userState.getUser(),
                 null,
                 null,
-                null,
+                null,              // TODO
                 null,
                 level,
                 baseService,
@@ -168,31 +167,35 @@ public class HistoryServiceImpl implements HistoryService {
             }
         });
         for (DbHistoryElement dbHistoryElement : dbHistoryElements) {
-            displayHistoryElements.add(convert(user, dbHistoryElement));
+            displayHistoryElements.add(convert(user, null, dbHistoryElement));
         }
         return displayHistoryElements;
     }
 
     @Override
-    public List<DisplayHistoryElement> getHistoryElements(final String sessionId, final Date from, final Date to) {
+    public List<DisplayHistoryElement> getHistoryElements(final Long from, final Long to, final String sessionId, final Integer baseId) {
         ArrayList<DisplayHistoryElement> displayHistoryElements = new ArrayList<DisplayHistoryElement>();
         @SuppressWarnings("unchecked")
         List<DbHistoryElement> dbHistoryElements = hibernateTemplate.execute(new HibernateCallback<List<DbHistoryElement>>() {
             public List<DbHistoryElement> doInHibernate(Session session) {
                 Criteria criteria = session.createCriteria(DbHistoryElement.class);
-                criteria.add(Restrictions.eq("sessionId", sessionId));
+                if (baseId != null) {
+                    criteria.add(Restrictions.or(Restrictions.eq("sessionId", sessionId), Restrictions.or(Restrictions.eq("actorBaseId", baseId), Restrictions.eq("targetBaseId", baseId))));
+                } else {
+                    criteria.add(Restrictions.eq("sessionId", sessionId));
+                }
                 if (from != null) {
-                    criteria.add(Restrictions.ge("timeStamp", from));
+                    criteria.add(Restrictions.ge("timeStampMs", from));
                 }
                 if (to != null) {
-                    criteria.add(Restrictions.lt("timeStamp", to));
+                    criteria.add(Restrictions.lt("timeStampMs", to));
                 }
                 criteria.addOrder(Property.forName("timeStampMs").desc());
                 return criteria.list();
             }
         });
         for (DbHistoryElement dbHistoryElement : dbHistoryElements) {
-            displayHistoryElements.add(convert(null, dbHistoryElement));
+            displayHistoryElements.add(convert(null, baseId, dbHistoryElement));
         }
         return displayHistoryElements;
     }
@@ -211,8 +214,8 @@ public class HistoryServiceImpl implements HistoryService {
         });
     }
 
-    private DisplayHistoryElement convert(User user, DbHistoryElement dbHistoryElement) {
-        DisplayHistoryElement displayHistoryElement = new DisplayHistoryElement(dbHistoryElement.getTimeStamp());
+    private DisplayHistoryElement convert(User user, Integer baseId, DbHistoryElement dbHistoryElement) {
+        DisplayHistoryElement displayHistoryElement = new DisplayHistoryElement(new Date(dbHistoryElement.getTimeStampMs()));
         String userName = null;
         if (user != null) {
             userName = user.getUsername();
@@ -222,12 +225,26 @@ public class HistoryServiceImpl implements HistoryService {
                 displayHistoryElement.setMessage("Base created: " + dbHistoryElement.getActorBaseName());
                 break;
             case BASE_DEFEATED:
-                if (userName == null) {
-                    displayHistoryElement.setMessage("Base destroyed: " + dbHistoryElement.getTargetBaseName());
-                } else if (userName.equals(dbHistoryElement.getActorUserName())) {
-                    displayHistoryElement.setMessage("Base destroyed: " + dbHistoryElement.getTargetBaseName());
+                if (userName != null) {
+                    if (userName.equals(dbHistoryElement.getActorUserName())) {
+                        displayHistoryElement.setMessage("Base destroyed: " + dbHistoryElement.getTargetBaseName());
+                    } else if (userName.equals(dbHistoryElement.getTargetBaseName())) {
+                        displayHistoryElement.setMessage("Your base has been destroyed by " + dbHistoryElement.getActorBaseName());
+                    } else {
+                        displayHistoryElement.setMessage("Internal error 1");
+                        log.error("Unknown state 1: " + userName + " " + dbHistoryElement.getActorUserName() + " " + dbHistoryElement.getTargetBaseName());
+                    }
+                } else if (baseId != null) {
+                    if (baseId.equals(dbHistoryElement.getActorBaseId())) {
+                        displayHistoryElement.setMessage("Base destroyed: " + dbHistoryElement.getTargetBaseName());
+                    } else if (baseId.equals(dbHistoryElement.getTargetBaseId())) {
+                        displayHistoryElement.setMessage("Base was destroyed by: " + dbHistoryElement.getActorBaseName());
+                    } else {
+                        displayHistoryElement.setMessage("Internal error 2");
+                        log.error("Unknown state 2: " + baseId + " " + dbHistoryElement.getActorBaseId() + " " + dbHistoryElement.getTargetBaseId());
+                    }
                 } else {
-                    displayHistoryElement.setMessage("Your base has been destroyed by " + dbHistoryElement.getActorBaseName());
+                    throw new IllegalArgumentException("user and baseId are null");
                 }
                 break;
             case BASE_SURRENDERED:
@@ -237,14 +254,34 @@ public class HistoryServiceImpl implements HistoryService {
                 displayHistoryElement.setMessage("Item created: " + dbHistoryElement.getItemTypeName());
                 break;
             case ITEM_DESTROYED:
-                if (userName == null) {
-                    displayHistoryElement.setMessage("Destroyed a " + dbHistoryElement.getItemTypeName() + " from " + dbHistoryElement.getTargetBaseName());
-                } else if (userName.equals(dbHistoryElement.getActorUserName())) {
-                    displayHistoryElement.setMessage("Destroyed a " + dbHistoryElement.getItemTypeName() + " from " + dbHistoryElement.getTargetBaseName());
-                } else if(dbHistoryElement.getActorBaseName() != null){
-                    displayHistoryElement.setMessage(dbHistoryElement.getActorBaseName() + " destroyed your " + dbHistoryElement.getItemTypeName());
+                if (userName != null) {
+                    if (userName.equals(dbHistoryElement.getActorUserName())) {
+                        displayHistoryElement.setMessage("Destroyed a " + dbHistoryElement.getItemTypeName() + " from " + dbHistoryElement.getTargetBaseName());
+                    } else if (userName.equals(dbHistoryElement.getTargetBaseName())) {
+                        if (dbHistoryElement.getActorBaseName() != null) {
+                            displayHistoryElement.setMessage(dbHistoryElement.getActorBaseName() + " destroyed your " + dbHistoryElement.getItemTypeName());
+                        } else {
+                            displayHistoryElement.setMessage(dbHistoryElement.getItemTypeName() + " has been sold");
+                        }
+                    } else {
+                        displayHistoryElement.setMessage("Internal error 3");
+                        log.error("Unknown state 3: " + userName + " " + dbHistoryElement.getActorUserName() + " " + dbHistoryElement.getTargetBaseName());
+                    }
+                } else if (baseId != null) {
+                    if (baseId.equals(dbHistoryElement.getActorBaseId())) {
+                        displayHistoryElement.setMessage("Destroyed a " + dbHistoryElement.getItemTypeName() + " from " + dbHistoryElement.getTargetBaseName());
+                    } else if (baseId.equals(dbHistoryElement.getTargetBaseId())) {
+                        if (dbHistoryElement.getActorBaseName() != null) {
+                            displayHistoryElement.setMessage(dbHistoryElement.getActorBaseName() + " destroyed a " + dbHistoryElement.getItemTypeName());
+                        } else {
+                            displayHistoryElement.setMessage(dbHistoryElement.getItemTypeName() + " has been sold");                            
+                        }
+                    } else {
+                        displayHistoryElement.setMessage("Internal error 4");
+                        log.error("Unknown state 4: " + baseId + " " + dbHistoryElement.getActorBaseId() + " " + dbHistoryElement.getTargetBaseId());
+                    }
                 } else {
-                    displayHistoryElement.setMessage(dbHistoryElement.getItemTypeName() + " has been sold");
+                    throw new IllegalArgumentException("user and baseId are null");
                 }
                 break;
             case LEVEL_PROMOTION:

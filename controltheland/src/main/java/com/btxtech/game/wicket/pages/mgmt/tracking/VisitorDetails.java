@@ -102,6 +102,5 @@ public class VisitorDetails extends MgmtWebPage {
         add(new Label("factoryCommands", Integer.toString(visitorDetailInfo.getFactoryCommands())));
         add(new Label("collectCommands", Integer.toString(visitorDetailInfo.getMoneyCollectCommands())));
         add(new Label("attackCommands", Integer.toString(visitorDetailInfo.getAttackCommands())));
-        add(new Label("tutorialTasks", Integer.toString(visitorDetailInfo.getTasks())));
     }
 }
