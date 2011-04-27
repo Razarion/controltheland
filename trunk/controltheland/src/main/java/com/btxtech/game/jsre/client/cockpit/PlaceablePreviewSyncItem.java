@@ -79,7 +79,12 @@ public class PlaceablePreviewSyncItem extends PlaceablePreviewWidget {
     @Override
     protected boolean allowedToPlace(int relX, int relY) {
         // Check if over cockpit
-        if (Cockpit.getInstance().contains(new Index(relX + itemTypeToBuilt.getHeight() / 2, relY + itemTypeToBuilt.getWidth() / 2))) {
+        int cockpitX = relX + itemTypeToBuilt.getHeight() / 2;
+        int cockpitY = relY + itemTypeToBuilt.getWidth() / 2;
+        if (cockpitX < 0 || cockpitY < 0) {
+            return false;
+        }
+        if (Cockpit.getInstance().contains(new Index(cockpitX, cockpitY))) {
             return false;
         }
 
