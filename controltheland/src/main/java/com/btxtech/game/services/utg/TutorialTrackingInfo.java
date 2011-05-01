@@ -13,6 +13,9 @@
 
 package com.btxtech.game.services.utg;
 
+import com.btxtech.game.services.utg.tracker.DbEventTrackingStart;
+import com.btxtech.game.services.utg.tracker.DbTutorialProgress;
+
 import java.io.Serializable;
 import java.util.List;
 

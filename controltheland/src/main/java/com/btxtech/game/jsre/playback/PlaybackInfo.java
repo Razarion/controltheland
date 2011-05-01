@@ -14,14 +14,13 @@
 package com.btxtech.game.jsre.playback;
 
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
-import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,9 +32,9 @@ public class PlaybackInfo extends SimulationInfo {
     private EventTrackingStart eventTrackingStart;
     private List<EventTrackingItem> eventTrackingItems;
     private List<SelectionTrackingItem> selectionTrackingItems;
-    private ArrayList<BaseCommand> baseCommands;
-    private ArrayList<TerrainScrollTracking> terrainScrollTrackings;
-    private ArrayList<BrowserWindowTracking> browserWindowTrackings;
+    private List<BaseCommand> baseCommands;
+    private List<TerrainScrollTracking> terrainScrollTrackings;
+    private List<BrowserWindowTracking> browserWindowTrackings;
 
     public EventTrackingStart getEventTrackingStart() {
         return eventTrackingStart;
@@ -61,27 +60,27 @@ public class PlaybackInfo extends SimulationInfo {
         this.selectionTrackingItems = selectionTrackingItems;
     }
 
-    public void setCommands(ArrayList<BaseCommand> baseCommands) {
+    public void setCommands(List<BaseCommand> baseCommands) {
         this.baseCommands = baseCommands;
     }
 
-    public ArrayList<BaseCommand> getBaseCommands() {
+    public List<BaseCommand> getBaseCommands() {
         return baseCommands;
     }
 
-    public void setScrollTrackingItems(ArrayList<TerrainScrollTracking> terrainScrollTrackings) {
+    public void setScrollTrackingItems(List<TerrainScrollTracking> terrainScrollTrackings) {
         this.terrainScrollTrackings = terrainScrollTrackings;
     }
 
-    public ArrayList<TerrainScrollTracking> getScrollTrackingItems() {
+    public List<TerrainScrollTracking> getScrollTrackingItems() {
         return terrainScrollTrackings;
     }
 
-    public void setBrowserWindowTrackings(ArrayList<BrowserWindowTracking> browserWindowTrackings) {
+    public void setBrowserWindowTrackings(List<BrowserWindowTracking> browserWindowTrackings) {
         this.browserWindowTrackings = browserWindowTrackings;
     }
 
-    public ArrayList<BrowserWindowTracking> getBrowserWindowTrackings() {
+    public List<BrowserWindowTracking> getBrowserWindowTrackings() {
         return browserWindowTrackings;
     }
 }

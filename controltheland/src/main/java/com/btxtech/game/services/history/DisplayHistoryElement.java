@@ -22,10 +22,10 @@ import java.util.Date;
  * Time: 15:44:05
  */
 public class DisplayHistoryElement implements Serializable {
-    private Date timeStamp;
+    private long timeStamp;
     private String message;
 
-    public DisplayHistoryElement(Date timeStamp) {
+    public DisplayHistoryElement(long timeStamp) {
         this.timeStamp = timeStamp;
     }
 
@@ -37,7 +37,7 @@ public class DisplayHistoryElement implements Serializable {
         this.message = message;
     }
 
-    public Date getTimeStamp() {
+    public long getTimeStamp() {
         return timeStamp;
     }
 

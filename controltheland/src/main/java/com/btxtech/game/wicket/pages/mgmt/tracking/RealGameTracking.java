@@ -50,7 +50,7 @@ public class RealGameTracking extends Panel {
 
     private void userActions(List<UserCommandHistoryElement> userCommandHistoryElements) {
         ListView<UserCommandHistoryElement> userActionList = new ListView<UserCommandHistoryElement>("userActions", userCommandHistoryElements) {
-            private Date previous;
+            private Long previous;
 
             @Override
             protected void populateItem(ListItem<UserCommandHistoryElement> listItem) {

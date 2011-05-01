@@ -1,4 +1,4 @@
-package com.btxtech.game.services.utg;
+package com.btxtech.game.services.utg.tracker;
 
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
 

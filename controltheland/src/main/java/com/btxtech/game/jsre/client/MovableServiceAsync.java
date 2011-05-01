@@ -67,8 +67,6 @@ public interface MovableServiceAsync {
                                Collection<BrowserWindowTracking> browserWindowTrackings,
                                AsyncCallback<Void> asyncCallback);
 
-    void sendCloseWindow(long totalRunningTime, long clientTimeStamp, AsyncCallback<Void> asyncCallback);
-
     void sellItem(Id id, AsyncCallback<Void> asyncCallback);
 
     void sendStartupInfo(List<StartupTaskInfo> infos, long totalTime, AsyncCallback<Void> asyncCallback);

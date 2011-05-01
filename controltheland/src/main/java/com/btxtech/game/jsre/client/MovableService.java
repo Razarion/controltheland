@@ -73,7 +73,5 @@ public interface MovableService extends RemoteService {
                                Collection<TerrainScrollTracking> terrainScrollTrackings,
                                Collection<BrowserWindowTracking> browserWindowTrackings);
 
-    void sendCloseWindow(long totalRunningTime, long clientTimeStamp);
-
     void sellItem(Id id);
 }

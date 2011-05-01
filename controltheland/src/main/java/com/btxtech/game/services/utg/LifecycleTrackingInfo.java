@@ -13,6 +13,9 @@
 
 package com.btxtech.game.services.utg;
 
+import com.btxtech.game.services.utg.tracker.DbStartup;
+import com.btxtech.game.services.utg.tracker.DbStartupTask;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,10 +27,12 @@ import java.util.List;
  */
 public class LifecycleTrackingInfo implements Serializable {
     private List<DbStartupTask> dbStartupTasks = new ArrayList<DbStartupTask>();
-    private long start;
+    private long startServer;
+    private long startClient;
     private long startupDuration;
     private String sessionId;
-    private Long end;
+    private Long nextStartServer;
+    private Long nextStartClient;
     private String level;
     private boolean realGame;
     private String baseName;
@@ -36,8 +41,9 @@ public class LifecycleTrackingInfo implements Serializable {
 
     public LifecycleTrackingInfo(String sessionId, DbStartup startup) {
         this.sessionId = sessionId;
-        start = startup.getServerTimeStamp();
-        dbStartupTasks = (List<DbStartupTask>) startup.getGameStartupTasks();
+        startServer = startup.getServerTimeStamp();
+        startClient = startup.getClientTimeStamp();
+        dbStartupTasks = startup.getGameStartupTasks();
         startupDuration = startup.getStartupDuration();
         level = startup.getLevel();
         realGame = startup.isRealGame();
@@ -45,8 +51,12 @@ public class LifecycleTrackingInfo implements Serializable {
         baseId = startup.getBaseId();
     }
 
-    public long getStart() {
-        return start;
+    public long getStartClient() {
+        return startClient;
+    }
+
+    public long getStartServer() {
+        return startServer;
     }
 
     public List<DbStartupTask> getGameStartups() {
@@ -61,12 +71,17 @@ public class LifecycleTrackingInfo implements Serializable {
         return sessionId;
     }
 
-    public Long getEnd() {
-        return end;
+    public void setNext(DbStartup nextStartup) {
+        nextStartServer = nextStartup.getServerTimeStamp();
+        nextStartClient = nextStartup.getClientTimeStamp();
     }
 
-    public void setEnd(long end) {
-        this.end = end;
+    public Long getNextStartServer() {
+        return nextStartServer;
+    }
+
+    public Long getNextStartClient() {
+        return nextStartClient;
     }
 
     public String getLevel() {

@@ -136,15 +136,6 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public void sendCloseWindow(long totalRunningTime, long clientTimeStamp) {
-        try {
-            userTrackingService.onCloseWindow(totalRunningTime, clientTimeStamp);
-        } catch (Throwable t) {
-            log.error("", t);
-        }
-    }
-
-    @Override
     public GameInfo getGameInfo() {
         try {
             DbAbstractLevel dbAbstractLevel = userGuidanceService.getDbAbstractLevel();

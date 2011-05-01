@@ -15,7 +15,7 @@ package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.wicket.WebCommon;
-import com.btxtech.game.wicket.pages.mgmt.tracking.UserTracking;
+import com.btxtech.game.wicket.pages.mgmt.tracking.SessionTable;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.TutorialTable;
 import java.io.Serializable;
 import java.lang.management.ManagementFactory;
@@ -114,7 +114,7 @@ public class MgmtPage extends MgmtWebPage {
         toolPages.add(new LinkAndName("Attack Matrix", AttackMatrix.class));
         toolPages.add(new LinkAndName("Resource", ResourceEditor.class));
         toolPages.add(new LinkAndName("Market", MarketEntryEditor.class));
-        toolPages.add(new LinkAndName("User Tracking", UserTracking.class));
+        toolPages.add(new LinkAndName("User Tracking", SessionTable.class));
         toolPages.add(new LinkAndName("Pathfinding", Pathfinding.class));
         toolPages.add(new LinkAndName("Bases", BasesTable.class));
         toolPages.add(new LinkAndName("XP Settings", XpSettingsEditor.class));

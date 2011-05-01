@@ -20,7 +20,7 @@ import java.util.Date;
  * Date: 16.01.2010
  * Time: 12:24:41
  */
-public class VisitorInfo {
+public class SessionOverviewDto {
     public static final int MAX_REFERER_LENGTH = 30;
     private Date date;
     private String sessionId;
@@ -30,17 +30,17 @@ public class VisitorInfo {
     private boolean startupFailure;
     private int commands;
     private int levelPromotions;
-    private boolean cookie;
+    private String cookie;
     private String referer;
 
-    public VisitorInfo(Date date,
+    public SessionOverviewDto(Date date,
                        String sessionId,
                        int pageHits,
                        int enterGameHits,
                        int successfulStarts,
                        boolean startupFailure, int commands,
                        int levelPromotions,
-                       boolean cookie,
+                       String cookie,
                        String referer) {
         this.date = date;
         this.sessionId = sessionId;
@@ -78,7 +78,7 @@ public class VisitorInfo {
         return commands;
     }
 
-    public boolean isCookie() {
+    public String getCookie() {
         return cookie;
     }
 

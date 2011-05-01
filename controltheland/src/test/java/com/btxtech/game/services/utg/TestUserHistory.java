@@ -6,6 +6,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.tracker.DbUserHistory;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -42,11 +43,11 @@ public class TestUserHistory extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        List<UserHistory> userHistories = getUserHistory();
-        Assert.assertEquals(3, userHistories.size());
-        Assert.assertNotNull(userHistories.get(0).getLoggedOut());
-        Assert.assertNotNull(userHistories.get(1).getLoggedIn());
-        Assert.assertNotNull(userHistories.get(2).getCreated());
+        List<DbUserHistory> dbUserHistories = getUserHistory();
+        Assert.assertEquals(3, dbUserHistories.size());
+        Assert.assertNotNull(dbUserHistories.get(0).getLoggedOut());
+        Assert.assertNotNull(dbUserHistories.get(1).getLoggedIn());
+        Assert.assertNotNull(dbUserHistories.get(2).getCreated());
     }
 
     @Test
@@ -74,16 +75,16 @@ public class TestUserHistory extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        List<UserHistory> userHistories = getUserHistory();
-        Assert.assertEquals(7, userHistories.size());
+        List<DbUserHistory> dbUserHistories = getUserHistory();
+        Assert.assertEquals(7, dbUserHistories.size());
 
-        Assert.assertNotNull(userHistories.get(0).getLoggedOut());
-        Assert.assertNotNull(userHistories.get(1).getLoggedIn());
-        Assert.assertNotNull(userHistories.get(2).getLoggedOut());
-        Assert.assertNotNull(userHistories.get(3).getLoggedIn());
-        Assert.assertNotNull(userHistories.get(4).getLoggedOut());
-        Assert.assertNotNull(userHistories.get(5).getLoggedIn());
-        Assert.assertNotNull(userHistories.get(6).getCreated());
+        Assert.assertNotNull(dbUserHistories.get(0).getLoggedOut());
+        Assert.assertNotNull(dbUserHistories.get(1).getLoggedIn());
+        Assert.assertNotNull(dbUserHistories.get(2).getLoggedOut());
+        Assert.assertNotNull(dbUserHistories.get(3).getLoggedIn());
+        Assert.assertNotNull(dbUserHistories.get(4).getLoggedOut());
+        Assert.assertNotNull(dbUserHistories.get(5).getLoggedIn());
+        Assert.assertNotNull(dbUserHistories.get(6).getCreated());
     }
 
     @Test
@@ -104,13 +105,13 @@ public class TestUserHistory extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        List<UserHistory> userHistories = getUserHistory();
-        Assert.assertEquals(5, userHistories.size());
-        Assert.assertNotNull(userHistories.get(0).getLoggedOut());
-        Assert.assertNotNull(userHistories.get(1).getGameEntered());
-        Assert.assertNotNull(userHistories.get(2).getBaseCreated());
-        Assert.assertNotNull(userHistories.get(3).getLoggedIn());
-        Assert.assertNotNull(userHistories.get(4).getCreated());
+        List<DbUserHistory> dbUserHistories = getUserHistory();
+        Assert.assertEquals(5, dbUserHistories.size());
+        Assert.assertNotNull(dbUserHistories.get(0).getLoggedOut());
+        Assert.assertNotNull(dbUserHistories.get(1).getGameEntered());
+        Assert.assertNotNull(dbUserHistories.get(2).getBaseCreated());
+        Assert.assertNotNull(dbUserHistories.get(3).getLoggedIn());
+        Assert.assertNotNull(dbUserHistories.get(4).getCreated());
     }
 
     @Test
@@ -132,15 +133,15 @@ public class TestUserHistory extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        List<UserHistory> userHistories = getUserHistory();
-        Assert.assertEquals(6, userHistories.size());
-        Assert.assertNotNull(userHistories.get(0).getLoggedOut());
-        Assert.assertNotNull(userHistories.get(1).getBaseSurrender());
-        Assert.assertEquals("U1", userHistories.get(1).getBaseName());
-        Assert.assertNotNull(userHistories.get(2).getGameEntered());
-        Assert.assertNotNull(userHistories.get(3).getBaseCreated());
-        Assert.assertNotNull(userHistories.get(4).getLoggedIn());
-        Assert.assertNotNull(userHistories.get(5).getCreated());
+        List<DbUserHistory> dbUserHistories = getUserHistory();
+        Assert.assertEquals(6, dbUserHistories.size());
+        Assert.assertNotNull(dbUserHistories.get(0).getLoggedOut());
+        Assert.assertNotNull(dbUserHistories.get(1).getBaseSurrender());
+        Assert.assertEquals("U1", dbUserHistories.get(1).getBaseName());
+        Assert.assertNotNull(dbUserHistories.get(2).getGameEntered());
+        Assert.assertNotNull(dbUserHistories.get(3).getBaseCreated());
+        Assert.assertNotNull(dbUserHistories.get(4).getLoggedIn());
+        Assert.assertNotNull(dbUserHistories.get(5).getCreated());
     }
 
     @Test
@@ -176,25 +177,25 @@ public class TestUserHistory extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        List<UserHistory> userHistories = getUserHistory();
-        Assert.assertEquals(6, userHistories.size());
-        Assert.assertEquals("U1", userHistories.get(0).getBaseName());
-        Assert.assertNotNull(userHistories.get(0).getBaseDefeated());
-        Assert.assertNotNull(userHistories.get(1).getLoggedOut());
-        Assert.assertNotNull(userHistories.get(2).getGameEntered());
-        Assert.assertNotNull(userHistories.get(3).getBaseCreated());
-        Assert.assertNotNull(userHistories.get(4).getLoggedIn());
-        Assert.assertNotNull(userHistories.get(5).getCreated());
+        List<DbUserHistory> dbUserHistories = getUserHistory();
+        Assert.assertEquals(6, dbUserHistories.size());
+        Assert.assertEquals("U1", dbUserHistories.get(0).getBaseName());
+        Assert.assertNotNull(dbUserHistories.get(0).getBaseDefeated());
+        Assert.assertNotNull(dbUserHistories.get(1).getLoggedOut());
+        Assert.assertNotNull(dbUserHistories.get(2).getGameEntered());
+        Assert.assertNotNull(dbUserHistories.get(3).getBaseCreated());
+        Assert.assertNotNull(dbUserHistories.get(4).getLoggedIn());
+        Assert.assertNotNull(dbUserHistories.get(5).getCreated());
     }
 
-    private List<UserHistory> getUserHistory() {
+    private List<DbUserHistory> getUserHistory() {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
 
-        List<UserHistory> userHistories = getHibernateTemplate().execute(new HibernateCallback<List<UserHistory>>() {
+        List<DbUserHistory> dbUserHistories = getHibernateTemplate().execute(new HibernateCallback<List<DbUserHistory>>() {
             @Override
-            public List<UserHistory> doInHibernate(Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(UserHistory.class);
+            public List<DbUserHistory> doInHibernate(Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbUserHistory.class);
                 criteria.addOrder(Order.desc("id"));
                 return criteria.list();
             }
@@ -203,6 +204,6 @@ public class TestUserHistory extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        return userHistories;
+        return dbUserHistories;
     }
 }

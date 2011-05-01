@@ -13,7 +13,7 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tracking;
 
-import com.btxtech.game.services.utg.DbStartupTask;
+import com.btxtech.game.services.utg.tracker.DbStartupTask;
 import com.btxtech.game.services.utg.LifecycleTrackingInfo;
 import com.btxtech.game.wicket.WebCommon;
 import org.apache.wicket.markup.html.basic.Label;
@@ -32,8 +32,8 @@ public class LifecyclePanel extends Panel {
     public LifecyclePanel(String id, LifecycleTrackingInfo lifecycleTrackingInfo) {
         super(id);
         add(new Label("level", lifecycleTrackingInfo.getLevel()));
-        add(new Label("startTime", WebCommon.formatDateTime(new Date(lifecycleTrackingInfo.getStart()))));
-        add(new Label("endTime", WebCommon.formatDateTime(lifecycleTrackingInfo.getEnd() != null ? new Date(lifecycleTrackingInfo.getEnd()) : null)));
+        add(new Label("startTime", WebCommon.formatDateTime(new Date(lifecycleTrackingInfo.getStartServer()))));
+        add(new Label("endTime", WebCommon.formatDateTime(lifecycleTrackingInfo.getNextStartServer() != null ? new Date(lifecycleTrackingInfo.getNextStartServer()) : null)));
         add(new ListView<DbStartupTask>("startup", lifecycleTrackingInfo.getGameStartups()) {
             @Override
             protected void populateItem(ListItem<DbStartupTask> gameStartupListItem) {

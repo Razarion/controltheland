@@ -69,18 +69,18 @@ public class LoadStartupTask extends AbstractStartupTask {
 
     private long getTimeStampFromHtml() {
         RootPanel div = getStartupInformation();
-        String timeStampString = div.getElement().getAttribute(PlaybackEntry.START_TIME);
+        String timeStampString = div.getElement().getAttribute(PlaybackEntry.START_LIFECYCLE_SERVER);
         if (timeStampString == null || timeStampString.trim().isEmpty()) {
-            throw new IllegalArgumentException(PlaybackEntry.START_TIME + " not found in div element as parameter");
+            throw new IllegalArgumentException(PlaybackEntry.START_LIFECYCLE_SERVER + " not found in div element as parameter");
         }
         return Long.parseLong(timeStampString);
     }
 
     private String getLevelFromHtml() {
         RootPanel div = getStartupInformation();
-        String level = div.getElement().getAttribute(PlaybackEntry.LAVAL_NAME);
+        String level = div.getElement().getAttribute(PlaybackEntry.LEVEL_NAME);
         if (level == null || level.trim().isEmpty()) {
-            throw new IllegalArgumentException(PlaybackEntry.LAVAL_NAME + " not found in div element as parameter");
+            throw new IllegalArgumentException(PlaybackEntry.LEVEL_NAME + " not found in div element as parameter");
         }
         return level;
     }

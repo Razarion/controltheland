@@ -75,8 +75,6 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
             @Override
             public void onClose(CloseEvent<Window> windowCloseEvent) {
                 sendEventTrackerItems();
-                long time = System.currentTimeMillis();
-                Connection.getInstance().sendCloseWindow(time - ClientServices.getInstance().getClientRunner().getStartupTimeStamp(), time);
             }
         });
     }

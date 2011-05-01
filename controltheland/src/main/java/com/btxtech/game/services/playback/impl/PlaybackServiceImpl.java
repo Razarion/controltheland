@@ -13,11 +13,11 @@
 
 package com.btxtech.game.services.playback.impl;
 
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
-import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.btxtech.game.jsre.playback.PlaybackInfo;
 import com.btxtech.game.services.gwt.MovableServiceImpl;
 import com.btxtech.game.services.item.ItemService;
@@ -26,14 +26,22 @@ import com.btxtech.game.services.playback.PlaybackService;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.services.utg.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.btxtech.game.services.utg.DbAbstractLevel;
+import com.btxtech.game.services.utg.tracker.DbBrowserWindowTracking;
+import com.btxtech.game.services.utg.tracker.DbCommand;
+import com.btxtech.game.services.utg.tracker.DbEventTrackingItem;
+import com.btxtech.game.services.utg.tracker.DbScrollTrackingItem;
+import com.btxtech.game.services.utg.tracker.DbSelectionTrackingItem;
+import com.btxtech.game.services.utg.DbSimulationLevel;
+import com.btxtech.game.services.utg.LifecycleTrackingInfo;
+import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.UserTrackingService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
 
 /**
  * User: beat
@@ -70,56 +78,46 @@ public class PlaybackServiceImpl implements PlaybackService {
             playbackInfo.setLevel(dbAbstractLevel.getLevel());
             terrainService.setupTerrain(playbackInfo, dbAbstractLevel);
 
-            // Mouse tracker
-            DbEventTrackingStart start = null;
-            DbEventTrackingStart next = null;
-            Long endTime = null;
-            List<DbEventTrackingStart> dbEventTrackingStarts = userTrackingService.getDbEventTrackingStart(sessionId);
-            for (int i = 0, dbEventTrackingStartsSize = dbEventTrackingStarts.size(); i < dbEventTrackingStartsSize; i++) {
-                DbEventTrackingStart dbEventTrackingStart = dbEventTrackingStarts.get(i);
-                if (dbEventTrackingStart.getClientTimeStamp() == startTime) {
-                    start = dbEventTrackingStart;
-                    i++;
-                    if (i < dbEventTrackingStartsSize) {
-                        next = dbEventTrackingStarts.get(i);
-                        endTime = next.getClientTimeStamp();
-                    }
-                    break;
-                }
+            // Start and and time
+
+
+            LifecycleTrackingInfo lifecycleTrackingInfo = userTrackingService.getLifecycleTrackingInfo(sessionId, startTime);
+            long startClient = lifecycleTrackingInfo.getStartClient();
+            Long endClient = lifecycleTrackingInfo.getNextStartClient();
+
+            playbackInfo.setEventTrackingStart(userTrackingService.getDbEventTrackingStart(sessionId, startClient, endClient).createEventTrackingStart());
+
+            // Mouse tracking
+            ArrayList<EventTrackingItem> eventTrackingItems = new ArrayList<EventTrackingItem>();
+            for (DbEventTrackingItem dbEventTrackingItem : userTrackingService.getDbEventTrackingItem(sessionId, startClient, endClient)) {
+                eventTrackingItems.add(dbEventTrackingItem.createEventTrackingItem());
             }
-            if (start != null) {
-                ArrayList<EventTrackingItem> eventTrackingItems = new ArrayList<EventTrackingItem>();
-                for (DbEventTrackingItem dbEventTrackingItem : userTrackingService.getDbEventTrackingItem(start, next)) {
-                    eventTrackingItems.add(dbEventTrackingItem.createEventTrackingItem());
-                }
-                playbackInfo.setEventTrackingItems(eventTrackingItems);
-                playbackInfo.setEventTrackingStart(start.createEventTrackingStart());
-            }
+            playbackInfo.setEventTrackingItems(eventTrackingItems);
 
             // Selections
             ArrayList<SelectionTrackingItem> selectionTrackingItems = new ArrayList<SelectionTrackingItem>();
-            for (DbSelectionTrackingItem dbSelectionTrackingItem : userTrackingService.getDbSelectionTrackingItems(sessionId, startTime, endTime)) {
+            for (DbSelectionTrackingItem dbSelectionTrackingItem : userTrackingService.getDbSelectionTrackingItems(sessionId, startClient, endClient)) {
                 selectionTrackingItems.add(dbSelectionTrackingItem.createSelectionTrackingItem());
             }
             playbackInfo.setSelectionTrackingItems(selectionTrackingItems);
 
             // Commands
             ArrayList<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
-            for (DbCommand dbCommand : userTrackingService.getDbCommands(sessionId, startTime, endTime)) {
+            for (DbCommand dbCommand : userTrackingService.getDbCommands(sessionId, startClient, endClient)) {
                 baseCommands.add(dbCommand.getBaseCommand());
             }
             playbackInfo.setCommands(baseCommands);
 
             // Scrolling
             ArrayList<TerrainScrollTracking> terrainScrollTrackings = new ArrayList<TerrainScrollTracking>();
-            for (DbScrollTrackingItem dbScrollTrackingItem : userTrackingService.getDbScrollTrackingItems(sessionId, startTime, endTime)) {
+            for (DbScrollTrackingItem dbScrollTrackingItem : userTrackingService.getDbScrollTrackingItems(sessionId, startClient, endClient)) {
                 terrainScrollTrackings.add(dbScrollTrackingItem.createScrollTrackingItem());
             }
             playbackInfo.setScrollTrackingItems(terrainScrollTrackings);
 
             // Scrolling
             ArrayList<BrowserWindowTracking> browserWindowTrackings = new ArrayList<BrowserWindowTracking>();
-            for (DbBrowserWindowTracking dbBrowserWindowTracking : userTrackingService.getDbBrowserWindowTrackings(sessionId, startTime, endTime)) {
+            for (DbBrowserWindowTracking dbBrowserWindowTracking : userTrackingService.getDbBrowserWindowTrackings(sessionId, startClient, endClient)) {
                 browserWindowTrackings.add(dbBrowserWindowTracking.createBrowserWindowTracking());
             }
             playbackInfo.setBrowserWindowTrackings(browserWindowTrackings);

@@ -14,6 +14,7 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.services.history.DisplayHistoryElement;
+import com.btxtech.game.services.utg.tracker.DbUserCommand;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -39,39 +40,33 @@ public class UserCommandHistoryElement implements Comparable, Serializable {
     public int compareTo(Object o) {
         UserCommandHistoryElement other = (UserCommandHistoryElement) o;
 
-        Date timeStamp;
+        Long timeStamp;
         if (dbUserCommand != null) {
-            timeStamp = dbUserCommand.getTimeStamp();
+            timeStamp = dbUserCommand.getTimeStampMs();
         } else {
             timeStamp = historyElement.getTimeStamp();
         }
 
-        Date otherTimeStamp = null;
+        Long otherTimeStamp;
         if (other.dbUserCommand != null) {
-            otherTimeStamp = other.dbUserCommand.getTimeStamp();
+            otherTimeStamp = other.dbUserCommand.getTimeStampMs();
         } else {
             otherTimeStamp = other.historyElement.getTimeStamp();
         }
 
-        if (timeStamp.after(otherTimeStamp)) {
-            return 1;
-        }
-        if (timeStamp.before(otherTimeStamp)) {
-            return -1;
-        }
-        return 0;
+        return timeStamp.compareTo(otherTimeStamp);
     }
 
     public Date getClientTimeStamp() {
         if (dbUserCommand != null) {
-            return dbUserCommand.getClientTimeStamp();
+            return new Date(dbUserCommand.getClientTimeStamp());
         }
         return null;
     }
 
-    public Date getTimeStamp() {
+    public long getTimeStamp() {
         if (dbUserCommand != null) {
-            return dbUserCommand.getTimeStamp();
+            return dbUserCommand.getTimeStampMs();
         } else {
             return historyElement.getTimeStamp();
         }
