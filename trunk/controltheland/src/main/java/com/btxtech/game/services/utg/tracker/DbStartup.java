@@ -11,9 +11,11 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.utg;
+package com.btxtech.game.services.utg.tracker;
 
-import com.btxtech.game.services.base.Base;
+import com.btxtech.game.services.utg.DbAbstractLevel;
+import com.btxtech.game.services.utg.DbRealGameLevel;
+import com.btxtech.game.services.utg.DbSimulationLevel;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
@@ -24,10 +26,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 /**
  * User: beat
@@ -51,7 +55,8 @@ public class DbStartup implements Serializable {
     @org.hibernate.annotations.IndexColumn(name = "orderIndex", nullable = false, base = 0)
     @JoinColumn(name = "dbStartup", nullable = false)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-    private Collection<DbStartupTask> dbStartupTasks;
+    @OrderBy("clientTimeStamp ASC")
+    private List<DbStartupTask> dbStartupTasks;
     private boolean realGame;
     private String baseName;
     private Integer baseId;
@@ -80,8 +85,6 @@ public class DbStartup implements Serializable {
         this.baseId = baseId;
     }
 
-
-
     public Date getTimeStamp() {
         return timeStamp;
     }
@@ -98,7 +101,11 @@ public class DbStartup implements Serializable {
         return serverTimeStamp;
     }
 
-    public Collection<DbStartupTask> getGameStartupTasks() {
+    public long getClientTimeStamp() {
+        return clientTimeStamp;
+    }
+
+    public List<DbStartupTask> getGameStartupTasks() {
         return dbStartupTasks;
     }
 

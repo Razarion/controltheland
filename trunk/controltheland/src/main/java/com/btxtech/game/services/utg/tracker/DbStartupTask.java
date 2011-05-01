@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.utg;
+package com.btxtech.game.services.utg.tracker;
 
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import java.io.Serializable;

@@ -16,7 +16,6 @@ package com.btxtech.game.wicket.pages.mgmt;
 import com.btxtech.game.jsre.playback.PlaybackEntry;
 import javax.servlet.http.HttpSession;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.protocol.http.WebRequest;
 
@@ -31,8 +30,8 @@ public class PlaybackPage extends MgmtWebPage {
         Label startupSeqLabel = new Label("info", "");
         startupSeqLabel.add(new SimpleAttributeModifier("id", PlaybackEntry.ID));
         startupSeqLabel.add(new SimpleAttributeModifier(PlaybackEntry.SESSION_ID, (String)httpSession.getAttribute(PlaybackEntry.SESSION_ID)));
-        startupSeqLabel.add(new SimpleAttributeModifier(PlaybackEntry.START_TIME, (String)httpSession.getAttribute(PlaybackEntry.START_TIME)));
-        startupSeqLabel.add(new SimpleAttributeModifier(PlaybackEntry.LAVAL_NAME, (String)httpSession.getAttribute(PlaybackEntry.LAVAL_NAME)));
+        startupSeqLabel.add(new SimpleAttributeModifier(PlaybackEntry.START_LIFECYCLE_SERVER, (String)httpSession.getAttribute(PlaybackEntry.START_LIFECYCLE_SERVER)));
+        startupSeqLabel.add(new SimpleAttributeModifier(PlaybackEntry.LEVEL_NAME, (String)httpSession.getAttribute(PlaybackEntry.LEVEL_NAME)));
         add(startupSeqLabel);
     }
 }

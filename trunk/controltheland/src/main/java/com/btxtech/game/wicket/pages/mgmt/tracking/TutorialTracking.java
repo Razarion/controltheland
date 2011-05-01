@@ -14,22 +14,22 @@
 package com.btxtech.game.wicket.pages.mgmt.tracking;
 
 import com.btxtech.game.jsre.playback.PlaybackEntry;
-import com.btxtech.game.services.utg.DbEventTrackingStart;
-import com.btxtech.game.services.utg.DbTutorialProgress;
+import com.btxtech.game.services.utg.tracker.DbEventTrackingStart;
+import com.btxtech.game.services.utg.tracker.DbTutorialProgress;
 import com.btxtech.game.services.utg.LifecycleTrackingInfo;
 import com.btxtech.game.services.utg.TutorialTrackingInfo;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.mgmt.PlaybackPage;
-import javax.servlet.http.HttpSession;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import javax.servlet.http.HttpSession;
 
 /**
  * User: beat
@@ -45,7 +45,7 @@ public class TutorialTracking extends Panel {
         add(new LifecyclePanel("lifecycle", lifecycleTrackingInfo));
         TutorialTrackingInfo tutorialTrackingInfo = userTrackingService.getTutorialTrackingInfo(lifecycleTrackingInfo);
 
-        overview(tutorialTrackingInfo, lifecycleTrackingInfo.getLevel());
+        overview(tutorialTrackingInfo, lifecycleTrackingInfo);
         tutorialProgress(tutorialTrackingInfo);
     }
 
@@ -61,26 +61,23 @@ public class TutorialTracking extends Panel {
         });
     }
 
-    private void overview(TutorialTrackingInfo tutorialTrackingInfo, final String level) {
-        final DbEventTrackingStart dbEventTrackingStart = tutorialTrackingInfo.getDbEventTrackingStart();
-        if (dbEventTrackingStart != null) {
-            Link link = new Link("link") {
+    private void overview(final TutorialTrackingInfo tutorialTrackingInfo, final LifecycleTrackingInfo lifecycleTrackingInfo) {
+        DbEventTrackingStart dbEventTrackingStart = tutorialTrackingInfo.getDbEventTrackingStart();
+        Link link = new Link("link") {
 
-                @Override
-                public void onClick() {
-                    HttpSession httpSession = ((WebRequest) getRequest()).getHttpServletRequest().getSession();
-                    httpSession.setAttribute(PlaybackEntry.SESSION_ID, dbEventTrackingStart.getSessionId());
-                    httpSession.setAttribute(PlaybackEntry.START_TIME, Long.toString(dbEventTrackingStart.getClientTimeStamp()));
-                    httpSession.setAttribute(PlaybackEntry.LAVAL_NAME, level);
-                    setResponsePage(new PlaybackPage());
-                }
-            };
-            add(link);
+            @Override
+            public void onClick() {
+                HttpSession httpSession = ((WebRequest) getRequest()).getHttpServletRequest().getSession();
+                httpSession.setAttribute(PlaybackEntry.SESSION_ID, lifecycleTrackingInfo.getSessionId());
+                httpSession.setAttribute(PlaybackEntry.START_LIFECYCLE_SERVER, Long.toString(lifecycleTrackingInfo.getStartServer()));
+                httpSession.setAttribute(PlaybackEntry.LEVEL_NAME, lifecycleTrackingInfo.getLevel());
+                setResponsePage(new PlaybackPage());
+            }
+        };
+        add(link);
+        if (dbEventTrackingStart != null) {
             add(new Label("resolution", dbEventTrackingStart.getClientWidth() + " x " + dbEventTrackingStart.getClientHeight()));
         } else {
-            BookmarkablePageLink<PlaybackPage> pageLink = new BookmarkablePageLink<PlaybackPage>("link", PlaybackPage.class, null);
-            pageLink.setEnabled(false);
-            add(pageLink);
             add(new Label("resolution", "-"));
         }
     }

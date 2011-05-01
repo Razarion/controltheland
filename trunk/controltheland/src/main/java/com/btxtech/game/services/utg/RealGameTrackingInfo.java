@@ -14,6 +14,7 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.services.history.DisplayHistoryElement;
+import com.btxtech.game.services.utg.tracker.DbUserCommand;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -13,6 +13,9 @@
 
 package com.btxtech.game.services.utg;
 
+import com.btxtech.game.services.utg.tracker.DbPageAccess;
+import com.btxtech.game.services.utg.tracker.DbSessionDetail;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,9 +24,9 @@ import java.util.List;
  * Date: 17.01.2010
  * Time: 12:01:19
  */
-public class VisitorDetailInfo {
-    private BrowserDetails browserDetails;
-    private List<PageAccess> pageAccessHistory;
+public class SessionDetailDto {
+    private DbSessionDetail dbSessionDetail;
+    private List<DbPageAccess> dbPageAccessHistory;
     private int attackCommands;
     private int moveCommands;
     private int builderCommands;
@@ -32,12 +35,12 @@ public class VisitorDetailInfo {
     private int gameAttempts;
     private List<LifecycleTrackingInfo> lifecycleTrackingInfos = new ArrayList<LifecycleTrackingInfo>();
 
-    public VisitorDetailInfo(BrowserDetails browserDetails) {
-        this.browserDetails = browserDetails;
+    public SessionDetailDto(DbSessionDetail dbSessionDetail) {
+        this.dbSessionDetail = dbSessionDetail;
     }
 
-    public BrowserDetails getUserDetails() {
-        return browserDetails;
+    public DbSessionDetail getUserDetails() {
+        return dbSessionDetail;
     }
 
     public void setGameAttempts(int gameAttempts) {
@@ -48,12 +51,12 @@ public class VisitorDetailInfo {
         return gameAttempts;
     }
 
-    public void setPageAccessHistory(List<PageAccess> pageAccessHistory) {
-        this.pageAccessHistory = pageAccessHistory;
+    public void setPageAccessHistory(List<DbPageAccess> dbPageAccessHistory) {
+        this.dbPageAccessHistory = dbPageAccessHistory;
     }
 
-    public List<PageAccess> getPageAccessHistory() {
-        return pageAccessHistory;
+    public List<DbPageAccess> getPageAccessHistory() {
+        return dbPageAccessHistory;
     }
 
     public int getAttackCommands() {

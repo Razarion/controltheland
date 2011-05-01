@@ -28,7 +28,6 @@ import java.util.List;
  * Time: 10:56:33
  */
 public class ClientRunner {
-    private long startupTimeStamp = System.currentTimeMillis();
     private Collection<StartupProgressListener> listeners = new ArrayList<StartupProgressListener>();
     private List<AbstractStartupTask> startupList = new ArrayList<AbstractStartupTask>();
     private List<DeferredStartup> deferredStartups = new ArrayList<DeferredStartup>();
@@ -175,9 +174,5 @@ public class ClientRunner {
         for (StartupTaskEnum startupTaskEnum : startupSeq.getAbstractStartupTaskEnum()) {
             startupList.add(startupTaskEnum.createTask());
         }
-    }
-
-    public long getStartupTimeStamp() {
-        return startupTimeStamp;
     }
 }

@@ -69,10 +69,10 @@ public class TestHistoryService extends AbstractServiceTest {
 
         Assert.assertEquals("Item created: " + TEST_START_BUILDER_ITEM, displayHistoryElements.get(0).getMessage());
 
-        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp().getTime() >= displayHistoryElements.get(1).getTimeStamp().getTime());
+        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
         Assert.assertEquals("Base created: U1", displayHistoryElements.get(1).getMessage());
 
-        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp().getTime() >= displayHistoryElements.get(2).getTimeStamp().getTime());
+        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
         Assert.assertEquals("Level reached: " + TEST_LEVEL_2_REAL, displayHistoryElements.get(2).getMessage());
 
         endHttpRequestAndOpenSessionInViewFilter();
@@ -117,7 +117,7 @@ public class TestHistoryService extends AbstractServiceTest {
         System.out.println("----- History End -----");
 
         Assert.assertEquals(4, displayHistoryElements.size());
-        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp().getTime() >= displayHistoryElements.get(1).getTimeStamp().getTime());
+        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
         Assert.assertEquals("Item created: " + TEST_FACTORY_ITEM, displayHistoryElements.get(0).getMessage());
 
 
@@ -167,9 +167,9 @@ public class TestHistoryService extends AbstractServiceTest {
         }
         System.out.println("----- History End -----");
         Assert.assertEquals(7, displayHistoryElements.size());
-        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp().getTime() >= displayHistoryElements.get(2).getTimeStamp().getTime());
+        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
         Assert.assertEquals("Destroyed a " + TEST_START_BUILDER_ITEM + " from Target", displayHistoryElements.get(1).getMessage());
-        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp().getTime() >= displayHistoryElements.get(1).getTimeStamp().getTime());
+        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
         Assert.assertEquals("Base destroyed: Target", displayHistoryElements.get(0).getMessage());
 
 
@@ -180,9 +180,9 @@ public class TestHistoryService extends AbstractServiceTest {
         }
         System.out.println("----- History End -----");
         Assert.assertEquals(5, displayHistoryElements.size());
-        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp().getTime() >= displayHistoryElements.get(2).getTimeStamp().getTime());
+        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
         Assert.assertEquals("Actor destroyed your " + TEST_START_BUILDER_ITEM, displayHistoryElements.get(1).getMessage());
-        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp().getTime() >= displayHistoryElements.get(1).getTimeStamp().getTime());
+        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
         Assert.assertEquals("Your base has been destroyed by Actor", displayHistoryElements.get(0).getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -228,9 +228,9 @@ public class TestHistoryService extends AbstractServiceTest {
         }
         System.out.println("----- History End -----");
         Assert.assertEquals(7, displayHistoryElements.size());
-        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp().getTime() >= displayHistoryElements.get(2).getTimeStamp().getTime());
+        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
         Assert.assertEquals("Destroyed a " + TEST_START_BUILDER_ITEM + " from Base 1", displayHistoryElements.get(1).getMessage());
-        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp().getTime() >= displayHistoryElements.get(1).getTimeStamp().getTime());
+        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
         Assert.assertEquals("Base destroyed: Base 1", displayHistoryElements.get(0).getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -286,13 +286,13 @@ public class TestHistoryService extends AbstractServiceTest {
         Assert.assertEquals(7, displayHistoryElements.size());
 
 
-        Assert.assertTrue(displayHistoryElements.get(3).getTimeStamp().getTime() >= displayHistoryElements.get(4).getTimeStamp().getTime());
+        Assert.assertTrue(displayHistoryElements.get(3).getTimeStamp() >= displayHistoryElements.get(4).getTimeStamp());
         Assert.assertEquals("Base 2 destroyed your " + TEST_START_BUILDER_ITEM, displayHistoryElements.get(3).getMessage());
-        Assert.assertTrue(displayHistoryElements.get(2).getTimeStamp().getTime() >= displayHistoryElements.get(3).getTimeStamp().getTime());
+        Assert.assertTrue(displayHistoryElements.get(2).getTimeStamp() >= displayHistoryElements.get(3).getTimeStamp());
         Assert.assertEquals("Your base has been destroyed by Base 2", displayHistoryElements.get(2).getMessage());
-        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp().getTime() >= displayHistoryElements.get(2).getTimeStamp().getTime());
+        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
         Assert.assertEquals("Base created: Target", displayHistoryElements.get(1).getMessage());
-        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp().getTime() >= displayHistoryElements.get(1).getTimeStamp().getTime());
+        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
         Assert.assertEquals("Item created: " + TEST_START_BUILDER_ITEM, displayHistoryElements.get(0).getMessage());
 
 
@@ -330,9 +330,9 @@ public class TestHistoryService extends AbstractServiceTest {
         }
         System.out.println("----- Actor End -----");
         Assert.assertEquals(6, displayHistoryElements.size());
-        Assert.assertTrue(displayHistoryElements.get(2).getTimeStamp().getTime() >= displayHistoryElements.get(3).getTimeStamp().getTime());
+        Assert.assertTrue(displayHistoryElements.get(2).getTimeStamp() >= displayHistoryElements.get(3).getTimeStamp());
         Assert.assertEquals("Base surrendered", displayHistoryElements.get(2).getMessage());
-        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp().getTime() >= displayHistoryElements.get(2).getTimeStamp().getTime());
+        Assert.assertTrue(displayHistoryElements.get(1).getTimeStamp() >= displayHistoryElements.get(2).getTimeStamp());
         // Time different to short to assure the correct order of the two out-commented entries below
         //Assert.assertEquals("Base created: Actor", displayHistoryElements.get(1).getMessage());
         //Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp().getTime() >= displayHistoryElements.get(1).getTimeStamp().getTime());
@@ -370,7 +370,7 @@ public class TestHistoryService extends AbstractServiceTest {
         }
         System.out.println("----- Actor End -----");
         Assert.assertEquals(4, displayHistoryElements.size());
-        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp().getTime() >= displayHistoryElements.get(1).getTimeStamp().getTime());
+        Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
         Assert.assertEquals(TEST_START_BUILDER_ITEM  + " has been sold", displayHistoryElements.get(0).getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

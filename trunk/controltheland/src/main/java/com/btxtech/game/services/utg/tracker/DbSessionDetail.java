@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.utg;
+package com.btxtech.game.services.utg.tracker;
 
 import java.io.Serializable;
 import java.net.InetAddress;
@@ -28,7 +28,7 @@ import javax.persistence.Id;
  * Time: 22:45:47
  */
 @Entity(name = "TRACKER_BROWSER_DETAILS")
-public class BrowserDetails implements Serializable {
+public class DbSessionDetail implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
@@ -50,10 +50,10 @@ public class BrowserDetails implements Serializable {
     /**
      * Used by Hibernate
      */
-    public BrowserDetails() {
+    public DbSessionDetail() {
     }
 
-    public BrowserDetails(String sessionId, String cookieId, String userAgent, String language, String remoteAddr, String Referer) {
+    public DbSessionDetail(String sessionId, String cookieId, String userAgent, String language, String remoteAddr, String Referer) {
         this.cookieId = cookieId;
         timeStamp = new Date();
         this.sessionId = sessionId;
@@ -114,7 +114,7 @@ public class BrowserDetails implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        BrowserDetails that = (BrowserDetails) o;
+        DbSessionDetail that = (DbSessionDetail) o;
 
         return !(id != null ? !id.equals(that.id) : that.id != null);
 

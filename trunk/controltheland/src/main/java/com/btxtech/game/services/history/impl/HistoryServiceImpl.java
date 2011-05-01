@@ -39,7 +39,6 @@ import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -215,7 +214,7 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     private DisplayHistoryElement convert(User user, Integer baseId, DbHistoryElement dbHistoryElement) {
-        DisplayHistoryElement displayHistoryElement = new DisplayHistoryElement(new Date(dbHistoryElement.getTimeStampMs()));
+        DisplayHistoryElement displayHistoryElement = new DisplayHistoryElement(dbHistoryElement.getTimeStampMs());
         String userName = null;
         if (user != null) {
             userName = user.getUsername();
@@ -274,7 +273,7 @@ public class HistoryServiceImpl implements HistoryService {
                         if (dbHistoryElement.getActorBaseName() != null) {
                             displayHistoryElement.setMessage(dbHistoryElement.getActorBaseName() + " destroyed a " + dbHistoryElement.getItemTypeName());
                         } else {
-                            displayHistoryElement.setMessage(dbHistoryElement.getItemTypeName() + " has been sold");                            
+                            displayHistoryElement.setMessage(dbHistoryElement.getItemTypeName() + " has been sold");
                         }
                     } else {
                         displayHistoryElement.setMessage("Internal error 4");

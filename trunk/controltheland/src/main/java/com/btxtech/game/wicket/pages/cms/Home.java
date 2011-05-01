@@ -21,7 +21,6 @@ import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import com.btxtech.game.wicket.pages.info.Info;
-import com.btxtech.game.wicket.pages.user.LoggedinBox;
 import com.btxtech.game.wicket.pages.user.LoginBox;
 import com.btxtech.game.wicket.pages.user.NewUser;
 import com.btxtech.game.wicket.uiservices.CmsImageResource;
@@ -30,11 +29,8 @@ import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
-import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.spring.injection.annot.SpringBean;
-
-import javax.servlet.http.Cookie;
 
 /**
  * User: beat
@@ -50,10 +46,6 @@ public class Home extends WebPage implements IHeaderContributor {
     private CmsService cmsService;
 
     public Home() {
-        Cookie[] cookies = ((WebRequest) getRequestCycle().getRequest()).getCookies();
-        if (WebCommon.getCookieId(cookies) == null) {
-            WebCommon.generateAndSetCookieId(((WebResponse) getRequestCycle().getResponse()).getHttpServletResponse());
-        }
         add(new LoginBox("loginBox", false));
 
         add(new Label("style", cmsService.getDbCmsHomeLayout().getCssString()));
@@ -77,6 +69,9 @@ public class Home extends WebPage implements IHeaderContributor {
     protected void onBeforeRender() {
         super.onBeforeRender();
         userTrackingService.pageAccess(getClass());
+        if(userTrackingService.hasCookieToAdd()) {
+            WebCommon.addCookieId(((WebResponse) getRequestCycle().getResponse()).getHttpServletResponse(), userTrackingService.getAndClearCookieToAdd());
+        }
     }
 
     @Override

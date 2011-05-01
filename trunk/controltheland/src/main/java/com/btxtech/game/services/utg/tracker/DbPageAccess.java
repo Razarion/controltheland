@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.utg;
+package com.btxtech.game.services.utg.tracker;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -26,7 +26,7 @@ import java.io.Serializable;
  * Time: 22:45:47
  */
 @Entity(name = "TRACKER_PAGE_ACCESS")
-public class PageAccess implements Serializable {
+public class DbPageAccess implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
@@ -41,10 +41,10 @@ public class PageAccess implements Serializable {
     /**
      * Used by Hibernate
      */
-    public PageAccess() {
+    public DbPageAccess() {
     }
 
-    public PageAccess(String sessionId, String page, String additional) {
+    public DbPageAccess(String sessionId, String page, String additional) {
         timeStamp = new Date();
         this.sessionId = sessionId;
         this.page = page;
@@ -72,7 +72,7 @@ public class PageAccess implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        PageAccess that = (PageAccess) o;
+        DbPageAccess that = (DbPageAccess) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
 

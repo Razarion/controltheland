@@ -17,8 +17,8 @@ import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
-import com.btxtech.game.services.utg.BrowserDetails;
 import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.services.utg.tracker.DbSessionDetail;
 import com.btxtech.game.wicket.WebCommon;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,9 +49,10 @@ public class SessionImpl implements Session, Serializable {
     UserService userService;
     private String sessionId;
     private String cookieId;
+    private String cookieIdToBeSet;
     private String userAgent;
     private boolean javaScriptDetected = false;
-    private BrowserDetails browserDetails;
+    private DbSessionDetail dbSessionDetail;
     private UserState userState;
     private Connection connection;
     private Log log = LogFactory.getLog(SessionImpl.class);
@@ -70,14 +71,28 @@ public class SessionImpl implements Session, Serializable {
     public void init() {
         sessionId = request.getSession().getId();
         userAgent = request.getHeader("user-agent");
-        cookieId = WebCommon.getCookieId(request.getCookies());
-        browserDetails = new BrowserDetails(sessionId,
+        cookieId = WebCommon.getCookieId(request);
+        if (cookieId == null) {
+            cookieId = WebCommon.generateCookieId();
+            cookieIdToBeSet = cookieId;
+        }
+        dbSessionDetail = new DbSessionDetail(sessionId,
                 cookieId,
                 userAgent,
                 request.getHeader("Accept-Language"),
                 request.getRemoteAddr(),
                 request.getHeader("Referer"));
-        userTrackingService.saveBrowserDetails(browserDetails);
+        userTrackingService.saveBrowserDetails(dbSessionDetail);
+    }
+
+    @Override
+    public String getCookieIdToBeSet() {
+        return cookieIdToBeSet;
+    }
+
+    @Override
+    public void clearCookieIdToBeSet() {
+        cookieIdToBeSet = null;
     }
 
     @PreDestroy
@@ -127,9 +142,8 @@ public class SessionImpl implements Session, Serializable {
             return;
         }
         javaScriptDetected = true;
-        browserDetails.setJavaScriptDetected();
-        userTrackingService.saveBrowserDetails(browserDetails);
-
+        dbSessionDetail.setJavaScriptDetected();
+        userTrackingService.saveBrowserDetails(dbSessionDetail);
     }
 
     @Override

@@ -16,6 +16,7 @@ package com.btxtech.game.wicket.pages.basepage;
 import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.cms.Home;
 import com.btxtech.game.wicket.pages.forum.ForumView;
 import com.btxtech.game.wicket.pages.info.Info;
@@ -37,6 +38,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.io.Serializable;
@@ -104,6 +106,9 @@ public class BasePage extends WebPage implements IHeaderContributor {
     protected void onBeforeRender() {
         userTrackingService.pageAccess(this);
         super.onBeforeRender();
+        if (userTrackingService.hasCookieToAdd()) {
+            WebCommon.addCookieId(((WebResponse) getRequestCycle().getResponse()).getHttpServletResponse(), userTrackingService.getAndClearCookieToAdd());
+        }
     }
 
     public String getAdditionalPageInfo() {

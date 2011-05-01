@@ -16,6 +16,7 @@ package com.btxtech.game.wicket;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -76,13 +77,28 @@ public class WebCommon {
         }
     }
 
+    static public String formatTime(Long time) {
+        if (time != null) {
+            return formatTime(new Date(time));
+        } else {
+            return "-";
+        }
+    }
+
     public static String getTimeDiff(Date start, Date end) {
         long diffMs = end.getTime() - start.getTime();
         diffMs /= 1000;
         return Long.toString(diffMs);
     }
 
-    public static String getCookieId(Cookie[] cookies) {
+    public static String getTimeDiff(long start, long end) {
+        long diffMs = end - start;
+        diffMs /= 1000;
+        return Long.toString(diffMs);
+    }
+
+    public static String getCookieId(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
         if (cookies == null) {
             return null;
         }
@@ -94,10 +110,15 @@ public class WebCommon {
         return null;
     }
 
-    public static void generateAndSetCookieId(HttpServletResponse response) {
-        Cookie cookie = new Cookie(COOKIE_ID, UUID.randomUUID().toString().toUpperCase());
+    public static String generateCookieId() {
+        return UUID.randomUUID().toString().toUpperCase();
+    }
+
+    public static String addCookieId(HttpServletResponse response, String cookieValue) {
+        Cookie cookie = new Cookie(COOKIE_ID, cookieValue);
         cookie.setMaxAge(Integer.MAX_VALUE);
         response.addCookie(cookie);
+        return cookie.getValue();
     }
 
     public static boolean isAuthorized(String role) {

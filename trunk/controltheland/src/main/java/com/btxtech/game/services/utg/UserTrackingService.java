@@ -15,17 +15,25 @@ package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.UserMessage;
+import com.btxtech.game.jsre.common.StartupTaskInfo;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
-import com.btxtech.game.jsre.common.StartupTaskInfo;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
-import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.utg.tracker.DbBrowserWindowTracking;
+import com.btxtech.game.services.utg.tracker.DbCommand;
+import com.btxtech.game.services.utg.tracker.DbEventTrackingItem;
+import com.btxtech.game.services.utg.tracker.DbEventTrackingStart;
+import com.btxtech.game.services.utg.tracker.DbScrollTrackingItem;
+import com.btxtech.game.services.utg.tracker.DbSelectionTrackingItem;
+import com.btxtech.game.services.utg.tracker.DbSessionDetail;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -35,15 +43,19 @@ import java.util.List;
  * Time: 22:04:31
  */
 public interface UserTrackingService {
-    void saveBrowserDetails(BrowserDetails browserDetails);
+    void saveBrowserDetails(DbSessionDetail dbSessionDetail);
 
     void pageAccess(BasePage basePage);
 
     void pageAccess(Class theClass);
 
-    List<VisitorInfo> getVisitorInfos(UserTrackingFilter filter);
+    boolean hasCookieToAdd();
 
-    VisitorDetailInfo getVisitorDetails(String sessionId);
+    String getAndClearCookieToAdd();
+
+    List<SessionOverviewDto> getSessionOverviewDtos(UserTrackingFilter filter);
+
+    SessionDetailDto getSessionDetailDto(String sessionId);
 
     void saveUserCommand(BaseCommand baseCommand);
 
@@ -75,13 +87,11 @@ public interface UserTrackingService {
 
     void onEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<BaseCommand> baseCommands, Collection<SelectionTrackingItem> selectionTrackingItems, Collection<TerrainScrollTracking> terrainScrollTrackings, Collection<BrowserWindowTracking> browserWindowTrackings);
 
-    List<DbEventTrackingStart> getDbEventTrackingStart(String sessionId);
+    List<DbEventTrackingItem> getDbEventTrackingItem(String sessionId, long startClient, Long endClient);
 
-    List<DbEventTrackingItem> getDbEventTrackingItem(DbEventTrackingStart begin, DbEventTrackingStart end);
+    DbEventTrackingStart getDbEventTrackingStart(String sessionId, long startClient, Long endClient);
 
     void startUpTaskFinished(List<StartupTaskInfo> infos, long totalTime);
-
-    void onCloseWindow(long totalRunningTime, long clientTimeStamp);
 
     RealGameTrackingInfo getGameTracking(LifecycleTrackingInfo lifecycleTrackingInfo);
 
@@ -93,5 +103,7 @@ public interface UserTrackingService {
 
     List<DbScrollTrackingItem> getDbScrollTrackingItems(final String sessionId, final long startTime, final Long endTime);
 
-    List<DbBrowserWindowTracking> getDbBrowserWindowTrackings(final String sessionId, final long startTime, final Long endTime);   
+    List<DbBrowserWindowTracking> getDbBrowserWindowTrackings(final String sessionId, final long startTime, final Long endTime);
+
+    LifecycleTrackingInfo getLifecycleTrackingInfo(final String sessionId, final long startServer);
 }

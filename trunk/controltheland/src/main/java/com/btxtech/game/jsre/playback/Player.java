@@ -56,7 +56,7 @@ public class Player {
             frames.add(new Frame(selectionTrackingItem.getTimeStamp(), selectionTrackingItem));
         }
         for (BaseCommand baseCommand : playbackInfo.getBaseCommands()) {
-            frames.add(new Frame(baseCommand.getTimeStamp().getTime(), baseCommand));
+            frames.add(new Frame(baseCommand.getTimeStamp(), baseCommand));
         }
         for (TerrainScrollTracking terrainScrollTracking : playbackInfo.getScrollTrackingItems()) {
             frames.add(new Frame(terrainScrollTracking.getClientTimeStamp(), terrainScrollTracking));

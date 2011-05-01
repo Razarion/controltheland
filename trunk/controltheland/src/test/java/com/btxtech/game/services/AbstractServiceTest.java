@@ -81,6 +81,7 @@ import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
@@ -94,6 +95,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.ServletRequest;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -172,6 +174,7 @@ abstract public class AbstractServiceTest {
     private ResourceService resourceService;
     private SessionHolder sessionHolder;
     private MockHttpServletRequest mockHttpServletRequest;
+    private MockHttpServletResponse mockHttpServletResponse;
     private MockHttpSession mockHttpSession;
     private SecurityContext securityContext;
 
@@ -706,9 +709,9 @@ abstract public class AbstractServiceTest {
         DbSurfaceRect dbSurfaceRect = new DbSurfaceRect(new Rectangle(0, 0, 100, 100), dbSurfaceImage);
         dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(dbSurfaceRect);
         // Setup Terrain Images
-        Collection<DbTerrainImagePosition> dbTerrainImagePositions  = new ArrayList<DbTerrainImagePosition>();
-        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(10,0), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_4x10)));
-        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(0,12), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_10x4)));
+        Collection<DbTerrainImagePosition> dbTerrainImagePositions = new ArrayList<DbTerrainImagePosition>();
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(10, 0), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_4x10)));
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(0, 12), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_10x4)));
         dbTerrainSetting.getDbTerrainImagePositionCrudServiceHelper().updateDbChildren(dbTerrainImagePositions);
 
         terrainService.getDbTerrainSettingCrudServiceHelper().updateDbChild(dbTerrainSetting);
@@ -1129,15 +1132,33 @@ abstract public class AbstractServiceTest {
         return mockHttpSession.getId();
     }
 
+    protected MockHttpServletRequest getMockHttpServletRequest() {
+        if(mockHttpServletRequest == null) {
+            throw new IllegalStateException("mockHttpServletRequest is null");
+        }
+        return mockHttpServletRequest;
+    }
+
+    protected MockHttpServletResponse getMockHttpServletResponse() {
+        if(mockHttpServletResponse == null) {
+            throw new IllegalStateException("mockHttpServletResponse is null");
+        }
+        return mockHttpServletResponse;
+    }
+
     private void beginHttpRequest() {
         if (mockHttpServletRequest != null) {
             throw new IllegalStateException("mockHttpServletRequest is not null");
+        }
+        if (mockHttpServletResponse != null) {
+            throw new IllegalStateException("mockHttpServletResponse is not null");
         }
         if (mockHttpSession == null) {
             throw new IllegalStateException("mockHttpSession is null");
         }
         mockHttpServletRequest = new MockHttpServletRequest();
         mockHttpServletRequest.setSession(mockHttpSession);
+        mockHttpServletResponse = new MockHttpServletResponse();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(mockHttpServletRequest));
         SecurityContextHolder.setContext(securityContext);
     }
@@ -1146,9 +1167,13 @@ abstract public class AbstractServiceTest {
         if (mockHttpServletRequest == null) {
             throw new IllegalStateException("mockHttpServletRequest not null");
         }
+        if (mockHttpServletResponse == null) {
+            throw new IllegalStateException("mockHttpServletResponse not null");
+        }
         ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).requestCompleted();
         RequestContextHolder.resetRequestAttributes();
         mockHttpServletRequest = null;
+        mockHttpServletResponse = null;
         securityContext = SecurityContextHolder.getContext();
     }
 
@@ -1171,5 +1196,14 @@ abstract public class AbstractServiceTest {
                 return mockHttpServletRequest;
             }
         });
+    }
+
+    // ------------------- Div --------------------
+
+    protected void setPrivateField(Class clazz, Object object, String fieldName, Object value) throws Exception {
+        Field field = clazz.getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(object, value);
+        field.setAccessible(false);
     }
 }

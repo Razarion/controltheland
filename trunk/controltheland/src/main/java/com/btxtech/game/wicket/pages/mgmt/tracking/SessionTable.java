@@ -13,9 +13,9 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tracking;
 
+import com.btxtech.game.services.utg.SessionOverviewDto;
 import com.btxtech.game.services.utg.UserTrackingFilter;
 import com.btxtech.game.services.utg.UserTrackingService;
-import com.btxtech.game.services.utg.VisitorInfo;
 import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -38,13 +38,13 @@ import java.util.List;
  * Date: Aug 4, 2009
  * Time: 10:31:43 PM
  */
-public class UserTracking extends MgmtWebPage {
+public class SessionTable extends MgmtWebPage {
     @SpringBean
     private UserTrackingService userTrackingService;
     private UserTrackingFilter userTrackingFilter;
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(WebCommon.DATE_TIME_FORMAT_STRING);
 
-    public UserTracking() {
+    public SessionTable() {
         userTrackingFilter = UserTrackingFilter.newDefaultFilter();
         filter();
         resultTable();
@@ -62,19 +62,19 @@ public class UserTracking extends MgmtWebPage {
     }
 
     private void resultTable() {
-        ListView<VisitorInfo> listView = new ListView<VisitorInfo>("visits", new IModel<List<VisitorInfo>>() {
-            private List<VisitorInfo> visitorInfos;
+        ListView<SessionOverviewDto> listView = new ListView<SessionOverviewDto>("visits", new IModel<List<SessionOverviewDto>>() {
+            private List<SessionOverviewDto> visitorInfos;
 
             @Override
-            public List<VisitorInfo> getObject() {
+            public List<SessionOverviewDto> getObject() {
                 if (visitorInfos == null) {
-                    visitorInfos = userTrackingService.getVisitorInfos(userTrackingFilter);
+                    visitorInfos = userTrackingService.getSessionOverviewDtos(userTrackingFilter);
                 }
                 return visitorInfos;
             }
 
             @Override
-            public void setObject(List<VisitorInfo> baseInfos) {
+            public void setObject(List<SessionOverviewDto> baseInfos) {
                 // Ignored
             }
 
@@ -84,7 +84,7 @@ public class UserTracking extends MgmtWebPage {
             }
         }) {
             @Override
-            protected void populateItem(final ListItem<VisitorInfo> listItem) {
+            protected void populateItem(final ListItem<SessionOverviewDto> listItem) {
                 listItem.add(new Label("date", simpleDateFormat.format(listItem.getModelObject().getDate())));
                 listItem.add(new Label("pageHits", Integer.toString(listItem.getModelObject().getPageHits())));
                 listItem.add(new Label("enterGame", Integer.toString(listItem.getModelObject().getEnterGameHits())));
@@ -92,12 +92,12 @@ public class UserTracking extends MgmtWebPage {
                 listItem.add(new Label("startupFailure", listItem.getModelObject().isStartupFailure() ? "!" : ""));
                 listItem.add(new Label("commands", Integer.toString(listItem.getModelObject().getCommands())));
                 listItem.add(new Label("levelPromotions", Integer.toString(listItem.getModelObject().getLevelPromotions())));
-                listItem.add(new Label("cookie", listItem.getModelObject().isCookie() ? "Yes" : ""));
+                listItem.add(new Label("cookie", listItem.getModelObject().getCookie() != null ? "Yes" : ""));
                 Link link = new Link("visitorLink") {
 
                     @Override
                     public void onClick() {
-                        setResponsePage(new VisitorDetails(listItem.getModelObject().getSessionId()));
+                        setResponsePage(new SessionDetail(listItem.getModelObject().getSessionId()));
                     }
                 };
                 link.add(new Label("sessionId", listItem.getModelObject().getSessionId()));

@@ -24,7 +24,7 @@ import java.util.Date;
  */
 public class BaseCommand implements Serializable {
     private Id id;
-    private Date timeStamp;
+    private long timeStamp;
 
     public Id getId() {
         return id;
@@ -34,12 +34,12 @@ public class BaseCommand implements Serializable {
         this.id = id;
     }
 
-    public Date getTimeStamp() {
+    public long getTimeStamp() {
         return timeStamp;
     }
 
     public void setTimeStamp() {
-        this.timeStamp = new Date();
+        timeStamp = System.currentTimeMillis();
     }
 
     @Override

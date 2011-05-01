@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.utg;
+package com.btxtech.game.services.utg.tracker;
 
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import java.io.Serializable;
@@ -26,6 +26,7 @@ import javax.persistence.Id;
  * Date: Jul 26, 2009
  * Time: 11:09:27 AM
  */
+// Tutorial command
 @Entity(name = "TRACKER_COMMAND")
 public class DbCommand implements Serializable {
     @Id
@@ -48,7 +49,7 @@ public class DbCommand implements Serializable {
 
     public DbCommand(BaseCommand baseCommand, String sessionId) {
         this.sessionId = sessionId;
-        clientTimeStamp = baseCommand.getTimeStamp().getTime();
+        clientTimeStamp = baseCommand.getTimeStamp();
         niceTimeStamp = new Date();
         this.baseCommand = baseCommand;
     }

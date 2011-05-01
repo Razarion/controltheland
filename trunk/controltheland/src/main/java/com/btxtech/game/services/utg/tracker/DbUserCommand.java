@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.utg;
+package com.btxtech.game.services.utg.tracker;
 
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.services.connection.Connection;
@@ -37,7 +37,7 @@ public class DbUserCommand implements Serializable {
     private Date timeStamp;
     private long timeStampMs;
     @Column(nullable = false)
-    private Date clientTimeStamp;
+    private long clientTimeStamp;
     @Column(nullable = false)
     private String sessionId;
     @Column(nullable = false)
@@ -79,7 +79,7 @@ public class DbUserCommand implements Serializable {
         return timeStamp;
     }
 
-    public Date getClientTimeStamp() {
+    public long getClientTimeStamp() {
         return clientTimeStamp;
     }
 

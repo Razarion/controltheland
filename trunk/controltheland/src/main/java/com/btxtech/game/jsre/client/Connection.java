@@ -306,12 +306,6 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
         }
     }
 
-    public void sendCloseWindow(long totalRunningTime, long clientTimeStamp) {
-        if (movableServiceAsync != null) {
-            movableServiceAsync.sendCloseWindow(totalRunningTime, clientTimeStamp, this);
-        }
-    }
-
     public void log(String logMessage, Date date) {
         if (movableServiceAsync != null) {
             movableServiceAsync.log(logMessage, date, this);

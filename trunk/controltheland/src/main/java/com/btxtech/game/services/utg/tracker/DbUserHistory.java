@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.utg;
+package com.btxtech.game.services.utg.tracker;
 
 import com.btxtech.game.services.user.User;
 import java.util.Date;
@@ -26,7 +26,7 @@ import javax.persistence.ManyToOne;
  * Time: 14:59:44
  */
 @Entity(name = "TRACKER_USER_HISTORY")
-public class UserHistory {
+public class DbUserHistory {
     @Id
     @GeneratedValue
     private Integer id;
@@ -47,10 +47,10 @@ public class UserHistory {
     /**
      * Used by hibernate
      */
-    protected UserHistory() {
+    protected DbUserHistory() {
     }
 
-    public UserHistory(User user) {
+    public DbUserHistory(User user) {
         this.user = user;
     }
 
@@ -151,7 +151,7 @@ public class UserHistory {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        UserHistory that = (UserHistory) o;
+        DbUserHistory that = (DbUserHistory) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
 

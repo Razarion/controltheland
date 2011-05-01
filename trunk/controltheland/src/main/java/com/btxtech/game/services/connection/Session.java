@@ -31,6 +31,10 @@ public interface Session {
 
     String getCookieId();
 
+    String getCookieIdToBeSet();
+
+    void clearCookieIdToBeSet();
+
     String getUserAgent();
 
     void onJavaScriptDetected();
