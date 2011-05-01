@@ -149,3 +149,20 @@ History
  INNER JOIN TUTORIAL_TASK_CONFIG S
  SET T.finishImageData = S.finishImageData
 WHERE S.id = 12
+
+------------------
+Remove base color
+
+ALTER TABLE `gamedb`.`BACKUP_BASE` DROP COLUMN `baseColor_id`
+, DROP INDEX `FKC4CC172ECF3B95F0`,
+ DROP FOREIGN KEY `FKC4CC172ECF3B95F0`;
+
+DROP TABLE BASE_COLOR;
+
+ALTER TABLE `gamedb`.`TUTORIAL_CONFIG` DROP COLUMN `enemyBaseColor`,
+ DROP COLUMN `ownBaseColor`;
+ 
+ 
+-----------------
+Tracking
+ALTER TABLE `gamedb`.`TRACKER_EVENT_START` DROP COLUMN `timeStamp`;
