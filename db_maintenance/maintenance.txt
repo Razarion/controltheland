@@ -166,3 +166,7 @@ ALTER TABLE `gamedb`.`TUTORIAL_CONFIG` DROP COLUMN `enemyBaseColor`,
 -----------------
 Tracking
 ALTER TABLE `gamedb`.`TRACKER_EVENT_START` DROP COLUMN `timeStamp`;
+
+ALTER TABLE `gamedb`.`TRACKER_USER_COMMAND` DROP COLUMN `clientTimeStamp`;
+
+
