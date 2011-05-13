@@ -221,6 +221,10 @@ public class Index implements Serializable {
         return new Index(newX, newY);
     }
 
+    public Index getMiddlePoint(Index other) {
+        return new Index((x + other.x) / 2, (y + other.y) / 2);
+    }
+
     public boolean isBigger(Index point) {
         return x > point.x || y > point.y;
     }

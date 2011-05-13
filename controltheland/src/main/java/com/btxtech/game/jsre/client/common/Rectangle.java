@@ -24,7 +24,7 @@ import java.util.Collection;
  */
 public class Rectangle implements Serializable {
     private Index start;
-    private Index end;
+    private Index endExclusive;
 
     /**
      * Used by GWT
@@ -37,17 +37,17 @@ public class Rectangle implements Serializable {
             throw new IllegalArgumentException("Invalid rectangle");
         }
         this.start = start.getCopy();
-        this.end = end.getCopy();
+        this.endExclusive = end.getCopy();
     }
 
     public Rectangle(int xStart, int yStart, int width, int height) {
         this.start = new Index(xStart, yStart);
-        this.end = new Index(xStart + width, yStart + height);
+        this.endExclusive = new Index(xStart + width, yStart + height);
     }
 
     public void replace(Rectangle target) {
         start = target.start.getCopy();
-        end = target.end.getCopy();
+        endExclusive = target.endExclusive.getCopy();
     }
 
     public Index getStart() {
@@ -55,7 +55,7 @@ public class Rectangle implements Serializable {
     }
 
     public Index getEnd() {
-        return end.getCopy();
+        return endExclusive.getCopy();
     }
 
     /**
@@ -65,7 +65,7 @@ public class Rectangle implements Serializable {
      * @return true if adjoins or contains position
      */
     public boolean contains(Index position) { // TODO rename: adjoinsOrContains
-        return position != null && position.getX() + 1 >= start.getX() && position.getY() + 1 >= start.getY() && position.getX() <= end.getX() && position.getY() <= end.getY();
+        return position != null && position.getX() + 1 >= start.getX() && position.getY() + 1 >= start.getY() && position.getX() <= endExclusive.getX() && position.getY() <= endExclusive.getY();
     }
 
     /**
@@ -75,25 +75,59 @@ public class Rectangle implements Serializable {
      * @return true if the position is inside the rectangle
      */
     public boolean containsExclusive(Index position) { // TODO rename: contains
-        return position.getX() >= start.getX() && position.getY() >= start.getY() && position.getX() < end.getX() && position.getY() < end.getY();
+        if (position.getX() < start.getX() || position.getY() < start.getY()) {
+            return false;
+        }
+        if (getWidth() > 0) {
+            if (position.getX() >= endExclusive.getX()) {
+                return false;
+            }
+        } else {
+            if (position.getX() > endExclusive.getX()) {
+                return false;
+            }
+        }
+
+        if (getHeight() > 0) {
+            if (position.getY() >= endExclusive.getY()) {
+                return false;
+            }
+        } else {
+            if (position.getY() > endExclusive.getY()) {
+                return false;
+            }
+        }
+        return true;
     }
 
+    /**
+     * Returns true if the given rectangle is in the rectangle or adjoins the rectangle
+     *
+     * @param rectangle to check
+     * @return true if the position is inside the rectangle
+     */
     public boolean adjoins(Rectangle rectangle) {
         int startX = Math.max(start.getX(), rectangle.start.getX());
         int startY = Math.max(start.getY(), rectangle.start.getY());
 
-        int endX = Math.min(end.getX(), rectangle.end.getX());
-        int endY = Math.min(end.getY(), rectangle.end.getY());
+        int endX = Math.min(endExclusive.getX(), rectangle.endExclusive.getX());
+        int endY = Math.min(endExclusive.getY(), rectangle.endExclusive.getY());
 
         return startX <= endX && startY <= endY;
     }
 
+    /**
+     * Returns true if the given rectangle overlaps this rectangle. If the rectangle just adjoins it returns false.
+     *
+     * @param rectangle to check
+     * @return true if the position is inside the rectangle
+     */
     public boolean adjoinsEclusive(Rectangle rectangle) {
         int startX = Math.max(start.getX(), rectangle.start.getX());
         int startY = Math.max(start.getY(), rectangle.start.getY());
 
-        int endX = Math.min(end.getX(), rectangle.end.getX());
-        int endY = Math.min(end.getY(), rectangle.end.getY());
+        int endX = Math.min(endExclusive.getX(), rectangle.endExclusive.getX());
+        int endY = Math.min(endExclusive.getY(), rectangle.endExclusive.getY());
 
         return startX < endX && startY < endY;
     }
@@ -102,8 +136,8 @@ public class Rectangle implements Serializable {
         int startX = Math.max(start.getX(), rectangle.start.getX());
         int startY = Math.max(start.getY(), rectangle.start.getY());
 
-        int endX = Math.min(end.getX(), rectangle.end.getX());
-        int endY = Math.min(end.getY(), rectangle.end.getY());
+        int endX = Math.min(endExclusive.getX(), rectangle.endExclusive.getX());
+        int endY = Math.min(endExclusive.getY(), rectangle.endExclusive.getY());
 
         if (startX > endX || startY > endY) {
             throw new IllegalArgumentException("Rectangles do not overlap");
@@ -112,9 +146,96 @@ public class Rectangle implements Serializable {
         return new Rectangle(new Index(startX, startY), new Index(endX, endY));
     }
 
+    /**
+     * Checks if the line cuts this rectangle in any way. It returns also true if the line is inside the rectangle
+     *
+     * @param point1 point 1 of the line
+     * @param point2 point 2 of the line
+     * @return true if the line cuts this rectangle
+     */
+    public boolean doesLineCut(Index point1, Index point2) {
+        if (containsExclusive(point1)) {
+            return true;
+        }
+        if (containsExclusive(point2)) {
+            return true;
+        }
+
+        int x1 = Math.min(point1.getX(), point2.getX());
+        int x2 = Math.max(point1.getX(), point2.getX());
+        int y1 = Math.min(point1.getY(), point2.getY());
+        int y2 = Math.max(point1.getY(), point2.getY());
+
+        // y = mx + c
+        // x = (y-c)/m
+        double m = (double) (point2.getY() - point1.getY()) / (double) (point2.getX() - point1.getX());
+        double c = point1.getY() - (m * (double) point1.getX());
+
+        double xNorth = Double.NaN;
+        double xSouth = Double.NaN;
+        double yWest = Double.NaN;
+        double yEast = Double.NaN;
+        if (Double.isInfinite(m)) {
+            // Vertical line
+            xNorth = x1;
+            xSouth = x1;
+        } else if (m == 0.0) {
+            yWest = c;
+            yEast = c;
+        } else {
+            xNorth = ((double) start.getY() - c) / m;
+            xSouth = ((double) endExclusive.getY() - 1 - c) / m;
+            yWest = m * (double) start.getX() + c;
+            yEast = m * (double) endExclusive.getX() - 1 + c;
+        }
+
+
+        // Since both points are outside the rectangle, one crossed edged is enough.
+
+        // Check north
+        if (!Double.isNaN(xNorth) && start.getX() <= xNorth && xNorth < endExclusive.getX() && x1 <= xNorth && xNorth <= x2 && y2 > start.getY() && y1 < endExclusive.getY()) {
+            return true;
+        }
+        // Check east
+        if (!Double.isNaN(yWest) && start.getY() <= yWest && yWest < endExclusive.getY() && y1 <= yWest && yWest <= y2 && x2 > start.getX() && x1 < endExclusive.getX()) {
+            return true;
+        }
+        // Check south
+        if (!Double.isNaN(xSouth) && start.getX() <= xSouth && xSouth < endExclusive.getX() && x1 <= xSouth && xSouth <= x2 && y2 > start.getY() && y1 < endExclusive.getY()) {
+            return true;
+        }
+        // Check west
+        return !Double.isNaN(yEast) && start.getY() <= yEast && yEast < endExclusive.getY() && y2 <= yEast && yEast <= y2 && x2 > start.getX() && x1 < endExclusive.getX();
+    }
+
+
+    /**
+     * Returns the shortes distance to the line
+     *
+     * @param point1 line point 1
+     * @param point2 line point 2
+     * @return the shortest distance
+     */
+    public int getShortestDistanceToLine(Index point1, Index point2) {
+        if (doesLineCut(point1, point2)) {
+            return 0;
+        }
+
+        Line line = new Line(point1, point2);
+        int d1 = line.getShortestDistance(start);
+        int d2 = line.getShortestDistance(new Index(getX(), getEndY() - 1));
+        int d3 = line.getShortestDistance(new Index(getEndX() - 1, getY()));
+        int d4 = line.getShortestDistance(new Index(getEndX() - 1, getEndY() - 1));
+
+        int d5 = getNearestPoint(point1).getDistance(point1);
+        int d6 = getNearestPoint(point2).getDistance(point2);
+
+        return Math.min(Math.min(Math.min(d1, d2), Math.min(d3, d4)), Math.min(d5, d6));
+    }
+
 
     public Rectangle copy() {
-        return new Rectangle(start.getCopy(), end.getCopy());
+        return new Rectangle(start.getCopy(), endExclusive.getCopy());
     }
 
     public void growNorth(int size) {
@@ -122,11 +243,11 @@ public class Rectangle implements Serializable {
     }
 
     public void growEast(int size) {
-        end.setX(end.getX() + size);
+        endExclusive.setX(endExclusive.getX() + size);
     }
 
     public void growSouth(int size) {
-        end.setY(end.getY() + size);
+        endExclusive.setY(endExclusive.getY() + size);
     }
 
     public void growWest(int size) {
@@ -135,7 +256,7 @@ public class Rectangle implements Serializable {
 
     public void shift(int deltaX, int deltaY) {
         start = start.add(deltaX, deltaY);
-        end = end.add(deltaX, deltaY);
+        endExclusive = endExclusive.add(deltaX, deltaY);
     }
 
     public Rectangle moveTo(int absX, int absY) {
@@ -149,36 +270,36 @@ public class Rectangle implements Serializable {
 
         Rectangle rectangle = (Rectangle) o;
 
-        return !(end != null ? !end.equals(rectangle.end) : rectangle.end != null) && !(start != null ? !start.equals(rectangle.start) : rectangle.start != null);
+        return !(endExclusive != null ? !endExclusive.equals(rectangle.endExclusive) : rectangle.endExclusive != null) && !(start != null ? !start.equals(rectangle.start) : rectangle.start != null);
 
     }
 
     @Override
     public int hashCode() {
         int result = start != null ? start.hashCode() : 0;
-        result = 31 * result + (end != null ? end.hashCode() : 0);
+        result = 31 * result + (endExclusive != null ? endExclusive.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return "Start " + start + " End " + end + " Width: " + getWidth() + " Height: " + getHeight();
+        return "Start " + start + " End " + endExclusive + " Width: " + getWidth() + " Height: " + getHeight();
     }
 
     public int getWidth() {
-        return end.getX() - start.getX();
+        return endExclusive.getX() - start.getX();
     }
 
     public int getHeight() {
-        return end.getY() - start.getY();
+        return endExclusive.getY() - start.getY();
     }
 
     public void setWidth(int width) {
-        end.setX(start.getX() + width);
+        endExclusive.setX(start.getX() + width);
     }
 
     public void setHeight(int height) {
-        end.setY(start.getY() + height);
+        endExclusive.setY(start.getY() + height);
     }
 
     public int getX() {
@@ -198,55 +319,63 @@ public class Rectangle implements Serializable {
     }
 
     public int getEndX() {
-        return end.getX();
+        return endExclusive.getX();
     }
 
     public int getEndY() {
-        return end.getY();
+        return endExclusive.getY();
     }
 
     public void setEndX(int x) {
-        end.setX(x);
+        endExclusive.setX(x);
     }
 
     public void setEndY(int y) {
-        end.setY(y);
+        endExclusive.setY(y);
     }
 
     public Index getCenter() {
-        int centerX = (end.getX() - start.getX()) / 2;
-        int centerY = (end.getY() - start.getY()) / 2;
+        int centerX = (endExclusive.getX() - start.getX()) / 2;
+        int centerY = (endExclusive.getY() - start.getY()) / 2;
         return new Index(start.getX() + centerX, start.getY() + centerY);
     }
 
     public Index getNearestPoint(Index point) {
         // Fist check end point
+        int endXCorrection = getWidth() > 0 ? 1 : 0;
+        int endYCorrection = getHeight() > 0 ? 1 : 0;
+
         if (point.getX() <= start.getX() && point.getY() <= start.getY()) {
             return start.getCopy();
-        } else if (point.getX() >= end.getX() && point.getY() >= end.getY()) {
-            return end.getCopy();
-        } else if (point.getX() <= start.getX() && point.getY() >= end.getY()) {
-            return new Index(start.getX(), end.getY());
-        } else if (point.getX() >= end.getX() && point.getY() <= start.getY()) {
-            return new Index(end.getX(), start.getY());
+        } else if (point.getX() >= endExclusive.getX() && point.getY() >= endExclusive.getY()) {
+            return endExclusive.sub(endXCorrection, endYCorrection);
+        } else if (point.getX() <= start.getX() && point.getY() >= endExclusive.getY()) {
+            return new Index(start.getX(), endExclusive.getY() - endYCorrection);
+        } else if (point.getX() >= endExclusive.getX() && point.getY() <= start.getY()) {
+            return new Index(endExclusive.getX() - endXCorrection, start.getY());
         }
 
         // Do projection
         if (point.getX() <= start.getX()) {
             return new Index(start.getX(), point.getY());
-        } else if (point.getX() >= end.getX()) {
-            return new Index(end.getX(), point.getY());
+        } else if (point.getX() >= endExclusive.getX()) {
+            return new Index(endExclusive.getX() - endXCorrection, point.getY());
         } else if (point.getY() <= start.getY()) {
             return new Index(point.getX(), start.getY());
-        } else if (point.getY() >= end.getY()) {
-            return new Index(point.getX(), end.getY());
+        } else if (point.getY() >= endExclusive.getY()) {
+            return new Index(point.getX(), endExclusive.getY() - endYCorrection);
         }
 
         throw new IllegalArgumentException("The point is inside the rectangle");
     }
 
+
     public boolean hasMinSize(int minSize) {
         return getHeight() >= minSize || getWidth() >= minSize;
+    }
+
+    public boolean isEmpty() {
+        return getHeight() == 0 && getWidth() == 0;
     }
 
     /**
@@ -254,7 +383,7 @@ public class Rectangle implements Serializable {
      * The result rectangles will always have the given width and height. If the area of this rectangle is not width * height
      * the returning result will be rounded up (e.g. thr returned rectangles have a bigger area then this rectangle).
      *
-     * @param width of the split tiles
+     * @param width  of the split tiles
      * @param height of the split tiles
      * @return Collection with split rectangles
      */
@@ -279,9 +408,9 @@ public class Rectangle implements Serializable {
         double sinus = Math.sin(angle);
         double cosinus = Math.cos(angle);
         Index p1 = start;
-        Index p2 = new Index(end.getX(), start.getY());
-        Index p3 = end;
-        Index p4 = new Index(start.getX(), end.getY());
+        Index p2 = new Index(endExclusive.getX(), start.getY());
+        Index p3 = endExclusive;
+        Index p4 = new Index(start.getX(), endExclusive.getY());
         Index newP1 = p1.rotateCounterClock(center, sinus, cosinus);
         Index newP2 = p2.rotateCounterClock(center, sinus, cosinus);
         Index newP3 = p3.rotateCounterClock(center, sinus, cosinus);

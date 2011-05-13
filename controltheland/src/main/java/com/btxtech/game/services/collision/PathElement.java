@@ -23,7 +23,7 @@ import java.util.Comparator;
 public class PathElement {
     private PassableRectangle passableRectangle;
     private int distance;
-    private boolean hasAlternatives = false;
+    private boolean hasAlternativeSiblings = false;
     // No negative number, as smaller as higher rank
     private int rank;
 
@@ -36,12 +36,12 @@ public class PathElement {
         return passableRectangle;
     }
 
-    public boolean isHasAlternatives() {
-        return hasAlternatives;
+    public boolean isHasAlternativeSiblings() {
+        return hasAlternativeSiblings;
     }
 
-    public void setHasAlternatives(boolean hasAlternatives) {
-        this.hasAlternatives = hasAlternatives;
+    public void setHasAlternativeSiblings(boolean hasAlternativeSiblings) {
+        this.hasAlternativeSiblings = hasAlternativeSiblings;
     }
 
     public static Comparator<PathElement> createDistanceComparator() {
@@ -67,6 +67,6 @@ public class PathElement {
 
     @Override
     public String toString() {
-        return getClass() + " " + passableRectangle + " rank: " + rank + " hasAlternatives: " + hasAlternatives;
+        return getClass().getSimpleName() + " " + passableRectangle + " rank: " + rank + " hasAlternativeSiblings: " + hasAlternativeSiblings;
     }
 }

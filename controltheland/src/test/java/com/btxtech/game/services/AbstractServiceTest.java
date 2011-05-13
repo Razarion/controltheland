@@ -143,6 +143,29 @@ abstract public class AbstractServiceTest {
     protected static int TERRAIN_IMAGE_10x4 = -1;
     protected static int TERRAIN_IMAGE_4x4 = -1;
     protected static int TERRAIN_IMAGE_10x10 = -1;
+    protected static final Rectangle COMPLEX_TERRAIN_RECT_1 = new Rectangle(0, 1300, 1000, 400);
+    protected static final Rectangle COMPLEX_TERRAIN_RECT_2 = new Rectangle(1000, 0, 400, 1000);
+    protected static final Rectangle COMPLEX_TERRAIN_RECT_3 = new Rectangle(0, 2100, 1000, 400);
+    protected static final Rectangle COMPLEX_TERRAIN_RECT_4 = new Rectangle(1300, 2200, 1000, 400);
+    protected static final Rectangle COMPLEX_TERRAIN_RECT_5 = new Rectangle(2000, 1600, 1000, 400);
+    protected static final Rectangle COMPLEX_TERRAIN_RECT_6 = new Rectangle(2000, 700, 1000, 400);
+    protected static final Rectangle COMPLEX_TERRAIN_RECT_7 = new Rectangle(1000, 2900, 400, 1000);
+    protected static final Rectangle COMPLEX_TERRAIN_RECT_8 = new Rectangle(1500, 2600, 400, 1000);
+    protected static final Rectangle COMPLEX_TERRAIN_RECT_9 = new Rectangle(2100, 2900, 400, 1000);
+    protected static final Rectangle COMPLEX_TERRAIN_RECT_10 = new Rectangle(3500, 2000, 400, 1000);
+    protected static final Rectangle COMPLEX_TERRAIN_RECT_11 = new Rectangle(3600, 500, 400, 1000);
+    protected static final Collection<Rectangle> COMPLEX_TERRAIN_RECTS = Arrays.asList(COMPLEX_TERRAIN_RECT_1,
+            COMPLEX_TERRAIN_RECT_2,
+            COMPLEX_TERRAIN_RECT_3,
+            COMPLEX_TERRAIN_RECT_4,
+            COMPLEX_TERRAIN_RECT_5,
+            COMPLEX_TERRAIN_RECT_6,
+            COMPLEX_TERRAIN_RECT_7,
+            COMPLEX_TERRAIN_RECT_8,
+            COMPLEX_TERRAIN_RECT_9,
+            COMPLEX_TERRAIN_RECT_10,
+            COMPLEX_TERRAIN_RECT_11);
+
     // Territories
     protected static String COMPLEX_TERRITORY = "ComplexTerritory";
     protected static int COMPLEX_TERRITORY_ID = -1;
@@ -711,7 +734,18 @@ abstract public class AbstractServiceTest {
         // Setup Terrain Images
         Collection<DbTerrainImagePosition> dbTerrainImagePositions = new ArrayList<DbTerrainImagePosition>();
         dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(10, 0), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_4x10)));
-        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(0, 12), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_10x4)));
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(0, 13), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_10x4)));
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(0, 21), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_10x4)));
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(13, 22), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_10x4)));
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(20, 16), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_10x4)));
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(20, 7), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_10x4)));
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(10, 29), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_4x10)));
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(15, 26), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_4x10)));
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(21, 29), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_4x10)));
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(35, 20), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_4x10)));
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(36, 5), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_4x10)));
+
+
         dbTerrainSetting.getDbTerrainImagePositionCrudServiceHelper().updateDbChildren(dbTerrainImagePositions);
 
         terrainService.getDbTerrainSettingCrudServiceHelper().updateDbChild(dbTerrainSetting);
@@ -1133,14 +1167,14 @@ abstract public class AbstractServiceTest {
     }
 
     protected MockHttpServletRequest getMockHttpServletRequest() {
-        if(mockHttpServletRequest == null) {
+        if (mockHttpServletRequest == null) {
             throw new IllegalStateException("mockHttpServletRequest is null");
         }
         return mockHttpServletRequest;
     }
 
     protected MockHttpServletResponse getMockHttpServletResponse() {
-        if(mockHttpServletResponse == null) {
+        if (mockHttpServletResponse == null) {
             throw new IllegalStateException("mockHttpServletResponse is null");
         }
         return mockHttpServletResponse;

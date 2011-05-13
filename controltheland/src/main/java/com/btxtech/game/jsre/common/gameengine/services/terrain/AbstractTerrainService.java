@@ -84,9 +84,9 @@ public interface AbstractTerrainService {
 
     Rectangle convertToAbsolutePosition(Rectangle rectangle);
 
-    boolean isFree(Index posititon, ItemType itemType);
+    boolean isFree(Index middlePoint, ItemType itemType);
 
-    boolean isFree(Index point, int itemFreeWidth, int itemFreeWidth1, Collection<SurfaceType> allowedSurfaces);
+    boolean isFree(Index middlePoint, int itemFreeWidth, int itemFreeHeight, Collection<SurfaceType> allowedSurfaces);
 
     @Deprecated
     boolean isTerrainPassable(Index posititon);
