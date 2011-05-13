@@ -109,7 +109,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
         }
         for (Map.Entry<TerrainType, Collection<Index>> entry : tiles.entrySet()) {
             ArrayList<Rectangle> mapAsRectangles = GeometricalUtil.separateIntoRectangles(entry.getValue());
-            List<PassableRectangle> passableRectangles = buildPassableRectangleList(mapAsRectangles);
+            List<PassableRectangle> passableRectangles = PathFinderUtilities.buildPassableRectangleList(mapAsRectangles, terrainService);
             passableRectangles4TerrainType.put(entry.getKey(), passableRectangles);
         }
 
@@ -135,28 +135,6 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
             }
         }
         return map;
-    }
-
-    private List<PassableRectangle> buildPassableRectangleList(ArrayList<Rectangle> rectangles) {
-        List<PassableRectangle> passableRectangles = new ArrayList<PassableRectangle>();
-
-        for (Rectangle rectangle : rectangles) {
-            PassableRectangle passableRectangle = new PassableRectangle(rectangle, terrainService);
-            passableRectangles.add(passableRectangle);
-        }
-
-        List<PassableRectangle> remaining = new ArrayList<PassableRectangle>(passableRectangles);
-        while (!remaining.isEmpty()) {
-            PassableRectangle passableRectangle = remaining.remove(0);
-            for (PassableRectangle possibleNeighbor : remaining) {
-                if (passableRectangle.getRectangle().adjoins(possibleNeighbor.getRectangle())) {
-                    passableRectangle.addNeighbor(possibleNeighbor);
-                    possibleNeighbor.addNeighbor(passableRectangle);
-                }
-            }
-        }
-
-        return passableRectangles;
     }
 
     @Override
@@ -311,28 +289,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
 
 
     private PassableRectangle getPassableRectangleOfAbsoluteIndex(Index absoluteIndex, TerrainType terrainType) {
-        List<PassableRectangle> passableRectangles = passableRectangles4TerrainType.get(terrainType);
-        if (passableRectangles == null) {
-            return null;
-        }
-        for (PassableRectangle passableRectangle : passableRectangles) {
-            if (passableRectangle.containAbsoluteIndex(absoluteIndex, terrainService.getTerrainSettings())) {
-                return passableRectangle;
-            }
-        }
-        return null;
-    }
-
-    private List<Index> getShortestPath(Index absoluteStart, List<Rectangle> borders) {
-        ArrayList<Index> path = new ArrayList<Index>();
-        Index origin = absoluteStart;
-        for (Rectangle border : borders) {
-            Rectangle absBorder = terrainService.convertToAbsolutePosition(border);
-            Index point = absBorder.getNearestPoint(origin);
-            path.add(point);
-            origin = point;
-        }
-        return path;
+        return PathFinderUtilities.getPassableRectangleOfAbsoluteIndex(absoluteIndex, terrainType, passableRectangles4TerrainType, terrainService);
     }
 
     @Override
@@ -370,11 +327,12 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
         long time = System.currentTimeMillis();
         List<Index> positions = null;
         try {
-            Path path = atomStartRect.findAllPossiblePassableRectanglePaths(atomDestRect, destination);
+            Path path = atomStartRect.findPossiblePassableRectanglePaths(start, atomDestRect, destination);
+            path = PathFinderUtilities.optimizePath(path);
             List<Rectangle> borders = path.getAllPassableBorders();
-            positions = getShortestPath(start, borders);
-            positions.add(0, start);
-            positions.add(destination);
+            GumPath gumPath = new GumPath(start, destination, borders, terrainService);
+            gumPath.calculateShortestPath();
+            positions = gumPath.getPath();
             return positions;
         } finally {
             if (System.currentTimeMillis() - time > 200 || positions == null) {

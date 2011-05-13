@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.territory.TerritoryService;
@@ -54,19 +55,26 @@ public class TestCollisionService extends AbstractServiceTest {
     public void testRandomPositionInTerritory() throws Exception {
         configureComplexGame();
 
+        Rectangle noobTerrain = new Rectangle(0, 0, 1599, 1799);
+        Rectangle terrainImage1 = new Rectangle(0, 1300, 1000, 400);
+        Rectangle terrainImage2 = new Rectangle(1000, 0, 400, 1000);
+
         ItemType itemType = itemService.getItemType(TEST_START_BUILDER_ITEM_ID);
         Territory territory = territoryService.getTerritory(COMPLEX_TERRITORY_ID);
         // 16 * 18 Tiles (100*100) = 288 Possible position for gold (100*100)
         // Minus Terrain Images 4*10 + 10*4 = 80
         // 208 possible positions if placed nicely
-        //  => 180 (tolerance)
+        // In the worst case only a quarter will be used -> 52
+        // -> 100
 
-        for (int i = 0; i < 180; i++) {
+        for (int i = 0; i < 100; i++) {
             Index index = collisionService.getFreeRandomPosition(itemType, territory, 100, false);
-            Index indexWithOffset = index.add(50, 50);
             Assert.assertEquals(COMPLEX_TERRITORY_ID, territoryService.getTerritory(index).getId());
-            itemService.createSyncObject(itemService.getItemType(TEST_RESOURCE_ITEM_ID), indexWithOffset, null, null, 0);
-            System.out.println("Gold Placed: " + i);
+            SyncItem syncItem = itemService.createSyncObject(itemService.getItemType(TEST_RESOURCE_ITEM_ID), index, null, null, 0);
+            System.out.println("Gold Placed: " + i + " at: " + syncItem.getPosition());
+            Assert.assertFalse(terrainImage1.adjoinsEclusive(syncItem.getRectangle()));
+            Assert.assertFalse(terrainImage2.adjoinsEclusive(syncItem.getRectangle()));
+            Assert.assertTrue(noobTerrain.adjoinsEclusive(syncItem.getRectangle()));
         }
     }
 }

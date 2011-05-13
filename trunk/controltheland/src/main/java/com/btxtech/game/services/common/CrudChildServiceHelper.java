@@ -53,9 +53,9 @@ public class CrudChildServiceHelper<T extends CrudChild> implements Serializable
 
     public void updateDbChildren(Collection<T> children) {
         this.children.clear();
-        for (T child : this.children) {
+        for (T child : children) {
             child.setParent(crudParent);
-            children.add(child);
+            this.children.add(child);
         }
     }
 
