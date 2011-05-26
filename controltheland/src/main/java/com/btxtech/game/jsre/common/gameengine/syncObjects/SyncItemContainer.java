@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeExce
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UnloadContainerCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -115,7 +116,7 @@ public class SyncItemContainer extends SyncBaseAbility {
             return false;
         } else {
             if (getSyncBaseItem().hasSyncMovable()) {
-                getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, getSyncBaseItem().getBaseItemType().getRadius(), itemContainerType.getRange(), unloadPos);
+                getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, null, unloadPos);
                 return true;
             } else {
                 stop();

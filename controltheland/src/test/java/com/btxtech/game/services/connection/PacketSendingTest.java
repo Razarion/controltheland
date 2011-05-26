@@ -74,6 +74,8 @@ public class PacketSendingTest extends AbstractServiceTest {
         Id target = getFirstSynItemId(TEST_START_BUILDER_ITEM_ID);
         sendBuildCommand(target, new Index(500, 100), TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
+        sendMoveCommand(getFirstSynItemId(TEST_START_BUILDER_ITEM_ID), new Index(100, 1000));
+        waitForActionServiceDone();
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

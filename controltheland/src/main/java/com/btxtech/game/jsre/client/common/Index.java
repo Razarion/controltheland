@@ -102,7 +102,7 @@ public class Index implements Serializable {
 
     public double getAngleToNord(Index point) {
         if (equals(point)) {
-            throw new IllegalArgumentException("Points do overlap");
+            throw new IllegalArgumentException("Points are equal");
         }
         int gk = x - point.x;
         int ak = y - point.y;
@@ -128,8 +128,8 @@ public class Index implements Serializable {
     }
 
     public Index getPointFromAngelToNord(double angle, int radius) {
-        int gk = (int) (Math.sin(angle) * (double) radius);
-        int ak = (int) (Math.cos(angle) * (double) radius);
+        int gk = (int) Math.round(Math.sin(angle) * (double) radius);
+        int ak = (int) Math.round(Math.cos(angle) * (double) radius);
         int newX = x - gk;
         if (newX < 0) {
             newX = 0;

@@ -88,7 +88,7 @@ public abstract class ItemType implements Serializable {
     }
 
     public Rectangle getRectangle(Index position) {
-        return new Rectangle(position.getX() - getWidth() / 2, position.getY() - getHeight() / 2, getWidth(), getHeight());
+        return Rectangle.generateRectangleFromMiddlePoint(position, getWidth(), getHeight());
     }
 
     @Override

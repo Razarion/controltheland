@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.ui.Widget;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -311,14 +312,6 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
     }
 
     @Override
-    public List<Index> setupPathToDestination(SyncBaseItem syncBaseItem, Index destination, int minRadius, int delta) {
-        Index newDestination = destination.getPointWithDistance(minRadius + delta, syncBaseItem.getPosition());
-        ArrayList<Index> path = new ArrayList<Index>();
-        path.add(newDestination);
-        return path;
-    }
-
-    @Override
     public List<Index> setupPathToDestination(Index start, Index destination, TerrainType terrainType) {
         ArrayList<Index> path = new ArrayList<Index>();
         path.add(destination);
@@ -342,6 +335,11 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
     @Override
     public boolean isFree(Index middlePoint, ItemType itemType) {
         return isFree(middlePoint, itemType.getWidth(), itemType.getHeight(), itemType.getTerrainType().getSurfaceTypes());
+    }
+
+    @Override
+    public boolean isFreeZeroSize(Index point, ItemType itemType) {
+        return isFree(point, 1, 1, itemType.getTerrainType().getSurfaceTypes());
     }
 
     @Override

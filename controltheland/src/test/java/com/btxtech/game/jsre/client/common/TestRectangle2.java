@@ -3,6 +3,9 @@ package com.btxtech.game.jsre.client.common;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 /**
  * User: beat
  * Date: 03.05.2011
@@ -82,9 +85,33 @@ public class TestRectangle2 {
     @Test
     public void testDistanceToPoint() {
         Rectangle rectangle = new Rectangle(23, 32, 13, 11);
-        Assert.assertEquals(2, rectangle.getShortestDistanceToLine(new Index(18,36), new Index(21,36)));
-        Assert.assertEquals(1, rectangle.getShortestDistanceToLine(new Index(33,28), new Index(38,33)));
-        Assert.assertEquals(3, rectangle.getShortestDistanceToLine(new Index(26,45), new Index(29,45)));
+        Assert.assertEquals(2, rectangle.getShortestDistanceToLine(new Index(18, 36), new Index(21, 36)));
+        Assert.assertEquals(1, rectangle.getShortestDistanceToLine(new Index(33, 28), new Index(38, 33)));
+        Assert.assertEquals(3, rectangle.getShortestDistanceToLine(new Index(26, 45), new Index(29, 45)));
+    }
+
+    @Test
+    public void testAdjoinsExclusive1() {
+        Collection<Rectangle> rectangles = new ArrayList<Rectangle>();
+        rectangles.add(new Rectangle(0, 0, 5, 5));
+        rectangles.add(new Rectangle(10, 10, 5, 5));
+        Assert.assertFalse(Rectangle.adjoinsExclusive(rectangles));
+    }
+
+    @Test
+    public void testAdjoinsExclusive2() {
+        Collection<Rectangle> rectangles = new ArrayList<Rectangle>();
+        rectangles.add(new Rectangle(0, 0, 15, 15));
+        rectangles.add(new Rectangle(10, 10, 5, 5));
+        Assert.assertTrue(Rectangle.adjoinsExclusive(rectangles));
+    }
+
+    @Test
+    public void testAdjoinsExclusive3() {
+        Collection<Rectangle> rectangles = new ArrayList<Rectangle>();
+        rectangles.add(new Rectangle(0, 0, 10, 10));
+        rectangles.add(new Rectangle(10, 10, 5, 5));
+        Assert.assertFalse(Rectangle.adjoinsExclusive(rectangles));
     }
 
 }

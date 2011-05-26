@@ -750,9 +750,9 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
         }
 
         if (hasSyncMovable()) {
-            getServices().getActionService().attack(this,syncBaseItem, true);
+            getServices().getActionService().defend(this,syncBaseItem, true);
         } else if (syncWeapon.isInRange(syncBaseItem)) {
-            getServices().getActionService().attack(this,syncBaseItem, false);
+            getServices().getActionService().defend(this,syncBaseItem, false);
         }
     }
 }

@@ -2,17 +2,24 @@ package com.btxtech.game.services.collision;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.MathHelper;
+import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.debug.DebugService;
 import com.btxtech.game.services.terrain.TerrainService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * User: beat
@@ -24,6 +31,8 @@ public class TestPathFinding extends AbstractServiceTest {
     private CollisionService collisionService;
     @Autowired
     private TerrainService terrainService;
+    @Autowired
+    private DebugService debugService;
 
     @Test
     @DirtiesContext
@@ -99,40 +108,6 @@ public class TestPathFinding extends AbstractServiceTest {
         }
     }
 
-    private void assertPathCanBeReduced2(List<Index> path) {
-        List<Index> reducedPath = null;
-        List<Index> tmpPath = path;
-        do {
-            tmpPath = reducedPath(tmpPath);
-            if (tmpPath != null) {
-                reducedPath = tmpPath;
-            }
-        } while (tmpPath != null);
-        if (reducedPath != null) {
-            System.out.println("Original path: " + path);
-            System.out.println("Reduced path: " + reducedPath);
-            Assert.fail("Path could be reduced");
-        }
-    }
-
-    private List<Index> reducedPath(List<Index> path) {
-        if (path.size() < 3) {
-            return null;
-        }
-        List<Index> newPath = new ArrayList<Index>(path);
-        Index lastIndexToProve = newPath.get(newPath.size() - 1);
-        for (int i = 0; i < newPath.size() - 2; i++) {
-            Index index = newPath.get(i);
-            if (!lineInTerrainImage(index, lastIndexToProve)) {
-                for (int j = i; j < newPath.size() - 1; j++) {
-                    newPath.remove(i + 1); // TODO false
-                }
-                return newPath;
-            }
-        }
-        return null;
-    }
-
     private void assertLineNotInTerrainImage(Index point1, Index point2) {
         for (Rectangle complexTerrainRect : COMPLEX_TERRAIN_RECTS) {
             if (complexTerrainRect.doesLineCut(point1, point2)) {
@@ -158,5 +133,287 @@ public class TestPathFinding extends AbstractServiceTest {
         }
 
     }
+
+    @Test
+    @DirtiesContext
+    public void testCircleFormationNoBlockingObject() throws Exception {
+        configureMinimalGame();
+
+        SyncBaseItem target = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(1, -100, -100));
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(1, -100, -100));
+
+        List<CircleFormation.CircleFormationItem> items = new ArrayList<CircleFormation.CircleFormationItem>();
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 300));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 300));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 300));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 300));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 300));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 300));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 300));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 300));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 300));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 300));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 300));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 300));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 300));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 300));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 300));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 300));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 300));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 300));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 300));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 300));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 300));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 300));
+        CircleFormation circleFormation = new CircleFormation(target.getRectangle(), MathHelper.EAST - 0.1, items);
+
+        List<Rectangle> expected = new ArrayList<Rectangle>();
+        expected.add(new Rectangle(848, 490, 100, 100));
+        expected.add(new Rectangle(825, 590, 100, 100));
+        expected.add(new Rectangle(845, 390, 100, 100));
+        expected.add(new Rectangle(770, 690, 100, 100));
+        expected.add(new Rectangle(817, 290, 100, 100));
+        expected.add(new Rectangle(670, 784, 100, 100));
+        expected.add(new Rectangle(754, 190, 100, 100));
+        expected.add(new Rectangle(570, 832, 100, 100));
+        expected.add(new Rectangle(654, 106, 100, 100));
+        expected.add(new Rectangle(470, 849, 100, 100));
+        expected.add(new Rectangle(554, 64, 100, 100));
+        expected.add(new Rectangle(370, 842, 100, 100));
+        expected.add(new Rectangle(454, 50, 100, 100));
+        expected.add(new Rectangle(270, 807, 100, 100));
+        expected.add(new Rectangle(354, 62, 100, 100));
+        expected.add(new Rectangle(170, 736, 100, 100));
+        expected.add(new Rectangle(254, 101, 100, 100));
+        expected.add(new Rectangle(96, 636, 100, 100));
+        expected.add(new Rectangle(154, 181, 100, 100));
+        expected.add(new Rectangle(59, 536, 100, 100));
+        expected.add(new Rectangle(87, 281, 100, 100));
+        expected.add(new Rectangle(50, 436, 100, 100));
+
+        List<Rectangle> rectangles = new ArrayList<Rectangle>();
+        while (circleFormation.hasNext()) {
+            CircleFormation.CircleFormationItem circleFormationItem = circleFormation.calculateNextEntry();
+            Assert.assertTrue(circleFormationItem.isInRange());
+            rectangles.add(circleFormationItem.getRectangle());
+            // ***************************************************************************************************
+            /*System.out.println("expected.add(new Rectangle(" + circleFormationItem.getRectangle().getX()
+                    + " ," + circleFormationItem.getRectangle().getY()
+                    + " ," + circleFormationItem.getRectangle().getWidth()
+                    + " ," + circleFormationItem.getRectangle().getHeight() + "));");  */
+            // ***************************************************************************************************
+            circleFormation.lastAccepted();
+        }
+        for (int i = 0, rectanglesSize = rectangles.size(); i < rectanglesSize; i++) {
+            Assert.assertEquals(expected.get(i), rectangles.get(i));
+        }
+        Assert.assertFalse(Rectangle.adjoinsExclusive(rectangles));
+    }
+
+    @Test
+    @DirtiesContext
+    public void testCircleFormationBlocking() throws Exception {
+        configureMinimalGame();
+
+        Rectangle rectangle1 = new Rectangle(0, 0, 1000, 300);
+        Rectangle rectangle2 = new Rectangle(0, 300, 300, 1000);
+
+        SyncBaseItem target = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(1, -100, -100));
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(1, -100, -100));
+
+        List<CircleFormation.CircleFormationItem> items = new ArrayList<CircleFormation.CircleFormationItem>();
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        CircleFormation circleFormation = new CircleFormation(target.getRectangle(), MathHelper.SOUTH_EAST, items);
+
+        List<Rectangle> expected = new ArrayList<Rectangle>();
+        expected.add(new Rectangle(491, 491, 100, 100));
+        expected.add(new Rectangle(391, 546, 100, 100));
+        expected.add(new Rectangle(546, 391, 100, 100));
+        expected.add(new Rectangle(450, 676, 100, 100));
+        expected.add(new Rectangle(550, 626, 100, 100));
+        expected.add(new Rectangle(642, 526, 100, 100));
+        expected.add(new Rectangle(682, 426, 100, 100));
+        expected.add(new Rectangle(690, 326, 100, 100));
+        expected.add(new Rectangle(450, 822, 100, 100));
+        expected.add(new Rectangle(550, 789, 100, 100));
+        expected.add(new Rectangle(650, 727, 100, 100));
+        expected.add(new Rectangle(744, 627, 100, 100));
+        expected.add(new Rectangle(798, 527, 100, 100));
+        expected.add(new Rectangle(826, 427, 100, 100));
+        expected.add(new Rectangle(831, 327, 100, 100));
+        expected.add(new Rectangle(450, 965, 100, 100));
+        expected.add(new Rectangle(550, 940, 100, 100));
+        expected.add(new Rectangle(650, 896, 100, 100));
+        expected.add(new Rectangle(750, 828, 100, 100));
+        expected.add(new Rectangle(846, 728, 100, 100));
+        expected.add(new Rectangle(908, 628, 100, 100));
+        expected.add(new Rectangle(947, 528, 100, 100));
+        expected.add(new Rectangle(968, 428, 100, 100));
+        expected.add(new Rectangle(973, 328, 100, 100));
+        expected.add(new Rectangle(450, 1107, 100, 100));
+        expected.add(new Rectangle(550, 1087, 100, 100));
+        expected.add(new Rectangle(650, 1053, 100, 100));
+        expected.add(new Rectangle(750, 1001, 100, 100));
+        expected.add(new Rectangle(850, 928, 100, 100));
+        expected.add(new Rectangle(946, 828, 100, 100));
+        expected.add(new Rectangle(1014, 728, 100, 100));
+        expected.add(new Rectangle(1062, 628, 100, 100));
+        expected.add(new Rectangle(1093, 528, 100, 100));
+        expected.add(new Rectangle(1110, 428, 100, 100));
+        expected.add(new Rectangle(1114, 328, 100, 100));
+        expected.add(new Rectangle(450, 1249, 100, 100));
+        expected.add(new Rectangle(550, 1233, 100, 100));
+        expected.add(new Rectangle(650, 1204, 100, 100));
+        expected.add(new Rectangle(750, 1162, 100, 100));
+        expected.add(new Rectangle(850, 1104, 100, 100));
+        expected.add(new Rectangle(950, 1028, 100, 100));
+        expected.add(new Rectangle(1047, 928, 100, 100));
+
+        List<Rectangle> rectangles = new ArrayList<Rectangle>();
+        int count = 0;
+        while (circleFormation.hasNext()) {
+            CircleFormation.CircleFormationItem circleFormationItem = circleFormation.calculateNextEntry();
+            Assert.assertNotNull(circleFormationItem.getDestinationHint());
+            if (rectangle1.adjoinsEclusive(circleFormationItem.getRectangle()) || rectangle2.adjoinsEclusive(circleFormationItem.getRectangle())) {
+                continue;
+            }
+            if (count < 3) {
+                Assert.assertTrue(circleFormationItem.isInRange());
+            } else {
+                Assert.assertFalse(circleFormationItem.isInRange());
+            }
+            count++;
+            circleFormation.lastAccepted();
+            rectangles.add(Rectangle.generateRectangleFromMiddlePoint(circleFormationItem.getDestinationHint(), 100, 100));
+        }
+        for (int i = 0, rectanglesSize = rectangles.size(); i < rectanglesSize; i++) {
+            Assert.assertEquals(expected.get(i), rectangles.get(i));
+        }
+        Assert.assertFalse(Rectangle.adjoinsExclusive(rectangles));
+    }
+
+    @Test
+    @DirtiesContext
+    public void testCircleFormationBlockingChannel() throws Exception {
+        configureMinimalGame();
+
+        Rectangle rectangle1 = new Rectangle(0, 0, 1000, 300);
+        Rectangle rectangle2 = new Rectangle(0, 300, 300, 500);
+        Rectangle rectangle3 = new Rectangle(500, 300, 300, 500);
+
+        SyncBaseItem target = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(1, -100, -100));
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(1, -100, -100));
+
+        List<CircleFormation.CircleFormationItem> items = new ArrayList<CircleFormation.CircleFormationItem>();
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 60));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 60));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 60));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 60));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 60));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 60));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 60));
+        CircleFormation circleFormation = new CircleFormation(target.getRectangle(), MathHelper.SOUTH - 0.35, items);
+
+        List<Rectangle> expected = new ArrayList<Rectangle>();
+        expected.add(new Rectangle(395, 504, 100, 100));
+        expected.add(new Rectangle(352, 651, 100, 100));
+        expected.add(new Rectangle(313, 790, 100, 100));
+        expected.add(new Rectangle(74, 864, 100, 100));
+        expected.add(new Rectangle(174, 906, 100, 100));
+        expected.add(new Rectangle(274, 928, 100, 100));
+        expected.add(new Rectangle(374, 932, 100, 100));
+
+        List<Rectangle> rectangles = new ArrayList<Rectangle>();
+        int count = 0;
+        while (circleFormation.hasNext()) {
+            CircleFormation.CircleFormationItem circleFormationItem = circleFormation.calculateNextEntry();
+            Assert.assertNotNull(circleFormationItem.getDestinationHint());
+            if (rectangle1.adjoinsEclusive(circleFormationItem.getRectangle())
+                    || rectangle2.adjoinsEclusive(circleFormationItem.getRectangle())
+                    || rectangle3.adjoinsEclusive(circleFormationItem.getRectangle())) {
+                continue;
+            }
+            if (count < 1) {
+                Assert.assertTrue(circleFormationItem.isInRange());
+            } else {
+                Assert.assertFalse(circleFormationItem.isInRange());
+            }
+            count++;
+
+            circleFormation.lastAccepted();
+            rectangles.add(Rectangle.generateRectangleFromMiddlePoint(circleFormationItem.getDestinationHint(), 100, 100));
+        }
+        for (int i = 0, rectanglesSize = rectangles.size(); i < rectanglesSize; i++) {
+            Assert.assertEquals(expected.get(i), rectangles.get(i));
+        }
+        Assert.assertFalse(Rectangle.adjoinsExclusive(rectangles));
+    }
+
+    @Test
+    @DirtiesContext
+    public void testSetupDestinationHints1() throws Exception {
+        configureComplexGame();
+
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, -100, -100));
+
+        List<CircleFormation.CircleFormationItem> items = new ArrayList<CircleFormation.CircleFormationItem>();
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+        items.add(new CircleFormation.CircleFormationItem(syncBaseItem, 100));
+
+        SyncItem target = createSyncResourceItem(TEST_RESOURCE_ITEM_ID, new Index(1000, 1000), new Id(1, -100, -100));
+
+        collisionService.setupDestinationHints(target, items);
+
+        for (CircleFormation.CircleFormationItem item : items) {
+            System.out.println(item.getDestinationHint());
+        }
+    }
+
 
 }

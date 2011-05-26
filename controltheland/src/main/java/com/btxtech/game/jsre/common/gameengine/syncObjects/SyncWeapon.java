@@ -27,6 +27,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInf
 public class SyncWeapon extends SyncBaseAbility {
     private WeaponType weaponType;
     private Id target;
+    private Index destinationHint;
     private boolean followTarget;
     private double reloadProgress;
 
@@ -77,7 +78,24 @@ public class SyncWeapon extends SyncBaseAbility {
                 }
             } else {
                 if (followTarget && getSyncBaseItem().hasSyncMovable()) {
-                    getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, getSyncBaseItem().getBaseItemType().getRadius() + targetItem.getBaseItemType().getRadius(), weaponType.getRange(), targetItem.getPosition());
+                    if (getSyncBaseItem().getPosition().equals(destinationHint)) {
+                        // Target has moved away
+                        Index targetPosition = null;
+                        if (targetItem.hasSyncMovable()) {
+                            targetPosition = targetItem.getSyncMovable().getDestination();
+                        }
+                        if (targetPosition == null) {
+                            targetPosition = targetItem.getPosition();
+                        }
+                        destinationHint = getServices().getCollisionService().getDestinationHint(getSyncBaseItem(), weaponType.getRange(), targetItem, targetPosition);
+                        if (destinationHint != null) {
+                            getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, destinationHint, targetItem.getPosition());
+                        } else {
+                            stop();
+                        }
+                    } else {
+                        getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, destinationHint, targetItem.getPosition());
+                    }
                 } else {
                     stop();
                     return returnFalseIfReloaded();
@@ -136,6 +154,7 @@ public class SyncWeapon extends SyncBaseAbility {
         }
 
         this.target = attackCommand.getTarget();
+        destinationHint = attackCommand.getDestinationHint();
         followTarget = attackCommand.isFollowTarget();
     }
 
@@ -159,19 +178,13 @@ public class SyncWeapon extends SyncBaseAbility {
         SyncBaseItem baseTarget = (SyncBaseItem) target;
         Index pos = getSyncBaseItem().getPosition();
         Index targetPos = target.getPosition();
-        if (pos == null || targetPos == null) {
-            return false;
-        }
-        return isItemTypeAllowed(baseTarget);
+        return !(pos == null || targetPos == null) && isItemTypeAllowed(baseTarget);
     }
 
     public boolean isInRange(SyncBaseItem target) {
         Index pos = getSyncBaseItem().getPosition();
         Index targetPos = target.getPosition();
-        if (pos == null || targetPos == null) {
-            return false;
-        }
-        return pos.isInRadius(targetPos, weaponType.getRange() + target.getItemType().getRadius() + getSyncBaseItem().getItemType().getRadius());
+        return !(pos == null || targetPos == null) && pos.isInRadius(targetPos, weaponType.getRange() + target.getItemType().getRadius() + getSyncBaseItem().getItemType().getRadius());
     }
 
     public Id getTarget() {
@@ -200,9 +213,5 @@ public class SyncWeapon extends SyncBaseAbility {
 
     public void setReloadProgress(double reloadProgress) {
         this.reloadProgress = reloadProgress;
-    }
-
-    public boolean isTargetInRange(SyncBaseItem syncBaseItem) {
-        return false;  //To change body of created methods use File | Settings | File Templates.
     }
 }

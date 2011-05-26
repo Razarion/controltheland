@@ -12,17 +12,22 @@ import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UnloadContainerCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.HouseSpacePacket;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
@@ -212,12 +217,24 @@ abstract public class AbstractServiceTest {
 
     // ------------------- Sync Items --------------------
 
-    protected SyncBaseItem createSyncBaseItem(int itemTypeId) throws Exception {
+    protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id) throws Exception {
         Services services = EasyMock.createNiceMock(Services.class);
         AbstractTerrainService terrainService = EasyMock.createNiceMock(AbstractTerrainService.class);
         EasyMock.expect(services.getTerrainService()).andReturn(terrainService);
         EasyMock.replay(services);
-        return new SyncBaseItem(new Id(1, -100, -100), new Index(100, 100), (BaseItemType) itemService.getItemType(itemTypeId), services, new SimpleBase(1));
+        SyncBaseItem syncBaseItem = new SyncBaseItem(id, null, (BaseItemType) itemService.getItemType(itemTypeId), services, new SimpleBase(1));
+        syncBaseItem.setPosition(position);
+        return syncBaseItem;
+    }
+
+    protected SyncResourceItem createSyncResourceItem(int itemTypeId, Index position, Id id) throws Exception {
+        Services services = EasyMock.createNiceMock(Services.class);
+        AbstractTerrainService terrainService = EasyMock.createNiceMock(AbstractTerrainService.class);
+        EasyMock.expect(services.getTerrainService()).andReturn(terrainService);
+        EasyMock.replay(services);
+        SyncResourceItem syncResourceItem = new SyncResourceItem(id, null, (ResourceType) itemService.getItemType(itemTypeId), services);
+        syncResourceItem.setPosition(position);
+        return syncResourceItem;
     }
 
     /**
@@ -263,6 +280,38 @@ abstract public class AbstractServiceTest {
         }
         throw new IllegalStateException("No such sync item: ItemTypeID=" + itemTypeId + " simpleBase=" + simpleBase);
     }
+
+    protected Collection<Id> getAllSynItemId(int itemTypeId) {
+        return getAllSynItemId(getMyBase(), itemTypeId, null);
+    }
+
+    protected Collection<Id> getAllSynItemId(SimpleBase simpleBase, int itemTypeId, Rectangle region) {
+        Collection<Id> ids = new ArrayList<Id>();
+        for (SyncItemInfo syncItemInfo : movableService.getAllSyncInfo()) {
+            if (syncItemInfo.getBase() == null && syncItemInfo.getItemTypeId() == itemTypeId) {
+                if (region != null) {
+                    if (region.contains(syncItemInfo.getPosition())) {
+                        ids.add(syncItemInfo.getId());
+                    }
+                } else {
+                    ids.add(syncItemInfo.getId());
+                }
+            } else if (syncItemInfo.getBase() != null && syncItemInfo.getBase().equals(simpleBase) && syncItemInfo.getItemTypeId() == itemTypeId) {
+                if (region != null) {
+                    if (region.contains(syncItemInfo.getPosition())) {
+                        ids.add(syncItemInfo.getId());
+                    }
+                } else {
+                    ids.add(syncItemInfo.getId());
+                }
+            }
+        }
+        if (ids.isEmpty()) {
+            throw new IllegalStateException("No such sync item: ItemTypeID=" + itemTypeId + " simpleBase=" + simpleBase);
+        }
+        return ids;
+    }
+
 
     protected void assertWholeItemTypeCount(int count) {
         Assert.assertEquals(count, itemService.getItemsCopy().size());
@@ -356,6 +405,16 @@ abstract public class AbstractServiceTest {
         }
     }
 
+    protected void sendMoveCommand(Id movable, Index destination) {
+        List<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
+        MoveCommand moveCommand = new MoveCommand();
+        moveCommand.setDestination(destination);
+        moveCommand.setId(movable);
+        moveCommand.setTimeStamp();
+        baseCommands.add(moveCommand);
+        movableService.sendCommands(baseCommands);
+    }
+
     protected void sendBuildCommand(Id builderId, Index toBeBuiltPosition, int toBeBuiltId) {
         List<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
         BuilderCommand builderCommand = new BuilderCommand();
@@ -388,6 +447,19 @@ abstract public class AbstractServiceTest {
         movableService.sendCommands(baseCommands);
     }
 
+    protected void sendAttackCommands(Collection<Id> attackers, Id targetId) {
+        List<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
+        for (Id attacker : attackers) {
+            AttackCommand attackCommand = new AttackCommand();
+            attackCommand.setFollowTarget(true);
+            attackCommand.setId(attacker);
+            attackCommand.setTarget(targetId);
+            attackCommand.setTimeStamp();
+            baseCommands.add(attackCommand);
+        }
+        movableService.sendCommands(baseCommands);
+    }
+
     protected void sendCollectCommand(Id harvesterId, Id resourceId) {
         List<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
         MoneyCollectCommand moneyCollectCommand = new MoneyCollectCommand();
@@ -396,6 +468,44 @@ abstract public class AbstractServiceTest {
         moneyCollectCommand.setTimeStamp();
         baseCommands.add(moneyCollectCommand);
         movableService.sendCommands(baseCommands);
+    }
+
+    protected void sendContainerLoadCommand(Id item, Id container) {
+        List<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
+        LoadContainCommand loadContainCommand = new LoadContainCommand();
+        loadContainCommand.setId(item);
+        loadContainCommand.setItemContainer(container);
+        loadContainCommand.setTimeStamp();
+        baseCommands.add(loadContainCommand);
+        movableService.sendCommands(baseCommands);
+
+    }
+
+    protected void sendUnloadContainerCommand(Id container, Index position) {
+        List<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
+        UnloadContainerCommand unloadContainerCommand = new UnloadContainerCommand();
+        unloadContainerCommand.setId(container);
+        unloadContainerCommand.setUnloadPos(position);
+        unloadContainerCommand.setTimeStamp();
+        baseCommands.add(unloadContainerCommand);
+        movableService.sendCommands(baseCommands);
+    }
+
+    protected AttackCommand createAttackCommand(Id actor, Id target) {
+        AttackCommand attackCommand = new AttackCommand();
+        attackCommand.setFollowTarget(true);
+        attackCommand.setId(actor);
+        attackCommand.setTarget(target);
+        attackCommand.setTimeStamp();
+        return attackCommand;
+    }
+
+    protected MoneyCollectCommand createMoneyCollectCommand(Id actor, Id target) {
+        MoneyCollectCommand moneyCollectCommand = new MoneyCollectCommand();
+        moneyCollectCommand.setId(actor);
+        moneyCollectCommand.setTarget(target);
+        moneyCollectCommand.setTimeStamp();
+        return moneyCollectCommand;
     }
 
     // -------------------  Game Config --------------------
@@ -561,6 +671,7 @@ abstract public class AbstractServiceTest {
         // DbItemContainerType
         DbItemContainerType dbItemContainerType = new DbItemContainerType();
         dbItemContainerType.setMaxCount(1);
+        dbItemContainerType.setRange(200);
         dbBaseItemType.setDbItemContainerType(dbItemContainerType);
         // DbMovableType
         DbMovableType dbMovableType = new DbMovableType();
@@ -642,6 +753,11 @@ abstract public class AbstractServiceTest {
         harvester.setAlwaysAllowed(true);
         harvester.setItemType(itemService.getDbItemType(TEST_HARVESTER_ITEM_ID));
         serverMarketService.getCrudMarketEntryService().updateDbChild(harvester);
+
+        MarketEntry itemContainer = serverMarketService.getCrudMarketEntryService().createDbChild();
+        itemContainer.setAlwaysAllowed(true);
+        itemContainer.setItemType(itemService.getDbItemType(TEST_CONTAINER_ITEM_ID));
+        serverMarketService.getCrudMarketEntryService().updateDbChild(itemContainer);
     }
 
     // ------------------- Setup Terrain --------------------
@@ -811,6 +927,9 @@ abstract public class AbstractServiceTest {
         DbItemTypeLimitation harvester = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
         harvester.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_HARVESTER_ITEM_ID));
         harvester.setCount(10);
+        DbItemTypeLimitation container = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
+        container.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_CONTAINER_ITEM_ID));
+        container.setCount(10);
 
         userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbRealGameLevel);
         TEST_LEVEL_2_REAL_ID = dbRealGameLevel.getId();

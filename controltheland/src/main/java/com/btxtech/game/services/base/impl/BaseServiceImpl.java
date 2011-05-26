@@ -109,7 +109,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     @Override
     public void checkBaseAccess(SyncBaseItem item) throws IllegalAccessException {
         if (!getBase().getSimpleBase().equals(item.getBase())) {
-            throw new IllegalAccessException("Invalid access from base: " + getBaseName(item.getBase()));
+            throw new IllegalAccessException("Invalid access from base: " + getBaseName(getBase().getSimpleBase()) + " to " + getBaseName(item.getBase()));
         }
     }
 
