@@ -14,13 +14,17 @@
 package com.btxtech.game.services.debug.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.debug.DebugService;
-import java.awt.Color;
-import java.awt.Frame;
-import java.awt.Graphics;
-import javax.annotation.PreDestroy;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.awt.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: beat
@@ -30,13 +34,30 @@ import org.springframework.stereotype.Component;
 @Component("debugService")
 public class DebugServiceImpl implements DebugService {
     private Frame frame;
+    private final Map<Rectangle, Color> rectangleColorMap = new HashMap<Rectangle, Color>();
 
     //@PostConstruct
     public void init() {
-        frame = new Frame();
+        frame = new Frame() {
+            @Override
+            public void paint(Graphics g) {
+                super.paint(g);
+                synchronized (rectangleColorMap) {
+                    privatePaintRectangles(g);
+                }
+            }
+        };
         frame.setSize(3200, 3200);
         frame.setVisible(true);
         frame.repaint();
+    }
+
+    private void privatePaintRectangles(Graphics graphics) {
+        for (Map.Entry<Rectangle, Color> entry : rectangleColorMap.entrySet()) {
+            graphics.setColor(entry.getValue());
+            Rectangle rectangle = entry.getKey();
+            graphics.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
+        }
     }
 
     @PreDestroy
@@ -48,8 +69,27 @@ public class DebugServiceImpl implements DebugService {
 
     @Override
     public void onPositionChanged(SyncItem item, Index position) {
-        Graphics graphics = frame.getGraphics();
-        graphics.setColor(Color.BLACK);
-        graphics.fillOval(position.getX(), position.getY(), 2, 2);
+        // See drawRectangle
+        // Graphics graphics = frame.getGraphics();
+        // graphics.setColor(Color.BLACK);
+        // graphics.fillOval(position.getX(), position.getY(), 2, 2);
+    }
+
+    @Override
+    public void drawRectangle(Rectangle rectangle, Color color) {
+        synchronized (rectangleColorMap) {
+            rectangleColorMap.put(rectangle, color);
+        }
+        frame.repaint();
+    }
+
+    @Override
+    public void drawRectangles(Collection<Rectangle> rectangles) {
+        for (Rectangle rectangle : rectangles) {
+            synchronized (rectangleColorMap) {
+                rectangleColorMap.put(rectangle, Color.BLACK);
+            }
+        }
+        frame.repaint();
     }
 }

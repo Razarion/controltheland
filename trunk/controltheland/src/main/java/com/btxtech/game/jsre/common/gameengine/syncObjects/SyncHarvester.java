@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.HarvesterType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
@@ -26,6 +27,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInf
 public class SyncHarvester extends SyncBaseAbility {
     private HarvesterType harvesterType;
     private Id target;
+    private Index destinationHint;
 
     public SyncHarvester(HarvesterType harvesterType, SyncBaseItem syncBaseItem) {
         super(syncBaseItem);
@@ -50,7 +52,7 @@ public class SyncHarvester extends SyncBaseAbility {
                 double money = resource.harvest(factor * harvesterType.getProgress());
                 getServices().getBaseService().depositResource(money, getSyncBaseItem().getBase());
             } else {
-                getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, getSyncBaseItem().getBaseItemType().getRadius() + resource.getItemType().getRadius(), harvesterType.getRange(), resource.getPosition());
+                getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, destinationHint, resource.getPosition());
             }
             return true;
         } catch (ItemDoesNotExistException ignore) {
@@ -83,6 +85,7 @@ public class SyncHarvester extends SyncBaseAbility {
         }
 
         this.target = resource.getId();
+        destinationHint = attackCommand.getDestinationHint();
     }
 
     public Id getTarget() {
@@ -91,5 +94,9 @@ public class SyncHarvester extends SyncBaseAbility {
 
     public void setTarget(Id target) {
         this.target = target;
+    }
+
+    public HarvesterType getHarvesterType() {
+        return harvesterType;
     }
 }

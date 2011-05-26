@@ -360,7 +360,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <!--forkMode>pertest</forkMode-->
+                    <forkMode>pertest</forkMode>
                     <argLine>-Xms1000m -Xmx1500m</argLine>
                     <testFailureIgnore>false</testFailureIgnore>
                     <useFile>false</useFile>

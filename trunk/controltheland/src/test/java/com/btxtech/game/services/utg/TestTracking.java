@@ -506,11 +506,20 @@ public class TestTracking extends AbstractServiceTest {
             System.out.println(userCommandHistoryElement.getTimeStamp() + "|" + userCommandHistoryElement.getInfo1() + "|" + userCommandHistoryElement.getInfo2());
         }
         System.out.println("----------History----------");
+        int offset = 0;
+        if (userCommandHistoryElements.size() == 4) {
+            offset = 0;
+        } else if (userCommandHistoryElements.size() == 5) {
+            offset = 1;
+        } else {
+            Assert.fail("4 or 5 expected. Received " + userCommandHistoryElements.size() + ". Depend if the create base is captured or not 'Item created: TestStartBuilderItem'");
+        }
+
         Assert.assertEquals(4, userCommandHistoryElements.size());
-        Assert.assertEquals(BuilderCommand.class.getName(), userCommandHistoryElements.get(0).getInfo1());
-        Assert.assertEquals("Item created: TestFactoryItem", userCommandHistoryElements.get(1).getInfo1());
-        Assert.assertEquals(FactoryCommand.class.getName(), userCommandHistoryElements.get(2).getInfo1());
-        Assert.assertEquals("Item created: TestAttackItem", userCommandHistoryElements.get(3).getInfo1());
+        Assert.assertEquals(BuilderCommand.class.getName(), userCommandHistoryElements.get(offset).getInfo1());
+        Assert.assertEquals("Item created: TestFactoryItem", userCommandHistoryElements.get(1 + offset).getInfo1());
+        Assert.assertEquals(FactoryCommand.class.getName(), userCommandHistoryElements.get(2 + offset).getInfo1());
+        Assert.assertEquals("Item created: TestAttackItem", userCommandHistoryElements.get(3 + offset).getInfo1());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

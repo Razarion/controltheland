@@ -14,7 +14,11 @@
 package com.btxtech.game.services.debug;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+
+import java.awt.*;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -23,4 +27,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
  */
 public interface DebugService {
     void onPositionChanged(SyncItem item, Index position);
+
+    void drawRectangle(Rectangle rectangle, Color color);
+
+    void drawRectangles(Collection<Rectangle> rectangles);
 }

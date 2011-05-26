@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+
 import java.util.List;
 
 /**
@@ -30,6 +31,7 @@ public class SyncMovable extends SyncBaseAbility {
     private MovableType movableType;
     private List<Index> pathToDestination;
     private Id targetContainer;
+    private Index destinationHintTargetContainer;
 
     public SyncMovable(MovableType movableType, SyncBaseItem syncBaseItem) {
         super(syncBaseItem);
@@ -90,25 +92,29 @@ public class SyncMovable extends SyncBaseAbility {
         return false;
     }
 
-    public void tickMoveToTarget(double factor, int minRadius, int delta, Index target) {
-        if (pathToDestination != null && !pathToDestination.isEmpty()) {
-            Index destination = pathToDestination.get(pathToDestination.size() - 1);
-            if (!destination.isInRadius(target, minRadius + delta)) {
-                pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem(), target, minRadius, delta);
-                getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
-            }
-        } else {
-            pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem(), target, minRadius, delta);
+    public void tickMoveToTarget(double factor, Index destinationHint, Index target) {
+        if (pathToDestination == null || pathToDestination.isEmpty()) {
+            setupPathToDestination(target, destinationHint);
             getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
         }
         tickMove(factor);
     }
 
+    private void setupPathToDestination(Index target, Index destinationHint) {
+        if (destinationHint != null) {
+            pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getPosition(), destinationHint, getSyncBaseItem().getTerrainType());
+        } else {
+            // Will only be called on the client. Remove if path finding is moved to the client
+            pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getPosition(), target, getSyncBaseItem().getTerrainType());
+        }
+    }
 
     private boolean tickMoveToContainer(double factor) {
         try {
             SyncBaseItem syncItemContainer = (SyncBaseItem) getServices().getItemService().getItem(targetContainer);
-            if (isTargetInRange4Container(syncItemContainer.getPosition(), syncItemContainer.getSyncItemContainer().getRange() + getSyncBaseItem().getBaseItemType().getRadius())) {
+            if (isTargetInRange4Container(syncItemContainer.getPosition(), syncItemContainer.getSyncItemContainer().getRange()
+                    + getSyncBaseItem().getBaseItemType().getRadius()
+                    + syncItemContainer.getBaseItemType().getRadius())) {
                 if (getSyncBaseItem().hasSyncTurnable()) {
                     getSyncBaseItem().getSyncTurnable().turnTo(syncItemContainer.getPosition());
                 }
@@ -116,7 +122,14 @@ public class SyncMovable extends SyncBaseAbility {
                 stop();
                 return false;
             } else {
-                tickMoveToTarget(factor, getSyncBaseItem().getBaseItemType().getRadius(), syncItemContainer.getSyncItemContainer().getRange(), syncItemContainer.getPosition());
+                if (destinationHintTargetContainer == null) {
+                    destinationHintTargetContainer = getServices().getCollisionService().getDestinationHint(getSyncBaseItem(), syncItemContainer.getSyncItemContainer().getRange(), syncItemContainer, syncItemContainer.getPosition());
+                    if (destinationHintTargetContainer == null) {
+                        stop();
+                    }
+
+                }
+                tickMoveToTarget(factor, destinationHintTargetContainer, syncItemContainer.getPosition());
                 return true;
             }
         } catch (ItemDoesNotExistException ignore) {
@@ -177,6 +190,7 @@ public class SyncMovable extends SyncBaseAbility {
     public void stop() {
         pathToDestination = null;
         targetContainer = null;
+        destinationHintTargetContainer = null;
     }
 
     public void executeCommand(MoveCommand moveCommand) {
@@ -200,6 +214,13 @@ public class SyncMovable extends SyncBaseAbility {
 
     public void setPathToDestination(List<Index> pathToDestination) {
         this.pathToDestination = pathToDestination;
+    }
+
+    public Index getDestination() {
+        if (pathToDestination != null && !pathToDestination.isEmpty()) {
+            return pathToDestination.get(pathToDestination.size() - 1);
+        }
+        return null;
     }
 
     public boolean isLoadPosReachable(SyncItemContainer syncItemContainer) {

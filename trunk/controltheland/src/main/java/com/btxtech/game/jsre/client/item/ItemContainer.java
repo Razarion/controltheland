@@ -537,6 +537,11 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         return factory.getPosition().add(factory.getItemType().getWidth() / 2 + 20, 0);
     }
 
+    @Override
+    public Index getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItem target, Index targetPosition) {
+        return targetPosition;
+    }
+
     public void clear() {
         for (ClientSyncItem ClientSyncItem : items.values()) {
             ClientSyncItem.dispose();

@@ -16,6 +16,7 @@ package com.btxtech.game.services.action.impl;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
+import com.btxtech.game.jsre.common.gameengine.PositionCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.BaseDoesNotExistException;
@@ -30,6 +31,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryComman
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.services.action.ActionService;
+import com.btxtech.game.services.action.ActionServiceUtil;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.connection.ConnectionService;
@@ -357,6 +359,11 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
     }
 
     @Override
+    public void defend(SyncBaseItem attacker, SyncBaseItem target, boolean followTarget) {
+        attack(attacker, target, followTarget);
+    }
+
+    @Override
     public void move(SyncBaseItem syncItem, Index destination) {
         syncItem.stop();
         MoveCommand moveCommand = new MoveCommand();
@@ -430,6 +437,19 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
 
     @Override
     public void executeCommands(List<BaseCommand> baseCommands) {
+        try {
+            ActionServiceUtil.addDestinationHintToCommands(baseCommands, collisionService, itemService);
+        } catch (PositionCanNotBeFoundException positionCanNotBeFoundException) {
+            log.warn("", positionCanNotBeFoundException);
+            for (BaseCommand baseCommand : baseCommands) {
+                try {
+                    connectionService.sendSyncInfo(itemService.getItem(baseCommand.getId()));
+                } catch (ItemDoesNotExistException e) {
+                    // Item may be killed
+                }
+            }
+            return;
+        }
         for (BaseCommand baseCommand : baseCommands) {
             try {
                 executeCommand(baseCommand, false);

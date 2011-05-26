@@ -105,7 +105,7 @@ public class SyncBuilder extends SyncBaseAbility {
             if (toBeBuildPosition == null) {
                 throw new IllegalStateException(this + " toBeBuildPosition == null");
             }
-            getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, getSyncBaseItem().getBaseItemType().getRadius(), builderType.getRange(), toBeBuildPosition);
+            getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, null, toBeBuildPosition);
             return true;
         }
     }

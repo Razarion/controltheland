@@ -25,6 +25,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.mapview.common.GeometricalUtil;
 import com.btxtech.game.services.bot.BotService;
+import com.btxtech.game.services.collision.CircleFormation;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.collision.CollisionServiceChangedListener;
 import com.btxtech.game.services.collision.PassableRectangle;
@@ -204,11 +205,6 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
         return getFreeRandomPosition(factory.getPosition(), 0, 0, allowedSurfaces, factory.getItemType().getHeight() / 2, MAX_RANGE_RALLY_POINT);
     }
 
-    @Override
-    public Index getFreeRandomPosition(ItemType itemType, SyncItem origin, int targetMinRange, int targetMaxRange) {
-        return getFreeRandomPosition(origin.getPosition(), itemType.getWidth(), itemType.getHeight(), itemType.getTerrainType().getSurfaceTypes(), targetMinRange, targetMaxRange);
-    }
-
     private Index getFreeRandomPosition(Index origin, int itemFreeWidth, int itemFreeHeight, Collection<SurfaceType> allowedSurfaces, int targetMinRange, int targetMaxRange) {
         int delta = (targetMaxRange - targetMinRange) / STEPS_DISTANCE;
         for (int distance = 0; distance < (targetMaxRange - targetMinRange); distance += delta) {
@@ -338,6 +334,105 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
             if (System.currentTimeMillis() - time > 200 || positions == null) {
                 log.fatal("Pathfinding took: " + (System.currentTimeMillis() - time) + "ms start: " + start + " destination: " + destination);
             }
+        }
+    }
+
+    private List<Index> setupPathToDifferentTerrainTypeDestination(Index start, TerrainType startTerrainType, Index destination, TerrainType destinationTerrainType) {
+        PassableRectangle atomStartRect = getPassableRectangleOfAbsoluteIndex(start, startTerrainType);
+        PassableRectangle atomDestRect = PathFinderUtilities.getNearestPassableRectangleDifferentTerrainTypeOfAbsoluteIndex(destination, destinationTerrainType, startTerrainType, passableRectangles4TerrainType, terrainService);
+        if (atomStartRect == null || atomDestRect == null) {
+            throw new IllegalArgumentException("Illegal atomStartRect or atomDestRect. start: " + start + " destination: " + destination + " terrainType: " + destinationTerrainType);
+        }
+
+        if (atomStartRect.equals(atomDestRect)) {
+            ArrayList<Index> singleIndex = new ArrayList<Index>();
+            singleIndex.add(destination);
+            return singleIndex;
+        }
+
+        long time = System.currentTimeMillis();
+        List<Index> positions = null;
+        try {
+            Path path = atomStartRect.findPossiblePassableRectanglePaths(start, atomDestRect, destination);
+            path = PathFinderUtilities.optimizePath(path);
+            List<Rectangle> borders = path.getAllPassableBorders();
+            GumPath gumPath = new GumPath(start, destination, borders, terrainService);
+            gumPath.calculateShortestPath();
+            positions = gumPath.getPath();
+            return positions;
+        } finally {
+            if (System.currentTimeMillis() - time > 200 || positions == null) {
+                log.fatal("Pathfinding took: " + (System.currentTimeMillis() - time) + "ms start: " + start + " destination: " + destination);
+            }
+        }
+    }
+
+    @Override
+    public Index getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItem target, Index targetPosition) {
+        List<CircleFormation.CircleFormationItem> formationItems = new ArrayList<CircleFormation.CircleFormationItem>();
+        formationItems.add(new CircleFormation.CircleFormationItem(syncBaseItem, range));
+        setupDestinationHints(target.getItemType().getRectangle(targetPosition), target.getItemType().getTerrainType(), formationItems);
+        if (formationItems.get(0).isInRange()) {
+            return formationItems.get(0).getDestinationHint();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public List<CircleFormation.CircleFormationItem> setupDestinationHints(SyncItem target, List<CircleFormation.CircleFormationItem> items) {
+        return setupDestinationHints(target.getRectangle(), target.getTerrainType(), items);
+    }
+
+    private List<CircleFormation.CircleFormationItem> setupDestinationHints(Rectangle target, TerrainType targetTerrainType, List<CircleFormation.CircleFormationItem> items) {
+        Map<TerrainType, List<CircleFormation.CircleFormationItem>> terrainTypeCollectionMap = new HashMap<TerrainType, List<CircleFormation.CircleFormationItem>>();
+        for (CircleFormation.CircleFormationItem item : items) {
+            TerrainType terrainType = item.getSyncBaseItem().getTerrainType();
+            List<CircleFormation.CircleFormationItem> circleFormationItems = terrainTypeCollectionMap.get(terrainType);
+            if (circleFormationItems == null) {
+                circleFormationItems = new ArrayList<CircleFormation.CircleFormationItem>();
+                terrainTypeCollectionMap.put(terrainType, circleFormationItems);
+            }
+            circleFormationItems.add(item);
+        }
+
+        for (Map.Entry<TerrainType, List<CircleFormation.CircleFormationItem>> entry : terrainTypeCollectionMap.entrySet()) {
+            setupDestinationHintTerrain(target, entry.getValue(), entry.getKey(), targetTerrainType);
+        }
+        return items;
+    }
+
+    private void setupDestinationHintTerrain(Rectangle targetPosition, List<CircleFormation.CircleFormationItem> items, TerrainType terrainType, TerrainType targetTerrainType) {
+        SyncItem actorItem = items.get(0).getSyncBaseItem();
+        List<Index> path;
+        if (terrainType == targetTerrainType) {
+            path = setupPathToDestination(actorItem.getPosition(), targetPosition.getCenter(), terrainType);
+        } else {
+            path = setupPathToDifferentTerrainTypeDestination(actorItem.getPosition(), terrainType, targetPosition.getCenter(), targetTerrainType);
+        }
+
+        path.remove(path.size() - 1); // Target pos
+        Index lastPoint;
+        if (path.isEmpty()) {
+            // Start and destination are in the same passable rectangle
+            lastPoint = actorItem.getPosition();
+        } else {
+            lastPoint = path.get(path.size() - 1);
+        }
+
+        double angel = targetPosition.getCenter().getAngleToNord(lastPoint);
+
+        CircleFormation circleFormation = new CircleFormation(targetPosition, angel, items);
+        while (circleFormation.hasNext()) {
+            CircleFormation.CircleFormationItem circleFormationItem = circleFormation.calculateNextEntry();
+            SyncBaseItem syncBaseItem = circleFormationItem.getSyncBaseItem();
+            if (!terrainService.isFreeZeroSize(circleFormationItem.getDestinationHint(), syncBaseItem.getItemType())) {
+                continue;
+            }
+            if (itemService.hasStandingItemsInRect(circleFormationItem.getRectangle(), syncBaseItem)) {
+                continue;
+            }
+            circleFormation.lastAccepted();
         }
     }
 }

@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects.command;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 
 /**
@@ -23,6 +24,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 public class AttackCommand extends BaseCommand {
     private Id target;
     private boolean followTarget;
+    private Index destinationHint;
 
     public Id getTarget() {
         return target;
@@ -40,9 +42,16 @@ public class AttackCommand extends BaseCommand {
         this.followTarget = followTarget;
     }
 
+    public Index getDestinationHint() {
+        return destinationHint;
+    }
+
+    public void setDestinationHint(Index destinationHint) {
+        this.destinationHint = destinationHint;
+    }
+
     @Override
     public String toString() {
         return super.toString() + " target: " + target + " followTarget: " + followTarget;
     }
-
 }

@@ -17,8 +17,8 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -28,8 +28,6 @@ import java.util.List;
  * Time: 14:23:09
  */
 public interface AbstractTerrainService {
-    List<Index> setupPathToDestination(SyncBaseItem syncBaseItem, Index destination, int minRadius, int delta);
-
     List<Index> setupPathToDestination(Index start, Index destination, TerrainType terrainType);
 
     Collection<TerrainImagePosition> getTerrainImagePositions();
@@ -84,9 +82,11 @@ public interface AbstractTerrainService {
 
     Rectangle convertToAbsolutePosition(Rectangle rectangle);
 
-    boolean isFree(Index middlePoint, ItemType itemType);
+    boolean isFreeZeroSize(Index point, ItemType itemType);
 
     boolean isFree(Index middlePoint, int itemFreeWidth, int itemFreeHeight, Collection<SurfaceType> allowedSurfaces);
+
+    boolean isFree(Index middlePoint, ItemType itemType);
 
     @Deprecated
     boolean isTerrainPassable(Index posititon);

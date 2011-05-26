@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client.common;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * User: beat
@@ -399,6 +400,14 @@ public class Rectangle implements Serializable {
         return split;
     }
 
+    public double getDiagonally() {
+        return Math.sqrt(getWidth() * getWidth() + getHeight() * getHeight());
+    }
+
+    public double getHalfDiagonally() {
+        return Math.sqrt(getWidth() * getWidth() + getHeight() * getHeight()) / 2.0;
+    }
+
     /**
      * @param center where this rectaggle is turned arount
      * @param angle  to turn thie rectaggle counterclockwise
@@ -434,7 +443,32 @@ public class Rectangle implements Serializable {
         return new Rectangle(start, end);
     }
 
+    public static Rectangle generateRectangleFromMiddlePoint(Index middlePoint, int width, int height) {
+        Index start = middlePoint.sub(width / 2, height / 2);
+        return new Rectangle(start.getX(), start.getY(), width, height);
+    }
+
     public static boolean contains(int x, int y, int width, int height, Index position) {
         return position != null && position.getX() >= x && position.getY() >= y && position.getX() <= x + width && position.getY() <= y + height;
+    }
+
+    /**
+     * Returns true if one rectangle call to adjoinsExclusive() returns true for one other rectangles in the given list.
+     *
+     * @param rectangles rectangle to check
+     * @return if one rectangle adjoinsExclusively another rectangle
+     */
+    public static boolean adjoinsExclusive(Collection<Rectangle> rectangles) {
+        List<Rectangle> rectanglesList = new ArrayList<Rectangle>(rectangles);
+        while (!rectanglesList.isEmpty()) {
+            Rectangle rectangle = rectanglesList.remove(0);
+            for (Rectangle others : rectanglesList) {
+                if (rectangle.adjoinsEclusive(others)) {
+                    System.out.println(rectangle + " " + others);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

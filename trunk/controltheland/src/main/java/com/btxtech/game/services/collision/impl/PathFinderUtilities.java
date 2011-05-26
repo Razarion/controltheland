@@ -51,6 +51,7 @@ public class PathFinderUtilities {
         if (passableRectangles == null) {
             return null;
         }
+        // Slow!
         for (PassableRectangle passableRectangle : passableRectangles) {
             if (passableRectangle.containAbsoluteIndex(absoluteIndex, terrainService.getTerrainSettings())) {
                 return passableRectangle;
@@ -58,6 +59,33 @@ public class PathFinderUtilities {
         }
         return null;
 
+    }
+
+    public static PassableRectangle getNearestPassableRectangleDifferentTerrainTypeOfAbsoluteIndex(Index absoluteIndexTaget,
+                                                                                                   TerrainType terrainTypeTarget,
+                                                                                                   TerrainType terrainType,
+                                                                                                   Map<TerrainType, List<PassableRectangle>> passableRectangles4TerrainType,
+                                                                                                   TerrainService terrainService) {
+        PassableRectangle targetPassableRectangle = getPassableRectangleOfAbsoluteIndex(absoluteIndexTaget, terrainTypeTarget, passableRectangles4TerrainType, terrainService);
+        if (targetPassableRectangle == null) {
+            return null;
+        }
+        List<PassableRectangle> passableRectangles = passableRectangles4TerrainType.get(terrainType);
+        if (passableRectangles == null) {
+            return null;
+        }
+        Index target = targetPassableRectangle.getRectangle().getCenter();
+        // Slow!
+        double shortestDistance = Double.MAX_VALUE;
+        PassableRectangle shortest = null;
+        for (PassableRectangle passableRectangle : passableRectangles) {
+            double distance = passableRectangle.getRectangle().getCenter().getDistance(target);
+            if (distance < shortestDistance) {
+                shortestDistance = distance;
+                shortest = passableRectangle;
+            }
+        }
+        return shortest;
     }
 
     public static Path optimizePath(Path path) {

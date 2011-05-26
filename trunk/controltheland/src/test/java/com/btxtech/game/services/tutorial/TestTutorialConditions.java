@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.utg.ConditionServiceListener;
 import com.btxtech.game.services.AbstractServiceTest;
@@ -151,7 +152,7 @@ public class TestTutorialConditions extends AbstractServiceTest {
         conditionServiceListener.conditionPassed(null);
         EasyMock.replay(conditionServiceListener);
         //
-        SyncBaseItem syncItem = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID);
+        SyncBaseItem syncItem = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(1, -100, -100));
         //
         SimulationConditionServiceImpl.getInstance().activateCondition(simulationInfo.getTutorialConfig().getTasks().get(0).getStepConfigs().get(0).getConditionConfig(), null);
         SimulationConditionServiceImpl.getInstance().setConditionServiceListener(conditionServiceListener);
@@ -185,7 +186,7 @@ public class TestTutorialConditions extends AbstractServiceTest {
         ConditionServiceListener<Object> conditionServiceListener = EasyMock.createStrictMock(ConditionServiceListener.class);
         EasyMock.replay(conditionServiceListener);
         //
-        SyncBaseItem syncItem = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID);
+        SyncBaseItem syncItem = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(100, 100), new Id(1, -100, -100));
         //
         SimulationConditionServiceImpl.getInstance().activateCondition(simulationInfo.getTutorialConfig().getTasks().get(0).getStepConfigs().get(0).getConditionConfig(), null);
         SimulationConditionServiceImpl.getInstance().setConditionServiceListener(conditionServiceListener);
@@ -219,7 +220,7 @@ public class TestTutorialConditions extends AbstractServiceTest {
         ConditionServiceListener<Object> conditionServiceListener = EasyMock.createStrictMock(ConditionServiceListener.class);
         EasyMock.replay(conditionServiceListener);
         //
-        SyncBaseItem syncItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID);
+        SyncBaseItem syncItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, -100, -100));
         //
         SimulationConditionServiceImpl.getInstance().activateCondition(simulationInfo.getTutorialConfig().getTasks().get(0).getStepConfigs().get(0).getConditionConfig(), null);
         SimulationConditionServiceImpl.getInstance().setConditionServiceListener(conditionServiceListener);

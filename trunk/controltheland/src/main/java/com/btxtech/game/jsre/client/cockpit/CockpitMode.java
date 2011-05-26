@@ -87,7 +87,7 @@ public class CockpitMode implements SelectionListener {
     public void onOwnSelectionChanged(Group selectedGroup) {
         clearUnloadMode();
         clearLaunchMode();
-        if (selectedGroup.count() == 1) {
+        if (selectedGroup.getCount() == 1) {
             Cockpit.getInstance().getSelectedItemPanel().displayOwnSingleItem(selectedGroup.getFirst());
         } else {
             Cockpit.getInstance().getSelectedItemPanel().displayMultiOwnItems(selectedGroup);

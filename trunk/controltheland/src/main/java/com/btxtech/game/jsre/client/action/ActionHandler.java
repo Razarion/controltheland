@@ -323,6 +323,14 @@ public class ActionHandler implements CommonActionService {
         }
     }
 
+    @Override
+    public void defend(SyncBaseItem attacker, SyncBaseItem target, boolean followTarget) {
+        if (!Connection.getInstance().getGameInfo().hasServerCommunication()) {
+            // In real game, server handles attack
+            attack(attacker, target, followTarget);
+        }
+    }
+
     public void collect(Collection<ClientSyncItem> clientSyncItems, SyncResourceItem money) {
         for (ClientSyncItem clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncHarvester()) {
