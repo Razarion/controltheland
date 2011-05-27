@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
+import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -41,6 +42,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInf
  * Time: 19:11:49
  */
 public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
+    private DecimalPosition decimalPosition;
     private SimpleBase base;
     private double buildup;
     private double health;
@@ -149,6 +151,37 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
         }
     }
 
+    @Override
+    public void setPosition(Index position) {
+        if (position != null) {
+            if (this.decimalPosition != null) {
+                this.decimalPosition.setPosition(position);
+            } else {
+                this.decimalPosition = new DecimalPosition(position);
+            }
+        } else {
+            decimalPosition = null;
+        }
+        fireItemChanged(SyncItemListener.Change.POSITION);
+    }
+
+    @Override
+    public Index getPosition() {
+        if (decimalPosition != null) {
+            return decimalPosition.getPosition();
+        } else {
+            return null;
+        }
+    }
+
+    public DecimalPosition getDecimalPosition() {
+        return decimalPosition;
+    }
+
+    public void setDecimalPosition(DecimalPosition decimalPosition) {
+        this.decimalPosition = decimalPosition;
+        fireItemChanged(SyncItemListener.Change.POSITION);        
+    }
 
     private void checkBase(SimpleBase syncBase) {
         if (base == null && syncBase == null) {
@@ -750,9 +783,9 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
         }
 
         if (hasSyncMovable()) {
-            getServices().getActionService().defend(this,syncBaseItem, true);
+            getServices().getActionService().defend(this, syncBaseItem, true);
         } else if (syncWeapon.isInRange(syncBaseItem)) {
-            getServices().getActionService().defend(this,syncBaseItem, false);
+            getServices().getActionService().defend(this, syncBaseItem, false);
         }
     }
 }

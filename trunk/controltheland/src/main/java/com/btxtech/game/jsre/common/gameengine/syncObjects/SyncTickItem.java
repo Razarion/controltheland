@@ -29,6 +29,14 @@ abstract public class SyncTickItem extends SyncItem{
         super(id, position, itemType, services);
     }
 
+    /**
+     *  Ticks this sync item
+     *
+     * @param factor time in s since the last ticks
+     * @return true if more tick are needed to fullfil the job
+     * @throws ItemDoesNotExistException if the target item does no exist any longer
+     * @throws NoSuchItemTypeException if the target item type does not exist
+     */
     public abstract boolean tick(double factor) throws ItemDoesNotExistException, NoSuchItemTypeException;
 
     public abstract void stop();

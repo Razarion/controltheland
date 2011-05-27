@@ -217,14 +217,18 @@ abstract public class AbstractServiceTest {
 
     // ------------------- Sync Items --------------------
 
+    protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id, Services services) throws Exception {
+        SyncBaseItem syncBaseItem = new SyncBaseItem(id, null, (BaseItemType) itemService.getItemType(itemTypeId), services, new SimpleBase(1));
+        syncBaseItem.setPosition(position);
+        return syncBaseItem;
+    }
+
     protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id) throws Exception {
         Services services = EasyMock.createNiceMock(Services.class);
         AbstractTerrainService terrainService = EasyMock.createNiceMock(AbstractTerrainService.class);
         EasyMock.expect(services.getTerrainService()).andReturn(terrainService);
         EasyMock.replay(services);
-        SyncBaseItem syncBaseItem = new SyncBaseItem(id, null, (BaseItemType) itemService.getItemType(itemTypeId), services, new SimpleBase(1));
-        syncBaseItem.setPosition(position);
-        return syncBaseItem;
+        return createSyncBaseItem(itemTypeId, position, id, services);
     }
 
     protected SyncResourceItem createSyncResourceItem(int itemTypeId, Index position, Id id) throws Exception {
@@ -1157,8 +1161,12 @@ abstract public class AbstractServiceTest {
         return dbBotConfig;
     }
 
-    protected void waitForBotToBuildup(DbBotConfig dbBotConfig) throws InterruptedException {
+    protected void waitForBotToBuildup(DbBotConfig dbBotConfig) throws InterruptedException, TimeoutException {
+        long maxTime = System.currentTimeMillis() + 100000;
         while (!botService.getBotRunner(dbBotConfig).isBuildup()) {
+            if (System.currentTimeMillis() > maxTime) {
+                throw new TimeoutException();
+            }
             Thread.sleep(100);
         }
     }

@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
+import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
@@ -58,26 +59,35 @@ public class SyncMovable extends SyncBaseAbility {
         }
 
         Index destination = pathToDestination.get(0);
-        if (destination.equals(getSyncBaseItem().getPosition())) {
+
+        DecimalPosition decimalPoint = getSyncBaseItem().getDecimalPosition().getPointWithDistance(getSpeed(factor), destination, false);
+        if (decimalPoint.isSame(destination)) {
             pathToDestination.remove(0);
             if (pathToDestination.isEmpty()) {
                 pathToDestination = null;
+                if (getSyncBaseItem().hasSyncTurnable()) {
+                    getSyncBaseItem().getSyncTurnable().turnTo(destination);
+                }
+                getSyncBaseItem().setDecimalPosition(decimalPoint);
                 return onFinished();
-            } else {
-                destination = pathToDestination.get(0);
             }
         }
 
-        Index pos = getStepToDestination(factor, destination);
-        boolean destinationReached = pos.equals(getSyncBaseItem().getPosition()) && pathToDestination.isEmpty();
-        if (destinationReached) {
-            pathToDestination = null;
+        double realDistance = decimalPoint.getDistance(getSyncBaseItem().getDecimalPosition());
+        double relativeDistance = realDistance / (double) movableType.getSpeed();
+        if (factor - relativeDistance > DecimalPosition.FACTOR) {
+            if (getSyncBaseItem().hasSyncTurnable()) {
+                getSyncBaseItem().getSyncTurnable().turnTo(destination);
+            }
+            getSyncBaseItem().setDecimalPosition(decimalPoint);
+            return tickMove(factor - relativeDistance);
         }
+
         if (getSyncBaseItem().hasSyncTurnable()) {
-            getSyncBaseItem().getSyncTurnable().turnTo(pos);
+            getSyncBaseItem().getSyncTurnable().turnTo(destination);
         }
-        getSyncBaseItem().setPosition(pos);
-        return !destinationReached || onFinished();
+        getSyncBaseItem().setDecimalPosition(decimalPoint);
+        return true;
     }
 
     public boolean onFinished() {
@@ -143,36 +153,8 @@ public class SyncMovable extends SyncBaseAbility {
         return getSyncBaseItem().getPosition().isInRadius(targetPos, range) && (pathToDestination == null || pathToDestination.isEmpty());
     }
 
-    private Index getStepToDestination(double factor, Index destination) {
-        int deltaX = destination.getX() - getSyncBaseItem().getPosition().getX();
-        int absDeltaX = Math.abs(deltaX);
-        int newX = getSyncBaseItem().getPosition().getX();
-        if (absDeltaX > getSpeed(factor)) {
-            absDeltaX = getSpeed(factor);
-        }
-        if (deltaX > 0) {
-            newX += absDeltaX;
-        } else if (deltaX < 0) {
-            newX -= absDeltaX;
-        }
-
-        int deltaY = destination.getY() - getSyncBaseItem().getPosition().getY();
-        int absDeltaY = Math.abs(deltaY);
-        int newY = getSyncBaseItem().getPosition().getY();
-        if (absDeltaY > getSpeed(factor)) {
-            absDeltaY = getSpeed(factor);
-        }
-        if (deltaY > 0) {
-            newY += absDeltaY;
-        } else if (deltaY < 0) {
-            newY -= absDeltaY;
-        }
-
-        return new Index(newX, newY);
-    }
-
-    private int getSpeed(double factor) {
-        return (int) Math.round(movableType.getSpeed() * factor);
+    private double getSpeed(double factor) {
+        return (double) movableType.getSpeed() * factor;
     }
 
     @Override
@@ -240,5 +222,9 @@ public class SyncMovable extends SyncBaseAbility {
 
     public void setTargetContainer(Id targetContainer) {
         this.targetContainer = targetContainer;
+    }
+
+    public MovableType getMovableType() {
+        return movableType;
     }
 }
