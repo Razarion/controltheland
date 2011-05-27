@@ -21,8 +21,10 @@ import java.io.Serializable;
  * Time: 13:01:16
  */
 public class DecimalPosition implements Serializable {
+    public static final double FACTOR = 0.01;
     private double x;
     private double y;
+    private Index index;
 
     /**
      * Used by GWT
@@ -31,7 +33,9 @@ public class DecimalPosition implements Serializable {
     }
 
     public DecimalPosition(double x, double y) {
-        // TODO check if < 0
+        if (x < 0 || y < 0) {
+            throw new DecimalPositionNegativeException(x, y);
+        }
         this.x = x;
         this.y = y;
     }
@@ -46,19 +50,10 @@ public class DecimalPosition implements Serializable {
     }
 
     public Index getPosition() {
-        return new Index((int) Math.round(x), (int) Math.round(y));
-    }
-
-    public DecimalPosition getPointWithDistance(double distance, DecimalPosition directionTo) {
-        double dirDeltaX = directionTo.x - x;
-        double dirDeltaY = directionTo.y - y;
-        double directionDistance = getDistance(directionTo);
-        if (directionDistance > 1.0) {
-            return directionTo.getCopy();
+        if (index == null || index.getX() != (int) Math.round(x) || index.getY() != (int) Math.round(y)) {
+            index = new Index((int) Math.round(x), (int) Math.round(y));
         }
-        double deltaX = (dirDeltaX * distance) / directionDistance;
-        double deltaY = (dirDeltaY * distance) / directionDistance;
-        return new DecimalPosition(x + deltaX, y + deltaY);
+        return index;
     }
 
     public DecimalPosition getPointWithDistance(double distance, Index directionTo, boolean allowOverrun) {
@@ -66,8 +61,8 @@ public class DecimalPosition implements Serializable {
         if (!allowOverrun && directionDistance <= distance) {
             return new DecimalPosition(directionTo);
         }
-        double dirDeltaX = directionTo.getX() - x;
-        double dirDeltaY = directionTo.getY() - y;
+        double dirDeltaX = (double) directionTo.getX() - x;
+        double dirDeltaY = (double) directionTo.getY() - y;
         double deltaX = (dirDeltaX * distance) / directionDistance;
         double deltaY = (dirDeltaY * distance) / directionDistance;
         return new DecimalPosition(x + deltaX, y + deltaY);
@@ -79,7 +74,7 @@ public class DecimalPosition implements Serializable {
     }
 
     public double getDistance(Index index) {
-        double sqrtC = Math.pow(index.getX() - x, 2) + Math.pow(index.getY() - y, 2);
+        double sqrtC = Math.pow((double) index.getX() - x, 2) + Math.pow((double) index.getY() - y, 2);
         return Math.sqrt(sqrtC);
     }
 
@@ -91,4 +86,9 @@ public class DecimalPosition implements Serializable {
     public String toString() {
         return "x: " + x + " y: " + y;
     }
+
+    public boolean isSame(Index position) {
+        return getDistance(position) < FACTOR;
+    }
+
 }
