@@ -66,7 +66,7 @@ import java.util.Iterator;
  */
 public class ActionHandler implements CommonActionService {
     private final static ActionHandler INSTANCE = new ActionHandler();
-    private static final int TICK_INTERVAL = 60;
+    private static final int TICK_INTERVAL = 40;
     private long lastTickTime = 0;
     private final HashSet<SyncTickItem> activeItems = new HashSet<SyncTickItem>();
     private HashSet<SyncTickItem> tmpAddActiveItems = new HashSet<SyncTickItem>();

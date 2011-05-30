@@ -38,6 +38,7 @@ public class SyncBuilder extends SyncBaseAbility {
     private Index toBeBuildPosition;
     private BaseItemType toBeBuiltType;
     private int createdChildCount;
+    private Index destinationHint;
 
     public SyncBuilder(BuilderType builderType, SyncBaseItem syncBaseItem) {
         super(syncBaseItem);
@@ -52,8 +53,7 @@ public class SyncBuilder extends SyncBaseAbility {
         if (toBeBuildPosition == null || toBeBuiltType == null) {
             return false;
         }
-
-        if (isTargetInRange(toBeBuildPosition, builderType.getRange() + getSyncBaseItem().getBaseItemType().getRadius())) {
+        if (isTargetInRange(toBeBuildPosition, builderType.getRange(), toBeBuiltType)) {
             if (currentBuildup == null) {
                 if (toBeBuiltType == null || toBeBuildPosition == null) {
                     throw new IllegalArgumentException("Invalid attributes |" + toBeBuiltType + "|" + toBeBuildPosition);
@@ -105,7 +105,13 @@ public class SyncBuilder extends SyncBaseAbility {
             if (toBeBuildPosition == null) {
                 throw new IllegalStateException(this + " toBeBuildPosition == null");
             }
-            getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, null, toBeBuildPosition);
+            if (destinationHint == null) {
+                destinationHint = getServices().getCollisionService().getDestinationHint(getSyncBaseItem(), builderType.getRange(), toBeBuiltType, toBeBuildPosition);
+                if (destinationHint == null) {
+                    stop();
+                }
+            }
+            getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, destinationHint, toBeBuildPosition);
             return true;
         }
     }
@@ -117,6 +123,7 @@ public class SyncBuilder extends SyncBaseAbility {
         currentBuildup = null;
         toBeBuiltType = null;
         toBeBuildPosition = null;
+        destinationHint = null;
         getSyncBaseItem().getSyncMovable().stop();
     }
 
@@ -201,7 +208,7 @@ public class SyncBuilder extends SyncBaseAbility {
         return createdChildCount;
     }
 
-    public SyncItem getCurrentBuildup() {
+    public SyncBaseItem getCurrentBuildup() {
         return currentBuildup;
     }
 

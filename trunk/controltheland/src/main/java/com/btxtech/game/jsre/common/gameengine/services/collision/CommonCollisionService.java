@@ -30,5 +30,5 @@ public interface CommonCollisionService {
 
     Index getRallyPoint(SyncBaseItem factory, Collection<SurfaceType> allowedSurfaces);
 
-    Index getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItem target, Index targetPosition);
+    Index getDestinationHint(SyncBaseItem syncBaseItem, int range, ItemType target, Index targetPosition);
 }

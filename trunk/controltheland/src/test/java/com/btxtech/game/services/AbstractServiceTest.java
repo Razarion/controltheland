@@ -126,6 +126,8 @@ abstract public class AbstractServiceTest {
     protected static int TEST_ATTACK_ITEM_ID = -1;
     protected static final String TEST_CONTAINER_ITEM = "TestContainerItem";
     protected static int TEST_CONTAINER_ITEM_ID = -1;
+    protected static final String TEST_SIMPLE_BUILDING = "TEST_SIMPLE_BUILDING";
+    protected static int TEST_SIMPLE_BUILDING_ID = -1;
     protected static final String TEST_RESOURCE_ITEM = "TestResourceItem";
     protected static int TEST_RESOURCE_ITEM_ID = -1;
     protected static final String TEST_HARVESTER_ITEM = "TEST_HARVESTER_ITEM";
@@ -520,6 +522,7 @@ abstract public class AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
 
         // Item Types
+        createSimpleBuilding();
         createHarvesterItemType();
         createAttackBaseItemType();
         createContainerBaseItemType();
@@ -686,6 +689,21 @@ abstract public class AbstractServiceTest {
         itemService.saveDbItemType(dbBaseItemType);
         itemService.activate();
         TEST_CONTAINER_ITEM_ID = dbBaseItemType.getId();
+        return dbBaseItemType;
+    }
+
+    protected DbBaseItemType createSimpleBuilding() {
+        DbBaseItemType dbBaseItemType = new DbBaseItemType();
+        dbBaseItemType.setName(TEST_SIMPLE_BUILDING);
+        dbBaseItemType.setTerrainType(TerrainType.LAND);
+        dbBaseItemType.setWidth(100);
+        dbBaseItemType.setHeight(100);
+        dbBaseItemType.setHealth(10);
+        dbBaseItemType.setBuildup(10);
+
+        itemService.saveDbItemType(dbBaseItemType);
+        itemService.activate();
+        TEST_SIMPLE_BUILDING_ID = dbBaseItemType.getId();
         return dbBaseItemType;
     }
 

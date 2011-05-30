@@ -122,9 +122,7 @@ public class SyncMovable extends SyncBaseAbility {
     private boolean tickMoveToContainer(double factor) {
         try {
             SyncBaseItem syncItemContainer = (SyncBaseItem) getServices().getItemService().getItem(targetContainer);
-            if (isTargetInRange4Container(syncItemContainer.getPosition(), syncItemContainer.getSyncItemContainer().getRange()
-                    + getSyncBaseItem().getBaseItemType().getRadius()
-                    + syncItemContainer.getBaseItemType().getRadius())) {
+            if (isTargetInRange4Container(syncItemContainer.getPosition(), syncItemContainer)) {
                 if (getSyncBaseItem().hasSyncTurnable()) {
                     getSyncBaseItem().getSyncTurnable().turnTo(syncItemContainer.getPosition());
                 }
@@ -133,7 +131,7 @@ public class SyncMovable extends SyncBaseAbility {
                 return false;
             } else {
                 if (destinationHintTargetContainer == null) {
-                    destinationHintTargetContainer = getServices().getCollisionService().getDestinationHint(getSyncBaseItem(), syncItemContainer.getSyncItemContainer().getRange(), syncItemContainer, syncItemContainer.getPosition());
+                    destinationHintTargetContainer = getServices().getCollisionService().getDestinationHint(getSyncBaseItem(), syncItemContainer.getSyncItemContainer().getRange(), syncItemContainer.getBaseItemType(), syncItemContainer.getPosition());
                     if (destinationHintTargetContainer == null) {
                         stop();
                     }
@@ -149,7 +147,8 @@ public class SyncMovable extends SyncBaseAbility {
         }
     }
 
-    public boolean isTargetInRange4Container(Index targetPos, int range) {
+    private boolean isTargetInRange4Container(Index targetPos, SyncBaseItem syncItemContainer) {
+        int range = calculateRange(syncItemContainer.getBaseItemType(), syncItemContainer.getSyncItemContainer().getRange(), getSyncBaseItem().getBaseItemType());
         return getSyncBaseItem().getPosition().isInRadius(targetPos, range) && (pathToDestination == null || pathToDestination.isEmpty());
     }
 
