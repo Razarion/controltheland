@@ -538,7 +538,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
     }
 
     @Override
-    public Index getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItem target, Index targetPosition) {
+    public Index getDestinationHint(SyncBaseItem syncBaseItem, int range, ItemType target, Index targetPosition) {
         return targetPosition;
     }
 

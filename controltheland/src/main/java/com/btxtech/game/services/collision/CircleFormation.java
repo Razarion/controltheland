@@ -40,7 +40,7 @@ public class CircleFormation {
     private Rectangle rectangle;
     private List<CircleFormationItem> circleFormationItems;
     private int tryCount;
-    private double range;
+    private double range = Integer.MAX_VALUE;
     private Mode mode = Mode.FINDING_START_ANGEL;
     private int maxWidth;
     private int maxHeight;
@@ -127,7 +127,6 @@ public class CircleFormation {
         angelClockWise = this.startAngel;
         angelCounterClockWise = this.startAngel;
 
-        int minRange = Integer.MAX_VALUE;
         for (CircleFormationItem circleFormationItem : circleFormationItems) {
             BaseItemType baseItemType = circleFormationItem.syncBaseItem.getBaseItemType();
             if (baseItemType.getWidth() > maxWidth) {
@@ -136,11 +135,10 @@ public class CircleFormation {
             if (baseItemType.getHeight() > maxHeight) {
                 maxHeight = baseItemType.getHeight();
             }
-            if (circleFormationItem.range < minRange) {
-                minRange = circleFormationItem.range;
+            if (circleFormationItem.range < range) {
+                range = circleFormationItem.range;
             }
         }
-        range = maxHeight / 2 + minRange + rectangle.getHeight() / 2;
         overbookedAngel = MathHelper.normaliseAngel(this.startAngel - OVERBOOKED_ANGEL);
         overbookedRange = range + MathHelper.getPythagoras(maxWidth, maxHeight);
     }

@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseAbility;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.mapview.common.GeometricalUtil;
@@ -368,10 +369,11 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     }
 
     @Override
-    public Index getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItem target, Index targetPosition) {
+    public Index getDestinationHint(SyncBaseItem syncBaseItem, int range, ItemType target, Index targetPosition) {
         List<CircleFormation.CircleFormationItem> formationItems = new ArrayList<CircleFormation.CircleFormationItem>();
-        formationItems.add(new CircleFormation.CircleFormationItem(syncBaseItem, range));
-        setupDestinationHints(target.getItemType().getRectangle(targetPosition), target.getItemType().getTerrainType(), formationItems);
+        int fullRange = SyncBaseAbility.calculateRange(syncBaseItem.getBaseItemType(), range, target);
+        formationItems.add(new CircleFormation.CircleFormationItem(syncBaseItem, fullRange));
+        setupDestinationHints(target.getRectangle(targetPosition), target.getTerrainType(), formationItems);
         if (formationItems.get(0).isInRange()) {
             return formationItems.get(0).getDestinationHint();
         } else {

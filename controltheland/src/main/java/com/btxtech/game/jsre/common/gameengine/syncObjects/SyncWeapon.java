@@ -60,7 +60,7 @@ public class SyncWeapon extends SyncBaseAbility {
     private boolean tickAttack(double factor) {
         try {
             SyncBaseItem targetItem = (SyncBaseItem) getServices().getItemService().getItem(target);
-            if (isTargetInRange(targetItem.getPosition(), weaponType.getRange() + getSyncBaseItem().getBaseItemType().getRadius() + targetItem.getBaseItemType().getRadius())) {
+            if (isTargetInRange(targetItem.getPosition(), weaponType.getRange(), targetItem.getBaseItemType())) {
                 if (getSyncBaseItem().hasSyncTurnable()) {
                     getSyncBaseItem().getSyncTurnable().turnTo(targetItem.getPosition());
                 }
@@ -87,7 +87,7 @@ public class SyncWeapon extends SyncBaseAbility {
                         if (targetPosition == null) {
                             targetPosition = targetItem.getPosition();
                         }
-                        destinationHint = getServices().getCollisionService().getDestinationHint(getSyncBaseItem(), weaponType.getRange(), targetItem, targetPosition);
+                        destinationHint = getServices().getCollisionService().getDestinationHint(getSyncBaseItem(), weaponType.getRange(), targetItem.getBaseItemType(), targetPosition);
                         if (destinationHint != null) {
                             getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, destinationHint, targetItem.getPosition());
                         } else {

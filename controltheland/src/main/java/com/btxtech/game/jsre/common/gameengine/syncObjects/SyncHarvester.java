@@ -45,7 +45,7 @@ public class SyncHarvester extends SyncBaseAbility {
 
         try {
             SyncResourceItem resource = (SyncResourceItem) getServices().getItemService().getItem(target);
-            if (isTargetInRange(resource.getPosition(), harvesterType.getRange() + getSyncBaseItem().getBaseItemType().getRadius() + resource.getItemType().getRadius())) {
+            if (isTargetInRange(resource.getPosition(), harvesterType.getRange(), resource.getItemType())) {
                 if (getSyncBaseItem().hasSyncTurnable()) {
                     getSyncBaseItem().getSyncTurnable().turnTo(resource.getPosition());
                 }

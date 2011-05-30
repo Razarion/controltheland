@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseAbility;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncHarvester;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -87,7 +88,8 @@ public class ActionServiceUtil {
                 try {
                     SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.getItem(attackCommand.getId());
                     SyncWeapon syncWeapon = syncBaseItem.getSyncWeapon();
-                    circleFormationItemList.add(new CircleFormation.CircleFormationItem(syncBaseItem, syncWeapon.getWeaponType().getRange()));
+                    int range = SyncBaseAbility.calculateRange(syncBaseItem.getBaseItemType(), syncWeapon.getWeaponType().getRange(), target.getItemType());
+                    circleFormationItemList.add(new CircleFormation.CircleFormationItem(syncBaseItem, range));
                 } catch (ItemDoesNotExistException e) {
                     // May be killed
                 }
@@ -124,7 +126,8 @@ public class ActionServiceUtil {
                 try {
                     SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.getItem(moneyCollectCommand.getId());
                     SyncHarvester syncHarvester = syncBaseItem.getSyncHarvester();
-                    circleFormationItemList.add(new CircleFormation.CircleFormationItem(syncBaseItem, syncHarvester.getHarvesterType().getRange()));
+                    int range = SyncBaseAbility.calculateRange(syncBaseItem.getBaseItemType(), syncHarvester.getHarvesterType().getRange(), target.getItemType());
+                    circleFormationItemList.add(new CircleFormation.CircleFormationItem(syncBaseItem, range));
                 } catch (ItemDoesNotExistException e) {
                     // May be killed
                 }

@@ -107,7 +107,7 @@ public class SyncItemContainer extends SyncBaseAbility {
         if (!isActive()) {
             return false;
         }
-        if (isTargetInRange(unloadPos, itemContainerType.getRange() + getSyncBaseItem().getBaseItemType().getRadius())) {
+        if (isTargetInRange(unloadPos, itemContainerType.getRange(), null)) {
             if (getSyncBaseItem().hasSyncTurnable()) {
                 getSyncBaseItem().getSyncTurnable().turnTo(unloadPos);
             }
