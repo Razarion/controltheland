@@ -15,6 +15,7 @@ import org.apache.wicket.util.value.ValueMap;
  * Date: 10.03.2011
  * Time: 10:49:56
  */
+@Deprecated
 public class CmsImageResource extends WebResource {
     public static final String CMS_SHARED_IMAGE_RESOURCES = "cms";
     private static final String ID = "id";

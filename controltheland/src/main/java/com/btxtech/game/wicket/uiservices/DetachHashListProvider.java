@@ -17,67 +17,87 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
+import javax.naming.directory.InvalidAttributesException;
 
 /**
- * User: beat
- * Date: 12.05.2010
- * Time: 20:35:01
+ * User: beat Date: 12.05.2010 Time: 20:35:01
  */
 public abstract class DetachHashListProvider<T> implements IDataProvider<T> {
-    private List<T> list;
+	private List<T> list;
+	private Map<Integer, T> hashMap = new HashMap<Integer, T>();
 
-    @Override
-    public Iterator<? extends T> iterator(int first, int count) {
-        return getList().subList(first, first + count).iterator();
-    }
+	@Override
+	public Iterator<? extends T> iterator(int first, int count) {
+		return getList().subList(first, first + count).iterator();
+	}
 
-    @Override
-    public int size() {
-        return getList().size();
-    }
+	@Override
+	public int size() {
+		return getList().size();
+	}
 
-    @Override
-    public IModel<T> model(T object) {
-        final int hash = object.hashCode();
-        return new CompoundPropertyModel<T>(new IModel<T>() {
-            private T object;
+	@Override
+	public IModel<T> model(T object) {
+		final int hash = object.hashCode();
+		return new CompoundPropertyModel<T>(new IModel<T>() {
+			private T object;
 
-            @Override
-            public T getObject() {
-                if (object == null) {
-                    object = getObject4Hash(hash);
-                }
-                return object;
-            }
+			@Override
+			public T getObject() {
+				if (object == null) {
+					object = getObject4Hash(hash);
+				}
+				return object;
+			}
 
-            @Override
-            public void setObject(T object) {
-                // Ignore
-            }
+			@Override
+			public void setObject(T object) {
+				// Ignore
+			}
 
-            @Override
-            public void detach() {
-                object = null;
-            }
-        });
-    }
+			@Override
+			public void detach() {
+				object = null;
+			}
+		});
+	}
 
-    @Override
-    public void detach() {
-        list = null;
-    }
+	@Override
+	public void detach() {
+		list = null;
+		hashMap.clear();
+	}
 
-    private List<T> getList() {
-        if (list == null) {
-            list = createList();
-        }
-        return list;
-    }
+	private List<T> getList() {
+		if (list == null) {
+			list = createList();
+			for (T t : list) {
+				hashMap.put(t.hashCode(), t);
+			}
+		}
+		return list;
+	}
 
-    protected abstract List<T> createList();
+	protected abstract List<T> createList();
 
-    protected abstract T getObject4Hash(int hash);
+	/**
+	 * Override in subclasses
+	 * 
+	 * @param hash
+	 *            for retrieving the item
+	 * @return the item
+	 */
+	protected T getObject4Hash(int hash) {
+		T t = hashMap.get(hash);
+		if (t == null) {
+			throw new IllegalArgumentException("No entry for " + hash);
+		}
+		return t;
+	}
 
 }

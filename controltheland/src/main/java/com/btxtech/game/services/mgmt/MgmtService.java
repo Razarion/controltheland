@@ -44,10 +44,11 @@ public interface MgmtService {
 
     boolean isTestMode();
 
-    StartupData getStartupData();
+	boolean isNoGameEngine();
+
+	StartupData getStartupData();
 
     StartupData readStartupData();
 
     void saveStartupData(StartupData startupData);
-
 }

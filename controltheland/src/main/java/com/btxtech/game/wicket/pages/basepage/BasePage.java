@@ -17,6 +17,7 @@ import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.WebCommon;
+import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.Home;
 import com.btxtech.game.wicket.pages.forum.ForumView;
 import com.btxtech.game.wicket.pages.info.Info;
@@ -73,6 +74,7 @@ public class BasePage extends WebPage implements IHeaderContributor {
         menuItems.add(new MenuItem("statistics", StatisticsPage.class, this, false));
         menuItems.add(new MenuItem("forum", ForumView.class, this, false));
         menuItems.add(new MenuItem("mgmt", MgmtPage.class, this, true));
+        menuItems.add(new MenuItem("test cms", CmsPage.class, this, true));
         buildMenu(menuItems);
     }
 
