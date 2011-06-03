@@ -13,6 +13,9 @@
 
 package com.btxtech.game.services.cms;
 
+import com.btxtech.game.services.cms.generated.cms.DbCmsImage;
+import com.btxtech.game.services.cms.generated.cms.DbPage;
+import com.btxtech.game.services.cms.generated.cms.DbPageStyle;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 
 /**
@@ -30,4 +33,12 @@ public interface CmsService {
     CrudRootServiceHelper<DbCmsHomeText> getCmsHomeTextCrudRootServiceHelper();
 
     CrudRootServiceHelper<DbCmsHomeLayout> getCmsHomeLayoutCrudRootServiceHelper();
+    
+    DbPage getPage(int pageId);
+
+    DbPage getDefaultPage();
+
+	DbPageStyle getStyle(int styleId);
+
+	DbCmsImage getDbCmsImage(int imgId);
 }

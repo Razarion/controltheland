@@ -72,6 +72,9 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
 
     @PostConstruct
     public void init() {
+    	if(mgmtService.isNoGameEngine()) {
+    		return;
+    	}
         try {
             terrainService.addTerrainListener(this);
             setupPassableTerrain();

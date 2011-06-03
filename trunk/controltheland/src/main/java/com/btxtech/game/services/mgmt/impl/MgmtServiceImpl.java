@@ -81,6 +81,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     public static final String LOG_DIR_NAME = "logs";
     public static final File LOG_DIR;
     public static final String TEST_MODE_PROPERTY = "testmode";
+    public static final String TEST_MODE_NO_GAME_ENGINE = "noGameEngine";
     private Date startTime = new Date();
     private JdbcTemplate readonlyJdbcTemplate;
     @Autowired
@@ -106,6 +107,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     private static Log log = LogFactory.getLog(MgmtServiceImpl.class);
     private HibernateTemplate hibernateTemplate;
     private boolean testMode;
+    private boolean noGameEngine;
     private StartupData startupData;
 
     static {
@@ -297,6 +299,9 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
 
     @Override
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
+    	if(noGameEngine) {
+    		return;
+    	}
         SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
         try {
             if (applicationEvent instanceof ContextRefreshedEvent &&
@@ -338,6 +343,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
             if (!testMode) {
                 LogManager.getLogger("com.btxtech").setLevel(Level.INFO);
             }
+            noGameEngine = System.getProperty(TEST_MODE_PROPERTY) != null && Boolean.parseBoolean(System.getProperty(TEST_MODE_NO_GAME_ENGINE)); 
             startupData = readStartupData();
         } catch (Throwable t) {
             log.error("", t);
@@ -376,8 +382,14 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         hibernateTemplate.saveOrUpdate(startupData);
     }
 
-    public boolean isTestMode() {
+    @Override
+   public boolean isTestMode() {
         return testMode;
     }
+
+    @Override
+	public boolean isNoGameEngine() {
+		return noGameEngine;
+	}
 }
 

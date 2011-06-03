@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbSurfaceRect;
 import com.btxtech.game.services.terrain.DbTerrainImage;
@@ -73,7 +74,9 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     private CrudRootServiceHelper<DbTerrainImage> dbTerrainImageCrudServiceHelper;
     @Autowired
     private CrudRootServiceHelper<DbSurfaceImage> dbSurfaceImageCrudServiceHelper;
-
+    @Autowired
+    private MgmtService mgmtService;
+    
     private HibernateTemplate hibernateTemplate;
     private HashMap<Integer, DbTerrainImage> dbTerrainImages = new HashMap<Integer, DbTerrainImage>();
     private HashMap<Integer, DbSurfaceImage> dbSurfaceImages = new HashMap<Integer, DbSurfaceImage>();
@@ -86,6 +89,9 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
 
     @PostConstruct
     public void init() {
+    	if(mgmtService.isNoGameEngine()) {
+    		return;
+    	}
         dbTerrainImageCrudServiceHelper.init(DbTerrainImage.class);
         dbSurfaceImageCrudServiceHelper.init(DbSurfaceImage.class);
         dbTerrainSettingCrudServiceHelper.init(DbTerrainSetting.class);

@@ -37,6 +37,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: May 31, 2009
  * Time: 9:53:21 PM
  */
+@Deprecated
 public class Home extends WebPage implements IHeaderContributor {
     @SpringBean
     private UserService userService;
