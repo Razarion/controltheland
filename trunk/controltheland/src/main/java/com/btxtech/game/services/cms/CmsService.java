@@ -13,9 +13,6 @@
 
 package com.btxtech.game.services.cms;
 
-import com.btxtech.game.services.cms.generated.cms.DbCmsImage;
-import com.btxtech.game.services.cms.generated.cms.DbPage;
-import com.btxtech.game.services.cms.generated.cms.DbPageStyle;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 
 /**
@@ -24,21 +21,34 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
  * Time: 21:39:03
  */
 public interface CmsService {
+    @Deprecated
     void activateHome();
 
+    @Deprecated
     DbCmsHomeText getDbCmsHomeText();
 
+    @Deprecated
     DbCmsHomeLayout getDbCmsHomeLayout();
 
+    @Deprecated
     CrudRootServiceHelper<DbCmsHomeText> getCmsHomeTextCrudRootServiceHelper();
 
+    @Deprecated
     CrudRootServiceHelper<DbCmsHomeLayout> getCmsHomeLayoutCrudRootServiceHelper();
     
     DbPage getPage(int pageId);
 
-    DbPage getDefaultPage();
-
-	DbPageStyle getStyle(int styleId);
+    DbPage getHomePage();
 
 	DbCmsImage getDbCmsImage(int imgId);
+
+    void activateCms();
+
+    CrudRootServiceHelper<DbCmsImage> getImageCrudRootServiceHelper();
+
+    CrudRootServiceHelper<DbPage> getPageCrudRootServiceHelper();
+
+    CrudRootServiceHelper<DbMenu> getMenuCrudRootServiceHelper();
+
+    CrudRootServiceHelper<DbPageStyle> getPageStyleCrudRootServiceHelper();
 }

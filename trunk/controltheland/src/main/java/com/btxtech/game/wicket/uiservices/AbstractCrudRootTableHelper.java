@@ -2,6 +2,7 @@ package com.btxtech.game.wicket.uiservices;
 
 import com.btxtech.game.services.common.CrudChild;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.repeater.Item;
@@ -132,6 +133,11 @@ abstract public class AbstractCrudRootTableHelper<T extends CrudChild> implement
     protected void extendedPopulateItem(Item<T> item) {
         item.add(new TextField<String>("name"));
     }
+
+    protected void displayId(Item<T> item) {
+        item.add(new Label("id"));
+    }
+
 
     /**
      * Override in subclasses

@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Page Editor</title>
+</head>
+<body>
+
+<span wicket:id="msgs"/>
+
+<form wicket:id="form">
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Style</td>
+            <td wicket:id="style"/>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Is Home</td>
+            <td><input wicket:id="home" type="checkbox"></td>
+
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Menu</td>
+            <td wicket:id="menu"/>
+        </tr>
+    </table>
+    <br>
+    <br>
+    <input type="submit" value="Save" wicket:id="save"/>
+    <br>
+    <input type="submit" value="CMS" wicket:id="cms"/>
+</form>
+</body>
+</html>
