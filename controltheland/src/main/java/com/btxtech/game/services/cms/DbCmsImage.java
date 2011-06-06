@@ -15,55 +15,55 @@ package com.btxtech.game.services.cms;
 
 import com.btxtech.game.services.common.CrudChild;
 
-import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.io.Serializable;
 
 /**
  * User: beat
- * Date: 07.07.2010
- * Time: 20:47:23
+ * Date: 04.06.2011
+ * Time: 01:14:51
  */
-@Deprecated
-@Entity(name = "CMS_HOME_TEXT")
-public class DbCmsHomeText implements CrudChild {
+@Entity(name = "CMS_IMAGE")
+public class DbCmsImage implements CrudChild {
     @Id
     @GeneratedValue
     private Integer id;
-    private boolean isActive;
-    private String internalName;
-    @Column(length = 50000)
-    private String text;
+    private String contentType;
+    @Column(length = 500000)
+    private byte[] data;
 
     @Override
-    public Serializable getId() {
+    public Integer getId() {
         return id;
     }
 
-    public boolean isActive() {
-        return isActive;
+    public String getContentType() {
+        return contentType;
     }
 
-    public void setActive(boolean active) {
-        isActive = active;
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
+    public byte[] getData() {
+        return data;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+
+    @Override
     public String getName() {
-        return internalName;
+        throw new UnsupportedOperationException();
     }
 
-    public void setName(String internalName) {
-        this.internalName = internalName;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
+    @Override
+    public void setName(String name) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -72,23 +72,21 @@ public class DbCmsHomeText implements CrudChild {
 
     @Override
     public void setParent(Object o) {
-        // Np parent
+        // Ignore
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DbCmsHomeText)) return false;
+        if (!(o instanceof DbCmsImage)) return false;
 
-        DbCmsHomeText that = (DbCmsHomeText) o;
+        DbCmsImage that = (DbCmsImage) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-
-        return true;
+        return id != null && id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 }

@@ -286,20 +286,4 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         }
         return allowedItemHelper;
     }
-
-    public void moveTaskUp(DbStepConfig stepConfig) {
-        int i = stepConfigs.indexOf(stepConfig);
-        if (i > 0) {
-            DbStepConfig old = stepConfigs.set(i - 1, stepConfig);
-            stepConfigs.set(i, old);
-        }
-    }
-
-    public void moveTaskDown(DbStepConfig stepConfig) {
-        int i = stepConfigs.indexOf(stepConfig);
-        if (i + 2 < stepConfigs.size()) {
-            DbStepConfig old = stepConfigs.set(i + 1, stepConfig);
-            stepConfigs.set(i, old);
-        }
-    }
 }

@@ -1,18 +1,28 @@
+/*
+ * Copyright (c) 2010.
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; version 2 of the License.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ */
 package com.btxtech.game.wicket.pages.cms;
 
+import com.btxtech.game.services.cms.CmsService;
+import com.btxtech.game.services.cms.DbPage;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.injection.web.InjectorHolder;
 import org.apache.wicket.markup.html.WebResource;
 import org.apache.wicket.markup.html.link.ResourceLink;
-import org.apache.wicket.resource.ByteArrayResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.resource.StringResourceStream;
 import org.apache.wicket.util.value.ValueMap;
-
-import com.btxtech.game.services.cms.CmsService;
-import com.btxtech.game.services.cms.generated.cms.DbPage;
 
 /**
  * User: beat
@@ -27,10 +37,10 @@ public class CmsCssResource extends WebResource {
     private CmsService cmsService;
 
     public static ResourceLink<Object> createCss(String id, DbPage dbPage) {
-    	ResourceLink<Object> link =  new ResourceLink<Object>(id, new ResourceReference(CMS_SHARED_CSS_RESOURCES), new ValueMap(ID + "=" + dbPage.getStyle().getId()));
-    	link.add(new SimpleAttributeModifier("rel", "stylesheet"));
-    	link.add(new SimpleAttributeModifier("type", "text/css"));
-    	return link;
+        ResourceLink<Object> link = new ResourceLink<Object>(id, new ResourceReference(CMS_SHARED_CSS_RESOURCES), new ValueMap(ID + "=" + dbPage.getId()));
+        link.add(new SimpleAttributeModifier("rel", "stylesheet"));
+        link.add(new SimpleAttributeModifier("type", "text/css"));
+        return link;
     }
 
     public CmsCssResource() {
@@ -40,7 +50,7 @@ public class CmsCssResource extends WebResource {
 
     @Override
     public IResourceStream getResourceStream() {
-        int styleId = Integer.parseInt(getParameters().getString(ID));
-        return new StringResourceStream(cmsService.getStyle(styleId).getCss(), "text/css");
+        int pageId = Integer.parseInt(getParameters().getString(ID));
+        return new StringResourceStream(cmsService.getPage(pageId).getStyle().getCss(), "text/css");
     }
 }

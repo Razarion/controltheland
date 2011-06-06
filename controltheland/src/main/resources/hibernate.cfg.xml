@@ -90,8 +90,6 @@
         <mapping class="com.btxtech.game.services.bot.DbBotItemCount"/>
         <mapping class="com.btxtech.game.services.territory.DbTerritory"/>
         <mapping class="com.btxtech.game.services.territory.DbTerritoryRegion"/>
-        <mapping class="com.btxtech.game.services.cms.DbCmsHomeText"/>
-        <mapping class="com.btxtech.game.services.cms.DbCmsHomeLayout"/>
         <mapping class="com.btxtech.game.services.tutorial.DbTutorialConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.DbTaskConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.DbTaskAllowedItem"/>
@@ -113,6 +111,13 @@
         <mapping class="com.btxtech.game.services.utg.condition.backup.DbCountComparisonBackup"/>
         <mapping class="com.btxtech.game.services.utg.condition.backup.DbSyncItemIdComparisonBackup"/>
         <mapping class="com.btxtech.game.services.utg.condition.backup.DbSyncItemTypeComparisonBackup"/>
-
+        <!-- CMS -->
+        <mapping class="com.btxtech.game.services.cms.DbCmsHomeText"/>
+        <mapping class="com.btxtech.game.services.cms.DbCmsHomeLayout"/>
+        <mapping class="com.btxtech.game.services.cms.DbCmsImage"/>
+        <mapping class="com.btxtech.game.services.cms.DbMenu"/>
+        <mapping class="com.btxtech.game.services.cms.DbMenuItem"/>
+        <mapping class="com.btxtech.game.services.cms.DbPage"/>
+        <mapping class="com.btxtech.game.services.cms.DbPageStyle"/>
     </session-factory>
 </hibernate-configuration>

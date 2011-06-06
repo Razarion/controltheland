@@ -15,6 +15,7 @@ package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.wicket.WebCommon;
+import com.btxtech.game.wicket.pages.mgmt.cms.Cms;
 import com.btxtech.game.wicket.pages.mgmt.tracking.SessionTable;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.TutorialTable;
 import java.io.Serializable;
@@ -123,6 +124,7 @@ public class MgmtPage extends MgmtWebPage {
         toolPages.add(new LinkAndName("TerritoryEditor", TerritoryEditor.class));
         toolPages.add(new LinkAndName("Tutorial", TutorialTable.class));
         toolPages.add(new LinkAndName("User States", UserStateTable.class));
+        toolPages.add(new LinkAndName("New CMS", Cms.class));
 
     }
 }

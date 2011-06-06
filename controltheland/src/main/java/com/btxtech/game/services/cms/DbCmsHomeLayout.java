@@ -26,6 +26,7 @@ import java.io.Serializable;
  * Date: 07.07.2010
  * Time: 20:48:15
  */
+@Deprecated
 @Entity(name = "CMS_HOME_LAYOUT")
 public class DbCmsHomeLayout implements Serializable, CrudChild {
     @Id
