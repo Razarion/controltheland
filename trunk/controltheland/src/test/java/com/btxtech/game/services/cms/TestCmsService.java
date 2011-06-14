@@ -30,7 +30,6 @@ public class TestCmsService extends AbstractServiceTest {
         DbCmsImage dbCmsImage1 = crud.createDbChild();
         dbCmsImage1.setData(new byte[50000]);
         dbCmsImage1.setContentType("image");
-        dbCmsImage1.setName("TestName");
         crud.updateDbChild(dbCmsImage1);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -39,7 +38,6 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         Collection<DbCmsImage> collection = crud.readDbChildren();
         Assert.assertEquals(1, collection.size());
-        Assert.assertEquals("TestName", collection.iterator().next().getName());
         Assert.assertEquals("image", collection.iterator().next().getContentType());
         Assert.assertEquals(50000, collection.iterator().next().getData().length);
         int id1 = collection.iterator().next().getId();
@@ -55,7 +53,6 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbCmsImage cachedImage = cmsService.getDbCmsImage(id1);
-        Assert.assertEquals("TestName", cachedImage.getName());
         Assert.assertEquals("image", cachedImage.getContentType());
         Assert.assertEquals(50000, cachedImage.getData().length);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -66,7 +63,6 @@ public class TestCmsService extends AbstractServiceTest {
         DbCmsImage dbCmsImage2 = crud.createDbChild();
         dbCmsImage2.setData(new byte[40000]);
         dbCmsImage2.setContentType("image2");
-        dbCmsImage2.setName("TestName2");
         crud.updateDbChild(dbCmsImage1);
         int id2 = dbCmsImage2.getId();
         endHttpRequestAndOpenSessionInViewFilter();
@@ -81,11 +77,9 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         cachedImage = cmsService.getDbCmsImage(id1);
-        Assert.assertEquals("TestName", cachedImage.getName());
         Assert.assertEquals("image", cachedImage.getContentType());
         Assert.assertEquals(50000, cachedImage.getData().length);
         cachedImage = cmsService.getDbCmsImage(id2);
-        Assert.assertEquals("TestName2", cachedImage.getName());
         Assert.assertEquals("image2", cachedImage.getContentType());
         Assert.assertEquals(40000, cachedImage.getData().length);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -142,7 +136,6 @@ public class TestCmsService extends AbstractServiceTest {
         pageCrud.updateDbChild(dbPage2);
         pageCrud.updateDbChild(dbPage3);
 
-        int id1 = dbPage1.getId();
         int id2 = dbPage2.getId();
         int id3 = dbPage3.getId();
 
@@ -211,6 +204,12 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        ((CmsServiceImpl)cmsService).init();
+        ((CmsServiceImpl) cmsService).init();
+    }
+
+    @Test
+    public void testContentProvider() throws Exception {
+        //ContentDataProviderInfo contentProvider = cmsService.getContentProvider("userGuidanceService", "getDbLevelCrudServiceHelper");
+        //Assert.assertNotNull(contentProvider);
     }
 }

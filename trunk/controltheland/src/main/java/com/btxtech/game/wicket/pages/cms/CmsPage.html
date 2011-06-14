@@ -11,18 +11,34 @@
   ~   GNU General Public License for more details.
   -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
 <head>
-<link wicket:id="css" />
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Insert title here</title>
+    <link wicket:id="css"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title>Insert title here</title>
 </head>
 <body>
-	<table class="menuTableClass">
-		<tr wicket:id="menuTable">
-			<td><a href="#" wicket:id="menuLink"> <span
-					wicket:id="menuLinkName"></span> </a></td>
-		</tr>
-	</table>
+
+<div class="wrapper">
+
+    <div class="header"></div>
+    <div class="left"></div>
+
+
+    <table class="menuTableClass">
+        <tr wicket:id="menuTable">
+            <td><a href="#" wicket:id="menuLink"> <span
+                    wicket:id="menuLinkName"></span> </a></td>
+        </tr>
+    </table>
+
+    <div wicket:id="content"></div>
+
+    <div class="loginClass">
+        <div wicket:id="loggedinBox">loggedinBox</div>
+        <div wicket:id="loginBox">loginBox</div>
+    </div>
+</div>
 </body>
 </html>

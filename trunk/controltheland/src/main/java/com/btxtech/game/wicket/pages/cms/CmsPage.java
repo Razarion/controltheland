@@ -17,7 +17,10 @@ import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbMenu;
 import com.btxtech.game.services.cms.DbMenuItem;
 import com.btxtech.game.services.cms.DbPage;
+import com.btxtech.game.wicket.pages.user.LoggedinBox;
+import com.btxtech.game.wicket.pages.user.LoginBox;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
+import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebPage;
@@ -25,30 +28,52 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
+import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.util.Collections;
 import java.util.List;
 
 public class CmsPage extends WebPage {
-    private static final String ID = "id";
+    public static final String ID = "id";
+    public static final String CHILD_ID = "childId";
     @SpringBean
     private CmsService cmsService;
+    @SpringBean
+    private CmsUiService cmsUiService;
+    private int pageId;
 
-    public CmsPage(PageParameters pageParameters) {
-        DbPage dbPage;
-        if (pageParameters.containsKey(ID)) {
-            int pageId = pageParameters.getInt(ID);
-            dbPage = cmsService.getPage(pageId);
-        } else {
-            dbPage = cmsService.getHomePage();
-        }
+    public CmsPage(final PageParameters pageParameters) {
+
+        setDefaultModel(new CompoundPropertyModel<DbPage>(new LoadableDetachableModel<DbPage>() {
+
+            @Override
+            protected DbPage load() {
+                DbPage dbPage;
+                if (pageParameters.containsKey(ID)) {
+                    pageId = pageParameters.getInt(ID);
+                    dbPage = cmsService.getPage(pageId);
+                } else {
+                    dbPage = cmsService.getHomePage();
+                    pageId = dbPage.getId();
+                }
+                return dbPage;
+            }
+        }));
+        DbPage dbPage = (DbPage) getDefaultModelObject();
         add(CmsCssResource.createCss("css", dbPage));
-        setupMenu(dbPage);
+        setupMenu();
+        setupLoginBox();
+        add(cmsUiService.getRootContent(dbPage, dbPage.getContent(), "content", pageParameters));
     }
 
-    private void setupMenu(DbPage dbPage) {
-        final int pageId = dbPage.getId();
+    private void setupLoginBox() {
+        add(new LoggedinBox("loggedinBox"));
+        add(new LoginBox("loginBox", true));
+    }
+
+    private void setupMenu() {
         DetachHashListProvider<DbMenuItem> menuProvider = new DetachHashListProvider<DbMenuItem>() {
 
             @Override
