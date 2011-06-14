@@ -35,12 +35,12 @@ public interface CmsService {
 
     @Deprecated
     CrudRootServiceHelper<DbCmsHomeLayout> getCmsHomeLayoutCrudRootServiceHelper();
-    
+
     DbPage getPage(int pageId);
 
     DbPage getHomePage();
 
-	DbCmsImage getDbCmsImage(int imgId);
+    DbCmsImage getDbCmsImage(int imgId);
 
     void activateCms();
 
@@ -51,4 +51,6 @@ public interface CmsService {
     CrudRootServiceHelper<DbMenu> getMenuCrudRootServiceHelper();
 
     CrudRootServiceHelper<DbPageStyle> getPageStyleCrudRootServiceHelper();
+
+    DbContent getContentStructure(int contentId);
 }

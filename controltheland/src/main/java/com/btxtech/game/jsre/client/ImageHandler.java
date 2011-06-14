@@ -25,6 +25,7 @@ import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Image;
+
 import java.util.HashSet;
 
 /**
@@ -78,19 +79,23 @@ public class ImageHandler {
     }
 
     private static Image getItemTypeImage(int imgIndex, ItemType itemType) {
+        String urlStr = getItemTYpeUrl(itemType.getId(), imgIndex);
+        loadImage(urlStr);
+        return createImageIE6TransparencyProblem(urlStr, itemType.getWidth(), itemType.getHeight());
+    }
+
+    public static String getItemTYpeUrl(int itemId, int imgIndex) {
         StringBuilder url = new StringBuilder();
         url.append(Constants.ITEM_IMAGE_URL);
         url.append("?");
         url.append(Constants.ITEM_IMAGE_ID);
         url.append("=");
-        url.append(itemType.getId());
+        url.append(itemId);
         url.append("&");
         url.append(Constants.ITEM_IMAGE_INDEX);
         url.append("=");
         url.append(imgIndex);
-        String urlStr = url.toString();
-        loadImage(urlStr);
-        return createImageIE6TransparencyProblem(urlStr, itemType.getWidth(), itemType.getHeight());
+        return url.toString();
     }
 
     /*
@@ -191,8 +196,7 @@ public class ImageHandler {
     }
 
     /**
-     *
-     * @param id image id
+     * @param id                image id
      * @param imageSizeCallback called when the image was loaded. If the image is already loaded is is not called
      * @return Image
      */

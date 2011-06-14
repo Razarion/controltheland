@@ -43,6 +43,12 @@
         </repository>
     </repositories>
     <dependencies>
+        <dependency>
+            <!-- Apache commons -->
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>1.8.3</version>
+        </dependency>
         <!-- GWT -->
         <dependency>
             <groupId>com.google.gwt</groupId>

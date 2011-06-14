@@ -23,7 +23,7 @@ import java.util.Collection;
  * Date: 25.07.2010
  * Time: 12:50:08
  */
-public class CrudChildServiceHelper<T extends CrudChild> implements Serializable {
+public class CrudChildServiceHelper<T extends CrudChild> implements Serializable, ContentProvider {
     private Collection<T> children;
     private Class<T> childClass;
     private CrudParent crudParent;
@@ -34,10 +34,12 @@ public class CrudChildServiceHelper<T extends CrudChild> implements Serializable
         this.crudParent = crudParent;
     }
 
+    @Override
     public Collection<T> readDbChildren() {
         return children;
     }
 
+    @Override
     public T readDbChild(Serializable id) {
         for (T child : children) {
             if (child.getId().equals(id)) {

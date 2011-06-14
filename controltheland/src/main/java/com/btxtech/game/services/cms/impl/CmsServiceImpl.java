@@ -17,6 +17,7 @@ import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbCmsHomeLayout;
 import com.btxtech.game.services.cms.DbCmsHomeText;
 import com.btxtech.game.services.cms.DbCmsImage;
+import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbMenu;
 import com.btxtech.game.services.cms.DbMenuItem;
 import com.btxtech.game.services.cms.DbPage;
@@ -39,6 +40,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +70,7 @@ public class CmsServiceImpl implements CmsService {
     private DbCmsHomeLayout dbCmsHomeLayout;
     private Map<Integer, DbCmsImage> imageCache = new HashMap<Integer, DbCmsImage>();
     private Map<Integer, DbPage> pageCache = new HashMap<Integer, DbPage>();
+    private Map<Integer, DbContent> contentCache = new HashMap<Integer, DbContent>();
     private DbPage home;
 
     @Autowired
@@ -102,6 +105,7 @@ public class CmsServiceImpl implements CmsService {
         }
         home = null;
         pageCache.clear();
+        contentCache.clear();
         for (DbPage dbPage : pageCrudRootServiceHelper.readDbChildren()) {
             initializeLazyDependencies(dbPage);
             pageCache.put(dbPage.getId(), dbPage);
@@ -111,10 +115,24 @@ public class CmsServiceImpl implements CmsService {
                 }
                 home = dbPage;
             }
+            DbContent dbContent = dbPage.getContent();
+            if (dbContent != null) {
+                fillContentCache(dbContent);
+            }
         }
 
         if (home == null) {
             log.warn("CMS: no home page configured");
+        }
+    }
+
+    private void fillContentCache(DbContent dbContent) {
+        contentCache.put(dbContent.getId(), dbContent);
+        Collection<? extends DbContent> children = dbContent.getChildren();
+        if (children != null) {
+            for (DbContent child : children) {
+                fillContentCache(child);
+            }
         }
     }
 
@@ -230,6 +248,15 @@ public class CmsServiceImpl implements CmsService {
     }
 
     @Override
+    public DbContent getContentStructure(int contentId) {
+        DbContent dbContent = contentCache.get(contentId);
+        if (dbContent == null) {
+            throw new IllegalArgumentException("No content for id: " + contentId);
+        }
+        return dbContent;
+    }
+
+    @Override
     public DbCmsImage getDbCmsImage(int imgId) {
         DbCmsImage dbCmsImage = imageCache.get(imgId);
         if (dbCmsImage == null) {
@@ -237,5 +264,4 @@ public class CmsServiceImpl implements CmsService {
         }
         return dbCmsImage;
     }
-
 }

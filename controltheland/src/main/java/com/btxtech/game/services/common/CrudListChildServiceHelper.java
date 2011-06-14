@@ -23,7 +23,7 @@ import java.util.List;
  * Date: 25.07.2010
  * Time: 12:50:08
  */
-public class CrudListChildServiceHelper<T extends CrudChild> implements Serializable {
+public class CrudListChildServiceHelper<T extends CrudChild> implements Serializable, ContentProvider {
     private List<T> children;
     private Class<T> childClass;
     private CrudParent crudParent;
