@@ -21,23 +21,30 @@
 <body>
 
 <div class="wrapper">
-
     <div class="header"></div>
-    <div class="left"></div>
 
+    <div>
+        <table class="contentMenu">
+            <tr wicket:id="menuTable">
+                <td><a href="#" wicket:id="menuLink"> <span wicket:id="menuLinkName"></span> </a></td>
+            </tr>
+        </table>
+        <div class="contentWrapper">
+            <div class="contentMain">
+                <div wicket:id="content" class="contentMainInner"></div>
+            </div>
+            <div class="contentLeft"></div>
+            <br class="clear-both"/>
+        </div>
+    </div>
 
-    <table class="menuTableClass">
-        <tr wicket:id="menuTable">
-            <td><a href="#" wicket:id="menuLink"> <span
-                    wicket:id="menuLinkName"></span> </a></td>
-        </tr>
-    </table>
+    <br class="clear-both"/>
 
-    <div wicket:id="content"></div>
-
-    <div class="loginClass">
-        <div wicket:id="loggedinBox">loggedinBox</div>
-        <div wicket:id="loginBox">loginBox</div>
+    <div class="footer">
+        <div class="loginClass">
+            <div wicket:id="loggedinBox">loggedinBox</div>
+            <div wicket:id="loginBox">loginBox</div>
+        </div>
     </div>
 </div>
 </body>

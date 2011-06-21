@@ -2,43 +2,56 @@
         "http://www.w3.org/TR/html4/loose.dtd">
 <html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
 <head>
-    <title>Menu Editor</title>
+    <title>Bean Table</title>
 </head>
 <body>
-<h1>Menu</h1>
-
+<h1>Content Book Editor</h1>
 <span wicket:id="msgs"/>
 
 <form wicket:id="form">
+    <h2>Config</h2>
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Spring Bean</td>
+            <td><input type="text" wicket:id="springBeanName"/></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Content Provider Getter</td>
+            <td><input type="text" wicket:id="contentProviderGetter"/></td>
+        </tr>
+    </table>
+
+    <h2>Config</h2>
     <table cellpadding="1" cellspacing="1" border="0">
         <tr>
+            <th bgcolor="#dadada">Id</th>
             <th bgcolor="#dadada">Name</th>
-            <th bgcolor="#dadada">Page</th>
+            <th bgcolor="#dadada">Edit</th>
             <th bgcolor="#dadada">Up</th>
             <th bgcolor="#dadada">Down</th>
             <th bgcolor="#dadada">Delete</th>
         </tr>
-        <tr wicket:id="menuItems">
+        <tr wicket:id="children">
+            <td wicket:id="id"/>
             <td><input wicket:id="name" type="text" size="30"></td>
-            <td wicket:id="page" />
+            <td valign="center">
+                <input type="submit" value="Edit" wicket:id="edit"/>
+            </td>
             <td valign="center">
                 <input type="submit" value="Up" wicket:id="up"/>
             </td>
             <td valign="center">
                 <input type="submit" value="Down" wicket:id="down"/>
-            </td>            
+            </td>
             <td valign="center">
                 <input type="submit" value="Delete" wicket:id="delete"/>
             </td>
         </tr>
     </table>
+    <span wicket:id="createChild"></span>
     <br>
-    <input type="submit" value="Save" wicket:id="saveMenuItems"/>
-    <input type="submit" value="Create" wicket:id="createMenuItem"/>
     <br>
-    <input type="submit" value="CMS" wicket:id="cms"/>
-
+    <input type="submit" value="Save" wicket:id="save"/>
 </form>
-
 </body>
 </html>

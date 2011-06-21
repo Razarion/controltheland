@@ -100,9 +100,9 @@ abstract public class AbstractCrudRootTableHelper<T extends CrudChild> implement
 
     protected abstract void updateDbChildren(List<T> children);
 
-    protected abstract void createDbChild();
+    protected abstract T createDbChild();
 
-    protected abstract void createDbChild(Class<? extends T> createClass);
+    protected abstract <C extends T> C createDbChild(Class<C> createClass);
 
     protected void setupCreate(WebMarkupContainer markupContainer, String createId) {
         markupContainer.add(new Button(createId) {

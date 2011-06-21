@@ -14,15 +14,15 @@
 package com.btxtech.game.services.cms;
 
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.common.HibernateUtil;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.OneToOne;
 
 /**
  * User: beat
@@ -40,15 +40,10 @@ public class DbPage implements CrudChild {
     private DbMenu menu;
     private String name;
     private boolean home;
-    @Transient
-    static private DbContent content;
+    @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private DbContent content;
 
     public DbPage() {
-    }
-
-    @Deprecated
-    public DbPage(Integer id) {
-        this.id = id;
     }
 
     @Override
@@ -99,12 +94,11 @@ public class DbPage implements CrudChild {
     }
 
     public DbContent getContent() {
-        //DbTextContent dbTextContent = new DbTextContent();
-        //dbTextContent.setContent("bla bla bla bla");
-        //return dbTextContent;
-        //return new DbGenericDetailTable();
-        // return new DbBeanTable();
-        return content;
+        return HibernateUtil.deproxy(content, DbContent.class);
+    }
+
+    public void setContent(DbContent content) {
+        this.content = content;
     }
 
     @Override
@@ -122,8 +116,36 @@ public class DbPage implements CrudChild {
         return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 
-    static {
+    /*   static {
+       DbBeanTable dbBeanTable = new DbBeanTable();
+       dbBeanTable.setRowsPerPage(5);
+       dbBeanTable.setSpringBeanName("cmsService");
+       dbBeanTable.setContentProviderGetter("getBlogEntryCrudRootServiceHelper");
+       List<DbProperty> dbPropertyColumns = new ArrayList<DbProperty>();
+       dbBeanTable.setDbPropertyColumns(dbPropertyColumns);
 
+       DbPropertyContainer dbPropertyContainer = new DbPropertyContainer();
+       dbPropertyColumns.add(dbPropertyContainer);
+       dbPropertyContainer.setParentContentDataProviderInfo(dbBeanTable);
+
+       List<DbProperty> dbProperties = new ArrayList<DbProperty>();
+       dbPropertyContainer.setDbProperties(dbProperties);
+       DbExpressionProperty title = new DbExpressionProperty();
+       title.setExpression("name");
+       dbProperties.add(title);
+       DbExpressionProperty date = new DbExpressionProperty();
+       date.setExpression("timeStamp");
+       dbProperties.add(date);
+       DbExpressionProperty html = new DbExpressionProperty();
+       html.setExpression("html");
+       html.setEscapeMarkup(false);
+       dbProperties.add(html);
+
+       content = dbBeanTable;
+   } */
+
+    /*
+    static {
         // Columns
         DbBeanTable dbBeanTable = new DbBeanTable();
         dbBeanTable.setRowsPerPage(5);
@@ -137,28 +159,28 @@ public class DbPage implements CrudChild {
         DbExpressionProperty column1 = new DbExpressionProperty();
         column1.setExpression("internalDescription");
         dbPropertyColumns.add(column1);
-        DbPropertyBookLink column3 = new DbPropertyBookLink();
+        DbContentLink column3 = new DbContentLink();
         column3.setLabel("Details");
         column3.setPage(new DbPage(4));
         dbPropertyColumns.add(column3);
 
-        List<DbPropertyBook> dbPropertyBooks = new ArrayList<DbPropertyBook>();
+        List<DbContentBook> dbPropertyBooks = new ArrayList<DbContentBook>();
 
-        DbPropertyBook dbPropertyBook0 = new DbPropertyBook();
+        DbContentBook dbPropertyBook0 = new DbContentBook();
         dbPropertyBooks.add(dbPropertyBook0);
         dbPropertyBook0.setParentSpringBeanProvider(dbBeanTable);
         dbPropertyBook0.setClassName("com.btxtech.game.services.utg.DbSimulationLevel");
-        List<DbPropertyRow> rows = new ArrayList<DbPropertyRow>();
+        List<DbContentRow> rows = new ArrayList<DbContentRow>();
         dbPropertyBook0.setDbPropertyRows(rows);
 
-        DbPropertyRow dbPropertyRow0 = new DbPropertyRow();
+        DbContentRow dbPropertyRow0 = new DbContentRow();
         rows.add(dbPropertyRow0);
         dbPropertyRow0.setName("Name");
         DbExpressionProperty row0p1 = new DbExpressionProperty();
         row0p1.setExpression("name");
         dbPropertyRow0.setDbProperty(row0p1);
 
-        DbPropertyRow dbPropertyRow1 = new DbPropertyRow();
+        DbContentRow dbPropertyRow1 = new DbContentRow();
         dbPropertyRow1.setName("Description");
         DbExpressionProperty row1p1 = new DbExpressionProperty();
         row1p1.setExpression("html");
@@ -166,21 +188,21 @@ public class DbPage implements CrudChild {
         dbPropertyRow1.setDbProperty(row1p1);
         rows.add(dbPropertyRow1);
 
-        DbPropertyBook dbPropertyBook1 = new DbPropertyBook();
+        DbContentBook dbPropertyBook1 = new DbContentBook();
         dbPropertyBook1.setParentSpringBeanProvider(dbBeanTable);
         dbPropertyBooks.add(dbPropertyBook1);
         dbPropertyBook1.setClassName("com.btxtech.game.services.utg.DbRealGameLevel");
-        rows = new ArrayList<DbPropertyRow>();
+        rows = new ArrayList<DbContentRow>();
         dbPropertyBook1.setDbPropertyRows(rows);
 
-        DbPropertyRow dbProperty1Row0 = new DbPropertyRow();
+        DbContentRow dbProperty1Row0 = new DbContentRow();
         dbProperty1Row0.setName("Name");
         DbExpressionProperty row0p2 = new DbExpressionProperty();
         row0p2.setExpression("name");
         dbProperty1Row0.setDbProperty(row0p1);
         rows.add(dbProperty1Row0);
 
-        DbPropertyRow dbProperty1Row1 = new DbPropertyRow();
+        DbContentRow dbProperty1Row1 = new DbContentRow();
         dbProperty1Row1.setName("Description");
         DbExpressionProperty row1p2 = new DbExpressionProperty();
         row1p2.setExpression("html");
@@ -191,7 +213,7 @@ public class DbPage implements CrudChild {
         dbBeanTable.setDbPropertyBooks(dbPropertyBooks);
 
 
-        DbPropertyRow dbProperty1Row2 = new DbPropertyRow();
+        DbContentRow dbProperty1Row2 = new DbContentRow();
         dbProperty1Row2.setName("Allowed Items");
         DbBeanTable dbBeanTable1 = new DbBeanTable();
         dbBeanTable1.setParentSpringBeanProvider(dbPropertyBook1);
@@ -208,6 +230,6 @@ public class DbPage implements CrudChild {
         rows.add(dbProperty1Row2);
 
         content = dbBeanTable;
-
     }
+    */
 }

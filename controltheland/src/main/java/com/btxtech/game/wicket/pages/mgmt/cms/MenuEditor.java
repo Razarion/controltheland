@@ -5,10 +5,10 @@ import com.btxtech.game.services.cms.DbMenu;
 import com.btxtech.game.services.cms.DbMenuItem;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
+import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CrudListChildTableHelper;
 import com.btxtech.game.wicket.uiservices.PageSelector;
 import com.btxtech.game.wicket.uiservices.RuModel;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -21,7 +21,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 06.06.2011
  * Time: 01:15:00
  */
-public class MenuEditor extends WebPage {
+public class MenuEditor extends MgmtWebPage {
     @SpringBean
     private CmsService cmsService;
     @SpringBean

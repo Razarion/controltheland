@@ -2,10 +2,17 @@ package com.btxtech.game.services.cms;
 
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.cms.impl.CmsServiceImpl;
+import com.btxtech.game.services.common.CrudChildServiceHelper;
+import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.wicket.pages.cms.CmsPage;
+import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
+import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Collection;
@@ -20,6 +27,15 @@ import java.util.List;
 public class TestCmsService extends AbstractServiceTest {
     @Autowired
     private CmsService cmsService;
+    private WicketTester tester;
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Before
+    public void setUp() {
+        tester = new WicketTester();
+        tester.getApplication().addComponentInstantiationListener(new SpringComponentInjector(tester.getApplication(), applicationContext, true));
+    }
 
     @Test
     @DirtiesContext
@@ -208,8 +224,179 @@ public class TestCmsService extends AbstractServiceTest {
     }
 
     @Test
-    public void testContentProvider() throws Exception {
-        //ContentDataProviderInfo contentProvider = cmsService.getContentProvider("userGuidanceService", "getDbLevelCrudServiceHelper");
-        //Assert.assertNotNull(contentProvider);
+    @DirtiesContext
+    public void testContentContainerInBeanTable() {
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage1 = pageCrud.createDbChild();
+        dbPage1.setHome(true);
+        dbPage1.setName("Home");
+
+        DbBeanTable dbBeanTable = new DbBeanTable();
+        dbBeanTable.init();// TODO should not be called here
+        dbPage1.setContent(dbBeanTable);
+        dbBeanTable.setRowsPerPage(5);
+        dbBeanTable.setSpringBeanName("cmsService");
+        dbBeanTable.setContentProviderGetter("getBlogEntryCrudRootServiceHelper");
+
+        CrudListChildServiceHelper<DbContent> columnCrud = dbBeanTable.getColumnsCrud();
+        DbContentContainer dbContentContentContainer = (DbContentContainer) columnCrud.createDbChild(DbContentContainer.class);
+
+        DbExpressionProperty title = (DbExpressionProperty) dbContentContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
+        title.setExpression("name");
+        DbExpressionProperty date = (DbExpressionProperty) dbContentContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
+        date.setExpression("timeStamp");
+        DbExpressionProperty html = (DbExpressionProperty) dbContentContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
+        html.setExpression("html");
+        html.setEscapeMarkup(false);
+
+        pageCrud.updateDbChild(dbPage1);
+        int id = dbPage1.getId();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Set blog service
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbBlogEntry> blogCrud = cmsService.getBlogEntryCrudRootServiceHelper();
+        DbBlogEntry dbBlogEntry = blogCrud.createDbChild();
+        dbBlogEntry.setHtml("Blog 1");
+        dbBlogEntry.setName("News 1");
+        blogCrud.updateDbChild(dbBlogEntry);
+
+        dbBlogEntry = blogCrud.createDbChild();
+        dbBlogEntry.setHtml("Blog 2");
+        dbBlogEntry.setName("News 2");
+        blogCrud.updateDbChild(dbBlogEntry);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbPage cachePage = cmsService.getPage(id);
+        DbBeanTable cacheBeanTable = (DbBeanTable) cachePage.getContent();
+
+        Assert.assertEquals("cmsService", cacheBeanTable.getSpringBeanName());
+        Assert.assertEquals("getBlogEntryCrudRootServiceHelper", cacheBeanTable.getContentProviderGetter());
+        Assert.assertEquals(5, (int) cacheBeanTable.getRowsPerPage());
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // TODO check for labels
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
     }
+
+    @Test
+    @DirtiesContext
+    public void testBeanTableWithContentBookWithBeanTable() {
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setHome(true);
+        dbPage.setName("Home");
+
+        DbBeanTable dbBeanTable = new DbBeanTable();
+        dbBeanTable.setRowsPerPage(5);
+        dbBeanTable.init();// TODO should not be called here
+        dbPage.setContent(dbBeanTable);
+        dbBeanTable.setSpringBeanName("userGuidanceService");
+        dbBeanTable.setContentProviderGetter("getDbLevelCrudServiceHelper");
+
+        CrudListChildServiceHelper<DbContent> columnCrud = dbBeanTable.getColumnsCrud();
+        DbExpressionProperty column = (DbExpressionProperty) columnCrud.createDbChild(DbExpressionProperty.class);
+        column.setExpression("name");
+        column = (DbExpressionProperty) columnCrud.createDbChild(DbExpressionProperty.class);
+        column.setExpression("internalDescription");
+        DbContentDetailLink detailLink = (DbContentDetailLink) columnCrud.createDbChild(DbContentDetailLink.class);
+        detailLink.setName("Details");
+
+        CrudChildServiceHelper<DbContentBook> contentBookCrud = dbBeanTable.getContentBookCrud();
+        DbContentBook dbContentBook = contentBookCrud.createDbChild();
+        dbContentBook.setClassName("com.btxtech.game.services.utg.DbSimulationLevel");
+
+        CrudListChildServiceHelper<DbContentRow> rowCrud = dbContentBook.getRowCrud();
+        DbContentRow dbContentRow = rowCrud.createDbChild();
+        dbContentRow.setName("Name");
+        DbExpressionProperty expProperty = new DbExpressionProperty();
+        expProperty.setExpression("name");
+        dbContentRow.setDbContent(expProperty);
+
+        dbContentRow = rowCrud.createDbChild();
+        dbContentRow.setName("Description");
+        expProperty = new DbExpressionProperty();
+        expProperty.setExpression("html");
+        expProperty.setEscapeMarkup(false);
+        dbContentRow.setDbContent(expProperty);
+
+        dbContentBook = contentBookCrud.createDbChild();
+        dbContentBook.setClassName("com.btxtech.game.services.utg.DbRealGameLevel");
+
+        dbContentRow = rowCrud.createDbChild();
+        dbContentRow.setName("Name");
+        expProperty = new DbExpressionProperty();
+        expProperty.setExpression("name");
+        dbContentRow.setDbContent(expProperty);
+
+        dbContentRow = rowCrud.createDbChild();
+        dbContentRow.setName("Description");
+        expProperty = new DbExpressionProperty();
+        expProperty.setExpression("html");
+        expProperty.setEscapeMarkup(false);
+        dbContentRow.setDbContent(expProperty);
+
+        dbContentRow = rowCrud.createDbChild();
+        dbContentRow.setName("Allowed Items");
+        DbBeanTable dbBeanTableItems = new DbBeanTable();
+        dbBeanTableItems.init();// TODO should not be called here        
+        dbBeanTableItems.setContentProviderGetter("getDbItemTypeLimitationCrudServiceHelper");
+        columnCrud = dbBeanTableItems.getColumnsCrud();
+        DbExpressionProperty count = (DbExpressionProperty) columnCrud.createDbChild(DbExpressionProperty.class);
+        count.setExpression("count");
+        DbExpressionProperty img = (DbExpressionProperty) columnCrud.createDbChild(DbExpressionProperty.class);
+        img.setExpression("dbBaseItemType");
+
+        pageCrud.updateDbChild(dbPage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // TODO check for labels
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertLabel("content:dataTable:body:rows:1:cells:1:cell", "Hallo");
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+    }
+
 }

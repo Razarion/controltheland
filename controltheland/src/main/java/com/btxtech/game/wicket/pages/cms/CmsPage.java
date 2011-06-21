@@ -65,7 +65,7 @@ public class CmsPage extends WebPage {
         add(CmsCssResource.createCss("css", dbPage));
         setupMenu();
         setupLoginBox();
-        add(cmsUiService.getRootContent(dbPage, dbPage.getContent(), "content", pageParameters));
+        add(cmsUiService.getRootComponent(dbPage, "content", pageParameters));
     }
 
     private void setupLoginBox() {
