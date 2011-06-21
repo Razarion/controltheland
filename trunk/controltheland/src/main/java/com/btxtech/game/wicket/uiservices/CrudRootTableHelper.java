@@ -51,13 +51,13 @@ public abstract class CrudRootTableHelper<T extends CrudChild> extends AbstractC
     }
 
     @Override
-    protected void createDbChild() {
-        getCrudRootServiceHelperImpl().createDbChild();
+    protected T createDbChild() {
+        return getCrudRootServiceHelperImpl().createDbChild();
     }
 
     @Override
-    protected void createDbChild(Class<? extends T> createClass) {
-        getCrudRootServiceHelperImpl().createDbChild(createClass);
+    protected <C extends T> C createDbChild(Class<C> createClass) {
+        return (C) getCrudRootServiceHelperImpl().createDbChild(createClass);
     }
 
 }

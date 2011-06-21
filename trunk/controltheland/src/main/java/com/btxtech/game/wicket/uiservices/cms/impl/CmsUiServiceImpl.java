@@ -1,20 +1,23 @@
 package com.btxtech.game.wicket.uiservices.cms.impl;
 
 import com.btxtech.game.services.cms.CmsService;
-import com.btxtech.game.services.cms.ContentDataProviderInfo;
 import com.btxtech.game.services.cms.DbBeanTable;
 import com.btxtech.game.services.cms.DbContent;
+import com.btxtech.game.services.cms.DbContentBook;
+import com.btxtech.game.services.cms.DbContentContainer;
+import com.btxtech.game.services.cms.DbContentDetailLink;
 import com.btxtech.game.services.cms.DbExpressionProperty;
 import com.btxtech.game.services.cms.DbPage;
-import com.btxtech.game.services.cms.DbPropertyBook;
-import com.btxtech.game.services.cms.DbPropertyBookLink;
+import com.btxtech.game.services.cms.DbStaticProperty;
 import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
-import com.btxtech.game.wicket.pages.cms.CmsPageLinkPanel;
+import com.btxtech.game.wicket.pages.cms.ContentDetailLink;
 import com.btxtech.game.wicket.pages.cms.ItemTypeImage;
 import com.btxtech.game.wicket.pages.cms.content.BeanTable;
-import com.btxtech.game.wicket.pages.cms.content.PropertyBook;
+import com.btxtech.game.wicket.pages.cms.content.ContentBook;
+import com.btxtech.game.wicket.pages.cms.content.ContentContainer;
+import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
@@ -43,44 +46,43 @@ public class CmsUiServiceImpl implements CmsUiService {
     private Log log = LogFactory.getLog(CmsUiServiceImpl.class);
 
     @Override
-    public Component getRootContent(DbPage dbPage, DbContent dbContent, String id, PageParameters pageParameters) {
+    public Component getRootComponent(DbPage dbPage, String componentId, PageParameters pageParameters) {
+        DbContent dbContent = dbPage.getContent();
+        BeanIdPathElement beanIdPathElement = new BeanIdPathElement(dbPage, dbContent);
+        // if the Page should display a child of a BeanTable
         if (pageParameters.containsKey(CmsPage.CHILD_ID) && dbContent instanceof DbBeanTable) {
-            ///////
-            // TODO slow
-            int childId = pageParameters.getInt(CmsPage.CHILD_ID);
-            DbBeanTable dbBeanTable = (DbBeanTable) dbContent;
-            Object bean = getContentDataProviderBean(dbBeanTable, childId);
-            DbPropertyBook dbPropertyBook = dbBeanTable.getDbPropertyBook(bean.getClass().getName());
-            ///////
-            return new PropertyBook(id, dbPropertyBook, childId);
+            beanIdPathElement = beanIdPathElement.createChild(pageParameters.getInt(CmsPage.CHILD_ID));
+            Object bean = getDataProviderBean(beanIdPathElement);
+            dbContent = ((DbBeanTable) dbContent).getDbPropertyBook(bean.getClass().getName());
         }
-        return getContent(dbContent, dbPage, id, null);
+        return getComponent(dbContent, null, componentId, beanIdPathElement);
     }
 
     @Override
-    public Component getContent(DbContent dbContent, Object bean, String id, Integer childId) {
+    public Component getComponent(DbContent dbContent, Object bean, String componentId, BeanIdPathElement beanIdPathElement) {
         try {
             if (dbContent instanceof DbBeanTable) {
-                DbBeanTable dbBeanTable = (DbBeanTable) dbContent;
-                return new BeanTable(id, dbBeanTable, childId);
+                return new BeanTable(componentId, (DbBeanTable) dbContent, beanIdPathElement);
             } else if (dbContent instanceof DbExpressionProperty) {
                 Object value = PropertyUtils.getProperty(bean, ((DbExpressionProperty) dbContent).getExpression());
-                return componentForClass(id, value, ((DbExpressionProperty) dbContent).getEscapeMarkup());
-            } else if (dbContent instanceof DbPropertyBookLink) {
-                return new CmsPageLinkPanel(id, (DbPropertyBookLink) dbContent, bean);
+                return componentForClass(componentId, value, ((DbExpressionProperty) dbContent).getEscapeMarkup());
+            } else if (dbContent instanceof DbContentDetailLink) {
+                return new ContentDetailLink(componentId, (DbContentDetailLink) dbContent, beanIdPathElement);
+            } else if (dbContent instanceof DbContentContainer) {
+                return new ContentContainer(componentId, (DbContentContainer) dbContent, beanIdPathElement);
+            } else if (dbContent instanceof DbContentBook) {
+                return new ContentBook(componentId, (DbContentBook) dbContent, beanIdPathElement);
+            } else if (dbContent instanceof DbStaticProperty) {
+                DbStaticProperty dbStaticProperty = (DbStaticProperty) dbContent;
+                return new Label(componentId, dbStaticProperty.getHtml()).setEscapeModelStrings(dbStaticProperty.getEscapeMarkup());
             } else {
-                log.warn("No Wicket Component for content: " + dbContent);
-                return new Label(id, "No content");
+                log.warn("CmsUiServiceImpl: No Wicket Component for content: " + dbContent);
+                return new Label(componentId, "No content");
             }
         } catch (Exception e) {
-            log.error("", e);
-            return new Label(id, "Error!");
+            log.error("DbContent: " + dbContent + " bean: " + bean + " id: " + componentId + " " + beanIdPathElement, e);
+            return new Label(componentId, "Error!");
         }
-    }
-
-    @Override
-    public Component getContent(int contentId, Object bean, String id, Integer childId) {
-        return getContent(this.<DbContent>getContentStructure(contentId), bean, id, childId);
     }
 
     private Component componentForClass(String id, Object value, boolean escapeMarkup) {
@@ -92,57 +94,66 @@ public class CmsUiServiceImpl implements CmsUiService {
     }
 
     @Override
-    public <T extends DbContent> T getContentStructure(int contentId) {
+    public <T extends DbContent> T getDbContent(int contentId) {
         return (T) cmsService.getContentStructure(contentId);
     }
 
-    private ContentProvider getContentDataProviderBeanFormBean(Object bean, ContentDataProviderInfo contentDataProviderInfo) {
-        while (contentDataProviderInfo.getContentProviderGetter() == null) {
-            contentDataProviderInfo = contentDataProviderInfo.getParentContentDataProvider();
-            if (contentDataProviderInfo == null) {
-                throw new IllegalStateException();
-            }
-        }
+    @Override
+    public Object getDataProviderBean(BeanIdPathElement beanIdPathElement) {
         try {
-            Method method = bean.getClass().getMethod(contentDataProviderInfo.getContentProviderGetter());
-            return (ContentProvider) method.invoke(bean);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private Object getSpringBean(ContentDataProviderInfo contentDataProviderInfo) {
-        while (contentDataProviderInfo.getSpringBeanName() == null) {
-            contentDataProviderInfo = contentDataProviderInfo.getParentContentDataProvider();
-            if (contentDataProviderInfo == null) {
-                throw new IllegalStateException();
+            if (beanIdPathElement.hasSpringBeanName()) {
+                return applicationContext.getBean(beanIdPathElement.getSpringBeanName());
+            } else if (beanIdPathElement.hasContentProviderGetter() && beanIdPathElement.hasBeanId() && beanIdPathElement.hasParent()) {
+                Object bean = getDataProviderBean(beanIdPathElement.getParent());
+                Method method = bean.getClass().getMethod(beanIdPathElement.getContentProviderGetter());
+                ContentProvider contentProvider = (ContentProvider) method.invoke(bean);
+                return contentProvider.readDbChild(beanIdPathElement.getBeanId());
+            } else if (beanIdPathElement.hasBeanId() && beanIdPathElement.hasParent()) {
+                ContentProvider contentProvider = getContentProvider(beanIdPathElement.getParent());
+                return contentProvider.readDbChild(beanIdPathElement.getBeanId());
+            } else {
+                throw new IllegalArgumentException(beanIdPathElement.toString());
             }
-        }
-        try {
-            return applicationContext.getBean(contentDataProviderInfo.getSpringBeanName());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public Object getContentDataProviderBean(ContentDataProviderInfo contentDataProviderInfo, Integer childId) {
-        Object contentProviderBean = getSpringBean(contentDataProviderInfo);
-        if(childId != null) {
-            ContentProvider contentProvider = getContentDataProviderBeanFormBean(contentProviderBean, contentDataProviderInfo);
-            contentProviderBean = contentProvider.readDbChild(childId);
+    public List getDataProviderBeans(BeanIdPathElement beanIdPathElement) {
+        try {
+            ContentProvider contentProvider;
+            if (beanIdPathElement.hasContentProviderGetter() && !beanIdPathElement.hasSpringBeanName() && !beanIdPathElement.hasBeanId()) {
+                Object bean = getDataProviderBean(beanIdPathElement.getParent());
+                Method method = bean.getClass().getMethod(beanIdPathElement.getContentProviderGetter());
+                contentProvider = (ContentProvider) method.invoke(bean);
+            } else {
+                contentProvider = getContentProvider(beanIdPathElement);
+            }
+            return new ArrayList(contentProvider.readDbChildren());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return contentProviderBean;
+
     }
 
-    @Override
-    public List getChildContentDataProviderBeans(ContentDataProviderInfo contentDataProviderInfo, Integer childId) {
-        Object contentProviderBean = getSpringBean(contentDataProviderInfo);
-        if (childId != null) {
-            ContentProvider parentContentProvider = getContentDataProviderBeanFormBean(contentProviderBean, contentDataProviderInfo.getParentContentDataProvider());
-            contentProviderBean = parentContentProvider.readDbChild(childId);
+    private ContentProvider getContentProvider(BeanIdPathElement beanIdPathElement) {
+        try {
+            if (beanIdPathElement.hasContentProviderGetter() && beanIdPathElement.hasSpringBeanName()) {
+                Object bean = applicationContext.getBean(beanIdPathElement.getSpringBeanName());
+                Method method = bean.getClass().getMethod(beanIdPathElement.getContentProviderGetter());
+                return (ContentProvider) method.invoke(bean);
+            } else if (beanIdPathElement.hasContentProviderGetter() && beanIdPathElement.hasBeanId() && beanIdPathElement.hasParent()) {
+                ContentProvider contentProvider = getContentProvider(beanIdPathElement.getParent());
+                Object bean = contentProvider.readDbChild(beanIdPathElement.getBeanId());
+                Method method = bean.getClass().getMethod(beanIdPathElement.getContentProviderGetter());
+                return (ContentProvider) method.invoke(bean);
+            } else {
+                throw new IllegalArgumentException(beanIdPathElement.toString());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        ContentProvider contentProvider = getContentDataProviderBeanFormBean(contentProviderBean, contentDataProviderInfo);
-        return new ArrayList(contentProvider.readDbChildren());
     }
+
 }

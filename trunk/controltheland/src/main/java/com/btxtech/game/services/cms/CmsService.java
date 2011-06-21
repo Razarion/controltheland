@@ -40,6 +40,8 @@ public interface CmsService {
 
     DbPage getHomePage();
 
+    DbContent getContentStructure(int contentId);
+
     DbCmsImage getDbCmsImage(int imgId);
 
     void activateCms();
@@ -52,5 +54,5 @@ public interface CmsService {
 
     CrudRootServiceHelper<DbPageStyle> getPageStyleCrudRootServiceHelper();
 
-    DbContent getContentStructure(int contentId);
+    CrudRootServiceHelper<DbBlogEntry> getBlogEntryCrudRootServiceHelper();
 }

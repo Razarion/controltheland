@@ -119,5 +119,15 @@
         <mapping class="com.btxtech.game.services.cms.DbMenuItem"/>
         <mapping class="com.btxtech.game.services.cms.DbPage"/>
         <mapping class="com.btxtech.game.services.cms.DbPageStyle"/>
+        <mapping class="com.btxtech.game.services.cms.DbBeanTable"/>
+        <mapping class="com.btxtech.game.services.cms.DbContentContainer"/>
+        <mapping class="com.btxtech.game.services.cms.DbExpressionProperty"/>
+        <mapping class="com.btxtech.game.services.cms.DbContentDetailLink"/>
+        <mapping class="com.btxtech.game.services.cms.DbContentBook"/>
+        <mapping class="com.btxtech.game.services.cms.DbContentRow"/>
+        <mapping class="com.btxtech.game.services.cms.DbStaticProperty"/>
+        <!-- Content -->
+        <mapping class="com.btxtech.game.services.cms.DbBlogEntry"/>
+
     </session-factory>
 </hibernate-configuration>

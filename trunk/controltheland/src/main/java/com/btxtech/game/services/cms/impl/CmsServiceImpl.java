@@ -14,6 +14,7 @@
 package com.btxtech.game.services.cms.impl;
 
 import com.btxtech.game.services.cms.CmsService;
+import com.btxtech.game.services.cms.DbBlogEntry;
 import com.btxtech.game.services.cms.DbCmsHomeLayout;
 import com.btxtech.game.services.cms.DbCmsHomeText;
 import com.btxtech.game.services.cms.DbCmsImage;
@@ -23,6 +24,7 @@ import com.btxtech.game.services.cms.DbMenuItem;
 import com.btxtech.game.services.cms.DbPage;
 import com.btxtech.game.services.cms.DbPageStyle;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,7 +50,7 @@ import java.util.Map;
 /**
  * User: beat Date: 06.07.2010 Time: 21:41:45
  */
-@Component("cmsServiceImpl")
+@Component("cmsService")
 public class CmsServiceImpl implements CmsService {
     private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(CmsServiceImpl.class);
@@ -66,6 +68,9 @@ public class CmsServiceImpl implements CmsService {
     private CrudRootServiceHelper<DbMenu> menuCrudRootServiceHelper;
     @Autowired
     private CrudRootServiceHelper<DbPageStyle> pageStyleCrudRootServiceHelper;
+    @Autowired
+    private CrudRootServiceHelper<DbBlogEntry> blogEntryCrudRootServiceHelper;
+
     private DbCmsHomeText dbCmsHomeText;
     private DbCmsHomeLayout dbCmsHomeLayout;
     private Map<Integer, DbCmsImage> imageCache = new HashMap<Integer, DbCmsImage>();
@@ -86,6 +91,7 @@ public class CmsServiceImpl implements CmsService {
         pageCrudRootServiceHelper.init(DbPage.class);
         menuCrudRootServiceHelper.init(DbMenu.class);
         pageStyleCrudRootServiceHelper.init(DbPageStyle.class);
+        blogEntryCrudRootServiceHelper.init(DbBlogEntry.class, "timeStamp");
         SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
         try {
             activateHome();
@@ -117,7 +123,9 @@ public class CmsServiceImpl implements CmsService {
             }
             DbContent dbContent = dbPage.getContent();
             if (dbContent != null) {
-                fillContentCache(dbContent);
+                dbContent = HibernateUtil.deproxy(dbContent, DbContent.class);
+                dbPage.setContent(dbContent);
+                initializeLazyDependenciesAndFillContentCache(dbContent);
             }
         }
 
@@ -126,12 +134,13 @@ public class CmsServiceImpl implements CmsService {
         }
     }
 
-    private void fillContentCache(DbContent dbContent) {
+    private void initializeLazyDependenciesAndFillContentCache(DbContent dbContent) {
+        Hibernate.initialize(dbContent);
         contentCache.put(dbContent.getId(), dbContent);
         Collection<? extends DbContent> children = dbContent.getChildren();
         if (children != null) {
             for (DbContent child : children) {
-                fillContentCache(child);
+                initializeLazyDependenciesAndFillContentCache(child);
             }
         }
     }
@@ -264,4 +273,10 @@ public class CmsServiceImpl implements CmsService {
         }
         return dbCmsImage;
     }
+
+    @Override
+    public CrudRootServiceHelper<DbBlogEntry> getBlogEntryCrudRootServiceHelper() {
+        return blogEntryCrudRootServiceHelper;
+    }
+
 }

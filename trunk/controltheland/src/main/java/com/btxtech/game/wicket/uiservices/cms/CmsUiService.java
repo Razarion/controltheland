@@ -1,8 +1,8 @@
 package com.btxtech.game.wicket.uiservices.cms;
 
-import com.btxtech.game.services.cms.ContentDataProviderInfo;
 import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbPage;
+import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 
@@ -15,15 +15,13 @@ import java.util.List;
  */
 public interface CmsUiService {
 
-    Component getContent(DbContent dbContent, Object bean, String id, Integer childId);
+    Component getComponent(DbContent dbContent, Object bean, String id, BeanIdPathElement parentBeanIdPathElement);
 
-    Component getContent(int contentId, Object bean, String id, Integer childId);
+    Component getRootComponent(DbPage dbPage, String id, PageParameters pageParameters);
 
-    Component getRootContent(DbPage dbPage, DbContent dbContent, String id, PageParameters pageParameters);
+    <T extends DbContent> T getDbContent(int contentId);
 
-    <T extends DbContent> T getContentStructure(int contentId);
+    Object getDataProviderBean(BeanIdPathElement beanIdPathElement);
 
-    Object getContentDataProviderBean(ContentDataProviderInfo contentDataProviderInfo, Integer childId);
-
-    List getChildContentDataProviderBeans(ContentDataProviderInfo contentDataProviderInfo, Integer childId);
+    List getDataProviderBeans(BeanIdPathElement beanIdPathElement);
 }

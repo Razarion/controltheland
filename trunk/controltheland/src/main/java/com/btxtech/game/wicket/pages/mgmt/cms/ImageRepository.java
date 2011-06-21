@@ -3,8 +3,8 @@ package com.btxtech.game.wicket.pages.mgmt.cms;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbCmsImage;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -21,7 +21,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 05.06.2011
  * Time: 23:32:37
  */
-public class ImageRepository extends WebPage {
+public class ImageRepository extends MgmtWebPage {
     @SpringBean
     private CmsService cmsService;
 

@@ -1,38 +1,40 @@
 package com.btxtech.game.wicket.pages.mgmt.cms;
 
-import com.btxtech.game.services.cms.DbPageStyle;
+import com.btxtech.game.services.cms.DbStaticProperty;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.RuModel;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
+
 /**
  * User: beat
- * Date: 06.06.2011
- * Time: 00:12:05
+ * Date: 21.06.2011
+ * Time: 17:46:43
  */
-public class PageStyleEditor extends MgmtWebPage {
+public class StaticPropertyEditor extends MgmtWebPage {
     @SpringBean
-    private RuServiceHelper<DbPageStyle> ruServiceHelper;
+    private RuServiceHelper<DbStaticProperty> ruServiceHelper;
 
-    public PageStyleEditor(DbPageStyle dbPageStyle) {
+    public StaticPropertyEditor(DbStaticProperty dbStaticProperty) {
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbPageStyle> form = new Form<DbPageStyle>("form", new CompoundPropertyModel<DbPageStyle>(new RuModel<DbPageStyle>(dbPageStyle, DbPageStyle.class) {
+        final Form<DbStaticProperty> form = new Form<DbStaticProperty>("form", new CompoundPropertyModel<DbStaticProperty>(new RuModel<DbStaticProperty>(dbStaticProperty, DbStaticProperty.class) {
             @Override
-            protected RuServiceHelper<DbPageStyle> getRuServiceHelper() {
+            protected RuServiceHelper<DbStaticProperty> getRuServiceHelper() {
                 return ruServiceHelper;
             }
         }));
         add(form);
 
-        form.add(new TextArea("css"));
+        form.add(new TextArea("html"));
+        form.add(new CheckBox("escapeMarkup"));
 
         form.add(new Button("save") {
 
@@ -40,14 +42,6 @@ public class PageStyleEditor extends MgmtWebPage {
             public void onSubmit() {
                 ruServiceHelper.updateDbEntity(form.getModelObject());
             }
-        });
-        form.add(new Button("cms") {
-
-            @Override
-            public void onSubmit() {
-                setResponsePage(Cms.class);
-            }
-        });
-
+        });        
     }
 }

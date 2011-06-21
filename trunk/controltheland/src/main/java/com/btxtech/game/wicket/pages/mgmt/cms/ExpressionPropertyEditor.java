@@ -1,38 +1,39 @@
 package com.btxtech.game.wicket.pages.mgmt.cms;
 
-import com.btxtech.game.services.cms.DbPageStyle;
+import com.btxtech.game.services.cms.DbExpressionProperty;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.RuModel;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
-import org.apache.wicket.markup.html.form.TextArea;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
  * User: beat
- * Date: 06.06.2011
- * Time: 00:12:05
+ * Date: 20.06.2011
+ * Time: 17:46:43
  */
-public class PageStyleEditor extends MgmtWebPage {
+public class ExpressionPropertyEditor extends MgmtWebPage {
     @SpringBean
-    private RuServiceHelper<DbPageStyle> ruServiceHelper;
+    private RuServiceHelper<DbExpressionProperty> ruServiceHelper;
 
-    public PageStyleEditor(DbPageStyle dbPageStyle) {
+    public ExpressionPropertyEditor(DbExpressionProperty dbExpressionProperty) {
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbPageStyle> form = new Form<DbPageStyle>("form", new CompoundPropertyModel<DbPageStyle>(new RuModel<DbPageStyle>(dbPageStyle, DbPageStyle.class) {
+        final Form<DbExpressionProperty> form = new Form<DbExpressionProperty>("form", new CompoundPropertyModel<DbExpressionProperty>(new RuModel<DbExpressionProperty>(dbExpressionProperty, DbExpressionProperty.class) {
             @Override
-            protected RuServiceHelper<DbPageStyle> getRuServiceHelper() {
+            protected RuServiceHelper<DbExpressionProperty> getRuServiceHelper() {
                 return ruServiceHelper;
             }
         }));
         add(form);
 
-        form.add(new TextArea("css"));
+        form.add(new TextField("expression"));
+        form.add(new CheckBox("escapeMarkup"));
 
         form.add(new Button("save") {
 
@@ -40,14 +41,6 @@ public class PageStyleEditor extends MgmtWebPage {
             public void onSubmit() {
                 ruServiceHelper.updateDbEntity(form.getModelObject());
             }
-        });
-        form.add(new Button("cms") {
-
-            @Override
-            public void onSubmit() {
-                setResponsePage(Cms.class);
-            }
-        });
-
+        });        
     }
 }

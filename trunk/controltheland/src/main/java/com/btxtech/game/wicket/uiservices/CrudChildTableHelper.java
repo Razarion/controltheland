@@ -41,14 +41,16 @@ public abstract class CrudChildTableHelper<P, T extends CrudChild> extends Abstr
     }
 
     @Override
-    protected void createDbChild() {
-        getCrudChildServiceHelperImpl().createDbChild();
+    protected T createDbChild() {
+        T t = getCrudChildServiceHelperImpl().createDbChild();
         getRuServiceHelper().updateDbEntity(getParent());
+        return t;
     }
 
     @Override
-    protected void createDbChild(Class<? extends T> createClass) {
-        getCrudChildServiceHelperImpl().createDbChild(createClass);
+    protected <C extends T> C createDbChild(Class<C> createClass) {
+        C c = (C) getCrudChildServiceHelperImpl().createDbChild(createClass);
         getRuServiceHelper().updateDbEntity(getParent());
+        return c;
     }
 }

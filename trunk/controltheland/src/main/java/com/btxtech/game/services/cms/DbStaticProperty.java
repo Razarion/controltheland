@@ -1,8 +1,8 @@
 package com.btxtech.game.services.cms;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import java.util.Collection;
 
 /**
  * User: beat
@@ -10,17 +10,18 @@ import java.util.Collection;
  * Time: 12:06:45
  */
 @Entity
-@DiscriminatorValue("EXPRESSION_PROPERTY")
-public class DbExpressionProperty extends DbContent {
-    private String expression;
+@DiscriminatorValue("STATIC_PROPERTY")
+public class DbStaticProperty extends DbContent {
+    @Column(length = 500000)
+    private String html;
     private boolean escapeMarkup = true;
 
-    public String getExpression() {
-        return expression;
+    public String getHtml() {
+        return html;
     }
 
-    public void setExpression(String expression) {
-        this.expression = expression;
+    public void setHtml(String html) {
+        this.html = html;
     }
 
     public void setEscapeMarkup(boolean escapeMarkup) {

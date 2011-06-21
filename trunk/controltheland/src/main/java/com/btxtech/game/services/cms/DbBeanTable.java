@@ -1,5 +1,18 @@
 package com.btxtech.game.services.cms;
 
+import com.btxtech.game.services.common.CrudChildServiceHelper;
+import com.btxtech.game.services.common.CrudListChildServiceHelper;
+import com.btxtech.game.services.common.CrudParent;
+import org.hibernate.annotations.Cascade;
+
+import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -9,25 +22,30 @@ import java.util.List;
  * Date: 09.06.2011
  * Time: 14:03:56
  */
-public class DbBeanTable extends DbProperty implements ContentDataProviderInfo {
-    private List<DbProperty> dbPropertyColumns;
+@Entity
+@DiscriminatorValue("BASE")
+public class DbBeanTable extends DbContent implements DataProviderInfo, CrudParent {
+    // Since the parentId field on a child can not distinguishes if it belongs to dbContentBooks or dbPropertyColumns
+    // mapping tables are used.
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+    @JoinTable(name = "CMS_CONTENT_BEAN_TABLE_COLUMNS",
+            joinColumns = @JoinColumn(name = "beanTableId"),
+            inverseJoinColumns = @JoinColumn(name = "contentId"))
+    private List<DbContent> dbPropertyColumns;
     private String springBeanName;
     private String contentProviderGetter;
-    private Collection<DbPropertyBook> dbPropertyBooks;
-    private ContentDataProviderInfo parentContentDataProviderInfo;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+    @JoinTable(name = "CMS_CONTENT_BEAN_TABLE_CONTENT_BOOK",
+            joinColumns = @JoinColumn(name = "beanTableId"),
+            inverseJoinColumns = @JoinColumn(name = "contentBookId"))
+    private Collection<DbContentBook> dbContentBooks;
     private Integer rowsPerPage;
-
-    public List<DbProperty> getDbPropertyColumns() {
-        return dbPropertyColumns;
-    }
-
-    public int getColumnCount() {
-        return dbPropertyColumns.size();
-    }
-
-    public void setDbPropertyColumns(List<DbProperty> dbPropertyColumns) {
-        this.dbPropertyColumns = dbPropertyColumns;
-    }
+    @Transient
+    private CrudListChildServiceHelper<DbContent> columnsCrud;
+    @Transient
+    private CrudChildServiceHelper<DbContentBook> contentBookCrud;
 
     @Override
     public String getSpringBeanName() {
@@ -39,38 +57,23 @@ public class DbBeanTable extends DbProperty implements ContentDataProviderInfo {
         return contentProviderGetter;
     }
 
-    public void setParentSpringBeanProvider(ContentDataProviderInfo parentContentDataProviderInfo) {
-        this.parentContentDataProviderInfo = parentContentDataProviderInfo;
-    }
-
     @Override
-    public ContentDataProviderInfo getParentContentDataProvider() {
-        return parentContentDataProviderInfo;
-    }
-
-    public ContentDataProviderInfo getParentContentProvider() {
-        return parentContentDataProviderInfo;
-    }
-
     public void setContentProviderGetter(String contentProviderGetter) {
         this.contentProviderGetter = contentProviderGetter;
     }
 
+    @Override
     public void setSpringBeanName(String springBeanName) {
         this.springBeanName = springBeanName;
     }
 
-    public void setDbPropertyBooks(Collection<DbPropertyBook> dbPropertyBooks) {
-        this.dbPropertyBooks = dbPropertyBooks;
-    }
-
-    public DbPropertyBook getDbPropertyBook(String className) {
-        for (DbPropertyBook dbPropertyBook : dbPropertyBooks) {
-            if (dbPropertyBook.getClassName().equals(className)) {
-                return dbPropertyBook;
+    public DbContentBook getDbPropertyBook(String className) {
+        for (DbContentBook dbContentBook : dbContentBooks) {
+            if (dbContentBook.getClassName().equals(className)) {
+                return dbContentBook;
             }
         }
-        throw new IllegalArgumentException("No DbPropertyBook for: " + className);
+        throw new IllegalArgumentException("No DbContentBook for: " + className);
     }
 
     public void setRowsPerPage(Integer rowsPerPage) {
@@ -85,12 +88,30 @@ public class DbBeanTable extends DbProperty implements ContentDataProviderInfo {
         return rowsPerPage != null;
     }
 
-    @Override
-    public Collection<? extends DbContent> getChildren() {
-        List<DbContent> children = new ArrayList<DbContent>(dbPropertyColumns);
-        if (dbPropertyBooks != null) {
-            children.addAll(dbPropertyBooks);
+    public CrudListChildServiceHelper<DbContent> getColumnsCrud() {
+        if (columnsCrud == null) {
+            columnsCrud = new CrudListChildServiceHelper<DbContent>(dbPropertyColumns, DbContent.class, this);
         }
+        return columnsCrud;
+    }
+
+    public CrudChildServiceHelper<DbContentBook> getContentBookCrud() {
+        if (contentBookCrud == null) {
+            contentBookCrud = new CrudChildServiceHelper<DbContentBook>(dbContentBooks, DbContentBook.class, this);
+        }
+        return contentBookCrud;
+    }
+
+    @Override
+    public Collection<DbContent> getChildren() {
+        List<DbContent> children = new ArrayList<DbContent>(dbPropertyColumns);
+        children.addAll(dbContentBooks);
         return children;
+    }
+
+    @Override
+    public void init() {
+        dbPropertyColumns = new ArrayList<DbContent>();
+        dbContentBooks = new ArrayList<DbContentBook>();
     }
 }
