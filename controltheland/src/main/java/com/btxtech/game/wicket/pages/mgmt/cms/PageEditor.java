@@ -87,18 +87,6 @@ public class PageEditor extends MgmtWebPage {
                 return form.getModelObject().getContent() != null;
             }
         });
-        /*    form.add(new BeanTableEditor("content", new LoadableDetachableModel<DbBeanTable>() {
-
-            @Override
-            protected DbBeanTable load() {
-                return (DbBeanTable) form.getModelObject().getContent();
-            }
-        }) {
-            @Override
-            public boolean isVisible() {
-                return form.getModelObject().getContent() != null;
-            }
-        });*/
     }
 
     private void setupButtons(final Form<DbPage> form) {
