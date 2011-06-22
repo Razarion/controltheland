@@ -7,8 +7,8 @@ import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.HeaderlessColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.HeadersToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.NoRecordsToolbar;
@@ -58,7 +58,7 @@ public class ContentBook extends Panel {
         List<IColumn<DbContentRow>> columns = new ArrayList<IColumn<DbContentRow>>();
 
         // Label
-        columns.add(new AbstractColumn<DbContentRow>(new Model<String>("????1")) {
+        columns.add(new HeaderlessColumn<DbContentRow>() {
             @Override
             public void populateItem(Item<ICellPopulator<DbContentRow>> cellItem, String componentId, IModel<DbContentRow> rowModel) {
                 cellItem.add(new Label(componentId, rowModel.getObject().getName()));
@@ -66,7 +66,7 @@ public class ContentBook extends Panel {
         });
 
         // Property
-        columns.add(new AbstractColumn<DbContentRow>(new Model<String>("????1")) {
+        columns.add(new HeaderlessColumn<DbContentRow>() {
             @Override
             public void populateItem(Item<ICellPopulator<DbContentRow>> cellItem, String componentId, IModel<DbContentRow> rowModel) {
                 BeanIdPathElement childBeanIdPathElement = null;
