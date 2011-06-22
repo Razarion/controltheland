@@ -1,6 +1,6 @@
 package com.btxtech.game.wicket.pages.mgmt.cms;
 
-import com.btxtech.game.services.cms.DbBeanTable;
+import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbContentBook;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
@@ -24,16 +24,16 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 20.06.2011
  * Time: 14:09:37
  */
-public class BeanTableEditor extends MgmtWebPage {
+public class ContentListEditor extends MgmtWebPage {
     @SpringBean
-    private RuServiceHelper<DbBeanTable> ruServiceHelper;
+    private RuServiceHelper<DbContentList> ruServiceHelper;
 
-    public BeanTableEditor(DbBeanTable dbBeanTable) {
+    public ContentListEditor(DbContentList dbContentList) {
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbBeanTable> form = new Form<DbBeanTable>("form", new CompoundPropertyModel<DbBeanTable>(new RuModel<DbBeanTable>(dbBeanTable, DbBeanTable.class) {
+        final Form<DbContentList> form = new Form<DbContentList>("form", new CompoundPropertyModel<DbContentList>(new RuModel<DbContentList>(dbContentList, DbContentList.class) {
             @Override
-            protected RuServiceHelper<DbBeanTable> getRuServiceHelper() {
+            protected RuServiceHelper<DbContentList> getRuServiceHelper() {
                 return ruServiceHelper;
             }
         }));
@@ -43,7 +43,7 @@ public class BeanTableEditor extends MgmtWebPage {
         form.add(new TextField("contentProviderGetter"));
         form.add(new TextField("rowsPerPage"));
 
-        new CrudListChildTableHelper<DbBeanTable, DbContent>("columns", null, "createColumn", true, form, true) {
+        new CrudListChildTableHelper<DbContentList, DbContent>("columns", null, "createColumn", true, form, true) {
 
             @Override
             protected void extendedPopulateItem(Item<DbContent> dbContentItem) {
@@ -52,12 +52,12 @@ public class BeanTableEditor extends MgmtWebPage {
             }
 
             @Override
-            protected RuServiceHelper<DbBeanTable> getRuServiceHelper() {
+            protected RuServiceHelper<DbContentList> getRuServiceHelper() {
                 return ruServiceHelper;
             }
 
             @Override
-            protected DbBeanTable getParent() {
+            protected DbContentList getParent() {
                 return form.getModelObject();
             }
 
@@ -84,7 +84,7 @@ public class BeanTableEditor extends MgmtWebPage {
             }
         };
 
-        new CrudChildTableHelper<DbBeanTable, DbContentBook>("contentBooks", null, "createContentBook", true, form, false) {
+        new CrudChildTableHelper<DbContentList, DbContentBook>("contentBooks", null, "createContentBook", true, form, false) {
 
             @Override
             protected void extendedPopulateItem(Item<DbContentBook> contentBookItem) {
@@ -93,12 +93,12 @@ public class BeanTableEditor extends MgmtWebPage {
             }
 
             @Override
-            protected RuServiceHelper<DbBeanTable> getRuServiceHelper() {
+            protected RuServiceHelper<DbContentList> getRuServiceHelper() {
                 return ruServiceHelper;
             }
 
             @Override
-            protected DbBeanTable getParent() {
+            protected DbContentList getParent() {
                 return form.getModelObject();
             }
 
