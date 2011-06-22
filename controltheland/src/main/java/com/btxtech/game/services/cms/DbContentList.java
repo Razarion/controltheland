@@ -23,14 +23,14 @@ import java.util.List;
  * Time: 14:03:56
  */
 @Entity
-@DiscriminatorValue("BASE")
-public class DbBeanTable extends DbContent implements DataProviderInfo, CrudParent {
+@DiscriminatorValue("CONTENT_LIST")
+public class DbContentList extends DbContent implements DataProviderInfo, CrudParent {
     // Since the parentId field on a child can not distinguishes if it belongs to dbContentBooks or dbPropertyColumns
     // mapping tables are used.
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     @JoinTable(name = "CMS_CONTENT_BEAN_TABLE_COLUMNS",
-            joinColumns = @JoinColumn(name = "beanTableId"),
+            joinColumns = @JoinColumn(name = "contentListId"),
             inverseJoinColumns = @JoinColumn(name = "contentId"))
     private List<DbContent> dbPropertyColumns;
     private String springBeanName;
@@ -38,7 +38,7 @@ public class DbBeanTable extends DbContent implements DataProviderInfo, CrudPare
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     @JoinTable(name = "CMS_CONTENT_BEAN_TABLE_CONTENT_BOOK",
-            joinColumns = @JoinColumn(name = "beanTableId"),
+            joinColumns = @JoinColumn(name = "contentListId"),
             inverseJoinColumns = @JoinColumn(name = "contentBookId"))
     private Collection<DbContentBook> dbContentBooks;
     private Integer rowsPerPage;
