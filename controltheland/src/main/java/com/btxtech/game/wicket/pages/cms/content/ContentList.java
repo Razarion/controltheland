@@ -1,7 +1,7 @@
 package com.btxtech.game.wicket.pages.cms.content;
 
 import com.btxtech.game.services.cms.DataProviderInfo;
-import com.btxtech.game.services.cms.DbBeanTable;
+import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbContentDetailLink;
 import com.btxtech.game.services.common.CrudChild;
@@ -11,6 +11,7 @@ import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
+import org.apache.wicket.extensions.markup.html.repeater.data.table.HeaderlessColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.HeadersToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.NavigationToolbar;
@@ -29,30 +30,23 @@ import java.util.List;
  * Date: 09.06.2011
  * Time: 12:29:43
  */
-public class BeanTable extends Panel {
+public class ContentList extends Panel {
     @SpringBean
     private CmsUiService cmsUiService;
     private BeanIdPathElement beanIdPathElement;
 
-    public BeanTable(String id, DbBeanTable dbBeanTable, BeanIdPathElement beanIdPathElement) {
+    public ContentList(String id, DbContentList dbContentList, BeanIdPathElement beanIdPathElement) {
         super(id);
         this.beanIdPathElement = beanIdPathElement;
-        /*final int contentId = dbBeanTable.getId();
-        setDefaultModel(new LoadableDetachableModel<DbBeanTable>() {
-            @Override
-            protected DbBeanTable load() {
-                return cmsUiService.getDbContent(contentId);
-            }
-        });*/
-        setupDetailTable(dbBeanTable);
+        setupDetailTable(dbContentList);
     }
 
-    private void setupDetailTable(DbBeanTable dbBeanTable) {
+    private void setupDetailTable(DbContentList dbContentList) {
 
         List<IColumn> columns = new ArrayList<IColumn>();
-        for (DbContent dbContent : dbBeanTable.getColumnsCrud().readDbChildren()) {
+        for (DbContent dbContent : dbContentList.getColumnsCrud().readDbChildren()) {
             final Integer dbContentId = dbContent.getId();
-            columns.add(new AbstractColumn<Object>(new Model<String>("????1")) {
+            columns.add(new HeaderlessColumn<Object>() {
 
                 @Override
                 public void populateItem(Item<ICellPopulator<Object>> cellItem, String componentId, IModel<Object> rowModel) {
@@ -79,14 +73,14 @@ public class BeanTable extends Panel {
         IColumn[] columnsArray = columns.toArray(new IColumn[columns.size()]);
 
         int rowsPerPage = Integer.MAX_VALUE;
-        if (dbBeanTable.isPageable()) {
-            rowsPerPage = dbBeanTable.getRowsPerPage();
+        if (dbContentList.isPageable()) {
+            rowsPerPage = dbContentList.getRowsPerPage();
         }
 
         DataTable dataTable = new DataTable("dataTable", columnsArray, detachHashListProvider, rowsPerPage);
         dataTable.addTopToolbar(new HeadersToolbar(dataTable, null));
         dataTable.addBottomToolbar(new NoRecordsToolbar(dataTable, new Model<String>("Nothing here")));
-        if (dbBeanTable.isPageable()) {
+        if (dbContentList.isPageable()) {
             dataTable.addBottomToolbar(new NavigationToolbar(dataTable));
         }
         add(dataTable);
