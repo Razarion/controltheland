@@ -1,6 +1,6 @@
 package com.btxtech.game.wicket.pages.mgmt.cms;
 
-import com.btxtech.game.services.cms.DbBeanTable;
+import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbContentBook;
 import com.btxtech.game.services.cms.DbContentContainer;
@@ -16,8 +16,8 @@ import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
  */
 public class ContentEditorFactory {
     public static MgmtWebPage createContentEditor(DbContent dbContent) {
-        if (dbContent instanceof DbBeanTable) {
-            return new BeanTableEditor((DbBeanTable) dbContent);
+        if (dbContent instanceof DbContentList) {
+            return new ContentListEditor((DbContentList) dbContent);
         } else if (dbContent instanceof DbContentBook) {
             return new ContentBookEditor((DbContentBook) dbContent);
         } else if (dbContent instanceof DbExpressionProperty) {
@@ -34,7 +34,7 @@ public class ContentEditorFactory {
     }
 
     public enum DbContentEnum {
-        BEAN_TABLE(DbBeanTable.class, "Bean table"),
+        BEAN_TABLE(DbContentList.class, "Bean table"),
         CONTENT_CONTAINER(DbContentContainer.class, "Content Container"),
         CONTENT_BOOK(DbContentBook.class, "Content Book"),
         CONTENT_LINK(DbContentDetailLink.class, "Content Link"),
