@@ -14,7 +14,6 @@
 package com.btxtech.game.services.cms.impl;
 
 import com.btxtech.game.services.cms.CmsService;
-import com.btxtech.game.services.cms.DbBlogEntry;
 import com.btxtech.game.services.cms.DbCmsHomeLayout;
 import com.btxtech.game.services.cms.DbCmsHomeText;
 import com.btxtech.game.services.cms.DbCmsImage;
@@ -68,8 +67,6 @@ public class CmsServiceImpl implements CmsService {
     private CrudRootServiceHelper<DbMenu> menuCrudRootServiceHelper;
     @Autowired
     private CrudRootServiceHelper<DbPageStyle> pageStyleCrudRootServiceHelper;
-    @Autowired
-    private CrudRootServiceHelper<DbBlogEntry> blogEntryCrudRootServiceHelper;
 
     private DbCmsHomeText dbCmsHomeText;
     private DbCmsHomeLayout dbCmsHomeLayout;
@@ -91,7 +88,6 @@ public class CmsServiceImpl implements CmsService {
         pageCrudRootServiceHelper.init(DbPage.class);
         menuCrudRootServiceHelper.init(DbMenu.class);
         pageStyleCrudRootServiceHelper.init(DbPageStyle.class);
-        blogEntryCrudRootServiceHelper.init(DbBlogEntry.class, "timeStamp");
         SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
         try {
             activateHome();
@@ -273,10 +269,4 @@ public class CmsServiceImpl implements CmsService {
         }
         return dbCmsImage;
     }
-
-    @Override
-    public CrudRootServiceHelper<DbBlogEntry> getBlogEntryCrudRootServiceHelper() {
-        return blogEntryCrudRootServiceHelper;
-    }
-
 }
