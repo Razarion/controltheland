@@ -1,11 +1,11 @@
 package com.btxtech.game.wicket.uiservices.cms.impl;
 
 import com.btxtech.game.services.cms.CmsService;
-import com.btxtech.game.services.cms.DbBeanTable;
 import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbContentBook;
 import com.btxtech.game.services.cms.DbContentContainer;
 import com.btxtech.game.services.cms.DbContentDetailLink;
+import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.cms.DbExpressionProperty;
 import com.btxtech.game.services.cms.DbPage;
 import com.btxtech.game.services.cms.DbStaticProperty;
@@ -14,9 +14,9 @@ import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.ContentDetailLink;
 import com.btxtech.game.wicket.pages.cms.ItemTypeImage;
-import com.btxtech.game.wicket.pages.cms.content.BeanTable;
 import com.btxtech.game.wicket.pages.cms.content.ContentBook;
 import com.btxtech.game.wicket.pages.cms.content.ContentContainer;
+import com.btxtech.game.wicket.pages.cms.content.ContentList;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -49,11 +49,11 @@ public class CmsUiServiceImpl implements CmsUiService {
     public Component getRootComponent(DbPage dbPage, String componentId, PageParameters pageParameters) {
         DbContent dbContent = dbPage.getContent();
         BeanIdPathElement beanIdPathElement = new BeanIdPathElement(dbPage, dbContent);
-        // if the Page should display a child of a BeanTable
-        if (pageParameters.containsKey(CmsPage.CHILD_ID) && dbContent instanceof DbBeanTable) {
+        // if the Page should display a child of a ContentList
+        if (pageParameters.containsKey(CmsPage.CHILD_ID) && dbContent instanceof DbContentList) {
             beanIdPathElement = beanIdPathElement.createChild(pageParameters.getInt(CmsPage.CHILD_ID));
             Object bean = getDataProviderBean(beanIdPathElement);
-            dbContent = ((DbBeanTable) dbContent).getDbPropertyBook(bean.getClass().getName());
+            dbContent = ((DbContentList) dbContent).getDbPropertyBook(bean.getClass().getName());
         }
         return getComponent(dbContent, null, componentId, beanIdPathElement);
     }
@@ -61,8 +61,8 @@ public class CmsUiServiceImpl implements CmsUiService {
     @Override
     public Component getComponent(DbContent dbContent, Object bean, String componentId, BeanIdPathElement beanIdPathElement) {
         try {
-            if (dbContent instanceof DbBeanTable) {
-                return new BeanTable(componentId, (DbBeanTable) dbContent, beanIdPathElement);
+            if (dbContent instanceof DbContentList) {
+                return new ContentList(componentId, (DbContentList) dbContent, beanIdPathElement);
             } else if (dbContent instanceof DbExpressionProperty) {
                 Object value = PropertyUtils.getProperty(bean, ((DbExpressionProperty) dbContent).getExpression());
                 return componentForClass(componentId, value, ((DbExpressionProperty) dbContent).getEscapeMarkup());
@@ -112,7 +112,7 @@ public class CmsUiServiceImpl implements CmsUiService {
                 ContentProvider contentProvider = getContentProvider(beanIdPathElement.getParent());
                 return contentProvider.readDbChild(beanIdPathElement.getBeanId());
             } else {
-                throw new IllegalArgumentException(beanIdPathElement.toString());
+                return null;
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

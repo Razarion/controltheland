@@ -119,7 +119,7 @@
         <mapping class="com.btxtech.game.services.cms.DbMenuItem"/>
         <mapping class="com.btxtech.game.services.cms.DbPage"/>
         <mapping class="com.btxtech.game.services.cms.DbPageStyle"/>
-        <mapping class="com.btxtech.game.services.cms.DbBeanTable"/>
+        <mapping class="com.btxtech.game.services.cms.DbContentList"/>
         <mapping class="com.btxtech.game.services.cms.DbContentContainer"/>
         <mapping class="com.btxtech.game.services.cms.DbExpressionProperty"/>
         <mapping class="com.btxtech.game.services.cms.DbContentDetailLink"/>
