@@ -53,6 +53,4 @@ public interface CmsService {
     CrudRootServiceHelper<DbMenu> getMenuCrudRootServiceHelper();
 
     CrudRootServiceHelper<DbPageStyle> getPageStyleCrudRootServiceHelper();
-
-    CrudRootServiceHelper<DbBlogEntry> getBlogEntryCrudRootServiceHelper();
 }
