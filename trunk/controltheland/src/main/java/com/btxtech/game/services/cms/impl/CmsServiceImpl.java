@@ -253,7 +253,7 @@ public class CmsServiceImpl implements CmsService {
     }
 
     @Override
-    public DbContent getContentStructure(int contentId) {
+    public DbContent getDbContent(int contentId) {
         DbContent dbContent = contentCache.get(contentId);
         if (dbContent == null) {
             throw new IllegalArgumentException("No content for id: " + contentId);

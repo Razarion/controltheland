@@ -23,7 +23,7 @@ import java.util.List;
  * Date: 25.07.2010
  * Time: 12:50:08
  */
-public class CrudListChildServiceHelper<T extends CrudChild> implements Serializable, ContentProvider {
+public class CrudListChildServiceHelper<T extends CrudChild> implements Serializable, ContentProvider<T> {
     private List<T> children;
     private Class<T> childClass;
     private CrudParent crudParent;
@@ -47,6 +47,7 @@ public class CrudListChildServiceHelper<T extends CrudChild> implements Serializ
         throw new NoSuchChildException("Id: " + id);
     }
 
+    @Override
     public void deleteDbChild(T child) {
         children.remove(child);
     }

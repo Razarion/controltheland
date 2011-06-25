@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.connection;
 
+import com.btxtech.game.services.cms.EditMode;
 import com.btxtech.game.services.user.UserState;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,4 +47,8 @@ public interface Session {
     void setUserState(UserState userState);
 
     HttpServletRequest getRequest();
+
+    EditMode getEditMode();
+
+    void setEditMode(EditMode editMode);
 }

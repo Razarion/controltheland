@@ -34,7 +34,7 @@ public class ContentEditorFactory {
     }
 
     public enum DbContentEnum {
-        BEAN_TABLE(DbContentList.class, "Bean table"),
+        CONTENT_LIST(DbContentList.class, "Content List"),
         CONTENT_CONTAINER(DbContentContainer.class, "Content Container"),
         CONTENT_BOOK(DbContentBook.class, "Content Book"),
         CONTENT_LINK(DbContentDetailLink.class, "Content Link"),

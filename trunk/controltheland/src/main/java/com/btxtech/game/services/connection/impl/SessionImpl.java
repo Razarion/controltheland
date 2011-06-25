@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.connection.impl;
 
+import com.btxtech.game.services.cms.EditMode;
 import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.user.UserService;
@@ -56,6 +57,7 @@ public class SessionImpl implements Session, Serializable {
     private UserState userState;
     private Connection connection;
     private Log log = LogFactory.getLog(SessionImpl.class);
+    private EditMode editMode;
 
     @Override
     public Connection getConnection() {
@@ -149,5 +151,15 @@ public class SessionImpl implements Session, Serializable {
     @Override
     public boolean isJavaScriptDetected() {
         return javaScriptDetected;
+    }
+
+    @Override
+    public EditMode getEditMode() {
+        return editMode;
+    }
+
+    @Override
+    public void setEditMode(EditMode editMode) {
+        this.editMode = editMode;
     }
 }

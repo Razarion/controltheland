@@ -86,4 +86,43 @@ public abstract class DbContent implements CrudChild<DbContent> {
     public int hashCode() {
         return id != null ? id.hashCode() : System.identityHashCode(this);
     }
+
+    public String getSpringBeanName() {
+        return null;
+    }
+
+    public String getNextPossibleSpringBeanName() {
+        if (getSpringBeanName() != null) {
+            return getSpringBeanName();
+        }
+        if (getParent() != null) {
+            return getParent().getNextPossibleSpringBeanName();
+        }
+        throw new IllegalStateException("No SpringBeanName in hierarchy");
+    }
+
+    public void setSpringBeanName(String springBeanName) {
+        throw new UnsupportedOperationException();
+    }
+
+    public String getContentProviderGetter() {
+        return null;
+    }
+
+    public void setContentProviderGetter(String contentProviderGetter) {
+        throw new UnsupportedOperationException();
+    }
+
+    public String getExpression() {
+        return null;
+    }
+
+    public void setExpression(String expression) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getName() + " id:" + id;
+    }
 }

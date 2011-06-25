@@ -40,7 +40,7 @@ public interface CmsService {
 
     DbPage getHomePage();
 
-    DbContent getContentStructure(int contentId);
+    DbContent getDbContent(int contentId);
 
     DbCmsImage getDbCmsImage(int imgId);
 

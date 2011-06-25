@@ -25,6 +25,7 @@ import org.apache.wicket.PageParameters;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -45,7 +46,6 @@ public class CmsPage extends WebPage {
     private int pageId;
 
     public CmsPage(final PageParameters pageParameters) {
-
         setDefaultModel(new CompoundPropertyModel<DbPage>(new LoadableDetachableModel<DbPage>() {
 
             @Override
@@ -65,7 +65,9 @@ public class CmsPage extends WebPage {
         add(CmsCssResource.createCss("css", dbPage));
         setupMenu();
         setupLoginBox();
-        add(cmsUiService.getRootComponent(dbPage, "content", pageParameters));
+        Form form = new Form("form");
+        add(form);
+        form.add(cmsUiService.getRootComponent(dbPage, "content", pageParameters));
     }
 
     private void setupLoginBox() {
