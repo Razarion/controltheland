@@ -1,15 +1,15 @@
 package com.btxtech.game.wicket.pages.cms.content;
 
 import com.btxtech.game.services.cms.DataProviderInfo;
-import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbContentDetailLink;
+import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.wicket.pages.cms.EditPanel;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.HeaderlessColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.HeadersToolbar;
@@ -34,10 +34,12 @@ public class ContentList extends Panel {
     @SpringBean
     private CmsUiService cmsUiService;
     private BeanIdPathElement beanIdPathElement;
+    private int contentId;
 
     public ContentList(String id, DbContentList dbContentList, BeanIdPathElement beanIdPathElement) {
         super(id);
         this.beanIdPathElement = beanIdPathElement;
+        contentId = dbContentList.getId();
         setupDetailTable(dbContentList);
     }
 
@@ -54,13 +56,25 @@ public class ContentList extends Panel {
                     BeanIdPathElement childBeanIdPathElement = null;
                     if (dbContent instanceof DataProviderInfo) {
                         childBeanIdPathElement = beanIdPathElement.createChild((DataProviderInfo) dbContent, rowModel.getObject());
-                    } else if(dbContent instanceof DbContentDetailLink) {
+                    } else if (dbContent instanceof DbContentDetailLink) {
                         childBeanIdPathElement = beanIdPathElement.createChild(((CrudChild) rowModel.getObject()).getId());
                     }
                     cellItem.add(cmsUiService.getComponent(dbContent, rowModel.getObject(), componentId, childBeanIdPathElement));
                 }
             });
         }
+
+        // Edit stuff
+        add(new EditPanel("edit", contentId, beanIdPathElement, true, false));
+        columns.add(new HeaderlessColumn<Object>() {
+
+            @Override
+            public void populateItem(Item<ICellPopulator<Object>> cellItem, String componentId, IModel<Object> rowModel) {
+                BeanIdPathElement childBeanIdPathElement = beanIdPathElement.createChild(((CrudChild) rowModel.getObject()).getId());
+                cellItem.add(new EditPanel(componentId, contentId, childBeanIdPathElement, false, true));
+            }
+        });
+
 
         DetachHashListProvider detachHashListProvider = new DetachHashListProvider() {
             @Override
@@ -77,6 +91,7 @@ public class ContentList extends Panel {
             rowsPerPage = dbContentList.getRowsPerPage();
         }
 
+        @SuppressWarnings("unchecked")
         DataTable dataTable = new DataTable("dataTable", columnsArray, detachHashListProvider, rowsPerPage);
         dataTable.addTopToolbar(new HeadersToolbar(dataTable, null));
         dataTable.addBottomToolbar(new NoRecordsToolbar(dataTable, new Model<String>("Nothing here")));

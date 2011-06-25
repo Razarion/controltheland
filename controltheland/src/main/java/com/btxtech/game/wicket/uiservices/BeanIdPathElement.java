@@ -18,6 +18,7 @@ public class BeanIdPathElement implements Serializable {
     private Serializable beanId;
     private String springBeanName;
     private String contentProviderGetter;
+    private String expression;
 
     public BeanIdPathElement(DbPage dbPage, DbContent dbContent) {
         pageId = dbPage.getId();
@@ -32,6 +33,7 @@ public class BeanIdPathElement implements Serializable {
     public void setDataProviderInfo(DataProviderInfo dataProviderInfo) {
         springBeanName = dataProviderInfo.getSpringBeanName();
         contentProviderGetter = dataProviderInfo.getContentProviderGetter();
+        expression = dataProviderInfo.getExpression();
     }
 
     public void setBeanId(Serializable beanId) {
@@ -78,6 +80,14 @@ public class BeanIdPathElement implements Serializable {
         return element.pageId;
     }
 
+    public String getExpression() {
+        return expression;
+    }
+
+    public boolean hasExpression() {
+        return expression != null;
+    }
+
     public BeanIdPathElement createChild(DataProviderInfo dataProviderInfo, Object parentBean) {
         BeanIdPathElement beanIdPathElement = new BeanIdPathElement();
         beanIdPathElement.parent = this;
@@ -99,10 +109,37 @@ public class BeanIdPathElement implements Serializable {
 
     @Override
     public String toString() {
-        return "BeanIdPathElement " + privateToString();
+        StringBuilder s = new StringBuilder();
+        s.append("BeanIdPathElement ");
+        privateToString(s);
+        return s.toString();
     }
 
-    private String privateToString() {
-        return "[pageId: " + pageId + " beanId: " + beanId + " springBeanName:" + springBeanName + " contentProviderGetter:" + contentProviderGetter + "]" + (parent != null ? parent.privateToString() : "");
+    private void privateToString(StringBuilder s) {
+        s.append("[");
+        if (pageId != null) {
+            s.append(" pageId: ");
+            s.append(pageId);
+        }
+        if (beanId != null) {
+            s.append(" beanId: ");
+            s.append(beanId);
+        }
+        if (springBeanName != null) {
+            s.append(" springBeanName: ");
+            s.append(springBeanName);
+        }
+        if (contentProviderGetter != null) {
+            s.append(" contentProviderGetter: ");
+            s.append(contentProviderGetter);
+        }
+        if (expression != null) {
+            s.append(" expression: ");
+            s.append(expression);
+        }
+        s.append("]");
+        if (parent != null) {
+            parent.privateToString(s);
+        }
     }
 }

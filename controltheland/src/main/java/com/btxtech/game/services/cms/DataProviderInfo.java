@@ -14,5 +14,9 @@ public interface DataProviderInfo {
 
     void setContentProviderGetter(String contentProviderGetter);
 
+    String getExpression();
+
+    void setExpression(String expression);
+
     DataProviderInfo getParentContentDataProvider();
 }

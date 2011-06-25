@@ -23,7 +23,7 @@ import java.util.Collection;
  * Date: 25.07.2010
  * Time: 12:50:08
  */
-public class CrudChildServiceHelper<T extends CrudChild> implements Serializable, ContentProvider {
+public class CrudChildServiceHelper<T extends CrudChild> implements Serializable, ContentProvider<T> {
     private Collection<T> children;
     private Class<T> childClass;
     private CrudParent crudParent;
@@ -49,6 +49,7 @@ public class CrudChildServiceHelper<T extends CrudChild> implements Serializable
         throw new NoSuchChildException("Id: " + id);
     }
 
+    @Override
     public void deleteDbChild(T child) {
         children.remove(child);
     }

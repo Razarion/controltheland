@@ -12,4 +12,8 @@ public interface ContentProvider<T> {
     Collection<T> readDbChildren();
 
     T readDbChild(Serializable id);
+
+    T createDbChild();
+
+     void deleteDbChild(T child);
 }

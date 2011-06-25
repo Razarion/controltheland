@@ -2,6 +2,7 @@ package com.btxtech.game.wicket.uiservices.cms;
 
 import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbPage;
+import com.btxtech.game.services.cms.EditMode;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
@@ -23,5 +24,23 @@ public interface CmsUiService {
 
     Object getDataProviderBean(BeanIdPathElement beanIdPathElement);
 
+    void setDataProviderBean(Object value, BeanIdPathElement beanIdPathElement);
+
     List getDataProviderBeans(BeanIdPathElement beanIdPathElement);
+
+    EditMode getEditMode(int contentId);
+
+    void enterEditMode(int contentId);
+
+    void leaveEditMode();
+
+    boolean isEnterEditModeAllowed(int contentId);
+
+    boolean isSaveAllowed(int contentId);
+
+    void save(BeanIdPathElement beanIdPathElement);
+
+    void deleteBean(BeanIdPathElement beanIdPathElement);
+
+    void createBean(BeanIdPathElement beanIdPathElement);
 }
