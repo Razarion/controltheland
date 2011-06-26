@@ -24,18 +24,31 @@
     <div class="header"></div>
 
     <div>
-        <table class="contentMenu">
-            <tr wicket:id="menuTable">
-                <td><a href="#" wicket:id="menuLink"> <span wicket:id="menuLinkName"></span> </a></td>
+        <table border="0" cellpadding="0" cellspacing="0"  class="contentLeft">
+            <tr>
+                <td class="contentTopMenu"></td>
+            </tr>
+            <tr>
+                <td>
+                    <table class="contentBgMenu">
+                        <tr wicket:id="menuTable">
+                            <td><a href="#" wicket:id="menuLink"> <span wicket:id="menuLinkName"></span> </a></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td class="contentBottomMenu"></td>
             </tr>
         </table>
+
         <div class="contentWrapper">
             <div class="contentMain">
                 <form wicket:id="form">
                     <div wicket:id="content" class="contentMainInner"></div>
                 </form>
             </div>
-            <div class="contentLeft"></div>
+            <div class="contentRight"></div>
             <br class="clear-both"/>
         </div>
     </div>
