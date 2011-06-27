@@ -11,8 +11,12 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("EXPRESSION_PROPERTY")
 public class DbExpressionProperty extends DbContent implements DataProviderInfo {
+    public enum Type {
+        DATE_DDMMYYYY_HH_MM_SS
+    };
     private String expression;
     private boolean escapeMarkup = true;
+    private Type optionalType;
 
     @Override
     public String getExpression() {
@@ -30,5 +34,13 @@ public class DbExpressionProperty extends DbContent implements DataProviderInfo 
 
     public boolean getEscapeMarkup() {
         return escapeMarkup;
+    }
+
+    public Type getOptionalType() {
+        return optionalType;
+    }
+
+    public void setOptionalType(Type optionalType) {
+        this.optionalType = optionalType;
     }
 }

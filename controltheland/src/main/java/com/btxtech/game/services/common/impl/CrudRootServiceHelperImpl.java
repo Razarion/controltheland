@@ -46,16 +46,20 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
     private HibernateTemplate hibernateTemplate;
     private Class<T> childClass;
     private String orderColumn;
+    private boolean setOrderColumn;
+    private boolean orderAsc;
 
     @Override
     public void init(Class<T> childClass) {
-        init(childClass, null);
+        init(childClass, null, false, false);
     }
 
     @Override
-    public void init(Class<T> childClass, String orderColumn) {
+    public void init(Class<T> childClass, String orderColumn, boolean setOrderColumn, boolean orderAsc) {
         this.childClass = childClass;
         this.orderColumn = orderColumn;
+        this.setOrderColumn = setOrderColumn;
+        this.orderAsc = orderAsc;
     }
 
     @Autowired
@@ -73,7 +77,11 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
                 Criteria criteria = session.createCriteria(childClass);
                 criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
                 if (orderColumn != null) {
-                    criteria.addOrder(Order.asc(orderColumn));
+                    if (orderAsc) {
+                        criteria.addOrder(Order.asc(orderColumn));
+                    } else {
+                        criteria.addOrder(Order.desc(orderColumn));
+                    }
                 }
                 return criteria.list();
             }
@@ -167,7 +175,7 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
 
     @Transactional
     private void addChild(T t) {
-        if (orderColumn != null) {
+        if (orderColumn != null && setOrderColumn) {
             int nextFreeIndex = hibernateTemplate.execute(new HibernateCallback<Integer>() {
                 @Override
                 public Integer doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {

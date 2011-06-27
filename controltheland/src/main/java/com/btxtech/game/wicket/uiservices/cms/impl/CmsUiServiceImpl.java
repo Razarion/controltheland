@@ -12,6 +12,7 @@ import com.btxtech.game.services.cms.DbStaticProperty;
 import com.btxtech.game.services.cms.EditMode;
 import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.item.itemType.DbItemType;
+import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.ContentDetailLink;
 import com.btxtech.game.wicket.pages.cms.ItemTypeImage;
@@ -32,8 +33,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -76,8 +79,7 @@ public class CmsUiServiceImpl implements CmsUiService {
             if (dbContent instanceof DbContentList) {
                 return new ContentList(componentId, (DbContentList) dbContent, beanIdPathElement);
             } else if (dbContent instanceof DbExpressionProperty) {
-                Object value = PropertyUtils.getProperty(bean, dbContent.getExpression());
-                return componentForClass(componentId, dbContent, bean, value, ((DbExpressionProperty) dbContent).getEscapeMarkup(), beanIdPathElement);
+                return component4ExpressionProperty(componentId, ((DbExpressionProperty) dbContent), bean, beanIdPathElement);
             } else if (dbContent instanceof DbContentDetailLink) {
                 return new ContentDetailLink(componentId, (DbContentDetailLink) dbContent, beanIdPathElement);
             } else if (dbContent instanceof DbContentContainer) {
@@ -97,19 +99,44 @@ public class CmsUiServiceImpl implements CmsUiService {
         }
     }
 
-    private Component componentForClass(String id, DbContent dbContent, Object bean, Object value, boolean escapeMarkup, final BeanIdPathElement beanIdPathElement) {
+    private Component component4ExpressionProperty(String id, DbExpressionProperty dbExpressionProperty, Object bean, BeanIdPathElement beanIdPathElement) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+        Object value = PropertyUtils.getProperty(bean, dbExpressionProperty.getExpression());
+
         if (value instanceof DbItemType) {
             return new ItemTypeImage(id, (DbItemType) value);
         } else {
-            if (PropertyUtils.isWriteable(bean, beanIdPathElement.getExpression()) && getEditMode(dbContent) != null) {
+            if (PropertyUtils.isWriteable(bean, beanIdPathElement.getExpression()) && getEditMode(dbExpressionProperty) != null) {
+                // Write
                 return new WritePanel(id, value, beanIdPathElement);
             } else {
+                // Read only
                 if (value != null) {
-                    return new Label(id, value.toString()).setEscapeModelStrings(escapeMarkup);
+                    String stringValue;
+                    if (dbExpressionProperty.getOptionalType() != null) {
+                        stringValue = typeToString(value, dbExpressionProperty.getOptionalType());
+                    } else {
+                        stringValue = value.toString();
+                    }
+                    return new Label(id, stringValue).setEscapeModelStrings(dbExpressionProperty.getEscapeMarkup());
                 } else {
-                    return new Label(id, "").setEscapeModelStrings(escapeMarkup);
+                    return new Label(id, "");
                 }
             }
+        }
+    }
+
+    private String typeToString(Object value, DbExpressionProperty.Type type) {
+        switch (type) {
+            case DATE_DDMMYYYY_HH_MM_SS:
+                if (value instanceof Date) {
+                    return WebCommon.formatDateTime((Date) value);
+                } else if (value instanceof Number) {
+                    return WebCommon.formatDateTime(new Date(((Number) value).longValue()));
+                } else {
+                    throw new IllegalArgumentException("Date value must be Number ore Date: " + value);
+                }
+            default:
+                throw new IllegalArgumentException("Unknown type: " + type);
         }
     }
 
@@ -132,7 +159,7 @@ public class CmsUiServiceImpl implements CmsUiService {
                 ContentProvider contentProvider = getContentProvider(beanIdPathElement.getParent());
                 return contentProvider.readDbChild(beanIdPathElement.getBeanId());
             } else if (beanIdPathElement.hasExpression() && beanIdPathElement.hasParent()) {
-                Object bean = getDataProviderBean(beanIdPathElement);
+                Object bean = getDataProviderBean(beanIdPathElement.getParent());
                 return PropertyUtils.getProperty(bean, beanIdPathElement.getExpression());
             } else {
                 return null;
