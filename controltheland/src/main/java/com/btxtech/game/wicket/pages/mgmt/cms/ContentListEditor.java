@@ -39,6 +39,7 @@ public class ContentListEditor extends MgmtWebPage {
         }));
         add(form);
 
+        form.add(new TextField("cssClass"));
         form.add(new TextField("springBeanName"));
         form.add(new TextField("contentProviderGetter"));
         form.add(new TextField("rowsPerPage"));

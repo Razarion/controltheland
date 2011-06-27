@@ -1,6 +1,14 @@
 package com.btxtech.game.wicket.pages.mgmt.cms;
 
+import com.btxtech.game.services.cms.DbContentDetailLink;
+import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
+import com.btxtech.game.wicket.uiservices.RuModel;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
  * User: beat
@@ -8,6 +16,19 @@ import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
  * Time: 17:46:43
  */
 public class ContentDetailLinkEditor extends MgmtWebPage {
-    public ContentDetailLinkEditor() {
+    @SpringBean
+    private RuServiceHelper<DbContentDetailLink> ruServiceHelper;
+
+    public ContentDetailLinkEditor(DbContentDetailLink dbContentDetailLink) {
+        add(new FeedbackPanel("msgs"));
+
+        Form<DbContentDetailLink> form = new Form<DbContentDetailLink>("form", new CompoundPropertyModel<DbContentDetailLink>(new RuModel<DbContentDetailLink>(dbContentDetailLink, DbContentDetailLink.class) {
+            @Override
+            protected RuServiceHelper<DbContentDetailLink> getRuServiceHelper() {
+                return ruServiceHelper;
+            }
+        }));
+        add(form);
+        form.add(new TextField("cssClass"));
     }
 }

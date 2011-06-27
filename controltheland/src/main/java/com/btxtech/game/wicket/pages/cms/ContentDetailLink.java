@@ -3,6 +3,7 @@ package com.btxtech.game.wicket.pages.cms;
 import com.btxtech.game.services.cms.DbContentDetailLink;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -21,5 +22,8 @@ public class ContentDetailLink extends Panel {
         BookmarkablePageLink<CmsPage> link = new BookmarkablePageLink<CmsPage>("link", CmsPage.class, pageParameters);
         link.add(new Label("label", dbContentDetailLink.getName()));
         add(link);
+        if (dbContentDetailLink.getCssClass() != null) {
+            add(new SimpleAttributeModifier("class", dbContentDetailLink.getCssClass()));
+        }
     }
 }

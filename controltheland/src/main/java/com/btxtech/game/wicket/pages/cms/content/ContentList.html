@@ -7,7 +7,14 @@
 <body>
 <wicket:panel>
     <div wicket:id="edit"></div>
-    <table wicket:id="dataTable"></table>
+    <table>
+        <tr wicket:id="rows">
+            <td wicket:id="cells">
+                <div wicket:id="cell"></div>
+            </td>
+        </tr>
+    </table>
+    <span wicket:id="navigator"></span>
 </wicket:panel>
 </body>
 </html>

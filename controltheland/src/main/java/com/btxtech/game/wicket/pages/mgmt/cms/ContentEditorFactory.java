@@ -1,10 +1,10 @@
 package com.btxtech.game.wicket.pages.mgmt.cms;
 
-import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbContentBook;
 import com.btxtech.game.services.cms.DbContentContainer;
 import com.btxtech.game.services.cms.DbContentDetailLink;
+import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.cms.DbExpressionProperty;
 import com.btxtech.game.services.cms.DbStaticProperty;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
@@ -25,7 +25,7 @@ public class ContentEditorFactory {
         } else if (dbContent instanceof DbContentContainer) {
             return new ContentContainerEditor((DbContentContainer) dbContent);
         } else if (dbContent instanceof DbContentDetailLink) {
-            return new ContentDetailLinkEditor();
+            return new ContentDetailLinkEditor((DbContentDetailLink) dbContent);
         } else if (dbContent instanceof DbStaticProperty) {
             return new StaticPropertyEditor((DbStaticProperty) dbContent);
         } else {

@@ -27,6 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +89,11 @@ public class CmsUiServiceImpl implements CmsUiService {
                 return new ContentBook(componentId, (DbContentBook) dbContent, beanIdPathElement);
             } else if (dbContent instanceof DbStaticProperty) {
                 DbStaticProperty dbStaticProperty = (DbStaticProperty) dbContent;
-                return new Label(componentId, dbStaticProperty.getHtml()).setEscapeModelStrings(dbStaticProperty.getEscapeMarkup());
+                Component label = new Label(componentId, dbStaticProperty.getHtml()).setEscapeModelStrings(dbStaticProperty.getEscapeMarkup());
+                if (dbContent.getCssClass() != null) {
+                    label.add(new SimpleAttributeModifier("class", dbContent.getCssClass()));
+                }
+                return label;
             } else {
                 log.warn("CmsUiServiceImpl: No Wicket Component for content: " + dbContent);
                 return new Label(componentId, "No content");
@@ -101,13 +106,13 @@ public class CmsUiServiceImpl implements CmsUiService {
 
     private Component component4ExpressionProperty(String id, DbExpressionProperty dbExpressionProperty, Object bean, BeanIdPathElement beanIdPathElement) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Object value = PropertyUtils.getProperty(bean, dbExpressionProperty.getExpression());
-
+        Component component;
         if (value instanceof DbItemType) {
-            return new ItemTypeImage(id, (DbItemType) value);
+            component = new ItemTypeImage(id, (DbItemType) value);
         } else {
             if (PropertyUtils.isWriteable(bean, beanIdPathElement.getExpression()) && getEditMode(dbExpressionProperty) != null) {
                 // Write
-                return new WritePanel(id, value, beanIdPathElement);
+                component = new WritePanel(id, value, beanIdPathElement);
             } else {
                 // Read only
                 if (value != null) {
@@ -117,12 +122,16 @@ public class CmsUiServiceImpl implements CmsUiService {
                     } else {
                         stringValue = value.toString();
                     }
-                    return new Label(id, stringValue).setEscapeModelStrings(dbExpressionProperty.getEscapeMarkup());
+                    component = new Label(id, stringValue).setEscapeModelStrings(dbExpressionProperty.getEscapeMarkup());
                 } else {
-                    return new Label(id, "");
+                    component = new Label(id, "");
                 }
             }
         }
+        if (dbExpressionProperty.getCssClass() != null) {
+            component.add(new SimpleAttributeModifier("class", dbExpressionProperty.getCssClass()));
+        }
+        return component;
     }
 
     private String typeToString(Object value, DbExpressionProperty.Type type) {
@@ -172,7 +181,7 @@ public class CmsUiServiceImpl implements CmsUiService {
     @Override
     public void setDataProviderBean(Object value, BeanIdPathElement beanIdPathElement) {
         try {
-            Object object = getDataProviderBean(beanIdPathElement);
+            Object object = getDataProviderBean(beanIdPathElement.getParent());
             PropertyUtils.setProperty(object, beanIdPathElement.getExpression(), value);
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -37,6 +37,7 @@ public class ContentBookEditor extends MgmtWebPage {
         }));
         add(form);
 
+        form.add(new TextField("cssClass"));
         form.add(new TextField("className"));
         form.add(new TextField("springBeanName"));
         form.add(new TextField("contentProviderGetter"));
