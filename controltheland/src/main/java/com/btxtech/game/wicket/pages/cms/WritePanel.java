@@ -1,11 +1,16 @@
 package com.btxtech.game.wicket.pages.cms;
 
+import com.btxtech.game.services.cms.CmsService;
+import com.btxtech.game.services.cms.DbExpressionProperty;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import wicket.contrib.tinymce.TinyMceBehavior;
+import wicket.contrib.tinymce.settings.TinyMCESettings;
 
 /**
  * User: beat
@@ -15,9 +20,12 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 public class WritePanel extends Panel {
     @SpringBean
     private CmsUiService cmsUiService;
+    @SpringBean
+    private CmsService cmsService;
 
-    public WritePanel(String id, Object value, final BeanIdPathElement beanIdPathElement) {
+    public WritePanel(String id, Object value, final BeanIdPathElement beanIdPathElement, DbExpressionProperty dbExpressionProperty) {
         super(id);
+        final int contentId = dbExpressionProperty.getId();
         add(new TextField("field", new LoadableDetachableModel(value) {
 
             @Override
@@ -30,6 +38,33 @@ public class WritePanel extends Panel {
             protected Object load() {
                 return cmsUiService.getDataProviderBean(beanIdPathElement);
             }
-        }));
+        }) {
+            @Override
+            public boolean isVisible() {
+                return ((DbExpressionProperty) cmsService.getDbContent(contentId)).getEscapeMarkup();
+            }
+        });
+        TextArea<String> contentArea = new TextArea<String>("textArea", new LoadableDetachableModel<String>() {
+            @Override
+            public void setObject(String s) {
+                super.setObject(s);
+                cmsUiService.setDataProviderBean(s, beanIdPathElement);
+            }
+
+            @Override
+            protected String load() {
+                return (String) cmsUiService.getDataProviderBean(beanIdPathElement);
+            }
+        }) {
+            @Override
+            public boolean isVisible() {
+                return !((DbExpressionProperty) cmsService.getDbContent(contentId)).getEscapeMarkup();
+            }
+        };
+        TinyMCESettings tinyMCESettings = new TinyMCESettings(TinyMCESettings.Theme.advanced);
+        tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.link, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after);
+        tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.unlink, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after);
+        contentArea.add(new TinyMceBehavior(tinyMCESettings));
+        add(contentArea);
     }
 }
