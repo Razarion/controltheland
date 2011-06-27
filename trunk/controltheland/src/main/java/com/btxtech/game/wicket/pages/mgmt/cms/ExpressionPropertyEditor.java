@@ -6,11 +6,14 @@ import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import java.util.Arrays;
 
 /**
  * User: beat
@@ -34,6 +37,7 @@ public class ExpressionPropertyEditor extends MgmtWebPage {
 
         form.add(new TextField("expression"));
         form.add(new CheckBox("escapeMarkup"));
+        form.add(new DropDownChoice<DbExpressionProperty.Type>("optionalType", Arrays.asList(DbExpressionProperty.Type.values())));
 
         form.add(new Button("save") {
 
@@ -41,6 +45,6 @@ public class ExpressionPropertyEditor extends MgmtWebPage {
             public void onSubmit() {
                 ruServiceHelper.updateDbEntity(form.getModelObject());
             }
-        });        
+        });
     }
 }

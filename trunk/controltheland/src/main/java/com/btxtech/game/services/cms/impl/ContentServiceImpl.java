@@ -20,7 +20,7 @@ public class ContentServiceImpl implements ContentService {
 
     @PostConstruct
     public void init() {
-        blogEntryCrudRootServiceHelper.init(DbBlogEntry.class, "timeStamp");
+        blogEntryCrudRootServiceHelper.init(DbBlogEntry.class, "timeStamp", false, false);
     }
 
     @Override
