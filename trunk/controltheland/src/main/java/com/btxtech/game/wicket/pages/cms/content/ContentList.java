@@ -9,6 +9,8 @@ import com.btxtech.game.wicket.pages.cms.EditPanel;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.extensions.markup.html.repeater.data.grid.DataGridView;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.HeaderlessColumn;
@@ -16,6 +18,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.HeadersToolb
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.NavigationToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.NoRecordsToolbar;
+import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
@@ -41,6 +44,9 @@ public class ContentList extends Panel {
         this.beanIdPathElement = beanIdPathElement;
         contentId = dbContentList.getId();
         setupDetailTable(dbContentList);
+        if (dbContentList.getCssClass() != null) {
+            add(new SimpleAttributeModifier("class", dbContentList.getCssClass()));
+        }
     }
 
     private void setupDetailTable(DbContentList dbContentList) {
@@ -83,7 +89,17 @@ public class ContentList extends Panel {
             }
         };
 
-        @SuppressWarnings("unchecked")
+
+        DataGridView dataGridView = new DataGridView("rows", columns, detachHashListProvider);
+        add(dataGridView);
+        if (dbContentList.isPageable()) {
+            dataGridView.setRowsPerPage(dbContentList.getRowsPerPage());
+            add(new PagingNavigator("navigator", dataGridView));
+        }
+
+        ///////////////
+
+   /*     @SuppressWarnings("unchecked")
         IColumn[] columnsArray = columns.toArray(new IColumn[columns.size()]);
 
         int rowsPerPage = Integer.MAX_VALUE;
@@ -98,6 +114,6 @@ public class ContentList extends Panel {
         if (dbContentList.isPageable()) {
             dataTable.addBottomToolbar(new NavigationToolbar(dataTable));
         }
-        add(dataTable);
+        add(dataTable);  */
     }
 }

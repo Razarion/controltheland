@@ -29,6 +29,7 @@ public abstract class DbContent implements CrudChild<DbContent> {
     private String name;
     @ManyToOne(fetch = FetchType.LAZY)
     private DbContent parent;
+    private String cssClass;
 
     @Override
     public Integer getId() {
@@ -119,6 +120,14 @@ public abstract class DbContent implements CrudChild<DbContent> {
 
     public void setExpression(String expression) {
         throw new UnsupportedOperationException();
+    }
+
+    public String getCssClass() {
+        return cssClass;
+    }
+
+    public void setCssClass(String cssClass) {
+        this.cssClass = cssClass;
     }
 
     @Override

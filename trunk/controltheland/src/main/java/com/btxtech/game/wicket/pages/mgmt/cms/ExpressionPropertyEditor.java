@@ -35,6 +35,7 @@ public class ExpressionPropertyEditor extends MgmtWebPage {
         }));
         add(form);
 
+        form.add(new TextField("cssClass"));
         form.add(new TextField("expression"));
         form.add(new CheckBox("escapeMarkup"));
         form.add(new DropDownChoice<DbExpressionProperty.Type>("optionalType", Arrays.asList(DbExpressionProperty.Type.values())));

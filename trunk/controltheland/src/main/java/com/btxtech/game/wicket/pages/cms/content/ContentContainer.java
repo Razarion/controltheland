@@ -5,6 +5,7 @@ import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbContentContainer;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -41,6 +42,9 @@ public class ContentContainer extends Panel {
             }
         });
         setupPropertyBook();
+        if(dbContentContentContainer.getCssClass() != null) {
+            add(new SimpleAttributeModifier("class", dbContentContentContainer.getCssClass()));
+        }
     }
 
     private void setupPropertyBook() {

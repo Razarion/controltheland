@@ -6,6 +6,7 @@ import com.btxtech.game.services.cms.DbContentRow;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.HeaderlessColumn;
@@ -51,6 +52,9 @@ public class ContentBook extends Panel {
             }
         });
         setupPropertyBook();
+        if(dbContentBook.getCssClass() != null) {
+            add(new SimpleAttributeModifier("class", dbContentBook.getCssClass()));
+        }
     }
 
     private void setupPropertyBook() {
