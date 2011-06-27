@@ -112,7 +112,7 @@ public class CmsUiServiceImpl implements CmsUiService {
         } else {
             if (PropertyUtils.isWriteable(bean, beanIdPathElement.getExpression()) && getEditMode(dbExpressionProperty) != null) {
                 // Write
-                component = new WritePanel(id, value, beanIdPathElement);
+                component = new WritePanel(id, value, beanIdPathElement, dbExpressionProperty);
             } else {
                 // Read only
                 if (value != null) {
