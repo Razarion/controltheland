@@ -43,9 +43,9 @@ public class DbWeaponType implements Serializable {
     private int range;
     private int damage;
     private double reloadTime;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbItemTypeData dbSound;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbItemTypeData dbMuzzleImage;
     @Column(nullable = false, columnDefinition = "INT default '0'")
     private int muzzlePointX_0;
@@ -61,7 +61,7 @@ public class DbWeaponType implements Serializable {
     private int muzzleFlashLength;
     @Column(nullable = false)
     private boolean stretchMuzzleFlashToTarget;
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "ITEM_WEAPON_TYPE_ALLOWED_ITEM_TYPE",
             joinColumns = @JoinColumn(name = "weaponItemTypeId"),
             inverseJoinColumns = @JoinColumn(name = "allowedItemTypeId")

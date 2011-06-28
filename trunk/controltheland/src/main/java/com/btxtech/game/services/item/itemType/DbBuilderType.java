@@ -39,7 +39,7 @@ public class DbBuilderType implements Serializable {
     @Column(name= "theRange")
     private int range;
     private double progress;
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "ITEM_BUILDER_TYPE_ABLE_TO_BUILD",
             joinColumns = @JoinColumn(name = "builderId"),
             inverseJoinColumns = @JoinColumn(name = "itemTypeId")

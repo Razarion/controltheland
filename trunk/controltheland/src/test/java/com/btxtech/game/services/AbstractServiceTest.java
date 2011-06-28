@@ -596,7 +596,7 @@ abstract public class AbstractServiceTest {
         DbMovableType dbMovableType = new DbMovableType();
         dbMovableType.setSpeed(10000);
         dbMovableType.setTerrainType(SurfaceType.LAND);
-        dbBaseItemType.setMovableType(dbMovableType);
+        dbBaseItemType.setDbMovableType(dbMovableType);
 
         itemService.saveDbItemType(dbBaseItemType);
         itemService.activate();
@@ -648,7 +648,7 @@ abstract public class AbstractServiceTest {
         DbMovableType dbMovableType = new DbMovableType();
         dbMovableType.setSpeed(10000);
         dbMovableType.setTerrainType(SurfaceType.LAND);
-        dbBaseItemType.setMovableType(dbMovableType);
+        dbBaseItemType.setDbMovableType(dbMovableType);
 
         itemService.saveDbItemType(dbBaseItemType);
         itemService.activate();
@@ -684,7 +684,7 @@ abstract public class AbstractServiceTest {
         DbMovableType dbMovableType = new DbMovableType();
         dbMovableType.setSpeed(10000);
         dbMovableType.setTerrainType(SurfaceType.LAND);
-        dbBaseItemType.setMovableType(dbMovableType);
+        dbBaseItemType.setDbMovableType(dbMovableType);
 
         itemService.saveDbItemType(dbBaseItemType);
         itemService.activate();
@@ -750,7 +750,7 @@ abstract public class AbstractServiceTest {
         DbMovableType dbMovableType = new DbMovableType();
         dbMovableType.setSpeed(10000);
         dbMovableType.setTerrainType(SurfaceType.LAND);
-        dbBaseItemType.setMovableType(dbMovableType);
+        dbBaseItemType.setDbMovableType(dbMovableType);
 
         itemService.saveDbItemType(dbBaseItemType);
         itemService.activate();

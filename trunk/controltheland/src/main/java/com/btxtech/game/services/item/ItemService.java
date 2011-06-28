@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeData;
@@ -82,5 +83,7 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
 
     void killSyncItems(Collection<SyncItem> itemsToKill);
 
-    void killSyncItemIds(Collection<Id> itemsToKill);    
+    void killSyncItemIds(Collection<Id> itemsToKill);
+
+    CrudRootServiceHelper<DbItemType> getDbItemTypeCrud();
 }

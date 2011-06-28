@@ -22,6 +22,7 @@ import com.btxtech.game.wicket.pages.cms.content.ContentContainer;
 import com.btxtech.game.wicket.pages.cms.content.ContentList;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import org.apache.commons.beanutils.NestedNullException;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,6 +48,7 @@ import java.util.List;
  */
 @org.springframework.stereotype.Component("cmsUiService")
 public class CmsUiServiceImpl implements CmsUiService {
+    private static final String CURRENT_PATH = ".";
     @Autowired
     private CmsService cmsService;
     @Autowired
@@ -105,12 +107,23 @@ public class CmsUiServiceImpl implements CmsUiService {
     }
 
     private Component component4ExpressionProperty(String id, DbExpressionProperty dbExpressionProperty, Object bean, BeanIdPathElement beanIdPathElement) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        Object value = PropertyUtils.getProperty(bean, dbExpressionProperty.getExpression());
+        Object value;
+        if (dbExpressionProperty.getExpression().equals(CURRENT_PATH)) {
+            value = bean;
+        } else {
+            try {
+                value = PropertyUtils.getProperty(bean, dbExpressionProperty.getExpression());
+            } catch (NestedNullException e) {
+                return new Label(id, "-");
+            }
+        }
         Component component;
         if (value instanceof DbItemType) {
             component = new ItemTypeImage(id, (DbItemType) value);
         } else {
-            if (PropertyUtils.isWriteable(bean, beanIdPathElement.getExpression()) && getEditMode(dbExpressionProperty) != null) {
+            if (!dbExpressionProperty.getExpression().equals(CURRENT_PATH)
+                    && PropertyUtils.isWriteable(bean, beanIdPathElement.getExpression())
+                    && getEditMode(dbExpressionProperty) != null) {
                 // Write
                 component = new WritePanel(id, value, beanIdPathElement, dbExpressionProperty);
             } else {

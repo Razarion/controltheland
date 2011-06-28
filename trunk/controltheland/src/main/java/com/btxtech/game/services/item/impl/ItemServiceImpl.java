@@ -35,6 +35,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInf
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.energy.ServerEnergyService;
@@ -62,6 +63,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -104,6 +106,8 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     private MgmtService mgmtService;
     @Autowired
     private ServerConditionService serverConditionService;
+    @Autowired
+    private CrudRootServiceHelper<DbItemType> dbItemTypeCrud;
     private HibernateTemplate hibernateTemplate;
     private int lastId = 0;
     private final HashMap<Id, SyncItem> items = new HashMap<Id, SyncItem>();
@@ -112,13 +116,16 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     private HashMap<Integer, DbItemTypeData> muzzleItemTypeImages = new HashMap<Integer, DbItemTypeData>();
     private HashMap<Integer, DbItemTypeData> muzzleItemTypeSounds = new HashMap<Integer, DbItemTypeData>();
 
-
     @PostConstruct
     public void setup() {
+        dbItemTypeCrud.init(DbItemType.class);
         try {
+            SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
             activate();
         } catch (Throwable t) {
             log.error("", t);
+        } finally {
+            SessionFactoryUtils.processDeferredClose(hibernateTemplate.getSessionFactory());
         }
     }
 
@@ -726,5 +733,10 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             throw new RuntimeException(e);
         }
         return itemType;
+    }
+
+    @Override
+    public CrudRootServiceHelper<DbItemType> getDbItemTypeCrud() {
+        return dbItemTypeCrud;
     }
 }
