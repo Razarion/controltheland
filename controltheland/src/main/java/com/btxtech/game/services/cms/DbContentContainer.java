@@ -26,6 +26,7 @@ import java.util.List;
 public class DbContentContainer extends DbContent implements DataProviderInfo, CrudParent {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "parent_id")
+    @org.hibernate.annotations.IndexColumn(name = "orderIndex", base = 0)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private List<DbContent> dbContents;
     private String springBeanName;

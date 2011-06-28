@@ -11,7 +11,9 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,9 +29,12 @@ import java.util.List;
 public class DbContentList extends DbContent implements DataProviderInfo, CrudParent {
     // Since the parentId field on a child can not distinguishes if it belongs to dbContentBooks or dbPropertyColumns
     // mapping tables are used.
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    // The DbContent table is not cleaned after removing an item (due to ManyToMany mapping). OneToMany mapping leads
+    // to an exception if orderIndex is changed
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-    @JoinTable(name = "CMS_CONTENT_BEAN_TABLE_COLUMNS",
+    @OrderColumn(name = "orderIndex")
+    @JoinTable(name = "CMS_CONTENT_CONTENT_LIST_COLUMNS",
             joinColumns = @JoinColumn(name = "contentListId"),
             inverseJoinColumns = @JoinColumn(name = "contentId"))
     private List<DbContent> dbPropertyColumns;
@@ -37,7 +42,7 @@ public class DbContentList extends DbContent implements DataProviderInfo, CrudPa
     private String contentProviderGetter;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-    @JoinTable(name = "CMS_CONTENT_BEAN_TABLE_CONTENT_BOOK",
+    @JoinTable(name = "CMS_CONTENT_CONTENT_LIST_CONTENT_BOOK",
             joinColumns = @JoinColumn(name = "contentListId"),
             inverseJoinColumns = @JoinColumn(name = "contentBookId"))
     private Collection<DbContentBook> dbContentBooks;
