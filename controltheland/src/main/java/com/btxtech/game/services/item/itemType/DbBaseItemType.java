@@ -30,6 +30,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToOne;
 
 /**
@@ -43,31 +44,31 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
     private int health;
     private int price;
     private int buildup;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbTurnableType dbTurnableType;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbMovableType dbMovableType;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbWeaponType dbWeaponType;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbFactoryType dbFactoryType;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbHarvesterType dbHarvesterType;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbBuilderType dbBuilderType;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbConsumerType dbConsumerType;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbGeneratorType dbGeneratorType;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbSpecialType dbSpecialType;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbBaseItemType upgradable;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbItemContainerType dbItemContainerType;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbHouseType dbHouseType;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbLauncherType dbLauncherType;
     private Integer upgradeProgress;
 
@@ -112,12 +113,12 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
     }
 
     @Override
-    public DbMovableType getMovableType() {
+    public DbMovableType getDbMovableType() {
         return dbMovableType;
     }
 
     @Override
-    public void setMovableType(DbMovableType dbMovableType) {
+    public void setDbMovableType(DbMovableType dbMovableType) {
         this.dbMovableType = dbMovableType;
     }
 

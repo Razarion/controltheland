@@ -30,6 +30,8 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
+
+import com.btxtech.game.services.common.CrudChild;
 import org.hibernate.annotations.Cascade;
 
 /**
@@ -40,7 +42,7 @@ import org.hibernate.annotations.Cascade;
 @Entity(name = "ITEM_TYPE")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
-public abstract class DbItemType implements Serializable, DbItemTypeI {
+public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild {
     @Id
     @GeneratedValue
     private Integer id;
@@ -50,8 +52,7 @@ public abstract class DbItemType implements Serializable, DbItemTypeI {
     private String description;
     private String proDescription;
     private String contraDescription;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "itemType")
-    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "itemType", orphanRemoval = true)
     private Set<DbItemTypeImage> itemTypeImages;
     private TerrainType terrainType;
 
@@ -181,5 +182,13 @@ public abstract class DbItemType implements Serializable, DbItemTypeI {
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : System.identityHashCode(this);
+    }
+
+    @Override
+    public void init() {
+    }
+
+    @Override
+    public void setParent(Object o) {
     }
 }

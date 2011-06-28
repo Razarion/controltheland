@@ -32,7 +32,7 @@ public class DbLauncherType implements Serializable {
     @GeneratedValue
     private Integer id;
     private double progress;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbProjectileItemType dbProjectileItemType;
 
     public double getProgress() {

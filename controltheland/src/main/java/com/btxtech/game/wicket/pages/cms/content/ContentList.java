@@ -87,9 +87,11 @@ public class ContentList extends Panel {
         @SuppressWarnings("unchecked")
         DataGridView dataGridView = new DataGridView("rows", columns, detachHashListProvider);
         add(dataGridView);
+        PagingNavigator pagingNavigator = new PagingNavigator("navigator", dataGridView);
         if (dbContentList.isPageable()) {
             dataGridView.setRowsPerPage(dbContentList.getRowsPerPage());
-            add(new PagingNavigator("navigator", dataGridView));
         }
+        pagingNavigator.setVisible(dbContentList.isPageable());
+        add(pagingNavigator);
     }
 }

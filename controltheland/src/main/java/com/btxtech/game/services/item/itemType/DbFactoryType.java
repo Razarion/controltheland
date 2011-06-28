@@ -36,7 +36,7 @@ public class DbFactoryType implements Serializable {
     @GeneratedValue
     private Integer id;
     private double progress;
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "ITEM_FACTORY_TYPE_ABLE_TO_BUILD",
             joinColumns = @JoinColumn(name = "factoryId"),
             inverseJoinColumns = @JoinColumn(name = "itemTypeId")

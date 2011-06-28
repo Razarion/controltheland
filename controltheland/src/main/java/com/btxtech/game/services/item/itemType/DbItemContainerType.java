@@ -37,7 +37,7 @@ public class DbItemContainerType implements Serializable {
     @GeneratedValue
     private Integer id;
     private int maxCount;
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "ITEM_ITEM_CONTAINER_TYPE_ABLE_TO_CONTAIN",
             joinColumns = @JoinColumn(name = "containId"),
             inverseJoinColumns = @JoinColumn(name = "itemTypeId")

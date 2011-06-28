@@ -34,7 +34,7 @@ import com.btxtech.game.services.item.itemType.DbWeaponType;
 import java.util.Arrays;
 import java.util.Collection;
 import javax.swing.ImageIcon;
-import org.apache.wicket.markup.html.WebPage;
+
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -191,9 +191,9 @@ public class BaseItemTypeEditor extends MgmtWebPage {
             turnable = false;
         }
 
-        if (dbBaseItemType.getMovableType() != null) {
+        if (dbBaseItemType.getDbMovableType() != null) {
             movable = true;
-            speed = dbBaseItemType.getMovableType().getSpeed();
+            speed = dbBaseItemType.getDbMovableType().getSpeed();
         } else {
             movable = false;
         }
@@ -298,15 +298,15 @@ public class BaseItemTypeEditor extends MgmtWebPage {
         }
 
         if (movable) {
-            DbMovableType movableType = dbBaseItemType.getMovableType();
+            DbMovableType movableType = dbBaseItemType.getDbMovableType();
             if (movableType == null) {
                 movableType = new DbMovableType();
-                dbBaseItemType.setMovableType(movableType);
+                dbBaseItemType.setDbMovableType(movableType);
             }
             movableType.setSpeed(speed);
             movableType.setTerrainType(SurfaceType.LAND);
         } else {
-            dbBaseItemType.setMovableType(null);
+            dbBaseItemType.setDbMovableType(null);
         }
 
         if (weapon) {

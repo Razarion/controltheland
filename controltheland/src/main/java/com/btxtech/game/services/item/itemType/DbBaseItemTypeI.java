@@ -22,9 +22,9 @@ public interface DbBaseItemTypeI extends DbItemTypeI {
 
     void setTurnableType(DbTurnableType dbTurnableType);
 
-    DbMovableType getMovableType();
+    DbMovableType getDbMovableType();
 
-    void setMovableType(DbMovableType dbMovableType);
+    void setDbMovableType(DbMovableType dbMovableType);
 
     DbWeaponType getWeaponType();
 
