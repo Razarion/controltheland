@@ -26,6 +26,7 @@ public class DbContentBook extends DbContent implements DataProviderInfo, CrudPa
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "parent_id")
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+    @org.hibernate.annotations.IndexColumn(name = "orderIndex", base = 0)
     private List<DbContentRow> dbContentRows;
     private String className;
     private String springBeanName;
