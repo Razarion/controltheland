@@ -24,7 +24,7 @@ public interface CmsUiService {
 
     Object getDataProviderBean(BeanIdPathElement beanIdPathElement);
 
-    void setDataProviderBean(Object value, BeanIdPathElement beanIdPathElement);
+    void setDataProviderBean(Object value, BeanIdPathElement beanIdPathElement, int contentId);
 
     List getDataProviderBeans(BeanIdPathElement beanIdPathElement);
 
@@ -43,4 +43,8 @@ public interface CmsUiService {
     void deleteBean(BeanIdPathElement beanIdPathElement);
 
     void createBean(BeanIdPathElement beanIdPathElement);
+
+    boolean isReadAllowed(int contentId);
+
+    boolean isPageAccessAllowed(DbPage dbPage);
 }

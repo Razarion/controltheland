@@ -35,6 +35,8 @@ public class ExpressionPropertyEditor extends MgmtWebPage {
         }));
         add(form);
 
+        form.add(new CheckBox("readRestricted"));
+        form.add(new CheckBox("writeRestricted"));
         form.add(new TextField("cssClass"));
         form.add(new TextField("expression"));
         form.add(new CheckBox("escapeMarkup"));

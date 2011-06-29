@@ -42,6 +42,7 @@ public class DbPage implements CrudChild {
     private boolean home;
     @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private DbContent content;
+    private boolean accessRestricted;
 
     public DbPage() {
     }
@@ -58,6 +59,7 @@ public class DbPage implements CrudChild {
 
     @Override
     public void init() {
+        accessRestricted = false;
     }
 
     @Override
@@ -99,6 +101,14 @@ public class DbPage implements CrudChild {
 
     public void setContent(DbContent content) {
         this.content = content;
+    }
+
+    public boolean isAccessRestricted() {
+        return accessRestricted;
+    }
+
+    public void setAccessRestricted(boolean accessRestricted) {
+        this.accessRestricted = accessRestricted;
     }
 
     @Override

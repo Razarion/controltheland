@@ -69,4 +69,9 @@ public interface UserService extends UserDetailsService {
     List<UserState> getAllBotUserStates();
 
     void restore(Collection<UserState> userStates);
+
+    Collection<DbContentAccessControl> getDbContentAccessControls();
+
+    Collection<DbPageAccessControl> getDbPageAccessControls();
+
 }

@@ -43,4 +43,9 @@ public class DbExpressionProperty extends DbContent implements DataProviderInfo 
     public void setOptionalType(Type optionalType) {
         this.optionalType = optionalType;
     }
+
+    @Override
+    public void init() {
+        setupDefaultRights();
+    }
 }

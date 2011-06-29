@@ -94,4 +94,9 @@ public class ContentList extends Panel {
         pagingNavigator.setVisible(dbContentList.isPageable());
         add(pagingNavigator);
     }
+
+    @Override
+    public boolean isVisible() {
+        return cmsUiService.isReadAllowed(contentId);
+    }
 }

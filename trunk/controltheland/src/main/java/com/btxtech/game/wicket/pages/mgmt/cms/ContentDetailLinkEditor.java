@@ -4,6 +4,7 @@ import com.btxtech.game.services.cms.DbContentDetailLink;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.RuModel;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -29,6 +30,8 @@ public class ContentDetailLinkEditor extends MgmtWebPage {
             }
         }));
         add(form);
+        form.add(new CheckBox("readRestricted"));
+        form.add(new CheckBox("writeRestricted"));
         form.add(new TextField("cssClass"));
     }
 }

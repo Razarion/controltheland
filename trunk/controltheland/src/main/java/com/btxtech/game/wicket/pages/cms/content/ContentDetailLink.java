@@ -1,12 +1,15 @@
-package com.btxtech.game.wicket.pages.cms;
+package com.btxtech.game.wicket.pages.cms.content;
 
 import com.btxtech.game.services.cms.DbContentDetailLink;
+import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
+import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
  * User: beat
@@ -14,8 +17,13 @@ import org.apache.wicket.markup.html.panel.Panel;
  * Time: 00:17:38
  */
 public class ContentDetailLink extends Panel {
+    @SpringBean
+    private CmsUiService cmsUiService;
+    private int contentId;
+    
     public ContentDetailLink(String id, DbContentDetailLink dbContentDetailLink, BeanIdPathElement beanIdPathElement) {
         super(id);
+        contentId = dbContentDetailLink.getId();
         PageParameters pageParameters = new PageParameters();
         pageParameters.put(CmsPage.ID, Integer.toString(beanIdPathElement.getPageId()));
         pageParameters.put(CmsPage.CHILD_ID, beanIdPathElement.getBeanId());
@@ -25,5 +33,11 @@ public class ContentDetailLink extends Panel {
         if (dbContentDetailLink.getCssClass() != null) {
             add(new SimpleAttributeModifier("class", dbContentDetailLink.getCssClass()));
         }
+    }
+
+
+    @Override
+    public boolean isVisible() {
+        return cmsUiService.isReadAllowed(contentId);
     }
 }

@@ -33,6 +33,7 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -82,7 +83,7 @@ public class CmsPage extends WebPage {
             protected List<DbMenuItem> createList() {
                 DbMenu dbMenu = cmsService.getPage(pageId).getMenu();
                 if (dbMenu != null) {
-                    return dbMenu.getMenuItemCrudChildServiceHelper().readDbChildren();
+                    return filterMenuItems(dbMenu.getMenuItemCrudChildServiceHelper().readDbChildren());
                 } else {
                     return Collections.emptyList();
                 }
@@ -95,11 +96,6 @@ public class CmsPage extends WebPage {
                 PageParameters pageParameters = new PageParameters();
                 pageParameters.add(ID, Integer.toString(item.getModelObject().getPage().getId()));
                 BookmarkablePageLink<CmsPage> link = new BookmarkablePageLink<CmsPage>("menuLink", CmsPage.class, pageParameters);
-
-                // TODO security if (item.getModelObject().isAdminOnly()) {
-                // link = new AdminBookmarkablePageLink<WebPage>("link",
-                // linkItem.getModelObject().destination);
-                // } else {
 
                 Label label = new Label("menuLinkName", item.getModelObject().getName());
                 link.add(label);
@@ -120,4 +116,19 @@ public class CmsPage extends WebPage {
         add(dataTable);
     }
 
+    private List<DbMenuItem> filterMenuItems(List<DbMenuItem> dbMenuItems) {
+        ArrayList<DbMenuItem> filtered = new ArrayList<DbMenuItem>();
+        for (DbMenuItem dbMenuItem : dbMenuItems) {
+            if (cmsUiService.isPageAccessAllowed(dbMenuItem.getPage())) {
+                filtered.add(dbMenuItem);
+            }
+        }
+        return filtered;
+    }
+
+    @Override
+    public boolean isVisible() {
+        DbPage dbPage = (DbPage) getDefaultModelObject();
+        return cmsUiService.isPageAccessAllowed(dbPage);
+    }
 }

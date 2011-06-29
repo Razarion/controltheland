@@ -24,11 +24,12 @@ public class ContentContainer extends Panel {
     private CmsUiService cmsUiService;
     private Object bean;
     private BeanIdPathElement beanIdPathElement;
+    private int contentId;
 
     public ContentContainer(String id, DbContentContainer dbContentContentContainer, final BeanIdPathElement beanIdPathElement) {
         super(id);
         this.beanIdPathElement = beanIdPathElement;
-        final int contentId = dbContentContentContainer.getId();
+        contentId = dbContentContentContainer.getId();
         setDefaultModel(new LoadableDetachableModel<DbContentContainer>() {
             @Override
             protected DbContentContainer load() {
@@ -67,5 +68,10 @@ public class ContentContainer extends Panel {
             }
         };
         add(listView);
+    }
+
+    @Override
+    public boolean isVisible() {
+        return cmsUiService.isReadAllowed(contentId);
     }
 }
