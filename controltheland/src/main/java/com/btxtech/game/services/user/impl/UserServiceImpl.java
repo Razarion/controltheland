@@ -21,6 +21,8 @@ import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
+import com.btxtech.game.services.user.DbContentAccessControl;
+import com.btxtech.game.services.user.DbPageAccessControl;
 import com.btxtech.game.services.user.NotAuthorizedException;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
@@ -30,6 +32,7 @@ import com.btxtech.game.services.utg.UserTrackingService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -229,7 +232,16 @@ public class UserServiceImpl implements UserService {
         if (users == null || users.isEmpty()) {
             return null;
         } else {
-            return users.get(0);
+            User user = users.get(0);
+            Hibernate.initialize(user.getDbContentAccessControls());
+            for (DbContentAccessControl dbContentAccessControl : user.getDbContentAccessControls()) {
+                Hibernate.initialize(dbContentAccessControl.getDbContent());
+            }
+            Hibernate.initialize(user.getDbPageAccessControls());
+            for (DbPageAccessControl dbPageAccessControl : user.getDbPageAccessControls()) {
+                Hibernate.initialize(dbPageAccessControl.getDbPage());
+            }
+            return user;
         }
     }
 
@@ -392,4 +404,31 @@ public class UserServiceImpl implements UserService {
             }
         }
     }
+
+    @Override
+    public Collection<DbContentAccessControl> getDbContentAccessControls() {
+        User user = getUser();
+        if (user == null) {
+            return null;
+        }
+        Collection<DbContentAccessControl> dbContentAccessControls = user.getDbContentAccessControls();
+        if (dbContentAccessControls == null || dbContentAccessControls.isEmpty()) {
+            return null;
+        }
+        return dbContentAccessControls;
+    }
+
+    @Override
+    public Collection<DbPageAccessControl> getDbPageAccessControls() {
+        User user = getUser();
+        if (user == null) {
+            return null;
+        }
+        Collection<DbPageAccessControl> dbPageAccessControls = user.getDbPageAccessControls();
+        if (dbPageAccessControls == null || dbPageAccessControls.isEmpty()) {
+            return null;
+        }
+        return dbPageAccessControls;
+    }
+
 }

@@ -1,8 +1,8 @@
 package com.btxtech.game.wicket.pages.mgmt.cms;
 
-import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbContentBook;
+import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
@@ -12,6 +12,7 @@ import com.btxtech.game.wicket.uiservices.CrudListChildTableHelper;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -39,6 +40,10 @@ public class ContentListEditor extends MgmtWebPage {
         }));
         add(form);
 
+        form.add(new CheckBox("readRestricted"));
+        form.add(new CheckBox("writeRestricted"));
+        form.add(new CheckBox("createRestricted"));
+        form.add(new CheckBox("deleteRestricted"));
         form.add(new TextField("cssClass"));
         form.add(new TextField("springBeanName"));
         form.add(new TextField("contentProviderGetter"));

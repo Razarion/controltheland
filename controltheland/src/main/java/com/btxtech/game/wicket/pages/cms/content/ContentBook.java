@@ -34,11 +34,12 @@ public class ContentBook extends Panel {
     private CmsUiService cmsUiService;
     private Object bean;
     private BeanIdPathElement beanIdPathElement;
+    private int contentId;
 
     public ContentBook(String id, DbContentBook dbContentBook, final BeanIdPathElement beanIdPathElement) {
         super(id);
         this.beanIdPathElement = beanIdPathElement;
-        final int contentId = dbContentBook.getId();
+        contentId = dbContentBook.getId();
         setDefaultModel(new LoadableDetachableModel<DbContentBook>() {
             @Override
             protected DbContentBook load() {
@@ -52,7 +53,7 @@ public class ContentBook extends Panel {
             }
         });
         setupPropertyBook();
-        if(dbContentBook.getCssClass() != null) {
+        if (dbContentBook.getCssClass() != null) {
             add(new SimpleAttributeModifier("class", dbContentBook.getCssClass()));
         }
     }
@@ -96,5 +97,10 @@ public class ContentBook extends Panel {
         dataTable.addTopToolbar(new HeadersToolbar(dataTable, null));
         dataTable.addBottomToolbar(new NoRecordsToolbar(dataTable, new Model<String>("Nothing here")));
         add(dataTable);
+    }
+
+    @Override
+    public boolean isVisible() {
+        return cmsUiService.isReadAllowed(contentId);
     }
 }

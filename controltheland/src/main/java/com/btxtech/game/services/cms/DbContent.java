@@ -30,6 +30,11 @@ public abstract class DbContent implements CrudChild<DbContent> {
     @ManyToOne(fetch = FetchType.LAZY)
     private DbContent parent;
     private String cssClass;
+    private boolean readRestricted;
+    private boolean writeRestricted;
+    private boolean createRestricted;
+    private boolean deleteRestricted;
+
 
     @Override
     public Integer getId() {
@@ -44,11 +49,6 @@ public abstract class DbContent implements CrudChild<DbContent> {
     @Override
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public void init() {
-        // TODO remove
     }
 
     @Override
@@ -128,6 +128,45 @@ public abstract class DbContent implements CrudChild<DbContent> {
 
     public void setCssClass(String cssClass) {
         this.cssClass = cssClass;
+    }
+
+    protected void setupDefaultRights() {
+        readRestricted = false;
+        writeRestricted = true;
+        createRestricted = true;
+        deleteRestricted = true;
+    }
+
+    public boolean isReadRestricted() {
+        return readRestricted;
+    }
+
+    public void setReadRestricted(boolean readRestricted) {
+        this.readRestricted = readRestricted;
+    }
+
+    public boolean isWriteRestricted() {
+        return writeRestricted;
+    }
+
+    public void setWriteRestricted(boolean writeRestricted) {
+        this.writeRestricted = writeRestricted;
+    }
+
+    public boolean isCreateRestricted() {
+        return createRestricted;
+    }
+
+    public void setCreateRestricted(boolean createRestricted) {
+        this.createRestricted = createRestricted;
+    }
+
+    public boolean isDeleteRestricted() {
+        return deleteRestricted;
+    }
+
+    public void setDeleteRestricted(boolean deleteRestricted) {
+        this.deleteRestricted = deleteRestricted;
     }
 
     @Override

@@ -7,11 +7,13 @@ import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.MenuSelector;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import com.btxtech.game.wicket.uiservices.StyleSelector;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.lang.reflect.Constructor;
@@ -35,7 +37,7 @@ public class PageEditor extends MgmtWebPage {
             }
         }));
         add(form);
-
+        form.add(new CheckBox("accessRestricted"));
         setupStyle(form);
         setupContent(form);
         setupButtons(form);
@@ -82,6 +84,23 @@ public class PageEditor extends MgmtWebPage {
                 ruServiceHelper.updateDbEntity(form.getModelObject());
             }
 
+            @Override
+            public boolean isVisible() {
+                return form.getModelObject().getContent() != null;
+            }
+        });
+
+        form.add(new Label("contentInfo", new LoadableDetachableModel<String>() {
+            @Override
+            protected String load() {
+                DbContent dbContent = form.getModelObject().getContent();
+                if (dbContent != null) {
+                    return dbContent.getClass().getSimpleName() + " Id: " + dbContent.getId();
+                } else {
+                    return "-";
+                }
+            }
+        }) {
             @Override
             public boolean isVisible() {
                 return form.getModelObject().getContent() != null;

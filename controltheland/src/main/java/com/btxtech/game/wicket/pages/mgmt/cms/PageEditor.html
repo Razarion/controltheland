@@ -10,8 +10,12 @@
 <span wicket:id="msgs"/>
 
 <form wicket:id="form">
-    <h2>Style</h2>    
+    <h2>Style</h2>
     <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Access restricted</td>
+            <td><input type="checkbox" wicket:id="accessRestricted"/></td>
+        </tr>
         <tr>
             <td bgcolor="#dadada">Style</td>
             <td wicket:id="style"/>
@@ -27,10 +31,13 @@
         </tr>
     </table>
     <br>
-    <h2>Content</h2>    
+
+    <h2>Content</h2>
     <span wicket:id="create"></span>
     <input type="submit" value="Edit" wicket:id="edit"/>
     <input type="submit" value="Delete" wicket:id="delete"/>
+    <br>
+    <span wicket:id="contentInfo"></span>
     <br>
     <br>
     <input type="submit" value="Save" wicket:id="save"/>

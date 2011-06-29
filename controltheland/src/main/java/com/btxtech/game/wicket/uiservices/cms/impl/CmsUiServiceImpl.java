@@ -12,13 +12,16 @@ import com.btxtech.game.services.cms.DbStaticProperty;
 import com.btxtech.game.services.cms.EditMode;
 import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.item.itemType.DbItemType;
+import com.btxtech.game.services.user.DbContentAccessControl;
+import com.btxtech.game.services.user.DbPageAccessControl;
+import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
-import com.btxtech.game.wicket.pages.cms.ContentDetailLink;
 import com.btxtech.game.wicket.pages.cms.ItemTypeImage;
 import com.btxtech.game.wicket.pages.cms.WritePanel;
 import com.btxtech.game.wicket.pages.cms.content.ContentBook;
 import com.btxtech.game.wicket.pages.cms.content.ContentContainer;
+import com.btxtech.game.wicket.pages.cms.content.ContentDetailLink;
 import com.btxtech.game.wicket.pages.cms.content.ContentList;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
@@ -38,6 +41,7 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -55,6 +59,8 @@ public class CmsUiServiceImpl implements CmsUiService {
     private ApplicationContext applicationContext;
     @Autowired
     private com.btxtech.game.services.connection.Session session;
+    @Autowired
+    private UserService userService;
     private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(CmsUiServiceImpl.class);
 
@@ -135,7 +141,9 @@ public class CmsUiServiceImpl implements CmsUiService {
                     } else {
                         stringValue = value.toString();
                     }
-                    component = new Label(id, stringValue).setEscapeModelStrings(dbExpressionProperty.getEscapeMarkup());
+                    component = new Label(id, stringValue);
+                    component.setVisible(isReadAllowed(dbExpressionProperty.getId()));
+                    component.setEscapeModelStrings(dbExpressionProperty.getEscapeMarkup());
                 } else {
                     component = new Label(id, "");
                 }
@@ -192,7 +200,10 @@ public class CmsUiServiceImpl implements CmsUiService {
     }
 
     @Override
-    public void setDataProviderBean(Object value, BeanIdPathElement beanIdPathElement) {
+    public void setDataProviderBean(Object value, BeanIdPathElement beanIdPathElement, int contentId) {
+        if (!isWriteAllowed(contentId)) {
+            throw new IllegalStateException("User not allowed to write property: " + contentId);
+        }
         try {
             Object object = getDataProviderBean(beanIdPathElement.getParent());
             PropertyUtils.setProperty(object, beanIdPathElement.getExpression(), value);
@@ -283,7 +294,10 @@ public class CmsUiServiceImpl implements CmsUiService {
             return false;
         }
         DbContent dbContent = cmsService.getDbContent(contentId);
-        return dbContent.getSpringBeanName() != null;
+        if (dbContent.getSpringBeanName() == null) {
+            return false;
+        }
+        return isWriteAllowed(contentId);
     }
 
     @Override
@@ -293,6 +307,41 @@ public class CmsUiServiceImpl implements CmsUiService {
         }
         DbContent dbContent = cmsService.getDbContent(contentId);
         return dbContent.getSpringBeanName() != null;
+    }
+
+    public boolean isWriteAllowed(int contentId) {
+        DbContent dbContent = cmsService.getDbContent(contentId);
+        if (!dbContent.isWriteRestricted()) {
+            return true;
+        }
+        Collection<DbContentAccessControl> dbContentAccessControls = userService.getDbContentAccessControls();
+        if (dbContentAccessControls == null) {
+            return false;
+        }
+        for (DbContentAccessControl dbContentAccessControl : dbContentAccessControls) {
+            if (contentId == dbContentAccessControl.getDbContent().getId()) {
+                return dbContentAccessControl.isWriteAllowed();
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isReadAllowed(int contentId) {
+        DbContent dbContent = cmsService.getDbContent(contentId);
+        if (!dbContent.isReadRestricted()) {
+            return true;
+        }
+        Collection<DbContentAccessControl> dbContentAccessControls = userService.getDbContentAccessControls();
+        if (dbContentAccessControls == null) {
+            return false;
+        }
+        for (DbContentAccessControl dbContentAccessControl : dbContentAccessControls) {
+            if (contentId == dbContentAccessControl.getDbContent().getId()) {
+                return dbContentAccessControl.isReadAllowed();
+            }
+        }
+        return false;
     }
 
     @Override
@@ -311,5 +360,22 @@ public class CmsUiServiceImpl implements CmsUiService {
     @Override
     public void save(BeanIdPathElement beanIdPathElement) {
         hibernateTemplate.flush();
+    }
+
+    @Override
+    public boolean isPageAccessAllowed(DbPage dbPage) {
+        if (!dbPage.isAccessRestricted()) {
+            return true;
+        }
+        Collection<DbPageAccessControl> dbPageAccessControls = userService.getDbPageAccessControls();
+        if (dbPageAccessControls == null) {
+            return false;
+        }
+        for (DbPageAccessControl dbPageAccessControl : dbPageAccessControls) {
+            if (dbPage.equals(dbPageAccessControl.getDbPage())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

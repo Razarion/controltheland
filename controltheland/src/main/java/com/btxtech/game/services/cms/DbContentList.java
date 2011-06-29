@@ -118,5 +118,6 @@ public class DbContentList extends DbContent implements DataProviderInfo, CrudPa
     public void init() {
         dbPropertyColumns = new ArrayList<DbContent>();
         dbContentBooks = new ArrayList<DbContentBook>();
+        setupDefaultRights();
     }
 }

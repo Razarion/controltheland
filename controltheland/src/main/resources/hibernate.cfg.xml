@@ -29,6 +29,8 @@
         <mapping class="com.btxtech.game.services.terrain.DbSurfaceImage"/>
         <mapping class="com.btxtech.game.services.terrain.DbTerrainSetting"/>
         <mapping class="com.btxtech.game.services.user.User"/>
+        <mapping class="com.btxtech.game.services.user.DbContentAccessControl"/>
+        <mapping class="com.btxtech.game.services.user.DbPageAccessControl"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.SavedQuery"/>
         <mapping class="com.btxtech.game.services.mgmt.StartupData"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbResourceItemType"/>

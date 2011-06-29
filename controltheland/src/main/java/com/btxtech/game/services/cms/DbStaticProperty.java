@@ -31,4 +31,9 @@ public class DbStaticProperty extends DbContent {
     public boolean getEscapeMarkup() {
         return escapeMarkup;
     }
+
+    @Override
+    public void init() {
+        setupDefaultRights();
+    }    
 }

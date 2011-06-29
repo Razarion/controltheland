@@ -31,7 +31,7 @@ public class WritePanel extends Panel {
             @Override
             public void setObject(Object object) {
                 super.setObject(object);
-                cmsUiService.setDataProviderBean(object, beanIdPathElement);
+                cmsUiService.setDataProviderBean(object, beanIdPathElement, contentId);
             }
 
             @Override
@@ -48,7 +48,7 @@ public class WritePanel extends Panel {
             @Override
             public void setObject(String s) {
                 super.setObject(s);
-                cmsUiService.setDataProviderBean(s, beanIdPathElement);
+                cmsUiService.setDataProviderBean(s, beanIdPathElement, contentId);
             }
 
             @Override

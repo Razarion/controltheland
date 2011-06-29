@@ -41,6 +41,10 @@ public class User implements UserDetails, Serializable {
     @CollectionTable(name = "USER_SECURITY_ROLE")
     @Column(name = "role")
     private Set<String> roles;
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "user")
+    private Collection<DbContentAccessControl> dbContentAccessControls;
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "user")
+    private Collection<DbPageAccessControl> dbPageAccessControls;
 
     public String getUsername() {
         return name;
@@ -126,6 +130,14 @@ public class User implements UserDetails, Serializable {
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public Collection<DbContentAccessControl> getDbContentAccessControls() {
+        return dbContentAccessControls;
+    }
+
+    public Collection<DbPageAccessControl> getDbPageAccessControls() {
+        return dbPageAccessControls;
     }
 
     @Override
