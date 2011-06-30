@@ -118,7 +118,8 @@ public class DbPage implements CrudChild {
 
         DbPage dbPage = (DbPage) o;
 
-        return id != null && id.equals(dbPage.id);
+        // Use getId() due to lazy loading
+        return id != null && id.equals(dbPage.getId());
     }
 
     @Override
