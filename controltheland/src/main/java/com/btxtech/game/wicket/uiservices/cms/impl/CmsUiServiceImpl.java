@@ -5,7 +5,9 @@ import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbContentBook;
 import com.btxtech.game.services.cms.DbContentContainer;
 import com.btxtech.game.services.cms.DbContentDetailLink;
+import com.btxtech.game.services.cms.DbContentLink;
 import com.btxtech.game.services.cms.DbContentList;
+import com.btxtech.game.services.cms.DbContentPageLink;
 import com.btxtech.game.services.cms.DbExpressionProperty;
 import com.btxtech.game.services.cms.DbPage;
 import com.btxtech.game.services.cms.DbStaticProperty;
@@ -22,7 +24,9 @@ import com.btxtech.game.wicket.pages.cms.WritePanel;
 import com.btxtech.game.wicket.pages.cms.content.ContentBook;
 import com.btxtech.game.wicket.pages.cms.content.ContentContainer;
 import com.btxtech.game.wicket.pages.cms.content.ContentDetailLink;
+import com.btxtech.game.wicket.pages.cms.content.ContentLink;
 import com.btxtech.game.wicket.pages.cms.content.ContentList;
+import com.btxtech.game.wicket.pages.cms.content.ContentPageLink;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.commons.beanutils.NestedNullException;
@@ -102,6 +106,10 @@ public class CmsUiServiceImpl implements CmsUiService {
                     label.add(new SimpleAttributeModifier("class", dbContent.getCssClass()));
                 }
                 return label;
+            } else if (dbContent instanceof DbContentPageLink) {
+                return new ContentPageLink(componentId, (DbContentPageLink) dbContent);
+            } else if (dbContent instanceof DbContentLink) {
+                return new ContentLink(componentId, (DbContentLink) dbContent);
             } else {
                 log.warn("CmsUiServiceImpl: No Wicket Component for content: " + dbContent);
                 return new Label(componentId, "No content");

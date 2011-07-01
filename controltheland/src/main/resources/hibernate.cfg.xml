@@ -128,6 +128,8 @@
         <mapping class="com.btxtech.game.services.cms.DbContentBook"/>
         <mapping class="com.btxtech.game.services.cms.DbContentRow"/>
         <mapping class="com.btxtech.game.services.cms.DbStaticProperty"/>
+        <mapping class="com.btxtech.game.services.cms.DbContentPageLink"/>
+        <mapping class="com.btxtech.game.services.cms.DbContentLink"/>
         <!-- Content -->
         <mapping class="com.btxtech.game.services.cms.DbBlogEntry"/>
 

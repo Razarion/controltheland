@@ -65,13 +65,13 @@ public class CmsPage extends WebPage {
         DbPage dbPage = (DbPage) getDefaultModelObject();
         add(CmsCssResource.createCss("css", dbPage));
         setupMenu();
-        setupLoginBox();
+        setupLoginBox(dbPage);
         Form form = new Form("form");
         add(form);
         form.add(cmsUiService.getRootComponent(dbPage, "content", pageParameters));
     }
 
-    private void setupLoginBox() {
+    private void setupLoginBox(DbPage dbPage) {
         add(new LoggedinBox("loggedinBox"));
         add(new LoginBox("loginBox", true));
     }

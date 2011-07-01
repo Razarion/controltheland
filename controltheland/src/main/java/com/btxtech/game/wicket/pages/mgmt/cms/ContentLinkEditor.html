@@ -2,36 +2,32 @@
         "http://www.w3.org/TR/html4/loose.dtd">
 <html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
 <head>
-    <title>Static Property Editor</title>
+    <title>Content Link Editor</title>
 </head>
 <body>
-<h1>Static Property Editor</h1>
+<h1>Content Link Editor</h1>
 <span wicket:id="msgs"/>
 
 <form wicket:id="form">
+    <h2>Config</h2>
     <table border="0">
         <tr>
             <td bgcolor="#dadada">Read restricted</td>
             <td><input type="checkbox" wicket:id="readRestricted"/></td>
         </tr>
         <tr>
-            <td bgcolor="#dadada">Write restricted</td>
-            <td><input type="checkbox" wicket:id="writeRestricted"/></td>
-        </tr>
-        <tr>
             <td bgcolor="#dadada">CSS Class</td>
             <td><input type="text" wicket:id="cssClass"/></td>
         </tr>
         <tr>
-            <td bgcolor="#dadada">Text / HTML</td>
-            <td><textarea wicket:id="html" rows="10" cols="60">content</textarea></td>
+            <td bgcolor="#dadada">URL</td>
+            <td><input type="text" wicket:id="url"/></td>
         </tr>
         <tr>
-            <td bgcolor="#dadada">Escape Markup</td>
-            <td><input type="checkbox" wicket:id="escapeMarkup"/></td>
+            <td bgcolor="#dadada">Image</td>
+            <td wicket:id="dbCmsImage"></td>
         </tr>
     </table>
-    <br>
     <br>
     <input type="submit" value="Save" wicket:id="save"/>
 </form>
