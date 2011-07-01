@@ -37,6 +37,9 @@ public class PageEditor extends MgmtWebPage {
             }
         }));
         add(form);
+        form.add(new CheckBox("headerVisible"));
+        form.add(new CheckBox("footerVisible"));
+        form.add(new CheckBox("adsVisible"));
         form.add(new CheckBox("accessRestricted"));
         setupStyle(form);
         setupContent(form);

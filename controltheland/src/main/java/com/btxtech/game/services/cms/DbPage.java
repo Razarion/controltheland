@@ -43,6 +43,9 @@ public class DbPage implements CrudChild {
     @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private DbContent content;
     private boolean accessRestricted;
+    private boolean headerVisible;
+    private boolean footerVisible;
+    private boolean adsVisible;
 
     public DbPage() {
     }
@@ -60,6 +63,9 @@ public class DbPage implements CrudChild {
     @Override
     public void init() {
         accessRestricted = false;
+        headerVisible = true;
+        footerVisible = true;
+        adsVisible = true;
     }
 
     @Override
@@ -109,6 +115,30 @@ public class DbPage implements CrudChild {
 
     public void setAccessRestricted(boolean accessRestricted) {
         this.accessRestricted = accessRestricted;
+    }
+
+    public boolean isFooterVisible() {
+        return footerVisible;
+    }
+
+    public void setFooterVisible(boolean footerVisible) {
+        this.footerVisible = footerVisible;
+    }
+
+    public boolean isHeaderVisible() {
+        return headerVisible;
+    }
+
+    public void setHeaderVisible(boolean headerVisible) {
+        this.headerVisible = headerVisible;
+    }
+
+    public boolean isAdsVisible() {
+        return adsVisible;
+    }
+
+    public void setAdsVisible(boolean adsVisible) {
+        this.adsVisible = adsVisible;
     }
 
     @Override
