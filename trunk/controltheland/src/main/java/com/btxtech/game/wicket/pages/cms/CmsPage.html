@@ -19,27 +19,11 @@
     <title>Insert title here</title>
 </head>
 <body>
-<div class="header"></div>
+<div class="header" wicket:id="header"></div>
 
 <div class="middle">
     <div class="middleRow">
-        <table border="0" cellpadding="0" cellspacing="0" class="middleLeft">
-            <tr>
-                <td class="contentTopMenu"></td>
-            </tr>
-            <tr>
-                <td>
-                    <table class="contentBgMenu">
-                        <tr wicket:id="menuTable">
-                            <td><a href="#" wicket:id="menuLink"> <span wicket:id="menuLinkName"></span> </a></td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            <tr>
-                <td class="contentBottomMenu"></td>
-            </tr>
-        </table>
+        <div class="middleRight" wicket:id="menu"></div>
 
         <div class="middleCenter">
             <form wicket:id="form">
@@ -47,15 +31,10 @@
             </form>
         </div>
 
-        <div class="middleRight">ccccccccccccccc</div>
+        <div class="middleRight" wicket:id="right"></div>
     </div>
 </div>
 
-<div class="footer">
-    <div class="loginClass">
-        <div wicket:id="loggedinBox">loggedinBox</div>
-        <div wicket:id="loginBox">loginBox</div>
-    </div>
-</div>
+<div class="footer" wicket:id="footer"></div>
 </body>
 </html>
