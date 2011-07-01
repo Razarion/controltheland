@@ -18,6 +18,8 @@ import com.btxtech.game.services.cms.DbCmsHomeLayout;
 import com.btxtech.game.services.cms.DbCmsHomeText;
 import com.btxtech.game.services.cms.DbCmsImage;
 import com.btxtech.game.services.cms.DbContent;
+import com.btxtech.game.services.cms.DbContentLink;
+import com.btxtech.game.services.cms.DbContentPageLink;
 import com.btxtech.game.services.cms.DbMenu;
 import com.btxtech.game.services.cms.DbMenuItem;
 import com.btxtech.game.services.cms.DbPage;
@@ -132,6 +134,12 @@ public class CmsServiceImpl implements CmsService {
 
     private void initializeLazyDependenciesAndFillContentCache(DbContent dbContent) {
         Hibernate.initialize(dbContent);
+        if(dbContent instanceof DbContentPageLink) {
+            Hibernate.initialize(((DbContentPageLink)dbContent).getDbCmsImage());
+        }
+        if(dbContent instanceof DbContentLink) {
+            Hibernate.initialize(((DbContentLink)dbContent).getDbCmsImage());
+        }
         contentCache.put(dbContent.getId(), dbContent);
         Collection<? extends DbContent> children = dbContent.getChildren();
         if (children != null) {

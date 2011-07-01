@@ -4,7 +4,9 @@ import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbContentBook;
 import com.btxtech.game.services.cms.DbContentContainer;
 import com.btxtech.game.services.cms.DbContentDetailLink;
+import com.btxtech.game.services.cms.DbContentLink;
 import com.btxtech.game.services.cms.DbContentList;
+import com.btxtech.game.services.cms.DbContentPageLink;
 import com.btxtech.game.services.cms.DbExpressionProperty;
 import com.btxtech.game.services.cms.DbStaticProperty;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
@@ -28,6 +30,10 @@ public class ContentEditorFactory {
             return new ContentDetailLinkEditor((DbContentDetailLink) dbContent);
         } else if (dbContent instanceof DbStaticProperty) {
             return new StaticPropertyEditor((DbStaticProperty) dbContent);
+        } else if (dbContent instanceof DbContentPageLink) {
+            return new ContentPageLinkEditor((DbContentPageLink) dbContent);
+        } else if (dbContent instanceof DbContentLink) {
+            return new ContentLinkEditor((DbContentLink) dbContent);
         } else {
             throw new IllegalArgumentException("Unknown DbContent: " + dbContent);
         }
@@ -39,7 +45,9 @@ public class ContentEditorFactory {
         CONTENT_BOOK(DbContentBook.class, "Content Book"),
         CONTENT_LINK(DbContentDetailLink.class, "Content Link"),
         STATIC_PROPERTY(DbStaticProperty.class, "Static Property"),
-        EXPRESSION_PROPERTY(DbExpressionProperty.class, "Expression Property");
+        EXPRESSION_PROPERTY(DbExpressionProperty.class, "Expression Property"),
+        PAGE_LINK(DbContentPageLink.class, "Page Link"),
+        LINK(DbContentLink.class, "Link");
 
         private Class<? extends DbContent> createClass;
         private String displayName;
