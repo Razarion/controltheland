@@ -1,3 +1,5 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
 <!--
   ~ Copyright (c) 2010.
   ~
@@ -10,8 +12,6 @@
   ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~   GNU General Public License for more details.
   -->
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-
 <html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
 <head>
     <link wicket:id="css"/>
@@ -19,12 +19,11 @@
     <title>Insert title here</title>
 </head>
 <body>
+<div class="header"></div>
 
-<div class="wrapper">
-    <div class="header"></div>
-
-    <div>
-        <table border="0" cellpadding="0" cellspacing="0"  class="contentLeft">
+<div class="middle">
+    <div class="middleRow">
+        <table border="0" cellpadding="0" cellspacing="0" class="middleLeft">
             <tr>
                 <td class="contentTopMenu"></td>
             </tr>
@@ -42,24 +41,20 @@
             </tr>
         </table>
 
-        <div class="contentWrapper">
-            <div class="contentMain">
-                <form wicket:id="form">
-                    <div wicket:id="content" class="defaultContent"></div>
-                </form>
-            </div>
-            <div class="contentRight"></div>
-            <br class="clear-both"/>
+        <div class="middleCenter">
+            <form wicket:id="form">
+                <div wicket:id="content" class="defaultContent"></div>
+            </form>
         </div>
+
+        <div class="middleRight">ccccccccccccccc</div>
     </div>
+</div>
 
-    <br class="clear-both"/>
-
-    <div class="footer">
-        <div class="loginClass">
-            <div wicket:id="loggedinBox">loggedinBox</div>
-            <div wicket:id="loginBox">loginBox</div>
-        </div>
+<div class="footer">
+    <div class="loginClass">
+        <div wicket:id="loggedinBox">loggedinBox</div>
+        <div wicket:id="loginBox">loginBox</div>
     </div>
 </div>
 </body>
