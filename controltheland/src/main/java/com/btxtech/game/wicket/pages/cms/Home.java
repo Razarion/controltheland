@@ -21,7 +21,7 @@ import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import com.btxtech.game.wicket.pages.info.Info;
-import com.btxtech.game.wicket.pages.user.LoginBox;
+import com.btxtech.game.wicket.pages.cms.content.plugin.login.LoginBox;
 import com.btxtech.game.wicket.pages.user.NewUser;
 import com.btxtech.game.wicket.uiservices.CmsImageResource;
 import org.apache.wicket.markup.html.IHeaderContributor;

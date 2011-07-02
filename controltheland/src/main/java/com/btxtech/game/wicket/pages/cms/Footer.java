@@ -1,8 +1,8 @@
 package com.btxtech.game.wicket.pages.cms;
 
 import com.btxtech.game.services.cms.DbPage;
-import com.btxtech.game.wicket.pages.user.LoggedinBox;
-import com.btxtech.game.wicket.pages.user.LoginBox;
+import com.btxtech.game.wicket.pages.cms.content.plugin.login.LoggedinBox;
+import com.btxtech.game.wicket.pages.cms.content.plugin.login.LoginBox;
 import org.apache.wicket.markup.html.panel.Panel;
 
 /**

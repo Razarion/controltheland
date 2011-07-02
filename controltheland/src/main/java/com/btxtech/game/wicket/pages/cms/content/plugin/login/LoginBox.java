@@ -11,11 +11,13 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.wicket.pages.user;
+package com.btxtech.game.wicket.pages.cms.content.plugin.login;
 
 import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.wicket.pages.Info;
+import com.btxtech.game.wicket.pages.user.NewUser;
+import com.btxtech.game.wicket.pages.user.UserPage;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.apache.wicket.authorization.Action;
