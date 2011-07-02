@@ -7,6 +7,7 @@ import com.btxtech.game.services.cms.DbContentDetailLink;
 import com.btxtech.game.services.cms.DbContentLink;
 import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.cms.DbContentPageLink;
+import com.btxtech.game.services.cms.DbContentPlugin;
 import com.btxtech.game.services.cms.DbExpressionProperty;
 import com.btxtech.game.services.cms.DbStaticProperty;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
@@ -18,36 +19,69 @@ import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
  */
 public class ContentEditorFactory {
     public static MgmtWebPage createContentEditor(DbContent dbContent) {
-        if (dbContent instanceof DbContentList) {
-            return new ContentListEditor((DbContentList) dbContent);
-        } else if (dbContent instanceof DbContentBook) {
-            return new ContentBookEditor((DbContentBook) dbContent);
-        } else if (dbContent instanceof DbExpressionProperty) {
-            return new ExpressionPropertyEditor((DbExpressionProperty) dbContent);
-        } else if (dbContent instanceof DbContentContainer) {
-            return new ContentContainerEditor((DbContentContainer) dbContent);
-        } else if (dbContent instanceof DbContentDetailLink) {
-            return new ContentDetailLinkEditor((DbContentDetailLink) dbContent);
-        } else if (dbContent instanceof DbStaticProperty) {
-            return new StaticPropertyEditor((DbStaticProperty) dbContent);
-        } else if (dbContent instanceof DbContentPageLink) {
-            return new ContentPageLinkEditor((DbContentPageLink) dbContent);
-        } else if (dbContent instanceof DbContentLink) {
-            return new ContentLinkEditor((DbContentLink) dbContent);
-        } else {
-            throw new IllegalArgumentException("Unknown DbContent: " + dbContent);
+        for (DbContentEnum dbContentEnum : DbContentEnum.values()) {
+            if (dbContentEnum.getCreateClass().equals(dbContent.getClass())) {
+                return dbContentEnum.createContentEditor(dbContent);
+            }
         }
+        throw new IllegalArgumentException("Unknown DbContent: " + dbContent);
     }
 
     public enum DbContentEnum {
-        CONTENT_LIST(DbContentList.class, "Content List"),
-        CONTENT_CONTAINER(DbContentContainer.class, "Content Container"),
-        CONTENT_BOOK(DbContentBook.class, "Content Book"),
-        CONTENT_LINK(DbContentDetailLink.class, "Content Link"),
-        STATIC_PROPERTY(DbStaticProperty.class, "Static Property"),
-        EXPRESSION_PROPERTY(DbExpressionProperty.class, "Expression Property"),
-        PAGE_LINK(DbContentPageLink.class, "Page Link"),
-        LINK(DbContentLink.class, "Link");
+        CONTENT_LIST(DbContentList.class, "Content List") {
+
+            @Override
+            MgmtWebPage createContentEditor(DbContent dbContent) {
+                return new ContentListEditor((DbContentList) dbContent);
+            }},
+        CONTENT_CONTAINER(DbContentContainer.class, "Content Container") {
+
+            @Override
+            MgmtWebPage createContentEditor(DbContent dbContent) {
+                return new ContentContainerEditor((DbContentContainer) dbContent);
+            }},
+        CONTENT_BOOK(DbContentBook.class, "Content Book") {
+
+            @Override
+            MgmtWebPage createContentEditor(DbContent dbContent) {
+                return new ContentBookEditor((DbContentBook) dbContent);
+            }},
+        CONTENT_LINK(DbContentDetailLink.class, "Content Link") {
+
+            @Override
+            MgmtWebPage createContentEditor(DbContent dbContent) {
+                return new ContentDetailLinkEditor((DbContentDetailLink) dbContent);
+            }},
+        STATIC_PROPERTY(DbStaticProperty.class, "Static Property") {
+
+            @Override
+            MgmtWebPage createContentEditor(DbContent dbContent) {
+                return new StaticPropertyEditor((DbStaticProperty) dbContent);
+            }},
+        EXPRESSION_PROPERTY(DbExpressionProperty.class, "Expression Property") {
+
+            @Override
+            MgmtWebPage createContentEditor(DbContent dbContent) {
+                return new ExpressionPropertyEditor((DbExpressionProperty) dbContent);
+            }},
+        PAGE_LINK(DbContentPageLink.class, "Page Link") {
+
+            @Override
+            MgmtWebPage createContentEditor(DbContent dbContent) {
+                return new ContentPageLinkEditor((DbContentPageLink) dbContent);
+            }},
+        LINK(DbContentLink.class, "Link") {
+
+            @Override
+            MgmtWebPage createContentEditor(DbContent dbContent) {
+                return new ContentLinkEditor((DbContentLink) dbContent);
+            }},
+        PLUGIN(DbContentPlugin.class, "Plugin") {
+
+            @Override
+            MgmtWebPage createContentEditor(DbContent dbContent) {
+                return new ContentPluginEditor((DbContentPlugin) dbContent);
+            }};
 
         private Class<? extends DbContent> createClass;
         private String displayName;
@@ -64,5 +98,7 @@ public class ContentEditorFactory {
         public String getDisplayName() {
             return displayName;
         }
+
+        abstract MgmtWebPage createContentEditor(DbContent dbContent);
     }
 }

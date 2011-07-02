@@ -8,6 +8,7 @@ import com.btxtech.game.services.cms.DbContentDetailLink;
 import com.btxtech.game.services.cms.DbContentLink;
 import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.cms.DbContentPageLink;
+import com.btxtech.game.services.cms.DbContentPlugin;
 import com.btxtech.game.services.cms.DbExpressionProperty;
 import com.btxtech.game.services.cms.DbPage;
 import com.btxtech.game.services.cms.DbStaticProperty;
@@ -110,6 +111,12 @@ public class CmsUiServiceImpl implements CmsUiService {
                 return new ContentPageLink(componentId, (DbContentPageLink) dbContent);
             } else if (dbContent instanceof DbContentLink) {
                 return new ContentLink(componentId, (DbContentLink) dbContent);
+            } else if (dbContent instanceof DbContentPlugin) {
+                Component component = ((DbContentPlugin) dbContent).getPluginEnum().createComponent(componentId);
+                if (dbContent.getCssClass() != null) {
+                    component.add(new SimpleAttributeModifier("class", dbContent.getCssClass()));
+                }
+                return component;
             } else {
                 log.warn("CmsUiServiceImpl: No Wicket Component for content: " + dbContent);
                 return new Label(componentId, "No content");

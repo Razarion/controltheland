@@ -130,6 +130,7 @@
         <mapping class="com.btxtech.game.services.cms.DbStaticProperty"/>
         <mapping class="com.btxtech.game.services.cms.DbContentPageLink"/>
         <mapping class="com.btxtech.game.services.cms.DbContentLink"/>
+        <mapping class="com.btxtech.game.services.cms.DbContentPlugin"/>
         <!-- Content -->
         <mapping class="com.btxtech.game.services.cms.DbBlogEntry"/>
 
