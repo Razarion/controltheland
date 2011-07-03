@@ -15,6 +15,7 @@ public class DbExpressionProperty extends DbContent implements DataProviderInfo 
         DATE_DDMMYYYY_HH_MM_SS
     };
     private String expression;
+    private String springBeanName;
     private boolean escapeMarkup = true;
     private Type optionalType;
 
@@ -26,6 +27,16 @@ public class DbExpressionProperty extends DbContent implements DataProviderInfo 
     @Override
     public void setExpression(String expression) {
         this.expression = expression;
+    }
+
+    @Override
+    public String getSpringBeanName() {
+        return springBeanName;
+    }
+
+    @Override
+    public void setSpringBeanName(String springBeanName) {
+        this.springBeanName = springBeanName;
     }
 
     public void setEscapeMarkup(boolean escapeMarkup) {

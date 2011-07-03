@@ -14,6 +14,8 @@ import com.btxtech.game.services.cms.DbPage;
 import com.btxtech.game.services.cms.DbStaticProperty;
 import com.btxtech.game.services.cms.EditMode;
 import com.btxtech.game.services.common.ContentProvider;
+import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.DbPageAccessControl;
@@ -133,9 +135,18 @@ public class CmsUiServiceImpl implements CmsUiService {
             value = bean;
         } else {
             try {
+                if (dbExpressionProperty.getSpringBeanName() != null) {
+                    bean = getDataProviderBean(beanIdPathElement);
+                }
                 value = PropertyUtils.getProperty(bean, dbExpressionProperty.getExpression());
             } catch (NestedNullException e) {
                 return new Label(id, "-");
+            } catch (InvocationTargetException ie) {
+                if (ie.getTargetException() instanceof NoConnectionException) {
+                    return new Label(id, "No Base");
+                } else {
+                    throw ie;
+                }
             }
         }
         Component component;
@@ -369,7 +380,7 @@ public class CmsUiServiceImpl implements CmsUiService {
     public void deleteBean(BeanIdPathElement beanIdPathElement) {
         ContentProvider contentProvider = getContentProvider(beanIdPathElement.getParent());
         Object bean = getDataProviderBean(beanIdPathElement);
-        contentProvider.deleteDbChild(bean);
+        contentProvider.deleteDbChild((CrudChild) bean);
     }
 
     @Override

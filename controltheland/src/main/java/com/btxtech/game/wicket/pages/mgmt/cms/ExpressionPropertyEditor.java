@@ -38,6 +38,7 @@ public class ExpressionPropertyEditor extends MgmtWebPage {
         form.add(new CheckBox("readRestricted"));
         form.add(new CheckBox("writeRestricted"));
         form.add(new TextField("cssClass"));
+        form.add(new TextField("springBeanName"));
         form.add(new TextField("expression"));
         form.add(new CheckBox("escapeMarkup"));
         form.add(new DropDownChoice<DbExpressionProperty.Type>("optionalType", Arrays.asList(DbExpressionProperty.Type.values())));
