@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeExce
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
+import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.energy.impl.BaseEnergy;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
@@ -93,4 +94,6 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
     Base getBase(UserState userState);
 
     void onSessionTimedOut(UserState userState);
+
+    ContentProvider<BaseItemTypeCount> getBaseItems();    
 }

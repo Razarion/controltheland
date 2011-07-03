@@ -37,9 +37,12 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.tutorial.HouseSpacePacket;
 import com.btxtech.game.services.base.Base;
+import com.btxtech.game.services.base.BaseItemTypeCount;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.collision.CollisionService;
+import com.btxtech.game.services.common.ContentProvider;
+import com.btxtech.game.services.common.ReadonlyCollectionContentProvider;
 import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.NoConnectionException;
@@ -65,15 +68,17 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
  * Date: May 31, 2009
  * Time: 8:15:53 PM
  */
-@Component
+@Component("baseService")
 public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseService {
     private static final String DEFAULT_BASE_NAME_PREFIX = "Base ";
     private Log log = LogFactory.getLog(BaseServiceImpl.class);
@@ -519,5 +524,24 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     @Override
     public Level getLevel(SimpleBase simpleBase) {
         return userGuidanceService.getDbLevel(simpleBase).getLevel();
+    }
+
+    @Override
+    public ContentProvider<BaseItemTypeCount> getBaseItems() {
+        if (hasBase()) {
+            Map<BaseItemType, BaseItemTypeCount> items = new HashMap<BaseItemType, BaseItemTypeCount>();
+            for (SyncBaseItem syncBaseItem : getBase().getItems()) {
+                BaseItemType baseItemType = syncBaseItem.getBaseItemType();
+                BaseItemTypeCount baseItemTypeCount = items.get(baseItemType);
+                if (baseItemTypeCount == null) {
+                    baseItemTypeCount = new BaseItemTypeCount(itemService.getDbBaseItemType(baseItemType.getId()));
+                    items.put(baseItemType, baseItemTypeCount);
+                }
+                baseItemTypeCount.increaseCount();
+            }
+            return new ReadonlyCollectionContentProvider<BaseItemTypeCount>(items.values());
+        } else {
+            return new ReadonlyCollectionContentProvider<BaseItemTypeCount>(Collections.<BaseItemTypeCount>emptyList());
+        }
     }
 }
