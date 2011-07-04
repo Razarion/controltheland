@@ -6,23 +6,13 @@ import javax.persistence.Entity;
 
 /**
  * User: beat
- * Date: 09.06.2011
+ * Date: 04.07.2011
  * Time: 12:06:45
  */
 @Entity
-@DiscriminatorValue("STATIC_PROPERTY")
-public class DbStaticProperty extends DbContent {
-    @Column(length = 500000)
-    private String html;
+@DiscriminatorValue("DYNAMIC_HTML")
+public class DbContentDynamicHtml extends DbContent {
     private boolean escapeMarkup = true;
-
-    public String getHtml() {
-        return html;
-    }
-
-    public void setHtml(String html) {
-        this.html = html;
-    }
 
     public void setEscapeMarkup(boolean escapeMarkup) {
         this.escapeMarkup = escapeMarkup;
@@ -30,6 +20,12 @@ public class DbStaticProperty extends DbContent {
 
     public boolean getEscapeMarkup() {
         return escapeMarkup;
+    }
+
+    @Override
+    public String getSpringBeanName() {
+        // This is only used for generating the EditMode class
+        return "DbContentDynamicHtml " + getId();
     }
 
     @Override

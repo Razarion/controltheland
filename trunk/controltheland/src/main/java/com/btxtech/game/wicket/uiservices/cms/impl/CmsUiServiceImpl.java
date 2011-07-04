@@ -5,13 +5,14 @@ import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbContentBook;
 import com.btxtech.game.services.cms.DbContentContainer;
 import com.btxtech.game.services.cms.DbContentDetailLink;
+import com.btxtech.game.services.cms.DbContentDynamicHtml;
 import com.btxtech.game.services.cms.DbContentLink;
 import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.cms.DbContentPageLink;
 import com.btxtech.game.services.cms.DbContentPlugin;
+import com.btxtech.game.services.cms.DbContentStaticHtml;
 import com.btxtech.game.services.cms.DbExpressionProperty;
 import com.btxtech.game.services.cms.DbPage;
-import com.btxtech.game.services.cms.DbStaticProperty;
 import com.btxtech.game.services.cms.EditMode;
 import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.common.CrudChild;
@@ -27,6 +28,7 @@ import com.btxtech.game.wicket.pages.cms.WritePanel;
 import com.btxtech.game.wicket.pages.cms.content.ContentBook;
 import com.btxtech.game.wicket.pages.cms.content.ContentContainer;
 import com.btxtech.game.wicket.pages.cms.content.ContentDetailLink;
+import com.btxtech.game.wicket.pages.cms.content.ContentDynamicHtml;
 import com.btxtech.game.wicket.pages.cms.content.ContentLink;
 import com.btxtech.game.wicket.pages.cms.content.ContentList;
 import com.btxtech.game.wicket.pages.cms.content.ContentPageLink;
@@ -102,13 +104,15 @@ public class CmsUiServiceImpl implements CmsUiService {
                 return new ContentContainer(componentId, (DbContentContainer) dbContent, beanIdPathElement);
             } else if (dbContent instanceof DbContentBook) {
                 return new ContentBook(componentId, (DbContentBook) dbContent, beanIdPathElement);
-            } else if (dbContent instanceof DbStaticProperty) {
-                DbStaticProperty dbStaticProperty = (DbStaticProperty) dbContent;
-                Component label = new Label(componentId, dbStaticProperty.getHtml()).setEscapeModelStrings(dbStaticProperty.getEscapeMarkup());
+            } else if (dbContent instanceof DbContentStaticHtml) {
+                DbContentStaticHtml dbContentStaticHtml = (DbContentStaticHtml) dbContent;
+                Component label = new Label(componentId, dbContentStaticHtml.getHtml()).setEscapeModelStrings(dbContentStaticHtml.getEscapeMarkup());
                 if (dbContent.getCssClass() != null) {
                     label.add(new SimpleAttributeModifier("class", dbContent.getCssClass()));
                 }
                 return label;
+            } else if (dbContent instanceof DbContentDynamicHtml) {
+                return new ContentDynamicHtml(componentId, (DbContentDynamicHtml) dbContent);
             } else if (dbContent instanceof DbContentPageLink) {
                 return new ContentPageLink(componentId, (DbContentPageLink) dbContent);
             } else if (dbContent instanceof DbContentLink) {
@@ -232,7 +236,7 @@ public class CmsUiServiceImpl implements CmsUiService {
         }
         try {
             Object object;
-            if(beanIdPathElement.hasBeanId() && beanIdPathElement.hasExpression()) {
+            if (beanIdPathElement.hasBeanId() && beanIdPathElement.hasExpression()) {
                 object = getDataProviderBean(beanIdPathElement);
             } else {
                 object = getDataProviderBean(beanIdPathElement.getParent());
@@ -324,8 +328,11 @@ public class CmsUiServiceImpl implements CmsUiService {
             // Already in edit mode
             return false;
         }
-        if(!isWriteAllowed(contentId)) {
+        if (!isWriteAllowed(contentId)) {
             return false;
+        }
+        if (beanIdPathElement == null) {
+            return true;
         }
         DbContent dbContent = cmsService.getDbContent(contentId);
         return beanIdPathElement.isChildDetailPage() || (dbContent.getSpringBeanName() != null && isWriteAllowed(contentId));

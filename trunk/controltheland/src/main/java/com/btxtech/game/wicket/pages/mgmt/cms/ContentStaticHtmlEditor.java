@@ -1,6 +1,6 @@
 package com.btxtech.game.wicket.pages.mgmt.cms;
 
-import com.btxtech.game.services.cms.DbStaticProperty;
+import com.btxtech.game.services.cms.DbContentStaticHtml;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.RuModel;
@@ -19,16 +19,16 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 21.06.2011
  * Time: 17:46:43
  */
-public class StaticPropertyEditor extends MgmtWebPage {
+public class ContentStaticHtmlEditor extends MgmtWebPage {
     @SpringBean
-    private RuServiceHelper<DbStaticProperty> ruServiceHelper;
+    private RuServiceHelper<DbContentStaticHtml> ruServiceHelper;
 
-    public StaticPropertyEditor(DbStaticProperty dbStaticProperty) {
+    public ContentStaticHtmlEditor(DbContentStaticHtml dbContentStaticHtml) {
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbStaticProperty> form = new Form<DbStaticProperty>("form", new CompoundPropertyModel<DbStaticProperty>(new RuModel<DbStaticProperty>(dbStaticProperty, DbStaticProperty.class) {
+        final Form<DbContentStaticHtml> form = new Form<DbContentStaticHtml>("form", new CompoundPropertyModel<DbContentStaticHtml>(new RuModel<DbContentStaticHtml>(dbContentStaticHtml, DbContentStaticHtml.class) {
             @Override
-            protected RuServiceHelper<DbStaticProperty> getRuServiceHelper() {
+            protected RuServiceHelper<DbContentStaticHtml> getRuServiceHelper() {
                 return ruServiceHelper;
             }
         }));
