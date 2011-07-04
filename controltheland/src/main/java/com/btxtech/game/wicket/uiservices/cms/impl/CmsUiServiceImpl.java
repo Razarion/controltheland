@@ -231,10 +231,15 @@ public class CmsUiServiceImpl implements CmsUiService {
             throw new IllegalStateException("User not allowed to write property: " + contentId);
         }
         try {
-            Object object = getDataProviderBean(beanIdPathElement.getParent());
+            Object object;
+            if(beanIdPathElement.hasBeanId() && beanIdPathElement.hasExpression()) {
+                object = getDataProviderBean(beanIdPathElement);
+            } else {
+                object = getDataProviderBean(beanIdPathElement.getParent());
+            }
             PropertyUtils.setProperty(object, beanIdPathElement.getExpression(), value);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("value: " + value + " " + beanIdPathElement + " contentId: " + contentId, e);
         }
     }
 
@@ -314,25 +319,25 @@ public class CmsUiServiceImpl implements CmsUiService {
     }
 
     @Override
-    public boolean isEnterEditModeAllowed(int contentId) {
+    public boolean isEnterEditModeAllowed(int contentId, BeanIdPathElement beanIdPathElement) {
         if (getEditMode(contentId) != null) {
             // Already in edit mode
             return false;
         }
-        DbContent dbContent = cmsService.getDbContent(contentId);
-        if (dbContent.getSpringBeanName() == null) {
+        if(!isWriteAllowed(contentId)) {
             return false;
         }
-        return isWriteAllowed(contentId);
+        DbContent dbContent = cmsService.getDbContent(contentId);
+        return beanIdPathElement.isChildDetailPage() || (dbContent.getSpringBeanName() != null && isWriteAllowed(contentId));
     }
 
     @Override
-    public boolean isSaveAllowed(int contentId) {
+    public boolean isSaveAllowed(int contentId, BeanIdPathElement beanIdPathElement) {
         if (getEditMode(contentId) == null) {
             return false;
         }
         DbContent dbContent = cmsService.getDbContent(contentId);
-        return dbContent.getSpringBeanName() != null;
+        return dbContent.getSpringBeanName() != null || beanIdPathElement.isChildDetailPage();
     }
 
     public boolean isWriteAllowed(int contentId) {

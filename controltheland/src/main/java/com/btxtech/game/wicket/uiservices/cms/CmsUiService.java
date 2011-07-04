@@ -34,9 +34,9 @@ public interface CmsUiService {
 
     void leaveEditMode();
 
-    boolean isEnterEditModeAllowed(int contentId);
+    boolean isEnterEditModeAllowed(int contentId, BeanIdPathElement beanIdPathElement);
 
-    boolean isSaveAllowed(int contentId);
+    boolean isSaveAllowed(int contentId, BeanIdPathElement beanIdPathElement);
 
     void save(BeanIdPathElement beanIdPathElement);
 

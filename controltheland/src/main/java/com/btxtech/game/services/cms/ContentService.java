@@ -9,4 +9,6 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
  */
 public interface ContentService {
     CrudRootServiceHelper<DbBlogEntry> getBlogEntryCrudRootServiceHelper();
+
+    CrudRootServiceHelper<DbWikiSection> getWikiSectionCrudRootServiceHelper();
 }

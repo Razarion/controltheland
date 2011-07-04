@@ -25,7 +25,7 @@ public class EditPanel extends Panel {
 
             @Override
             public boolean isVisible() {
-                return !showDelete && cmsUiService.isEnterEditModeAllowed(contentId);
+                return !showDelete && cmsUiService.isEnterEditModeAllowed(contentId, beanIdPathElement);
             }
         };
         add(edit);
@@ -51,7 +51,7 @@ public class EditPanel extends Panel {
 
             @Override
             public boolean isVisible() {
-                return !showDelete && cmsUiService.isSaveAllowed(contentId);
+                return !showDelete && cmsUiService.isSaveAllowed(contentId, beanIdPathElement);
             }
         };
         add(save);

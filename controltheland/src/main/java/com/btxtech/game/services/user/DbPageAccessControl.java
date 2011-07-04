@@ -1,6 +1,7 @@
 package com.btxtech.game.services.user;
 
 import com.btxtech.game.services.cms.DbPage;
+import com.btxtech.game.services.common.CrudChild;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import java.io.Serializable;
 
 /**
  * User: beat
@@ -15,7 +17,7 @@ import javax.persistence.OneToOne;
  * Time: 00:39:22
  */
 @Entity(name = "USER_SECURITY_CMS_PAGE_ACCESS")
-public class DbPageAccessControl {
+public class DbPageAccessControl implements CrudChild<User> {
     @Id
     @GeneratedValue
     private Integer id;
@@ -23,6 +25,11 @@ public class DbPageAccessControl {
     private DbPage dbPage;
     @ManyToOne(optional = false)
     private User user;
+
+    @Override
+    public Serializable getId() {
+        return id;
+    }
 
     public DbPage getDbPage() {
         return dbPage;
@@ -36,8 +43,23 @@ public class DbPageAccessControl {
         return user;
     }
 
-    public void setUser(User user) {
+    @Override
+    public void setParent(User user) {
         this.user = user;
+    }
+
+    @Override
+    public String getName() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setName(String name) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void init() {
     }
 
     @Override

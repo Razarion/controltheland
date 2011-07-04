@@ -5,8 +5,13 @@ import com.btxtech.game.services.cms.impl.CmsServiceImpl;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.user.DbContentAccessControl;
+import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
+import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
 import org.junit.Assert;
 import org.junit.Before;
@@ -17,6 +22,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,9 +35,11 @@ public class TestCmsService extends AbstractServiceTest {
     private CmsService cmsService;
     @Autowired
     private ContentService contentService;
-    private WicketTester tester;
     @Autowired
     private ApplicationContext applicationContext;
+    @Autowired
+    private UserService userService;
+    private WicketTester tester;
 
     @Before
     public void setUp() {
@@ -221,9 +229,103 @@ public class TestCmsService extends AbstractServiceTest {
         ((CmsServiceImpl) cmsService).init();
     }
 
+    private int setupBlogPage() {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage1 = pageCrud.createDbChild();
+        dbPage1.setHome(true);
+        dbPage1.setName("Home");
+
+        DbContentList dbContentList = new DbContentList();
+        dbContentList.init();// TODO should not be called here
+        dbPage1.setContent(dbContentList);
+        dbContentList.setRowsPerPage(5);
+        dbContentList.setSpringBeanName("contentService");
+        dbContentList.setContentProviderGetter("getBlogEntryCrudRootServiceHelper");
+
+        CrudListChildServiceHelper<DbContent> columnCrud = dbContentList.getColumnsCrud();
+        DbContentContainer dbContentContentContainer = (DbContentContainer) columnCrud.createDbChild(DbContentContainer.class);
+
+        DbExpressionProperty title = (DbExpressionProperty) dbContentContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
+        title.setExpression("name");
+        DbExpressionProperty date = (DbExpressionProperty) dbContentContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
+        date.setExpression("timeStamp");
+        date.setOptionalType(DbExpressionProperty.Type.DATE_DDMMYYYY_HH_MM_SS);
+        DbExpressionProperty html = (DbExpressionProperty) dbContentContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
+        html.setExpression("html");
+        html.setEscapeMarkup(false);
+
+        pageCrud.updateDbChild(dbPage1);
+        int id = dbPage1.getId();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        return id;
+    }
+
     @Test
     @DirtiesContext
-    public void testContentContainerInBeanTable() {
+    public void testBlogRead() {
+        // Setup CMS content
+        int id = setupBlogPage();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Set blog service
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbBlogEntry> blogCrud = contentService.getBlogEntryCrudRootServiceHelper();
+        DbBlogEntry dbBlogEntry1 = blogCrud.createDbChild();
+        dbBlogEntry1.setHtml("Blog 1");
+        dbBlogEntry1.setName("News 1");
+        blogCrud.updateDbChild(dbBlogEntry1);
+
+        DbBlogEntry dbBlogEntry2 = blogCrud.createDbChild();
+        dbBlogEntry2.setHtml("Blog 2");
+        dbBlogEntry2.setName("News 2");
+        blogCrud.updateDbChild(dbBlogEntry2);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbPage cachePage = cmsService.getPage(id);
+        DbContentList cacheContentList = (DbContentList) cachePage.getContent();
+
+        Assert.assertEquals("contentService", cacheContentList.getSpringBeanName());
+        Assert.assertEquals("getBlogEntryCrudRootServiceHelper", cacheContentList.getContentProviderGetter());
+        Assert.assertEquals(5, (int) cacheContentList.getRowsPerPage());
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertLabel("form:content:rows:1:cells:1:cell:listView:0:content", "News 2");
+        tester.assertLabel("form:content:rows:1:cells:1:cell:listView:1:content", WebCommon.formatDateTime(new Date(dbBlogEntry2.getTimeStamp())));
+        tester.assertLabel("form:content:rows:1:cells:1:cell:listView:2:content", "Blog 2");
+
+        tester.assertLabel("form:content:rows:2:cells:1:cell:listView:0:content", "News 1");
+        tester.assertLabel("form:content:rows:2:cells:1:cell:listView:1:content", WebCommon.formatDateTime(new Date(dbBlogEntry1.getTimeStamp())));
+        tester.assertLabel("form:content:rows:2:cells:1:cell:listView:2:content", "Blog 1");
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testBlogWrite() throws Exception {
+        configureMinimalGame();
+
         // Setup CMS content
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -246,6 +348,7 @@ public class TestCmsService extends AbstractServiceTest {
         title.setExpression("name");
         DbExpressionProperty date = (DbExpressionProperty) dbContentContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
         date.setExpression("timeStamp");
+        date.setOptionalType(DbExpressionProperty.Type.DATE_DDMMYYYY_HH_MM_SS);
         DbExpressionProperty html = (DbExpressionProperty) dbContentContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
         html.setExpression("html");
         html.setEscapeMarkup(false);
@@ -254,52 +357,180 @@ public class TestCmsService extends AbstractServiceTest {
         int id = dbPage1.getId();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-
+        // Activate
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         cmsService.activateCms();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        // Set blog service
         beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        CrudRootServiceHelper<DbBlogEntry> blogCrud = contentService.getBlogEntryCrudRootServiceHelper();
-        DbBlogEntry dbBlogEntry = blogCrud.createDbChild();
-        dbBlogEntry.setHtml("Blog 1");
-        dbBlogEntry.setName("News 1");
-        blogCrud.updateDbChild(dbBlogEntry);
 
-        dbBlogEntry = blogCrud.createDbChild();
-        dbBlogEntry.setHtml("Blog 2");
-        dbBlogEntry.setName("News 2");
-        blogCrud.updateDbChild(dbBlogEntry);
+        // Create User
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("test", "test", "test", "");
+        userService.login("test", "test");
+        User user = userService.getUser();
+        DbContentAccessControl control = user.getContentCrud().createDbChild();
+        control.setDbContent(dbContentList);
+        control.setCreateAllowed(true);
+        control.setDeleteAllowed(true);
+        control.setWriteAllowed(true);
+        control = user.getContentCrud().createDbChild();
+        control.setDbContent(title);
+        control.setCreateAllowed(true);
+        control.setDeleteAllowed(true);
+        control.setWriteAllowed(true);
+        control = user.getContentCrud().createDbChild();
+        control.setDbContent(html);
+        control.setCreateAllowed(true);
+        control.setDeleteAllowed(true);
+        control.setWriteAllowed(true);
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        // Write
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertVisible("form:content:edit:edit");
+        FormTester formTester = tester.newFormTester("form");
+        formTester.submit("content:edit:edit");
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        formTester = tester.newFormTester("form");
+        formTester.submit("content:edit:create");
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        formTester = tester.newFormTester("form");
+        formTester.setValue("content:rows:1:cells:1:cell:listView:0:content:field", "Blog 1");
+        formTester.setValue("content:rows:1:cells:1:cell:listView:2:content:textArea", "Bla Bla");
+        formTester.submit("content:edit:save");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
+        Collection<DbBlogEntry> blog = contentService.getBlogEntryCrudRootServiceHelper().readDbChildren();
+        Assert.assertEquals(1, blog.size());
+        DbBlogEntry dbBlogEntry = blog.iterator().next();
+        Assert.assertEquals("Blog 1", dbBlogEntry.getName());
+        Assert.assertEquals("Bla Bla", dbBlogEntry.getHtml());
+    }
+
+    @Test
+    @DirtiesContext
+    public void testWiki() throws Exception {
+        configureMinimalGame();
+
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage1 = pageCrud.createDbChild();
+        dbPage1.setHome(true);
+        dbPage1.setName("Home");
+
+        DbContentList dbContentList = new DbContentList();
+        dbContentList.init();// TODO should not be called here
+        dbPage1.setContent(dbContentList);
+        dbContentList.setRowsPerPage(5);
+        dbContentList.setSpringBeanName("contentService");
+        dbContentList.setContentProviderGetter("getWikiSectionCrudRootServiceHelper");
+
+        CrudListChildServiceHelper<DbContent> columnCrud = dbContentList.getColumnsCrud();
+        DbExpressionProperty nameProperty = (DbExpressionProperty) columnCrud.createDbChild(DbExpressionProperty.class);
+        nameProperty.setExpression("name");
+        DbContentDetailLink detailLink = (DbContentDetailLink) columnCrud.createDbChild(DbContentDetailLink.class);
+        detailLink.setName("Details");
+
+        CrudChildServiceHelper<DbContentBook> contentBookCrud = dbContentList.getContentBookCrud();
+        DbContentBook dbContentBook = contentBookCrud.createDbChild();
+        dbContentBook.setClassName(DbWikiSection.class.getName());
+        CrudListChildServiceHelper<DbContentRow> rowCrud = dbContentBook.getRowCrud();
+        DbContentRow dbContentRow = rowCrud.createDbChild();
+        dbContentRow.setName("theName");
+        DbExpressionProperty expProperty = new DbExpressionProperty();
+        expProperty.setParent(dbContentRow);
+        expProperty.setExpression("html");
+        expProperty.setEscapeMarkup(false);
+        dbContentRow.setDbContent(expProperty);
+
+        pageCrud.updateDbChild(dbPage1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
         // Activate
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbPage cachePage = cmsService.getPage(id);
-        DbContentList cacheContentList = (DbContentList) cachePage.getContent();
-
-        Assert.assertEquals("contentService", cacheContentList.getSpringBeanName());
-        Assert.assertEquals("getBlogEntryCrudRootServiceHelper", cacheContentList.getContentProviderGetter());
-        Assert.assertEquals(5, (int) cacheContentList.getRowsPerPage());
-
+        cmsService.activateCms();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        // Verify
         beginHttpSession();
+
+        // Create User
         beginHttpRequestAndOpenSessionInViewFilter();
-        // TODO check for labels
-        tester.startPage(CmsPage.class);
-        tester.assertRenderedPage(CmsPage.class);
+        userService.createUser("test", "test", "test", "");
+        userService.login("test", "test");
+        User user = userService.getUser();
+        DbContentAccessControl control = user.getContentCrud().createDbChild();
+        control.setDbContent(dbContentList);
+        control.setCreateAllowed(true);
+        control.setDeleteAllowed(true);
+        control.setWriteAllowed(true);
+        control = user.getContentCrud().createDbChild();
+        control.setDbContent(nameProperty);
+        control.setCreateAllowed(true);
+        control.setDeleteAllowed(true);
+        control.setWriteAllowed(true);
+        control = user.getContentCrud().createDbChild();
+        control.setDbContent(expProperty);
+        control.setCreateAllowed(true);
+        control.setDeleteAllowed(true);
+        control.setWriteAllowed(true);
 
         endHttpRequestAndOpenSessionInViewFilter();
+
+        // Write
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertVisible("form:content:edit:edit");
+        FormTester formTester = tester.newFormTester("form");
+        formTester.submit("content:edit:edit");
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        formTester = tester.newFormTester("form");
+        formTester.submit("content:edit:create");
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        formTester = tester.newFormTester("form");
+        formTester.setValue("content:rows:1:cells:1:cell:field", "TEST 1");
+        formTester.submit("content:edit:save");
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.clickLink("form:content:rows:2:cells:2:cell:link");
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.debugComponentTrees();
+        formTester = tester.newFormTester("form");
+        formTester.setValue("content:dataTable:body:rows:1:cells:2:cell:textArea", "Content Content Content");
+        formTester.submit("content:edit:save");
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        formTester = tester.newFormTester("form");
+        formTester.submit("content:edit:cancelEdit");
+        endHttpRequestAndOpenSessionInViewFilter();
+
         endHttpSession();
 
+        Collection<DbWikiSection> wiki = contentService.getWikiSectionCrudRootServiceHelper().readDbChildren();
+        Assert.assertEquals(1, wiki.size());
+        DbWikiSection dbWikiSection = wiki.iterator().next();
+        Assert.assertEquals("TEST 1", dbWikiSection.getName());
+        Assert.assertEquals("Content Content Content", dbWikiSection.getHtml());
     }
 
     @Test

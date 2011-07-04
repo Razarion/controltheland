@@ -3,6 +3,7 @@ package com.btxtech.game.wicket.pages.cms.content;
 import com.btxtech.game.services.cms.DataProviderInfo;
 import com.btxtech.game.services.cms.DbContentBook;
 import com.btxtech.game.services.cms.DbContentRow;
+import com.btxtech.game.wicket.pages.cms.EditPanel;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
@@ -52,6 +53,7 @@ public class ContentBook extends Panel {
                 bean = null;
             }
         });
+        add(new EditPanel("edit", contentId, beanIdPathElement, false, false));        
         setupPropertyBook();
         if (dbContentBook.getCssClass() != null) {
             add(new SimpleAttributeModifier("class", dbContentBook.getCssClass()));
