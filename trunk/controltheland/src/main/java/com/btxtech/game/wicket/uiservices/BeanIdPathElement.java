@@ -88,6 +88,11 @@ public class BeanIdPathElement implements Serializable {
         return expression != null;
     }
 
+    public boolean isChildDetailPage() {
+        return hasBeanId() && !hasSpringBeanName() && !hasContentProviderGetter()
+                && hasParent() && parent.hasSpringBeanName() && parent.hasSpringBeanName();
+    }
+
     public BeanIdPathElement createChild(DataProviderInfo dataProviderInfo, Object parentBean) {
         BeanIdPathElement beanIdPathElement = new BeanIdPathElement();
         beanIdPathElement.parent = this;

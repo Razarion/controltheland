@@ -18,7 +18,11 @@ import com.btxtech.game.services.cms.DbPage;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.debug.PageView;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.html.pages.ExceptionErrorPage;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -57,6 +61,21 @@ public class CmsPage extends WebPage {
         Form form = new Form("form");
         add(form);
         form.add(cmsUiService.getRootComponent(dbPage, "content", pageParameters));
+        //////////////////////
+        add(new Link<Void>("displayPageViewLink")
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void onClick()
+			{
+				CmsPage.this.replace(new PageView("componentTree", CmsPage.this));
+				setVisible(false);
+			}
+		});
+
+		add(new Label("componentTree", ""));
+        //////////////////////
     }
 
     @Override

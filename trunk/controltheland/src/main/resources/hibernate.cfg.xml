@@ -133,6 +133,7 @@
         <mapping class="com.btxtech.game.services.cms.DbContentPlugin"/>
         <!-- Content -->
         <mapping class="com.btxtech.game.services.cms.DbBlogEntry"/>
+        <mapping class="com.btxtech.game.services.cms.DbWikiSection"/>
 
     </session-factory>
 </hibernate-configuration>

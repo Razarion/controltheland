@@ -166,14 +166,16 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * This method creates a user and connect it to the current Base and UserState
+     * <p/>
+     * After this method login must be called immediately!     *
+     *
      * @param name            User name
      * @param password        password
      * @param confirmPassword confirm password
      * @param email           email
      * @throws UserAlreadyExistsException
-     * @throws PasswordNotMatchException  This method creates a user and connect it to the current Base and UserStatus
-     *                                    <p/>
-     *                                    After this method login must be called immediately!
+     * @throws PasswordNotMatchException
      */
     @Override
     public void createUser(String name, String password, String confirmPassword, String email) throws UserAlreadyExistsException, PasswordNotMatchException, AlreadyLoggedInException {
@@ -233,12 +235,12 @@ public class UserServiceImpl implements UserService {
             return null;
         } else {
             User user = users.get(0);
-            Hibernate.initialize(user.getDbContentAccessControls());
-            for (DbContentAccessControl dbContentAccessControl : user.getDbContentAccessControls()) {
+            Hibernate.initialize(user.getContentCrud().readDbChildren());
+            for (DbContentAccessControl dbContentAccessControl : user.getContentCrud().readDbChildren()) {
                 Hibernate.initialize(dbContentAccessControl.getDbContent());
             }
-            Hibernate.initialize(user.getDbPageAccessControls());
-            for (DbPageAccessControl dbPageAccessControl : user.getDbPageAccessControls()) {
+            Hibernate.initialize(user.getPageCrud().readDbChildren());
+            for (DbPageAccessControl dbPageAccessControl : user.getPageCrud().readDbChildren()) {
                 Hibernate.initialize(dbPageAccessControl.getDbPage());
             }
             return user;
@@ -411,7 +413,7 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             return null;
         }
-        Collection<DbContentAccessControl> dbContentAccessControls = user.getDbContentAccessControls();
+        Collection<DbContentAccessControl> dbContentAccessControls = user.getContentCrud().readDbChildren();
         if (dbContentAccessControls == null || dbContentAccessControls.isEmpty()) {
             return null;
         }
@@ -424,7 +426,7 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             return null;
         }
-        Collection<DbPageAccessControl> dbPageAccessControls = user.getDbPageAccessControls();
+        Collection<DbPageAccessControl> dbPageAccessControls = user.getPageCrud().readDbChildren();
         if (dbPageAccessControls == null || dbPageAccessControls.isEmpty()) {
             return null;
         }

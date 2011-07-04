@@ -13,11 +13,21 @@
 
 package com.btxtech.game.services.user;
 
+import com.btxtech.game.services.common.CrudChildServiceHelper;
+import com.btxtech.game.services.common.CrudParent;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,7 +35,7 @@ import java.util.Date;
 import java.util.Set;
 
 @Entity(name = "USER")
-public class User implements UserDetails, Serializable {
+public class User implements UserDetails, Serializable, CrudParent {
     @Id
     private String name;
     @Column(name = "passwordHash")
@@ -45,6 +55,11 @@ public class User implements UserDetails, Serializable {
     private Collection<DbContentAccessControl> dbContentAccessControls;
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "user")
     private Collection<DbPageAccessControl> dbPageAccessControls;
+    @Transient
+    private CrudChildServiceHelper<DbContentAccessControl> contentCrud;
+    @Transient
+    private CrudChildServiceHelper<DbPageAccessControl> pageCrud;
+
 
     public String getUsername() {
         return name;
@@ -132,12 +147,24 @@ public class User implements UserDetails, Serializable {
         return enabled;
     }
 
-    public Collection<DbContentAccessControl> getDbContentAccessControls() {
-        return dbContentAccessControls;
+    public CrudChildServiceHelper<DbContentAccessControl> getContentCrud() {
+        if (dbContentAccessControls == null) {
+            dbContentAccessControls = new ArrayList<DbContentAccessControl>();
+        }
+        if (contentCrud == null) {
+            contentCrud = new CrudChildServiceHelper<DbContentAccessControl>(dbContentAccessControls, DbContentAccessControl.class, this);
+        }
+        return contentCrud;
     }
 
-    public Collection<DbPageAccessControl> getDbPageAccessControls() {
-        return dbPageAccessControls;
+    public CrudChildServiceHelper<DbPageAccessControl> getPageCrud() {
+        if (dbPageAccessControls == null) {
+            dbPageAccessControls = new ArrayList<DbPageAccessControl>();
+        }
+        if (pageCrud == null) {
+            pageCrud = new CrudChildServiceHelper<DbPageAccessControl>(dbPageAccessControls, DbPageAccessControl.class, this);
+        }
+        return pageCrud;
     }
 
     @Override
