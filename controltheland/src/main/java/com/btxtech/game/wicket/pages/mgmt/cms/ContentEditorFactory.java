@@ -4,12 +4,13 @@ import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbContentBook;
 import com.btxtech.game.services.cms.DbContentContainer;
 import com.btxtech.game.services.cms.DbContentDetailLink;
+import com.btxtech.game.services.cms.DbContentDynamicHtml;
 import com.btxtech.game.services.cms.DbContentLink;
 import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.cms.DbContentPageLink;
 import com.btxtech.game.services.cms.DbContentPlugin;
 import com.btxtech.game.services.cms.DbExpressionProperty;
-import com.btxtech.game.services.cms.DbStaticProperty;
+import com.btxtech.game.services.cms.DbContentStaticHtml;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 
 /**
@@ -52,11 +53,11 @@ public class ContentEditorFactory {
             MgmtWebPage createContentEditor(DbContent dbContent) {
                 return new ContentDetailLinkEditor((DbContentDetailLink) dbContent);
             }},
-        STATIC_PROPERTY(DbStaticProperty.class, "Static Property") {
+        STATIC_HTML(DbContentStaticHtml.class, "Static HTML") {
 
             @Override
             MgmtWebPage createContentEditor(DbContent dbContent) {
-                return new StaticPropertyEditor((DbStaticProperty) dbContent);
+                return new ContentStaticHtmlEditor((DbContentStaticHtml) dbContent);
             }},
         EXPRESSION_PROPERTY(DbExpressionProperty.class, "Expression Property") {
 
@@ -81,6 +82,12 @@ public class ContentEditorFactory {
             @Override
             MgmtWebPage createContentEditor(DbContent dbContent) {
                 return new ContentPluginEditor((DbContentPlugin) dbContent);
+            }},
+        DYNAMIC_HTML(DbContentDynamicHtml.class, "Dynamic HTML") {
+
+            @Override
+            MgmtWebPage createContentEditor(DbContent dbContent) {
+                return new ContentDynamicHtmlEditor((DbContentDynamicHtml) dbContent);
             }};
 
         private Class<? extends DbContent> createClass;

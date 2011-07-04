@@ -127,13 +127,15 @@
         <mapping class="com.btxtech.game.services.cms.DbContentDetailLink"/>
         <mapping class="com.btxtech.game.services.cms.DbContentBook"/>
         <mapping class="com.btxtech.game.services.cms.DbContentRow"/>
-        <mapping class="com.btxtech.game.services.cms.DbStaticProperty"/>
+        <mapping class="com.btxtech.game.services.cms.DbContentStaticHtml"/>
         <mapping class="com.btxtech.game.services.cms.DbContentPageLink"/>
         <mapping class="com.btxtech.game.services.cms.DbContentLink"/>
         <mapping class="com.btxtech.game.services.cms.DbContentPlugin"/>
+        <mapping class="com.btxtech.game.services.cms.DbContentDynamicHtml"/>
         <!-- Content -->
         <mapping class="com.btxtech.game.services.cms.DbBlogEntry"/>
         <mapping class="com.btxtech.game.services.cms.DbWikiSection"/>
+        <mapping class="com.btxtech.game.services.cms.DbHtmlContent"/>
 
     </session-factory>
 </hibernate-configuration>

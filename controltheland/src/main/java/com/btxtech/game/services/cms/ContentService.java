@@ -11,4 +11,8 @@ public interface ContentService {
     CrudRootServiceHelper<DbBlogEntry> getBlogEntryCrudRootServiceHelper();
 
     CrudRootServiceHelper<DbWikiSection> getWikiSectionCrudRootServiceHelper();
+
+    String getDynamicHtml(int contentId);
+
+    void setDynamicHtml(int contentId, String value);
 }

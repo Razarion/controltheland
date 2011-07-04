@@ -449,7 +449,7 @@ public class TestCmsService extends AbstractServiceTest {
         DbContentRow dbContentRow = rowCrud.createDbChild();
         dbContentRow.setName("theName");
         DbExpressionProperty expProperty = new DbExpressionProperty();
-        expProperty.setParent(dbContentRow);
+        expProperty.setParent(dbContentRow); // TODO should not be called here
         expProperty.setExpression("html");
         expProperty.setEscapeMarkup(false);
         dbContentRow.setDbContent(expProperty);
@@ -513,7 +513,6 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        tester.debugComponentTrees();
         formTester = tester.newFormTester("form");
         formTester.setValue("content:dataTable:body:rows:1:cells:2:cell:textArea", "Content Content Content");
         formTester.submit("content:edit:save");
@@ -531,6 +530,106 @@ public class TestCmsService extends AbstractServiceTest {
         DbWikiSection dbWikiSection = wiki.iterator().next();
         Assert.assertEquals("TEST 1", dbWikiSection.getName());
         Assert.assertEquals("Content Content Content", dbWikiSection.getHtml());
+    }
+
+    @Test
+    @DirtiesContext
+    public void testDynamicHtmlRead() throws Exception {
+        configureMinimalGame();
+
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage1 = pageCrud.createDbChild();
+        dbPage1.setHome(true);
+        dbPage1.setName("Home");
+
+        DbContentDynamicHtml dbContentDynamicHtml = new DbContentDynamicHtml();
+        dbContentDynamicHtml.init();// TODO should not be called here
+        dbPage1.setContent(dbContentDynamicHtml);
+        pageCrud.updateDbChild(dbPage1);
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        contentService.setDynamicHtml(dbContentDynamicHtml.getId(), "1234567890");        
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+
+        // Read
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+
+        //tester.assertLabel();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+
+    @Test
+    @DirtiesContext
+    public void testDynamicHtmlWrite() throws Exception {
+        configureMinimalGame();
+
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage1 = pageCrud.createDbChild();
+        dbPage1.setHome(true);
+        dbPage1.setName("Home");
+
+        DbContentDynamicHtml dbContentDynamicHtml = new DbContentDynamicHtml();
+        dbContentDynamicHtml.init();// TODO should not be called here
+        dbPage1.setContent(dbContentDynamicHtml);
+
+        pageCrud.updateDbChild(dbPage1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+
+        // Create User
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("test", "test", "test", "");
+        userService.login("test", "test");
+        User user = userService.getUser();
+        DbContentAccessControl control = user.getContentCrud().createDbChild();
+        control.setDbContent(dbContentDynamicHtml);
+        control.setCreateAllowed(true);
+        control.setDeleteAllowed(true);
+        control.setWriteAllowed(true);
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        // Write
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertVisible("form:content:edit:edit");
+        FormTester formTester = tester.newFormTester("form");
+        formTester.submit("content:edit:edit");
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        //tester.debugComponentTrees();
+        formTester = tester.newFormTester("form");
+        formTester.setValue("content:htmlTextArea", "qaywsxedc");
+        formTester.submit("content:edit:save");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        Assert.assertEquals("qaywsxedc", contentService.getDynamicHtml(dbContentDynamicHtml.getId()));
     }
 
     @Test
