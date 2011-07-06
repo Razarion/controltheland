@@ -13,7 +13,7 @@
 
 package com.btxtech.game.services.market.impl;
 
-import com.btxtech.game.services.market.MarketEntry;
+import com.btxtech.game.services.market.DbMarketEntry;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,16 +27,16 @@ import java.util.Set;
  * Time: 13:00:19
  */
 public class UserItemTypeAccess implements Serializable {
-    private Set<MarketEntry> allowedItemTypes;
+    private Set<DbMarketEntry> allowedItemTypes;
     private int xp = 0;
 
-    public UserItemTypeAccess(Collection<MarketEntry> allowedItemTypes) {
-        this.allowedItemTypes = new HashSet<MarketEntry>(allowedItemTypes);
+    public UserItemTypeAccess(Collection<DbMarketEntry> allowedItemTypes) {
+        this.allowedItemTypes = new HashSet<DbMarketEntry>(allowedItemTypes);
     }
 
     public Collection<Integer> getItemTypeIds() {
         ArrayList<Integer> list = new ArrayList<Integer>();
-        for (MarketEntry allowedItemType : allowedItemTypes) {
+        for (DbMarketEntry allowedItemType : allowedItemTypes) {
             if (allowedItemType.getItemType() != null) {
                 list.add(allowedItemType.getItemType().getId());
             }
@@ -45,7 +45,7 @@ public class UserItemTypeAccess implements Serializable {
     }
 
     public boolean contains(int itemTypeId) {
-        for (MarketEntry allowedItemType : allowedItemTypes) {
+        for (DbMarketEntry allowedItemType : allowedItemTypes) {
             if (allowedItemType.getItemType() != null) {
                 if (allowedItemType.getItemType().getId() == itemTypeId) {
                     return true;
@@ -55,11 +55,11 @@ public class UserItemTypeAccess implements Serializable {
         return false;
     }
 
-    public boolean contains(MarketEntry marketEntry) {
-        return allowedItemTypes.contains(marketEntry);
+    public boolean contains(DbMarketEntry dbMarketEntry) {
+        return allowedItemTypes.contains(dbMarketEntry);
     }
 
-    public Set<MarketEntry> getAllowedItemTypes() {
+    public Set<DbMarketEntry> getAllowedItemTypes() {
         return allowedItemTypes;
     }
 
@@ -75,11 +75,11 @@ public class UserItemTypeAccess implements Serializable {
         xp += value;
     }
 
-    public void buy(MarketEntry marketEntry) {
-        if (marketEntry.getPrice() > xp) {
-            throw new IllegalArgumentException("Not enough XP to buy: " + marketEntry);
+    public void buy(DbMarketEntry dbMarketEntry) {
+        if (dbMarketEntry.getPrice() > xp) {
+            throw new IllegalArgumentException("Not enough XP to buy: " + dbMarketEntry);
         }
-        xp -= marketEntry.getPrice();
-        allowedItemTypes.add(marketEntry);
+        xp -= dbMarketEntry.getPrice();
+        allowedItemTypes.add(dbMarketEntry);
     }
 }

@@ -44,7 +44,7 @@ import com.btxtech.game.services.item.itemType.DbItemContainerType;
 import com.btxtech.game.services.item.itemType.DbMovableType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.services.item.itemType.DbWeaponType;
-import com.btxtech.game.services.market.MarketEntry;
+import com.btxtech.game.services.market.DbMarketEntry;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.market.XpSettings;
 import com.btxtech.game.services.resource.DbRegionResource;
@@ -761,25 +761,30 @@ abstract public class AbstractServiceTest {
     // ------------------- Setup Market --------------------
 
     protected void setupMinimalMarket() {
-        MarketEntry factory = serverMarketService.getCrudMarketEntryService().createDbChild();
+        DbMarketEntry factory = serverMarketService.getCrudMarketEntryService().createDbChild();
         factory.setAlwaysAllowed(true);
         factory.setItemType(itemService.getDbItemType(TEST_FACTORY_ITEM_ID));
         serverMarketService.getCrudMarketEntryService().updateDbChild(factory);
 
-        MarketEntry attacker = serverMarketService.getCrudMarketEntryService().createDbChild();
+        DbMarketEntry attacker = serverMarketService.getCrudMarketEntryService().createDbChild();
         attacker.setAlwaysAllowed(true);
         attacker.setItemType(itemService.getDbItemType(TEST_ATTACK_ITEM_ID));
         serverMarketService.getCrudMarketEntryService().updateDbChild(attacker);
 
-        MarketEntry harvester = serverMarketService.getCrudMarketEntryService().createDbChild();
+        DbMarketEntry harvester = serverMarketService.getCrudMarketEntryService().createDbChild();
         harvester.setAlwaysAllowed(true);
         harvester.setItemType(itemService.getDbItemType(TEST_HARVESTER_ITEM_ID));
         serverMarketService.getCrudMarketEntryService().updateDbChild(harvester);
 
-        MarketEntry itemContainer = serverMarketService.getCrudMarketEntryService().createDbChild();
+        DbMarketEntry itemContainer = serverMarketService.getCrudMarketEntryService().createDbChild();
         itemContainer.setAlwaysAllowed(true);
         itemContainer.setItemType(itemService.getDbItemType(TEST_CONTAINER_ITEM_ID));
         serverMarketService.getCrudMarketEntryService().updateDbChild(itemContainer);
+
+        DbMarketEntry simpleBuilding = serverMarketService.getCrudMarketEntryService().createDbChild();
+        simpleBuilding.setItemType(itemService.getDbItemType(TEST_SIMPLE_BUILDING_ID));
+        simpleBuilding.setPrice(10);
+        serverMarketService.getCrudMarketEntryService().updateDbChild(simpleBuilding);
     }
 
     // ------------------- Setup Terrain --------------------
@@ -952,6 +957,9 @@ abstract public class AbstractServiceTest {
         DbItemTypeLimitation container = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
         container.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_CONTAINER_ITEM_ID));
         container.setCount(10);
+        DbItemTypeLimitation simpleBuilding = dbRealGameLevel.getDbItemTypeLimitationCrudServiceHelper().createDbChild();
+        simpleBuilding.setDbBaseItemType((DbBaseItemType) itemService.getDbItemType(TEST_SIMPLE_BUILDING_ID));
+        simpleBuilding.setCount(10);
 
         userGuidanceService.getDbLevelCrudServiceHelper().updateDbChild(dbRealGameLevel);
         TEST_LEVEL_2_REAL_ID = dbRealGameLevel.getId();

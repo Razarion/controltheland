@@ -13,7 +13,7 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.services.market.MarketEntry;
+import com.btxtech.game.services.market.DbMarketEntry;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -89,17 +89,17 @@ public class UserStateEditor extends MgmtWebPage {
             }
         }, Integer.class));
         boolean enabled = false;
-        List<MarketEntry> marketEntries = Collections.emptyList();
+        List<DbMarketEntry> dbMarketEntries = Collections.emptyList();
         if (form.getModelObject().getUserItemTypeAccess() != null) {
-            marketEntries = new ArrayList<MarketEntry>(form.getModelObject().getUserItemTypeAccess().getAllowedItemTypes());
+            dbMarketEntries = new ArrayList<DbMarketEntry>(form.getModelObject().getUserItemTypeAccess().getAllowedItemTypes());
             enabled = true;
         }
 
         form.add(new TextField<Integer>("userItemTypeAccess.xp").setEnabled(enabled));
-        form.add(new ListView<MarketEntry>("allowedItemTypes", marketEntries) {
+        form.add(new ListView<DbMarketEntry>("allowedItemTypes", dbMarketEntries) {
 
             @Override
-            protected void populateItem(ListItem<MarketEntry> marketEntryListItem) {
+            protected void populateItem(ListItem<DbMarketEntry> marketEntryListItem) {
                 marketEntryListItem.add(new Label("itemType", marketEntryListItem.getModelObject().getItemType().getName()));
             }
         }.setEnabled(enabled));

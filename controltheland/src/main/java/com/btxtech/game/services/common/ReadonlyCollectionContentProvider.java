@@ -2,6 +2,8 @@ package com.btxtech.game.services.common;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: beat
@@ -9,20 +11,27 @@ import java.util.Collection;
  * Time: 20:04:06
  */
 public class ReadonlyCollectionContentProvider<T extends CrudChild> implements ContentProvider<T> {
-    private Collection<T> collection;
+    private Map<Serializable, T> collection;
 
     public ReadonlyCollectionContentProvider(Collection<T> collection) {
-        this.collection = collection;
+        this.collection = new HashMap<Serializable, T>();
+        for (T t : collection) {
+            this.collection.put(t.getId(), t);
+        }
     }
 
     @Override
     public Collection<T> readDbChildren() {
-        return collection;
+        return collection.values();
     }
 
     @Override
     public T readDbChild(Serializable id) {
-        throw new UnsupportedOperationException();
+        T t = collection.get(id);
+        if (t == null) {
+            throw new NoSuchChildException(id);
+        }
+        return t;
     }
 
     @Override

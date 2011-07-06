@@ -15,10 +15,13 @@ package com.btxtech.game.services.market;
 
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.item.itemType.DbItemType;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Entity;
 import java.io.Serializable;
 
 /**
@@ -27,7 +30,7 @@ import java.io.Serializable;
  * Time: 22:19:08
  */
 @Entity(name = "ITEM_TYPE_ACCESS_ENTRY")
-public class MarketEntry implements CrudChild, Serializable{
+public class DbMarketEntry implements CrudChild, Serializable {
     @Id
     @GeneratedValue
     private Integer id;
@@ -36,16 +39,18 @@ public class MarketEntry implements CrudChild, Serializable{
     private DbItemType itemType;
     private int price;
     @ManyToOne
-    private MarketFunction marketFunction;
+    @JoinColumn(name = "marketFunction_id")
+    private DbMarketFunction dbMarketFunction;
     @ManyToOne
-    private MarketCategory marketCategory;
+    @JoinColumn(name = "marketCategory_id")
+    private DbMarketCategory dbMarketCategory;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        MarketEntry that = (MarketEntry) o;
+        DbMarketEntry that = (DbMarketEntry) o;
 
         return !(id != null ? !id.equals(that.id) : that.id != null);
 
@@ -103,19 +108,19 @@ public class MarketEntry implements CrudChild, Serializable{
         this.price = price;
     }
 
-    public MarketFunction getMarketFunction() {
-        return marketFunction;
+    public DbMarketFunction getMarketFunction() {
+        return dbMarketFunction;
     }
 
-    public void setMarketFunction(MarketFunction marketFunction) {
-        this.marketFunction = marketFunction;
+    public void setMarketFunction(DbMarketFunction dbMarketFunction) {
+        this.dbMarketFunction = dbMarketFunction;
     }
 
-    public MarketCategory getMarketCategory() {
-        return marketCategory;
+    public DbMarketCategory getMarketCategory() {
+        return dbMarketCategory;
     }
 
-    public void setMarketCategory(MarketCategory marketCategory) {
-        this.marketCategory = marketCategory;
+    public void setMarketCategory(DbMarketCategory dbMarketCategory) {
+        this.dbMarketCategory = dbMarketCategory;
     }
 }

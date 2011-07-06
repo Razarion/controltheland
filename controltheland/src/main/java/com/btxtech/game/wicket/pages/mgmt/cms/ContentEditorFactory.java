@@ -1,6 +1,7 @@
 package com.btxtech.game.wicket.pages.mgmt.cms;
 
 import com.btxtech.game.services.cms.DbContent;
+import com.btxtech.game.services.cms.DbContentActionButton;
 import com.btxtech.game.services.cms.DbContentBook;
 import com.btxtech.game.services.cms.DbContentContainer;
 import com.btxtech.game.services.cms.DbContentDetailLink;
@@ -9,8 +10,8 @@ import com.btxtech.game.services.cms.DbContentLink;
 import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.cms.DbContentPageLink;
 import com.btxtech.game.services.cms.DbContentPlugin;
-import com.btxtech.game.services.cms.DbExpressionProperty;
 import com.btxtech.game.services.cms.DbContentStaticHtml;
+import com.btxtech.game.services.cms.DbExpressionProperty;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 
 /**
@@ -88,6 +89,12 @@ public class ContentEditorFactory {
             @Override
             MgmtWebPage createContentEditor(DbContent dbContent) {
                 return new ContentDynamicHtmlEditor((DbContentDynamicHtml) dbContent);
+            }},
+        ACTION_BUTTON(DbContentActionButton.class, "Action Button") {
+
+            @Override
+            MgmtWebPage createContentEditor(DbContent dbContent) {
+                return new ContentActionButtonEditor((DbContentActionButton) dbContent);
             }};
 
         private Class<? extends DbContent> createClass;

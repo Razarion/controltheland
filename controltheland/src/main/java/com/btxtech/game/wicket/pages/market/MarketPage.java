@@ -13,7 +13,7 @@
 
 package com.btxtech.game.wicket.pages.market;
 
-import com.btxtech.game.services.market.MarketCategory;
+import com.btxtech.game.services.market.DbMarketCategory;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import com.btxtech.game.wicket.pages.user.NewUser;
@@ -59,29 +59,29 @@ public class MarketPage extends BasePage {
             }
         }));
 
-        add(new ListView<MarketCategory>("categories", new IModel<List<MarketCategory>>() {
-            private List<MarketCategory> marketCategories;
+        add(new ListView<DbMarketCategory>("categories", new IModel<List<DbMarketCategory>>() {
+            private List<DbMarketCategory> dbMarketCategories;
 
             @Override
-            public List<MarketCategory> getObject() {
-                if (marketCategories == null) {
-                    marketCategories = serverMarketService.getUsedMarketCategories();
+            public List<DbMarketCategory> getObject() {
+                if (dbMarketCategories == null) {
+                    dbMarketCategories = serverMarketService.getUsedMarketCategories();
                 }
-                return marketCategories;
+                return dbMarketCategories;
             }
 
             @Override
-            public void setObject(List<MarketCategory> object) {
+            public void setObject(List<DbMarketCategory> object) {
                 // Ignore
             }
 
             @Override
             public void detach() {
-                marketCategories = null;
+                dbMarketCategories = null;
             }
         }) {
             @Override
-            protected void populateItem(ListItem<MarketCategory> marketCategoryListItem) {
+            protected void populateItem(ListItem<DbMarketCategory> marketCategoryListItem) {
                 marketCategoryListItem.add(new MarketCategoryPanel("category", marketCategoryListItem.getModelObject()));
             }
         });

@@ -23,10 +23,10 @@ import javax.persistence.Id;
 /**
  * User: beat
  * Date: 03.04.2010
- * Time: 18:11:59
+ * Time: 18:12:36
  */
-@Entity(name = "MARKET_CATEGORY")
-public class MarketCategory implements CrudChild, Serializable {
+@Entity(name = "MARKET_FUNCTION")
+public class DbMarketFunction implements CrudChild, Serializable{
     @Id
     @GeneratedValue
     private Integer id;
@@ -59,15 +59,16 @@ public class MarketCategory implements CrudChild, Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        MarketCategory category = (MarketCategory) o;
+        DbMarketFunction that = (DbMarketFunction) o;
 
-        return !(name != null ? !name.equals(category.name) : category.name != null);
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
 
+        return true;
     }
 
     @Override
     public int hashCode() {
-        return name != null ? name.hashCode() : 0;
+        return id != null ? id.hashCode() : 0;
     }
 
     @Override

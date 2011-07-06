@@ -47,4 +47,8 @@ public interface CmsUiService {
     boolean isReadAllowed(int contentId);
 
     boolean isPageAccessAllowed(DbPage dbPage);
+
+    void invokeCall(int contentId, BeanIdPathElement beanIdPathElement);
+
+    boolean isConditionFulfilled(int contentId, BeanIdPathElement beanIdPathElement);
 }

@@ -21,13 +21,15 @@ import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.QueueWorker;
+import com.btxtech.game.services.common.ReadonlyCollectionContentProvider;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.services.market.MarketCategory;
-import com.btxtech.game.services.market.MarketEntry;
-import com.btxtech.game.services.market.MarketFunction;
+import com.btxtech.game.services.market.AvailableMarketEntry;
+import com.btxtech.game.services.market.DbMarketCategory;
+import com.btxtech.game.services.market.DbMarketEntry;
+import com.btxtech.game.services.market.DbMarketFunction;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.market.XpSettings;
 import com.btxtech.game.services.user.UserService;
@@ -50,6 +52,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +65,7 @@ import java.util.TimerTask;
  * Date: 18.12.2009
  * Time: 21:11:36
  */
-@Component("serverItemTypeAccess")
+@Component("marketService")
 public class ServerMarketServiceImpl implements ServerMarketService {
     @Autowired
     private BaseService baseService;
@@ -79,11 +82,11 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     @Autowired
     private ServerConditionService serverConditionService;
     @Autowired
-    private CrudRootServiceHelper<MarketCategory> marketCategoryCrudRootServiceHelper;
+    private CrudRootServiceHelper<DbMarketCategory> marketCategoryCrudRootServiceHelper;
     @Autowired
-    private CrudRootServiceHelper<MarketFunction> marketFunctionCrudRootServiceHelper;
+    private CrudRootServiceHelper<DbMarketFunction> marketFunctionCrudRootServiceHelper;
     @Autowired
-    private CrudRootServiceHelper<MarketEntry> marketEntryCrudRootServiceHelper;
+    private CrudRootServiceHelper<DbMarketEntry> marketEntryCrudRootServiceHelper;
     private HibernateTemplate hibernateTemplate;
     private Timer timer;
     private XpSettings xpSettings;
@@ -105,13 +108,11 @@ public class ServerMarketServiceImpl implements ServerMarketService {
         }
     }
 
-    ;
-
     @PostConstruct
     public void start() {
-        marketCategoryCrudRootServiceHelper.init(MarketCategory.class);
-        marketFunctionCrudRootServiceHelper.init(MarketFunction.class);
-        marketEntryCrudRootServiceHelper.init(MarketEntry.class);
+        marketCategoryCrudRootServiceHelper.init(DbMarketCategory.class);
+        marketFunctionCrudRootServiceHelper.init(DbMarketFunction.class);
+        marketEntryCrudRootServiceHelper.init(DbMarketEntry.class);
         loadXpPointSettings();
         stop();
         if (xpSettings.getPeriodMilliSeconds() > 0) {
@@ -150,12 +151,12 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     }
 
     @Override
-    public void buy(MarketEntry marketEntry) {
-        if (!userGuidanceService.isBaseItemTypeAllowedInLevel((DbBaseItemType) marketEntry.getItemType())) {
-            throw new IllegalStateException("Item type not allowed in level: " + userGuidanceService.getDbLevel() + " " + marketEntry.getItemType());
+    public void buy(DbMarketEntry dbMarketEntry) {
+        if (!userGuidanceService.isBaseItemTypeAllowedInLevel((DbBaseItemType) dbMarketEntry.getItemType())) {
+            throw new IllegalStateException("Item type not allowed in level: " + userGuidanceService.getDbLevel() + " " + dbMarketEntry.getItemType());
         }
         UserItemTypeAccess userItemTypeAccess = getUserItemTypeAccess();
-        userItemTypeAccess.buy(marketEntry);
+        userItemTypeAccess.buy(dbMarketEntry);
         if (connectionService.hasConnection()) {
             ItemTypeAccessSyncInfo itemTypeAccessSyncInfo = new ItemTypeAccessSyncInfo();
             itemTypeAccessSyncInfo.setAllowedItemTypes(userItemTypeAccess.getItemTypeIds());
@@ -186,11 +187,11 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     }
 
     @SuppressWarnings("unchecked")
-    private Collection<MarketEntry> getAlwaysAllowed() {
-        return (Collection<MarketEntry>) hibernateTemplate.execute(new HibernateCallback() {
+    private Collection<DbMarketEntry> getAlwaysAllowed() {
+        return (Collection<DbMarketEntry>) hibernateTemplate.execute(new HibernateCallback() {
             @Override
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(MarketEntry.class);
+                Criteria criteria = session.createCriteria(DbMarketEntry.class);
                 criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
                 criteria.add(Restrictions.eq("alwaysAllowed", true));
                 return criteria.list();
@@ -199,28 +200,28 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     }
 
     @Override
-    public CrudRootServiceHelper<MarketCategory> getCrudMarketCategoryService() {
+    public CrudRootServiceHelper<DbMarketCategory> getCrudMarketCategoryService() {
         return marketCategoryCrudRootServiceHelper;
     }
 
     @Override
-    public CrudRootServiceHelper<MarketFunction> getCrudMarketFunctionService() {
+    public CrudRootServiceHelper<DbMarketFunction> getCrudMarketFunctionService() {
         return marketFunctionCrudRootServiceHelper;
     }
 
     @Override
-    public CrudRootServiceHelper<MarketEntry> getCrudMarketEntryService() {
+    public CrudRootServiceHelper<DbMarketEntry> getCrudMarketEntryService() {
         return marketEntryCrudRootServiceHelper;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<MarketEntry> getMarketEntries(final MarketCategory marketCategory) {
-        return (List<MarketEntry>) hibernateTemplate.executeFind(new HibernateCallback() {
+    public List<DbMarketEntry> getMarketEntries(final DbMarketCategory dbMarketCategory) {
+        return (List<DbMarketEntry>) hibernateTemplate.executeFind(new HibernateCallback() {
             @Override
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(MarketEntry.class);
-                criteria.add(Restrictions.eq("marketCategory", marketCategory));
+                Criteria criteria = session.createCriteria(DbMarketEntry.class);
+                criteria.add(Restrictions.eq("dbMarketCategory", dbMarketCategory));
                 criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
                 return criteria.list();
             }
@@ -308,20 +309,20 @@ public class ServerMarketServiceImpl implements ServerMarketService {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<MarketCategory> getMarketCategories() {
-        return hibernateTemplate.loadAll(MarketCategory.class);
+    public List<DbMarketCategory> getMarketCategories() {
+        return hibernateTemplate.loadAll(DbMarketCategory.class);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<MarketFunction> getMarketFunctions() {
-        return hibernateTemplate.loadAll(MarketFunction.class);
+    public List<DbMarketFunction> getMarketFunctions() {
+        return hibernateTemplate.loadAll(DbMarketFunction.class);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<MarketCategory> getUsedMarketCategories() {
-        return (List<MarketCategory>) hibernateTemplate.find("from com.btxtech.game.services.market.MarketCategory where exists (from com.btxtech.game.services.market.MarketEntry where marketCategory is not null)");
+    public List<DbMarketCategory> getUsedMarketCategories() {
+        return (List<DbMarketCategory>) hibernateTemplate.find("from com.btxtech.game.services.market.DbMarketCategory where exists (from com.btxtech.game.services.market.DbMarketEntry where dbMarketCategory is not null)");
     }
 
     class XpPeriodTask extends TimerTask {
@@ -377,5 +378,25 @@ public class ServerMarketServiceImpl implements ServerMarketService {
             }
             increaseXp(entry.getValue(), userItemTypeAccess, base);
         }
+    }
+
+    @Override
+    public ReadonlyCollectionContentProvider<AvailableMarketEntry> getAvailableCrud() {
+        ArrayList<AvailableMarketEntry> availableMarketEntries = new ArrayList<AvailableMarketEntry>();
+
+        UserItemTypeAccess userItemTypeAccess = getUserItemTypeAccess();
+        Collection<DbMarketEntry> marketEntries = marketEntryCrudRootServiceHelper.readDbChildren();
+        for (DbMarketEntry marketEntry : marketEntries) {
+            if (userItemTypeAccess.contains(marketEntry)) {
+                continue;
+            }
+
+            if (!userGuidanceService.isBaseItemTypeAllowedInLevel((DbBaseItemType) marketEntry.getItemType())) {
+                continue;
+            }
+
+            availableMarketEntries.add(new AvailableMarketEntry(marketEntry));
+        }
+        return new ReadonlyCollectionContentProvider<AvailableMarketEntry>(availableMarketEntries);
     }
 }

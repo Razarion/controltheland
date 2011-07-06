@@ -13,7 +13,7 @@
 
 package com.btxtech.game.services.mgmt.impl;
 
-import com.btxtech.game.services.market.MarketEntry;
+import com.btxtech.game.services.market.DbMarketEntry;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 
 import javax.persistence.Entity;
@@ -23,7 +23,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,7 +41,7 @@ public class DbUserItemTypeAccess {
             joinColumns = @JoinColumn(name = "itemTypeAccessId"),
             inverseJoinColumns = @JoinColumn(name = "userItemTypeId")
     )
-    private Set<MarketEntry> allowedItemTypes;
+    private Set<DbMarketEntry> allowedItemTypes;
     private int xp = 0;
 
     /**
@@ -52,7 +51,7 @@ public class DbUserItemTypeAccess {
     }
 
     public DbUserItemTypeAccess(UserItemTypeAccess userItemTypeAccess) {
-        this.allowedItemTypes = new HashSet<MarketEntry>(userItemTypeAccess.getAllowedItemTypes());
+        this.allowedItemTypes = new HashSet<DbMarketEntry>(userItemTypeAccess.getAllowedItemTypes());
         xp = userItemTypeAccess.getXp();
     }
 

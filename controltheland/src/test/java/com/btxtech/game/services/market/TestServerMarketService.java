@@ -1,7 +1,6 @@
 package com.btxtech.game.services.market;
 
 import com.btxtech.game.jsre.client.MovableService;
-import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.XpBalancePacket;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
@@ -32,7 +31,7 @@ public class TestServerMarketService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
-        SimpleBase simpleBase = getMyBase(); // Get connection
+        getMyBase(); // Get connection
         Thread.sleep(100); // Wait for packet to be sent
         clearPackets();
         Assert.assertEquals(0, userService.getUserState().getUserItemTypeAccess().getXp());
@@ -48,7 +47,22 @@ public class TestServerMarketService extends AbstractServiceTest {
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+    }
 
+    @Test
+    @DirtiesContext
+    public void testAvailable() throws Exception {
+        configureMinimalGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertEquals(0, serverMarketService.getAvailableCrud().readDbChildren().size());
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
+        Assert.assertEquals(1, serverMarketService.getAvailableCrud().readDbChildren().size());
+        AvailableMarketEntry availableMarketEntry = serverMarketService.getAvailableCrud().readDbChildren().iterator().next();
+        Assert.assertEquals(TEST_SIMPLE_BUILDING_ID, (int) availableMarketEntry.getDbMarketEntry().getItemType().getId());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
 }
