@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeA
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.common.ReadonlyCollectionContentProvider;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 
 import java.util.Collection;
@@ -30,7 +31,7 @@ import java.util.List;
 public interface ServerMarketService extends ItemTypeAccess {
     public Collection<Integer> getAllowedItemTypes();
 
-    List<MarketEntry> getMarketEntries(MarketCategory marketCategory);
+    List<DbMarketEntry> getMarketEntries(DbMarketCategory dbMarketCategory);
 
     UserItemTypeAccess getUserItemTypeAccess();
 
@@ -40,21 +41,23 @@ public interface ServerMarketService extends ItemTypeAccess {
 
     int getXp();
 
-    void buy(MarketEntry marketEntry);
+    void buy(DbMarketEntry dbMarketEntry);
 
     XpSettings getXpPointSettings();
 
     void saveXpPointSettings(XpSettings xpSettings);
 
-    List<MarketCategory> getUsedMarketCategories();
+    List<DbMarketCategory> getUsedMarketCategories();
 
-    List<MarketCategory> getMarketCategories();
+    List<DbMarketCategory> getMarketCategories();
 
-    List<MarketFunction> getMarketFunctions();
+    List<DbMarketFunction> getMarketFunctions();
 
-    CrudRootServiceHelper<MarketCategory> getCrudMarketCategoryService();
+    CrudRootServiceHelper<DbMarketCategory> getCrudMarketCategoryService();
 
-    CrudRootServiceHelper<MarketFunction> getCrudMarketFunctionService();
+    CrudRootServiceHelper<DbMarketFunction> getCrudMarketFunctionService();
 
-    CrudRootServiceHelper<MarketEntry> getCrudMarketEntryService();
+    CrudRootServiceHelper<DbMarketEntry> getCrudMarketEntryService();
+
+    ReadonlyCollectionContentProvider<AvailableMarketEntry> getAvailableCrud();
 }

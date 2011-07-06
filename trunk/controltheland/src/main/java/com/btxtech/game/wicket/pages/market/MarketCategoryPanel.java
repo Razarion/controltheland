@@ -16,9 +16,9 @@ package com.btxtech.game.wicket.pages.market;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
-import com.btxtech.game.services.market.MarketCategory;
-import com.btxtech.game.services.market.MarketEntry;
-import com.btxtech.game.services.market.MarketFunction;
+import com.btxtech.game.services.market.DbMarketCategory;
+import com.btxtech.game.services.market.DbMarketEntry;
+import com.btxtech.game.services.market.DbMarketFunction;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -49,26 +49,26 @@ public class MarketCategoryPanel extends Panel {
     private ServerMarketService serverMarketService;
     @SpringBean
     private UserGuidanceService userGuidanceService;
-    private MarketCategory marketCategory;
+    private DbMarketCategory dbMarketCategory;
 
-    public MarketCategoryPanel(String id, MarketCategory marketCategory) {
+    public MarketCategoryPanel(String id, DbMarketCategory dbMarketCategory) {
         super(id);
-        this.marketCategory = marketCategory;
+        this.dbMarketCategory = dbMarketCategory;
 
-        add(new Label("category", marketCategory.getName()));
+        add(new Label("category", dbMarketCategory.getName()));
 
         Form form = new Form("marketForm");
         add(form);
 
-        final DataView<MarketEntry> entries = new DataView<MarketEntry>("itemTypeAccessEntries", new ItemTypeAccessEntryProvider()) {
-            protected void populateItem(final Item<MarketEntry> item) {
+        final DataView<DbMarketEntry> entries = new DataView<DbMarketEntry>("itemTypeAccessEntries", new ItemTypeAccessEntryProvider()) {
+            protected void populateItem(final Item<DbMarketEntry> item) {
                 DbBaseItemType itemType = (DbBaseItemType) item.getModelObject().getItemType();
                 // Name
                 item.add(new Label("name", itemType.getName()));
                 // Function
-                MarketFunction marketFunction = item.getModelObject().getMarketFunction();
-                if (marketFunction != null) {
-                    item.add(new Label("function", marketFunction.getName()));
+                DbMarketFunction dbMarketFunction = item.getModelObject().getMarketFunction();
+                if (dbMarketFunction != null) {
+                    item.add(new Label("function", dbMarketFunction.getName()));
                 } else {
                     item.add(new Label("function", ""));
                 }
@@ -130,35 +130,35 @@ public class MarketCategoryPanel extends Panel {
         return dbItemTypeImages.iterator().next().getData();
     }
 
-    class ItemTypeAccessEntryProvider implements IDataProvider<MarketEntry> {
-        private List<MarketEntry> marketEntries;
+    class ItemTypeAccessEntryProvider implements IDataProvider<DbMarketEntry> {
+        private List<DbMarketEntry> dbMarketEntries;
 
         private void setupMarketEntries() {
-            if (marketEntries == null) {
-                marketEntries = serverMarketService.getMarketEntries(marketCategory);
+            if (dbMarketEntries == null) {
+                dbMarketEntries = serverMarketService.getMarketEntries(dbMarketCategory);
             }
         }
 
         @Override
-        public Iterator<MarketEntry> iterator(int first, int count) {
+        public Iterator<DbMarketEntry> iterator(int first, int count) {
             setupMarketEntries();
-            return marketEntries.subList(first, first + count).iterator();
+            return dbMarketEntries.subList(first, first + count).iterator();
         }
 
         @Override
         public int size() {
             setupMarketEntries();
-            return marketEntries.size();
+            return dbMarketEntries.size();
         }
 
         @Override
-        public IModel<MarketEntry> model(MarketEntry marketEntry) {
-            return new Model<MarketEntry>(marketEntry);
+        public IModel<DbMarketEntry> model(DbMarketEntry dbMarketEntry) {
+            return new Model<DbMarketEntry>(dbMarketEntry);
         }
 
         @Override
         public void detach() {
-            marketEntries = null;
+            dbMarketEntries = null;
         }
     }
 

@@ -17,9 +17,9 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
-import com.btxtech.game.services.market.MarketCategory;
-import com.btxtech.game.services.market.MarketEntry;
-import com.btxtech.game.services.market.MarketFunction;
+import com.btxtech.game.services.market.DbMarketEntry;
+import com.btxtech.game.services.market.DbMarketCategory;
+import com.btxtech.game.services.market.DbMarketFunction;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import com.btxtech.game.wicket.uiservices.ItemTypePanel;
@@ -58,9 +58,9 @@ public class MarketEntryEditor extends MgmtWebPage {
         Form form = new Form("categoryForm");
         add(form);
 
-        new CrudRootTableHelper<MarketCategory>("categories", "save", "add", false, form, false) {
+        new CrudRootTableHelper<DbMarketCategory>("categories", "save", "add", false, form, false) {
             @Override
-            protected CrudRootServiceHelper<MarketCategory> getCrudRootServiceHelperImpl() {
+            protected CrudRootServiceHelper<DbMarketCategory> getCrudRootServiceHelperImpl() {
                 return serverMarketService.getCrudMarketCategoryService();
             }
         };
@@ -70,9 +70,9 @@ public class MarketEntryEditor extends MgmtWebPage {
         Form form = new Form("functionForm");
         add(form);
 
-        new CrudRootTableHelper<MarketFunction>("functions", "save", "add", false, form, false) {
+        new CrudRootTableHelper<DbMarketFunction>("functions", "save", "add", false, form, false) {
             @Override
-            protected CrudRootServiceHelper<MarketFunction> getCrudRootServiceHelperImpl() {
+            protected CrudRootServiceHelper<DbMarketFunction> getCrudRootServiceHelperImpl() {
                 return serverMarketService.getCrudMarketFunctionService();
             }
         };
@@ -82,14 +82,14 @@ public class MarketEntryEditor extends MgmtWebPage {
         Form form = new Form("itemTypeAccessForm");
         add(form);
 
-        new CrudRootTableHelper<MarketEntry>("itemTypeAccessEntries", "save", "add", false, form, false) {
+        new CrudRootTableHelper<DbMarketEntry>("itemTypeAccessEntries", "save", "add", false, form, false) {
             @Override
-            protected CrudRootServiceHelper<MarketEntry> getCrudRootServiceHelperImpl() {
+            protected CrudRootServiceHelper<DbMarketEntry> getCrudRootServiceHelperImpl() {
                 return serverMarketService.getCrudMarketEntryService();
             }
 
             @Override
-            protected void extendedPopulateItem(Item<MarketEntry> item) {
+            protected void extendedPopulateItem(Item<DbMarketEntry> item) {
                 // Id
                 item.add(new Label("id"));
                 // image
@@ -103,8 +103,8 @@ public class MarketEntryEditor extends MgmtWebPage {
                 item.add(new ItemTypePanel("itemType"));
                 item.add(new TextField("price"));
                 item.add(new CheckBox("alwaysAllowed"));
-                item.add(new DropDownChoice<MarketCategory>("marketCategory", serverMarketService.getMarketCategories()));
-                item.add(new DropDownChoice<MarketFunction>("marketFunction", serverMarketService.getMarketFunctions()));
+                item.add(new DropDownChoice<DbMarketCategory>("marketCategory", serverMarketService.getMarketCategories()));
+                item.add(new DropDownChoice<DbMarketFunction>("marketFunction", serverMarketService.getMarketFunctions()));
                 // alternating row color
                 item.add(new AttributeModifier("class", true, new Model<String>(item.getIndex() % 2 == 0 ? "even" : "odd")));
             }

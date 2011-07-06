@@ -2,6 +2,7 @@ package com.btxtech.game.wicket.uiservices.cms.impl;
 
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbContent;
+import com.btxtech.game.services.cms.DbContentActionButton;
 import com.btxtech.game.services.cms.DbContentBook;
 import com.btxtech.game.services.cms.DbContentContainer;
 import com.btxtech.game.services.cms.DbContentDetailLink;
@@ -25,6 +26,7 @@ import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.ItemTypeImage;
 import com.btxtech.game.wicket.pages.cms.WritePanel;
+import com.btxtech.game.wicket.pages.cms.content.ContentActionButton;
 import com.btxtech.game.wicket.pages.cms.content.ContentBook;
 import com.btxtech.game.wicket.pages.cms.content.ContentContainer;
 import com.btxtech.game.wicket.pages.cms.content.ContentDetailLink;
@@ -123,6 +125,8 @@ public class CmsUiServiceImpl implements CmsUiService {
                     component.add(new SimpleAttributeModifier("class", dbContent.getCssClass()));
                 }
                 return component;
+            } else if (dbContent instanceof DbContentActionButton) {
+                return new ContentActionButton(componentId, (DbContentActionButton) dbContent, beanIdPathElement);
             } else {
                 log.warn("CmsUiServiceImpl: No Wicket Component for content: " + dbContent);
                 return new Label(componentId, "No content");
@@ -145,6 +149,9 @@ public class CmsUiServiceImpl implements CmsUiService {
                 value = PropertyUtils.getProperty(bean, dbExpressionProperty.getExpression());
             } catch (NestedNullException e) {
                 return new Label(id, "-");
+            } catch (NoSuchMethodException ie) {
+                log.warn("NoSuchMethodException: bean: " + bean + " expression: " + dbExpressionProperty.getExpression());
+                throw ie;
             } catch (InvocationTargetException ie) {
                 if (ie.getTargetException() instanceof NoConnectionException) {
                     return new Label(id, "No Base");
@@ -415,5 +422,38 @@ public class CmsUiServiceImpl implements CmsUiService {
             }
         }
         return false;
+    }
+
+    @Override
+    public void invokeCall(int contentId, BeanIdPathElement beanIdPathElement) {
+        try {
+            DbContentActionButton dbContentActionButton = (DbContentActionButton) cmsService.getDbContent(contentId);
+            Object springBean = getDataProviderBean(beanIdPathElement);
+            Object parameterHolder = getDataProviderBean(beanIdPathElement.getParent());
+            Object parameter = PropertyUtils.getProperty(parameterHolder, dbContentActionButton.getParameterExpression());
+            Method method = springBean.getClass().getMethod(dbContentActionButton.getMethodName(), parameter.getClass());
+            method.invoke(springBean, parameter);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public boolean isConditionFulfilled(int contentId, BeanIdPathElement beanIdPathElement) {
+        try {
+            DbContentActionButton dbContentActionButton = (DbContentActionButton) cmsService.getDbContent(contentId);
+            // Left side
+            Object leftSideSpringBean = applicationContext.getBean(dbContentActionButton.getLeftSideSpringBeanName());
+            Integer leftSideOperand = (Integer) PropertyUtils.getProperty(leftSideSpringBean, dbContentActionButton.getLeftSideOperandExpression());
+
+            // Right side
+            Object rightSideParameterHolder = getDataProviderBean(beanIdPathElement.getParent());
+            Integer rightSideOperand = (Integer) PropertyUtils.getProperty(rightSideParameterHolder, dbContentActionButton.getRightSideOperandExpression());
+
+            // Do decision -> leftSideOperand >= leftSideOperand
+            return leftSideOperand >= rightSideOperand;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -50,10 +50,10 @@
         <mapping class="com.btxtech.game.services.item.itemType.DbItemContainerType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbHouseType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbLauncherType"/>
-        <mapping class="com.btxtech.game.services.market.MarketEntry"/>
+        <mapping class="com.btxtech.game.services.market.DbMarketEntry"/>
         <mapping class="com.btxtech.game.services.market.XpSettings"/>
-        <mapping class="com.btxtech.game.services.market.MarketCategory"/>
-        <mapping class="com.btxtech.game.services.market.MarketFunction"/>
+        <mapping class="com.btxtech.game.services.market.DbMarketCategory"/>
+        <mapping class="com.btxtech.game.services.market.DbMarketFunction"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbPageAccess"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbSessionDetail"/>
         <mapping class="com.btxtech.game.services.utg.tracker.DbStartupTask"/>
@@ -132,6 +132,7 @@
         <mapping class="com.btxtech.game.services.cms.DbContentLink"/>
         <mapping class="com.btxtech.game.services.cms.DbContentPlugin"/>
         <mapping class="com.btxtech.game.services.cms.DbContentDynamicHtml"/>
+        <mapping class="com.btxtech.game.services.cms.DbContentActionButton"/>
         <!-- Content -->
         <mapping class="com.btxtech.game.services.cms.DbBlogEntry"/>
         <mapping class="com.btxtech.game.services.cms.DbWikiSection"/>

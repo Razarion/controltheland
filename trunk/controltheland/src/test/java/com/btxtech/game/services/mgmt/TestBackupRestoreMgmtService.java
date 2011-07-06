@@ -20,7 +20,7 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.collision.CollisionService;
-import com.btxtech.game.services.market.MarketEntry;
+import com.btxtech.game.services.market.DbMarketEntry;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.user.User;
@@ -366,14 +366,14 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         }
 
         Assert.assertEquals(oldUserItemTypeAccess.getXp(), newUserItemTypeAccess.getXp());
-        Collection<MarketEntry> tmpNewMarketEntry = new ArrayList<MarketEntry>(newUserItemTypeAccess.getAllowedItemTypes());
-        for (MarketEntry marketEntry : oldUserItemTypeAccess.getAllowedItemTypes()) {
-            if (!tmpNewMarketEntry.remove(marketEntry)) {
-                Assert.fail("No MarketEntry in new UserItemTypeAccess found for: " + marketEntry);
+        Collection<DbMarketEntry> tmpNewDbMarketEntry = new ArrayList<DbMarketEntry>(newUserItemTypeAccess.getAllowedItemTypes());
+        for (DbMarketEntry dbMarketEntry : oldUserItemTypeAccess.getAllowedItemTypes()) {
+            if (!tmpNewDbMarketEntry.remove(dbMarketEntry)) {
+                Assert.fail("No DbMarketEntry in new UserItemTypeAccess found for: " + dbMarketEntry);
             }
         }
-        if (!tmpNewMarketEntry.isEmpty()) {
-            Assert.fail("MarketEntry do not match");
+        if (!tmpNewDbMarketEntry.isEmpty()) {
+            Assert.fail("DbMarketEntry do not match");
         }
     }
 

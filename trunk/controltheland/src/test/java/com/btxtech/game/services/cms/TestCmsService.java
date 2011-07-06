@@ -1,10 +1,13 @@
 package com.btxtech.game.services.cms;
 
+import com.btxtech.game.jsre.client.MovableService;
+import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.cms.impl.CmsServiceImpl;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
@@ -39,6 +42,10 @@ public class TestCmsService extends AbstractServiceTest {
     private ApplicationContext applicationContext;
     @Autowired
     private UserService userService;
+    @Autowired
+    private MovableService movableService;
+    @Autowired
+    private ServerMarketService serverMarketService;
     private WicketTester tester;
 
     @Before
@@ -238,7 +245,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbPage1.setName("Home");
 
         DbContentList dbContentList = new DbContentList();
-        dbContentList.init();// TODO should not be called here
+        dbContentList.init();
         dbPage1.setContent(dbContentList);
         dbContentList.setRowsPerPage(5);
         dbContentList.setSpringBeanName("contentService");
@@ -335,7 +342,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbPage1.setName("Home");
 
         DbContentList dbContentList = new DbContentList();
-        dbContentList.init();// TODO should not be called here
+        dbContentList.init();
         dbPage1.setContent(dbContentList);
         dbContentList.setRowsPerPage(5);
         dbContentList.setSpringBeanName("contentService");
@@ -354,7 +361,6 @@ public class TestCmsService extends AbstractServiceTest {
         html.setEscapeMarkup(false);
 
         pageCrud.updateDbChild(dbPage1);
-        int id = dbPage1.getId();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         // Activate
@@ -430,7 +436,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbPage1.setName("Home");
 
         DbContentList dbContentList = new DbContentList();
-        dbContentList.init();// TODO should not be called here
+        dbContentList.init();
         dbPage1.setContent(dbContentList);
         dbContentList.setRowsPerPage(5);
         dbContentList.setSpringBeanName("contentService");
@@ -449,7 +455,7 @@ public class TestCmsService extends AbstractServiceTest {
         DbContentRow dbContentRow = rowCrud.createDbChild();
         dbContentRow.setName("theName");
         DbExpressionProperty expProperty = new DbExpressionProperty();
-        expProperty.setParent(dbContentRow); // TODO should not be called here
+        expProperty.setParent(dbContentRow);
         expProperty.setExpression("html");
         expProperty.setEscapeMarkup(false);
         dbContentRow.setDbContent(expProperty);
@@ -546,7 +552,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbPage1.setName("Home");
 
         DbContentDynamicHtml dbContentDynamicHtml = new DbContentDynamicHtml();
-        dbContentDynamicHtml.init();// TODO should not be called here
+        dbContentDynamicHtml.init();
         dbPage1.setContent(dbContentDynamicHtml);
         pageCrud.updateDbChild(dbPage1);
 
@@ -571,7 +577,6 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpSession();
     }
 
-
     @Test
     @DirtiesContext
     public void testDynamicHtmlWrite() throws Exception {
@@ -586,7 +591,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbPage1.setName("Home");
 
         DbContentDynamicHtml dbContentDynamicHtml = new DbContentDynamicHtml();
-        dbContentDynamicHtml.init();// TODO should not be called here
+        dbContentDynamicHtml.init();
         dbPage1.setContent(dbContentDynamicHtml);
 
         pageCrud.updateDbChild(dbPage1);
@@ -634,6 +639,95 @@ public class TestCmsService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
+    public void testMarket() throws Exception {
+        configureMinimalGame();
+
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage1 = pageCrud.createDbChild();
+        dbPage1.setHome(true);
+        dbPage1.setName("Home");
+
+        DbContentList dbContentList = new DbContentList();
+        dbContentList.init();
+        dbPage1.setContent(dbContentList);
+        dbContentList.setRowsPerPage(5);
+        dbContentList.setSpringBeanName("marketService");
+        dbContentList.setContentProviderGetter("getAvailableCrud");
+
+        DbContentContainer dbContentContainer = (DbContentContainer) dbContentList.getColumnsCrud().createDbChild(DbContentContainer.class);
+        DbExpressionProperty image = (DbExpressionProperty) dbContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
+        image.setExpression("dbMarketEntry.itemType");
+        DbExpressionProperty price = (DbExpressionProperty) dbContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
+        price.setExpression("dbMarketEntry.price");
+        DbExpressionProperty name = (DbExpressionProperty) dbContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
+        name.setExpression("dbMarketEntry.itemType.name");
+        DbContentActionButton buyButton = (DbContentActionButton) dbContentContainer.getContentCrud().createDbChild(DbContentActionButton.class);
+        buyButton.setName("buy");
+        buyButton.setParameterExpression("dbMarketEntry");
+        buyButton.setMethodName("buy");
+        buyButton.setSpringBeanName("marketService");
+        buyButton.setLeftSideSpringBeanName("marketService");
+        buyButton.setLeftSideOperandExpression("userItemTypeAccess.xp");
+        buyButton.setRightSideOperandExpression("dbMarketEntry.price");
+        buyButton.setUnfilledHtml("UnfilledText");
+
+        pageCrud.updateDbChild(dbPage1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        // No market
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        endHttpRequestAndOpenSessionInViewFilter();
+        // Enter game
+        beginHttpRequestAndOpenSessionInViewFilter();
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
+        endHttpRequestAndOpenSessionInViewFilter();
+        // Verify
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertFalse(serverMarketService.getUserItemTypeAccess().contains(TEST_SIMPLE_BUILDING_ID));
+        endHttpRequestAndOpenSessionInViewFilter();        
+        // Not enough XPs
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("form:content:rows:1:cells:1:cell:listView:2:content", TEST_SIMPLE_BUILDING);
+        tester.debugComponentTrees();
+        tester.assertInvisible("form:content:rows:1:cells:1:cell:listView:3:content:button");
+        tester.assertLabel("form:content:rows:1:cells:1:cell:listView:3:content:label", "UnfilledText");
+        tester.assertVisible("form:content:rows:1:cells:1:cell:listView:3:content:label");
+        endHttpRequestAndOpenSessionInViewFilter();
+        // Get Some XP
+        beginHttpRequestAndOpenSessionInViewFilter();
+        serverMarketService.getUserItemTypeAccess().setXp(10);
+        endHttpRequestAndOpenSessionInViewFilter();
+        // Buy in market
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("form:content:rows:1:cells:1:cell:listView:2:content", TEST_SIMPLE_BUILDING);
+        tester.assertInvisible("form:content:rows:1:cells:1:cell:listView:3:content:label");        
+        FormTester formTester = tester.newFormTester("form");
+        formTester.submit("content:rows:1:cells:1:cell:listView:3:content:button");
+        endHttpRequestAndOpenSessionInViewFilter();
+        // Verify
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertTrue(serverMarketService.getUserItemTypeAccess().contains(TEST_SIMPLE_BUILDING_ID));
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
     public void testBeanTableWithContentBookWithBeanTable() {
         // Setup CMS content
         beginHttpSession();
@@ -645,7 +739,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         DbContentList dbContentList = new DbContentList();
         dbContentList.setRowsPerPage(5);
-        dbContentList.init();// TODO should not be called here
+        dbContentList.init();
         dbPage.setContent(dbContentList);
         dbContentList.setSpringBeanName("userGuidanceService");
         dbContentList.setContentProviderGetter("getDbLevelCrudServiceHelper");
@@ -695,7 +789,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbContentRow = rowCrud.createDbChild();
         dbContentRow.setName("Allowed Items");
         DbContentList dbContentListItems = new DbContentList();
-        dbContentListItems.init();// TODO should not be called here
+        dbContentListItems.init();
         dbContentListItems.setContentProviderGetter("getDbItemTypeLimitationCrudServiceHelper");
         columnCrud = dbContentListItems.getColumnsCrud();
         DbExpressionProperty count = (DbExpressionProperty) columnCrud.createDbChild(DbExpressionProperty.class);
