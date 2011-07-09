@@ -173,3 +173,6 @@ ALTER TABLE `gamedb`.`TRACKER_USER_COMMAND` DROP COLUMN `clientTimeStamp`;
 INSERT INTO USER_SECURITY_CMS_CONTENT_ACCESS
 (readAllowed, writeAllowed, createAllowed, deleteAllowed, dbContent_id, user_name)
 VALUE(true, true, true, true, 112, "beat");
+
+-----------------
+ALTER TABLE `gamedb`.`ITEM_TYPE_ACCESS_ENTRY` RENAME TO `gamedb`.`MARKET_ENTRY`;
