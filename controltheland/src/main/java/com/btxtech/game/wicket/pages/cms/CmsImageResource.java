@@ -35,11 +35,8 @@ public class CmsImageResource extends WebResource {
     @SpringBean
     private CmsService cmsService;
 
-//May not working due to the mounting to PATH
-
     public static Image createImage(String id, DbCmsImage imageId) {
         return new Image(id, new ResourceReference(CMS_SHARED_IMAGE_RESOURCES), new ValueMap(ID + "=" + imageId.getId()));
-        //return new Image(id, INSTANCE);
     }
 
     public CmsImageResource() {

@@ -29,7 +29,7 @@ import java.io.Serializable;
  * Date: 18.12.2009
  * Time: 22:19:08
  */
-@Entity(name = "ITEM_TYPE_ACCESS_ENTRY")
+@Entity(name = "MARKET_ENTRY")
 public class DbMarketEntry implements CrudChild, Serializable {
     @Id
     @GeneratedValue
