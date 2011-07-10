@@ -4,6 +4,7 @@ import com.btxtech.game.services.cms.DbContentDetailLink;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.RuModel;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
@@ -23,7 +24,7 @@ public class ContentDetailLinkEditor extends MgmtWebPage {
     public ContentDetailLinkEditor(DbContentDetailLink dbContentDetailLink) {
         add(new FeedbackPanel("msgs"));
 
-        Form<DbContentDetailLink> form = new Form<DbContentDetailLink>("form", new CompoundPropertyModel<DbContentDetailLink>(new RuModel<DbContentDetailLink>(dbContentDetailLink, DbContentDetailLink.class) {
+        final Form<DbContentDetailLink> form = new Form<DbContentDetailLink>("form", new CompoundPropertyModel<DbContentDetailLink>(new RuModel<DbContentDetailLink>(dbContentDetailLink, DbContentDetailLink.class) {
             @Override
             protected RuServiceHelper<DbContentDetailLink> getRuServiceHelper() {
                 return ruServiceHelper;
@@ -33,5 +34,13 @@ public class ContentDetailLinkEditor extends MgmtWebPage {
         form.add(new CheckBox("readRestricted"));
         form.add(new CheckBox("writeRestricted"));
         form.add(new TextField("cssClass"));
+
+        form.add(new Button("save") {
+
+            @Override
+            public void onSubmit() {
+                ruServiceHelper.updateDbEntity(form.getModelObject());
+            }
+        });
     }
 }
