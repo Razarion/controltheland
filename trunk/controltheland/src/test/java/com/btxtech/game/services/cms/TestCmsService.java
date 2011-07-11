@@ -844,7 +844,9 @@ public class TestCmsService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void testBeanTableWithContentBookWithBeanTable() {
+    public void testLevels() throws Exception {
+        configureMinimalGame();
+
         // Setup CMS content
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -863,41 +865,44 @@ public class TestCmsService extends AbstractServiceTest {
         CrudListChildServiceHelper<DbContent> columnCrud = dbContentList.getColumnsCrud();
         DbExpressionProperty column = (DbExpressionProperty) columnCrud.createDbChild(DbExpressionProperty.class);
         column.setExpression("name");
-        column = (DbExpressionProperty) columnCrud.createDbChild(DbExpressionProperty.class);
-        column.setExpression("internalDescription");
         DbContentDetailLink detailLink = (DbContentDetailLink) columnCrud.createDbChild(DbContentDetailLink.class);
         detailLink.setName("Details");
 
         CrudChildServiceHelper<DbContentBook> contentBookCrud = dbContentList.getContentBookCrud();
         DbContentBook dbContentBook = contentBookCrud.createDbChild();
         dbContentBook.setClassName("com.btxtech.game.services.utg.DbSimulationLevel");
-
         CrudListChildServiceHelper<DbContentRow> rowCrud = dbContentBook.getRowCrud();
+
         DbContentRow dbContentRow = rowCrud.createDbChild();
         dbContentRow.setName("Name");
         DbExpressionProperty expProperty = new DbExpressionProperty();
         expProperty.setExpression("name");
+        expProperty.setParent(dbContentRow);
         dbContentRow.setDbContent(expProperty);
 
         dbContentRow = rowCrud.createDbChild();
         dbContentRow.setName("Description");
         expProperty = new DbExpressionProperty();
+        expProperty.setParent(dbContentRow);
         expProperty.setExpression("html");
         expProperty.setEscapeMarkup(false);
         dbContentRow.setDbContent(expProperty);
 
         dbContentBook = contentBookCrud.createDbChild();
         dbContentBook.setClassName("com.btxtech.game.services.utg.DbRealGameLevel");
+        rowCrud = dbContentBook.getRowCrud();
 
         dbContentRow = rowCrud.createDbChild();
         dbContentRow.setName("Name");
         expProperty = new DbExpressionProperty();
         expProperty.setExpression("name");
+        expProperty.setParent(dbContentRow);
         dbContentRow.setDbContent(expProperty);
 
         dbContentRow = rowCrud.createDbChild();
         dbContentRow.setName("Description");
         expProperty = new DbExpressionProperty();
+        expProperty.setParent(dbContentRow);
         expProperty.setExpression("html");
         expProperty.setEscapeMarkup(false);
         dbContentRow.setDbContent(expProperty);
@@ -905,9 +910,13 @@ public class TestCmsService extends AbstractServiceTest {
         dbContentRow = rowCrud.createDbChild();
         dbContentRow.setName("Allowed Items");
         DbContentList dbContentListItems = new DbContentList();
+        dbContentListItems.setParent(dbContentRow);
+        dbContentRow.setDbContent(dbContentListItems);        
         dbContentListItems.init();
         dbContentListItems.setContentProviderGetter("getDbItemTypeLimitationCrudServiceHelper");
         columnCrud = dbContentListItems.getColumnsCrud();
+        DbExpressionProperty name = (DbExpressionProperty) columnCrud.createDbChild(DbExpressionProperty.class);
+        name.setExpression("dbBaseItemType.name");
         DbExpressionProperty count = (DbExpressionProperty) columnCrud.createDbChild(DbExpressionProperty.class);
         count.setExpression("count");
         DbExpressionProperty img = (DbExpressionProperty) columnCrud.createDbChild(DbExpressionProperty.class);
@@ -927,11 +936,42 @@ public class TestCmsService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        // TODO check for labels
         tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
-        // TODO tester.assertLabel("content:dataTable:body:rows:1:cells:1:cell", "Hallo");
+        tester.assertLabel("form:content:rows:1:cells:1:cell", "TEST_LEVEL_1_SIMULATED");
+        tester.assertVisible("form:content:rows:1:cells:2:cell:link");
+        tester.assertLabel("form:content:rows:2:cells:1:cell", "TEST_LEVEL_2_REAL");
+        tester.assertVisible("form:content:rows:2:cells:2:cell:link");
+        tester.assertLabel("form:content:rows:3:cells:1:cell", "TEST_LEVEL_3_REAL");
+        tester.assertVisible("form:content:rows:3:cells:2:cell:link");
+        tester.assertLabel("form:content:rows:4:cells:1:cell", "TEST_LEVEL_4_SIMULATED");
+        tester.assertVisible("form:content:rows:4:cells:2:cell:link");
+        tester.assertLabel("form:content:rows:5:cells:1:cell", "TEST_LEVEL_5_REAL");
+        tester.assertVisible("form:content:rows:5:cells:2:cell:link");
+        // Click first link
+        tester.clickLink("form:content:rows:1:cells:2:cell:link");
+        tester.assertLabel("form:content:dataTable:body:rows:1:cells:2:cell", "TEST_LEVEL_1_SIMULATED");
+        // Back to home an click a real level
+        tester.startPage(CmsPage.class);
+        tester.clickLink("form:content:rows:2:cells:2:cell:link");
+        tester.debugComponentTrees();
+        tester.assertLabel("form:content:dataTable:body:rows:1:cells:2:cell", "TEST_LEVEL_2_REAL");
+        // Item limitations list
+        // unpredictable order tester.assertLabel("form:content:dataTable:body:rows:3:cells:2:cell:rows:1:cells:1:cell", "TestAttackItem");
+        tester.assertLabel("form:content:dataTable:body:rows:3:cells:2:cell:rows:1:cells:2:cell", "10");
+        tester.assertVisible("form:content:dataTable:body:rows:3:cells:2:cell:rows:1:cells:3:cell:image");
 
+        // unpredictable order tester.assertLabel("form:content:dataTable:body:rows:3:cells:2:cell:rows:2:cells:1:cell", "TEST_HARVESTER_ITEM");
+        tester.assertLabel("form:content:dataTable:body:rows:3:cells:2:cell:rows:2:cells:2:cell", "10");
+        tester.assertVisible("form:content:dataTable:body:rows:3:cells:2:cell:rows:2:cells:3:cell:image");
+
+        // unpredictable order tester.assertLabel("form:content:dataTable:body:rows:3:cells:2:cell:rows:3:cells:1:cell", "TestContainerItem");
+        tester.assertLabel("form:content:dataTable:body:rows:3:cells:2:cell:rows:3:cells:2:cell", "10");
+        tester.assertVisible("form:content:dataTable:body:rows:3:cells:2:cell:rows:3:cells:3:cell:image");
+
+        // unpredictable order tester.assertLabel("form:content:dataTable:body:rows:3:cells:2:cell:rows:3:cells:1:cell", "TestContainerItem");
+        tester.assertLabel("form:content:dataTable:body:rows:3:cells:2:cell:rows:3:cells:2:cell", "10");
+        tester.assertVisible("form:content:dataTable:body:rows:3:cells:2:cell:rows:3:cells:3:cell:image");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
