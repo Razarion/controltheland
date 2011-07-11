@@ -13,6 +13,9 @@
 
 package com.btxtech.game.services.forum;
 
+import com.btxtech.game.services.common.CrudRootServiceHelper;
+
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -21,6 +24,7 @@ import java.util.List;
  * Time: 17:04:50
  */
 public interface ForumService {
+    @Deprecated
     List<SubForum> getSubForums();
 
     Category getCategory(int categoryId);
@@ -37,13 +41,15 @@ public interface ForumService {
 
     void insertSubForumEntry(SubForum subForum);
 
-    void insertCategoryEntry(int parentId, Category category);
+    void insertCategoryEntry(Serializable parentId, Category category);
 
-    void insertForumThreadEntry(int parentId, ForumThread forumThread);
+    void insertForumThreadEntry(Serializable parentId, ForumThread forumThread);
 
-    void insertPostEntry(int parentId, Post post);
+    void insertPostEntry(Serializable parentId, Post post);
 
     int getPostCount(Category category);
 
     void delete(AbstractForumEntry abstractForumEntry);
+
+    CrudRootServiceHelper<SubForum> getSubForumCrud();
 }

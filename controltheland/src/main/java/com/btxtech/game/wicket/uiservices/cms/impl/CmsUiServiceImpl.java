@@ -1,6 +1,7 @@
 package com.btxtech.game.wicket.uiservices.cms.impl;
 
 import com.btxtech.game.services.cms.CmsService;
+import com.btxtech.game.services.cms.DataProviderInfo;
 import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbContentActionButton;
 import com.btxtech.game.services.cms.DbContentBook;
@@ -53,6 +54,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -85,8 +87,41 @@ public class CmsUiServiceImpl implements CmsUiService {
         DbContent dbContent = dbPage.getContent();
         BeanIdPathElement beanIdPathElement = new BeanIdPathElement(dbPage, dbContent);
         // if the Page should display a child of a ContentList
-        if (pageParameters.containsKey(CmsPage.CHILD_ID) && dbContent instanceof DbContentList) {
-            beanIdPathElement = beanIdPathElement.createChild(pageParameters.getInt(CmsPage.CHILD_ID));
+        if (pageParameters.containsKey(CmsPage.DETAIL_CONTENT_ID)) {
+            dbContent = cmsService.getDbContent(pageParameters.getInt(CmsPage.DETAIL_CONTENT_ID));
+            DbContent nearestSpringBeanComponent = dbContent;
+            List<DbContent> contentPath = new ArrayList<DbContent>();
+            while (nearestSpringBeanComponent != null && nearestSpringBeanComponent.getSpringBeanName() == null) {
+                nearestSpringBeanComponent = nearestSpringBeanComponent.getParent();
+                contentPath.add(nearestSpringBeanComponent);
+            }
+            contentPath.add(dbContent);
+            //Collections.reverse(contentPath);
+            if (nearestSpringBeanComponent == null) {
+                throw new IllegalArgumentException("No Spring Bean for detail component found: " + dbContent);
+            }
+            List<Integer> beanIds = new ArrayList<Integer>();
+            for (int level = 0; level < CmsPage.MAX_LEVELS; level++) {
+                if (pageParameters.containsKey(CmsPage.getChildUrlParameter(level))) {
+                    beanIds.add(pageParameters.getInt(CmsPage.getChildUrlParameter(level)));
+                }
+            }
+
+            for (DbContent content : contentPath) {
+                if (content instanceof DataProviderInfo) {
+                    if (content.getSpringBeanName() != null) {
+                        beanIdPathElement = beanIdPathElement.createChild((DataProviderInfo) content, null);
+                    } else if (content.getContentProviderGetter() != null) {
+                        beanIdPathElement = beanIdPathElement.createChild(beanIds.remove(0));
+                        beanIdPathElement = beanIdPathElement.createChildFromContentProviderGetter((DataProviderInfo) content);
+                    }
+                }
+            }
+
+            if (beanIds.size() != 1) {
+                throw new IllegalStateException("Bean Id mismatch: " + beanIds.size());
+            }
+            beanIdPathElement = beanIdPathElement.createChild(beanIds.remove(0));
             Object bean = getDataProviderBean(beanIdPathElement);
             dbContent = ((DbContentList) dbContent).getDbPropertyBook(bean.getClass().getName());
         }
@@ -258,11 +293,10 @@ public class CmsUiServiceImpl implements CmsUiService {
     @Override
     public List getDataProviderBeans(BeanIdPathElement beanIdPathElement) {
         try {
-            ContentProvider contentProvider;
+            ContentProvider contentProvider = null;
             if (beanIdPathElement.hasContentProviderGetter() && !beanIdPathElement.hasSpringBeanName() && !beanIdPathElement.hasBeanId()) {
                 Object bean = getDataProviderBean(beanIdPathElement.getParent());
-                Method method = bean.getClass().getMethod(beanIdPathElement.getContentProviderGetter());
-                contentProvider = (ContentProvider) method.invoke(bean);
+                contentProvider = getContentProvider(beanIdPathElement, bean);
             } else {
                 contentProvider = getContentProvider(beanIdPathElement);
             }
@@ -271,6 +305,20 @@ public class CmsUiServiceImpl implements CmsUiService {
             throw new RuntimeException(e);
         }
 
+    }
+
+    private ContentProvider getContentProvider(BeanIdPathElement beanIdPathElement, Object bean) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        for (Method method : bean.getClass().getMethods()) {
+            if (method.getName().equals(beanIdPathElement.getContentProviderGetter())) {
+                if (method.getParameterTypes().length == 1) {
+                    // UserService as parameter expected
+                    return (ContentProvider) method.invoke(bean, userService);
+                } else {
+                    return (ContentProvider) method.invoke(bean);
+                }
+            }
+        }
+        throw new NoSuchMethodException(beanIdPathElement.getContentProviderGetter() + " can not be found in " + bean);
     }
 
     private ContentProvider getContentProvider(BeanIdPathElement beanIdPathElement) {
@@ -282,8 +330,10 @@ public class CmsUiServiceImpl implements CmsUiService {
             } else if (beanIdPathElement.hasContentProviderGetter() && beanIdPathElement.hasBeanId() && beanIdPathElement.hasParent()) {
                 ContentProvider contentProvider = getContentProvider(beanIdPathElement.getParent());
                 Object bean = contentProvider.readDbChild(beanIdPathElement.getBeanId());
-                Method method = bean.getClass().getMethod(beanIdPathElement.getContentProviderGetter());
-                return (ContentProvider) method.invoke(bean);
+                return getContentProvider(beanIdPathElement, bean);
+            } else if (beanIdPathElement.hasContentProviderGetter() && beanIdPathElement.hasParent()) {
+                Object bean = getDataProviderBean(beanIdPathElement.getParent());
+                return getContentProvider(beanIdPathElement, bean);
             } else {
                 throw new IllegalArgumentException(beanIdPathElement.toString());
             }

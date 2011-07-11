@@ -106,7 +106,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     @PostConstruct
     public void init() {
         crudRootDbResurrection.init(DbResurrection.class);
-        crudServiceHelperHibernate.init(DbAbstractLevel.class, "orderIndex", true, true);
+        crudServiceHelperHibernate.init(DbAbstractLevel.class, "orderIndex", true, true, null);
         serverConditionService.setConditionServiceListener(this);
     }
 

@@ -7,6 +7,8 @@ import com.btxtech.game.services.cms.impl.CmsServiceImpl;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.forum.ForumService;
+import com.btxtech.game.services.forum.TestForum;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.User;
@@ -46,6 +48,9 @@ public class TestCmsService extends AbstractServiceTest {
     private MovableService movableService;
     @Autowired
     private ServerMarketService serverMarketService;
+    @Autowired
+    private ForumService forumService;
+
     private WicketTester tester;
 
     @Before
@@ -450,7 +455,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         CrudChildServiceHelper<DbContentBook> contentBookCrud = dbContentList.getContentBookCrud();
         DbContentBook dbContentBook = contentBookCrud.createDbChild();
-        dbContentBook.setClassName(DbWikiSection.class.getName());
+        dbContentBook.setClassName("com.btxtech.game.services.cms.DbWikiSection");
         CrudListChildServiceHelper<DbContentRow> rowCrud = dbContentBook.getRowCrud();
         DbContentRow dbContentRow = rowCrud.createDbChild();
         dbContentRow.setName("theName");
@@ -562,7 +567,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         cmsService.activateCms();
-        contentService.setDynamicHtml(dbContentDynamicHtml.getId(), "1234567890");        
+        contentService.setDynamicHtml(dbContentDynamicHtml.getId(), "1234567890");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -696,7 +701,7 @@ public class TestCmsService extends AbstractServiceTest {
         // Verify
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertFalse(serverMarketService.getUserItemTypeAccess().contains(TEST_SIMPLE_BUILDING_ID));
-        endHttpRequestAndOpenSessionInViewFilter();        
+        endHttpRequestAndOpenSessionInViewFilter();
         // Not enough XPs
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
@@ -714,7 +719,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
         tester.assertLabel("form:content:rows:1:cells:1:cell:listView:2:content", TEST_SIMPLE_BUILDING);
-        tester.assertInvisible("form:content:rows:1:cells:1:cell:listView:3:content:label");        
+        tester.assertInvisible("form:content:rows:1:cells:1:cell:listView:3:content:label");
         FormTester formTester = tester.newFormTester("form");
         formTester.submit("content:rows:1:cells:1:cell:listView:3:content:button");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -725,6 +730,117 @@ public class TestCmsService extends AbstractServiceTest {
 
         endHttpSession();
     }
+
+    @Test
+    @DirtiesContext
+    public void testForum() throws Exception {
+        configureMinimalGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // Setup CMS content
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage1 = pageCrud.createDbChild();
+        dbPage1.setHome(true);
+        dbPage1.setName("Forum");
+
+        DbContentList dbContentList = new DbContentList();
+        dbContentList.init();
+        dbPage1.setContent(dbContentList);
+        dbContentList.setSpringBeanName("forumService");
+        dbContentList.setContentProviderGetter("getSubForumCrud");
+
+        DbContentContainer subForums = (DbContentContainer) dbContentList.getColumnsCrud().createDbChild(DbContentContainer.class);
+        DbExpressionProperty name = (DbExpressionProperty) subForums.getContentCrud().createDbChild(DbExpressionProperty.class);
+        name.setExpression("name");
+        DbExpressionProperty content = (DbExpressionProperty) subForums.getContentCrud().createDbChild(DbExpressionProperty.class);
+        content.setExpression("content");
+        DbContentList categories = (DbContentList) subForums.getContentCrud().createDbChild(DbContentList.class);
+        categories.setName("Categories");
+        categories.setContentProviderGetter("getCategoryCrud");
+
+        DbExpressionProperty nameCat = (DbExpressionProperty) categories.getColumnsCrud().createDbChild(DbExpressionProperty.class);
+        nameCat.setExpression("name");
+        DbExpressionProperty lastPostCat = (DbExpressionProperty) categories.getColumnsCrud().createDbChild(DbExpressionProperty.class);
+        lastPostCat.setExpression("lastPost");
+        DbContentDetailLink categoryLink = (DbContentDetailLink) categories.getColumnsCrud().createDbChild(DbContentDetailLink.class);
+        categoryLink.setName("details");
+
+        DbContentBook categoryContentBook = categories.getContentBookCrud().createDbChild();
+        categoryContentBook.setClassName("com.btxtech.game.services.forum.Category");
+        DbContentRow categoryNameRow = categoryContentBook.getRowCrud().createDbChild();
+        DbExpressionProperty categoryName = new DbExpressionProperty();
+        categoryName.setParent(categoryNameRow);
+        categoryName.setExpression("name");
+        categoryNameRow.setDbContent(categoryName);
+        DbContentRow categoryDetailRow = categoryContentBook.getRowCrud().createDbChild();
+        DbContentList threadList = new DbContentList();
+        threadList.setParent(categoryDetailRow);
+        threadList.init();
+        threadList.setContentProviderGetter("getForumThreadCrud");
+        categoryDetailRow.setDbContent(threadList);
+        DbExpressionProperty threadColumnName = (DbExpressionProperty) threadList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
+        threadColumnName.setExpression("name");
+        DbContentDetailLink threadLink = (DbContentDetailLink) threadList.getColumnsCrud().createDbChild(DbContentDetailLink.class);
+        threadLink.setName("details");
+
+        DbContentBook postContentBook = threadList.getContentBookCrud().createDbChild();
+        postContentBook.setClassName("com.btxtech.game.services.forum.ForumThread");
+        DbContentRow threadNameRow = postContentBook.getRowCrud().createDbChild();
+        DbExpressionProperty postColumnName = new DbExpressionProperty();
+        postColumnName.setParent(threadNameRow);
+        postColumnName.setExpression("name");
+        threadNameRow.setDbContent(postColumnName);
+
+
+        DbContentRow postsNameRow = postContentBook.getRowCrud().createDbChild();
+        DbContentList postName = new DbContentList();
+        postName.setParent(postsNameRow);
+        postName.init();
+        postName.setContentProviderGetter("getPostCrud");
+        postsNameRow.setDbContent(postName);
+        DbContentRow postsContentRow = postContentBook.getRowCrud().createDbChild();
+        DbExpressionProperty postContent = (DbExpressionProperty) postName.getColumnsCrud().createDbChild(DbExpressionProperty.class);
+        postContent.setExpression("content");
+        postContent.setParent(postsContentRow);
+        postName.setContentProviderGetter("getPostCrud");
+        postsContentRow.setDbContent(postContent);
+
+
+        pageCrud.updateDbChild(dbPage1);
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // Setup und login user and fill forum
+        userService.createUser("U1", "test", "test", "test");
+        userService.login("U1", "test");
+        TestForum.fillForum(forumService, userService);
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        // Activate
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        // Verify
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("form:content:rows:1:cells:1:cell:listView:0:content", "SubForumName1");
+        tester.assertLabel("form:content:rows:1:cells:1:cell:listView:1:content", "SubForumContent1");
+        tester.assertLabel("form:content:rows:1:cells:1:cell:listView:2:content:rows:1:cells:1:cell", "CategoryName1");
+        // Click the category link
+        tester.clickLink("form:content:rows:1:cells:1:cell:listView:2:content:rows:1:cells:3:cell:link");
+        tester.assertLabel("form:content:dataTable:body:rows:1:cells:2:cell", "CategoryName1");
+        tester.assertLabel("form:content:dataTable:body:rows:2:cells:2:cell:rows:1:cells:1:cell", "ForumThreadName1");
+        // Click the thread link
+        tester.clickLink("form:content:dataTable:body:rows:2:cells:2:cell:rows:1:cells:2:cell:link");
+        tester.assertLabel("form:content:dataTable:body:rows:1:cells:2:cell", "ForumThreadName1");
+        tester.assertLabel("form:content:dataTable:body:rows:2:cells:2:cell:rows:1:cells:1:cell", "PostContent1");
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        endHttpSession();
+    }
+
 
     @Test
     @DirtiesContext

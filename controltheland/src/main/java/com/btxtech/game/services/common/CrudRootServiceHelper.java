@@ -24,7 +24,7 @@ import java.util.Collection;
 public interface CrudRootServiceHelper<T extends CrudChild> extends ContentProvider<T> {
     void init(Class<T> childClass);
 
-    void init(Class<T> childClass, String orderColumn, boolean setOrderColumn, boolean orderAsc);
+    void init(Class<T> childClass, String orderColumn, boolean setOrderColumn, boolean orderAsc, String userColumn);
 
     Collection<T> readDbChildren();
 

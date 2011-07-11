@@ -47,7 +47,7 @@ public class ContentServiceImpl implements ContentService {
 
     @PostConstruct
     public void init() {
-        blogEntryCrudRootServiceHelper.init(DbBlogEntry.class, "timeStamp", false, false);
+        blogEntryCrudRootServiceHelper.init(DbBlogEntry.class, "timeStamp", false, false, null);
         wikiSectionCrudRootServiceHelper.init(DbWikiSection.class);
     }
 

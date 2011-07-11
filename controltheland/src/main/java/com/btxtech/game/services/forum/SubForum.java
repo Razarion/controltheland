@@ -13,12 +13,18 @@
 
 package com.btxtech.game.services.forum;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.common.CrudListChildServiceHelper;
+import com.btxtech.game.services.common.CrudParent;
+import com.btxtech.game.services.user.UserService;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: beat
@@ -26,9 +32,11 @@ import javax.persistence.OneToMany;
  * Time: 17:16:58
  */
 @Entity(name = "FORUM_SUB_FORUM")
-public class SubForum extends AbstractForumEntry {
+public class SubForum extends AbstractForumEntry implements CrudChild, CrudParent {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "subForum", fetch = FetchType.LAZY)
     private List<Category> categories;
+    @Transient
+    private CrudListChildServiceHelper<Category> categoryCrud;
 
     public void addCategory(Category category) {
         if (categories == null) {
@@ -41,5 +49,22 @@ public class SubForum extends AbstractForumEntry {
 
     public List<Category> getCategories() {
         return categories;
+    }
+
+    @Override
+    public void init() {
+        categories = new ArrayList<Category>();
+        setDate();
+    }
+
+    @Override
+    public void setParent(Object o) {
+    }
+
+    public CrudListChildServiceHelper<Category> getCategoryCrud(UserService userService) {
+        if (categoryCrud == null) {
+            categoryCrud = new CrudListChildServiceHelper<Category>(categories, Category.class, this, userService, "user");
+        }
+        return categoryCrud;
     }
 }
