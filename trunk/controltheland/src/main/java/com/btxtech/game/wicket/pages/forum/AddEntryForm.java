@@ -25,6 +25,8 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import wicket.contrib.tinymce.TinyMceBehavior;
 import wicket.contrib.tinymce.settings.TinyMCESettings;
 
+import java.io.Serializable;
+
 /**
  * User: beat
  * Date: 22.03.2010
@@ -53,24 +55,24 @@ public class AddEntryForm extends BasePage {
             public void onSubmit() {
                 abstractForumEntry.setTitle(title.getObject());
                 abstractForumEntry.setContent(content.getObject());
-                int parentid = parent != null ? parent.getId() : -1;
+                Serializable parentId = parent != null ? parent.getId() : -1;
                 if (abstractForumEntry instanceof Category) {
-                    forumService.insertCategoryEntry(parentid, (Category) abstractForumEntry);
+                    forumService.insertCategoryEntry(parentId, (Category) abstractForumEntry);
                     setResponsePage(ForumView.class);
                 } else if (abstractForumEntry instanceof SubForum) {
                     forumService.insertSubForumEntry((SubForum) abstractForumEntry);
                     PageParameters pageParameters = new PageParameters();
-                    pageParameters.add(CategoryView.ID, Integer.toString(abstractForumEntry.getId()));
+                    pageParameters.add(CategoryView.ID, abstractForumEntry.getId().toString());
                     setResponsePage(ForumThreadView.class, pageParameters);
                 } else if (abstractForumEntry instanceof ForumThread) {
-                    forumService.insertForumThreadEntry(parentid, (ForumThread) abstractForumEntry);
+                    forumService.insertForumThreadEntry(parentId, (ForumThread) abstractForumEntry);
                     PageParameters pageParameters = new PageParameters();
-                    pageParameters.add(CategoryView.ID, Integer.toString(abstractForumEntry.getId()));
+                    pageParameters.add(CategoryView.ID, abstractForumEntry.getId().toString());
                     setResponsePage(ForumThreadView.class, pageParameters);
                 } else if (abstractForumEntry instanceof Post) {
-                    forumService.insertPostEntry(parentid, (Post) abstractForumEntry);
+                    forumService.insertPostEntry(parentId, (Post) abstractForumEntry);
                     PageParameters pageParameters = new PageParameters();
-                    pageParameters.add(CategoryView.ID, Integer.toString(parentid));
+                    pageParameters.add(CategoryView.ID, parentId.toString());
                     setResponsePage(ForumThreadView.class, pageParameters);
                 } else {
                     throw new IllegalArgumentException("Unknown: " + abstractForumEntry);

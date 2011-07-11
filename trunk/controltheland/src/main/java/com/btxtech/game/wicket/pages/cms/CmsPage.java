@@ -22,19 +22,20 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.debug.PageView;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.markup.html.pages.ExceptionErrorPage;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 public class CmsPage extends WebPage {
     public static final String ID = "id";
-    public static final String CHILD_ID = "childId";
+    private static final String CHILD_ID = "childId";
+    public static final String DETAIL_CONTENT_ID = "detailId";
     @SpringBean
     private CmsService cmsService;
     @SpringBean
     private CmsUiService cmsUiService;
     private int pageId;
+    public static final int MAX_LEVELS = 20;
 
     public CmsPage(final PageParameters pageParameters) {
         setDefaultModel(new CompoundPropertyModel<DbPage>(new LoadableDetachableModel<DbPage>() {
@@ -62,19 +63,17 @@ public class CmsPage extends WebPage {
         add(form);
         form.add(cmsUiService.getRootComponent(dbPage, "content", pageParameters));
         //////////////////////
-        add(new Link<Void>("displayPageViewLink")
-		{
-			private static final long serialVersionUID = 1L;
+        add(new Link<Void>("displayPageViewLink") {
+            private static final long serialVersionUID = 1L;
 
-			@Override
-			public void onClick()
-			{
-				CmsPage.this.replace(new PageView("componentTree", CmsPage.this));
-				setVisible(false);
-			}
-		});
+            @Override
+            public void onClick() {
+                CmsPage.this.replace(new PageView("componentTree", CmsPage.this));
+                setVisible(false);
+            }
+        });
 
-		add(new Label("componentTree", ""));
+        add(new Label("componentTree", ""));
         //////////////////////
     }
 
@@ -82,5 +81,13 @@ public class CmsPage extends WebPage {
     public boolean isVisible() {
         DbPage dbPage = (DbPage) getDefaultModelObject();
         return cmsUiService.isPageAccessAllowed(dbPage);
+    }
+
+    public static String getChildUrlParameter(int level) {
+        if (level == 0) {
+            return CHILD_ID;
+        } else {
+            return CHILD_ID + level;
+        }
     }
 }

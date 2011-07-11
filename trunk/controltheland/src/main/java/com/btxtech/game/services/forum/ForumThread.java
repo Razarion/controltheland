@@ -13,15 +13,20 @@
 
 package com.btxtech.game.services.forum;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.common.CrudListChildServiceHelper;
+import com.btxtech.game.services.common.CrudParent;
+import com.btxtech.game.services.user.UserService;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: beat
@@ -29,13 +34,16 @@ import javax.persistence.OneToMany;
  * Time: 17:08:04
  */
 @Entity(name = "FORUM_THREAD")
-public class ForumThread extends AbstractForumEntry {
+public class ForumThread extends AbstractForumEntry implements CrudChild<Category>, CrudParent {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "forumThread", fetch = FetchType.LAZY)
     private List<Post> posts;
     private int viewCount = 100;
     @ManyToOne
     @JoinColumn(name = "categoryId", nullable = false)
     private Category category;
+    @Transient
+    private CrudListChildServiceHelper<Post> postCrud;
+
 
     public void addPost(Post post) {
         if (posts == null) {
@@ -68,5 +76,23 @@ public class ForumThread extends AbstractForumEntry {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    @Override
+    public void init() {
+        posts = new ArrayList<Post>();
+        setDate();
+    }
+
+    @Override
+    public void setParent(Category category) {
+        setCategory(category);
+    }
+
+    public CrudListChildServiceHelper<Post> getPostCrud(UserService userService) {
+        if (postCrud == null) {
+            postCrud = new CrudListChildServiceHelper<Post>(posts, Post.class, this, userService, "user");
+        }
+        return postCrud;
     }
 }

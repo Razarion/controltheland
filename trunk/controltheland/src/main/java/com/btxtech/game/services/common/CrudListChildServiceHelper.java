@@ -13,6 +13,9 @@
 
 package com.btxtech.game.services.common;
 
+import com.btxtech.game.services.common.impl.CrudRootServiceHelperImpl;
+import com.btxtech.game.services.user.UserService;
+
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.List;
@@ -27,11 +30,19 @@ public class CrudListChildServiceHelper<T extends CrudChild> implements Serializ
     private List<T> children;
     private Class<T> childClass;
     private CrudParent crudParent;
+    private UserService userService;
+    private String userField;
 
-    public CrudListChildServiceHelper(List<T> children, Class<T> childClass, CrudParent crudParent) {
+    public CrudListChildServiceHelper(List<T> children, Class<T> childClass, CrudParent crudParent, UserService userService, String userField) {
         this.children = children;
         this.childClass = childClass;
         this.crudParent = crudParent;
+        this.userService = userService;
+        this.userField = userField;
+    }
+
+    public CrudListChildServiceHelper(List<T> children, Class<T> childClass, CrudParent crudParent) {
+        this(children, childClass, crudParent, null, null);
     }
 
     public List<T> readDbChildren() {
@@ -68,6 +79,9 @@ public class CrudListChildServiceHelper<T extends CrudChild> implements Serializ
         try {
             Constructor<? extends T> constructor = createClass.getConstructor();
             T t = constructor.newInstance();
+            if (userField != null) {
+                CrudRootServiceHelperImpl.setUser(userService, userField, childClass, t);
+            }
             addChild(t);
             return t;
         } catch (Exception e) {

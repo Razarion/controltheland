@@ -14,10 +14,10 @@
 package com.btxtech.game.services.forum;
 
 import com.btxtech.game.services.user.User;
-import java.io.Serializable;
-import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,6 +26,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * User: beat
@@ -38,14 +40,11 @@ abstract public class AbstractForumEntry implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Integer id;
-    @Column(nullable = false)
     private Date date;
-    @Column(nullable = false)
     private String title;
-    @Column(nullable = false, length = 5000)
+    @Column(length = 5000)
     private String content;
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
     @Transient
     private Date lastPost;
@@ -70,6 +69,14 @@ abstract public class AbstractForumEntry implements Serializable {
         }
     }
 
+    public String getName() {
+        return getTitle();
+    }
+
+    public void setName(String name) {
+        setTitle(name);
+    }
+
     public String getContent() {
         return content;
     }
@@ -90,7 +97,7 @@ abstract public class AbstractForumEntry implements Serializable {
         this.user = user;
     }
 
-    public int getId() {
+    public Serializable getId() {
         return id;
     }
 

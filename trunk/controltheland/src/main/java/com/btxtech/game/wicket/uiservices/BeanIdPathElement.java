@@ -93,6 +93,13 @@ public class BeanIdPathElement implements Serializable {
                 && hasParent() && parent.hasSpringBeanName() && parent.hasSpringBeanName();
     }
 
+    public BeanIdPathElement createChildFromContentProviderGetter(DataProviderInfo dataProviderInfo) {
+        BeanIdPathElement beanIdPathElement = new BeanIdPathElement();
+        beanIdPathElement.parent = this;
+        beanIdPathElement.contentProviderGetter = dataProviderInfo.getContentProviderGetter();
+        return beanIdPathElement;
+    }
+
     public BeanIdPathElement createChild(DataProviderInfo dataProviderInfo, Object parentBean) {
         BeanIdPathElement beanIdPathElement = new BeanIdPathElement();
         beanIdPathElement.parent = this;
@@ -128,7 +135,7 @@ public class BeanIdPathElement implements Serializable {
         }
         if (beanId != null) {
             s.append(" beanId: ");
-            s.append(beanId);
+            s.append(beanId.toString());
         }
         if (springBeanName != null) {
             s.append(" springBeanName: ");

@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.forum.impl;
 
+import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.forum.AbstractForumEntry;
 import com.btxtech.game.services.forum.Category;
 import com.btxtech.game.services.forum.ForumService;
@@ -37,6 +38,8 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Date;
@@ -53,13 +56,26 @@ public class ForumServiceImpl implements ForumService {
     private HibernateTemplate hibernateTemplate;
     @Autowired
     private UserService userService;
+    @Autowired
+    private CrudRootServiceHelper<SubForum> subForumCrud;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
         hibernateTemplate = new HibernateTemplate(sessionFactory);
     }
 
+    @PostConstruct
+    public void init() {
+        subForumCrud.init(SubForum.class, null, false, false, "user");
+    }
+
     @Override
+    public CrudRootServiceHelper<SubForum> getSubForumCrud() {
+        return subForumCrud;
+    }
+
+    @Override
+    @Deprecated
     public List<SubForum> getSubForums() {
         return hibernateTemplate.execute(new HibernateCallback<List<SubForum>>() {
             @Override
@@ -154,7 +170,7 @@ public class ForumServiceImpl implements ForumService {
     @Override
     @Secured(SecurityRoles.ROLE_FORUM_ADMINISTRATOR)
     @Transactional
-    public void insertCategoryEntry(final int parentId, final Category category) {
+    public void insertCategoryEntry(final Serializable parentId, final Category category) {
         category.setUser(userService.getUser());
         hibernateTemplate.execute(new HibernateCallback<Void>() {
             @Override
@@ -176,7 +192,7 @@ public class ForumServiceImpl implements ForumService {
     @Override
     @Secured(SecurityRoles.ROLE_USER)
     @Transactional
-    public void insertForumThreadEntry(final int parentId, final ForumThread forumThread) {
+    public void insertForumThreadEntry(final Serializable parentId, final ForumThread forumThread) {
         forumThread.setUser(userService.getUser());
         hibernateTemplate.execute(new HibernateCallback<Void>() {
             @Override
@@ -205,7 +221,7 @@ public class ForumServiceImpl implements ForumService {
     @Override
     @Secured(SecurityRoles.ROLE_USER)
     @Transactional
-    public void insertPostEntry(final int parentId, final Post post) {
+    public void insertPostEntry(final Serializable parentId, final Post post) {
         post.setUser(userService.getUser());
         hibernateTemplate.execute(new HibernateCallback<Void>() {
             @Override

@@ -41,7 +41,7 @@ public class ForumThreadField extends Panel {
     public ForumThreadField(String id, final ForumThread forumThread) {
         super(id);
         BookmarkablePageLink<ForumThreadView> link = new BookmarkablePageLink<ForumThreadView>("link", ForumThreadView.class);
-        link.setParameter(ForumThreadView.ID, Integer.toString(forumThread.getId()));
+        link.setParameter(ForumThreadView.ID, forumThread.getId().toString());
         add(link);
         link.add(new Label("text", forumThread.getTitle()));
         Form form = new Form("deleteThreadForm") {

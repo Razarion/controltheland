@@ -27,7 +27,7 @@ public class CategoryField extends Panel {
     public CategoryField(String id, final Category category) {
         super(id);
         BookmarkablePageLink<CategoryView> link = new BookmarkablePageLink<CategoryView>("link", CategoryView.class);
-        link.setParameter(CategoryView.ID, Integer.toString(category.getId()));
+        link.setParameter(CategoryView.ID, category.getId().toString());
         link.add(new Label("text", category.getTitle()));
         add(link);
     }

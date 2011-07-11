@@ -13,6 +13,8 @@
 
 package com.btxtech.game.services.forum;
 
+import com.btxtech.game.services.common.CrudChild;
+
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -23,7 +25,7 @@ import javax.persistence.ManyToOne;
  * Time: 17:07:38
  */
 @Entity(name = "FORUM_POST")
-public class Post extends AbstractForumEntry {
+public class Post extends AbstractForumEntry implements CrudChild<ForumThread> {
     @ManyToOne
     @JoinColumn(name = "forumThreadId", nullable = false)
     private ForumThread forumThread;
@@ -34,5 +36,14 @@ public class Post extends AbstractForumEntry {
 
     public void setForumThread(ForumThread forumThread) {
         this.forumThread = forumThread;
+    }
+
+    @Override
+    public void init() {
+    }
+
+    @Override
+    public void setParent(ForumThread forumThread) {
+        setForumThread(forumThread);
     }
 }

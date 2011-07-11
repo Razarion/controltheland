@@ -16,6 +16,8 @@ package com.btxtech.game.services.common.impl;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.NoSuchChildException;
+import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserService;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -48,18 +50,22 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
     private String orderColumn;
     private boolean setOrderColumn;
     private boolean orderAsc;
+    private String userField;
+    @Autowired
+    private UserService userService;
 
     @Override
     public void init(Class<T> childClass) {
-        init(childClass, null, false, false);
+        init(childClass, null, false, false, null);
     }
 
     @Override
-    public void init(Class<T> childClass, String orderColumn, boolean setOrderColumn, boolean orderAsc) {
+    public void init(Class<T> childClass, String orderColumn, boolean setOrderColumn, boolean orderAsc, String userField) {
         this.childClass = childClass;
         this.orderColumn = orderColumn;
         this.setOrderColumn = setOrderColumn;
         this.orderAsc = orderAsc;
+        this.userField = userField;
     }
 
     @Autowired
@@ -93,7 +99,7 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
     public T readDbChild(Serializable id) {
         T t = hibernateTemplate.get(childClass, id);
         if (t == null) {
-            throw new NoSuchChildException(id);
+            throw new NoSuchChildException("Class: " + childClass + " id: " + id);
         }
         return t;
     }
@@ -143,6 +149,9 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
             Constructor<? extends T> constructor = createClass.getConstructor();
             T t = constructor.newInstance();
             t.init();
+            if (userField != null) {
+                setUser(userService, userField, childClass, t);
+            }
             addChild(t);
             return t;
         } catch (Exception e) {
@@ -150,6 +159,29 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
         }
     }
 
+    public static void setUser(UserService userService, String userField, Class childClass, Object child) throws NoSuchFieldException, IllegalAccessException {
+        Field field = getField(childClass, userField);
+        field.setAccessible(true);
+        User user = userService.getUser();
+        if (user == null) {
+            throw new IllegalStateException("No current user");
+        }
+        field.set(child, user);
+        field.setAccessible(false);
+    }
+
+    private static Field getField(Class clazz, String fieldName) throws NoSuchFieldException {
+        Class tmpClass = clazz;
+        while (tmpClass != null) {
+            for (Field field : tmpClass.getDeclaredFields()) {
+                if (field.getName().equals(fieldName)) {
+                    return field;
+                }
+            }
+            tmpClass = tmpClass.getSuperclass();
+        }
+        throw new NoSuchFieldException("Field '" + fieldName + "' not found on class " + clazz);
+    }
 
     @Override
     @Transactional
