@@ -20,7 +20,7 @@ public class EditPanel extends Panel {
         Button edit = new Button("edit") {
             @Override
             public void onSubmit() {
-                cmsUiService.enterEditMode(contentId);
+                cmsUiService.enterEditMode(contentId, beanIdPathElement);
             }
 
             @Override

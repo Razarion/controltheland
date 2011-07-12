@@ -33,7 +33,7 @@ public class ContentActionButtonEditor extends MgmtWebPage {
         }));
         add(form);
 
-        form.add(new CheckBox("readRestricted"));
+        form.add(new ContentAccessPanel("accessPanel", false, false));
         form.add(new TextField("cssClass"));
         form.add(new TextField("unfilledHtml"));
         form.add(new CheckBox("unfilledHtmlEscapeMarkup"));

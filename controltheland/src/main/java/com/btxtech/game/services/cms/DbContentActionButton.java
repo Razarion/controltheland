@@ -22,11 +22,6 @@ public class DbContentActionButton extends DbContent implements DataProviderInfo
     private String unfilledHtml;
     private boolean unfilledHtmlEscapeMarkup;
 
-    @Override
-    public void init() {
-        setupDefaultRights();
-    }
-
     public String getUnfilledHtml() {
         return unfilledHtml;
     }

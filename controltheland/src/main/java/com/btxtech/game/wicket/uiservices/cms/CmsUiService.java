@@ -30,7 +30,7 @@ public interface CmsUiService {
 
     EditMode getEditMode(int contentId);
 
-    void enterEditMode(int contentId);
+    void enterEditMode(int contentId, BeanIdPathElement beanIdPathElement);
 
     void leaveEditMode();
 

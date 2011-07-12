@@ -22,9 +22,4 @@ public class DbContentPlugin extends DbContent {
     public void setPluginEnum(PluginEnum pluginEnum) {
         this.pluginEnum = pluginEnum;
     }
-
-    @Override
-    public void init() {
-        setupDefaultRights();
-    }
 }

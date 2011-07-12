@@ -27,9 +27,4 @@ public class DbContentDynamicHtml extends DbContent {
         // This is only used for generating the EditMode class
         return "DbContentDynamicHtml " + getId();
     }
-
-    @Override
-    public void init() {
-        setupDefaultRights();
-    }    
 }

@@ -12,7 +12,6 @@ import com.btxtech.game.wicket.uiservices.CrudListChildTableHelper;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -40,10 +39,7 @@ public class ContentListEditor extends MgmtWebPage {
         }));
         add(form);
 
-        form.add(new CheckBox("readRestricted"));
-        form.add(new CheckBox("writeRestricted"));
-        form.add(new CheckBox("createRestricted"));
-        form.add(new CheckBox("deleteRestricted"));
+        form.add(new ContentAccessPanel("accessPanel", true, true));
         form.add(new TextField("cssClass"));
         form.add(new TextField("springBeanName"));
         form.add(new TextField("contentProviderGetter"));

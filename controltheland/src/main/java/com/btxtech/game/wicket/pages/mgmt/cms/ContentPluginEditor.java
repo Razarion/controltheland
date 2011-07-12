@@ -39,7 +39,7 @@ public class ContentPluginEditor extends MgmtWebPage {
             }
         }));
         add(form);
-        form.add(new CheckBox("readRestricted"));
+        form.add(new ContentAccessPanel("accessPanel", false, false));
         form.add(new TextField("cssClass"));
         form.add(new DropDownChoice<PluginEnum>("pluginEnum", Arrays.asList(PluginEnum.values()), new IChoiceRenderer<PluginEnum>() {
 

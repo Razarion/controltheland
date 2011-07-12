@@ -109,6 +109,14 @@ public class DbPage implements CrudChild {
         this.content = content;
     }
 
+    public void setContentAndAccessWrites(DbContent content) {
+        setContent(content);
+        content.setReadRestricted(DbContent.Access.ALLOWED);
+        content.setWriteRestricted(DbContent.Access.DENIED);
+        content.setCreateRestricted(DbContent.Access.DENIED);
+        content.setDeleteRestricted(DbContent.Access.DENIED);
+    }
+
     public boolean isAccessRestricted() {
         return accessRestricted;
     }

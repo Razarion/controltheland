@@ -9,24 +9,9 @@
 <span wicket:id="msgs"/>
 
 <form wicket:id="form">
+    <div wicket:id="accessPanel"></div>
     <h2>Config</h2>
     <table border="0">
-        <tr>
-            <td bgcolor="#dadada">Read restricted</td>
-            <td><input type="checkbox" wicket:id="readRestricted"/></td>
-        </tr>
-        <tr>
-            <td bgcolor="#dadada">Write restricted</td>
-            <td><input type="checkbox" wicket:id="writeRestricted"/></td>
-        </tr>
-        <tr>
-            <td bgcolor="#dadada">Create restricted</td>
-            <td><input type="checkbox" wicket:id="createRestricted"/></td>
-        </tr>
-        <tr>
-            <td bgcolor="#dadada">Delete restricted</td>
-            <td><input type="checkbox" wicket:id="deleteRestricted"/></td>
-        </tr>                
         <tr>
             <td bgcolor="#dadada">CSS Class</td>
             <td><input type="text" wicket:id="cssClass"/></td>
@@ -73,7 +58,7 @@
         </tr>
     </table>
     <span wicket:id="createColumn"></span>
-    
+
     <h2>Detail Content Books</h2>
     <table cellpadding="1" cellspacing="1" border="0">
         <tr>

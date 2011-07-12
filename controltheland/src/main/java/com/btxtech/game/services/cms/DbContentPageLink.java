@@ -33,9 +33,4 @@ public class DbContentPageLink extends DbContent {
     public void setDbCmsImage(DbCmsImage dbCmsImage) {
         this.dbCmsImage = dbCmsImage;
     }
-
-    @Override
-    public void init() {
-        setupDefaultRights();
-    }
 }

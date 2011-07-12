@@ -54,7 +54,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -110,10 +109,10 @@ public class CmsUiServiceImpl implements CmsUiService {
             for (DbContent content : contentPath) {
                 if (content instanceof DataProviderInfo) {
                     if (content.getSpringBeanName() != null) {
-                        beanIdPathElement = beanIdPathElement.createChild((DataProviderInfo) content, null);
+                        beanIdPathElement = beanIdPathElement.createChildFromDataProviderInfo((DataProviderInfo) content);
                     } else if (content.getContentProviderGetter() != null) {
-                        beanIdPathElement = beanIdPathElement.createChild(beanIds.remove(0));
-                        beanIdPathElement = beanIdPathElement.createChildFromContentProviderGetter((DataProviderInfo) content);
+                        beanIdPathElement = beanIdPathElement.createChildFromBeanId(beanIds.remove(0));
+                        beanIdPathElement = beanIdPathElement.createChildFromDataProviderInfo((DataProviderInfo) content);
                     }
                 }
             }
@@ -121,7 +120,8 @@ public class CmsUiServiceImpl implements CmsUiService {
             if (beanIds.size() != 1) {
                 throw new IllegalStateException("Bean Id mismatch: " + beanIds.size());
             }
-            beanIdPathElement = beanIdPathElement.createChild(beanIds.remove(0));
+            beanIdPathElement = beanIdPathElement.createChildFromBeanId(beanIds.remove(0));
+            beanIdPathElement.setChildDetailPage(true);
             Object bean = getDataProviderBean(beanIdPathElement);
             dbContent = ((DbContentList) dbContent).getDbPropertyBook(bean.getClass().getName());
         }
@@ -200,7 +200,7 @@ public class CmsUiServiceImpl implements CmsUiService {
             component = new ItemTypeImage(id, (DbItemType) value);
         } else {
             if (!dbExpressionProperty.getExpression().equals(CURRENT_PATH)
-                    && PropertyUtils.isWriteable(bean, beanIdPathElement.getExpression())
+                    && PropertyUtils.isWriteable(bean, dbExpressionProperty.getExpression())
                     && getEditMode(dbExpressionProperty) != null) {
                 // Write
                 component = new WritePanel(id, value, beanIdPathElement, dbExpressionProperty);
@@ -363,9 +363,14 @@ public class CmsUiServiceImpl implements CmsUiService {
     }
 
     @Override
-    public void enterEditMode(int contentId) {
+    public void enterEditMode(int contentId, BeanIdPathElement beanIdPathElement) {
         DbContent dbContent = cmsService.getDbContent(contentId);
-        String springBeanName = dbContent.getSpringBeanName();
+        String springBeanName;
+        if (beanIdPathElement != null && beanIdPathElement.isChildDetailPage()) {
+            springBeanName = dbContent.getNextPossibleSpringBeanName();
+        } else {
+            springBeanName = dbContent.getSpringBeanName();
+        }
         if (springBeanName == null) {
             throw new IllegalArgumentException("No spring bean name in DbContent: " + dbContent);
         }
@@ -406,37 +411,75 @@ public class CmsUiServiceImpl implements CmsUiService {
 
     public boolean isWriteAllowed(int contentId) {
         DbContent dbContent = cmsService.getDbContent(contentId);
-        if (!dbContent.isWriteRestricted()) {
-            return true;
-        }
-        Collection<DbContentAccessControl> dbContentAccessControls = userService.getDbContentAccessControls();
-        if (dbContentAccessControls == null) {
-            return false;
-        }
-        for (DbContentAccessControl dbContentAccessControl : dbContentAccessControls) {
-            if (contentId == dbContentAccessControl.getDbContent().getId()) {
-                return dbContentAccessControl.isWriteAllowed();
+        while (dbContent.getWriteRestricted() == DbContent.Access.INHERIT) {
+            dbContent = dbContent.getParent();
+            if (dbContent == null) {
+                throw new IllegalStateException("Content has no sufficient write restriction configured: " + cmsService.getDbContent(contentId));
             }
         }
-        return false;
+
+        switch (dbContent.getWriteRestricted()) {
+            case DENIED: {
+                return false;
+            }
+            case ALLOWED: {
+                return true;
+            }
+            case REGISTERED_USER: {
+                return userService.isRegistered();
+            }
+            case USER: {
+                Collection<DbContentAccessControl> dbContentAccessControls = userService.getDbContentAccessControls();
+                if (dbContentAccessControls == null) {
+                    return false;
+                }
+                for (DbContentAccessControl dbContentAccessControl : dbContentAccessControls) {
+                    if (dbContent.getId().equals(dbContentAccessControl.getDbContent().getId())) {
+                        return dbContentAccessControl.isWriteAllowed();
+                    }
+                }
+                return false;
+            }
+            default:
+                throw new IllegalArgumentException("Unknown read restriction: " + dbContent.getReadRestricted());
+        }
     }
 
     @Override
     public boolean isReadAllowed(int contentId) {
         DbContent dbContent = cmsService.getDbContent(contentId);
-        if (!dbContent.isReadRestricted()) {
-            return true;
-        }
-        Collection<DbContentAccessControl> dbContentAccessControls = userService.getDbContentAccessControls();
-        if (dbContentAccessControls == null) {
-            return false;
-        }
-        for (DbContentAccessControl dbContentAccessControl : dbContentAccessControls) {
-            if (contentId == dbContentAccessControl.getDbContent().getId()) {
-                return dbContentAccessControl.isReadAllowed();
+        while (dbContent.getReadRestricted() == DbContent.Access.INHERIT) {
+            dbContent = dbContent.getParent();
+            if (dbContent == null) {
+                throw new IllegalStateException("Content has no sufficient read restriction configured: " + cmsService.getDbContent(contentId));
             }
         }
-        return false;
+
+        switch (dbContent.getReadRestricted()) {
+            case DENIED: {
+                return false;
+            }
+            case ALLOWED: {
+                return true;
+            }
+            case REGISTERED_USER: {
+                return userService.isRegistered();
+            }
+            case USER: {
+                Collection<DbContentAccessControl> dbContentAccessControls = userService.getDbContentAccessControls();
+                if (dbContentAccessControls == null) {
+                    return false;
+                }
+                for (DbContentAccessControl dbContentAccessControl : dbContentAccessControls) {
+                    if (dbContent.getId().equals(dbContentAccessControl.getDbContent().getId())) {
+                        return dbContentAccessControl.isReadAllowed();
+                    }
+                }
+                return false;
+            }
+            default:
+                throw new IllegalArgumentException("Unknown read restriction: " + dbContent.getReadRestricted());
+        }
     }
 
     @Override

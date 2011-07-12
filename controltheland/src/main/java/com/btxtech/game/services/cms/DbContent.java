@@ -23,6 +23,14 @@ import java.util.Collection;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
 public abstract class DbContent implements CrudChild<DbContent> {
+    public enum Access {
+        DENIED,
+        ALLOWED,
+        REGISTERED_USER,
+        USER,
+        INHERIT
+    }
+
     @Id
     @GeneratedValue
     private Integer id;
@@ -30,10 +38,10 @@ public abstract class DbContent implements CrudChild<DbContent> {
     @ManyToOne(fetch = FetchType.LAZY)
     private DbContent parent;
     private String cssClass;
-    private boolean readRestricted;
-    private boolean writeRestricted;
-    private boolean createRestricted;
-    private boolean deleteRestricted;
+    private Access readRestricted = Access.INHERIT;
+    private Access writeRestricted = Access.INHERIT;
+    private Access createRestricted = Access.INHERIT;
+    private Access deleteRestricted = Access.INHERIT;
 
 
     @Override
@@ -130,43 +138,40 @@ public abstract class DbContent implements CrudChild<DbContent> {
         this.cssClass = cssClass;
     }
 
-    protected void setupDefaultRights() {
-        readRestricted = false;
-        writeRestricted = true;
-        createRestricted = true;
-        deleteRestricted = true;
-    }
-
-    public boolean isReadRestricted() {
+    public Access getReadRestricted() {
         return readRestricted;
     }
 
-    public void setReadRestricted(boolean readRestricted) {
+    public void setReadRestricted(Access readRestricted) {
         this.readRestricted = readRestricted;
     }
 
-    public boolean isWriteRestricted() {
+    public Access getWriteRestricted() {
         return writeRestricted;
     }
 
-    public void setWriteRestricted(boolean writeRestricted) {
+    public void setWriteRestricted(Access writeRestricted) {
         this.writeRestricted = writeRestricted;
     }
 
-    public boolean isCreateRestricted() {
+    public Access getCreateRestricted() {
         return createRestricted;
     }
 
-    public void setCreateRestricted(boolean createRestricted) {
+    public void setCreateRestricted(Access createRestricted) {
         this.createRestricted = createRestricted;
     }
 
-    public boolean isDeleteRestricted() {
+    public Access getDeleteRestricted() {
         return deleteRestricted;
     }
 
-    public void setDeleteRestricted(boolean deleteRestricted) {
+    public void setDeleteRestricted(Access deleteRestricted) {
         this.deleteRestricted = deleteRestricted;
+    }
+
+    @Override
+    public void init() {
     }
 
     @Override

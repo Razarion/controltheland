@@ -62,7 +62,7 @@ public class ContentContainer extends Panel {
             protected void populateItem(ListItem<DbContent> dbContentListItem) {
                 BeanIdPathElement childBeanIdPathElement = null;
                 if (dbContentListItem.getModelObject() instanceof DataProviderInfo) {
-                    childBeanIdPathElement = beanIdPathElement.createChild((DataProviderInfo) dbContentListItem.getModelObject(), null);
+                    childBeanIdPathElement = beanIdPathElement.createChildFromDataProviderInfo((DataProviderInfo) dbContentListItem.getModelObject());
                 }
                 dbContentListItem.add(cmsUiService.getComponent(dbContentListItem.getModelObject(), bean, "content", childBeanIdPathElement));
             }

@@ -35,8 +35,7 @@ public class ContentDynamicHtmlEditor extends MgmtWebPage {
         }));
         add(form);
 
-        form.add(new CheckBox("readRestricted"));
-        form.add(new CheckBox("writeRestricted"));
+        form.add(new ContentAccessPanel("accessPanel", true, false));
         form.add(new TextField("cssClass"));
         form.add(new CheckBox("escapeMarkup"));
 
