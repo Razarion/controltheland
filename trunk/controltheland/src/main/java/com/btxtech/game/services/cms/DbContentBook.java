@@ -75,6 +75,5 @@ public class DbContentBook extends DbContent implements DataProviderInfo, CrudPa
     @Override
     public void init() {
         dbContentRows = new ArrayList<DbContentRow>();
-        setupDefaultRights();
     }
 }

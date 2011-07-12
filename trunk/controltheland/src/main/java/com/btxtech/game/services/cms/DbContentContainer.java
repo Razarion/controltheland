@@ -60,7 +60,6 @@ public class DbContentContainer extends DbContent implements DataProviderInfo, C
     @Override
     public void init() {
         dbContents = new ArrayList<DbContent>();
-        setupDefaultRights();
     }
 
     public CrudListChildServiceHelper<DbContent> getContentCrud() {

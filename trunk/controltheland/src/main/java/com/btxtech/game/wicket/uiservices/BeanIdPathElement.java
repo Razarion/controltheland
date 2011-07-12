@@ -19,6 +19,7 @@ public class BeanIdPathElement implements Serializable {
     private String springBeanName;
     private String contentProviderGetter;
     private String expression;
+    private boolean childDetailPage = false;
 
     public BeanIdPathElement(DbPage dbPage, DbContent dbContent) {
         pageId = dbPage.getId();
@@ -89,30 +90,21 @@ public class BeanIdPathElement implements Serializable {
     }
 
     public boolean isChildDetailPage() {
-        return hasBeanId() && !hasSpringBeanName() && !hasContentProviderGetter()
-                && hasParent() && parent.hasSpringBeanName() && parent.hasSpringBeanName();
+        return childDetailPage;
     }
 
-    public BeanIdPathElement createChildFromContentProviderGetter(DataProviderInfo dataProviderInfo) {
+    public void setChildDetailPage(boolean childDetailPage) {
+        this.childDetailPage = childDetailPage;
+    }
+
+    public BeanIdPathElement createChildFromDataProviderInfo(DataProviderInfo dataProviderInfo) {
         BeanIdPathElement beanIdPathElement = new BeanIdPathElement();
         beanIdPathElement.parent = this;
-        beanIdPathElement.contentProviderGetter = dataProviderInfo.getContentProviderGetter();
+        beanIdPathElement.setDataProviderInfo(dataProviderInfo);
         return beanIdPathElement;
     }
 
-    public BeanIdPathElement createChild(DataProviderInfo dataProviderInfo, Object parentBean) {
-        BeanIdPathElement beanIdPathElement = new BeanIdPathElement();
-        beanIdPathElement.parent = this;
-        if (dataProviderInfo != null) {
-            beanIdPathElement.setDataProviderInfo(dataProviderInfo);
-        }
-        if (parentBean instanceof CrudChild) {
-            beanIdPathElement.setBeanId(((CrudChild) parentBean).getId());
-        }
-        return beanIdPathElement;
-    }
-
-    public BeanIdPathElement createChild(Serializable parentId) {
+    public BeanIdPathElement createChildFromBeanId(Serializable parentId) {
         BeanIdPathElement beanIdPathElement = new BeanIdPathElement();
         beanIdPathElement.parent = this;
         beanIdPathElement.setBeanId(parentId);

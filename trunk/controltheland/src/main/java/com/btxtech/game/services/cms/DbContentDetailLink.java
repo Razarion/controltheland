@@ -11,8 +11,4 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("CONTENT_DETAIL_LINK")
 public class DbContentDetailLink extends DbContent {
-    @Override
-    public void init() {
-        setupDefaultRights();
-    }
 }

@@ -38,10 +38,7 @@ public class ContentBookEditor extends MgmtWebPage {
         }));
         add(form);
 
-        form.add(new CheckBox("readRestricted"));
-        form.add(new CheckBox("writeRestricted"));
-        form.add(new CheckBox("createRestricted"));
-        form.add(new CheckBox("deleteRestricted"));
+        form.add(new ContentAccessPanel("accessPanel", true, true));
         form.add(new TextField("cssClass"));
         form.add(new TextField("className"));
         form.add(new TextField("springBeanName"));

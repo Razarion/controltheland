@@ -1,6 +1,8 @@
 package com.btxtech.game.services.cms;
 
 import com.btxtech.game.jsre.client.MovableService;
+import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
+import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.cms.impl.CmsServiceImpl;
@@ -251,7 +253,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         DbContentList dbContentList = new DbContentList();
         dbContentList.init();
-        dbPage1.setContent(dbContentList);
+        dbPage1.setContentAndAccessWrites(dbContentList);
         dbContentList.setRowsPerPage(5);
         dbContentList.setSpringBeanName("contentService");
         dbContentList.setContentProviderGetter("getBlogEntryCrudRootServiceHelper");
@@ -348,7 +350,92 @@ public class TestCmsService extends AbstractServiceTest {
 
         DbContentList dbContentList = new DbContentList();
         dbContentList.init();
-        dbPage1.setContent(dbContentList);
+        dbPage1.setContentAndAccessWrites(dbContentList);
+        dbContentList.setWriteRestricted(DbContent.Access.USER);
+        dbContentList.setRowsPerPage(5);
+        dbContentList.setSpringBeanName("contentService");
+        dbContentList.setContentProviderGetter("getBlogEntryCrudRootServiceHelper");
+
+        CrudListChildServiceHelper<DbContent> columnCrud = dbContentList.getColumnsCrud();
+        DbContentContainer dbContentContentContainer = (DbContentContainer) columnCrud.createDbChild(DbContentContainer.class);
+
+        DbExpressionProperty title = (DbExpressionProperty) dbContentContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
+        title.setExpression("name");
+        DbExpressionProperty date = (DbExpressionProperty) dbContentContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
+        date.setExpression("timeStamp");
+        date.setOptionalType(DbExpressionProperty.Type.DATE_DDMMYYYY_HH_MM_SS);
+        DbExpressionProperty html = (DbExpressionProperty) dbContentContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
+        html.setExpression("html");
+        html.setEscapeMarkup(false);
+
+        pageCrud.updateDbChild(dbPage1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+
+        // Create User
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("test", "test", "test", "");
+        userService.login("test", "test");
+        User user = userService.getUser();
+        DbContentAccessControl control = user.getContentCrud().createDbChild();
+        control.setDbContent(dbContentList);
+        control.setCreateAllowed(true);
+        control.setDeleteAllowed(true);
+        control.setWriteAllowed(true);
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        // Write
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertVisible("form:content:edit:edit");
+        FormTester formTester = tester.newFormTester("form");
+        formTester.submit("content:edit:edit");
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        formTester = tester.newFormTester("form");
+        formTester.submit("content:edit:create");
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        formTester = tester.newFormTester("form");
+        formTester.setValue("content:rows:1:cells:1:cell:listView:0:content:field", "Blog 1");
+        formTester.setValue("content:rows:1:cells:1:cell:listView:2:content:textArea", "Bla Bla");
+        formTester.submit("content:edit:save");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        Collection<DbBlogEntry> blog = contentService.getBlogEntryCrudRootServiceHelper().readDbChildren();
+        Assert.assertEquals(1, blog.size());
+        DbBlogEntry dbBlogEntry = blog.iterator().next();
+        Assert.assertEquals("Blog 1", dbBlogEntry.getName());
+        Assert.assertEquals("Bla Bla", dbBlogEntry.getHtml());
+    }
+
+    @Test
+    @DirtiesContext
+    public void testBlogWriteProtected() throws Exception {
+        configureMinimalGame();
+
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage1 = pageCrud.createDbChild();
+        dbPage1.setHome(true);
+        dbPage1.setName("Home");
+
+        DbContentList dbContentList = new DbContentList();
+        dbContentList.init();
+        dbPage1.setContentAndAccessWrites(dbContentList);
         dbContentList.setRowsPerPage(5);
         dbContentList.setSpringBeanName("contentService");
         dbContentList.setContentProviderGetter("getBlogEntryCrudRootServiceHelper");
@@ -402,29 +489,8 @@ public class TestCmsService extends AbstractServiceTest {
         // Write
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
-        tester.assertVisible("form:content:edit:edit");
-        FormTester formTester = tester.newFormTester("form");
-        formTester.submit("content:edit:edit");
+        tester.assertInvisible("form:content:edit:edit");
         endHttpRequestAndOpenSessionInViewFilter();
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-        formTester = tester.newFormTester("form");
-        formTester.submit("content:edit:create");
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-        formTester = tester.newFormTester("form");
-        formTester.setValue("content:rows:1:cells:1:cell:listView:0:content:field", "Blog 1");
-        formTester.setValue("content:rows:1:cells:1:cell:listView:2:content:textArea", "Bla Bla");
-        formTester.submit("content:edit:save");
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        Collection<DbBlogEntry> blog = contentService.getBlogEntryCrudRootServiceHelper().readDbChildren();
-        Assert.assertEquals(1, blog.size());
-        DbBlogEntry dbBlogEntry = blog.iterator().next();
-        Assert.assertEquals("Blog 1", dbBlogEntry.getName());
-        Assert.assertEquals("Bla Bla", dbBlogEntry.getHtml());
     }
 
     @Test
@@ -442,10 +508,11 @@ public class TestCmsService extends AbstractServiceTest {
 
         DbContentList dbContentList = new DbContentList();
         dbContentList.init();
-        dbPage1.setContent(dbContentList);
+        dbPage1.setContentAndAccessWrites(dbContentList);
         dbContentList.setRowsPerPage(5);
         dbContentList.setSpringBeanName("contentService");
         dbContentList.setContentProviderGetter("getWikiSectionCrudRootServiceHelper");
+        dbContentList.setWriteRestricted(DbContent.Access.REGISTERED_USER);
 
         CrudListChildServiceHelper<DbContent> columnCrud = dbContentList.getColumnsCrud();
         DbExpressionProperty nameProperty = (DbExpressionProperty) columnCrud.createDbChild(DbExpressionProperty.class);
@@ -481,23 +548,6 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("test", "test", "test", "");
         userService.login("test", "test");
-        User user = userService.getUser();
-        DbContentAccessControl control = user.getContentCrud().createDbChild();
-        control.setDbContent(dbContentList);
-        control.setCreateAllowed(true);
-        control.setDeleteAllowed(true);
-        control.setWriteAllowed(true);
-        control = user.getContentCrud().createDbChild();
-        control.setDbContent(nameProperty);
-        control.setCreateAllowed(true);
-        control.setDeleteAllowed(true);
-        control.setWriteAllowed(true);
-        control = user.getContentCrud().createDbChild();
-        control.setDbContent(expProperty);
-        control.setCreateAllowed(true);
-        control.setDeleteAllowed(true);
-        control.setWriteAllowed(true);
-
         endHttpRequestAndOpenSessionInViewFilter();
 
         // Write
@@ -558,7 +608,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         DbContentDynamicHtml dbContentDynamicHtml = new DbContentDynamicHtml();
         dbContentDynamicHtml.init();
-        dbPage1.setContent(dbContentDynamicHtml);
+        dbPage1.setContentAndAccessWrites(dbContentDynamicHtml);
         pageCrud.updateDbChild(dbPage1);
 
         endHttpRequestAndOpenSessionInViewFilter();
@@ -597,7 +647,8 @@ public class TestCmsService extends AbstractServiceTest {
 
         DbContentDynamicHtml dbContentDynamicHtml = new DbContentDynamicHtml();
         dbContentDynamicHtml.init();
-        dbPage1.setContent(dbContentDynamicHtml);
+        dbPage1.setContentAndAccessWrites(dbContentDynamicHtml);
+        dbContentDynamicHtml.setWriteRestricted(DbContent.Access.ALLOWED);
 
         pageCrud.updateDbChild(dbPage1);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -612,7 +663,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpSession();
 
         // Create User
-        beginHttpRequestAndOpenSessionInViewFilter();
+      /*  beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("test", "test", "test", "");
         userService.login("test", "test");
         User user = userService.getUser();
@@ -621,7 +672,7 @@ public class TestCmsService extends AbstractServiceTest {
         control.setCreateAllowed(true);
         control.setDeleteAllowed(true);
         control.setWriteAllowed(true);
-        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpRequestAndOpenSessionInViewFilter();  */
 
         // Write
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -632,7 +683,6 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        //tester.debugComponentTrees();
         formTester = tester.newFormTester("form");
         formTester.setValue("content:htmlTextArea", "qaywsxedc");
         formTester.submit("content:edit:save");
@@ -657,7 +707,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         DbContentList dbContentList = new DbContentList();
         dbContentList.init();
-        dbPage1.setContent(dbContentList);
+        dbPage1.setContentAndAccessWrites(dbContentList);
         dbContentList.setRowsPerPage(5);
         dbContentList.setSpringBeanName("marketService");
         dbContentList.setContentProviderGetter("getAvailableCrud");
@@ -706,7 +756,6 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
         tester.assertLabel("form:content:rows:1:cells:1:cell:listView:2:content", TEST_SIMPLE_BUILDING);
-        tester.debugComponentTrees();
         tester.assertInvisible("form:content:rows:1:cells:1:cell:listView:3:content:button");
         tester.assertLabel("form:content:rows:1:cells:1:cell:listView:3:content:label", "UnfilledText");
         tester.assertVisible("form:content:rows:1:cells:1:cell:listView:3:content:label");
@@ -731,11 +780,18 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpSession();
     }
 
-    @Test
-    @DirtiesContext
-    public void testForum() throws Exception {
-        configureMinimalGame();
+    private void fillForum() throws UserAlreadyExistsException, PasswordNotMatchException {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // Setup und login user and fill forum
+        userService.createUser("U1", "test", "test", "test");
+        userService.login("U1", "test");
+        TestForum.fillForum(forumService, userService);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
 
+    private void setupForumStructure() throws UserAlreadyExistsException, PasswordNotMatchException {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         // Setup CMS content
@@ -746,7 +802,10 @@ public class TestCmsService extends AbstractServiceTest {
 
         DbContentList dbContentList = new DbContentList();
         dbContentList.init();
-        dbPage1.setContent(dbContentList);
+        dbPage1.setContentAndAccessWrites(dbContentList);
+        dbContentList.setWriteRestricted(DbContent.Access.USER);
+        dbContentList.setCreateRestricted(DbContent.Access.USER);
+        dbContentList.setDeleteRestricted(DbContent.Access.USER);
         dbContentList.setSpringBeanName("forumService");
         dbContentList.setContentProviderGetter("getSubForumCrud");
 
@@ -761,8 +820,8 @@ public class TestCmsService extends AbstractServiceTest {
 
         DbExpressionProperty nameCat = (DbExpressionProperty) categories.getColumnsCrud().createDbChild(DbExpressionProperty.class);
         nameCat.setExpression("name");
-        DbExpressionProperty lastPostCat = (DbExpressionProperty) categories.getColumnsCrud().createDbChild(DbExpressionProperty.class);
-        lastPostCat.setExpression("lastPost");
+        //DbExpressionProperty lastPostCat = (DbExpressionProperty) categories.getColumnsCrud().createDbChild(DbExpressionProperty.class);
+        //lastPostCat.setExpression("lastPost");
         DbContentDetailLink categoryLink = (DbContentDetailLink) categories.getColumnsCrud().createDbChild(DbContentDetailLink.class);
         categoryLink.setName("details");
 
@@ -792,7 +851,6 @@ public class TestCmsService extends AbstractServiceTest {
         postColumnName.setExpression("name");
         threadNameRow.setDbContent(postColumnName);
 
-
         DbContentRow postsNameRow = postContentBook.getRowCrud().createDbChild();
         DbContentList postName = new DbContentList();
         postName.setParent(postsNameRow);
@@ -802,19 +860,12 @@ public class TestCmsService extends AbstractServiceTest {
         DbContentRow postsContentRow = postContentBook.getRowCrud().createDbChild();
         DbExpressionProperty postContent = (DbExpressionProperty) postName.getColumnsCrud().createDbChild(DbExpressionProperty.class);
         postContent.setExpression("content");
+        postContent.setEscapeMarkup(false);
         postContent.setParent(postsContentRow);
         postName.setContentProviderGetter("getPostCrud");
         postsContentRow.setDbContent(postContent);
 
-
         pageCrud.updateDbChild(dbPage1);
-        endHttpRequestAndOpenSessionInViewFilter();
-
-        beginHttpRequestAndOpenSessionInViewFilter();
-        // Setup und login user and fill forum
-        userService.createUser("U1", "test", "test", "test");
-        userService.login("U1", "test");
-        TestForum.fillForum(forumService, userService);
         endHttpRequestAndOpenSessionInViewFilter();
 
         // Activate
@@ -822,25 +873,331 @@ public class TestCmsService extends AbstractServiceTest {
         cmsService.activateCms();
         endHttpRequestAndOpenSessionInViewFilter();
 
+        // Create User with forum rights
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("forum", "forum", "forum", "");
+        userService.login("forum", "forum");
+        User user = userService.getUser();
+        DbContentAccessControl control = user.getContentCrud().createDbChild();
+        control.setDbContent(dbContentList);
+        control.setCreateAllowed(true);
+        control.setDeleteAllowed(true);
+        control.setWriteAllowed(true);
+        userService.save(user);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testForum() throws Exception {
+        configureMinimalGame();
+
+        setupForumStructure();
+
+        fillForum();
+
         // Verify
+        beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
         tester.assertLabel("form:content:rows:1:cells:1:cell:listView:0:content", "SubForumName1");
         tester.assertLabel("form:content:rows:1:cells:1:cell:listView:1:content", "SubForumContent1");
         tester.assertLabel("form:content:rows:1:cells:1:cell:listView:2:content:rows:1:cells:1:cell", "CategoryName1");
+        tester.assertInvisible("form:content:edit:edit");
+        tester.assertInvisible("form:content:edit:create");
+        tester.assertInvisible("form:content:edit:save");
+        tester.assertInvisible("form:content:edit:delete");
+        tester.assertInvisible("form:content:edit:cancelEdit");
         // Click the category link
-        tester.clickLink("form:content:rows:1:cells:1:cell:listView:2:content:rows:1:cells:3:cell:link");
+        tester.clickLink("form:content:rows:1:cells:1:cell:listView:2:content:rows:1:cells:2:cell:link");
         tester.assertLabel("form:content:dataTable:body:rows:1:cells:2:cell", "CategoryName1");
         tester.assertLabel("form:content:dataTable:body:rows:2:cells:2:cell:rows:1:cells:1:cell", "ForumThreadName1");
+        tester.assertInvisible("form:content:edit:edit");
+        tester.assertInvisible("form:content:edit:create");
+        tester.assertInvisible("form:content:edit:save");
+        tester.assertInvisible("form:content:edit:delete");
+        tester.assertInvisible("form:content:edit:cancelEdit");
         // Click the thread link
         tester.clickLink("form:content:dataTable:body:rows:2:cells:2:cell:rows:1:cells:2:cell:link");
         tester.assertLabel("form:content:dataTable:body:rows:1:cells:2:cell", "ForumThreadName1");
         tester.assertLabel("form:content:dataTable:body:rows:2:cells:2:cell:rows:1:cells:1:cell", "PostContent1");
+        tester.assertInvisible("form:content:edit:edit");
+        tester.assertInvisible("form:content:edit:create");
+        tester.assertInvisible("form:content:edit:save");
+        tester.assertInvisible("form:content:edit:delete");
+        tester.assertInvisible("form:content:edit:cancelEdit");
         endHttpRequestAndOpenSessionInViewFilter();
-
         endHttpSession();
     }
 
+    @Test
+    @DirtiesContext
+    public void testForumAdmin() throws Exception {
+        configureMinimalGame();
+
+        setupForumStructure();
+
+        fillForum();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("forum", "forum");
+
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("form:content:rows:1:cells:1:cell:listView:0:content", "SubForumName1");
+        tester.assertLabel("form:content:rows:1:cells:1:cell:listView:1:content", "SubForumContent1");
+        tester.assertLabel("form:content:rows:1:cells:1:cell:listView:2:content:rows:1:cells:1:cell", "CategoryName1");
+        tester.assertVisible("form:content:edit:edit");
+        tester.assertInvisible("form:content:edit:create");
+        tester.assertInvisible("form:content:edit:save");
+        tester.assertInvisible("form:content:edit:delete");
+        tester.assertInvisible("form:content:edit:cancelEdit");
+        // Click the category link
+        tester.clickLink("form:content:rows:1:cells:1:cell:listView:2:content:rows:1:cells:2:cell:link");
+        tester.assertLabel("form:content:dataTable:body:rows:1:cells:2:cell", "CategoryName1");
+        tester.assertLabel("form:content:dataTable:body:rows:2:cells:2:cell:rows:1:cells:1:cell", "ForumThreadName1");
+        tester.assertVisible("form:content:edit:edit");
+        tester.assertInvisible("form:content:edit:create");
+        tester.assertInvisible("form:content:edit:save");
+        tester.assertInvisible("form:content:edit:delete");
+        tester.assertInvisible("form:content:edit:cancelEdit");
+        // Click the thread link
+        tester.clickLink("form:content:dataTable:body:rows:2:cells:2:cell:rows:1:cells:2:cell:link");
+        tester.assertLabel("form:content:dataTable:body:rows:1:cells:2:cell", "ForumThreadName1");
+        tester.assertLabel("form:content:dataTable:body:rows:2:cells:2:cell:rows:1:cells:1:cell", "PostContent1");
+        tester.assertVisible("form:content:edit:edit");
+        tester.assertInvisible("form:content:edit:create");
+        tester.assertInvisible("form:content:edit:save");
+        tester.assertInvisible("form:content:edit:delete");
+        tester.assertInvisible("form:content:edit:cancelEdit");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testForumAdminSubForumEdit() throws Exception {
+        configureMinimalGame();
+
+        setupForumStructure();
+
+        fillForum();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("forum", "forum");
+
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("form:content:rows:1:cells:1:cell:listView:0:content", "SubForumName1");
+        tester.assertLabel("form:content:rows:1:cells:1:cell:listView:1:content", "SubForumContent1");
+        tester.assertLabel("form:content:rows:1:cells:1:cell:listView:2:content:rows:1:cells:1:cell", "CategoryName1");
+        tester.assertVisible("form:content:edit:edit");
+        tester.assertInvisible("form:content:edit:create");
+        tester.assertInvisible("form:content:edit:save");
+        tester.assertInvisible("form:content:edit:delete");
+        tester.assertInvisible("form:content:edit:cancelEdit");
+        // Click the Edit button
+        FormTester formTester = tester.newFormTester("form");
+        formTester.submit("content:edit:edit");
+        tester.assertInvisible("form:content:edit:edit");
+        tester.assertVisible("form:content:edit:create");
+        tester.assertVisible("form:content:edit:save");
+        tester.assertInvisible("form:content:edit:delete");
+        tester.assertVisible("form:content:edit:cancelEdit");
+        // Fill invalues and press save
+        formTester = tester.newFormTester("form");
+        formTester.setValue("content:rows:2:cells:1:cell:listView:0:content:field", "SubForumName2");
+        formTester.setValue("content:rows:2:cells:1:cell:listView:1:content:field", "SubForumContent2");
+        formTester.setValue("content:rows:2:cells:1:cell:listView:2:content:rows:1:cells:1:cell:field", "CategoryName2");
+        formTester.submit("content:edit:save");
+        tester.newFormTester("form").submit("content:edit:cancelEdit");
+        tester.assertVisible("form:content:edit:edit");
+        tester.assertInvisible("form:content:edit:create");
+        tester.assertInvisible("form:content:edit:save");
+        tester.assertInvisible("form:content:edit:delete");
+        tester.assertInvisible("form:content:edit:cancelEdit");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("form:content:rows:1:cells:1:cell:listView:0:content", "SubForumName2");
+        tester.assertLabel("form:content:rows:1:cells:1:cell:listView:1:content", "SubForumContent2");
+        tester.assertLabel("form:content:rows:1:cells:1:cell:listView:2:content:rows:1:cells:1:cell", "CategoryName2");
+        tester.assertInvisible("form:content:edit:edit");
+        tester.assertInvisible("form:content:edit:create");
+        tester.assertInvisible("form:content:edit:save");
+        tester.assertInvisible("form:content:edit:delete");
+        tester.assertInvisible("form:content:edit:cancelEdit");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testForumAdminCategoryEdit() throws Exception {
+        configureMinimalGame();
+
+        setupForumStructure();
+
+        fillForum();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("forum", "forum");
+
+        tester.startPage(CmsPage.class);
+        // Click the Edit button
+        tester.newFormTester("form").submit("content:edit:edit");
+        // Click the category link
+        tester.clickLink("form:content:rows:2:cells:1:cell:listView:2:content:rows:1:cells:2:cell:link");
+        tester.assertInvisible("form:content:edit:edit");
+        tester.assertInvisible("form:content:edit:create");
+        tester.assertVisible("form:content:edit:save");
+        tester.assertInvisible("form:content:edit:delete");
+        tester.assertVisible("form:content:edit:cancelEdit");
+        // Fill in values and press save
+        FormTester formTester = tester.newFormTester("form");
+        formTester.setValue("content:dataTable:body:rows:1:cells:2:cell:field", "CategoryName2");
+        formTester.setValue("content:dataTable:body:rows:2:cells:2:cell:rows:1:cells:1:cell:field", "ForumThreadName2");
+        formTester.submit("content:edit:save");
+        tester.newFormTester("form").submit("content:edit:cancelEdit");
+        tester.assertVisible("form:content:edit:edit");
+        tester.assertInvisible("form:content:edit:create");
+        tester.assertInvisible("form:content:edit:save");
+        tester.assertInvisible("form:content:edit:delete");
+        tester.assertInvisible("form:content:edit:cancelEdit");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.clickLink("form:content:rows:1:cells:1:cell:listView:2:content:rows:1:cells:2:cell:link");
+        tester.assertLabel("form:content:dataTable:body:rows:1:cells:2:cell", "CategoryName2");
+        tester.assertLabel("form:content:dataTable:body:rows:2:cells:2:cell:rows:1:cells:1:cell", "ForumThreadName2");        
+        tester.assertInvisible("form:content:edit:edit");
+        tester.assertInvisible("form:content:edit:create");
+        tester.assertInvisible("form:content:edit:save");
+        tester.assertInvisible("form:content:edit:delete");
+        tester.assertInvisible("form:content:edit:cancelEdit");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testForumAdminCategoryEdit2() throws Exception {
+        configureMinimalGame();
+
+        setupForumStructure();
+
+        fillForum();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("forum", "forum");
+
+        tester.startPage(CmsPage.class);
+        // Click the category link
+        tester.clickLink("form:content:rows:1:cells:1:cell:listView:2:content:rows:1:cells:2:cell:link");
+        // Click the Edit button
+        tester.newFormTester("form").submit("content:edit:edit");
+        tester.assertInvisible("form:content:edit:edit");
+        tester.assertInvisible("form:content:edit:create");
+        tester.assertVisible("form:content:edit:save");
+        tester.assertInvisible("form:content:edit:delete");
+        tester.assertVisible("form:content:edit:cancelEdit");
+        // Fill in values and press save
+        FormTester formTester = tester.newFormTester("form");
+        formTester.setValue("content:dataTable:body:rows:3:cells:2:cell:field", "CategoryName2");
+        formTester.setValue("content:dataTable:body:rows:4:cells:2:cell:rows:1:cells:1:cell:field", "ForumThreadName2");
+        formTester.submit("content:edit:save");
+        tester.newFormTester("form").submit("content:edit:cancelEdit");
+        tester.assertVisible("form:content:edit:edit");
+        tester.assertInvisible("form:content:edit:create");
+        tester.assertInvisible("form:content:edit:save");
+        tester.assertInvisible("form:content:edit:delete");
+        tester.assertInvisible("form:content:edit:cancelEdit");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.clickLink("form:content:rows:1:cells:1:cell:listView:2:content:rows:1:cells:2:cell:link");
+        tester.assertLabel("form:content:dataTable:body:rows:1:cells:2:cell", "CategoryName2");
+        tester.assertLabel("form:content:dataTable:body:rows:2:cells:2:cell:rows:1:cells:1:cell", "ForumThreadName2");
+        tester.assertInvisible("form:content:edit:edit");
+        tester.assertInvisible("form:content:edit:create");
+        tester.assertInvisible("form:content:edit:save");
+        tester.assertInvisible("form:content:edit:delete");
+        tester.assertInvisible("form:content:edit:cancelEdit");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testForumAdminThreadEdit2() throws Exception {
+        configureMinimalGame();
+
+        setupForumStructure();
+
+        fillForum();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("forum", "forum");
+
+        tester.startPage(CmsPage.class);
+        // Click the category link
+        tester.clickLink("form:content:rows:1:cells:1:cell:listView:2:content:rows:1:cells:2:cell:link");
+        // Click the thread link
+        tester.clickLink("form:content:dataTable:body:rows:2:cells:2:cell:rows:1:cells:2:cell:link");
+        // Click the Edit button
+        tester.newFormTester("form").submit("content:edit:edit");
+        tester.assertInvisible("form:content:edit:edit");
+        tester.assertInvisible("form:content:edit:create");
+        tester.assertVisible("form:content:edit:save");
+        tester.assertInvisible("form:content:edit:delete");
+        tester.assertVisible("form:content:edit:cancelEdit");
+        // Fill in values and press save
+        FormTester formTester = tester.newFormTester("form");
+        formTester.setValue("content:dataTable:body:rows:4:cells:2:cell:field", "ForumThreadName5");
+        formTester.setValue("content:dataTable:body:rows:5:cells:2:cell:rows:1:cells:1:cell:textArea", "PostContent6");
+        formTester.submit("content:edit:save");
+        tester.newFormTester("form").submit("content:edit:cancelEdit");
+        tester.assertVisible("form:content:edit:edit");
+        tester.assertInvisible("form:content:edit:create");
+        tester.assertInvisible("form:content:edit:save");
+        tester.assertInvisible("form:content:edit:delete");
+        tester.assertInvisible("form:content:edit:cancelEdit");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.clickLink("form:content:rows:1:cells:1:cell:listView:2:content:rows:1:cells:2:cell:link");
+        tester.clickLink("form:content:dataTable:body:rows:2:cells:2:cell:rows:1:cells:2:cell:link");
+        tester.assertLabel("form:content:dataTable:body:rows:1:cells:2:cell", "ForumThreadName5");
+        tester.assertLabel("form:content:dataTable:body:rows:2:cells:2:cell:rows:1:cells:1:cell", "PostContent6");
+        tester.assertInvisible("form:content:edit:edit");
+        tester.assertInvisible("form:content:edit:create");
+        tester.assertInvisible("form:content:edit:save");
+        tester.assertInvisible("form:content:edit:delete");
+        tester.assertInvisible("form:content:edit:cancelEdit");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
 
     @Test
     @DirtiesContext
@@ -858,7 +1215,7 @@ public class TestCmsService extends AbstractServiceTest {
         DbContentList dbContentList = new DbContentList();
         dbContentList.setRowsPerPage(5);
         dbContentList.init();
-        dbPage.setContent(dbContentList);
+        dbPage.setContentAndAccessWrites(dbContentList);
         dbContentList.setSpringBeanName("userGuidanceService");
         dbContentList.setContentProviderGetter("getDbLevelCrudServiceHelper");
 
@@ -911,7 +1268,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbContentRow.setName("Allowed Items");
         DbContentList dbContentListItems = new DbContentList();
         dbContentListItems.setParent(dbContentRow);
-        dbContentRow.setDbContent(dbContentListItems);        
+        dbContentRow.setDbContent(dbContentListItems);
         dbContentListItems.init();
         dbContentListItems.setContentProviderGetter("getDbItemTypeLimitationCrudServiceHelper");
         columnCrud = dbContentListItems.getColumnsCrud();
@@ -954,7 +1311,6 @@ public class TestCmsService extends AbstractServiceTest {
         // Back to home an click a real level
         tester.startPage(CmsPage.class);
         tester.clickLink("form:content:rows:2:cells:2:cell:link");
-        tester.debugComponentTrees();
         tester.assertLabel("form:content:dataTable:body:rows:1:cells:2:cell", "TEST_LEVEL_2_REAL");
         // Item limitations list
         // unpredictable order tester.assertLabel("form:content:dataTable:body:rows:3:cells:2:cell:rows:1:cells:1:cell", "TestAttackItem");

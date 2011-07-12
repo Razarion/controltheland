@@ -54,7 +54,7 @@ public class PageEditor extends MgmtWebPage {
                 try {
                     Constructor<? extends DbContent> constructor = selected.getConstructor();
                     DbContent dbContent = constructor.newInstance();
-                    form.getModelObject().setContent(dbContent);
+                    form.getModelObject().setContentAndAccessWrites(dbContent);
                     ruServiceHelper.updateDbEntity(form.getModelObject());
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -83,7 +83,7 @@ public class PageEditor extends MgmtWebPage {
 
             @Override
             public void onSubmit() {
-                form.getModelObject().setContent(null);
+                form.getModelObject().setContentAndAccessWrites(null);
                 ruServiceHelper.updateDbEntity(form.getModelObject());
             }
 

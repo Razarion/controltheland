@@ -32,7 +32,7 @@ public class ContentLinkEditor extends MgmtWebPage {
             }
         }));
         add(form);
-        form.add(new CheckBox("readRestricted"));
+        form.add(new ContentAccessPanel("accessPanel", false, false));
         form.add(new TextField("cssClass"));
         form.add(new TextField("url"));
         form.add(new CmsImageSelector("dbCmsImage"));

@@ -39,9 +39,4 @@ public class DbContentRow extends DbContent {
 
         }
     }
-
-    @Override
-    public void init() {
-        setupDefaultRights();
-    }
 }

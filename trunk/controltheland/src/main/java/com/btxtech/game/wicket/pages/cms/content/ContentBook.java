@@ -53,7 +53,7 @@ public class ContentBook extends Panel {
                 bean = null;
             }
         });
-        add(new EditPanel("edit", contentId, beanIdPathElement, false, false));        
+        add(new EditPanel("edit", contentId, beanIdPathElement, false, false));
         setupPropertyBook();
         if (dbContentBook.getCssClass() != null) {
             add(new SimpleAttributeModifier("class", dbContentBook.getCssClass()));
@@ -78,7 +78,7 @@ public class ContentBook extends Panel {
             public void populateItem(Item<ICellPopulator<DbContentRow>> cellItem, String componentId, IModel<DbContentRow> rowModel) {
                 BeanIdPathElement childBeanIdPathElement = null;
                 if (rowModel.getObject().getDbContent() instanceof DataProviderInfo) {
-                    childBeanIdPathElement = beanIdPathElement.createChild((DataProviderInfo) rowModel.getObject().getDbContent(), null);
+                    childBeanIdPathElement = beanIdPathElement.createChildFromDataProviderInfo((DataProviderInfo) rowModel.getObject().getDbContent());
                 }
                 cellItem.add(cmsUiService.getComponent(rowModel.getObject().getDbContent(), bean, componentId, childBeanIdPathElement));
             }

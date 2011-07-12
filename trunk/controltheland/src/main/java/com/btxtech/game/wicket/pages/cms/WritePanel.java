@@ -44,16 +44,16 @@ public class WritePanel extends Panel {
                 return ((DbExpressionProperty) cmsService.getDbContent(contentId)).getEscapeMarkup();
             }
         });
-        TextArea<String> contentArea = new TextArea<String>("textArea", new LoadableDetachableModel<String>() {
+        TextArea contentArea = new TextArea("textArea", new LoadableDetachableModel() {
             @Override
-            public void setObject(String s) {
+            public void setObject(Object s) {
                 super.setObject(s);
                 cmsUiService.setDataProviderBean(s, beanIdPathElement, contentId);
             }
 
             @Override
-            protected String load() {
-                return (String) cmsUiService.getDataProviderBean(beanIdPathElement);
+            protected Object load() {
+                return cmsUiService.getDataProviderBean(beanIdPathElement);
             }
         }) {
             @Override

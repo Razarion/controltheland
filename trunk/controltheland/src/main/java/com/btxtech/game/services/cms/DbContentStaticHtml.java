@@ -31,9 +31,4 @@ public class DbContentStaticHtml extends DbContent {
     public boolean getEscapeMarkup() {
         return escapeMarkup;
     }
-
-    @Override
-    public void init() {
-        setupDefaultRights();
-    }    
 }
