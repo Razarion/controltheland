@@ -6,7 +6,6 @@ import com.btxtech.game.services.cms.DbContentDetailLink;
 import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.wicket.pages.cms.EditPanel;
-import com.btxtech.game.wicket.pages.mgmt.cms.CreateCreateEditPanel;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
@@ -15,6 +14,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.grid.DataGridView;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.HeaderlessColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
@@ -39,13 +39,15 @@ public class ContentList extends Panel {
         super(id);
         this.beanIdPathElement = beanIdPathElement;
         contentId = dbContentList.getId();
-        setupDetailTable(dbContentList);
+        WebMarkupContainer table = new WebMarkupContainer("table");
+        add(table);
+        setupDetailTable(table, dbContentList);
         if (dbContentList.getCssClass() != null) {
-            add(new SimpleAttributeModifier("class", dbContentList.getCssClass()));
+            table.add(new SimpleAttributeModifier("class", dbContentList.getCssClass()));
         }
     }
 
-    private void setupDetailTable(DbContentList dbContentList) {
+    private void setupDetailTable(WebMarkupContainer table, DbContentList dbContentList) {
 
         List<IColumn> columns = new ArrayList<IColumn>();
         for (DbContent dbContent : dbContentList.getColumnsCrud().readDbChildren()) {
@@ -73,14 +75,16 @@ public class ContentList extends Panel {
 
         // Edit stuff
         add(new EditPanel("edit", dbContentList, contentId, beanIdPathElement, true, false));
-        columns.add(new HeaderlessColumn<Object>() {
+        if (cmsUiService.isEnterEditModeAllowed(contentId, beanIdPathElement)) {
+            columns.add(new HeaderlessColumn<Object>() {
 
-            @Override
-            public void populateItem(Item<ICellPopulator<Object>> cellItem, String componentId, IModel<Object> rowModel) {
-                BeanIdPathElement childBeanIdPathElement = beanIdPathElement.createChildFromBeanId(((CrudChild) rowModel.getObject()).getId());
-                cellItem.add(new EditPanel(componentId, null,contentId, childBeanIdPathElement, false, true));
-            }
-        });
+                @Override
+                public void populateItem(Item<ICellPopulator<Object>> cellItem, String componentId, IModel<Object> rowModel) {
+                    BeanIdPathElement childBeanIdPathElement = beanIdPathElement.createChildFromBeanId(((CrudChild) rowModel.getObject()).getId());
+                    cellItem.add(new EditPanel(componentId, null, contentId, childBeanIdPathElement, false, true));
+                }
+            });
+        }
 
 
         DetachHashListProvider detachHashListProvider = new DetachHashListProvider() {
@@ -92,7 +96,7 @@ public class ContentList extends Panel {
 
         @SuppressWarnings("unchecked")
         DataGridView dataGridView = new DataGridView("rows", columns, detachHashListProvider);
-        add(dataGridView);
+        table.add(dataGridView);
         PagingNavigator pagingNavigator = new PagingNavigator("navigator", dataGridView);
         if (dbContentList.isPageable()) {
             dataGridView.setRowsPerPage(dbContentList.getRowsPerPage());
