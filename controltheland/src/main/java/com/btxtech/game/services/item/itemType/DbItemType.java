@@ -32,7 +32,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 
 import com.btxtech.game.services.common.CrudChild;
-import org.hibernate.annotations.Cascade;
+import com.btxtech.game.services.user.UserService;
 
 /**
  * User: beat
@@ -185,7 +185,7 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
     }
 
     @Override

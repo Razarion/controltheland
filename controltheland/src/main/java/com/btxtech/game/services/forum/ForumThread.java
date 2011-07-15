@@ -85,7 +85,9 @@ public class ForumThread extends AbstractForumEntry implements CrudChild<Categor
         super.setContent(null);
         // Fist post
         // Threads do not have a content
-        posts.get(0).setContent(content);
+        if (posts != null && posts.size() == 1) {
+            posts.get(0).setContent(content);
+        }
     }
 
     @Override
@@ -96,14 +98,11 @@ public class ForumThread extends AbstractForumEntry implements CrudChild<Categor
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
+        setDate();
         posts = new ArrayList<Post>();
         // There is never an empty thread
-        Post post = new Post();
-        post.setParent(this);
-        post.init();
-        posts.add(post);
-        setDate();
+        getPostCrud().createDbChild(userService);
     }
 
     @Override
@@ -111,9 +110,9 @@ public class ForumThread extends AbstractForumEntry implements CrudChild<Categor
         setCategory(category);
     }
 
-    public CrudListChildServiceHelper<Post> getPostCrud(UserService userService) {
+    public CrudListChildServiceHelper<Post> getPostCrud() {
         if (postCrud == null) {
-            postCrud = new CrudListChildServiceHelper<Post>(posts, Post.class, this, userService, "user");
+            postCrud = new CrudListChildServiceHelper<Post>(posts, Post.class, this, "user");
         }
         return postCrud;
     }

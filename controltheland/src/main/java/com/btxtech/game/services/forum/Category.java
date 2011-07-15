@@ -72,7 +72,7 @@ public class Category extends AbstractForumEntry implements CrudChild<SubForum>,
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
         forumThreads = new ArrayList<ForumThread>();
         setDate();
     }
@@ -82,9 +82,9 @@ public class Category extends AbstractForumEntry implements CrudChild<SubForum>,
         setSubForum(subForum);
     }
 
-    public CrudListChildServiceHelper<ForumThread> getForumThreadCrud(UserService userService) {
+    public CrudListChildServiceHelper<ForumThread> getForumThreadCrud() {
         if(forumThreadCrud == null) {
-            forumThreadCrud = new CrudListChildServiceHelper<ForumThread>(forumThreads, ForumThread.class, this, userService, "user");
+            forumThreadCrud = new CrudListChildServiceHelper<ForumThread>(forumThreads, ForumThread.class, this, "user");
         }
         return forumThreadCrud;
     }

@@ -81,7 +81,7 @@ public class ContentBookEditor extends MgmtWebPage {
                             // Should not be here -> put to service class
                             DbContentRow dbContentRow = createDbChild();
                             DbContent dbContent = selected.getConstructor().newInstance();
-                            dbContent.init();
+                            dbContent.init(null);
                             dbContent.setParent(dbContentRow);
                             dbContentRow.setDbContent(dbContent);
                             getRuServiceHelper().updateDbEntity(form.getModelObject());

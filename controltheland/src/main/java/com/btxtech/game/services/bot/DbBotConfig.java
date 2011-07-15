@@ -18,6 +18,7 @@ import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.db.RectangleUserType;
+import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.*;
 
 import javax.persistence.CascadeType;
@@ -167,7 +168,7 @@ public class DbBotConfig implements CrudChild, CrudParent {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
         actionDelay = 3000;
         baseBuildup = new HashSet<DbBotItemCount>();
         baseFundamental = new HashSet<DbBotItemCount>();

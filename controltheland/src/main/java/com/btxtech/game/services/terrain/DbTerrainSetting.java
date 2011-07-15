@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
+import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
@@ -149,7 +150,7 @@ public class DbTerrainSetting implements CrudParent, CrudChild, Serializable {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
         tileXCount = 50;
         tileYCount = 50;
         tileHeight = 100;

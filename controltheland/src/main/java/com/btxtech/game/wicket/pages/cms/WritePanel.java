@@ -22,6 +22,7 @@ public class WritePanel extends Panel {
     private CmsUiService cmsUiService;
     @SpringBean
     private CmsService cmsService;
+    private TextArea contentArea2;
 
     public WritePanel(String id, Object value, final BeanIdPathElement beanIdPathElement, DbExpressionProperty dbExpressionProperty) {
         super(id);
@@ -48,6 +49,7 @@ public class WritePanel extends Panel {
             @Override
             public void setObject(Object s) {
                 super.setObject(s);
+                System.out.println(contentArea2.getPath());
                 cmsUiService.setDataProviderBean(s, beanIdPathElement, contentId);
             }
 
@@ -61,6 +63,7 @@ public class WritePanel extends Panel {
                 return !((DbExpressionProperty) cmsService.getDbContent(contentId)).getEscapeMarkup();
             }
         };
+        contentArea2 = contentArea;
         TinyMCESettings tinyMCESettings = new TinyMCESettings(TinyMCESettings.Theme.advanced);
         tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.link, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after);
         tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.unlink, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after);

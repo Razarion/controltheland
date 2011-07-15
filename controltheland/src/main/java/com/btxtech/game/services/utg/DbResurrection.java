@@ -3,9 +3,9 @@ package com.btxtech.game.services.utg;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.territory.DbTerritory;
+import com.btxtech.game.services.user.UserService;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -76,7 +76,7 @@ public class DbResurrection implements CrudChild {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
     }
 
     @Override

@@ -143,12 +143,17 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
     }
 
     @Override
+    public T createDbChild(UserService userService) {
+        return createDbChild();
+    }
+
+    @Override
     @Transactional
     public T createDbChild(Class<? extends T> createClass) {
         try {
             Constructor<? extends T> constructor = createClass.getConstructor();
             T t = constructor.newInstance();
-            t.init();
+            t.init(userService);
             if (userField != null) {
                 setUser(userService, userField, childClass, t);
             }

@@ -547,7 +547,7 @@ public class CmsUiServiceImpl implements CmsUiService {
     @Override
     public CrudChild createBean(BeanIdPathElement beanIdPathElement) {
         ContentProvider contentProvider = getContentProvider(beanIdPathElement);
-        return contentProvider.createDbChild();
+        return contentProvider.createDbChild(userService);
     }
 
     @Override

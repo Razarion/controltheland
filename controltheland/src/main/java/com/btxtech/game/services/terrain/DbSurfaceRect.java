@@ -16,6 +16,7 @@ package com.btxtech.game.services.terrain;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.user.UserService;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -99,7 +100,7 @@ public class DbSurfaceRect implements CrudChild<DbTerrainSetting>, Serializable 
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
     }
 
     @Override

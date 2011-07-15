@@ -21,6 +21,7 @@ import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.tutorial.hint.DbHintConfig;
 import com.btxtech.game.services.tutorial.hint.ResourceHintManager;
+import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import org.hibernate.annotations.Cascade;
 
@@ -67,7 +68,7 @@ public class DbStepConfig implements CrudParent, CrudChild<DbTaskConfig> {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
         dbHintConfigs = new HashSet<DbHintConfig>();
     }
 

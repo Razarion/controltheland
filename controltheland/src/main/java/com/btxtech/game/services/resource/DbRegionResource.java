@@ -24,6 +24,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+
+import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -55,7 +57,7 @@ public class DbRegionResource implements CrudChild {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
     }
 
     public String getName() {

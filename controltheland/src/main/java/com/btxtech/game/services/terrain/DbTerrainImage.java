@@ -16,6 +16,8 @@ package com.btxtech.game.services.terrain;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.user.UserService;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,7 +59,7 @@ public class DbTerrainImage implements CrudChild, Serializable {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
         // Ignore
     }
 

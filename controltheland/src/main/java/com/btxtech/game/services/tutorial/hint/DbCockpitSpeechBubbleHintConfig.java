@@ -18,6 +18,8 @@ import com.btxtech.game.jsre.common.utg.config.CockpitWidgetEnum;
 import com.btxtech.game.jsre.common.tutorial.HintConfig;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.user.UserService;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -80,7 +82,7 @@ public class DbCockpitSpeechBubbleHintConfig extends DbHintConfig {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
         cockpitWidgetEnum = CockpitWidgetEnum.SELL_BUTTON;
         blinkDelay = 0;
         blinkInterval = 0;

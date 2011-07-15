@@ -2,6 +2,7 @@ package com.btxtech.game.services.cms;
 
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
+import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
@@ -38,7 +39,7 @@ public class DbContentCreateEdit extends DbContent implements CrudParent {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
         dbValueFields = new ArrayList<DbExpressionProperty>();
     }
 

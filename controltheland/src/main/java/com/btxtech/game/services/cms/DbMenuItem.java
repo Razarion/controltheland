@@ -14,6 +14,7 @@
 package com.btxtech.game.services.cms;
 
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.user.UserService;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -57,7 +58,7 @@ public class DbMenuItem implements CrudChild<DbMenu> {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
     }
 
     @Override

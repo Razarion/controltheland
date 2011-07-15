@@ -24,6 +24,7 @@ import com.btxtech.game.services.common.db.IndexUserType;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.tutorial.hint.DbResourceHintConfig;
 import com.btxtech.game.services.tutorial.hint.ResourceHintManager;
+import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
@@ -109,7 +110,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
         items = new HashSet<DbItemTypeAndPosition>();
         scroll = new Index(0, 0);
         stepConfigs = new ArrayList<DbStepConfig>();

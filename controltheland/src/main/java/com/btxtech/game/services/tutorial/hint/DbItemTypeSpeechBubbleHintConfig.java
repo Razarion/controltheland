@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.tutorial.HintConfig;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeSpeechBubbleHintConfig;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbItemType;
+import com.btxtech.game.services.user.UserService;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -71,7 +72,7 @@ public class DbItemTypeSpeechBubbleHintConfig extends DbHintConfig {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
         blinkDelay = 0;
         blinkInterval = 0;
     }

@@ -2,6 +2,7 @@ package com.btxtech.game.services.cms;
 
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.HibernateUtil;
+import com.btxtech.game.services.user.UserService;
 
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -171,7 +172,7 @@ public abstract class DbContent implements CrudChild<DbContent> {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
     }
 
     @Override

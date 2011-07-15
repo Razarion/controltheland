@@ -1,5 +1,7 @@
 package com.btxtech.game.services.common;
 
+import com.btxtech.game.services.user.UserService;
+
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -13,7 +15,7 @@ public interface ContentProvider<T extends CrudChild> {
 
     T readDbChild(Serializable id);
 
-    T createDbChild();
+    T createDbChild(UserService userService);
 
     void deleteDbChild(T child);
 

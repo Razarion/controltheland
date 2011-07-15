@@ -14,7 +14,6 @@
 package com.btxtech.game.services.utg;
 
 import com.btxtech.game.jsre.client.common.Level;
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
@@ -22,13 +21,11 @@ import com.btxtech.game.services.common.db.RectangleUserType;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.territory.DbTerritory;
+import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.condition.DbConditionConfig;
-import org.hibernate.annotations.Columns;
-import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -188,7 +185,7 @@ public class DbRealGameLevel extends DbAbstractLevel implements CrudParent {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
         itemTypeLimitation = new HashSet<DbItemTypeLimitation>();
     }
 

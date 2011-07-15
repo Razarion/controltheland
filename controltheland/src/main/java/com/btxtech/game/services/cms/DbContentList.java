@@ -3,6 +3,7 @@ package com.btxtech.game.services.cms;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
+import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
@@ -129,7 +130,7 @@ public class DbContentList extends DbContent implements DataProviderInfo, CrudPa
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
         dbPropertyColumns = new ArrayList<DbContent>();
         dbContentBooks = new ArrayList<DbContentBook>();
     }

@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.common.utg.config.ConditionConfig;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.user.UserService;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -101,7 +102,7 @@ public abstract class DbAbstractLevel implements CrudChild, Serializable {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
         // Ignore
     }
 

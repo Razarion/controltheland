@@ -1,6 +1,6 @@
 package com.btxtech.game.services.common;
 
-import java.io.Serializable;
+import com.btxtech.game.services.user.UserService;
 
 /**
  * User: beat
@@ -19,7 +19,7 @@ public abstract class SimpleCrudChild<T> implements CrudChild<T> {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
         throw new UnsupportedOperationException();
     }
 

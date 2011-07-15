@@ -37,12 +37,12 @@ public class TestForum extends AbstractServiceTest {
         SubForum subForum = subForumCrud.createDbChild();
         subForum.setName("SubForumName1");
         subForum.setContent("SubForumContent1");
-        CrudListChildServiceHelper<Category> categoryCrud = subForum.getCategoryCrud(userService);
-        Category category = categoryCrud.createDbChild();
+        CrudListChildServiceHelper<Category> categoryCrud = subForum.getCategoryCrud();
+        Category category = categoryCrud.createDbChild(userService);
         category.setName("CategoryName1");
         category.setContent("CategoryContent1");
-        CrudListChildServiceHelper<ForumThread> forumThreadCrud = category.getForumThreadCrud(userService);
-        ForumThread forumThread = forumThreadCrud.createDbChild();
+        CrudListChildServiceHelper<ForumThread> forumThreadCrud = category.getForumThreadCrud();
+        ForumThread forumThread = forumThreadCrud.createDbChild(userService);
         forumThread.setName("ForumThreadName1");
         forumThread.setContent("PostContent1");
 

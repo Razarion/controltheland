@@ -13,6 +13,8 @@
 
 package com.btxtech.game.services.common;
 
+import com.btxtech.game.services.user.UserService;
+
 import java.io.Serializable;
 
 /**
@@ -25,7 +27,7 @@ public interface CrudChild<T> {
 
     void setName(String name);
 
-    void init();
+    void init(UserService userService);
 
     void setParent(T t);
 

@@ -14,6 +14,7 @@
 package com.btxtech.game.services.forum;
 
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.user.UserService;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -39,7 +40,7 @@ public class Post extends AbstractForumEntry implements CrudChild<ForumThread> {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
         setDate();
     }
 
