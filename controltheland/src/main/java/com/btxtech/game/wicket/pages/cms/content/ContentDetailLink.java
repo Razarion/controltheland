@@ -31,7 +31,6 @@ public class ContentDetailLink extends Panel {
         contentId = dbContentDetailLink.getId();
         PageParameters pageParameters = new PageParameters();
         pageParameters.put(CmsPage.DETAIL_CONTENT_ID, Integer.toString(dbContentDetailLink.getParent().getId()));
-        pageParameters.put(CmsPage.ID, Integer.toString(beanIdPathElement.getPageId()));
         fillBeanIdPathUrlParameters(beanIdPathElement, pageParameters);
         BookmarkablePageLink<CmsPage> link = new BookmarkablePageLink<CmsPage>("link", CmsPage.class, pageParameters);
         link.add(new Label("label", dbContentDetailLink.getName()));
@@ -41,7 +40,8 @@ public class ContentDetailLink extends Panel {
         }
     }
 
-    private void fillBeanIdPathUrlParameters(BeanIdPathElement beanIdPathElement, PageParameters pageParameters) {
+    public static void fillBeanIdPathUrlParameters(BeanIdPathElement beanIdPathElement, PageParameters pageParameters) {
+        pageParameters.put(CmsPage.ID, Integer.toString(beanIdPathElement.getPageId()));        
         List<Serializable> beanIds = new ArrayList<Serializable>();
         BeanIdPathElement tmpBeanIdPathElement = beanIdPathElement;
         while (tmpBeanIdPathElement != null) {

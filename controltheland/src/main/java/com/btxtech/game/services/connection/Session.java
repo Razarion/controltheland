@@ -46,6 +46,7 @@ public interface Session {
 
     void setUserState(UserState userState);
 
+    @Deprecated
     HttpServletRequest getRequest();
 
     EditMode getEditMode();

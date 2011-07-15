@@ -2,36 +2,23 @@
         "http://www.w3.org/TR/html4/loose.dtd">
 <html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
 <head>
-    <title>Content List</title>
+    <title>Create Edit Editor</title>
 </head>
 <body>
-<h1>Content List</h1>
+<h1>Create Edit Editor</h1>
 <span wicket:id="msgs"/>
 
 <form wicket:id="form">
     <div wicket:id="accessPanel"></div>
-    <div wicket:id="dbContentCreateEdit"></div>
     <h2>Config</h2>
     <table border="0">
         <tr>
             <td bgcolor="#dadada">CSS Class</td>
             <td><input type="text" wicket:id="cssClass"/></td>
         </tr>
-        <tr>
-            <td bgcolor="#dadada">Spring Bean</td>
-            <td><input type="text" wicket:id="springBeanName"/></td>
-        </tr>
-        <tr>
-            <td bgcolor="#dadada">Content Provider Getter</td>
-            <td><input type="text" wicket:id="contentProviderGetter"/></td>
-        </tr>
-        <tr>
-            <td bgcolor="#dadada">Rows per Page</td>
-            <td><input type="text" wicket:id="rowsPerPage"/></td>
-        </tr>
     </table>
 
-    <h2>Columns</h2>
+    <h2>Values</h2>
     <table cellpadding="1" cellspacing="1" border="0">
         <tr>
             <th bgcolor="#dadada">Id</th>
@@ -59,30 +46,10 @@
         </tr>
     </table>
     <span wicket:id="createColumn"></span>
-
-    <h2>Detail Content Books</h2>
-    <table cellpadding="1" cellspacing="1" border="0">
-        <tr>
-            <th bgcolor="#dadada">Id</th>
-            <th bgcolor="#dadada">Name</th>
-            <th bgcolor="#dadada">Edit</th>
-            <th bgcolor="#dadada">Delete</th>
-        </tr>
-        <tr wicket:id="contentBooks">
-            <td wicket:id="id"/>
-            <td><input wicket:id="name" type="text" size="30"></td>
-            <td valign="center">
-                <input type="submit" value="Edit" wicket:id="edit"/>
-            </td>
-            <td valign="center">
-                <input type="submit" value="Delete" wicket:id="delete"/>
-            </td>
-        </tr>
-    </table>
-    <input type="submit" value="Create Content Book" wicket:id="createContentBook"/>
     <br>
     <br>
     <input type="submit" value="Save" wicket:id="save"/>
 </form>
+
 </body>
 </html>

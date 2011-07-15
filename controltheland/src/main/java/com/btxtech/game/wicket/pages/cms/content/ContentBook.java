@@ -53,7 +53,7 @@ public class ContentBook extends Panel {
                 bean = null;
             }
         });
-        add(new EditPanel("edit", contentId, beanIdPathElement, false, false));
+        add(new EditPanel("edit", dbContentBook, contentId, beanIdPathElement, false, false));
         setupPropertyBook();
         if (dbContentBook.getCssClass() != null) {
             add(new SimpleAttributeModifier("class", dbContentBook.getCssClass()));

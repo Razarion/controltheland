@@ -35,7 +35,7 @@ public class ExpressionPropertyEditor extends MgmtWebPage {
         }));
         add(form);
 
-        form.add(new ContentAccessPanel("accessPanel", true, false));
+        form.add(new ContentAccessPanel("accessPanel", true, true, false, false));
         form.add(new TextField("cssClass"));
         form.add(new TextField("springBeanName"));
         form.add(new TextField("expression"));

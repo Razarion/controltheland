@@ -17,6 +17,7 @@ import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.user.UserService;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -36,6 +37,7 @@ import java.util.List;
 @Entity(name = "FORUM_CATEGORY")
 public class Category extends AbstractForumEntry implements CrudChild<SubForum>, CrudParent {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "category", fetch = FetchType.LAZY)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private List<ForumThread> forumThreads;
     @ManyToOne
     @JoinColumn(name = "subForumId", nullable = false)

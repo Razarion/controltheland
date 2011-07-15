@@ -117,4 +117,9 @@ public class CrudListChildServiceHelper<T extends CrudChild> implements Serializ
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public void updateDbChild(T t) {
+        throw new UnsupportedOperationException();
+    }
 }

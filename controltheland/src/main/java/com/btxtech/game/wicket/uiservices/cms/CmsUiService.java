@@ -3,6 +3,7 @@ package com.btxtech.game.wicket.uiservices.cms;
 import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbPage;
 import com.btxtech.game.services.cms.EditMode;
+import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
@@ -38,11 +39,15 @@ public interface CmsUiService {
 
     boolean isSaveAllowed(int contentId, BeanIdPathElement beanIdPathElement);
 
+    boolean isCreateEditAllowed(int contentCreateEditId);
+
     void save(BeanIdPathElement beanIdPathElement);
 
     void deleteBean(BeanIdPathElement beanIdPathElement);
 
-    void createBean(BeanIdPathElement beanIdPathElement);
+    CrudChild createBean(BeanIdPathElement beanIdPathElement);
+
+    CrudChild createAndFillBean(BeanIdPathElement beanIdPathElement);
 
     boolean isReadAllowed(int contentId);
 

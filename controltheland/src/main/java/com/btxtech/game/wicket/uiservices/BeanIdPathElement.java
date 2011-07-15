@@ -3,7 +3,6 @@ package com.btxtech.game.wicket.uiservices;
 import com.btxtech.game.services.cms.DataProviderInfo;
 import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbPage;
-import com.btxtech.game.services.common.CrudChild;
 
 import java.io.Serializable;
 
@@ -20,6 +19,7 @@ public class BeanIdPathElement implements Serializable {
     private String contentProviderGetter;
     private String expression;
     private boolean childDetailPage = false;
+    private boolean createEditPage = false;
 
     public BeanIdPathElement(DbPage dbPage, DbContent dbContent) {
         pageId = dbPage.getId();
@@ -97,6 +97,21 @@ public class BeanIdPathElement implements Serializable {
         this.childDetailPage = childDetailPage;
     }
 
+    public boolean isCreateEditPage() {
+        BeanIdPathElement element = this;
+        do {
+            if (element.createEditPage) {
+                return true;
+            }
+            element = element.parent;
+        } while (element != null);
+        return false;
+    }
+
+    public void setCreateEditPage(boolean createEditPage) {
+        this.createEditPage = createEditPage;
+    }
+
     public BeanIdPathElement createChildFromDataProviderInfo(DataProviderInfo dataProviderInfo) {
         BeanIdPathElement beanIdPathElement = new BeanIdPathElement();
         beanIdPathElement.parent = this;
@@ -117,6 +132,19 @@ public class BeanIdPathElement implements Serializable {
         s.append("BeanIdPathElement ");
         privateToString(s);
         return s.toString();
+    }
+
+    public BeanIdPathElement getFirstDbBeanElement() {
+        BeanIdPathElement beanIdPathElement = this;
+        BeanIdPathElement last = null;
+        while (beanIdPathElement != null) {
+            if (beanIdPathElement.hasSpringBeanName() && beanIdPathElement.hasContentProviderGetter()) {
+                return last;
+            }
+            last = beanIdPathElement;
+            beanIdPathElement = beanIdPathElement.getParent();
+        }
+        throw new IllegalStateException("No root spring bean name found");
     }
 
     private void privateToString(StringBuilder s) {

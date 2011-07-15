@@ -7,7 +7,6 @@ import com.btxtech.game.wicket.uiservices.CmsImageSelector;
 import com.btxtech.game.wicket.uiservices.PageSelector;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
-import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -33,7 +32,7 @@ public class ContentPageLinkEditor extends MgmtWebPage {
             }
         }));
         add(form);
-        form.add(new ContentAccessPanel("accessPanel", false, false));
+        form.add(new ContentAccessPanel("accessPanel", true, false, false, false));
         form.add(new TextField("cssClass"));
         form.add(new PageSelector("dbPage"));
         form.add(new CmsImageSelector("dbCmsImage"));

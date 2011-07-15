@@ -44,7 +44,7 @@ abstract public class AbstractForumEntry implements Serializable {
     private String title;
     @Column(length = 5000)
     private String content;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User user;
     @Transient
     private Date lastPost;

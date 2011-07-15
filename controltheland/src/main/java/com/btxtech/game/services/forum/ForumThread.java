@@ -17,6 +17,7 @@ import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.user.UserService;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -36,6 +37,7 @@ import java.util.List;
 @Entity(name = "FORUM_THREAD")
 public class ForumThread extends AbstractForumEntry implements CrudChild<Category>, CrudParent {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "forumThread", fetch = FetchType.LAZY)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private List<Post> posts;
     private int viewCount = 100;
     @ManyToOne
@@ -79,8 +81,28 @@ public class ForumThread extends AbstractForumEntry implements CrudChild<Categor
     }
 
     @Override
+    public void setContent(String content) {
+        super.setContent(null);
+        // Fist post
+        // Threads do not have a content
+        posts.get(0).setContent(content);
+    }
+
+    @Override
+    public void setName(String name) {
+        super.setName(name);
+        // Fist post        
+        posts.get(0).setName(name);
+    }
+
+    @Override
     public void init() {
         posts = new ArrayList<Post>();
+        // There is never an empty thread
+        Post post = new Post();
+        post.setParent(this);
+        post.init();
+        posts.add(post);
         setDate();
     }
 

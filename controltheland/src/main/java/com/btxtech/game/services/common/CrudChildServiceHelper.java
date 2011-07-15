@@ -105,4 +105,9 @@ public class CrudChildServiceHelper<T extends CrudChild> implements Serializable
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public void updateDbChild(T t) {
+        throw new UnsupportedOperationException();
+    }
 }

@@ -43,4 +43,9 @@ public class ReadonlyCollectionContentProvider<T extends CrudChild> implements C
     public void deleteDbChild(T child) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public void updateDbChild(T t) {
+        throw new UnsupportedOperationException();
+    }
 }
