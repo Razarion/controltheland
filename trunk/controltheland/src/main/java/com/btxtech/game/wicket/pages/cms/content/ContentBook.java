@@ -54,13 +54,10 @@ public class ContentBook extends Panel {
             }
         });
         add(new EditPanel("edit", dbContentBook, contentId, beanIdPathElement, false, false));
-        setupPropertyBook();
-        if (dbContentBook.getCssClass() != null) {
-            add(new SimpleAttributeModifier("class", dbContentBook.getCssClass()));
-        }
+        setupPropertyBook(dbContentBook);
     }
 
-    private void setupPropertyBook() {
+    private void setupPropertyBook(DbContentBook dbContentBook) {
 
         List<IColumn<DbContentRow>> columns = new ArrayList<IColumn<DbContentRow>>();
 
@@ -96,8 +93,10 @@ public class ContentBook extends Panel {
         IColumn<DbContentRow>[] columnsArray = columns.toArray(new IColumn[columns.size()]);
 
         DataTable<DbContentRow> dataTable = new DataTable<DbContentRow>("dataTable", columnsArray, detachHashListProvider, Integer.MAX_VALUE);
-        dataTable.addTopToolbar(new HeadersToolbar(dataTable, null));
         dataTable.addBottomToolbar(new NoRecordsToolbar(dataTable, new Model<String>("Nothing here")));
+        if (dbContentBook.getCssClass() != null) {
+            dataTable.add(new SimpleAttributeModifier("class", dbContentBook.getCssClass()));
+        }
         add(dataTable);
     }
 
