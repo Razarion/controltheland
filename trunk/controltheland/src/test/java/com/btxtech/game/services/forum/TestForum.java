@@ -44,11 +44,7 @@ public class TestForum extends AbstractServiceTest {
         CrudListChildServiceHelper<ForumThread> forumThreadCrud = category.getForumThreadCrud(userService);
         ForumThread forumThread = forumThreadCrud.createDbChild();
         forumThread.setName("ForumThreadName1");
-        forumThread.setContent("ForumThreadContent1");
-        CrudListChildServiceHelper<Post> postCrud = forumThread.getPostCrud(userService);
-        Post post = postCrud.createDbChild();
-        post.setName("PostName1");
-        post.setContent("PostContent1");
+        forumThread.setContent("PostContent1");
 
         subForumCrud.updateDbChild(subForum);
     }

@@ -9,7 +9,11 @@ import com.btxtech.game.services.cms.impl.CmsServiceImpl;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.forum.Category;
 import com.btxtech.game.services.forum.ForumService;
+import com.btxtech.game.services.forum.ForumThread;
+import com.btxtech.game.services.forum.Post;
+import com.btxtech.game.services.forum.SubForum;
 import com.btxtech.game.services.forum.TestForum;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.user.DbContentAccessControl;
@@ -17,6 +21,10 @@ import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
+import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import com.btxtech.game.wicket.uiservices.cms.impl.CmsUiServiceImpl;
+import org.apache.wicket.RequestCycle;
+import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
@@ -40,6 +48,8 @@ import java.util.List;
 public class TestCmsService extends AbstractServiceTest {
     @Autowired
     private CmsService cmsService;
+    @Autowired
+    private CmsUiService cmsUiService;
     @Autowired
     private ContentService contentService;
     @Autowired
@@ -663,16 +673,16 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpSession();
 
         // Create User
-      /*  beginHttpRequestAndOpenSessionInViewFilter();
-        userService.createUser("test", "test", "test", "");
-        userService.login("test", "test");
-        User user = userService.getUser();
-        DbContentAccessControl control = user.getContentCrud().createDbChild();
-        control.setDbContent(dbContentDynamicHtml);
-        control.setCreateAllowed(true);
-        control.setDeleteAllowed(true);
-        control.setWriteAllowed(true);
-        endHttpRequestAndOpenSessionInViewFilter();  */
+        /*  beginHttpRequestAndOpenSessionInViewFilter();
+      userService.createUser("test", "test", "test", "");
+      userService.login("test", "test");
+      User user = userService.getUser();
+      DbContentAccessControl control = user.getContentCrud().createDbChild();
+      control.setDbContent(dbContentDynamicHtml);
+      control.setCreateAllowed(true);
+      control.setDeleteAllowed(true);
+      control.setWriteAllowed(true);
+      endHttpRequestAndOpenSessionInViewFilter();  */
 
         // Write
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -851,18 +861,32 @@ public class TestCmsService extends AbstractServiceTest {
         postColumnName.setExpression("name");
         threadNameRow.setDbContent(postColumnName);
 
+        DbContentCreateEdit threadCreateEdit = new DbContentCreateEdit();
+        threadCreateEdit.init();
+        threadCreateEdit.setParent(threadList);
+        threadCreateEdit.setName("New Thread");
+        threadCreateEdit.setCreateRestricted(DbContent.Access.REGISTERED_USER);
+        threadList.setDbContentCreateEdit(threadCreateEdit);
+        DbExpressionProperty createName = threadCreateEdit.getValueCrud().createDbChild(DbExpressionProperty.class);
+        createName.setExpression("name");
+        createName.setWriteRestricted(DbContent.Access.REGISTERED_USER);
+        DbExpressionProperty createContent = threadCreateEdit.getValueCrud().createDbChild(DbExpressionProperty.class);
+        createContent.setExpression("content");
+        createContent.setEscapeMarkup(false);
+        createContent.setWriteRestricted(DbContent.Access.REGISTERED_USER);
+
         DbContentRow postsNameRow = postContentBook.getRowCrud().createDbChild();
-        DbContentList postName = new DbContentList();
-        postName.setParent(postsNameRow);
-        postName.init();
-        postName.setContentProviderGetter("getPostCrud");
-        postsNameRow.setDbContent(postName);
+        DbContentList postList = new DbContentList();
+        postList.setParent(postsNameRow);
+        postList.init();
+        postList.setContentProviderGetter("getPostCrud");
+        postsNameRow.setDbContent(postList);
         DbContentRow postsContentRow = postContentBook.getRowCrud().createDbChild();
-        DbExpressionProperty postContent = (DbExpressionProperty) postName.getColumnsCrud().createDbChild(DbExpressionProperty.class);
+        DbExpressionProperty postContent = (DbExpressionProperty) postList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
         postContent.setExpression("content");
         postContent.setEscapeMarkup(false);
         postContent.setParent(postsContentRow);
-        postName.setContentProviderGetter("getPostCrud");
+        postList.setContentProviderGetter("getPostCrud");
         postsContentRow.setDbContent(postContent);
 
         pageCrud.updateDbChild(dbPage1);
@@ -890,7 +914,7 @@ public class TestCmsService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void testForum() throws Exception {
+    public void testForumView() throws Exception {
         configureMinimalGame();
 
         setupForumStructure();
@@ -1080,7 +1104,7 @@ public class TestCmsService extends AbstractServiceTest {
         tester.startPage(CmsPage.class);
         tester.clickLink("form:content:rows:1:cells:1:cell:listView:2:content:rows:1:cells:2:cell:link");
         tester.assertLabel("form:content:dataTable:body:rows:1:cells:2:cell", "CategoryName2");
-        tester.assertLabel("form:content:dataTable:body:rows:2:cells:2:cell:rows:1:cells:1:cell", "ForumThreadName2");        
+        tester.assertLabel("form:content:dataTable:body:rows:2:cells:2:cell:rows:1:cells:1:cell", "ForumThreadName2");
         tester.assertInvisible("form:content:edit:edit");
         tester.assertInvisible("form:content:edit:create");
         tester.assertInvisible("form:content:edit:save");
@@ -1198,6 +1222,146 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
+
+    @Test
+    @DirtiesContext
+    public void testForumCreateThreadInvisible() throws Exception {
+        configureMinimalGame();
+
+        setupForumStructure();
+
+        fillForum();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        // Click the category link
+        tester.clickLink("form:content:rows:1:cells:1:cell:listView:2:content:rows:1:cells:2:cell:link");
+        // Click the thread link
+        tester.clickLink("form:content:dataTable:body:rows:2:cells:2:cell:rows:1:cells:2:cell:link");
+        tester.assertInvisible("form:content:dataTable:body:rows:2:cells:2:cell:edit:createEdit");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testForumCreateThreadCancel() throws Exception {
+        configureMinimalGame();
+
+        setupForumStructure();
+
+        fillForum();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("test", "test", "test", "");
+        userService.login("test", "test");
+
+        tester.startPage(CmsPage.class);
+        // Click the category link
+        tester.clickLink("form:content:rows:1:cells:1:cell:listView:2:content:rows:1:cells:2:cell:link");
+        tester.assertLabel("form:content:dataTable:body:rows:1:cells:2:cell", "CategoryName1");
+        tester.assertLabel("form:content:dataTable:body:rows:2:cells:2:cell:rows:1:cells:1:cell", "ForumThreadName1");
+        // Click the thread link
+        tester.assertVisible("form:content:dataTable:body:rows:2:cells:2:cell:edit:createEdit");
+        // Click the New Thread Button
+        tester.newFormTester("form").submit("content:dataTable:body:rows:2:cells:2:cell:edit:createEdit");
+        FormTester formTester = tester.newFormTester("form");
+        formTester.setValue("content:listView:0:content:field", "Title");
+        formTester.setValue("content:listView:1:content:textArea", "Content Content");
+        // Cancel -> back to page before
+        formTester.submit("content:cancel");
+        tester.assertLabel("form:content:dataTable:body:rows:1:cells:2:cell", "CategoryName1");
+        tester.assertLabel("form:content:dataTable:body:rows:2:cells:2:cell:rows:1:cells:1:cell", "ForumThreadName1");
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        // Verify        
+        tester.setupRequestAndResponse(); // Clears the attribute in the request
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertNull(((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest().getAttribute(CmsUiServiceImpl.REQUEST_TMP_CREATE_BEAN_ATTRIBUTES));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<SubForum> subForums = (List<SubForum>) forumService.getSubForumCrud().readDbChildren();
+        Assert.assertEquals(1, subForums.size());
+        List<Category> categories = subForums.get(0).getCategoryCrud(userService).readDbChildren();
+        Assert.assertEquals(1, categories.size());
+        List<ForumThread> threads = categories.get(0).getForumThreadCrud(userService).readDbChildren();
+        Assert.assertEquals(1, threads.size());
+        List<Post> posts = threads.get(0).getPostCrud(userService).readDbChildren();
+        Assert.assertEquals(1, posts.size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testForumCreateThreadSubmit() throws Exception {
+        configureMinimalGame();
+
+        setupForumStructure();
+
+        fillForum();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("test", "test", "test", "");
+        userService.login("test", "test");
+
+        tester.startPage(CmsPage.class);
+        // Click the category link
+        tester.clickLink("form:content:rows:1:cells:1:cell:listView:2:content:rows:1:cells:2:cell:link");
+        tester.assertLabel("form:content:dataTable:body:rows:1:cells:2:cell", "CategoryName1");
+        tester.assertLabel("form:content:dataTable:body:rows:2:cells:2:cell:rows:1:cells:1:cell", "ForumThreadName1");
+        // Click the thread link
+        tester.assertVisible("form:content:dataTable:body:rows:2:cells:2:cell:edit:createEdit");
+        // Click the New Thread Button
+        tester.newFormTester("form").submit("content:dataTable:body:rows:2:cells:2:cell:edit:createEdit");
+        FormTester formTester = tester.newFormTester("form");
+        formTester.setValue("content:listView:0:content:field", "ForumThreadName2");
+        formTester.setValue("content:listView:1:content:textArea", "Content Content");
+        // Submit -> back to page before
+        formTester.submit("content:submit");
+        tester.assertLabel("form:content:dataTable:body:rows:1:cells:2:cell", "CategoryName1");
+        tester.assertLabel("form:content:dataTable:body:rows:2:cells:2:cell:rows:1:cells:1:cell", "ForumThreadName1");
+        tester.assertLabel("form:content:dataTable:body:rows:2:cells:2:cell:rows:2:cells:1:cell", "ForumThreadName2");
+        // Open Thread
+        tester.clickLink("form:content:dataTable:body:rows:2:cells:2:cell:rows:2:cells:2:cell:link");
+        tester.assertLabel("form:content:dataTable:body:rows:1:cells:2:cell", "ForumThreadName2");
+        tester.assertLabel("form:content:dataTable:body:rows:2:cells:2:cell:rows:1:cells:1:cell", "Content Content");
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        // Verify
+        tester.setupRequestAndResponse(); // Clears the attribute in the request
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertNull(((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest().getAttribute(CmsUiServiceImpl.REQUEST_TMP_CREATE_BEAN_ATTRIBUTES));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<SubForum> subForums = (List<SubForum>) forumService.getSubForumCrud().readDbChildren();
+        Assert.assertEquals(1, subForums.size());
+        List<Category> categories = subForums.get(0).getCategoryCrud(userService).readDbChildren();
+        Assert.assertEquals(1, categories.size());
+        List<ForumThread> threads = categories.get(0).getForumThreadCrud(userService).readDbChildren();
+        Assert.assertEquals(2, threads.size());
+        List<Post> posts1 = threads.get(0).getPostCrud(userService).readDbChildren();
+        Assert.assertEquals(1, posts1.size());
+        List<Post> posts2 = threads.get(1).getPostCrud(userService).readDbChildren();
+        Assert.assertEquals(1, posts2.size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 
     @Test
     @DirtiesContext

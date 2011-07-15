@@ -30,6 +30,7 @@ public class CmsPage extends WebPage {
     public static final String ID = "id";
     private static final String CHILD_ID = "childId";
     public static final String DETAIL_CONTENT_ID = "detailId";
+    public static final String CREATE_CONTENT_ID = "createId";
     @SpringBean
     private CmsService cmsService;
     @SpringBean

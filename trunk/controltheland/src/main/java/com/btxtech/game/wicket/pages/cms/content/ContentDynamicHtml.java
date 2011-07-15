@@ -27,7 +27,7 @@ public class ContentDynamicHtml extends Panel {
     public ContentDynamicHtml(String id, DbContentDynamicHtml dbContentDynamicHtml) {
         super(id);
         contentId = dbContentDynamicHtml.getId();
-        add(new EditPanel("edit", contentId, null, false, false));
+        add(new EditPanel("edit", dbContentDynamicHtml, contentId, null, false, false));
 
         add(new Label("html", new LoadableDetachableModel<String>() {
 

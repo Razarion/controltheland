@@ -6,6 +6,7 @@ import com.btxtech.game.services.cms.DbContentDetailLink;
 import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.wicket.pages.cms.EditPanel;
+import com.btxtech.game.wicket.pages.mgmt.cms.CreateCreateEditPanel;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
@@ -56,7 +57,7 @@ public class ContentList extends Panel {
                     DbContent dbContent = cmsUiService.getDbContent(dbContentId);
                     BeanIdPathElement childBeanIdPathElement = null;
                     if (dbContent instanceof DataProviderInfo) {
-                        if(dbContent.getSpringBeanName() != null || dbContent.getContentProviderGetter() != null || dbContent.getExpression() != null) {
+                        if (dbContent.getSpringBeanName() != null || dbContent.getContentProviderGetter() != null || dbContent.getExpression() != null) {
                             childBeanIdPathElement = beanIdPathElement.createChildFromBeanId(((CrudChild) rowModel.getObject()).getId());
                             childBeanIdPathElement = childBeanIdPathElement.createChildFromDataProviderInfo((DataProviderInfo) dbContent);
                         } else {
@@ -71,13 +72,13 @@ public class ContentList extends Panel {
         }
 
         // Edit stuff
-        add(new EditPanel("edit", contentId, beanIdPathElement, true, false));
+        add(new EditPanel("edit", dbContentList, contentId, beanIdPathElement, true, false));
         columns.add(new HeaderlessColumn<Object>() {
 
             @Override
             public void populateItem(Item<ICellPopulator<Object>> cellItem, String componentId, IModel<Object> rowModel) {
                 BeanIdPathElement childBeanIdPathElement = beanIdPathElement.createChildFromBeanId(((CrudChild) rowModel.getObject()).getId());
-                cellItem.add(new EditPanel(componentId, contentId, childBeanIdPathElement, false, true));
+                cellItem.add(new EditPanel(componentId, null,contentId, childBeanIdPathElement, false, true));
             }
         });
 

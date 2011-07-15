@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.persistence.Transient;
 import java.util.ArrayList;
@@ -47,6 +48,8 @@ public class DbContentList extends DbContent implements DataProviderInfo, CrudPa
             inverseJoinColumns = @JoinColumn(name = "contentBookId"))
     private Collection<DbContentBook> dbContentBooks;
     private Integer rowsPerPage;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private DbContentCreateEdit dbContentCreateEdit;
     @Transient
     private CrudListChildServiceHelper<DbContent> columnsCrud;
     @Transient
@@ -107,10 +110,21 @@ public class DbContentList extends DbContent implements DataProviderInfo, CrudPa
         return contentBookCrud;
     }
 
+    public DbContentCreateEdit getDbContentCreateEdit() {
+        return dbContentCreateEdit;
+    }
+
+    public void setDbContentCreateEdit(DbContentCreateEdit dbContentCreateEdit) {
+        this.dbContentCreateEdit = dbContentCreateEdit;
+    }
+
     @Override
     public Collection<DbContent> getChildren() {
         List<DbContent> children = new ArrayList<DbContent>(dbPropertyColumns);
         children.addAll(dbContentBooks);
+        if (dbContentCreateEdit != null) {
+            children.add(dbContentCreateEdit);
+        }
         return children;
     }
 

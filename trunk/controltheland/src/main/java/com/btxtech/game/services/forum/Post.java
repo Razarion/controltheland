@@ -40,6 +40,7 @@ public class Post extends AbstractForumEntry implements CrudChild<ForumThread> {
 
     @Override
     public void init() {
+        setDate();
     }
 
     @Override

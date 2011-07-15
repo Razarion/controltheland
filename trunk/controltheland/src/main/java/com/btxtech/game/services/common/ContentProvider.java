@@ -15,5 +15,7 @@ public interface ContentProvider<T extends CrudChild> {
 
     T createDbChild();
 
-     void deleteDbChild(T child);
+    void deleteDbChild(T child);
+
+    void updateDbChild(T t);
 }

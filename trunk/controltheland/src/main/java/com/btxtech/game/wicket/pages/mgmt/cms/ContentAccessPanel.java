@@ -13,12 +13,12 @@ import java.util.Arrays;
  * Time: 10:40:36
  */
 public class ContentAccessPanel extends Panel {
-    public ContentAccessPanel(String id, boolean showWrite, boolean showCreateDelete) {
+    public ContentAccessPanel(String id, boolean showRead, boolean showWrite, boolean showCreate, boolean showDelete) {
         super(id);
-        addSelectField("readRestricted", true);
+        addSelectField("readRestricted", showRead);
         addSelectField("writeRestricted", showWrite);
-        addSelectField("createRestricted", showCreateDelete);
-        addSelectField("deleteRestricted", showCreateDelete);
+        addSelectField("createRestricted", showCreate);
+        addSelectField("deleteRestricted", showDelete);
     }
 
     private void addSelectField(String id, final boolean visible) {

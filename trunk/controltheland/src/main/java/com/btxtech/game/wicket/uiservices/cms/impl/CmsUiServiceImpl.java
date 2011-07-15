@@ -6,6 +6,7 @@ import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbContentActionButton;
 import com.btxtech.game.services.cms.DbContentBook;
 import com.btxtech.game.services.cms.DbContentContainer;
+import com.btxtech.game.services.cms.DbContentCreateEdit;
 import com.btxtech.game.services.cms.DbContentDetailLink;
 import com.btxtech.game.services.cms.DbContentDynamicHtml;
 import com.btxtech.game.services.cms.DbContentLink;
@@ -19,6 +20,7 @@ import com.btxtech.game.services.cms.EditMode;
 import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.connection.NoConnectionException;
+import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.DbPageAccessControl;
@@ -30,6 +32,7 @@ import com.btxtech.game.wicket.pages.cms.WritePanel;
 import com.btxtech.game.wicket.pages.cms.content.ContentActionButton;
 import com.btxtech.game.wicket.pages.cms.content.ContentBook;
 import com.btxtech.game.wicket.pages.cms.content.ContentContainer;
+import com.btxtech.game.wicket.pages.cms.content.ContentCreateEdit;
 import com.btxtech.game.wicket.pages.cms.content.ContentDetailLink;
 import com.btxtech.game.wicket.pages.cms.content.ContentDynamicHtml;
 import com.btxtech.game.wicket.pages.cms.content.ContentLink;
@@ -43,8 +46,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.protocol.http.WebRequest;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -54,8 +59,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
@@ -64,15 +72,16 @@ import java.util.List;
  */
 @org.springframework.stereotype.Component("cmsUiService")
 public class CmsUiServiceImpl implements CmsUiService {
+    public static final String REQUEST_TMP_CREATE_BEAN_ATTRIBUTES = "btxtech.game.tmpCreateBeanAttributes";
     private static final String CURRENT_PATH = ".";
     @Autowired
     private CmsService cmsService;
     @Autowired
     private ApplicationContext applicationContext;
     @Autowired
-    private com.btxtech.game.services.connection.Session session;
-    @Autowired
     private UserService userService;
+    @Autowired
+    private Session session;
     private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(CmsUiServiceImpl.class);
 
@@ -88,44 +97,58 @@ public class CmsUiServiceImpl implements CmsUiService {
         // if the Page should display a child of a ContentList
         if (pageParameters.containsKey(CmsPage.DETAIL_CONTENT_ID)) {
             dbContent = cmsService.getDbContent(pageParameters.getInt(CmsPage.DETAIL_CONTENT_ID));
-            DbContent nearestSpringBeanComponent = dbContent;
-            List<DbContent> contentPath = new ArrayList<DbContent>();
-            while (nearestSpringBeanComponent != null && nearestSpringBeanComponent.getSpringBeanName() == null) {
-                nearestSpringBeanComponent = nearestSpringBeanComponent.getParent();
-                contentPath.add(nearestSpringBeanComponent);
-            }
-            contentPath.add(dbContent);
-            //Collections.reverse(contentPath);
-            if (nearestSpringBeanComponent == null) {
-                throw new IllegalArgumentException("No Spring Bean for detail component found: " + dbContent);
-            }
-            List<Integer> beanIds = new ArrayList<Integer>();
-            for (int level = 0; level < CmsPage.MAX_LEVELS; level++) {
-                if (pageParameters.containsKey(CmsPage.getChildUrlParameter(level))) {
-                    beanIds.add(pageParameters.getInt(CmsPage.getChildUrlParameter(level)));
-                }
-            }
-
-            for (DbContent content : contentPath) {
-                if (content instanceof DataProviderInfo) {
-                    if (content.getSpringBeanName() != null) {
-                        beanIdPathElement = beanIdPathElement.createChildFromDataProviderInfo((DataProviderInfo) content);
-                    } else if (content.getContentProviderGetter() != null) {
-                        beanIdPathElement = beanIdPathElement.createChildFromBeanId(beanIds.remove(0));
-                        beanIdPathElement = beanIdPathElement.createChildFromDataProviderInfo((DataProviderInfo) content);
-                    }
-                }
-            }
-
-            if (beanIds.size() != 1) {
-                throw new IllegalStateException("Bean Id mismatch: " + beanIds.size());
-            }
-            beanIdPathElement = beanIdPathElement.createChildFromBeanId(beanIds.remove(0));
+            beanIdPathElement = createBeanIdPathElement(pageParameters, dbContent, beanIdPathElement);
             beanIdPathElement.setChildDetailPage(true);
             Object bean = getDataProviderBean(beanIdPathElement);
             dbContent = ((DbContentList) dbContent).getDbPropertyBook(bean.getClass().getName());
+        } else if (pageParameters.containsKey(CmsPage.CREATE_CONTENT_ID)) {
+            dbContent = cmsService.getDbContent(pageParameters.getInt(CmsPage.CREATE_CONTENT_ID));
+            beanIdPathElement = createBeanIdPathElement(pageParameters, dbContent, beanIdPathElement);
+            beanIdPathElement.setCreateEditPage(true);
         }
         return getComponent(dbContent, null, componentId, beanIdPathElement);
+    }
+
+    private BeanIdPathElement createBeanIdPathElement(PageParameters pageParameters, DbContent dbContent, BeanIdPathElement beanIdPathElement) {
+        DbContent nearestSpringBeanComponent = dbContent;
+        List<DbContent> contentPath = new ArrayList<DbContent>();
+        contentPath.add(dbContent);
+        while (nearestSpringBeanComponent != null && nearestSpringBeanComponent.getSpringBeanName() == null) {
+            nearestSpringBeanComponent = nearestSpringBeanComponent.getParent();
+            if (nearestSpringBeanComponent != null) {
+                contentPath.add(nearestSpringBeanComponent);
+            }
+        }
+        Collections.reverse(contentPath);
+        if (nearestSpringBeanComponent == null) {
+            throw new IllegalArgumentException("No Spring Bean for detail component found: " + dbContent);
+        }
+        List<Integer> beanIds = new ArrayList<Integer>();
+        for (int level = 0; level < CmsPage.MAX_LEVELS; level++) {
+            if (pageParameters.containsKey(CmsPage.getChildUrlParameter(level))) {
+                beanIds.add(pageParameters.getInt(CmsPage.getChildUrlParameter(level)));
+            }
+        }
+
+        for (DbContent content : contentPath) {
+            if (content instanceof DataProviderInfo) {
+                if (content.getSpringBeanName() != null) {
+                    beanIdPathElement = beanIdPathElement.createChildFromDataProviderInfo((DataProviderInfo) content);
+                } else if (content.getContentProviderGetter() != null) {
+                    beanIdPathElement = beanIdPathElement.createChildFromBeanId(beanIds.remove(0));
+                    beanIdPathElement = beanIdPathElement.createChildFromDataProviderInfo((DataProviderInfo) content);
+                } else if (content.getExpression() != null) {
+                    beanIdPathElement = beanIdPathElement.createChildFromDataProviderInfo((DataProviderInfo) content);
+                }
+            }
+        }
+
+        if (beanIds.size() == 1) {
+            beanIdPathElement = beanIdPathElement.createChildFromBeanId(beanIds.remove(0));
+        } else if (beanIds.size() > 1) {
+            throw new IllegalStateException("Bean Id mismatch: " + beanIds.size());
+        }
+        return beanIdPathElement;
     }
 
     @Override
@@ -162,6 +185,8 @@ public class CmsUiServiceImpl implements CmsUiService {
                 return component;
             } else if (dbContent instanceof DbContentActionButton) {
                 return new ContentActionButton(componentId, (DbContentActionButton) dbContent, beanIdPathElement);
+            } else if (dbContent instanceof DbContentCreateEdit) {
+                return new ContentCreateEdit(componentId, (DbContentCreateEdit) dbContent, beanIdPathElement);
             } else {
                 log.warn("CmsUiServiceImpl: No Wicket Component for content: " + dbContent);
                 return new Label(componentId, "No content");
@@ -250,7 +275,9 @@ public class CmsUiServiceImpl implements CmsUiService {
     @Override
     public Object getDataProviderBean(BeanIdPathElement beanIdPathElement) {
         try {
-            if (beanIdPathElement.hasSpringBeanName()) {
+            if (beanIdPathElement.isCreateEditPage()) {
+                return null;
+            } else if (beanIdPathElement.hasSpringBeanName()) {
                 return applicationContext.getBean(beanIdPathElement.getSpringBeanName());
             } else if (beanIdPathElement.hasContentProviderGetter() && beanIdPathElement.hasBeanId() && beanIdPathElement.hasParent()) {
                 Object bean = getDataProviderBean(beanIdPathElement.getParent());
@@ -276,16 +303,20 @@ public class CmsUiServiceImpl implements CmsUiService {
         if (!isWriteAllowed(contentId)) {
             throw new IllegalStateException("User not allowed to write property: " + contentId);
         }
-        try {
-            Object object;
-            if (beanIdPathElement.hasBeanId() && beanIdPathElement.hasExpression()) {
-                object = getDataProviderBean(beanIdPathElement);
-            } else {
-                object = getDataProviderBean(beanIdPathElement.getParent());
+        if (beanIdPathElement.isCreateEditPage()) {
+            putCreateEditTmpBeanAttribute(beanIdPathElement, value);
+        } else {
+            try {
+                Object object;
+                if (beanIdPathElement.hasBeanId() && beanIdPathElement.hasExpression()) {
+                    object = getDataProviderBean(beanIdPathElement);
+                } else {
+                    object = getDataProviderBean(beanIdPathElement.getParent());
+                }
+                PropertyUtils.setProperty(object, beanIdPathElement.getExpression(), value);
+            } catch (Exception e) {
+                throw new RuntimeException("value: " + value + " " + beanIdPathElement + " contentId: " + contentId, e);
             }
-            PropertyUtils.setProperty(object, beanIdPathElement.getExpression(), value);
-        } catch (Exception e) {
-            throw new RuntimeException("value: " + value + " " + beanIdPathElement + " contentId: " + contentId, e);
         }
     }
 
@@ -293,7 +324,7 @@ public class CmsUiServiceImpl implements CmsUiService {
     @Override
     public List getDataProviderBeans(BeanIdPathElement beanIdPathElement) {
         try {
-            ContentProvider contentProvider = null;
+            ContentProvider contentProvider;
             if (beanIdPathElement.hasContentProviderGetter() && !beanIdPathElement.hasSpringBeanName() && !beanIdPathElement.hasBeanId()) {
                 Object bean = getDataProviderBean(beanIdPathElement.getParent());
                 contentProvider = getContentProvider(beanIdPathElement, bean);
@@ -409,7 +440,38 @@ public class CmsUiServiceImpl implements CmsUiService {
         return dbContent.getSpringBeanName() != null || beanIdPathElement.isChildDetailPage();
     }
 
-    public boolean isWriteAllowed(int contentId) {
+    @Override
+    public boolean isCreateEditAllowed(int contentCreateEditId) {
+        DbContentCreateEdit dbContentCreateEdit = (DbContentCreateEdit) cmsService.getDbContent(contentCreateEditId);
+        switch (dbContentCreateEdit.getCreateRestricted()) {
+            case DENIED: {
+                return false;
+            }
+            case ALLOWED: {
+                return true;
+            }
+            case REGISTERED_USER: {
+                return userService.isRegistered();
+            }
+            case USER: {
+                Collection<DbContentAccessControl> dbContentAccessControls = userService.getDbContentAccessControls();
+                if (dbContentAccessControls == null) {
+                    return false;
+                }
+                for (DbContentAccessControl dbContentAccessControl : dbContentAccessControls) {
+                    if (dbContentCreateEdit.getId().equals(dbContentAccessControl.getDbContent().getId())) {
+                        return dbContentAccessControl.isCreateAllowed();
+                    }
+                }
+                return false;
+            }
+            default:
+                throw new IllegalArgumentException("Unknown create restriction: " + dbContentCreateEdit.getReadRestricted());
+        }
+
+    }
+
+    private boolean isWriteAllowed(int contentId) {
         DbContent dbContent = cmsService.getDbContent(contentId);
         while (dbContent.getWriteRestricted() == DbContent.Access.INHERIT) {
             dbContent = dbContent.getParent();
@@ -483,9 +545,31 @@ public class CmsUiServiceImpl implements CmsUiService {
     }
 
     @Override
-    public void createBean(BeanIdPathElement beanIdPathElement) {
+    public CrudChild createBean(BeanIdPathElement beanIdPathElement) {
         ContentProvider contentProvider = getContentProvider(beanIdPathElement);
-        contentProvider.createDbChild();
+        return contentProvider.createDbChild();
+    }
+
+    @Override
+    public CrudChild createAndFillBean(BeanIdPathElement beanIdPathElement) {
+        CrudChild crudChild = createBean(beanIdPathElement);
+        Map<String, Object> attributeMap = (Map<String, Object>) ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest().getAttribute(REQUEST_TMP_CREATE_BEAN_ATTRIBUTES);
+        if (attributeMap != null) {
+            for (Map.Entry<String, Object> entry : attributeMap.entrySet()) {
+                try {
+                    PropertyUtils.setProperty(crudChild, entry.getKey(), entry.getValue());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        // save root parent
+        BeanIdPathElement root = beanIdPathElement.getFirstDbBeanElement();
+        ContentProvider rootContentProvider = getContentProvider(root.getParent());
+        CrudChild rootCrudChild = (CrudChild) getDataProviderBean(root);
+        rootContentProvider.updateDbChild(rootCrudChild);
+
+        return crudChild;
     }
 
     @Override
@@ -548,5 +632,15 @@ public class CmsUiServiceImpl implements CmsUiService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    private void putCreateEditTmpBeanAttribute(BeanIdPathElement beanIdPathElement, Object value) {
+        Map<String, Object> attributeMap = (Map<String, Object>) ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest().getAttribute(REQUEST_TMP_CREATE_BEAN_ATTRIBUTES);
+        if (attributeMap == null) {
+            attributeMap = new HashMap<String, Object>();
+            ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest().setAttribute(REQUEST_TMP_CREATE_BEAN_ATTRIBUTES, attributeMap);
+        }
+        attributeMap.put(beanIdPathElement.getExpression(), value);
     }
 }

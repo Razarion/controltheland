@@ -2,6 +2,7 @@ package com.btxtech.game.wicket.pages.mgmt.cms;
 
 import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbContentBook;
+import com.btxtech.game.services.cms.DbContentCreateEdit;
 import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
@@ -39,7 +40,25 @@ public class ContentListEditor extends MgmtWebPage {
         }));
         add(form);
 
-        form.add(new ContentAccessPanel("accessPanel", true, true));
+        form.add(new ContentAccessPanel("accessPanel", true, true, true, true));
+        form.add(new CreateCreateEditPanel("dbContentCreateEdit"){
+            @Override
+            protected void createDbContentCreateEdit() {
+                // Should not be here -> put to service class
+                DbContentCreateEdit dbContentCreateEdit = new DbContentCreateEdit();
+                dbContentCreateEdit.init();
+                form.getModelObject().setDbContentCreateEdit(dbContentCreateEdit);
+                dbContentCreateEdit.setParent(form.getModelObject());
+                ruServiceHelper.updateDbEntity(form.getModelObject());                
+            }
+
+            @Override
+            protected void deleteDbContentCreateEdit(DbContentCreateEdit dbContentCreateEdit) {
+                dbContentCreateEdit.setParent(null);
+                form.getModelObject().setDbContentCreateEdit(null);
+                ruServiceHelper.updateDbEntity(form.getModelObject());
+            }
+        });
         form.add(new TextField("cssClass"));
         form.add(new TextField("springBeanName"));
         form.add(new TextField("contentProviderGetter"));

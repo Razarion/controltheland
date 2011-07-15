@@ -1,7 +1,8 @@
 package com.btxtech.game.wicket.pages.mgmt.cms;
 
 import com.btxtech.game.services.cms.DbContent;
-import com.btxtech.game.services.cms.DbContentContainer;
+import com.btxtech.game.services.cms.DbContentCreateEdit;
+import com.btxtech.game.services.cms.DbExpressionProperty;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
@@ -18,50 +19,48 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
  * User: beat
- * Date: 20.06.2011
- * Time: 14:09:37
+ * Date: 15.07.2011
+ * Time: 11:42:27
  */
-public class ContentContainerEditor extends MgmtWebPage {
+public class ContentCreateEditEditor extends MgmtWebPage {
     @SpringBean
-    private RuServiceHelper<DbContentContainer> ruServiceHelper;
+    private RuServiceHelper<DbContentCreateEdit> ruServiceHelper;
 
-    public ContentContainerEditor(DbContentContainer dbContentContainer) {
+    public ContentCreateEditEditor(DbContentCreateEdit dbContentCreateEdit) {
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbContentContainer> form = new Form<DbContentContainer>("form", new CompoundPropertyModel<DbContentContainer>(new RuModel<DbContentContainer>(dbContentContainer, DbContentContainer.class) {
+        final Form<DbContentCreateEdit> form = new Form<DbContentCreateEdit>("form", new CompoundPropertyModel<DbContentCreateEdit>(new RuModel<DbContentCreateEdit>(dbContentCreateEdit, DbContentCreateEdit.class) {
             @Override
-            protected RuServiceHelper<DbContentContainer> getRuServiceHelper() {
+            protected RuServiceHelper<DbContentCreateEdit> getRuServiceHelper() {
                 return ruServiceHelper;
             }
         }));
         add(form);
 
-        form.add(new ContentAccessPanel("accessPanel", true, true, true, true));
+        form.add(new ContentAccessPanel("accessPanel", false, false, true, false));
         form.add(new TextField("cssClass"));
-        form.add(new TextField("springBeanName"));
-        form.add(new TextField("contentProviderGetter"));
 
-        new CrudListChildTableHelper<DbContentContainer, DbContent>("children", null, "createChild", true, form, true) {
+        new CrudListChildTableHelper<DbContentCreateEdit, DbExpressionProperty>("columns", null, "createColumn", true, form, true) {
 
             @Override
-            protected void extendedPopulateItem(Item<DbContent> dbContentItem) {
+            protected void extendedPopulateItem(Item<DbExpressionProperty> dbContentItem) {
                 super.extendedPopulateItem(dbContentItem);
                 displayId(dbContentItem);
             }
 
             @Override
-            protected RuServiceHelper<DbContentContainer> getRuServiceHelper() {
+            protected RuServiceHelper<DbContentCreateEdit> getRuServiceHelper() {
                 return ruServiceHelper;
             }
 
             @Override
-            protected DbContentContainer getParent() {
+            protected DbContentCreateEdit getParent() {
                 return form.getModelObject();
             }
 
             @Override
-            protected CrudListChildServiceHelper<DbContent> getCrudListChildServiceHelperImpl() {
-                return getParent().getContentCrud();
+            protected CrudListChildServiceHelper<DbExpressionProperty> getCrudListChildServiceHelperImpl() {
+                return getParent().getValueCrud();
             }
 
             @Override
@@ -70,15 +69,16 @@ public class ContentContainerEditor extends MgmtWebPage {
 
                     @Override
                     public void onDbContentSelected(Class<? extends DbContent> selected) {
-                        createDbChild(selected);
+                        //createDbChild(selected);
+                        createDbChild();
                         refresh();
                     }
                 });
             }
 
             @Override
-            protected void onEditSubmit(DbContent dbContent) {
-                setResponsePage(ContentEditorFactory.createContentEditor(dbContent));
+            protected void onEditSubmit(DbExpressionProperty dbExpressionProperty) {
+                setResponsePage(ContentEditorFactory.createContentEditor(dbExpressionProperty));
             }
         };
 
@@ -91,5 +91,5 @@ public class ContentContainerEditor extends MgmtWebPage {
         });
 
     }
-
 }
+
