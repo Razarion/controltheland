@@ -16,6 +16,8 @@ package com.btxtech.game.services.terrain;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.user.UserService;
+
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -50,7 +52,7 @@ public class DbSurfaceImage implements CrudChild, Serializable {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
         surfaceType = SurfaceType.LAND;
     }
 

@@ -16,6 +16,7 @@ package com.btxtech.game.services.cms;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
+import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
@@ -64,7 +65,7 @@ public class DbMenu implements CrudChild, CrudParent {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
         menuItems = new ArrayList<DbMenuItem>();
     }
 

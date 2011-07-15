@@ -19,12 +19,14 @@ import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.db.IndexUserType;
 import com.btxtech.game.services.item.itemType.DbItemType;
-import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+
+import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -102,7 +104,7 @@ public class DbItemTypeAndPosition implements CrudChild<DbTaskConfig> {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
         baseId = 1;
         position = new Index(0, 0);
     }

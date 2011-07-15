@@ -13,6 +13,8 @@
 
 package com.btxtech.game.services.common;
 
+import com.btxtech.game.services.user.UserService;
+
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
@@ -63,14 +65,22 @@ public class CrudChildServiceHelper<T extends CrudChild> implements Serializable
     }
 
     public T createDbChild() {
-        return createDbChild(childClass);
+        return createDbChild(childClass, null);
     }
 
     public T createDbChild(Class<? extends T> createClass) {
+        return createDbChild(createClass, null);
+    }
+
+    public T createDbChild(UserService userService) {
+        return createDbChild(childClass, userService);
+    }
+
+    public T createDbChild(Class<? extends T> createClass, UserService userService) {
         try {
             Constructor<? extends T> constructor = createClass.getConstructor();
             T t = constructor.newInstance();
-            addChild(t);
+            addChild(t, userService);
             return t;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -84,9 +94,9 @@ public class CrudChildServiceHelper<T extends CrudChild> implements Serializable
         children.clear();
     }
 
-    public void addChild(T t) {
+    public void addChild(T t, UserService userService) {
         t.setParent(crudParent);
-        t.init();
+        t.init(userService);
         initChild(t);
         children.add(t);
     }

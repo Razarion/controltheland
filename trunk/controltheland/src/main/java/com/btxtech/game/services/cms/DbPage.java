@@ -15,6 +15,7 @@ package com.btxtech.game.services.cms;
 
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.HibernateUtil;
+import com.btxtech.game.services.user.UserService;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -61,7 +62,7 @@ public class DbPage implements CrudChild {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
         accessRestricted = false;
         headerVisible = true;
         footerVisible = true;

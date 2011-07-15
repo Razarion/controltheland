@@ -22,6 +22,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Columns;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -74,7 +75,7 @@ public class DbResourceHintConfig extends DbHintConfig {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
         position = new Index(0, 0);
     }
 

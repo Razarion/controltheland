@@ -47,6 +47,7 @@ public class EditPanel extends Panel {
                 return !showDelete && cmsUiService.getEditMode(contentId) != null;
             }
         };
+        cancelEdit.setDefaultFormProcessing(false);
         add(cancelEdit);
 
         Button save = new Button("save") {

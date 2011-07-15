@@ -1,5 +1,7 @@
 package com.btxtech.game.services.common;
 
+import com.btxtech.game.services.user.UserService;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
@@ -35,7 +37,7 @@ public class ReadonlyCollectionContentProvider<T extends CrudChild> implements C
     }
 
     @Override
-    public T createDbChild() {
+    public T createDbChild(UserService userService) {
         throw new UnsupportedOperationException();
     }
 

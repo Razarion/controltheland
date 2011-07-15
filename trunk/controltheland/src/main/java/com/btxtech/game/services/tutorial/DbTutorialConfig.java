@@ -23,6 +23,7 @@ import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.tutorial.hint.ResourceHintManager;
+import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
@@ -193,7 +194,7 @@ public class DbTutorialConfig implements CrudChild, CrudParent {
         return new TutorialConfig(taskConfigs, ownBase, width, height, baseAttributes, failOnOwnItemsLost, failOnMoneyBelowAndNoAttackUnits, tracking, showWindowTooSmall);
     }
 
-    public void init() {
+    public void init(UserService userService) {
         ownBaseId = 1;
         ownBaseName = "My Base";
         enemyBaseId = 2;

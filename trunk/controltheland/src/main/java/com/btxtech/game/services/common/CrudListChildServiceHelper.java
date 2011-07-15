@@ -30,19 +30,17 @@ public class CrudListChildServiceHelper<T extends CrudChild> implements Serializ
     private List<T> children;
     private Class<T> childClass;
     private CrudParent crudParent;
-    private UserService userService;
     private String userField;
 
-    public CrudListChildServiceHelper(List<T> children, Class<T> childClass, CrudParent crudParent, UserService userService, String userField) {
+    public CrudListChildServiceHelper(List<T> children, Class<T> childClass, CrudParent crudParent, String userField) {
         this.children = children;
         this.childClass = childClass;
         this.crudParent = crudParent;
-        this.userService = userService;
         this.userField = userField;
     }
 
     public CrudListChildServiceHelper(List<T> children, Class<T> childClass, CrudParent crudParent) {
-        this(children, childClass, crudParent, null, null);
+        this(children, childClass, crudParent, null);
     }
 
     public List<T> readDbChildren() {
@@ -72,17 +70,28 @@ public class CrudListChildServiceHelper<T extends CrudChild> implements Serializ
     }
 
     public T createDbChild() {
-        return createDbChild(childClass);
+        return createDbChild(childClass, null);
     }
 
     public T createDbChild(Class<? extends T> createClass) {
+        return createDbChild(createClass, null);
+    }
+
+    public T createDbChild(UserService userService) {
+        return createDbChild(childClass, userService);
+    }
+
+    public T createDbChild(Class<? extends T> createClass, UserService userService) {
         try {
             Constructor<? extends T> constructor = createClass.getConstructor();
             T t = constructor.newInstance();
             if (userField != null) {
+                if(userService == null) {
+                    throw new IllegalArgumentException("To create a child, the user service must be passed.");
+                }
                 CrudRootServiceHelperImpl.setUser(userService, userField, childClass, t);
             }
-            addChild(t);
+            addChild(t, userService);
             return t;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -96,9 +105,9 @@ public class CrudListChildServiceHelper<T extends CrudChild> implements Serializ
         children.clear();
     }
 
-    public void addChild(T t) {
+    public void addChild(T t, UserService userService) {
         t.setParent(crudParent);
-        t.init();
+        t.init(userService);
         initChild(t);
         children.add(t);
     }

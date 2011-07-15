@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
@@ -144,7 +145,7 @@ public class DbTerritory implements CrudChild {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
         allowedItemTypes = new HashSet<DbBaseItemType>();
         dbTerritoryRegions = new HashSet<DbTerritoryRegion>();
     }

@@ -14,6 +14,7 @@
 package com.btxtech.game.services.market;
 
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.user.UserService;
 
 import java.io.Serializable;
 import javax.persistence.Entity;
@@ -46,7 +47,7 @@ public class DbMarketCategory implements CrudChild, Serializable {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
     }
 
     @Override

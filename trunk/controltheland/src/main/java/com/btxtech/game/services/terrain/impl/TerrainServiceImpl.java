@@ -233,7 +233,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         // Add new
         for (TerrainImagePosition terrainImagePosition : newImagePosition.values()) {
             DbTerrainImage dbTerrainImage = getDbTerrainImage(terrainImagePosition.getImageId());
-            dbTerrainSetting.getDbTerrainImagePositionCrudServiceHelper().addChild(new DbTerrainImagePosition(terrainImagePosition.getTileIndex(), dbTerrainImage));
+            dbTerrainSetting.getDbTerrainImagePositionCrudServiceHelper().addChild(new DbTerrainImagePosition(terrainImagePosition.getTileIndex(), dbTerrainImage), null);
         }
 
         // Surface Rects
@@ -255,7 +255,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         // Add new
         for (SurfaceRect surfaceRect : newSurfaceRect.values()) {
             DbSurfaceImage dbSurfaceImage = getDbSurfaceImage(surfaceRect.getSurfaceImageId());
-            dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(surfaceRect.getTileRectangle(), dbSurfaceImage));
+            dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(new DbSurfaceRect(surfaceRect.getTileRectangle(), dbSurfaceImage), null);
         }
 
         hibernateTemplate.saveOrUpdate(dbTerrainSetting);

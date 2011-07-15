@@ -848,7 +848,7 @@ abstract public class AbstractServiceTest {
         dbTerrainSetting.setTileWidth(100);
         dbTerrainSetting.setTileHeight(100);
         DbSurfaceRect dbSurfaceRect = new DbSurfaceRect(new Rectangle(0, 0, 100, 100), dbSurfaceImage);
-        dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(dbSurfaceRect);
+        dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(dbSurfaceRect, null);
         terrainService.getDbTerrainSettingCrudServiceHelper().updateDbChild(dbTerrainSetting);
         return dbTerrainSetting;
     }
@@ -873,7 +873,7 @@ abstract public class AbstractServiceTest {
         dbTerrainSetting.setTileWidth(100);
         dbTerrainSetting.setTileHeight(100);
         DbSurfaceRect dbSurfaceRect = new DbSurfaceRect(new Rectangle(0, 0, 100, 100), dbSurfaceImage);
-        dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(dbSurfaceRect);
+        dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(dbSurfaceRect, null);
         // Setup Terrain Images
         Collection<DbTerrainImagePosition> dbTerrainImagePositions = new ArrayList<DbTerrainImagePosition>();
         dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(10, 0), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_4x10)));

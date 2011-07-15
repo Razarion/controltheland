@@ -16,6 +16,7 @@ package com.btxtech.game.services.terrain;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.user.UserService;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -113,7 +114,7 @@ public class DbTerrainImagePosition implements Serializable, CrudChild<DbTerrain
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
     }
 
     @Override

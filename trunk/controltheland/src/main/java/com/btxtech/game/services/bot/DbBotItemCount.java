@@ -15,6 +15,8 @@ package com.btxtech.game.services.bot;
 
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
+import com.btxtech.game.services.user.UserService;
+
 import java.io.Serializable;
 import javax.persistence.*;
 
@@ -74,7 +76,7 @@ public class DbBotItemCount implements CrudChild<DbBotConfig>, Serializable {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
         type = 1;
     }
 

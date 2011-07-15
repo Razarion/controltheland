@@ -46,7 +46,7 @@ public class ContentListEditor extends MgmtWebPage {
             protected void createDbContentCreateEdit() {
                 // Should not be here -> put to service class
                 DbContentCreateEdit dbContentCreateEdit = new DbContentCreateEdit();
-                dbContentCreateEdit.init();
+                dbContentCreateEdit.init(null);
                 form.getModelObject().setDbContentCreateEdit(dbContentCreateEdit);
                 dbContentCreateEdit.setParent(form.getModelObject());
                 ruServiceHelper.updateDbEntity(form.getModelObject());                

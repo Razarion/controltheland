@@ -54,7 +54,7 @@ public class SubForum extends AbstractForumEntry implements CrudChild, CrudParen
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
         categories = new ArrayList<Category>();
         setDate();
     }
@@ -63,9 +63,9 @@ public class SubForum extends AbstractForumEntry implements CrudChild, CrudParen
     public void setParent(Object o) {
     }
 
-    public CrudListChildServiceHelper<Category> getCategoryCrud(UserService userService) {
+    public CrudListChildServiceHelper<Category> getCategoryCrud() {
         if (categoryCrud == null) {
-            categoryCrud = new CrudListChildServiceHelper<Category>(categories, Category.class, this, userService, "user");
+            categoryCrud = new CrudListChildServiceHelper<Category>(categories, Category.class, this, "user");
         }
         return categoryCrud;
     }

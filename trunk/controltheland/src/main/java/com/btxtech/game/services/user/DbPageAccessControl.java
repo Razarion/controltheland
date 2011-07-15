@@ -59,7 +59,7 @@ public class DbPageAccessControl implements CrudChild<User> {
     }
 
     @Override
-    public void init() {
+    public void init(UserService userService) {
     }
 
     @Override
