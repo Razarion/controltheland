@@ -23,7 +23,9 @@ import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import com.btxtech.game.wicket.uiservices.cms.impl.CmsUiServiceImpl;
+import org.apache.wicket.Component;
 import org.apache.wicket.RequestCycle;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.util.tester.FormTester;
@@ -1492,7 +1494,86 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertVisible("form:content:dataTable:body:rows:3:cells:2:cell:table:rows:3:cells:3:cell:image");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+    }
 
+    @Test
+    @DirtiesContext
+    public void testPageLinkText() throws Exception {
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setHome(true);
+        dbPage.setName("Home");
+
+        DbContentPageLink dbContentPageLink = new DbContentPageLink();
+        dbContentPageLink.setName("PAGE LINK");
+        dbContentPageLink.setDbPage(dbPage);
+        dbPage.setContentAndAccessWrites(dbContentPageLink);
+
+        pageCrud.updateDbChild(dbPage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertLabel("form:content:link:label", "PAGE LINK");
+        tester.assertInvisible("form:content:link:image");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+    @Test
+    @DirtiesContext
+    public void testPageLinkImage() throws Exception {
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setHome(true);
+        dbPage.setName("Home");
+
+        // Prepare image
+        DbCmsImage dbCmsImage = cmsService.getImageCrudRootServiceHelper().createDbChild();
+        dbCmsImage.setData(new byte[]{1,2,3});
+        cmsService.getImageCrudRootServiceHelper().updateDbChild(dbCmsImage);
+
+        DbContentPageLink dbContentPageLink = new DbContentPageLink();
+        dbContentPageLink.setName("PAGE LINK");
+        dbContentPageLink.setDbPage(dbPage);
+        dbContentPageLink.setDbCmsImage(dbCmsImage);
+        dbPage.setContentAndAccessWrites(dbContentPageLink);
+
+        pageCrud.updateDbChild(dbPage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertInvisible("form:content:link:label");
+        tester.assertVisible("form:content:link:image");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
 }
