@@ -176,3 +176,16 @@ VALUE(true, true, true, true, 112, "beat");
 
 -----------------
 ALTER TABLE `gamedb`.`ITEM_TYPE_ACCESS_ENTRY` RENAME TO `gamedb`.`MARKET_ENTRY`;
+
+-----------------
+ALTER TABLE `gamedb`.`CMS_CONTENT` MODIFY COLUMN `createRestricted` BIT(1) DEFAULT NULL,
+ MODIFY COLUMN `deleteRestricted` BIT(1) DEFAULT NULL,
+ MODIFY COLUMN `readRestricted` BIT(1) DEFAULT NULL,
+ MODIFY COLUMN `writeRestricted` BIT(1) DEFAULT NULL;
+
+ UPDATE CMS_CONTENT set deleteRestricted = null, readRestricted = null, writeRestricted = null, createRestricted = null
+ 
+ ALTER TABLE `gamedb`.`CMS_CONTENT` DROP COLUMN `createRestricted`,
+ DROP COLUMN `deleteRestricted`,
+ DROP COLUMN `readRestricted`,
+ DROP COLUMN `writeRestricted`;
