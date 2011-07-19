@@ -36,7 +36,7 @@ import java.util.Date;
 @Entity(name = "FORUM_POST")
 public class DbPost implements CrudChild<DbForumThread> {
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue
     private Integer id;
     private Date postDate;
     private String name;

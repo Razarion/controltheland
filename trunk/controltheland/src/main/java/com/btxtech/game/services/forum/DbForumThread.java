@@ -44,7 +44,7 @@ import java.util.List;
 @Entity(name = "FORUM_THREAD")
 public class DbForumThread implements CrudChild<DbCategory>, CrudParent {
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue
     private Integer id;
     private Date date;
     private String name;
