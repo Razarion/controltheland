@@ -9,11 +9,11 @@ import com.btxtech.game.services.cms.impl.CmsServiceImpl;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
-import com.btxtech.game.services.forum.Category;
+import com.btxtech.game.services.forum.DbCategory;
+import com.btxtech.game.services.forum.DbPost;
+import com.btxtech.game.services.forum.DbSubForum;
 import com.btxtech.game.services.forum.ForumService;
-import com.btxtech.game.services.forum.ForumThread;
-import com.btxtech.game.services.forum.Post;
-import com.btxtech.game.services.forum.SubForum;
+import com.btxtech.game.services.forum.DbForumThread;
 import com.btxtech.game.services.forum.TestForum;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.user.DbContentAccessControl;
@@ -23,9 +23,7 @@ import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import com.btxtech.game.wicket.uiservices.cms.impl.CmsUiServiceImpl;
-import org.apache.wicket.Component;
 import org.apache.wicket.RequestCycle;
-import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.util.tester.FormTester;
@@ -838,7 +836,7 @@ public class TestCmsService extends AbstractServiceTest {
         categoryLink.setName("details");
 
         DbContentBook categoryContentBook = categories.getContentBookCrud().createDbChild();
-        categoryContentBook.setClassName("com.btxtech.game.services.forum.Category");
+        categoryContentBook.setClassName("com.btxtech.game.services.forum.DbCategory");
         DbContentRow categoryNameRow = categoryContentBook.getRowCrud().createDbChild();
         DbExpressionProperty categoryName = new DbExpressionProperty();
         categoryName.setParent(categoryNameRow);
@@ -856,7 +854,7 @@ public class TestCmsService extends AbstractServiceTest {
         threadLink.setName("details");
 
         DbContentBook threadContentBook = threadList.getContentBookCrud().createDbChild();
-        threadContentBook.setClassName("com.btxtech.game.services.forum.ForumThread");
+        threadContentBook.setClassName("com.btxtech.game.services.forum.DbForumThread");
         DbContentRow threadNameRow = threadContentBook.getRowCrud().createDbChild();
         DbExpressionProperty postColumnName = new DbExpressionProperty();
         postColumnName.setParent(threadNameRow);
@@ -1288,13 +1286,13 @@ public class TestCmsService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<SubForum> subForums = (List<SubForum>) forumService.getSubForumCrud().readDbChildren();
+        List<DbSubForum> subForums = (List<DbSubForum>) forumService.getSubForumCrud().readDbChildren();
         Assert.assertEquals(1, subForums.size());
-        List<Category> categories = subForums.get(0).getCategoryCrud().readDbChildren();
+        List<DbCategory> categories = subForums.get(0).getCategoryCrud().readDbChildren();
         Assert.assertEquals(1, categories.size());
-        List<ForumThread> threads = categories.get(0).getForumThreadCrud().readDbChildren();
+        List<DbForumThread> threads = categories.get(0).getForumThreadCrud().readDbChildren();
         Assert.assertEquals(1, threads.size());
-        List<Post> posts = threads.get(0).getPostCrud().readDbChildren();
+        List<DbPost> posts = threads.get(0).getPostCrud().readDbChildren();
         Assert.assertEquals(1, posts.size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -1330,10 +1328,10 @@ public class TestCmsService extends AbstractServiceTest {
         // Submit -> back to page before
         formTester.submit("content:submit");
         tester.assertLabel("form:content:dataTable:body:rows:1:cells:2:cell", "CategoryName1");
-        tester.assertLabel("form:content:dataTable:body:rows:2:cells:2:cell:table:rows:1:cells:1:cell", "ForumThreadName1");
-        tester.assertLabel("form:content:dataTable:body:rows:2:cells:2:cell:table:rows:2:cells:1:cell", "ForumThreadName2");
+        tester.assertLabel("form:content:dataTable:body:rows:2:cells:2:cell:table:rows:1:cells:1:cell", "ForumThreadName2");
+        tester.assertLabel("form:content:dataTable:body:rows:2:cells:2:cell:table:rows:2:cells:1:cell", "ForumThreadName1");
         // Open Thread
-        tester.clickLink("form:content:dataTable:body:rows:2:cells:2:cell:table:rows:2:cells:2:cell:link");
+        tester.clickLink("form:content:dataTable:body:rows:2:cells:2:cell:table:rows:1:cells:2:cell:link");
         tester.assertLabel("form:content:dataTable:body:rows:1:cells:2:cell", "ForumThreadName2");
         tester.assertLabel("form:content:dataTable:body:rows:2:cells:2:cell:table:rows:1:cells:1:cell", "Content Content");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -1348,15 +1346,15 @@ public class TestCmsService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        List<SubForum> subForums = (List<SubForum>) forumService.getSubForumCrud().readDbChildren();
+        List<DbSubForum> subForums = (List<DbSubForum>) forumService.getSubForumCrud().readDbChildren();
         Assert.assertEquals(1, subForums.size());
-        List<Category> categories = subForums.get(0).getCategoryCrud().readDbChildren();
+        List<DbCategory> categories = subForums.get(0).getCategoryCrud().readDbChildren();
         Assert.assertEquals(1, categories.size());
-        List<ForumThread> threads = categories.get(0).getForumThreadCrud().readDbChildren();
+        List<DbForumThread> threads = categories.get(0).getForumThreadCrud().readDbChildren();
         Assert.assertEquals(2, threads.size());
-        List<Post> posts1 = threads.get(0).getPostCrud().readDbChildren();
+        List<DbPost> posts1 = threads.get(0).getPostCrud().readDbChildren();
         Assert.assertEquals(1, posts1.size());
-        List<Post> posts2 = threads.get(1).getPostCrud().readDbChildren();
+        List<DbPost> posts2 = threads.get(1).getPostCrud().readDbChildren();
         Assert.assertEquals(1, posts2.size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

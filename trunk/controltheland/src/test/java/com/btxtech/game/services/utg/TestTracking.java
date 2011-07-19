@@ -22,7 +22,6 @@ import com.btxtech.game.services.utg.tracker.DbStartupTask;
 import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.Home;
-import com.btxtech.game.wicket.pages.forum.ForumView;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,9 +89,6 @@ public class TestTracking extends AbstractServiceTest {
         userTrackingService.pageAccess(Home.class);
         endHttpRequestAndOpenSessionInViewFilter();
 
-        beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.pageAccess(ForumView.class);
-        endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // Verify
@@ -100,7 +96,7 @@ public class TestTracking extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         List<SessionOverviewDto> sessionOverviewDto = userTrackingService.getSessionOverviewDtos(UserTrackingFilter.newDefaultFilter());
         Assert.assertEquals(1, sessionOverviewDto.size());
-        Assert.assertEquals(2, sessionOverviewDto.get(0).getPageHits());
+        Assert.assertEquals(1, sessionOverviewDto.get(0).getPageHits());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
