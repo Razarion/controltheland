@@ -18,6 +18,8 @@ import com.btxtech.game.services.user.UserService;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -31,16 +33,25 @@ public class CrudListChildServiceHelper<T extends CrudChild> implements Serializ
     private Class<T> childClass;
     private CrudParent crudParent;
     private String userField;
+    private Comparator<T> comparable;
 
-    public CrudListChildServiceHelper(List<T> children, Class<T> childClass, CrudParent crudParent, String userField) {
+    public CrudListChildServiceHelper(List<T> children, Class<T> childClass, CrudParent crudParent, String userField, Comparator<T> comparable) {
         this.children = children;
         this.childClass = childClass;
         this.crudParent = crudParent;
         this.userField = userField;
+        this.comparable = comparable;
+        sort();
+    }
+
+    public void sort() {
+        if (comparable != null && children.size() > 1) {
+            Collections.sort(children, comparable);
+        }
     }
 
     public CrudListChildServiceHelper(List<T> children, Class<T> childClass, CrudParent crudParent) {
-        this(children, childClass, crudParent, null);
+        this(children, childClass, crudParent, null, null);
     }
 
     public List<T> readDbChildren() {
@@ -67,6 +78,7 @@ public class CrudListChildServiceHelper<T extends CrudChild> implements Serializ
             child.setParent(crudParent);
             this.children.add(child);
         }
+        sort();
     }
 
     public T createDbChild() {
@@ -86,7 +98,7 @@ public class CrudListChildServiceHelper<T extends CrudChild> implements Serializ
             Constructor<? extends T> constructor = createClass.getConstructor();
             T t = constructor.newInstance();
             if (userField != null) {
-                if(userService == null) {
+                if (userService == null) {
                     throw new IllegalArgumentException("To create a child, the user service must be passed.");
                 }
                 CrudRootServiceHelperImpl.setUser(userService, userField, childClass, t);
@@ -110,6 +122,7 @@ public class CrudListChildServiceHelper<T extends CrudChild> implements Serializ
         t.init(userService);
         initChild(t);
         children.add(t);
+        sort();
     }
 
     public void copyTo(CrudListChildServiceHelper<T> crudChildServiceHelper) {

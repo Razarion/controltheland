@@ -81,11 +81,10 @@
         <mapping class="com.btxtech.game.services.utg.condition.DbSyncItemIdPositionComparisonConfig"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbContainedInComparisonConfig"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig"/>
-        <mapping class="com.btxtech.game.services.forum.AbstractForumEntry"/>
-        <mapping class="com.btxtech.game.services.forum.SubForum"/>
-        <mapping class="com.btxtech.game.services.forum.Category"/>
-        <mapping class="com.btxtech.game.services.forum.ForumThread"/>
-        <mapping class="com.btxtech.game.services.forum.Post"/>
+        <mapping class="com.btxtech.game.services.forum.DbSubForum"/>
+        <mapping class="com.btxtech.game.services.forum.DbCategory"/>
+        <mapping class="com.btxtech.game.services.forum.DbForumThread"/>
+        <mapping class="com.btxtech.game.services.forum.DbPost"/>
         <mapping class="com.btxtech.game.services.messenger.Mail"/>
         <mapping class="com.btxtech.game.services.resource.DbRegionResource"/>
         <mapping class="com.btxtech.game.services.bot.DbBotConfig"/>

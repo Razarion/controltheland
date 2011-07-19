@@ -21,13 +21,13 @@ import java.util.List;
  * Time: 17:16:58
  */
 public class Forum {
-    private List<SubForum> subForums;
+    private List<DbSubForum> subForums;
 
-    public Forum(List<SubForum> subForums) {
+    public Forum(List<DbSubForum> subForums) {
         this.subForums = subForums;
     }
 
-    public List<SubForum> getSubForums() {
+    public List<DbSubForum> getSubForums() {
         return subForums;
     }
 }
