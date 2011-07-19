@@ -16,9 +16,12 @@ import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.user.UserService;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
+
+import java.util.List;
 
 /**
  * User: beat
@@ -33,16 +36,15 @@ public class TestForum extends AbstractServiceTest {
     private UserService userService;
 
     public static void fillForum(ForumService forumService, UserService userService) {
-        CrudRootServiceHelper<SubForum> subForumCrud = forumService.getSubForumCrud();
-        SubForum subForum = subForumCrud.createDbChild();
+        CrudRootServiceHelper<DbSubForum> subForumCrud = forumService.getSubForumCrud();
+        DbSubForum subForum = subForumCrud.createDbChild();
         subForum.setName("SubForumName1");
         subForum.setContent("SubForumContent1");
-        CrudListChildServiceHelper<Category> categoryCrud = subForum.getCategoryCrud();
-        Category category = categoryCrud.createDbChild(userService);
+        CrudListChildServiceHelper<DbCategory> categoryCrud = subForum.getCategoryCrud();
+        DbCategory category = categoryCrud.createDbChild(userService);
         category.setName("CategoryName1");
-        category.setContent("CategoryContent1");
-        CrudListChildServiceHelper<ForumThread> forumThreadCrud = category.getForumThreadCrud();
-        ForumThread forumThread = forumThreadCrud.createDbChild(userService);
+        CrudListChildServiceHelper<DbForumThread> forumThreadCrud = category.getForumThreadCrud();
+        DbForumThread forumThread = forumThreadCrud.createDbChild(userService);
         forumThread.setName("ForumThreadName1");
         forumThread.setContent("PostContent1");
 
@@ -50,18 +52,15 @@ public class TestForum extends AbstractServiceTest {
     }
 
     @Test
+    @DirtiesContext
     public void testCreateAndFillForum() throws Exception {
         configureMinimalGame();
 
         beginHttpSession();
-        
+
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.createUser("U1", "test", "test", "test");
         userService.login("U1", "test");
-        SubForum subForum = (SubForum) forumService.createForumEntry(SubForum.class);
-        subForum.setTitle("Test");
-        subForum.setContent("Content");
-        forumService.insertSubForumEntry(subForum);
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -70,4 +69,150 @@ public class TestForum extends AbstractServiceTest {
 
         endHttpSession();
     }
+
+    @Test
+    @DirtiesContext
+    public void testOrderForum() throws Exception {
+        configureMinimalGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U1", "test", "test", "test");
+        userService.login("U1", "test");
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        // Fill forum
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbSubForum> subForumCrud = forumService.getSubForumCrud();
+        DbSubForum subForum1 = subForumCrud.createDbChild();
+        subForum1.setName("SubForumName1");
+        subForum1.setContent("SubForumContent1");
+        CrudListChildServiceHelper<DbCategory> categoryCrud = subForum1.getCategoryCrud();
+        DbCategory category1 = categoryCrud.createDbChild(userService);
+        category1.setName("CategoryName1");
+        CrudListChildServiceHelper<DbForumThread> forumThreadCrud = category1.getForumThreadCrud();
+        DbForumThread dbForumThread1 = forumThreadCrud.createDbChild(userService);
+        dbForumThread1.setName("ForumThreadName1");
+        subForumCrud.updateDbChild(subForum1);
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbSubForum subForum2 = subForumCrud.createDbChild();
+        subForum2.setName("SubForumName2");
+        subForum2.setContent("SubForumContent2");
+        subForumCrud.updateDbChild(subForum2);
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbSubForum subForum3 = subForumCrud.createDbChild();
+        subForum3.setName("SubForumName3");
+        subForum3.setContent("SubForumContent3");
+        subForumCrud.updateDbChild(subForum3);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Add categories
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        subForumCrud = forumService.getSubForumCrud();
+        subForum1 = subForumCrud.readDbChild(subForum1.getId());
+        categoryCrud = subForum1.getCategoryCrud();
+        DbCategory category2 = categoryCrud.createDbChild(userService);
+        category2.setName("CategoryName2");
+        subForumCrud.updateDbChild(subForum1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify category
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        subForumCrud = forumService.getSubForumCrud();
+        List<DbSubForum> dbSubForums = (List<DbSubForum>) subForumCrud.readDbChildren();
+        List<DbCategory> dbCategories = dbSubForums.get(0).getCategoryCrud().readDbChildren();
+        Assert.assertEquals("CategoryName1", dbCategories.get(0).getName());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Add thread and post
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        subForumCrud = forumService.getSubForumCrud();
+        subForum1 = subForumCrud.readDbChild(subForum1.getId());
+        category1 = subForum1.getCategoryCrud().readDbChild(category1.getId());
+        DbForumThread dbForumThread2 = category1.getForumThreadCrud().createDbChild(userService);
+        dbForumThread2.setName("ForumThreadName2");
+        dbForumThread2.getPostCrud().readDbChildren().get(0).setContent("ForumPostContent2");
+        subForumCrud.updateDbChild(subForum1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify ForumThread
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        subForumCrud = forumService.getSubForumCrud();
+        subForum1 = subForumCrud.readDbChild(subForum1.getId());
+        category1 = subForum1.getCategoryCrud().readDbChild(category1.getId());
+        List<DbForumThread> dbForumThreads = category1.getForumThreadCrud().readDbChildren();
+        Assert.assertEquals("ForumThreadName2", dbForumThreads.get(0).getName());
+        Assert.assertEquals("ForumThreadName1", dbForumThreads.get(1).getName());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Add thread and post
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        subForumCrud = forumService.getSubForumCrud();
+        subForum1 = subForumCrud.readDbChild(subForum1.getId());
+        category1 = subForum1.getCategoryCrud().readDbChild(category1.getId());
+        DbForumThread dbForumThread3 = category1.getForumThreadCrud().createDbChild(userService);
+        dbForumThread3.setName("ForumThreadName3");
+        subForumCrud.updateDbChild(subForum1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify ForumThread
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        subForumCrud = forumService.getSubForumCrud();
+        subForum1 = subForumCrud.readDbChild(subForum1.getId());
+        category1 = subForum1.getCategoryCrud().readDbChild(category1.getId());
+        dbForumThreads = category1.getForumThreadCrud().readDbChildren();
+        Assert.assertEquals("ForumThreadName3", dbForumThreads.get(0).getName());
+        Assert.assertEquals("ForumThreadName2", dbForumThreads.get(1).getName());
+        Assert.assertEquals("ForumThreadName1", dbForumThreads.get(2).getName());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Add post
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        subForumCrud = forumService.getSubForumCrud();
+        subForum1 = subForumCrud.readDbChild(subForum1.getId());
+        category1 = subForum1.getCategoryCrud().readDbChild(category1.getId());
+        dbForumThread1 = category1.getForumThreadCrud().readDbChild(dbForumThread1.getId());
+        DbPost dbPost4 = dbForumThread1.getPostCrud().createDbChild(userService);
+        dbPost4.setName("PostName4");
+        subForumCrud.updateDbChild(subForum1);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify post
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        subForumCrud = forumService.getSubForumCrud();
+        subForum1 = subForumCrud.readDbChild(subForum1.getId());
+        category1 = subForum1.getCategoryCrud().readDbChild(category1.getId());
+        dbForumThread1 = category1.getForumThreadCrud().readDbChild(dbForumThread1.getId());
+        List<DbPost> dbPosts = dbForumThread1.getPostCrud().readDbChildren();
+        Assert.assertEquals("PostName4", dbPosts.get(0).getName());
+        Assert.assertEquals("ForumThreadName1", dbPosts.get(1).getName());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        
+    }
+
 }
