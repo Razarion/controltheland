@@ -24,32 +24,6 @@ import java.util.List;
  * Time: 17:04:50
  */
 public interface ForumService {
-    @Deprecated
-    List<SubForum> getSubForums();
 
-    Category getCategory(int categoryId);
-
-    List<Category> getCategories(SubForum subForum);
-
-    ForumThread getForumThread(int forumThreadId);
-
-    List<ForumThread> getForumThreads(Category category);
-
-    List<Post> getPosts(ForumThread forumThread);
-
-    AbstractForumEntry createForumEntry(Class<? extends AbstractForumEntry> aClass);
-
-    void insertSubForumEntry(SubForum subForum);
-
-    void insertCategoryEntry(Serializable parentId, Category category);
-
-    void insertForumThreadEntry(Serializable parentId, ForumThread forumThread);
-
-    void insertPostEntry(Serializable parentId, Post post);
-
-    int getPostCount(Category category);
-
-    void delete(AbstractForumEntry abstractForumEntry);
-
-    CrudRootServiceHelper<SubForum> getSubForumCrud();
+    CrudRootServiceHelper<DbSubForum> getSubForumCrud();
 }

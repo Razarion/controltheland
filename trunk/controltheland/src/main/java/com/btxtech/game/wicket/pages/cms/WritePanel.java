@@ -49,7 +49,6 @@ public class WritePanel extends Panel {
             @Override
             public void setObject(Object s) {
                 super.setObject(s);
-                System.out.println(contentArea2.getPath());
                 cmsUiService.setDataProviderBean(s, beanIdPathElement, contentId);
             }
 

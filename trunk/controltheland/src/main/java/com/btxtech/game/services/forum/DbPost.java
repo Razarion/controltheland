@@ -13,7 +13,9 @@
 
 package com.btxtech.game.services.forum;
 
+import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserService;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,60 +23,46 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
 /**
  * User: beat
  * Date: 21.03.2010
- * Time: 17:06:12
+ * Time: 17:07:38
  */
-@Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-abstract public class AbstractForumEntry implements Serializable {
+@Entity(name = "FORUM_POST")
+public class DbPost implements CrudChild<DbForumThread> {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Integer id;
-    private Date date;
-    private String title;
+    private Date postDate;
+    private String name;
     @Column(length = 5000)
     private String content;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User user;
-    @Transient
-    private Date lastPost;
+    @ManyToOne
+    @JoinColumn(name = "forumThreadId", nullable = false)
+    private DbForumThread dbForumThread;
+
+    @Override
+    public Serializable getId() {
+        return id;
+    }
 
     public Date getDate() {
-        return date;
-    }
-
-    public void setDate() {
-        this.date = new Date();
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        if (title != null) {
-            this.title = title;
-        } else {
-            this.title = "";
-        }
+        return postDate;
     }
 
     public String getName() {
-        return getTitle();
+        return name;
     }
 
     public void setName(String name) {
-        setTitle(name);
+        this.name = name;
     }
 
     public String getContent() {
@@ -82,11 +70,7 @@ abstract public class AbstractForumEntry implements Serializable {
     }
 
     public void setContent(String content) {
-        if (content != null) {
-            this.content = content;
-        } else {
-            this.content = "";
-        }
+        this.content = content;
     }
 
     public User getUser() {
@@ -97,16 +81,14 @@ abstract public class AbstractForumEntry implements Serializable {
         this.user = user;
     }
 
-    public Serializable getId() {
-        return id;
+    @Override
+    public void init(UserService userService) {
+        postDate = new Date();
     }
 
-    public Date getLastPost() {
-        return lastPost;
-    }
-
-    public void setLastPost(Date lastPost) {
-        this.lastPost = lastPost;
+    @Override
+    public void setParent(DbForumThread dbForumThread) {
+        this.dbForumThread = dbForumThread;
     }
 
     @Override
@@ -114,15 +96,12 @@ abstract public class AbstractForumEntry implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        AbstractForumEntry that = (AbstractForumEntry) o;
-
-        return !(id != null ? !id.equals(that.id) : that.id != null);
-
+        DbPost that = (DbPost) o;
+        return id != null && id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
-
 }
