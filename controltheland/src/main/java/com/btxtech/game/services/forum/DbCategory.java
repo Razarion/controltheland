@@ -43,7 +43,7 @@ import java.util.List;
 @Entity(name = "FORUM_CATEGORY")
 public class DbCategory implements CrudChild<DbSubForum>, CrudParent {
     @Id
-    @GeneratedValue(strategy = GenerationType.TABLE)
+    @GeneratedValue
     private Integer id;
     private Date date;
     private String name;
