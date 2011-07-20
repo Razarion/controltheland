@@ -5,6 +5,7 @@ import com.btxtech.game.services.cms.DbMenuItem;
 import com.btxtech.game.services.cms.DbPage;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -35,7 +36,9 @@ public class Menu extends Panel {
             protected List<DbMenuItem> createList() {
                 DbMenu dbMenu = (DbMenu) Menu.this.getDefaultModelObject();
                 if (dbMenu != null) {
-                    return filterMenuItems(dbMenu.getMenuItemCrudChildServiceHelper().readDbChildren());
+                    List<DbMenuItem> menuItemList = new ArrayList<DbMenuItem>(dbMenu.getMenuItemCrudChildServiceHelper().readDbChildren());
+                    addSubMenuItems(menuItemList);
+                    return filterMenuItems(menuItemList);
                 } else {
                     return Collections.emptyList();
                 }
@@ -55,18 +58,51 @@ public class Menu extends Panel {
                 item.add(link);
 
                 if (selected) {
-                    link.add(new SimpleAttributeModifier("class", StyleConstants.MENU_LINK_SELECTED_CLASS.getStyleName()));
-                    label.add(new SimpleAttributeModifier("class", StyleConstants.MENU_LABEL_SELECTED_CLASS.getStyleName()));
-                    item.add(new SimpleAttributeModifier("class", StyleConstants.MENU_TABLE_ROW_SELECTED_CLASS.getStyleName()));
+                    setStyle(link, item.getModelObject().getSelectedCssLinkClass());
+                    setStyle(label, item.getModelObject().getSelectedCssClass());
+                    setStyle(item, item.getModelObject().getSelectedCssTrClass());
                 } else {
-                    link.add(new SimpleAttributeModifier("class", StyleConstants.MENU_LINK_CLASS.getStyleName()));
-                    label.add(new SimpleAttributeModifier("class", StyleConstants.MENU_LABEL_CLASS.getStyleName()));
-                    item.add(new SimpleAttributeModifier("class", StyleConstants.MENU_TABLE_ROW_CLASS.getStyleName()));
+                    setStyle(link, item.getModelObject().getCssLinkClass());
+                    setStyle(label, item.getModelObject().getCssClass());
+                    setStyle(item, item.getModelObject().getCssTrClass());
                 }
             }
         };
         add(dataTable);
+    }
 
+    private void setStyle(Component component, String style) {
+        if (style != null) {
+            component.add(new SimpleAttributeModifier("class", style));
+        }
+    }
+
+    private void addSubMenuItems(List<DbMenuItem> menuItemList) {
+        DbPage dbPage = (DbPage) Menu.this.getParent().getDefaultModelObject();
+        List<DbMenuItem> subMenuItems = null;
+        DbMenuItem menuWithSubMenu = null;
+        for (DbMenuItem dbMenuItem : menuItemList) {
+            List<DbMenuItem> tmpSubMenu = new ArrayList<DbMenuItem>();
+            if (dbMenuItem.getSubMenu() != null) {
+                menuWithSubMenu = dbMenuItem;
+                for (DbMenuItem subMenuItem : dbMenuItem.getSubMenu().getMenuItemCrudChildServiceHelper().readDbChildren()) {
+                    tmpSubMenu.add(subMenuItem);
+                    if (subMenuItem.getPage().equals(dbPage)) {
+                        subMenuItems = tmpSubMenu;
+                    }
+                }
+                if (subMenuItems != null) {
+                    break;
+                }
+                if (dbMenuItem.getPage().equals(dbPage)) {
+                    subMenuItems = tmpSubMenu;
+                    break;
+                }
+            }
+        }
+        if (subMenuItems != null) {
+            menuItemList.addAll(menuItemList.indexOf(menuWithSubMenu) + 1, subMenuItems);
+        }
     }
 
     private List<DbMenuItem> filterMenuItems(List<DbMenuItem> dbMenuItems) {
@@ -82,7 +118,7 @@ public class Menu extends Panel {
 
     @Override
     public boolean isVisible() {
-        DbMenu dbMenu = (DbMenu) Menu.this.getDefaultModelObject();
+        DbMenu dbMenu = (DbMenu) getDefaultModelObject();
         return dbMenu != null;
     }
 }

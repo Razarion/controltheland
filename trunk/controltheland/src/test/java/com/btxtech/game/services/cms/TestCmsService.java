@@ -253,6 +253,161 @@ public class TestCmsService extends AbstractServiceTest {
         ((CmsServiceImpl) cmsService).init();
     }
 
+    @Test
+    @DirtiesContext
+    public void testSubMenu() {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage1 = pageCrud.createDbChild();
+        dbPage1.setHome(true);
+        dbPage1.setName("Home");
+        DbPage dbPage2 = pageCrud.createDbChild();
+        dbPage2.setHome(false);
+        dbPage2.setName("Market");
+        DbPage dbPage3 = pageCrud.createDbChild();
+        dbPage3.setHome(false);
+        dbPage3.setName("Rank");
+        DbPage dbSubPage31 = pageCrud.createDbChild();
+        dbSubPage31.setHome(false);
+        dbSubPage31.setName("SubRank1");
+        DbPage dbSubPage32 = pageCrud.createDbChild();
+        dbSubPage32.setHome(false);
+        dbSubPage32.setName("SubRank2");
+        DbPage dbSubPage33 = pageCrud.createDbChild();
+        dbSubPage33.setHome(false);
+        dbSubPage33.setName("SubRank3");
+        DbPage dbPage4 = pageCrud.createDbChild();
+        dbPage4.setHome(false);
+        dbPage4.setName("Page4");
+        DbPage dbPage5 = pageCrud.createDbChild();
+        dbPage5.setHome(false);
+        dbPage5.setName("Page5");
+        DbPage dbSubPage51 = pageCrud.createDbChild();
+        dbSubPage51.setHome(false);
+        dbSubPage51.setName("SubPage51");
+        DbPage dbSubPage52 = pageCrud.createDbChild();
+        dbSubPage52.setHome(false);
+        dbSubPage52.setName("SubPage52");
+
+
+        CrudRootServiceHelper<DbMenu> menuCrud = cmsService.getMenuCrudRootServiceHelper();
+        DbMenu dbMenu = menuCrud.createDbChild();
+        dbMenu.setName("MainMenu");
+        createMenuItem(dbPage1, dbMenu, "Home Menu");
+        createMenuItem(dbPage2, dbMenu, "Market Menu");
+        DbMenuItem dbMenuItem3 = createMenuItem(dbPage3, dbMenu, "Rank Menu");
+        createMenuItem(dbPage4, dbMenu, "Page4");
+        DbMenuItem dbMenuItem5 = createMenuItem(dbPage5, dbMenu, "Page5");
+
+
+        DbMenu dbSubMenu3 = new DbMenu();
+        dbSubMenu3.init(userService);
+        dbMenuItem3.setSubMenu(dbSubMenu3);
+        createMenuItem(dbSubPage31, dbSubMenu3, "SubMenu1");
+        createMenuItem(dbSubPage32, dbSubMenu3, "SubMenu2");
+        createMenuItem(dbSubPage33, dbSubMenu3, "SubMenu3");
+
+        DbMenu dbSubMenu5 = new DbMenu();
+        dbSubMenu5.init(userService);
+        dbMenuItem5.setSubMenu(dbSubMenu5);
+        createMenuItem(dbSubPage51, dbSubMenu5, "SubMenu51");
+        createMenuItem(dbSubPage51, dbSubMenu5, "SubMenu52");
+        
+        menuCrud.updateDbChild(dbMenu);
+        pageCrud.updateDbChild(dbPage1);
+        pageCrud.updateDbChild(dbPage2);
+        pageCrud.updateDbChild(dbPage3);
+        pageCrud.updateDbChild(dbSubPage31);
+        pageCrud.updateDbChild(dbSubPage32);
+        pageCrud.updateDbChild(dbSubPage33);
+        pageCrud.updateDbChild(dbSubPage51);
+        pageCrud.updateDbChild(dbSubPage52);
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertLabel("menu:menuTable:1:menuLink:menuLinkName", "Home Menu");
+        tester.assertLabel("menu:menuTable:2:menuLink:menuLinkName", "Market Menu");
+        tester.assertLabel("menu:menuTable:3:menuLink:menuLinkName", "Rank Menu");
+        tester.assertLabel("menu:menuTable:4:menuLink:menuLinkName", "Page4");
+        tester.assertLabel("menu:menuTable:5:menuLink:menuLinkName", "Page5");
+        // Click Home Menu
+        tester.clickLink("menu:menuTable:1:menuLink");
+        tester.assertLabel("menu:menuTable:1:menuLink:menuLinkName", "Home Menu");
+        tester.assertLabel("menu:menuTable:2:menuLink:menuLinkName", "Market Menu");
+        tester.assertLabel("menu:menuTable:3:menuLink:menuLinkName", "Rank Menu");
+        tester.assertLabel("menu:menuTable:4:menuLink:menuLinkName", "Page4");
+        tester.assertLabel("menu:menuTable:5:menuLink:menuLinkName", "Page5");
+        // Click Market Menu
+        tester.clickLink("menu:menuTable:2:menuLink");
+        tester.assertLabel("menu:menuTable:1:menuLink:menuLinkName", "Home Menu");
+        tester.assertLabel("menu:menuTable:2:menuLink:menuLinkName", "Market Menu");
+        tester.assertLabel("menu:menuTable:3:menuLink:menuLinkName", "Rank Menu");
+        tester.assertLabel("menu:menuTable:4:menuLink:menuLinkName", "Page4");
+        tester.assertLabel("menu:menuTable:5:menuLink:menuLinkName", "Page5");
+        // Click Rank Menu
+        tester.clickLink("menu:menuTable:3:menuLink");
+        tester.assertLabel("menu:menuTable:1:menuLink:menuLinkName", "Home Menu");
+        tester.assertLabel("menu:menuTable:2:menuLink:menuLinkName", "Market Menu");
+        tester.assertLabel("menu:menuTable:3:menuLink:menuLinkName", "Rank Menu");
+        tester.assertLabel("menu:menuTable:4:menuLink:menuLinkName", "SubMenu1");
+        tester.assertLabel("menu:menuTable:5:menuLink:menuLinkName", "SubMenu2");
+        tester.assertLabel("menu:menuTable:6:menuLink:menuLinkName", "SubMenu3");
+        tester.assertLabel("menu:menuTable:7:menuLink:menuLinkName", "Page4");
+        tester.assertLabel("menu:menuTable:8:menuLink:menuLinkName", "Page5");
+        // Click Page 4
+        tester.clickLink("menu:menuTable:7:menuLink");
+        tester.assertLabel("menu:menuTable:1:menuLink:menuLinkName", "Home Menu");
+        tester.assertLabel("menu:menuTable:2:menuLink:menuLinkName", "Market Menu");
+        tester.assertLabel("menu:menuTable:3:menuLink:menuLinkName", "Rank Menu");
+        tester.assertLabel("menu:menuTable:4:menuLink:menuLinkName", "Page4");
+        tester.assertLabel("menu:menuTable:5:menuLink:menuLinkName", "Page5");
+        // Click Page5
+        tester.clickLink("menu:menuTable:5:menuLink");
+        tester.assertLabel("menu:menuTable:1:menuLink:menuLinkName", "Home Menu");
+        tester.assertLabel("menu:menuTable:2:menuLink:menuLinkName", "Market Menu");
+        tester.assertLabel("menu:menuTable:3:menuLink:menuLinkName", "Rank Menu");
+        tester.assertLabel("menu:menuTable:4:menuLink:menuLinkName", "Page4");
+        tester.assertLabel("menu:menuTable:5:menuLink:menuLinkName", "Page5");
+        tester.assertLabel("menu:menuTable:6:menuLink:menuLinkName", "SubMenu51");
+        tester.assertLabel("menu:menuTable:7:menuLink:menuLinkName", "SubMenu52");
+        // Click Home Menu
+        tester.clickLink("menu:menuTable:1:menuLink");
+        tester.assertLabel("menu:menuTable:1:menuLink:menuLinkName", "Home Menu");
+        tester.assertLabel("menu:menuTable:2:menuLink:menuLinkName", "Market Menu");
+        tester.assertLabel("menu:menuTable:3:menuLink:menuLinkName", "Rank Menu");
+        tester.assertLabel("menu:menuTable:4:menuLink:menuLinkName", "Page4");
+        tester.assertLabel("menu:menuTable:5:menuLink:menuLinkName", "Page5");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    private DbMenuItem createMenuItem(DbPage dbPage, DbMenu dbMenu, String name) {
+        DbMenuItem dbMenuItem = dbMenu.getMenuItemCrudChildServiceHelper().createDbChild();
+        dbMenuItem.setName(name);
+        dbMenuItem.setPage(dbPage);
+        dbMenuItem.setCssClass("itemCss");
+        dbMenuItem.setCssLinkClass("linkCss");
+        dbMenuItem.setCssTrClass("trCss");
+        dbMenuItem.setSelectedCssClass("selectedItemCss");
+        dbMenuItem.setSelectedCssLinkClass("selectedLinkCss");
+        dbMenuItem.setSelectedCssTrClass("selectedTrCss");
+        dbPage.setMenu(dbMenu);
+        return dbMenuItem;
+    }
+
     private int setupBlogPage() {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();

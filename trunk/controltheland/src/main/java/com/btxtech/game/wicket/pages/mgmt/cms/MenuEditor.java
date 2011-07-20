@@ -5,6 +5,7 @@ import com.btxtech.game.services.cms.DbMenu;
 import com.btxtech.game.services.cms.DbMenuItem;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
+import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CrudListChildTableHelper;
 import com.btxtech.game.wicket.uiservices.PageSelector;
@@ -25,6 +26,8 @@ public class MenuEditor extends MgmtWebPage {
     @SpringBean
     private CmsService cmsService;
     @SpringBean
+    private UserService userService;
+    @SpringBean
     private RuServiceHelper<DbMenu> ruServiceHelper;
 
     public MenuEditor(DbMenu dbMenu) {
@@ -41,9 +44,52 @@ public class MenuEditor extends MgmtWebPage {
         new CrudListChildTableHelper<DbMenu, DbMenuItem>("menuItems", "saveMenuItems", "createMenuItem", false, form, true) {
 
             @Override
-            protected void extendedPopulateItem(Item<DbMenuItem> dbMenuItemItem) {
+            protected void extendedPopulateItem(final Item<DbMenuItem> dbMenuItemItem) {
                 super.extendedPopulateItem(dbMenuItemItem);
                 dbMenuItemItem.add(new PageSelector("page"));
+                dbMenuItemItem.add(new Button("createSubMenu") {
+
+                    @Override
+                    public void onSubmit() {
+                        // Should be in a service
+                        DbMenu subMenu = new DbMenu();
+                        subMenu.init(userService);
+                        dbMenuItemItem.getModelObject().setSubMenu(subMenu);
+                        ruServiceHelper.updateDbEntity(form.getModelObject());
+                    }
+
+                    @Override
+                    public boolean isVisible() {
+                        return dbMenuItemItem.getModelObject().getSubMenu() == null;
+                    }
+                });
+                dbMenuItemItem.add(new Button("editSubMenu") {
+
+                    @Override
+                    public void onSubmit() {
+                        setResponsePage(new MenuEditor(dbMenuItemItem.getModelObject().getSubMenu()));
+                    }
+
+                    @Override
+                    public boolean isVisible() {
+                        return dbMenuItemItem.getModelObject().getSubMenu() != null;
+                    }
+                });
+                dbMenuItemItem.add(new Button("deleteSubMenu") {
+
+                    @Override
+                    public void onSubmit() {
+                        // Should be in a service
+                        dbMenuItemItem.getModelObject().setSubMenu(null);
+                        ruServiceHelper.updateDbEntity(form.getModelObject());
+                    }
+
+                    @Override
+                    public boolean isVisible() {
+                        return dbMenuItemItem.getModelObject().getSubMenu() != null;
+                    }
+                });
+
             }
 
             @Override
