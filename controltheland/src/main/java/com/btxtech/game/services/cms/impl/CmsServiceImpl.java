@@ -18,9 +18,7 @@ import com.btxtech.game.services.cms.DbCmsHomeLayout;
 import com.btxtech.game.services.cms.DbCmsHomeText;
 import com.btxtech.game.services.cms.DbCmsImage;
 import com.btxtech.game.services.cms.DbContent;
-import com.btxtech.game.services.cms.DbContentCreateEdit;
 import com.btxtech.game.services.cms.DbContentLink;
-import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.cms.DbContentPageLink;
 import com.btxtech.game.services.cms.DbMenu;
 import com.btxtech.game.services.cms.DbMenuItem;
@@ -136,11 +134,11 @@ public class CmsServiceImpl implements CmsService {
 
     private void initializeLazyDependenciesAndFillContentCache(DbContent dbContent) {
         Hibernate.initialize(dbContent);
-        if(dbContent instanceof DbContentPageLink) {
-            Hibernate.initialize(((DbContentPageLink)dbContent).getDbCmsImage());
+        if (dbContent instanceof DbContentPageLink) {
+            Hibernate.initialize(((DbContentPageLink) dbContent).getDbCmsImage());
         }
-        if(dbContent instanceof DbContentLink) {
-            Hibernate.initialize(((DbContentLink)dbContent).getDbCmsImage());
+        if (dbContent instanceof DbContentLink) {
+            Hibernate.initialize(((DbContentLink) dbContent).getDbCmsImage());
         }
         contentCache.put(dbContent.getId(), dbContent);
         Collection<? extends DbContent> children = dbContent.getChildren();
@@ -154,12 +152,18 @@ public class CmsServiceImpl implements CmsService {
     private void initializeLazyDependencies(DbPage dbPage) {
         Hibernate.initialize(dbPage);
         Hibernate.initialize(dbPage.getStyle());
-        DbMenu dbMenu = dbPage.getMenu();
+        initializeLazyMenu(dbPage.getMenu());
+    }
+
+    private void initializeLazyMenu(DbMenu dbMenu) {
         Hibernate.initialize(dbMenu);
         if (dbMenu != null) {
             for (DbMenuItem dbMenuItem : dbMenu.getMenuItemCrudChildServiceHelper().readDbChildren()) {
                 Hibernate.initialize(dbMenuItem);
                 Hibernate.initialize(dbMenuItem.getPage());
+                if (dbMenuItem.getSubMenu() != null) {
+                    initializeLazyMenu(dbMenuItem.getSubMenu());
+                }
             }
         }
     }

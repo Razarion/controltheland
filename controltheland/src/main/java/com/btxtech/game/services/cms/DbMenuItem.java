@@ -15,13 +15,16 @@ package com.btxtech.game.services.cms;
 
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.user.UserService;
+import org.hibernate.annotations.Cascade;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 /**
  * User: beat
@@ -37,8 +40,17 @@ public class DbMenuItem implements CrudChild<DbMenu> {
     private DbPage page;
     private String name;
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "dbMenu_id", insertable = false, updatable = false, nullable = false)    
+    @JoinColumn(name = "dbMenu_id", insertable = false, updatable = false, nullable = false)
     private DbMenu dbMenu;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+    private DbMenu subMenu;
+    private String cssClass;
+    private String selectedCssClass;
+    private String cssLinkClass;
+    private String selectedCssLinkClass;
+    private String cssTrClass;
+    private String selectedCssTrClass;
 
     public DbPage getPage() {
         return page;
@@ -50,6 +62,62 @@ public class DbMenuItem implements CrudChild<DbMenu> {
 
     public String getName() {
         return name;
+    }
+
+    public DbMenu getSubMenu() {
+        return subMenu;
+    }
+
+    public void setSubMenu(DbMenu subMenu) {
+        this.subMenu = subMenu;
+    }
+
+    public String getCssClass() {
+        return cssClass;
+    }
+
+    public void setCssClass(String cssClass) {
+        this.cssClass = cssClass;
+    }
+
+    public String getSelectedCssClass() {
+        return selectedCssClass;
+    }
+
+    public void setSelectedCssClass(String selectedCssClass) {
+        this.selectedCssClass = selectedCssClass;
+    }
+
+    public String getCssLinkClass() {
+        return cssLinkClass;
+    }
+
+    public void setCssLinkClass(String cssLinkClass) {
+        this.cssLinkClass = cssLinkClass;
+    }
+
+    public String getSelectedCssLinkClass() {
+        return selectedCssLinkClass;
+    }
+
+    public void setSelectedCssLinkClass(String selectedCssLinkClass) {
+        this.selectedCssLinkClass = selectedCssLinkClass;
+    }
+
+    public String getCssTrClass() {
+        return cssTrClass;
+    }
+
+    public void setCssTrClass(String cssTrClass) {
+        this.cssTrClass = cssTrClass;
+    }
+
+    public String getSelectedCssTrClass() {
+        return selectedCssTrClass;
+    }
+
+    public void setSelectedCssTrClass(String selectedCssTrClass) {
+        this.selectedCssTrClass = selectedCssTrClass;
     }
 
     @Override
