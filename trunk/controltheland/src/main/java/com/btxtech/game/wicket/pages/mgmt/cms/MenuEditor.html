@@ -5,7 +5,7 @@
     <title>Menu Editor</title>
 </head>
 <body>
-<h1>Menu</h1>
+<h1>Menu Editor</h1>
 
 <span wicket:id="msgs"/>
 
@@ -13,31 +13,21 @@
     <table cellpadding="1" cellspacing="1" border="0">
         <tr>
             <th bgcolor="#dadada">Name</th>
-            <th bgcolor="#dadada">Page</th>
+            <th bgcolor="#dadada">Edit</th>
             <th bgcolor="#dadada">Up</th>
             <th bgcolor="#dadada">Down</th>
-            <th bgcolor="#dadada">Sub Menu</th>
-            <th bgcolor="#dadada">Sub Menu</th>
-            <th bgcolor="#dadada">Sub Menu</th>
             <th bgcolor="#dadada">Delete</th>
         </tr>
         <tr wicket:id="menuItems">
             <td><input wicket:id="name" type="text" size="30"></td>
-            <td wicket:id="page" />
+            <td valign="center">
+                <input type="submit" value="Edit" wicket:id="edit"/>
+            </td>
             <td valign="center">
                 <input type="submit" value="Up" wicket:id="up"/>
             </td>
             <td valign="center">
                 <input type="submit" value="Down" wicket:id="down"/>
-            </td>
-            <td valign="center">
-                <input type="submit" value="Create" wicket:id="createSubMenu"/>
-            </td>
-            <td valign="center">
-                <input type="submit" value="Edit" wicket:id="editSubMenu"/>
-            </td>
-            <td valign="center">
-                <input type="submit" value="Delete" wicket:id="deleteSubMenu"/>
             </td>
             <td valign="center">
                 <input type="submit" value="Delete" wicket:id="delete"/>
