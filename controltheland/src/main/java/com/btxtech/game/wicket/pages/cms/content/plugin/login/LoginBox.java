@@ -13,12 +13,11 @@
 
 package com.btxtech.game.wicket.pages.cms.content.plugin.login;
 
+import com.btxtech.game.services.cms.DbPage;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.SecurityRoles;
-import com.btxtech.game.wicket.pages.Info;
 import com.btxtech.game.wicket.pages.user.NewUser;
-import com.btxtech.game.wicket.pages.user.UserPage;
-import org.apache.wicket.PageParameters;
+import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeAction;
@@ -28,6 +27,7 @@ import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
  * User: beat
@@ -38,6 +38,8 @@ import org.apache.wicket.model.CompoundPropertyModel;
 public class LoginBox extends Panel {
     private String loginName = "User name";
     private String loginPassowrd = "12345678";
+    @SpringBean
+    private CmsUiService cmsUiService;
 
     public LoginBox(String id, boolean showRegisterLink) {
         super(id);
@@ -47,16 +49,12 @@ public class LoginBox extends Panel {
                 try {
                     AuthenticatedWebSession session = AuthenticatedWebSession.get();
                     if (session.signIn(loginName, loginPassowrd)) {
-                        setResponsePage(UserPage.class);
+                        cmsUiService.setPredefinedResponsePage(this, DbPage.PredefinedType.USER_PAGE);
                     } else {
-                        PageParameters parameters = new PageParameters();
-                        parameters.add(Info.KEY_MESSAGE, "Login failed. Please try again");
-                        setResponsePage(Info.class, parameters);
+                        cmsUiService.setMessageResponsePage(this, "Login failed. Please try again");
                     }
                 } catch (AlreadyLoggedInException e) {
-                    PageParameters parameters = new PageParameters();
-                    parameters.add(Info.KEY_MESSAGE, e.getMessage());
-                    setResponsePage(Info.class, parameters);
+                    cmsUiService.setMessageResponsePage(this, e.getMessage());
                 }
             }
         };

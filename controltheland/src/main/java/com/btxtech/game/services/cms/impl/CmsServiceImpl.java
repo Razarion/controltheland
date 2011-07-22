@@ -43,6 +43,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -75,7 +76,7 @@ public class CmsServiceImpl implements CmsService {
     private Map<Integer, DbCmsImage> imageCache = new HashMap<Integer, DbCmsImage>();
     private Map<Integer, DbPage> pageCache = new HashMap<Integer, DbPage>();
     private Map<Integer, DbContent> contentCache = new HashMap<Integer, DbContent>();
-    private DbPage home;
+    private Map<DbPage.PredefinedType, DbPage> predefinedDbPages = new HashMap<DbPage.PredefinedType, DbPage>();
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -103,22 +104,18 @@ public class CmsServiceImpl implements CmsService {
 
     @Override
     public void activateCms() {
+        //checkPredefinedDbPages();
         imageCache.clear();
         for (DbCmsImage dbCmsImage : imageCrudRootServiceHelper.readDbChildren()) {
             imageCache.put(dbCmsImage.getId(), dbCmsImage);
         }
-        home = null;
+        predefinedDbPages.clear();
         pageCache.clear();
         contentCache.clear();
         for (DbPage dbPage : pageCrudRootServiceHelper.readDbChildren()) {
             initializeLazyDependencies(dbPage);
             pageCache.put(dbPage.getId(), dbPage);
-            if (dbPage.isHome()) {
-                if (home != null) {
-                    log.warn("CMS: more than one home page configured");
-                }
-                home = dbPage;
-            }
+            handlePredefinedDbPages(dbPage);
             DbContent dbContent = dbPage.getContent();
             if (dbContent != null) {
                 dbContent = HibernateUtil.deproxy(dbContent, DbContent.class);
@@ -126,10 +123,35 @@ public class CmsServiceImpl implements CmsService {
                 initializeLazyDependenciesAndFillContentCache(dbContent);
             }
         }
+    }
 
-        if (home == null) {
-            log.warn("CMS: no home page configured");
+    private void checkPredefinedDbPages() {
+        List<DbPage.PredefinedType> predefinedTypes = Arrays.asList(DbPage.PredefinedType.values());
+        for (DbPage dbPage : pageCrudRootServiceHelper.readDbChildren()) {
+            if (dbPage.getPredefinedType() != null) {
+                predefinedTypes.remove(dbPage.getPredefinedType());
+            }
         }
+        if (predefinedTypes.isEmpty()) {
+            return;
+        }
+        StringBuilder builder = new StringBuilder();
+        builder.append("Not all predefined pages have been configured: ");
+        for (DbPage.PredefinedType predefinedType : predefinedTypes) {
+            builder.append(predefinedType.name());
+            builder.append(" ");
+        }
+        throw new IllegalStateException(builder.toString());
+    }
+
+    private void handlePredefinedDbPages(DbPage dbPage) {
+        if (dbPage.getPredefinedType() == null) {
+            return;
+        }
+        if (predefinedDbPages.containsKey(dbPage.getPredefinedType())) {
+            throw new IllegalStateException("Predefined DbPage already exits: " + dbPage);
+        }
+        predefinedDbPages.put(dbPage.getPredefinedType(), dbPage);
     }
 
     private void initializeLazyDependenciesAndFillContentCache(DbContent dbContent) {
@@ -253,8 +275,12 @@ public class CmsServiceImpl implements CmsService {
     }
 
     @Override
-    public DbPage getHomePage() {
-        return home;
+    public DbPage getPredefinedDbPage(DbPage.PredefinedType predefinedType) {
+        DbPage dbPage = predefinedDbPages.get(predefinedType);
+        if (dbPage == null) {
+            throw new IllegalStateException("Predefined DbPage does not exist: " + predefinedType);
+        }
+        return dbPage;
     }
 
     @Override

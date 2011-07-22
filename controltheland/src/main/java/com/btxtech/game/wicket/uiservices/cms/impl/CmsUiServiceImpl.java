@@ -40,6 +40,7 @@ import com.btxtech.game.wicket.pages.cms.content.ContentList;
 import com.btxtech.game.wicket.pages.cms.content.ContentPageLink;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import com.btxtech.game.wicket.uiservices.cms.SecurityCmsUiService;
 import org.apache.commons.beanutils.NestedNullException;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
@@ -82,12 +83,33 @@ public class CmsUiServiceImpl implements CmsUiService {
     private UserService userService;
     @Autowired
     private Session session;
+    @Autowired
+    private SecurityCmsUiService securityCmsUiService;
     private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(CmsUiServiceImpl.class);
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
         hibernateTemplate = new HibernateTemplate(sessionFactory);
+    }
+
+    @Override
+    public PageParameters getPredefinedDbPageParameters(DbPage.PredefinedType predefinedType) {
+        PageParameters pageParameters = new PageParameters();
+        pageParameters.put(CmsPage.ID, Integer.toString(cmsService.getPredefinedDbPage(predefinedType).getId()));
+        return pageParameters;
+    }
+
+    @Override
+    public void setPredefinedResponsePage(Component component, DbPage.PredefinedType predefinedType) {
+        component.setResponsePage(CmsPage.class, getPredefinedDbPageParameters(predefinedType));
+    }
+
+    @Override
+    public void setMessageResponsePage(Component component, String message) {
+        PageParameters pageParameters = getPredefinedDbPageParameters(DbPage.PredefinedType.MESSAGE);
+        pageParameters.put(CmsPage.MESSAGE_ID, message);
+        component.setResponsePage(CmsPage.class, pageParameters);
     }
 
     @Override
@@ -105,6 +127,8 @@ public class CmsUiServiceImpl implements CmsUiService {
             dbContent = cmsService.getDbContent(pageParameters.getInt(CmsPage.CREATE_CONTENT_ID));
             beanIdPathElement = createBeanIdPathElement(pageParameters, dbContent, beanIdPathElement);
             beanIdPathElement.setCreateEditPage(true);
+        } else if (pageParameters.containsKey(CmsPage.MESSAGE_ID)) {
+            return new Label(componentId, pageParameters.getString(CmsPage.MESSAGE_ID));
         }
         return getComponent(dbContent, null, componentId, beanIdPathElement);
     }
@@ -642,5 +666,10 @@ public class CmsUiServiceImpl implements CmsUiService {
             ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest().setAttribute(REQUEST_TMP_CREATE_BEAN_ATTRIBUTES, attributeMap);
         }
         attributeMap.put(beanIdPathElement.getExpression(), value);
+    }
+
+    @Override
+    public SecurityCmsUiService getSecurityCmsUiService() {
+        return securityCmsUiService;
     }
 }

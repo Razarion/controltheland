@@ -16,6 +16,11 @@ import java.util.List;
  * Time: 15:43:28
  */
 public interface CmsUiService {
+    PageParameters getPredefinedDbPageParameters(DbPage.PredefinedType predefinedType);
+
+    void setPredefinedResponsePage(Component component, DbPage.PredefinedType predefinedType);
+
+    void setMessageResponsePage(Component component, String message);
 
     Component getComponent(DbContent dbContent, Object bean, String id, BeanIdPathElement parentBeanIdPathElement);
 
@@ -56,4 +61,6 @@ public interface CmsUiService {
     void invokeCall(int contentId, BeanIdPathElement beanIdPathElement);
 
     boolean isConditionFulfilled(int contentId, BeanIdPathElement beanIdPathElement);
+
+    SecurityCmsUiService getSecurityCmsUiService();
 }
