@@ -8,18 +8,15 @@ import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.extensions.markup.html.repeater.data.grid.DataGridView;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.DataTable;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.HeaderlessColumn;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.HeadersToolbar;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
-import org.apache.wicket.extensions.markup.html.repeater.data.table.NoRecordsToolbar;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.util.ArrayList;
@@ -54,20 +51,25 @@ public class ContentBook extends Panel {
             }
         });
         add(new EditPanel("edit", dbContentBook, contentId, beanIdPathElement, false, false));
-        setupPropertyBook(dbContentBook);
+        WebMarkupContainer table = new WebMarkupContainer("table");
+        add(table);
+
+        setupPropertyBook(table, dbContentBook);
     }
 
-    private void setupPropertyBook(DbContentBook dbContentBook) {
+    private void setupPropertyBook(WebMarkupContainer table, DbContentBook dbContentBook) {
 
-        List<IColumn<DbContentRow>> columns = new ArrayList<IColumn<DbContentRow>>();
+        List<ICellPopulator<DbContentRow>> columns = new ArrayList<ICellPopulator<DbContentRow>>();
 
-        // Label
-        columns.add(new HeaderlessColumn<DbContentRow>() {
-            @Override
-            public void populateItem(Item<ICellPopulator<DbContentRow>> cellItem, String componentId, IModel<DbContentRow> rowModel) {
-                cellItem.add(new Label(componentId, rowModel.getObject().getName()));
-            }
-        });
+        if(dbContentBook.isShowName()) {
+            // Label
+            columns.add(new HeaderlessColumn<DbContentRow>() {
+                @Override
+                public void populateItem(Item<ICellPopulator<DbContentRow>> cellItem, String componentId, IModel<DbContentRow> rowModel) {
+                    cellItem.add(new Label(componentId, rowModel.getObject().getName()));
+                }
+            });
+        }
 
         // Property
         columns.add(new HeaderlessColumn<DbContentRow>() {
@@ -89,15 +91,11 @@ public class ContentBook extends Panel {
             }
         };
 
-        @SuppressWarnings("unchecked")
-        IColumn<DbContentRow>[] columnsArray = columns.toArray(new IColumn[columns.size()]);
-
-        DataTable<DbContentRow> dataTable = new DataTable<DbContentRow>("dataTable", columnsArray, detachHashListProvider, Integer.MAX_VALUE);
-        dataTable.addBottomToolbar(new NoRecordsToolbar(dataTable, new Model<String>("Nothing here")));
+        DataGridView<DbContentRow> dataGridView = new DataGridView<DbContentRow>("rows", columns, detachHashListProvider);
+        table.add(dataGridView);
         if (dbContentBook.getCssClass() != null) {
-            dataTable.add(new SimpleAttributeModifier("class", dbContentBook.getCssClass()));
+            table.add(new SimpleAttributeModifier("class", dbContentBook.getCssClass()));
         }
-        add(dataTable);
     }
 
     @Override

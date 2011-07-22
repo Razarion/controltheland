@@ -4,6 +4,7 @@ import com.btxtech.game.services.cms.ContentService;
 import com.btxtech.game.services.cms.DbContentDynamicHtml;
 import com.btxtech.game.wicket.pages.cms.EditPanel;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -64,5 +65,9 @@ public class ContentDynamicHtml extends Panel {
         tinyMCESettings.add(wicket.contrib.tinymce.settings.Button.unlink, TinyMCESettings.Toolbar.first, TinyMCESettings.Position.after);
         contentArea.add(new TinyMceBehavior(tinyMCESettings));
         add(contentArea);
+
+        if (dbContentDynamicHtml.getCssClass() != null) {
+            add(new SimpleAttributeModifier("class", dbContentDynamicHtml.getCssClass()));
+        }
     }
 }
