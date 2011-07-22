@@ -38,8 +38,6 @@ public interface CmsService {
 
     DbPage getPage(int pageId);
 
-    DbPage getHomePage();
-
     DbContent getDbContent(int contentId);
 
     DbCmsImage getDbCmsImage(int imgId);
@@ -53,4 +51,6 @@ public interface CmsService {
     CrudRootServiceHelper<DbMenu> getMenuCrudRootServiceHelper();
 
     CrudRootServiceHelper<DbPageStyle> getPageStyleCrudRootServiceHelper();
+
+    DbPage getPredefinedDbPage(DbPage.PredefinedType predefinedType);
 }

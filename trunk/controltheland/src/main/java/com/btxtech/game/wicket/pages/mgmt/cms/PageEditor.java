@@ -10,6 +10,7 @@ import com.btxtech.game.wicket.uiservices.StyleSelector;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -17,6 +18,9 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * User: beat
@@ -41,7 +45,7 @@ public class PageEditor extends MgmtWebPage {
         form.add(new CheckBox("footerVisible"));
         form.add(new CheckBox("adsVisible"));
         form.add(new CheckBox("accessRestricted"));
-        setupStyle(form);
+        setupConfiguration(form);
         setupContent(form);
         setupButtons(form);
     }
@@ -128,8 +132,10 @@ public class PageEditor extends MgmtWebPage {
         });
     }
 
-    private void setupStyle(Form<DbPage> form) {
-        form.add(new CheckBox("home"));
+    private void setupConfiguration(Form<DbPage> form) {
+        List<DbPage.PredefinedType> choices = new ArrayList<DbPage.PredefinedType>(Arrays.asList(DbPage.PredefinedType.values()));
+        choices.add(0, null);
+        form.add(new DropDownChoice<DbPage.PredefinedType>("predefinedType", choices));
         form.add(new MenuSelector("menu"));
         form.add(new StyleSelector("style"));
     }

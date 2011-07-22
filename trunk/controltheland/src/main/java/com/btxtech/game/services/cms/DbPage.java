@@ -32,6 +32,12 @@ import javax.persistence.OneToOne;
  */
 @Entity(name = "CMS_PAGE")
 public class DbPage implements CrudChild {
+    public enum PredefinedType {
+        HOME,
+        USER_PAGE,
+        REGISTER,
+        MESSAGE
+    }
     @Id
     @GeneratedValue
     private Integer id;
@@ -40,7 +46,7 @@ public class DbPage implements CrudChild {
     @ManyToOne(fetch = FetchType.LAZY)
     private DbMenu menu;
     private String name;
-    private boolean home;
+    private PredefinedType predefinedType;
     @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private DbContent content;
     private boolean accessRestricted;
@@ -94,12 +100,12 @@ public class DbPage implements CrudChild {
         this.menu = menu;
     }
 
-    public boolean isHome() {
-        return home;
+    public PredefinedType getPredefinedType() {
+        return predefinedType;
     }
 
-    public void setHome(boolean home) {
-        this.home = home;
+    public void setPredefinedType(PredefinedType predefinedType) {
+        this.predefinedType = predefinedType;
     }
 
     public DbContent getContent() {
@@ -112,6 +118,9 @@ public class DbPage implements CrudChild {
 
     public void setContentAndAccessWrites(DbContent content) {
         setContent(content);
+        if(content == null) {
+            return;
+        }
         content.setReadRestricted(DbContent.Access.ALLOWED);
         content.setWriteRestricted(DbContent.Access.DENIED);
         content.setCreateRestricted(DbContent.Access.DENIED);

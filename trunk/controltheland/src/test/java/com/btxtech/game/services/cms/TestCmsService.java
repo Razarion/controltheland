@@ -10,30 +10,35 @@ import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudListChildServiceHelper;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.forum.DbCategory;
+import com.btxtech.game.services.forum.DbForumThread;
 import com.btxtech.game.services.forum.DbPost;
 import com.btxtech.game.services.forum.DbSubForum;
 import com.btxtech.game.services.forum.ForumService;
-import com.btxtech.game.services.forum.DbForumThread;
 import com.btxtech.game.services.forum.TestForum;
 import com.btxtech.game.services.market.ServerMarketService;
+import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
+import com.btxtech.game.wicket.pages.cms.content.plugin.PluginEnum;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
+import com.btxtech.game.wicket.uiservices.cms.SecurityCmsUiService;
 import com.btxtech.game.wicket.uiservices.cms.impl.CmsUiServiceImpl;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.util.tester.FormTester;
 import org.apache.wicket.util.tester.WicketTester;
+import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -143,13 +148,11 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage1 = pageCrud.createDbChild();
-        dbPage1.setHome(true);
+        dbPage1.setPredefinedType(DbPage.PredefinedType.HOME);
         dbPage1.setName("Home");
         DbPage dbPage2 = pageCrud.createDbChild();
-        dbPage2.setHome(false);
         dbPage2.setName("Market");
         DbPage dbPage3 = pageCrud.createDbChild();
-        dbPage3.setHome(false);
         dbPage3.setName("Rank");
 
         CrudRootServiceHelper<DbMenu> menuCrud = cmsService.getMenuCrudRootServiceHelper();
@@ -196,7 +199,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbPage cachePageHome = cmsService.getHomePage();
+        DbPage cachePageHome = cmsService.getPredefinedDbPage(DbPage.PredefinedType.HOME);
         Assert.assertEquals("Home", cachePageHome.getName());
         DbMenu cacheMenu = cachePageHome.getMenu();
         Assert.assertEquals("MainMenu", cacheMenu.getName());
@@ -260,34 +263,25 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage1 = pageCrud.createDbChild();
-        dbPage1.setHome(true);
+        dbPage1.setPredefinedType(DbPage.PredefinedType.HOME);
         dbPage1.setName("Home");
         DbPage dbPage2 = pageCrud.createDbChild();
-        dbPage2.setHome(false);
         dbPage2.setName("Market");
         DbPage dbPage3 = pageCrud.createDbChild();
-        dbPage3.setHome(false);
         dbPage3.setName("Rank");
         DbPage dbSubPage31 = pageCrud.createDbChild();
-        dbSubPage31.setHome(false);
         dbSubPage31.setName("SubRank1");
         DbPage dbSubPage32 = pageCrud.createDbChild();
-        dbSubPage32.setHome(false);
         dbSubPage32.setName("SubRank2");
         DbPage dbSubPage33 = pageCrud.createDbChild();
-        dbSubPage33.setHome(false);
         dbSubPage33.setName("SubRank3");
         DbPage dbPage4 = pageCrud.createDbChild();
-        dbPage4.setHome(false);
         dbPage4.setName("Page4");
         DbPage dbPage5 = pageCrud.createDbChild();
-        dbPage5.setHome(false);
         dbPage5.setName("Page5");
         DbPage dbSubPage51 = pageCrud.createDbChild();
-        dbSubPage51.setHome(false);
         dbSubPage51.setName("SubPage51");
         DbPage dbSubPage52 = pageCrud.createDbChild();
-        dbSubPage52.setHome(false);
         dbSubPage52.setName("SubPage52");
 
 
@@ -313,7 +307,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbMenuItem5.setSubMenu(dbSubMenu5);
         createMenuItem(dbSubPage51, dbSubMenu5, "SubMenu51");
         createMenuItem(dbSubPage51, dbSubMenu5, "SubMenu52");
-        
+
         menuCrud.updateDbChild(dbMenu);
         pageCrud.updateDbChild(dbPage1);
         pageCrud.updateDbChild(dbPage2);
@@ -413,7 +407,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage1 = pageCrud.createDbChild();
-        dbPage1.setHome(true);
+        dbPage1.setPredefinedType(DbPage.PredefinedType.HOME);
         dbPage1.setName("Home");
 
         DbContentList dbContentList = new DbContentList();
@@ -510,7 +504,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage1 = pageCrud.createDbChild();
-        dbPage1.setHome(true);
+        dbPage1.setPredefinedType(DbPage.PredefinedType.HOME);
         dbPage1.setName("Home");
 
         DbContentList dbContentList = new DbContentList();
@@ -595,7 +589,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage1 = pageCrud.createDbChild();
-        dbPage1.setHome(true);
+        dbPage1.setPredefinedType(DbPage.PredefinedType.HOME);
         dbPage1.setName("Home");
 
         DbContentList dbContentList = new DbContentList();
@@ -668,7 +662,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage1 = pageCrud.createDbChild();
-        dbPage1.setHome(true);
+        dbPage1.setPredefinedType(DbPage.PredefinedType.HOME);
         dbPage1.setName("Home");
 
         DbContentList dbContentList = new DbContentList();
@@ -768,7 +762,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage1 = pageCrud.createDbChild();
-        dbPage1.setHome(true);
+        dbPage1.setPredefinedType(DbPage.PredefinedType.HOME);
         dbPage1.setName("Home");
 
         DbContentDynamicHtml dbContentDynamicHtml = new DbContentDynamicHtml();
@@ -807,7 +801,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage1 = pageCrud.createDbChild();
-        dbPage1.setHome(true);
+        dbPage1.setPredefinedType(DbPage.PredefinedType.HOME);
         dbPage1.setName("Home");
 
         DbContentDynamicHtml dbContentDynamicHtml = new DbContentDynamicHtml();
@@ -867,7 +861,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage1 = pageCrud.createDbChild();
-        dbPage1.setHome(true);
+        dbPage1.setPredefinedType(DbPage.PredefinedType.HOME);
         dbPage1.setName("Home");
 
         DbContentList dbContentList = new DbContentList();
@@ -962,7 +956,7 @@ public class TestCmsService extends AbstractServiceTest {
         // Setup CMS content
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage1 = pageCrud.createDbChild();
-        dbPage1.setHome(true);
+        dbPage1.setPredefinedType(DbPage.PredefinedType.HOME);
         dbPage1.setName("Forum");
 
         DbContentList dbContentList = new DbContentList();
@@ -1086,7 +1080,6 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertInvisible("form:content:edit:cancelEdit");
         // Click the category link
         tester.clickLink("form:content:table:rows:1:cells:1:cell:listView:2:content:table:rows:1:cells:2:cell:link");
-        tester.debugComponentTrees();
         tester.assertLabel("form:content:dataTable:body:rows:1:cells:2:cell", "CategoryName1");
         tester.assertLabel("form:content:dataTable:body:rows:2:cells:2:cell:table:rows:1:cells:1:cell", "ForumThreadName1");
         tester.assertInvisible("form:content:edit:edit");
@@ -1347,7 +1340,6 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertVisible("form:content:edit:cancelEdit");
         // Fill in values and press save
         FormTester formTester = tester.newFormTester("form");
-        tester.debugComponentTrees();
         //formTester.setValue("content:dataTable:body:rows:3:cells:2:cell:textArea", "ForumThreadName5");
         formTester.setValue("content:dataTable:body:rows:4:cells:2:cell:table:rows:1:cells:1:cell:textArea", "PostContent6");
         formTester.submit("content:edit:save");
@@ -1526,7 +1518,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage = pageCrud.createDbChild();
-        dbPage.setHome(true);
+        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
         dbPage.setName("Home");
 
         DbContentList dbContentList = new DbContentList();
@@ -1657,7 +1649,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage = pageCrud.createDbChild();
-        dbPage.setHome(true);
+        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
         dbPage.setName("Home");
 
         DbContentPageLink dbContentPageLink = new DbContentPageLink();
@@ -1685,6 +1677,7 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
+
     @Test
     @DirtiesContext
     public void testPageLinkImage() throws Exception {
@@ -1693,12 +1686,12 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage = pageCrud.createDbChild();
-        dbPage.setHome(true);
+        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
         dbPage.setName("Home");
 
         // Prepare image
         DbCmsImage dbCmsImage = cmsService.getImageCrudRootServiceHelper().createDbChild();
-        dbCmsImage.setData(new byte[]{1,2,3});
+        dbCmsImage.setData(new byte[]{1, 2, 3});
         cmsService.getImageCrudRootServiceHelper().updateDbChild(dbCmsImage);
 
         DbContentPageLink dbContentPageLink = new DbContentPageLink();
@@ -1729,4 +1722,171 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpSession();
     }
 
+    private void prepare4RegisterCheck() throws Exception {
+        configureMinimalGame();
+
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage.setName("Home");
+        DbPage dbUserPage = pageCrud.createDbChild();
+        dbUserPage.setPredefinedType(DbPage.PredefinedType.USER_PAGE);
+        dbUserPage.setName("User Page");
+        DbPage dbMessagePage = pageCrud.createDbChild();
+        dbMessagePage.setPredefinedType(DbPage.PredefinedType.MESSAGE);
+        dbMessagePage.setName("Message Page");
+
+        DbContentPlugin registerPlugin = new DbContentPlugin();
+        registerPlugin.setPluginEnum(PluginEnum.REGISTER);
+        dbPage.setContentAndAccessWrites(registerPlugin);
+
+        pageCrud.updateDbChild(dbPage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testRegister() throws Exception {
+        SecurityCmsUiService securityCmsUiServiceMock = EasyMock.createMock(SecurityCmsUiService.class);
+        securityCmsUiServiceMock.signIn("U1", "test");
+        EasyMock.replay(securityCmsUiServiceMock);
+        ReflectionTestUtils.setField(cmsUiService, "securityCmsUiService", securityCmsUiServiceMock);
+
+        prepare4RegisterCheck();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertVisible("form:content:newUserForm:name");
+        tester.assertVisible("form:content:newUserForm:email");
+        tester.assertVisible("form:content:newUserForm:password");
+        tester.assertVisible("form:content:newUserForm:confirmPassword");
+        FormTester formTester = tester.newFormTester("form");
+        formTester.setValue("content:newUserForm:name", "U1");
+        formTester.setValue("content:newUserForm:email", "u1email");
+        formTester.setValue("content:newUserForm:password", "test");
+        formTester.setValue("content:newUserForm:confirmPassword", "test");
+        formTester.submit();
+        tester.assertRenderedPage(CmsPage.class);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testRegisterFailAlreadyLoggedInException() throws Exception {
+        SecurityCmsUiService securityCmsUiServiceMock = EasyMock.createMock(SecurityCmsUiService.class);
+        securityCmsUiServiceMock.signIn("U1", "test");
+        User user = new User();
+        user.registerUser("TestUser", "", "");
+        EasyMock.expectLastCall().andThrow(new AlreadyLoggedInException(user));
+        EasyMock.replay(securityCmsUiServiceMock);
+
+        ReflectionTestUtils.setField(cmsUiService, "securityCmsUiService", securityCmsUiServiceMock);
+
+        prepare4RegisterCheck();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertVisible("form:content:newUserForm:name");
+        tester.assertVisible("form:content:newUserForm:email");
+        tester.assertVisible("form:content:newUserForm:password");
+        tester.assertVisible("form:content:newUserForm:confirmPassword");
+        FormTester formTester = tester.newFormTester("form");
+        formTester.setValue("content:newUserForm:name", "U1");
+        formTester.setValue("content:newUserForm:email", "u1email");
+        formTester.setValue("content:newUserForm:password", "test");
+        formTester.setValue("content:newUserForm:confirmPassword", "test");
+        formTester.submit();
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertLabel("form:content", "Already logged in as: TestUser");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testRegisterFailUserAlreadyExistsException() throws Exception {
+        SecurityCmsUiService securityCmsUiServiceMock = EasyMock.createMock(SecurityCmsUiService.class);
+        securityCmsUiServiceMock.signIn("U1", "test");
+        User user = new User();
+        user.registerUser("TestUser", "", "");
+        EasyMock.expectLastCall().andThrow(new UserAlreadyExistsException());
+        EasyMock.replay(securityCmsUiServiceMock);
+
+        ReflectionTestUtils.setField(cmsUiService, "securityCmsUiService", securityCmsUiServiceMock);
+
+        prepare4RegisterCheck();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertVisible("form:content:newUserForm:name");
+        tester.assertVisible("form:content:newUserForm:email");
+        tester.assertVisible("form:content:newUserForm:password");
+        tester.assertVisible("form:content:newUserForm:confirmPassword");
+        FormTester formTester = tester.newFormTester("form");
+        formTester.setValue("content:newUserForm:name", "U1");
+        formTester.setValue("content:newUserForm:email", "u1email");
+        formTester.setValue("content:newUserForm:password", "test");
+        formTester.setValue("content:newUserForm:confirmPassword", "test");
+        formTester.submit();
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertLabel("form:content", "The user already exists");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testRegisterFailPasswordNotMatchException() throws Exception {
+        SecurityCmsUiService securityCmsUiServiceMock = EasyMock.createMock(SecurityCmsUiService.class);
+        securityCmsUiServiceMock.signIn("U1", "test");
+        User user = new User();
+        user.registerUser("TestUser", "", "");
+        EasyMock.expectLastCall().andThrow(new PasswordNotMatchException());
+        EasyMock.replay(securityCmsUiServiceMock);
+
+        ReflectionTestUtils.setField(cmsUiService, "securityCmsUiService", securityCmsUiServiceMock);
+
+        prepare4RegisterCheck();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertVisible("form:content:newUserForm:name");
+        tester.assertVisible("form:content:newUserForm:email");
+        tester.assertVisible("form:content:newUserForm:password");
+        tester.assertVisible("form:content:newUserForm:confirmPassword");
+        FormTester formTester = tester.newFormTester("form");
+        formTester.setValue("content:newUserForm:name", "U1");
+        formTester.setValue("content:newUserForm:email", "u1email");
+        formTester.setValue("content:newUserForm:password", "test");
+        formTester.setValue("content:newUserForm:confirmPassword", "test");
+        formTester.submit();
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertLabel("form:content", "Password and confirm password do not match");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
 }

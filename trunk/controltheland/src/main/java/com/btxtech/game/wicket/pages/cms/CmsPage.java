@@ -31,6 +31,7 @@ public class CmsPage extends WebPage {
     private static final String CHILD_ID = "childId";
     public static final String DETAIL_CONTENT_ID = "detailId";
     public static final String CREATE_CONTENT_ID = "createId";
+    public static final String MESSAGE_ID = "messageId";
     @SpringBean
     private CmsService cmsService;
     @SpringBean
@@ -48,7 +49,7 @@ public class CmsPage extends WebPage {
                     pageId = pageParameters.getInt(ID);
                     dbPage = cmsService.getPage(pageId);
                 } else {
-                    dbPage = cmsService.getHomePage();
+                    dbPage = cmsService.getPredefinedDbPage(DbPage.PredefinedType.HOME);
                     pageId = dbPage.getId();
                 }
                 return dbPage;
