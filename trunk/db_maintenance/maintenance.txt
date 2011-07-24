@@ -193,7 +193,4 @@ ALTER TABLE `gamedb`.`CMS_CONTENT` MODIFY COLUMN `createRestricted` BIT(1) DEFAU
  -----------------
 Convert CMS
 
-UPDATE CMS_CONTENT SET showName = true;
-ALTER TABLE `gamedb`.`CMS_CONTENT` MODIFY COLUMN `showName` BIT(1) NOT NULL;
-UPDATE CMS_CONTENT SET showHeader = false;
-ALTER TABLE `gamedb`.`CMS_CONTENT` MODIFY COLUMN `showHeader` BIT(1) NOT NULL;
+UPDATE CMS_CONTENT SET showHead = false where TYPE = "CONTENT_LIST";
