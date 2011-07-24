@@ -49,6 +49,8 @@ public class DbContentList extends DbContent implements DataProviderInfo, CrudPa
             inverseJoinColumns = @JoinColumn(name = "contentBookId"))
     private Collection<DbContentBook> dbContentBooks;
     private Integer rowsPerPage;
+    private boolean showHead;
+    private String cssClassHead;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private DbContentCreateEdit dbContentCreateEdit;
     @Transient
@@ -117,6 +119,22 @@ public class DbContentList extends DbContent implements DataProviderInfo, CrudPa
 
     public void setDbContentCreateEdit(DbContentCreateEdit dbContentCreateEdit) {
         this.dbContentCreateEdit = dbContentCreateEdit;
+    }
+
+    public boolean isShowHead() {
+        return showHead;
+    }
+
+    public void setShowHead(boolean showHead) {
+        this.showHead = showHead;
+    }
+
+    public String getCssClassHead() {
+        return cssClassHead;
+    }
+
+    public void setCssClassHead(String cssClassHead) {
+        this.cssClassHead = cssClassHead;
     }
 
     @Override
