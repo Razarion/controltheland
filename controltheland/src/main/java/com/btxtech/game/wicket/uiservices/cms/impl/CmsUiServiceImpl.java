@@ -13,6 +13,7 @@ import com.btxtech.game.services.cms.DbContentLink;
 import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.cms.DbContentPageLink;
 import com.btxtech.game.services.cms.DbContentPlugin;
+import com.btxtech.game.services.cms.DbContentSmartPageLink;
 import com.btxtech.game.services.cms.DbContentStaticHtml;
 import com.btxtech.game.services.cms.DbExpressionProperty;
 import com.btxtech.game.services.cms.DbPage;
@@ -38,6 +39,7 @@ import com.btxtech.game.wicket.pages.cms.content.ContentDynamicHtml;
 import com.btxtech.game.wicket.pages.cms.content.ContentLink;
 import com.btxtech.game.wicket.pages.cms.content.ContentList;
 import com.btxtech.game.wicket.pages.cms.content.ContentPageLink;
+import com.btxtech.game.wicket.pages.cms.content.ContentSmartPageLink;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import com.btxtech.game.wicket.uiservices.cms.SecurityCmsUiService;
@@ -111,6 +113,14 @@ public class CmsUiServiceImpl implements CmsUiService {
         pageParameters.put(CmsPage.MESSAGE_ID, message);
         component.setResponsePage(CmsPage.class, pageParameters);
     }
+
+    @Override
+    public void setResponsePage(Component component, int dbPageId) {
+        PageParameters pageParameters = new PageParameters();
+        pageParameters.put(CmsPage.ID, Integer.toString(dbPageId));
+        component.setResponsePage(CmsPage.class, pageParameters);
+    }
+
 
     @Override
     public Component getRootComponent(DbPage dbPage, String componentId, PageParameters pageParameters) {
@@ -211,6 +221,8 @@ public class CmsUiServiceImpl implements CmsUiService {
                 return new ContentActionButton(componentId, (DbContentActionButton) dbContent, beanIdPathElement);
             } else if (dbContent instanceof DbContentCreateEdit) {
                 return new ContentCreateEdit(componentId, (DbContentCreateEdit) dbContent, beanIdPathElement);
+            } else if (dbContent instanceof DbContentSmartPageLink) {
+                return new ContentSmartPageLink(componentId, (DbContentSmartPageLink) dbContent);
             } else {
                 log.warn("CmsUiServiceImpl: No Wicket Component for content: " + dbContent);
                 return new Label(componentId, "No content");
@@ -294,6 +306,16 @@ public class CmsUiServiceImpl implements CmsUiService {
     @Override
     public <T extends DbContent> T getDbContent(int contentId) {
         return (T) cmsService.getDbContent(contentId);
+    }
+
+    @Override
+    public Object getValue(String springBeanName, String propertyExpression) {
+        try {
+            Object bean = applicationContext.getBean(springBeanName);
+            return PropertyUtils.getProperty(bean, propertyExpression);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -565,6 +587,32 @@ public class CmsUiServiceImpl implements CmsUiService {
             }
             default:
                 throw new IllegalArgumentException("Unknown read restriction: " + dbContent.getReadRestricted());
+        }
+    }
+
+    @Override
+    public boolean isAllowedGeneric(DbContent.Access access) {
+        if (access == null) {
+            return false;
+        }
+        switch (access) {
+            case DENIED: {
+                return false;
+            }
+            case ALLOWED: {
+                return true;
+            }
+            case REGISTERED_USER: {
+                return userService.isRegistered();
+            }
+            case USER: {
+                throw new UnsupportedOperationException(DbContent.Access.USER + " access is not supported");
+            }
+            case INHERIT: {
+                throw new UnsupportedOperationException(DbContent.Access.INHERIT + " access is not supported");
+            }
+            default:
+                throw new IllegalArgumentException("Unknown access: " + access);
         }
     }
 

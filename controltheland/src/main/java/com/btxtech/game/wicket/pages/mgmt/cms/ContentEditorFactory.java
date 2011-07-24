@@ -10,6 +10,7 @@ import com.btxtech.game.services.cms.DbContentLink;
 import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.cms.DbContentPageLink;
 import com.btxtech.game.services.cms.DbContentPlugin;
+import com.btxtech.game.services.cms.DbContentSmartPageLink;
 import com.btxtech.game.services.cms.DbContentStaticHtml;
 import com.btxtech.game.services.cms.DbExpressionProperty;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
@@ -95,6 +96,12 @@ public class ContentEditorFactory {
             @Override
             MgmtWebPage createContentEditor(DbContent dbContent) {
                 return new ContentActionButtonEditor((DbContentActionButton) dbContent);
+            }},
+        SMART_PAGE_LINK(DbContentSmartPageLink.class, "Smart Page Link") {
+
+            @Override
+            MgmtWebPage createContentEditor(DbContent dbContent) {
+                return new ContentSmartPageLinkEditor((DbContentSmartPageLink) dbContent);
             }};
 
         private Class<? extends DbContent> createClass;
