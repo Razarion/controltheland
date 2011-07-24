@@ -22,11 +22,15 @@ public interface CmsUiService {
 
     void setMessageResponsePage(Component component, String message);
 
+    void setResponsePage(Component component, int dbPageId);
+
     Component getComponent(DbContent dbContent, Object bean, String id, BeanIdPathElement parentBeanIdPathElement);
 
     Component getRootComponent(DbPage dbPage, String id, PageParameters pageParameters);
 
     <T extends DbContent> T getDbContent(int contentId);
+
+    Object getValue(String springBeanName, String propertyExpression);
 
     Object getDataProviderBean(BeanIdPathElement beanIdPathElement);
 
@@ -55,6 +59,8 @@ public interface CmsUiService {
     CrudChild createAndFillBean(BeanIdPathElement beanIdPathElement);
 
     boolean isReadAllowed(int contentId);
+
+    boolean isAllowedGeneric(DbContent.Access access);
 
     boolean isPageAccessAllowed(DbPage dbPage);
 

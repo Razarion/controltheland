@@ -15,14 +15,18 @@ import java.util.Arrays;
 public class ContentAccessPanel extends Panel {
     public ContentAccessPanel(String id, boolean showRead, boolean showWrite, boolean showCreate, boolean showDelete) {
         super(id);
-        addSelectField("readRestricted", showRead);
-        addSelectField("writeRestricted", showWrite);
-        addSelectField("createRestricted", showCreate);
-        addSelectField("deleteRestricted", showDelete);
+        add(createSelectField("readRestricted", showRead));
+        add(createSelectField("writeRestricted", showWrite));
+        add(createSelectField("createRestricted", showCreate));
+        add(createSelectField("deleteRestricted", showDelete));
     }
 
-    private void addSelectField(String id, final boolean visible) {
-        add(new DropDownChoice<DbContent.Access>(id, Arrays.asList(DbContent.Access.values()), new IChoiceRenderer<DbContent.Access>() {
+    public static DropDownChoice createSelectField(String id) {
+        return (createSelectField(id, true));
+    }
+
+    public static DropDownChoice createSelectField(String id, final boolean visible) {
+        return new DropDownChoice<DbContent.Access>(id, Arrays.asList(DbContent.Access.values()), new IChoiceRenderer<DbContent.Access>() {
 
             @Override
             public Object getDisplayValue(DbContent.Access pluginEnum) {
@@ -38,6 +42,6 @@ public class ContentAccessPanel extends Panel {
             public boolean isVisible() {
                 return visible;
             }
-        });
+        };
     }
 }

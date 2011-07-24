@@ -16,17 +16,20 @@ import com.btxtech.game.services.forum.DbSubForum;
 import com.btxtech.game.services.forum.ForumService;
 import com.btxtech.game.services.forum.TestForum;
 import com.btxtech.game.services.market.ServerMarketService;
+import com.btxtech.game.services.messenger.MessengerService;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
+import com.btxtech.game.wicket.pages.cms.CmsStringGenerator;
 import com.btxtech.game.wicket.pages.cms.content.plugin.PluginEnum;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import com.btxtech.game.wicket.uiservices.cms.SecurityCmsUiService;
 import com.btxtech.game.wicket.uiservices.cms.impl.CmsUiServiceImpl;
 import org.apache.wicket.RequestCycle;
+import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.apache.wicket.util.tester.FormTester;
@@ -67,6 +70,8 @@ public class TestCmsService extends AbstractServiceTest {
     private ServerMarketService serverMarketService;
     @Autowired
     private ForumService forumService;
+    @Autowired
+    private MessengerService messengerService;
 
     private WicketTester tester;
 
@@ -734,7 +739,6 @@ public class TestCmsService extends AbstractServiceTest {
 
         beginHttpRequestAndOpenSessionInViewFilter();
         formTester = tester.newFormTester("form");
-        tester.debugComponentTrees();
         formTester.setValue("content:table:rows:1:cells:2:cell:textArea", "Content Content Content");
         formTester.submit("content:edit:save");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -1890,4 +1894,137 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
+
+    @Test
+    @DirtiesContext
+    public void testCmsStringGenerator() throws Exception {
+        Assert.assertEquals("Hallo 0", CmsStringGenerator.createNumberString(0, "Hallo 0", "Hallo 1", "Hallo $"));
+        Assert.assertEquals("Hallo 1", CmsStringGenerator.createNumberString(1, "Hallo 0", "Hallo 1", "Hallo $"));
+        Assert.assertEquals("Hallo 2", CmsStringGenerator.createNumberString(2, "Hallo 0", "Hallo 1", "Hallo $"));
+        Assert.assertEquals("Hallo 5", CmsStringGenerator.createNumberString(5, "Hallo 0", "Hallo 1", "Hallo $"));
+        Assert.assertEquals("Hallo 15", CmsStringGenerator.createNumberString(15, "Hallo 0", "Hallo 1", "Hallo $"));
+    }
+
+    @Test
+    @DirtiesContext
+    public void testGetValue() throws Exception {
+        configureMinimalGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("test", "test", "test", "");
+        userService.login("test", "test");
+
+        Assert.assertEquals(0, cmsUiService.getValue("messengerService", "unreadMails"));
+        // Add mail
+        messengerService.sendMail("test", "subject", "body");
+        Assert.assertEquals(1, cmsUiService.getValue("messengerService", "unreadMails"));
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testSmartPageLink() throws Exception {
+        configureMinimalGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage.setName("Home");
+        DbPage dbPage2 = pageCrud.createDbChild();
+        dbPage2.setName("Page 2");
+        DbContentStaticHtml dbContentStaticHtml = new DbContentStaticHtml();
+        dbContentStaticHtml.setHtml("This is page two");
+        dbPage2.setContent(dbContentStaticHtml);
+        
+        // Smart link
+        DbContentSmartPageLink smartPageLink = new DbContentSmartPageLink();
+        dbPage.setContent(smartPageLink);
+        smartPageLink.init(userService);
+        smartPageLink.setAccessDeniedString("No access");
+        smartPageLink.setButtonName("Button Name");
+        smartPageLink.setDbPage(dbPage2);
+        smartPageLink.setEnableAccess(DbContent.Access.REGISTERED_USER);
+        smartPageLink.setSpringBeanName("messengerService");
+        smartPageLink.setPropertyExpression("unreadMails");
+        smartPageLink.setString0("Nothing");
+        smartPageLink.setString1("Single");
+        smartPageLink.setStringN("Multi $");
+        pageCrud.updateDbChild(dbPage);
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify not logged in
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("form:content:label", "No access");
+        tester.assertDisabled("form:content:button");
+        Button button = (Button) tester.getComponentFromLastRenderedPage("form:content:button");
+        Assert.assertEquals("Button Name", button.getValue());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify logged in 0 mail
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("test", "test", "test", "");
+        userService.login("test", "test");
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("form:content:label", "Nothing");
+        tester.assertEnabled("form:content:button");
+        button = (Button) tester.getComponentFromLastRenderedPage("form:content:button");
+        Assert.assertEquals("Button Name", button.getValue());
+        // Click mail button
+        tester.newFormTester("form").submit("content:button");
+        tester.assertLabel("form:content", "This is page two");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify logged in 1 mail
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("test", "test");
+        messengerService.sendMail("test", "subject", "body");        
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("form:content:label", "Single");
+        tester.assertEnabled("form:content:button");
+        button = (Button) tester.getComponentFromLastRenderedPage("form:content:button");
+        Assert.assertEquals("Button Name", button.getValue());
+        // Click mail button
+        tester.newFormTester("form").submit("content:button");
+        tester.assertLabel("form:content", "This is page two");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify logged in 2 mails
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("test", "test");
+        messengerService.sendMail("test", "subject", "body");
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("form:content:label", "Multi 2");
+        tester.assertEnabled("form:content:button");
+        button = (Button) tester.getComponentFromLastRenderedPage("form:content:button");
+        Assert.assertEquals("Button Name", button.getValue());
+        // Click mail button
+        tester.newFormTester("form").submit("content:button");
+        tester.assertLabel("form:content", "This is page two");        
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 }

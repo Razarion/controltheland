@@ -133,6 +133,7 @@
         <mapping class="com.btxtech.game.services.cms.DbContentDynamicHtml"/>
         <mapping class="com.btxtech.game.services.cms.DbContentActionButton"/>
         <mapping class="com.btxtech.game.services.cms.DbContentCreateEdit"/>
+        <mapping class="com.btxtech.game.services.cms.DbContentSmartPageLink"/>
         <!-- Content -->
         <mapping class="com.btxtech.game.services.cms.DbBlogEntry"/>
         <mapping class="com.btxtech.game.services.cms.DbWikiSection"/>
