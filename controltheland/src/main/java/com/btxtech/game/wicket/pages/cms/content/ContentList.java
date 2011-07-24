@@ -8,6 +8,7 @@ import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.wicket.pages.cms.EditPanel;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
+import com.btxtech.game.wicket.uiservices.TableHead;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.DataGridView;
@@ -86,6 +87,8 @@ public class ContentList extends Panel {
             });
         }
 
+        // Head
+        table.add(new TableHead("tHead", getHeaderNames(dbContentList), dbContentList.getCssClassHead()));
 
         DetachHashListProvider detachHashListProvider = new DetachHashListProvider() {
             @Override
@@ -103,6 +106,17 @@ public class ContentList extends Panel {
         }
         pagingNavigator.setVisible(dbContentList.isPageable());
         add(pagingNavigator);
+    }
+
+    private List<String> getHeaderNames(DbContentList dbContentList) {
+        if (!dbContentList.isShowHead()) {
+            return null;
+        }
+        List<String> name = new ArrayList<String>();
+        for (DbContent dbContent : dbContentList.getColumnsCrud().readDbChildren()) {
+            name.add(dbContent.getName());
+        }
+        return name;
     }
 
     @Override

@@ -13,6 +13,7 @@ import com.btxtech.game.wicket.uiservices.CrudListChildTableHelper;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -63,6 +64,8 @@ public class ContentListEditor extends MgmtWebPage {
         form.add(new TextField("springBeanName"));
         form.add(new TextField("contentProviderGetter"));
         form.add(new TextField("rowsPerPage"));
+        form.add(new CheckBox("showHead"));
+        form.add(new TextField("cssClassHead"));
 
         new CrudListChildTableHelper<DbContentList, DbContent>("columns", null, "createColumn", true, form, true) {
 
