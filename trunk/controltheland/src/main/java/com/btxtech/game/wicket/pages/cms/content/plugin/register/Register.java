@@ -19,7 +19,6 @@ import com.btxtech.game.services.cms.DbPage;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
-import com.btxtech.game.wicket.uiservices.cms.SecurityCmsUiService;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.TextField;
@@ -39,6 +38,11 @@ public class Register extends Panel {
 
     public Register(String id) {
         super(id);
+        if (userService.isRegistered()) {
+            cmsUiService.setMessageResponsePage(this, "Already logged in as: " + userService.getUser().getUsername());
+            return;
+        }
+
         Form form = new Form<Register>("newUserForm", new CompoundPropertyModel<Register>(this)) {
             @Override
             protected void onSubmit() {
