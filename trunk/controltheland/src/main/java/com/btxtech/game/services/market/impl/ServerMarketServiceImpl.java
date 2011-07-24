@@ -390,7 +390,10 @@ public class ServerMarketServiceImpl implements ServerMarketService {
             if (userItemTypeAccess.contains(marketEntry)) {
                 continue;
             }
-
+            if(marketEntry.getItemType() == null) {
+                // this should not be checked here. This is a miss configuration.
+                continue;
+            }
             if (!userGuidanceService.isBaseItemTypeAllowedInLevel((DbBaseItemType) marketEntry.getItemType())) {
                 continue;
             }
