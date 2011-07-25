@@ -19,10 +19,11 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 public class ContentSmartPageLink extends Panel {
     @SpringBean
     private CmsUiService cmsUiService;
+    private int contentId;
 
     public ContentSmartPageLink(String id, DbContentSmartPageLink dbContentSmartPageLink) {
         super(id);
-
+        contentId = dbContentSmartPageLink.getId();
         if (cmsUiService.isAllowedGeneric(dbContentSmartPageLink.getEnableAccess())) {
             final String springBeanName = dbContentSmartPageLink.getSpringBeanName();
             final String propertyExpression = dbContentSmartPageLink.getPropertyExpression();
@@ -65,5 +66,10 @@ public class ContentSmartPageLink extends Panel {
         if (dbContentSmartPageLink.getCssClass() != null) {
             add(new SimpleAttributeModifier("class", dbContentSmartPageLink.getCssClass()));
         }
+    }
+
+    @Override
+    public boolean isVisible() {
+        return cmsUiService.isReadAllowed(contentId);
     }
 }

@@ -1,5 +1,6 @@
 package com.btxtech.game.wicket.uiservices.cms;
 
+import com.btxtech.game.services.cms.DataProviderInfo;
 import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbPage;
 import com.btxtech.game.services.cms.EditMode;

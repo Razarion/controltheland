@@ -13,7 +13,7 @@ import javax.persistence.Entity;
 public class DbExpressionProperty extends DbContent implements DataProviderInfo {
     public enum Type {
         DATE_DDMMYYYY_HH_MM_SS
-    };
+    }
     private String expression;
     private String springBeanName;
     private boolean escapeMarkup = true;

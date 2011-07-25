@@ -13,6 +13,8 @@
 
 package com.btxtech.game.services.messenger;
 
+import com.btxtech.game.services.common.ReadonlyListContentProvider;
+
 import java.util.List;
 
 /**
@@ -26,9 +28,11 @@ public interface MessengerService {
 
     int getUnreadMails();
 
-    List<Mail> getMails();
+    List<DbMail> getMails();
 
     void sendMail(String to, String subject, String body) throws InvalidFieldException;
 
-    void setMailRead(Mail mail);
+    void setMailRead(DbMail dbMail);
+
+    ReadonlyListContentProvider<DbMail> getUserMailCrud();
 }

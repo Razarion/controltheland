@@ -13,8 +13,8 @@
 
 package com.btxtech.game.wicket.pages.messenger;
 
+import com.btxtech.game.services.messenger.DbMail;
 import com.btxtech.game.services.messenger.InvalidFieldException;
-import com.btxtech.game.services.messenger.Mail;
 import com.btxtech.game.services.messenger.MessengerService;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
 import org.apache.wicket.markup.html.form.Form;
@@ -43,12 +43,12 @@ public class WriteMail extends BasePage {
         this(null);
     }
 
-    public WriteMail(final Mail replayMail) {
+    public WriteMail(final DbMail replayDbMail) {
         add(new FeedbackPanel("msgs"));
-        if (replayMail != null) {
-            toModel.setObject(replayMail.getFromUser());
-            subjectModel.setObject(RE + replayMail.getSubject());
-            bodyModel.setObject(replayMail.getBody());
+        if (replayDbMail != null) {
+            toModel.setObject(replayDbMail.getFromUser());
+            subjectModel.setObject(RE + replayDbMail.getSubject());
+            bodyModel.setObject(replayDbMail.getBody());
         }
 
         Form form = new Form("form") {

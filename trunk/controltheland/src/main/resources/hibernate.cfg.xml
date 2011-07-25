@@ -85,7 +85,7 @@
         <mapping class="com.btxtech.game.services.forum.DbCategory"/>
         <mapping class="com.btxtech.game.services.forum.DbForumThread"/>
         <mapping class="com.btxtech.game.services.forum.DbPost"/>
-        <mapping class="com.btxtech.game.services.messenger.Mail"/>
+        <mapping class="com.btxtech.game.services.messenger.DbMail"/>
         <mapping class="com.btxtech.game.services.resource.DbRegionResource"/>
         <mapping class="com.btxtech.game.services.bot.DbBotConfig"/>
         <mapping class="com.btxtech.game.services.bot.DbBotItemCount"/>
@@ -134,6 +134,7 @@
         <mapping class="com.btxtech.game.services.cms.DbContentActionButton"/>
         <mapping class="com.btxtech.game.services.cms.DbContentCreateEdit"/>
         <mapping class="com.btxtech.game.services.cms.DbContentSmartPageLink"/>
+        <mapping class="com.btxtech.game.services.cms.DbContentBooleanExpressionImage"/>
         <!-- Content -->
         <mapping class="com.btxtech.game.services.cms.DbBlogEntry"/>
         <mapping class="com.btxtech.game.services.cms.DbWikiSection"/>

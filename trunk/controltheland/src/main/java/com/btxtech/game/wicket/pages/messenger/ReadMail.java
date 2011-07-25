@@ -13,7 +13,7 @@
 
 package com.btxtech.game.wicket.pages.messenger;
 
-import com.btxtech.game.services.messenger.Mail;
+import com.btxtech.game.services.messenger.DbMail;
 import com.btxtech.game.services.messenger.MessengerService;
 import com.btxtech.game.wicket.WebCommon;
 import java.text.SimpleDateFormat;
@@ -31,21 +31,21 @@ public class ReadMail extends Panel {
     @SpringBean
     private MessengerService messengerService;
 
-    public ReadMail(String id, final Mail mail) {
+    public ReadMail(String id, final DbMail dbMail) {
         super(id);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(WebCommon.DATE_TIME_FORMAT_STRING);
-        add(new Label("date", simpleDateFormat.format(mail.getSent())));
-        add(new Label("from", mail.getFromUser()));
-        add(new Label("to", mail.getToUsers()));
-        add(new Label("subject", mail.getSubject()));
+        add(new Label("date", simpleDateFormat.format(dbMail.getSent())));
+        add(new Label("from", dbMail.getFromUser()));
+        add(new Label("to", dbMail.getToUsers()));
+        add(new Label("subject", dbMail.getSubject()));
         add(new Form("replayMail") {
 
             @Override
             protected void onSubmit() {
-                setResponsePage(new WriteMail(mail));
+                setResponsePage(new WriteMail(dbMail));
             }
         });
-        add(new Label("mailBody", mail.getBody()).setEscapeModelStrings(false));
-        messengerService.setMailRead(mail);
+        add(new Label("mailBody", dbMail.getBody()).setEscapeModelStrings(false));
+        messengerService.setMailRead(dbMail);
     }
 }
