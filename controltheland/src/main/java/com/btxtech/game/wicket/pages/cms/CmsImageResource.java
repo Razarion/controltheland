@@ -29,7 +29,7 @@ import org.apache.wicket.util.value.ValueMap;
 public class CmsImageResource extends WebResource {
     public static final String CMS_SHARED_IMAGE_RESOURCES = "cmsimg";
     public static final String PATH = "/cmsimg";
-    private static final String ID = "id";
+    public static final String ID = "id";
     private static CmsImageResource INSTANCE;
 
     @SpringBean

@@ -3,6 +3,7 @@ package com.btxtech.game.wicket.pages.mgmt.cms;
 import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbContentActionButton;
 import com.btxtech.game.services.cms.DbContentBook;
+import com.btxtech.game.services.cms.DbContentBooleanExpressionImage;
 import com.btxtech.game.services.cms.DbContentContainer;
 import com.btxtech.game.services.cms.DbContentDetailLink;
 import com.btxtech.game.services.cms.DbContentDynamicHtml;
@@ -102,6 +103,12 @@ public class ContentEditorFactory {
             @Override
             MgmtWebPage createContentEditor(DbContent dbContent) {
                 return new ContentSmartPageLinkEditor((DbContentSmartPageLink) dbContent);
+            }},
+        BOOLEAN_EXPRESSION_IMAGE(DbContentBooleanExpressionImage.class, "Boolean Expression Image") {
+
+            @Override
+            MgmtWebPage createContentEditor(DbContent dbContent) {
+                return new ContentBooleanExpressionImageEditor((DbContentBooleanExpressionImage) dbContent);
             }};
 
         private Class<? extends DbContent> createClass;

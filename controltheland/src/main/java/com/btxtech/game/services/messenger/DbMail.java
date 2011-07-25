@@ -13,7 +13,10 @@
 
 package com.btxtech.game.services.messenger;
 
+import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserService;
+
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
@@ -29,7 +32,7 @@ import javax.persistence.ManyToOne;
  * Time: 22:25:12
  */
 @Entity(name = "MESSENGER_MAIL")
-public class Mail implements Serializable{
+public class DbMail implements Serializable, CrudChild {
     @Id
     @GeneratedValue
     private Integer id;
@@ -48,6 +51,30 @@ public class Mail implements Serializable{
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private User user;
+
+
+    @Override
+    public Serializable getId() {
+        return id;
+    }
+
+    @Override
+    public String getName() {
+        return null;
+    }
+
+    @Override
+    public void setName(String name) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void init(UserService userService) {
+    }
+
+    @Override
+    public void setParent(Object o) {
+    }
 
     public String getToUsers() {
         return toUsers;
@@ -110,15 +137,13 @@ public class Mail implements Serializable{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Mail mail = (Mail) o;
+        DbMail dbMail = (DbMail) o;
 
-        if (id != null ? !id.equals(mail.id) : mail.id != null) return false;
-
-        return true;
+        return id != null && id.equals(dbMail.id);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 }

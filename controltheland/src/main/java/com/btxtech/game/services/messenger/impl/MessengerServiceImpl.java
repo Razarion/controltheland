@@ -13,8 +13,10 @@
 
 package com.btxtech.game.services.messenger.impl;
 
+import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.common.ReadonlyListContentProvider;
+import com.btxtech.game.services.messenger.DbMail;
 import com.btxtech.game.services.messenger.InvalidFieldException;
-import com.btxtech.game.services.messenger.Mail;
 import com.btxtech.game.services.messenger.MessengerService;
 import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.User;
@@ -32,6 +34,7 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,7 +64,7 @@ public class MessengerServiceImpl implements MessengerService {
         return hibernateTemplate.execute(new HibernateCallback<Integer>() {
             @Override
             public Integer doInHibernate(Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(Mail.class);
+                Criteria criteria = session.createCriteria(DbMail.class);
                 criteria.add(Restrictions.eq("user", user));
                 criteria.add(Restrictions.eq("read", false));
                 criteria.setProjection(Projections.rowCount());
@@ -73,12 +76,12 @@ public class MessengerServiceImpl implements MessengerService {
 
     @Override
     @Secured(SecurityRoles.ROLE_USER)
-    public List<Mail> getMails() {
+    public List<DbMail> getMails() {
         final User user = userService.getUser();
-        return hibernateTemplate.execute(new HibernateCallback<List<Mail>>() {
+        return hibernateTemplate.execute(new HibernateCallback<List<DbMail>>() {
             @Override
-            public List<Mail> doInHibernate(Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(Mail.class);
+            public List<DbMail> doInHibernate(Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbMail.class);
                 criteria.add(Restrictions.eq("user", user));
                 criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
                 criteria.addOrder(Order.desc("sent"));
@@ -130,23 +133,28 @@ public class MessengerServiceImpl implements MessengerService {
     }
 
     private void sendMail(User to, String toString, User from, String subject, String body) {
-        Mail mail = new Mail();
-        mail.setSubject(subject);
-        mail.setBody(body);
-        mail.setFromUser(from.getUsername());
-        mail.setRead(false);
-        mail.setToUsers(toString);
-        mail.setSent(new Date());
-        mail.setUser(to);
-        hibernateTemplate.save(mail);
+        DbMail dbMail = new DbMail();
+        dbMail.setSubject(subject);
+        dbMail.setBody(body);
+        dbMail.setFromUser(from.getUsername());
+        dbMail.setRead(false);
+        dbMail.setToUsers(toString);
+        dbMail.setSent(new Date());
+        dbMail.setUser(to);
+        hibernateTemplate.save(dbMail);
     }
 
     @Override
-    public void setMailRead(Mail mail) {
-        if (mail.isRead()) {
+    public void setMailRead(DbMail dbMail) {
+        if (dbMail.isRead()) {
             return;
         }
-        mail.setRead(true);
-        hibernateTemplate.update(mail);
+        dbMail.setRead(true);
+        hibernateTemplate.update(dbMail);
+    }
+
+    @Override
+    public ReadonlyListContentProvider<DbMail> getUserMailCrud() {
+       return new ReadonlyListContentProvider(getMails());
     }
 }

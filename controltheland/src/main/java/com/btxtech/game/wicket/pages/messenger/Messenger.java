@@ -13,7 +13,7 @@
 
 package com.btxtech.game.wicket.pages.messenger;
 
-import com.btxtech.game.services.messenger.Mail;
+import com.btxtech.game.services.messenger.DbMail;
 import com.btxtech.game.services.messenger.MessengerService;
 import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.basepage.BasePage;
@@ -43,7 +43,7 @@ public class Messenger extends BasePage {
         this(null);
     }
 
-    public Messenger(Mail displayMail) {
+    public Messenger(DbMail displayDbMail) {
         add(new Form("newMail") {
 
             @Override
@@ -53,15 +53,15 @@ public class Messenger extends BasePage {
         });
 
 
-        ListView<Mail> mails = new ListView<Mail>("mails", new IModel<List<Mail>>() {
+        ListView<DbMail> mails = new ListView<DbMail>("mails", new IModel<List<DbMail>>() {
 
             @Override
-            public List<Mail> getObject() {
+            public List<DbMail> getObject() {
                 return messengerService.getMails();
             }
 
             @Override
-            public void setObject(List<Mail> mails) {
+            public void setObject(List<DbMail> mails) {
                 //Ignore
             }
 
@@ -71,7 +71,7 @@ public class Messenger extends BasePage {
             }
         }) {
             @Override
-            protected void populateItem(final ListItem<Mail> mailListItem) {
+            protected void populateItem(final ListItem<DbMail> mailListItem) {
                 if (mailListItem.getModelObject().isRead()) {
                     mailListItem.add(new Image("read", new Model<String>("mail-open.png")));
                 } else {
@@ -91,8 +91,8 @@ public class Messenger extends BasePage {
             }
         };
         add(mails);
-        if (displayMail != null) {
-            add(new ReadMail("readMail", displayMail));
+        if (displayDbMail != null) {
+            add(new ReadMail("readMail", displayDbMail));
         } else {
             add(new Label("readMail", ""));
         }

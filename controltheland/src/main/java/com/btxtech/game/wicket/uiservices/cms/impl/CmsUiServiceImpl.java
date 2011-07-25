@@ -5,6 +5,7 @@ import com.btxtech.game.services.cms.DataProviderInfo;
 import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbContentActionButton;
 import com.btxtech.game.services.cms.DbContentBook;
+import com.btxtech.game.services.cms.DbContentBooleanExpressionImage;
 import com.btxtech.game.services.cms.DbContentContainer;
 import com.btxtech.game.services.cms.DbContentCreateEdit;
 import com.btxtech.game.services.cms.DbContentDetailLink;
@@ -32,6 +33,7 @@ import com.btxtech.game.wicket.pages.cms.ItemTypeImage;
 import com.btxtech.game.wicket.pages.cms.WritePanel;
 import com.btxtech.game.wicket.pages.cms.content.ContentActionButton;
 import com.btxtech.game.wicket.pages.cms.content.ContentBook;
+import com.btxtech.game.wicket.pages.cms.content.ContentBooleanExpressionImage;
 import com.btxtech.game.wicket.pages.cms.content.ContentContainer;
 import com.btxtech.game.wicket.pages.cms.content.ContentCreateEdit;
 import com.btxtech.game.wicket.pages.cms.content.ContentDetailLink;
@@ -186,6 +188,11 @@ public class CmsUiServiceImpl implements CmsUiService {
     }
 
     @Override
+    public <T extends DbContent> T getDbContent(int contentId) {
+        return (T) cmsService.getDbContent(contentId);
+    }
+
+    @Override
     public Component getComponent(DbContent dbContent, Object bean, String componentId, BeanIdPathElement beanIdPathElement) {
         try {
             if (dbContent instanceof DbContentList) {
@@ -223,6 +230,8 @@ public class CmsUiServiceImpl implements CmsUiService {
                 return new ContentCreateEdit(componentId, (DbContentCreateEdit) dbContent, beanIdPathElement);
             } else if (dbContent instanceof DbContentSmartPageLink) {
                 return new ContentSmartPageLink(componentId, (DbContentSmartPageLink) dbContent);
+            } else if (dbContent instanceof DbContentBooleanExpressionImage) {
+                return new ContentBooleanExpressionImage(componentId, (DbContentBooleanExpressionImage) dbContent, beanIdPathElement);
             } else {
                 log.warn("CmsUiServiceImpl: No Wicket Component for content: " + dbContent);
                 return new Label(componentId, "No content");
@@ -235,25 +244,18 @@ public class CmsUiServiceImpl implements CmsUiService {
 
     private Component component4ExpressionProperty(String id, DbExpressionProperty dbExpressionProperty, Object bean, BeanIdPathElement beanIdPathElement) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Object value;
-        if (dbExpressionProperty.getExpression().equals(CURRENT_PATH)) {
-            value = bean;
-        } else {
-            try {
-                if (dbExpressionProperty.getSpringBeanName() != null) {
-                    bean = getDataProviderBean(beanIdPathElement);
-                }
-                value = PropertyUtils.getProperty(bean, dbExpressionProperty.getExpression());
-            } catch (NestedNullException e) {
-                return new Label(id, "-");
-            } catch (NoSuchMethodException ie) {
-                log.warn("NoSuchMethodException: bean: " + bean + " expression: " + dbExpressionProperty.getExpression());
+        try {
+            value = getValue(dbExpressionProperty, bean, beanIdPathElement);
+        } catch (NestedNullException e) {
+            return new Label(id, "-");
+        } catch (NoSuchMethodException ie) {
+            log.warn("NoSuchMethodException: bean: " + bean + " expression: " + dbExpressionProperty.getExpression());
+            throw ie;
+        } catch (InvocationTargetException ie) {
+            if (ie.getTargetException() instanceof NoConnectionException) {
+                return new Label(id, "No Base");
+            } else {
                 throw ie;
-            } catch (InvocationTargetException ie) {
-                if (ie.getTargetException() instanceof NoConnectionException) {
-                    return new Label(id, "No Base");
-                } else {
-                    throw ie;
-                }
             }
         }
         Component component;
@@ -303,9 +305,15 @@ public class CmsUiServiceImpl implements CmsUiService {
         }
     }
 
-    @Override
-    public <T extends DbContent> T getDbContent(int contentId) {
-        return (T) cmsService.getDbContent(contentId);
+    private Object getValue(DataProviderInfo dataProviderInfo, Object bean, BeanIdPathElement beanIdPathElement) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        if (dataProviderInfo.getExpression().equals(CURRENT_PATH)) {
+            return bean;
+        } else {
+            if (dataProviderInfo.getSpringBeanName() != null) {
+                bean = getDataProviderBean(beanIdPathElement);
+            }
+            return PropertyUtils.getProperty(bean, beanIdPathElement.getExpression());
+        }
     }
 
     @Override

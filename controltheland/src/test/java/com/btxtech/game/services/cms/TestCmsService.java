@@ -16,6 +16,7 @@ import com.btxtech.game.services.forum.DbSubForum;
 import com.btxtech.game.services.forum.ForumService;
 import com.btxtech.game.services.forum.TestForum;
 import com.btxtech.game.services.market.ServerMarketService;
+import com.btxtech.game.services.messenger.InvalidFieldException;
 import com.btxtech.game.services.messenger.MessengerService;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.DbContentAccessControl;
@@ -1940,11 +1941,11 @@ public class TestCmsService extends AbstractServiceTest {
         dbPage2.setName("Page 2");
         DbContentStaticHtml dbContentStaticHtml = new DbContentStaticHtml();
         dbContentStaticHtml.setHtml("This is page two");
-        dbPage2.setContent(dbContentStaticHtml);
-        
+        dbPage2.setContentAndAccessWrites(dbContentStaticHtml);
+
         // Smart link
         DbContentSmartPageLink smartPageLink = new DbContentSmartPageLink();
-        dbPage.setContent(smartPageLink);
+        dbPage.setContentAndAccessWrites(smartPageLink);
         smartPageLink.init(userService);
         smartPageLink.setAccessDeniedString("No access");
         smartPageLink.setButtonName("Button Name");
@@ -1956,6 +1957,7 @@ public class TestCmsService extends AbstractServiceTest {
         smartPageLink.setString1("Single");
         smartPageLink.setStringN("Multi $");
         pageCrud.updateDbChild(dbPage);
+        pageCrud.updateDbChild(dbPage2);
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -1998,7 +2000,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.login("test", "test");
-        messengerService.sendMail("test", "subject", "body");        
+        messengerService.sendMail("test", "subject", "body");
         tester.startPage(CmsPage.class);
         tester.assertLabel("form:content:label", "Single");
         tester.assertEnabled("form:content:button");
@@ -2022,9 +2024,151 @@ public class TestCmsService extends AbstractServiceTest {
         Assert.assertEquals("Button Name", button.getValue());
         // Click mail button
         tester.newFormTester("form").submit("content:button");
-        tester.assertLabel("form:content", "This is page two");        
+        tester.assertLabel("form:content", "This is page two");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
 
+    private void createUserAndSendEmails() throws UserAlreadyExistsException, PasswordNotMatchException, InvalidFieldException {
+        // Fill mails
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U1", "test", "test", "");
+        userService.login("U1", "test");
+        userService.logout();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U2", "test", "test", "");
+        userService.login("U2", "test");
+        userService.logout();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Send mail 1
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        messengerService.sendMail("U2", "subject1", "body1");
+        userService.logout();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Send mail 2
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U2", "test");
+        messengerService.sendMail("U1", "subject2", "body2");
+        userService.logout();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Send mail 3
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        messengerService.sendMail("U2", "subject3", "body3");
+        userService.logout();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Send mail 4
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U2", "test");
+        messengerService.sendMail("U1", "subject4", "body4");
+        userService.logout();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Send mail 5
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        messengerService.sendMail("U2", "subject5", "body5");
+        userService.logout();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        // Send mail 6
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U2", "test");
+        messengerService.sendMail("U1", "subject6", "body6");
+        userService.logout();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testMail() throws Exception {
+        configureMinimalGame();
+        // Add cms image
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbCmsImage> crud = cmsService.getImageCrudRootServiceHelper();
+        DbCmsImage dbCmsImage1 = crud.createDbChild();
+        dbCmsImage1.setData(new byte[50000]);
+        dbCmsImage1.setContentType("image1");
+        crud.updateDbChild(dbCmsImage1);
+        DbCmsImage dbCmsImage2 = crud.createDbChild();
+        dbCmsImage2.setData(new byte[10000]);
+        dbCmsImage2.setContentType("image2");
+        crud.updateDbChild(dbCmsImage2);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage.setName("Home");
+
+        // Mail List
+        DbContentContainer dbContentContainer = new DbContentContainer();
+        dbPage.setContentAndAccessWrites(dbContentContainer);
+        dbContentContainer.init(userService);
+        DbContentList mailList = (DbContentList) dbContentContainer.getContentCrud().createDbChild(DbContentList.class);
+        mailList.setSpringBeanName("messengerService");
+        mailList.setContentProviderGetter("getUserMailCrud");
+        DbContentBooleanExpressionImage readImage = (DbContentBooleanExpressionImage) mailList.getColumnsCrud().createDbChild(DbContentBooleanExpressionImage.class);
+        readImage.setExpression("read");
+        readImage.setTrueImage(dbCmsImage1);
+        readImage.setFalseImage(dbCmsImage2);
+        DbExpressionProperty date = (DbExpressionProperty) mailList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
+        date.setExpression("sent");
+        date.setOptionalType(DbExpressionProperty.Type.DATE_DDMMYYYY_HH_MM_SS);
+        DbExpressionProperty from = (DbExpressionProperty) mailList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
+        from.setExpression("fromUser");
+        DbExpressionProperty subject = (DbExpressionProperty) mailList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
+        subject.setExpression("subject");
+
+        pageCrud.updateDbChild(dbPage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        createUserAndSendEmails();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");        
+        tester.startPage(CmsPage.class);
+        tester.debugComponentTrees();
+        tester.assertLabel("form:content:listView:0:content:table:rows:1:cells:4:cell", "subject6");
+        tester.assertLabel("form:content:listView:0:content:table:rows:1:cells:3:cell", "U2");
+        tester.assertLabel("form:content:listView:0:content:table:rows:2:cells:4:cell", "subject4");
+        tester.assertLabel("form:content:listView:0:content:table:rows:2:cells:3:cell", "U2");
+        tester.assertLabel("form:content:listView:0:content:table:rows:3:cells:4:cell", "subject2");
+        tester.assertLabel("form:content:listView:0:content:table:rows:3:cells:3:cell", "U2");
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
 }
