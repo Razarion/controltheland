@@ -1,6 +1,7 @@
 package com.btxtech.game.wicket.uiservices.cms;
 
 import com.btxtech.game.services.cms.DbContent;
+import com.btxtech.game.services.cms.DbContentBook;
 import com.btxtech.game.services.cms.DbContentInvoker;
 import com.btxtech.game.services.cms.DbPage;
 import com.btxtech.game.services.cms.EditMode;
@@ -80,4 +81,6 @@ public interface CmsUiService {
     BeanIdPathElement createChildBeanIdPathElement(DbContent childDbContent, BeanIdPathElement beanIdPathElement, CrudChild crudChild);
 
     void invoke(DbContentInvoker dbContentInvoker, HashMap<String, String> parameters) throws InvocationTargetException;
+
+    void invokeHiddenMethod(DbContentBook dbContentBook, BeanIdPathElement beanIdPathElement);
 }

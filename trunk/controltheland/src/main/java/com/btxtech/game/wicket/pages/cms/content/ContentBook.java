@@ -54,6 +54,7 @@ public class ContentBook extends Panel {
         add(table);
 
         setupPropertyBook(table, dbContentBook);
+        cmsUiService.invokeHiddenMethod(dbContentBook, beanIdPathElement);
     }
 
     private void setupPropertyBook(WebMarkupContainer table, DbContentBook dbContentBook) {

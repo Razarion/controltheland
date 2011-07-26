@@ -2141,6 +2141,18 @@ public class TestCmsService extends AbstractServiceTest {
         from.setExpression("fromUser");
         DbExpressionProperty subject = (DbExpressionProperty) mailList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
         subject.setExpression("subject");
+        DbContentDetailLink details = (DbContentDetailLink) mailList.getColumnsCrud().createDbChild(DbContentDetailLink.class);
+        details.setName("read");
+
+        DbContentBook dbContentBook = mailList.getContentBookCrud().createDbChild();
+        dbContentBook.setClassName("com.btxtech.game.services.messenger.DbMail");
+        dbContentBook.setHiddenMethodName("setMailRead");
+        DbContentRow dbContentRow = dbContentBook.getRowCrud().createDbChild();
+        DbExpressionProperty mailSubject = new DbExpressionProperty();
+        mailSubject.init(userService);
+        mailSubject.setParent(dbContentRow);
+        dbContentRow.setDbContent(mailSubject);
+        mailSubject.setExpression("subject");
 
         pageCrud.updateDbChild(dbPage);
         endHttpRequestAndOpenSessionInViewFilter();
@@ -2166,7 +2178,11 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertLabel("form:content:listView:0:content:table:rows:2:cells:3:cell", "U2");
         tester.assertLabel("form:content:listView:0:content:table:rows:3:cells:4:cell", "subject2");
         tester.assertLabel("form:content:listView:0:content:table:rows:3:cells:3:cell", "U2");
-
+        Assert.assertFalse(messengerService.getMails().get(0).isRead());
+        // click the read more link
+        tester.clickLink("form:content:listView:0:content:table:rows:1:cells:5:cell:link");
+        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "subject6");
+        Assert.assertTrue(messengerService.getMails().get(0).isRead());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

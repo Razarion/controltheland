@@ -33,6 +33,7 @@ public class DbContentBook extends DbContent implements DataProviderInfo, CrudPa
     private String springBeanName;
     private String contentProviderGetter;
     private boolean showName = true;
+    private String hiddenMethodName;
     @Transient
     private CrudListChildServiceHelper<DbContentRow> rowCrud;
 
@@ -68,6 +69,14 @@ public class DbContentBook extends DbContent implements DataProviderInfo, CrudPa
 
     public void setShowName(boolean showName) {
         this.showName = showName;
+    }
+
+    public String getHiddenMethodName() {
+        return hiddenMethodName;
+    }
+
+    public void setHiddenMethodName(String hiddenMethodName) {
+        this.hiddenMethodName = hiddenMethodName;
     }
 
     @Override
