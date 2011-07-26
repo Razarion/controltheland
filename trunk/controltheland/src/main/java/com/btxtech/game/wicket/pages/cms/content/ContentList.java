@@ -1,8 +1,6 @@
 package com.btxtech.game.wicket.pages.cms.content;
 
-import com.btxtech.game.services.cms.DataProviderInfo;
 import com.btxtech.game.services.cms.DbContent;
-import com.btxtech.game.services.cms.DbContentDetailLink;
 import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.wicket.pages.cms.EditPanel;
@@ -58,17 +56,7 @@ public class ContentList extends Panel {
                 @Override
                 public void populateItem(Item<ICellPopulator<Object>> cellItem, String componentId, IModel<Object> rowModel) {
                     DbContent dbContent = cmsUiService.getDbContent(dbContentId);
-                    BeanIdPathElement childBeanIdPathElement = null;
-                    if (dbContent instanceof DataProviderInfo) {
-                        if (dbContent.getSpringBeanName() != null || dbContent.getContentProviderGetter() != null || dbContent.getExpression() != null) {
-                            childBeanIdPathElement = beanIdPathElement.createChildFromBeanId(((CrudChild) rowModel.getObject()).getId());
-                            childBeanIdPathElement = childBeanIdPathElement.createChildFromDataProviderInfo((DataProviderInfo) dbContent);
-                        } else {
-                            childBeanIdPathElement = beanIdPathElement.createChildFromBeanId(((CrudChild) rowModel.getObject()).getId());
-                        }
-                    } else if (dbContent instanceof DbContentDetailLink) {
-                        childBeanIdPathElement = beanIdPathElement.createChildFromBeanId(((CrudChild) rowModel.getObject()).getId());
-                    }
+                    BeanIdPathElement childBeanIdPathElement = cmsUiService.createChildBeanIdPathElement(dbContent, beanIdPathElement, (CrudChild) rowModel.getObject());
                     cellItem.add(cmsUiService.getComponent(dbContent, rowModel.getObject(), componentId, childBeanIdPathElement));
                 }
             });

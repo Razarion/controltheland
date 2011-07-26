@@ -135,6 +135,8 @@
         <mapping class="com.btxtech.game.services.cms.DbContentCreateEdit"/>
         <mapping class="com.btxtech.game.services.cms.DbContentSmartPageLink"/>
         <mapping class="com.btxtech.game.services.cms.DbContentBooleanExpressionImage"/>
+        <mapping class="com.btxtech.game.services.cms.DbContentInvoker"/>
+        <mapping class="com.btxtech.game.services.cms.DbContentInvokerButton"/>
         <!-- Content -->
         <mapping class="com.btxtech.game.services.cms.DbBlogEntry"/>
         <mapping class="com.btxtech.game.services.cms.DbWikiSection"/>

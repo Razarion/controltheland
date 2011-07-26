@@ -1,7 +1,7 @@
 package com.btxtech.game.wicket.uiservices.cms;
 
-import com.btxtech.game.services.cms.DataProviderInfo;
 import com.btxtech.game.services.cms.DbContent;
+import com.btxtech.game.services.cms.DbContentInvoker;
 import com.btxtech.game.services.cms.DbPage;
 import com.btxtech.game.services.cms.EditMode;
 import com.btxtech.game.services.common.CrudChild;
@@ -9,6 +9,8 @@ import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -24,6 +26,10 @@ public interface CmsUiService {
     void setMessageResponsePage(Component component, String message);
 
     void setResponsePage(Component component, int dbPageId);
+
+    void setInvokerResponsePage(Component component, DbContentInvoker dbContentInvoker);
+
+    void setParentResponsePage(Component component, DbContent dbContent, BeanIdPathElement beanIdPathElement);
 
     Component getComponent(DbContent dbContent, Object bean, String id, BeanIdPathElement parentBeanIdPathElement);
 
@@ -70,4 +76,8 @@ public interface CmsUiService {
     boolean isConditionFulfilled(int contentId, BeanIdPathElement beanIdPathElement);
 
     SecurityCmsUiService getSecurityCmsUiService();
+
+    BeanIdPathElement createChildBeanIdPathElement(DbContent childDbContent, BeanIdPathElement beanIdPathElement, CrudChild crudChild);
+
+    void invoke(DbContentInvoker dbContentInvoker, HashMap<String, String> parameters) throws InvocationTargetException;
 }

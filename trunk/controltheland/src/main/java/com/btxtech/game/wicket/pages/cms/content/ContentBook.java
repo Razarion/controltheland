@@ -1,6 +1,5 @@
 package com.btxtech.game.wicket.pages.cms.content;
 
-import com.btxtech.game.services.cms.DataProviderInfo;
 import com.btxtech.game.services.cms.DbContentBook;
 import com.btxtech.game.services.cms.DbContentRow;
 import com.btxtech.game.wicket.pages.cms.EditPanel;
@@ -61,7 +60,7 @@ public class ContentBook extends Panel {
 
         List<ICellPopulator<DbContentRow>> columns = new ArrayList<ICellPopulator<DbContentRow>>();
 
-        if(dbContentBook.isShowName()) {
+        if (dbContentBook.isShowName()) {
             // Label
             columns.add(new HeaderlessColumn<DbContentRow>() {
                 @Override
@@ -75,10 +74,7 @@ public class ContentBook extends Panel {
         columns.add(new HeaderlessColumn<DbContentRow>() {
             @Override
             public void populateItem(Item<ICellPopulator<DbContentRow>> cellItem, String componentId, IModel<DbContentRow> rowModel) {
-                BeanIdPathElement childBeanIdPathElement = null;
-                if (rowModel.getObject().getDbContent() instanceof DataProviderInfo) {
-                    childBeanIdPathElement = beanIdPathElement.createChildFromDataProviderInfo((DataProviderInfo) rowModel.getObject().getDbContent());
-                }
+                BeanIdPathElement childBeanIdPathElement = cmsUiService.createChildBeanIdPathElement(rowModel.getObject().getDbContent(), beanIdPathElement, null);
                 cellItem.add(cmsUiService.getComponent(rowModel.getObject().getDbContent(), bean, componentId, childBeanIdPathElement));
             }
         });

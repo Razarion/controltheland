@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.messenger.impl;
 
-import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.messenger.DbMail;
 import com.btxtech.game.services.messenger.InvalidFieldException;
@@ -34,7 +33,6 @@ import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -155,6 +153,6 @@ public class MessengerServiceImpl implements MessengerService {
 
     @Override
     public ReadonlyListContentProvider<DbMail> getUserMailCrud() {
-       return new ReadonlyListContentProvider(getMails());
+        return new ReadonlyListContentProvider(getMails());
     }
 }

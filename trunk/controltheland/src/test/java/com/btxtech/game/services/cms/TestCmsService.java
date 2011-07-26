@@ -2158,9 +2158,8 @@ public class TestCmsService extends AbstractServiceTest {
         // Verify
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userService.login("U1", "test");        
+        userService.login("U1", "test");
         tester.startPage(CmsPage.class);
-        tester.debugComponentTrees();
         tester.assertLabel("form:content:listView:0:content:table:rows:1:cells:4:cell", "subject6");
         tester.assertLabel("form:content:listView:0:content:table:rows:1:cells:3:cell", "U2");
         tester.assertLabel("form:content:listView:0:content:table:rows:2:cells:4:cell", "subject4");
@@ -2171,4 +2170,151 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
+
+    private void setupNewMailTest() throws Exception {
+        configureMinimalGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage.setName("Home");
+        DbPage dbMessagePage = pageCrud.createDbChild();
+        dbMessagePage.setPredefinedType(DbPage.PredefinedType.MESSAGE);
+        dbMessagePage.setName("Message Page");
+
+        // Mail List
+        DbContentContainer dbContentContainer = new DbContentContainer();
+        dbPage.setContentAndAccessWrites(dbContentContainer);
+        dbContentContainer.init(userService);
+        DbContentInvokerButton newMailButton = (DbContentInvokerButton) dbContentContainer.getContentCrud().createDbChild(DbContentInvokerButton.class);
+        newMailButton.setName("New Mail");
+        DbContentInvoker dbContentInvoker = new DbContentInvoker();
+        newMailButton.setDbContentInvoker(dbContentInvoker);
+        dbContentInvoker.setParent(newMailButton);
+        dbContentInvoker.init(userService);
+        dbContentInvoker.setSpringBeanName("messengerService");
+        dbContentInvoker.setMethodName("sendMail");
+        DbExpressionProperty to = dbContentInvoker.getValueCrud().createDbChild();
+        to.setName("To");
+        to.setExpression("toUser");
+        DbExpressionProperty subject = dbContentInvoker.getValueCrud().createDbChild();
+        subject.setName("subject");
+        subject.setExpression("subject");
+        DbExpressionProperty body = dbContentInvoker.getValueCrud().createDbChild();
+        body.setName("Message");
+        body.setEscapeMarkup(false);
+        body.setExpression("body");
+
+        pageCrud.updateDbChild(dbPage);
+        pageCrud.updateDbChild(dbMessagePage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testNewMail() throws Exception {
+        setupNewMailTest();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U2", "test", "test", "");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U1", "test", "test", "");
+        userService.login("U1", "test");
+        tester.startPage(CmsPage.class);
+        tester.assertVisible("form:content:listView:0:content:button");
+        tester.newFormTester("form").submit("content:listView:0:content:button");
+        tester.assertVisible("form:content:listView:0:field");
+        tester.assertVisible("form:content:listView:1:field");
+        tester.assertVisible("form:content:listView:2:textArea");
+        FormTester formTester = tester.newFormTester("form");
+        formTester.setValue("content:listView:0:field", "U2");
+        formTester.setValue("content:listView:1:field", "subject2");
+        formTester.setValue("content:listView:2:textArea", "message message");
+        formTester.submit("content:invoke");
+        tester.assertVisible("form:content:listView:0:content:button");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify U2 got mail
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U2", "test");
+        Assert.assertEquals(1, messengerService.getMails().size());
+        Assert.assertEquals("U1", messengerService.getMails().get(0).getFromUser());
+        Assert.assertEquals("subject2", messengerService.getMails().get(0).getSubject());
+        Assert.assertEquals("message message", messengerService.getMails().get(0).getBody());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testNewMailFailWrongUser() throws Exception {
+        setupNewMailTest();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U1", "test", "test", "");
+        userService.login("U1", "test");
+        tester.startPage(CmsPage.class);
+        tester.assertVisible("form:content:listView:0:content:button");
+        tester.newFormTester("form").submit("content:listView:0:content:button");
+        tester.assertVisible("form:content:listView:0:field");
+        tester.assertVisible("form:content:listView:1:field");
+        tester.assertVisible("form:content:listView:2:textArea");
+        FormTester formTester = tester.newFormTester("form");
+        formTester.setValue("content:listView:0:field", "U5");
+        formTester.setValue("content:listView:1:field", "subject2");
+        formTester.setValue("content:listView:2:textArea", "message message");
+        formTester.submit("content:invoke");
+        tester.assertLabel("form:content", "Unknown user: U5");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testNewMailPressCancel() throws Exception {
+        setupNewMailTest();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U1", "test", "test", "");
+        userService.login("U1", "test");
+        tester.startPage(CmsPage.class);
+        tester.assertVisible("form:content:listView:0:content:button");
+        tester.newFormTester("form").submit("content:listView:0:content:button");
+        tester.assertVisible("form:content:listView:0:field");
+        tester.assertVisible("form:content:listView:1:field");
+        tester.assertVisible("form:content:listView:2:textArea");
+        FormTester formTester = tester.newFormTester("form");
+        formTester.setValue("content:listView:0:field", "U5");
+        formTester.setValue("content:listView:1:field", "subject2");
+        formTester.setValue("content:listView:2:textArea", "message message");
+        formTester.submit("content:cancel");
+        tester.debugComponentTrees();
+        tester.assertVisible("form:content:listView:0:content:button");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 }
