@@ -763,8 +763,12 @@ public class CmsUiServiceImpl implements CmsUiService {
         BeanIdPathElement childBeanIdPathElement = null;
         if (childDbContent instanceof DataProviderInfo) {
             if (childDbContent.getSpringBeanName() != null || childDbContent.getContentProviderGetter() != null || childDbContent.getExpression() != null) {
-                childBeanIdPathElement = beanIdPathElement.createChildFromBeanId(crudChild.getId());
-                childBeanIdPathElement = childBeanIdPathElement.createChildFromDataProviderInfo((DataProviderInfo) childDbContent);
+                if (crudChild != null) {
+                    childBeanIdPathElement = beanIdPathElement.createChildFromBeanId(crudChild.getId());
+                    childBeanIdPathElement = childBeanIdPathElement.createChildFromDataProviderInfo((DataProviderInfo) childDbContent);
+                }else {
+                    childBeanIdPathElement = beanIdPathElement.createChildFromDataProviderInfo((DataProviderInfo) childDbContent);
+                }
             } else {
                 childBeanIdPathElement = beanIdPathElement.createChildFromBeanId(crudChild.getId());
             }
@@ -780,13 +784,13 @@ public class CmsUiServiceImpl implements CmsUiService {
             Object bean = applicationContext.getBean(dbContentInvoker.getSpringBeanName());
             int parameterCount = dbContentInvoker.getValueCrud().readDbChildren().size();
             Class[] parameterType = new Class[parameterCount];
-            for(int i = 0; i < parameterCount; i++) {
-               parameterType[i] = String.class;
+            for (int i = 0; i < parameterCount; i++) {
+                parameterType[i] = String.class;
             }
             Method method = bean.getClass().getMethod(dbContentInvoker.getMethodName(), parameterType);
             Object[] parameters = new Object[parameterCount];
             for (int i = 0; i < parameters.length; i++) {
-                String expression =  dbContentInvoker.getValueCrud().readDbChildren().get(i).getExpression();
+                String expression = dbContentInvoker.getValueCrud().readDbChildren().get(i).getExpression();
                 parameters[i] = parameterMap.get(expression);
             }
             method.invoke(bean, parameters);
