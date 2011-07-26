@@ -44,6 +44,7 @@ public class ContentBookEditor extends MgmtWebPage {
         form.add(new TextField("springBeanName"));
         form.add(new TextField("contentProviderGetter"));
         form.add(new CheckBox("showName"));
+        form.add(new TextField("hiddenMethodName"));
 
         new CrudListChildTableHelper<DbContentBook, DbContentRow>("rows", null, "createRow", true, form, true) {
 

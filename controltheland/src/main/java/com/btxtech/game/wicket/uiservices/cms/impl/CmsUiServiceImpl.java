@@ -766,7 +766,7 @@ public class CmsUiServiceImpl implements CmsUiService {
                 if (crudChild != null) {
                     childBeanIdPathElement = beanIdPathElement.createChildFromBeanId(crudChild.getId());
                     childBeanIdPathElement = childBeanIdPathElement.createChildFromDataProviderInfo((DataProviderInfo) childDbContent);
-                }else {
+                } else {
                     childBeanIdPathElement = beanIdPathElement.createChildFromDataProviderInfo((DataProviderInfo) childDbContent);
                 }
             } else {
@@ -796,6 +796,21 @@ public class CmsUiServiceImpl implements CmsUiService {
             method.invoke(bean, parameters);
         } catch (InvocationTargetException e) {
             throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void invokeHiddenMethod(DbContentBook dbContentBook, BeanIdPathElement beanIdPathElement) {
+        if (dbContentBook.getHiddenMethodName() == null) {
+            return;
+        }
+        try {
+            Object parameter = getDataProviderBean(beanIdPathElement);
+            Object bean = getDataProviderBean(beanIdPathElement.getParent());
+            Method method = bean.getClass().getMethod(dbContentBook.getHiddenMethodName(), parameter.getClass());
+            method.invoke(bean, parameter);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

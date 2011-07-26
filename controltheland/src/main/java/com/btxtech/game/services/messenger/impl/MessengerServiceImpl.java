@@ -153,6 +153,6 @@ public class MessengerServiceImpl implements MessengerService {
 
     @Override
     public ReadonlyListContentProvider<DbMail> getUserMailCrud() {
-        return new ReadonlyListContentProvider(getMails());
+        return new ReadonlyListContentProvider<DbMail>(getMails());
     }
 }
