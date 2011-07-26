@@ -1,6 +1,5 @@
 package com.btxtech.game.wicket.pages.cms.content;
 
-import com.btxtech.game.services.cms.DataProviderInfo;
 import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbContentContainer;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
@@ -43,7 +42,7 @@ public class ContentContainer extends Panel {
             }
         });
         setupPropertyBook();
-        if(dbContentContentContainer.getCssClass() != null) {
+        if (dbContentContentContainer.getCssClass() != null) {
             add(new SimpleAttributeModifier("class", dbContentContentContainer.getCssClass()));
         }
     }
@@ -60,10 +59,7 @@ public class ContentContainer extends Panel {
 
             @Override
             protected void populateItem(ListItem<DbContent> dbContentListItem) {
-                BeanIdPathElement childBeanIdPathElement = null;
-                if (dbContentListItem.getModelObject() instanceof DataProviderInfo) {
-                    childBeanIdPathElement = beanIdPathElement.createChildFromDataProviderInfo((DataProviderInfo) dbContentListItem.getModelObject());
-                }
+                BeanIdPathElement childBeanIdPathElement = cmsUiService.createChildBeanIdPathElement(dbContentListItem.getModelObject(), beanIdPathElement, null);
                 dbContentListItem.add(cmsUiService.getComponent(dbContentListItem.getModelObject(), bean, "content", childBeanIdPathElement));
             }
         };

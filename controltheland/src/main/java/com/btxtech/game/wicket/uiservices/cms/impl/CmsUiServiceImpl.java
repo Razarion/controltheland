@@ -10,6 +10,8 @@ import com.btxtech.game.services.cms.DbContentContainer;
 import com.btxtech.game.services.cms.DbContentCreateEdit;
 import com.btxtech.game.services.cms.DbContentDetailLink;
 import com.btxtech.game.services.cms.DbContentDynamicHtml;
+import com.btxtech.game.services.cms.DbContentInvoker;
+import com.btxtech.game.services.cms.DbContentInvokerButton;
 import com.btxtech.game.services.cms.DbContentLink;
 import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.cms.DbContentPageLink;
@@ -38,6 +40,8 @@ import com.btxtech.game.wicket.pages.cms.content.ContentContainer;
 import com.btxtech.game.wicket.pages.cms.content.ContentCreateEdit;
 import com.btxtech.game.wicket.pages.cms.content.ContentDetailLink;
 import com.btxtech.game.wicket.pages.cms.content.ContentDynamicHtml;
+import com.btxtech.game.wicket.pages.cms.content.ContentInvoker;
+import com.btxtech.game.wicket.pages.cms.content.ContentInvokerButton;
 import com.btxtech.game.wicket.pages.cms.content.ContentLink;
 import com.btxtech.game.wicket.pages.cms.content.ContentList;
 import com.btxtech.game.wicket.pages.cms.content.ContentPageLink;
@@ -123,6 +127,24 @@ public class CmsUiServiceImpl implements CmsUiService {
         component.setResponsePage(CmsPage.class, pageParameters);
     }
 
+    @Override
+    public void setInvokerResponsePage(Component component, DbContentInvoker dbContentInvoker) {
+        PageParameters parameters = new PageParameters();
+        parameters.put(CmsPage.INVOKE_ID, Integer.toString(dbContentInvoker.getId()));
+        component.setResponsePage(CmsPage.class, parameters);
+    }
+
+    @Override
+    public void setParentResponsePage(Component component, DbContent dbContent, BeanIdPathElement beanIdPathElement) {
+        PageParameters parameters = new PageParameters();
+        // Find out if parent was a detail link
+        if (dbContent.getParent() instanceof DbContentList) {
+            // ??? Why -> dbContent.getParent().getParent().getParent().getParent()
+            parameters.put(CmsPage.DETAIL_CONTENT_ID, Integer.toString(dbContent.getParent().getParent().getParent().getParent().getId()));
+        }
+        ContentDetailLink.fillBeanIdPathUrlParameters(beanIdPathElement, parameters);
+        component.setResponsePage(CmsPage.class, parameters);
+    }
 
     @Override
     public Component getRootComponent(DbPage dbPage, String componentId, PageParameters pageParameters) {
@@ -139,6 +161,9 @@ public class CmsUiServiceImpl implements CmsUiService {
             dbContent = cmsService.getDbContent(pageParameters.getInt(CmsPage.CREATE_CONTENT_ID));
             beanIdPathElement = createBeanIdPathElement(pageParameters, dbContent, beanIdPathElement);
             beanIdPathElement.setCreateEditPage(true);
+        } else if (pageParameters.containsKey(CmsPage.INVOKE_ID)) {
+            dbContent = cmsService.getDbContent(pageParameters.getInt(CmsPage.INVOKE_ID));
+            beanIdPathElement.setInvokePage(true);
         } else if (pageParameters.containsKey(CmsPage.MESSAGE_ID)) {
             return new Label(componentId, pageParameters.getString(CmsPage.MESSAGE_ID));
         }
@@ -232,6 +257,10 @@ public class CmsUiServiceImpl implements CmsUiService {
                 return new ContentSmartPageLink(componentId, (DbContentSmartPageLink) dbContent);
             } else if (dbContent instanceof DbContentBooleanExpressionImage) {
                 return new ContentBooleanExpressionImage(componentId, (DbContentBooleanExpressionImage) dbContent, beanIdPathElement);
+            } else if (dbContent instanceof DbContentInvokerButton) {
+                return new ContentInvokerButton(componentId, (DbContentInvokerButton) dbContent);
+            } else if (dbContent instanceof DbContentInvoker) {
+                return new ContentInvoker(componentId, (DbContentInvoker) dbContent, beanIdPathElement);
             } else {
                 log.warn("CmsUiServiceImpl: No Wicket Component for content: " + dbContent);
                 return new Label(componentId, "No content");
@@ -727,5 +756,44 @@ public class CmsUiServiceImpl implements CmsUiService {
     @Override
     public SecurityCmsUiService getSecurityCmsUiService() {
         return securityCmsUiService;
+    }
+
+    @Override
+    public BeanIdPathElement createChildBeanIdPathElement(DbContent childDbContent, BeanIdPathElement beanIdPathElement, CrudChild crudChild) {
+        BeanIdPathElement childBeanIdPathElement = null;
+        if (childDbContent instanceof DataProviderInfo) {
+            if (childDbContent.getSpringBeanName() != null || childDbContent.getContentProviderGetter() != null || childDbContent.getExpression() != null) {
+                childBeanIdPathElement = beanIdPathElement.createChildFromBeanId(crudChild.getId());
+                childBeanIdPathElement = childBeanIdPathElement.createChildFromDataProviderInfo((DataProviderInfo) childDbContent);
+            } else {
+                childBeanIdPathElement = beanIdPathElement.createChildFromBeanId(crudChild.getId());
+            }
+        } else if (childDbContent instanceof DbContentDetailLink) {
+            childBeanIdPathElement = beanIdPathElement.createChildFromBeanId(crudChild.getId());
+        }
+        return childBeanIdPathElement;
+    }
+
+    @Override
+    public void invoke(DbContentInvoker dbContentInvoker, HashMap<String, String> parameterMap) throws InvocationTargetException {
+        try {
+            Object bean = applicationContext.getBean(dbContentInvoker.getSpringBeanName());
+            int parameterCount = dbContentInvoker.getValueCrud().readDbChildren().size();
+            Class[] parameterType = new Class[parameterCount];
+            for(int i = 0; i < parameterCount; i++) {
+               parameterType[i] = String.class;
+            }
+            Method method = bean.getClass().getMethod(dbContentInvoker.getMethodName(), parameterType);
+            Object[] parameters = new Object[parameterCount];
+            for (int i = 0; i < parameters.length; i++) {
+                String expression =  dbContentInvoker.getValueCrud().readDbChildren().get(i).getExpression();
+                parameters[i] = parameterMap.get(expression);
+            }
+            method.invoke(bean, parameters);
+        } catch (InvocationTargetException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

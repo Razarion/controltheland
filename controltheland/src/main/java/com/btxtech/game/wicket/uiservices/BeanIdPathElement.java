@@ -20,6 +20,7 @@ public class BeanIdPathElement implements Serializable {
     private String expression;
     private boolean childDetailPage = false;
     private boolean createEditPage = false;
+    private boolean invokePage = false;
 
     public BeanIdPathElement(DbPage dbPage, DbContent dbContent) {
         pageId = dbPage.getId();
@@ -110,6 +111,21 @@ public class BeanIdPathElement implements Serializable {
 
     public void setCreateEditPage(boolean createEditPage) {
         this.createEditPage = createEditPage;
+    }
+
+    public boolean isInvokePage() {
+        BeanIdPathElement element = this;
+        do {
+            if (element.invokePage) {
+                return true;
+            }
+            element = element.parent;
+        } while (element != null);
+        return false;
+    }
+
+    public void setInvokePage(boolean invokePage) {
+        this.invokePage = invokePage;
     }
 
     public BeanIdPathElement createChildFromDataProviderInfo(DataProviderInfo dataProviderInfo) {

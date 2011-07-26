@@ -3,13 +3,10 @@ package com.btxtech.game.wicket.pages.cms.content;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbContentCreateEdit;
-import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.cms.DbExpressionProperty;
-import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.WritePanel;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
-import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -50,28 +47,16 @@ public class ContentCreateEdit extends Panel {
             @Override
             public void onSubmit() {
                 cmsUiService.createAndFillBean(beanIdPathElement);
-                jumpToPage(beanIdPathElement);
+                cmsUiService.setParentResponsePage(ContentCreateEdit.this, (DbContent) ContentCreateEdit.this.getDefaultModelObject(), beanIdPathElement);
             }
         });
         add(new Button("cancel") {
             @Override
             public void onSubmit() {
-                jumpToPage(beanIdPathElement);
+                cmsUiService.setParentResponsePage(ContentCreateEdit.this, (DbContent) ContentCreateEdit.this.getDefaultModelObject(), beanIdPathElement);
             }
         });
 
-    }
-
-    private void jumpToPage(BeanIdPathElement beanIdPathElement) {
-        PageParameters parameters = new PageParameters();
-        // Find out if parent was a detail link
-        DbContent dbContent = cmsService.getDbContent(contentId);
-        if (dbContent.getParent() instanceof DbContentList) {
-            // ??? Why -> dbContent.getParent().getParent().getParent().getParent()
-            parameters.put(CmsPage.DETAIL_CONTENT_ID, Integer.toString(dbContent.getParent().getParent().getParent().getParent().getId()));
-        }
-        ContentDetailLink.fillBeanIdPathUrlParameters(beanIdPathElement, parameters);
-        setResponsePage(CmsPage.class, parameters);
     }
 
     private void setupCreateFields(final BeanIdPathElement beanIdPathElement) {
@@ -94,4 +79,8 @@ public class ContentCreateEdit extends Panel {
         add(listView);
     }
 
+    @Override
+    public boolean isVisible() {
+        return cmsUiService.isReadAllowed(contentId);
+    }
 }
