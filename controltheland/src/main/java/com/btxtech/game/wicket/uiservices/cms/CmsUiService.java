@@ -28,7 +28,7 @@ public interface CmsUiService {
 
     void setResponsePage(Component component, int dbPageId);
 
-    void setInvokerResponsePage(Component component, DbContentInvoker dbContentInvoker);
+    void setInvokerResponsePage(Component component, int dbPageId, DbContentInvoker dbContentInvoker);
 
     void setParentResponsePage(Component component, DbContent dbContent, BeanIdPathElement beanIdPathElement);
 

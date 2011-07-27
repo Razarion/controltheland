@@ -72,6 +72,8 @@ public class CmsServiceImpl implements CmsService {
     private CrudRootServiceHelper<DbMenu> menuCrudRootServiceHelper;
     @Autowired
     private CrudRootServiceHelper<DbPageStyle> pageStyleCrudRootServiceHelper;
+    @Autowired
+    private CrudRootServiceHelper<DbContent> contentCrud;
 
     private DbCmsHomeText dbCmsHomeText;
     private DbCmsHomeLayout dbCmsHomeLayout;
@@ -93,6 +95,7 @@ public class CmsServiceImpl implements CmsService {
         pageCrudRootServiceHelper.init(DbPage.class);
         menuCrudRootServiceHelper.init(DbMenu.class);
         pageStyleCrudRootServiceHelper.init(DbPageStyle.class);
+        contentCrud.init(DbContent.class);
         SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
         try {
             activateHome();
@@ -274,6 +277,11 @@ public class CmsServiceImpl implements CmsService {
     @Override
     public CrudRootServiceHelper<DbPageStyle> getPageStyleCrudRootServiceHelper() {
         return pageStyleCrudRootServiceHelper;
+    }
+
+    @Override
+    public CrudRootServiceHelper<DbContent> getContentCrud() {
+        return contentCrud;
     }
 
     @Override

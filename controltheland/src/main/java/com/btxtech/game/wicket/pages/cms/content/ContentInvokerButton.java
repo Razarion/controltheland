@@ -20,7 +20,7 @@ public class ContentInvokerButton extends Panel {
     private CmsUiService cmsUiService;
     private int contentId;
 
-    public ContentInvokerButton(String componentId, DbContentInvokerButton dbContentInvokerButton) {
+    public ContentInvokerButton(String componentId, DbContentInvokerButton dbContentInvokerButton, final BeanIdPathElement beanIdPathElement) {
         super(componentId);
         contentId = dbContentInvokerButton.getId();
         setDefaultModel(new LoadableDetachableModel<DbContentInvokerButton>() {
@@ -33,7 +33,7 @@ public class ContentInvokerButton extends Panel {
         add(new Button("button", new Model<String>(dbContentInvokerButton.getName())) {
             @Override
             public void onSubmit() {
-                cmsUiService.setInvokerResponsePage(this, ((DbContentInvokerButton) ContentInvokerButton.this.getDefaultModelObject()).getDbContentInvoker());
+                cmsUiService.setInvokerResponsePage(this, beanIdPathElement.getPageId(), ((DbContentInvokerButton) ContentInvokerButton.this.getDefaultModelObject()).getDbContentInvoker());
             }
         });
 
