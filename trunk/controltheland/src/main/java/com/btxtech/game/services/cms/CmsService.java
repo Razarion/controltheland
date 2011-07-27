@@ -52,5 +52,7 @@ public interface CmsService {
 
     CrudRootServiceHelper<DbPageStyle> getPageStyleCrudRootServiceHelper();
 
+    CrudRootServiceHelper<DbContent> getContentCrud();
+
     DbPage getPredefinedDbPage(DbPage.PredefinedType predefinedType);
 }

@@ -7,6 +7,7 @@ import com.btxtech.game.services.cms.DbContentBooleanExpressionImage;
 import com.btxtech.game.services.cms.DbContentContainer;
 import com.btxtech.game.services.cms.DbContentDetailLink;
 import com.btxtech.game.services.cms.DbContentDynamicHtml;
+import com.btxtech.game.services.cms.DbContentInvokerButton;
 import com.btxtech.game.services.cms.DbContentLink;
 import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.cms.DbContentPageLink;
@@ -109,6 +110,12 @@ public class ContentEditorFactory {
             @Override
             MgmtWebPage createContentEditor(DbContent dbContent) {
                 return new ContentBooleanExpressionImageEditor((DbContentBooleanExpressionImage) dbContent);
+            }},
+        INVOKER_BUTTON(DbContentInvokerButton.class, "Invoker Button") {
+
+            @Override
+            MgmtWebPage createContentEditor(DbContent dbContent) {
+                return new ContentInvokerButtonEditor((DbContentInvokerButton) dbContent);
             }};
 
         private Class<? extends DbContent> createClass;

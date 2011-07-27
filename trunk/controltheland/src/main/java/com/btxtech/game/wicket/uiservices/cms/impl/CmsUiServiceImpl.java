@@ -128,8 +128,9 @@ public class CmsUiServiceImpl implements CmsUiService {
     }
 
     @Override
-    public void setInvokerResponsePage(Component component, DbContentInvoker dbContentInvoker) {
+    public void setInvokerResponsePage(Component component, int dbPageId, DbContentInvoker dbContentInvoker) {
         PageParameters parameters = new PageParameters();
+        parameters.put(CmsPage.ID, Integer.toString(dbPageId));
         parameters.put(CmsPage.INVOKE_ID, Integer.toString(dbContentInvoker.getId()));
         component.setResponsePage(CmsPage.class, parameters);
     }
@@ -258,7 +259,7 @@ public class CmsUiServiceImpl implements CmsUiService {
             } else if (dbContent instanceof DbContentBooleanExpressionImage) {
                 return new ContentBooleanExpressionImage(componentId, (DbContentBooleanExpressionImage) dbContent, beanIdPathElement);
             } else if (dbContent instanceof DbContentInvokerButton) {
-                return new ContentInvokerButton(componentId, (DbContentInvokerButton) dbContent);
+                return new ContentInvokerButton(componentId, (DbContentInvokerButton) dbContent, beanIdPathElement);
             } else if (dbContent instanceof DbContentInvoker) {
                 return new ContentInvoker(componentId, (DbContentInvoker) dbContent, beanIdPathElement);
             } else {
@@ -770,10 +771,15 @@ public class CmsUiServiceImpl implements CmsUiService {
                     childBeanIdPathElement = beanIdPathElement.createChildFromDataProviderInfo((DataProviderInfo) childDbContent);
                 }
             } else {
-                childBeanIdPathElement = beanIdPathElement.createChildFromBeanId(crudChild.getId());
+                if (crudChild != null) {
+                    childBeanIdPathElement = beanIdPathElement.createChildFromBeanId(crudChild.getId());
+                }
             }
         } else if (childDbContent instanceof DbContentDetailLink) {
             childBeanIdPathElement = beanIdPathElement.createChildFromBeanId(crudChild.getId());
+        }
+        if(childBeanIdPathElement == null) {
+            childBeanIdPathElement = beanIdPathElement;
         }
         return childBeanIdPathElement;
     }
