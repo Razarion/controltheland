@@ -55,4 +55,8 @@ public interface CmsService {
     CrudRootServiceHelper<DbContent> getContentCrud();
 
     DbPage getPredefinedDbPage(DbPage.PredefinedType predefinedType);
+
+    String getAdsCode();
+
+    CrudRootServiceHelper<DbAds> getAdsCrud();
 }

@@ -82,6 +82,33 @@
     <input type="submit" value="Save" wicket:id="saveMenus"/>
     <input type="submit" value="Create" wicket:id="createMenu"/>
 
+    <h3>Ads</h3>
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Id</th>
+            <th bgcolor="#dadada">Name</th>
+            <th bgcolor="#dadada">Active</th>
+            <th bgcolor="#dadada">Edit</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+        <tr wicket:id="ads">
+            <td wicket:id="id"/>
+            <td><input wicket:id="name" type="text" size="30"></td>
+            <td valign="center">
+                <input type="checkbox" wicket:id="active"/>
+            </td>
+            <td valign="center">
+                <input type="submit" value="Edit" wicket:id="edit"/>
+            </td>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <input type="submit" value="Save" wicket:id="saveAds"/>
+    <input type="submit" value="Create" wicket:id="createAds"/>
+
     <h2>Misc</h2>
     <input type="submit" value="Repository" wicket:id="repository"/>
     <br>

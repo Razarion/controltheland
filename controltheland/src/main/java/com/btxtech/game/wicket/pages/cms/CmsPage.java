@@ -56,10 +56,10 @@ public class CmsPage extends WebPage {
         }));
         DbPage dbPage = (DbPage) getDefaultModelObject();
         add(CmsCssResource.createCss("css", dbPage));
-        add(new Ads("right", dbPage));
         add(new Menu("menu"));
         add(new Header("header", dbPage));
         add(new Footer("footer", dbPage));
+        add(new Ads("contentRight", dbPage));
         Form form = new Form("form");
         add(form);
         form.add(cmsUiService.getRootComponent(dbPage, "content", pageParameters));
