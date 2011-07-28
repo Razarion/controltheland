@@ -1,7 +1,10 @@
 package com.btxtech.game.wicket.pages.cms;
 
+import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbPage;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
  * User: beat
@@ -9,11 +12,15 @@ import org.apache.wicket.markup.html.panel.Panel;
  * Time: 23:33:55
  */
 public class Ads extends Panel {
+    @SpringBean
+    private CmsService cmsService;
+
     private boolean adsVisible;
 
     public Ads(String id, DbPage dbPage) {
         super(id);
         adsVisible = dbPage.isAdsVisible();
+        add(new Label("label", cmsService.getAdsCode()).setEscapeModelStrings(false));
     }
 
     @Override

@@ -26,30 +26,32 @@
         <div class="middleLeft" wicket:id="menu"></div>
 
         <div class="middleCenter">
-            <form wicket:id="form">
-                <table border="0" cellpadding="0" cellspacing="0" class="contentOuter">
-                    <tr>
-                        <td class="contentTL"></td>
-                        <td class="contentT"></td>
-                        <td class="contentTR"></td>
-                    </tr>
-                    <tr>
-                        <td class="contentL"></td>
-                        <td>
-                            <div wicket:id="content" class="content"></div>
-                        </td>
-                        <td class="contentR"></td>
-                    </tr>
-                    <tr>
-                        <td class="contentBL"></td>
-                        <td class="contentB"></td>
-                        <td class="contentBR"></td>
-                    </tr>
-                </table>
-            </form>
+            <table border="0" cellpadding="0" cellspacing="0" class="contentOuter">
+                <tr>
+                    <td class="contentTL"></td>
+                    <td class="contentT"></td>
+                    <td class="contentTR"></td>
+                </tr>
+                <tr>
+                    <td class="contentL"></td>
+                    <td>
+                        <div class="contentM">
+                            <form wicket:id="form">
+                                <div wicket:id="content" class="contentML"></div>
+                            </form>
+                            <div wicket:id="contentRight" class="contentMR"></div>
+                        </div>
+                    </td>
+                    <td class="contentR"></td>
+                </tr>
+                <tr>
+                    <td class="contentBL"></td>
+                    <td class="contentB"></td>
+                    <td class="contentBR"></td>
+                </tr>
+            </table>
         </div>
 
-        <div class="middleRight" wicket:id="right"></div>
     </div>
 </div>
 

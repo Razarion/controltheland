@@ -2333,4 +2333,55 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpSession();
     }
 
+    @Test
+    @DirtiesContext
+    public void testAds() throws Exception {
+        configureMinimalGame();
+
+        // Setup ads
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbAds dbAds = cmsService.getAdsCrud().createDbChild();
+        dbAds.setActive(true);
+        dbAds.setCode("THIS IS THE CODE");
+        cmsService.getAdsCrud().updateDbChild(dbAds);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setName("Home");
+        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage.setAdsVisible(true);
+        DbContentStaticHtml dbContentStaticHtml = new DbContentStaticHtml();
+        dbContentStaticHtml.setHtml("This is a page");
+        dbPage.setContentAndAccessWrites(dbContentStaticHtml);
+
+        pageCrud.updateDbChild(dbPage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.debugComponentTrees();
+        tester.assertLabel("form:content", "This is a page");
+        tester.assertLabel("contentRight:label", "THIS IS THE CODE");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+    }
+
 }

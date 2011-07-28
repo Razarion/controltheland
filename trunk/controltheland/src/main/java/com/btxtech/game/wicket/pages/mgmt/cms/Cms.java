@@ -1,6 +1,7 @@
 package com.btxtech.game.wicket.pages.mgmt.cms;
 
 import com.btxtech.game.services.cms.CmsService;
+import com.btxtech.game.services.cms.DbAds;
 import com.btxtech.game.services.cms.DbMenu;
 import com.btxtech.game.services.cms.DbPage;
 import com.btxtech.game.services.cms.DbPageStyle;
@@ -8,6 +9,7 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
@@ -82,6 +84,26 @@ public class Cms extends MgmtWebPage {
             @Override
             protected void onEditSubmit(DbMenu dbMenu) {
                 setResponsePage(new MenuEditor(dbMenu));
+            }
+        };
+
+        new CrudRootTableHelper<DbAds>("ads", "saveAds", "createAds", true, form, false) {
+
+            @Override
+            protected void extendedPopulateItem(Item<DbAds> dbMenuItem) {
+                displayId(dbMenuItem);
+                super.extendedPopulateItem(dbMenuItem);
+                dbMenuItem.add(new CheckBox("active"));
+            }
+
+            @Override
+            protected CrudRootServiceHelper<DbAds> getCrudRootServiceHelperImpl() {
+                return cmsService.getAdsCrud();
+            }
+
+            @Override
+            protected void onEditSubmit(DbAds dbAds) {
+                setResponsePage(new AdsEditor(dbAds));
             }
         };
 

@@ -14,12 +14,11 @@
 package com.btxtech.game.services.cms.impl;
 
 import com.btxtech.game.services.cms.CmsService;
+import com.btxtech.game.services.cms.DbAds;
 import com.btxtech.game.services.cms.DbCmsHomeLayout;
 import com.btxtech.game.services.cms.DbCmsHomeText;
 import com.btxtech.game.services.cms.DbCmsImage;
 import com.btxtech.game.services.cms.DbContent;
-import com.btxtech.game.services.cms.DbContentInvoker;
-import com.btxtech.game.services.cms.DbContentInvokerButton;
 import com.btxtech.game.services.cms.DbContentLink;
 import com.btxtech.game.services.cms.DbContentPageLink;
 import com.btxtech.game.services.cms.DbMenu;
@@ -74,6 +73,8 @@ public class CmsServiceImpl implements CmsService {
     private CrudRootServiceHelper<DbPageStyle> pageStyleCrudRootServiceHelper;
     @Autowired
     private CrudRootServiceHelper<DbContent> contentCrud;
+    @Autowired
+    private CrudRootServiceHelper<DbAds> adsCrud;
 
     private DbCmsHomeText dbCmsHomeText;
     private DbCmsHomeLayout dbCmsHomeLayout;
@@ -81,6 +82,7 @@ public class CmsServiceImpl implements CmsService {
     private Map<Integer, DbPage> pageCache = new HashMap<Integer, DbPage>();
     private Map<Integer, DbContent> contentCache = new HashMap<Integer, DbContent>();
     private Map<DbPage.PredefinedType, DbPage> predefinedDbPages = new HashMap<DbPage.PredefinedType, DbPage>();
+    private String adsCode;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -96,6 +98,7 @@ public class CmsServiceImpl implements CmsService {
         menuCrudRootServiceHelper.init(DbMenu.class);
         pageStyleCrudRootServiceHelper.init(DbPageStyle.class);
         contentCrud.init(DbContent.class);
+        adsCrud.init(DbAds.class);
         SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
         try {
             activateHome();
@@ -127,6 +130,19 @@ public class CmsServiceImpl implements CmsService {
                 dbPage.setContent(dbContent);
                 initializeLazyDependenciesAndFillContentCache(dbContent);
             }
+        }
+        adsCode = null;
+        for (DbAds dbAds : adsCrud.readDbChildren()) {
+            if (dbAds.isActive()) {
+                if (adsCode != null) {
+                    log.warn("More than one active ADS configured");
+                }
+                adsCode = dbAds.getCode();
+            }
+        }
+        if (adsCode == null) {
+            log.warn("No active ADS configured");
+            adsCode = null;
         }
     }
 
@@ -318,5 +334,15 @@ public class CmsServiceImpl implements CmsService {
             throw new IllegalArgumentException("No CmsImage for id: " + imgId);
         }
         return dbCmsImage;
+    }
+
+    @Override
+    public String getAdsCode() {
+        return adsCode;
+    }
+
+    @Override
+    public CrudRootServiceHelper<DbAds> getAdsCrud() {
+        return adsCrud;
     }
 }
