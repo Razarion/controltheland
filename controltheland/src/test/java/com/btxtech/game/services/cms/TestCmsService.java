@@ -2182,8 +2182,11 @@ public class TestCmsService extends AbstractServiceTest {
         // click the read more link
         tester.clickLink("form:content:listView:0:content:table:rows:1:cells:5:cell:link");
         tester.assertLabel("form:content:table:rows:1:cells:2:cell", "subject6");
+        endHttpRequestAndOpenSessionInViewFilter();
+        beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertTrue(messengerService.getMails().get(0).isRead());
         endHttpRequestAndOpenSessionInViewFilter();
+
         endHttpSession();
     }
 
