@@ -16,8 +16,10 @@ package com.btxtech.game.services.cms;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.user.UserService;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
@@ -33,6 +35,7 @@ public class DbCmsImage implements CrudChild {
     private Integer id;
     private String contentType;
     @Column(length = 500000)
+    @Basic(fetch = FetchType.LAZY)
     private byte[] data;
 
     @Override

@@ -32,6 +32,7 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -143,6 +144,7 @@ public class MessengerServiceImpl implements MessengerService {
     }
 
     @Override
+    @Transactional
     public void setMailRead(DbMail dbMail) {
         if (dbMail.isRead()) {
             return;

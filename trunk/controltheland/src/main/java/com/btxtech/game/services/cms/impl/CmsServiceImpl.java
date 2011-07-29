@@ -19,6 +19,7 @@ import com.btxtech.game.services.cms.DbCmsHomeLayout;
 import com.btxtech.game.services.cms.DbCmsHomeText;
 import com.btxtech.game.services.cms.DbCmsImage;
 import com.btxtech.game.services.cms.DbContent;
+import com.btxtech.game.services.cms.DbContentBooleanExpressionImage;
 import com.btxtech.game.services.cms.DbContentLink;
 import com.btxtech.game.services.cms.DbContentPageLink;
 import com.btxtech.game.services.cms.DbMenu;
@@ -182,6 +183,10 @@ public class CmsServiceImpl implements CmsService {
         }
         if (dbContent instanceof DbContentLink) {
             Hibernate.initialize(((DbContentLink) dbContent).getDbCmsImage());
+        }
+        if (dbContent instanceof DbContentBooleanExpressionImage) {
+            Hibernate.initialize(((DbContentBooleanExpressionImage) dbContent).getTrueImage());
+            Hibernate.initialize(((DbContentBooleanExpressionImage) dbContent).getFalseImage());
         }
         contentCache.put(dbContent.getId(), dbContent);
         Collection<? extends DbContent> children = dbContent.getChildren();
