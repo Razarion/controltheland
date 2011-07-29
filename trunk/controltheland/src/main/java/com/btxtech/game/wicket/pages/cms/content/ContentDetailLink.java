@@ -36,7 +36,7 @@ public class ContentDetailLink extends Panel {
         link.add(new Label("label", dbContentDetailLink.getName()));
         add(link);
         if (dbContentDetailLink.getCssClass() != null) {
-            add(new SimpleAttributeModifier("class", dbContentDetailLink.getCssClass()));
+            link.add(new SimpleAttributeModifier("class", dbContentDetailLink.getCssClass()));
         }
     }
 
