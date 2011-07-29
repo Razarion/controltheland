@@ -488,13 +488,13 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:listView:0:content", "News 2");
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:listView:1:content", WebCommon.formatDateTime(new Date(dbBlogEntry2.getTimeStamp())));
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:listView:2:content", "Blog 2");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:1", "News 2");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:2", WebCommon.formatDateTime(new Date(dbBlogEntry2.getTimeStamp())));
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:3", "Blog 2");
 
-        tester.assertLabel("form:content:table:rows:2:cells:1:cell:listView:0:content", "News 1");
-        tester.assertLabel("form:content:table:rows:2:cells:1:cell:listView:1:content", WebCommon.formatDateTime(new Date(dbBlogEntry1.getTimeStamp())));
-        tester.assertLabel("form:content:table:rows:2:cells:1:cell:listView:2:content", "Blog 1");
+        tester.assertLabel("form:content:table:rows:2:cells:1:cell:container:1", "News 1");
+        tester.assertLabel("form:content:table:rows:2:cells:1:cell:container:2", WebCommon.formatDateTime(new Date(dbBlogEntry1.getTimeStamp())));
+        tester.assertLabel("form:content:table:rows:2:cells:1:cell:container:3", "Blog 1");
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -572,8 +572,8 @@ public class TestCmsService extends AbstractServiceTest {
 
         beginHttpRequestAndOpenSessionInViewFilter();
         formTester = tester.newFormTester("form");
-        formTester.setValue("content:table:rows:1:cells:1:cell:listView:0:content:field", "Blog 1");
-        formTester.setValue("content:table:rows:1:cells:1:cell:listView:2:content:textArea", "Bla Bla");
+        formTester.setValue("content:table:rows:1:cells:1:cell:container:1:field", "Blog 1");
+        formTester.setValue("content:table:rows:1:cells:1:cell:container:3:textArea", "Bla Bla");
         formTester.submit("content:edit:save");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -920,10 +920,10 @@ public class TestCmsService extends AbstractServiceTest {
         // Not enough XPs
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:listView:2:content", TEST_SIMPLE_BUILDING);
-        tester.assertInvisible("form:content:table:rows:1:cells:1:cell:listView:3:content:button");
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:listView:3:content:label", "UnfilledText");
-        tester.assertVisible("form:content:table:rows:1:cells:1:cell:listView:3:content:label");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:3", TEST_SIMPLE_BUILDING);
+        tester.assertInvisible("form:content:table:rows:1:cells:1:cell:container:4:button");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:4:label", "UnfilledText");
+        tester.assertVisible("form:content:table:rows:1:cells:1:cell:container:4:label");
         endHttpRequestAndOpenSessionInViewFilter();
         // Get Some XP
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -932,10 +932,10 @@ public class TestCmsService extends AbstractServiceTest {
         // Buy in market
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:listView:2:content", TEST_SIMPLE_BUILDING);
-        tester.assertInvisible("form:content:table:rows:1:cells:1:cell:listView:3:content:label");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:3", TEST_SIMPLE_BUILDING);
+        tester.assertInvisible("form:content:table:rows:1:cells:1:cell:container:4:label");
         FormTester formTester = tester.newFormTester("form");
-        formTester.submit("content:table:rows:1:cells:1:cell:listView:3:content:button");
+        formTester.submit("content:table:rows:1:cells:1:cell:container:4:button");
         endHttpRequestAndOpenSessionInViewFilter();
         // Verify
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -1076,16 +1076,16 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:listView:0:content", "SubForumName1");
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:listView:1:content", "SubForumContent1");
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:listView:2:content:table:rows:1:cells:1:cell", "CategoryName1");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:1", "SubForumName1");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:2", "SubForumContent1");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:3:table:rows:1:cells:1:cell", "CategoryName1");
         tester.assertInvisible("form:content:edit:edit");
         tester.assertInvisible("form:content:edit:create");
         tester.assertInvisible("form:content:edit:save");
         tester.assertInvisible("form:content:edit:delete");
         tester.assertInvisible("form:content:edit:cancelEdit");
         // Click the category link
-        tester.clickLink("form:content:table:rows:1:cells:1:cell:listView:2:content:table:rows:1:cells:2:cell:link");
+        tester.clickLink("form:content:table:rows:1:cells:1:cell:container:3:table:rows:1:cells:2:cell:link");
         tester.assertLabel("form:content:table:rows:1:cells:2:cell", "CategoryName1");
         tester.assertLabel("form:content:table:rows:2:cells:2:cell:table:rows:1:cells:1:cell", "ForumThreadName1");
         tester.assertInvisible("form:content:edit:edit");
@@ -1121,16 +1121,16 @@ public class TestCmsService extends AbstractServiceTest {
         userService.login("forum", "forum");
 
         tester.startPage(CmsPage.class);
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:listView:0:content", "SubForumName1");
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:listView:1:content", "SubForumContent1");
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:listView:2:content:table:rows:1:cells:1:cell", "CategoryName1");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:1", "SubForumName1");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:2", "SubForumContent1");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:3:table:rows:1:cells:1:cell", "CategoryName1");
         tester.assertVisible("form:content:edit:edit");
         tester.assertInvisible("form:content:edit:create");
         tester.assertInvisible("form:content:edit:save");
         tester.assertInvisible("form:content:edit:delete");
         tester.assertInvisible("form:content:edit:cancelEdit");
         // Click the category link
-        tester.clickLink("form:content:table:rows:1:cells:1:cell:listView:2:content:table:rows:1:cells:2:cell:link");
+        tester.clickLink("form:content:table:rows:1:cells:1:cell:container:3:table:rows:1:cells:2:cell:link");
         tester.assertLabel("form:content:table:rows:1:cells:2:cell", "CategoryName1");
         tester.assertLabel("form:content:table:rows:2:cells:2:cell:table:rows:1:cells:1:cell", "ForumThreadName1");
         tester.assertVisible("form:content:edit:edit");
@@ -1166,9 +1166,9 @@ public class TestCmsService extends AbstractServiceTest {
         userService.login("forum", "forum");
 
         tester.startPage(CmsPage.class);
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:listView:0:content", "SubForumName1");
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:listView:1:content", "SubForumContent1");
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:listView:2:content:table:rows:1:cells:1:cell", "CategoryName1");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:1", "SubForumName1");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:2", "SubForumContent1");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:3:table:rows:1:cells:1:cell", "CategoryName1");
         tester.assertVisible("form:content:edit:edit");
         tester.assertInvisible("form:content:edit:create");
         tester.assertInvisible("form:content:edit:save");
@@ -1184,9 +1184,9 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertVisible("form:content:edit:cancelEdit");
         // Fill invalues and press save
         formTester = tester.newFormTester("form");
-        formTester.setValue("content:table:rows:2:cells:1:cell:listView:0:content:field", "SubForumName2");
-        formTester.setValue("content:table:rows:2:cells:1:cell:listView:1:content:field", "SubForumContent2");
-        formTester.setValue("content:table:rows:2:cells:1:cell:listView:2:content:table:rows:1:cells:1:cell:field", "CategoryName2");
+        formTester.setValue("content:table:rows:2:cells:1:cell:container:1:field", "SubForumName2");
+        formTester.setValue("content:table:rows:2:cells:1:cell:container:2:field", "SubForumContent2");
+        formTester.setValue("content:table:rows:2:cells:1:cell:container:3:table:rows:1:cells:1:cell:field", "CategoryName2");
         formTester.submit("content:edit:save");
         tester.newFormTester("form").submit("content:edit:cancelEdit");
         tester.assertVisible("form:content:edit:edit");
@@ -1200,9 +1200,9 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:listView:0:content", "SubForumName2");
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:listView:1:content", "SubForumContent2");
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:listView:2:content:table:rows:1:cells:1:cell", "CategoryName2");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:1", "SubForumName2");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:2", "SubForumContent2");
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:3:table:rows:1:cells:1:cell", "CategoryName2");
         tester.assertInvisible("form:content:edit:edit");
         tester.assertInvisible("form:content:edit:create");
         tester.assertInvisible("form:content:edit:save");
@@ -1230,7 +1230,7 @@ public class TestCmsService extends AbstractServiceTest {
         // Click the Edit button
         tester.newFormTester("form").submit("content:edit:edit");
         // Click the category link
-        tester.clickLink("form:content:table:rows:2:cells:1:cell:listView:2:content:table:rows:1:cells:2:cell:link");
+        tester.clickLink("form:content:table:rows:2:cells:1:cell:container:3:table:rows:1:cells:2:cell:link");
         tester.assertInvisible("form:content:edit:edit");
         tester.assertInvisible("form:content:edit:create");
         tester.assertVisible("form:content:edit:save");
@@ -1253,7 +1253,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
-        tester.clickLink("form:content:table:rows:1:cells:1:cell:listView:2:content:table:rows:1:cells:2:cell:link");
+        tester.clickLink("form:content:table:rows:1:cells:1:cell:container:3:table:rows:1:cells:2:cell:link");
         tester.assertLabel("form:content:table:rows:1:cells:2:cell", "CategoryName2");
         tester.assertLabel("form:content:table:rows:2:cells:2:cell:table:rows:1:cells:1:cell", "ForumThreadName2");
         tester.assertInvisible("form:content:edit:edit");
@@ -1281,7 +1281,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         tester.startPage(CmsPage.class);
         // Click the category link
-        tester.clickLink("form:content:table:rows:1:cells:1:cell:listView:2:content:table:rows:1:cells:2:cell:link");
+        tester.clickLink("form:content:table:rows:1:cells:1:cell:container:3:table:rows:1:cells:2:cell:link");
         // Click the Edit button
         tester.newFormTester("form").submit("content:edit:edit");
         tester.assertInvisible("form:content:edit:edit");
@@ -1306,7 +1306,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
-        tester.clickLink("form:content:table:rows:1:cells:1:cell:listView:2:content:table:rows:1:cells:2:cell:link");
+        tester.clickLink("form:content:table:rows:1:cells:1:cell:container:3:table:rows:1:cells:2:cell:link");
         tester.assertLabel("form:content:table:rows:1:cells:2:cell", "CategoryName2");
         tester.assertLabel("form:content:table:rows:2:cells:2:cell:table:rows:1:cells:1:cell", "ForumThreadName2");
         tester.assertInvisible("form:content:edit:edit");
@@ -1334,7 +1334,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         tester.startPage(CmsPage.class);
         // Click the category link
-        tester.clickLink("form:content:table:rows:1:cells:1:cell:listView:2:content:table:rows:1:cells:2:cell:link");
+        tester.clickLink("form:content:table:rows:1:cells:1:cell:container:3:table:rows:1:cells:2:cell:link");
         // Click the thread link
         tester.clickLink("form:content:table:rows:2:cells:2:cell:table:rows:1:cells:2:cell:link");
         // Click the Edit button
@@ -1361,7 +1361,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
-        tester.clickLink("form:content:table:rows:1:cells:1:cell:listView:2:content:table:rows:1:cells:2:cell:link");
+        tester.clickLink("form:content:table:rows:1:cells:1:cell:container:3:table:rows:1:cells:2:cell:link");
         tester.clickLink("form:content:table:rows:2:cells:2:cell:table:rows:1:cells:2:cell:link");
         //tester.assertLabel("form:content:table:rows:1:cells:2:cell", "ForumThreadName5");
         tester.assertLabel("form:content:table:rows:2:cells:2:cell:table:rows:1:cells:1:cell", "PostContent6");
@@ -1388,7 +1388,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
         // Click the category link
-        tester.clickLink("form:content:table:rows:1:cells:1:cell:listView:2:content:table:rows:1:cells:2:cell:link");
+        tester.clickLink("form:content:table:rows:1:cells:1:cell:container:3:table:rows:1:cells:2:cell:link");
         // Click the thread link
         tester.clickLink("form:content:table:rows:2:cells:2:cell:table:rows:1:cells:2:cell:link");
         tester.assertInvisible("form:content:table:rows:2:cells:2:cell:edit:createEdit");
@@ -1413,7 +1413,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         tester.startPage(CmsPage.class);
         // Click the category link
-        tester.clickLink("form:content:table:rows:1:cells:1:cell:listView:2:content:table:rows:1:cells:2:cell:link");
+        tester.clickLink("form:content:table:rows:1:cells:1:cell:container:3:table:rows:1:cells:2:cell:link");
         tester.assertLabel("form:content:table:rows:1:cells:2:cell", "CategoryName1");
         tester.assertLabel("form:content:table:rows:2:cells:2:cell:table:rows:1:cells:1:cell", "ForumThreadName1");
         // Click the thread link
@@ -1468,7 +1468,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         tester.startPage(CmsPage.class);
         // Click the category link
-        tester.clickLink("form:content:table:rows:1:cells:1:cell:listView:2:content:table:rows:1:cells:2:cell:link");
+        tester.clickLink("form:content:table:rows:1:cells:1:cell:container:3:table:rows:1:cells:2:cell:link");
         tester.assertLabel("form:content:table:rows:1:cells:2:cell", "CategoryName1");
         tester.assertLabel("form:content:table:rows:2:cells:2:cell:table:rows:1:cells:1:cell", "ForumThreadName1");
         // Click the thread link
@@ -2172,15 +2172,15 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.login("U1", "test");
         tester.startPage(CmsPage.class);
-        tester.assertLabel("form:content:listView:0:content:table:rows:1:cells:4:cell", "subject6");
-        tester.assertLabel("form:content:listView:0:content:table:rows:1:cells:3:cell", "U2");
-        tester.assertLabel("form:content:listView:0:content:table:rows:2:cells:4:cell", "subject4");
-        tester.assertLabel("form:content:listView:0:content:table:rows:2:cells:3:cell", "U2");
-        tester.assertLabel("form:content:listView:0:content:table:rows:3:cells:4:cell", "subject2");
-        tester.assertLabel("form:content:listView:0:content:table:rows:3:cells:3:cell", "U2");
+        tester.assertLabel("form:content:container:1:table:rows:1:cells:4:cell", "subject6");
+        tester.assertLabel("form:content:container:1:table:rows:1:cells:3:cell", "U2");
+        tester.assertLabel("form:content:container:1:table:rows:2:cells:4:cell", "subject4");
+        tester.assertLabel("form:content:container:1:table:rows:2:cells:3:cell", "U2");
+        tester.assertLabel("form:content:container:1:table:rows:3:cells:4:cell", "subject2");
+        tester.assertLabel("form:content:container:1:table:rows:3:cells:3:cell", "U2");
         Assert.assertFalse(messengerService.getMails().get(0).isRead());
         // click the read more link
-        tester.clickLink("form:content:listView:0:content:table:rows:1:cells:5:cell:link");
+        tester.clickLink("form:content:container:1:table:rows:1:cells:5:cell:link");
         tester.assertLabel("form:content:table:rows:1:cells:2:cell", "subject6");
         endHttpRequestAndOpenSessionInViewFilter();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -2257,8 +2257,8 @@ public class TestCmsService extends AbstractServiceTest {
         userService.createUser("U1", "test", "test", "");
         userService.login("U1", "test");
         tester.startPage(CmsPage.class);
-        tester.assertVisible("form:content:listView:0:content:button");
-        tester.newFormTester("form").submit("content:listView:0:content:button");
+        tester.assertVisible("form:content:container:1:button");
+        tester.newFormTester("form").submit("content:container:1:button");
         tester.assertVisible("form:content:listView:0:field");
         tester.assertVisible("form:content:listView:1:field");
         tester.assertVisible("form:content:listView:2:textArea");
@@ -2267,7 +2267,7 @@ public class TestCmsService extends AbstractServiceTest {
         formTester.setValue("content:listView:1:field", "subject2");
         formTester.setValue("content:listView:2:textArea", "message message");
         formTester.submit("content:invoke");
-        tester.assertVisible("form:content:listView:0:content:button");
+        tester.assertVisible("form:content:container:1:button");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -2294,8 +2294,8 @@ public class TestCmsService extends AbstractServiceTest {
         userService.createUser("U1", "test", "test", "");
         userService.login("U1", "test");
         tester.startPage(CmsPage.class);
-        tester.assertVisible("form:content:listView:0:content:button");
-        tester.newFormTester("form").submit("content:listView:0:content:button");
+        tester.assertVisible("form:content:container:1:button");
+        tester.newFormTester("form").submit("content:container:1:button");
         tester.assertVisible("form:content:listView:0:field");
         tester.assertVisible("form:content:listView:1:field");
         tester.assertVisible("form:content:listView:2:textArea");
@@ -2320,8 +2320,8 @@ public class TestCmsService extends AbstractServiceTest {
         userService.createUser("U1", "test", "test", "");
         userService.login("U1", "test");
         tester.startPage(CmsPage.class);
-        tester.assertVisible("form:content:listView:0:content:button");
-        tester.newFormTester("form").submit("content:listView:0:content:button");
+        tester.assertVisible("form:content:container:1:button");
+        tester.newFormTester("form").submit("content:container:1:button");
         tester.assertVisible("form:content:listView:0:field");
         tester.assertVisible("form:content:listView:1:field");
         tester.assertVisible("form:content:listView:2:textArea");
@@ -2331,7 +2331,7 @@ public class TestCmsService extends AbstractServiceTest {
         formTester.setValue("content:listView:2:textArea", "message message");
         formTester.submit("content:cancel");
         tester.debugComponentTrees();
-        tester.assertVisible("form:content:listView:0:content:button");
+        tester.assertVisible("form:content:container:1:button");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
