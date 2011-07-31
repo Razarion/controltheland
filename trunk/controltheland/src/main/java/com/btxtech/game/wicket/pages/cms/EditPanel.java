@@ -19,10 +19,22 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 public class EditPanel extends Panel {
     @SpringBean
     private CmsUiService cmsUiService;
+    private int contentId;
+    private int contentCreateEditID = -1;
+    private BeanIdPathElement beanIdPathElement;
+    private boolean showCreate;
+    private boolean showDelete;
 
     public EditPanel(String id, DbContent dbContent, int contentIdFallback, final BeanIdPathElement beanIdPathElement, final boolean showCreate, final boolean showDelete) {
         super(id);
-        final int contentId = getContentId(dbContent, contentIdFallback);
+        this.beanIdPathElement = beanIdPathElement;
+        this.showCreate = showCreate;
+        this.showDelete = showDelete;
+        contentId = getContentId(dbContent, contentIdFallback);
+        if (dbContent instanceof DbContentList && ((DbContentList) dbContent).getDbContentCreateEdit() != null) {
+            DbContentList dbContentList = (DbContentList) dbContent;
+            contentCreateEditID = dbContentList.getDbContentCreateEdit().getId();
+        }
         Button edit = new Button("edit") {
             @Override
             public void onSubmit() {
@@ -92,7 +104,6 @@ public class EditPanel extends Panel {
         Button createEditButton;
         if (dbContent instanceof DbContentList && ((DbContentList) dbContent).getDbContentCreateEdit() != null) {
             DbContentList dbContentList = (DbContentList) dbContent;
-            final int contentCreateEditID = dbContentList.getDbContentCreateEdit().getId();
             createEditButton = new Button("createEdit", new Model<String>(dbContentList.getDbContentCreateEdit().getName())) {
                 @Override
                 public void onSubmit() {
@@ -124,4 +135,13 @@ public class EditPanel extends Panel {
         return tmpContentId;
     }
 
+    @Override
+    public boolean isVisible() {
+        return !showDelete && cmsUiService.isEnterEditModeAllowed(contentId, beanIdPathElement)
+                || !showDelete && cmsUiService.getEditMode(contentId) != null
+                || !showDelete && cmsUiService.isSaveAllowed(contentId, beanIdPathElement)
+                || !showDelete && showCreate && cmsUiService.getEditMode(contentId) != null
+                || showDelete && cmsUiService.getEditMode(contentId) != null
+                || contentCreateEditID != -1 && cmsUiService.isCreateEditAllowed(contentCreateEditID);
+    }
 }
