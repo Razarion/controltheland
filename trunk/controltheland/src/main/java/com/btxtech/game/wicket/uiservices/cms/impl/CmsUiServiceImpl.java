@@ -32,6 +32,7 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.ItemTypeImage;
+import com.btxtech.game.wicket.pages.cms.Message;
 import com.btxtech.game.wicket.pages.cms.WritePanel;
 import com.btxtech.game.wicket.pages.cms.content.ContentActionButton;
 import com.btxtech.game.wicket.pages.cms.content.ContentBook;
@@ -166,7 +167,7 @@ public class CmsUiServiceImpl implements CmsUiService {
             dbContent = cmsService.getDbContent(pageParameters.getInt(CmsPage.INVOKE_ID));
             beanIdPathElement.setInvokePage(true);
         } else if (pageParameters.containsKey(CmsPage.MESSAGE_ID)) {
-            return new Label(componentId, pageParameters.getString(CmsPage.MESSAGE_ID));
+            return new Message(componentId, pageParameters.getString(CmsPage.MESSAGE_ID));
         }
         return getComponent(dbContent, null, componentId, beanIdPathElement);
     }
@@ -778,7 +779,7 @@ public class CmsUiServiceImpl implements CmsUiService {
         } else if (childDbContent instanceof DbContentDetailLink) {
             childBeanIdPathElement = beanIdPathElement.createChildFromBeanId(crudChild.getId());
         }
-        if(childBeanIdPathElement == null) {
+        if (childBeanIdPathElement == null) {
             childBeanIdPathElement = beanIdPathElement;
         }
         return childBeanIdPathElement;
