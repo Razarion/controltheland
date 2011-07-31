@@ -1821,7 +1821,7 @@ public class TestCmsService extends AbstractServiceTest {
         formTester.setValue("content:newUserForm:confirmPassword", "test");
         formTester.submit();
         tester.assertRenderedPage(CmsPage.class);
-        tester.assertLabel("form:content", "Already logged in as: TestUser");
+        tester.assertLabel("form:content:message", "Already logged in as: TestUser");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -1856,7 +1856,7 @@ public class TestCmsService extends AbstractServiceTest {
         formTester.setValue("content:newUserForm:confirmPassword", "test");
         formTester.submit();
         tester.assertRenderedPage(CmsPage.class);
-        tester.assertLabel("form:content", "The user already exists");
+        tester.assertLabel("form:content:message", "The user already exists");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -1891,7 +1891,7 @@ public class TestCmsService extends AbstractServiceTest {
         formTester.setValue("content:newUserForm:confirmPassword", "test");
         formTester.submit();
         tester.assertRenderedPage(CmsPage.class);
-        tester.assertLabel("form:content", "Password and confirm password do not match");
+        tester.assertLabel("form:content:message", "Password and confirm password do not match");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -2304,7 +2304,7 @@ public class TestCmsService extends AbstractServiceTest {
         formTester.setValue("content:listView:1:field", "subject2");
         formTester.setValue("content:listView:2:textArea", "message message");
         formTester.submit("content:invoke");
-        tester.assertLabel("form:content", "Unknown user: U5");
+        tester.assertLabel("form:content:message", "Unknown user: U5");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
