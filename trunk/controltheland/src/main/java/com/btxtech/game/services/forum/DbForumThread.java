@@ -52,7 +52,7 @@ public class DbForumThread implements CrudChild<DbCategory>, CrudParent {
     private User user;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "dbForumThread", fetch = FetchType.LAZY)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-    @OrderBy("postDate DESC")
+    @OrderBy("postDate ASC")
     private List<DbPost> posts;
     @ManyToOne
     @JoinColumn(name = "categoryId", nullable = false)

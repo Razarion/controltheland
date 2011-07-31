@@ -208,8 +208,8 @@ public class TestForum extends AbstractServiceTest {
         category1 = subForum1.getCategoryCrud().readDbChild(category1.getId());
         dbForumThread1 = category1.getForumThreadCrud().readDbChild(dbForumThread1.getId());
         List<DbPost> dbPosts = dbForumThread1.getPostCrud().readDbChildren();
-        Assert.assertEquals("PostName4", dbPosts.get(0).getName());
-        Assert.assertEquals("ForumThreadName1", dbPosts.get(1).getName());
+        Assert.assertEquals("ForumThreadName1", dbPosts.get(0).getName());
+        Assert.assertEquals("PostName4", dbPosts.get(1).getName());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
         
