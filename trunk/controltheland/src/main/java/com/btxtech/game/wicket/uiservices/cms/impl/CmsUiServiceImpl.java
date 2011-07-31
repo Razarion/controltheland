@@ -10,9 +10,9 @@ import com.btxtech.game.services.cms.DbContentContainer;
 import com.btxtech.game.services.cms.DbContentCreateEdit;
 import com.btxtech.game.services.cms.DbContentDetailLink;
 import com.btxtech.game.services.cms.DbContentDynamicHtml;
+import com.btxtech.game.services.cms.DbContentGameLink;
 import com.btxtech.game.services.cms.DbContentInvoker;
 import com.btxtech.game.services.cms.DbContentInvokerButton;
-import com.btxtech.game.services.cms.DbContentLink;
 import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.cms.DbContentPageLink;
 import com.btxtech.game.services.cms.DbContentPlugin;
@@ -43,7 +43,7 @@ import com.btxtech.game.wicket.pages.cms.content.ContentDetailLink;
 import com.btxtech.game.wicket.pages.cms.content.ContentDynamicHtml;
 import com.btxtech.game.wicket.pages.cms.content.ContentInvoker;
 import com.btxtech.game.wicket.pages.cms.content.ContentInvokerButton;
-import com.btxtech.game.wicket.pages.cms.content.ContentLink;
+import com.btxtech.game.wicket.pages.cms.content.ContentGameLink;
 import com.btxtech.game.wicket.pages.cms.content.ContentList;
 import com.btxtech.game.wicket.pages.cms.content.ContentPageLink;
 import com.btxtech.game.wicket.pages.cms.content.ContentSmartPageLink;
@@ -243,8 +243,8 @@ public class CmsUiServiceImpl implements CmsUiService {
                 return new ContentDynamicHtml(componentId, (DbContentDynamicHtml) dbContent);
             } else if (dbContent instanceof DbContentPageLink) {
                 return new ContentPageLink(componentId, (DbContentPageLink) dbContent);
-            } else if (dbContent instanceof DbContentLink) {
-                return new ContentLink(componentId, (DbContentLink) dbContent);
+            } else if (dbContent instanceof DbContentGameLink) {
+                return new ContentGameLink(componentId, (DbContentGameLink) dbContent);
             } else if (dbContent instanceof DbContentPlugin) {
                 Component component = ((DbContentPlugin) dbContent).getPluginEnum().createComponent(componentId);
                 if (dbContent.getCssClass() != null) {

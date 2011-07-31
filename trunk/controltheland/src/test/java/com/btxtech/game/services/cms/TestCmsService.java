@@ -2330,7 +2330,6 @@ public class TestCmsService extends AbstractServiceTest {
         formTester.setValue("content:listView:1:field", "subject2");
         formTester.setValue("content:listView:2:textArea", "message message");
         formTester.submit("content:cancel");
-        tester.debugComponentTrees();
         tester.assertVisible("form:content:container:1:button");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -2379,12 +2378,98 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
-        tester.debugComponentTrees();
         tester.assertLabel("form:content", "This is a page");
         tester.assertLabel("contentRight:label", "THIS IS THE CODE");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-
     }
 
+    @Test
+    @DirtiesContext
+    public void testGameLinkText() throws Exception {
+        configureMinimalGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setName("Home");
+        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage.setAdsVisible(true);
+        DbContentGameLink gameLink = new DbContentGameLink();
+        gameLink.setName("GAME LINK");
+        dbPage.setContentAndAccessWrites(gameLink);
+
+        pageCrud.updateDbChild(dbPage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertLabel("form:content:link:label", "GAME LINK");
+        tester.assertInvisible("form:content:link:image");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testGameLinkImage() throws Exception {
+        configureMinimalGame();
+
+        // Setup image
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbCmsImage> crud = cmsService.getImageCrudRootServiceHelper();
+        DbCmsImage dbCmsImage = crud.createDbChild();
+        dbCmsImage.setData(new byte[50000]);
+        dbCmsImage.setContentType("image");
+        crud.updateDbChild(dbCmsImage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setName("Home");
+        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage.setAdsVisible(true);
+        DbContentGameLink gameLink = new DbContentGameLink();
+        gameLink.setDbCmsImage(dbCmsImage);
+        dbPage.setContentAndAccessWrites(gameLink);
+
+        pageCrud.updateDbChild(dbPage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.debugComponentTrees();
+        tester.assertVisible("form:content:link:image");
+        tester.assertInvisible("form:content:link:label");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
 }
