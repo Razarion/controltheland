@@ -7,8 +7,8 @@ import com.btxtech.game.services.cms.DbContentBooleanExpressionImage;
 import com.btxtech.game.services.cms.DbContentContainer;
 import com.btxtech.game.services.cms.DbContentDetailLink;
 import com.btxtech.game.services.cms.DbContentDynamicHtml;
+import com.btxtech.game.services.cms.DbContentGameLink;
 import com.btxtech.game.services.cms.DbContentInvokerButton;
-import com.btxtech.game.services.cms.DbContentLink;
 import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.cms.DbContentPageLink;
 import com.btxtech.game.services.cms.DbContentPlugin;
@@ -75,11 +75,11 @@ public class ContentEditorFactory {
             MgmtWebPage createContentEditor(DbContent dbContent) {
                 return new ContentPageLinkEditor((DbContentPageLink) dbContent);
             }},
-        LINK(DbContentLink.class, "Link") {
+        GAME_LINK(DbContentGameLink.class, "Game Link") {
 
             @Override
             MgmtWebPage createContentEditor(DbContent dbContent) {
-                return new ContentLinkEditor((DbContentLink) dbContent);
+                return new ContentGameLinkEditor((DbContentGameLink) dbContent);
             }},
         PLUGIN(DbContentPlugin.class, "Plugin") {
 

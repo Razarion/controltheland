@@ -1,6 +1,6 @@
 package com.btxtech.game.wicket.pages.mgmt.cms;
 
-import com.btxtech.game.services.cms.DbContentLink;
+import com.btxtech.game.services.cms.DbContentGameLink;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CmsImageSelector;
@@ -17,23 +17,22 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
  * Date: 30.06.2011
  * Time: 17:46:43
  */
-public class ContentLinkEditor extends MgmtWebPage {
+public class ContentGameLinkEditor extends MgmtWebPage {
     @SpringBean
-    private RuServiceHelper<DbContentLink> ruServiceHelper;
+    private RuServiceHelper<DbContentGameLink> ruServiceHelper;
 
-    public ContentLinkEditor(DbContentLink dbContentLink) {
+    public ContentGameLinkEditor(DbContentGameLink dbContentGameLink) {
         add(new FeedbackPanel("msgs"));
 
-        final Form<DbContentLink> form = new Form<DbContentLink>("form", new CompoundPropertyModel<DbContentLink>(new RuModel<DbContentLink>(dbContentLink, DbContentLink.class) {
+        final Form<DbContentGameLink> form = new Form<DbContentGameLink>("form", new CompoundPropertyModel<DbContentGameLink>(new RuModel<DbContentGameLink>(dbContentGameLink, DbContentGameLink.class) {
             @Override
-            protected RuServiceHelper<DbContentLink> getRuServiceHelper() {
+            protected RuServiceHelper<DbContentGameLink> getRuServiceHelper() {
                 return ruServiceHelper;
             }
         }));
         add(form);
         form.add(new ContentAccessPanel("accessPanel", true, false, false, false));
         form.add(new TextField("cssClass"));
-        form.add(new TextField("url"));
         form.add(new CmsImageSelector("dbCmsImage"));
 
         form.add(new Button("save") {

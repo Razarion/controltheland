@@ -128,7 +128,7 @@
         <mapping class="com.btxtech.game.services.cms.DbContentRow"/>
         <mapping class="com.btxtech.game.services.cms.DbContentStaticHtml"/>
         <mapping class="com.btxtech.game.services.cms.DbContentPageLink"/>
-        <mapping class="com.btxtech.game.services.cms.DbContentLink"/>
+        <mapping class="com.btxtech.game.services.cms.DbContentGameLink"/>
         <mapping class="com.btxtech.game.services.cms.DbContentPlugin"/>
         <mapping class="com.btxtech.game.services.cms.DbContentDynamicHtml"/>
         <mapping class="com.btxtech.game.services.cms.DbContentActionButton"/>

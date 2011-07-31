@@ -11,19 +11,10 @@ import javax.persistence.ManyToOne;
  * Time: 12:06:45
  */
 @Entity
-@DiscriminatorValue("CONTENT_LINK")
-public class DbContentLink extends DbContent {
-    private String url;
+@DiscriminatorValue("CONTENT_GAME_LINK")
+public class DbContentGameLink extends DbContent {
     @ManyToOne(fetch = FetchType.LAZY)
     private DbCmsImage dbCmsImage;
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
 
     public DbCmsImage getDbCmsImage() {
         return dbCmsImage;
