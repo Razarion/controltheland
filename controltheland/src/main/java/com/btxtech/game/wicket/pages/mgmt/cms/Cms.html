@@ -109,6 +109,28 @@
     <input type="submit" value="Save" wicket:id="saveAds"/>
     <input type="submit" value="Create" wicket:id="createAds"/>
 
+    <h2>Content</h2>
+    <table cellpadding="1" cellspacing="1" border="0">
+        <tr>
+            <th bgcolor="#dadada">Id</th>
+            <th bgcolor="#dadada">Name</th>
+            <th bgcolor="#dadada">Edit</th>
+            <th bgcolor="#dadada">Delete</th>
+        </tr>
+        <tr wicket:id="contents">
+            <td wicket:id="id"/>
+            <td><input wicket:id="name" type="text" size="30"></td>
+            <td valign="center">
+                <input type="submit" value="Edit" wicket:id="edit"/>
+            </td>
+            <td valign="center">
+                <input type="submit" value="Delete" wicket:id="delete"/>
+            </td>
+        </tr>
+    </table>
+    <span wicket:id="createContent"></span>
+    <input type="submit" value="Save" wicket:id="saveContent"/>
+
     <h2>Misc</h2>
     <input type="submit" value="Repository" wicket:id="repository"/>
     <br>

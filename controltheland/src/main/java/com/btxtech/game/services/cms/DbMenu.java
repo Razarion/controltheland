@@ -26,6 +26,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,6 +47,8 @@ public class DbMenu implements CrudChild, CrudParent {
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private List<DbMenuItem> menuItems;
     private String name;
+    @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private DbContent bottom;
     @Transient
     private CrudListChildServiceHelper<DbMenuItem> menuItemCrudChildServiceHelper;
 
@@ -79,6 +82,14 @@ public class DbMenu implements CrudChild, CrudParent {
             menuItemCrudChildServiceHelper = new CrudListChildServiceHelper<DbMenuItem>(menuItems, DbMenuItem.class, this);
         }
         return menuItemCrudChildServiceHelper;
+    }
+
+    public DbContent getBottom() {
+        return bottom;
+    }
+
+    public void setBottom(DbContent bottom) {
+        this.bottom = bottom;
     }
 
     @Override

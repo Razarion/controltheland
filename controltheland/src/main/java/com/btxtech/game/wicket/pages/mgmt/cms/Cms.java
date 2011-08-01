@@ -2,12 +2,14 @@ package com.btxtech.game.wicket.pages.mgmt.cms;
 
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbAds;
+import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbMenu;
 import com.btxtech.game.services.cms.DbPage;
 import com.btxtech.game.services.cms.DbPageStyle;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
@@ -104,6 +106,37 @@ public class Cms extends MgmtWebPage {
             @Override
             protected void onEditSubmit(DbAds dbAds) {
                 setResponsePage(new AdsEditor(dbAds));
+            }
+        };
+
+        new CrudRootTableHelper<DbContent>("contents", "saveContent", "createContent", true, form, false) {
+
+            @Override
+            protected void extendedPopulateItem(Item<DbContent> contentItem) {
+                displayId(contentItem);
+                super.extendedPopulateItem(contentItem);
+            }
+
+            @Override
+            protected CrudRootServiceHelper<DbContent> getCrudRootServiceHelperImpl() {
+                return cmsService.getContentCrud();
+            }
+
+            @Override
+            protected void setupCreate(WebMarkupContainer markupContainer, String createId) {
+                markupContainer.add(new CreateDbContentPanel(createId) {
+
+                    @Override
+                    public void onDbContentSelected(Class<? extends DbContent> selected) {
+                        createDbChild(selected);
+                        refresh();
+                    }
+                });
+            }
+
+            @Override
+            protected void onEditSubmit(DbContent dbContent) {
+                setResponsePage(ContentEditorFactory.createContentEditor(dbContent));
             }
         };
 

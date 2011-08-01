@@ -28,7 +28,7 @@ public class Menu extends Panel {
     @SpringBean
     private CmsUiService cmsUiService;
 
-    public Menu(String id) {
+    public Menu(String id, DbMenu dbMenu) {
         super(id);
         DetachHashListProvider<DbMenuItem> menuProvider = new DetachHashListProvider<DbMenuItem>() {
 
@@ -69,6 +69,15 @@ public class Menu extends Panel {
             }
         };
         add(dataTable);
+        setupBottom(dbMenu);
+    }
+
+    private void setupBottom(DbMenu dbMenu) {
+        if (dbMenu != null && dbMenu.getBottom() != null) {
+            add(cmsUiService.getComponent(dbMenu.getBottom(), null, "bottom", null));
+        } else {
+            add(new Label("bottom", "").setVisible(false));
+        }
     }
 
     private void setStyle(Component component, String style) {
