@@ -408,6 +408,90 @@ public class TestCmsService extends AbstractServiceTest {
         return dbMenuItem;
     }
 
+    @Test
+    @DirtiesContext
+    public void testBottomMenuInvisible() {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage.setName("Home");
+
+        CrudRootServiceHelper<DbMenu> menuCrud = cmsService.getMenuCrudRootServiceHelper();
+        DbMenu dbMenu = menuCrud.createDbChild();
+        dbMenu.setName("MainMenu");
+        createMenuItem(dbPage, dbMenu, "Home Menu");
+
+        menuCrud.updateDbChild(dbMenu);
+        pageCrud.updateDbChild(dbPage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertInvisible("menu:bottom");
+        tester.debugComponentTrees();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+   }
+
+    @Test
+    @DirtiesContext
+    public void testBottomMenu() {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage.setName("Home");
+
+        CrudRootServiceHelper<DbMenu> menuCrud = cmsService.getMenuCrudRootServiceHelper();
+        DbMenu dbMenu = menuCrud.createDbChild();
+        dbMenu.setName("MainMenu");
+        createMenuItem(dbPage, dbMenu, "Home Menu");
+
+        DbContentGameLink dbContentGameLink = (DbContentGameLink) cmsService.getContentCrud().createDbChild(DbContentGameLink.class);
+        dbContentGameLink.setName("Hallo Galli");
+        dbContentGameLink.setReadRestricted(DbContent.Access.ALLOWED);
+        dbContentGameLink.setWriteRestricted(DbContent.Access.DENIED);
+        dbContentGameLink.setCreateRestricted(DbContent.Access.DENIED);
+        dbContentGameLink.setDeleteRestricted(DbContent.Access.DENIED);
+        dbMenu.setBottom(dbContentGameLink);
+
+        cmsService.getContentCrud().updateDbChild(dbContentGameLink);
+        menuCrud.updateDbChild(dbMenu);
+        pageCrud.updateDbChild(dbPage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.debugComponentTrees();
+        tester.assertLabel("menu:bottom:link:label", "Hallo Galli");
+        tester.assertInvisible("menu:bottom:link:image");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+   }
+
     private int setupBlogPage() {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -2466,7 +2550,6 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
-        tester.debugComponentTrees();
         tester.assertVisible("form:content:link:image");
         tester.assertInvisible("form:content:link:label");
         endHttpRequestAndOpenSessionInViewFilter();

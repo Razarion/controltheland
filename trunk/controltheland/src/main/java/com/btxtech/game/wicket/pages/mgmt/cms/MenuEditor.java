@@ -8,6 +8,7 @@ import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.CrudListChildTableHelper;
+import com.btxtech.game.wicket.uiservices.DbContentSelector;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -39,6 +40,7 @@ public class MenuEditor extends MgmtWebPage {
             }
         }));
         add(form);
+        form.add(new DbContentSelector("bottom"));
 
         new CrudListChildTableHelper<DbMenu, DbMenuItem>("menuItems", "saveMenuItems", "createMenuItem", true, form, true) {
 

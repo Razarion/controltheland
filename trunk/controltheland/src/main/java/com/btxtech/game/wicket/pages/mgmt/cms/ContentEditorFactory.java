@@ -15,6 +15,7 @@ import com.btxtech.game.services.cms.DbContentPlugin;
 import com.btxtech.game.services.cms.DbContentSmartPageLink;
 import com.btxtech.game.services.cms.DbContentStaticHtml;
 import com.btxtech.game.services.cms.DbExpressionProperty;
+import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 
 /**
@@ -24,6 +25,7 @@ import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
  */
 public class ContentEditorFactory {
     public static MgmtWebPage createContentEditor(DbContent dbContent) {
+        dbContent = HibernateUtil.deproxy(dbContent, DbContent.class);
         for (DbContentEnum dbContentEnum : DbContentEnum.values()) {
             if (dbContentEnum.getCreateClass().equals(dbContent.getClass())) {
                 return dbContentEnum.createContentEditor(dbContent);
