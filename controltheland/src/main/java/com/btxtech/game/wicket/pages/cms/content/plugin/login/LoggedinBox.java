@@ -56,7 +56,7 @@ public class LoggedinBox extends Panel {
 
             @Override
             public void onClick() {
-                setResponsePage(UserPage.class);
+                cmsUiService.setPredefinedResponsePage(LoggedinBox.this, DbPage.PredefinedType.USER_PAGE);
             }
         };
         link.add(new Label("name", new IModel() {
