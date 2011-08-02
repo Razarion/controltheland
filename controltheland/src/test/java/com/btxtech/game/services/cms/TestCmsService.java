@@ -1,6 +1,8 @@
 package com.btxtech.game.services.cms;
 
 import com.btxtech.game.jsre.client.MovableService;
+import com.btxtech.game.jsre.client.common.info.RealityInfo;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
@@ -22,6 +24,7 @@ import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.CmsStringGenerator;
@@ -73,6 +76,8 @@ public class TestCmsService extends AbstractServiceTest {
     private ForumService forumService;
     @Autowired
     private MessengerService messengerService;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
 
     private WicketTester tester;
 
@@ -2555,4 +2560,58 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
+
+    @Test
+    @DirtiesContext
+    public void testExpressionProperty() throws Exception {
+        configureMinimalGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setName("Home");
+        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage.setAdsVisible(true);
+        DbContentContainer dbContentContainer = new DbContentContainer();
+        dbPage.setContentAndAccessWrites(dbContentContainer);
+        dbContentContainer.init(userService);
+
+        DbExpressionProperty level = (DbExpressionProperty) dbContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
+        level.setSpringBeanName("userGuidanceService");
+        level.setExpression("dbAbstractLevel.name");
+
+        DbExpressionProperty xp = (DbExpressionProperty) dbContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
+        xp.setSpringBeanName("userService");
+        xp.setExpression("userState.userItemTypeAccess.xp");
+
+        pageCrud.updateDbChild(dbPage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        // Set Level and XP
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
+        movableService.getGameInfo(); // Connection is created here. Don't call movableService.getGameInfo() again!
+        userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_3_REAL_ID);
+
+        tester.startPage(CmsPage.class);
+        tester.debugComponentTrees();
+        tester.assertLabel("form:content:container:1", "TEST_LEVEL_3_REAL");
+        tester.assertLabel("form:content:container:2", "500");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+
 }

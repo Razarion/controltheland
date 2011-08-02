@@ -293,9 +293,9 @@ public class CmsUiServiceImpl implements CmsUiService {
         if (value instanceof DbItemType) {
             component = new ItemTypeImage(id, (DbItemType) value);
         } else {
-            if (!dbExpressionProperty.getExpression().equals(CURRENT_PATH)
-                    && PropertyUtils.isWriteable(bean, dbExpressionProperty.getExpression())
-                    && getEditMode(dbExpressionProperty) != null) {
+            if (getEditMode(dbExpressionProperty) != null
+                    && !dbExpressionProperty.getExpression().equals(CURRENT_PATH)
+                    && PropertyUtils.isWriteable(bean, dbExpressionProperty.getExpression())) {
                 // Write
                 component = new WritePanel(id, value, beanIdPathElement, dbExpressionProperty);
             } else {
