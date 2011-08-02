@@ -194,3 +194,8 @@ ALTER TABLE `gamedb`.`CMS_CONTENT` MODIFY COLUMN `createRestricted` BIT(1) DEFAU
 Convert CMS
 
 UPDATE CMS_CONTENT SET showHead = false where TYPE = "CONTENT_LIST";
+
+ -----------------
+Convert CMS
+UPDATE CMS_CONTENT SET TYPE = "CONTENT_GAME_LINK" where TYPE = "CONTENT_LINK";
+ALTER TABLE `gamedb`.`CMS_CONTENT` DROP COLUMN `url`;
