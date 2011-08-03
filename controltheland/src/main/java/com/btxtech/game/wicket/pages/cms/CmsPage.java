@@ -15,27 +15,39 @@ package com.btxtech.game.wicket.pages.cms;
 
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbPage;
+import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.uiservices.DisplayPageViewLink;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.PageParameters;
+import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-public class CmsPage extends WebPage {
+public class CmsPage extends WebPage implements IHeaderContributor {
     public static final String ID = "id";
     private static final String CHILD_ID = "childId";
     public static final String DETAIL_CONTENT_ID = "detailId";
     public static final String CREATE_CONTENT_ID = "createId";
     public static final String INVOKE_ID = "invokeId";
     public static final String MESSAGE_ID = "messageId";
+    public static final String JAVA_SCRIPT_DETECTION = "var f = document.createElement('script');\n" +
+            "f.setAttribute(\"type\", \"text/javascript\");\n" +
+            "f.setAttribute(\"src\", \"/spring/statJS\");\n" +
+            "document.getElementsByTagName(\"head\")[0].appendChild(f)";
+
     @SpringBean
     private CmsService cmsService;
     @SpringBean
     private CmsUiService cmsUiService;
+    @SpringBean
+    private UserTrackingService userTrackingService;
     private int pageId;
     public static final int MAX_LEVELS = 20;
 
@@ -79,6 +91,23 @@ public class CmsPage extends WebPage {
             return CHILD_ID;
         } else {
             return CHILD_ID + level;
+        }
+    }
+
+    @Override
+    public void renderHead(IHeaderResponse iHeaderResponse) {
+        if (!userTrackingService.isJavaScriptDetected()) {
+            iHeaderResponse.renderJavascript(JAVA_SCRIPT_DETECTION, null);
+        }
+    }
+
+    @Override
+    protected void onBeforeRender() {
+        DbPage dbPage = (DbPage) getDefaultModelObject();
+        userTrackingService.pageAccess(dbPage.getName());
+        super.onBeforeRender();
+        if (userTrackingService.hasCookieToAdd()) {
+            WebCommon.addCookieId(((WebResponse) getRequestCycle().getResponse()).getHttpServletResponse(), userTrackingService.getAndClearCookieToAdd());
         }
     }
 }
