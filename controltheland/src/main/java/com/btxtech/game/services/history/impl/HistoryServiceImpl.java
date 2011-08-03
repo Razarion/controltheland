@@ -40,6 +40,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -304,6 +305,11 @@ public class HistoryServiceImpl implements HistoryService {
 
     @Override
     public ReadonlyListContentProvider<DisplayHistoryElement> getNewestHistoryElements() {
-        return new ReadonlyListContentProvider<DisplayHistoryElement>(getNewestHistoryElements(userService.getUser(), NEWEST_HISTORY_ELEMENT_COUNT));
+        User user = userService.getUser();
+        if(user != null) {
+            return new ReadonlyListContentProvider<DisplayHistoryElement>(getNewestHistoryElements(user, NEWEST_HISTORY_ELEMENT_COUNT));
+        } else {
+            return new ReadonlyListContentProvider<DisplayHistoryElement>(Collections.<DisplayHistoryElement>emptyList());
+        }
     }
 }
