@@ -77,6 +77,14 @@ public class TestHistoryService extends AbstractServiceTest {
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        Assert.assertEquals(3, historyService.getNewestHistoryElements().readDbChildren().size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test

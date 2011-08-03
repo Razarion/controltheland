@@ -205,11 +205,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
 
     @Override
     public Base getBase() {
-        Connection connection = session.getConnection();
-        if (connection == null) {
-            throw new NoConnectionException("No connection", session.getSessionId());
-        }
-        Base base = connection.getBase();
+        Base base = userService.getUserState().getBase();
         if (base == null) {
             throw new NoConnectionException("Base does not exist", session.getSessionId());
         }

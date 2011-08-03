@@ -16,6 +16,7 @@ package com.btxtech.game.services.history.impl;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.history.DbHistoryElement;
 import com.btxtech.game.services.history.DisplayHistoryElement;
 import com.btxtech.game.services.history.HistoryService;
@@ -48,6 +49,7 @@ import java.util.List;
  */
 @Component("historyService")
 public class HistoryServiceImpl implements HistoryService {
+    static private final int NEWEST_HISTORY_ELEMENT_COUNT = 30;
     private Log log = LogFactory.getLog(HistoryServiceImpl.class);
     private HibernateTemplate hibernateTemplate;
     @Autowired
@@ -214,7 +216,7 @@ public class HistoryServiceImpl implements HistoryService {
     }
 
     private DisplayHistoryElement convert(User user, Integer baseId, DbHistoryElement dbHistoryElement) {
-        DisplayHistoryElement displayHistoryElement = new DisplayHistoryElement(dbHistoryElement.getTimeStampMs());
+        DisplayHistoryElement displayHistoryElement = new DisplayHistoryElement(dbHistoryElement.getTimeStampMs(), dbHistoryElement.getId());
         String userName = null;
         if (user != null) {
             userName = user.getUsername();
@@ -298,5 +300,10 @@ public class HistoryServiceImpl implements HistoryService {
         } catch (Throwable t) {
             log.error("", t);
         }
+    }
+
+    @Override
+    public ReadonlyListContentProvider<DisplayHistoryElement> getNewestHistoryElements() {
+        return new ReadonlyListContentProvider<DisplayHistoryElement>(getNewestHistoryElements(userService.getUser(), NEWEST_HISTORY_ELEMENT_COUNT));
     }
 }
