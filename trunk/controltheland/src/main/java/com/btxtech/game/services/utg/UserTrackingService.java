@@ -49,6 +49,8 @@ public interface UserTrackingService {
 
     void pageAccess(Class theClass);
 
+    void pageAccess(String pageName);
+
     boolean hasCookieToAdd();
 
     String getAndClearCookieToAdd();

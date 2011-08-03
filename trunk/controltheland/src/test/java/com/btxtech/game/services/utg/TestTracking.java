@@ -20,8 +20,6 @@ import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.playback.PlaybackService;
 import com.btxtech.game.services.utg.tracker.DbStartupTask;
 import com.btxtech.game.wicket.WebCommon;
-import com.btxtech.game.wicket.pages.Game;
-import com.btxtech.game.wicket.pages.cms.Home;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +49,7 @@ public class TestTracking extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.pageAccess(Home.class);
+        userTrackingService.pageAccess("Page 1");
         userTrackingService.onJavaScriptDetected();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -86,7 +84,7 @@ public class TestTracking extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.pageAccess(Home.class);
+        userTrackingService.pageAccess("Page 1");
         endHttpRequestAndOpenSessionInViewFilter();
 
         endHttpSession();
@@ -135,21 +133,21 @@ public class TestTracking extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.pageAccess(Home.class);
+        userTrackingService.pageAccess("Page 1");
         userTrackingService.onJavaScriptDetected();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.pageAccess(Home.class);
+        userTrackingService.pageAccess("Page 1");
         userTrackingService.onJavaScriptDetected();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.pageAccess(Home.class);
+        userTrackingService.pageAccess("Page 1");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -192,7 +190,7 @@ public class TestTracking extends AbstractServiceTest {
     private void tutorial1() throws Exception {
         // 0 until 1550 (client time )
         beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.pageAccess(Home.class);
+        userTrackingService.pageAccess("Page 1");
         userTrackingService.onJavaScriptDetected();
         endHttpRequestAndOpenSessionInViewFilter();
 
@@ -256,7 +254,7 @@ public class TestTracking extends AbstractServiceTest {
     private void tutorial2() throws Exception {
         // 1600 until 3100 (client time )
         beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.pageAccess(Home.class);
+        userTrackingService.pageAccess("Page 1");
         userTrackingService.onJavaScriptDetected();
         endHttpRequestAndOpenSessionInViewFilter();
 
@@ -323,7 +321,7 @@ public class TestTracking extends AbstractServiceTest {
     private void realGame1() throws Exception {
         // 1600 until 3100 (client time )
         beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.pageAccess(Game.class);
+        userTrackingService.pageAccess("Page 1");
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();

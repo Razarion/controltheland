@@ -134,6 +134,17 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
+    @Transactional
+    public void pageAccess(String pageName) {
+        try {
+            DbPageAccess dbPageAccess = new DbPageAccess(session.getSessionId(), pageName, null);
+            hibernateTemplate.saveOrUpdate(dbPageAccess);
+        } catch (NoConnectionException e) {
+            log.error("", e);
+        }
+    }
+
+    @Override
     public boolean hasCookieToAdd() {
         return session.getCookieIdToBeSet() != null;
     }
@@ -171,7 +182,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             criteria.add(Restrictions.eq("javaScriptDetected", filter.getJsEnabled().equals(UserTrackingFilter.ENABLED)));
         }
         criteria.add(Restrictions.gt("timeStamp", gregorianCalendar.getTime()));
-        criteria.addOrder(Order.desc("timeStamp")) ;
+        criteria.addOrder(Order.desc("timeStamp"));
         List<DbSessionDetail> browserDetails = criteria.list();
 
         for (DbSessionDetail browserDetail : browserDetails) {
