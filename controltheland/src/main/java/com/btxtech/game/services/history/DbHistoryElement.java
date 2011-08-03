@@ -81,6 +81,10 @@ public class DbHistoryElement implements Serializable {
         levelName = level != null ? level.getName() : null;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     public String getActorBaseName() {
         return actorBaseName;
     }

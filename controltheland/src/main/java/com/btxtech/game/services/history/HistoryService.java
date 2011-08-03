@@ -15,12 +15,11 @@ package com.btxtech.game.services.history;
 
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbAbstractLevel;
-import com.btxtech.game.services.utg.DbResurrection;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -46,4 +45,6 @@ public interface HistoryService {
     void addLevelPromotionEntry(UserState user, DbAbstractLevel level);
 
     int getLevelPromotionCount(final String sessionId);
+
+    ReadonlyListContentProvider<DisplayHistoryElement> getNewestHistoryElements();
 }

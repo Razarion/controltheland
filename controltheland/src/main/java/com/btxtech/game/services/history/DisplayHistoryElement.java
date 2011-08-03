@@ -13,20 +13,23 @@
 
 package com.btxtech.game.services.history;
 
+import com.btxtech.game.services.common.SimpleCrudChild;
+
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * User: beat
  * Date: 27.03.2010
  * Time: 15:44:05
  */
-public class DisplayHistoryElement implements Serializable {
+public class DisplayHistoryElement extends SimpleCrudChild implements Serializable {
     private long timeStamp;
     private String message;
+    private int id;
 
-    public DisplayHistoryElement(long timeStamp) {
+    public DisplayHistoryElement(long timeStamp, int id) {
         this.timeStamp = timeStamp;
+        this.id = id;
     }
 
     public String getMessage() {
@@ -39,6 +42,26 @@ public class DisplayHistoryElement implements Serializable {
 
     public long getTimeStamp() {
         return timeStamp;
+    }
+
+    @Override
+    public Serializable getId() {
+        return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DisplayHistoryElement)) return false;
+
+        DisplayHistoryElement that = (DisplayHistoryElement) o;
+
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
     }
 
     @Override
