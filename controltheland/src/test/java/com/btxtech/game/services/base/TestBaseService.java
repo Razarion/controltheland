@@ -121,4 +121,29 @@ public class TestBaseService extends AbstractServiceTest {
         endHttpSession();
     }
 
+    @Test
+    @DirtiesContext
+    public void testGetBaseItems() throws Exception {
+        configureMinimalGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U1", "test", "test", "test");
+        userService.login("U1", "test");
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
+        SimpleBase simpleBase = getMyBase(); // Setup connection
+        sendBuildCommand(getFirstSynItemId(simpleBase, TEST_START_BUILDER_ITEM_ID), new Index(100, 100), TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
+        Assert.assertEquals(2, baseService.getBaseItems().readDbChildren().size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.login("U1", "test");
+        Assert.assertEquals(2, baseService.getBaseItems().readDbChildren().size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+    }
 }
