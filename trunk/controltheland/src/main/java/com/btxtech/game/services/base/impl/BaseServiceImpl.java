@@ -213,12 +213,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     private boolean hasBase() {
-        Connection connection = session.getConnection();
-        if (connection == null) {
-            return false;
-        }
-        Base base = connection.getBase();
-        return base != null;
+        return userService.getUserState().getBase() != null;
     }
 
     @Override
