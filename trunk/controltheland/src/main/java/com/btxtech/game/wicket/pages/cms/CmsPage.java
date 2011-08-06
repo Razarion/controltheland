@@ -13,6 +13,7 @@
 
 package com.btxtech.game.wicket.pages.cms;
 
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbPage;
 import com.btxtech.game.services.utg.UserTrackingService;
@@ -31,7 +32,7 @@ import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 public class CmsPage extends WebPage implements IHeaderContributor {
-    public static final String ID = "id";
+    public static final String ID = "page";
     private static final String CHILD_ID = "childId";
     public static final String DETAIL_CONTENT_ID = "detailId";
     public static final String CREATE_CONTENT_ID = "createId";
@@ -61,7 +62,7 @@ public class CmsPage extends WebPage implements IHeaderContributor {
                     pageId = pageParameters.getInt(ID);
                     dbPage = cmsService.getPage(pageId);
                 } else {
-                    dbPage = cmsService.getPredefinedDbPage(DbPage.PredefinedType.HOME);
+                    dbPage = cmsService.getPredefinedDbPage(CmsUtil.CmsPredefinedPage.HOME);
                     pageId = dbPage.getId();
                 }
                 return dbPage;

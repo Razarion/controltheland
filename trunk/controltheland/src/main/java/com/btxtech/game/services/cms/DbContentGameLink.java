@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 public class DbContentGameLink extends DbContent {
     @ManyToOne(fetch = FetchType.LAZY)
     private DbCmsImage dbCmsImage;
+    private String linkText;
 
     public DbCmsImage getDbCmsImage() {
         return dbCmsImage;
@@ -22,5 +23,13 @@ public class DbContentGameLink extends DbContent {
 
     public void setDbCmsImage(DbCmsImage dbCmsImage) {
         this.dbCmsImage = dbCmsImage;
+    }
+
+    public String getLinkText() {
+        return linkText;
+    }
+
+    public void setLinkText(String linkText) {
+        this.linkText = linkText;
     }
 }

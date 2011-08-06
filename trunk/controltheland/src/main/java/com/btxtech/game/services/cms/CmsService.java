@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.cms;
 
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 
 /**
@@ -54,7 +55,9 @@ public interface CmsService {
 
     CrudRootServiceHelper<DbContent> getContentCrud();
 
-    DbPage getPredefinedDbPage(DbPage.PredefinedType predefinedType);
+    boolean hasPredefinedDbPage(CmsUtil.CmsPredefinedPage predefinedType);
+
+    DbPage getPredefinedDbPage(CmsUtil.CmsPredefinedPage predefinedType);
 
     String getAdsCode();
 

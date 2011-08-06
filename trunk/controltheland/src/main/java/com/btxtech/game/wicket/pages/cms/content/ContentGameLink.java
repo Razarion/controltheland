@@ -1,5 +1,6 @@
 package com.btxtech.game.wicket.pages.cms.content;
 
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.DbContentGameLink;
 import com.btxtech.game.wicket.pages.Game;
 import com.btxtech.game.wicket.pages.cms.CmsImageResource;
@@ -8,7 +9,6 @@ import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
-import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
@@ -30,9 +30,10 @@ public class ContentGameLink extends Panel {
             pageLink.add(new Label("label", "").setVisible(false));
             pageLink.add(CmsImageResource.createImage("image", dbContentGameLink.getDbCmsImage()));
         } else {
-            pageLink.add(new Label("label", dbContentGameLink.getName()));
+            pageLink.add(new Label("label", dbContentGameLink.getLinkText()));
             pageLink.add(new Image("image").setVisible(false));
         }
+        pageLink.add(new SimpleAttributeModifier("target", CmsUtil.TARGET_GAME));
         add(pageLink);
         if (dbContentGameLink.getCssClass() != null) {
             add(new SimpleAttributeModifier("class", dbContentGameLink.getCssClass()));

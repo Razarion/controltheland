@@ -27,15 +27,16 @@ import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.DbAbstractLevel;
+import com.btxtech.game.services.utg.DbSimulationLevel;
+import com.btxtech.game.services.utg.LifecycleTrackingInfo;
+import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.tracker.DbBrowserWindowTracking;
 import com.btxtech.game.services.utg.tracker.DbCommand;
 import com.btxtech.game.services.utg.tracker.DbEventTrackingItem;
 import com.btxtech.game.services.utg.tracker.DbScrollTrackingItem;
 import com.btxtech.game.services.utg.tracker.DbSelectionTrackingItem;
-import com.btxtech.game.services.utg.DbSimulationLevel;
-import com.btxtech.game.services.utg.LifecycleTrackingInfo;
-import com.btxtech.game.services.utg.UserGuidanceService;
-import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,8 @@ public class PlaybackServiceImpl implements PlaybackService {
     private MgmtService mgmtService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private CmsUiService cmsUiService;
     private Log log = LogFactory.getLog(PlaybackServiceImpl.class);
 
     @Override
@@ -72,7 +75,7 @@ public class PlaybackServiceImpl implements PlaybackService {
             PlaybackInfo playbackInfo = new PlaybackInfo();
 
             // Tutorial
-            MovableServiceImpl.setCommonInfo(playbackInfo, userService, itemService, mgmtService);
+            MovableServiceImpl.setCommonInfo(playbackInfo, userService, itemService, mgmtService, cmsUiService);
             DbAbstractLevel dbAbstractLevel = userGuidanceService.getDbLevel(levelName);
             playbackInfo.setTutorialConfig(tutorialService.getTutorialConfig((DbSimulationLevel) dbAbstractLevel));
             playbackInfo.setLevel(dbAbstractLevel.getLevel());

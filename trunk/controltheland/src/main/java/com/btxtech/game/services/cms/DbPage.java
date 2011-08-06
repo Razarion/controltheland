@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.cms;
 
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.user.UserService;
@@ -32,12 +33,6 @@ import javax.persistence.OneToOne;
  */
 @Entity(name = "CMS_PAGE")
 public class DbPage implements CrudChild {
-    public enum PredefinedType {
-        HOME,
-        USER_PAGE,
-        REGISTER,
-        MESSAGE
-    }
     @Id
     @GeneratedValue
     private Integer id;
@@ -46,7 +41,7 @@ public class DbPage implements CrudChild {
     @ManyToOne(fetch = FetchType.LAZY)
     private DbMenu menu;
     private String name;
-    private PredefinedType predefinedType;
+    private CmsUtil.CmsPredefinedPage predefinedType;
     @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private DbContent content;
     private boolean accessRestricted;
@@ -100,11 +95,11 @@ public class DbPage implements CrudChild {
         this.menu = menu;
     }
 
-    public PredefinedType getPredefinedType() {
+    public CmsUtil.CmsPredefinedPage getPredefinedType() {
         return predefinedType;
     }
 
-    public void setPredefinedType(PredefinedType predefinedType) {
+    public void setPredefinedType(CmsUtil.CmsPredefinedPage predefinedType) {
         this.predefinedType = predefinedType;
     }
 

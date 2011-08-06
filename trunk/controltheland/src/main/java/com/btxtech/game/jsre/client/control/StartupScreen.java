@@ -236,6 +236,7 @@ public class StartupScreen implements StartupProgressListener {
         }
         showTaskTableLoading();
         setOpacity(1.0);
+        showCloseButton();
     }
 
     private void hideStartScreen() {

@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client.dialogs;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.control.StartupScreen;
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -41,12 +42,9 @@ public class MenuDialog extends Dialog {
         FlexTable flexTable = new FlexTable();
         flexTable.setCellSpacing(6);
 
-        addRow(flexTable, "Market", "box", "/?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.market.MarketPage");
-        if (Connection.getInstance().isRegistered()) {
-            addRow(flexTable, "User Page", "user", "/?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.user.UserPage");
-        }
-        addRow(flexTable, "Statistics", "chart", "/?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.statistics.StatisticsPage");
-        addRow(flexTable, "Game instruction", "lifebuoy", "/?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.forum.CategoryView&id=2");
+        addRow(flexTable, "UserPage (Market)", "user", getPredefinedUrls(CmsUtil.CmsPredefinedPage.USER_PAGE), CmsUtil.TARGET_USER_PAGE);
+        addRow(flexTable, "Statistics", "chart", getPredefinedUrls(CmsUtil.CmsPredefinedPage.HIGH_SCORE), CmsUtil.TARGET_USER_INFO);
+        addRow(flexTable, "Game instruction", "lifebuoy", getPredefinedUrls(CmsUtil.CmsPredefinedPage.INFO), CmsUtil.TARGET_USER_INFO);
         addRow(flexTable, "Quit", "control-power", new Runnable() {
             @Override
             public void run() {
@@ -83,18 +81,14 @@ public class MenuDialog extends Dialog {
     }
 
     private void closeWindow() {
-        if (Connection.getInstance().isRegistered()) {
-            Window.open("/?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.user.UserPage", "_self", "");
-        } else {
-            Window.open("/?wicket:bookmarkablePage=:com.btxtech.game.wicket.pages.info.Info", "_self", "");
-        }
+        Window.open(getPredefinedUrls(CmsUtil.CmsPredefinedPage.USER_PAGE), "_self", "");
     }
 
-    private void addRow(FlexTable flexTable, String name, String icon, final String url) {
+    private void addRow(FlexTable flexTable, String name, String icon, final String url, final String wndName) {
         addRow(flexTable, name, icon, new Runnable() {
             @Override
             public void run() {
-                Window.open(url, "_blank", "");
+                Window.open(url, wndName, "");
             }
         });
     }
@@ -120,5 +114,9 @@ public class MenuDialog extends Dialog {
         });
         label.getElement().getStyle().setCursor(Style.Cursor.POINTER);
         flexTable.setWidget(row, 1, label);
+    }
+
+    private String getPredefinedUrls(CmsUtil.CmsPredefinedPage cmsPredefinedPage) {
+        return Connection.getInstance().getGameInfo().getPredefinedUrls().get(cmsPredefinedPage);
     }
 }
