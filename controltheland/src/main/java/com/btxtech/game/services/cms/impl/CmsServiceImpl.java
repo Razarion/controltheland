@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.cms.impl;
 
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbAds;
 import com.btxtech.game.services.cms.DbCmsHomeLayout;
@@ -29,6 +30,7 @@ import com.btxtech.game.services.cms.DbPageStyle;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.HibernateUtil;
 import com.btxtech.game.services.utg.UserGuidanceService;
+import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -76,13 +78,15 @@ public class CmsServiceImpl implements CmsService {
     private CrudRootServiceHelper<DbContent> contentCrud;
     @Autowired
     private CrudRootServiceHelper<DbAds> adsCrud;
+    @Autowired
+    private CmsUiService cmsUiService;
 
     private DbCmsHomeText dbCmsHomeText;
     private DbCmsHomeLayout dbCmsHomeLayout;
     private Map<Integer, DbCmsImage> imageCache = new HashMap<Integer, DbCmsImage>();
     private Map<Integer, DbPage> pageCache = new HashMap<Integer, DbPage>();
     private Map<Integer, DbContent> contentCache = new HashMap<Integer, DbContent>();
-    private Map<DbPage.PredefinedType, DbPage> predefinedDbPages = new HashMap<DbPage.PredefinedType, DbPage>();
+    private Map<CmsUtil.CmsPredefinedPage, DbPage> predefinedDbPages = new HashMap<CmsUtil.CmsPredefinedPage, DbPage>();
     private String adsCode;
 
     @Autowired
@@ -145,10 +149,11 @@ public class CmsServiceImpl implements CmsService {
             log.warn("No active ADS configured");
             adsCode = null;
         }
+        cmsUiService.setupPredefinedUrls();
     }
 
     private void checkPredefinedDbPages() {
-        List<DbPage.PredefinedType> predefinedTypes = Arrays.asList(DbPage.PredefinedType.values());
+        List<CmsUtil.CmsPredefinedPage> predefinedTypes = Arrays.asList(CmsUtil.CmsPredefinedPage.values());
         for (DbPage dbPage : pageCrudRootServiceHelper.readDbChildren()) {
             if (dbPage.getPredefinedType() != null) {
                 predefinedTypes.remove(dbPage.getPredefinedType());
@@ -159,7 +164,7 @@ public class CmsServiceImpl implements CmsService {
         }
         StringBuilder builder = new StringBuilder();
         builder.append("Not all predefined pages have been configured: ");
-        for (DbPage.PredefinedType predefinedType : predefinedTypes) {
+        for (CmsUtil.CmsPredefinedPage predefinedType : predefinedTypes) {
             builder.append(predefinedType.name());
             builder.append(" ");
         }
@@ -171,7 +176,7 @@ public class CmsServiceImpl implements CmsService {
             return;
         }
         if (predefinedDbPages.containsKey(dbPage.getPredefinedType())) {
-            throw new IllegalStateException("Predefined DbPage already exits: " + dbPage);
+            log.warn("Predefined DbPage already exits: " + dbPage);
         }
         predefinedDbPages.put(dbPage.getPredefinedType(), dbPage);
     }
@@ -311,12 +316,17 @@ public class CmsServiceImpl implements CmsService {
     }
 
     @Override
-    public DbPage getPredefinedDbPage(DbPage.PredefinedType predefinedType) {
+    public DbPage getPredefinedDbPage(CmsUtil.CmsPredefinedPage predefinedType) {
         DbPage dbPage = predefinedDbPages.get(predefinedType);
         if (dbPage == null) {
             throw new IllegalStateException("Predefined DbPage does not exist: " + predefinedType);
         }
         return dbPage;
+    }
+
+    @Override
+    public boolean hasPredefinedDbPage(CmsUtil.CmsPredefinedPage predefinedType) {
+        return predefinedDbPages.containsKey(predefinedType);
     }
 
     @Override

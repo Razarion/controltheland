@@ -13,9 +13,9 @@
 
 package com.btxtech.game.wicket.pages.cms.content.plugin.register;
 
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
-import com.btxtech.game.services.cms.DbPage;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
@@ -49,7 +49,7 @@ public class Register extends Panel {
                 try {
                     userService.createUser(name, password, confirmPassword, email);
                     cmsUiService.getSecurityCmsUiService().signIn(name, password);
-                    cmsUiService.setPredefinedResponsePage(this, DbPage.PredefinedType.USER_PAGE);
+                    cmsUiService.setPredefinedResponsePage(this, CmsUtil.CmsPredefinedPage.USER_PAGE);
                 } catch (AlreadyLoggedInException e) {
                     cmsUiService.setMessageResponsePage(this, e.getMessage());
                 } catch (UserAlreadyExistsException e) {

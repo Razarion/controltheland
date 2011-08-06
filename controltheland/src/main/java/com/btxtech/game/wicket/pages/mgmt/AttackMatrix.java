@@ -55,7 +55,7 @@ public class AttackMatrix extends MgmtWebPage {
 
                 @Override
                 public void populateItem(Item<ICellPopulator<DbBaseItemType>> cellItem, String componentId, IModel<DbBaseItemType> rowModel) {
-                    cellItem.add(new AttackMatrixAssignment(componentId, baseItemType, rowModel.getObject().getWeaponType()));
+                    cellItem.add(new AttackMatrixAssignment(componentId, baseItemType, rowModel.getObject().getDbWeaponType()));
                 }
             });
         }

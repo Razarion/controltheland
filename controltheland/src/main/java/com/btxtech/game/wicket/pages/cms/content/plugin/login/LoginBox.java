@@ -13,7 +13,7 @@
 
 package com.btxtech.game.wicket.pages.cms.content.plugin.login;
 
-import com.btxtech.game.services.cms.DbPage;
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.wicket.pages.user.NewUser;
@@ -49,7 +49,7 @@ public class LoginBox extends Panel {
                 try {
                     AuthenticatedWebSession session = AuthenticatedWebSession.get();
                     if (session.signIn(loginName, loginPassowrd)) {
-                        cmsUiService.setPredefinedResponsePage(this, DbPage.PredefinedType.USER_PAGE);
+                        cmsUiService.setPredefinedResponsePage(this, CmsUtil.CmsPredefinedPage.USER_PAGE);
                     } else {
                         cmsUiService.setMessageResponsePage(this, "Login failed. Please try again");
                     }

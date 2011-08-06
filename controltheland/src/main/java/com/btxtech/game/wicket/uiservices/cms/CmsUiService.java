@@ -1,5 +1,6 @@
 package com.btxtech.game.wicket.uiservices.cms;
 
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbContentBook;
 import com.btxtech.game.services.cms.DbContentInvoker;
@@ -13,6 +14,7 @@ import org.apache.wicket.PageParameters;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
@@ -20,9 +22,13 @@ import java.util.List;
  * Time: 15:43:28
  */
 public interface CmsUiService {
-    PageParameters getPredefinedDbPageParameters(DbPage.PredefinedType predefinedType);
+    PageParameters getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage predefinedType);
 
-    void setPredefinedResponsePage(Component component, DbPage.PredefinedType predefinedType);
+    void setupPredefinedUrls();
+    
+    Map<CmsUtil.CmsPredefinedPage, String> getPredefinedUrls();
+
+    void setPredefinedResponsePage(Component component, CmsUtil.CmsPredefinedPage predefinedType);
 
     void setMessageResponsePage(Component component, String message);
 

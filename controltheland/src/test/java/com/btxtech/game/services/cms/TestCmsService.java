@@ -1,8 +1,7 @@
 package com.btxtech.game.services.cms;
 
 import com.btxtech.game.jsre.client.MovableService;
-import com.btxtech.game.jsre.client.common.info.RealityInfo;
-import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
@@ -51,6 +50,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
@@ -159,7 +159,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage1 = pageCrud.createDbChild();
-        dbPage1.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage1.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage1.setName("Home");
         DbPage dbPage2 = pageCrud.createDbChild();
         dbPage2.setName("Market");
@@ -210,7 +210,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbPage cachePageHome = cmsService.getPredefinedDbPage(DbPage.PredefinedType.HOME);
+        DbPage cachePageHome = cmsService.getPredefinedDbPage(CmsUtil.CmsPredefinedPage.HOME);
         Assert.assertEquals("Home", cachePageHome.getName());
         DbMenu cacheMenu = cachePageHome.getMenu();
         Assert.assertEquals("MainMenu", cacheMenu.getName());
@@ -274,7 +274,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage1 = pageCrud.createDbChild();
-        dbPage1.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage1.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage1.setName("Home");
         DbPage dbPage2 = pageCrud.createDbChild();
         dbPage2.setName("Market");
@@ -420,7 +420,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage = pageCrud.createDbChild();
-        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage.setName("Home");
 
         CrudRootServiceHelper<DbMenu> menuCrud = cmsService.getMenuCrudRootServiceHelper();
@@ -448,7 +448,7 @@ public class TestCmsService extends AbstractServiceTest {
         tester.debugComponentTrees();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-   }
+    }
 
     @Test
     @DirtiesContext
@@ -457,7 +457,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage = pageCrud.createDbChild();
-        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage.setName("Home");
 
         CrudRootServiceHelper<DbMenu> menuCrud = cmsService.getMenuCrudRootServiceHelper();
@@ -466,7 +466,7 @@ public class TestCmsService extends AbstractServiceTest {
         createMenuItem(dbPage, dbMenu, "Home Menu");
 
         DbContentGameLink dbContentGameLink = (DbContentGameLink) cmsService.getContentCrud().createDbChild(DbContentGameLink.class);
-        dbContentGameLink.setName("Hallo Galli");
+        dbContentGameLink.setLinkText("Hallo Galli");
         dbContentGameLink.setReadRestricted(DbContent.Access.ALLOWED);
         dbContentGameLink.setWriteRestricted(DbContent.Access.DENIED);
         dbContentGameLink.setCreateRestricted(DbContent.Access.DENIED);
@@ -495,14 +495,14 @@ public class TestCmsService extends AbstractServiceTest {
         tester.assertInvisible("menu:bottom:link:image");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-   }
+    }
 
     private int setupBlogPage() {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage1 = pageCrud.createDbChild();
-        dbPage1.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage1.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage1.setName("Home");
 
         DbContentList dbContentList = new DbContentList();
@@ -599,7 +599,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage1 = pageCrud.createDbChild();
-        dbPage1.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage1.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage1.setName("Home");
 
         DbContentList dbContentList = new DbContentList();
@@ -684,7 +684,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage1 = pageCrud.createDbChild();
-        dbPage1.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage1.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage1.setName("Home");
 
         DbContentList dbContentList = new DbContentList();
@@ -757,7 +757,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage1 = pageCrud.createDbChild();
-        dbPage1.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage1.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage1.setName("Home");
 
         DbContentList dbContentList = new DbContentList();
@@ -857,7 +857,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage1 = pageCrud.createDbChild();
-        dbPage1.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage1.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage1.setName("Home");
 
         DbContentDynamicHtml dbContentDynamicHtml = new DbContentDynamicHtml();
@@ -896,7 +896,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage1 = pageCrud.createDbChild();
-        dbPage1.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage1.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage1.setName("Home");
 
         DbContentDynamicHtml dbContentDynamicHtml = new DbContentDynamicHtml();
@@ -945,6 +945,84 @@ public class TestCmsService extends AbstractServiceTest {
 
         Assert.assertEquals("qaywsxedc", contentService.getDynamicHtml(dbContentDynamicHtml.getId()));
     }
+    
+    @Test
+    @DirtiesContext
+    public void test2DynamicHtml() {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+
+        DbContentContainer dbContentContainer = new DbContentContainer();
+        dbContentContainer.init(userService);
+        dbPage.setContentAndAccessWrites(dbContentContainer);
+        dbContentContainer.setWriteRestricted(DbContent.Access.ALLOWED);
+        DbContentDynamicHtml dynamicHtml1 = (DbContentDynamicHtml) dbContentContainer.getContentCrud().createDbChild(DbContentDynamicHtml.class);
+        dynamicHtml1.setEscapeMarkup(false);
+        DbContentDynamicHtml dynamicHtml2 = (DbContentDynamicHtml) dbContentContainer.getContentCrud().createDbChild(DbContentDynamicHtml.class);
+        dynamicHtml2.setEscapeMarkup(false);
+
+        pageCrud.updateDbChild(dbPage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Write field 1
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertVisible("form:content:container:1:edit:edit");
+        tester.assertVisible("form:content:container:1:edit:edit");
+        FormTester formTester = tester.newFormTester("form");
+        formTester.submit("content:container:1:edit:edit");
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        formTester = tester.newFormTester("form");
+        tester.assertInvisible("form:content:container:1:edit:edit");
+        // tester.assertInvisible("form:content:container:2:edit:edit");
+        tester.assertInvisible("form:content:container:2:edit:save");
+        tester.assertVisible("form:content:container:1:htmlTextArea");
+        formTester.setValue("content:container:1:htmlTextArea", "qaywsxedc");
+        formTester.submit("content:container:1:edit:save");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Write field 2
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertVisible("form:content:container:1:edit:edit");
+        tester.assertVisible("form:content:container:2:edit:edit");
+        formTester = tester.newFormTester("form");
+        formTester.submit("content:container:2:edit:edit");
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        formTester = tester.newFormTester("form");
+//        tester.assertInvisible("form:content:container:1:edit:edit");
+        tester.assertInvisible("form:content:container:2:edit:edit");
+        tester.assertInvisible("form:content:container:1:edit:save");
+        tester.assertVisible("form:content:container:2:htmlTextArea");
+        formTester.setValue("content:container:2:htmlTextArea", "qaywsxedc2");
+        formTester.submit("content:container:2:edit:save");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        Assert.assertEquals("qaywsxedc", contentService.getDynamicHtml(dynamicHtml1.getId()));
+        Assert.assertEquals("qaywsxedc2", contentService.getDynamicHtml(dynamicHtml2.getId()));
+    }
 
     @Test
     @DirtiesContext
@@ -956,7 +1034,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage1 = pageCrud.createDbChild();
-        dbPage1.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage1.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage1.setName("Home");
 
         DbContentList dbContentList = new DbContentList();
@@ -1051,7 +1129,7 @@ public class TestCmsService extends AbstractServiceTest {
         // Setup CMS content
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage1 = pageCrud.createDbChild();
-        dbPage1.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage1.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage1.setName("Forum");
 
         DbContentList dbContentList = new DbContentList();
@@ -1613,7 +1691,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage = pageCrud.createDbChild();
-        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage.setName("Home");
 
         DbContentList dbContentList = new DbContentList();
@@ -1744,7 +1822,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage = pageCrud.createDbChild();
-        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage.setName("Home");
 
         DbContentPageLink dbContentPageLink = new DbContentPageLink();
@@ -1781,7 +1859,7 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage = pageCrud.createDbChild();
-        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage.setName("Home");
 
         // Prepare image
@@ -1825,13 +1903,13 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage = pageCrud.createDbChild();
-        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage.setName("Home");
         DbPage dbUserPage = pageCrud.createDbChild();
-        dbUserPage.setPredefinedType(DbPage.PredefinedType.USER_PAGE);
+        dbUserPage.setPredefinedType(CmsUtil.CmsPredefinedPage.USER_PAGE);
         dbUserPage.setName("User Page");
         DbPage dbMessagePage = pageCrud.createDbChild();
-        dbMessagePage.setPredefinedType(DbPage.PredefinedType.MESSAGE);
+        dbMessagePage.setPredefinedType(CmsUtil.CmsPredefinedPage.MESSAGE);
         dbMessagePage.setName("Message Page");
 
         DbContentPlugin registerPlugin = new DbContentPlugin();
@@ -2024,7 +2102,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage = pageCrud.createDbChild();
-        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage.setName("Home");
         DbPage dbPage2 = pageCrud.createDbChild();
         dbPage2.setName("Page 2");
@@ -2209,7 +2287,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage = pageCrud.createDbChild();
-        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage.setName("Home");
 
         // Mail List
@@ -2287,10 +2365,10 @@ public class TestCmsService extends AbstractServiceTest {
 
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage = pageCrud.createDbChild();
-        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage.setName("Home");
         DbPage dbMessagePage = pageCrud.createDbChild();
-        dbMessagePage.setPredefinedType(DbPage.PredefinedType.MESSAGE);
+        dbMessagePage.setPredefinedType(CmsUtil.CmsPredefinedPage.MESSAGE);
         dbMessagePage.setName("Message Page");
 
         // Mail List
@@ -2446,7 +2524,7 @@ public class TestCmsService extends AbstractServiceTest {
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage = pageCrud.createDbChild();
         dbPage.setName("Home");
-        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage.setAdsVisible(true);
         DbContentStaticHtml dbContentStaticHtml = new DbContentStaticHtml();
         dbContentStaticHtml.setHtml("This is a page");
@@ -2484,10 +2562,10 @@ public class TestCmsService extends AbstractServiceTest {
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage = pageCrud.createDbChild();
         dbPage.setName("Home");
-        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage.setAdsVisible(true);
         DbContentGameLink gameLink = new DbContentGameLink();
-        gameLink.setName("GAME LINK");
+        gameLink.setLinkText("GAME LINK");
         dbPage.setContentAndAccessWrites(gameLink);
 
         pageCrud.updateDbChild(dbPage);
@@ -2534,7 +2612,7 @@ public class TestCmsService extends AbstractServiceTest {
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage = pageCrud.createDbChild();
         dbPage.setName("Home");
-        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage.setAdsVisible(true);
         DbContentGameLink gameLink = new DbContentGameLink();
         gameLink.setDbCmsImage(dbCmsImage);
@@ -2572,7 +2650,7 @@ public class TestCmsService extends AbstractServiceTest {
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
         DbPage dbPage = pageCrud.createDbChild();
         dbPage.setName("Home");
-        dbPage.setPredefinedType(DbPage.PredefinedType.HOME);
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
         dbPage.setAdsVisible(true);
         DbContentContainer dbContentContainer = new DbContentContainer();
         dbPage.setContentAndAccessWrites(dbContentContainer);
@@ -2606,12 +2684,63 @@ public class TestCmsService extends AbstractServiceTest {
         userGuidanceService.promote(userService.getUserState(), TEST_LEVEL_3_REAL_ID);
 
         tester.startPage(CmsPage.class);
-        tester.debugComponentTrees();
         tester.assertLabel("form:content:container:1", "TEST_LEVEL_3_REAL");
         tester.assertLabel("form:content:container:2", "500");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
 
+    @Test
+    @DirtiesContext
+    public void testUrlGenerating() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        pageCrud.updateDbChild(dbPage);
 
+        dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.MESSAGE);
+        pageCrud.updateDbChild(dbPage);
+
+        dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.REGISTER);
+        pageCrud.updateDbChild(dbPage);
+
+        dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.USER_PAGE);
+        pageCrud.updateDbChild(dbPage);
+
+        dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HIGH_SCORE);
+        pageCrud.updateDbChild(dbPage);
+
+        dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.INFO);
+        pageCrud.updateDbChild(dbPage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Map<CmsUtil.CmsPredefinedPage, String> urls = cmsUiService.getPredefinedUrls();
+        Assert.assertEquals(CmsUtil.CmsPredefinedPage.values().length, urls.size());
+
+        for (String url : urls.values()) {
+            Assert.assertNotNull(url);
+            Assert.assertTrue(url.length() > 10);
+        }
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+    }
 }

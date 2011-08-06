@@ -34,6 +34,7 @@ public class ContentGameLinkEditor extends MgmtWebPage {
         form.add(new ContentAccessPanel("accessPanel", true, false, false, false));
         form.add(new TextField("cssClass"));
         form.add(new CmsImageSelector("dbCmsImage"));
+        form.add(new TextField("linkText"));
 
         form.add(new Button("save") {
 

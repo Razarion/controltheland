@@ -1,5 +1,6 @@
 package com.btxtech.game.wicket.uiservices.cms.impl;
 
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DataProviderInfo;
 import com.btxtech.game.services.cms.DbContent;
@@ -30,6 +31,7 @@ import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.DbPageAccessControl;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.WebCommon;
+import com.btxtech.game.wicket.WicketApplication;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.ItemTypeImage;
 import com.btxtech.game.wicket.pages.cms.Message;
@@ -41,9 +43,9 @@ import com.btxtech.game.wicket.pages.cms.content.ContentContainer;
 import com.btxtech.game.wicket.pages.cms.content.ContentCreateEdit;
 import com.btxtech.game.wicket.pages.cms.content.ContentDetailLink;
 import com.btxtech.game.wicket.pages.cms.content.ContentDynamicHtml;
+import com.btxtech.game.wicket.pages.cms.content.ContentGameLink;
 import com.btxtech.game.wicket.pages.cms.content.ContentInvoker;
 import com.btxtech.game.wicket.pages.cms.content.ContentInvokerButton;
-import com.btxtech.game.wicket.pages.cms.content.ContentGameLink;
 import com.btxtech.game.wicket.pages.cms.content.ContentList;
 import com.btxtech.game.wicket.pages.cms.content.ContentPageLink;
 import com.btxtech.game.wicket.pages.cms.content.ContentSmartPageLink;
@@ -96,6 +98,7 @@ public class CmsUiServiceImpl implements CmsUiService {
     private SecurityCmsUiService securityCmsUiService;
     private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(CmsUiServiceImpl.class);
+    private Map<CmsUtil.CmsPredefinedPage, String> predefinedUrls = new HashMap<CmsUtil.CmsPredefinedPage, String>();
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -103,20 +106,47 @@ public class CmsUiServiceImpl implements CmsUiService {
     }
 
     @Override
-    public PageParameters getPredefinedDbPageParameters(DbPage.PredefinedType predefinedType) {
+    public Map<CmsUtil.CmsPredefinedPage, String> getPredefinedUrls() {
+        return predefinedUrls;
+    }
+
+    @Override
+    public void setupPredefinedUrls() {
+        predefinedUrls.clear();
+        for (CmsUtil.CmsPredefinedPage predefinedType : CmsUtil.CmsPredefinedPage.values()) {
+            if (cmsService.hasPredefinedDbPage(predefinedType)) {
+                predefinedUrls.put(predefinedType, getUrl4CmsPage(predefinedType));
+            } else {
+                log.warn("Predefined page does not does not exist: " + predefinedType);
+            }
+        }
+    }
+
+    private String getUrl4CmsPage(CmsUtil.CmsPredefinedPage predefinedType) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(WicketApplication.MOUNT_GAME_CMS);
+        builder.append('/');
+        builder.append(CmsPage.ID);
+        builder.append('/');
+        builder.append(cmsService.getPredefinedDbPage(predefinedType).getId());
+        return builder.toString();
+    }
+
+    @Override
+    public PageParameters getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage predefinedType) {
         PageParameters pageParameters = new PageParameters();
         pageParameters.put(CmsPage.ID, Integer.toString(cmsService.getPredefinedDbPage(predefinedType).getId()));
         return pageParameters;
     }
 
     @Override
-    public void setPredefinedResponsePage(Component component, DbPage.PredefinedType predefinedType) {
+    public void setPredefinedResponsePage(Component component, CmsUtil.CmsPredefinedPage predefinedType) {
         component.setResponsePage(CmsPage.class, getPredefinedDbPageParameters(predefinedType));
     }
 
     @Override
     public void setMessageResponsePage(Component component, String message) {
-        PageParameters pageParameters = getPredefinedDbPageParameters(DbPage.PredefinedType.MESSAGE);
+        PageParameters pageParameters = getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.MESSAGE);
         pageParameters.put(CmsPage.MESSAGE_ID, message);
         component.setResponsePage(CmsPage.class, pageParameters);
     }
@@ -473,7 +503,6 @@ public class CmsUiServiceImpl implements CmsUiService {
         if (springBeanName.equals(editMode.getSpringBeanName())) {
             return editMode;
         } else {
-            leaveEditMode();
             return null;
         }
     }

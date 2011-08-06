@@ -103,12 +103,12 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
     }
 
     @Override
-    public DbTurnableType getTurnableType() {
+    public DbTurnableType getDbTurnableType() {
         return dbTurnableType;
     }
 
     @Override
-    public void setTurnableType(DbTurnableType dbTurnableType) {
+    public void setDbTurnableType(DbTurnableType dbTurnableType) {
         this.dbTurnableType = dbTurnableType;
     }
 
@@ -123,72 +123,72 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
     }
 
     @Override
-    public DbWeaponType getWeaponType() {
+    public DbWeaponType getDbWeaponType() {
         return dbWeaponType;
     }
 
     @Override
-    public void setWeaponType(DbWeaponType dbWeaponType) {
+    public void setDbWeaponType(DbWeaponType dbWeaponType) {
         this.dbWeaponType = dbWeaponType;
     }
 
     @Override
-    public DbFactoryType getFactoryType() {
+    public DbFactoryType getDbFactoryType() {
         return dbFactoryType;
     }
 
     @Override
-    public void setFactoryType(DbFactoryType dbFactoryType) {
+    public void setDbFactoryType(DbFactoryType dbFactoryType) {
         this.dbFactoryType = dbFactoryType;
     }
 
     @Override
-    public DbHarvesterType getHarvesterType() {
+    public DbHarvesterType getDbHarvesterType() {
         return dbHarvesterType;
     }
 
     @Override
-    public void setHarvesterType(DbHarvesterType dbHarvesterType) {
+    public void setDbHarvesterType(DbHarvesterType dbHarvesterType) {
         this.dbHarvesterType = dbHarvesterType;
     }
 
     @Override
-    public DbBuilderType getBuilderType() {
+    public DbBuilderType getDbBuilderType() {
         return dbBuilderType;
     }
 
     @Override
-    public void setBuilderType(DbBuilderType dbBuilderType) {
+    public void setDbBuilderType(DbBuilderType dbBuilderType) {
         this.dbBuilderType = dbBuilderType;
     }
 
     @Override
-    public DbConsumerType getConsumerType() {
+    public DbConsumerType getDbConsumerType() {
         return dbConsumerType;
     }
 
     @Override
-    public void setConsumerType(DbConsumerType dbConsumerType) {
+    public void setDbConsumerType(DbConsumerType dbConsumerType) {
         this.dbConsumerType = dbConsumerType;
     }
 
     @Override
-    public DbGeneratorType getGeneratorType() {
+    public DbGeneratorType getDbGeneratorType() {
         return dbGeneratorType;
     }
 
     @Override
-    public void setGeneratorType(DbGeneratorType dbGeneratorType) {
+    public void setDbGeneratorType(DbGeneratorType dbGeneratorType) {
         this.dbGeneratorType = dbGeneratorType;
     }
 
     @Override
-    public DbSpecialType getSpecialType() {
+    public DbSpecialType getDbSpecialType() {
         return dbSpecialType;
     }
 
     @Override
-    public void setSpecialType(DbSpecialType dbSpecialType) {
+    public void setDbSpecialType(DbSpecialType dbSpecialType) {
         this.dbSpecialType = dbSpecialType;
     }
 

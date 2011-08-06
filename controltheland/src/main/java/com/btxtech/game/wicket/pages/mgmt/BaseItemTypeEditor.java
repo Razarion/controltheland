@@ -184,9 +184,9 @@ public class BaseItemTypeEditor extends MgmtWebPage {
     }
 
     private void load() {
-        if (dbBaseItemType.getTurnableType() != null) {
+        if (dbBaseItemType.getDbTurnableType() != null) {
             turnable = true;
-            imageCount = dbBaseItemType.getTurnableType().getImageCount();
+            imageCount = dbBaseItemType.getDbTurnableType().getImageCount();
         } else {
             turnable = false;
         }
@@ -198,16 +198,16 @@ public class BaseItemTypeEditor extends MgmtWebPage {
             movable = false;
         }
 
-        if (dbBaseItemType.getWeaponType() != null) {
+        if (dbBaseItemType.getDbWeaponType() != null) {
             weapon = true;
-            damage = dbBaseItemType.getWeaponType().getDamage();
-            weaponRange = dbBaseItemType.getWeaponType().getRange();
-            weaponReloadTime = dbBaseItemType.getWeaponType().getReloadTime();
-            weaponMuzzlePointX_0 = dbBaseItemType.getWeaponType().getMuzzlePointX_0();
-            weaponMuzzlePointY_0 = dbBaseItemType.getWeaponType().getMuzzlePointY_0();
-            weaponMuzzlePointX_90 = dbBaseItemType.getWeaponType().getMuzzlePointX_90();
-            weaponMuzzlePointY_90 = dbBaseItemType.getWeaponType().getMuzzlePointY_90();
-            weaponMuzzleStretch = dbBaseItemType.getWeaponType().isStretchMuzzleFlashToTarget();
+            damage = dbBaseItemType.getDbWeaponType().getDamage();
+            weaponRange = dbBaseItemType.getDbWeaponType().getRange();
+            weaponReloadTime = dbBaseItemType.getDbWeaponType().getReloadTime();
+            weaponMuzzlePointX_0 = dbBaseItemType.getDbWeaponType().getMuzzlePointX_0();
+            weaponMuzzlePointY_0 = dbBaseItemType.getDbWeaponType().getMuzzlePointY_0();
+            weaponMuzzlePointX_90 = dbBaseItemType.getDbWeaponType().getMuzzlePointX_90();
+            weaponMuzzlePointY_90 = dbBaseItemType.getDbWeaponType().getMuzzlePointY_90();
+            weaponMuzzleStretch = dbBaseItemType.getDbWeaponType().isStretchMuzzleFlashToTarget();
         } else {
             weapon = false;
         }
@@ -222,41 +222,41 @@ public class BaseItemTypeEditor extends MgmtWebPage {
             launcher = false;
         }
 
-        if (dbBaseItemType.getFactoryType() != null) {
+        if (dbBaseItemType.getDbFactoryType() != null) {
             factory = true;
-            factoryProgress = dbBaseItemType.getFactoryType().getProgress();
-            factoryAbleToBuild = ItemsUtil.itemTypesToString(dbBaseItemType.getFactoryType().getAbleToBuild());
+            factoryProgress = dbBaseItemType.getDbFactoryType().getProgress();
+            factoryAbleToBuild = ItemsUtil.itemTypesToString(dbBaseItemType.getDbFactoryType().getAbleToBuild());
         } else {
             factory = false;
         }
 
-        if (dbBaseItemType.getHarvesterType() != null) {
+        if (dbBaseItemType.getDbHarvesterType() != null) {
             harvester = true;
-            harvesterProgress = dbBaseItemType.getHarvesterType().getProgress();
-            harvesterRange = dbBaseItemType.getHarvesterType().getRange();
+            harvesterProgress = dbBaseItemType.getDbHarvesterType().getProgress();
+            harvesterRange = dbBaseItemType.getDbHarvesterType().getRange();
         } else {
             harvester = false;
         }
 
-        if (dbBaseItemType.getBuilderType() != null) {
+        if (dbBaseItemType.getDbBuilderType() != null) {
             builder = true;
-            builderProgress = dbBaseItemType.getBuilderType().getProgress();
-            builderRange = dbBaseItemType.getBuilderType().getRange();
-            builderAbleToBuild = ItemsUtil.itemTypesToString(dbBaseItemType.getBuilderType().getAbleToBuild());
+            builderProgress = dbBaseItemType.getDbBuilderType().getProgress();
+            builderRange = dbBaseItemType.getDbBuilderType().getRange();
+            builderAbleToBuild = ItemsUtil.itemTypesToString(dbBaseItemType.getDbBuilderType().getAbleToBuild());
         } else {
             builder = false;
         }
 
-        if (dbBaseItemType.getConsumerType() != null) {
+        if (dbBaseItemType.getDbConsumerType() != null) {
             consumer = true;
-            consumerWattage = dbBaseItemType.getConsumerType().getWattage();
+            consumerWattage = dbBaseItemType.getDbConsumerType().getWattage();
         } else {
             consumer = false;
         }
 
-        if (dbBaseItemType.getGeneratorType() != null) {
+        if (dbBaseItemType.getDbGeneratorType() != null) {
             generator = true;
-            generatorWattage = dbBaseItemType.getGeneratorType().getWattage();
+            generatorWattage = dbBaseItemType.getDbGeneratorType().getWattage();
         } else {
             generator = false;
         }
@@ -277,9 +277,9 @@ public class BaseItemTypeEditor extends MgmtWebPage {
             house = false;
         }
 
-        if (dbBaseItemType.getSpecialType() != null) {
+        if (dbBaseItemType.getDbSpecialType() != null) {
             special = true;
-            specialString = dbBaseItemType.getSpecialType().getString();
+            specialString = dbBaseItemType.getDbSpecialType().getString();
         } else {
             special = false;
         }
@@ -287,14 +287,14 @@ public class BaseItemTypeEditor extends MgmtWebPage {
 
     private void save() {
         if (turnable) {
-            DbTurnableType turnableType = dbBaseItemType.getTurnableType();
+            DbTurnableType turnableType = dbBaseItemType.getDbTurnableType();
             if (turnableType == null) {
                 turnableType = new DbTurnableType();
-                dbBaseItemType.setTurnableType(turnableType);
+                dbBaseItemType.setDbTurnableType(turnableType);
             }
             turnableType.setImageCount(imageCount);
         } else {
-            dbBaseItemType.setTurnableType(null);
+            dbBaseItemType.setDbTurnableType(null);
         }
 
         if (movable) {
@@ -310,10 +310,10 @@ public class BaseItemTypeEditor extends MgmtWebPage {
         }
 
         if (weapon) {
-            DbWeaponType weaponType = dbBaseItemType.getWeaponType();
+            DbWeaponType weaponType = dbBaseItemType.getDbWeaponType();
             if (weaponType == null) {
                 weaponType = new DbWeaponType();
-                dbBaseItemType.setWeaponType(weaponType);
+                dbBaseItemType.setDbWeaponType(weaponType);
             }
             weaponType.setRange(weaponRange);
             weaponType.setDamage(damage);
@@ -339,7 +339,7 @@ public class BaseItemTypeEditor extends MgmtWebPage {
                 weaponType.setDbSound(sound);
             }
         } else {
-            dbBaseItemType.setWeaponType(null);
+            dbBaseItemType.setDbWeaponType(null);
         }
 
         if (launcher) {
@@ -357,62 +357,62 @@ public class BaseItemTypeEditor extends MgmtWebPage {
         }
 
         if (factory) {
-            DbFactoryType factoryType = dbBaseItemType.getFactoryType();
+            DbFactoryType factoryType = dbBaseItemType.getDbFactoryType();
             if (factoryType == null) {
                 factoryType = new DbFactoryType();
-                dbBaseItemType.setFactoryType(factoryType);
+                dbBaseItemType.setDbFactoryType(factoryType);
             }
             factoryType.setAbleToBuild(ItemsUtil.stringToItemTypes(factoryAbleToBuild, baseItemTypes));
             factoryType.setProgress(factoryProgress);
         } else {
-            dbBaseItemType.setFactoryType(null);
+            dbBaseItemType.setDbFactoryType(null);
         }
 
         if (harvester) {
-            DbHarvesterType harvesterType = dbBaseItemType.getHarvesterType();
+            DbHarvesterType harvesterType = dbBaseItemType.getDbHarvesterType();
             if (harvesterType == null) {
                 harvesterType = new DbHarvesterType();
-                dbBaseItemType.setHarvesterType(harvesterType);
+                dbBaseItemType.setDbHarvesterType(harvesterType);
             }
             harvesterType.setProgress(harvesterProgress);
             harvesterType.setRange(harvesterRange);
         } else {
-            dbBaseItemType.setHarvesterType(null);
+            dbBaseItemType.setDbHarvesterType(null);
         }
 
         if (consumer) {
-            DbConsumerType consumerType = dbBaseItemType.getConsumerType();
+            DbConsumerType consumerType = dbBaseItemType.getDbConsumerType();
             if (consumerType == null) {
                 consumerType = new DbConsumerType();
-                dbBaseItemType.setConsumerType(consumerType);
+                dbBaseItemType.setDbConsumerType(consumerType);
             }
             consumerType.setWattage(consumerWattage);
         } else {
-            dbBaseItemType.setConsumerType(null);
+            dbBaseItemType.setDbConsumerType(null);
         }
 
         if (builder) {
-            DbBuilderType builderType = dbBaseItemType.getBuilderType();
+            DbBuilderType builderType = dbBaseItemType.getDbBuilderType();
             if (builderType == null) {
                 builderType = new DbBuilderType();
-                dbBaseItemType.setBuilderType(builderType);
+                dbBaseItemType.setDbBuilderType(builderType);
             }
             builderType.setProgress(builderProgress);
             builderType.setRange(builderRange);
             builderType.setAbleToBuild(ItemsUtil.stringToItemTypes(builderAbleToBuild, baseItemTypes));
         } else {
-            dbBaseItemType.setBuilderType(null);
+            dbBaseItemType.setDbBuilderType(null);
         }
 
         if (generator) {
-            DbGeneratorType generatorType = dbBaseItemType.getGeneratorType();
+            DbGeneratorType generatorType = dbBaseItemType.getDbGeneratorType();
             if (generatorType == null) {
                 generatorType = new DbGeneratorType();
-                dbBaseItemType.setGeneratorType(generatorType);
+                dbBaseItemType.setDbGeneratorType(generatorType);
             }
             generatorType.setWattage(generatorWattage);
         } else {
-            dbBaseItemType.setGeneratorType(null);
+            dbBaseItemType.setDbGeneratorType(null);
         }
 
         if (itemContainer) {
@@ -437,14 +437,14 @@ public class BaseItemTypeEditor extends MgmtWebPage {
         }
 
         if (special) {
-            DbSpecialType specialType = dbBaseItemType.getSpecialType();
+            DbSpecialType specialType = dbBaseItemType.getDbSpecialType();
             if (specialType == null) {
                 specialType = new DbSpecialType();
-                dbBaseItemType.setSpecialType(specialType);
+                dbBaseItemType.setDbSpecialType(specialType);
             }
             specialType.setString(specialString);
         } else {
-            dbBaseItemType.setSpecialType(null);
+            dbBaseItemType.setDbSpecialType(null);
         }
 
         Html5ImagesUploadConverter html5ImagesUploadConverter = new Html5ImagesUploadConverter(imageFileField, dbBaseItemType);

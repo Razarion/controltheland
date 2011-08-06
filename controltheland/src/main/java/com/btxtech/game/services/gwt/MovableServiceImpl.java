@@ -26,7 +26,6 @@ import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
@@ -53,6 +52,7 @@ import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.services.utg.DbSimulationLevel;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
@@ -93,6 +93,8 @@ public class MovableServiceImpl implements MovableService {
     private TutorialService tutorialService;
     @Autowired
     private Session session;
+    @Autowired
+    private CmsUiService cmsUiService;
 
     private Log log = LogFactory.getLog(MovableServiceImpl.class);
 
@@ -157,7 +159,7 @@ public class MovableServiceImpl implements MovableService {
         try {
             baseService.continueBase();
             RealityInfo realityInfo = new RealityInfo();
-            setCommonInfo(realityInfo, userService, itemService, mgmtService);
+            setCommonInfo(realityInfo, userService, itemService, mgmtService, cmsUiService);
             realityInfo.setBase(baseService.getBase().getSimpleBase());
             realityInfo.setAccountBalance(baseService.getBase().getAccountBalance());
             realityInfo.setAllowedItemTypes(serverMarketService.getAllowedItemTypes());
@@ -183,7 +185,7 @@ public class MovableServiceImpl implements MovableService {
             SimulationInfo simulationInfo = new SimulationInfo();
             simulationInfo.setLevel(dbSimulationLevel.getLevel());
             // Common
-            setCommonInfo(simulationInfo, userService, itemService, mgmtService);
+            setCommonInfo(simulationInfo, userService, itemService, mgmtService, cmsUiService);
             simulationInfo.setTutorialConfig(tutorialService.getTutorialConfig(dbSimulationLevel));
             // Terrain
             terrainService.setupTerrain(simulationInfo, dbSimulationLevel);
@@ -194,11 +196,12 @@ public class MovableServiceImpl implements MovableService {
         return null;
     }
 
-    public static void setCommonInfo(GameInfo gameInfo, UserService userService, ItemService itemService, MgmtService mgmtService) {
+    public static void setCommonInfo(GameInfo gameInfo, UserService userService, ItemService itemService, MgmtService mgmtService, CmsUiService cmsUiService) {
         gameInfo.setRegistered(userService.isRegistered());
         gameInfo.setItemTypes(itemService.getItemTypes());
         StartupData startupData = mgmtService.getStartupData();
         gameInfo.setRegisterDialogDelay(startupData.getRegisterDialogDelay());
+        gameInfo.setPredefinedUrls(cmsUiService.getPredefinedUrls());
     }
 
     @Override

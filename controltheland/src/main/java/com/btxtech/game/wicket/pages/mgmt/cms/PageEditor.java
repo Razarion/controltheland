@@ -1,5 +1,6 @@
 package com.btxtech.game.wicket.pages.mgmt.cms;
 
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbPage;
 import com.btxtech.game.services.common.RuServiceHelper;
@@ -133,9 +134,9 @@ public class PageEditor extends MgmtWebPage {
     }
 
     private void setupConfiguration(Form<DbPage> form) {
-        List<DbPage.PredefinedType> choices = new ArrayList<DbPage.PredefinedType>(Arrays.asList(DbPage.PredefinedType.values()));
+        List<CmsUtil.CmsPredefinedPage> choices = new ArrayList<CmsUtil.CmsPredefinedPage>(Arrays.asList(CmsUtil.CmsPredefinedPage.values()));
         choices.add(0, null);
-        form.add(new DropDownChoice<DbPage.PredefinedType>("predefinedType", choices));
+        form.add(new DropDownChoice<CmsUtil.CmsPredefinedPage>("predefinedType", choices));
         form.add(new MenuSelector("menu"));
         form.add(new StyleSelector("style"));
     }

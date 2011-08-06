@@ -13,10 +13,9 @@
 
 package com.btxtech.game.wicket.pages.cms.content.plugin.login;
 
-import com.btxtech.game.services.cms.DbPage;
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.wicket.pages.user.UserPage;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.apache.wicket.authorization.Action;
@@ -48,7 +47,7 @@ public class LoggedinBox extends Panel {
             protected void onSubmit() {
                 AuthenticatedWebSession session = AuthenticatedWebSession.get();
                 session.signOut();
-                cmsUiService.setPredefinedResponsePage(this, DbPage.PredefinedType.HOME);
+                cmsUiService.setPredefinedResponsePage(this, CmsUtil.CmsPredefinedPage.HOME);
             }
         };
         add(form);
@@ -56,7 +55,7 @@ public class LoggedinBox extends Panel {
 
             @Override
             public void onClick() {
-                cmsUiService.setPredefinedResponsePage(LoggedinBox.this, DbPage.PredefinedType.USER_PAGE);
+                cmsUiService.setPredefinedResponsePage(LoggedinBox.this, CmsUtil.CmsPredefinedPage.USER_PAGE);
             }
         };
         link.add(new Label("name", new IModel() {

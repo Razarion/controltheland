@@ -22,8 +22,8 @@ public class ItemTypeImage extends Panel {
         imgIndex = 1;
         if (dbItemType instanceof DbBaseItemType) {
             DbBaseItemType dbBaseItemType = (DbBaseItemType) dbItemType;
-            if (dbBaseItemType.getTurnableType() != null) {
-                imgIndex = dbBaseItemType.getTurnableType().getImageCount() / 8;
+            if (dbBaseItemType.getDbTurnableType() != null) {
+                imgIndex = dbBaseItemType.getDbTurnableType().getImageCount() / 8;
             }
         }
         add(new Image());

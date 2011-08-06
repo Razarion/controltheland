@@ -591,7 +591,7 @@ abstract public class AbstractServiceTest {
         Set<DbBaseItemType> ableToBuild = new HashSet<DbBaseItemType>();
         ableToBuild.add((DbBaseItemType) itemService.getDbItemType(TEST_FACTORY_ITEM_ID));
         dbBuilderType.setAbleToBuild(ableToBuild);
-        dbBaseItemType.setBuilderType(dbBuilderType);
+        dbBaseItemType.setDbBuilderType(dbBuilderType);
         // DbMovableType
         DbMovableType dbMovableType = new DbMovableType();
         dbMovableType.setSpeed(10000);
@@ -621,7 +621,7 @@ abstract public class AbstractServiceTest {
         ableToBuild.add((DbBaseItemType) itemService.getDbItemType(TEST_CONTAINER_ITEM_ID));
         ableToBuild.add((DbBaseItemType) itemService.getDbItemType(TEST_HARVESTER_ITEM_ID));
         dbFactoryType.setAbleToBuild(ableToBuild);
-        dbBaseItemType.setFactoryType(dbFactoryType);
+        dbBaseItemType.setDbFactoryType(dbFactoryType);
 
         itemService.saveDbItemType(dbBaseItemType);
         itemService.activate();
@@ -643,7 +643,7 @@ abstract public class AbstractServiceTest {
         dbWeaponType.setRange(100);
         dbWeaponType.setReloadTime(1);
         dbWeaponType.setDamage(1000);
-        dbBaseItemType.setWeaponType(dbWeaponType);
+        dbBaseItemType.setDbWeaponType(dbWeaponType);
         // DbMovableType
         DbMovableType dbMovableType = new DbMovableType();
         dbMovableType.setSpeed(10000);
@@ -659,9 +659,9 @@ abstract public class AbstractServiceTest {
     private void finishAttackBaseItemType() {
         DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID);
         // DbWeaponType
-        dbBaseItemType.getWeaponType().setItemTypeAllowed((DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID), true);
-        dbBaseItemType.getWeaponType().setItemTypeAllowed((DbBaseItemType) itemService.getDbItemType(TEST_FACTORY_ITEM_ID), true);
-        dbBaseItemType.getWeaponType().setItemTypeAllowed((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID), true);
+        dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID), true);
+        dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) itemService.getDbItemType(TEST_FACTORY_ITEM_ID), true);
+        dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) itemService.getDbItemType(TEST_START_BUILDER_ITEM_ID), true);
 
         itemService.saveDbItemType(dbBaseItemType);
         itemService.activate();
@@ -745,7 +745,7 @@ abstract public class AbstractServiceTest {
         DbHarvesterType dbHarvesterType = new DbHarvesterType();
         dbHarvesterType.setRange(100);
         dbHarvesterType.setProgress(1);
-        dbBaseItemType.setHarvesterType(dbHarvesterType);
+        dbBaseItemType.setDbHarvesterType(dbHarvesterType);
         // DbMovableType
         DbMovableType dbMovableType = new DbMovableType();
         dbMovableType.setSpeed(10000);

@@ -513,19 +513,19 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     private void addMuzzleEffect(DbBaseItemType dbItemType) {
-        if (dbItemType.getWeaponType() == null) {
+        if (dbItemType.getDbWeaponType() == null) {
             return;
         }
         // Image
         if (muzzleItemTypeImages.containsKey(dbItemType.getId())) {
             throw new IllegalArgumentException("Item Type Images already exits: " + dbItemType);
         }
-        muzzleItemTypeImages.put(dbItemType.getId(), dbItemType.getWeaponType().getDbMuzzleImage());
+        muzzleItemTypeImages.put(dbItemType.getId(), dbItemType.getDbWeaponType().getDbMuzzleImage());
         // Sound
         if (muzzleItemTypeSounds.containsKey(dbItemType.getId())) {
             throw new IllegalArgumentException("Item Type sound already exits: " + dbItemType);
         }
-        muzzleItemTypeSounds.put(dbItemType.getId(), dbItemType.getWeaponType().getDbSound());
+        muzzleItemTypeSounds.put(dbItemType.getId(), dbItemType.getDbWeaponType().getDbSound());
     }
 
     @Override

@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.common.info;
 
 import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
@@ -23,6 +24,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosi
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * User: beat
@@ -40,6 +42,7 @@ public abstract class GameInfo implements Serializable {
     private Collection<Territory> territories;
     private Collection<ItemType> itemTypes;
     private Level level;
+    private Map<CmsUtil.CmsPredefinedPage, String> predefinedUrls;
 
     public TerrainSettings getTerrainSettings() {
         return terrainSettings;
@@ -122,5 +125,13 @@ public abstract class GameInfo implements Serializable {
 
     public void setLevel(Level level) {
         this.level = level;
+    }
+
+    public Map<CmsUtil.CmsPredefinedPage, String> getPredefinedUrls() {
+        return predefinedUrls;
+    }
+
+    public void setPredefinedUrls(Map<CmsUtil.CmsPredefinedPage, String> predefinedUrls) {
+        this.predefinedUrls = predefinedUrls;
     }
 }

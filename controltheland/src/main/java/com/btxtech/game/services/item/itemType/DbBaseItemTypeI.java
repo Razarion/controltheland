@@ -18,41 +18,41 @@ public interface DbBaseItemTypeI extends DbItemTypeI {
 
     void setBuildup(int buildup);
 
-    DbTurnableType getTurnableType();
+    DbTurnableType getDbTurnableType();
 
-    void setTurnableType(DbTurnableType dbTurnableType);
+    void setDbTurnableType(DbTurnableType dbTurnableType);
 
     DbMovableType getDbMovableType();
 
     void setDbMovableType(DbMovableType dbMovableType);
 
-    DbWeaponType getWeaponType();
+    DbWeaponType getDbWeaponType();
 
-    void setWeaponType(DbWeaponType dbWeaponType);
+    void setDbWeaponType(DbWeaponType dbWeaponType);
 
-    DbFactoryType getFactoryType();
+    DbFactoryType getDbFactoryType();
 
-    void setFactoryType(DbFactoryType dbFactoryType);
+    void setDbFactoryType(DbFactoryType dbFactoryType);
 
-    DbHarvesterType getHarvesterType();
+    DbHarvesterType getDbHarvesterType();
 
-    void setHarvesterType(DbHarvesterType dbHarvesterType);
+    void setDbHarvesterType(DbHarvesterType dbHarvesterType);
 
-    DbBuilderType getBuilderType();
+    DbBuilderType getDbBuilderType();
 
-    void setBuilderType(DbBuilderType dbBuilderType);
+    void setDbBuilderType(DbBuilderType dbBuilderType);
 
-    DbConsumerType getConsumerType();
+    DbConsumerType getDbConsumerType();
 
-    void setConsumerType(DbConsumerType dbConsumerType);
+    void setDbConsumerType(DbConsumerType dbConsumerType);
 
-    DbGeneratorType getGeneratorType();
+    DbGeneratorType getDbGeneratorType();
 
-    void setGeneratorType(DbGeneratorType dbGeneratorType);
+    void setDbGeneratorType(DbGeneratorType dbGeneratorType);
 
-    DbSpecialType getSpecialType();
+    DbSpecialType getDbSpecialType();
 
-    void setSpecialType(DbSpecialType dbSpecialType);
+    void setDbSpecialType(DbSpecialType dbSpecialType);
 
     DbItemContainerType getDbItemContainerType();
 
