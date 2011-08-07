@@ -45,6 +45,10 @@ public class SyncFactory extends SyncBaseAbility {
         calculateRallyPoint();
     }
 
+    public FactoryType getFactoryType() {
+        return factoryType;
+    }
+
     public boolean isActive() {
         return getSyncBaseItem().isAlive() && toBeBuiltType != null && getSyncBaseItem().isReady();
     }
