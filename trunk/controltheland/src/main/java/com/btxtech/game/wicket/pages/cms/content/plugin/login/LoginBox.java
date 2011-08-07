@@ -16,7 +16,7 @@ package com.btxtech.game.wicket.pages.cms.content.plugin.login;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.SecurityRoles;
-import com.btxtech.game.wicket.pages.user.NewUser;
+import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.apache.wicket.authorization.Action;
@@ -61,7 +61,7 @@ public class LoginBox extends Panel {
 
         form.add(new TextField<String>("loginName"));
         form.add(new PasswordTextField("loginPassowrd"));
-        form.add(new BookmarkablePageLink<NewUser>("createAccountLink", NewUser.class).setVisible(showRegisterLink));
+        form.add(new BookmarkablePageLink<CmsPage>("createAccountLink", CmsPage.class, cmsUiService.getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.REGISTER)).setVisible(showRegisterLink));
 
         add(form);
     }
