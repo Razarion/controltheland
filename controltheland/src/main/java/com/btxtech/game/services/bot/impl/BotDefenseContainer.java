@@ -15,19 +15,21 @@ package com.btxtech.game.services.bot.impl;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * User: beat
  * Date: 22.09.2010
  * Time: 19:01:40
  */
+@Deprecated
 public class BotDefenseContainer {
     private Map<SyncBaseItem, Collection<BotSyncBaseItem>> intruders = new HashMap<SyncBaseItem, Collection<BotSyncBaseItem>>();
     private int superiority;
@@ -66,10 +68,10 @@ public class BotDefenseContainer {
         for (Iterator<Map.Entry<SyncBaseItem, Collection<BotSyncBaseItem>>> iterator = intruders.entrySet().iterator(); iterator.hasNext();) {
             Map.Entry<SyncBaseItem, Collection<BotSyncBaseItem>> intruder = iterator.next();
             if (!intruder.getKey().isAlive() || !region.contains(intruder.getKey().getPosition())) {
-                 Collection<BotSyncBaseItem> idleUnits = intruder.getValue();
+                Collection<BotSyncBaseItem> idleUnits = intruder.getValue();
                 iterator.remove();
                 for (BotSyncBaseItem idleUnit : idleUnits) {
-                   idleUnit.stop(); 
+                    idleUnit.stop();
                 }
                 continue;
             }
@@ -82,11 +84,11 @@ public class BotDefenseContainer {
             }
 
             while (defenceUnits.size() < superiority) {
-                BotSyncBaseItem botSyncBaseItem = defense.getFirstIdleItem();
+           /* TODO     BotSyncBaseItem botSyncBaseItem = defense.getFirstIdleAttacker(intruder.getKey());
                 if (botSyncBaseItem == null) {
                     break;
                 }
-                doAttack(intruder.getKey(), defenceUnits, botSyncBaseItem);
+                doAttack(intruder.getKey(), defenceUnits, botSyncBaseItem); */
             }
 
             if (defenceUnits.size() < superiority || canTakeFrom == null) {

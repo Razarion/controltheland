@@ -13,7 +13,7 @@
 
 package com.btxtech.game.services.bot.impl;
 
-import com.btxtech.game.services.bot.DbBotItemCount;
+import com.btxtech.game.services.bot.DbBotItemConfig;
 
 /**
  * User: beat
@@ -21,5 +21,5 @@ import com.btxtech.game.services.bot.DbBotItemCount;
  * Time: 21:54:21
  */
 public interface SyncBaseItemFactory {
-    void create(DbBotItemCount dbBotItemCount);
+    void create(DbBotItemConfig dbBotItemConfig);
 }

@@ -87,8 +87,6 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     void sendHouseSpacePacket(Base base);
 
-    void setBot(Base simpleBase, boolean isBot);
-
     int getTotalHouseSpace();
 
     Base getBase(UserState userState);

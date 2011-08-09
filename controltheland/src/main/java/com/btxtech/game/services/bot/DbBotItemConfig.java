@@ -13,12 +13,22 @@
 
 package com.btxtech.game.services.bot;
 
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.common.db.RectangleUserType;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.user.UserService;
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
-import javax.persistence.*;
 
 
 /**
@@ -26,23 +36,27 @@ import javax.persistence.*;
  * Date: 04.04.2010
  * Time: 20:41:25
  */
-@Entity(name = "BOT_ITEM_COUNT")
-public class DbBotItemCount implements CrudChild<DbBotConfig>, Serializable {
+@Entity(name = "BOT_ITEM_CONFIG")
+@TypeDef(name = "rectangle", typeClass = RectangleUserType.class)
+public class DbBotItemConfig implements CrudChild<DbBotConfig>, Serializable {
     @Id
     @GeneratedValue
     private Integer id;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private DbBaseItemType baseItemType;
     @Column(name = "theCount")
     private int count;
-    private int type;
+    private boolean createDirectly;
+    @Type(type = "rectangle")
+    @Columns(columns = {@Column(name = "coreRectX"), @Column(name = "coreRectY"), @Column(name = "coreRectWidth"), @Column(name = "coreRectHeight")})
+    private Rectangle region;
     @ManyToOne
     private DbBotConfig parent;
 
     /**
      * Used by Hibernate
      */
-    public DbBotItemCount() {
+    public DbBotItemConfig() {
     }
 
     public Integer getId() {
@@ -77,7 +91,6 @@ public class DbBotItemCount implements CrudChild<DbBotConfig>, Serializable {
 
     @Override
     public void init(UserService userService) {
-        type = 1;
     }
 
     @Override
@@ -85,27 +98,34 @@ public class DbBotItemCount implements CrudChild<DbBotConfig>, Serializable {
         this.parent = parent;
     }
 
-    public int getType() {
-        return type;
+    public boolean isCreateDirectly() {
+        return createDirectly;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setCreateDirectly(boolean createDirectly) {
+        this.createDirectly = createDirectly;
+    }
+
+    public Rectangle getRegion() {
+        return region;
+    }
+
+    public void setRegion(Rectangle region) {
+        this.region = region;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DbBotItemCount)) return false;
+        if (!(o instanceof DbBotItemConfig)) return false;
 
-        DbBotItemCount that = (DbBotItemCount) o;
+        DbBotItemConfig that = (DbBotItemConfig) o;
 
-        return !(id != null ? !id.equals(that.id) : that.id != null);
-
+        return id != null && !id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 }

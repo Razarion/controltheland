@@ -35,43 +35,20 @@ import java.util.Set;
 @Entity(name = "BOT_CONFIG")
 @TypeDef(name = "rectangle", typeClass = RectangleUserType.class)
 public class DbBotConfig implements CrudChild, CrudParent {
-    private static final int BASE_FUNDAMENTAL = 0;
-    private static final int BASE_BUILDUP = 1;
-    private static final int DEFENSE = 2;
     @Id
     @GeneratedValue
     private Integer id;
     private int actionDelay;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "parent_id")
-    @Where(clause = "type=" + BASE_BUILDUP)
     @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-    private Set<DbBotItemCount> baseBuildup;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    @JoinColumn(name = "parent_id")
-    @Where(clause = "type=" + BASE_FUNDAMENTAL)
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-    private Set<DbBotItemCount> baseFundamental;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    @JoinColumn(name = "parent_id")
-    @Where(clause = "type=" + DEFENSE)
-    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-    private Set<DbBotItemCount> defence;
-    @Type(type = "rectangle")
-    @Columns(columns = {@Column(name = "coreRectX"), @Column(name = "coreRectY"), @Column(name = "coreRectWidth"), @Column(name = "coreRectHeight")})
-    private Rectangle core;
-    private int coreSuperiority;
+    private Set<DbBotItemConfig> botItems;
     @Type(type = "rectangle")
     @Columns(columns = {@Column(name = "realmRectX"), @Column(name = "realmRectY"), @Column(name = "realmRectWidth"), @Column(name = "realmRectHeight")})
     private Rectangle realm;
-    private int realmSuperiority;
     private String name;
     @Transient
-    private CrudChildServiceHelper<DbBotItemCount> baseBuildupCrudServiceHelper;
-    @Transient
-    private CrudChildServiceHelper<DbBotItemCount> baseFundamentalCrudServiceHelper;
-    @Transient
-    private CrudChildServiceHelper<DbBotItemCount> defenceCrudServiceHelper;
+    private CrudChildServiceHelper<DbBotItemConfig> botItemCrud;
 
     public Integer getId() {
         return id;
@@ -85,60 +62,12 @@ public class DbBotConfig implements CrudChild, CrudParent {
         this.actionDelay = actionDelay;
     }
 
-    public Set<DbBotItemCount> getBaseFundamental() {
-        return baseFundamental;
-    }
-
-    public void setBaseFundamental(Set<DbBotItemCount> baseFundamental) {
-        this.baseFundamental = baseFundamental;
-    }
-
-    public Set<DbBotItemCount> getBaseBuildup() {
-        return baseBuildup;
-    }
-
-    public void setBaseBuildup(Set<DbBotItemCount> baseBuildup) {
-        this.baseBuildup = baseBuildup;
-    }
-
-    public Set<DbBotItemCount> getDefence() {
-        return defence;
-    }
-
-    public void setDefence(Set<DbBotItemCount> defence) {
-        this.defence = defence;
-    }
-
-    public Rectangle getCore() {
-        return core;
-    }
-
-    public void setCore(Rectangle core) {
-        this.core = core;
-    }
-
     public Rectangle getRealm() {
         return realm;
     }
 
     public void setRealm(Rectangle realm) {
         this.realm = realm;
-    }
-
-    public int getCoreSuperiority() {
-        return coreSuperiority;
-    }
-
-    public void setCoreSuperiority(int coreSuperiority) {
-        this.coreSuperiority = coreSuperiority;
-    }
-
-    public int getRealmSuperiority() {
-        return realmSuperiority;
-    }
-
-    public void setRealmSuperiority(int realmSuperiority) {
-        this.realmSuperiority = realmSuperiority;
     }
 
     @Override
@@ -170,9 +99,7 @@ public class DbBotConfig implements CrudChild, CrudParent {
     @Override
     public void init(UserService userService) {
         actionDelay = 3000;
-        baseBuildup = new HashSet<DbBotItemCount>();
-        baseFundamental = new HashSet<DbBotItemCount>();
-        defence = new HashSet<DbBotItemCount>();
+        botItems = new HashSet<DbBotItemConfig>();
     }
 
     @Override
@@ -180,39 +107,10 @@ public class DbBotConfig implements CrudChild, CrudParent {
         // Ignore
     }
 
-    public CrudChildServiceHelper<DbBotItemCount> getBaseBuildupCrudServiceHelper() {
-        if (baseBuildupCrudServiceHelper == null) {
-            baseBuildupCrudServiceHelper = new CrudChildServiceHelper<DbBotItemCount>(baseBuildup, DbBotItemCount.class, this) {
-                @Override
-                protected void initChild(DbBotItemCount dbBotItemCount) {
-                    dbBotItemCount.setType(BASE_BUILDUP);
-                }
-            };
+    public CrudChildServiceHelper<DbBotItemConfig> getBotItemCrud() {
+        if (botItemCrud == null) {
+            botItemCrud = new CrudChildServiceHelper<DbBotItemConfig>(botItems, DbBotItemConfig.class, this);
         }
-        return baseBuildupCrudServiceHelper;
-    }
-
-    public CrudChildServiceHelper<DbBotItemCount> getBaseFundamentalCrudServiceHelper() {
-        if (baseFundamentalCrudServiceHelper == null) {
-            baseFundamentalCrudServiceHelper = new CrudChildServiceHelper<DbBotItemCount>(baseFundamental, DbBotItemCount.class, this) {
-                @Override
-                protected void initChild(DbBotItemCount dbBotItemCount) {
-                    dbBotItemCount.setType(BASE_FUNDAMENTAL);
-                }
-            };
-        }
-        return baseFundamentalCrudServiceHelper;
-    }
-
-    public CrudChildServiceHelper<DbBotItemCount> getDefenceCrudServiceHelper() {
-        if (defenceCrudServiceHelper == null) {
-            defenceCrudServiceHelper = new CrudChildServiceHelper<DbBotItemCount>(defence, DbBotItemCount.class, this) {
-                @Override
-                protected void initChild(DbBotItemCount dbBotItemCount) {
-                    dbBotItemCount.setType(DEFENSE);
-                }
-            };
-        }
-        return defenceCrudServiceHelper;
+        return botItemCrud;
     }
 }

@@ -20,11 +20,12 @@ import java.io.Serializable;
  * Date: Aug 12, 2009
  * Time: 8:38:29 PM
  */
-public class Id implements Serializable{
+public class Id implements Serializable {
     private Integer id;
     private int parentId;
     private int childIndex;
     private long userTimeStamp;
+    public static final int NO_ID = 0;
 
     /**
      * Used by GWT
@@ -89,7 +90,7 @@ public class Id implements Serializable{
     }
 
     public int getId() {
-        if(id == null) {
+        if (id == null) {
             throw new IllegalStateException(this + " id is null in getter");
         }
         return id;
@@ -101,6 +102,10 @@ public class Id implements Serializable{
 
     public int getParentId() {
         return parentId;
+    }
+
+    public boolean hasParent() {
+        return parentId != NO_ID;
     }
 
     public int getChildIndex() {
