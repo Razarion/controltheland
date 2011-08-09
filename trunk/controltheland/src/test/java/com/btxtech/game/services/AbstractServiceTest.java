@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
@@ -34,7 +35,6 @@ import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
-import com.btxtech.game.services.bot.DbBotItemCount;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBuilderType;
@@ -287,12 +287,12 @@ abstract public class AbstractServiceTest {
         throw new IllegalStateException("No such sync item: ItemTypeID=" + itemTypeId + " simpleBase=" + simpleBase);
     }
 
-    protected Collection<Id> getAllSynItemId(int itemTypeId) {
+    protected List<Id> getAllSynItemId(int itemTypeId) {
         return getAllSynItemId(getMyBase(), itemTypeId, null);
     }
 
-    protected Collection<Id> getAllSynItemId(SimpleBase simpleBase, int itemTypeId, Rectangle region) {
-        Collection<Id> ids = new ArrayList<Id>();
+    protected List<Id> getAllSynItemId(SimpleBase simpleBase, int itemTypeId, Rectangle region) {
+        List<Id> ids = new ArrayList<Id>();
         for (SyncItemInfo syncItemInfo : movableService.getAllSyncInfo()) {
             if (syncItemInfo.getBase() == null && syncItemInfo.getItemTypeId() == itemTypeId) {
                 if (region != null) {
@@ -319,8 +319,13 @@ abstract public class AbstractServiceTest {
     }
 
 
-    protected void assertWholeItemTypeCount(int count) {
+    protected void assertWholeItemCount(int count) {
         Assert.assertEquals(count, itemService.getItemsCopy().size());
+    }
+
+    protected void killSyncItem(Id id) throws Exception {
+        SyncItem syncItem = itemService.getItem(id);
+        itemService.killSyncItem(syncItem, null, true, false);
     }
 
     // ------------------- Connection --------------------
@@ -1167,28 +1172,33 @@ abstract public class AbstractServiceTest {
     // ------------------- Setup minimal bot --------------------
 
     protected DbBotConfig setupMinimalBot(Rectangle realm, Rectangle core) {
-        DbBotConfig dbBotConfig = botService.getDbBotConfigCrudServiceHelper().createDbChild();
-        dbBotConfig.setActionDelay(10);
-        dbBotConfig.setRealm(realm);
-        dbBotConfig.setCore(core);
-        dbBotConfig.setCoreSuperiority(2);
-        dbBotConfig.setRealmSuperiority(1);
-        DbBotItemCount fundamental = dbBotConfig.getBaseFundamentalCrudServiceHelper().createDbChild();
-        fundamental.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
-        fundamental.setCount(1);
-        DbBotItemCount baseBuildup = dbBotConfig.getBaseBuildupCrudServiceHelper().createDbChild();
-        baseBuildup.setBaseItemType(itemService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
-        baseBuildup.setCount(1);
-        DbBotItemCount defence = dbBotConfig.getDefenceCrudServiceHelper().createDbChild();
-        defence.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
-        defence.setCount(1);
-        botService.getDbBotConfigCrudServiceHelper().updateDbChild(dbBotConfig);
-        botService.activate();
-        return dbBotConfig;
+        throw new UnsupportedOperationException();
+        /*  DbBotConfig dbBotConfig = botService.getDbBotConfigCrudServiceHelper().createDbChild();
+      dbBotConfig.setActionDelay(10);
+      dbBotConfig.setRealm(realm);
+      dbBotConfig.setCore(core);
+      dbBotConfig.setCoreSuperiority(2);
+      dbBotConfig.setRealmSuperiority(1);
+      DbBotItemConfig fundamental = dbBotConfig.getBaseFundamentalCrudServiceHelper().createDbChild();
+      fundamental.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+      fundamental.setCount(1);
+      DbBotItemConfig baseBuildup = dbBotConfig.getBotItemCrud().createDbChild();
+      baseBuildup.setBaseItemType(itemService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
+      baseBuildup.setCount(1);
+      DbBotItemConfig defence = dbBotConfig.getDefenceCrudServiceHelper().createDbChild();
+      defence.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+      defence.setCount(1);
+      botService.getDbBotConfigCrudServiceHelper().updateDbChild(dbBotConfig);
+      botService.activate();
+      return dbBotConfig; */
     }
 
     protected void waitForBotToBuildup(DbBotConfig dbBotConfig) throws InterruptedException, TimeoutException {
-        long maxTime = System.currentTimeMillis() + 100000;
+        waitForBotToBuildup(dbBotConfig, 100000);
+    }
+
+    protected void waitForBotToBuildup(DbBotConfig dbBotConfig, int timeOut) throws InterruptedException, TimeoutException {
+        long maxTime = System.currentTimeMillis() + timeOut;
         while (!botService.getBotRunner(dbBotConfig).isBuildup()) {
             if (System.currentTimeMillis() > maxTime) {
                 throw new TimeoutException();

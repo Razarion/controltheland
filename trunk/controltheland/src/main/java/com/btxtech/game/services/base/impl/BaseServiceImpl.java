@@ -182,6 +182,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             createBase(base.getSimpleBase(), name, false);
             log.info("Bot Base created: " + base);
             bases.put(base.getSimpleBase(), base);
+            setBot(base.getSimpleBase(), true);
             sendBaseChangedPacket(BaseChangedPacket.Type.CREATED, base.getSimpleBase());
             return base;
         }
@@ -474,12 +475,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         HouseSpacePacket houseSpacePacket = new HouseSpacePacket();
         houseSpacePacket.setHouseSpace(base.getHouseSpace());
         connectionService.sendPacket(houseSpacePacket);
-    }
-
-    @Override
-    public void setBot(Base base, boolean isBot) {
-        setBot(base.getSimpleBase(), isBot);
-        sendBaseChangedPacket(BaseChangedPacket.Type.CHANGED, base.getSimpleBase());
     }
 
     @Override

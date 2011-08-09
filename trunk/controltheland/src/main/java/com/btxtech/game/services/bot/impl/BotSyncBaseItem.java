@@ -44,6 +44,16 @@ public class BotSyncBaseItem {
         return idle;
     }
 
+    public boolean isAbleToBuild(BaseItemType toBeBuilt) {
+        return syncBaseItem.hasSyncFactory() && syncBaseItem.getSyncFactory().getFactoryType().isAbleToBuild(toBeBuilt.getId())
+                || syncBaseItem.hasSyncBuilder() && syncBaseItem.getSyncBuilder().getBuilderType().isAbleToBuild(toBeBuilt.getId());
+    }
+
+    public boolean isAbleToAttack(BaseItemType baseItemType) {
+        return syncBaseItem.hasSyncWeapon() && syncBaseItem.getSyncWeapon().getWeaponType().isItemTypeAllowed(baseItemType.getId());
+
+    }
+
     public void buildBuilding(Index position, BaseItemType toBeBuilt) {
         try {
             actionService.buildFactory(syncBaseItem, position, toBeBuilt);
@@ -85,5 +95,9 @@ public class BotSyncBaseItem {
     public void stop() {
         syncBaseItem.stop();
         idle = true;
+    }
+
+    public int getDistanceTo(Index position) {
+        return syncBaseItem.getPosition().getDistance(position);
     }
 }

@@ -98,7 +98,7 @@ public class TestResurrection extends AbstractServiceTest {
         String targetName = baseService.getBaseName(targetBase);
         Id target = getFirstSynItemId(targetBase, TEST_START_BUILDER_ITEM_ID);
         clearPackets();
-        assertWholeItemTypeCount(1);
+        assertWholeItemCount(1);
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -118,11 +118,11 @@ public class TestResurrection extends AbstractServiceTest {
         waitForActionServiceDone();
         Id actorAttacker = getFirstSynItemId(actorBase, TEST_ATTACK_ITEM_ID);
         clearPackets();
-        assertWholeItemTypeCount(4);
+        assertWholeItemCount(4);
         sendAttackCommand(actorAttacker, target);
         waitForActionServiceDone();
         Assert.assertEquals(1, baseService.getBases().size());
-        assertWholeItemTypeCount(3);
+        assertWholeItemCount(3);
 
         Message message = new Message();
         message.setMessage("You defeated U1");
@@ -151,7 +151,7 @@ public class TestResurrection extends AbstractServiceTest {
         Message message2 = new Message();
         message2.setMessage("You lost your base. A new base was created.");
         assertPackagesIgnoreSyncItemInfoAndClear(message2);
-        assertWholeItemTypeCount(4);
+        assertWholeItemCount(4);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -233,7 +233,7 @@ public class TestResurrection extends AbstractServiceTest {
 
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertEquals(1, baseService.getBases().size());
-        assertWholeItemTypeCount(1);
+        assertWholeItemCount(1);
 
         SimpleBase newBase = getMyBase(); // Connection
         Assert.assertFalse(simpleBase.equals(newBase));
@@ -241,7 +241,7 @@ public class TestResurrection extends AbstractServiceTest {
         Message message2 = new Message();
         message2.setMessage("You lost your base. A new base was created.");
         assertPackagesIgnoreSyncItemInfoAndClear(message2);
-        assertWholeItemTypeCount(2);
+        assertWholeItemCount(2);
 
         endHttpRequestAndOpenSessionInViewFilter();
 

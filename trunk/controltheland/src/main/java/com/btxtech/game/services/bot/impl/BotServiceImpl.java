@@ -72,8 +72,7 @@ public class BotServiceImpl implements BotService {
 
     private void startBot(DbBotConfig botConfig) {
         BotRunner botRunner = (BotRunner) applicationContext.getBean("botRunner");
-        botRunner.setBotConfig(botConfig);
-        botRunner.start();
+        botRunner.start(botConfig);
         synchronized (botRunners) {
             botRunners.put(botConfig, botRunner);
         }
@@ -98,7 +97,7 @@ public class BotServiceImpl implements BotService {
         for (DbBotConfig botConfig : dbBotConfigs) {
             BotRunner botRunner = botRunners.get(botConfig);
             if (botRunner != null) {
-                botRunner.synchronize(botConfig);
+                // TODO botRunner.synchronize(botConfig);
             } else {
                 newDbBotConfigs.add(botConfig);
             }

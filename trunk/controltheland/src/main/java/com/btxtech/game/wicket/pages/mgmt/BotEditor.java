@@ -15,7 +15,7 @@ package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
-import com.btxtech.game.services.bot.DbBotItemCount;
+import com.btxtech.game.services.bot.DbBotItemConfig;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.ItemService;
@@ -65,14 +65,7 @@ public class BotEditor extends MgmtWebPage {
         form.add(new RectanglePanel("realm"));
         form.add(new TextField("realmSuperiority"));
 
-        new CrudChildTableHelper<DbBotConfig, DbBotItemCount>("baseFundamental", null, "createBaseFundamentalItem", false, form, false) {
-
-            @Override
-            protected void extendedPopulateItem(final Item<DbBotItemCount> item) {
-                item.add(new BaseItemTypePanel("baseItemType"));
-                item.add(new TextField("count"));
-            }
-
+        new CrudChildTableHelper<DbBotConfig, DbBotItemConfig>("botItems", null, "createBaseBuildupItem", false, form, false) {
             @Override
             protected RuServiceHelper<DbBotConfig> getRuServiceHelper() {
                 return dbBotConfigRuServiceHelper;
@@ -84,54 +77,14 @@ public class BotEditor extends MgmtWebPage {
             }
 
             @Override
-            protected CrudChildServiceHelper<DbBotItemCount> getCrudChildServiceHelperImpl() {
-                return getParent().getBaseFundamentalCrudServiceHelper();
-            }
-        };
-
-        new CrudChildTableHelper<DbBotConfig, DbBotItemCount>("baseBuildup", null, "createBaseBuildupItem", false, form, false) {
-            @Override
-            protected RuServiceHelper<DbBotConfig> getRuServiceHelper() {
-                return dbBotConfigRuServiceHelper;
+            protected CrudChildServiceHelper<DbBotItemConfig> getCrudChildServiceHelperImpl() {
+                return getParent().getBotItemCrud();
             }
 
             @Override
-            protected DbBotConfig getParent() {
-                return form.getModelObject();
-            }
-
-            @Override
-            protected CrudChildServiceHelper<DbBotItemCount> getCrudChildServiceHelperImpl() {
-                return getParent().getBaseBuildupCrudServiceHelper();
-            }
-
-            @Override
-            protected void extendedPopulateItem(final Item<DbBotItemCount> item) {
+            protected void extendedPopulateItem(final Item<DbBotItemConfig> item) {
                 item.add(new BaseItemTypePanel("baseItemType"));
                 item.add(new TextField("count"));
-            }
-        };
-
-        new CrudChildTableHelper<DbBotConfig, DbBotItemCount>("defence", null, "createDefenceItem", false, form, false) {
-            @Override
-            protected void extendedPopulateItem(final Item<DbBotItemCount> item) {
-                item.add(new BaseItemTypePanel("baseItemType"));
-                item.add(new TextField("count"));
-            }
-
-            @Override
-            protected RuServiceHelper<DbBotConfig> getRuServiceHelper() {
-                return dbBotConfigRuServiceHelper;
-            }
-
-            @Override
-            protected DbBotConfig getParent() {
-                return form.getModelObject();
-            }
-
-            @Override
-            protected CrudChildServiceHelper<DbBotItemCount> getCrudChildServiceHelperImpl() {
-                return getParent().getDefenceCrudServiceHelper();
             }
         };
 

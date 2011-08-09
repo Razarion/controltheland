@@ -182,8 +182,8 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         if (parent != null) {
             parentId = parent.getId().getId();
         } else {
-            parentId = 0;
-            childIndex = 0;
+            parentId = Id.NO_ID;
+            childIndex = Id.NO_ID;
         }
 
         if (lastId == Integer.MAX_VALUE) {

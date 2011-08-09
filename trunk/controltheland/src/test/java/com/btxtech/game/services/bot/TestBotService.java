@@ -67,51 +67,51 @@ public class TestBotService extends AbstractServiceTest {
 
         // Wait for bot to complete
         waitForBotToBuildup(dbBotConfig);
-        assertWholeItemTypeCount(3);
+        assertWholeItemCount(3);
 
         // Kill all bot items
         dbBotConfig.setActionDelay(50); // UGLY
         Thread.sleep(20);
         itemService.killSyncItems(itemService.getItemsCopy());
-        assertWholeItemTypeCount(0);
+        assertWholeItemCount(0);
         dbBotConfig.setActionDelay(10); // UGLY
 
         // Wait for bot to complete
         waitForBotToBuildup(dbBotConfig);
-        assertWholeItemTypeCount(3);
+        assertWholeItemCount(3);
 
         // Kill all bot items
         dbBotConfig.setActionDelay(50); // UGLY
         Thread.sleep(20);
         itemService.killSyncItems(itemService.getItemsCopy());
-        assertWholeItemTypeCount(0);
+        assertWholeItemCount(0);
         dbBotConfig.setActionDelay(10); // UGLY
 
         // Wait for bot to complete
         waitForBotToBuildup(dbBotConfig);
-        assertWholeItemTypeCount(3);
+        assertWholeItemCount(3);
 
         // Kill all bot items
         dbBotConfig.setActionDelay(50); // UGLY
         Thread.sleep(20);
         itemService.killSyncItems(itemService.getItemsCopy());
-        assertWholeItemTypeCount(0);
+        assertWholeItemCount(0);
         dbBotConfig.setActionDelay(10); // UGLY
 
         // Wait for bot to complete
         waitForBotToBuildup(dbBotConfig);
-        assertWholeItemTypeCount(3);
+        assertWholeItemCount(3);
 
         // Kill all bot items
         dbBotConfig.setActionDelay(50); // UGLY
         Thread.sleep(20);
         itemService.killSyncItems(itemService.getItemsCopy());
-        assertWholeItemTypeCount(0);
+        assertWholeItemCount(0);
         dbBotConfig.setActionDelay(10); // UGLY
-        
+
         // Wait for bot to complete
         waitForBotToBuildup(dbBotConfig);
-        assertWholeItemTypeCount(3);
+        assertWholeItemCount(3);
     }
 
     @Test
@@ -129,7 +129,7 @@ public class TestBotService extends AbstractServiceTest {
 
         // Wait for bot to complete
         waitForBotToBuildup(dbBotConfig);
-        assertWholeItemTypeCount(3);
+        assertWholeItemCount(3);
 
         // Save
         beginHttpSession();
@@ -143,7 +143,7 @@ public class TestBotService extends AbstractServiceTest {
 
         // Wait for bot to complete
         waitForBotToBuildup(dbBotConfig);
-        assertWholeItemTypeCount(3);
+        assertWholeItemCount(3);
     }
 
     @Test
@@ -161,7 +161,7 @@ public class TestBotService extends AbstractServiceTest {
 
         // Wait for bot to complete
         waitForBotToBuildup(dbBotConfig);
-        assertWholeItemTypeCount(3);
+        assertWholeItemCount(3);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -172,7 +172,7 @@ public class TestBotService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        assertWholeItemTypeCount(0);
+        assertWholeItemCount(0);
         Assert.assertEquals(0, userService.getAllBotUserStates().size());
 
         // Make sure backup still works
@@ -200,7 +200,7 @@ public class TestBotService extends AbstractServiceTest {
 
         // Wait for bot to complete
         waitForBotToBuildup(dbBotConfig);
-        assertWholeItemTypeCount(3);
+        assertWholeItemCount(3);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -216,4 +216,79 @@ public class TestBotService extends AbstractServiceTest {
         endHttpSession();
 
     }
+
+    @Test
+    @DirtiesContext
+    public void testBotBuildupWrongConfig() throws Exception {
+        throw new UnsupportedOperationException();
+/*
+        configureMinimalGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        DbBotConfig dbBotConfig = botService.getDbBotConfigCrudServiceHelper().createDbChild();
+        dbBotConfig.setActionDelay(10);
+        dbBotConfig.setRealm(new Rectangle(1, 1, 5000, 5000));
+        dbBotConfig.setCore(new Rectangle(1000, 1000, 3000, 3000));
+        dbBotConfig.setCoreSuperiority(2);
+        dbBotConfig.setRealmSuperiority(1);
+        DbBotItemConfig fundamental = dbBotConfig.getBaseFundamentalCrudServiceHelper().createDbChild();
+        fundamental.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        fundamental.setCount(1);
+        DbBotItemConfig baseBuildup = dbBotConfig.getBotItemCrud().createDbChild();
+        baseBuildup.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        baseBuildup.setCount(1);
+        DbBotItemConfig defence = dbBotConfig.getDefenceCrudServiceHelper().createDbChild();
+        defence.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        defence.setCount(1);
+        botService.getDbBotConfigCrudServiceHelper().updateDbChild(dbBotConfig);
+        botService.activate();
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Wait for bot to complete
+        try {
+            waitForBotToBuildup(dbBotConfig, 1000);
+            Assert.fail("TimeoutException expected");
+        } catch (TimeoutException e) {
+            // unused
+        }  */
+    }
+
+    @Test
+    @DirtiesContext
+    public void testBotBuildup() throws Exception {
+        throw new UnsupportedOperationException();        
+       /* configureMinimalGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        DbBotConfig dbBotConfig = botService.getDbBotConfigCrudServiceHelper().createDbChild();
+        dbBotConfig.setActionDelay(10);
+        dbBotConfig.setRealm(new Rectangle(1, 1, 5000, 5000));
+        dbBotConfig.setCore(new Rectangle(1000, 1000, 3000, 3000));
+        dbBotConfig.setCoreSuperiority(2);
+        dbBotConfig.setRealmSuperiority(1);
+        DbBotItemConfig fundamental = dbBotConfig.getBaseFundamentalCrudServiceHelper().createDbChild();
+        fundamental.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        fundamental.setCount(1);
+        DbBotItemConfig baseBuildup = dbBotConfig.getBotItemCrud().createDbChild();
+        baseBuildup.setBaseItemType(itemService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
+        baseBuildup.setCount(1);
+        DbBotItemConfig defence = dbBotConfig.getDefenceCrudServiceHelper().createDbChild();
+        defence.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        defence.setCount(1);
+        botService.getDbBotConfigCrudServiceHelper().updateDbChild(dbBotConfig);
+        botService.activate();
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Wait for bot to complete
+        waitForBotToBuildup(dbBotConfig);  */
+    }
+
 }

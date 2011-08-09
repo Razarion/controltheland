@@ -46,7 +46,7 @@
             <td><input wicket:id="realmSuperiority" type="text" size="6"></td>
         </tr>
         <tr>
-            <td bgcolor="#dadada">Base Fundamental</td>
+            <td bgcolor="#dadada">Bot Items</td>
             <td>
                 <table cellpadding="1" cellspacing="1" border="0">
                     <tr>
@@ -54,27 +54,7 @@
                         <th bgcolor="#dadada">Count</th>
                         <th bgcolor="#dadada">Delete</th>
                     </tr>
-                    <tr wicket:id="baseFundamental">
-                        <td wicket:id="baseItemType"/>
-                        <td><input type="text" wicket:id="count" size="6"></td>
-                        <td valign="center">
-                            <input type="submit" value="Delete" wicket:id="delete"/>
-                        </td>
-                    </tr>
-                </table>
-                <input type="submit" wicket:id="createBaseFundamentalItem" value="Create">
-            </td>
-        </tr>
-        <tr>
-            <td bgcolor="#dadada">Base Buildup Items</td>
-            <td>
-                <table cellpadding="1" cellspacing="1" border="0">
-                    <tr>
-                        <th bgcolor="#dadada">Item Type</th>
-                        <th bgcolor="#dadada">Count</th>
-                        <th bgcolor="#dadada">Delete</th>
-                    </tr>
-                    <tr wicket:id="baseBuildup">
+                    <tr wicket:id="botItems">
                         <td wicket:id="baseItemType"/>
                         <td><input type="text" wicket:id="count" size="6"></td>
                         <td valign="center">
@@ -83,26 +63,6 @@
                     </tr>
                 </table>
                 <input type="submit" wicket:id="createBaseBuildupItem" value="Create">
-            </td>
-        </tr>
-        <tr>
-            <td bgcolor="#dadada">Defence</td>
-            <td>
-                <table cellpadding="1" cellspacing="1" border="0">
-                    <tr>
-                        <th bgcolor="#dadada">Item Type</th>
-                        <th bgcolor="#dadada">Count</th>
-                        <th bgcolor="#dadada">Delete</th>
-                    </tr>
-                    <tr wicket:id="defence">
-                        <td wicket:id="baseItemType"/>
-                        <td><input type="text" wicket:id="count" size="6"></td>
-                        <td valign="center">
-                            <input type="submit" value="Delete" wicket:id="delete"/>
-                        </td>
-                    </tr>
-                </table>
-                <input type="submit" wicket:id="createDefenceItem" value="Create">
             </td>
         </tr>
     </table>

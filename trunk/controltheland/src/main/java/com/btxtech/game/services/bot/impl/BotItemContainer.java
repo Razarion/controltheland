@@ -13,86 +13,199 @@
 
 package com.btxtech.game.services.bot.impl;
 
+import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.services.action.ActionService;
+import com.btxtech.game.services.base.Base;
+import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.bot.DbBotItemConfig;
+import com.btxtech.game.services.collision.CollisionService;
+import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.user.UserState;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * User: beat
  * Date: 18.09.2010
  * Time: 11:41:21
  */
+@Component(value = "botItemContainer")
+@Scope("prototype")
 public class BotItemContainer {
-    private Collection<BotSyncBaseItem> botSyncBaseItems = new ArrayList<BotSyncBaseItem>();
-    private Collection<BotSyncBaseItem> buildingItems = new ArrayList<BotSyncBaseItem>();
-    private Map<BaseItemType, Integer> needs = new HashMap<BaseItemType, Integer>();
+    private HashMap<SyncBaseItem, BotSyncBaseItem> botItems = new HashMap<SyncBaseItem, BotSyncBaseItem>();
+    private Map<DbBotItemConfig, Collection<BotSyncBaseItem>> buildingItems = new HashMap<DbBotItemConfig, Collection<BotSyncBaseItem>>();
+    private Need need;
+    @Autowired
+    private ActionService actionService;
+    @Autowired
+    private CollisionService collisionService;
+    @Autowired
+    private ItemService itemService;
+    @Autowired
+    private BaseService baseService;
+    private Log log = LogFactory.getLog(BotItemContainer.class);
 
-    public BotItemContainer(Map<BaseItemType, Integer> needs) {
-        this.needs = needs;
+    public void init(Collection<DbBotItemConfig> dbBotItemConfigs) {
+        need = new Need(dbBotItemConfigs);
     }
 
-    public boolean add(BotSyncBaseItem botSyncBaseItem) {
-        Integer needCount = needs.get(botSyncBaseItem.getSyncBaseItem().getBaseItemType());
-        if (needCount == null || needCount == 0) {
-            return false;
+    public void buildup(SimpleBase simpleBase, UserState userState) {
+        if (isFulfilled(userState)) {
+            return;
         }
-        needs.put(botSyncBaseItem.getSyncBaseItem().getBaseItemType(), needCount - 1);
-        botSyncBaseItems.add(botSyncBaseItem);
-        return true;
+        buildItems(simpleBase);
     }
 
-    public boolean isFulfilled() {
-        updateState();
-        int totalNeedCount = 0;
-        for (Integer needCount : needs.values()) {
-            totalNeedCount += needCount;
+    public boolean isFulfilled(UserState userStat) {
+        updateState(userStat);
+        return need.getNeedCount() == 0;
+    }
+
+    public void killAllItems() {
+        itemService.killSyncItems(new ArrayList<SyncItem>(botItems.keySet()));
+    }
+
+    private void updateState(UserState userState) {
+        Set<SyncBaseItem> newItems = getItems(userState);
+        newItems.removeAll(botItems.keySet());
+        for (SyncBaseItem newItem : newItems) {
+            add(newItem);
         }
-        return totalNeedCount <= botSyncBaseItems.size() && buildingItems.isEmpty();
-    }
 
-    public HashMap<BaseItemType, Integer> getNeeds() {
-        HashMap<BaseItemType, Integer> copyNeeds = new HashMap<BaseItemType, Integer>(needs);
-        for (Iterator<Integer> iterator = copyNeeds.values().iterator(); iterator.hasNext();) {
-            Integer needCount = iterator.next();
-            if (needCount == 0) {
-                iterator.remove();
+        ArrayList<BotSyncBaseItem> remove = new ArrayList<BotSyncBaseItem>();
+        for (BotSyncBaseItem botSyncBaseItem : botItems.values()) {
+            if (botSyncBaseItem.isAlive()) {
+                botSyncBaseItem.updateIdleState();
+            } else {
+                remove.add(botSyncBaseItem);
             }
         }
-        return copyNeeds;
+        for (BotSyncBaseItem botSyncBaseItem : remove) {
+            remove(botSyncBaseItem);
+        }
+        for (Iterator<Map.Entry<DbBotItemConfig, Collection<BotSyncBaseItem>>> iterator = buildingItems.entrySet().iterator(); iterator.hasNext();) {
+            Map.Entry<DbBotItemConfig, Collection<BotSyncBaseItem>> entry = iterator.next();
+            for (Iterator<BotSyncBaseItem> builderIterator = entry.getValue().iterator(); builderIterator.hasNext();) {
+                BotSyncBaseItem buildingItem = builderIterator.next();
+                if (!buildingItem.isAlive() || buildingItem.isIdle()) {
+                    builderIterator.remove();
+                }
+                if (entry.getValue().isEmpty()) {
+                    iterator.remove();
+                }
+            }
+        }
     }
 
-    public BotSyncBaseItem getFirstIdleItem() {
-        for (BotSyncBaseItem botSyncBaseItem : botSyncBaseItems) {
-            if (botSyncBaseItem.isIdle()) {
+    private Set<SyncBaseItem> getItems(UserState userState) {
+        Base base = baseService.getBase(userState);
+        if (base == null) {
+            return Collections.emptySet();
+        } else {
+            return new HashSet<SyncBaseItem>(baseService.getBase(userState).getItems());
+        }
+    }
+
+    private void add(SyncBaseItem syncBaseItem) {
+        BotSyncBaseItem botSyncBaseItem = new BotSyncBaseItem(syncBaseItem, actionService);
+        botItems.put(syncBaseItem, botSyncBaseItem);
+        need.onItemAdded(botSyncBaseItem);
+    }
+
+    private void remove(BotSyncBaseItem botSyncBaseItem) {
+        botItems.remove(botSyncBaseItem.getSyncBaseItem());
+        need.onItemRemoved(botSyncBaseItem);
+    }
+
+    private void buildItems(SimpleBase simpleBase) {
+        for (DbBotItemConfig dbBotItemConfig : need.getItemNeed()) {
+
+            int effectiveNeed = need.getNeedCount(dbBotItemConfig);
+            Collection<BotSyncBaseItem> currentlyBuilding = buildingItems.get(dbBotItemConfig);
+            if (currentlyBuilding != null) {
+                effectiveNeed -= currentlyBuilding.size();
+                if (effectiveNeed < 0) {
+                    effectiveNeed = 0;
+                }
+            }
+
+            for (int i = 0; i < effectiveNeed; i++) {
+                try {
+                    createItem(dbBotItemConfig, simpleBase);
+                } catch (Exception e) {
+                    log.error("", e);
+                }
+            }
+        }
+    }
+
+    private void createItem(DbBotItemConfig dbBotItemConfig, SimpleBase simpleBase) throws ItemLimitExceededException, HouseSpaceExceededException, NoSuchItemTypeException {
+        BaseItemType toBeBuilt = (BaseItemType) itemService.getItemType(dbBotItemConfig.getBaseItemType());
+        if (dbBotItemConfig.isCreateDirectly()) {
+            Index position = collisionService.getFreeRandomPosition(toBeBuilt, dbBotItemConfig.getRegion(), 100, false);
+            SyncBaseItem newItem = (SyncBaseItem) itemService.createSyncObject(toBeBuilt, position, null, simpleBase, 0);
+            newItem.setBuildup(1.0);
+        } else {
+            BotSyncBaseItem botSyncBuilder = getFirstIdleBuilder(toBeBuilt);
+            if (botSyncBuilder == null) {
+                return;
+            }
+            if (botSyncBuilder.getSyncBaseItem().hasSyncFactory()) {
+                botSyncBuilder.buildUnit(toBeBuilt);
+            } else {
+                Index position = collisionService.getFreeRandomPosition(toBeBuilt, dbBotItemConfig.getRegion(), 0, false);
+                botSyncBuilder.buildBuilding(position, toBeBuilt);
+            }
+            Collection<BotSyncBaseItem> builders = buildingItems.get(dbBotItemConfig);
+            if (builders == null) {
+                builders = new ArrayList<BotSyncBaseItem>();
+                buildingItems.put(dbBotItemConfig, builders);
+            }
+            builders.add(botSyncBuilder);
+        }
+    }
+
+
+    private BotSyncBaseItem getFirstIdleBuilder(BaseItemType toBeBuilt) {
+        for (BotSyncBaseItem botSyncBaseItem : botItems.values()) {
+            if (botSyncBaseItem.isIdle() && botSyncBaseItem.isAbleToBuild(toBeBuilt)) {
                 return botSyncBaseItem;
             }
         }
         return null;
     }
 
-    private void updateState() {
-        for (Iterator<BotSyncBaseItem> itemIterator = botSyncBaseItems.iterator(); itemIterator.hasNext();) {
-            BotSyncBaseItem botSyncBaseItem = itemIterator.next();
-            if (botSyncBaseItem.isAlive()) {
-                botSyncBaseItem.updateIdleState();
-            } else {
-                itemIterator.remove();
-                int count = needs.get(botSyncBaseItem.getSyncBaseItem().getBaseItemType());
-                needs.put(botSyncBaseItem.getSyncBaseItem().getBaseItemType(), count + 1);
-            }
-        }
-        for (Iterator<BotSyncBaseItem> builderIterator = buildingItems.iterator(); builderIterator.hasNext();) {
-            BotSyncBaseItem buildingItem = builderIterator.next();
-            if (!buildingItem.isAlive() || buildingItem.isIdle()) {
-                builderIterator.remove();
-            }
-        }
-    }
-
-    public void addBuildingItem(BotSyncBaseItem botSyncBaseItem) {
-        buildingItems.add(botSyncBaseItem);
-    }
+    /* private BotSyncBaseItem getFirstIdleAttacker(SyncBaseItem target) {
+       int distance = Integer.MAX_VALUE;
+       BotSyncBaseItem result = null;
+       for (BotSyncBaseItem botSyncBaseItem : botItems.values()) {
+           if (botSyncBaseItem.isIdle() && botSyncBaseItem.isAbleToAttack(target.getBaseItemType())) {
+               int dist = botSyncBaseItem.getDistanceTo(target.getPosition());
+               if (dist < distance) {
+                   distance = dist;
+                   result = botSyncBaseItem;
+               }
+           }
+       }
+       return result;
+   } */
 }
