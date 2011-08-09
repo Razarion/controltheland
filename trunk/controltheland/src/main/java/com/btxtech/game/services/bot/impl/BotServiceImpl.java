@@ -14,7 +14,6 @@
 package com.btxtech.game.services.bot.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
@@ -25,10 +24,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,8 +34,6 @@ import java.util.Map;
  */
 @Component(value = "botService")
 public class BotServiceImpl implements BotService {
-    @Autowired
-    private BaseService baseService;
     @Autowired
     private CrudRootServiceHelper<DbBotConfig> dbBotConfigCrudServiceHelper;
     @Autowired
@@ -78,46 +72,15 @@ public class BotServiceImpl implements BotService {
         }
     }
 
-    private void killBot(DbBotConfig botConfig) {
-        BotRunner botRunner;
-        synchronized (botRunners) {
-            botRunner = botRunners.remove(botConfig);
-        }
-        if (botRunner == null) {
-            throw new IllegalArgumentException("Can not stop bot. No such bot " + botConfig.getName());
-        }
-
-        botRunner.kill();
-    }
-
     @Override
     public void activate() {
-        List<DbBotConfig> newDbBotConfigs = new ArrayList<DbBotConfig>();
-        Collection<DbBotConfig> dbBotConfigs = dbBotConfigCrudServiceHelper.readDbChildren();
-        for (DbBotConfig botConfig : dbBotConfigs) {
-            BotRunner botRunner = botRunners.get(botConfig);
-            if (botRunner != null) {
-                // TODO botRunner.synchronize(botConfig);
-            } else {
-                newDbBotConfigs.add(botConfig);
-            }
+        // Kill all bots
+        for (BotRunner botRunner : botRunners.values()) {
+            botRunner.kill();
         }
+        botRunners.clear();
 
-        // Start new bots
-        for (DbBotConfig botConfig : newDbBotConfigs) {
-            try {
-                startBot(botConfig);
-            } catch (Exception e) {
-                log.error("", e);
-            }
-        }
-
-        // Remove old bots
-        List<DbBotConfig> oldDbBotConfigs = new ArrayList<DbBotConfig>(botRunners.keySet());
-        oldDbBotConfigs.removeAll(dbBotConfigs);
-        for (DbBotConfig botConfig : oldDbBotConfigs) {
-            killBot(botConfig);
-        }
+        start();
     }
 
     public BotRunner getBotRunner(DbBotConfig dbBotConfig) {
@@ -126,13 +89,13 @@ public class BotServiceImpl implements BotService {
 
     @Override
     public boolean isInRealm(Index point) {
-       synchronized (botRunners) {
-           for (BotRunner botRunner : botRunners.values()) {
-               if(botRunner.isInRealm(point)) {
-                   return true;
-               }
-           }
-       }
+        synchronized (botRunners) {
+            for (BotRunner botRunner : botRunners.values()) {
+                if (botRunner.isInRealm(point)) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 }

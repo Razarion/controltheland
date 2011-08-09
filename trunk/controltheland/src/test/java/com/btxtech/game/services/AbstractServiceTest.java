@@ -35,6 +35,7 @@ import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
+import com.btxtech.game.services.bot.DbBotItemConfig;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBuilderType;
@@ -1171,26 +1172,25 @@ abstract public class AbstractServiceTest {
 
     // ------------------- Setup minimal bot --------------------
 
-    protected DbBotConfig setupMinimalBot(Rectangle realm, Rectangle core) {
-        throw new UnsupportedOperationException();
-        /*  DbBotConfig dbBotConfig = botService.getDbBotConfigCrudServiceHelper().createDbChild();
-      dbBotConfig.setActionDelay(10);
-      dbBotConfig.setRealm(realm);
-      dbBotConfig.setCore(core);
-      dbBotConfig.setCoreSuperiority(2);
-      dbBotConfig.setRealmSuperiority(1);
-      DbBotItemConfig fundamental = dbBotConfig.getBaseFundamentalCrudServiceHelper().createDbChild();
-      fundamental.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
-      fundamental.setCount(1);
-      DbBotItemConfig baseBuildup = dbBotConfig.getBotItemCrud().createDbChild();
-      baseBuildup.setBaseItemType(itemService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
-      baseBuildup.setCount(1);
-      DbBotItemConfig defence = dbBotConfig.getDefenceCrudServiceHelper().createDbChild();
-      defence.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
-      defence.setCount(1);
-      botService.getDbBotConfigCrudServiceHelper().updateDbChild(dbBotConfig);
-      botService.activate();
-      return dbBotConfig; */
+    protected DbBotConfig setupMinimalBot(Rectangle realm) {
+        DbBotConfig dbBotConfig = botService.getDbBotConfigCrudServiceHelper().createDbChild();
+        dbBotConfig.setActionDelay(10);
+        dbBotConfig.setRealm(realm);
+        DbBotItemConfig builder = dbBotConfig.getBotItemCrud().createDbChild();
+        builder.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        builder.setCount(1);
+        builder.setCreateDirectly(true);
+        builder.setRegion(realm);
+        DbBotItemConfig factory = dbBotConfig.getBotItemCrud().createDbChild();
+        factory.setBaseItemType(itemService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
+        factory.setCount(1);
+        factory.setRegion(realm);
+        DbBotItemConfig defence = dbBotConfig.getBotItemCrud().createDbChild();
+        defence.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        defence.setCount(2);
+        botService.getDbBotConfigCrudServiceHelper().updateDbChild(dbBotConfig);
+        botService.activate();
+        return dbBotConfig;
     }
 
     protected void waitForBotToBuildup(DbBotConfig dbBotConfig) throws InterruptedException, TimeoutException {

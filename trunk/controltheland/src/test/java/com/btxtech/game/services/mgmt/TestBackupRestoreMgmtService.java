@@ -237,7 +237,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbBotConfig dbBotConfig = setupMinimalBot(new Rectangle(4000, 4000, 3000, 3000), new Rectangle(5000, 5000, 1000, 1000));
+        DbBotConfig dbBotConfig = setupMinimalBot(new Rectangle(4000, 4000, 3000, 3000));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -246,7 +246,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertEquals(1, baseService.getBases().size());
-        Assert.assertEquals(3, baseService.getBases().get(0).getItems().size());
+        Assert.assertEquals(4, baseService.getBases().get(0).getItems().size());
         Assert.assertTrue(baseService.getBases().get(0).getUserState().isBot());
         Assert.assertEquals(0, userService.getAllUserStates().size());
         Assert.assertEquals(1, userService.getAllBotUserStates().size());
@@ -256,7 +256,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        assertBackupSummery(1, 3, 1, 1);
+        assertBackupSummery(1, 4, 1, 1);
 
         List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
         mgmtService.restore(backupSummaries.get(0).getDate());
@@ -264,7 +264,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         Assert.assertTrue(baseService.getBases().get(0).getUserState().isBot());
         Assert.assertEquals(0, userService.getAllUserStates().size());
         Assert.assertEquals(1, userService.getAllBotUserStates().size());
-        Assert.assertEquals(3, baseService.getBases().get(0).getItems().size());
+        Assert.assertEquals(4, baseService.getBases().get(0).getItems().size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -276,14 +276,14 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        assertBackupSummery(2, 3, 1, 1);        
+        assertBackupSummery(2, 4, 1, 1);        
         backupSummaries = mgmtService.getBackupSummary();
         mgmtService.restore(backupSummaries.get(0).getDate());
         Assert.assertEquals(1, baseService.getBases().size());
         Assert.assertTrue(baseService.getBases().get(0).getUserState().isBot());
         Assert.assertEquals(0, userService.getAllUserStates().size());
         Assert.assertEquals(1, userService.getAllBotUserStates().size());
-        Assert.assertEquals(3, baseService.getBases().get(0).getItems().size());
+        Assert.assertEquals(4, baseService.getBases().get(0).getItems().size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }

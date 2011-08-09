@@ -272,4 +272,36 @@ public class TestBotItemContainer extends AbstractServiceTest {
         assertWholeItemCount(0);        
     }
 
+    @Test
+    @DirtiesContext
+    public void buildupWrongConfig() throws Exception {
+        configureMinimalGame();
+
+        Collection<DbBotItemConfig> dbBotItemConfigs = new ArrayList<DbBotItemConfig>();
+        DbBotItemConfig config1 = new DbBotItemConfig();
+        config1.setCount(1);
+        config1.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        config1.setRegion(new Rectangle(2000, 2000, 1000, 1000));
+        config1.setCreateDirectly(true);
+        dbBotItemConfigs.add(config1);
+        DbBotItemConfig config2 = new DbBotItemConfig();
+        config2.setCount(3);
+        config2.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        dbBotItemConfigs.add(config2);
+
+        BotItemContainer botItemContainer = (BotItemContainer) applicationContext.getBean("botItemContainer");
+        botItemContainer.init(dbBotItemConfigs);
+
+        UserState userState = userService.getUserState(new DbBotConfig());
+        Base base = baseService.createBotBase(userState, "Test Bot");
+        Assert.assertFalse(botItemContainer.isFulfilled(userState));
+
+        for (int i = 0; i < 50; i++) {
+            botItemContainer.buildup(base.getSimpleBase(), userState);
+            waitForActionServiceDone();
+        }
+
+        Assert.assertFalse(botItemContainer.isFulfilled(userState));
+    }
+
 }
