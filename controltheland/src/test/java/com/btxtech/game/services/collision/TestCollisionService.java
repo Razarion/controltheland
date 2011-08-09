@@ -34,8 +34,8 @@ public class TestCollisionService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
 
-        setupMinimalBot(new Rectangle(1, 1, 3000, 3000), new Rectangle(1000, 1000, 1000, 1000));
-        setupMinimalBot(new Rectangle(4000, 4000, 3000, 3000), new Rectangle(5000, 5000, 1000, 1000));
+        setupMinimalBot(new Rectangle(1, 1, 3000, 3000));
+        setupMinimalBot(new Rectangle(4000, 4000, 3000, 3000));
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

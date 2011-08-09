@@ -1,5 +1,6 @@
 package com.btxtech.game.wicket.uiservices.cms.impl;
 
+import com.btxtech.game.jsre.common.CmsPredefinedPageDoesNotExistException;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DataProviderInfo;
@@ -123,19 +124,28 @@ public class CmsUiServiceImpl implements CmsUiService {
     }
 
     private String getUrl4CmsPage(CmsUtil.CmsPredefinedPage predefinedType) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(WicketApplication.MOUNT_GAME_CMS);
-        builder.append('/');
-        builder.append(CmsPage.ID);
-        builder.append('/');
-        builder.append(cmsService.getPredefinedDbPage(predefinedType).getId());
-        return builder.toString();
+        try {
+            StringBuilder builder = new StringBuilder();
+            builder.append(WicketApplication.MOUNT_GAME_CMS);
+            builder.append('/');
+            builder.append(CmsPage.ID);
+            builder.append('/');
+            builder.append(cmsService.getPredefinedDbPage(predefinedType).getId());
+            return builder.toString();
+        } catch (CmsPredefinedPageDoesNotExistException e) {
+            log.error("", e);
+            return "";
+        }
     }
 
     @Override
     public PageParameters getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage predefinedType) {
         PageParameters pageParameters = new PageParameters();
-        pageParameters.put(CmsPage.ID, Integer.toString(cmsService.getPredefinedDbPage(predefinedType).getId()));
+        try {
+            pageParameters.put(CmsPage.ID, Integer.toString(cmsService.getPredefinedDbPage(predefinedType).getId()));
+        } catch (CmsPredefinedPageDoesNotExistException e) {
+            log.error("", e);
+        }
         return pageParameters;
     }
 

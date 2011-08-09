@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.cms.impl;
 
+import com.btxtech.game.jsre.common.CmsPredefinedPageDoesNotExistException;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbAds;
@@ -316,10 +317,10 @@ public class CmsServiceImpl implements CmsService {
     }
 
     @Override
-    public DbPage getPredefinedDbPage(CmsUtil.CmsPredefinedPage predefinedType) {
+    public DbPage getPredefinedDbPage(CmsUtil.CmsPredefinedPage predefinedType) throws CmsPredefinedPageDoesNotExistException {
         DbPage dbPage = predefinedDbPages.get(predefinedType);
         if (dbPage == null) {
-            throw new IllegalStateException("Predefined DbPage does not exist: " + predefinedType);
+            throw new CmsPredefinedPageDoesNotExistException(predefinedType);
         }
         return dbPage;
     }

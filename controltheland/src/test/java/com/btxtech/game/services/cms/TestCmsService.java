@@ -154,7 +154,7 @@ public class TestCmsService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void testPages() {
+    public void testPages() throws Exception {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
@@ -945,7 +945,7 @@ public class TestCmsService extends AbstractServiceTest {
 
         Assert.assertEquals("qaywsxedc", contentService.getDynamicHtml(dbContentDynamicHtml.getId()));
     }
-    
+
     @Test
     @DirtiesContext
     public void test2DynamicHtml() {

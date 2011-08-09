@@ -13,6 +13,7 @@
 
 package com.btxtech.game.wicket.pages.cms;
 
+import com.btxtech.game.jsre.common.CmsPredefinedPageDoesNotExistException;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.CmsService;
 import com.btxtech.game.services.cms.DbPage;
@@ -62,8 +63,12 @@ public class CmsPage extends WebPage implements IHeaderContributor {
                     pageId = pageParameters.getInt(ID);
                     dbPage = cmsService.getPage(pageId);
                 } else {
-                    dbPage = cmsService.getPredefinedDbPage(CmsUtil.CmsPredefinedPage.HOME);
-                    pageId = dbPage.getId();
+                    try {
+                        dbPage = cmsService.getPredefinedDbPage(CmsUtil.CmsPredefinedPage.HOME);
+                        pageId = dbPage.getId();
+                    } catch (CmsPredefinedPageDoesNotExistException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
                 return dbPage;
             }

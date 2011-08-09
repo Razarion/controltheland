@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.cms;
 
+import com.btxtech.game.jsre.common.CmsPredefinedPageDoesNotExistException;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 
@@ -57,7 +58,7 @@ public interface CmsService {
 
     boolean hasPredefinedDbPage(CmsUtil.CmsPredefinedPage predefinedType);
 
-    DbPage getPredefinedDbPage(CmsUtil.CmsPredefinedPage predefinedType);
+    DbPage getPredefinedDbPage(CmsUtil.CmsPredefinedPage predefinedType) throws CmsPredefinedPageDoesNotExistException;
 
     String getAdsCode();
 
