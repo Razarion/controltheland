@@ -621,13 +621,14 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public List<SyncBaseItem> getEnemyItems(SimpleBase simpleBase, Rectangle region) {
+    public List<SyncBaseItem> getEnemyItems(SimpleBase simpleBase, Rectangle region, boolean ignoreBot) {
         ArrayList<SyncBaseItem> clientBaseItems = new ArrayList<SyncBaseItem>();
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
-                if (syncItem instanceof SyncBaseItem &&
-                        !((SyncBaseItem) syncItem).getBase().equals(simpleBase) &&
-                        region.contains(syncItem.getPosition())) {
+                if (syncItem instanceof SyncBaseItem
+                        && !((SyncBaseItem) syncItem).getBase().equals(simpleBase)
+                        && region.contains(syncItem.getPosition())
+                        && (!ignoreBot || !baseService.isBot(((SyncBaseItem) syncItem).getBase()))) {
                     clientBaseItems.add((SyncBaseItem) syncItem);
                 }
             }

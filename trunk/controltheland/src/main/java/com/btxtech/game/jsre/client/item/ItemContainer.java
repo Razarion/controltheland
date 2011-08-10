@@ -265,6 +265,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         }
     }
 
+    @Override
     public boolean baseObjectExists(SyncItem syncItem) {
         return items.containsKey(syncItem.getId());
     }
@@ -305,6 +306,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         return clientBaseItems;
     }
 
+    @Override
     public Collection<SyncBaseItem> getBaseItemsInRectangle(Rectangle rectangle, SimpleBase simpleBase, Collection<BaseItemType> baseItemTypeFilter) {
         ArrayList<SyncBaseItem> result = new ArrayList<SyncBaseItem>();
         for (ClientSyncItem clientSyncItem : items.values()) {
@@ -340,6 +342,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         return null;
     }
 
+    @Override
     public boolean hasBuildingsInRect(Rectangle rectangle) {
         for (ClientSyncItem clientSyncItem : items.values()) {
             if (clientSyncItem.isSyncBaseItem() &&
@@ -371,14 +374,16 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         return clientBaseItems;
     }
 
-    public List<SyncBaseItem> getEnemyItems(SimpleBase base, Rectangle region) {
+    @Override
+    public List<SyncBaseItem> getEnemyItems(SimpleBase base, Rectangle region, boolean ignoreBot) {
         ArrayList<SyncBaseItem> clientBaseItems = new ArrayList<SyncBaseItem>();
         for (ClientSyncItem clientSyncItem : items.values()) {
-            if (clientSyncItem.isSyncBaseItem() &&
-                    !clientSyncItem.getSyncBaseItem().getBase().equals(base) &&
-                    !orphanItems.containsKey(clientSyncItem.getSyncItem().getId()) &&
-                    !seeminglyDeadItems.containsKey(clientSyncItem.getSyncItem().getId()) &&
-                    region.contains(clientSyncItem.getSyncItem().getPosition())) {
+            if (clientSyncItem.isSyncBaseItem()
+                    && !clientSyncItem.getSyncBaseItem().getBase().equals(base)
+                    && !orphanItems.containsKey(clientSyncItem.getSyncItem().getId())
+                    && !seeminglyDeadItems.containsKey(clientSyncItem.getSyncItem().getId())
+                    && region.contains(clientSyncItem.getSyncItem().getPosition())
+                    && (!ignoreBot || !ClientServices.getInstance().getBaseService().isBot(clientSyncItem.getSyncBaseItem().getBase()))) {
                 clientBaseItems.add(clientSyncItem.getSyncBaseItem());
             }
         }
@@ -399,6 +404,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         return false;
     }
 
+    @Override
     public List<? extends SyncItem> getItems(ItemType itemType, SimpleBase simpleBase) {
         ArrayList<SyncItem> syncItems = new ArrayList<SyncItem>();
         for (ClientSyncItem clientSyncItem : items.values()) {
@@ -528,6 +534,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         return false;
     }
 
+    @Override
     public Map<BaseItemType, List<SyncBaseItem>> getItems4Base(SimpleBase simpleBase) {
         throw new UnsupportedOperationException();
     }

@@ -33,9 +33,12 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInf
 import com.btxtech.game.jsre.common.tutorial.HouseSpacePacket;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
 import com.btxtech.game.services.action.ActionService;
+import com.btxtech.game.services.base.Base;
+import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.bot.DbBotItemConfig;
+import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBuilderType;
@@ -63,6 +66,8 @@ import com.btxtech.game.services.tutorial.DbStepConfig;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.services.tutorial.DbTutorialConfig;
 import com.btxtech.game.services.tutorial.TutorialService;
+import com.btxtech.game.services.user.UserService;
+import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbItemTypeLimitation;
 import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.services.utg.DbResurrection;
@@ -203,6 +208,12 @@ abstract public class AbstractServiceTest {
     private ServerMarketService serverMarketServic;
     @Autowired
     private ResourceService resourceService;
+    @Autowired
+    private ServerServices serverServices;
+    @Autowired
+    private BaseService baseService;
+    @Autowired
+    private UserService userService;
     private SessionHolder sessionHolder;
     private MockHttpServletRequest mockHttpServletRequest;
     private MockHttpServletResponse mockHttpServletResponse;
@@ -216,6 +227,22 @@ abstract public class AbstractServiceTest {
 
     protected HibernateTemplate getHibernateTemplate() {
         return hibernateTemplate;
+    }
+
+    // ---------------------- Base -----------------------
+
+    protected Base createBase(int startItem) throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        UserState userState = userService.getUserState();
+        userGuidanceService.promote(userState, TEST_LEVEL_3_REAL_ID);
+        Base base= baseService.createNewBase(userState,
+                itemService.getDbBaseItemType(startItem),
+                territoryService.getTerritory(TEST_NOOB_TERRITORY_ID),
+                100);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+        return base;
     }
 
     // ------------------- Sync Items --------------------
@@ -242,6 +269,10 @@ abstract public class AbstractServiceTest {
         SyncResourceItem syncResourceItem = new SyncResourceItem(id, null, (ResourceType) itemService.getItemType(itemTypeId), services);
         syncResourceItem.setPosition(position);
         return syncResourceItem;
+    }
+
+    protected SyncBaseItem createSyncBaseItemAndAddItemService(int itemTypeId, Index position, SimpleBase simpleBase) throws Exception {
+        return (SyncBaseItem) itemService.createSyncObject(itemService.getItemType(itemTypeId), position, null, simpleBase, 0);
     }
 
     /**

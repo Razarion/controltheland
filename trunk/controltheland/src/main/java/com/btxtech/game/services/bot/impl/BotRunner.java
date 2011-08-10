@@ -45,6 +45,7 @@ public class BotRunner {
     private Thread botThread;
     private Log log = LogFactory.getLog(BotRunner.class);
     private BotItemContainer botItemContainer;
+    private IntruderHandler intruderHandler;
     private UserState userState;
     private final Object syncObject = new Object();
 
@@ -89,6 +90,8 @@ public class BotRunner {
         synchronized (syncObject) {
             botItemContainer = (BotItemContainer) applicationContext.getBean("botItemContainer");
             botItemContainer.init(botConfig.getBotItemCrud().readDbChildren());
+            intruderHandler = (IntruderHandler) applicationContext.getBean("intruderHandler");
+            intruderHandler.init(botItemContainer, botConfig.getRealm());
         }
         if (base != null && baseService.isAlive(base.getSimpleBase())) {
             baseService.changeBotBaseName(base, botConfig.getName());
@@ -119,6 +122,7 @@ public class BotRunner {
                             checkBase();
                             synchronized (syncObject) {
                                 botItemContainer.buildup(base.getSimpleBase(), userState);
+                                intruderHandler.handleIntruders(base.getSimpleBase());
                             }
                             Thread.sleep(botConfig.getActionDelay());
                         } catch (InterruptedException e) {
