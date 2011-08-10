@@ -84,6 +84,21 @@ public class BotItemContainer {
         itemService.killSyncItems(new ArrayList<SyncItem>(botItems.keySet()));
     }
 
+    public BotSyncBaseItem getFirstIdleAttacker(SyncBaseItem target) {
+        int distance = Integer.MAX_VALUE;
+        BotSyncBaseItem attacker = null;
+        for (BotSyncBaseItem botSyncBaseItem : botItems.values()) {
+            if (botSyncBaseItem.isIdle() && botSyncBaseItem.isAbleToAttack(target.getBaseItemType())) {
+                int dist = botSyncBaseItem.getDistanceTo(target.getPosition());
+                if (dist < distance) {
+                    distance = dist;
+                    attacker = botSyncBaseItem;
+                }
+            }
+        }
+        return attacker;
+    }
+
     private void updateState(UserState userState) {
         Set<SyncBaseItem> newItems = getItems(userState);
         newItems.removeAll(botItems.keySet());
@@ -118,10 +133,10 @@ public class BotItemContainer {
 
     private Set<SyncBaseItem> getItems(UserState userState) {
         Base base = baseService.getBase(userState);
-        if (base == null) {
-            return Collections.emptySet();
+        if (base != null) {
+            return new HashSet<SyncBaseItem>(base.getItems());
         } else {
-            return new HashSet<SyncBaseItem>(baseService.getBase(userState).getItems());
+            return Collections.emptySet();
         }
     }
 
@@ -194,18 +209,4 @@ public class BotItemContainer {
         return null;
     }
 
-    /* private BotSyncBaseItem getFirstIdleAttacker(SyncBaseItem target) {
-       int distance = Integer.MAX_VALUE;
-       BotSyncBaseItem result = null;
-       for (BotSyncBaseItem botSyncBaseItem : botItems.values()) {
-           if (botSyncBaseItem.isIdle() && botSyncBaseItem.isAbleToAttack(target.getBaseItemType())) {
-               int dist = botSyncBaseItem.getDistanceTo(target.getPosition());
-               if (dist < distance) {
-                   distance = dist;
-                   result = botSyncBaseItem;
-               }
-           }
-       }
-       return result;
-   } */
 }

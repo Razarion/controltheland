@@ -1,8 +1,11 @@
 package com.btxtech.game.services.bot;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.impl.BotRunner;
 import com.btxtech.game.services.item.ItemService;
@@ -170,5 +173,38 @@ public class TestBotRunner extends AbstractServiceTest {
             Thread.sleep(100);
         }
     }
-    
+
+    @Test
+    @DirtiesContext
+    public void attack() throws Exception {
+        configureMinimalGame();
+
+        Base base = createBase(TEST_START_BUILDER_ITEM_ID);
+
+        DbBotConfig dbBotConfig = new DbBotConfig();
+        dbBotConfig.init(userService);
+        dbBotConfig.setActionDelay(10);
+        dbBotConfig.setRealm(new Rectangle(0, 0, 4000, 4000));
+        DbBotItemConfig config1 = dbBotConfig.getBotItemCrud().createDbChild();
+        config1.setCount(1);
+        config1.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        config1.setRegion(new Rectangle(0, 0, 1000, 1000));
+        config1.setCreateDirectly(true);
+
+        BotRunner botRunner = (BotRunner) applicationContext.getBean("botRunner");
+        botRunner.start(dbBotConfig);
+
+        waitForBotRunner(botRunner);
+        assertWholeItemCount(2);
+
+        SyncBaseItem syncBaseItem2 = createSyncBaseItemAndAddItemService(TEST_START_BUILDER_ITEM_ID, new Index(2000, 2000), base.getSimpleBase());
+        Assert.assertTrue(syncBaseItem2.isAlive());
+
+        Thread.sleep(15);
+        waitForActionServiceDone();
+
+        Assert.assertFalse(syncBaseItem2.isAlive());
+    }
+
+
 }
