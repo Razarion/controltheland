@@ -13,6 +13,9 @@
 
 package com.btxtech.game.services.item.itemType;
 
+import com.btxtech.game.services.common.ContentProvider;
+import com.btxtech.game.services.common.ReadonlyCollectionContentProvider;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Set;
@@ -57,6 +60,10 @@ public class DbFactoryType implements Serializable {
 
     public void setAbleToBuild(Set<DbBaseItemType> ableToBuild) {
         this.ableToBuild = ableToBuild;
+    }
+
+    public ContentProvider<DbBaseItemType> getAbleToBuildCrud() {
+        return new ReadonlyCollectionContentProvider<DbBaseItemType>(ableToBuild);
     }
 
     @Override

@@ -445,7 +445,6 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
         tester.assertInvisible("menu:bottom");
-        tester.debugComponentTrees();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -490,7 +489,6 @@ public class TestCmsService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         tester.startPage(CmsPage.class);
-        tester.debugComponentTrees();
         tester.assertLabel("menu:bottom:link:label", "Hallo Galli");
         tester.assertInvisible("menu:bottom:link:image");
         endHttpRequestAndOpenSessionInViewFilter();
@@ -510,7 +508,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbPage1.setContentAndAccessWrites(dbContentList);
         dbContentList.setRowsPerPage(5);
         dbContentList.setSpringBeanName("contentService");
-        dbContentList.setContentProviderGetter("getBlogEntryCrudRootServiceHelper");
+        dbContentList.setContentProviderGetter("blogEntryCrudRootServiceHelper");
 
         CrudListChildServiceHelper<DbContent> columnCrud = dbContentList.getColumnsCrud();
         DbContentContainer dbContentContentContainer = (DbContentContainer) columnCrud.createDbChild(DbContentContainer.class);
@@ -566,7 +564,7 @@ public class TestCmsService extends AbstractServiceTest {
         DbContentList cacheContentList = (DbContentList) cachePage.getContent();
 
         Assert.assertEquals("contentService", cacheContentList.getSpringBeanName());
-        Assert.assertEquals("getBlogEntryCrudRootServiceHelper", cacheContentList.getContentProviderGetter());
+        Assert.assertEquals("blogEntryCrudRootServiceHelper", cacheContentList.getContentProviderGetter());
         Assert.assertEquals(5, (int) cacheContentList.getRowsPerPage());
 
         endHttpRequestAndOpenSessionInViewFilter();
@@ -608,7 +606,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbContentList.setWriteRestricted(DbContent.Access.USER);
         dbContentList.setRowsPerPage(5);
         dbContentList.setSpringBeanName("contentService");
-        dbContentList.setContentProviderGetter("getBlogEntryCrudRootServiceHelper");
+        dbContentList.setContentProviderGetter("blogEntryCrudRootServiceHelper");
 
         CrudListChildServiceHelper<DbContent> columnCrud = dbContentList.getColumnsCrud();
         DbContentContainer dbContentContentContainer = (DbContentContainer) columnCrud.createDbChild(DbContentContainer.class);
@@ -692,7 +690,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbPage1.setContentAndAccessWrites(dbContentList);
         dbContentList.setRowsPerPage(5);
         dbContentList.setSpringBeanName("contentService");
-        dbContentList.setContentProviderGetter("getBlogEntryCrudRootServiceHelper");
+        dbContentList.setContentProviderGetter("blogEntryCrudRootServiceHelper");
 
         CrudListChildServiceHelper<DbContent> columnCrud = dbContentList.getColumnsCrud();
         DbContentContainer dbContentContentContainer = (DbContentContainer) columnCrud.createDbChild(DbContentContainer.class);
@@ -765,7 +763,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbPage1.setContentAndAccessWrites(dbContentList);
         dbContentList.setRowsPerPage(5);
         dbContentList.setSpringBeanName("contentService");
-        dbContentList.setContentProviderGetter("getWikiSectionCrudRootServiceHelper");
+        dbContentList.setContentProviderGetter("wikiSectionCrudRootServiceHelper");
         dbContentList.setWriteRestricted(DbContent.Access.REGISTERED_USER);
 
         CrudListChildServiceHelper<DbContent> columnCrud = dbContentList.getColumnsCrud();
@@ -1042,7 +1040,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbPage1.setContentAndAccessWrites(dbContentList);
         dbContentList.setRowsPerPage(5);
         dbContentList.setSpringBeanName("marketService");
-        dbContentList.setContentProviderGetter("getAvailableCrud");
+        dbContentList.setContentProviderGetter("availableCrud");
 
         DbContentContainer dbContentContainer = (DbContentContainer) dbContentList.getColumnsCrud().createDbChild(DbContentContainer.class);
         DbExpressionProperty image = (DbExpressionProperty) dbContentContainer.getContentCrud().createDbChild(DbExpressionProperty.class);
@@ -1139,7 +1137,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbContentList.setCreateRestricted(DbContent.Access.USER);
         dbContentList.setDeleteRestricted(DbContent.Access.USER);
         dbContentList.setSpringBeanName("forumService");
-        dbContentList.setContentProviderGetter("getSubForumCrud");
+        dbContentList.setContentProviderGetter("subForumCrud");
 
         DbContentContainer subForums = (DbContentContainer) dbContentList.getColumnsCrud().createDbChild(DbContentContainer.class);
         DbExpressionProperty name = (DbExpressionProperty) subForums.getContentCrud().createDbChild(DbExpressionProperty.class);
@@ -1148,7 +1146,7 @@ public class TestCmsService extends AbstractServiceTest {
         content.setExpression("content");
         DbContentList categories = (DbContentList) subForums.getContentCrud().createDbChild(DbContentList.class);
         categories.setName("Categories");
-        categories.setContentProviderGetter("getCategoryCrud");
+        categories.setContentProviderGetter("categoryCrud");
 
         DbExpressionProperty nameCat = (DbExpressionProperty) categories.getColumnsCrud().createDbChild(DbExpressionProperty.class);
         nameCat.setExpression("name");
@@ -1168,7 +1166,7 @@ public class TestCmsService extends AbstractServiceTest {
         DbContentList threadList = new DbContentList();
         threadList.setParent(categoryDetailRow);
         threadList.init(userService);
-        threadList.setContentProviderGetter("getForumThreadCrud");
+        threadList.setContentProviderGetter("forumThreadCrud");
         categoryDetailRow.setDbContent(threadList);
         DbExpressionProperty threadColumnName = (DbExpressionProperty) threadList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
         threadColumnName.setExpression("name");
@@ -1201,7 +1199,7 @@ public class TestCmsService extends AbstractServiceTest {
         DbContentList postList = new DbContentList();
         postList.setParent(postsNameRow);
         postList.init(userService);
-        postList.setContentProviderGetter("getPostCrud");
+        postList.setContentProviderGetter("postCrud");
         postsNameRow.setDbContent(postList);
         DbExpressionProperty postContent = (DbExpressionProperty) postList.getColumnsCrud().createDbChild(DbExpressionProperty.class);
         postContent.setExpression("content");
@@ -1699,7 +1697,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbContentList.init(userService);
         dbPage.setContentAndAccessWrites(dbContentList);
         dbContentList.setSpringBeanName("userGuidanceService");
-        dbContentList.setContentProviderGetter("getDbLevelCrudServiceHelper");
+        dbContentList.setContentProviderGetter("dbLevelCrudServiceHelper");
 
         CrudListChildServiceHelper<DbContent> columnCrud = dbContentList.getColumnsCrud();
         DbExpressionProperty column = (DbExpressionProperty) columnCrud.createDbChild(DbExpressionProperty.class);
@@ -1752,7 +1750,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbContentListItems.setParent(dbContentRow);
         dbContentRow.setDbContent(dbContentListItems);
         dbContentListItems.init(userService);
-        dbContentListItems.setContentProviderGetter("getDbItemTypeLimitationCrudServiceHelper");
+        dbContentListItems.setContentProviderGetter("dbItemTypeLimitationCrudServiceHelper");
         columnCrud = dbContentListItems.getColumnsCrud();
         DbExpressionProperty name = (DbExpressionProperty) columnCrud.createDbChild(DbExpressionProperty.class);
         name.setExpression("dbBaseItemType.name");
@@ -1810,6 +1808,107 @@ public class TestCmsService extends AbstractServiceTest {
         // unpredictable order tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:3:cells:1:cell", "TestContainerItem");
         tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:3:cells:2:cell", "10");
         tester.assertVisible("form:content:table:rows:3:cells:2:cell:table:rows:3:cells:3:cell:image");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void testItemTypes() throws Exception {
+        configureMinimalGame();
+
+        // Setup CMS content
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.HOME);
+        dbPage.setName("Home");
+
+        DbContentList dbContentList = new DbContentList();
+        dbContentList.setRowsPerPage(5);
+        dbContentList.init(userService);
+        dbPage.setContentAndAccessWrites(dbContentList);
+        dbContentList.setSpringBeanName("itemService");
+        dbContentList.setContentProviderGetter("dbItemTypeCrud");
+
+        CrudListChildServiceHelper<DbContent> columnCrud = dbContentList.getColumnsCrud();
+        DbExpressionProperty column = (DbExpressionProperty) columnCrud.createDbChild(DbExpressionProperty.class);
+        column.setExpression("name");
+        DbContentDetailLink detailLink = (DbContentDetailLink) columnCrud.createDbChild(DbContentDetailLink.class);
+        detailLink.setName("Details");
+
+        CrudChildServiceHelper<DbContentBook> contentBookCrud = dbContentList.getContentBookCrud();
+        DbContentBook dbContentBook = contentBookCrud.createDbChild();
+        dbContentBook.setClassName("com.btxtech.game.services.item.itemType.DbBaseItemType");
+        CrudListChildServiceHelper<DbContentRow> rowCrud = dbContentBook.getRowCrud();
+
+        DbContentRow dbContentRow = rowCrud.createDbChild();
+        dbContentRow.setName("Name");
+        DbExpressionProperty expProperty = new DbExpressionProperty();
+        expProperty.setExpression("name");
+        expProperty.setParent(dbContentRow);
+        dbContentRow.setDbContent(expProperty);
+
+        dbContentRow = rowCrud.createDbChild();
+        dbContentRow.setName("Progress");
+        expProperty = new DbExpressionProperty();
+        expProperty.setParent(dbContentRow);
+        expProperty.setExpression("dbFactoryType.progress");
+        dbContentRow.setDbContent(expProperty);
+
+        dbContentRow = rowCrud.createDbChild();
+        dbContentRow.setName("Able to build");
+        DbContentList ableToBuild = new DbContentList();
+        ableToBuild.init(userService);
+        ableToBuild.setContentProviderGetter("dbFactoryType.ableToBuildCrud");
+        ableToBuild.setParent(dbContentRow);
+        dbContentRow.setDbContent(ableToBuild);
+
+        CrudListChildServiceHelper<DbContent> ableToBuildColumnCrud = ableToBuild.getColumnsCrud();
+        DbExpressionProperty ableToBuildName = (DbExpressionProperty) ableToBuildColumnCrud.createDbChild(DbExpressionProperty.class);
+        ableToBuildName.setExpression("name");
+
+
+        pageCrud.updateDbChild(dbPage);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertLabel("form:content:table:rows:5:cells:1:cell", "TestFactoryItem");
+        tester.assertLabel("form:content:table:rows:5:cells:2:cell:link:label", "Details");
+        // Click link
+        tester.clickLink("form:content:table:rows:5:cells:2:cell:link");
+        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "TestFactoryItem");
+        tester.assertLabel("form:content:table:rows:2:cells:2:cell", "1000.0");
+        tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:1:cells:1:cell", "TEST_HARVESTER_ITEM");
+        tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:2:cells:1:cell", "TestAttackItem");
+        tester.assertLabel("form:content:table:rows:3:cells:2:cell:table:rows:3:cells:1:cell", "TestContainerItem");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify if null property
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        tester.startPage(CmsPage.class);
+        tester.assertRenderedPage(CmsPage.class);
+        tester.assertLabel("form:content:table:rows:3:cells:1:cell", "TestAttackItem");
+        tester.assertLabel("form:content:table:rows:3:cells:2:cell:link:label", "Details");
+        // Click link
+        tester.clickLink("form:content:table:rows:3:cells:2:cell:link");
+        tester.assertLabel("form:content:table:rows:1:cells:2:cell", "TestAttackItem");
+        tester.assertLabel("form:content:table:rows:2:cells:2:cell", "-");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -2296,7 +2395,7 @@ public class TestCmsService extends AbstractServiceTest {
         dbContentContainer.init(userService);
         DbContentList mailList = (DbContentList) dbContentContainer.getContentCrud().createDbChild(DbContentList.class);
         mailList.setSpringBeanName("messengerService");
-        mailList.setContentProviderGetter("getUserMailCrud");
+        mailList.setContentProviderGetter("userMailCrud");
         DbContentBooleanExpressionImage readImage = (DbContentBooleanExpressionImage) mailList.getColumnsCrud().createDbChild(DbContentBooleanExpressionImage.class);
         readImage.setExpression("read");
         readImage.setTrueImage(dbCmsImage1);
