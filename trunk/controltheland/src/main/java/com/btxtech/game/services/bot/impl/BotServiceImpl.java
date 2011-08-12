@@ -16,9 +16,11 @@ package com.btxtech.game.services.bot.impl;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
+import com.btxtech.game.services.bot.DbBotItemConfig;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -52,10 +54,21 @@ public class BotServiceImpl implements BotService {
     public void start() {
         for (DbBotConfig botConfig : dbBotConfigCrudServiceHelper.readDbChildren()) {
             try {
+                hibernateInitialize(botConfig);
+                Hibernate.initialize(botConfig);
+                Hibernate.initialize(botConfig.getBotItemCrud().readDbChildren());
                 startBot(botConfig);
             } catch (Exception e) {
                 log.error("", e);
             }
+        }
+    }
+
+    private void hibernateInitialize(DbBotConfig botConfig) {
+        Hibernate.initialize(botConfig);
+        for (DbBotItemConfig dbBotItemConfig : botConfig.getBotItemCrud().readDbChildren()) {
+            Hibernate.initialize(dbBotItemConfig);
+            Hibernate.initialize(dbBotItemConfig.getBaseItemType());
         }
     }
 

@@ -14,6 +14,7 @@
 package com.btxtech.game.services.mgmt;
 
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+
 import java.io.File;
 import java.util.Date;
 import java.util.List;
@@ -42,11 +43,13 @@ public interface MgmtService {
 
     void restore(final Date date) throws NoSuchItemTypeException;
 
+    void deleteBackupEntry(final Date date) throws NoSuchItemTypeException;
+
     boolean isTestMode();
 
-	boolean isNoGameEngine();
+    boolean isNoGameEngine();
 
-	StartupData getStartupData();
+    StartupData getStartupData();
 
     StartupData readStartupData();
 

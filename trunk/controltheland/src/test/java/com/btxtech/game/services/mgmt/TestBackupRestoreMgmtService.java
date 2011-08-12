@@ -189,7 +189,48 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         verifyUserStates(newUserStates, oldUserStates);
         verifyBases(newBases, oldBases);
         endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession(); 
+        endHttpSession();
+
+        // Delete backup
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        backupSummaries = mgmtService.getBackupSummary();
+        Assert.assertEquals(3, backupSummaries.size());        
+        mgmtService.deleteBackupEntry(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        backupSummaries = mgmtService.getBackupSummary();
+        Assert.assertEquals(2, backupSummaries.size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Delete backup
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        backupSummaries = mgmtService.getBackupSummary();
+        Assert.assertEquals(2, backupSummaries.size());
+        mgmtService.deleteBackupEntry(backupSummaries.get(0).getDate());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        backupSummaries = mgmtService.getBackupSummary();
+        Assert.assertEquals(1, backupSummaries.size());
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        newBases = baseService.getBases();
+        newUserStates = userService.getAllUserStates();
+        Assert.assertEquals(3, newBases.size());
+        Assert.assertEquals(3, newUserStates.size());
+        verifyUserStates(newUserStates, oldUserStates);
+        verifyBases(newBases, oldBases);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test

@@ -9,6 +9,7 @@ import com.btxtech.game.services.user.UserService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate3.SessionFactoryUtils;
 import org.springframework.test.annotation.DirtiesContext;
 
 /**
@@ -50,6 +51,30 @@ public class TestBotService extends AbstractServiceTest {
         Assert.assertFalse(botService.isInRealm(new Index(7002, 7002)));
         Assert.assertFalse(botService.isInRealm(new Index(8000, 8000)));
 
+    }
+
+    @Test
+    @DirtiesContext
+    public void testSystemActivate() throws Exception {
+        configureMinimalGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        DbBotConfig dbBotConfig = setupMinimalBot(new Rectangle(1, 1, 5000, 5000));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        SessionFactoryUtils.initDeferredClose(getHibernateTemplate().getSessionFactory());
+        try {
+            botService.activate();
+        } finally {
+            SessionFactoryUtils.processDeferredClose(getHibernateTemplate().getSessionFactory());
+        }
+
+
+        // Wait for bot to complete
+        waitForBotToBuildup(dbBotConfig);
+        assertWholeItemCount(4);
     }
 
     @Test

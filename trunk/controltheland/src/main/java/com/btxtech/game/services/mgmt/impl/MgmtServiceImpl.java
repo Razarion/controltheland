@@ -143,10 +143,10 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         final DbViewDTO dbViewDTO = new DbViewDTO();
         readonlyJdbcTemplate.setMaxRows(1000);
         readonlyJdbcTemplate.setQueryTimeout(30000);
-        readonlyJdbcTemplate.query(sql, new RowMapper() {
+        readonlyJdbcTemplate.query(sql, new RowMapper<Void>() {
 
             @Override
-            public Object mapRow(ResultSet resultSet, int i) throws SQLException {
+            public Void mapRow(ResultSet resultSet, int i) throws SQLException {
                 dbViewDTO.newRow();
                 ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
                 int columnCount = resultSetMetaData.getColumnCount();
@@ -166,8 +166,8 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     @Override
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveQuery(final String query) {
-        hibernateTemplate.execute(new HibernateCallback() {
-            public Object doInHibernate(Session session) {
+        hibernateTemplate.execute(new HibernateCallback<Void>() {
+            public Void doInHibernate(Session session) {
                 SavedQuery savedQuery = new SavedQuery();
                 savedQuery.setQuery(query);
                 session.saveOrUpdate(savedQuery);
@@ -196,8 +196,8 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     @Override
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void removeSavedQuery(final String query) {
-        hibernateTemplate.execute(new HibernateCallback() {
-            public Object doInHibernate(Session session) {
+        hibernateTemplate.execute(new HibernateCallback<Void>() {
+            public Void doInHibernate(Session session) {
                 Criteria criteria = session.createCriteria(SavedQuery.class);
                 criteria.add(Restrictions.like("query", query));
                 List list = criteria.list();
@@ -279,6 +279,26 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
         genericItemConverter.clear();
     }
 
+    @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
+    @Transactional
+    public void deleteBackupEntry(final Date date) throws NoSuchItemTypeException {
+        @SuppressWarnings("unchecked")
+        List<BackupEntry> list = (List<BackupEntry>) hibernateTemplate.execute(new HibernateCallback() {
+            public Object doInHibernate(Session session) {
+                Criteria criteria = session.createCriteria(BackupEntry.class);
+                criteria.add(Restrictions.eq("timeStamp", date));
+                return criteria.list();
+            }
+        });
+        if (list.isEmpty()) {
+            throw new IllegalArgumentException("No entry for " + date);
+        }
+        BackupEntry backupEntry = list.get(0);
+        hibernateTemplate.delete(backupEntry);
+        log.info("Backup entry deleted: " + date);
+    }
+
     public String getLogFile(String name) {
         try {
             File logFile = new File(LOG_DIR, name);
@@ -299,9 +319,9 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
 
     @Override
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
-    	if(noGameEngine) {
-    		return;
-    	}
+        if (noGameEngine) {
+            return;
+        }
         SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
         try {
             if (applicationEvent instanceof ContextRefreshedEvent &&
@@ -343,7 +363,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
             if (!testMode) {
                 LogManager.getLogger("com.btxtech").setLevel(Level.INFO);
             }
-            noGameEngine = System.getProperty(TEST_MODE_PROPERTY) != null && Boolean.parseBoolean(System.getProperty(TEST_MODE_NO_GAME_ENGINE)); 
+            noGameEngine = System.getProperty(TEST_MODE_PROPERTY) != null && Boolean.parseBoolean(System.getProperty(TEST_MODE_NO_GAME_ENGINE));
             startupData = readStartupData();
         } catch (Throwable t) {
             log.error("", t);
@@ -383,13 +403,13 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     }
 
     @Override
-   public boolean isTestMode() {
+    public boolean isTestMode() {
         return testMode;
     }
 
     @Override
-	public boolean isNoGameEngine() {
-		return noGameEngine;
-	}
+    public boolean isNoGameEngine() {
+        return noGameEngine;
+    }
 }
 

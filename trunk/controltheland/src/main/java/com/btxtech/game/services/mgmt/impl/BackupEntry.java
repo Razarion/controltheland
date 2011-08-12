@@ -34,10 +34,10 @@ public class BackupEntry {
     @Id
     @GeneratedValue
     private Integer id;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "backupEntry", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "backupEntry", fetch = FetchType.LAZY)
     private Set<GenericItem> items;
     private Date timeStamp;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "backupEntry", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "backupEntry", fetch = FetchType.LAZY)
     private Set<DbUserState> userStates;
 
     @Override

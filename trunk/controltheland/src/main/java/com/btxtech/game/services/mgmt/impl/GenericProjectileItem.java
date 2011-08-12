@@ -42,7 +42,7 @@ import org.hibernate.annotations.TypeDefs;
 @TypeDefs({@TypeDef(name = "index", typeClass = IndexUserType.class)})
 @DiscriminatorValue("PROJECTILE")
 public class GenericProjectileItem extends GenericItem{
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbBase base;
     @Type(type = "index")
     @Columns(columns = {@Column(name = "xUnloadPos"), @Column(name = "yUnloadPos")})

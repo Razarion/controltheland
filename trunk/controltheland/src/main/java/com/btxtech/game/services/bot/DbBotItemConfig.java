@@ -48,7 +48,7 @@ public class DbBotItemConfig implements CrudChild<DbBotConfig>, Serializable {
     private int count;
     private boolean createDirectly;
     @Type(type = "rectangle")
-    @Columns(columns = {@Column(name = "coreRectX"), @Column(name = "coreRectY"), @Column(name = "coreRectWidth"), @Column(name = "coreRectHeight")})
+    @Columns(columns = {@Column(name = "regionX"), @Column(name = "regionY"), @Column(name = "regionWidth"), @Column(name = "regionHeight")})
     private Rectangle region;
     @ManyToOne
     private DbBotConfig parent;

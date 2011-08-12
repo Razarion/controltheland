@@ -36,7 +36,7 @@ public class DbUserItemTypeAccess {
     @Id
     @GeneratedValue
     private Integer id;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "BACKUP_USER_ITEM_TYPE_ACCESS_BOUGHT",
             joinColumns = @JoinColumn(name = "itemTypeAccessId"),
             inverseJoinColumns = @JoinColumn(name = "userItemTypeId")

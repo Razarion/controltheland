@@ -30,20 +30,8 @@
             <td><input wicket:id="actionDelay" type="text" size="6"></td>
         </tr>
         <tr>
-            <td bgcolor="#dadada">Core Region</td>
-            <td wicket:id="core"></td>
-        </tr>
-        <tr>
-            <td bgcolor="#dadada">Core Superiority</td>
-            <td><input wicket:id="coreSuperiority" type="text" size="6"></td>
-        </tr>
-        <tr>
             <td bgcolor="#dadada">Realm Region</td>
             <td wicket:id="realm"></td>
-        </tr>
-        <tr>
-            <td bgcolor="#dadada">Realm Superiority</td>
-            <td><input wicket:id="realmSuperiority" type="text" size="6"></td>
         </tr>
         <tr>
             <td bgcolor="#dadada">Bot Items</td>
@@ -52,11 +40,15 @@
                     <tr>
                         <th bgcolor="#dadada">Item Type</th>
                         <th bgcolor="#dadada">Count</th>
+                        <th bgcolor="#dadada">Create Directly</th>
+                        <th bgcolor="#dadada">Region</th>
                         <th bgcolor="#dadada">Delete</th>
                     </tr>
                     <tr wicket:id="botItems">
                         <td wicket:id="baseItemType"/>
                         <td><input type="text" wicket:id="count" size="6"></td>
+                        <td><input type="checkbox" wicket:id="createDirectly"></td>
+                        <td wicket:id="region"></td>
                         <td valign="center">
                             <input type="submit" value="Delete" wicket:id="delete"/>
                         </td>

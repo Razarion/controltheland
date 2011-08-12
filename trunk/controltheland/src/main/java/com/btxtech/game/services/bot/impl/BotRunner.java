@@ -104,6 +104,7 @@ public class BotRunner {
             if (base == null) {
                 base = baseService.createBotBase(userState, botConfig.getName());
             }
+            baseService.setBot(base.getSimpleBase(), true);            
         }
     }
 

@@ -13,15 +13,13 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
+import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.services.mgmt.BackupSummary;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.wicket.WebCommon;
-import java.text.SimpleDateFormat;
-import java.util.Iterator;
-import java.util.List;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -29,6 +27,13 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * User: beat
@@ -39,6 +44,7 @@ public class BackupRestore extends MgmtWebPage {
     @SpringBean
     private MgmtService mgmtService;
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(WebCommon.DATE_TIME_FORMAT_STRING);
+    private Collection<Date> toBeDeleted = new ArrayList<Date>();
 
     public BackupRestore() {
         setupBackup();
@@ -63,10 +69,41 @@ public class BackupRestore extends MgmtWebPage {
                         setResponsePage(new ConfirmRestorePage(baseItem.getModelObject()));
                     }
                 });
+                baseItem.add(new CheckBox("delete", new IModel<Boolean>() {
+
+                    @Override
+                    public Boolean getObject() {
+                        return false;
+                    }
+
+                    @Override
+                    public void setObject(Boolean delete) {
+                        if (delete) {
+                            toBeDeleted.add(baseItem.getModelObject().getDate());
+                        }
+                    }
+
+                    @Override
+                    public void detach() {
+                        toBeDeleted.clear();
+                    }
+                }));
+
             }
         };
         form.add(tileList);
-
+        form.add(new Button("delete") {
+            @Override
+            public void onSubmit() {
+                for (Date date : toBeDeleted) {
+                    try {
+                        mgmtService.deleteBackupEntry(date);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        });
     }
 
     private void setupBackup() {
@@ -100,7 +137,7 @@ public class BackupRestore extends MgmtWebPage {
 
         @Override
         public IModel<BackupSummary> model(BackupSummary object) {
-            return new Model(object);
+            return new Model<BackupSummary>(object);
         }
     }
 }
