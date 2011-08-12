@@ -459,6 +459,8 @@ public class CmsUiServiceImpl implements CmsUiService {
                 contentProvider = getContentProvider(beanIdPathElement);
             }
             return new ArrayList(contentProvider.readDbChildren());
+        } catch (NestedNullException e) {
+            return Collections.emptyList();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -466,25 +468,14 @@ public class CmsUiServiceImpl implements CmsUiService {
     }
 
     private ContentProvider getContentProvider(BeanIdPathElement beanIdPathElement, Object bean) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        for (Method method : bean.getClass().getMethods()) {
-            if (method.getName().equals(beanIdPathElement.getContentProviderGetter())) {
-                if (method.getParameterTypes().length == 1) {
-                    // UserService as parameter expected
-                    return (ContentProvider) method.invoke(bean, userService);
-                } else {
-                    return (ContentProvider) method.invoke(bean);
-                }
-            }
-        }
-        throw new NoSuchMethodException(beanIdPathElement.getContentProviderGetter() + " can not be found in " + bean);
+        return (ContentProvider)PropertyUtils.getProperty(bean, beanIdPathElement.getContentProviderGetter());
     }
 
     private ContentProvider getContentProvider(BeanIdPathElement beanIdPathElement) {
         try {
             if (beanIdPathElement.hasContentProviderGetter() && beanIdPathElement.hasSpringBeanName()) {
                 Object bean = applicationContext.getBean(beanIdPathElement.getSpringBeanName());
-                Method method = bean.getClass().getMethod(beanIdPathElement.getContentProviderGetter());
-                return (ContentProvider) method.invoke(bean);
+                return getContentProvider(beanIdPathElement, bean);
             } else if (beanIdPathElement.hasContentProviderGetter() && beanIdPathElement.hasBeanId() && beanIdPathElement.hasParent()) {
                 ContentProvider contentProvider = getContentProvider(beanIdPathElement.getParent());
                 Object bean = contentProvider.readDbChild(beanIdPathElement.getBeanId());

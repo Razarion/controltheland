@@ -13,8 +13,10 @@
 
 package com.btxtech.game.services.item.itemType;
 
+import com.btxtech.game.services.common.ContentProvider;
+import com.btxtech.game.services.common.ReadonlyCollectionContentProvider;
+
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -68,6 +70,10 @@ public class DbItemContainerType implements Serializable {
 
     public void setRange(int range) {
         this.range = range;
+    }
+
+    public ContentProvider<DbBaseItemType> getAbleToContainCrud() {
+        return new ReadonlyCollectionContentProvider<DbBaseItemType>(ableToContain);
     }
 
     @Override

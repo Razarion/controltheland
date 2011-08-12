@@ -13,10 +13,9 @@
 
 package com.btxtech.game.services.item.itemType;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import com.btxtech.game.services.common.ContentProvider;
+import com.btxtech.game.services.common.ReadonlyCollectionContentProvider;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,7 +26,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
-import org.hibernate.annotations.Cascade;
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * User: beat
@@ -162,6 +164,10 @@ public class DbWeaponType implements Serializable {
 
     public void setStretchMuzzleFlashToTarget(boolean stretchMuzzleFlashToTarget) {
         this.stretchMuzzleFlashToTarget = stretchMuzzleFlashToTarget;
+    }
+
+    public ContentProvider<DbBaseItemType> getAllowedItemTypeCrud() {
+        return new ReadonlyCollectionContentProvider<DbBaseItemType>(allowedItemTypes);
     }
 
     @Override
