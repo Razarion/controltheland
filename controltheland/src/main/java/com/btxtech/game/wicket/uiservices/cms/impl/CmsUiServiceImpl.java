@@ -66,6 +66,7 @@ import org.apache.wicket.protocol.http.WebRequest;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
 import java.lang.reflect.InvocationTargetException;
@@ -84,6 +85,7 @@ import java.util.Map;
  * Time: 16:55:27
  */
 @org.springframework.stereotype.Component("cmsUiService")
+@DependsOn("cmsService")
 public class CmsUiServiceImpl implements CmsUiService {
     public static final String REQUEST_TMP_CREATE_BEAN_ATTRIBUTES = "btxtech.game.tmpCreateBeanAttributes";
     private static final String CURRENT_PATH = ".";
