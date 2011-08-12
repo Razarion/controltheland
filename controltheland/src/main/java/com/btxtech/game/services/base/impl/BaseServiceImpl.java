@@ -43,7 +43,6 @@ import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.common.ReadonlyCollectionContentProvider;
-import com.btxtech.game.services.connection.Connection;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.connection.Session;
@@ -186,6 +185,11 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             sendBaseChangedPacket(BaseChangedPacket.Type.CREATED, base.getSimpleBase());
             return base;
         }
+    }
+
+    @Override
+    public void setBot(SimpleBase simpleBase, boolean bot) {
+        super.setBot(simpleBase, bot);
     }
 
     private void deleteBase(Base base) {

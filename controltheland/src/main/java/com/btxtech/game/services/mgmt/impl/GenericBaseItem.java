@@ -49,11 +49,11 @@ public class GenericBaseItem extends GenericItem {
     private Double reloadProgress;
     @Type(type = "path")
     private List<Index> pathToAbsoluteDestination;
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     private GenericBaseItem baseTarget;
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     private GenericResourceItem resourceTarget;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbBase base;
     private double buildup;
     private double angel;
@@ -62,13 +62,13 @@ public class GenericBaseItem extends GenericItem {
     private Index rallyPoint;
     private Boolean isUpgrading;
     private Double upgradeProgress;
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     private DbBaseItemType upgradingItemType;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     private GenericBaseItem containedIn;
-    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER, mappedBy = "containedIn")
+    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY, mappedBy = "containedIn")
     private Set<GenericBaseItem> containedItems;
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     private GenericBaseItem targetContainer;
     @Type(type = "index")
     @Columns(columns = {@Column(name = "xUnloadPos"), @Column(name = "yUnloadPos")})

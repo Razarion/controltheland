@@ -25,6 +25,7 @@ import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
 import com.btxtech.game.wicket.uiservices.RectanglePanel;
 import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -60,10 +61,7 @@ public class BotEditor extends MgmtWebPage {
         }));
         add(form);
         form.add(new TextField("actionDelay"));
-        form.add(new RectanglePanel("core"));
-        form.add(new TextField("coreSuperiority"));
         form.add(new RectanglePanel("realm"));
-        form.add(new TextField("realmSuperiority"));
 
         new CrudChildTableHelper<DbBotConfig, DbBotItemConfig>("botItems", null, "createBaseBuildupItem", false, form, false) {
             @Override
@@ -85,6 +83,8 @@ public class BotEditor extends MgmtWebPage {
             protected void extendedPopulateItem(final Item<DbBotItemConfig> item) {
                 item.add(new BaseItemTypePanel("baseItemType"));
                 item.add(new TextField("count"));
+                item.add(new CheckBox("createDirectly"));
+                item.add(new RectanglePanel("region"));
             }
         };
 

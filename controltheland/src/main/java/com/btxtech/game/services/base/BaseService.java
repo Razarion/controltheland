@@ -63,6 +63,8 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     Base createBotBase(UserState userState, String name);
 
+    void setBot(SimpleBase simpleBase, boolean bot);
+
     void continueBase();
 
     Base getBase(SyncBaseObject syncBaseObject);
@@ -93,5 +95,5 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     void onSessionTimedOut(UserState userState);
 
-    ContentProvider<BaseItemTypeCount> getBaseItems();    
+    ContentProvider<BaseItemTypeCount> getBaseItems();
 }

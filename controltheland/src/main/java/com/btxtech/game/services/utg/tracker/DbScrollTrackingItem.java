@@ -16,6 +16,7 @@ package com.btxtech.game.services.utg.tracker;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,6 +32,7 @@ public class DbScrollTrackingItem implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
+    private Date timeStamp;
     @Column(nullable = false)
     private long clientTimeStamp;
     @Column(nullable = false)
@@ -56,6 +58,7 @@ public class DbScrollTrackingItem implements Serializable {
         top = terrainScrollTracking.getTop();
         width = terrainScrollTracking.getWidth();
         height = terrainScrollTracking.getHeight();
+        timeStamp = new Date();        
     }
 
     public TerrainScrollTracking createScrollTrackingItem() {

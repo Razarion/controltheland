@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.util.Date;
 
 /**
  * User: beat
@@ -26,6 +27,7 @@ public class DbBrowserWindowTracking {
     private int scrollWidth;
     private int scrollHeight;
     private long clientTimeStamp;
+    private Date timeStamp;
 
     /**
      * Used by hibernate
@@ -42,6 +44,7 @@ public class DbBrowserWindowTracking {
         scrollWidth = browserWindowTracking.getScrollWidth();
         scrollHeight = browserWindowTracking.getScrollHeight();
         clientTimeStamp = browserWindowTracking.getClientTimeStamp();
+        timeStamp = new Date();
     }
 
     public BrowserWindowTracking createBrowserWindowTracking() {

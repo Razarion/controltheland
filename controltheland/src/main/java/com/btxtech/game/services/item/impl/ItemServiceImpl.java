@@ -56,6 +56,7 @@ import com.btxtech.game.services.utg.UserGuidanceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -520,11 +521,13 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         if (muzzleItemTypeImages.containsKey(dbItemType.getId())) {
             throw new IllegalArgumentException("Item Type Images already exits: " + dbItemType);
         }
+        Hibernate.initialize(dbItemType.getDbWeaponType().getDbMuzzleImage());
         muzzleItemTypeImages.put(dbItemType.getId(), dbItemType.getDbWeaponType().getDbMuzzleImage());
         // Sound
         if (muzzleItemTypeSounds.containsKey(dbItemType.getId())) {
             throw new IllegalArgumentException("Item Type sound already exits: " + dbItemType);
         }
+        Hibernate.initialize(dbItemType.getDbWeaponType().getDbSound());        
         muzzleItemTypeSounds.put(dbItemType.getId(), dbItemType.getDbWeaponType().getDbSound());
     }
 

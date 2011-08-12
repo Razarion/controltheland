@@ -20,6 +20,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * User: beat
@@ -32,6 +33,7 @@ public class DbEventTrackingStart implements Serializable {
     @GeneratedValue
     private Integer id;
     private long timeStampMs;
+    private Date timeStamp;
     @Column(nullable = false)
     private String sessionId;
     private long clientTimeStamp;
@@ -59,6 +61,7 @@ public class DbEventTrackingStart implements Serializable {
         scrollWidth = eventTrackingStart.getScrollWidth();
         scrollHeight = eventTrackingStart.getScrollHeight();
         clientTimeStamp = eventTrackingStart.getClientTimeStamp();
+        timeStamp = new Date();                
     }
 
     public EventTrackingStart createEventTrackingStart() {

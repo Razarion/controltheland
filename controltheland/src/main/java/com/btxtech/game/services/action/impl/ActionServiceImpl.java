@@ -165,7 +165,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
                         iterator.remove();
                         connectionService.sendSyncInfo(activeItem);
                     } catch (Throwable t) {
-                        log.error("", t);
+                        log.error("ActiveItem: " + activeItem, t);
                         activeItem.stop();
                         iterator.remove();
                         connectionService.sendSyncInfo(activeItem);

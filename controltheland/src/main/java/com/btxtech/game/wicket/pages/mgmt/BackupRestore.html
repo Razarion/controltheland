@@ -13,7 +13,7 @@
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
 <head>
     <title></title>
 </head>
@@ -34,6 +34,7 @@
             <th>Bases</th>
             <th>UserStates</th>
             <th>Restore</th>
+            <th>Delete</th>
         </tr>
         <tr wicket:id="restoreTable">
             <td wicket:id="date"/>
@@ -41,8 +42,10 @@
             <td wicket:id="bases"/>
             <td wicket:id="userStates"/>
             <td><input wicket:id="button" type="submit" value="Restore"></td>
+            <td><input wicket:id="delete" type="checkbox"></td>
         </tr>
     </table>
+    <input wicket:id="delete" type="submit" value="Delete Selected">
 </form>
 
 </body>
