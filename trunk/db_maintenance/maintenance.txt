@@ -199,3 +199,11 @@ UPDATE CMS_CONTENT SET showHead = false where TYPE = "CONTENT_LIST";
 Convert CMS
 UPDATE CMS_CONTENT SET TYPE = "CONTENT_GAME_LINK" where TYPE = "CONTENT_LINK";
 ALTER TABLE `gamedb`.`CMS_CONTENT` DROP COLUMN `url`;
+ -----------------
+Convert CMS
+
+SET SQL_SAFE_UPDATES=0;
+UPDATE gamedb.CMS_CONTENT 
+  SET contentProviderGetter = CONCAT(SUBSTRING(LOWER(contentProviderGetter), 4,1), SUBSTRING(contentProviderGetter, 5))
+  WHERE contentProviderGetter is not null;
+SET SQL_SAFE_UPDATES=1;
