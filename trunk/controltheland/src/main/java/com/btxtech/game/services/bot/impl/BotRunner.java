@@ -113,7 +113,7 @@ public class BotRunner {
             throw new IllegalStateException("Bot is already running");
         }
 
-        botThread = new Thread() {
+        botThread = new Thread("Bot thread: " + botConfig.getName()) {
             @Override
             public void run() {
                 setupBot();
