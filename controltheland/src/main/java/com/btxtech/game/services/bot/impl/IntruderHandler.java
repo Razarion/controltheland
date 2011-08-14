@@ -81,7 +81,7 @@ public class IntruderHandler {
             Collection<BotSyncBaseItem> attackers = attackersIterator.next();
             for (Iterator<BotSyncBaseItem> attackerIterator = attackers.iterator(); attackerIterator.hasNext();) {
                 BotSyncBaseItem attacker = attackerIterator.next();
-                if (!attacker.isAlive()) {
+                if (!attacker.isAlive() || attacker.isIdle()) {
                     attackerIterator.remove();
                 }
             }
@@ -106,9 +106,9 @@ public class IntruderHandler {
         }
         BotSyncBaseItem attacker = botItemContainer.getFirstIdleAttacker(intruder);
         if (attacker != null) {
-            attackers.add(attacker);
             try {
                 attacker.attack(intruder);
+                attackers.add(attacker);
             } catch (Exception e) {
                 log.error("", e);
             }
