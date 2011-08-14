@@ -187,4 +187,82 @@ public class TestIntruderHandler extends AbstractServiceTest {
         EasyMock.verify(mockItemService);
         EasyMock.verify(mockActionService);
     }
+
+    @Test
+    @DirtiesContext
+    public void oneIntruderAndAttackerBecomesIdle() throws Exception {
+        configureMinimalGame();
+
+        SimpleBase botBase = new SimpleBase(1);
+        Rectangle region = new Rectangle(0, 0, 2000, 2000);
+        SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1, 0));
+        SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-2, -2, 0));
+
+        ActionService mockActionService = EasyMock.createStrictMock(ActionService.class);
+        mockActionService.attack(attacker, intruder, true);
+        mockActionService.attack(attacker, intruder, true);
+
+        BotItemContainer mockBotItemContainer = EasyMock.createStrictMock(BotItemContainer.class);
+        BotSyncBaseItem attackerBotItem = new BotSyncBaseItem(attacker, mockActionService);
+        EasyMock.expect(mockBotItemContainer.getFirstIdleAttacker(intruder)).andReturn(attackerBotItem);
+        EasyMock.expect(mockBotItemContainer.getFirstIdleAttacker(intruder)).andReturn(attackerBotItem);
+
+        ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
+        EasyMock.expect(mockItemService.getEnemyItems(botBase, region, true)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
+        EasyMock.expect(mockItemService.getEnemyItems(botBase, region, true)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
+
+        IntruderHandler intruderHandler = (IntruderHandler) applicationContext.getBean("intruderHandler");
+        setPrivateField(IntruderHandler.class, intruderHandler, "itemService", mockItemService);
+        intruderHandler.init(mockBotItemContainer, region);
+
+        EasyMock.replay(mockBotItemContainer);
+        EasyMock.replay(mockItemService);
+        EasyMock.replay(mockActionService);
+        intruderHandler.handleIntruders(botBase);
+        setPrivateField(BotSyncBaseItem.class, attackerBotItem, "idle", true);
+        intruderHandler.handleIntruders(botBase);
+        EasyMock.verify(mockBotItemContainer);
+        EasyMock.verify(mockItemService);
+        EasyMock.verify(mockActionService);
+    }
+
+    @Test
+    @DirtiesContext
+    public void oneIntruderAndAttackerException() throws Exception {
+        configureMinimalGame();
+
+        SimpleBase botBase = new SimpleBase(1);
+        Rectangle region = new Rectangle(0, 0, 2000, 2000);
+        SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1, 0));
+        SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-2, -2, 0));
+
+        ActionService mockActionService = EasyMock.createStrictMock(ActionService.class);
+        mockActionService.attack(attacker, intruder, true);
+        //noinspection ThrowableInstanceNeverThrown
+        EasyMock.expectLastCall().andThrow(new RuntimeException());
+        mockActionService.attack(attacker, intruder, true);
+
+        BotItemContainer mockBotItemContainer = EasyMock.createStrictMock(BotItemContainer.class);
+        BotSyncBaseItem attackerBotItem = new BotSyncBaseItem(attacker, mockActionService);
+        EasyMock.expect(mockBotItemContainer.getFirstIdleAttacker(intruder)).andReturn(attackerBotItem);
+        EasyMock.expect(mockBotItemContainer.getFirstIdleAttacker(intruder)).andReturn(attackerBotItem);
+
+        ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
+        EasyMock.expect(mockItemService.getEnemyItems(botBase, region, true)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
+        EasyMock.expect(mockItemService.getEnemyItems(botBase, region, true)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
+
+        IntruderHandler intruderHandler = (IntruderHandler) applicationContext.getBean("intruderHandler");
+        setPrivateField(IntruderHandler.class, intruderHandler, "itemService", mockItemService);
+        intruderHandler.init(mockBotItemContainer, region);
+
+        EasyMock.replay(mockBotItemContainer);
+        EasyMock.replay(mockItemService);
+        EasyMock.replay(mockActionService);
+        intruderHandler.handleIntruders(botBase);
+        intruderHandler.handleIntruders(botBase);
+        EasyMock.verify(mockBotItemContainer);
+        EasyMock.verify(mockItemService);
+        EasyMock.verify(mockActionService);
+    }
+
 }
