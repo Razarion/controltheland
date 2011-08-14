@@ -206,5 +206,227 @@ public class TestBotRunner extends AbstractServiceTest {
         Assert.assertFalse(syncBaseItem2.isAlive());
     }
 
+    @Test
+    @DirtiesContext
+    public void intervalConfig() throws Exception {
+        DbBotConfig dbBotConfig = new DbBotConfig();
+        Assert.assertFalse(dbBotConfig.isIntervalBot());
+        Assert.assertFalse(dbBotConfig.isIntervalValid());
 
+        dbBotConfig.setMaxActiveMs(10L);
+        dbBotConfig.setMinActiveMs(5L);
+        dbBotConfig.setMaxInactiveMs(20L);
+        dbBotConfig.setMinInactiveMs(15L);
+        Assert.assertTrue(dbBotConfig.isIntervalBot());
+        Assert.assertTrue(dbBotConfig.isIntervalValid());
+
+        dbBotConfig.setMaxActiveMs(null);
+        Assert.assertTrue(dbBotConfig.isIntervalBot());
+        Assert.assertFalse(dbBotConfig.isIntervalValid());
+
+        dbBotConfig.setMaxActiveMs(0L);
+        Assert.assertTrue(dbBotConfig.isIntervalBot());
+        Assert.assertFalse(dbBotConfig.isIntervalValid());
+
+        dbBotConfig.setMaxActiveMs(1L);
+        Assert.assertTrue(dbBotConfig.isIntervalBot());
+        Assert.assertFalse(dbBotConfig.isIntervalValid());
+
+        dbBotConfig.setMaxActiveMs(5L);
+        Assert.assertTrue(dbBotConfig.isIntervalBot());
+        Assert.assertTrue(dbBotConfig.isIntervalValid());
+
+        dbBotConfig.setMaxActiveMs(11L);
+        Assert.assertTrue(dbBotConfig.isIntervalBot());
+        Assert.assertTrue(dbBotConfig.isIntervalValid());
+
+        dbBotConfig.setMinActiveMs(null);
+        Assert.assertTrue(dbBotConfig.isIntervalBot());
+        Assert.assertFalse(dbBotConfig.isIntervalValid());
+
+        dbBotConfig.setMinActiveMs(0L);
+        Assert.assertTrue(dbBotConfig.isIntervalBot());
+        Assert.assertFalse(dbBotConfig.isIntervalValid());
+
+        dbBotConfig.setMinActiveMs(12L);
+        Assert.assertTrue(dbBotConfig.isIntervalBot());
+        Assert.assertFalse(dbBotConfig.isIntervalValid());
+
+        dbBotConfig.setMinActiveMs(11L);
+        Assert.assertTrue(dbBotConfig.isIntervalBot());
+        Assert.assertTrue(dbBotConfig.isIntervalValid());
+
+        dbBotConfig.setMinActiveMs(5L);
+        Assert.assertTrue(dbBotConfig.isIntervalBot());
+        Assert.assertTrue(dbBotConfig.isIntervalValid());
+
+        dbBotConfig.setMinInactiveMs(null);
+        Assert.assertTrue(dbBotConfig.isIntervalBot());
+        Assert.assertFalse(dbBotConfig.isIntervalValid());
+
+        dbBotConfig.setMinInactiveMs(0L);
+        Assert.assertTrue(dbBotConfig.isIntervalBot());
+        Assert.assertFalse(dbBotConfig.isIntervalValid());
+
+        dbBotConfig.setMinInactiveMs(21L);
+        Assert.assertTrue(dbBotConfig.isIntervalBot());
+        Assert.assertFalse(dbBotConfig.isIntervalValid());
+
+        dbBotConfig.setMinInactiveMs(20L);
+        Assert.assertTrue(dbBotConfig.isIntervalBot());
+        Assert.assertTrue(dbBotConfig.isIntervalValid());
+
+        dbBotConfig.setMinInactiveMs(17L);
+        Assert.assertTrue(dbBotConfig.isIntervalBot());
+        Assert.assertTrue(dbBotConfig.isIntervalValid());
+
+        dbBotConfig.setMaxInactiveMs(null);
+        Assert.assertTrue(dbBotConfig.isIntervalBot());
+        Assert.assertFalse(dbBotConfig.isIntervalValid());
+
+        dbBotConfig.setMaxInactiveMs(0L);
+        Assert.assertTrue(dbBotConfig.isIntervalBot());
+        Assert.assertFalse(dbBotConfig.isIntervalValid());
+
+        dbBotConfig.setMaxInactiveMs(16L);
+        Assert.assertTrue(dbBotConfig.isIntervalBot());
+        Assert.assertFalse(dbBotConfig.isIntervalValid());
+
+        dbBotConfig.setMaxInactiveMs(17L);
+        Assert.assertTrue(dbBotConfig.isIntervalBot());
+        Assert.assertTrue(dbBotConfig.isIntervalValid());
+
+        dbBotConfig.setMaxInactiveMs(18L);
+        Assert.assertTrue(dbBotConfig.isIntervalBot());
+        Assert.assertTrue(dbBotConfig.isIntervalValid());
+    }
+
+    @Test
+    @DirtiesContext
+    public void intervalBuildup() throws Exception {
+        configureMinimalGame();
+
+        DbBotConfig dbBotConfig = new DbBotConfig();
+        dbBotConfig.setMaxActiveMs(300L);
+        dbBotConfig.setMinActiveMs(200L);
+        dbBotConfig.setMaxInactiveMs(200L);
+        dbBotConfig.setMinInactiveMs(100L);
+        dbBotConfig.init(userService);
+        dbBotConfig.setActionDelay(10);
+        dbBotConfig.setRealm(new Rectangle(0, 0, 4000, 4000));
+        DbBotItemConfig config1 = dbBotConfig.getBotItemCrud().createDbChild();
+        config1.setCount(3);
+        config1.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        config1.setRegion(new Rectangle(0, 0, 1000, 1000));
+        config1.setCreateDirectly(true);
+
+        BotRunner botRunner = (BotRunner) applicationContext.getBean("botRunner");
+        botRunner.start(dbBotConfig);
+
+        assertWholeItemCount(0);
+        Thread.sleep(250);
+        assertWholeItemCount(3);
+
+        botRunner.kill(); //Avoid background timer & thread
+    }
+
+    @Test
+    @DirtiesContext
+    public void intervalPeriodicalBuildup() throws Exception {
+        configureMinimalGame();
+
+        DbBotConfig dbBotConfig = new DbBotConfig();
+        dbBotConfig.setMaxActiveMs(500L);
+        dbBotConfig.setMinActiveMs(500L);
+        dbBotConfig.setMaxInactiveMs(500L);
+        dbBotConfig.setMinInactiveMs(500L);
+        dbBotConfig.init(userService);
+        dbBotConfig.setActionDelay(10);
+        dbBotConfig.setRealm(new Rectangle(0, 0, 4000, 4000));
+        DbBotItemConfig config1 = dbBotConfig.getBotItemCrud().createDbChild();
+        config1.setCount(5);
+        config1.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        config1.setRegion(new Rectangle(0, 0, 1000, 1000));
+        config1.setCreateDirectly(true);
+
+        BotRunner botRunner = (BotRunner) applicationContext.getBean("botRunner");
+        botRunner.start(dbBotConfig);
+        Thread.sleep(200);
+
+        for (int i = 0; i < 10; i++) {
+            assertWholeItemCount(0);
+            Thread.sleep(500);
+            assertWholeItemCount(5);
+            Thread.sleep(500);
+        }
+
+        botRunner.kill(); //Avoid background timer & thread
+    }
+
+    @Test
+    @DirtiesContext
+    public void intervalKillActive() throws Exception {
+        configureMinimalGame();
+
+        DbBotConfig dbBotConfig = new DbBotConfig();
+        dbBotConfig.setMaxActiveMs(120L);
+        dbBotConfig.setMinActiveMs(100L);
+        dbBotConfig.setMaxInactiveMs(70L);
+        dbBotConfig.setMinInactiveMs(40L);
+        dbBotConfig.init(userService);
+        dbBotConfig.setActionDelay(10);
+        dbBotConfig.setRealm(new Rectangle(0, 0, 4000, 4000));
+        DbBotItemConfig config1 = dbBotConfig.getBotItemCrud().createDbChild();
+        config1.setCount(3);
+        config1.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        config1.setRegion(new Rectangle(0, 0, 1000, 1000));
+        config1.setCreateDirectly(true);
+
+        BotRunner botRunner = (BotRunner) applicationContext.getBean("botRunner");
+        botRunner.start(dbBotConfig);
+        assertWholeItemCount(0);
+
+        Thread.sleep(100);
+        assertWholeItemCount(3);
+
+        botRunner.kill();
+        assertWholeItemCount(0);
+
+        for (int i = 0; i < 200; i++) {
+            Thread.sleep(20);
+            assertWholeItemCount(0);
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void intervalKillInactive() throws Exception {
+        configureMinimalGame();
+
+        DbBotConfig dbBotConfig = new DbBotConfig();
+        dbBotConfig.setMaxActiveMs(60L);
+        dbBotConfig.setMinActiveMs(50L);
+        dbBotConfig.setMaxInactiveMs(100L);
+        dbBotConfig.setMinInactiveMs(80L);
+        dbBotConfig.init(userService);
+        dbBotConfig.setActionDelay(10);
+        dbBotConfig.setRealm(new Rectangle(0, 0, 4000, 4000));
+        DbBotItemConfig config1 = dbBotConfig.getBotItemCrud().createDbChild();
+        config1.setCount(3);
+        config1.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
+        config1.setRegion(new Rectangle(0, 0, 1000, 1000));
+        config1.setCreateDirectly(true);
+
+        BotRunner botRunner = (BotRunner) applicationContext.getBean("botRunner");
+        botRunner.start(dbBotConfig);
+        assertWholeItemCount(0);
+        Thread.sleep(40);
+
+        botRunner.kill();
+
+        for (int i = 0; i < 200; i++) {
+            Thread.sleep(20);
+            assertWholeItemCount(0);
+        }
+    }
 }

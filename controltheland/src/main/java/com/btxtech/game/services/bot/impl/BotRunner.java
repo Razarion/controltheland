@@ -26,6 +26,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+
 /**
  * User: beat
  * Date: 21.05.2010
@@ -34,6 +38,11 @@ import org.springframework.stereotype.Component;
 @Component(value = "botRunner")
 @Scope("prototype")
 public class BotRunner {
+    private enum IntervalState {
+        INACTIVE,
+        ACTIVE
+    }
+
     @Autowired
     private BaseService baseService;
     @Autowired
@@ -48,17 +57,35 @@ public class BotRunner {
     private IntruderHandler intruderHandler;
     private UserState userState;
     private final Object syncObject = new Object();
+    private Timer timer;
+    private IntervalState intervalState;
 
     public void start(DbBotConfig botConfig) {
         this.botConfig = botConfig;
-        userState = userService.getUserState(botConfig);
-        checkBase();
-        runBot();
+        if (botConfig.isIntervalBot()) {
+            if (botConfig.isIntervalValid()) {
+                intervalState = IntervalState.INACTIVE;
+                timer = new Timer();
+                scheduleTimer(botConfig.getMinInactiveMs(), botConfig.getMaxInactiveMs());
+            } else {
+                log.warn("Bot has invalid interval configuration: " + botConfig.getName());
+            }
+        } else {
+            startBotThread();
+        }
     }
 
     public void kill() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+        killBotThread();
+    }
+
+    private void killBotThread() {
         if (botThread == null) {
-            throw new IllegalStateException("Bot thread is not running");
+            return;
         }
         Thread tmp = botThread;
         botThread = null;
@@ -74,7 +101,7 @@ public class BotRunner {
 
     public boolean isBuildup() {
         synchronized (syncObject) {
-            return botItemContainer != null && botItemContainer.isFulfilled(userState);
+            return botItemContainer != null && userState != null && botItemContainer.isFulfilled(userState);
         }
     }
 
@@ -104,15 +131,15 @@ public class BotRunner {
             if (base == null) {
                 base = baseService.createBotBase(userState, botConfig.getName());
             }
-            baseService.setBot(base.getSimpleBase(), true);            
+            baseService.setBot(base.getSimpleBase(), true);
         }
     }
 
-    private void runBot() {
+    private void startBotThread() {
         if (botThread != null) {
             throw new IllegalStateException("Bot is already running");
         }
-
+        userState = userService.getUserState(botConfig);
         botThread = new Thread("Bot thread: " + botConfig.getName()) {
             @Override
             public void run() {
@@ -142,5 +169,33 @@ public class BotRunner {
         };
         botThread.setDaemon(true);
         botThread.start();
+    }
+
+    private void scheduleTimer(long min, long max) {
+        Random random = new Random();
+        long delay = min + (long) (random.nextDouble() * (double) (max - min));
+        timer.schedule(new BotInterval(), delay);
+    }
+
+
+    private class BotInterval extends TimerTask {
+
+        @Override
+        public void run() {
+            switch (intervalState) {
+                case INACTIVE:
+                    startBotThread();
+                    intervalState = IntervalState.ACTIVE;
+                    scheduleTimer(botConfig.getMinActiveMs(), botConfig.getMaxActiveMs());
+                    break;
+                case ACTIVE:
+                    killBotThread();
+                    intervalState = IntervalState.INACTIVE;
+                    scheduleTimer(botConfig.getMinInactiveMs(), botConfig.getMaxInactiveMs());
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown intervalState: " + intervalState);
+            }
+        }
     }
 }

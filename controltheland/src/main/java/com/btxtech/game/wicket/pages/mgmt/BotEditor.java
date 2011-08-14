@@ -24,6 +24,7 @@ import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
 import com.btxtech.game.wicket.uiservices.RectanglePanel;
 import com.btxtech.game.wicket.uiservices.RuModel;
+import com.btxtech.game.wicket.uiservices.TimeSelector;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
@@ -87,6 +88,12 @@ public class BotEditor extends MgmtWebPage {
                 item.add(new RectanglePanel("region"));
             }
         };
+
+        form.add(new TimeSelector("minInactiveMs", TimeSelector.Converter.MINUTES_TO_MS));
+        form.add(new TimeSelector("maxInactiveMs", TimeSelector.Converter.MINUTES_TO_MS));
+        form.add(new TimeSelector("minActiveMs", TimeSelector.Converter.MINUTES_TO_MS));
+        form.add(new TimeSelector("maxActiveMs", TimeSelector.Converter.MINUTES_TO_MS));
+
 
         form.add(new Button("save") {
 

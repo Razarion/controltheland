@@ -19,11 +19,20 @@ import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.db.RectangleUserType;
 import com.btxtech.game.services.user.UserService;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.CascadeType;
-import javax.persistence.*;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,6 +56,11 @@ public class DbBotConfig implements CrudChild, CrudParent {
     @Columns(columns = {@Column(name = "realmRectX"), @Column(name = "realmRectY"), @Column(name = "realmRectWidth"), @Column(name = "realmRectHeight")})
     private Rectangle realm;
     private String name;
+    private Long minInactiveMs;
+    private Long maxInactiveMs;
+    private Long minActiveMs;
+    private Long maxActiveMs;
+
     @Transient
     private CrudChildServiceHelper<DbBotItemConfig> botItemCrud;
 
@@ -77,13 +91,12 @@ public class DbBotConfig implements CrudChild, CrudParent {
 
         DbBotConfig dbBotConfig = (DbBotConfig) o;
 
-        return !(id != null ? !id.equals(dbBotConfig.id) : dbBotConfig.id != null);
-
+        return id != null && id.equals(dbBotConfig.id);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 
     @Override
@@ -94,6 +107,49 @@ public class DbBotConfig implements CrudChild, CrudParent {
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isIntervalBot() {
+        return minInactiveMs != null || maxInactiveMs != null || minActiveMs != null || maxActiveMs != null;
+    }
+
+    public boolean isIntervalValid() {
+        return !(minInactiveMs == null || maxInactiveMs == null || minActiveMs == null || maxActiveMs == null)
+                && !(minInactiveMs <= 0 || maxInactiveMs <= 0 || minActiveMs <= 0 || maxActiveMs <= 0)
+                && minInactiveMs <= maxInactiveMs
+                && minActiveMs <= maxActiveMs;
+    }
+
+    public Long getMinInactiveMs() {
+        return minInactiveMs;
+    }
+
+    public void setMinInactiveMs(Long minInactiveMs) {
+        this.minInactiveMs = minInactiveMs;
+    }
+
+    public Long getMaxInactiveMs() {
+        return maxInactiveMs;
+    }
+
+    public void setMaxInactiveMs(Long maxInactiveMs) {
+        this.maxInactiveMs = maxInactiveMs;
+    }
+
+    public Long getMinActiveMs() {
+        return minActiveMs;
+    }
+
+    public void setMinActiveMs(Long minActiveMs) {
+        this.minActiveMs = minActiveMs;
+    }
+
+    public Long getMaxActiveMs() {
+        return maxActiveMs;
+    }
+
+    public void setMaxActiveMs(Long maxActiveMs) {
+        this.maxActiveMs = maxActiveMs;
     }
 
     @Override

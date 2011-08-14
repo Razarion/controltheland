@@ -13,26 +13,25 @@
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
 <head>
     <title>Bot Editor</title>
 </head>
 <body>
-<h1>Task Config</h1>
+<h1>Bot Editor</h1>
 
 <span wicket:id="msgs"/>
 
 <form wicket:id="from">
-    <h2>Bot Editor</h2>
+    <h2>Common</h2>
     <table border="0">
         <tr>
             <td bgcolor="#dadada">Action Delay [ms]</td>
             <td><input wicket:id="actionDelay" type="text" size="6"></td>
         </tr>
-        <tr>
-            <td bgcolor="#dadada">Realm Region</td>
-            <td wicket:id="realm"></td>
-        </tr>
+    </table>
+    <h2>Buildup</h2>
+    <table border="0">
         <tr>
             <td bgcolor="#dadada">Bot Items</td>
             <td>
@@ -56,6 +55,32 @@
                 </table>
                 <input type="submit" wicket:id="createBaseBuildupItem" value="Create">
             </td>
+        </tr>
+    </table>
+    <h2>Attack Strategy</h2>
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Realm Region</td>
+            <td wicket:id="realm"></td>
+        </tr>
+    </table>
+    <h2>Interval</h2>
+    <table border="0">
+        <tr>
+            <td bgcolor="#dadada">Min Inactive Minutes</td>
+            <td wicket:id="minInactiveMs"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Max Inactive Minutes</td>
+            <td wicket:id="maxInactiveMs"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Min Active Minutes</td>
+            <td wicket:id="minActiveMs"></td>
+        </tr>
+        <tr>
+            <td bgcolor="#dadada">Max Active Minutes</td>
+            <td wicket:id="maxActiveMs"></td>
         </tr>
     </table>
     <br>
