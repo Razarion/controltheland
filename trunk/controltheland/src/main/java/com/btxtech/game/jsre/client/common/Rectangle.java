@@ -464,7 +464,6 @@ public class Rectangle implements Serializable {
             Rectangle rectangle = rectanglesList.remove(0);
             for (Rectangle others : rectanglesList) {
                 if (rectangle.adjoinsEclusive(others)) {
-                    System.out.println(rectangle + " " + others);
                     return true;
                 }
             }
