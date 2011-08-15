@@ -29,6 +29,15 @@ import java.util.Map;
  * Time: 13:55:14
  */
 public class ActionServiceUtil {
+
+    public static BaseCommand addDestinationHintToCommand(BaseCommand baseCommand, CollisionService collisionService, ItemService itemService) {
+        List<BaseCommand> commands = new ArrayList<BaseCommand>();
+        commands.add(baseCommand);
+        addDestinationHintToCommands(commands, collisionService, itemService);
+        return commands.get(0);
+    }
+
+
     /**
      * Adds the destination hint to collect and move command. If there is not enough space on the terrain
      * the collect and move command are replaced with the move command
@@ -155,5 +164,4 @@ public class ActionServiceUtil {
         moveCommand.setDestination(destination);
         return moveCommand;
     }
-
 }

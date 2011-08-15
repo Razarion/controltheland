@@ -88,13 +88,13 @@ public class TestBotItemContainer extends AbstractServiceTest {
         DbBotItemConfig config1 = new DbBotItemConfig();
         config1.setCount(1);
         config1.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
-        config1.setRegion(new Rectangle(2000, 2000, 1000, 1000));
+        config1.setRegion(new Rectangle(2000, 2000, 2000, 2000));
         config1.setCreateDirectly(true);
         dbBotItemConfigs.add(config1);
         DbBotItemConfig config2 = new DbBotItemConfig();
         config2.setCount(2);
         config2.setBaseItemType(itemService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
-        config2.setRegion(new Rectangle(2000, 2000, 1000, 1000));
+        config2.setRegion(new Rectangle(2000, 2000, 2000, 2000));
         dbBotItemConfigs.add(config2);
 
         BotItemContainer botItemContainer = (BotItemContainer) applicationContext.getBean("botItemContainer");
