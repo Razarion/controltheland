@@ -310,8 +310,11 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
         builderCommand.setTimeStamp();
         builderCommand.setToBeBuilt(itemTypeToBuild.getId());
         builderCommand.setPositionToBeBuilt(position);
+
+        BaseCommand baseCommand = ActionServiceUtil.addDestinationHintToCommand(builderCommand, collisionService, itemService);
+
         try {
-            executeCommand(builderCommand, true);
+            executeCommand(baseCommand, true);
         } catch (Exception e) {
             log.error("", e);
         }
@@ -351,8 +354,15 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
         AttackCommand attackCommand = createAttackCommand(tank, target);
         attackCommand.setFollowTarget(true);
 
+        BaseCommand baseCommand;
+        if (followTarget) {
+            baseCommand = ActionServiceUtil.addDestinationHintToCommand(attackCommand, collisionService, itemService);
+        } else {
+            baseCommand = attackCommand;
+        }
+
         try {
-            executeCommand(attackCommand, true);
+            executeCommand(baseCommand, true);
         } catch (Exception e) {
             log.error("", e);
         }
