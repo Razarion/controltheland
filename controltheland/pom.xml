@@ -337,7 +337,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>gwt-maven-plugin</artifactId>
-                <version>2.1.0-1</version>
+                <version>2.3.0-1</version>
                 <configuration>
                     <runTarget>http://localhost:8080</runTarget>
                     <noServer>true</noServer>
@@ -354,6 +354,7 @@
                                 <module>com.btxtech.game.jsre.Pathfinding</module>
                                 <module>com.btxtech.game.jsre.MapView</module>
                                 <module>com.btxtech.game.jsre.Playback</module>
+                                <module>com.btxtech.game.jsre.ItemTypeEditor</module>
                             </modules>
                         </configuration>
                         <goals>
@@ -383,7 +384,7 @@
     <properties>
         <wicket.version>1.4.15</wicket.version>
         <jetty.version>6.1.25</jetty.version>
-        <gwtVersion>2.1.1</gwtVersion>
+        <gwtVersion>2.3.0</gwtVersion>
         <hibernateVersion>3.5.4-Final</hibernateVersion>
         <org.springframework.version>3.0.5.RELEASE</org.springframework.version>
         <aspectj>1.6.10</aspectj>

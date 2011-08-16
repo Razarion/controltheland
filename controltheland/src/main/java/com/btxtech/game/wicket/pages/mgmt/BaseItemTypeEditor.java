@@ -15,6 +15,7 @@ package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.itemtypeeditor.ItemTypeEditor;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBuilderType;
@@ -31,10 +32,9 @@ import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbSpecialType;
 import com.btxtech.game.services.item.itemType.DbTurnableType;
 import com.btxtech.game.services.item.itemType.DbWeaponType;
-import java.util.Arrays;
-import java.util.Collection;
-import javax.swing.ImageIcon;
-
+import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -47,6 +47,10 @@ import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import javax.swing.*;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -181,6 +185,16 @@ public class BaseItemTypeEditor extends MgmtWebPage {
         add(form);
 
         load();
+        showItemTypeEditor(dbBaseItemType.getId());
+    }
+
+    private void showItemTypeEditor(int itemTypeId) {
+        Label gwtItemEditor = new Label("itemTypeEditor", "<DIV>Loading Item Type Editor</DIV>");
+        gwtItemEditor.setEscapeModelStrings(false);
+        gwtItemEditor.add(new SimpleAttributeModifier("id", ItemTypeEditor.ITEM_TYPE_EDITOR));
+        gwtItemEditor.add(new SimpleAttributeModifier(ItemTypeEditor.ITEM_TYPE_ID, Integer.toString(itemTypeId)));
+        add(gwtItemEditor);
+        add(JavascriptPackageResource.getHeaderContribution("itemtypeeditor/itemtypeeditor.nocache.js"));
     }
 
     private void load() {
