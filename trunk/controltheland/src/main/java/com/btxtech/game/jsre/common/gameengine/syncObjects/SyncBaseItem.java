@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
-import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -42,12 +41,10 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInf
  * Time: 19:11:49
  */
 public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
-    private DecimalPosition decimalPosition;
     private SimpleBase base;
     private double buildup;
     private double health;
     private SyncMovable syncMovable;
-    private SyncTurnable syncTurnable;
     private SyncWeapon syncWeapon;
     private SyncFactory syncFactory;
     private SyncBuilder syncBuilder;
@@ -78,12 +75,6 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
             syncMovable = new SyncMovable(baseItemType.getMovableType(), this);
         } else {
             syncMovable = null;
-        }
-
-        if (baseItemType.getTurnableType() != null) {
-            syncTurnable = new SyncTurnable(baseItemType.getTurnableType(), this);
-        } else {
-            syncTurnable = null;
         }
 
         if (baseItemType.getWeaponType() != null) {
@@ -151,38 +142,6 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
         }
     }
 
-    @Override
-    public void setPosition(Index position) {
-        if (position != null) {
-            if (this.decimalPosition != null) {
-                this.decimalPosition.setPosition(position);
-            } else {
-                this.decimalPosition = new DecimalPosition(position);
-            }
-        } else {
-            decimalPosition = null;
-        }
-        fireItemChanged(SyncItemListener.Change.POSITION);
-    }
-
-    @Override
-    public Index getPosition() {
-        if (decimalPosition != null) {
-            return decimalPosition.getPosition();
-        } else {
-            return null;
-        }
-    }
-
-    public DecimalPosition getDecimalPosition() {
-        return decimalPosition;
-    }
-
-    public void setDecimalPosition(DecimalPosition decimalPosition) {
-        this.decimalPosition = decimalPosition;
-        fireItemChanged(SyncItemListener.Change.POSITION);        
-    }
-
     private void checkBase(SimpleBase syncBase) {
         if (base == null && syncBase == null) {
             return;
@@ -221,10 +180,6 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
 
         if (syncMovable != null) {
             syncMovable.synchronize(syncItemInfo);
-        }
-
-        if (syncTurnable != null) {
-            syncTurnable.synchronize(syncItemInfo);
         }
 
         if (syncWeapon != null) {
@@ -271,10 +226,6 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
             syncMovable.fillSyncItemInfo(syncItemInfo);
         }
 
-        if (syncTurnable != null) {
-            syncTurnable.fillSyncItemInfo(syncItemInfo);
-        }
-
         if (syncWeapon != null) {
             syncWeapon.fillSyncItemInfo(syncItemInfo);
         }
@@ -307,37 +258,14 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
     }
 
     public boolean isIdle() {
-        if (!isReady()) {
-            return false;
-        }
-        if (isUpgrading()) {
-            return false;
-        }
-        if (syncMovable != null && syncMovable.isActive()) {
-            return false;
-        }
-
-        if (syncWeapon != null && syncWeapon.isActive()) {
-            return false;
-        }
-
-        if (syncFactory != null && syncFactory.isActive()) {
-            return false;
-        }
-
-        if (syncBuilder != null && syncBuilder.isActive()) {
-            return false;
-        }
-
-        if (syncHarvester != null && syncHarvester.isActive()) {
-            return false;
-        }
-
-        if (syncLauncher != null && syncLauncher.isActive()) {
-            return false;
-        }
-
-        return true;
+        return isReady()
+                && !isUpgrading()
+                && !(syncMovable != null && syncMovable.isActive())
+                && !(syncWeapon != null && syncWeapon.isActive())
+                && !(syncFactory != null && syncFactory.isActive())
+                && !(syncBuilder != null && syncBuilder.isActive())
+                && !(syncHarvester != null && syncHarvester.isActive())
+                && !(syncLauncher != null && syncLauncher.isActive());
     }
 
     public boolean tick(double factor) throws ItemDoesNotExistException, NoSuchItemTypeException {
@@ -499,17 +427,6 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
 
     public boolean hasSyncMovable() {
         return syncMovable != null;
-    }
-
-    public SyncTurnable getSyncTurnable() {
-        if (syncTurnable == null) {
-            throw new IllegalStateException(this + " has no SyncTurnable");
-        }
-        return syncTurnable;
-    }
-
-    public boolean hasSyncTurnable() {
-        return syncTurnable != null;
     }
 
     public boolean hasSyncHarvester() {
@@ -712,13 +629,13 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
 
     public void setContained(Id itemContainer) {
         this.containedIn = itemContainer;
-        setPosition(null);
+        getSyncItemArea().setPosition(null);
         fireItemChanged(SyncItemListener.Change.CONTAINED_IN_CHANGED);
     }
 
     public void clearContained(Index position) {
         containedIn = null;
-        setPosition(position);
+        getSyncItemArea().setPosition(position);
         fireItemChanged(SyncItemListener.Change.CONTAINED_IN_CHANGED);
     }
 
@@ -788,4 +705,6 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
             getServices().getActionService().defend(this, syncBaseItem, false);
         }
     }
+
+    
 }

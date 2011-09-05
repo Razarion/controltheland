@@ -1,13 +1,26 @@
 package com.btxtech.game.jsre.itemtypeeditor;
 
-import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.dialogs.DialogManager;
+import com.btxtech.game.jsre.client.dialogs.MessageDialog;
+import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DecoratorPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IntegerBox;
 import com.google.gwt.user.client.ui.Widget;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -15,72 +28,75 @@ import com.google.gwt.user.client.ui.Widget;
  * Time: 16:32:21
  */
 public class BoundingBoxControl extends DecoratorPanel {
-    private Index middle;
-    private Index start;
-    private int width;
-    private int height;
     private RotationControl rotationControl;
+    private int itemTypeId;
+    private BoundingBox boundingBox;
+    private boolean showBoundingBox = true;
+    private Logger log = Logger.getLogger(BoundingBoxControl.class.getName());
 
-    public BoundingBoxControl(Index middle, Index start, int width, int height) {
-        this.middle = middle;
-        this.start = start;
-        this.width = width;
-        this.height = height;
-
+    public BoundingBoxControl(int itemTypeId, BoundingBox boundingBox) {
+        this.itemTypeId = itemTypeId;
+        this.boundingBox = boundingBox;
         setupControls();
     }
 
     private void setupControls() {
         FlexTable flexTable = new FlexTable();
         flexTable.setCellSpacing(6);
-        flexTable.setText(0, 0, "Middle X");
-        flexTable.setWidget(0, 1, createIntegerBox(middle.getX(), new ValueChangeHandler<Integer>() {
+
+        CheckBox showBoundingBoxWidget = new CheckBox("Show Bounding Box");
+        flexTable.setWidget(0, 0, showBoundingBoxWidget);
+        showBoundingBoxWidget.setValue(showBoundingBox);
+        showBoundingBoxWidget.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> value) {
+                showBoundingBox = value.getValue();
+                rotationControl.update();
+            }
+        });
+        flexTable.getFlexCellFormatter().setColSpan(0, 0, 2);
+        flexTable.setText(1, 0, "Image Width");
+        flexTable.setText(1, 1, Integer.toString(boundingBox.getImageWidth()));
+        flexTable.setText(2, 0, "Image Height");
+        flexTable.setText(2, 1, Integer.toString(boundingBox.getImageHeight()));
+        flexTable.setText(3, 0, "Width");
+        flexTable.setWidget(3, 1, createIntegerBox(boundingBox.getWidth(), new ValueChangeHandler<Integer>() {
             @Override
             public void onValueChange(ValueChangeEvent<Integer> value) {
-                middle.setX(value.getValue());
+                boundingBox.setWidth(value.getValue());
                 rotationControl.update();
             }
         }));
-        flexTable.setText(1, 0, "Middle Y");
-        flexTable.setWidget(1, 1, createIntegerBox(middle.getX(), new ValueChangeHandler<Integer>() {
+        flexTable.setText(4, 0, "Height");
+        flexTable.setWidget(4, 1, createIntegerBox(boundingBox.getHeight(), new ValueChangeHandler<Integer>() {
             @Override
             public void onValueChange(ValueChangeEvent<Integer> value) {
-                middle.setY(value.getValue());
+                boundingBox.setHeight(value.getValue());
                 rotationControl.update();
             }
         }));
-        flexTable.setText(2, 0, "Start X");
-        flexTable.setWidget(2, 1, createIntegerBox(start.getX(), new ValueChangeHandler<Integer>() {
+        flexTable.setWidget(5, 0, new Button("Save", new ClickHandler() {
             @Override
-            public void onValueChange(ValueChangeEvent<Integer> value) {
-                start.setX(value.getValue());
-                rotationControl.update();
+            public void onClick(ClickEvent event) {
+                final Button button = (Button) event.getSource();
+                ItemTypeAccessAsync itemTypeAccess = GWT.create(ItemTypeAccess.class);
+                itemTypeAccess.saveBoundingBox(itemTypeId, boundingBox, new AsyncCallback<Void>() {
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        button.setEnabled(true);
+                        log.log(Level.SEVERE, "saveBoundingBox call failed", caught);
+                        DialogManager.showDialog(new MessageDialog("Save failed!"), DialogManager.Type.PROMPTLY);
+                    }
+
+                    @Override
+                    public void onSuccess(Void result) {
+                        button.setEnabled(true);
+                    }
+                });
+                button.setEnabled(false);
             }
         }));
-        flexTable.setText(3, 0, "Start Y");
-        flexTable.setWidget(3, 1, createIntegerBox(start.getX(), new ValueChangeHandler<Integer>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Integer> value) {
-                start.setY(value.getValue());
-                rotationControl.update();
-            }
-        }));
-        flexTable.setText(4, 0, "Width");
-        flexTable.setWidget(4, 1, createIntegerBox(width, new ValueChangeHandler<Integer>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Integer> value) {
-                width = value.getValue();
-                rotationControl.update();
-            }
-        }));
-        flexTable.setText(5, 0, "Height");
-        flexTable.setWidget(5, 1, createIntegerBox(height, new ValueChangeHandler<Integer>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Integer> value) {
-                height = value.getValue();
-                rotationControl.update();
-            }
-        }));
+        flexTable.getFlexCellFormatter().setColSpan(5, 0, 2);
         setWidget(flexTable);
     }
 
@@ -89,32 +105,37 @@ public class BoundingBoxControl extends DecoratorPanel {
     }
 
     private Widget createIntegerBox(int value, ValueChangeHandler<Integer> changeHandler) {
-        IntegerBox integerBox = new IntegerBox();
+        HorizontalPanel horizontalPanel = new HorizontalPanel();
+        final IntegerBox integerBox = new IntegerBox();
         integerBox.setValue(value);
         integerBox.addValueChangeHandler(changeHandler);
-        return integerBox;
+        horizontalPanel.add(integerBox);
+        horizontalPanel.add(new Button("+", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                integerBox.setValue(integerBox.getValue() + 1, true);
+            }
+        }));
+        horizontalPanel.add(new Button("-", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                integerBox.setValue(integerBox.getValue() - 1, true);
+            }
+        }));
+        return horizontalPanel;
     }
 
-    public void boundingBox(int imageNr, int imageCount, Index offset, Context2d context2d) {
-        double angel = (double) imageNr * 2.0 * Math.PI / (double) imageCount;
-        double sin = Math.sin(angel);
-        double cos = Math.cos(angel);
-        Index boundingBox1 = offset.add(start);
-        Index boundingBox2 = boundingBox1.add(new Index(0, height));
-        Index boundingBox3 = boundingBox1.add(new Index(width, height));
-        Index boundingBox4 = boundingBox1.add(new Index(width, 0));
-
-        Index absoluteMiddle = middle.add(offset);
-        Index rotBb1 = boundingBox1.rotateCounterClock(absoluteMiddle, sin, cos);
-        Index rotBb2 = boundingBox2.rotateCounterClock(absoluteMiddle, sin, cos);
-        Index rotBb3 = boundingBox3.rotateCounterClock(absoluteMiddle, sin, cos);
-        Index rotBb4 = boundingBox4.rotateCounterClock(absoluteMiddle, sin, cos);
+    public void draw(SyncItemArea syncItemArea, Context2d context2d) {
+        if (!showBoundingBox) {
+            return;
+        }
         context2d.save();
+        context2d.setStrokeStyle("#FF0000");
         context2d.beginPath();
-        context2d.moveTo(rotBb1.getX(), rotBb1.getY());
-        context2d.lineTo(rotBb2.getX(), rotBb2.getY());
-        context2d.lineTo(rotBb3.getX(), rotBb3.getY());
-        context2d.lineTo(rotBb4.getX(), rotBb4.getY());
+        context2d.moveTo(syncItemArea.getCorner1().getX(), syncItemArea.getCorner1().getY());
+        context2d.lineTo(syncItemArea.getCorner2().getX(), syncItemArea.getCorner2().getY());
+        context2d.lineTo(syncItemArea.getCorner3().getX(), syncItemArea.getCorner3().getY());
+        context2d.lineTo(syncItemArea.getCorner4().getX(), syncItemArea.getCorner4().getY());
         context2d.closePath();
         context2d.stroke();
         context2d.restore();

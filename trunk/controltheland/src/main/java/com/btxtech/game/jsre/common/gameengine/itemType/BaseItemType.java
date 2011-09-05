@@ -22,7 +22,6 @@ public class BaseItemType extends ItemType {
     private int health;
     private int price;
     private int buildup;
-    private TurnableType turnableType;
     private MovableType movableType;
     private WeaponType weaponType;
     private FactoryType factoryType;
@@ -59,14 +58,6 @@ public class BaseItemType extends ItemType {
 
     public void setMovableType(MovableType movableType) {
         this.movableType = movableType;
-    }
-
-    public TurnableType getTurnableType() {
-        return turnableType;
-    }
-
-    public void setTurnableType(TurnableType turnableType) {
-        this.turnableType = turnableType;
     }
 
     public WeaponType getWeaponType() {
@@ -183,9 +174,6 @@ public class BaseItemType extends ItemType {
         upgradeable = baseItemType.upgradeable;
         upgradeProgress = baseItemType.upgradeProgress;
 
-        if (turnableType != null) {
-            turnableType.changeTo(baseItemType.turnableType);
-        }
         if (movableType != null) {
             movableType.changeTo(baseItemType.movableType);
         }
@@ -233,4 +221,6 @@ public class BaseItemType extends ItemType {
             launcherType.changeTo(baseItemType.launcherType);
         }
     }
+
+
 }

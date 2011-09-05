@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+
 import java.util.Iterator;
 import java.util.List;
 
@@ -54,6 +55,8 @@ public class SyncItemInfo extends Packet {
     private Index unloadPos;
     private boolean explode;
     private Index targetPosition;
+    private Index destinationHint;
+    private Double destinationAngel;
 
 
     public Id getId() {
@@ -280,6 +283,22 @@ public class SyncItemInfo extends Packet {
         this.targetPosition = targetPosition;
     }
 
+    public Index getDestinationHint() {
+        return destinationHint;
+    }
+
+    public void setDestinationHint(Index destinationHint) {
+        this.destinationHint = destinationHint;
+    }
+
+    public void setDestinationAngel(Double destinationAngel) {
+        this.destinationAngel = destinationAngel;
+    }
+
+    public Double getDestinationAngel() {
+        return destinationAngel;
+    }
+
     private String pathToDestinationAsString() {
         StringBuilder builder = new StringBuilder();
         if (pathToDestination != null) {
@@ -360,7 +379,8 @@ public class SyncItemInfo extends Packet {
                 " targetContainer:" + targetContainer +
                 " containedIn:" + containedIn +
                 " unloadPos:" + unloadPos +
-                " targetPosition:" + targetPosition;
+                " targetPosition:" + targetPosition +
+                " destinationHint:" + destinationHint +
+                " destinationAngel:" + destinationAngel;
     }
-
 }

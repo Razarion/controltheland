@@ -80,7 +80,7 @@ public class BaseEditor extends MgmtWebPage {
             protected void onSubmit() {
                 itemsToKill.clear();
                 for (SyncBaseItem syncBaseItem : baseService.getBase(simpleBase).getItems()) {
-                    if (selection.contains(syncBaseItem.getPosition())) {
+                    if (syncBaseItem.getSyncItemArea().contains(selection)) {
                         itemsToKill.add(syncBaseItem.getId());
                     }
                 }
@@ -206,9 +206,8 @@ public class BaseEditor extends MgmtWebPage {
                     item.add(new TextField<String>("xPos", new IModel<String>() {
                         @Override
                         public String getObject() {
-                            Index pos = item.getModelObject().getPosition();
-                            if (pos != null) {
-                                return Integer.toString(pos.getX());
+                            if (item.getModelObject().getSyncItemArea().hasPosition()) {
+                                return Integer.toString(item.getModelObject().getSyncItemArea().getPosition().getX());
                             } else {
                                 return NO_POS;
                             }
@@ -217,10 +216,10 @@ public class BaseEditor extends MgmtWebPage {
                         @Override
                         public void setObject(String xPos) {
                             if (!NO_POS.equals(xPos)) {
-                                if (item.getModelObject().getPosition() != null) {
-                                    item.getModelObject().setPosition(new Index(Integer.parseInt(xPos), item.getModelObject().getPosition().getY()));
+                                if (item.getModelObject().getSyncItemArea().hasPosition()) {
+                                    item.getModelObject().getSyncItemArea().setPosition(new Index(Integer.parseInt(xPos), item.getModelObject().getSyncItemArea().getPosition().getY()));
                                 } else {
-                                    item.getModelObject().setPosition(new Index(Integer.parseInt(xPos), 0));
+                                    item.getModelObject().getSyncItemArea().setPosition(new Index(Integer.parseInt(xPos), 0));
                                 }
                             }
                         }
@@ -232,9 +231,8 @@ public class BaseEditor extends MgmtWebPage {
                     item.add(new TextField<String>("yPos", new IModel<String>() {
                         @Override
                         public String getObject() {
-                            Index pos = item.getModelObject().getPosition();
-                            if (pos != null) {
-                                return Integer.toString(pos.getY());
+                            if (item.getModelObject().getSyncItemArea().hasPosition()) {
+                                return Integer.toString(item.getModelObject().getSyncItemArea().getPosition().getY());
                             } else {
                                 return NO_POS;
                             }
@@ -243,10 +241,10 @@ public class BaseEditor extends MgmtWebPage {
                         @Override
                         public void setObject(String yPos) {
                             if (!NO_POS.equals(yPos)) {
-                                if (item.getModelObject().getPosition() != null) {
-                                    item.getModelObject().setPosition(new Index(item.getModelObject().getPosition().getX(), Integer.parseInt(yPos)));
+                                if (item.getModelObject().getSyncItemArea().hasPosition()) {
+                                    item.getModelObject().getSyncItemArea().setPosition(new Index(item.getModelObject().getSyncItemArea().getPosition().getX(), Integer.parseInt(yPos)));
                                 } else {
-                                    item.getModelObject().setPosition(new Index(0, Integer.parseInt(yPos)));
+                                    item.getModelObject().getSyncItemArea().setPosition(new Index(0, Integer.parseInt(yPos)));
                                 }
                             }
                         }

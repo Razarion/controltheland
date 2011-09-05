@@ -256,8 +256,8 @@ public class GenericItemConverter {
         if (item.hasSyncMovable()) {
             genericItem.setPathToAbsoluteDestination(item.getSyncMovable().getPathToDestination());
         }
-        if (item.hasSyncTurnable()) {
-            genericItem.setAngel(item.getSyncTurnable().getAngel());
+        if (item.getItemType().getBoundingBox().isTurnable()) {
+            genericItem.setAngel(item.getSyncItemArea().getAngel());
         }
         if (item.hasSyncBuilder()) {
             genericItem.setPositionToBeBuilt(item.getSyncBuilder().getToBeBuildPosition());
@@ -378,8 +378,8 @@ public class GenericItemConverter {
         if (item.hasSyncMovable()) {
             item.getSyncMovable().setPathToDestination(genericItem.getPathToAbsoluteDestination());
         }
-        if (item.hasSyncTurnable()) {
-            item.getSyncTurnable().setAngel(genericItem.getAngel());
+        if (item.getItemType().getBoundingBox().isTurnable()) {
+            item.getSyncItemArea().setAngel(genericItem.getAngel());
         }
         if (item.hasSyncBuilder()) {
             item.getSyncBuilder().setToBeBuildPosition(genericItem.getPositionToBeBuilt());
@@ -484,7 +484,7 @@ public class GenericItemConverter {
             }
         }
 
-        if (syncItem.getPosition() == null && !syncItem.isContainedIn()) {
+        if (!syncItem.getSyncItemArea().hasPosition() && !syncItem.isContainedIn()) {
             throw new IllegalStateException("SyncBaseItem has no position but is not contained in: " + syncItem);
         }
 

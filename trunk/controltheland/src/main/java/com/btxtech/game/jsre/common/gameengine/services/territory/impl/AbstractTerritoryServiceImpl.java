@@ -113,7 +113,7 @@ public abstract class AbstractTerritoryServiceImpl implements AbstractTerritoryS
     @Override
     public boolean isAtLeastOneAllowed(Collection<SyncBaseItem> items) {
         for (SyncBaseItem item : items) {
-            if (isAllowed(item.getPosition(), item)) {
+            if (isAllowed(item.getSyncItemArea().getPosition(), item)) {
                 return true;
             }
         }

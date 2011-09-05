@@ -28,6 +28,7 @@ public class SyncHarvester extends SyncBaseAbility {
     private HarvesterType harvesterType;
     private Id target;
     private Index destinationHint;
+    private Double destinationAngel;
 
     public SyncHarvester(HarvesterType harvesterType, SyncBaseItem syncBaseItem) {
         super(syncBaseItem);
@@ -45,14 +46,12 @@ public class SyncHarvester extends SyncBaseAbility {
 
         try {
             SyncResourceItem resource = (SyncResourceItem) getServices().getItemService().getItem(target);
-            if (isTargetInRange(resource.getPosition(), harvesterType.getRange(), resource.getItemType())) {
-                if (getSyncBaseItem().hasSyncTurnable()) {
-                    getSyncBaseItem().getSyncTurnable().turnTo(resource.getPosition());
-                }
+            if (getSyncItemArea().isInRange(harvesterType.getRange(), resource)) {
+                getSyncItemArea().turnTo(resource);
                 double money = resource.harvest(factor * harvesterType.getProgress());
                 getServices().getBaseService().depositResource(money, getSyncBaseItem().getBase());
             } else {
-                getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, destinationHint, resource.getPosition());
+                getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, destinationHint, destinationAngel, resource.getSyncItemArea().getPosition());
             }
             return true;
         } catch (ItemDoesNotExistException ignore) {
@@ -64,6 +63,8 @@ public class SyncHarvester extends SyncBaseAbility {
 
     public void stop() {
         target = null;
+        destinationAngel = null;
+        destinationHint = null;
         getSyncBaseItem().getSyncMovable().stop();
     }
 
@@ -80,12 +81,13 @@ public class SyncHarvester extends SyncBaseAbility {
     public void executeCommand(MoneyCollectCommand attackCommand) throws ItemDoesNotExistException {
         SyncResourceItem resource = (SyncResourceItem) getServices().getItemService().getItem(attackCommand.getTarget());
 
-        if (!getServices().getTerritoryService().isAllowed(resource.getPosition(), getSyncBaseItem())) {
-            throw new IllegalArgumentException(this + " Collector not allowed to collect on territory: " + resource.getPosition() + "  " + getSyncBaseItem());
+        if (!getServices().getTerritoryService().isAllowed(resource.getSyncItemArea().getPosition(), getSyncBaseItem())) {
+            throw new IllegalArgumentException(this + " Collector not allowed to collect on territory: " + resource.getSyncItemArea().getPosition() + "  " + getSyncBaseItem());
         }
 
         this.target = resource.getId();
         destinationHint = attackCommand.getDestinationHint();
+        destinationAngel = attackCommand.getDestinationAngel();
     }
 
     public Id getTarget() {

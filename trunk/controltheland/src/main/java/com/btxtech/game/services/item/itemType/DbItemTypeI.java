@@ -13,14 +13,6 @@ import java.util.Set;
 public interface DbItemTypeI {
     Integer getId();
 
-    int getHeight();
-
-    void setHeight(int height);
-
-    int getWidth();
-
-    void setWidth(int width);
-
     String getName();
 
     void setDescription(String description);
@@ -44,4 +36,14 @@ public interface DbItemTypeI {
     TerrainType getTerrainType();
 
     void setTerrainType(TerrainType terrainType);
+
+    int getImageWidth();
+
+    int getImageHeight();
+
+    int getBoundingBoxWidth();
+
+    int getBoundingBoxHeight();
+
+    int getImageCount();
 }

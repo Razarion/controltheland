@@ -40,7 +40,6 @@
         <mapping class="com.btxtech.game.services.item.itemType.DbFactoryType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbHarvesterType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbMovableType"/>
-        <mapping class="com.btxtech.game.services.item.itemType.DbTurnableType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbWeaponType"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbItemTypeImage"/>
         <mapping class="com.btxtech.game.services.item.itemType.DbConsumerType"/>

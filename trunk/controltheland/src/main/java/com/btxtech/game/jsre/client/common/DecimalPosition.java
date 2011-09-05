@@ -33,9 +33,6 @@ public class DecimalPosition implements Serializable {
     }
 
     public DecimalPosition(double x, double y) {
-        if (x < 0 || y < 0) {
-            throw new DecimalPositionNegativeException(x, y);
-        }
         this.x = x;
         this.y = y;
     }
@@ -82,13 +79,20 @@ public class DecimalPosition implements Serializable {
         return new DecimalPosition(x, y);
     }
 
-    @Override
-    public String toString() {
-        return "x: " + x + " y: " + y;
-    }
-
     public boolean isSame(Index position) {
         return getDistance(position) < FACTOR;
     }
 
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    @Override
+    public String toString() {
+        return "x: " + x + " y: " + y;
+    }
 }

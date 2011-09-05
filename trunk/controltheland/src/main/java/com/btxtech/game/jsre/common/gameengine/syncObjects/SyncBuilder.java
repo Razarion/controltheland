@@ -14,8 +14,8 @@
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
+import com.btxtech.game.jsre.common.gameengine.AttackFormation;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -39,6 +39,7 @@ public class SyncBuilder extends SyncBaseAbility {
     private BaseItemType toBeBuiltType;
     private int createdChildCount;
     private Index destinationHint;
+    private Double destinationAngel;
 
     public SyncBuilder(BuilderType builderType, SyncBaseItem syncBaseItem) {
         super(syncBaseItem);
@@ -53,22 +54,15 @@ public class SyncBuilder extends SyncBaseAbility {
         if (toBeBuildPosition == null || toBeBuiltType == null) {
             return false;
         }
-        if (isTargetInRange(toBeBuildPosition, builderType.getRange(), toBeBuiltType)) {
+        if (getSyncItemArea().isInRange(builderType.getRange(), toBeBuildPosition, toBeBuiltType)) {
             if (currentBuildup == null) {
                 if (toBeBuiltType == null || toBeBuildPosition == null) {
                     throw new IllegalArgumentException("Invalid attributes |" + toBeBuiltType + "|" + toBeBuildPosition);
                 }
-                if (getSyncBaseItem().hasSyncTurnable()) {
-                    getSyncBaseItem().getSyncTurnable().turnTo(toBeBuildPosition);
-                }
+                getSyncItemArea().turnTo(toBeBuildPosition);
 
-                Rectangle itemRect = new Rectangle(toBeBuildPosition.getX() - toBeBuiltType.getWidth() / 2,
-                        toBeBuildPosition.getY() - toBeBuiltType.getHeight() / 2,
-                        toBeBuiltType.getWidth(),
-                        toBeBuiltType.getHeight());
-                if (getServices().getItemService().hasBuildingsInRect(itemRect)) {
-                    throw new PositionTakenException(toBeBuildPosition, toBeBuiltType);
-                }
+                getServices().getItemService().checkBuildingsInRect(toBeBuiltType, toBeBuildPosition);
+
                 try {
                     currentBuildup = (SyncBaseItem) getServices().getItemService().createSyncObject(toBeBuiltType, toBeBuildPosition, getSyncBaseItem(), getSyncBaseItem().getBase(), createdChildCount);
                     createdChildCount++;
@@ -106,12 +100,19 @@ public class SyncBuilder extends SyncBaseAbility {
                 throw new IllegalStateException(this + " toBeBuildPosition == null");
             }
             if (destinationHint == null) {
-                destinationHint = getServices().getCollisionService().getDestinationHint(getSyncBaseItem(), builderType.getRange(), toBeBuiltType, toBeBuildPosition);
+                AttackFormation.AttackFormationItem format = getServices().getCollisionService().getDestinationHint(getSyncBaseItem(),
+                        builderType.getRange(),
+                        toBeBuiltType.getBoundingBox().createSyntheticSyncItemArea(toBeBuildPosition),
+                        toBeBuiltType.getTerrainType());
+                if (format != null) {
+                    destinationHint = format.getDestinationHint();
+                    destinationAngel = format.getDestinationAngel();
+                }
                 if (destinationHint == null) {
                     stop();
                 }
             }
-            getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, destinationHint, toBeBuildPosition);
+            getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, destinationHint, destinationAngel, toBeBuildPosition);
             return true;
         }
     }
@@ -124,6 +125,7 @@ public class SyncBuilder extends SyncBaseAbility {
         toBeBuiltType = null;
         toBeBuildPosition = null;
         destinationHint = null;
+        destinationAngel = null;
         getSyncBaseItem().getSyncMovable().stop();
     }
 
@@ -183,17 +185,17 @@ public class SyncBuilder extends SyncBaseAbility {
             throw new IllegalArgumentException(this + " user is not allowed to build: " + builderFinalizeCommand.getToBeBuilt());
         }
 
-        if (!getServices().getTerritoryService().isAllowed(syncBaseItem.getPosition(), getSyncBaseItem())) {
-            throw new IllegalArgumentException(this + " Builder not allowed to build on territory: " + syncBaseItem.getPosition() + "  " + getSyncBaseItem());
+        if (!getServices().getTerritoryService().isAllowed(syncBaseItem.getSyncItemArea().getPosition(), getSyncBaseItem())) {
+            throw new IllegalArgumentException(this + " Builder not allowed to build on territory: " + syncBaseItem.getSyncItemArea().getPosition() + "  " + getSyncBaseItem());
         }
 
-        if (!getServices().getTerritoryService().isAllowed(syncBaseItem.getPosition(), syncBaseItem)) {
-            throw new IllegalArgumentException(this + " Item can not be built on territory: " + syncBaseItem.getPosition() + "  " + syncBaseItem);
+        if (!getServices().getTerritoryService().isAllowed(syncBaseItem.getSyncItemArea().getPosition(), syncBaseItem)) {
+            throw new IllegalArgumentException(this + " Item can not be built on territory: " + syncBaseItem.getSyncItemArea().getPosition() + "  " + syncBaseItem);
         }
 
         currentBuildup = syncBaseItem;
         toBeBuiltType = syncBaseItem.getBaseItemType();
-        toBeBuildPosition = syncBaseItem.getPosition();
+        toBeBuildPosition = syncBaseItem.getSyncItemArea().getPosition();
     }
 
     public Index getToBeBuildPosition() {

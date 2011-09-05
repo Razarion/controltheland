@@ -52,6 +52,7 @@
         <url-pattern>/pathfinding/gwtrpc/*</url-pattern>
         <url-pattern>/mapview/gwtrpc/*</url-pattern>
         <url-pattern>/playback/gwtrpc/*</url-pattern>
+        <url-pattern>/itemtypeeditor/gwtrpc/*</url-pattern>
     </servlet-mapping>
 
     <!-- Spring controller integration -->
@@ -67,12 +68,20 @@
 
     <!-- GWT Logging -->
     <servlet>
-        <servlet-name>remoteLoggingServiceImpl</servlet-name>
-        <servlet-class>com.google.gwt.libideas.logging.server.RemoteLoggingServiceImpl</servlet-class>
+        <servlet-name>remoteLogging</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.ExtendedRemoteLoggingServiceImpl</servlet-class>
+        <init-param>
+            <param-name>symbolMapsDirectory</param-name>
+            <param-value>src/main/webapp/WEB-INF/deploy/itemtypeeditor/symbolMaps</param-value>
+        </init-param>
     </servlet>
     <servlet-mapping>
-        <servlet-name>remoteLoggingServiceImpl</servlet-name>
-        <url-pattern>/game/logging</url-pattern>
+        <servlet-name>remoteLogging</servlet-name>
+        <url-pattern>/game/remote_logging</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>remoteLogging</servlet-name>
+        <url-pattern>/itemtypeeditor/remote_logging</url-pattern>
     </servlet-mapping>
 
     <filter>

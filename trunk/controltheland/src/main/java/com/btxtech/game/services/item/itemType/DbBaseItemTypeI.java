@@ -18,10 +18,6 @@ public interface DbBaseItemTypeI extends DbItemTypeI {
 
     void setBuildup(int buildup);
 
-    DbTurnableType getDbTurnableType();
-
-    void setDbTurnableType(DbTurnableType dbTurnableType);
-
     DbMovableType getDbMovableType();
 
     void setDbMovableType(DbMovableType dbMovableType);

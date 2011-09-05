@@ -13,9 +13,8 @@
 
 package com.btxtech.game.jsre.common.gameengine.itemType;
 
-import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+
 import java.io.Serializable;
 
 /**
@@ -25,31 +24,21 @@ import java.io.Serializable;
  */
 public abstract class ItemType implements Serializable {
     private int id;
-    private int height;
-    private int width;
     private String name;
     private String description;
     private TerrainType terrainType;
-    private Integer radius;
+    private BoundingBox boundingBox;
 
     public int getId() {
         return id;
     }
 
-    public int getHeight() {
-        return height;
+    public BoundingBox getBoundingBox() {
+        return boundingBox;
     }
 
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
+    public void setBoundingBox(BoundingBox boundingBox) {
+        this.boundingBox = boundingBox;
     }
 
     public String getName() {
@@ -80,15 +69,14 @@ public abstract class ItemType implements Serializable {
         return terrainType;
     }
 
-    public int getRadius() {
-        if (radius == null) {
-            radius = (int) (Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)) / 2.0);
+    public void changeTo(ItemType itemType) {
+        if (id != itemType.id) {
+            throw new IllegalArgumentException("Id must be the same: " + id + ":" + itemType.id);
         }
-        return radius;
-    }
-
-    public Rectangle getRectangle(Index position) {
-        return Rectangle.generateRectangleFromMiddlePoint(position, getWidth(), getHeight());
+        boundingBox = itemType.boundingBox;
+        name = itemType.name;
+        description = itemType.description;
+        terrainType = itemType.terrainType;
     }
 
     @Override
@@ -98,25 +86,12 @@ public abstract class ItemType implements Serializable {
 
         ItemType itemType = (ItemType) o;
 
-        if (id != itemType.id) return false;
-
-        return true;
+        return id == itemType.id;
     }
 
     @Override
     public int hashCode() {
         return id;
-    }
-
-    public void changeTo(ItemType itemType) {
-        if (id != itemType.id) {
-            throw new IllegalArgumentException("Id must be the same: " + id + ":" + itemType.id);
-        }
-        height = itemType.height;
-        width = itemType.width;
-        name = itemType.name;
-        description = itemType.description;
-        terrainType = itemType.terrainType;
     }
 
     @Override

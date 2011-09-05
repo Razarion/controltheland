@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
@@ -25,6 +26,7 @@ import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededEx
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -67,10 +69,16 @@ public interface ItemService {
 
     List<SyncBaseItem> getEnemyItems(SimpleBase base, Rectangle region, boolean ignoreBot);
 
-    boolean hasBuildingsInRect(Rectangle rectangle);
-
     boolean hasStandingItemsInRect(Rectangle rectangle, SyncItem exceptThat);
 
+    boolean isSyncItemOverlapping(SyncItem syncItem);
+
+    boolean isSyncItemOverlapping(SyncItem syncItem, Index positionToCheck);
+
+    boolean isUnmovableSyncItemOverlapping(BoundingBox boundingBox, Index positionToCheck);
+
+    void checkBuildingsInRect(BaseItemType toBeBuiltType, Index toBeBuildPosition);
+    
     Collection<SyncBaseItem> getBaseItemsInRadius(Index position, int radius, SimpleBase simpleBase, Collection<BaseItemType> baseItemTypeFilter);
 
     Collection<SyncBaseItem> getBaseItemsInRectangle(Rectangle rectangle, SimpleBase simpleBase, Collection<BaseItemType> baseItemTypeFilter);

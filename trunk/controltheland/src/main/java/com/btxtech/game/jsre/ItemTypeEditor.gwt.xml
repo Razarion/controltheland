@@ -12,10 +12,10 @@
   ~   GNU General Public License for more details.
   -->
 <module rename-to='itemtypeeditor'>
-    <source path="itemtypeeditor" />
+    <source path="itemtypeeditor"/>
     <source path="client"/>
-    <source path="common" />
-    
+    <source path="common"/>
+
     <!-- Inherit the core Web Toolkit stuff.                        -->
     <inherits name='com.google.gwt.user.User'/>
     <inherits name='com.google.gwt.user.theme.standard.Standard'/>
@@ -32,4 +32,9 @@
 
     <!-- Specify the app entry point class.                         -->
     <entry-point class='com.btxtech.game.jsre.itemtypeeditor.ItemTypeEditor'/>
+
+    <!-- Logging -->
+    <set-property name="gwt.logging.firebugHandler" value="DISABLED"/>
+    <set-property name="gwt.logging.simpleRemoteHandler" value="ENABLED"/>
+    <set-property name="gwt.logging.popupHandler" value="DISABLED"/>
 </module>

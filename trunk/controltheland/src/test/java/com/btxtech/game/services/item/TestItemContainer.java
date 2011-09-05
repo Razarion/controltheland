@@ -13,6 +13,7 @@ import com.btxtech.game.services.collision.CollisionService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
 
 /**
  * User: beat
@@ -28,6 +29,7 @@ public class TestItemContainer extends AbstractServiceTest {
     private ItemService itemService;
 
     @Test
+    @DirtiesContext
     public void testLoadUnloadContainer() throws Exception {
         configureMinimalGame();
 
@@ -53,7 +55,7 @@ public class TestItemContainer extends AbstractServiceTest {
         waitForActionServiceDone();
         Assert.assertEquals(0, syncItemContainer.getContainedItems().size());
         Assert.assertFalse(builder.isContainedIn());
-        Assert.assertNotNull(builder.getPosition());
+        Assert.assertTrue(builder.getSyncItemArea().hasPosition());
 
         // Load
         sendContainerLoadCommand(builderId, containerId);
@@ -61,14 +63,14 @@ public class TestItemContainer extends AbstractServiceTest {
         Assert.assertEquals(1, syncItemContainer.getContainedItems().size());
         Assert.assertEquals(builderId, syncItemContainer.getContainedItems().get(0));
         Assert.assertTrue(builder.isContainedIn());
-        Assert.assertNull(builder.getPosition());
+        Assert.assertFalse(builder.getSyncItemArea().hasPosition());
 
         // Unload
         sendUnloadContainerCommand(containerId, new Index(8000, 8000));
         waitForActionServiceDone();
         Assert.assertEquals(0, syncItemContainer.getContainedItems().size());
         Assert.assertFalse(builder.isContainedIn());
-        Assert.assertEquals(new Index(8000, 8000), builder.getPosition());
+        Assert.assertEquals(new Index(8000, 8000), builder.getSyncItemArea().getPosition());
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();

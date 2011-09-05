@@ -16,10 +16,9 @@ package com.btxtech.game.jsre.client;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.utg.ImageSizeCallback;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.itemType.TurnableType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTurnable;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.user.client.DOM;
@@ -55,9 +54,9 @@ public class ImageHandler {
 
     public static Image getItemTypeImage(SyncItem syncItem) {
         int imgIndex;
-        if (syncItem.hasSyncTurnable()) {
-            SyncTurnable syncTurnable = syncItem.getSyncTurnable();
-            imgIndex = angleToNumber(syncTurnable.getAngel(), syncTurnable.getTurnableType().getImageCount());
+        BoundingBox boundingBox = syncItem.getItemType().getBoundingBox();
+        if (boundingBox.isTurnable()) {
+            imgIndex = angleToNumber(syncItem.getSyncItemArea().getAngel(), boundingBox.getImageCount());
             imgIndex++;// First image start with 1
         } else {
             imgIndex = 1;
@@ -67,21 +66,13 @@ public class ImageHandler {
     }
 
     public static Image getItemTypeImage(ItemType itemType) {
-        int imgIndex = 1;
-        if (itemType instanceof BaseItemType) {
-            BaseItemType baseItemType = (BaseItemType) itemType;
-            TurnableType turnableType = baseItemType.getTurnableType();
-            if (turnableType != null) {
-                imgIndex = turnableType.getImageCount() / 4;
-            }
-        }
-        return getItemTypeImage(imgIndex, itemType);
+        return getItemTypeImage(itemType.getBoundingBox().getCosmeticImageIndex(), itemType);
     }
 
     private static Image getItemTypeImage(int imgIndex, ItemType itemType) {
         String urlStr = getItemTYpeUrl(itemType.getId(), imgIndex);
         loadImage(urlStr);
-        return createImageIE6TransparencyProblem(urlStr, itemType.getWidth(), itemType.getHeight());
+        return createImageIE6TransparencyProblem(urlStr, itemType.getBoundingBox().getImageWidth(), itemType.getBoundingBox().getImageHeight());
     }
 
     public static String getItemTYpeUrl(int itemId, int imgIndex) {

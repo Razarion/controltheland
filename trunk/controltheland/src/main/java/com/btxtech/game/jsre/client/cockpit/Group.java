@@ -233,8 +233,8 @@ public class Group {
             if (clientSyncItem.getSyncBaseItem().hasSyncBuilder()
                     && clientSyncItem.getSyncBaseItem().getSyncBuilder().getBuilderType().isAbleToBuild(tobeFinalized.getItemType().getId())
                     && ClientItemTypeAccess.getInstance().isAllowed(tobeFinalized.getItemType().getId())
-                    && ClientTerritoryService.getInstance().isAllowed(tobeFinalized.getPosition(), tobeFinalized)
-                    && ClientTerritoryService.getInstance().isAllowed(tobeFinalized.getPosition(), clientSyncItem.getSyncBaseItem())) {
+                    && ClientTerritoryService.getInstance().isAllowed(tobeFinalized.getSyncItemArea().getPosition(), tobeFinalized)
+                    && ClientTerritoryService.getInstance().isAllowed(tobeFinalized.getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem())) {
                 return true;
             }
         }
@@ -246,8 +246,8 @@ public class Group {
             if (clientSyncItem.getSyncBaseItem().hasSyncLauncher()) {
                 try {
                     int range = clientSyncItem.getSyncBaseItem().getSyncLauncher().getRange();
-                    if (clientSyncItem.getSyncBaseItem().getPosition().getDistance(position) <= range
-                            && ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getPosition(), clientSyncItem.getSyncBaseItem())
+                    if (clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition().getDistance(position) <= range
+                            && ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem())
                             && ClientTerritoryService.getInstance().isAllowed(position, clientSyncItem.getSyncBaseItem().getSyncLauncher().getLauncherType().getProjectileItemType())) {
                         return true;
                     }

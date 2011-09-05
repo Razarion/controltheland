@@ -17,7 +17,6 @@ import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -61,7 +60,7 @@ public class PlaceablePreviewSyncItem extends PlaceablePreviewWidget {
     @Override
     protected int specialMoveX(int x) {
         if (itemTypeToBuilt != null) {
-            return x -= itemTypeToBuilt.getWidth() / 2;
+            return x -= itemTypeToBuilt.getBoundingBox().getEffectiveWidth() / 2;
         } else {
             return x -= getImage().getWidth() / 2;
         }
@@ -70,7 +69,7 @@ public class PlaceablePreviewSyncItem extends PlaceablePreviewWidget {
     @Override
     protected int specialMoveY(int y) {
         if (itemTypeToBuilt != null) {
-            return y -= itemTypeToBuilt.getHeight() / 2;
+            return y -= itemTypeToBuilt.getBoundingBox().getEffectiveHeight() / 2;
         } else {
             return y -= getImage().getHeight() / 2;
         }
@@ -78,41 +77,31 @@ public class PlaceablePreviewSyncItem extends PlaceablePreviewWidget {
 
     @Override
     protected boolean allowedToPlace(int relX, int relY) {
+        Index relative = Index.createSaveIndex(relX, relY);
+
         // Check if over cockpit
-        int cockpitX = relX + itemTypeToBuilt.getHeight() / 2;
-        int cockpitY = relY + itemTypeToBuilt.getWidth() / 2;
-        if (cockpitX < 0 || cockpitY < 0) {
-            return false;
-        }
-        if (Cockpit.getInstance().contains(new Index(cockpitX, cockpitY))) {
+        if(itemTypeToBuilt.getBoundingBox().contains(relative, Cockpit.getInstance().getArea())) {
             return false;
         }
 
         // Check terrain
-        int absX = relX + TerrainView.getInstance().getViewOriginLeft();
-        int absY = relY + TerrainView.getInstance().getViewOriginTop();
-        if (absX < 0 || absY < 0) {
-            return false;
-        }
-        Index absIndex = new Index(absX, absY);
+        Index absolute = TerrainView.getInstance().toAbsoluteIndex(relative);
 
-        int terrainX = absX + itemTypeToBuilt.getWidth() / 2;
-        int terrainY = absY + itemTypeToBuilt.getHeight() / 2;
-        if (!ClientServices.getInstance().getTerrainService().isFree(new Index(terrainX, terrainY), itemTypeToBuilt)) {
+        if (!ClientServices.getInstance().getTerrainService().isFree(absolute, itemTypeToBuilt)) {
             return false;
         }
 
-        // Check territory
-        if (!ClientTerritoryService.getInstance().isAllowed(absIndex, itemTypeToBuilt)) {
+        // Check if Item allowed to play in territory
+        if (!ClientTerritoryService.getInstance().isAllowed(relative, itemTypeToBuilt)) {
             return false;
         }
 
-        if (!ClientTerritoryService.getInstance().isAtLeastOneAllowed(absIndex, group.getSyncBaseItems())) {
+        // Check if builder is allowed to build in territory
+        if (!ClientTerritoryService.getInstance().isAtLeastOneAllowed(relative, group.getSyncBaseItems())) {
             return false;
         }
 
         // Check items
-        Rectangle itemRect = new Rectangle(absX, absY, itemTypeToBuilt.getWidth(), itemTypeToBuilt.getHeight());
-        return !ItemContainer.getInstance().hasBuildingsInRect(itemRect);
+        return !ItemContainer.getInstance().isUnmovableSyncItemOverlapping(itemTypeToBuilt.getBoundingBox(), absolute);
     }
 }

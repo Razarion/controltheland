@@ -26,19 +26,86 @@ public class TestMathHelper {
 
     @Test
     public void testIsInSection() {
-        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(10), MathHelper.gradToRad(5), MathHelper.gradToRad(15)));
-        Assert.assertFalse(MathHelper.isInSection(MathHelper.gradToRad(15), MathHelper.gradToRad(5), MathHelper.gradToRad(15)));
-        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(33), MathHelper.gradToRad(33), MathHelper.gradToRad(60)));
-        Assert.assertFalse(MathHelper.isInSection(MathHelper.gradToRad(33), MathHelper.gradToRad(35), MathHelper.gradToRad(60)));
-        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(10), MathHelper.gradToRad(350), MathHelper.gradToRad(20)));
-        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(350), MathHelper.gradToRad(350), MathHelper.gradToRad(20)));
-        Assert.assertFalse(MathHelper.isInSection(MathHelper.gradToRad(20), MathHelper.gradToRad(350), MathHelper.gradToRad(20)));
-        Assert.assertFalse(MathHelper.isInSection(MathHelper.gradToRad(-30), MathHelper.gradToRad(-20), MathHelper.gradToRad(-40)));
-        Assert.assertFalse(MathHelper.isInSection(MathHelper.gradToRad(-30), MathHelper.gradToRad(20), MathHelper.gradToRad(-40)));
-        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(100), MathHelper.gradToRad(200), MathHelper.gradToRad(180)));
+        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(10), MathHelper.gradToRad(5), MathHelper.gradToRad(10)));
+        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(15), MathHelper.gradToRad(5), MathHelper.gradToRad(10)));
+        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(33), MathHelper.gradToRad(33), MathHelper.gradToRad(20)));
+        Assert.assertFalse(MathHelper.isInSection(MathHelper.gradToRad(33), MathHelper.gradToRad(35), MathHelper.gradToRad(20)));
+        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(10), MathHelper.gradToRad(350), MathHelper.gradToRad(30)));
+        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(350), MathHelper.gradToRad(350), MathHelper.gradToRad(30)));
+        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(20), MathHelper.gradToRad(350), MathHelper.gradToRad(30)));
+        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(100), MathHelper.gradToRad(200), MathHelper.gradToRad(340)));
         Assert.assertFalse(MathHelper.isInSection(MathHelper.gradToRad(190), MathHelper.gradToRad(200), MathHelper.gradToRad(180)));
-        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(100), MathHelper.gradToRad(220), MathHelper.gradToRad(200)));
-        Assert.assertFalse(MathHelper.isInSection(MathHelper.gradToRad(210), MathHelper.gradToRad(220), MathHelper.gradToRad(200)));
+        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(100), MathHelper.gradToRad(220), MathHelper.gradToRad(340)));
+        Assert.assertFalse(MathHelper.isInSection(MathHelper.gradToRad(210), MathHelper.gradToRad(220), MathHelper.gradToRad(340)));
+        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(20), MathHelper.gradToRad(10), MathHelper.gradToRad(10)));
+        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(10), MathHelper.gradToRad(10), MathHelper.gradToRad(10)));
 
+        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(10), MathHelper.gradToRad(20), MathHelper.gradToRad(-20)));
+        Assert.assertFalse(MathHelper.isInSection(MathHelper.gradToRad(10), MathHelper.gradToRad(20), MathHelper.gradToRad(20)));
+        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(243), MathHelper.gradToRad(264), MathHelper.gradToRad(-180)));
+        Assert.assertFalse(MathHelper.isInSection(MathHelper.gradToRad(243), MathHelper.gradToRad(264), MathHelper.gradToRad(180)));
+        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(10), MathHelper.gradToRad(20), MathHelper.gradToRad(-40)));
+        Assert.assertFalse(MathHelper.isInSection(MathHelper.gradToRad(10), MathHelper.gradToRad(20), MathHelper.gradToRad(40)));
+        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(350), MathHelper.gradToRad(20), MathHelper.gradToRad(-40)));
+        Assert.assertFalse(MathHelper.isInSection(MathHelper.gradToRad(350), MathHelper.gradToRad(20), MathHelper.gradToRad(40)));
+        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(30), MathHelper.gradToRad(50), MathHelper.gradToRad(-30)));
+        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(342), MathHelper.gradToRad(0), MathHelper.gradToRad(-180)));
+        Assert.assertFalse(MathHelper.isInSection(MathHelper.gradToRad(322), MathHelper.gradToRad(313), MathHelper.gradToRad(-180)));
+        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(322), MathHelper.gradToRad(313), MathHelper.gradToRad(180)));
+        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(20), MathHelper.gradToRad(30), MathHelper.gradToRad(-10)));
+        Assert.assertTrue(MathHelper.isInSection(MathHelper.gradToRad(30), MathHelper.gradToRad(30), MathHelper.gradToRad(-10)));
+
+    }
+
+    @Test
+    public void testGetAngel() {
+        Assert.assertEquals(MathHelper.gradToRad(5), MathHelper.getAngel(MathHelper.gradToRad(5), MathHelper.gradToRad(10), true), 0.0001);
+        Assert.assertEquals(MathHelper.gradToRad(30), MathHelper.getAngel(MathHelper.gradToRad(30), MathHelper.gradToRad(60), true), 0.0001);
+        Assert.assertEquals(MathHelper.gradToRad(90), MathHelper.getAngel(MathHelper.gradToRad(0), MathHelper.gradToRad(90), true), 0.0001);
+        Assert.assertEquals(MathHelper.gradToRad(10), MathHelper.getAngel(MathHelper.gradToRad(350), MathHelper.gradToRad(0), true), 0.0001);
+        Assert.assertEquals(MathHelper.gradToRad(20), MathHelper.getAngel(MathHelper.gradToRad(350), MathHelper.gradToRad(10), true), 0.0001);
+        Assert.assertEquals(MathHelper.gradToRad(350), MathHelper.getAngel(MathHelper.gradToRad(-10), MathHelper.gradToRad(-20), true), 0.0001);
+        Assert.assertEquals(MathHelper.gradToRad(350), MathHelper.getAngel(MathHelper.gradToRad(20), MathHelper.gradToRad(10), true), 0.0001);
+
+        Assert.assertEquals(MathHelper.gradToRad(10), MathHelper.getAngel(MathHelper.gradToRad(20), MathHelper.gradToRad(10), false), 0.0001);
+        Assert.assertEquals(MathHelper.gradToRad(20), MathHelper.getAngel(MathHelper.gradToRad(0), MathHelper.gradToRad(340), false), 0.0001);
+        Assert.assertEquals(MathHelper.gradToRad(30), MathHelper.getAngel(MathHelper.gradToRad(30), MathHelper.gradToRad(0), false), 0.0001);
+        Assert.assertEquals(MathHelper.gradToRad(10), MathHelper.getAngel(MathHelper.gradToRad(-10), MathHelper.gradToRad(-20), false), 0.0001);
+        Assert.assertEquals(MathHelper.gradToRad(350), MathHelper.getAngel(MathHelper.gradToRad(10), MathHelper.gradToRad(20), false), 0.0001);
+    }
+
+    @Test
+    public void testCompareWithPrecision() {
+        Assert.assertFalse(MathHelper.compareWithPrecision(1.0, 2.0));
+        Assert.assertFalse(MathHelper.compareWithPrecision(-1.0, -2.0));
+        Assert.assertFalse(MathHelper.compareWithPrecision(2.0, 1.0));
+        Assert.assertFalse(MathHelper.compareWithPrecision(-1.0, 1.0));
+        Assert.assertFalse(MathHelper.compareWithPrecision(1.0, -1.0));
+
+        Assert.assertTrue(MathHelper.compareWithPrecision(0.0, 0.0));
+        Assert.assertTrue(MathHelper.compareWithPrecision(-0.0, 0.0));
+        Assert.assertTrue(MathHelper.compareWithPrecision(0.0, -0.0));
+
+        Assert.assertTrue(MathHelper.compareWithPrecision(1.0, 1.0));
+        Assert.assertTrue(MathHelper.compareWithPrecision(10000.0, 10000.0));
+        Assert.assertTrue(MathHelper.compareWithPrecision(-42.0, -42.0));
+        Assert.assertTrue(MathHelper.compareWithPrecision(1.0, 1.000009));
+        Assert.assertTrue(MathHelper.compareWithPrecision(1.0, 0.99999));
+        Assert.assertFalse(MathHelper.compareWithPrecision(1.0, 0.9));
+        Assert.assertFalse(MathHelper.compareWithPrecision(1.0, 1.1));
+
+        Assert.assertTrue(MathHelper.compareWithPrecision(-1.0, -1.000009));
+        Assert.assertTrue(MathHelper.compareWithPrecision(-1.0, -0.99999));
+        Assert.assertFalse(MathHelper.compareWithPrecision(-1.0, -0.9));
+        Assert.assertFalse(MathHelper.compareWithPrecision(-1.0, -1.1));
+
+        Assert.assertTrue(MathHelper.compareWithPrecision(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY));
+        Assert.assertTrue(MathHelper.compareWithPrecision(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY));
+        Assert.assertFalse(MathHelper.compareWithPrecision(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY));
+        Assert.assertFalse(MathHelper.compareWithPrecision(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY));
+        Assert.assertFalse(MathHelper.compareWithPrecision(Double.POSITIVE_INFINITY, 0));
+        Assert.assertFalse(MathHelper.compareWithPrecision(Double.NEGATIVE_INFINITY, 0));
+        Assert.assertFalse(MathHelper.compareWithPrecision(Double.POSITIVE_INFINITY, 100));
+        Assert.assertFalse(MathHelper.compareWithPrecision(Double.NEGATIVE_INFINITY, 100));
     }
 }

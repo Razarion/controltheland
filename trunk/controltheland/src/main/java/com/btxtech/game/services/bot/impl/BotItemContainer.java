@@ -89,7 +89,7 @@ public class BotItemContainer {
         BotSyncBaseItem attacker = null;
         for (BotSyncBaseItem botSyncBaseItem : botItems.values()) {
             if (botSyncBaseItem.isIdle() && botSyncBaseItem.isAbleToAttack(target.getBaseItemType())) {
-                int dist = botSyncBaseItem.getDistanceTo(target.getPosition());
+                int dist = botSyncBaseItem.getDistanceTo(target);
                 if (dist < distance) {
                     distance = dist;
                     attacker = botSyncBaseItem;

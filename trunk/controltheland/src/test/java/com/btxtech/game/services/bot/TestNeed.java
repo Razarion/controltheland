@@ -51,7 +51,7 @@ public class TestNeed extends AbstractServiceTest {
         Assert.assertEquals(0, need.getNeedCount());
         Assert.assertEquals(0, need.getItemNeed().size());
 
-        syncBaseItem.setPosition( new Index(10000, 10000));
+        syncBaseItem.getSyncItemArea().setPosition( new Index(10000, 10000));
         need.onItemRemoved(botSyncBaseItem);
         Assert.assertEquals(1, need.getNeedCount());
         Assert.assertEquals(1, need.getItemNeed().size());

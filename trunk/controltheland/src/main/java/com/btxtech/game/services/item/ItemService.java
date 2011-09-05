@@ -15,7 +15,9 @@ package com.btxtech.game.services.item;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
+import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -52,6 +54,10 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
     void saveAttackMatrix(Collection<DbBaseItemType> dbBaseItemTypes);
 
     void saveDbItemType(DbItemType dBItemType);
+
+    BoundingBox getBoundingBox(int itemTypeId) throws NoSuchItemTypeException;
+    
+    void saveBoundingBox(int itemTypeId, BoundingBox boundingBox) throws NoSuchItemTypeException;
 
     Collection<DbItemType> getDbItemTypes();
 

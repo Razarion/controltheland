@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 public class MoneyCollectCommand extends BaseCommand {
     private Id target;
     private Index destinationHint;
+    private double destinationAngel;
 
     public Id getTarget() {
         return target;
@@ -39,6 +40,14 @@ public class MoneyCollectCommand extends BaseCommand {
 
     public void setDestinationHint(Index destinationHint) {
         this.destinationHint = destinationHint;
+    }
+
+    public double getDestinationAngel() {
+        return destinationAngel;
+    }
+
+    public void setDestinationAngel(double destinationAngel) {
+        this.destinationAngel = destinationAngel;
     }
 
     @Override

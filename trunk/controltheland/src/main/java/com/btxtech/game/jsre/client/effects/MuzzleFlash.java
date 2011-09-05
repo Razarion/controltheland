@@ -57,7 +57,7 @@ public class MuzzleFlash {
 
         if (weaponType.stretchMuzzleFlashToTarget()) {
             SyncItem target = ItemContainer.getInstance().getItem(clientSyncItem.getSyncBaseItem().getSyncWeapon().getTarget());
-            int distance = target.getPosition().getDistance(center);
+            int distance = target.getSyncItemArea().getPosition().getDistance(center);
             x = (int) (center.getX() - Math.round(weaponType.getMuzzleFlashWidth() / 2.0));
             y = center.getY() - distance;
             width = weaponType.getMuzzleFlashWidth();
@@ -105,9 +105,9 @@ public class MuzzleFlash {
     private Index getAbsoluteStartPoint(ClientSyncItem clientSyncItem) throws ItemDoesNotExistException {
         SyncItem target = ItemContainer.getInstance().getItem(clientSyncItem.getSyncBaseItem().getSyncWeapon().getTarget());
         BaseItemType baseItemType = clientSyncItem.getSyncBaseItem().getBaseItemType();
-        if (clientSyncItem.getSyncBaseItem().hasSyncTurnable()) {
+        if (clientSyncItem.getSyncBaseItem().getBaseItemType().getBoundingBox().isTurnable()) {
             // Make angel start on the Y axsi
-            double tmpAngel = clientSyncItem.getSyncBaseItem().getSyncTurnable().getAngel();
+            double tmpAngel = clientSyncItem.getSyncBaseItem().getSyncItemArea().getAngel();
             tmpAngel += ImageHandler.QUARTER_RADIANT;
             tmpAngel = ImageHandler.normalizeAngel(tmpAngel);
 
@@ -121,16 +121,16 @@ public class MuzzleFlash {
             int y = (int) (b * Math.sin(-tmpAngel));
 
             // convert to MapWindow
-            x = x + ellipseMiddle.getX() - baseItemType.getWidth() / 2 + clientSyncItem.getSyncItem().getPosition().getX();
-            y = y + ellipseMiddle.getY() - baseItemType.getHeight() / 2 + clientSyncItem.getSyncItem().getPosition().getY();
+            x = x + ellipseMiddle.getX() - baseItemType.getBoundingBox().getImageWidth() / 2 + clientSyncItem.getSyncItem().getSyncItemArea().getPosition().getX();
+            y = y + ellipseMiddle.getY() - baseItemType.getBoundingBox().getImageHeight() / 2 + clientSyncItem.getSyncItem().getSyncItemArea().getPosition().getY();
             Index index = new Index(x, y);
-            angel = index.getAngleToNord(target.getPosition());
+            angel = index.getAngleToNord(target.getSyncItemArea().getPosition());
             return index;
         } else {
-            int x = baseItemType.getWeaponType().getMuzzlePointX_0() - baseItemType.getWidth() / 2 + clientSyncItem.getSyncItem().getPosition().getX();
-            int y = baseItemType.getWeaponType().getMuzzlePointY_0() - baseItemType.getHeight() / 2 + clientSyncItem.getSyncItem().getPosition().getY();
+            int x = baseItemType.getWeaponType().getMuzzlePointX_0() - baseItemType.getBoundingBox().getImageWidth() / 2 + clientSyncItem.getSyncItem().getSyncItemArea().getPosition().getX();
+            int y = baseItemType.getWeaponType().getMuzzlePointY_0() - baseItemType.getBoundingBox().getImageHeight() / 2 + clientSyncItem.getSyncItem().getSyncItemArea().getPosition().getY();
             Index index = new Index(x, y);
-            angel = index.getAngleToNord(target.getPosition());
+            angel = index.getAngleToNord(target.getSyncItemArea().getPosition());
             return index;
         }
 

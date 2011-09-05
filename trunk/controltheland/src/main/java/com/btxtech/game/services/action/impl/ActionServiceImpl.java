@@ -15,6 +15,7 @@ package com.btxtech.game.services.action.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
+import com.btxtech.game.jsre.common.gameengine.AttackFormation;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.PositionCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
@@ -193,11 +194,11 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
             return;
         }
 
-        if (syncBaseItem.getPosition() == null) {
+        if (!syncBaseItem.getSyncItemArea().hasPosition()) {
             return;
         }
 
-        if (!territoryService.isAllowed(syncBaseItem.getPosition(), syncBaseItem)) {
+        if (!territoryService.isAllowed(syncBaseItem.getSyncItemArea().getPosition(), syncBaseItem)) {
             return;
         }
 
@@ -310,11 +311,8 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
         builderCommand.setTimeStamp();
         builderCommand.setToBeBuilt(itemTypeToBuild.getId());
         builderCommand.setPositionToBeBuilt(position);
-
-        BaseCommand baseCommand = ActionServiceUtil.addDestinationHintToCommand(builderCommand, collisionService, itemService);
-
         try {
-            executeCommand(baseCommand, true);
+            executeCommand(builderCommand, true);
         } catch (Exception e) {
             log.error("", e);
         }
@@ -354,15 +352,19 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
         AttackCommand attackCommand = createAttackCommand(tank, target);
         attackCommand.setFollowTarget(true);
 
-        BaseCommand baseCommand;
         if (followTarget) {
-            baseCommand = ActionServiceUtil.addDestinationHintToCommand(attackCommand, collisionService, itemService);
-        } else {
-            baseCommand = attackCommand;
+            AttackFormation.AttackFormationItem format = collisionService.getDestinationHint(tank,
+                    tank.getSyncWeapon().getWeaponType().getRange(),
+                    target.getSyncItemArea(),
+                    target.getBaseItemType().getTerrainType());
+            if (format != null) {
+                attackCommand.setDestinationHint(format.getDestinationHint());
+                attackCommand.setDestinationAngel(format.getDestinationAngel());
+            }
         }
 
         try {
-            executeCommand(baseCommand, true);
+            executeCommand(attackCommand, true);
         } catch (Exception e) {
             log.error("", e);
         }

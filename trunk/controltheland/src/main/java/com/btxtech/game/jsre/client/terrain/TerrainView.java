@@ -253,7 +253,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
     }
 
     public boolean isItemVisible(SyncItem syncItem) {
-        return getViewRect().adjoins(syncItem.getRectangle());
+        return syncItem.getSyncItemArea().contains(getViewRect());
     }
 
     public Index toAbsoluteIndex(Index relative) {
@@ -265,8 +265,8 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
     }
 
     public void moveToMiddle(ClientSyncItem clientSyncItem) {
-        int left = clientSyncItem.getSyncItem().getPosition().getX() - parent.getOffsetWidth() / 2 - viewOriginLeft;
-        int top = clientSyncItem.getSyncItem().getPosition().getY() - parent.getOffsetHeight() / 2 - viewOriginTop;
+        int left = clientSyncItem.getSyncItem().getSyncItemArea().getPosition().getX() - parent.getOffsetWidth() / 2 - viewOriginLeft;
+        int top = clientSyncItem.getSyncItem().getSyncItemArea().getPosition().getY() - parent.getOffsetHeight() / 2 - viewOriginTop;
         moveDelta(left, top);
     }
 

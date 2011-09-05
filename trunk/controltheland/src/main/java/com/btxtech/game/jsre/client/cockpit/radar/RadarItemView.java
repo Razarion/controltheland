@@ -59,14 +59,14 @@ public class RadarItemView extends MiniMap {
         scale(scale, scale);
         for (ClientSyncItem clientSyncItem : ItemContainer.getInstance().getItems()) {
             if (clientSyncItem.isSyncBaseItem()) {
-                Index pos = clientSyncItem.getSyncItem().getPosition();
+                Index pos = clientSyncItem.getSyncItem().getSyncItemArea().getPosition();
                 if (pos == null) {
                     continue;
                 }
                 setStrokeStyle(new Color(ClientBase.getInstance().getBaseHtmlColor(clientSyncItem.getSyncBaseItem().getBase())));
                 strokeRect(pos.getX(), pos.getY(), BASE_ITEM_SIZE, BASE_ITEM_SIZE);
             } else if (clientSyncItem.isSyncResourceItem()) {
-                Index pos = clientSyncItem.getSyncItem().getPosition();
+                Index pos = clientSyncItem.getSyncItem().getSyncItemArea().getPosition();
                 setStrokeStyle(Color.WHITE);
                 strokeRect(pos.getX(), pos.getY(), RESOURCE_ITEM_SIZE, RESOURCE_ITEM_SIZE);
             }

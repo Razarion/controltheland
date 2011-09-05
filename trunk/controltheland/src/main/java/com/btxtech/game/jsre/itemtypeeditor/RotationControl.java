@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.itemtypeeditor;
 
+import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -8,8 +9,8 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DecoratorPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
@@ -21,40 +22,23 @@ public class RotationControl extends DecoratorPanel {
     private static final int HORIZONTAL_SPACING = 5;
     private static final int VERTICAL_SPACING = 5;
     private int currentImage = 1;
-    private int imageCount;
-    private ItemTypeEditorView itemTypeEditorView;
-    private Label stepLabel;
+    private BoundingBox boundingBox;
+    private ItemTypeView itemTypeView;
+    private HTML stepLabel;
     private Timer timer;
     private CheckBox clockwise;
     private int timerScheduleRepeating = 100;
 
 
-    public RotationControl(int imageCount, ItemTypeEditorView itemTypeEditorView) {
-        this.imageCount = imageCount;
-        this.itemTypeEditorView = itemTypeEditorView;
+    public RotationControl(BoundingBox boundingBox, ItemTypeView itemTypeView) {
+        this.boundingBox = boundingBox;
+        this.itemTypeView = itemTypeView;
         VerticalPanel verticalPanel = new VerticalPanel();
         setWidget(verticalPanel);
         verticalPanel.setSpacing(VERTICAL_SPACING);
-        setupSetting(verticalPanel);
         setupSingleStep(verticalPanel);
         setupAutoRotation(verticalPanel);
         update();
-    }
-
-    private void setupSetting(VerticalPanel verticalPanel) {
-        HorizontalPanel hPanel = new HorizontalPanel();
-        hPanel.setSpacing(HORIZONTAL_SPACING);
-        CheckBox boundingBox = new CheckBox("Show Bounding Box");
-        boundingBox.setValue(true);
-        boundingBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> value) {
-                itemTypeEditorView.showBoundingBox(value.getValue());
-                update();
-            }
-        });
-        hPanel.add(boundingBox);
-        verticalPanel.add(hPanel);
     }
 
     private void setupSingleStep(VerticalPanel verticalPanel) {
@@ -67,7 +51,7 @@ public class RotationControl extends DecoratorPanel {
                 nextImage();
             }
         }));
-        stepLabel = new Label();
+        stepLabel = new HTML();
         hPanel.add(stepLabel);
         hPanel.add(new Button("Right", new ClickHandler() {
             @Override
@@ -138,7 +122,7 @@ public class RotationControl extends DecoratorPanel {
 
     private void nextImage() {
         currentImage++;
-        if (currentImage > imageCount) {
+        if (currentImage > boundingBox.getImageCount()) {
             currentImage = 1;
         }
         update();
@@ -147,15 +131,15 @@ public class RotationControl extends DecoratorPanel {
     private void previousImage() {
         currentImage--;
         if (currentImage < 1) {
-            currentImage = imageCount;
+            currentImage = boundingBox.getImageCount();
         }
         update();
     }
 
     public void update() {
-        int grad = (int) ((double) (currentImage - 1) / (double) imageCount * 360.0);
-        stepLabel.setText(currentImage + " of " + imageCount + " (" + grad + ")");
-        itemTypeEditorView.draw(currentImage - 1);
+        int grad = (int) ((double) (currentImage - 1) / (double) boundingBox.getImageCount() * 360.0);
+        stepLabel.setHTML(currentImage + " of " + boundingBox.getImageCount() + " (" + grad + "&deg;)");
+        itemTypeView.draw(currentImage - 1);
     }
 
 }

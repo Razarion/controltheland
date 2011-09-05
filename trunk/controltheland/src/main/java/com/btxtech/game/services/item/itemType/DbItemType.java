@@ -13,13 +13,12 @@
 
 package com.btxtech.game.services.item.itemType;
 
+import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.user.UserService;
+
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -30,9 +29,11 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
-
-import com.btxtech.game.services.common.CrudChild;
-import com.btxtech.game.services.user.UserService;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * User: beat
@@ -46,8 +47,6 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
     @Id
     @GeneratedValue
     private Integer id;
-    private int height;
-    private int width;
     private String name;
     private String description;
     private String proDescription;
@@ -55,30 +54,16 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "itemType", orphanRemoval = true)
     private Set<DbItemTypeImage> itemTypeImages;
     private TerrainType terrainType;
+    private int imageWidth;
+    private int imageHeight;
+    private int boundingBoxWidth;
+    private int boundingBoxHeight;
+    private int imageCount;
+
 
     @Override
     public Integer getId() {
         return id;
-    }
-
-    @Override
-    public int getHeight() {
-        return height;
-    }
-
-    @Override
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    @Override
-    public int getWidth() {
-        return width;
-    }
-
-    @Override
-    public void setWidth(int width) {
-        this.width = width;
     }
 
     @Override
@@ -147,11 +132,48 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
         this.terrainType = terrainType;
     }
 
+    @Override
+    public int getImageWidth() {
+        return imageWidth;
+    }
+
+    @Override
+    public int getImageHeight() {
+        return imageHeight;
+    }
+
+    @Override
+    public int getBoundingBoxWidth() {
+        return boundingBoxWidth;
+    }
+
+    @Override
+    public int getBoundingBoxHeight() {
+        return boundingBoxHeight;
+    }
+
+    @Override
+    public int getImageCount() {
+        return imageCount;
+    }
+
+    public BoundingBox getBoundingBox() {
+        return new BoundingBox(imageWidth, imageHeight, boundingBoxWidth, boundingBoxHeight, imageCount);
+    }
+
+    public void setBounding(BoundingBox boundingBox) {
+        imageWidth = boundingBox.getImageWidth();
+        imageHeight = boundingBox.getImageHeight();
+        boundingBoxWidth = boundingBox.getWidth();
+        boundingBoxHeight = boundingBox.getHeight();
+        imageCount = boundingBox.getImageCount();
+    }
+
     public abstract ItemType createItemType();
 
     protected Collection<Integer> toInt(Collection<DbBaseItemType> items) {
         ArrayList<Integer> ints = new ArrayList<Integer>();
-        if(items == null) {
+        if (items == null) {
             return ints;
         }
         for (DbBaseItemType item : items) {
@@ -164,8 +186,7 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
         itemType.setId(id);
         itemType.setName(getName());
         itemType.setDescription(getDescription());
-        itemType.setHeight(getHeight());
-        itemType.setWidth(getWidth());
+        itemType.setBoundingBox(getBoundingBox());
         itemType.setTerrainType(terrainType);
     }
 

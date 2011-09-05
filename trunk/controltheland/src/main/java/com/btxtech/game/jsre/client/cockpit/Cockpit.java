@@ -396,6 +396,10 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         return Rectangle.contains(getAbsoluteLeft(), getAbsoluteTop(), WIDTH, HEIGHT, point);
     }
 
+    public Rectangle getArea() {
+        return new Rectangle(getAbsoluteLeft(), getAbsoluteTop(), WIDTH, HEIGHT);
+    }
+
     public void enableOnlinePanel(boolean enabled) {
         receivedText.setEnabled(enabled);
         send.setEnabled(enabled);

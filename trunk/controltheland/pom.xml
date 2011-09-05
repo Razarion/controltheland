@@ -343,6 +343,7 @@
                     <noServer>true</noServer>
                     <debugPort>1974</debugPort>
                     <!--style>DETAILED</style-->
+                    <!--draftCompile>true</draftCompile-->
                     <inplace>true</inplace>
                 </configuration>
                 <executions>

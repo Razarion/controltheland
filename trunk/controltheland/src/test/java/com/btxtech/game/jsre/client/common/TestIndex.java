@@ -46,4 +46,12 @@ public class TestIndex {
         Assert.assertEquals(13, middle.getX());
         Assert.assertEquals(6, middle.getY());
     }
+
+    @Test
+    public void testGetPointWithDistanceAllowOverrun() {
+        Index point = new Index(399, 350);
+        Index directionTo = new Index(400, 350);
+        Index newPoint = point.getPointWithDistance(100, directionTo, true);
+        Assert.assertEquals(new Index(499, 350), newPoint);
+    }
 }

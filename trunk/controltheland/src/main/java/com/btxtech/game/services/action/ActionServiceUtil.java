@@ -1,10 +1,10 @@
 package com.btxtech.game.services.action;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.gameengine.AttackFormation;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseAbility;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncHarvester;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -13,7 +13,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
-import com.btxtech.game.services.collision.CircleFormation;
 import com.btxtech.game.services.collision.CollisionService;
 
 import java.util.ArrayList;
@@ -29,14 +28,6 @@ import java.util.Map;
  * Time: 13:55:14
  */
 public class ActionServiceUtil {
-
-    public static BaseCommand addDestinationHintToCommand(BaseCommand baseCommand, CollisionService collisionService, ItemService itemService) {
-        List<BaseCommand> commands = new ArrayList<BaseCommand>();
-        commands.add(baseCommand);
-        addDestinationHintToCommands(commands, collisionService, itemService);
-        return commands.get(0);
-    }
-
 
     /**
      * Adds the destination hint to collect and move command. If there is not enough space on the terrain
@@ -92,25 +83,25 @@ public class ActionServiceUtil {
                 continue;
             }
 
-            List<CircleFormation.CircleFormationItem> circleFormationItemList = new ArrayList<CircleFormation.CircleFormationItem>();
+            List<AttackFormation.AttackFormationItem> attackFormationItemList = new ArrayList<AttackFormation.AttackFormationItem>();
             for (AttackCommand attackCommand : entry.getValue()) {
                 try {
                     SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.getItem(attackCommand.getId());
                     SyncWeapon syncWeapon = syncBaseItem.getSyncWeapon();
-                    int range = SyncBaseAbility.calculateRange(syncBaseItem.getBaseItemType(), syncWeapon.getWeaponType().getRange(), target.getItemType());
-                    circleFormationItemList.add(new CircleFormation.CircleFormationItem(syncBaseItem, range));
+                    attackFormationItemList.add(new AttackFormation.AttackFormationItem(syncBaseItem, syncWeapon.getWeaponType().getRange()));
                 } catch (ItemDoesNotExistException e) {
                     // May be killed
                 }
             }
 
-            circleFormationItemList = collisionService.setupDestinationHints(target, circleFormationItemList);
+            attackFormationItemList = collisionService.setupDestinationHints(target, attackFormationItemList);
 
-            for (int i = 0; i < circleFormationItemList.size(); i++) {
+            for (int i = 0; i < attackFormationItemList.size(); i++) {
                 AttackCommand attackCommand = entry.getValue().get(i);
-                CircleFormation.CircleFormationItem item = circleFormationItemList.get(i);
+                AttackFormation.AttackFormationItem item = attackFormationItemList.get(i);
                 if (item.isInRange()) {
                     attackCommand.setDestinationHint(item.getDestinationHint());
+                    attackCommand.setDestinationAngel(item.getDestinationAngel());
                 } else {
                     changedCommand.put(item.getSyncBaseItem().getId(), createMoveCommand(item.getSyncBaseItem().getId(), item.getDestinationHint()));
                 }
@@ -130,25 +121,25 @@ public class ActionServiceUtil {
                 continue;
             }
 
-            List<CircleFormation.CircleFormationItem> circleFormationItemList = new ArrayList<CircleFormation.CircleFormationItem>();
+            List<AttackFormation.AttackFormationItem> attackFormationItemList = new ArrayList<AttackFormation.AttackFormationItem>();
             for (MoneyCollectCommand moneyCollectCommand : entry.getValue()) {
                 try {
                     SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.getItem(moneyCollectCommand.getId());
                     SyncHarvester syncHarvester = syncBaseItem.getSyncHarvester();
-                    int range = SyncBaseAbility.calculateRange(syncBaseItem.getBaseItemType(), syncHarvester.getHarvesterType().getRange(), target.getItemType());
-                    circleFormationItemList.add(new CircleFormation.CircleFormationItem(syncBaseItem, range));
+                    attackFormationItemList.add(new AttackFormation.AttackFormationItem(syncBaseItem, syncHarvester.getHarvesterType().getRange()));
                 } catch (ItemDoesNotExistException e) {
                     // May be killed
                 }
             }
 
-            circleFormationItemList = collisionService.setupDestinationHints(target, circleFormationItemList);
+            attackFormationItemList = collisionService.setupDestinationHints(target, attackFormationItemList);
 
-            for (int i = 0; i < circleFormationItemList.size(); i++) {
+            for (int i = 0; i < attackFormationItemList.size(); i++) {
                 MoneyCollectCommand moneyCollectCommand = entry.getValue().get(i);
-                CircleFormation.CircleFormationItem item = circleFormationItemList.get(i);
+                AttackFormation.AttackFormationItem item = attackFormationItemList.get(i);
                 if (item.isInRange()) {
                     moneyCollectCommand.setDestinationHint(item.getDestinationHint());
+                    moneyCollectCommand.setDestinationAngel(item.getDestinationAngel());
                 } else {
                     changedCommand.put(item.getSyncBaseItem().getId(), createMoveCommand(item.getSyncBaseItem().getId(), item.getDestinationHint()));
                 }

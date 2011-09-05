@@ -101,7 +101,7 @@ public class Need {
         for (DbBotItemConfig dbBotItemConfig : botItemConfigs) {
             if (dbBotItemConfig.getBaseItemType().getId() == botSyncBaseItem.getSyncBaseItem().getBaseItemType().getId()) {
                 if (!ignoreRegion && dbBotItemConfig.getRegion() != null) {
-                    if (dbBotItemConfig.getRegion().contains(botSyncBaseItem.getSyncBaseItem().getPosition())) {
+                    if (botSyncBaseItem.getSyncBaseItem().getSyncItemArea().contains(dbBotItemConfig.getRegion())) {
                         return dbBotItemConfig;
                     }
                 } else {

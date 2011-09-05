@@ -50,15 +50,16 @@ public class ExplosionFrame extends ExtendedCanvas {
         frame = 1;
         if(clientSyncItem.isSyncProjectileItem()){
             width = clientSyncItem.getSyncProjectileItem().getProjectileItemType().getExplosionRadius() * 2;
+            //noinspection SuspiciousNameCombination
             height = width;
         } else {
-            width = clientSyncItem.getSyncItem().getItemType().getWidth();
-            height = clientSyncItem.getSyncItem().getItemType().getHeight();
+            width = clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageWidth();
+            height = clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageHeight();
         }
         SoundController soundController = new SoundController();
         Sound sound = soundController.createSound(Sound.MIME_TYPE_AUDIO_MPEG, "/sounds/explosion.mp3");
         sound.play();
-        Index relativeMiddle = TerrainView.getInstance().toRelativeIndex(clientSyncItem.getSyncItem().getPosition());
+        Index relativeMiddle = TerrainView.getInstance().toRelativeIndex(clientSyncItem.getSyncItem().getSyncItemArea().getPosition());
         MapWindow.getAbsolutePanel().add(this, relativeMiddle.getX() - width / 2, relativeMiddle.getY() - height / 2);
         setPixelSize(width, height);
         sinkEvents(Event.ONMOUSEMOVE);

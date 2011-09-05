@@ -30,7 +30,6 @@ import com.btxtech.game.services.item.itemType.DbLauncherType;
 import com.btxtech.game.services.item.itemType.DbMovableType;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbSpecialType;
-import com.btxtech.game.services.item.itemType.DbTurnableType;
 import com.btxtech.game.services.item.itemType.DbWeaponType;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
@@ -61,8 +60,6 @@ public class BaseItemTypeEditor extends MgmtWebPage {
     @SpringBean
     private ItemService itemService;
     private DbBaseItemType dbBaseItemType;
-    private boolean turnable;
-    private int imageCount;
     private boolean movable;
     private int speed;
     private boolean weapon;
@@ -127,8 +124,6 @@ public class BaseItemTypeEditor extends MgmtWebPage {
         form.add(new DropDownChoice<TerrainType>("terrainType", Arrays.asList(TerrainType.values())));
         form.add(new TextField<String>("upgradeable"));
         form.add(new TextField<String>("upgradeProgress"));
-        form.add(new CheckBox("turnable"));
-        form.add(new TextField("imageCount"));
         form.add(new CheckBox("movable"));
         form.add(new TextField("speed"));
         form.add(new CheckBox("weapon"));
@@ -198,13 +193,6 @@ public class BaseItemTypeEditor extends MgmtWebPage {
     }
 
     private void load() {
-        if (dbBaseItemType.getDbTurnableType() != null) {
-            turnable = true;
-            imageCount = dbBaseItemType.getDbTurnableType().getImageCount();
-        } else {
-            turnable = false;
-        }
-
         if (dbBaseItemType.getDbMovableType() != null) {
             movable = true;
             speed = dbBaseItemType.getDbMovableType().getSpeed();
@@ -300,17 +288,6 @@ public class BaseItemTypeEditor extends MgmtWebPage {
     }
 
     private void save() {
-        if (turnable) {
-            DbTurnableType turnableType = dbBaseItemType.getDbTurnableType();
-            if (turnableType == null) {
-                turnableType = new DbTurnableType();
-                dbBaseItemType.setDbTurnableType(turnableType);
-            }
-            turnableType.setImageCount(imageCount);
-        } else {
-            dbBaseItemType.setDbTurnableType(null);
-        }
-
         if (movable) {
             DbMovableType movableType = dbBaseItemType.getDbMovableType();
             if (movableType == null) {
@@ -460,14 +437,14 @@ public class BaseItemTypeEditor extends MgmtWebPage {
         } else {
             dbBaseItemType.setDbSpecialType(null);
         }
-
-        Html5ImagesUploadConverter html5ImagesUploadConverter = new Html5ImagesUploadConverter(imageFileField, dbBaseItemType);
-        if (!html5ImagesUploadConverter.isEmpty()) {
-            dbBaseItemType.setItemTypeImages(html5ImagesUploadConverter.getImages());
-            ImageIcon image = new ImageIcon(html5ImagesUploadConverter.getFirst().getData());
-            dbBaseItemType.setHeight(image.getIconHeight());
-            dbBaseItemType.setWidth(image.getIconWidth());
-        }
+        // TODO
+        /*   Html5ImagesUploadConverter html5ImagesUploadConverter = new Html5ImagesUploadConverter(imageFileField, dbBaseItemType);
+       if (!html5ImagesUploadConverter.isEmpty()) {
+           dbBaseItemType.setItemTypeImages(html5ImagesUploadConverter.getImages());
+           ImageIcon image = new ImageIcon(html5ImagesUploadConverter.getFirst().getData());
+           dbBaseItemType.setHeight(image.getIconHeight());
+           dbBaseItemType.setWidth(image.getIconWidth());
+       } */
 
         itemService.saveDbItemType(dbBaseItemType);
     }
