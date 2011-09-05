@@ -2,6 +2,7 @@ package com.btxtech.game.services.action;
 
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.gameengine.AttackFormation;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
@@ -11,7 +12,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectC
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
-import com.btxtech.game.services.collision.CircleFormation;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.user.UserService;
@@ -99,11 +99,11 @@ public class TestActionService extends AbstractServiceTest {
         SyncBaseItem target = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(2000, 2000), targetId);
         SyncBaseItem actor1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), actor1Id);
 
-        List<CircleFormation.CircleFormationItem> itemsIn = new ArrayList<CircleFormation.CircleFormationItem>();
-        itemsIn.add(new CircleFormation.CircleFormationItem(actor1, 100));
+        List<AttackFormation.AttackFormationItem> itemsIn = new ArrayList<AttackFormation.AttackFormationItem>();
+        itemsIn.add(new AttackFormation.AttackFormationItem(actor1, 100));
 
-        List<CircleFormation.CircleFormationItem> itemsOut = new ArrayList<CircleFormation.CircleFormationItem>();
-        itemsOut.add(new CircleFormation.CircleFormationItem(actor1, 100, new Index(100, 100), true));
+        List<AttackFormation.AttackFormationItem> itemsOut = new ArrayList<AttackFormation.AttackFormationItem>();
+        itemsOut.add(new AttackFormation.AttackFormationItem(actor1, 100, new Index(100, 100), true));
 
         ItemService itemServiceMock = EasyMock.createNiceMock(ItemService.class);
         EasyMock.expect(itemServiceMock.getItem(actor1Id)).andReturn(actor1);
@@ -134,11 +134,11 @@ public class TestActionService extends AbstractServiceTest {
         SyncBaseItem target = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(2000, 2000), targetId);
         SyncBaseItem actor1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), actor1Id);
 
-        List<CircleFormation.CircleFormationItem> itemsIn = new ArrayList<CircleFormation.CircleFormationItem>();
-        itemsIn.add(new CircleFormation.CircleFormationItem(actor1, 100));
+        List<AttackFormation.AttackFormationItem> itemsIn = new ArrayList<AttackFormation.AttackFormationItem>();
+        itemsIn.add(new AttackFormation.AttackFormationItem(actor1, 100));
 
-        List<CircleFormation.CircleFormationItem> itemsOut = new ArrayList<CircleFormation.CircleFormationItem>();
-        itemsOut.add(new CircleFormation.CircleFormationItem(actor1, 100, new Index(100, 100), false));
+        List<AttackFormation.AttackFormationItem> itemsOut = new ArrayList<AttackFormation.AttackFormationItem>();
+        itemsOut.add(new AttackFormation.AttackFormationItem(actor1, 100, new Index(100, 100), false));
 
         ItemService itemServiceMock = EasyMock.createNiceMock(ItemService.class);
         EasyMock.expect(itemServiceMock.getItem(actor1Id)).andReturn(actor1);
@@ -169,11 +169,11 @@ public class TestActionService extends AbstractServiceTest {
         SyncResourceItem target = createSyncResourceItem(TEST_RESOURCE_ITEM_ID, new Index(2000, 2000), targetId);
         SyncBaseItem actor1 = createSyncBaseItem(TEST_HARVESTER_ITEM_ID, new Index(1000, 1000), actor1Id);
 
-        List<CircleFormation.CircleFormationItem> itemsIn = new ArrayList<CircleFormation.CircleFormationItem>();
-        itemsIn.add(new CircleFormation.CircleFormationItem(actor1, 100));
+        List<AttackFormation.AttackFormationItem> itemsIn = new ArrayList<AttackFormation.AttackFormationItem>();
+        itemsIn.add(new AttackFormation.AttackFormationItem(actor1, 100));
 
-        List<CircleFormation.CircleFormationItem> itemsOut = new ArrayList<CircleFormation.CircleFormationItem>();
-        itemsOut.add(new CircleFormation.CircleFormationItem(actor1, 100, new Index(100, 100), true));
+        List<AttackFormation.AttackFormationItem> itemsOut = new ArrayList<AttackFormation.AttackFormationItem>();
+        itemsOut.add(new AttackFormation.AttackFormationItem(actor1, 100, new Index(100, 100), true));
 
         ItemService itemServiceMock = EasyMock.createNiceMock(ItemService.class);
         EasyMock.expect(itemServiceMock.getItem(actor1Id)).andReturn(actor1);
@@ -204,11 +204,11 @@ public class TestActionService extends AbstractServiceTest {
         SyncResourceItem target = createSyncResourceItem(TEST_RESOURCE_ITEM_ID, new Index(2000, 2000), targetId);
         SyncBaseItem actor1 = createSyncBaseItem(TEST_HARVESTER_ITEM_ID, new Index(1000, 1000), actor1Id);
 
-        List<CircleFormation.CircleFormationItem> itemsIn = new ArrayList<CircleFormation.CircleFormationItem>();
-        itemsIn.add(new CircleFormation.CircleFormationItem(actor1, 100));
+        List<AttackFormation.AttackFormationItem> itemsIn = new ArrayList<AttackFormation.AttackFormationItem>();
+        itemsIn.add(new AttackFormation.AttackFormationItem(actor1, 100));
 
-        List<CircleFormation.CircleFormationItem> itemsOut = new ArrayList<CircleFormation.CircleFormationItem>();
-        itemsOut.add(new CircleFormation.CircleFormationItem(actor1, 100, new Index(100, 100), false));
+        List<AttackFormation.AttackFormationItem> itemsOut = new ArrayList<AttackFormation.AttackFormationItem>();
+        itemsOut.add(new AttackFormation.AttackFormationItem(actor1, 100, new Index(100, 100), false));
 
         ItemService itemServiceMock = EasyMock.createNiceMock(ItemService.class);
         EasyMock.expect(itemServiceMock.getItem(actor1Id)).andReturn(actor1);

@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.AttackFormation;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BuilderType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -17,6 +18,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBuilder;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncMovable;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.action.ActionService;
@@ -66,10 +68,11 @@ public class TestBuilder extends AbstractServiceTest {
         EasyMock.replay(itemServiceMock);
 
         CollisionService collisionServiceMock = EasyMock.createNiceMock(CollisionService.class);
+        AttackFormation.AttackFormationItem formation = new AttackFormation.AttackFormationItem(null, 0, new Index(5000, 5200), 0, false);
         EasyMock.expect(collisionServiceMock.getDestinationHint(EasyMock.<SyncBaseItem>anyObject(),
                 EasyMock.anyInt(),
-                EasyMock.<ItemType>anyObject(),
-                EasyMock.<Index>anyObject())).andReturn(new Index(5000, 5200)).anyTimes();
+                EasyMock.<SyncItemArea>anyObject(),
+                EasyMock.<TerrainType>anyObject())).andReturn(formation).anyTimes();
         EasyMock.replay(collisionServiceMock);
 
         AbstractTerrainService terrainServiceMock = EasyMock.createNiceMock(AbstractTerrainService.class);
@@ -101,7 +104,7 @@ public class TestBuilder extends AbstractServiceTest {
         Assert.assertFalse(syncMovable.tick(1.0));
         // Set buildup
         SyncBuilder syncBuilder = syncBaseItem.getSyncBuilder();
-        syncBuilder.getBuilderType().changeTo(new BuilderType(10, 2, syncBuilder.getBuilderType().getAbleToBuild()));
+        syncBuilder.getBuilderType().changeTo(new BuilderType(11, 2, syncBuilder.getBuilderType().getAbleToBuild()));
 
 
         return syncBaseItem;
@@ -112,47 +115,47 @@ public class TestBuilder extends AbstractServiceTest {
     public void testBuildup() throws Exception {
         SyncBaseItem syncBaseItem = createSyncBuilderItem();
 
-        syncBaseItem.getSyncBuilder().setToBeBuildPosition(new Index(5000, 5350));
+        syncBaseItem.getSyncBuilder().setToBeBuildPosition(new Index(5000, 5290));
         syncBaseItem.getSyncBuilder().setToBeBuiltType((BaseItemType) itemService.getItemType(TEST_SIMPLE_BUILDING_ID));
 
-        Assert.assertEquals(new Index(5000, 5000), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(5000, 5000), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertNull(syncBaseItem.getSyncBuilder().getCurrentBuildup());
 
         Assert.assertTrue(syncBaseItem.tick(1));
-        Assert.assertEquals(new Index(5000, 5100), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(5000, 5100), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertNull(syncBaseItem.getSyncBuilder().getCurrentBuildup());
 
         Assert.assertTrue(syncBaseItem.tick(1));
-        Assert.assertEquals(new Index(5000, 5200), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(5000, 5200), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertNull(syncBaseItem.getSyncBuilder().getCurrentBuildup());
 
         Assert.assertTrue(syncBaseItem.tick(1));
-        Assert.assertEquals(new Index(5000, 5200), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(5000, 5200), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertNotNull(syncBaseItem.getSyncBuilder().getCurrentBuildup());
         Assert.assertEquals(0.2, syncBaseItem.getSyncBuilder().getCurrentBuildup().getBuildup(), 0.001);
         Assert.assertFalse(syncBaseItem.getSyncBuilder().getCurrentBuildup().isReady());
 
         Assert.assertTrue(syncBaseItem.tick(1));
-        Assert.assertEquals(new Index(5000, 5200), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(5000, 5200), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertNotNull(syncBaseItem.getSyncBuilder().getCurrentBuildup());
         Assert.assertEquals(0.4, syncBaseItem.getSyncBuilder().getCurrentBuildup().getBuildup(), 0.001);
         Assert.assertFalse(syncBaseItem.getSyncBuilder().getCurrentBuildup().isReady());
 
         Assert.assertTrue(syncBaseItem.tick(1));
-        Assert.assertEquals(new Index(5000, 5200), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(5000, 5200), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertNotNull(syncBaseItem.getSyncBuilder().getCurrentBuildup());
         Assert.assertEquals(0.6, syncBaseItem.getSyncBuilder().getCurrentBuildup().getBuildup(), 0.001);
         Assert.assertFalse(syncBaseItem.getSyncBuilder().getCurrentBuildup().isReady());
 
         Assert.assertTrue(syncBaseItem.tick(1));
-        Assert.assertEquals(new Index(5000, 5200), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(5000, 5200), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertNotNull(syncBaseItem.getSyncBuilder().getCurrentBuildup());
         Assert.assertEquals(0.8, syncBaseItem.getSyncBuilder().getCurrentBuildup().getBuildup(), 0.001);
         Assert.assertFalse(syncBaseItem.getSyncBuilder().getCurrentBuildup().isReady());
 
         SyncBaseItem buildup = syncBaseItem.getSyncBuilder().getCurrentBuildup();
         Assert.assertFalse(syncBaseItem.tick(1));
-        Assert.assertEquals(new Index(5000, 5200), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(5000, 5200), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertNull(syncBaseItem.getSyncBuilder().getCurrentBuildup());
         Assert.assertEquals(1.0, buildup.getBuildup(), 0.001);
         Assert.assertTrue(buildup.isReady());
@@ -164,43 +167,43 @@ public class TestBuilder extends AbstractServiceTest {
         SyncBaseItem syncBaseItem = createSyncBuilderItem();
 
         Id id2 = new Id(2, 1, 1);
-        SyncBaseItem buildupBaseItem = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(5000, 5350), id2, servicesMock);
+        SyncBaseItem buildupBaseItem = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(5000, 5290), id2, servicesMock);
         buildupBaseItem.setBuildup(0.5);
         syncBaseItem.getSyncBuilder().setCurrentBuildup(buildupBaseItem);
-        syncBaseItem.getSyncBuilder().setToBeBuildPosition(buildupBaseItem.getPosition());
+        syncBaseItem.getSyncBuilder().setToBeBuildPosition(buildupBaseItem.getSyncItemArea().getPosition());
         syncBaseItem.getSyncBuilder().setToBeBuiltType(buildupBaseItem.getBaseItemType());
 
-        Assert.assertEquals(new Index(5000, 5000), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(5000, 5000), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertNotNull(syncBaseItem.getSyncBuilder().getCurrentBuildup());
         Assert.assertEquals(0.5, syncBaseItem.getSyncBuilder().getCurrentBuildup().getBuildup(), 0.001);
         Assert.assertFalse(syncBaseItem.getSyncBuilder().getCurrentBuildup().isReady());
 
         Assert.assertTrue(syncBaseItem.tick(1));
-        Assert.assertEquals(new Index(5000, 5100), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(5000, 5100), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertNotNull(syncBaseItem.getSyncBuilder().getCurrentBuildup());
         Assert.assertEquals(0.5, syncBaseItem.getSyncBuilder().getCurrentBuildup().getBuildup(), 0.001);
         Assert.assertFalse(syncBaseItem.getSyncBuilder().getCurrentBuildup().isReady());
 
         Assert.assertTrue(syncBaseItem.tick(1));
-        Assert.assertEquals(new Index(5000, 5200), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(5000, 5200), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertNotNull(syncBaseItem.getSyncBuilder().getCurrentBuildup());
         Assert.assertEquals(0.5, syncBaseItem.getSyncBuilder().getCurrentBuildup().getBuildup(), 0.001);
         Assert.assertFalse(syncBaseItem.getSyncBuilder().getCurrentBuildup().isReady());
 
         Assert.assertTrue(syncBaseItem.tick(1));
-        Assert.assertEquals(new Index(5000, 5200), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(5000, 5200), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertNotNull(syncBaseItem.getSyncBuilder().getCurrentBuildup());
         Assert.assertEquals(0.7, syncBaseItem.getSyncBuilder().getCurrentBuildup().getBuildup(), 0.001);
         Assert.assertFalse(syncBaseItem.getSyncBuilder().getCurrentBuildup().isReady());
 
         Assert.assertTrue(syncBaseItem.tick(1));
-        Assert.assertEquals(new Index(5000, 5200), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(5000, 5200), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertNotNull(syncBaseItem.getSyncBuilder().getCurrentBuildup());
         Assert.assertEquals(0.9, syncBaseItem.getSyncBuilder().getCurrentBuildup().getBuildup(), 0.001);
         Assert.assertFalse(syncBaseItem.getSyncBuilder().getCurrentBuildup().isReady());
 
         Assert.assertFalse(syncBaseItem.tick(1));
-        Assert.assertEquals(new Index(5000, 5200), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(5000, 5200), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertNull(syncBaseItem.getSyncBuilder().getCurrentBuildup());
         Assert.assertEquals(1.0, buildupBaseItem.getBuildup(), 0.001);
         Assert.assertTrue(buildupBaseItem.isReady());

@@ -76,7 +76,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     private CrudRootServiceHelper<DbSurfaceImage> dbSurfaceImageCrudServiceHelper;
     @Autowired
     private MgmtService mgmtService;
-    
+
     private HibernateTemplate hibernateTemplate;
     private HashMap<Integer, DbTerrainImage> dbTerrainImages = new HashMap<Integer, DbTerrainImage>();
     private HashMap<Integer, DbSurfaceImage> dbSurfaceImages = new HashMap<Integer, DbSurfaceImage>();
@@ -89,9 +89,9 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
 
     @PostConstruct
     public void init() {
-    	if(mgmtService.isNoGameEngine()) {
-    		return;
-    	}
+        if (mgmtService.isNoGameEngine()) {
+            return;
+        }
         dbTerrainImageCrudServiceHelper.init(DbTerrainImage.class);
         dbSurfaceImageCrudServiceHelper.init(DbSurfaceImage.class);
         dbTerrainSettingCrudServiceHelper.init(DbTerrainSetting.class);
@@ -269,10 +269,10 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     @Override
     public List<Index> setupPathToSyncMovableRandomPositionIfTaken(SyncItem syncItem) {
         Index position = collisionService.getFreeSyncMovableRandomPositionIfTaken(syncItem, 500);
-        if (position == null) {
-            return null;
+        if (position != null) {
+            return setupPathToDestination(syncItem.getSyncItemArea().getPosition(), position, syncItem.getTerrainType());
         } else {
-            return setupPathToDestination(syncItem.getPosition(), position, syncItem.getTerrainType());
+            return null;
         }
     }
 

@@ -140,9 +140,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         Index startPoint = collisionService.getFreeRandomPosition(startItem, territory, startItemFreeRange, true);
         SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.createSyncObject(startItem, startPoint, null, base.getSimpleBase(), 0);
         syncBaseItem.setBuildup(1.0);
-        if (syncBaseItem.hasSyncTurnable()) {
-            syncBaseItem.getSyncTurnable().setAngel(Math.PI / 4.0); // Cosmetics shows vehicle from side
-        }
+        syncBaseItem.getSyncItemArea().setCosmeticsAngel();
         if (userService.getUser() != null) {
             userTrackingService.onBaseCreated(userService.getUser(), setupBaseName(base));
         }

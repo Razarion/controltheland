@@ -31,9 +31,6 @@ public class Index implements Serializable {
     }
 
     public Index(int x, int y) {
-        if (x < 0 || y < 0) {
-            throw new IllegalArgumentException("Index is not allowed to be negative x=" + x + " y=" + y);
-        }
         this.x = x;
         this.y = y;
     }
@@ -74,16 +71,10 @@ public class Index implements Serializable {
     }
 
     public void setX(int x) {
-        if (x < 0) {
-            throw new IllegalArgumentException("Index is not allowed to be negative");
-        }
         this.x = x;
     }
 
     public void setY(int y) {
-        if (y < 0) {
-            throw new IllegalArgumentException("Index is not allowed to be negative");
-        }
         this.y = y;
     }
 
@@ -93,7 +84,12 @@ public class Index implements Serializable {
 
     public int getDistance(Index index) {
         double sqrtC = Math.pow(index.x - x, 2) + Math.pow(index.y - y, 2);
-        return (int) Math.sqrt(sqrtC);
+        return (int) Math.round(Math.sqrt(sqrtC));
+    }
+
+    public double getDistanceDouble(Index index) {
+        double sqrtC = Math.pow(index.x - x, 2) + Math.pow(index.y - y, 2);
+        return Math.sqrt(sqrtC);
     }
 
     public boolean isInRadius(Index index, int radius) {
@@ -131,41 +127,26 @@ public class Index implements Serializable {
         int gk = (int) Math.round(Math.sin(angle) * (double) radius);
         int ak = (int) Math.round(Math.cos(angle) * (double) radius);
         int newX = x - gk;
-        if (newX < 0) {
-            newX = 0;
-        }
         int newY = y - ak;
-        if (newY < 0) {
-            newY = 0;
-        }
         return new Index(newX, newY);
     }
 
-    public Index getPointWithDistance(int distance, Index directionTo) {
-        // TODO wrong see DecimalPosition
+    public Index getPointWithDistance(int distance, Index directionTo, boolean allowOverrun) {
+        double directionDistance = getDistance(directionTo);
+        if (!allowOverrun && directionDistance <= distance) {
+            return directionTo;
+        }
         int dirDeltaX = directionTo.x - x;
         int dirDeltaY = directionTo.y - y;
-        int directionDistance = getDistance(directionTo);
-        if (directionDistance == 0) {
-            return directionTo.getCopy();
-        }
-        int delteX = (dirDeltaX * distance) / directionDistance;
-        int deltaY = (dirDeltaY * distance) / directionDistance;
-        return new Index(x + delteX, y + deltaY);
+        int deltaX = (int) Math.round((dirDeltaX * distance) / directionDistance);
+        int deltaY = (int) Math.round((dirDeltaY * distance) / directionDistance);
+
+        return new Index(x + deltaX, y + deltaY);
     }
 
     public Rectangle getRegion(int width, int height) {
         int startX = x - width / 2;
         int startY = y - height / 2;
-
-        if (startX < 0) {
-            startX = 0;
-        }
-
-        if (startY < 0) {
-            startY = 0;
-        }
-
         return new Rectangle(startX, startY, x + width / 2, y + height / 2);
     }
 
@@ -186,39 +167,15 @@ public class Index implements Serializable {
     }
 
     public Index add(int deltaX, int deltaY) {
-        int newX = x + deltaX;
-        int newY = y + deltaY;
-        if (newX < 0) {
-            newX = 0;
-        }
-        if (newY < 0) {
-            newY = 0;
-        }
-        return new Index(newX, newY);
+        return new Index(x + deltaX, y + deltaY);
     }
 
     public Index sub(Index point) {
-        int newX = x - point.x;
-        int newY = y - point.y;
-        if (newX < 0) {
-            newX = 0;
-        }
-        if (newY < 0) {
-            newY = 0;
-        }
-        return new Index(newX, newY);
+        return new Index(x - point.x, y - point.y);
     }
 
     public Index sub(int deltaX, int deltaY) {
-        int newX = x - deltaX;
-        int newY = y - deltaY;
-        if (newX < 0) {
-            newX = 0;
-        }
-        if (newY < 0) {
-            newY = 0;
-        }
-        return new Index(newX, newY);
+        return new Index(x - deltaX, y - deltaY);
     }
 
     public Index getMiddlePoint(Index other) {
@@ -233,12 +190,18 @@ public class Index implements Serializable {
         return x < point.x || y < point.y;
     }
 
-    public Index rotateCounterClock(Index center, double sinus, double cosinus) {
-        int normX = center.x - x;
-        int normY = center.y - y;
-        int newX = (int) (-normX * cosinus - normY * sinus);
-        int newY = (int) (-normY * cosinus + normX * sinus);
+    public Index rotateCounterClock(Index center, double sinus, double cosines) {
+        double normX = center.x - x;
+        double normY = center.y - y;
+        int newX = (int) Math.round(-normX * cosines - normY * sinus);
+        int newY = (int) Math.round(-normY * cosines + normX * sinus);
         return new Index(center.x + newX, center.y + newY);
+    }
+
+    public Index rotateCounterClock(Index center, double angel) {
+        double sinus = Math.sin(angel);
+        double cosines = Math.cos(angel);
+        return rotateCounterClock(center, sinus, cosines);
     }
 
     public static Index createSaveIndex(int x, int y) {

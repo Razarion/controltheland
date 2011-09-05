@@ -192,7 +192,8 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
     }
 
     private void setupSize() {
-        setPixelSize(clientSyncItem.getSyncItem().getItemType().getWidth(), clientSyncItem.getSyncItem().getItemType().getHeight());
+        setPixelSize(clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageWidth(),
+                clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageHeight());
     }
 
     public void setupImage() {
@@ -208,20 +209,20 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
     }
 
     public void setPosition() {
-        if (clientSyncItem.getSyncItem().getPosition() == null) {
+        if (!clientSyncItem.getSyncItem().getSyncItemArea().hasPosition()) {
             return;
         }
-        int x = toRelativePosition(clientSyncItem.getSyncItem().getPosition().getX(),
+        int x = toRelativePosition(clientSyncItem.getSyncItem().getSyncItemArea().getPosition().getX(),
                 TerrainView.getInstance().getViewOriginLeft(),
-                clientSyncItem.getSyncItem().getItemType().getWidth());
-        int y = toRelativePosition(clientSyncItem.getSyncItem().getPosition().getY(),
+                clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageWidth());
+        int y = toRelativePosition(clientSyncItem.getSyncItem().getSyncItemArea().getPosition().getY(),
                 TerrainView.getInstance().getViewOriginTop(),
-                clientSyncItem.getSyncItem().getItemType().getHeight());
+                clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageHeight());
         MapWindow.getAbsolutePanel().setWidgetPosition(this, x, y);
     }
 
-    private int toRelativePosition(int pos, int viewOrigin, int itemSize) {
-        return pos - viewOrigin - itemSize / 2;
+    private int toRelativePosition(int pos, int viewOrigin, int itemImageSize) {
+        return pos - viewOrigin - itemImageSize / 2;
     }
 
     public void onModelChange(SyncItemListener.Change change) {
@@ -311,7 +312,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
     }
 
     private void setupHealthBarPos() {
-        setWidgetPosition(healthBar, 0, clientSyncItem.getSyncItem().getItemType().getHeight() - 3);
+        setWidgetPosition(healthBar, 0, clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageHeight() - 3);
     }
 
     private void setupMarker() {
@@ -334,21 +335,22 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
     }
 
     private void setupMarkerPos() {
-        setWidgetPosition(marker, 0, clientSyncItem.getSyncItem().getItemType().getHeight() - 13);
+        setWidgetPosition(marker, 0, clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageHeight() - 13);
     }
 
 
     private void setupImageSizeAndPos() {
         if (clientSyncItem.isSyncBaseItem() && !clientSyncItem.getSyncBaseItem().isReady() && !GwtCommon.isIe6()) {
             SyncBaseItem syncBaseItem = clientSyncItem.getSyncBaseItem();
-            int width = (int) (syncBaseItem.getItemType().getWidth() * syncBaseItem.getBuildup());
-            int height = (int) (syncBaseItem.getItemType().getHeight() * syncBaseItem.getBuildup());
+            int width = (int) (syncBaseItem.getItemType().getBoundingBox().getImageWidth() * syncBaseItem.getBuildup());
+            int height = (int) (syncBaseItem.getItemType().getBoundingBox().getImageHeight() * syncBaseItem.getBuildup());
             image.setPixelSize(width, height);
-            int imgX = (syncBaseItem.getItemType().getWidth() - width) / 2;
-            int imgY = (syncBaseItem.getItemType().getHeight() - height) / 2;
+            int imgX = (syncBaseItem.getItemType().getBoundingBox().getImageWidth() - width) / 2;
+            int imgY = (syncBaseItem.getItemType().getBoundingBox().getImageHeight() - height) / 2;
             setWidgetPosition(image, imgX, imgY);
         } else {
-            image.setPixelSize(clientSyncItem.getSyncItem().getItemType().getWidth(), clientSyncItem.getSyncItem().getItemType().getHeight());
+            image.setPixelSize(clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageWidth(),
+                    clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageHeight());
             setWidgetPosition(image, 0, 0);
         }
     }

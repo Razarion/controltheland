@@ -35,7 +35,7 @@ public class SyncItemIdPositionComparison extends AbstractSyncItemComparison {
     @Override
     protected void privateOnSyncItem(SyncItem syncItem) {
         if (syncItem.getId().getId() == syncObjectId) {
-            isFulfilled = region.contains(syncItem.getPosition());
+            isFulfilled = syncItem.getSyncItemArea().contains(region);
         }
     }
 

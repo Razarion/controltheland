@@ -25,7 +25,6 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.LauncherType;
 import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
 import com.btxtech.game.jsre.common.gameengine.itemType.SpecialType;
-import com.btxtech.game.jsre.common.gameengine.itemType.TurnableType;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
@@ -44,8 +43,6 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
     private int health;
     private int price;
     private int buildup;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private DbTurnableType dbTurnableType;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbMovableType dbMovableType;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -100,16 +97,6 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
     @Override
     public void setBuildup(int buildup) {
         this.buildup = buildup;
-    }
-
-    @Override
-    public DbTurnableType getDbTurnableType() {
-        return dbTurnableType;
-    }
-
-    @Override
-    public void setDbTurnableType(DbTurnableType dbTurnableType) {
-        this.dbTurnableType = dbTurnableType;
     }
 
     @Override
@@ -249,9 +236,6 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
         baseItemType.setPrice(price);
         baseItemType.setHealth(health);
         baseItemType.setBuildup(buildup);
-        if (dbTurnableType != null) {
-            baseItemType.setTurnableType(new TurnableType(dbTurnableType.getImageCount()));
-        }
         if (dbMovableType != null) {
             baseItemType.setMovableType(new MovableType(dbMovableType.getSpeed(), dbMovableType.getTerrainType()));
         }

@@ -26,10 +26,12 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.effects.ExplosionHandler;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
-import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.AttackFormation;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
+import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ProjectileItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
@@ -39,13 +41,14 @@ import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisio
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.items.impl.AbstractItemService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
-import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.Timer;
 
 import java.util.ArrayList;
@@ -109,7 +112,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
                 checkSpecialAdded(clientSyncItem);
             } else {
                 // Check for  Teleportation effect
-                Index localPos = clientSyncItem.getSyncItem().getPosition();
+                Index localPos = clientSyncItem.getSyncItem().getSyncItemArea().getPosition();
                 Index syncPos = syncItemInfo.getPosition();
                 if (localPos != null && syncPos != null) {
                     int distance = localPos.getDistance(syncPos);
@@ -203,10 +206,8 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         if (itemView.getSyncItem() instanceof SyncBaseItem) {
             SyncBaseItem syncBaseItem = (SyncBaseItem) itemView.getSyncItem();
             syncBaseItem.setBuildup(1.0);
-            if (syncBaseItem.hasSyncTurnable()) {
-                syncBaseItem.getSyncTurnable().setAngel(itemTypeAndPosition.getAngel());
-                syncBaseItem.fireItemChanged(SyncItemListener.Change.ANGEL);
-            }
+            syncBaseItem.getSyncItemArea().setAngel(itemTypeAndPosition.getAngel());
+            syncBaseItem.fireItemChanged(SyncItemListener.Change.ANGEL);
         }
         itemView.checkVisibility();
         itemView.update();
@@ -293,7 +294,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
             if (clientSyncItem.isSyncBaseItem() &&
                     !orphanItems.containsKey(clientSyncItem.getSyncItem().getId()) &&
                     !seeminglyDeadItems.containsKey(clientSyncItem.getSyncItem().getId()) &&
-                    rectangle.contains(clientSyncItem.getSyncItem().getPosition())) {
+                    clientSyncItem.getSyncItem().getSyncItemArea().contains(rectangle)) {
                 if (onlyOwnItems) {
                     if (clientSyncItem.isMyOwnProperty()) {
                         clientBaseItems.add(clientSyncItem);
@@ -317,7 +318,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
                 if (simpleBase != null && !(syncBaseItem.getBase().equals(simpleBase))) {
                     continue;
                 }
-                if (!rectangle.contains(syncBaseItem.getPosition())) {
+                if (!syncBaseItem.getSyncItemArea().contains(rectangle)) {
                     continue;
                 }
                 if (baseItemTypeFilter != null && !baseItemTypeFilter.contains(syncBaseItem.getBaseItemType())) {
@@ -329,36 +330,48 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         return result;
     }
 
-
-    public ClientSyncItem getFirstItemInRange(ItemType itemType, Index origin, int maxRange) {
-        for (ClientSyncItem syncItemView : items.values()) {
-            if (syncItemView.getSyncItem().getItemType().equals(itemType) &&
-                    !orphanItems.containsKey(syncItemView.getSyncItem().getId()) &&
-                    !seeminglyDeadItems.containsKey(syncItemView.getSyncItem().getId()) &&
-                    syncItemView.getSyncItem().getPosition().getDistance(origin) <= maxRange) {
-                return syncItemView;
-            }
-        }
-        return null;
+    @Override
+    public boolean isSyncItemOverlapping(SyncItem syncItem) {
+        return isSyncItemOverlapping(syncItem, null);
     }
 
     @Override
-    public boolean hasBuildingsInRect(Rectangle rectangle) {
-        for (ClientSyncItem clientSyncItem : items.values()) {
-            if (clientSyncItem.isSyncBaseItem() &&
-                    !orphanItems.containsKey(clientSyncItem.getSyncItem().getId()) &&
-                    !seeminglyDeadItems.containsKey(clientSyncItem.getSyncItem().getId()) &&
-                    !(clientSyncItem.getSyncBaseItem()).hasSyncMovable() &&
-                    rectangle.adjoinsEclusive(clientSyncItem.getSyncItem().getRectangle())) {
-                return true;
-            }
-        }
+    public boolean isSyncItemOverlapping(SyncItem syncItem, Index positionToCheck) {
         return false;
     }
 
     @Override
     public boolean hasStandingItemsInRect(Rectangle rectangle, SyncItem exceptThat) {
         return false;
+    }
+
+    @Override
+    public boolean isUnmovableSyncItemOverlapping(BoundingBox boundingBox, Index positionToCheck) {
+        for (ClientSyncItem clientSyncItem : items.values()) {
+            if (orphanItems.containsKey(clientSyncItem.getSyncItem().getId()) ||
+                    !seeminglyDeadItems.containsKey(clientSyncItem.getSyncItem().getId())) {
+                continue;
+            }
+            if (clientSyncItem.isSyncBaseItem()) {
+                if (!(clientSyncItem.getSyncBaseItem()).hasSyncMovable()) {
+                    if (clientSyncItem.getSyncItem().getSyncItemArea().contains(boundingBox, positionToCheck)) {
+                        return true;
+                    }
+                }
+            } else if (clientSyncItem.isSyncResourceItem()) {
+                if (clientSyncItem.getSyncItem().getSyncItemArea().contains(boundingBox, positionToCheck)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void checkBuildingsInRect(BaseItemType toBeBuiltType, Index toBeBuildPosition) {
+        if (isUnmovableSyncItemOverlapping(toBeBuiltType.getBoundingBox(), toBeBuildPosition)) {
+            throw new PositionTakenException(toBeBuildPosition, toBeBuiltType);
+        }
     }
 
     public Collection<ClientSyncItem> getOwnItems() {
@@ -376,18 +389,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
 
     @Override
     public List<SyncBaseItem> getEnemyItems(SimpleBase base, Rectangle region, boolean ignoreBot) {
-        ArrayList<SyncBaseItem> clientBaseItems = new ArrayList<SyncBaseItem>();
-        for (ClientSyncItem clientSyncItem : items.values()) {
-            if (clientSyncItem.isSyncBaseItem()
-                    && !clientSyncItem.getSyncBaseItem().getBase().equals(base)
-                    && !orphanItems.containsKey(clientSyncItem.getSyncItem().getId())
-                    && !seeminglyDeadItems.containsKey(clientSyncItem.getSyncItem().getId())
-                    && region.contains(clientSyncItem.getSyncItem().getPosition())
-                    && (!ignoreBot || !ClientServices.getInstance().getBaseService().isBot(clientSyncItem.getSyncBaseItem().getBase()))) {
-                clientBaseItems.add(clientSyncItem.getSyncBaseItem());
-            }
-        }
-        return clientBaseItems;
+        return null;
     }
 
     public boolean hasOwnAttackingMovable() {
@@ -427,35 +429,6 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         }
         return syncItems;
 
-    }
-
-    public Index getFreeRandomPosition(ItemType itemType, SyncItem origin, int targetMinRange, int targetMaxRange) {
-        for (int i = 0; i < Integer.MAX_VALUE; i++) {
-            double angel = Random.nextDouble() * 2.0 * Math.PI;
-            int discance = targetMinRange + Random.nextInt(targetMaxRange - targetMinRange);
-            Index point = origin.getPosition().getPointFromAngelToNord(angel, discance);
-
-            if (point.getX() >= TerrainView.getInstance().getTerrainHandler().getTerrainSettings().getPlayFieldXSize()) {
-                continue;
-            }
-            if (point.getY() >= TerrainView.getInstance().getTerrainHandler().getTerrainSettings().getPlayFieldYSize()) {
-                continue;
-            }
-
-            if (!TerrainView.getInstance().getTerrainHandler().isFree(point, itemType)) {
-                continue;
-            }
-            Rectangle itemRectangle = new Rectangle(point.getX() - itemType.getWidth() / 2,
-                    point.getY() - itemType.getHeight() / 2,
-                    itemType.getWidth(),
-                    itemType.getHeight());
-
-            if (!getItemsInRect(itemRectangle, false).isEmpty()) {
-                continue;
-            }
-            return point;
-        }
-        throw new IllegalStateException("Can not find free position");
     }
 
     @Override
@@ -541,12 +514,12 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
 
     @Override
     public Index getRallyPoint(SyncBaseItem factory, Collection<SurfaceType> allowedSurfaces) {
-        return factory.getPosition().add(factory.getItemType().getWidth() / 2 + 20, 0);
+        return factory.getSyncItemArea().getPosition().add(factory.getItemType().getBoundingBox().getMaxRadius() + 20, 0);
     }
 
     @Override
-    public Index getDestinationHint(SyncBaseItem syncBaseItem, int range, ItemType target, Index targetPosition) {
-        return targetPosition;
+    public AttackFormation.AttackFormationItem getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItemArea target, TerrainType targetTerrainType) {
+        return new AttackFormation.AttackFormationItem(syncBaseItem, range, target.getPosition(), syncBaseItem.getSyncItemArea().getTurnToAngel(target), true);
     }
 
     public void clear() {

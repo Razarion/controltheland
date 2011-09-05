@@ -151,7 +151,7 @@ public class CursorHandler implements TerrainMouseMoveListener {
             setCursor(clientSyncItemView, null, false);
             return;
         }
-        Index position = clientSyncItemView.getClientSyncItem().getSyncItem().getPosition();
+        Index position = clientSyncItemView.getClientSyncItem().getSyncItem().getSyncItemArea().getPosition();
         if (cursorState.isCanAttack() && cursorItemState.isAttackTarget()) {
             setCursor(clientSyncItemView, CursorType.ATTACK,
                     SelectionHandler.getInstance().atLeastOneAllowedOnTerrain4Selection()

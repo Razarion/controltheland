@@ -13,9 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
@@ -36,21 +34,12 @@ public abstract class SyncBaseAbility {
         return syncBaseItem;
     }
 
-    public boolean isTargetInRange(Index targetPos, int range, ItemType other) {
-        int fullRange = calculateRange(getSyncBaseItem().getBaseItemType(), range, other);
-        return syncBaseItem.getPosition().isInRadius(targetPos, fullRange) && (!getSyncBaseItem().hasSyncMovable() || !getSyncBaseItem().getSyncMovable().isActive());
-    }
-
-    public static int calculateRange(ItemType itemType, int itemTypeRange, ItemType targetItemType) {
-        int fullRange = itemTypeRange + itemType.getRadius();
-        if (targetItemType != null) {
-            fullRange += targetItemType.getRadius();
-        }
-        return fullRange;
-    }
-
     public Services getServices() {
         return syncBaseItem.getServices();
+    }
+
+    public SyncItemArea getSyncItemArea() {
+        return syncBaseItem.getSyncItemArea();
     }
 
     public abstract void synchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException, ItemDoesNotExistException;

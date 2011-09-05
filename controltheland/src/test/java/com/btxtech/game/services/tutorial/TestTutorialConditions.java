@@ -156,7 +156,7 @@ public class TestTutorialConditions extends AbstractServiceTest {
         //
         SimulationConditionServiceImpl.getInstance().activateCondition(simulationInfo.getTutorialConfig().getTasks().get(0).getStepConfigs().get(0).getConditionConfig(), null);
         SimulationConditionServiceImpl.getInstance().setConditionServiceListener(conditionServiceListener);
-        syncItem.setPosition(new Index(400, 400));
+        syncItem.getSyncItemArea().setPosition(new Index(400, 400));
         SimulationConditionServiceImpl.getInstance().onSyncItemDeactivated(syncItem);
         EasyMock.verify(conditionServiceListener);
     }
@@ -190,7 +190,7 @@ public class TestTutorialConditions extends AbstractServiceTest {
         //
         SimulationConditionServiceImpl.getInstance().activateCondition(simulationInfo.getTutorialConfig().getTasks().get(0).getStepConfigs().get(0).getConditionConfig(), null);
         SimulationConditionServiceImpl.getInstance().setConditionServiceListener(conditionServiceListener);
-        syncItem.setPosition(new Index(1000, 1000));
+        syncItem.getSyncItemArea().setPosition(new Index(1000, 1000));
         SimulationConditionServiceImpl.getInstance().onSyncItemDeactivated(syncItem);
         EasyMock.verify(conditionServiceListener);
     }
@@ -224,7 +224,7 @@ public class TestTutorialConditions extends AbstractServiceTest {
         //
         SimulationConditionServiceImpl.getInstance().activateCondition(simulationInfo.getTutorialConfig().getTasks().get(0).getStepConfigs().get(0).getConditionConfig(), null);
         SimulationConditionServiceImpl.getInstance().setConditionServiceListener(conditionServiceListener);
-        syncItem.setPosition(new Index(400, 400));
+        syncItem.getSyncItemArea().setPosition(new Index(400, 400));
         SimulationConditionServiceImpl.getInstance().onSyncItemDeactivated(syncItem);
         EasyMock.verify(conditionServiceListener);
     }

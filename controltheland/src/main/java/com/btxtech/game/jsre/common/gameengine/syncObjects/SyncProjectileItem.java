@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ProjectileItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+
 import java.util.Collection;
 
 /**
@@ -70,21 +71,6 @@ public class SyncProjectileItem extends SyncTickItem implements SyncBaseObject {
         }
         isAlive = false;
         getServices().getItemService().killSyncItem(this, null, true, true);
-    }
-
-    @Override
-    public Index getPosition() {
-        return position.getPosition();
-    }
-
-    @Override
-    public void setPosition(Index position) {
-        if (this.position != null) {
-            this.position.setPosition(position);
-        } else {
-            this.position = new DecimalPosition(position);
-        }
-        fireItemChanged(SyncItemListener.Change.POSITION);
     }
 
     @Override

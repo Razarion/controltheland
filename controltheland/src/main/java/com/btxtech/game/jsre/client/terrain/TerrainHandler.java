@@ -24,11 +24,13 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.widgetideas.graphics.client.ImageLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeSet;
 
 /**
@@ -164,5 +166,10 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
 
     public HashMap<Integer, ImageElement> getSurfaceImageElements() {
         return surfaceImageElements;
+    }
+
+    @Override
+    public List<Index> setupPathToSyncMovableRandomPositionIfTaken(SyncItem syncItem) {
+        return null;
     }
 }

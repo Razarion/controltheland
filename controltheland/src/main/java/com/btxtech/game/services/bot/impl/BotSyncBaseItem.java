@@ -97,7 +97,7 @@ public class BotSyncBaseItem {
         idle = true;
     }
 
-    public int getDistanceTo(Index position) {
-        return syncBaseItem.getPosition().getDistance(position);
+    public int getDistanceTo(SyncBaseItem syncBaseItem) {
+        return this.syncBaseItem.getSyncItemArea().getDistance(syncBaseItem);
     }
 }

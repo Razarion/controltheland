@@ -16,14 +16,12 @@ package com.btxtech.game.services.collision;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.Territory;
-import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
+import com.btxtech.game.jsre.common.gameengine.AttackFormation;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -47,5 +45,5 @@ public interface CollisionService extends CommonCollisionService {
 
     List<Index> setupPathToDestination(Index start, Index destination, TerrainType terrainType);
 
-    List<CircleFormation.CircleFormationItem> setupDestinationHints(SyncItem target, List<CircleFormation.CircleFormationItem> items);
+    List<AttackFormation.AttackFormationItem> setupDestinationHints(SyncItem target, List<AttackFormation.AttackFormationItem> items);
 }

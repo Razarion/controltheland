@@ -29,6 +29,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncProjectileItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -185,7 +186,7 @@ abstract public class AbstractItemService implements ItemService {
         Collection<SyncBaseItem> syncBaseItems = getBaseItemsInRectangle(position.getRegion(2 * radius, 2 * radius), simpleBase, baseItemTypeFilter);
         for (Iterator<SyncBaseItem> iterator = syncBaseItems.iterator(); iterator.hasNext();) {
             SyncBaseItem syncBaseItem = iterator.next();
-            if (syncBaseItem.getPosition().getDistance(position) > radius) {
+            if (!syncBaseItem.getSyncItemArea().isInRange(radius, position)) {
                 iterator.remove();
             }
         }

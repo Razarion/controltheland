@@ -15,17 +15,17 @@ package com.btxtech.game.services.resource.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
-import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.resource.DbRegionResource;
 import com.btxtech.game.services.terrain.TerrainService;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: beat
@@ -57,7 +57,7 @@ public class RegionResource {
         synchronized (syncResourceItems) {
             syncResourceItems.clear();
             for (SyncResourceItem resourceItem : resourceItems) {
-                if (dbRegionResource.getRegion().contains(resourceItem.getPosition())) {
+                if (resourceItem.getSyncItemArea().contains(dbRegionResource.getRegion())) {
                     syncResourceItems.add(resourceItem);
                 }
             }
@@ -110,7 +110,7 @@ public class RegionResource {
         synchronized (syncResourceItems) {
             ArrayList<SyncResourceItem> copy = new ArrayList<SyncResourceItem>(syncResourceItems);
             for (SyncResourceItem syncResourceItem : copy) {
-                if (!terrainService.isFree(syncResourceItem.getPosition(), resourceType)) {
+                if (!terrainService.isFree(syncResourceItem.getSyncItemArea().getPosition(), resourceType)) {
                     itemService.killSyncItem(syncResourceItem, null, true, false);
                 }
             }

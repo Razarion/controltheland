@@ -14,10 +14,12 @@
 package com.btxtech.game.jsre.common.gameengine.services.collision;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.AttackFormation;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+
 import java.util.Collection;
 
 /**
@@ -30,5 +32,5 @@ public interface CommonCollisionService {
 
     Index getRallyPoint(SyncBaseItem factory, Collection<SurfaceType> allowedSurfaces);
 
-    Index getDestinationHint(SyncBaseItem syncBaseItem, int range, ItemType target, Index targetPosition);
+    AttackFormation.AttackFormationItem getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItemArea target, TerrainType targetTerrainType);
 }

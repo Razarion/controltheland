@@ -21,7 +21,6 @@ import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -54,10 +53,10 @@ public class SpeechBubble extends AbsolutePanel {
     public SpeechBubble(SyncItem item, String html, boolean scrollWithTerrain) {
         this.scrollWithTerrain = scrollWithTerrain;
         Index htmlSize = getHtmlSize(html);
-        Index relative = TerrainView.getInstance().toRelativeIndex(item.getPosition());
+        Index relative = TerrainView.getInstance().toRelativeIndex(item.getSyncItemArea().getPosition());
         Direction direction = getBeakDirection(relative.getX(), relative.getY(), htmlSize.getX(), htmlSize.getY());
-        int deltaX = (int) (item.getItemType().getWidth() / 2 * 0.8);
-        int deltaY = (int) (item.getItemType().getHeight() / 2 * 0.8);
+        int deltaX = (int) (item.getItemType().getBoundingBox().getImageWidth() / 2 * 0.8);
+        int deltaY = (int) (item.getItemType().getBoundingBox().getImageHeight() / 2 * 0.8);
 
         switch (direction) {
             case BOTTOM:

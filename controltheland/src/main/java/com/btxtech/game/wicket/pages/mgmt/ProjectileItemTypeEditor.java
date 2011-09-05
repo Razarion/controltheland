@@ -65,8 +65,9 @@ public class ProjectileItemTypeEditor extends MgmtWebPage {
             @Override
             public void setObject(FileUpload fileUpload) {
                 ImageIcon image = new ImageIcon(fileUpload.getBytes());
-                dbProjectileItemType.setHeight(image.getIconHeight());
-                dbProjectileItemType.setWidth(image.getIconWidth());
+                // TODO
+                //dbProjectileItemType.setHeight(image.getIconHeight());
+                //dbProjectileItemType.setWidth(image.getIconWidth());
                 DbItemTypeImage itemTypeImage = new DbItemTypeImage();
                 itemTypeImage.setItemType(dbProjectileItemType);
                 itemTypeImage.setContentType(fileUpload.getContentType());

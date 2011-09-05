@@ -7,7 +7,7 @@ import java.io.Serializable;
  * Date: 08.05.2011
  * Time: 16:24:24
  */
-public class Line implements Serializable {
+public class Line implements Segment, Serializable {
     private Index point1;
     private Index point2;
     private double m;
@@ -17,13 +17,16 @@ public class Line implements Serializable {
      * Used by GWT
      */
     Line() {
+
+    }
+
+    public Line(Index start, double angel, int length) {
+        this(start, start.getPointFromAngelToNord(angel, length));
     }
 
     public Line(Index point1, Index point2) {
         this.point1 = point1;
         this.point2 = point2;
-        //this.point1 = new Index(Math.min(point1.getX(), point2.getX()), Math.min(point1.getY(), point2.getY()));
-        //this.point2 = new Index(Math.max(point1.getX(), point2.getX()), Math.max(point1.getY(), point2.getY()));
         m = (double) (this.point2.getY() - this.point1.getY()) / (double) (this.point2.getX() - this.point1.getX());
         c = this.point1.getY() - (m * (double) this.point1.getX());
     }
@@ -36,21 +39,9 @@ public class Line implements Serializable {
         return point2;
     }
 
-    /*  public int getStartX() {
-        return point1.getX();
+    public Line translate(double angel, int distance) {
+        return new Line(point1.getPointFromAngelToNord(angel, distance), point2.getPointFromAngelToNord(angel, distance));
     }
-
-    public int getStartY() {
-        return point1.getY();
-    }
-
-    public int getEndX() {
-        return point2.getX();
-    }
-
-    public int getEndY() {
-        return point2.getY();
-    }*/
 
     public double getM() {
         return m;
@@ -66,8 +57,6 @@ public class Line implements Serializable {
             projection = point; // TODO
         }
 
-        //this.point1 = new Index(Math.min(point1.getX(), point2.getX()), Math.min(point1.getY(), point2.getY()));
-        //this.point2 = new Index(Math.max(point1.getX(), point2.getX()), Math.max(point1.getY(), point2.getY()));
         int xMin = Math.min(point1.getX(), point2.getX());
         int xMax = Math.max(point1.getX(), point2.getX());
         int yMin = Math.min(point1.getY(), point2.getY());
@@ -104,6 +93,178 @@ public class Line implements Serializable {
             return null;
         }
         return new Index((int) Math.round(x), (int) Math.round(y));
+    }
+
+    public boolean isPointInLine(Index point) {
+        return Rectangle.generateRectangleFromAnyPoints(point1, point2).contains2(point);
+    }
+
+    public double calculateX(double y) {
+        if (Double.isInfinite(m)) {
+            return point1.getX();
+        } else if (Double.compare(0.0, m) == 0 || Double.compare(-0.0, m) == 0) {
+            throw new IllegalStateException("Can not calculate X if m is zero");
+        } else {
+            return (y - c) / m;
+        }
+    }
+
+    public double calculateY(double x) {
+        if (Double.isInfinite(m)) {
+            throw new IllegalStateException("Can not calculate Y if m is infinite");
+        } else if (Double.compare(0.0, m) == 0 || Double.compare(-0.0, m) == 0) {
+            return point1.getY();
+        } else {
+            return m * x + c;
+        }
+    }
+
+    @Override
+    public Index getCross(double angel, Index reference) {
+        int distance = Math.max(reference.getDistance(point1), reference.getDistance(point2)) * 2;
+        return getCross(new Line(reference, angel, distance));
+    }
+
+    public Index getCross(Line line) {
+        if (Double.compare(m, line.m) == 0
+                || (Double.compare(Math.abs(m), 0.0) == 0 && Double.compare(Math.abs(line.m), 0.0) == 0)
+                || (Double.isInfinite(m) && Double.isInfinite(line.m))) {
+            return null;
+        }
+
+        double x;
+        double y;
+        if (Double.compare(Math.abs(m), 0.0) == 0) {
+            y = point1.getY();
+            x = line.calculateX(y);
+        } else if (Double.compare(Math.abs(line.m), 0.0) == 0) {
+            y = line.point1.getY();
+            x = calculateX(y);
+        } else if (Double.isInfinite(m)) {
+            x = point1.getX();
+            y = line.calculateY(x);
+        } else if (Double.isInfinite(line.m)) {
+            x = line.point1.getX();
+            y = calculateY(x);
+        } else {
+            x = (line.c - c) / (m - line.m);
+            y = calculateY(x);
+        }
+
+        Index point = new Index((int) Math.round(x), (int) Math.round(y));
+        if (!isPointInLine(point)) {
+            return null;
+        }
+        if (!line.isPointInLine(point)) {
+            return null;
+        }
+        return point;
+    }
+
+    /**
+     * Returns the end-point of this line (counter)clockwise relative to the given reference
+     *
+     * @param reference    reference point
+     * @param counterClock direction
+     * @return next point
+     */
+    public Index getEndPoint(Index reference, boolean counterClock) {
+        double angel = -reference.getAngleToNord(point1);
+        Index point1Rot = point1.rotateCounterClock(reference, angel);
+        Index point2Rot = point2.rotateCounterClock(reference, angel);
+        if (counterClock) {
+            if (point1Rot.getX() < point2Rot.getX()) {
+                return point1;
+            } else {
+                return point2;
+            }
+        } else {
+            if (point1Rot.getX() > point2Rot.getX()) {
+                return point1;
+            } else {
+                return point2;
+            }
+        }
+    }
+
+    @Override
+    public boolean isNextPointOnSegment(Index crossPoint, int distance, Index reference, boolean counterClock) {
+        Index directionTo = getEndPoint(reference, counterClock);
+        if (directionTo.equals(crossPoint)) {
+            return false;
+        }
+        Index point = crossPoint.getPointWithDistance(distance, directionTo, true);
+        return isPointInLine(point);
+    }
+
+    @Override
+    public Index getNextPoint(Index crossPoint, int distance, Index reference, boolean counterClock) {
+        Index directionTo = getEndPoint(reference, counterClock);
+        Index point = crossPoint.getPointWithDistance(distance, directionTo, true);
+        if (isPointInLine(point)) {
+            return point;
+        } else {
+            throw new IllegalArgumentException("Given point is not on the line");
+        }
+    }
+
+    @Override
+    public int getDistanceToEnd(Index crossPoint, Index reference, boolean counterClock, int width) {
+        Index directionTo = getEndPoint(reference, counterClock);
+        return crossPoint.getDistance(directionTo);
+    }
+
+    @Override
+    public Index getPerpendicular(Index crossPoint, int perpendicularDistance, Index otherDirection) {
+        Index p1;
+        Index p2;
+        if (Double.compare(0.0, m) == 0 || Double.compare(-0.0, m) == 0) {
+            // New m -> Infinite
+            int y1 = crossPoint.getY() + perpendicularDistance;
+            int y2 = crossPoint.getY() - perpendicularDistance;
+            p1 = new Index(crossPoint.getX(), y1);
+            p2 = new Index(crossPoint.getX(), y2);
+        } else if (Double.isInfinite(m)) {
+            // New m -> 0
+            int x1 = crossPoint.getX() + perpendicularDistance;
+            int x2 = crossPoint.getX() - perpendicularDistance;
+            p1 = new Index(x1, crossPoint.getY());
+            p2 = new Index(x2, crossPoint.getY());
+
+        } else {
+            double mNew = -1.0 / m;
+            double cNew = crossPoint.getY() - mNew * (double) crossPoint.getX();
+            double deltaX = (double) perpendicularDistance / Math.sqrt(1 + mNew * mNew);
+            double x1 = (double) crossPoint.getX() + deltaX;
+            double x2 = (double) crossPoint.getX() - deltaX;
+            int y1 = (int) Math.round(mNew * (double) x1 + cNew);
+            int y2 = (int) Math.round(mNew * (double) x2 + cNew);
+            p1 = new Index((int) Math.round(x1), y1);
+            p2 = new Index((int) Math.round(x2), y2);
+        }
+
+        double d1 = otherDirection.getDistance(p1);
+        double d2 = otherDirection.getDistance(p2);
+        if (d1 > d2) {
+            return p1;
+        } else {
+            return p2;
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Line)) return false;
+
+        Line line = (Line) o;
+
+        return ((point1.equals(line.point1) && point2.equals(line.point2)) || point1.equals(line.point2) && point2.equals(line.point1));
+    }
+
+    @Override
+    public int hashCode() {
+        return point1.hashCode() + point2.hashCode();
     }
 
     @Override

@@ -70,6 +70,17 @@ public class Rectangle implements Serializable {
     }
 
     /**
+     * Returns true if the given position is in the rectangle the rectangle
+     *
+     * @param position to check
+     * @return true if adjoins or contains position
+     */
+    public boolean contains2(Index position) { // TODO rename: ???
+        return position != null && position.getX() >= start.getX() && position.getY() >= start.getY() && position.getX() <= endExclusive.getX() && position.getY() <= endExclusive.getY();
+    }
+
+
+    /**
      * Returns true if the given position is in the rectangle. If the rectangle just adjoins it returns false.
      *
      * @param position to check
@@ -425,6 +436,35 @@ public class Rectangle implements Serializable {
         Index newP3 = p3.rotateCounterClock(center, sinus, cosinus);
         Index newP4 = p4.rotateCounterClock(center, sinus, cosinus);
         return generateRectangleFromAnyPoints(newP1, newP2, newP3, newP4);
+    }
+
+    public Index getCorner1() {
+        return start;
+    }
+
+    public Index getCorner2() {
+        return start.add(0, getHeight());
+    }
+
+    public Index getCorner3() {
+        return endExclusive;
+    }
+
+    public Index getCorner4() {
+        return start.add(getWidth(), 0);
+    }
+
+    public int getArea() {
+        return getWidth() * getHeight();
+    }
+
+    public Collection<Line> getLines() {
+        Collection<Line> lines = new ArrayList<Line>();
+        lines.add(new Line(getCorner1(), getCorner2()));
+        lines.add(new Line(getCorner2(), getCorner3()));
+        lines.add(new Line(getCorner3(), getCorner4()));
+        lines.add(new Line(getCorner4(), getCorner1()));
+        return lines;
     }
 
     public static Rectangle generateRectangleFromAnyPoints(Index point1, Index point2) {

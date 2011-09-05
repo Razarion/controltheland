@@ -36,11 +36,11 @@ public class RectangleFormation {
     public RectangleFormation(Index origin, Collection<ClientSyncItem> clientSyncItems) {
         this.origin = origin;
         for (ClientSyncItem clientSyncItem : clientSyncItems) {
-            if (clientSyncItem.getSyncItem().getItemType().getWidth() > distanceX) {
-                distanceX = clientSyncItem.getSyncItem().getItemType().getWidth();
+            if (clientSyncItem.getSyncItem().getItemType().getBoundingBox().getMaxDiameter() > distanceX) {
+                distanceX = clientSyncItem.getSyncItem().getItemType().getBoundingBox().getMaxDiameter();
             }
-            if (clientSyncItem.getSyncItem().getItemType().getHeight() > distanceY) {
-                distanceY = clientSyncItem.getSyncItem().getItemType().getHeight();
+            if (clientSyncItem.getSyncItem().getItemType().getBoundingBox().getMaxDiameter() > distanceY) {
+                distanceY = clientSyncItem.getSyncItem().getItemType().getBoundingBox().getMaxDiameter();
             }
         }
     }

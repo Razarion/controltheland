@@ -70,8 +70,8 @@ public class SyncItemContainer extends SyncBaseAbility {
             throw new IllegalArgumentException("Container " + getSyncBaseItem() + " is not able to contain: " + syncBaseItem);
         }
 
-        if (!getServices().getTerritoryService().isAllowed(getSyncBaseItem().getPosition(), getSyncBaseItem())) {
-            throw new IllegalArgumentException(this + " Container not allowed to load on territory: " + getSyncBaseItem().getPosition() + "  " + getSyncBaseItem());
+        if (!getServices().getTerritoryService().isAllowed(getSyncBaseItem().getSyncItemArea().getPosition(), getSyncBaseItem())) {
+            throw new IllegalArgumentException(this + " Container not allowed to load on territory: " + getSyncBaseItem().getSyncItemArea().getPosition() + "  " + getSyncBaseItem());
         }
 
         if (containedItems.size() >= itemContainerType.getMaxCount()) {
@@ -107,16 +107,14 @@ public class SyncItemContainer extends SyncBaseAbility {
         if (!isActive()) {
             return false;
         }
-        if (isTargetInRange(unloadPos, itemContainerType.getRange(), null)) {
-            if (getSyncBaseItem().hasSyncTurnable()) {
-                getSyncBaseItem().getSyncTurnable().turnTo(unloadPos);
-            }
+        if (getSyncItemArea().isInRange(itemContainerType.getRange(), unloadPos)) {
+            getSyncItemArea().turnTo(unloadPos);
             unload();
             stop();
             return false;
         } else {
             if (getSyncBaseItem().hasSyncMovable()) {
-                getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, null, unloadPos);
+                getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, null, null, unloadPos);
                 return true;
             } else {
                 stop();

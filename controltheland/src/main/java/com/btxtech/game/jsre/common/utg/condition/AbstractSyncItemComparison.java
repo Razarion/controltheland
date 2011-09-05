@@ -33,7 +33,7 @@ public abstract class AbstractSyncItemComparison implements AbstractComparison {
 
     public final void onSyncItem(SyncItem syncItem) {
         if (excludedTerritoryId != null) {
-            if (getServices().getTerritoryService().isTerritory(excludedTerritoryId, syncItem.getPosition())) {
+            if (getServices().getTerritoryService().isTerritory(excludedTerritoryId, syncItem.getSyncItemArea().getPosition())) {
                 return;
             }
         }

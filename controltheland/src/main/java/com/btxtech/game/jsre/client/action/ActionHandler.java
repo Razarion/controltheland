@@ -220,8 +220,8 @@ public class ActionHandler implements CommonActionService {
     public void finalizeBuild(Collection<ClientSyncItem> builders, ClientSyncItem building) {
         for (ClientSyncItem builder : builders) {
             if (builder.getSyncBaseItem().hasSyncBuilder()
-                    && ClientTerritoryService.getInstance().isAllowed(building.getSyncItem().getPosition(), builder.getSyncBaseItem())
-                    && ClientTerritoryService.getInstance().isAllowed(building.getSyncItem().getPosition(), building.getSyncBaseItem())
+                    && ClientTerritoryService.getInstance().isAllowed(building.getSyncItem().getSyncItemArea().getPosition(), builder.getSyncBaseItem())
+                    && ClientTerritoryService.getInstance().isAllowed(building.getSyncItem().getSyncItemArea().getPosition(), building.getSyncBaseItem())
                     && builder.getSyncBaseItem().getSyncBuilder().getBuilderType().isAbleToBuild(building.getSyncBaseItem().getItemType().getId())
                     && ClientItemTypeAccess.getInstance().isAllowed(building.getSyncBaseItem().getItemType().getId())) {
                 finalizeBuild(builder.getSyncBaseItem(), building.getSyncBaseItem());
@@ -257,8 +257,8 @@ public class ActionHandler implements CommonActionService {
 
         for (ClientSyncItem clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncFactory()) {
-                if (ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getPosition(), clientSyncItem.getSyncBaseItem())
-                        && ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getPosition(), itemTypeToBuild)) {
+                if (ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem())
+                        && ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition(), itemTypeToBuild)) {
                     build(clientSyncItem.getSyncBaseItem(), itemTypeToBuild);
                 }
             } else {
@@ -291,8 +291,8 @@ public class ActionHandler implements CommonActionService {
     public void attack(Collection<ClientSyncItem> clientSyncItems, SyncBaseItem target) {
         for (ClientSyncItem clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncWeapon()) {
-                if (ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getPosition(), clientSyncItem.getSyncBaseItem())
-                        && ClientTerritoryService.getInstance().isAllowed(target.getPosition(), clientSyncItem.getSyncBaseItem())
+                if (ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem())
+                        && ClientTerritoryService.getInstance().isAllowed(target.getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem())
                         && clientSyncItem.getSyncBaseItem().getSyncWeapon().isItemTypeAllowed(target)) {
                     attack(clientSyncItem.getSyncBaseItem(), target, true);
                 }
@@ -334,7 +334,7 @@ public class ActionHandler implements CommonActionService {
     public void collect(Collection<ClientSyncItem> clientSyncItems, SyncResourceItem money) {
         for (ClientSyncItem clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncHarvester()) {
-                if (ClientTerritoryService.getInstance().isAllowed(money.getPosition(), clientSyncItem.getSyncBaseItem())) {
+                if (ClientTerritoryService.getInstance().isAllowed(money.getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem())) {
                     collect(clientSyncItem.getSyncBaseItem(), money);
                 }
             } else {
@@ -391,7 +391,7 @@ public class ActionHandler implements CommonActionService {
 
         for (ClientSyncItem item : items) {
             if (item.getSyncBaseItem().hasSyncMovable()) {
-                if (ClientTerritoryService.getInstance().isAllowed(container.getSyncBaseItem().getPosition(), container.getSyncBaseItem())
+                if (ClientTerritoryService.getInstance().isAllowed(container.getSyncBaseItem().getSyncItemArea().getPosition(), container.getSyncBaseItem())
                         && container.getSyncBaseItem().getSyncItemContainer().isAbleToContain(item.getSyncBaseItem())
                         && item.getSyncBaseItem().getSyncMovable().isLoadPosReachable(container.getSyncBaseItem().getSyncItemContainer())) {
                     putToContainer(container.getSyncBaseItem(), item.getSyncBaseItem());

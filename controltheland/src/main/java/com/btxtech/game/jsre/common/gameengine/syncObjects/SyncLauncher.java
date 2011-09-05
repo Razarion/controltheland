@@ -105,23 +105,21 @@ public class SyncLauncher extends SyncBaseAbility {
         }
 
         int range = getProjectileItemType().getRange();
-        if (getSyncBaseItem().getPosition().getDistance(command.getTarget()) > range) {
+        if (getSyncItemArea().getPosition().getDistance(command.getTarget()) > range) {
             throw new IllegalStateException(this + " range too big for projectile");
         }
 
-        if (!getServices().getTerritoryService().isAllowed(getSyncBaseItem().getPosition(), getSyncBaseItem())) {
-            throw new IllegalArgumentException(this + " Can not launch on territory:" + getSyncBaseItem().getPosition());
+        if (!getServices().getTerritoryService().isAllowed(getSyncItemArea().getPosition(), getSyncBaseItem())) {
+            throw new IllegalArgumentException(this + " Can not launch on territory:" + getSyncItemArea().getPosition());
         }
 
         if (!getServices().getTerritoryService().isAllowed(command.getTarget(), getLauncherType().getProjectileItemType())) {
             throw new IllegalArgumentException(this + " Projectile not allowed on territory:" + command.getTarget());
         }
 
-        SyncProjectileItem projectile = (SyncProjectileItem) getServices().getItemService().createSyncObject(getProjectileItemType(), getSyncBaseItem().getPosition(), getSyncBaseItem(), getSyncBaseItem().getBase(), 0);
+        SyncProjectileItem projectile = (SyncProjectileItem) getServices().getItemService().createSyncObject(getProjectileItemType(), getSyncItemArea().getPosition(), getSyncBaseItem(), getSyncBaseItem().getBase(), 0);
         if (projectile != null) {
-            if (getSyncBaseItem().hasSyncTurnable()) {
-                getSyncBaseItem().getSyncTurnable().turnTo(command.getTarget());
-            }
+            getSyncItemArea().turnTo(command.getTarget());
             buildup = 0;
             getSyncBaseItem().fireItemChanged(SyncItemListener.Change.LAUNCHER_PROGRESS);
             projectile.setTarget(command.getTarget());

@@ -19,6 +19,13 @@ package com.btxtech.game.jsre.common.gameengine.services.items;
  * Time: 16:10:39
  */
 public class NoSuchItemTypeException extends Exception {
+
+    /**
+     * Used bw GWT
+     */
+    NoSuchItemTypeException() {
+    }
+
     public NoSuchItemTypeException(String name) {
         super("No such item type: " + name);
     }

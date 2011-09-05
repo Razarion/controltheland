@@ -17,7 +17,9 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
+import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
@@ -306,13 +308,13 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
     @Override
     public boolean hasItemsInRectangle(Rectangle rectangle) {
-        // TODO slow
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
-                if (syncItem.getPosition() == null) {
+                if(!syncItem.getSyncItemArea().hasPosition()) {
                     continue;
                 }
-                if (rectangle.adjoins(syncItem.getRectangle())) {
+
+                if (syncItem.getSyncItemArea().contains(rectangle)) {
                     return true;
                 }
             }
@@ -322,24 +324,16 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
     @Override
     public SyncBaseItem getFirstEnemyItemInRange(SyncBaseItem baseSyncItem) {
-        int range = baseSyncItem.getSyncWeapon().getWeaponType().getRange();
-        int startX = baseSyncItem.getPosition().getX() - range - baseSyncItem.getItemType().getWidth() / 2;
-        if (startX < 0) {
-            startX = 0;
-        }
-        int startY = baseSyncItem.getPosition().getY() - range - baseSyncItem.getItemType().getHeight() / 2;
-        if (startY < 0) {
-            startY = 0;
-        }
-        Rectangle rectangle = new Rectangle(startX, startY, 2 * range + baseSyncItem.getItemType().getWidth(), 2 * range + baseSyncItem.getItemType().getHeight());
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
-                if (syncItem.getPosition() != null && rectangle.contains(syncItem.getPosition())
-                        && syncItem instanceof SyncBaseItem
-                        && baseSyncItem.isEnemy((SyncBaseItem) syncItem)
-                        && baseSyncItem.getSyncWeapon().isAttackAllowedWithoutMoving(syncItem)) {
-                    return (SyncBaseItem) syncItem;
+                if(!syncItem.getSyncItemArea().hasPosition()) {
+                    continue;
                 }
+
+                if (syncItem instanceof SyncBaseItem
+                        && baseSyncItem.isEnemy((SyncBaseItem) syncItem)
+                        && baseSyncItem.getSyncWeapon().isAttackAllowedWithoutMoving(syncItem))
+                    return (SyncBaseItem) syncItem;
             }
         }
         return null;
@@ -402,6 +396,28 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
     public void saveDbItemType(DbItemType dbItemType) {
         hibernateTemplate.saveOrUpdate(dbItemType);
+    }
+
+    @Override
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
+    public BoundingBox getBoundingBox(int itemTypeId) throws NoSuchItemTypeException {
+        DbItemType dbItemType = getDbItemType(itemTypeId);
+        if (dbItemType == null) {
+            throw new NoSuchItemTypeException(itemTypeId);
+        }
+        return dbItemType.getBoundingBox();
+    }
+
+    @Override
+    @Transactional
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
+    public void saveBoundingBox(int itemTypeId, BoundingBox boundingBox) throws NoSuchItemTypeException {
+        DbItemType dbItemType = getDbItemType(itemTypeId);
+        if (dbItemType == null) {
+            throw new NoSuchItemTypeException(itemTypeId);
+        }
+        dbItemType.setBounding(boundingBox);
+        saveDbItemType(dbItemType);
     }
 
     @Override
@@ -527,7 +543,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         if (muzzleItemTypeSounds.containsKey(dbItemType.getId())) {
             throw new IllegalArgumentException("Item Type sound already exits: " + dbItemType);
         }
-        Hibernate.initialize(dbItemType.getDbWeaponType().getDbSound());        
+        Hibernate.initialize(dbItemType.getDbWeaponType().getDbSound());
         muzzleItemTypeSounds.put(dbItemType.getId(), dbItemType.getDbWeaponType().getDbSound());
     }
 
@@ -628,9 +644,12 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         ArrayList<SyncBaseItem> clientBaseItems = new ArrayList<SyncBaseItem>();
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
+                if(!syncItem.getSyncItemArea().hasPosition()) {
+                    continue;
+                }
                 if (syncItem instanceof SyncBaseItem
                         && !((SyncBaseItem) syncItem).getBase().equals(simpleBase)
-                        && region.contains(syncItem.getPosition())
+                        && region.contains(syncItem.getSyncItemArea().getPosition())
                         && (!ignoreBot || !baseService.isBot(((SyncBaseItem) syncItem).getBase()))) {
                     clientBaseItems.add((SyncBaseItem) syncItem);
                 }
@@ -640,15 +659,26 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public boolean hasBuildingsInRect(Rectangle rectangle) {
+    public boolean hasStandingItemsInRect(Rectangle rectangle, SyncItem exceptThat) {
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
+                if (syncItem.equals(exceptThat)) {
+                    continue;
+                }
+                if(!syncItem.getSyncItemArea().hasPosition()) {
+                    continue;
+                }
                 if (syncItem instanceof SyncBaseItem) {
                     SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
-                    if (!syncBaseItem.hasSyncMovable() && rectangle.adjoinsEclusive(syncBaseItem.getRectangle())) {
+                    if (!syncBaseItem.hasSyncMovable() || !syncBaseItem.getSyncMovable().isActive()) {
+                        if (syncItem.getSyncItemArea().contains(rectangle)) {
+                            return true;
+                        }
+                    }
+                } else if (syncItem instanceof SyncResourceItem) {
+                    if (syncItem.getSyncItemArea().contains(rectangle)) {
                         return true;
                     }
-
                 }
             }
         }
@@ -656,34 +686,74 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public boolean hasStandingItemsInRect(Rectangle rectangle, SyncItem exceptThat) {
+    public boolean isSyncItemOverlapping(SyncItem syncItem) {
+        return isSyncItemOverlapping(syncItem, null);
+    }
+
+    @Override
+    public boolean isSyncItemOverlapping(SyncItem syncItem, Index positionToCheck) {
         synchronized (items) {
-            for (SyncItem syncItem : items.values()) {
-                if (syncItem.equals(exceptThat)) {
+            for (SyncItem otherItem : items.values()) {
+                if (otherItem.equals(syncItem)) {
                     continue;
                 }
-                if (syncItem instanceof SyncBaseItem) {
-                    SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
-                    if (syncBaseItem.isContainedIn()) {
-                        continue;
-                    }
-                    if (syncBaseItem.hasSyncMovable()) {
-                        if (!syncBaseItem.getSyncMovable().isActive() && rectangle.adjoinsEclusive(syncBaseItem.getRectangle())) {
-                            return true;
+                if(!otherItem.getSyncItemArea().hasPosition()) {
+                    continue;
+                }
+                if (otherItem instanceof SyncBaseItem) {
+                    SyncBaseItem syncBaseItem = (SyncBaseItem) otherItem;
+                    if (!syncBaseItem.hasSyncMovable() || !syncBaseItem.getSyncMovable().isActive()) {
+                        if (positionToCheck == null) {
+                            if (syncItem.getSyncItemArea().contains(syncBaseItem)) {
+                                return true;
+                            }
+                        } else {
+                            if (syncItem.getSyncItemArea().contains(syncBaseItem, positionToCheck)) {
+                                return true;
+                            }
                         }
-                    } else {
-                        if (rectangle.adjoins(syncBaseItem.getRectangle())) {
-                            return true;
-                        }
                     }
-                } else if (syncItem instanceof SyncResourceItem) {
-                    if (rectangle.adjoinsEclusive(syncItem.getRectangle())) {
+                } else if (otherItem instanceof SyncResourceItem) {
+                    if (syncItem.getSyncItemArea().contains(otherItem)) {
                         return true;
                     }
                 }
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean isUnmovableSyncItemOverlapping(BoundingBox boundingBox, Index positionToCheck) {
+        synchronized (items) {
+            for (SyncItem syncItem : items.values()) {
+                if(!syncItem.getSyncItemArea().hasPosition()) {
+                    continue;
+                }
+
+                if (syncItem instanceof SyncBaseItem) {
+                    SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
+                    if (!syncBaseItem.hasSyncMovable()) {
+                        if (syncBaseItem.getSyncItemArea().contains(boundingBox, positionToCheck)) {
+                            return true;
+                        }
+                    }
+                } else if (syncItem instanceof SyncResourceItem) {
+                    if (syncItem.getSyncItemArea().contains(boundingBox, positionToCheck)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+
+    @Override
+    public void checkBuildingsInRect(BaseItemType toBeBuiltType, Index toBeBuildPosition) {
+        if (isUnmovableSyncItemOverlapping(toBeBuiltType.getBoundingBox(), toBeBuildPosition)) {
+            throw new PositionTakenException(toBeBuildPosition, toBeBuiltType);
+        }
     }
 
     @Override
@@ -710,12 +780,15 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         ArrayList<SyncBaseItem> result = new ArrayList<SyncBaseItem>();
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
+                if(!syncItem.getSyncItemArea().hasPosition()) {
+                    continue;
+                }
                 if (syncItem instanceof SyncBaseItem) {
                     SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
                     if (simpleBase != null && !(syncBaseItem.getBase().equals(simpleBase))) {
                         continue;
                     }
-                    if (!rectangle.contains(syncBaseItem.getPosition())) {
+                    if (!syncBaseItem.getSyncItemArea().contains(rectangle)) {
                         continue;
                     }
                     if (baseItemTypeFilter != null && !baseItemTypeFilter.contains(syncBaseItem.getBaseItemType())) {

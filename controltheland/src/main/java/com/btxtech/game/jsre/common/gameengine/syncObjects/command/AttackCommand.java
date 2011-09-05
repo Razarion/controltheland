@@ -25,6 +25,7 @@ public class AttackCommand extends BaseCommand {
     private Id target;
     private boolean followTarget;
     private Index destinationHint;
+    private double destinationAngel;
 
     public Id getTarget() {
         return target;
@@ -48,6 +49,14 @@ public class AttackCommand extends BaseCommand {
 
     public void setDestinationHint(Index destinationHint) {
         this.destinationHint = destinationHint;
+    }
+
+    public double getDestinationAngel() {
+        return destinationAngel;
+    }
+
+    public void setDestinationAngel(double destinationAngel) {
+        this.destinationAngel = destinationAngel;
     }
 
     @Override

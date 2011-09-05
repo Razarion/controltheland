@@ -5,6 +5,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncMovable;
@@ -40,8 +41,11 @@ public class TestMove extends AbstractServiceTest {
         EasyMock.expect(itemServiceMock.hasItemsInRectangle(EasyMock.<Rectangle>anyObject())).andReturn(false).anyTimes();
         EasyMock.replay(itemServiceMock);
 
+        AbstractTerrainService mockTerrainService = EasyMock.createNiceMock(AbstractTerrainService.class);
+
         Services services = EasyMock.createNiceMock(Services.class);
         EasyMock.expect(services.getItemService()).andReturn(itemServiceMock).anyTimes();
+        EasyMock.expect(services.getTerrainService()).andReturn(mockTerrainService).anyTimes();
         EasyMock.replay(services);
 
         Id id = new Id(1, 1, 1);
@@ -64,10 +68,10 @@ public class TestMove extends AbstractServiceTest {
         syncBaseItem.getSyncMovable().setPathToDestination(path);
 
         Assert.assertTrue(syncBaseItem.getSyncMovable().tick(1.0));
-        Assert.assertEquals(new Index(2100, 2000), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2100, 2000), syncBaseItem.getSyncItemArea().getPosition());
 
         Assert.assertFalse(syncBaseItem.getSyncMovable().tick(9.0));
-        Assert.assertEquals(new Index(3000, 2000), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(3000, 2000), syncBaseItem.getSyncItemArea().getPosition());
     }
 
     @Test
@@ -80,13 +84,13 @@ public class TestMove extends AbstractServiceTest {
         syncBaseItem.getSyncMovable().setPathToDestination(path);
 
         Assert.assertTrue(syncBaseItem.getSyncMovable().tick(0.3));
-        Assert.assertEquals(new Index(2030, 2000), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2030, 2000), syncBaseItem.getSyncItemArea().getPosition());
 
         Assert.assertTrue(syncBaseItem.getSyncMovable().tick(4.7));
-        Assert.assertEquals(new Index(2500, 2000), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2500, 2000), syncBaseItem.getSyncItemArea().getPosition());
 
         Assert.assertFalse(syncBaseItem.getSyncMovable().tick(5.0));
-        Assert.assertEquals(new Index(3000, 2000), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(3000, 2000), syncBaseItem.getSyncItemArea().getPosition());
     }
 
     @Test
@@ -103,7 +107,7 @@ public class TestMove extends AbstractServiceTest {
         }
 
         Assert.assertFalse(syncBaseItem.getSyncMovable().tick(0.002));
-        Assert.assertEquals(new Index(2100, 2000), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2100, 2000), syncBaseItem.getSyncItemArea().getPosition());
     }
 
     @Test
@@ -116,10 +120,10 @@ public class TestMove extends AbstractServiceTest {
         syncBaseItem.getSyncMovable().setPathToDestination(path);
 
         Assert.assertTrue(syncBaseItem.getSyncMovable().tick(1.0));
-        Assert.assertEquals(new Index(2000, 2100), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2000, 2100), syncBaseItem.getSyncItemArea().getPosition());
 
         Assert.assertFalse(syncBaseItem.getSyncMovable().tick(9.0));
-        Assert.assertEquals(new Index(2000, 3000), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2000, 3000), syncBaseItem.getSyncItemArea().getPosition());
     }
 
     @Test
@@ -132,13 +136,13 @@ public class TestMove extends AbstractServiceTest {
         syncBaseItem.getSyncMovable().setPathToDestination(path);
 
         Assert.assertTrue(syncBaseItem.getSyncMovable().tick(0.5));
-        Assert.assertEquals(new Index(2000, 2050), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2000, 2050), syncBaseItem.getSyncItemArea().getPosition());
 
         Assert.assertTrue(syncBaseItem.getSyncMovable().tick(4.5));
-        Assert.assertEquals(new Index(2000, 2500), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2000, 2500), syncBaseItem.getSyncItemArea().getPosition());
 
         Assert.assertFalse(syncBaseItem.getSyncMovable().tick(5.0));
-        Assert.assertEquals(new Index(2000, 3000), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2000, 3000), syncBaseItem.getSyncItemArea().getPosition());
     }
 
     @Test
@@ -155,7 +159,7 @@ public class TestMove extends AbstractServiceTest {
         }
 
         Assert.assertFalse(syncBaseItem.getSyncMovable().tick(0.001));
-        Assert.assertEquals(new Index(2000, 2050), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2000, 2050), syncBaseItem.getSyncItemArea().getPosition());
     }
 
     @Test
@@ -168,10 +172,10 @@ public class TestMove extends AbstractServiceTest {
         syncBaseItem.getSyncMovable().setPathToDestination(path);
 
         Assert.assertTrue(syncBaseItem.getSyncMovable().tick(1.0));
-        Assert.assertEquals(new Index(2071, 2071), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2071, 2071), syncBaseItem.getSyncItemArea().getPosition());
 
         Assert.assertTrue(syncBaseItem.getSyncMovable().tick(13.14));
-        Assert.assertEquals(new Index(3000, 3000), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(3000, 3000), syncBaseItem.getSyncItemArea().getPosition());
     }
 
     @Test
@@ -188,7 +192,7 @@ public class TestMove extends AbstractServiceTest {
         }
 
         Assert.assertFalse(syncBaseItem.getSyncMovable().tick(0.003));
-        Assert.assertEquals(new Index(2100, 2100), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2100, 2100), syncBaseItem.getSyncItemArea().getPosition());
     }
 
     @Test
@@ -201,10 +205,10 @@ public class TestMove extends AbstractServiceTest {
         syncBaseItem.getSyncMovable().setPathToDestination(path);
 
         Assert.assertTrue(syncBaseItem.getSyncMovable().tick(0.4));
-        Assert.assertEquals(new Index(2018, 2036), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2018, 2036), syncBaseItem.getSyncItemArea().getPosition());
 
         Assert.assertTrue(syncBaseItem.getSyncMovable().tick(10.78));
-        Assert.assertEquals(new Index(2500, 3000), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2500, 3000), syncBaseItem.getSyncItemArea().getPosition());
     }
 
     @Test
@@ -217,11 +221,11 @@ public class TestMove extends AbstractServiceTest {
         syncBaseItem.getSyncMovable().setPathToDestination(path);
 
         Assert.assertTrue(syncBaseItem.getSyncMovable().tick(1.06));
-        System.out.println(syncBaseItem.getPosition());
-        Assert.assertEquals(new Index(2092, 2053), syncBaseItem.getPosition());
+        System.out.println(syncBaseItem.getSyncItemArea().getPosition());
+        Assert.assertEquals(new Index(2092, 2053), syncBaseItem.getSyncItemArea().getPosition());
 
         Assert.assertTrue(syncBaseItem.getSyncMovable().tick(7.0));
-        Assert.assertEquals(new Index(2700, 2400), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2700, 2400), syncBaseItem.getSyncItemArea().getPosition());
     }
 
     @Test
@@ -235,13 +239,13 @@ public class TestMove extends AbstractServiceTest {
         syncBaseItem.getSyncMovable().setPathToDestination(path);
 
         Assert.assertTrue(syncBaseItem.getSyncMovable().tick(0.8));
-        Assert.assertEquals(new Index(2080, 2000), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2080, 2000), syncBaseItem.getSyncItemArea().getPosition());
 
         Assert.assertTrue(syncBaseItem.getSyncMovable().tick(0.4));
-        Assert.assertEquals(new Index(2100, 2020), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2100, 2020), syncBaseItem.getSyncItemArea().getPosition());
 
         Assert.assertFalse(syncBaseItem.getSyncMovable().tick(0.8));
-        Assert.assertEquals(new Index(2100, 2100), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2100, 2100), syncBaseItem.getSyncItemArea().getPosition());
     }
 
     @Test
@@ -258,20 +262,20 @@ public class TestMove extends AbstractServiceTest {
         syncBaseItem.getSyncMovable().setPathToDestination(path);
 
         Assert.assertTrue(syncBaseItem.getSyncMovable().tick(0.5));
-        Assert.assertEquals(new Index(2050, 2000), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2050, 2000), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertTrue(syncBaseItem.getSyncMovable().tick(0.5));
-        Assert.assertEquals(new Index(2100, 2000), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2100, 2000), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertTrue(syncBaseItem.getSyncMovable().tick(0.5));
-        Assert.assertEquals(new Index(2100, 2050), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2100, 2050), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertTrue(syncBaseItem.getSyncMovable().tick(0.5));
-        Assert.assertEquals(new Index(2110, 2010), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2110, 2010), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertTrue(syncBaseItem.getSyncMovable().tick(0.5));
-        Assert.assertEquals(new Index(2160, 2010), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2160, 2010), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertTrue(syncBaseItem.getSyncMovable().tick(0.5));
-        Assert.assertEquals(new Index(2210, 2010), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2210, 2010), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertTrue(syncBaseItem.getSyncMovable().tick(0.5));
-        Assert.assertEquals(new Index(2260, 2010), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2260, 2010), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertFalse(syncBaseItem.getSyncMovable().tick(0.5));
-        Assert.assertEquals(new Index(2300, 2010), syncBaseItem.getPosition());
+        Assert.assertEquals(new Index(2300, 2010), syncBaseItem.getSyncItemArea().getPosition());
     }
 }

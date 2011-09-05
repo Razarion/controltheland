@@ -19,8 +19,8 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.ui.Widget;
@@ -36,7 +36,7 @@ import java.util.Map;
  * Date: 05.02.2010
  * Time: 22:28:01
  */
-public class AbstractTerrainServiceImpl implements AbstractTerrainService {
+public abstract class AbstractTerrainServiceImpl implements AbstractTerrainService {
     private Collection<TerrainImagePosition> terrainImagePositions = new ArrayList<TerrainImagePosition>();
     private Collection<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
     private Map<Integer, TerrainImage> terrainImages = new HashMap<Integer, TerrainImage>();
@@ -334,7 +334,10 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
 
     @Override
     public boolean isFree(Index middlePoint, ItemType itemType) {
-        return isFree(middlePoint, itemType.getWidth(), itemType.getHeight(), itemType.getTerrainType().getSurfaceTypes());
+        return isFree(middlePoint,
+                itemType.getBoundingBox().getWidth(),
+                itemType.getBoundingBox().getHeight(),
+                itemType.getTerrainType().getSurfaceTypes());
     }
 
     @Override
@@ -442,26 +445,22 @@ public class AbstractTerrainServiceImpl implements AbstractTerrainService {
 
     public Index correctPosition(SyncItem syncItem, Index position) {
         int x;
-        if (position.getX() - syncItem.getItemType().getWidth() / 2 < 0) {
-            x = syncItem.getItemType().getWidth() / 2;
-        } else if (position.getX() + syncItem.getItemType().getWidth() / 2 > terrainSettings.getPlayFieldXSize()) {
-            x = terrainSettings.getPlayFieldXSize() - syncItem.getItemType().getWidth() / 2;
+        int maxRadius = syncItem.getItemType().getBoundingBox().getMaxRadius();
+        if (position.getX() - maxRadius < 0) {
+            x = maxRadius;
+        } else if (position.getX() + maxRadius > terrainSettings.getPlayFieldXSize()) {
+            x = terrainSettings.getPlayFieldXSize() - maxRadius;
         } else {
             x = position.getX();
         }
         int y;
-        if (position.getY() - syncItem.getItemType().getHeight() / 2 < 0) {
-            y = syncItem.getItemType().getHeight() / 2;
-        } else if (position.getY() + syncItem.getItemType().getHeight() / 2 > terrainSettings.getPlayFieldYSize()) {
-            y = terrainSettings.getPlayFieldYSize() - syncItem.getItemType().getHeight() / 2;
+        if (position.getY() - maxRadius < 0) {
+            y = maxRadius;
+        } else if (position.getY() + maxRadius > terrainSettings.getPlayFieldYSize()) {
+            y = terrainSettings.getPlayFieldYSize() - maxRadius;
         } else {
             y = position.getY();
         }
         return new Index(x, y);
-    }
-
-    @Override
-    public List<Index> setupPathToSyncMovableRandomPositionIfTaken(SyncItem syncItem) {
-        throw new UnsupportedOperationException();
     }
 }

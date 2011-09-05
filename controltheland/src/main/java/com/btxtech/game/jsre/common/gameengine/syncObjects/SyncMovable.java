@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
 import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.gameengine.AttackFormation;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
@@ -33,6 +34,7 @@ public class SyncMovable extends SyncBaseAbility {
     private List<Index> pathToDestination;
     private Id targetContainer;
     private Index destinationHintTargetContainer;
+    //private Double destinationAngel;
 
     public SyncMovable(MovableType movableType, SyncBaseItem syncBaseItem) {
         super(syncBaseItem);
@@ -47,11 +49,11 @@ public class SyncMovable extends SyncBaseAbility {
         if (targetContainer != null) {
             return tickMoveToContainer(factor);
         } else {
-            return tickMove(factor);
+            return tickMove(factor, null);
         }
     }
 
-    private boolean tickMove(double factor) {
+    private boolean tickMove(double factor, Double destinationAngel) {
         if (pathToDestination == null || pathToDestination.isEmpty()) {
             pathToDestination = null;
             // no new destination
@@ -60,39 +62,37 @@ public class SyncMovable extends SyncBaseAbility {
 
         Index destination = pathToDestination.get(0);
 
-        DecimalPosition decimalPoint = getSyncBaseItem().getDecimalPosition().getPointWithDistance(getSpeed(factor), destination, false);
+        DecimalPosition decimalPoint = getSyncItemArea().getDecimalPosition().getPointWithDistance(getSpeed(factor), destination, false);
         if (decimalPoint.isSame(destination)) {
             pathToDestination.remove(0);
             if (pathToDestination.isEmpty()) {
                 pathToDestination = null;
-                if (getSyncBaseItem().hasSyncTurnable()) {
-                    getSyncBaseItem().getSyncTurnable().turnTo(destination);
+                if (destinationAngel != null) {
+                    getSyncItemArea().turnTo(destinationAngel);
+                } else {
+                    getSyncItemArea().turnTo(destination);
                 }
-                getSyncBaseItem().setDecimalPosition(decimalPoint);
+                getSyncItemArea().setDecimalPosition(decimalPoint);
                 return onFinished();
             }
         }
 
-        double realDistance = decimalPoint.getDistance(getSyncBaseItem().getDecimalPosition());
+        double realDistance = decimalPoint.getDistance(getSyncItemArea().getDecimalPosition());
         double relativeDistance = realDistance / (double) movableType.getSpeed();
         if (factor - relativeDistance > DecimalPosition.FACTOR) {
-            if (getSyncBaseItem().hasSyncTurnable()) {
-                getSyncBaseItem().getSyncTurnable().turnTo(destination);
-            }
-            getSyncBaseItem().setDecimalPosition(decimalPoint);
-            return tickMove(factor - relativeDistance);
+            getSyncItemArea().turnTo(destination);
+            getSyncItemArea().setDecimalPosition(decimalPoint);
+            return tickMove(factor - relativeDistance, destinationAngel);
         }
 
-        if (getSyncBaseItem().hasSyncTurnable()) {
-            getSyncBaseItem().getSyncTurnable().turnTo(destination);
-        }
-        getSyncBaseItem().setDecimalPosition(decimalPoint);
+        getSyncItemArea().turnTo(destination);
+        getSyncItemArea().setDecimalPosition(decimalPoint);
         return true;
     }
 
     public boolean onFinished() {
         SyncBaseItem syncBaseItem = getSyncBaseItem();
-        if (getServices().getItemService().hasStandingItemsInRect(syncBaseItem.getRectangle(), getSyncBaseItem())) {
+        if (getServices().getItemService().isSyncItemOverlapping(syncBaseItem)) {
             pathToDestination = getServices().getTerrainService().setupPathToSyncMovableRandomPositionIfTaken(syncBaseItem);
             if (pathToDestination != null) {
                 getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
@@ -102,42 +102,46 @@ public class SyncMovable extends SyncBaseAbility {
         return false;
     }
 
-    public void tickMoveToTarget(double factor, Index destinationHint, Index target) {
+    public boolean tickMoveToTarget(double factor, Index destinationHint, Double destinationAngel, Index target) {
         if (pathToDestination == null || pathToDestination.isEmpty()) {
             setupPathToDestination(target, destinationHint);
             getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
         }
-        tickMove(factor);
+        return tickMove(factor, destinationAngel);
     }
 
     private void setupPathToDestination(Index target, Index destinationHint) {
         if (destinationHint != null) {
-            pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getPosition(), destinationHint, getSyncBaseItem().getTerrainType());
+            pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getSyncItemArea().getPosition(), destinationHint, getSyncBaseItem().getTerrainType());
         } else {
             // Will only be called on the client. Remove if path finding is moved to the client
-            pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getPosition(), target, getSyncBaseItem().getTerrainType());
+            pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getSyncItemArea().getPosition(), target, getSyncBaseItem().getTerrainType());
         }
     }
 
     private boolean tickMoveToContainer(double factor) {
         try {
             SyncBaseItem syncItemContainer = (SyncBaseItem) getServices().getItemService().getItem(targetContainer);
-            if (isTargetInRange4Container(syncItemContainer.getPosition(), syncItemContainer)) {
-                if (getSyncBaseItem().hasSyncTurnable()) {
-                    getSyncBaseItem().getSyncTurnable().turnTo(syncItemContainer.getPosition());
-                }
+            if (getSyncItemArea().isInRange(syncItemContainer.getSyncItemContainer().getRange(), syncItemContainer)) {
+                getSyncItemArea().turnTo(syncItemContainer);
                 syncItemContainer.getSyncItemContainer().load(getSyncBaseItem());
                 stop();
                 return false;
             } else {
                 if (destinationHintTargetContainer == null) {
-                    destinationHintTargetContainer = getServices().getCollisionService().getDestinationHint(getSyncBaseItem(), syncItemContainer.getSyncItemContainer().getRange(), syncItemContainer.getBaseItemType(), syncItemContainer.getPosition());
+                    AttackFormation.AttackFormationItem formation = getServices().getCollisionService().getDestinationHint(getSyncBaseItem(),
+                            syncItemContainer.getSyncItemContainer().getRange(),
+                            syncItemContainer.getSyncItemArea(),
+                            syncItemContainer.getTerrainType());
+                    if (formation != null) {
+                        destinationHintTargetContainer = formation.getDestinationHint();
+                    }
                     if (destinationHintTargetContainer == null) {
                         stop();
                     }
 
                 }
-                tickMoveToTarget(factor, destinationHintTargetContainer, syncItemContainer.getPosition());
+                tickMoveToTarget(factor, destinationHintTargetContainer, null, syncItemContainer.getSyncItemArea().getPosition());
                 return true;
             }
         } catch (ItemDoesNotExistException ignore) {
@@ -147,9 +151,15 @@ public class SyncMovable extends SyncBaseAbility {
         }
     }
 
-    private boolean isTargetInRange4Container(Index targetPos, SyncBaseItem syncItemContainer) {
-        int range = calculateRange(syncItemContainer.getBaseItemType(), syncItemContainer.getSyncItemContainer().getRange(), getSyncBaseItem().getBaseItemType());
-        return getSyncBaseItem().getPosition().isInRadius(targetPos, range) && (pathToDestination == null || pathToDestination.isEmpty());
+    public boolean isLoadPosReachable(SyncItemContainer syncItemContainer) {
+        try {
+            getServices().getTerrainService().getNearestPoint(getSyncBaseItem().getTerrainType(),
+                    syncItemContainer.getSyncItemArea().getPosition(),
+                    syncItemContainer.getItemContainerType().getRange());
+            return true;
+        } catch (IllegalArgumentException ignore) {
+            return false;
+        }
     }
 
     private double getSpeed(double factor) {
@@ -175,11 +185,11 @@ public class SyncMovable extends SyncBaseAbility {
     }
 
     public void executeCommand(MoveCommand moveCommand) {
-        if (getSyncBaseItem().getPosition().equals(moveCommand.getDestination())) {
+        if (getSyncBaseItem().getSyncItemArea().positionReached(moveCommand.getDestination())) {
             return;
         }
         Index destination = getServices().getTerrainService().correctPosition(getSyncBaseItem(), moveCommand.getDestination());
-        pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getPosition(), destination, getSyncBaseItem().getTerrainType());
+        pathToDestination = getServices().getTerrainService().setupPathToDestination(getSyncBaseItem().getSyncItemArea().getPosition(), destination, getSyncBaseItem().getTerrainType());
     }
 
     public void executeCommand(LoadContainCommand loadContainCommand) {
@@ -202,17 +212,6 @@ public class SyncMovable extends SyncBaseAbility {
             return pathToDestination.get(pathToDestination.size() - 1);
         }
         return null;
-    }
-
-    public boolean isLoadPosReachable(SyncItemContainer syncItemContainer) {
-        try {
-            getServices().getTerrainService().getNearestPoint(getSyncBaseItem().getTerrainType(),
-                    syncItemContainer.getSyncBaseItem().getPosition(),
-                    syncItemContainer.getItemContainerType().getRange());
-            return true;
-        } catch (IllegalArgumentException ignore) {
-            return false;
-        }
     }
 
     public Id getTargetContainer() {

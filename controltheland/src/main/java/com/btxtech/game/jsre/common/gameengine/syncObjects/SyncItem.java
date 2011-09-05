@@ -15,7 +15,6 @@ package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
@@ -34,7 +33,7 @@ public abstract class SyncItem {
     private Services services;
     // Own states
     private ItemType itemType;
-    private Index position;
+    private SyncItemArea syncItemArea;
     // Sync states
     private final ArrayList<SyncItemListener> syncItemListeners = new ArrayList<SyncItemListener>();
     private boolean explode = false;
@@ -44,9 +43,9 @@ public abstract class SyncItem {
         this.id = id;
         this.itemType = itemType;
         this.services = services;
-        if (position != null) {
-            setPosition(services.getTerrainService().correctPosition(this, position));
-        }
+        syncItemArea = new SyncItemArea(this);
+        syncItemArea.setPosition(position);
+        syncItemArea.correctPosition();
     }
 
     public Id getId() {
@@ -54,27 +53,18 @@ public abstract class SyncItem {
     }
 
     public void synchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException, ItemDoesNotExistException {
-        setPosition(syncItemInfo.getPosition());
+        syncItemArea.synchronize(syncItemInfo);
         id.synchronize(syncItemInfo.getId());
     }
 
     public SyncItemInfo getSyncInfo() {
         SyncItemInfo syncItemInfo = new SyncItemInfo();
         syncItemInfo.setId(id);
-        syncItemInfo.setPosition(getPosition());
+        syncItemArea.fillSyncItemInfo(syncItemInfo);
         syncItemInfo.setItemTypeId(itemType.getId());
         syncItemInfo.setAlive(isAlive());
         syncItemInfo.setExplode(explode);
         return syncItemInfo;
-    }
-
-    public Index getPosition() {
-        return position;
-    }
-
-    public void setPosition(Index position) {
-        this.position = position;
-        fireItemChanged(SyncItemListener.Change.POSITION);
     }
 
     public Services getServices() {
@@ -115,19 +105,8 @@ public abstract class SyncItem {
 
     public abstract boolean isAlive();
 
-    public boolean hasSyncTurnable() {
-        return false;
-    }
-
-    public SyncTurnable getSyncTurnable() {
-        return null;
-    }
-
-    public Rectangle getRectangle() {
-        if (getPosition() == null) {
-            throw new NullPointerException("Has no position: " + this);
-        }
-        return itemType.getRectangle(getPosition());
+    public SyncItemArea getSyncItemArea() {
+        return syncItemArea;
     }
 
     public TerrainType getTerrainType() {
@@ -136,7 +115,7 @@ public abstract class SyncItem {
 
     @Override
     public String toString() {
-        return "SyncItem: " + id + " " + itemType + " pos: " + getPosition();
+        return "SyncItem: " + id + " " + itemType + " " + syncItemArea;
     }
 
     @Override

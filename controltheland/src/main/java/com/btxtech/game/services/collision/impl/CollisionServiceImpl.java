@@ -17,16 +17,17 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.common.Territory;
+import com.btxtech.game.jsre.common.gameengine.AttackFormation;
+import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseAbility;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.btxtech.game.jsre.mapview.common.GeometricalUtil;
 import com.btxtech.game.services.bot.BotService;
-import com.btxtech.game.services.collision.CircleFormation;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.collision.CollisionServiceChangedListener;
 import com.btxtech.game.services.collision.PassableRectangle;
@@ -72,9 +73,9 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
 
     @PostConstruct
     public void init() {
-    	if(mgmtService.isNoGameEngine()) {
-    		return;
-    	}
+        if (mgmtService.isNoGameEngine()) {
+            return;
+        }
         try {
             terrainService.addTerrainListener(this);
             setupPassableTerrain();
@@ -196,7 +197,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
             }
             Index start = point.sub(new Index(itemFreeRange / 2, itemFreeRange / 2));
             Rectangle rectangle = new Rectangle(start.getX(), start.getY(), itemFreeRange, itemFreeRange);
-            if (itemService.hasItemsInRectangle(rectangle)) {
+            if (itemService.hasStandingItemsInRect(rectangle, null)) {
                 continue;
             }
             return point;
@@ -206,7 +207,12 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
 
     @Override
     public Index getRallyPoint(SyncBaseItem factory, Collection<SurfaceType> allowedSurfaces) {
-        return getFreeRandomPosition(factory.getPosition(), 0, 0, allowedSurfaces, factory.getItemType().getHeight() / 2, MAX_RANGE_RALLY_POINT);
+        return getFreeRandomPosition(factory.getSyncItemArea().getPosition(),
+                0,
+                0,
+                allowedSurfaces,
+                factory.getItemType().getBoundingBox().getMaxRadius(),
+                MAX_RANGE_RALLY_POINT);
     }
 
     private Index getFreeRandomPosition(Index origin, int itemFreeWidth, int itemFreeHeight, Collection<SurfaceType> allowedSurfaces, int targetMinRange, int targetMaxRange) {
@@ -253,8 +259,9 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     @Override
     public Index getFreeSyncMovableRandomPositionIfTaken(SyncItem syncItem, int targetMaxRange) {
         ItemType itemType = syncItem.getItemType();
-        Index origin = syncItem.getPosition();
-        int targetMinRange = (int) (Math.sqrt(Math.pow(itemType.getWidth(), 2) + Math.pow(itemType.getHeight(), 2)) / 2.0);
+        Index origin = syncItem.getSyncItemArea().getPosition();
+        BoundingBox boundingBox = itemType.getBoundingBox();
+        int targetMinRange = boundingBox.getMaxRadius();
         int delta = (targetMaxRange - targetMinRange) / STEPS_DISTANCE;
         for (int distance = 0; distance < (targetMaxRange - targetMinRange); distance += delta) {
             for (double angel = 0.0; angel < 2.0 * Math.PI; angel += (2.0 * Math.PI / STEPS_ANGEL)) {
@@ -266,14 +273,12 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
                 if (point.getY() >= terrainService.getTerrainSettings().getPlayFieldYSize()) {
                     continue;
                 }
-                if (!terrainService.isFree(point, itemType.getWidth(), itemType.getHeight(), itemType.getTerrainType().getSurfaceTypes())) {
+                if (!terrainService.isFree(point, boundingBox.getMaxDiameter(), boundingBox.getMaxDiameter(), itemType.getTerrainType().getSurfaceTypes())) {
                     continue;
                 }
-                if (itemService.hasStandingItemsInRect(new Rectangle(point.getX() - itemType.getWidth() / 2,
-                        point.getY() - itemType.getHeight() / 2,
-                        itemType.getWidth(),
-                        itemType.getHeight()), syncItem)) {
+                if (itemService.isSyncItemOverlapping(syncItem, point)) {
                     continue;
+
                 }
                 return point;
             }
@@ -315,7 +320,11 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
         PassableRectangle atomStartRect = getPassableRectangleOfAbsoluteIndex(start, terrainType);
         PassableRectangle atomDestRect = getPassableRectangleOfAbsoluteIndex(destination, terrainType);
         if (atomStartRect == null || atomDestRect == null) {
-            throw new IllegalArgumentException("Illegal atomStartRect or atomDestRect. start: " + start + " destination: " + destination + " terrainType: " + terrainType);
+            if (atomStartRect == null) {
+                throw new IllegalArgumentException("Illegal atomStartRect. start: " + start + " destination: " + destination + " terrainType: " + terrainType);
+            } else {
+                throw new IllegalArgumentException("Illegal atomDestRect. start: " + start + " destination: " + destination + " terrainType: " + terrainType);
+            }
         }
 
         if (atomStartRect.equals(atomDestRect)) {
@@ -372,72 +381,82 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     }
 
     @Override
-    public Index getDestinationHint(SyncBaseItem syncBaseItem, int range, ItemType target, Index targetPosition) {
-        List<CircleFormation.CircleFormationItem> formationItems = new ArrayList<CircleFormation.CircleFormationItem>();
-        int fullRange = SyncBaseAbility.calculateRange(syncBaseItem.getBaseItemType(), range, target);
-        formationItems.add(new CircleFormation.CircleFormationItem(syncBaseItem, fullRange));
-        setupDestinationHints(target.getRectangle(targetPosition), target.getTerrainType(), formationItems);
+    public AttackFormation.AttackFormationItem getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItemArea target, TerrainType targetTerrainType) {
+        List<AttackFormation.AttackFormationItem> formationItems = new ArrayList<AttackFormation.AttackFormationItem>();
+        formationItems.add(new AttackFormation.AttackFormationItem(syncBaseItem, range));
+        setupDestinationHints(target, targetTerrainType, formationItems);
         if (formationItems.get(0).isInRange()) {
-            return formationItems.get(0).getDestinationHint();
+            return formationItems.get(0);
         } else {
             return null;
         }
     }
 
     @Override
-    public List<CircleFormation.CircleFormationItem> setupDestinationHints(SyncItem target, List<CircleFormation.CircleFormationItem> items) {
-        return setupDestinationHints(target.getRectangle(), target.getTerrainType(), items);
+    public List<AttackFormation.AttackFormationItem> setupDestinationHints(SyncItem target, List<AttackFormation.AttackFormationItem> items) {
+        return setupDestinationHints(target.getSyncItemArea(), target.getTerrainType(), items);
     }
 
-    private List<CircleFormation.CircleFormationItem> setupDestinationHints(Rectangle target, TerrainType targetTerrainType, List<CircleFormation.CircleFormationItem> items) {
-        Map<TerrainType, List<CircleFormation.CircleFormationItem>> terrainTypeCollectionMap = new HashMap<TerrainType, List<CircleFormation.CircleFormationItem>>();
-        for (CircleFormation.CircleFormationItem item : items) {
+    private List<AttackFormation.AttackFormationItem> setupDestinationHints(SyncItemArea target, TerrainType targetTerrainType, List<AttackFormation.AttackFormationItem> items) {
+        Map<TerrainType, List<AttackFormation.AttackFormationItem>> terrainTypeCollectionMap = new HashMap<TerrainType, List<AttackFormation.AttackFormationItem>>();
+        for (AttackFormation.AttackFormationItem item : items) {
             TerrainType terrainType = item.getSyncBaseItem().getTerrainType();
-            List<CircleFormation.CircleFormationItem> circleFormationItems = terrainTypeCollectionMap.get(terrainType);
-            if (circleFormationItems == null) {
-                circleFormationItems = new ArrayList<CircleFormation.CircleFormationItem>();
-                terrainTypeCollectionMap.put(terrainType, circleFormationItems);
+            List<AttackFormation.AttackFormationItem> attackFormationItems = terrainTypeCollectionMap.get(terrainType);
+            if (attackFormationItems == null) {
+                attackFormationItems = new ArrayList<AttackFormation.AttackFormationItem>();
+                terrainTypeCollectionMap.put(terrainType, attackFormationItems);
             }
-            circleFormationItems.add(item);
+            attackFormationItems.add(item);
         }
 
-        for (Map.Entry<TerrainType, List<CircleFormation.CircleFormationItem>> entry : terrainTypeCollectionMap.entrySet()) {
+        for (Map.Entry<TerrainType, List<AttackFormation.AttackFormationItem>> entry : terrainTypeCollectionMap.entrySet()) {
             setupDestinationHintTerrain(target, entry.getValue(), entry.getKey(), targetTerrainType);
         }
         return items;
     }
 
-    private void setupDestinationHintTerrain(Rectangle targetPosition, List<CircleFormation.CircleFormationItem> items, TerrainType terrainType, TerrainType targetTerrainType) {
+    private void setupDestinationHintTerrain(SyncItemArea target, List<AttackFormation.AttackFormationItem> items, TerrainType terrainType, TerrainType targetTerrainType) {
         SyncItem actorItem = items.get(0).getSyncBaseItem();
         List<Index> path;
         if (terrainType == targetTerrainType) {
-            path = setupPathToDestination(actorItem.getPosition(), targetPosition.getCenter(), terrainType);
+            path = setupPathToDestination(actorItem.getSyncItemArea().getPosition(), target.getPosition(), terrainType);
         } else {
-            path = setupPathToDifferentTerrainTypeDestination(actorItem.getPosition(), terrainType, targetPosition.getCenter(), targetTerrainType);
+            path = setupPathToDifferentTerrainTypeDestination(actorItem.getSyncItemArea().getPosition(), terrainType, target.getPosition(), targetTerrainType);
         }
 
         path.remove(path.size() - 1); // Target pos
         Index lastPoint;
         if (path.isEmpty()) {
             // Start and destination are in the same passable rectangle
-            lastPoint = actorItem.getPosition();
+            lastPoint = actorItem.getSyncItemArea().getPosition();
         } else {
             lastPoint = path.get(path.size() - 1);
         }
 
-        double angel = targetPosition.getCenter().getAngleToNord(lastPoint);
-
-        CircleFormation circleFormation = new CircleFormation(targetPosition, angel, items);
-        while (circleFormation.hasNext()) {
-            CircleFormation.CircleFormationItem circleFormationItem = circleFormation.calculateNextEntry();
-            SyncBaseItem syncBaseItem = circleFormationItem.getSyncBaseItem();
-            if (!terrainService.isFreeZeroSize(circleFormationItem.getDestinationHint(), syncBaseItem.getItemType())) {
+        double angel = target.getPosition().getAngleToNord(lastPoint);
+        List<AttackFormation.AttackFormationItem> tmpItems = new ArrayList<AttackFormation.AttackFormationItem>(items);
+        AttackFormation attackFormation = new AttackFormation(target, angel, items);
+        boolean overbooked = false;
+        while (attackFormation.hasNext()) {
+            AttackFormation.AttackFormationItem attackFormationItem = attackFormation.calculateNextEntry();
+            SyncBaseItem syncBaseItem = attackFormationItem.getSyncBaseItem();
+            if (!terrainService.isFree(attackFormationItem.getDestinationHint(), syncBaseItem.getItemType())) {
                 continue;
             }
-            if (itemService.hasStandingItemsInRect(circleFormationItem.getRectangle(), syncBaseItem)) {
+            if (itemService.isSyncItemOverlapping(syncBaseItem, attackFormationItem.getDestinationHint())) {
                 continue;
             }
-            circleFormation.lastAccepted();
+            if (!attackFormationItem.isInRange()) {
+                overbooked = true;
+            }
+            attackFormation.lastAccepted();
+        }
+        if (overbooked) {
+            System.out.println("------- Overbooked");
+            System.out.println("target: " + target);
+            System.out.println("angel: " + angel);
+            System.out.println("tmpItems: " + tmpItems.size());
+            System.out.println("item 0: " + tmpItems.get(0).getSyncBaseItem().getItemType().getBoundingBox());
         }
     }
 }
