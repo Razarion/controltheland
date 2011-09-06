@@ -77,6 +77,9 @@ public class AttackFormationTrack {
         if (crossPoint == null || crossSegment == null) {
             throw new IllegalStateException("Start has not been called before or start failed.");
         }
+        if (distance < 0) {
+            throw new IllegalStateException("Distance not allowed to be negative: " + distance);
+        }
 
         if (crossSegment.isNextPointOnSegment(crossPoint, distance, target.getPosition(), counterClock)) {
             crossPoint = crossSegment.getNextPoint(crossPoint, distance, target.getPosition(), counterClock);

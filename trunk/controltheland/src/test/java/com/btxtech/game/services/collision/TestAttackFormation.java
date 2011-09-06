@@ -95,6 +95,7 @@ public class TestAttackFormation extends AbstractServiceTest {
     }
 
     // TODO @Test
+
     @DirtiesContext
     public void testAttackFormationTrack5AttackerRot() throws Exception {
         BoundingBox boundingBox = new BoundingBox(300, 200, 200, 100, 24);
@@ -113,6 +114,7 @@ public class TestAttackFormation extends AbstractServiceTest {
     }
 
     // TODO @Test
+
     @DirtiesContext
     public void testAttackFormationTrack5AttackerRotCounter() throws Exception {
         BoundingBox boundingBox = new BoundingBox(300, 200, 200, 100, 24);
@@ -143,7 +145,7 @@ public class TestAttackFormation extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void testCircleFormationNoBlockingObject() throws Throwable {
+    public void testAttackFormationNoBlockingObject() throws Throwable {
         configureMinimalGame();
 
         ItemType targetItemType = itemService.getItemType(TEST_SIMPLE_BUILDING_ID);
@@ -203,6 +205,60 @@ public class TestAttackFormation extends AbstractServiceTest {
 //        }
     }
 
+    @Test
+    @DirtiesContext
+    public void testAttackFormationNoBlockingObject__TMP() throws Throwable {
+        configureMinimalGame();
+
+        ItemType targetItemType = itemService.getItemType(TEST_SIMPLE_BUILDING_ID);
+        targetItemType.setBoundingBox(new BoundingBox(100, 100, 80, 80, 1));
+        SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(720, 1087), new Id(1, -100, -100));
+
+        ItemType attackItemType = itemService.getItemType(TEST_ATTACK_ITEM_ID);
+        attackItemType.setBoundingBox(new BoundingBox(100, 100, 38, 68, 24));
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(2, -100, -100));
+
+        double targetAngel = 0;
+        double attackerAngel = 4.269286425417284;
+        int count = 6;
+        int range = 8;
+        target.getSyncItemArea().turnTo(targetAngel);
+
+        List<AttackFormation.AttackFormationItem> items = new ArrayList<AttackFormation.AttackFormationItem>();
+        for (int i = 0; i < count; i++) {
+            items.add(new AttackFormation.AttackFormationItem(syncBaseItem, range));
+        }
+
+        AttackFormation attackFormation = new AttackFormation(target.getSyncItemArea(), attackerAngel, items);
+        List<SyncBaseItem> attackers = new ArrayList<SyncBaseItem>();
+        attackers.add(target);
+        debugService.drawSyncItemArea(target.getSyncItemArea(), Color.BLUE);
+        debugService.drawPosition(target.getSyncItemArea().getPosition(), Color.BLUE);
+        debugService.drawSegments(attackFormation.getClockwiseTrack().getSegments());
+        debugService.drawSegments(attackFormation.getCounterClockwiseTrack().getSegments());
+
+        while (attackFormation.hasNext()) {
+            AttackFormation.AttackFormationItem attackFormationItem = attackFormation.calculateNextEntry();
+            SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, attackFormationItem.getDestinationHint(), new Id(2, -100, -100));
+            attacker.getSyncItemArea().turnTo(attackFormationItem.getDestinationAngel());
+            if (attackFormationItem.isInRange()) {
+                Assert.assertFalse("Not in range", attacker.getSyncItemArea().getDistance(target.getSyncItemArea()) > range);
+            } else {
+                Assert.assertTrue("In range", attacker.getSyncItemArea().getDistance(target.getSyncItemArea()) > range);
+                Assert.fail("Overbooked not expected");
+            }
+            debugService.drawSyncItemArea(attacker.getSyncItemArea(), Color.RED);
+            debugService.drawPosition(attacker.getSyncItemArea().getPosition(), Color.BLUE);
+
+            attackFormation.lastAccepted();
+            attackers.add(attacker);
+        }
+        Assert.assertEquals(count + 1, attackers.size());
+        assertOverlapping(attackers);
+        debugService.waitForClose();
+    }
+
+
     private void assertOverlapping(List<SyncBaseItem> attackers) {
         for (int i = 0, attackersSize = attackers.size(); i < attackersSize; i++) {
             SyncBaseItem attackerToCheck = attackers.get(i);
@@ -232,6 +288,7 @@ public class TestAttackFormation extends AbstractServiceTest {
     }
 
     // TODO @Test
+
     @DirtiesContext
     public void testCircleFormationNoBlockingObject2() throws Exception {
         configureMinimalGame();
@@ -264,6 +321,7 @@ public class TestAttackFormation extends AbstractServiceTest {
     }
 
     // TODO @Test
+
     @DirtiesContext
     public void testCircleFormationNoBlockingObjectNeverOverbooked() throws Exception {
         configureMinimalGame();
@@ -291,6 +349,7 @@ public class TestAttackFormation extends AbstractServiceTest {
 
 
     // TODO @Test
+
     @DirtiesContext
     public void testCircleFormationBlocking() throws Exception {
         configureMinimalGame();
@@ -439,6 +498,7 @@ public class TestAttackFormation extends AbstractServiceTest {
     }
 
     // TODO @Test
+
     @DirtiesContext
     public void testCircleFormationBlockingChannel() throws Exception {
         configureMinimalGame();
@@ -497,6 +557,7 @@ public class TestAttackFormation extends AbstractServiceTest {
     }
 
     // TODO @Test
+
     @DirtiesContext
     public void testSetupDestinationHints1() throws Exception {
         configureComplexGame();

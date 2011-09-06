@@ -278,7 +278,6 @@ public class SyncItemArea {
     }
 
     public boolean isInRange(int range, SyncItemArea syncItemArea) {
-        System.out.println("getDistance: " + getDistance(syncItemArea));
         return range >= getDistance(syncItemArea);
     }
 
