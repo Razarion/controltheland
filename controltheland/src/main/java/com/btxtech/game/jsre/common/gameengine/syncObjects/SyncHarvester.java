@@ -76,6 +76,8 @@ public class SyncHarvester extends SyncBaseAbility {
     @Override
     public void fillSyncItemInfo(SyncItemInfo syncItemInfo) {
         syncItemInfo.setTarget(target);
+        syncItemInfo.setDestinationHint(destinationHint);
+        syncItemInfo.setDestinationAngel(destinationAngel);
     }
 
     public void executeCommand(MoneyCollectCommand attackCommand) throws ItemDoesNotExistException {

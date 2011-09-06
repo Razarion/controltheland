@@ -138,6 +138,8 @@ public class SyncBuilder extends SyncBaseAbility {
             toBeBuiltType = null;
         }
         createdChildCount = syncItemInfo.getCreatedChildCount();
+        destinationHint = syncItemInfo.getDestinationHint();
+        destinationAngel = syncItemInfo.getDestinationAngel();
     }
 
     @Override
@@ -147,6 +149,8 @@ public class SyncBuilder extends SyncBaseAbility {
             syncItemInfo.setToBeBuiltTypeId(toBeBuiltType.getId());
         }
         syncItemInfo.setCreatedChildCount(createdChildCount);
+        syncItemInfo.setDestinationHint(destinationHint);
+        syncItemInfo.setDestinationAngel(destinationAngel);
     }
 
     public void executeCommand(BuilderCommand builderCommand) throws NoSuchItemTypeException {
