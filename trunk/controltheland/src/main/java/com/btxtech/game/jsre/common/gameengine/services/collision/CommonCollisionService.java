@@ -14,7 +14,7 @@
 package com.btxtech.game.jsre.common.gameengine.services.collision;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.gameengine.AttackFormation;
+import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
@@ -32,5 +32,5 @@ public interface CommonCollisionService {
 
     Index getRallyPoint(SyncBaseItem factory, Collection<SurfaceType> allowedSurfaces);
 
-    AttackFormation.AttackFormationItem getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItemArea target, TerrainType targetTerrainType);
+    AttackFormationItem getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItemArea target, TerrainType targetTerrainType);
 }

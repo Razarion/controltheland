@@ -15,8 +15,8 @@ package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
 import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.gameengine.AttackFormation;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
+import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
@@ -91,6 +91,7 @@ public class SyncMovable extends SyncBaseAbility {
     }
 
     public boolean onFinished() {
+        // TODO throw exception and handle in other sync abilities (e.g. SyncWeapon)
         SyncBaseItem syncBaseItem = getSyncBaseItem();
         if (getServices().getItemService().isSyncItemOverlapping(syncBaseItem)) {
             pathToDestination = getServices().getTerrainService().setupPathToSyncMovableRandomPositionIfTaken(syncBaseItem);
@@ -129,7 +130,7 @@ public class SyncMovable extends SyncBaseAbility {
                 return false;
             } else {
                 if (destinationHintTargetContainer == null) {
-                    AttackFormation.AttackFormationItem formation = getServices().getCollisionService().getDestinationHint(getSyncBaseItem(),
+                    AttackFormationItem formation = getServices().getCollisionService().getDestinationHint(getSyncBaseItem(),
                             syncItemContainer.getSyncItemContainer().getRange(),
                             syncItemContainer.getSyncItemArea(),
                             syncItemContainer.getTerrainType());

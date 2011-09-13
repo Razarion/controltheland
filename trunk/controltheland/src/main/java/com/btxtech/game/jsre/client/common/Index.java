@@ -131,6 +131,14 @@ public class Index implements Serializable {
         return new Index(newX, newY);
     }
 
+    public Index getPointFromAngelToNord(double angle, double radius) {
+        int gk = (int) Math.round(Math.sin(angle) * radius);
+        int ak = (int) Math.round(Math.cos(angle) * radius);
+        int newX = x - gk;
+        int newY = y - ak;
+        return new Index(newX, newY);
+    }
+
     public Index getPointWithDistance(int distance, Index directionTo, boolean allowOverrun) {
         double directionDistance = getDistance(directionTo);
         if (!allowOverrun && directionDistance <= distance) {

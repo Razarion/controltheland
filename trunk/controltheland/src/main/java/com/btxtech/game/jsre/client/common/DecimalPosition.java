@@ -41,6 +41,11 @@ public class DecimalPosition implements Serializable {
         this(position.getX(), position.getY());
     }
 
+    public DecimalPosition(DecimalPosition position) {
+        x = position.x;
+        y = position.y;
+    }
+
     public void setPosition(Index index) {
         x = index.getX();
         y = index.getY();

@@ -46,7 +46,7 @@ public class SyncHarvester extends SyncBaseAbility {
 
         try {
             SyncResourceItem resource = (SyncResourceItem) getServices().getItemService().getItem(target);
-            if (getSyncItemArea().isInRange(harvesterType.getRange(), resource)) {
+            if ((destinationHint == null || getSyncItemArea().positionReached(destinationHint)) && getSyncItemArea().isInRange(harvesterType.getRange(), resource)) {
                 getSyncItemArea().turnTo(resource);
                 double money = resource.harvest(factor * harvesterType.getProgress());
                 getServices().getBaseService().depositResource(money, getSyncBaseItem().getBase());
@@ -71,6 +71,8 @@ public class SyncHarvester extends SyncBaseAbility {
     @Override
     public void synchronize(SyncItemInfo syncItemInfo) {
         target = syncItemInfo.getTarget();
+        destinationHint = syncItemInfo.getDestinationHint();
+        destinationAngel = syncItemInfo.getDestinationAngel();
     }
 
     @Override

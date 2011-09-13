@@ -310,7 +310,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     public boolean hasItemsInRectangle(Rectangle rectangle) {
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
-                if(!syncItem.getSyncItemArea().hasPosition()) {
+                if (!syncItem.getSyncItemArea().hasPosition()) {
                     continue;
                 }
 
@@ -326,7 +326,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     public SyncBaseItem getFirstEnemyItemInRange(SyncBaseItem baseSyncItem) {
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
-                if(!syncItem.getSyncItemArea().hasPosition()) {
+                if (!syncItem.getSyncItemArea().hasPosition()) {
                     continue;
                 }
 
@@ -644,7 +644,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         ArrayList<SyncBaseItem> clientBaseItems = new ArrayList<SyncBaseItem>();
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
-                if(!syncItem.getSyncItemArea().hasPosition()) {
+                if (!syncItem.getSyncItemArea().hasPosition()) {
                     continue;
                 }
                 if (syncItem instanceof SyncBaseItem
@@ -665,7 +665,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
                 if (syncItem.equals(exceptThat)) {
                     continue;
                 }
-                if(!syncItem.getSyncItemArea().hasPosition()) {
+                if (!syncItem.getSyncItemArea().hasPosition()) {
                     continue;
                 }
                 if (syncItem instanceof SyncBaseItem) {
@@ -687,19 +687,24 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
 
     @Override
     public boolean isSyncItemOverlapping(SyncItem syncItem) {
-        return isSyncItemOverlapping(syncItem, null);
+        return isSyncItemOverlapping(syncItem, null, null);
     }
 
     @Override
-    public boolean isSyncItemOverlapping(SyncItem syncItem, Index positionToCheck) {
+    public boolean isSyncItemOverlapping(SyncItem syncItem, Index positionToCheck, Collection<SyncItem> exceptionThem) {
         synchronized (items) {
             for (SyncItem otherItem : items.values()) {
                 if (otherItem.equals(syncItem)) {
                     continue;
                 }
-                if(!otherItem.getSyncItemArea().hasPosition()) {
+                if (!otherItem.getSyncItemArea().hasPosition()) {
                     continue;
                 }
+
+                if (exceptionThem != null && exceptionThem.contains(otherItem)) {
+                    continue;
+                }
+
                 if (otherItem instanceof SyncBaseItem) {
                     SyncBaseItem syncBaseItem = (SyncBaseItem) otherItem;
                     if (!syncBaseItem.hasSyncMovable() || !syncBaseItem.getSyncMovable().isActive()) {
@@ -714,8 +719,14 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
                         }
                     }
                 } else if (otherItem instanceof SyncResourceItem) {
-                    if (syncItem.getSyncItemArea().contains(otherItem)) {
-                        return true;
+                    if (positionToCheck == null) {
+                        if (syncItem.getSyncItemArea().contains(otherItem)) {
+                            return true;
+                        }
+                    } else {
+                        if (syncItem.getSyncItemArea().contains(otherItem, positionToCheck)) {
+                            return true;
+                        }
                     }
                 }
             }
@@ -727,7 +738,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     public boolean isUnmovableSyncItemOverlapping(BoundingBox boundingBox, Index positionToCheck) {
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
-                if(!syncItem.getSyncItemArea().hasPosition()) {
+                if (!syncItem.getSyncItemArea().hasPosition()) {
                     continue;
                 }
 
@@ -780,7 +791,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         ArrayList<SyncBaseItem> result = new ArrayList<SyncBaseItem>();
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
-                if(!syncItem.getSyncItemArea().hasPosition()) {
+                if (!syncItem.getSyncItemArea().hasPosition()) {
                     continue;
                 }
                 if (syncItem instanceof SyncBaseItem) {

@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class SyncItemArea {
     private DecimalPosition position;
-    private double angel;
+    private double angel = 0;
     private SyncItem syncItem;
     private BoundingBox boundingBox;
 
@@ -31,7 +31,12 @@ public class SyncItemArea {
     public SyncItemArea(BoundingBox boundingBox, Index position) {
         this.boundingBox = boundingBox;
         setPosition(position);
-        angel = 0;
+    }
+
+    public SyncItemArea(SyncItemArea syncItemArea) {
+        position = new DecimalPosition(syncItemArea.position);
+        angel = syncItemArea.angel;
+        boundingBox = syncItemArea.boundingBox;
     }
 
     public Index getPosition() {
@@ -132,12 +137,15 @@ public class SyncItemArea {
     }
 
     public void turnTo(SyncItem target) {
-        if (contains(target.getSyncItemArea())) {
-            turnTo(target.getSyncItemArea().getPosition());
+        turnTo(target.getSyncItemArea());
+    }
+
+    public void turnTo(SyncItemArea target) {
+        if (contains(target)) {
+            turnTo(target.getPosition());
             return;
         }
-
-        turnTo(getTurnToAngel(target.getSyncItemArea()));
+        turnTo(getTurnToAngel(target));
     }
 
     public double getTurnToAngel(Index destination) {
@@ -156,7 +164,7 @@ public class SyncItemArea {
         Index rotPosition = getPosition().rotateCounterClock(target.getPosition(), -target.getAngel());
         Rectangle targetRectangle = target.getBoundingBox().getRectangle(target.getPosition());
 
-        Index rotPosOnRect = targetRectangle.getNearestPoint(rotPosition);
+        Index rotPosOnRect = targetRectangle.getNearestPointInclusive(rotPosition);
         Index posOnRect = rotPosOnRect.rotateCounterClock(target.getPosition(), target.getAngel());
 
         return getTurnToAngel(posOnRect);
@@ -204,8 +212,27 @@ public class SyncItemArea {
         return contains(syncItem.getSyncItemArea());
     }
 
+    /**
+     * Move this SyncItemArea to the given position and
+     *
+     * @param syncItem        to check against
+     * @param positionToCheck position to move this to
+     * @return true if contains
+     */
     public boolean contains(SyncItem syncItem, Index positionToCheck) {
-        return contains(syncItem.getSyncItemArea().getBoundingBox().createSyntheticSyncItemArea(positionToCheck));
+        return getBoundingBox().createSyntheticSyncItemArea(positionToCheck).contains(syncItem);
+    }
+
+    /**
+     * Check if this SyncItemArea will contains the given bounding box at the given position. The bounding box
+     * is moved to the given position
+     *
+     * @param boundingBox     bounding box
+     * @param positionToCheck position to check
+     * @return true if contains
+     */
+    public boolean contains(BoundingBox boundingBox, Index positionToCheck) {
+        return contains(boundingBox.createSyntheticSyncItemArea(positionToCheck));
     }
 
     public boolean contains(Rectangle rectangle) {
@@ -225,28 +252,36 @@ public class SyncItemArea {
         }
     }
 
-    public boolean contains(BoundingBox boundingBox, Index positionToCheck) {
-        return contains(boundingBox.createSyntheticSyncItemArea(positionToCheck));
-    }
-
     public boolean positionReached(Index destination) {
         return getPosition().equals(destination);
     }
 
-    public int getDistance(Index position) {
+    public double getDistance(Index position) {
         if (contains(position)) {
             return 0;
         }
         Index rotPos = position.rotateCounterClock(getPosition(), -getAngel());
-        Index nearestPoint = getBoundingBox().getRectangle(getPosition()).getNearestPoint(rotPos);
-        return position.getDistance(nearestPoint);
+        Index nearestPoint = getBoundingBox().getRectangle(getPosition()).getNearestPointInclusive(rotPos);
+        return rotPos.getDistanceDouble(nearestPoint);
     }
 
-    public int getDistance(SyncItem syncItem) {
+    public double getDistance(SyncItem syncItem) {
         return getDistance(syncItem.getSyncItemArea());
     }
 
-    public int getDistance(SyncItemArea syncItemArea) {
+    public int getDistanceRounded(SyncItem syncItem) {
+        return (int) Math.round(getDistance(syncItem.getSyncItemArea()));
+    }
+
+    public int getDistanceRounded(Index position) {
+        return (int) Math.round(getDistance(position));
+    }
+
+    public int getDistanceRounded(SyncItemArea syncItemArea) {
+        return (int) Math.round(getDistance(syncItemArea));
+    }
+
+    public double getDistance(SyncItemArea syncItemArea) {
         if (contains(syncItemArea)) {
             return 0;
         }
@@ -257,16 +292,16 @@ public class SyncItemArea {
 
         Rectangle rectangle = getBoundingBox().getRectangle(getPosition());
 
-        int d1 = rectangle.getShortestDistanceToLine(otherP1, otherP2);
-        int d2 = rectangle.getShortestDistanceToLine(otherP2, otherP3);
-        int d3 = rectangle.getShortestDistanceToLine(otherP3, otherP4);
-        int d4 = rectangle.getShortestDistanceToLine(otherP4, otherP1);
+        double d1 = rectangle.getShortestDistanceToLine(otherP1, otherP2);
+        double d2 = rectangle.getShortestDistanceToLine(otherP2, otherP3);
+        double d3 = rectangle.getShortestDistanceToLine(otherP3, otherP4);
+        double d4 = rectangle.getShortestDistanceToLine(otherP4, otherP1);
 
         return Math.min(Math.min(d1, d2), Math.min(d3, d4));
     }
 
     public boolean isInRange(int range, SyncItem target) {
-        return range >= getDistance(target);
+        return range >= getDistanceRounded(target);
     }
 
     public boolean isInRange(int range, Index position, ItemType toBeBuiltType) {
@@ -274,11 +309,11 @@ public class SyncItemArea {
     }
 
     public boolean isInRange(int range, Index position) {
-        return range >= getDistance(position);
+        return range >= getDistanceRounded(position);
     }
 
     public boolean isInRange(int range, SyncItemArea syncItemArea) {
-        return range >= getDistance(syncItemArea);
+        return range >= getDistanceRounded(syncItemArea);
     }
 
     public void setCosmeticsAngel() {

@@ -17,7 +17,7 @@ import com.btxtech.game.jsre.client.common.Arc;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Line;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.common.Segment;
+import com.btxtech.game.jsre.common.gameengine.formation.Segment;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 
 import java.awt.*;

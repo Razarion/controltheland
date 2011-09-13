@@ -53,8 +53,20 @@ public class BoundingBox implements Serializable {
         return getMaxDiameter() / 2;
     }
 
+    public double getMaxRadiusDouble() {
+        return (double) getMaxDiameter() / 2.0;
+    }
+
     public int getMaxDiameter() {
         return (int) Math.round(MathHelper.getPythagoras(width, height));
+    }
+
+    public int getMinDiameter() {
+        return Math.min(width, height);
+    }
+
+    public double getMinRadius() {
+        return Math.min(width, height) / 2.0;
     }
 
     public int getImageWidth() {
@@ -150,6 +162,10 @@ public class BoundingBox implements Serializable {
 
     public Index getMiddleFromImage(Index offset) {
         return getMiddleFromImage().add(offset);
+    }
+
+    public int getSmallerstSide() {
+        return Math.min(width, height);
     }
 
     @Override

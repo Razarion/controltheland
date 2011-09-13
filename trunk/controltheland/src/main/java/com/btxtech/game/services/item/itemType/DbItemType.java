@@ -157,6 +157,18 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
         return imageCount;
     }
 
+    public void setImageWidth(int imageWidth) {
+        this.imageWidth = imageWidth;
+    }
+
+    public void setImageHeight(int imageHeight) {
+        this.imageHeight = imageHeight;
+    }
+
+    public void setImageCount(int imageCount) {
+        this.imageCount = imageCount;
+    }
+
     public BoundingBox getBoundingBox() {
         return new BoundingBox(imageWidth, imageHeight, boundingBoxWidth, boundingBoxHeight, imageCount);
     }

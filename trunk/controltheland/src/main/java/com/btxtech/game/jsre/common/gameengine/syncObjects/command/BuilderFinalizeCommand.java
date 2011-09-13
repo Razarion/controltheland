@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects.command;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 
 /**
@@ -22,6 +23,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
  */
 public class BuilderFinalizeCommand extends BaseCommand {
     private Id toBeBuilt;
+    private Index destinationHint;
+    private double destinationAngel;
 
     public Id getToBeBuilt() {
         return toBeBuilt;
@@ -29,6 +32,22 @@ public class BuilderFinalizeCommand extends BaseCommand {
 
     public void setToBeBuilt(Id toBeBuilt) {
         this.toBeBuilt = toBeBuilt;
+    }
+
+    public Index getDestinationHint() {
+        return destinationHint;
+    }
+
+    public void setDestinationHint(Index destinationHint) {
+        this.destinationHint = destinationHint;
+    }
+
+    public double getDestinationAngel() {
+        return destinationAngel;
+    }
+
+    public void setDestinationAngel(double destinationAngel) {
+        this.destinationAngel = destinationAngel;
     }
 
     @Override

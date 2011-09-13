@@ -80,52 +80,52 @@ public class TestLine {
     @Test
     public void testGetShortestDistance1() {
         Line line = new Line(new Index(5, 5), new Index(10, 10));
-        Assert.assertEquals(3, line.getShortestDistance(new Index(7, 3)));
-        Assert.assertEquals(1, line.getShortestDistance(new Index(4, 4)));
-        Assert.assertEquals(0, line.getShortestDistance(new Index(5, 5)));
-        Assert.assertEquals(7, line.getShortestDistance(new Index(0, 0)));
-        Assert.assertEquals(5, line.getShortestDistance(new Index(0, 4)));
-        Assert.assertEquals(14, line.getShortestDistance(new Index(20, 20)));
-        Assert.assertEquals(11, line.getShortestDistance(new Index(20, 15)));
-        Assert.assertEquals(1, line.getShortestDistance(new Index(4, 4)));
-        Assert.assertEquals(0, line.getShortestDistance(new Index(10, 10)));
-        Assert.assertEquals(1, line.getShortestDistance(new Index(11, 11)));
-        Assert.assertEquals(5, line.getShortestDistance(new Index(10, 3)));
-        Assert.assertEquals(7, line.getShortestDistance(new Index(13, 16)));
-        Assert.assertEquals(8, line.getShortestDistance(new Index(8, 18)));
-        Assert.assertEquals(7, line.getShortestDistance(new Index(0, 0)));
+        Assert.assertEquals(2.82, line.getShortestDistance(new Index(7, 3)), 0.01);
+        Assert.assertEquals(1.41, line.getShortestDistance(new Index(4, 4)), 0.01);
+        Assert.assertEquals(0, line.getShortestDistance(new Index(5, 5)), 0.01);
+        Assert.assertEquals(7.07, line.getShortestDistance(new Index(0, 0)), 0.01);
+        Assert.assertEquals(5.09, line.getShortestDistance(new Index(0, 4)), 0.01);
+        Assert.assertEquals(14.14, line.getShortestDistance(new Index(20, 20)), 0.01);
+        Assert.assertEquals(11.18, line.getShortestDistance(new Index(20, 15)), 0.01);
+        Assert.assertEquals(1.41, line.getShortestDistance(new Index(4, 4)), 0.01);
+        Assert.assertEquals(0, line.getShortestDistance(new Index(10, 10)), 0.01);
+        Assert.assertEquals(1.41, line.getShortestDistance(new Index(11, 11)), 0.01);
+        Assert.assertEquals(5, line.getShortestDistance(new Index(10, 3)), 0.01);
+        Assert.assertEquals(6.70, line.getShortestDistance(new Index(13, 16)), 0.01);
+        Assert.assertEquals(8.24, line.getShortestDistance(new Index(8, 18)), 0.01);
+        Assert.assertEquals(7.07, line.getShortestDistance(new Index(0, 0)), 0.01);
     }
 
     @Test
     public void testGetShortestDistance2() {
         Line line = new Line(new Index(0, 5), new Index(10, 5));
-        Assert.assertEquals(2, line.getShortestDistance(new Index(7, 3)));
-        Assert.assertEquals(1, line.getShortestDistance(new Index(4, 4)));
+        Assert.assertEquals(2, line.getShortestDistance(new Index(7, 3)), 0.01);
+        Assert.assertEquals(1, line.getShortestDistance(new Index(4, 4)), 0.01);
     }
 
     @Test
     public void testGetShortestDistance3() {
         Line line = new Line(new Index(20, 10), new Index(20, 20));
-        Assert.assertEquals(15, line.getShortestDistance(new Index(5, 20)));
-        Assert.assertEquals(7, line.getShortestDistance(new Index(13, 16)));
-        Assert.assertEquals(9, line.getShortestDistance(new Index(28, 24)));
+        Assert.assertEquals(15, line.getShortestDistance(new Index(5, 20)), 0.01);
+        Assert.assertEquals(7, line.getShortestDistance(new Index(13, 16)), 0.01);
+        Assert.assertEquals(8.94, line.getShortestDistance(new Index(28, 24)), 0.01);
     }
 
     @Test
     public void testGetShortestDistance4() {
         Line line = new Line(new Index(33, 2), new Index(39, 4));
-        Assert.assertEquals(6, line.getShortestDistance(new Index(27, 2)));
-        Assert.assertEquals(3, line.getShortestDistance(new Index(37, 0)));
-        Assert.assertEquals(8, line.getShortestDistance(new Index(25, 0)));
+        Assert.assertEquals(6, line.getShortestDistance(new Index(27, 2)), 0.01);
+        Assert.assertEquals(3.16, line.getShortestDistance(new Index(37, 0)), 0.01);
+        Assert.assertEquals(8.24, line.getShortestDistance(new Index(25, 0)), 0.01);
     }
 
     @Test
     public void testGetShortestDistance5() {
         Line line = new Line(new Index(3, 9), new Index(10, 2));
-        Assert.assertEquals(4, line.getShortestDistance(new Index(4, 2)));
-        Assert.assertEquals(3, line.getShortestDistance(new Index(13, 2)));
-        Assert.assertEquals(3, line.getShortestDistance(new Index(9, 7)));
-        Assert.assertEquals(2, line.getShortestDistance(new Index(1, 9)));
+        Assert.assertEquals(4.24, line.getShortestDistance(new Index(4, 2)), 0.01);
+        Assert.assertEquals(3, line.getShortestDistance(new Index(13, 2)), 0.01);
+        Assert.assertEquals(2.82, line.getShortestDistance(new Index(9, 7)), 0.01);
+        Assert.assertEquals(2, line.getShortestDistance(new Index(1, 9)), 0.01);
     }
 
     @Test
@@ -288,110 +288,4 @@ public class TestLine {
         Assert.assertEquals(new Index(600, 500), line.getEndPoint(reference, true));
         Assert.assertEquals(new Index(100, 400), line.getEndPoint(reference, false));
     }
-
-    @Test
-    public void testIsNextPointOnSegment() {
-        Index cross = new Index(200, 200);
-        Index reference = new Index(200, 300);
-        Line line = new Line(new Index(100, 100), new Index(400, 400));
-        Assert.assertTrue(line.isNextPointOnSegment(cross, 100, reference, true));
-        Assert.assertTrue(line.isNextPointOnSegment(cross, 100, reference, false));
-        Assert.assertFalse(line.isNextPointOnSegment(cross, 200, reference, true));
-        Assert.assertTrue(line.isNextPointOnSegment(cross, 200, reference, false));
-        Assert.assertFalse(line.isNextPointOnSegment(cross, 400, reference, true));
-        Assert.assertFalse(line.isNextPointOnSegment(cross, 400, reference, false));
-
-        cross = new Index(100, 300);
-        reference = new Index(400, 200);
-        line = new Line(new Index(100, 100), new Index(100, 400));
-        Assert.assertTrue(line.isNextPointOnSegment(cross, 99, reference, true));
-        Assert.assertTrue(line.isNextPointOnSegment(cross, 99, reference, false));
-        Assert.assertTrue(line.isNextPointOnSegment(cross, 100, reference, true));
-        Assert.assertTrue(line.isNextPointOnSegment(cross, 100, reference, false));
-        Assert.assertFalse(line.isNextPointOnSegment(cross, 200, reference, true));
-        Assert.assertFalse(line.isNextPointOnSegment(cross, 201, reference, false));
-
-        cross = new Index(200, 100);
-        reference = new Index(400, 400);
-        line = new Line(new Index(100, 100), new Index(400, 100));
-        Assert.assertTrue(line.isNextPointOnSegment(cross, 99, reference, true));
-        Assert.assertTrue(line.isNextPointOnSegment(cross, 99, reference, false));
-        Assert.assertTrue(line.isNextPointOnSegment(cross, 100, reference, true));
-        Assert.assertTrue(line.isNextPointOnSegment(cross, 100, reference, false));
-        Assert.assertFalse(line.isNextPointOnSegment(cross, 101, reference, true));
-        Assert.assertTrue(line.isNextPointOnSegment(cross, 101, reference, false));
-        Assert.assertFalse(line.isNextPointOnSegment(cross, 201, reference, true));
-        Assert.assertFalse(line.isNextPointOnSegment(cross, 201, reference, false));
-
-        cross = new Index(1500, 1261);
-        reference = new Index(1500, 1500);
-        line = new Line(new Index(1599, 1261), new Index(1399, 1262));
-        System.out.println(line.isNextPointOnSegment(cross, 82, reference, true));
-        Assert.assertTrue(line.isNextPointOnSegment(cross, 99, reference, true));
-    }
-
-    @Test
-    public void testIsNextPointOnSegment2() {
-        Index cross = new Index(400, 350);
-        Index reference = new Index(500, 500);
-        Line line = new Line(new Index(600, 350), new Index(400, 350));
-        Assert.assertFalse(line.isNextPointOnSegment(cross, 100, reference, true));
-    }
-
-    @Test
-    public void testGetNextPoint() {
-        Index cross = new Index(200, 200);
-        Index reference = new Index(200, 300);
-        Line line = new Line(new Index(100, 100), new Index(400, 400));
-        Assert.assertEquals(new Index(129, 129), line.getNextPoint(cross, 100, reference, true));
-        Assert.assertEquals(new Index(271, 271), line.getNextPoint(cross, 100, reference, false));
-        try {
-            line.getNextPoint(cross, 200, reference, true);
-            Assert.fail("IllegalArgumentException expected. Point not on line");
-        } catch (IllegalArgumentException e) {
-            // Expected exception
-        }
-        Assert.assertEquals(new Index(341, 341), line.getNextPoint(cross, 200, reference, false));
-
-        cross = new Index(100, 300);
-        reference = new Index(400, 200);
-        line = new Line(new Index(100, 100), new Index(100, 400));
-        Assert.assertEquals(new Index(100, 399), line.getNextPoint(cross, 99, reference, true));
-        Assert.assertEquals(new Index(100, 150), line.getNextPoint(cross, 150, reference, false));
-
-        cross = new Index(200, 100);
-        reference = new Index(400, 400);
-        line = new Line(new Index(100, 100), new Index(400, 100));
-        Assert.assertEquals(new Index(150, 100), line.getNextPoint(cross, 50, reference, true));
-        Assert.assertEquals(new Index(250, 100), line.getNextPoint(cross, 50, reference, false));
-    }
-
-    @Test
-    public void testGetDistanceToEnd() {
-        Index cross = new Index(200, 200);
-        Index reference = new Index(200, 300);
-        Line line = new Line(new Index(100, 100), new Index(400, 400));
-        Assert.assertEquals(141, line.getDistanceToEnd(cross, reference, true, 666));
-        Assert.assertEquals(283, line.getDistanceToEnd(cross, reference, false, 666));
-
-        cross = new Index(100, 300);
-        reference = new Index(400, 200);
-        line = new Line(new Index(100, 100), new Index(100, 400));
-        Assert.assertEquals(100, line.getDistanceToEnd(cross, reference, true, 666));
-        Assert.assertEquals(200, line.getDistanceToEnd(cross, reference, false, 666));
-
-        cross = new Index(200, 100);
-        reference = new Index(400, 400);
-        line = new Line(new Index(100, 100), new Index(400, 100));
-        Assert.assertEquals(100, line.getDistanceToEnd(cross, reference, true, 666));
-        Assert.assertEquals(200, line.getDistanceToEnd(cross, reference, false, 666));
-
-        cross = new Index(1500, 1261);
-        reference = new Index(1500, 1500);
-        line = new Line(new Index(1599, 1261), new Index(1399, 1262));
-        Assert.assertEquals(101, line.getDistanceToEnd(cross, reference, true, 666));
-        Assert.assertEquals(99, line.getDistanceToEnd(cross, reference, false, 666));
-
-    }
-
 }

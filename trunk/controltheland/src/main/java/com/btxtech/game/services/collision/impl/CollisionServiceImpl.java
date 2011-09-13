@@ -17,7 +17,9 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.common.Territory;
-import com.btxtech.game.jsre.common.gameengine.AttackFormation;
+import com.btxtech.game.jsre.common.gameengine.formation.AttackFormation;
+import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationFactory;
+import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
@@ -44,6 +46,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -276,7 +279,7 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
                 if (!terrainService.isFree(point, boundingBox.getMaxDiameter(), boundingBox.getMaxDiameter(), itemType.getTerrainType().getSurfaceTypes())) {
                     continue;
                 }
-                if (itemService.isSyncItemOverlapping(syncItem, point)) {
+                if (itemService.isSyncItemOverlapping(syncItem, point, null)) {
                     continue;
 
                 }
@@ -381,9 +384,9 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     }
 
     @Override
-    public AttackFormation.AttackFormationItem getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItemArea target, TerrainType targetTerrainType) {
-        List<AttackFormation.AttackFormationItem> formationItems = new ArrayList<AttackFormation.AttackFormationItem>();
-        formationItems.add(new AttackFormation.AttackFormationItem(syncBaseItem, range));
+    public AttackFormationItem getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItemArea target, TerrainType targetTerrainType) {
+        List<AttackFormationItem> formationItems = new ArrayList<AttackFormationItem>();
+        formationItems.add(new AttackFormationItem(syncBaseItem, range));
         setupDestinationHints(target, targetTerrainType, formationItems);
         if (formationItems.get(0).isInRange()) {
             return formationItems.get(0);
@@ -393,29 +396,29 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
     }
 
     @Override
-    public List<AttackFormation.AttackFormationItem> setupDestinationHints(SyncItem target, List<AttackFormation.AttackFormationItem> items) {
+    public List<AttackFormationItem> setupDestinationHints(SyncItem target, List<AttackFormationItem> items) {
         return setupDestinationHints(target.getSyncItemArea(), target.getTerrainType(), items);
     }
 
-    private List<AttackFormation.AttackFormationItem> setupDestinationHints(SyncItemArea target, TerrainType targetTerrainType, List<AttackFormation.AttackFormationItem> items) {
-        Map<TerrainType, List<AttackFormation.AttackFormationItem>> terrainTypeCollectionMap = new HashMap<TerrainType, List<AttackFormation.AttackFormationItem>>();
-        for (AttackFormation.AttackFormationItem item : items) {
+    private List<AttackFormationItem> setupDestinationHints(SyncItemArea target, TerrainType targetTerrainType, List<AttackFormationItem> items) {
+        Map<TerrainType, List<AttackFormationItem>> terrainTypeCollectionMap = new HashMap<TerrainType, List<AttackFormationItem>>();
+        for (AttackFormationItem item : items) {
             TerrainType terrainType = item.getSyncBaseItem().getTerrainType();
-            List<AttackFormation.AttackFormationItem> attackFormationItems = terrainTypeCollectionMap.get(terrainType);
+            List<AttackFormationItem> attackFormationItems = terrainTypeCollectionMap.get(terrainType);
             if (attackFormationItems == null) {
-                attackFormationItems = new ArrayList<AttackFormation.AttackFormationItem>();
+                attackFormationItems = new ArrayList<AttackFormationItem>();
                 terrainTypeCollectionMap.put(terrainType, attackFormationItems);
             }
             attackFormationItems.add(item);
         }
 
-        for (Map.Entry<TerrainType, List<AttackFormation.AttackFormationItem>> entry : terrainTypeCollectionMap.entrySet()) {
+        for (Map.Entry<TerrainType, List<AttackFormationItem>> entry : terrainTypeCollectionMap.entrySet()) {
             setupDestinationHintTerrain(target, entry.getValue(), entry.getKey(), targetTerrainType);
         }
         return items;
     }
 
-    private void setupDestinationHintTerrain(SyncItemArea target, List<AttackFormation.AttackFormationItem> items, TerrainType terrainType, TerrainType targetTerrainType) {
+    private void setupDestinationHintTerrain(SyncItemArea target, List<AttackFormationItem> items, TerrainType terrainType, TerrainType targetTerrainType) {
         SyncItem actorItem = items.get(0).getSyncBaseItem();
         List<Index> path;
         if (terrainType == targetTerrainType) {
@@ -433,30 +436,23 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
             lastPoint = path.get(path.size() - 1);
         }
 
+        Collection<SyncItem> placeAbleItems = new HashSet<SyncItem>();
+        for (AttackFormationItem item : items) {
+            placeAbleItems.add(item.getSyncBaseItem());
+        }
+
         double angel = target.getPosition().getAngleToNord(lastPoint);
-        List<AttackFormation.AttackFormationItem> tmpItems = new ArrayList<AttackFormation.AttackFormationItem>(items);
-        AttackFormation attackFormation = new AttackFormation(target, angel, items);
-        boolean overbooked = false;
+        AttackFormation attackFormation = AttackFormationFactory.create(target, angel, items);
         while (attackFormation.hasNext()) {
-            AttackFormation.AttackFormationItem attackFormationItem = attackFormation.calculateNextEntry();
+            AttackFormationItem attackFormationItem = attackFormation.calculateNextEntry();
             SyncBaseItem syncBaseItem = attackFormationItem.getSyncBaseItem();
             if (!terrainService.isFree(attackFormationItem.getDestinationHint(), syncBaseItem.getItemType())) {
                 continue;
             }
-            if (itemService.isSyncItemOverlapping(syncBaseItem, attackFormationItem.getDestinationHint())) {
+            if (itemService.isSyncItemOverlapping(syncBaseItem, attackFormationItem.getDestinationHint(), placeAbleItems)) {
                 continue;
             }
-            if (!attackFormationItem.isInRange()) {
-                overbooked = true;
-            }
             attackFormation.lastAccepted();
-        }
-        if (overbooked) {
-            System.out.println("------- Overbooked");
-            System.out.println("target: " + target);
-            System.out.println("angel: " + angel);
-            System.out.println("tmpItems: " + tmpItems.size());
-            System.out.println("item 0: " + tmpItems.get(0).getSyncBaseItem().getItemType().getBoundingBox());
         }
     }
 }

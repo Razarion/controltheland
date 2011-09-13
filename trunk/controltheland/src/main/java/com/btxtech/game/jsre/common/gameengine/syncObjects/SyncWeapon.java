@@ -14,8 +14,8 @@
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.gameengine.AttackFormation;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
+import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
@@ -62,7 +62,7 @@ public class SyncWeapon extends SyncBaseAbility {
     private boolean tickAttack(double factor) {
         try {
             SyncBaseItem targetItem = (SyncBaseItem) getServices().getItemService().getItem(target);
-            if (isInRange(targetItem) && destinationHint == null) {
+            if ((destinationHint == null || getSyncItemArea().positionReached(destinationHint))&& isInRange(targetItem)) {
                 getSyncItemArea().turnTo(targetItem);
                 if (!getServices().getTerritoryService().isAllowed(targetItem.getSyncItemArea().getPosition(), getSyncBaseItem())) {
                     throw new IllegalArgumentException(this + " Weapon not allowed to attack item on territory: " + targetItem.getSyncItemArea().getPosition() + "  " + getSyncBaseItem());
@@ -86,7 +86,7 @@ public class SyncWeapon extends SyncBaseAbility {
                         } else {
                             targetSyncItemArea = targetItem.getSyncItemArea();
                         }
-                        AttackFormation.AttackFormationItem formation = getServices().getCollisionService().getDestinationHint(getSyncBaseItem(), weaponType.getRange(), targetSyncItemArea, targetItem.getBaseItemType().getTerrainType());
+                        AttackFormationItem formation = getServices().getCollisionService().getDestinationHint(getSyncBaseItem(), weaponType.getRange(), targetSyncItemArea, targetItem.getBaseItemType().getTerrainType());
                         if (formation != null) {
                             destinationHint = formation.getDestinationHint();
                             destinationAngel = formation.getDestinationAngel();

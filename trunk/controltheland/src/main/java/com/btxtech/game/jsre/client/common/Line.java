@@ -1,5 +1,7 @@
 package com.btxtech.game.jsre.client.common;
 
+import com.btxtech.game.jsre.common.gameengine.formation.Segment;
+
 import java.io.Serializable;
 
 /**
@@ -51,7 +53,7 @@ public class Line implements Segment, Serializable {
         return c;
     }
 
-    public int getShortestDistance(Index point) {
+    public double getShortestDistance(Index point) {
         Index projection = projectOnInfiniteLine(point);
         if (projection == null) {
             projection = point; // TODO
@@ -63,9 +65,9 @@ public class Line implements Segment, Serializable {
         int yMax = Math.max(point1.getY(), point2.getY());
 
         if (projection.getX() < xMin || projection.getY() < yMin || projection.getX() > xMax || projection.getY() > yMax) {
-            return Math.min(point.getDistance(point1), point.getDistance(point2));
+            return Math.min(point.getDistanceDouble(point1), point.getDistanceDouble(point2));
         } else {
-            return point.getDistance(projection);
+            return point.getDistanceDouble(projection);
         }
 
     }
@@ -187,32 +189,37 @@ public class Line implements Segment, Serializable {
         }
     }
 
-    @Override
-    public boolean isNextPointOnSegment(Index crossPoint, int distance, Index reference, boolean counterClock) {
+/*    @Override
+    public boolean isNextPointOnSegment(PlaceableFormatItem last, PlaceableFormatItem next, Index reference, boolean counterClock) {
         Index directionTo = getEndPoint(reference, counterClock);
-        if (directionTo.equals(crossPoint)) {
+        if (directionTo.equals(last.getMiddleFront())) {
             return false;
         }
-        Index point = crossPoint.getPointWithDistance(distance, directionTo, true);
-        return isPointInLine(point);
-    }
-
-    @Override
-    public Index getNextPoint(Index crossPoint, int distance, Index reference, boolean counterClock) {
-        Index directionTo = getEndPoint(reference, counterClock);
-        Index point = crossPoint.getPointWithDistance(distance, directionTo, true);
-        if (isPointInLine(point)) {
-            return point;
-        } else {
-            throw new IllegalArgumentException("Given point is not on the line");
+        //if(!isPointInLine(last.getEndCorner())) {
+        //    return false;
+        //}
+        PlaceableFormatItem tmp = new PlaceableFormatItem(next);
+        Index lastPointOnLine = projectOnInfiniteLine(last.getEndCorner()).getPointWithDistance((int) DISTANCE, directionTo, true);
+        if (lastPointOnLine.equals(directionTo) || !isPointInLine(lastPointOnLine)) {
+            return false;
         }
+        tmp.setStartCorner(lastPointOnLine);
+        tmp.calculateMiddleAndEndCorner(directionTo);
+        return isPointInLine(tmp.getMiddleFront());
     }
 
     @Override
-    public int getDistanceToEnd(Index crossPoint, Index reference, boolean counterClock, int width) {
+    public PlaceableFormatItem getNextPoint(PlaceableFormatItem last, PlaceableFormatItem next, Index reference, boolean counterClock) {
         Index directionTo = getEndPoint(reference, counterClock);
-        return crossPoint.getDistance(directionTo);
-    }
+        Index lastPointOnLine = projectOnInfiniteLine(last.getEndCorner()).getPointWithDistance((int) DISTANCE, directionTo, true);
+        next.setStartCorner(lastPointOnLine);
+        next.calculateMiddleAndEndCorner(directionTo);
+        if (isPointInLine(next.getMiddleFront())) {
+            return next;
+        } else {
+            throw new IllegalArgumentException("Given point is not on the line: " + next.getMiddleFront() + " " + this);
+        }
+    }*/
 
     @Override
     public Index getPerpendicular(Index crossPoint, int perpendicularDistance, Index otherDirection) {
@@ -250,6 +257,20 @@ public class Line implements Segment, Serializable {
         } else {
             return p2;
         }
+    }
+
+    @Override
+    public Index getNextPoint(boolean counterClock, Index reference, Index crossPoint, double distance) {
+        Index directionTo = getEndPoint(reference, counterClock);
+        if (directionTo.equals(crossPoint)) {
+            return null;
+        }
+        return projectOnInfiniteLine(crossPoint.getPointWithDistance((int) Math.round(distance), directionTo, true));
+    }
+
+    @Override
+    public boolean isNextPointOnSegment(boolean counterClock, Index reference, Index crossPoint, double distance) {
+        return isPointInLine(getNextPoint(counterClock, reference, crossPoint, distance));
     }
 
     @Override

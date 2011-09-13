@@ -103,7 +103,7 @@ public class BaseItemTypeEditor extends MgmtWebPage {
     private Collection<DbProjectileItemType> projectileItemTypes;
 
 
-    public BaseItemTypeEditor(DbBaseItemType dbBaseItemType) {
+    public BaseItemTypeEditor(final DbBaseItemType dbBaseItemType) {
         // Prevent circular object from with same id -> Hibernate problem
         baseItemTypes = itemService.getDbBaseItemTypes();
         projectileItemTypes = itemService.getDbProjectileItemTypes();
@@ -179,17 +179,13 @@ public class BaseItemTypeEditor extends MgmtWebPage {
         });
         add(form);
 
+        form.add(new Button("editBoundingBox"){
+            @Override
+            public void onSubmit() {
+                setResponsePage(new BoundingBoxEditor(dbBaseItemType.getId()));
+            }
+        });
         load();
-        showItemTypeEditor(dbBaseItemType.getId());
-    }
-
-    private void showItemTypeEditor(int itemTypeId) {
-        Label gwtItemEditor = new Label("itemTypeEditor", "<DIV>Loading Item Type Editor</DIV>");
-        gwtItemEditor.setEscapeModelStrings(false);
-        gwtItemEditor.add(new SimpleAttributeModifier("id", ItemTypeEditor.ITEM_TYPE_EDITOR));
-        gwtItemEditor.add(new SimpleAttributeModifier(ItemTypeEditor.ITEM_TYPE_ID, Integer.toString(itemTypeId)));
-        add(gwtItemEditor);
-        add(JavascriptPackageResource.getHeaderContribution("itemtypeeditor/itemtypeeditor.nocache.js"));
     }
 
     private void load() {
@@ -437,14 +433,14 @@ public class BaseItemTypeEditor extends MgmtWebPage {
         } else {
             dbBaseItemType.setDbSpecialType(null);
         }
-        // TODO
-        /*   Html5ImagesUploadConverter html5ImagesUploadConverter = new Html5ImagesUploadConverter(imageFileField, dbBaseItemType);
-       if (!html5ImagesUploadConverter.isEmpty()) {
-           dbBaseItemType.setItemTypeImages(html5ImagesUploadConverter.getImages());
-           ImageIcon image = new ImageIcon(html5ImagesUploadConverter.getFirst().getData());
-           dbBaseItemType.setHeight(image.getIconHeight());
-           dbBaseItemType.setWidth(image.getIconWidth());
-       } */
+        Html5ImagesUploadConverter html5ImagesUploadConverter = new Html5ImagesUploadConverter(imageFileField, dbBaseItemType);
+        if (!html5ImagesUploadConverter.isEmpty()) {
+            dbBaseItemType.setItemTypeImages(html5ImagesUploadConverter.getImages());
+            ImageIcon image = new ImageIcon(html5ImagesUploadConverter.getFirst().getData());
+            dbBaseItemType.setImageCount(html5ImagesUploadConverter.getImages().size());
+            dbBaseItemType.setImageWidth(image.getIconWidth());
+            dbBaseItemType.setImageHeight(image.getIconHeight());
+        }
 
         itemService.saveDbItemType(dbBaseItemType);
     }

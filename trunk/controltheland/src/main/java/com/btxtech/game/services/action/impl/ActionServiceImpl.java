@@ -15,7 +15,7 @@ package com.btxtech.game.services.action.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
-import com.btxtech.game.jsre.common.gameengine.AttackFormation;
+import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.PositionCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
@@ -353,7 +353,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
         attackCommand.setFollowTarget(true);
 
         if (followTarget) {
-            AttackFormation.AttackFormationItem format = collisionService.getDestinationHint(tank,
+            AttackFormationItem format = collisionService.getDestinationHint(tank,
                     tank.getSyncWeapon().getWeaponType().getRange(),
                     target.getSyncItemArea(),
                     target.getBaseItemType().getTerrainType());

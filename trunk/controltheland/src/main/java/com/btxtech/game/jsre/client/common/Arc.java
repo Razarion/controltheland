@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.client.common;
 
 import com.btxtech.game.jsre.common.MathHelper;
+import com.btxtech.game.jsre.common.gameengine.formation.Segment;
 
 import java.io.Serializable;
 
@@ -148,56 +149,34 @@ public class Arc implements Segment, Serializable {
         return MathHelper.isInSection(angel, reference.getAngleToNord(start), delta);
     }
 
-    @Override
-    public boolean isNextPointOnSegment(Index crossPoint, int distance, Index reference, boolean counterClock) {
-        double angel = MathHelper.normaliseAngel(middle.getAngleToNord(crossPoint));
-        //double deltaAngel = Math.atan((double) distance / (double) getRadius());
-        double deltaAngel = Math.atan((double) distance / 2.0 / getRadius()) * 2.0;
-
+    /*   @Override
+    public boolean isNextPointOnSegment(PlaceableFormatItem last, PlaceableFormatItem next, Index reference, boolean counterClock) {
+        double angel = MathHelper.normaliseAngel(middle.getAngleToNord(last.getEndCorner()));
+        double deltaStartAngel = Math.asin(DISTANCE / middle.getDistanceDouble(last.getEndCorner()));
+        double deltaAngel = Math.atan(next.getHalfWidth() / getRadius());
         if (counterClock) {
-            return isInSegment(angel + deltaAngel, middle);
+            return isInSegment(angel + deltaStartAngel + deltaAngel, middle);
         } else {
-            return isInSegment(angel - deltaAngel, middle);
+            return isInSegment(angel - deltaStartAngel - deltaAngel, middle);
         }
     }
 
     @Override
-    public Index getNextPoint(Index crossPoint, int distance, Index reference, boolean counterClock) {
-        double angel = middle.getAngleToNord(crossPoint);
-        double deltaAngel = Math.atan((double) distance / 2.0 / getRadius()) * 2.0;
-
-        double newAngel;
+    public PlaceableFormatItem getNextPoint(PlaceableFormatItem last, PlaceableFormatItem next, Index reference, boolean counterClock) {
+        double angel = MathHelper.normaliseAngel(middle.getAngleToNord(last.getEndCorner()));
+        double deltaStartAngel = Math.asin(DISTANCE / middle.getDistanceDouble(last.getEndCorner()));
+        double deltaAngel = Math.atan(next.getHalfWidth() / getRadius());
+        double frontMiddlePointAngel;
         if (counterClock) {
-            newAngel = angel + deltaAngel;
+            frontMiddlePointAngel = angel + deltaStartAngel + deltaAngel;
         } else {
-            newAngel = angel - deltaAngel;
+            frontMiddlePointAngel = angel - deltaStartAngel - deltaAngel;
         }
-
-        return middle.getPointFromAngelToNord(newAngel, (int) Math.round(getRadius()));
-    }
-
-    @Override
-    public int getDistanceToEnd(Index crossPoint, Index reference, boolean counterClock, int width) {
-        double remainingAngel = MathHelper.normaliseAngel(middle.getAngleToNord(crossPoint));
-
-        if (counterClock) {
-            remainingAngel = MathHelper.getAngel(remainingAngel, middle.getAngleToNord(end), true);
-        } else {
-            remainingAngel = MathHelper.getAngel(remainingAngel, middle.getAngleToNord(start), false);
-        }
-
-        int distance = (int) (Math.tan(remainingAngel) * getRadius());
-        if (distance > width / 2) {
-            double hypotenuse = MathHelper.getPythagoras(getRadius(), (double) width / 2.0);
-            return (int) Math.round(hypotenuse * Math.sin(remainingAngel));
-//            double fullAngel = MathHelper.normaliseAngel(Math.atan((double) width / 2.0 / getRadius())) * 2.0;
-//            double deltaAngel = fullAngel - remainingAngel;
-//            int deltaDistance = (int) (Math.tan(deltaAngel) * getRadius());
-//            return deltaDistance + width / 2;
-        } else {
-            return distance;
-        }
-    }
+        next.calculateStartAndEnd(middle.getPointFromAngelToNord(frontMiddlePointAngel, getRadius()),
+                middle.getPointFromAngelToNord(frontMiddlePointAngel, getRadius() + next.getHalfHeight()),
+                counterClock);
+        return next;
+    }*/
 
     @Override
     public Index getPerpendicular(Index crossPoint, int perpendicularDistance, Index otherDirection) {
@@ -211,6 +190,30 @@ public class Arc implements Segment, Serializable {
         } else {
             return start;
         }
+    }
+
+    @Override
+    public Index getNextPoint(boolean counterClock, Index reference, Index crossPoint, double distance) {
+        double arcLength = distance * 2.0 / getRadius();
+        double angel = middle.getAngleToNord(crossPoint);
+        if (counterClock) {
+            angel += arcLength;
+        } else {
+            angel -= arcLength;
+        }
+        return middle.getPointFromAngelToNord(angel, getRadius());
+    }
+
+    @Override
+    public boolean isNextPointOnSegment(boolean counterClock, Index reference, Index crossPoint, double distance) {
+        double arcLength = distance * 2.0 / getRadius();
+        double angel = middle.getAngleToNord(crossPoint);
+        if (counterClock) {
+            angel += arcLength;
+        } else {
+            angel -= arcLength;
+        }
+        return isInSegment(angel, middle);
     }
 
     @Override

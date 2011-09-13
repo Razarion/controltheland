@@ -16,9 +16,6 @@ package com.btxtech.game.wicket.pages.mgmt;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
-import java.util.HashSet;
-import javax.swing.ImageIcon;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
@@ -29,6 +26,9 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import javax.swing.*;
+import java.util.HashSet;
 
 /**
  * User: beat
@@ -44,6 +44,13 @@ public class ProjectileItemTypeEditor extends MgmtWebPage {
         add(feedbackPanel);
 
         Form<DbProjectileItemType> form = new Form<DbProjectileItemType>("itemTypeForm", new CompoundPropertyModel<DbProjectileItemType>(dbProjectileItemType));
+
+        form.add(new Button("editBoundingBox"){
+            @Override
+            public void onSubmit() {
+                setResponsePage(new BoundingBoxEditor(dbProjectileItemType.getId()));
+            }
+        });
 
         form.add(new TextField<String>("name"));
         form.add(new TextArea<String>("description"));
@@ -65,9 +72,9 @@ public class ProjectileItemTypeEditor extends MgmtWebPage {
             @Override
             public void setObject(FileUpload fileUpload) {
                 ImageIcon image = new ImageIcon(fileUpload.getBytes());
-                // TODO
-                //dbProjectileItemType.setHeight(image.getIconHeight());
-                //dbProjectileItemType.setWidth(image.getIconWidth());
+                dbProjectileItemType.setImageHeight(image.getIconHeight());
+                dbProjectileItemType.setImageWidth(image.getIconWidth());
+                dbProjectileItemType.setImageCount(1);
                 DbItemTypeImage itemTypeImage = new DbItemTypeImage();
                 itemTypeImage.setItemType(dbProjectileItemType);
                 itemTypeImage.setContentType(fileUpload.getContentType());

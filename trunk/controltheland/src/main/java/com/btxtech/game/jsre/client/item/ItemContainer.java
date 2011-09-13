@@ -27,7 +27,7 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.effects.ExplosionHandler;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.AttackFormation;
+import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
@@ -332,11 +332,11 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
 
     @Override
     public boolean isSyncItemOverlapping(SyncItem syncItem) {
-        return isSyncItemOverlapping(syncItem, null);
+        return isSyncItemOverlapping(syncItem, null, null);
     }
 
     @Override
-    public boolean isSyncItemOverlapping(SyncItem syncItem, Index positionToCheck) {
+    public boolean isSyncItemOverlapping(SyncItem syncItem, Index positionToCheck, Collection<SyncItem> exceptionThem) {
         return false;
     }
 
@@ -518,8 +518,8 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
     }
 
     @Override
-    public AttackFormation.AttackFormationItem getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItemArea target, TerrainType targetTerrainType) {
-        return new AttackFormation.AttackFormationItem(syncBaseItem, range, target.getPosition(), syncBaseItem.getSyncItemArea().getTurnToAngel(target), true);
+    public AttackFormationItem getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItemArea target, TerrainType targetTerrainType) {
+        return new AttackFormationItem(syncBaseItem, range, target.getPosition(), syncBaseItem.getSyncItemArea().getTurnToAngel(target), true);
     }
 
     public void clear() {

@@ -1,10 +1,10 @@
-package com.btxtech.game.jsre.common.gameengine;
+package com.btxtech.game.jsre.common.gameengine.formation;
 
 import com.btxtech.game.jsre.client.common.Arc;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Line;
-import com.btxtech.game.jsre.client.common.Segment;
 import com.btxtech.game.jsre.common.MathHelper;
+import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 
 import java.util.ArrayList;
@@ -17,15 +17,16 @@ import java.util.List;
  * Time: 11:32:28
  */
 
-public class AttackFormationTrack {
+public class RoundedRectangleAttackFormationTrack {
     private List<Segment> segments = new ArrayList<Segment>();
     private SyncItemArea target;
     private boolean counterClock;
-    private Index crossPoint;
     private Segment crossSegment;
+    private Index crossPoint;
+    private SyncItemArea last;
 
 
-    public AttackFormationTrack(SyncItemArea target, int range, boolean counterClock) {
+    public RoundedRectangleAttackFormationTrack(SyncItemArea target, int range, boolean counterClock) {
         this.target = target;
         this.counterClock = counterClock;
         // Line 1
@@ -68,48 +69,74 @@ public class AttackFormationTrack {
         return segments;
     }
 
-    public Index start(double angel, int perpendicularDistance) {
-        setupStartSegment(angel);
-        return crossSegment.getPerpendicular(crossPoint, perpendicularDistance, target.getPosition());
+    public SyncItemArea start(double startAngel, AttackFormationItem attackFormationItem) {
+        crossPoint = setupStartSegment(startAngel);
+        last = createSyncItemArea(attackFormationItem);
+        return last;
     }
 
-    public Index getNextPoint(int distance, int perpendicularDistance, int width) {
-        if (crossPoint == null || crossSegment == null) {
+    private SyncItemArea createSyncItemArea(AttackFormationItem attackFormationItem) {
+        BoundingBox boundingBox = attackFormationItem.getSyncBaseItem().getSyncItemArea().getBoundingBox();
+        Index center = crossSegment.getPerpendicular(crossPoint, (int) Math.floor((double) boundingBox.getHeight() / 2.0 - 2.0), target.getPosition());
+        SyncItemArea syncItemArea = boundingBox.createSyntheticSyncItemArea(center);
+        syncItemArea.turnTo(target);
+        return syncItemArea;
+    }
+
+    public SyncItemArea getNextPoint(AttackFormationItem attackFormationItem) {
+        if (crossSegment == null || last == null) {
             throw new IllegalStateException("Start has not been called before or start failed.");
         }
-        if (distance < 0) {
-            throw new IllegalStateException("Distance not allowed to be negative: " + distance);
-        }
 
-        if (crossSegment.isNextPointOnSegment(crossPoint, distance, target.getPosition(), counterClock)) {
-            crossPoint = crossSegment.getNextPoint(crossPoint, distance, target.getPosition(), counterClock);
-            return crossSegment.getPerpendicular(crossPoint, perpendicularDistance, target.getPosition());
-        } else {
-            int deltaDistance = crossSegment.getDistanceToEnd(crossPoint, target.getPosition(), counterClock, width);
-            int index = segments.indexOf(crossSegment);
-            index++;
-            if (index >= segments.size()) {
-                index = 0;
+        int maxTries = 100000;
+        while (true) {
+            findNextPointOnSegment();
+            SyncItemArea syncItemArea = createSyncItemArea(attackFormationItem);
+            if (!last.contains(syncItemArea)) {
+                last = syncItemArea;
+                break;
             }
-            crossSegment = segments.get(index);
+            maxTries--;
+            if(maxTries < 0) {
+                throw new IllegalStateException("Max tries in RoundedRectangleAttackFormationTrack exceeded");
+            }
+        }
+        return last;
+    }
+
+    public SyncItemArea getLast() {
+        return last;
+    }
+
+    private void findNextPointOnSegment() {
+        if (crossSegment.isNextPointOnSegment(counterClock, target.getPosition(), crossPoint, 1)) {
+            crossPoint = crossSegment.getNextPoint(counterClock, target.getPosition(), crossPoint, 1);
+        } else {
+            crossSegment = getNextSegment(crossSegment);
             crossPoint = crossSegment.getEndPoint(target.getPosition(), !counterClock);
-            return getNextPoint(distance - deltaDistance, perpendicularDistance, width);
         }
     }
 
-    private void setupStartSegment(double angel) {
+
+    private Segment getNextSegment(Segment crossSegment) {
+        int index = segments.indexOf(crossSegment);
+        if (index < 0) {
+            throw new IllegalStateException("Segment does not exist");
+        }
+        index++;
+        if (index >= segments.size()) {
+            index = 0;
+        }
+        return segments.get(index);
+    }
+
+    private Index setupStartSegment(double angel) {
         for (Segment segment : segments) {
             Index point = segment.getCross(angel, target.getPosition());
             if (point != null) {
-                crossPoint = point;
                 crossSegment = segment;
-                return;
+                return point;
             }
-        }
-        System.out.println("Reference: " + target.getPosition());
-        System.out.println("angel: " + angel);
-        for (Segment segment : segments) {
-            System.out.println(segment);
         }
         throw new IllegalArgumentException("Start segment can not be found");
     }

@@ -41,6 +41,7 @@ import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.bot.DbBotItemConfig;
 import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.item.impl.ItemServiceImpl;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBuilderType;
 import com.btxtech.game.services.item.itemType.DbFactoryType;
@@ -88,6 +89,11 @@ import org.hibernate.SessionFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.springframework.aop.SpringProxy;
+import org.springframework.aop.framework.Advised;
+import org.springframework.aop.framework.AopProxy;
+import org.springframework.aop.framework.AopProxyUtils;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -617,7 +623,7 @@ abstract public class AbstractServiceTest {
         DbBaseItemType dbBaseItemType = new DbBaseItemType();
         dbBaseItemType.setName(TEST_START_BUILDER_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(100,100,80,80,1));
+        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(1);
@@ -645,7 +651,7 @@ abstract public class AbstractServiceTest {
         DbBaseItemType dbBaseItemType = new DbBaseItemType();
         dbBaseItemType.setName(TEST_FACTORY_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(100,100,80,80,1));
+        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(2);
@@ -669,7 +675,7 @@ abstract public class AbstractServiceTest {
         DbBaseItemType dbBaseItemType = new DbBaseItemType();
         dbBaseItemType.setName(TEST_ATTACK_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(100,100,80,80,1));
+        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(3);
@@ -706,7 +712,7 @@ abstract public class AbstractServiceTest {
         DbBaseItemType dbBaseItemType = new DbBaseItemType();
         dbBaseItemType.setName(TEST_CONTAINER_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(100,100,80,80,1));
+        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         // DbItemContainerType
@@ -730,7 +736,7 @@ abstract public class AbstractServiceTest {
         DbBaseItemType dbBaseItemType = new DbBaseItemType();
         dbBaseItemType.setName(TEST_SIMPLE_BUILDING);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(100,100,80,80,1));
+        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
 
@@ -755,7 +761,7 @@ abstract public class AbstractServiceTest {
         DbResourceItemType dbResourceItemType = new DbResourceItemType();
         dbResourceItemType.setName(TEST_RESOURCE_ITEM);
         dbResourceItemType.setTerrainType(TerrainType.LAND);
-        dbResourceItemType.setBounding(new BoundingBox(100,100,80,80,1));
+        dbResourceItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));
         dbResourceItemType.setAmount(3);
 
         itemService.saveDbItemType(dbResourceItemType);
@@ -768,7 +774,7 @@ abstract public class AbstractServiceTest {
         DbBaseItemType dbBaseItemType = new DbBaseItemType();
         dbBaseItemType.setName(TEST_HARVESTER_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(100,100,80,80,1));
+        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(4);
@@ -1423,6 +1429,9 @@ abstract public class AbstractServiceTest {
     // ------------------- Div --------------------
 
     protected void setPrivateField(Class clazz, Object object, String fieldName, Object value) throws Exception {
+        if(AopUtils.isJdkDynamicProxy(object)) {
+            object = ((Advised)object).getTargetSource().getTarget();
+        }
         Field field = clazz.getDeclaredField(fieldName);
         field.setAccessible(true);
         field.set(object, value);

@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects.command;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import java.io.Serializable;
 import java.util.Date;
@@ -25,7 +26,9 @@ import java.util.Date;
 public class BaseCommand implements Serializable {
     private Id id;
     private long timeStamp;
-
+    private Index destinationHint;
+    private double destinationAngel;
+    
     public Id getId() {
         return id;
     }

@@ -2,7 +2,7 @@ package com.btxtech.game.services.action;
 
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.gameengine.AttackFormation;
+import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
@@ -99,11 +99,11 @@ public class TestActionService extends AbstractServiceTest {
         SyncBaseItem target = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(2000, 2000), targetId);
         SyncBaseItem actor1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), actor1Id);
 
-        List<AttackFormation.AttackFormationItem> itemsIn = new ArrayList<AttackFormation.AttackFormationItem>();
-        itemsIn.add(new AttackFormation.AttackFormationItem(actor1, 100));
+        List<AttackFormationItem> itemsIn = new ArrayList<AttackFormationItem>();
+        itemsIn.add(new AttackFormationItem(actor1, 100));
 
-        List<AttackFormation.AttackFormationItem> itemsOut = new ArrayList<AttackFormation.AttackFormationItem>();
-        itemsOut.add(new AttackFormation.AttackFormationItem(actor1, 100, new Index(100, 100), true));
+        List<AttackFormationItem> itemsOut = new ArrayList<AttackFormationItem>();
+        itemsOut.add(new AttackFormationItem(actor1, 100, new Index(100, 100), true));
 
         ItemService itemServiceMock = EasyMock.createNiceMock(ItemService.class);
         EasyMock.expect(itemServiceMock.getItem(actor1Id)).andReturn(actor1);
@@ -134,11 +134,11 @@ public class TestActionService extends AbstractServiceTest {
         SyncBaseItem target = createSyncBaseItem(TEST_START_BUILDER_ITEM_ID, new Index(2000, 2000), targetId);
         SyncBaseItem actor1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), actor1Id);
 
-        List<AttackFormation.AttackFormationItem> itemsIn = new ArrayList<AttackFormation.AttackFormationItem>();
-        itemsIn.add(new AttackFormation.AttackFormationItem(actor1, 100));
+        List<AttackFormationItem> itemsIn = new ArrayList<AttackFormationItem>();
+        itemsIn.add(new AttackFormationItem(actor1, 100));
 
-        List<AttackFormation.AttackFormationItem> itemsOut = new ArrayList<AttackFormation.AttackFormationItem>();
-        itemsOut.add(new AttackFormation.AttackFormationItem(actor1, 100, new Index(100, 100), false));
+        List<AttackFormationItem> itemsOut = new ArrayList<AttackFormationItem>();
+        itemsOut.add(new AttackFormationItem(actor1, 100, new Index(100, 100), false));
 
         ItemService itemServiceMock = EasyMock.createNiceMock(ItemService.class);
         EasyMock.expect(itemServiceMock.getItem(actor1Id)).andReturn(actor1);
@@ -169,11 +169,11 @@ public class TestActionService extends AbstractServiceTest {
         SyncResourceItem target = createSyncResourceItem(TEST_RESOURCE_ITEM_ID, new Index(2000, 2000), targetId);
         SyncBaseItem actor1 = createSyncBaseItem(TEST_HARVESTER_ITEM_ID, new Index(1000, 1000), actor1Id);
 
-        List<AttackFormation.AttackFormationItem> itemsIn = new ArrayList<AttackFormation.AttackFormationItem>();
-        itemsIn.add(new AttackFormation.AttackFormationItem(actor1, 100));
+        List<AttackFormationItem> itemsIn = new ArrayList<AttackFormationItem>();
+        itemsIn.add(new AttackFormationItem(actor1, 100));
 
-        List<AttackFormation.AttackFormationItem> itemsOut = new ArrayList<AttackFormation.AttackFormationItem>();
-        itemsOut.add(new AttackFormation.AttackFormationItem(actor1, 100, new Index(100, 100), true));
+        List<AttackFormationItem> itemsOut = new ArrayList<AttackFormationItem>();
+        itemsOut.add(new AttackFormationItem(actor1, 100, new Index(100, 100), true));
 
         ItemService itemServiceMock = EasyMock.createNiceMock(ItemService.class);
         EasyMock.expect(itemServiceMock.getItem(actor1Id)).andReturn(actor1);
@@ -204,11 +204,11 @@ public class TestActionService extends AbstractServiceTest {
         SyncResourceItem target = createSyncResourceItem(TEST_RESOURCE_ITEM_ID, new Index(2000, 2000), targetId);
         SyncBaseItem actor1 = createSyncBaseItem(TEST_HARVESTER_ITEM_ID, new Index(1000, 1000), actor1Id);
 
-        List<AttackFormation.AttackFormationItem> itemsIn = new ArrayList<AttackFormation.AttackFormationItem>();
-        itemsIn.add(new AttackFormation.AttackFormationItem(actor1, 100));
+        List<AttackFormationItem> itemsIn = new ArrayList<AttackFormationItem>();
+        itemsIn.add(new AttackFormationItem(actor1, 100));
 
-        List<AttackFormation.AttackFormationItem> itemsOut = new ArrayList<AttackFormation.AttackFormationItem>();
-        itemsOut.add(new AttackFormation.AttackFormationItem(actor1, 100, new Index(100, 100), false));
+        List<AttackFormationItem> itemsOut = new ArrayList<AttackFormationItem>();
+        itemsOut.add(new AttackFormationItem(actor1, 100, new Index(100, 100), false));
 
         ItemService itemServiceMock = EasyMock.createNiceMock(ItemService.class);
         EasyMock.expect(itemServiceMock.getItem(actor1Id)).andReturn(actor1);
