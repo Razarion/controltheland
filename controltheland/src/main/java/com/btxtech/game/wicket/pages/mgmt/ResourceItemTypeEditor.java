@@ -17,10 +17,6 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
-import java.util.Arrays;
-import java.util.HashSet;
-import javax.swing.ImageIcon;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -31,6 +27,10 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import javax.swing.*;
+import java.util.Arrays;
+import java.util.HashSet;
 
 /**
  * User: beat
@@ -48,10 +48,17 @@ public class ResourceItemTypeEditor extends MgmtWebPage {
 
         Form<DbResourceItemType> form = new Form<DbResourceItemType>("itemTypeForm", new CompoundPropertyModel<DbResourceItemType>(dbResourceItemType));
 
+        form.add(new Button("editBoundingBox") {
+            @Override
+            public void onSubmit() {
+                setResponsePage(new BoundingBoxEditor(dbResourceItemType.getId()));
+            }
+        });
+
         form.add(new TextField<String>("name"));
         form.add(new TextField<String>("description"));
         form.add(new TextField<String>("amount"));
-        form.add(new DropDownChoice<TerrainType>("terrainType", Arrays.asList(TerrainType.values())));        
+        form.add(new DropDownChoice<TerrainType>("terrainType", Arrays.asList(TerrainType.values())));
         form.add(new FileUploadField("upload", new IModel<FileUpload>() {
 
             @Override
@@ -62,9 +69,9 @@ public class ResourceItemTypeEditor extends MgmtWebPage {
             @Override
             public void setObject(FileUpload fileUpload) {
                 ImageIcon image = new ImageIcon(fileUpload.getBytes());
-                // TODO
-                //dbResourceItemType.setHeight(image.getIconHeight());
-                //dbResourceItemType.setWidth(image.getIconWidth());
+                dbResourceItemType.setImageHeight(image.getIconHeight());
+                dbResourceItemType.setImageWidth(image.getIconWidth());
+                dbResourceItemType.setImageCount(1);
                 DbItemTypeImage itemTypeImage = new DbItemTypeImage();
                 itemTypeImage.setItemType(dbResourceItemType);
                 itemTypeImage.setContentType(fileUpload.getContentType());

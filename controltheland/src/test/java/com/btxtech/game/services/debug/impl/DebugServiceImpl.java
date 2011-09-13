@@ -17,7 +17,7 @@ import com.btxtech.game.jsre.client.common.Arc;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Line;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.common.Segment;
+import com.btxtech.game.jsre.common.gameengine.formation.Segment;
 import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.btxtech.game.services.debug.DebugService;
@@ -55,7 +55,7 @@ public class DebugServiceImpl implements DebugService {
     private Thread blockedThread;
     private Label mousePosition;
 
-    @PostConstruct
+    //@PostConstruct
     public void init() {
         frame = new Frame();
         frame.addWindowListener(new WindowAdapter() {

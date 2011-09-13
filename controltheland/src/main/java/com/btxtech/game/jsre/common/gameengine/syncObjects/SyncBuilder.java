@@ -15,9 +15,9 @@ package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
-import com.btxtech.game.jsre.common.gameengine.AttackFormation;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
+import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BuilderType;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
@@ -54,12 +54,11 @@ public class SyncBuilder extends SyncBaseAbility {
         if (toBeBuildPosition == null || toBeBuiltType == null) {
             return false;
         }
-        if (getSyncItemArea().isInRange(builderType.getRange(), toBeBuildPosition, toBeBuiltType)) {
+        if ((destinationHint == null || getSyncItemArea().positionReached(destinationHint)) && getSyncItemArea().isInRange(builderType.getRange(), toBeBuildPosition, toBeBuiltType)) {
             if (currentBuildup == null) {
                 if (toBeBuiltType == null || toBeBuildPosition == null) {
                     throw new IllegalArgumentException("Invalid attributes |" + toBeBuiltType + "|" + toBeBuildPosition);
                 }
-                getSyncItemArea().turnTo(toBeBuildPosition);
 
                 getServices().getItemService().checkBuildingsInRect(toBeBuiltType, toBeBuildPosition);
 
@@ -74,6 +73,7 @@ public class SyncBuilder extends SyncBaseAbility {
                     return false;
                 }
             }
+            getSyncItemArea().turnTo(toBeBuildPosition);            
             if (getServices().getItemService().baseObjectExists(currentBuildup)) {
                 double buildFactor = factor * builderType.getProgress() / (double) toBeBuiltType.getBuildup();
                 if (buildFactor + currentBuildup.getBuildup() > 1.0) {
@@ -100,7 +100,7 @@ public class SyncBuilder extends SyncBaseAbility {
                 throw new IllegalStateException(this + " toBeBuildPosition == null");
             }
             if (destinationHint == null) {
-                AttackFormation.AttackFormationItem format = getServices().getCollisionService().getDestinationHint(getSyncBaseItem(),
+                AttackFormationItem format = getServices().getCollisionService().getDestinationHint(getSyncBaseItem(),
                         builderType.getRange(),
                         toBeBuiltType.getBoundingBox().createSyntheticSyncItemArea(toBeBuildPosition),
                         toBeBuiltType.getTerrainType());
@@ -177,6 +177,8 @@ public class SyncBuilder extends SyncBaseAbility {
 
         toBeBuiltType = tmpToBeBuiltType;
         toBeBuildPosition = builderCommand.getPositionToBeBuilt();
+        destinationHint = null;
+        destinationAngel = null;
     }
 
     public void executeCommand(BuilderFinalizeCommand builderFinalizeCommand) throws NoSuchItemTypeException, ItemDoesNotExistException {
@@ -200,6 +202,8 @@ public class SyncBuilder extends SyncBaseAbility {
         currentBuildup = syncBaseItem;
         toBeBuiltType = syncBaseItem.getBaseItemType();
         toBeBuildPosition = syncBaseItem.getSyncItemArea().getPosition();
+        destinationHint = builderFinalizeCommand.getDestinationHint();
+        destinationAngel = builderFinalizeCommand.getDestinationAngel();
     }
 
     public Index getToBeBuildPosition() {

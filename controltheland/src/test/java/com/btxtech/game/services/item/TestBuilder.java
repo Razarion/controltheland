@@ -4,7 +4,7 @@ import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.AttackFormation;
+import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BuilderType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -68,7 +68,7 @@ public class TestBuilder extends AbstractServiceTest {
         EasyMock.replay(itemServiceMock);
 
         CollisionService collisionServiceMock = EasyMock.createNiceMock(CollisionService.class);
-        AttackFormation.AttackFormationItem formation = new AttackFormation.AttackFormationItem(null, 0, new Index(5000, 5200), 0, false);
+        AttackFormationItem formation = new AttackFormationItem(null, 0, new Index(5000, 5200), 0, false);
         EasyMock.expect(collisionServiceMock.getDestinationHint(EasyMock.<SyncBaseItem>anyObject(),
                 EasyMock.anyInt(),
                 EasyMock.<SyncItemArea>anyObject(),

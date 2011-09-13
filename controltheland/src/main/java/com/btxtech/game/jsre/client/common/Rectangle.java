@@ -222,25 +222,25 @@ public class Rectangle implements Serializable {
 
 
     /**
-     * Returns the shortes distance to the line
+     * Returns the shortest distance to the line, end is inclusive
      *
      * @param point1 line point 1
      * @param point2 line point 2
      * @return the shortest distance
      */
-    public int getShortestDistanceToLine(Index point1, Index point2) {
+    public double getShortestDistanceToLine(Index point1, Index point2) {
         if (doesLineCut(point1, point2)) {
             return 0;
         }
 
         Line line = new Line(point1, point2);
-        int d1 = line.getShortestDistance(start);
-        int d2 = line.getShortestDistance(new Index(getX(), getEndY() - 1));
-        int d3 = line.getShortestDistance(new Index(getEndX() - 1, getY()));
-        int d4 = line.getShortestDistance(new Index(getEndX() - 1, getEndY() - 1));
+        double d1 = line.getShortestDistance(start);
+        double d2 = line.getShortestDistance(new Index(getX(), getEndY()));
+        double d3 = line.getShortestDistance(endExclusive);
+        double d4 = line.getShortestDistance(new Index(getEndX(), getY()));
 
-        int d5 = getNearestPoint(point1).getDistance(point1);
-        int d6 = getNearestPoint(point2).getDistance(point2);
+        double d5 = getNearestPointInclusive(point1).getDistanceDouble(point1);
+        double d6 = getNearestPointInclusive(point2).getDistanceDouble(point2);
 
         return Math.min(Math.min(Math.min(d1, d2), Math.min(d3, d4)), Math.min(d5, d6));
     }
@@ -352,6 +352,12 @@ public class Rectangle implements Serializable {
         return new Index(start.getX() + centerX, start.getY() + centerY);
     }
 
+    /**
+     * Returns the nearest point on the rectangle. Endpoints are exclusive
+     *
+     * @param point input
+     * @return result (exclusive)
+     */
     public Index getNearestPoint(Index point) {
         // Fist check end point
         int endXCorrection = getWidth() > 0 ? 1 : 0;
@@ -381,6 +387,36 @@ public class Rectangle implements Serializable {
         throw new IllegalArgumentException("The point is inside the rectangle");
     }
 
+    /**
+     * Returns the nearest point on the rectangle. Endpoints are inclusive
+     *
+     * @param point input
+     * @return result (exclusive)
+     */
+    public Index getNearestPointInclusive(Index point) {
+        if (point.getX() <= start.getX() && point.getY() <= start.getY()) {
+            return start.getCopy();
+        } else if (point.getX() >= endExclusive.getX() && point.getY() >= endExclusive.getY()) {
+            return endExclusive.getCopy();
+        } else if (point.getX() <= start.getX() && point.getY() >= endExclusive.getY()) {
+            return new Index(start.getX(), endExclusive.getY());
+        } else if (point.getX() >= endExclusive.getX() && point.getY() <= start.getY()) {
+            return new Index(endExclusive.getX(), start.getY());
+        }
+
+        // Do projection
+        if (point.getX() <= start.getX()) {
+            return new Index(start.getX(), point.getY());
+        } else if (point.getX() >= endExclusive.getX()) {
+            return new Index(endExclusive.getX(), point.getY());
+        } else if (point.getY() <= start.getY()) {
+            return new Index(point.getX(), start.getY());
+        } else if (point.getY() >= endExclusive.getY()) {
+            return new Index(point.getX(), endExclusive.getY());
+        }
+
+        throw new IllegalArgumentException("The point is inside the rectangle");
+    }
 
     public boolean hasMinSize(int minSize) {
         return getHeight() >= minSize || getWidth() >= minSize;

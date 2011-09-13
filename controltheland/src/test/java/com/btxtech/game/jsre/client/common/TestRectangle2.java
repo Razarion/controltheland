@@ -85,9 +85,12 @@ public class TestRectangle2 {
     @Test
     public void testDistanceToPoint() {
         Rectangle rectangle = new Rectangle(23, 32, 13, 11);
-        Assert.assertEquals(2, rectangle.getShortestDistanceToLine(new Index(18, 36), new Index(21, 36)));
-        Assert.assertEquals(1, rectangle.getShortestDistanceToLine(new Index(33, 28), new Index(38, 33)));
-        Assert.assertEquals(3, rectangle.getShortestDistanceToLine(new Index(26, 45), new Index(29, 45)));
+        Assert.assertEquals(2.0, rectangle.getShortestDistanceToLine(new Index(18, 36), new Index(21, 36)), 0.001);
+        Assert.assertEquals(1.0, rectangle.getShortestDistanceToLine(new Index(33, 28), new Index(38, 33)), 0.001);
+        Assert.assertEquals(2.0, rectangle.getShortestDistanceToLine(new Index(26, 45), new Index(29, 45)), 0.001);
+
+        rectangle = new Rectangle(300, 300, 200, 200);
+        Assert.assertEquals(100.0, rectangle.getShortestDistanceToLine(new Index(360, 600), new Index(360, 680)), 0.001);
     }
 
     @Test

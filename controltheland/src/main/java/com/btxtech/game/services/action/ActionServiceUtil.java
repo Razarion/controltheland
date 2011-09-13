@@ -1,16 +1,18 @@
 package com.btxtech.game.services.action;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.common.gameengine.AttackFormation;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
+import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBuilder;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncHarvester;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncWeapon;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderFinalizeCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.services.collision.CollisionService;
@@ -40,6 +42,7 @@ public class ActionServiceUtil {
     public static void addDestinationHintToCommands(Collection<BaseCommand> baseCommands, CollisionService collisionService, ItemService itemService) {
         Map<Id, List<AttackCommand>> attackCommandMap = new HashMap<Id, List<AttackCommand>>();
         Map<Id, List<MoneyCollectCommand>> moneyCollectCommandMap = new HashMap<Id, List<MoneyCollectCommand>>();
+        Map<Id, List<BuilderFinalizeCommand>> builderFinalizeCommandMap = new HashMap<Id, List<BuilderFinalizeCommand>>();
 
         for (BaseCommand baseCommand : baseCommands) {
             if (baseCommand instanceof AttackCommand) {
@@ -58,11 +61,20 @@ public class ActionServiceUtil {
                     moneyCollectCommandMap.put(moneyCollectCommand.getTarget(), moneyCollectCommands);
                 }
                 moneyCollectCommands.add(moneyCollectCommand);
+            } else if (baseCommand instanceof BuilderFinalizeCommand) {
+                BuilderFinalizeCommand builderFinalizeCommand = (BuilderFinalizeCommand) baseCommand;
+                List<BuilderFinalizeCommand> builderFinalizeCommands = builderFinalizeCommandMap.get(builderFinalizeCommand.getToBeBuilt());
+                if (builderFinalizeCommands == null) {
+                    builderFinalizeCommands = new ArrayList<BuilderFinalizeCommand>();
+                    builderFinalizeCommandMap.put(builderFinalizeCommand.getToBeBuilt(), builderFinalizeCommands);
+                }
+                builderFinalizeCommands.add(builderFinalizeCommand);
             }
         }
 
         Map<Id, BaseCommand> changedCommand = addDestinationHintToAttack(attackCommandMap, collisionService, itemService);
         changedCommand.putAll(addDestinationHintToCollect(moneyCollectCommandMap, collisionService, itemService));
+        changedCommand.putAll(addDestinationHintToBuilderFinalize(builderFinalizeCommandMap, collisionService, itemService));
         for (Iterator<BaseCommand> iterator = baseCommands.iterator(); iterator.hasNext();) {
             BaseCommand baseCommand = iterator.next();
             if (changedCommand.containsKey(baseCommand.getId())) {
@@ -83,12 +95,12 @@ public class ActionServiceUtil {
                 continue;
             }
 
-            List<AttackFormation.AttackFormationItem> attackFormationItemList = new ArrayList<AttackFormation.AttackFormationItem>();
+            List<AttackFormationItem> attackFormationItemList = new ArrayList<AttackFormationItem>();
             for (AttackCommand attackCommand : entry.getValue()) {
                 try {
                     SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.getItem(attackCommand.getId());
                     SyncWeapon syncWeapon = syncBaseItem.getSyncWeapon();
-                    attackFormationItemList.add(new AttackFormation.AttackFormationItem(syncBaseItem, syncWeapon.getWeaponType().getRange()));
+                    attackFormationItemList.add(new AttackFormationItem(syncBaseItem, syncWeapon.getWeaponType().getRange()));
                 } catch (ItemDoesNotExistException e) {
                     // May be killed
                 }
@@ -98,7 +110,7 @@ public class ActionServiceUtil {
 
             for (int i = 0; i < attackFormationItemList.size(); i++) {
                 AttackCommand attackCommand = entry.getValue().get(i);
-                AttackFormation.AttackFormationItem item = attackFormationItemList.get(i);
+                AttackFormationItem item = attackFormationItemList.get(i);
                 if (item.isInRange()) {
                     attackCommand.setDestinationHint(item.getDestinationHint());
                     attackCommand.setDestinationAngel(item.getDestinationAngel());
@@ -121,12 +133,12 @@ public class ActionServiceUtil {
                 continue;
             }
 
-            List<AttackFormation.AttackFormationItem> attackFormationItemList = new ArrayList<AttackFormation.AttackFormationItem>();
+            List<AttackFormationItem> attackFormationItemList = new ArrayList<AttackFormationItem>();
             for (MoneyCollectCommand moneyCollectCommand : entry.getValue()) {
                 try {
                     SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.getItem(moneyCollectCommand.getId());
                     SyncHarvester syncHarvester = syncBaseItem.getSyncHarvester();
-                    attackFormationItemList.add(new AttackFormation.AttackFormationItem(syncBaseItem, syncHarvester.getHarvesterType().getRange()));
+                    attackFormationItemList.add(new AttackFormationItem(syncBaseItem, syncHarvester.getHarvesterType().getRange()));
                 } catch (ItemDoesNotExistException e) {
                     // May be killed
                 }
@@ -136,10 +148,48 @@ public class ActionServiceUtil {
 
             for (int i = 0; i < attackFormationItemList.size(); i++) {
                 MoneyCollectCommand moneyCollectCommand = entry.getValue().get(i);
-                AttackFormation.AttackFormationItem item = attackFormationItemList.get(i);
+                AttackFormationItem item = attackFormationItemList.get(i);
                 if (item.isInRange()) {
                     moneyCollectCommand.setDestinationHint(item.getDestinationHint());
                     moneyCollectCommand.setDestinationAngel(item.getDestinationAngel());
+                } else {
+                    changedCommand.put(item.getSyncBaseItem().getId(), createMoveCommand(item.getSyncBaseItem().getId(), item.getDestinationHint()));
+                }
+            }
+        }
+        return changedCommand;
+    }
+
+    private static Map<Id, BaseCommand> addDestinationHintToBuilderFinalize(Map<Id, List<BuilderFinalizeCommand>> builderFinalizeCommandMap, CollisionService collisionService, ItemService itemService) {
+        Map<Id, BaseCommand> changedCommand = new HashMap<Id, BaseCommand>();
+        for (Map.Entry<Id, List<BuilderFinalizeCommand>> entry : builderFinalizeCommandMap.entrySet()) {
+            SyncItem toBeBuilt;
+            try {
+                toBeBuilt = itemService.getItem(entry.getKey());
+            } catch (ItemDoesNotExistException e) {
+                // The target does not exist anymore
+                continue;
+            }
+
+            List<AttackFormationItem> attackFormationItemList = new ArrayList<AttackFormationItem>();
+            for (BuilderFinalizeCommand finalizeCommand : entry.getValue()) {
+                try {
+                    SyncBaseItem syncBaseItem = (SyncBaseItem) itemService.getItem(finalizeCommand.getId());
+                    SyncBuilder syncBuilder = syncBaseItem.getSyncBuilder();
+                    attackFormationItemList.add(new AttackFormationItem(syncBaseItem, syncBuilder.getBuilderType().getRange()));
+                } catch (ItemDoesNotExistException e) {
+                    // May be killed
+                }
+            }
+
+            attackFormationItemList = collisionService.setupDestinationHints(toBeBuilt, attackFormationItemList);
+
+            for (int i = 0; i < attackFormationItemList.size(); i++) {
+                BuilderFinalizeCommand finalizeCommand = entry.getValue().get(i);
+                AttackFormationItem item = attackFormationItemList.get(i);
+                if (item.isInRange()) {
+                    finalizeCommand.setDestinationHint(item.getDestinationHint());
+                    finalizeCommand.setDestinationAngel(item.getDestinationAngel());
                 } else {
                     changedCommand.put(item.getSyncBaseItem().getId(), createMoveCommand(item.getSyncBaseItem().getId(), item.getDestinationHint()));
                 }

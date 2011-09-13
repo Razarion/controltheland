@@ -73,7 +73,7 @@ public interface ItemService {
 
     boolean isSyncItemOverlapping(SyncItem syncItem);
 
-    boolean isSyncItemOverlapping(SyncItem syncItem, Index positionToCheck);
+    boolean isSyncItemOverlapping(SyncItem syncItem, Index positionToCheck, Collection<SyncItem> exceptionThem);
 
     boolean isUnmovableSyncItemOverlapping(BoundingBox boundingBox, Index positionToCheck);
 
