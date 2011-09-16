@@ -1,9 +1,9 @@
 package com.btxtech.game.services.collision.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.common.Line;
 import com.btxtech.game.jsre.common.SimpleEntry;
-import com.btxtech.game.services.terrain.TerrainService;
+import com.btxtech.game.services.collision.Port;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -19,72 +19,72 @@ import java.util.Set;
 public class GumPath {
     private Index start;
     private Index destination;
-    private List<Rectangle> borders;
-    private TerrainService terrainService;
+    private List<Port> ports;
     private Index middlePoint;
-    private List<Map.Entry<Index, Rectangle>> pathBorders;
+    private List<Map.Entry<Index, Line>> pathPorts;
     private Set<Index> indexToRemove;
 
-    public GumPath(Index start, Index destination, List<Rectangle> borders, TerrainService terrainService) {
+    public GumPath(Index start, Index destination, List<Port> ports) {
         this.start = start;
         this.destination = destination;
-        this.borders = borders;
-        this.terrainService = terrainService;
+        this.ports = ports;
         middlePoint = start.getMiddlePoint(destination);
     }
 
     public void calculateShortestPath() {
-        pathBorders = new ArrayList<Map.Entry<Index, Rectangle>>();
+        pathPorts = new ArrayList<Map.Entry<Index, Line>>();
         fillPath();
         optimizePath();
     }
 
     private void optimizePath() {
         indexToRemove = new HashSet<Index>();
-        if (pathBorders.size() < 3) {
+        if (pathPorts.size() < 3) {
             return;
         }
 
         // Shift lower point
-        for (int lowerPointIndex = 0; lowerPointIndex + 2 < pathBorders.size();lowerPointIndex++) {
-            Index point1 = pathBorders.get(lowerPointIndex).getKey();
+        for (int lowerPointIndex = 0; lowerPointIndex + 2 < pathPorts.size();) {
+            Index point1 = pathPorts.get(lowerPointIndex).getKey();
             boolean allFits = true;
-            int lastSkipCount = 0;
             // Shift upper point
-            for (int upperPointIndex = lowerPointIndex + 2; upperPointIndex < pathBorders.size(); upperPointIndex++) {
-                Index point2 = pathBorders.get(upperPointIndex).getKey();
+            int lastUpperPointIndex = lowerPointIndex + 1;
+            for (int upperPointIndex = lowerPointIndex + 2; upperPointIndex < pathPorts.size(); upperPointIndex++) {
+                Index point2 = pathPorts.get(upperPointIndex).getKey();
+                Line line = new Line(point1, point2);
                 // Check all borders between lowerPointIndex and upperPointIndex
                 for (int borderIndex = lowerPointIndex + 1; borderIndex < upperPointIndex; borderIndex++) {
-                    Rectangle absBorder = terrainService.convertToAbsolutePosition(pathBorders.get(borderIndex).getValue());
-                    if (!absBorder.doesLineCut(point1, point2)) {
+                    Line crossLines = pathPorts.get(borderIndex).getValue();
+                    if (crossLines.getCross(line) != null) {
+                        indexToRemove.add(pathPorts.get(borderIndex).getKey());
+                    } else {
                         allFits = false;
                         break;
-                    } else {
-                        lastSkipCount = borderIndex;
-                        indexToRemove.add(pathBorders.get(borderIndex).getKey());
                     }
                 }
 
                 if (!allFits) {
                     break;
+                } else {
+                    lastUpperPointIndex = upperPointIndex;
                 }
             }
-            lowerPointIndex += lastSkipCount;
+            lowerPointIndex = lastUpperPointIndex;
         }
     }
 
     private void fillPath() {
-        pathBorders.add(new SimpleEntry<Index, Rectangle>(start, null));
-        for (Rectangle border : borders) {
-            Rectangle absBorder = terrainService.convertToAbsolutePosition(border);
-            pathBorders.add(new SimpleEntry<Index, Rectangle>(absBorder.getNearestPoint(middlePoint), border));
+        pathPorts.add(new SimpleEntry<Index, Line>(start, null));
+        for (Port port : ports) {
+            pathPorts.add(new SimpleEntry<Index, Line>(port.getCurrentNearestCrossPoint(middlePoint), port.getCurrentCrossLine()));
+            pathPorts.add(new SimpleEntry<Index, Line>(port.getDestinationNearestCrossPoint(middlePoint), (port.getDestinationCrossLine())));
         }
-        pathBorders.add(new SimpleEntry<Index, Rectangle>(destination, null));
+        pathPorts.add(new SimpleEntry<Index, Line>(destination, null));
     }
 
     public List<Index> getPath() {
         List<Index> path = new ArrayList<Index>();
-        for (Map.Entry<Index, Rectangle> pathBorder : pathBorders) {
+        for (Map.Entry<Index, Line> pathBorder : pathPorts) {
             if (!indexToRemove.contains(pathBorder.getKey())) {
                 path.add(pathBorder.getKey());
             }
@@ -92,4 +92,7 @@ public class GumPath {
         return path;
     }
 
+    public List<Port> getPorts() {
+        return ports;
+    }
 }

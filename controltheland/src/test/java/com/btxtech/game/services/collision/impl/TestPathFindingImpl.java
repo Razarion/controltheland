@@ -7,6 +7,7 @@ import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.collision.PassableRectangle;
 import com.btxtech.game.services.collision.Path;
+import com.btxtech.game.services.collision.Port;
 import com.btxtech.game.services.collision.TestPathFinding;
 import com.btxtech.game.services.terrain.TerrainService;
 import org.easymock.EasyMock;
@@ -493,18 +494,17 @@ public class TestPathFindingImpl extends AbstractServiceTest {
     public void testGumPath1() throws Exception {
         configureComplexGame();
 
-        List<Rectangle> borders = new ArrayList<Rectangle>();
-        borders.add(new Rectangle(20, 0, 0, 4));
-        borders.add(new Rectangle(25, 0, 0, 4));
-        borders.add(new Rectangle(29, 0, 0, 4));
+        List<Port> ports = new ArrayList<Port>();
+        ports.add(new Port(new Rectangle(new Index(1400, 0), new Index(2000, 300)), new Rectangle(new Index(2000, 0), new Index(2500, 300))));
+        ports.add(new Port(new Rectangle(new Index(2000, 0), new Index(2500, 300)), new Rectangle(new Index(2500, 0), new Index(2900, 300))));
+        ports.add(new Port(new Rectangle(new Index(2500, 0), new Index(2900, 300)), new Rectangle(new Index(2900, 0), new Index(3500, 300))));
 
-        GumPath gumPath = new GumPath(new Index(1700, 200), new Index(3200, 200), borders, terrainService);
+        GumPath gumPath = new GumPath(new Index(1700, 200), new Index(3200, 200), ports);
         gumPath.calculateShortestPath();
 
         Assert.assertEquals(2, gumPath.getPath().size());
         Assert.assertEquals(new Index(1700, 200), gumPath.getPath().get(0));
         Assert.assertEquals(new Index(3200, 200), gumPath.getPath().get(1));
-        assertPathInAllBorders(borders, gumPath);
     }
 
     @Test
@@ -512,21 +512,19 @@ public class TestPathFindingImpl extends AbstractServiceTest {
     public void testGumPath2() throws Exception {
         configureComplexGame();
 
-        List<Rectangle> borders = new ArrayList<Rectangle>();
-        borders.add(new Rectangle(12, 10, 0, 7));
-        borders.add(new Rectangle(18, 12, 0, 7));
-        borders.add(new Rectangle(21, 20, 10, 0));
-        borders.add(new Rectangle(21, 25, 10, 0));
+        List<Port> ports = new ArrayList<Port>();
+        ports.add(new Port(new Rectangle(new Index(400, 1000), new Index(1200, 1600)), new Rectangle(new Index(1200, 1000), new Index(1800, 1800))));
+        ports.add(new Port(new Rectangle(new Index(1200, 1000), new Index(1800, 1800)), new Rectangle(new Index(1200, 1800), new Index(3000, 3000))));
+        ports.add(new Port(new Rectangle(new Index(1200, 1800), new Index(3000, 2000)), new Rectangle(new Index(2100, 2000), new Index(3000, 2500))));
+        ports.add(new Port(new Rectangle(new Index(2100, 2000), new Index(3000, 2500)), new Rectangle(new Index(2100, 2500), new Index(3000, 3100))));
 
-        GumPath gumPath = new GumPath(new Index(700, 1300), new Index(2500, 3000), borders, terrainService);
+        GumPath gumPath = new GumPath(new Index(700, 1300), new Index(2500, 3000), ports);
         gumPath.calculateShortestPath();
 
         Assert.assertEquals(3, gumPath.getPath().size());
         Assert.assertEquals(new Index(700, 1300), gumPath.getPath().get(0));
-        Assert.assertEquals(new Index(2100, 2000), gumPath.getPath().get(1));
+        Assert.assertEquals(new Index(2100, 1999), gumPath.getPath().get(1));
         Assert.assertEquals(new Index(2500, 3000), gumPath.getPath().get(2));
-
-        assertPathInAllBorders(borders, gumPath);
     }
 
     @Test
@@ -534,24 +532,24 @@ public class TestPathFindingImpl extends AbstractServiceTest {
     public void testGumPath3() throws Exception {
         configureComplexGame();
 
-        List<Rectangle> borders = new ArrayList<Rectangle>();
-        borders.add(new Rectangle(47, 7, 0, 8));
-        borders.add(new Rectangle(52, 10, 0, 6));
-        borders.add(new Rectangle(55, 16, 5, 0));
-        borders.add(new Rectangle(52, 18, 0, 5));
-        borders.add(new Rectangle(48, 18, 0, 5));
+        List<Port> ports = new ArrayList<Port>();
+        ports.add(new Port(new Rectangle(new Index(4200, 700), new Index(4700, 1400)), new Rectangle(new Index(4700, 700), new Index(5200, 1500))));
+        ports.add(new Port(new Rectangle(new Index(4700, 700), new Index(5200, 1500)), new Rectangle(new Index(5200, 1000), new Index(5900, 1600))));
+        ports.add(new Port(new Rectangle(new Index(5200, 1000), new Index(5900, 1600)), new Rectangle(new Index(5500, 1600), new Index(5900, 2200))));
+        ports.add(new Port(new Rectangle(new Index(5200, 1800), new Index(5900, 2200)), new Rectangle(new Index(4800, 1800), new Index(5200, 2200))));
+        ports.add(new Port(new Rectangle(new Index(4800, 1800), new Index(5200, 2200)), new Rectangle(new Index(4200, 1800), new Index(4800, 2200))));
 
 
-        GumPath gumPath = new GumPath(new Index(4400, 1300), new Index(4400, 2000), borders, terrainService);
+        GumPath gumPath = new GumPath(new Index(4400, 1300), new Index(4400, 2000), ports);
         gumPath.calculateShortestPath();
 
-        Assert.assertEquals(4, gumPath.getPath().size());
+        Assert.assertEquals(6, gumPath.getPath().size());
         Assert.assertEquals(new Index(4400, 1300), gumPath.getPath().get(0));
-        Assert.assertEquals(new Index(5500, 1600), gumPath.getPath().get(1));
-        Assert.assertEquals(new Index(5200, 1800), gumPath.getPath().get(2));
-        Assert.assertEquals(new Index(4400, 2000), gumPath.getPath().get(3));
-
-        assertPathInAllBorders(borders, gumPath);
+        Assert.assertEquals(new Index(5200, 1499), gumPath.getPath().get(1));
+        Assert.assertEquals(new Index(5500, 1599), gumPath.getPath().get(2));
+        Assert.assertEquals(new Index(5500, 1600), gumPath.getPath().get(3));
+        Assert.assertEquals(new Index(5200, 1800), gumPath.getPath().get(4));
+        Assert.assertEquals(new Index(4400, 2000), gumPath.getPath().get(5));
     }
 
     @Test
@@ -559,31 +557,30 @@ public class TestPathFindingImpl extends AbstractServiceTest {
     public void testGumPath4() throws Exception {
         configureComplexGame();
 
-        List<Rectangle> borders = new ArrayList<Rectangle>();
-        borders.add(new Rectangle(6, 40, 0, 5));
-        borders.add(new Rectangle(10, 38, 0, 6));
-        borders.add(new Rectangle(15, 42, 6, 0));
-        borders.add(new Rectangle(18, 46, 6, 0));
-        borders.add(new Rectangle(25, 49, 0, 5));
-        borders.add(new Rectangle(31, 46, 0, 6));
-        borders.add(new Rectangle(33, 44, 6, 0));
-        borders.add(new Rectangle(34, 41, 6, 0));
-        borders.add(new Rectangle(41, 35, 0, 5));
-        borders.add(new Rectangle(47, 33, 0, 4));
+        List<Port> ports = new ArrayList<Port>();
+        ports.add(new Port(new Rectangle(new Index(0, 4000), new Index(600, 4500)), new Rectangle(new Index(600, 3800), new Index(1000, 4500))));
+        ports.add(new Port(new Rectangle(new Index(600, 3800), new Index(1000, 4500)), new Rectangle(new Index(1000, 3800), new Index(2000, 4200))));
+        ports.add(new Port(new Rectangle(new Index(1000, 3800), new Index(2000, 4200)), new Rectangle(new Index(1500, 4200), new Index(2300, 4600))));
+        ports.add(new Port(new Rectangle(new Index(1500, 4200), new Index(2300, 4600)), new Rectangle(new Index(1800, 4600), new Index(2500, 5300))));
+        ports.add(new Port(new Rectangle(new Index(1900, 4900), new Index(2500, 5300)), new Rectangle(new Index(2500, 4900), new Index(3100, 5100))));
+        ports.add(new Port(new Rectangle(new Index(2500, 4600), new Index(3100, 5100)), new Rectangle(new Index(3100, 4600), new Index(4600, 5100))));
+        ports.add(new Port(new Rectangle(new Index(3300, 4400), new Index(3800, 4800)), new Rectangle(new Index(3300, 4100), new Index(3900, 4400))));
+        ports.add(new Port(new Rectangle(new Index(3400, 4100), new Index(3900, 4300)), new Rectangle(new Index(3400, 3500), new Index(3900, 4100))));
+        ports.add(new Port(new Rectangle(new Index(3400, 3500), new Index(4100, 3900)), new Rectangle(new Index(4100, 3500), new Index(4600, 3900))));
+        ports.add(new Port(new Rectangle(new Index(4200, 3300), new Index(4700, 3600)), new Rectangle(new Index(4700, 3300), new Index(5400, 3600))));
 
-        GumPath gumPath = new GumPath(new Index(200, 4200), new Index(5100, 3400), borders, terrainService);
+
+        GumPath gumPath = new GumPath(new Index(200, 4200), new Index(5100, 3400), ports);
         gumPath.calculateShortestPath();
 
         Assert.assertEquals(7, gumPath.getPath().size());
         Assert.assertEquals(new Index(200, 4200), gumPath.getPath().get(0));
-        Assert.assertEquals(new Index(2099, 4200), gumPath.getPath().get(1));
-        Assert.assertEquals(new Index(2500, 4900), gumPath.getPath().get(2));
+        Assert.assertEquals(new Index(1000, 3800), gumPath.getPath().get(1));
+        Assert.assertEquals(new Index(2499, 4900), gumPath.getPath().get(2));
         Assert.assertEquals(new Index(3100, 4600), gumPath.getPath().get(3));
         Assert.assertEquals(new Index(3300, 4400), gumPath.getPath().get(4));
-        Assert.assertEquals(new Index(3400, 4100), gumPath.getPath().get(5));
+        Assert.assertEquals(new Index(4100, 3800), gumPath.getPath().get(5));
         Assert.assertEquals(new Index(5100, 3400), gumPath.getPath().get(6));
-
-        assertPathInAllBorders(borders, gumPath);
     }
 
     @Test
@@ -591,22 +588,20 @@ public class TestPathFindingImpl extends AbstractServiceTest {
     public void testGumPath5() throws Exception {
         configureComplexGame();
 
-        List<Rectangle> borders = new ArrayList<Rectangle>();
-        borders.add(new Rectangle(6, 60, 0, 5));
-        borders.add(new Rectangle(9, 62, 0, 7));
-        borders.add(new Rectangle(13, 66, 7, 0));
-        borders.add(new Rectangle(22, 67, 0, 6));
-        borders.add(new Rectangle(28, 66, 0, 5));
+        List<Port> ports = new ArrayList<Port>();
+        ports.add(new Port(new Rectangle(new Index(100, 6000), new Index(600, 6400)), new Rectangle(new Index(600, 6000), new Index(900, 6700))));
+        ports.add(new Port(new Rectangle(new Index(600, 6000), new Index(900, 6700)), new Rectangle(new Index(900, 6100), new Index(1200, 6700))));
+        ports.add(new Port(new Rectangle(new Index(1300, 6200), new Index(1900, 6600)), new Rectangle(new Index(1300, 6600), new Index(2200, 7200))));
+        ports.add(new Port(new Rectangle(new Index(1800, 6700), new Index(2200, 7200)), new Rectangle(new Index(2200, 6600), new Index(2800, 7200))));
+        ports.add(new Port(new Rectangle(new Index(2200, 6600), new Index(2800, 7200)), new Rectangle(new Index(2800, 6600), new Index(3800, 7000))));
 
-        GumPath gumPath = new GumPath(new Index(300, 6200), new Index(3200, 6800), borders, terrainService);
+        GumPath gumPath = new GumPath(new Index(300, 6200), new Index(3200, 6800), ports);
         gumPath.calculateShortestPath();
 
         Assert.assertEquals(3, gumPath.getPath().size());
         Assert.assertEquals(new Index(300, 6200), gumPath.getPath().get(0));
         Assert.assertEquals(new Index(2200, 6700), gumPath.getPath().get(1));
         Assert.assertEquals(new Index(3200, 6800), gumPath.getPath().get(2));
-
-        assertPathInAllBorders(borders, gumPath);
     }
 
     @Test
@@ -614,22 +609,21 @@ public class TestPathFindingImpl extends AbstractServiceTest {
     public void testGumPath6() throws Exception {
         configureComplexGame();
 
-        List<Rectangle> borders = new ArrayList<Rectangle>();
-        borders.add(new Rectangle(60, 75, 0, 4));
-        borders.add(new Rectangle(70, 62, 0, 6));
-        borders.add(new Rectangle(78, 75, 0, 4));
+        List<Port> ports = new ArrayList<Port>();
+        ports.add(new Port(new Rectangle(new Index(5100, 7500), new Index(6000, 7800)), new Rectangle(new Index(6000, 7500), new Index(6400, 7800))));
+        ports.add(new Port(new Rectangle(new Index(6700, 6200), new Index(7000, 6700)), new Rectangle(new Index(7000, 6200), new Index(7400, 6700))));
+        ports.add(new Port(new Rectangle(new Index(7500, 7500), new Index(7800, 7800)), new Rectangle(new Index(7800, 7500), new Index(8700, 7800))));
 
-        GumPath gumPath = new GumPath(new Index(5500, 7500), new Index(8400, 7500), borders, terrainService);
+        GumPath gumPath = new GumPath(new Index(5500, 7500), new Index(8400, 7500), ports);
         gumPath.calculateShortestPath();
 
-        Assert.assertEquals(5, gumPath.getPath().size());
+        Assert.assertEquals(6, gumPath.getPath().size());
         Assert.assertEquals(new Index(5500, 7500), gumPath.getPath().get(0));
         Assert.assertEquals(new Index(6000, 7500), gumPath.getPath().get(1));
-        Assert.assertEquals(new Index(7000, 6799), gumPath.getPath().get(2));
-        Assert.assertEquals(new Index(7800, 7500), gumPath.getPath().get(3));
-        Assert.assertEquals(new Index(8400, 7500), gumPath.getPath().get(4));
-
-        assertPathInAllBorders(borders, gumPath);
+        Assert.assertEquals(new Index(6999, 6699), gumPath.getPath().get(2));
+        Assert.assertEquals(new Index(7000, 6699), gumPath.getPath().get(3));
+        Assert.assertEquals(new Index(7799, 7500), gumPath.getPath().get(4));
+        Assert.assertEquals(new Index(8400, 7500), gumPath.getPath().get(5));
     }
 
 

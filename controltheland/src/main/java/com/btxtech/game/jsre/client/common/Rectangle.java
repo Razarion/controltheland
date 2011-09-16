@@ -220,6 +220,30 @@ public class Rectangle implements Serializable {
         return !Double.isNaN(yEast) && start.getY() <= yEast && yEast < endExclusive.getY() && y2 <= yEast && yEast <= y2 && x2 > start.getX() && x1 < endExclusive.getX();
     }
 
+    public List<Index> getCrossPointsExclusive(Line line) {
+        List<Index> crossPoints = new ArrayList<Index>();
+        Index crossPoint = getLine12().getCross(line);
+        if (crossPoint != null) {
+            crossPoints.add(crossPoint);
+        }
+        crossPoint = getLine23Exclusive().getCross(line);
+        if (crossPoint != null) {
+            crossPoints.add(crossPoint);
+        }
+        crossPoint = getLine34Exclusive().getCross(line);
+        if (crossPoint != null) {
+            crossPoints.add(crossPoint);
+        }
+        crossPoint = getLine41().getCross(line);
+        if (crossPoint != null) {
+            crossPoints.add(crossPoint);
+        }
+        if (crossPoints.size() > 2) {
+            throw new IllegalStateException("A rectangle can not be crossed more then twice by a line");
+        }
+        return crossPoints;
+    }
+
 
     /**
      * Returns the shortest distance to the line, end is inclusive
@@ -488,6 +512,30 @@ public class Rectangle implements Serializable {
 
     public Index getCorner4() {
         return start.add(getWidth(), 0);
+    }
+
+    public Line getLine12() {
+        return new Line(getCorner1(), getCorner2());
+    }
+
+    public Line getLine23() {
+        return new Line(getCorner2(), getCorner3());
+    }
+
+    public Line getLine23Exclusive() {
+        return new Line(getCorner2().sub(0, 1), getCorner3().sub(1, 1));
+    }
+
+    public Line getLine34() {
+        return new Line(getCorner3(), getCorner4());
+    }
+
+    public Line getLine34Exclusive() {
+        return new Line(getCorner3().sub(1, 1), getCorner4().sub(1, 0));
+    }
+
+    public Line getLine41() {
+        return new Line(getCorner4(), getCorner1());
     }
 
     public int getArea() {

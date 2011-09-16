@@ -34,6 +34,7 @@ import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.collision.CollisionServiceChangedListener;
 import com.btxtech.game.services.collision.PassableRectangle;
 import com.btxtech.game.services.collision.Path;
+import com.btxtech.game.services.collision.Port;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.terrain.TerrainService;
@@ -341,8 +342,8 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
         try {
             Path path = atomStartRect.findPossiblePassableRectanglePaths(start, atomDestRect, destination);
             path = PathFinderUtilities.optimizePath(path);
-            List<Rectangle> borders = path.getAllPassableBorders();
-            GumPath gumPath = new GumPath(start, destination, borders, terrainService);
+            List<Port> ports = path.getAllPassableBorders();
+            GumPath gumPath = new GumPath(start, destination, ports);
             gumPath.calculateShortestPath();
             positions = gumPath.getPath();
             return positions;
@@ -371,8 +372,8 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
         try {
             Path path = atomStartRect.findPossiblePassableRectanglePaths(start, atomDestRect, destination);
             path = PathFinderUtilities.optimizePath(path);
-            List<Rectangle> borders = path.getAllPassableBorders();
-            GumPath gumPath = new GumPath(start, destination, borders, terrainService);
+            List<Port> ports = path.getAllPassableBorders();
+            GumPath gumPath = new GumPath(start, destination, ports);
             gumPath.calculateShortestPath();
             positions = gumPath.getPath();
             return positions;

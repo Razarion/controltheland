@@ -36,23 +36,19 @@ public class PassableRectangle {
 
     public class Neighbor {
         private PassableRectangle passableRectangle;
-        private Rectangle crossSection;
+        private Port port;
 
-        private Neighbor(PassableRectangle passableRectangle, Rectangle crossSection) {
+        private Neighbor(PassableRectangle passableRectangle, Port port) {
             this.passableRectangle = passableRectangle;
-            if (crossSection.getWidth() > 0 && crossSection.getHeight() > 0) {
-                throw new IllegalArgumentException();
-            }
-
-            this.crossSection = crossSection;
+            this.port = port;
         }
 
         public PassableRectangle getPassableRectangle() {
             return passableRectangle;
         }
 
-        public Rectangle getCrossSection() {
-            return crossSection;
+        public Port getPort() {
+            return port;
         }
 
         @Override
@@ -80,12 +76,9 @@ public class PassableRectangle {
         return rectangle;
     }
 
-    public void addNeighbor(PassableRectangle neighborPassableRectangle) {
-        Rectangle crossSectionRectangle = rectangle.getCrossSection(neighborPassableRectangle.rectangle);
-        if (crossSectionRectangle.getWidth() > 0 && crossSectionRectangle.getHeight() > 0) {
-            throw new IllegalArgumentException("Rectangle must be a line");
-        }
-        Neighbor neighbor = new Neighbor(neighborPassableRectangle, crossSectionRectangle);
+    public void addNeighbor(PassableRectangle neighborPassableRectangle, TerrainService terrainService) {
+        Neighbor neighbor = new Neighbor(neighborPassableRectangle, new Port(terrainService.convertToAbsolutePosition(rectangle),
+                terrainService.convertToAbsolutePosition(neighborPassableRectangle.rectangle)));
         neighbors.put(neighborPassableRectangle, neighbor);
     }
 
@@ -186,8 +179,8 @@ public class PassableRectangle {
         return result;
     }
 
-    public Rectangle getBorder(PassableRectangle passableRectangle) {
-        return neighbors.get(passableRectangle).getCrossSection();
+    public Port getBorder(PassableRectangle passableRectangle) {
+        return neighbors.get(passableRectangle).getPort();
     }
 
     public HashMap<PassableRectangle, Neighbor> getNeighbors() {
