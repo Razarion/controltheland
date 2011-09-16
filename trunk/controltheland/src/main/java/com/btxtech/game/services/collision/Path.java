@@ -13,8 +13,6 @@
 
 package com.btxtech.game.services.collision;
 
-import com.btxtech.game.jsre.client.common.Rectangle;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -58,20 +56,16 @@ public class Path {
         }
     }
 
-    public List<Rectangle> getAllPassableBorders() {
+    public List<Port> getAllPassableBorders() {
         PathElement previous = null;
-        ArrayList<Rectangle> allBorders = new ArrayList<Rectangle>();
+        ArrayList<Port> allPorts = new ArrayList<Port>();
         for (PathElement pathElement : pathElements) {
             if (previous != null) {
-                Rectangle rectangle = previous.getPassableRectangle().getBorder(pathElement.getPassableRectangle());
-                if (rectangle.getWidth() > 0 && rectangle.getHeight() > 0) {
-                    throw new IllegalArgumentException("Border mus be a line");
-                }
-                allBorders.add(rectangle);
+                allPorts.add(previous.getPassableRectangle().getBorder(pathElement.getPassableRectangle()));
             }
             previous = pathElement;
         }
-        return allBorders;
+        return allPorts;
     }
 
     public List<PathElement> getPathElements() {

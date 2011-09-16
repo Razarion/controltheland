@@ -97,6 +97,20 @@ public class Line implements Segment, Serializable {
         return new Index((int) Math.round(x), (int) Math.round(y));
     }
 
+
+    public Index getNearestPointOnLine(Index point) {
+        Index projection = projectOnInfiniteLine(point);
+        if (isPointInLine(projection)) {
+            return projection;
+        }
+        if (projection.getDistance(point1) < projection.getDistance(point2)) {
+            return point1;
+        } else {
+            return point2;
+        }
+    }
+
+
     public boolean isPointInLine(Index point) {
         return Rectangle.generateRectangleFromAnyPoints(point1, point2).contains2(point);
     }

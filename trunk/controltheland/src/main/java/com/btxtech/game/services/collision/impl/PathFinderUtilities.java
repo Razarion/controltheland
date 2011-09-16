@@ -34,8 +34,8 @@ public class PathFinderUtilities {
             for (PassableRectangle possibleNeighbor : remaining) {
                 if (passableRectangle.getRectangle().adjoins(possibleNeighbor.getRectangle()) &&
                         !passableRectangle.getRectangle().getCrossSection(possibleNeighbor.getRectangle()).isEmpty()) {
-                    passableRectangle.addNeighbor(possibleNeighbor);
-                    possibleNeighbor.addNeighbor(passableRectangle);
+                    passableRectangle.addNeighbor(possibleNeighbor, terrainService);
+                    possibleNeighbor.addNeighbor(passableRectangle, terrainService);
                 }
             }
         }
