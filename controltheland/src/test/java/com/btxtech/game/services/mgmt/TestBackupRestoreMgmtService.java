@@ -470,13 +470,8 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
     private void verifyBase(Base newBase, Base oldBase) {
         Assert.assertEquals(oldBase.getAccountBalance(), newBase.getAccountBalance(), 0.0);
         Assert.assertEquals(oldBase.getBaseId(), newBase.getBaseId());
-        Assert.assertEquals(oldBase.getCreated(), newBase.getCreated());
         Assert.assertEquals(oldBase.getHouseSpace(), newBase.getHouseSpace());
-        Assert.assertEquals(oldBase.getKills(), newBase.getKills());
-        Assert.assertEquals(oldBase.getLost(), newBase.getLost());
         Assert.assertEquals(oldBase.getStartTime(), newBase.getStartTime());
-        Assert.assertEquals(oldBase.getTotalEarned(), newBase.getTotalEarned(), 0.0);
-        Assert.assertEquals(oldBase.getTotalSpent(), newBase.getTotalSpent(), 0.0);
         verifyItems(oldBase.getItems(), newBase.getItems());
     }
 

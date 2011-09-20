@@ -36,11 +36,6 @@ public class DbBase {
     private Integer id;
     private double accountBalance;
     private Date startTime;
-    private int kills;
-    private int created;
-    private int lost;
-    private double totalSpent;
-    private double totalEarned;
     private boolean abandoned = false;
     private int baseId;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "base", fetch = FetchType.LAZY)
@@ -55,11 +50,6 @@ public class DbBase {
     public DbBase(Base base) {
         accountBalance = base.getAccountBalance();
         startTime = base.getStartTime();
-        kills = base.getKills();
-        created = base.getCreated();
-        lost = base.getLost();
-        totalSpent = base.getTotalSpent();
-        totalEarned = base.getTotalEarned();
         abandoned = base.isAbandoned();
         baseId = base.getBaseId();
     }
@@ -67,11 +57,6 @@ public class DbBase {
     public Base createBase(UserState userState) {
         return new Base(accountBalance,
                 startTime,
-                kills,
-                created,
-                lost,
-                totalSpent,
-                totalEarned,
                 userState == null || abandoned,
                 baseId,
                 userState);

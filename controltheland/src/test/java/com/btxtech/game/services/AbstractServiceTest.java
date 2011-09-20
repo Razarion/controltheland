@@ -41,7 +41,6 @@ import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.bot.DbBotItemConfig;
 import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.item.impl.ItemServiceImpl;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbBuilderType;
 import com.btxtech.game.services.item.itemType.DbFactoryType;
@@ -89,10 +88,7 @@ import org.hibernate.SessionFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.springframework.aop.SpringProxy;
 import org.springframework.aop.framework.Advised;
-import org.springframework.aop.framework.AopProxy;
-import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectFactory;
@@ -108,6 +104,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -221,6 +218,8 @@ abstract public class AbstractServiceTest {
     private BaseService baseService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private PlatformTransactionManager transactionManager;
     private SessionHolder sessionHolder;
     private MockHttpServletRequest mockHttpServletRequest;
     private MockHttpServletResponse mockHttpServletResponse;
@@ -236,7 +235,10 @@ abstract public class AbstractServiceTest {
         return hibernateTemplate;
     }
 
-    // ---------------------- Base -----------------------
+    protected PlatformTransactionManager getTransactionManager() {
+        return transactionManager;
+    }
+// ---------------------- Base -----------------------
 
     protected Base createBase(int startItem) throws Exception {
         beginHttpSession();
@@ -254,18 +256,26 @@ abstract public class AbstractServiceTest {
 
     // ------------------- Sync Items --------------------
 
-    protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id, Services services) throws Exception {
-        SyncBaseItem syncBaseItem = new SyncBaseItem(id, null, (BaseItemType) itemService.getItemType(itemTypeId), services, new SimpleBase(1));
+    protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id, Services services, SimpleBase simpleBase) throws Exception {
+        SyncBaseItem syncBaseItem = new SyncBaseItem(id, null, (BaseItemType) itemService.getItemType(itemTypeId), services, simpleBase);
         syncBaseItem.getSyncItemArea().setPosition(position);
         return syncBaseItem;
     }
 
-    protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id) throws Exception {
+    protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id, Services services) throws Exception {
+        return createSyncBaseItem(itemTypeId, position, id, services, new SimpleBase(1));
+    }
+
+    protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id, SimpleBase simpleBase) throws Exception {
         Services services = EasyMock.createNiceMock(Services.class);
         AbstractTerrainService terrainService = EasyMock.createNiceMock(AbstractTerrainService.class);
         EasyMock.expect(services.getTerrainService()).andReturn(terrainService);
         EasyMock.replay(services);
-        return createSyncBaseItem(itemTypeId, position, id, services);
+        return createSyncBaseItem(itemTypeId, position, id, services, simpleBase);
+    }
+
+    protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id) throws Exception {
+        return createSyncBaseItem(itemTypeId, position, id, new SimpleBase(1));
     }
 
     protected SyncResourceItem createSyncResourceItem(int itemTypeId, Index position, Id id) throws Exception {
@@ -1429,8 +1439,8 @@ abstract public class AbstractServiceTest {
     // ------------------- Div --------------------
 
     protected void setPrivateField(Class clazz, Object object, String fieldName, Object value) throws Exception {
-        if(AopUtils.isJdkDynamicProxy(object)) {
-            object = ((Advised)object).getTargetSource().getTarget();
+        if (AopUtils.isJdkDynamicProxy(object)) {
+            object = ((Advised) object).getTargetSource().getTarget();
         }
         Field field = clazz.getDeclaredField(fieldName);
         field.setAccessible(true);

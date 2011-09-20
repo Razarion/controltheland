@@ -13,7 +13,11 @@
 
 package com.btxtech.game.services.statistics;
 
-import java.util.List;
+import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.services.base.Base;
+import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.user.UserState;
 
 /**
  * User: beat
@@ -21,12 +25,22 @@ import java.util.List;
  * Time: 1:25:35 PM
  */
 public interface StatisticsService {
-    List<BaseStatisticsDTO> getBasesByUpTime(int count);
 
-    List<BaseStatisticsDTO> getBasesByMoney(int count);
+    void onMoneyEarned(SimpleBase simpleBase, double amount);
 
-    List<BaseStatisticsDTO> getBasesBySize(int count);
+    void onMoneySpent(SimpleBase simpleBase, double amount);
 
-    List<BaseStatisticsDTO> getBasesByKills(int count);
+    void onItemKilled(SyncBaseItem targetItem, SimpleBase actorBase);
 
+    void onItemCreated(SyncBaseItem syncBaseItem);
+
+    void onBaseKilled(SimpleBase target, SimpleBase actor);
+
+    void onLevelPromotion(UserState userState);
+
+    CrudRootServiceHelper<DbStatisticsEntry> getDayStatistics();
+
+    CrudRootServiceHelper<DbStatisticsEntry> getWeekStatistics();
+
+    CrudRootServiceHelper<DbStatisticsEntry> getAllTimeStatistics();
 }
