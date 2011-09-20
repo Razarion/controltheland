@@ -178,8 +178,8 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         }
 
         connectionService.sendSyncInfo(syncItem);
-        if (log.isInfoEnabled()) {
-            log.info("CREATED: " + syncItem);
+        if (log.isDebugEnabled()) {
+            log.debug("CREATED: " + syncItem);
         }
         return syncItem;
     }
@@ -249,8 +249,8 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             }
         }
         killedItem.setExplode(explode);
-        if (log.isInfoEnabled()) {
-            log.info("DELETED: " + killedItem);
+        if (log.isDebugEnabled()) {
+            log.debug("DELETED: " + killedItem);
         }
         connectionService.sendSyncInfo(killedItem);
 

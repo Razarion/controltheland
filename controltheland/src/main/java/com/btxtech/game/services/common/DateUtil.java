@@ -9,7 +9,10 @@ import java.util.Date;
  * Time: 22:49:13
  */
 public class DateUtil {
-    public static final long MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
+    public static final long MILLIS_IN_SECOND = 1000;
+    public static final long MILLIS_IN_MINUTE = MILLIS_IN_SECOND * 60;
+    public static final long MILLIS_IN_HOUR = MILLIS_IN_MINUTE * 60;
+    public static final long MILLIS_IN_DAY = MILLIS_IN_HOUR * 24;
     public static final long MILLIS_IN_WEEK = MILLIS_IN_DAY * 7;
 
     /**

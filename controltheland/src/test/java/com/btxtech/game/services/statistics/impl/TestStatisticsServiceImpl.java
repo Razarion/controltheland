@@ -5,12 +5,17 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.DateUtil;
+import com.btxtech.game.services.common.ReadonlyListContentProvider;
+import com.btxtech.game.services.statistics.CurrentStatisticEntry;
 import com.btxtech.game.services.statistics.DbStatisticsEntry;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.services.utg.UserGuidanceService;
 import org.easymock.EasyMock;
 import org.hibernate.criterion.Order;
 import org.junit.Assert;
@@ -39,6 +44,8 @@ import java.util.List;
 public class TestStatisticsServiceImpl extends AbstractServiceTest {
     @Autowired
     private StatisticsService statisticsService;
+    @Autowired
+    private UserGuidanceService userGuidanceService;
 
     private StatisticsServiceImpl getImpl() throws Exception {
         if (AopUtils.isJdkDynamicProxy(statisticsService)) {
@@ -443,7 +450,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         } else {
             actorEntry = entry2;
             targetEntry = entry1;
-        }   
+        }
         // Actor
         Assert.assertEquals(0, actorEntry.getBasesDestroyedBot());
         Assert.assertEquals(1, actorEntry.getBasesDestroyedPlayer());
@@ -1048,5 +1055,91 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         }
     }
 
+    @Test
+    @DirtiesContext
+    public void currentStatisticsEmpty() throws Exception {
+        List<UserState> userStates = new ArrayList<UserState>();
 
+        UserService userServiceMock = EasyMock.createMock(UserService.class);
+        EasyMock.expect(userServiceMock.getAllUserStates()).andReturn(userStates).once();
+        EasyMock.replay(userServiceMock);
+
+        setPrivateField(StatisticsServiceImpl.class, statisticsService, "userService", userServiceMock);
+
+        ReadonlyListContentProvider<CurrentStatisticEntry> current = statisticsService.getCurrentStatistics();
+        Assert.assertEquals(0, current.readDbChildren().size());
+    }
+
+    @Test
+    @DirtiesContext
+    public void currentStatistics() throws Exception {
+        configureMinimalGame();
+
+        List<UserState> userStates = new ArrayList<UserState>();
+        UserState userState = new UserState();
+        userState.setCurrentAbstractLevel(userGuidanceService.getDbLevel(TEST_LEVEL_1_SIMULATED));
+        userStates.add(userState);
+
+        userState = new UserState();
+        Base base1 = new Base(userState, 1);
+        base1.setAccountBalance(1234);
+        setPrivateField(Base.class, base1, "startTime", new Date(System.currentTimeMillis() - DateUtil.MILLIS_IN_HOUR));
+        base1.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1, 1)));
+        base1.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(2, 1, 1)));
+        userState.setBase(base1);
+        userState.setCurrentAbstractLevel(userGuidanceService.getDbLevel(TEST_LEVEL_2_REAL));
+        userStates.add(userState);
+
+        User user = new User();
+        user.registerUser("xxx", "", "");
+        userState = new UserState();
+        userState.setUser(user);
+        Base base2 = new Base(userState, 2);
+        base2.setAccountBalance(90);        
+        setPrivateField(Base.class, base2, "startTime", new Date(System.currentTimeMillis() - DateUtil.MILLIS_IN_MINUTE));
+        base2.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1, 1)));
+        base2.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(2, 1, 1)));
+        base2.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(3, 1, 1)));
+        base2.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(4, 1, 1)));
+        base2.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(5, 1, 1)));
+        userState.setBase(base2);
+        userState.setCurrentAbstractLevel(userGuidanceService.getDbLevel(TEST_LEVEL_2_REAL));
+        userStates.add(userState);
+
+        UserService userServiceMock = EasyMock.createMock(UserService.class);
+        EasyMock.expect(userServiceMock.getAllUserStates()).andReturn(userStates).once();
+        EasyMock.replay(userServiceMock);
+        setPrivateField(StatisticsServiceImpl.class, statisticsService, "userService", userServiceMock);
+
+        BaseService baseService = EasyMock.createMock(BaseService.class);
+        EasyMock.expect(baseService.getBaseName(base1.getSimpleBase())).andReturn("Base 1").once();
+        EasyMock.expect(baseService.getBaseName(base2.getSimpleBase())).andReturn("RegUser").once();
+        EasyMock.replay(baseService);
+        setPrivateField(StatisticsServiceImpl.class, statisticsService, "baseService", baseService);
+
+        ReadonlyListContentProvider<CurrentStatisticEntry> current = statisticsService.getCurrentStatistics();
+        Assert.assertEquals(3, current.readDbChildren().size());
+
+        CurrentStatisticEntry entry = current.readDbChildren().get(0);
+        Assert.assertEquals(TEST_LEVEL_1_SIMULATED, entry.getLevel().getName());
+        Assert.assertEquals("-", entry.getUser());
+        Assert.assertEquals(0, entry.getMoney());
+        Assert.assertEquals("-", entry.getBaseName());
+        Assert.assertEquals("-", entry.getBaseUpTime());
+        Assert.assertEquals(0, entry.getItemCount());
+        entry = current.readDbChildren().get(1);
+        Assert.assertEquals(TEST_LEVEL_2_REAL, entry.getLevel().getName());
+        Assert.assertEquals("-", entry.getUser());
+        Assert.assertEquals(1234, entry.getMoney());
+        Assert.assertEquals("Base 1", entry.getBaseName());
+        Assert.assertEquals("1:00:00", entry.getBaseUpTime());
+        Assert.assertEquals(2, entry.getItemCount());
+        entry = current.readDbChildren().get(2);
+        Assert.assertEquals(TEST_LEVEL_2_REAL, entry.getLevel().getName());
+        Assert.assertEquals("xxx", entry.getUser());
+        Assert.assertEquals(90, entry.getMoney());
+        Assert.assertEquals("RegUser", entry.getBaseName());
+        Assert.assertEquals("0:01:00", entry.getBaseUpTime());
+        Assert.assertEquals(5, entry.getItemCount()); 
+    }
 }

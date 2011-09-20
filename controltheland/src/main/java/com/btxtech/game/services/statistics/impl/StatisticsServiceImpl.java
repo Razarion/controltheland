@@ -15,14 +15,17 @@ package com.btxtech.game.services.statistics.impl;
 
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.DateUtil;
+import com.btxtech.game.services.common.ReadonlyListContentProvider;
+import com.btxtech.game.services.statistics.CurrentStatisticEntry;
 import com.btxtech.game.services.statistics.DbStatisticsEntry;
 import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.User;
+import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
+import com.btxtech.game.wicket.WebCommon;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -71,6 +74,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     private CrudRootServiceHelper<DbStatisticsEntry> weekStatistics;
     @Autowired
     private CrudRootServiceHelper<DbStatisticsEntry> allTimeStatistics;
+    @Autowired
+    private UserService userService;
     private HibernateTemplate hibernateTemplate;
     private final Map<UserState, DbStatisticsEntry> currentStatisticsCache = new HashMap<UserState, DbStatisticsEntry>();
     private ScheduledThreadPoolExecutor scheduledThreadPoolExecutor;
@@ -434,4 +439,34 @@ public class StatisticsServiceImpl implements StatisticsService {
     public CrudRootServiceHelper<DbStatisticsEntry> getAllTimeStatistics() {
         return allTimeStatistics;
     }
+
+    @Override
+    public ReadonlyListContentProvider<CurrentStatisticEntry> getCurrentStatistics() {
+        List<CurrentStatisticEntry> entries = new ArrayList<CurrentStatisticEntry>();
+        for (UserState userState : userService.getAllUserStates()) {
+            String baseName = "-";
+            String upTime = "-";
+            int money = 0;
+            int itemCount = 0;
+            if (userState.getBase() != null) {
+                baseName = baseService.getBaseName(userState.getBase().getSimpleBase());
+                upTime = WebCommon.formatDuration(userState.getBase().getUptime());
+                itemCount = userState.getBase().getItemCount();
+                money = (int) Math.round(userState.getBase().getAccountBalance());
+            }
+            String userName = "-";
+            if (userState.getUser() != null) {
+                userName = userState.getUser().getUsername();
+            }
+            entries.add(new CurrentStatisticEntry(userState.getCurrentAbstractLevel(),
+                    userName,
+                    baseName,
+                    upTime,
+                    itemCount,
+                    money));
+        }
+        return new ReadonlyListContentProvider<CurrentStatisticEntry>(entries);
+    }
+
+
 }
