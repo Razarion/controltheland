@@ -18,11 +18,8 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
-import com.btxtech.game.wicket.pages.cms.Home;
-import com.btxtech.game.wicket.pages.info.Info;
 import com.btxtech.game.wicket.pages.market.MarketPage;
 import com.btxtech.game.wicket.pages.mgmt.MgmtPage;
-import com.btxtech.game.wicket.pages.statistics.StatisticsPage;
 import com.btxtech.game.wicket.pages.user.LoggedinBox;
 import com.btxtech.game.wicket.pages.user.LoginBox;
 import com.btxtech.game.wicket.pages.user.UserListPage;
@@ -50,10 +47,6 @@ import java.util.ArrayList;
  * Time: 10:05:20 PM
  */
 public class BasePage extends WebPage implements IHeaderContributor {
-    public static final String JAVA_SCRIPT_DETECTION = "var f = document.createElement('script');\n" +
-            "f.setAttribute(\"type\", \"text/javascript\");\n" +
-            "f.setAttribute(\"src\", \"/spring/statJS\");\n" +
-            "document.getElementsByTagName(\"head\")[0].appendChild(f)";
 
     @SpringBean
     private UserService userService;
@@ -66,11 +59,11 @@ public class BasePage extends WebPage implements IHeaderContributor {
         add(new LoginBox("loginBox", true));
 
         ArrayList<MenuItem> menuItems = new ArrayList<MenuItem>();
-        menuItems.add(new MenuItem("home", Home.class, this, false));
-        menuItems.add(new MenuItem("info", Info.class, this, false));
+        //menuItems.add(new MenuItem("home", Home.class, this, false));
+        //menuItems.add(new MenuItem("info", Info.class, this, false));
         menuItems.add(new MenuItem("market", MarketPage.class, this, false));
         menuItems.add(new MenuItem("users", UserListPage.class, this, false));
-        menuItems.add(new MenuItem("statistics", StatisticsPage.class, this, false));
+        //menuItems.add(new MenuItem("statistics", StatisticsPage.class, this, false));
         menuItems.add(new MenuItem("mgmt", MgmtPage.class, this, true));
         menuItems.add(new MenuItem("test cms", CmsPage.class, this, true));
         buildMenu(menuItems);
@@ -118,7 +111,7 @@ public class BasePage extends WebPage implements IHeaderContributor {
     @Override
     public void renderHead(IHeaderResponse iHeaderResponse) {
         if (!userTrackingService.isJavaScriptDetected()) {
-            iHeaderResponse.renderJavascript(JAVA_SCRIPT_DETECTION, null);
+            //iHeaderResponse.renderJavascript(Home.JAVA_SCRIPT_DETECTION, null);
         }
     }
 

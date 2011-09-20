@@ -15,7 +15,6 @@ package com.btxtech.game.wicket.pages.user;
 
 import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.wicket.pages.cms.Home;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeAction;
@@ -44,7 +43,7 @@ public class LoggedinBox extends Panel {
             protected void onSubmit() {
                 AuthenticatedWebSession session = AuthenticatedWebSession.get();
                 session.signOut();
-                setResponsePage(Home.class);
+                //setResponsePage(Home.class);
             }
         };
         add(form);

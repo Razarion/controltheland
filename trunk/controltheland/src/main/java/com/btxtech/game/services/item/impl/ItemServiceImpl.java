@@ -52,6 +52,7 @@ import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.resource.ResourceService;
+import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.SecurityRoles;
 import com.btxtech.game.services.utg.ServerConditionService;
 import com.btxtech.game.services.utg.UserGuidanceService;
@@ -111,6 +112,8 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     private ServerConditionService serverConditionService;
     @Autowired
     private CrudRootServiceHelper<DbItemType> dbItemTypeCrud;
+    @Autowired
+    private StatisticsService statisticsService;
     private HibernateTemplate hibernateTemplate;
     private int lastId = 0;
     private final HashMap<Id, SyncItem> items = new HashMap<Id, SyncItem>();
@@ -171,6 +174,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             syncItem.addSyncItemListener(actionService);
             syncItem.addSyncItemListener(baseService);
             actionService.interactionGuardingItems(syncBaseItem);
+            statisticsService.onItemCreated(syncBaseItem);
         }
 
         connectionService.sendSyncInfo(syncItem);
@@ -254,7 +258,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             actionService.removeGuardingBaseItem((SyncBaseItem) killedItem);
             if (actor != null) {
                 Base actorBase = baseService.getBase(actor);
-                actorBase.increaseKills();
+                statisticsService.onItemKilled((SyncBaseItem) killedItem, actorBase.getSimpleBase());
                 serverMarketService.increaseXp(actorBase, (SyncBaseItem) killedItem);
                 serverConditionService.onSyncItemKilled(actor, (SyncBaseItem) killedItem);
 

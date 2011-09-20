@@ -54,6 +54,7 @@ import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.mgmt.MgmtService;
+import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.DbRealGameLevel;
@@ -107,6 +108,8 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     private BotService botService;
     @Autowired
     private ServerConditionService serverConditionService;
+    @Autowired
+    private StatisticsService statisticsService;
     private final HashMap<SimpleBase, Base> bases = new HashMap<SimpleBase, Base>();
     private int lastBaseId = 0;
 
@@ -281,6 +284,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             if (base.getUserState() != null && base.getUserState().getUser() != null) {
                 userTrackingService.onBaseDefeated(base.getUserState().getUser(), base);
             }
+            statisticsService.onBaseKilled(base.getSimpleBase(), actor);
             deleteBase(base);
             if (!base.isAbandoned()) {
                 base.getUserState().setBase(null);
@@ -403,9 +407,12 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             } else if (money > dbRealGameLevel.getMaxMoney()) {
                 base.setAccountBalance(dbRealGameLevel.getMaxMoney());
             } else if (money + price > dbRealGameLevel.getMaxMoney()) {
-                base.depositMoney(dbRealGameLevel.getMaxMoney() - money);
+                double amount = dbRealGameLevel.getMaxMoney() - money;
+                base.depositMoney(amount);
+                statisticsService.onMoneyEarned(simpleBase, amount);
             } else {
                 base.depositMoney(price);
+                statisticsService.onMoneyEarned(simpleBase, price);
             }
             serverConditionService.onMoneyIncrease(base.getSimpleBase(), price);
         }
@@ -416,6 +423,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         Base base = getBase(simpleBase);
         if (!isBot(simpleBase)) {
             base.withdrawalMoney(price);
+            statisticsService.onMoneySpent(simpleBase, price);
         }
     }
 

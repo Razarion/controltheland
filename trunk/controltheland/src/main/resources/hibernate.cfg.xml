@@ -141,6 +141,8 @@
         <mapping class="com.btxtech.game.services.cms.DbBlogEntry"/>
         <mapping class="com.btxtech.game.services.cms.DbWikiSection"/>
         <mapping class="com.btxtech.game.services.cms.DbHtmlContent"/>
+        <!-- Statistics -->
+        <mapping class="com.btxtech.game.services.statistics.DbStatisticsEntry"/>
 
     </session-factory>
 </hibernate-configuration>

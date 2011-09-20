@@ -33,11 +33,6 @@ import java.util.HashSet;
 public class Base implements Serializable {
     private double accountBalance;
     private Date startTime;
-    private int kills;
-    private int created;
-    private int lost;
-    private double totalSpent;
-    private double totalEarned;
     private boolean abandoned = false;
     private int baseId;
     private UserState userState;
@@ -66,21 +61,11 @@ public class Base implements Serializable {
 
     public Base(double accountBalance,
                 Date startTime,
-                int kills,
-                int created,
-                int lost,
-                double totalSpent,
-                double totalEarned,
                 boolean abandoned,
                 int baseId,
                 UserState userState) {
         this.accountBalance = accountBalance;
         this.startTime = startTime;
-        this.kills = kills;
-        this.created = created;
-        this.lost = lost;
-        this.totalSpent = totalSpent;
-        this.totalEarned = totalEarned;
         this.abandoned = abandoned;
         this.baseId = baseId;
         this.userState = userState;
@@ -91,7 +76,6 @@ public class Base implements Serializable {
             if (!items.remove(syncItem)) {
                 throw new IllegalArgumentException("Item (" + syncItem + ") does not exist in base: " + getSimpleBase());
             }
-            lost++;
         }
     }
 
@@ -123,7 +107,6 @@ public class Base implements Serializable {
     public void depositMoney(double amount) {
         synchronized (syncObject) {
             accountBalance += amount;
-            totalEarned += amount;
         }
     }
 
@@ -133,7 +116,6 @@ public class Base implements Serializable {
                 throw new InsufficientFundsException();
             } else {
                 accountBalance -= amount;
-                totalSpent += amount;
             }
         }
     }
@@ -164,14 +146,6 @@ public class Base implements Serializable {
 
     public int getItemCount() {
         return items.size();
-    }
-
-    public void increaseKills() {
-        kills++;
-    }
-
-    public int getKills() {
-        return kills;
     }
 
     public boolean isAbandoned() {
@@ -215,21 +189,5 @@ public class Base implements Serializable {
 
     public Date getStartTime() {
         return startTime;
-    }
-
-    public int getCreated() {
-        return created;
-    }
-
-    public int getLost() {
-        return lost;
-    }
-
-    public double getTotalSpent() {
-        return totalSpent;
-    }
-
-    public double getTotalEarned() {
-        return totalEarned;
     }
 }

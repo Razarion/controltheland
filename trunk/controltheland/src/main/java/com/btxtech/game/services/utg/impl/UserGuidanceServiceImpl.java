@@ -30,6 +30,7 @@ import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.market.ServerMarketService;
+import com.btxtech.game.services.statistics.StatisticsService;
 import com.btxtech.game.services.territory.TerritoryService;
 import com.btxtech.game.services.tutorial.TutorialService;
 import com.btxtech.game.services.user.UserService;
@@ -98,6 +99,8 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     private CrudRootServiceHelper<DbResurrection> crudRootDbResurrection;
     @Autowired
     private TerritoryService territoryService;
+    @Autowired
+    private StatisticsService statisticsService;
     private HibernateTemplate hibernateTemplate;
     private Log log = LogFactory.getLog(UserGuidanceServiceImpl.class);
     private List<DbAbstractLevel> dbAbstractLevels = new ArrayList<DbAbstractLevel>();
@@ -197,6 +200,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
         userState.setCurrentAbstractLevel(dbNextAbstractLevel);
         // Tracking
         historyService.addLevelPromotionEntry(userState, dbNextAbstractLevel);
+        statisticsService.onLevelPromotion(userState);
         log.debug("User: " + userState + " has been promoted: " + dbOldAbstractLevel + " to " + dbNextAbstractLevel);
 
         if (dbNextAbstractLevel instanceof DbRealGameLevel) {
@@ -231,6 +235,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     private void handleRewards(Base base, DbRealGameLevel dbRealGameLevel) {
         if (dbRealGameLevel.getDeltaMoney() != 0) {
             base.depositMoney(dbRealGameLevel.getDeltaMoney());
+            statisticsService.onMoneyEarned(base.getSimpleBase(), dbRealGameLevel.getDeltaMoney());
             baseService.sendAccountBaseUpdate(base);
         }
         if (dbRealGameLevel.getDeltaXp() != 0) {

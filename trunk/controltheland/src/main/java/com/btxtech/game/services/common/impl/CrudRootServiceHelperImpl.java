@@ -22,6 +22,7 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
@@ -51,6 +55,7 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
     private boolean setOrderColumn;
     private boolean orderAsc;
     private String userField;
+    private Map<Object, Criterion> criterionMap = new HashMap<Object, Criterion>();
     @Autowired
     private UserService userService;
 
@@ -76,13 +81,20 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
     @Override
     @Transactional(readOnly = true)
     @SuppressWarnings("unchecked")
-    public Collection<T> readDbChildren() {
+    public Collection<T> readDbChildren(final List<Order> orderList) {
         return hibernateTemplate.executeFind(new HibernateCallback() {
             @Override
             public Object doInHibernate(Session session) throws HibernateException, SQLException {
                 Criteria criteria = session.createCriteria(childClass);
                 criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                if (orderColumn != null) {
+                for (Criterion criterion : criterionMap.values()) {
+                    criteria.add(criterion);
+                }
+                if (orderList != null && !orderList.isEmpty()) {
+                    for (Order order : orderList) {
+                        criteria.addOrder(order);
+                    }
+                } else if (orderColumn != null) {
                     if (orderAsc) {
                         criteria.addOrder(Order.asc(orderColumn));
                     } else {
@@ -92,6 +104,13 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
                 return criteria.list();
             }
         });
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    @SuppressWarnings("unchecked")
+    public Collection<T> readDbChildren() {
+        return readDbChildren(null);
     }
 
     @Override
@@ -208,6 +227,16 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
     @Transactional
     public void deleteAllChildren() {
         hibernateTemplate.deleteAll(readDbChildren());
+    }
+
+    @Override
+    public void putCriterion(Object key, Criterion criterion) {
+        criterionMap.put(key, criterion);
+    }
+
+    @Override
+    public void removeCriterion(Object key) {
+        criterionMap.remove(key);
     }
 
     @Transactional
