@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.user.UserState;
 
 /**
@@ -43,4 +44,6 @@ public interface StatisticsService {
     CrudRootServiceHelper<DbStatisticsEntry> getWeekStatistics();
 
     CrudRootServiceHelper<DbStatisticsEntry> getAllTimeStatistics();
+
+    ReadonlyListContentProvider<CurrentStatisticEntry> getCurrentStatistics();
 }

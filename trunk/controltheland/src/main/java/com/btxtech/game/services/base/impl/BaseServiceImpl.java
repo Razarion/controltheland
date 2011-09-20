@@ -134,7 +134,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             lastBaseId++;
             base = new Base(userState, lastBaseId);
             createBase(base.getSimpleBase(), setupBaseName(base), false);
-            log.info("Base created: " + base);
+            log.debug("Base created: " + base);
             bases.put(base.getSimpleBase(), base);
         }
         historyService.addBaseStartEntry(base.getSimpleBase());
@@ -180,7 +180,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             lastBaseId++;
             Base base = new Base(userState, lastBaseId);
             createBase(base.getSimpleBase(), name, false);
-            log.info("Bot Base created: " + base);
+            log.debug("Bot Base created: " + base);
             bases.put(base.getSimpleBase(), base);
             setBot(base.getSimpleBase(), true);
             sendBaseChangedPacket(BaseChangedPacket.Type.CREATED, base.getSimpleBase());
@@ -194,7 +194,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     private void deleteBase(Base base) {
-        log.info("Base deleted: " + base);
+        log.debug("Base deleted: " + base);
         boolean isBot = isBot(base.getSimpleBase());
         synchronized (bases) {
             if (bases.remove(base.getSimpleBase()) == null) {
