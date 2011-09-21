@@ -2,6 +2,7 @@ package com.btxtech.game.wicket.pages.cms.content;
 
 import com.btxtech.game.services.cms.DbContentBook;
 import com.btxtech.game.services.cms.DbContentRow;
+import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.pages.cms.EditPanel;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
@@ -31,11 +32,13 @@ public class ContentBook extends Panel {
     private CmsUiService cmsUiService;
     private Object bean;
     private BeanIdPathElement beanIdPathElement;
+    private ContentContext contentContext;
     private int contentId;
 
-    public ContentBook(String id, DbContentBook dbContentBook, final BeanIdPathElement beanIdPathElement) {
+    public ContentBook(String id, DbContentBook dbContentBook, final BeanIdPathElement beanIdPathElement, ContentContext contentContext) {
         super(id);
         this.beanIdPathElement = beanIdPathElement;
+        this.contentContext = contentContext;
         contentId = dbContentBook.getId();
         setDefaultModel(new LoadableDetachableModel<DbContentBook>() {
             @Override
@@ -76,7 +79,7 @@ public class ContentBook extends Panel {
             @Override
             public void populateItem(Item<ICellPopulator<DbContentRow>> cellItem, String componentId, IModel<DbContentRow> rowModel) {
                 BeanIdPathElement childBeanIdPathElement = cmsUiService.createChildBeanIdPathElement(rowModel.getObject().getDbContent(), beanIdPathElement, null);
-                cellItem.add(cmsUiService.getComponent(rowModel.getObject().getDbContent(), bean, componentId, childBeanIdPathElement));
+                cellItem.add(cmsUiService.getComponent(rowModel.getObject().getDbContent(), bean, componentId, childBeanIdPathElement, contentContext));
             }
         });
 

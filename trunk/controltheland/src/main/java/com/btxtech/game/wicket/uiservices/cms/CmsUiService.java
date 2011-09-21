@@ -7,6 +7,7 @@ import com.btxtech.game.services.cms.DbContentInvoker;
 import com.btxtech.game.services.cms.DbPage;
 import com.btxtech.game.services.cms.EditMode;
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import org.apache.wicket.Component;
 import org.apache.wicket.PageParameters;
@@ -24,8 +25,10 @@ import java.util.Map;
 public interface CmsUiService {
     PageParameters getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage predefinedType);
 
+    PageParameters createPageParametersFromBeanId(BeanIdPathElement beanIdPathElement);
+
     void setupPredefinedUrls();
-    
+
     Map<CmsUtil.CmsPredefinedPage, String> getPredefinedUrls();
 
     void setPredefinedResponsePage(Component component, CmsUtil.CmsPredefinedPage predefinedType);
@@ -38,9 +41,9 @@ public interface CmsUiService {
 
     void setParentResponsePage(Component component, DbContent dbContent, BeanIdPathElement beanIdPathElement);
 
-    Component getComponent(DbContent dbContent, Object bean, String id, BeanIdPathElement parentBeanIdPathElement);
+    Component getComponent(DbContent dbContent, Object bean, String id, BeanIdPathElement parentBeanIdPathElement, ContentContext contentContext);
 
-    Component getRootComponent(DbPage dbPage, String id, PageParameters pageParameters);
+    Component getRootComponent(DbPage dbPage, String id, ContentContext contentContext);
 
     <T extends DbContent> T getDbContent(int contentId);
 

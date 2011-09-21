@@ -41,6 +41,7 @@ import com.btxtech.game.wicket.pages.cms.content.ContentActionButton;
 import com.btxtech.game.wicket.pages.cms.content.ContentBook;
 import com.btxtech.game.wicket.pages.cms.content.ContentBooleanExpressionImage;
 import com.btxtech.game.wicket.pages.cms.content.ContentContainer;
+import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.pages.cms.content.ContentCreateEdit;
 import com.btxtech.game.wicket.pages.cms.content.ContentDetailLink;
 import com.btxtech.game.wicket.pages.cms.content.ContentDynamicHtml;
@@ -69,6 +70,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -152,6 +154,34 @@ public class CmsUiServiceImpl implements CmsUiService {
     }
 
     @Override
+    public PageParameters createPageParametersFromBeanId(BeanIdPathElement beanIdPathElement) {
+        PageParameters pageParameters = new PageParameters();
+        pageParameters.put(CmsPage.ID, Integer.toString(beanIdPathElement.getPageId()));
+        List<Serializable> beanIds = new ArrayList<Serializable>();
+        BeanIdPathElement tmpBeanIdPathElement = beanIdPathElement;
+        while (tmpBeanIdPathElement != null) {
+            if (tmpBeanIdPathElement.hasBeanId()) {
+                if (beanIds.size() >= CmsPage.MAX_LEVELS) {
+                    throw new IllegalStateException("Max level reached");
+                }
+                beanIds.add(tmpBeanIdPathElement.getBeanId());
+            }
+            if (tmpBeanIdPathElement.hasParent() && !tmpBeanIdPathElement.getParent().hasSpringBeanName()) {
+                tmpBeanIdPathElement = tmpBeanIdPathElement.getParent();
+            } else {
+                tmpBeanIdPathElement = null;
+            }
+        }
+        Collections.reverse(beanIds);
+        for (int level = 0, beanIdsSize = beanIds.size(); level < beanIdsSize; level++) {
+            Serializable beanId = beanIds.get(level);
+            pageParameters.put(CmsPage.getChildUrlParameter(level), beanId);
+        }
+        return pageParameters;
+    }
+
+
+    @Override
     public void setPredefinedResponsePage(Component component, CmsUtil.CmsPredefinedPage predefinedType) {
         component.setResponsePage(CmsPage.class, getPredefinedDbPageParameters(predefinedType));
     }
@@ -180,20 +210,20 @@ public class CmsUiServiceImpl implements CmsUiService {
 
     @Override
     public void setParentResponsePage(Component component, DbContent dbContent, BeanIdPathElement beanIdPathElement) {
-        PageParameters parameters = new PageParameters();
+        PageParameters parameters = createPageParametersFromBeanId(beanIdPathElement);
         // Find out if parent was a detail link
         if (dbContent.getParent() instanceof DbContentList) {
             // ??? Why -> dbContent.getParent().getParent().getParent().getParent()
             parameters.put(CmsPage.DETAIL_CONTENT_ID, Integer.toString(dbContent.getParent().getParent().getParent().getParent().getId()));
         }
-        ContentDetailLink.fillBeanIdPathUrlParameters(beanIdPathElement, parameters);
         component.setResponsePage(CmsPage.class, parameters);
     }
 
     @Override
-    public Component getRootComponent(DbPage dbPage, String componentId, PageParameters pageParameters) {
+    public Component getRootComponent(DbPage dbPage, String componentId, ContentContext contentContext) {
         DbContent dbContent = dbPage.getContent();
         BeanIdPathElement beanIdPathElement = new BeanIdPathElement(dbPage, dbContent);
+        PageParameters pageParameters = contentContext.getPageParameters();
         // if the Page should display a child of a ContentList
         if (pageParameters.containsKey(CmsPage.DETAIL_CONTENT_ID)) {
             dbContent = cmsService.getDbContent(pageParameters.getInt(CmsPage.DETAIL_CONTENT_ID));
@@ -211,7 +241,7 @@ public class CmsUiServiceImpl implements CmsUiService {
         } else if (pageParameters.containsKey(CmsPage.MESSAGE_ID)) {
             return new Message(componentId, pageParameters.getString(CmsPage.MESSAGE_ID));
         }
-        return getComponent(dbContent, null, componentId, beanIdPathElement);
+        return getComponent(dbContent, null, componentId, beanIdPathElement, contentContext);
     }
 
     private BeanIdPathElement createBeanIdPathElement(PageParameters pageParameters, DbContent dbContent, BeanIdPathElement beanIdPathElement) {
@@ -262,18 +292,18 @@ public class CmsUiServiceImpl implements CmsUiService {
     }
 
     @Override
-    public Component getComponent(DbContent dbContent, Object bean, String componentId, BeanIdPathElement beanIdPathElement) {
+    public Component getComponent(DbContent dbContent, Object bean, String componentId, BeanIdPathElement beanIdPathElement, ContentContext contentContext) {
         try {
             if (dbContent instanceof DbContentList) {
-                return new ContentList(componentId, (DbContentList) dbContent, beanIdPathElement);
+                return new ContentList(componentId, (DbContentList) dbContent, beanIdPathElement, contentContext);
             } else if (dbContent instanceof DbExpressionProperty) {
                 return component4ExpressionProperty(componentId, ((DbExpressionProperty) dbContent), bean, beanIdPathElement);
             } else if (dbContent instanceof DbContentDetailLink) {
                 return new ContentDetailLink(componentId, (DbContentDetailLink) dbContent, beanIdPathElement);
             } else if (dbContent instanceof DbContentContainer) {
-                return new ContentContainer(componentId, (DbContentContainer) dbContent, beanIdPathElement);
+                return new ContentContainer(componentId, (DbContentContainer) dbContent, beanIdPathElement, contentContext);
             } else if (dbContent instanceof DbContentBook) {
-                return new ContentBook(componentId, (DbContentBook) dbContent, beanIdPathElement);
+                return new ContentBook(componentId, (DbContentBook) dbContent, beanIdPathElement, contentContext);
             } else if (dbContent instanceof DbContentStaticHtml) {
                 DbContentStaticHtml dbContentStaticHtml = (DbContentStaticHtml) dbContent;
                 Component label = new Label(componentId, dbContentStaticHtml.getHtml()).setEscapeModelStrings(dbContentStaticHtml.getEscapeMarkup());
@@ -468,7 +498,7 @@ public class CmsUiServiceImpl implements CmsUiService {
     }
 
     private ContentProvider getContentProvider(BeanIdPathElement beanIdPathElement, Object bean) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        return (ContentProvider)PropertyUtils.getProperty(bean, beanIdPathElement.getContentProviderGetter());
+        return (ContentProvider) PropertyUtils.getProperty(bean, beanIdPathElement.getContentProviderGetter());
     }
 
     private ContentProvider getContentProvider(BeanIdPathElement beanIdPathElement) {

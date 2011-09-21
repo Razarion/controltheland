@@ -27,9 +27,11 @@ import java.util.List;
 public class Menu extends Panel {
     @SpringBean
     private CmsUiService cmsUiService;
+    private ContentContext contentContext;
 
-    public Menu(String id, DbMenu dbMenu) {
+    public Menu(String id, DbMenu dbMenu, ContentContext contentContext) {
         super(id);
+        this.contentContext = contentContext;
         DetachHashListProvider<DbMenuItem> menuProvider = new DetachHashListProvider<DbMenuItem>() {
 
             @Override
@@ -74,7 +76,7 @@ public class Menu extends Panel {
 
     private void setupBottom(DbMenu dbMenu) {
         if (dbMenu != null && dbMenu.getBottom() != null) {
-            add(cmsUiService.getComponent(dbMenu.getBottom(), null, "bottom", null));
+            add(cmsUiService.getComponent(dbMenu.getBottom(), null, "bottom", null, contentContext));
         } else {
             add(new Label("bottom", "").setVisible(false));
         }

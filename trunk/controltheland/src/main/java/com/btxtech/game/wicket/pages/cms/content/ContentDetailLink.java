@@ -11,11 +11,6 @@ import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * User: beat
  * Date: 08.06.2011
@@ -29,9 +24,8 @@ public class ContentDetailLink extends Panel {
     public ContentDetailLink(String id, DbContentDetailLink dbContentDetailLink, BeanIdPathElement beanIdPathElement) {
         super(id);
         contentId = dbContentDetailLink.getId();
-        PageParameters pageParameters = new PageParameters();
+        PageParameters pageParameters = cmsUiService.createPageParametersFromBeanId(beanIdPathElement);
         pageParameters.put(CmsPage.DETAIL_CONTENT_ID, Integer.toString(dbContentDetailLink.getParent().getId()));
-        fillBeanIdPathUrlParameters(beanIdPathElement, pageParameters);
         BookmarkablePageLink<CmsPage> link = new BookmarkablePageLink<CmsPage>("link", CmsPage.class, pageParameters);
         link.add(new Label("label", dbContentDetailLink.getName()));
         add(link);
@@ -39,31 +33,6 @@ public class ContentDetailLink extends Panel {
             link.add(new SimpleAttributeModifier("class", dbContentDetailLink.getCssClass()));
         }
     }
-
-    public static void fillBeanIdPathUrlParameters(BeanIdPathElement beanIdPathElement, PageParameters pageParameters) {
-        pageParameters.put(CmsPage.ID, Integer.toString(beanIdPathElement.getPageId()));        
-        List<Serializable> beanIds = new ArrayList<Serializable>();
-        BeanIdPathElement tmpBeanIdPathElement = beanIdPathElement;
-        while (tmpBeanIdPathElement != null) {
-            if (tmpBeanIdPathElement.hasBeanId()) {
-                if (beanIds.size() >= CmsPage.MAX_LEVELS) {
-                    throw new IllegalStateException("Max level reached");
-                }
-                beanIds.add(tmpBeanIdPathElement.getBeanId());
-            }
-            if (tmpBeanIdPathElement.hasParent() && !tmpBeanIdPathElement.getParent().hasSpringBeanName()) {
-                tmpBeanIdPathElement = tmpBeanIdPathElement.getParent();
-            } else {
-                tmpBeanIdPathElement = null;
-            }
-        }
-        Collections.reverse(beanIds);
-        for (int level = 0, beanIdsSize = beanIds.size(); level < beanIdsSize; level++) {
-            Serializable beanId = beanIds.get(level);
-            pageParameters.put(CmsPage.getChildUrlParameter(level), beanId);
-        }
-    }
-
 
     @Override
     public boolean isVisible() {

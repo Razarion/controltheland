@@ -107,9 +107,8 @@ public class EditPanel extends Panel {
             createEditButton = new Button("createEdit", new Model<String>(dbContentList.getDbContentCreateEdit().getName())) {
                 @Override
                 public void onSubmit() {
-                    PageParameters parameters = new PageParameters();
+                    PageParameters parameters = cmsUiService.createPageParametersFromBeanId(beanIdPathElement);
                     parameters.put(CmsPage.CREATE_CONTENT_ID, Integer.toString(contentCreateEditID));
-                    ContentDetailLink.fillBeanIdPathUrlParameters(beanIdPathElement, parameters);
                     setResponsePage(CmsPage.class, parameters);
                 }
 

@@ -3,6 +3,8 @@ package com.btxtech.game.wicket.pages.cms.content;
 import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.wicket.pages.cms.CmsPage;
+import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.pages.cms.EditPanel;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
@@ -14,7 +16,6 @@ import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulato
 import org.apache.wicket.extensions.markup.html.repeater.data.table.HeaderlessColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.navigation.paging.PagingNavigator;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
@@ -32,11 +33,13 @@ public class ContentList extends Panel {
     @SpringBean
     private CmsUiService cmsUiService;
     private BeanIdPathElement beanIdPathElement;
+    private ContentContext contentContext;
     private int contentId;
 
-    public ContentList(String id, DbContentList dbContentList, BeanIdPathElement beanIdPathElement) {
+    public ContentList(String id, DbContentList dbContentList, BeanIdPathElement beanIdPathElement, ContentContext contentContext) {
         super(id);
         this.beanIdPathElement = beanIdPathElement;
+        this.contentContext = contentContext;
         contentId = dbContentList.getId();
         WebMarkupContainer table = new WebMarkupContainer("table");
         add(table);
@@ -57,7 +60,7 @@ public class ContentList extends Panel {
                 public void populateItem(Item<ICellPopulator<Object>> cellItem, String componentId, IModel<Object> rowModel) {
                     DbContent dbContent = cmsUiService.getDbContent(dbContentId);
                     BeanIdPathElement childBeanIdPathElement = cmsUiService.createChildBeanIdPathElement(dbContent, beanIdPathElement, (CrudChild) rowModel.getObject());
-                    cellItem.add(cmsUiService.getComponent(dbContent, rowModel.getObject(), componentId, childBeanIdPathElement));
+                    cellItem.add(cmsUiService.getComponent(dbContent, rowModel.getObject(), componentId, childBeanIdPathElement, contentContext));
                 }
             });
         }
@@ -88,9 +91,13 @@ public class ContentList extends Panel {
         @SuppressWarnings("unchecked")
         DataGridView dataGridView = new DataGridView("rows", columns, detachHashListProvider);
         table.add(dataGridView);
-        PagingNavigator pagingNavigator = new PagingNavigator("navigator", dataGridView);
+        BookmarkablePagingNavigator pagingNavigator = new BookmarkablePagingNavigator("navigator", dataGridView, beanIdPathElement);
+
         if (dbContentList.isPageable()) {
             dataGridView.setRowsPerPage(dbContentList.getRowsPerPage());
+        }
+        if (contentContext.getPageParameters().containsKey(CmsPage.PAGING_NUMBER)) {
+            dataGridView.setCurrentPage(contentContext.getPageParameters().getInt(CmsPage.PAGING_NUMBER));
         }
         pagingNavigator.setVisible(dbContentList.isPageable());
         add(pagingNavigator);
