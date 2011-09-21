@@ -39,6 +39,7 @@ public class CmsPage extends WebPage implements IHeaderContributor {
     public static final String CREATE_CONTENT_ID = "createId";
     public static final String INVOKE_ID = "invokeId";
     public static final String MESSAGE_ID = "messageId";
+    public static final String PAGING_NUMBER = "paging";
     public static final String JAVA_SCRIPT_DETECTION = "var f = document.createElement('script');\n" +
             "f.setAttribute(\"type\", \"text/javascript\");\n" +
             "f.setAttribute(\"src\", \"/spring/statJS\");\n" +
@@ -73,16 +74,17 @@ public class CmsPage extends WebPage implements IHeaderContributor {
                 return dbPage;
             }
         }));
+        ContentContext contentContext = new ContentContext(pageParameters);
         DbPage dbPage = (DbPage) getDefaultModelObject();
         add(new Label("title", dbPage.getName()));
         add(CmsCssResource.createCss("css", dbPage));
-        add(new Menu("menu", dbPage.getMenu()));
+        add(new Menu("menu", dbPage.getMenu(), contentContext));
         add(new Header("header", dbPage));
         add(new Footer("footer", dbPage));
         add(new Ads("contentRight", dbPage));
         Form form = new Form("form");
         add(form);
-        form.add(cmsUiService.getRootComponent(dbPage, "content", pageParameters));
+        form.add(cmsUiService.getRootComponent(dbPage, "content", contentContext));
         add(new DisplayPageViewLink("componentTree", this));
     }
 
