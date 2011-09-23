@@ -53,7 +53,9 @@ public interface CmsUiService {
 
     void setDataProviderBean(Object value, BeanIdPathElement beanIdPathElement, int contentId);
 
-    List getDataProviderBeans(BeanIdPathElement beanIdPathElement);
+    List getDataProviderBeans(BeanIdPathElement beanIdPathElement, int contentId, ContentContext contentContext);
+
+    String getSortInfo(String columnName, int contentListId, ContentContext contentContext);
 
     EditMode getEditMode(int contentId);
 

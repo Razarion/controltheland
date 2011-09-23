@@ -3,6 +3,10 @@ package com.btxtech.game.services.common;
 import com.btxtech.game.services.user.UserService;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +31,28 @@ public class ReadonlyListContentProvider<T extends CrudChild> implements Content
     @Override
     public List<T> readDbChildren() {
         return list;
+    }
+
+    @Override
+    public Collection<T> readDbChildren(ContentSortList contentSortList) {
+        List<T> sortedList = new ArrayList<T>(list);
+        if (contentSortList != null) {
+            // ComparatorChain 
+            final ContentSort contentSort = contentSortList.getContentSorts().get(0);
+            final NestedNullSafeBeanComparator beanComparator = new NestedNullSafeBeanComparator(contentSort.getPropertyName(), false);
+
+            Collections.sort(sortedList, new Comparator<T>() {
+                @Override
+                public int compare(T o1, T o2) {
+                    if (contentSort.isAsc()) {
+                        return beanComparator.compare(o1, o2);
+                    } else {
+                        return beanComparator.compare(o2, o1);
+                    }
+                }
+            });
+        }
+        return sortedList;
     }
 
     @Override

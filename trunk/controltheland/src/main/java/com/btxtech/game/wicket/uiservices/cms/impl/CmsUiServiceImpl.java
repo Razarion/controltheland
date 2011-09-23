@@ -24,6 +24,7 @@ import com.btxtech.game.services.cms.DbExpressionProperty;
 import com.btxtech.game.services.cms.DbPage;
 import com.btxtech.game.services.cms.EditMode;
 import com.btxtech.game.services.common.ContentProvider;
+import com.btxtech.game.services.common.ContentSortList;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.connection.Session;
@@ -34,6 +35,7 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.WicketApplication;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
+import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.pages.cms.ItemTypeImage;
 import com.btxtech.game.wicket.pages.cms.Message;
 import com.btxtech.game.wicket.pages.cms.WritePanel;
@@ -41,7 +43,6 @@ import com.btxtech.game.wicket.pages.cms.content.ContentActionButton;
 import com.btxtech.game.wicket.pages.cms.content.ContentBook;
 import com.btxtech.game.wicket.pages.cms.content.ContentBooleanExpressionImage;
 import com.btxtech.game.wicket.pages.cms.content.ContentContainer;
-import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.pages.cms.content.ContentCreateEdit;
 import com.btxtech.game.wicket.pages.cms.content.ContentDetailLink;
 import com.btxtech.game.wicket.pages.cms.content.ContentDynamicHtml;
@@ -403,6 +404,14 @@ public class CmsUiServiceImpl implements CmsUiService {
                 } else {
                     throw new IllegalArgumentException("Date value must be Number ore Date: " + value);
                 }
+            case DURATION_HH_MM_SS:
+                if (value instanceof Date) {
+                    return WebCommon.formatDuration(((Date) value).getTime());
+                } else if (value instanceof Number) {
+                    return WebCommon.formatDuration(((Number) value).longValue());
+                } else {
+                    throw new IllegalArgumentException("Date value must be Number ore Date: " + value);
+                }
             default:
                 throw new IllegalArgumentException("Unknown type: " + type);
         }
@@ -479,7 +488,7 @@ public class CmsUiServiceImpl implements CmsUiService {
 
 
     @Override
-    public List getDataProviderBeans(BeanIdPathElement beanIdPathElement) {
+    public List getDataProviderBeans(BeanIdPathElement beanIdPathElement, int contentId, ContentContext contentContext) {
         try {
             ContentProvider contentProvider;
             if (beanIdPathElement.hasContentProviderGetter() && !beanIdPathElement.hasSpringBeanName() && !beanIdPathElement.hasBeanId()) {
@@ -488,7 +497,7 @@ public class CmsUiServiceImpl implements CmsUiService {
             } else {
                 contentProvider = getContentProvider(beanIdPathElement);
             }
-            return new ArrayList(contentProvider.readDbChildren());
+            return new ArrayList(contentProvider.readDbChildren(generateContentOrderList(contentId, contentContext)));
         } catch (NestedNullException e) {
             return Collections.emptyList();
         } catch (Exception e) {
@@ -496,6 +505,72 @@ public class CmsUiServiceImpl implements CmsUiService {
         }
 
     }
+
+    private ContentSortList generateContentOrderList(int contentId, ContentContext contentContext) {
+        DbContentList dbContentList = getDbContent(contentId);
+
+        String sortInfo = contentContext.getContentSortInfoString(contentId);
+        Boolean ascending = null;
+        String sortColumnName = null;
+        if (sortInfo != null) {
+            ascending = sortInfo.charAt(0) == CmsPage.SORT_ASCENDING;
+            sortColumnName = sortInfo.substring(1, sortInfo.length());
+        }
+
+        String sortExpression = null;
+        String defaultSortExpression = null;
+        Boolean defaultSortAsc = null;
+        for (DbContent dbContent : dbContentList.getColumnsCrud().readDbChildren()) {
+            if (!(dbContent instanceof DbExpressionProperty)) {
+                continue;
+            }
+            DbExpressionProperty dbExpressionProperty = (DbExpressionProperty) dbContent;
+            if (!dbExpressionProperty.isSortable()) {
+                continue;
+            }
+            if (dbExpressionProperty.isDefaultSortable()) {
+                if (dbExpressionProperty.getSortHintExpression() != null) {
+                    defaultSortExpression = dbExpressionProperty.getSortHintExpression();
+                } else {
+                    defaultSortExpression = dbExpressionProperty.getExpression();
+                }
+                defaultSortAsc = dbExpressionProperty.isDefaultSortableAsc();
+            }
+            if (sortColumnName != null && dbExpressionProperty.getName().equals(sortColumnName)) {
+                if (dbExpressionProperty.getSortHintExpression() != null) {
+                    sortExpression = dbExpressionProperty.getSortHintExpression();
+                } else {
+                    sortExpression = dbExpressionProperty.getExpression();
+                }
+            }
+        }
+        ContentSortList contentSortList = null;
+        if (sortExpression != null) {
+            contentSortList = new ContentSortList();
+            contentSortList.add(ascending, sortExpression);
+        } else if (defaultSortExpression != null) {
+            contentSortList = new ContentSortList();
+            contentSortList.add(defaultSortAsc, defaultSortExpression);
+        }
+        return contentSortList;
+    }
+
+    @Override
+    public String getSortInfo(String columnName, int contentListId, ContentContext contentContext) {
+        String oldSortInfo = contentContext.getContentSortInfoString(contentListId);
+        String newSortInfo;
+        if (oldSortInfo != null && oldSortInfo.length() > 1 && oldSortInfo.substring(1, oldSortInfo.length()).equals(columnName)) {
+            if (oldSortInfo.charAt(0) == CmsPage.SORT_DESCENDING) {
+                newSortInfo = CmsPage.SORT_ASCENDING + columnName;
+            } else {
+                newSortInfo = CmsPage.SORT_DESCENDING + columnName;
+            }
+        } else {
+            newSortInfo = CmsPage.SORT_DESCENDING + columnName;
+        }
+        return newSortInfo;
+    }
+
 
     private ContentProvider getContentProvider(BeanIdPathElement beanIdPathElement, Object bean) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         return (ContentProvider) PropertyUtils.getProperty(bean, beanIdPathElement.getContentProviderGetter());

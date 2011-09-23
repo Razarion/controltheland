@@ -81,6 +81,10 @@ import com.btxtech.game.services.utg.condition.DbContainedInComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
+import org.apache.wicket.PageParameters;
+import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.util.tester.WicketTester;
 import org.easymock.EasyMock;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
@@ -1438,7 +1442,37 @@ abstract public class AbstractServiceTest {
 
     // ------------------- Div --------------------
 
-    protected void setPrivateField(Class clazz, Object object, String fieldName, Object value) throws Exception {
+    /**
+     * Asserts that that the BookmarkablePageLink identified by "id" points to the page as expected
+     * - including parameters.
+     *
+     * @param id
+     * @param pageClass
+     * @param parameters
+     */
+    protected void assertBookmarkablePageLink(WicketTester wicketTester, final String id,
+                                              final Class<? extends WebPage> pageClass, final PageParameters parameters) {
+        BookmarkablePageLink<?> pageLink = null;
+        try {
+            pageLink = (BookmarkablePageLink<?>) wicketTester.getComponentFromLastRenderedPage(id);
+        }
+        catch (ClassCastException e) {
+            throw new IllegalArgumentException("Component with id:" + id +
+                    " is not a BookmarkablePageLink");
+        }
+
+        junit.framework.Assert.assertEquals("BookmarkablePageLink: " + id + " is pointing to the wrong page",
+                pageClass, pageLink.getPageClass());
+
+        junit.framework.Assert.assertEquals(
+                "One or more of the parameters associated with the BookmarkablePageLink: " + id +
+                        " do not match", parameters, pageLink.getPageParameters());
+    }
+
+
+    // ------------------- Div --------------------
+
+    public static void setPrivateField(Class clazz, Object object, String fieldName, Object value) throws Exception {
         if (AopUtils.isJdkDynamicProxy(object)) {
             object = ((Advised) object).getTargetSource().getTarget();
         }

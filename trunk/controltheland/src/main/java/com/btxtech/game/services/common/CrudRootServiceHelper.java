@@ -13,13 +13,10 @@
 
 package com.btxtech.game.services.common;
 
-import org.hibernate.Criteria;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Order;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * User: beat
@@ -33,7 +30,7 @@ public interface CrudRootServiceHelper<T extends CrudChild> extends ContentProvi
 
     Collection<T> readDbChildren();
 
-    Collection<T> readDbChildren(List<Order> orderList);
+    Collection<T> readDbChildren(ContentSortList contentSortList);
 
     T readDbChild(Serializable id);
 

@@ -40,6 +40,11 @@ public class CrudChildServiceHelper<T extends CrudChild> implements Serializable
     public Collection<T> readDbChildren() {
         return children;
     }
+    
+    @Override
+    public Collection<T> readDbChildren(ContentSortList contentSortList) {
+        return children;
+    }
 
     @Override
     public T readDbChild(Serializable id) {

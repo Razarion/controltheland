@@ -28,6 +28,11 @@ public class ReadonlyCollectionContentProvider<T extends CrudChild> implements C
     }
 
     @Override
+    public Collection<T> readDbChildren(ContentSortList contentSortList) {
+        return readDbChildren();
+    }
+
+    @Override
     public T readDbChild(Serializable id) {
         T t = collection.get(id);
         if (t == null) {

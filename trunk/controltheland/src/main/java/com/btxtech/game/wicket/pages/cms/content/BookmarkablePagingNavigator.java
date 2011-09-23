@@ -1,6 +1,7 @@
 package com.btxtech.game.wicket.pages.cms.content;
 
 import com.btxtech.game.wicket.pages.cms.CmsPage;
+import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.Page;
@@ -22,9 +23,11 @@ public class BookmarkablePagingNavigator extends PagingNavigator {
     private BeanIdPathElement beanIdPathElement;
     @SpringBean
     private CmsUiService cmsUiService;
+    private int contentListId;
 
-    public BookmarkablePagingNavigator(String id, IPageable iPageable, BeanIdPathElement beanIdPathElement) {
+    public BookmarkablePagingNavigator(String id, int contentListId, IPageable iPageable, BeanIdPathElement beanIdPathElement) {
         super(id, iPageable);
+        this.contentListId = contentListId;
         this.beanIdPathElement = beanIdPathElement;
     }
 
@@ -32,7 +35,7 @@ public class BookmarkablePagingNavigator extends PagingNavigator {
     protected AbstractLink newPagingNavigationLink(String id, final IPageable pageable, int pageNumber) {
         PageParameters parameters = cmsUiService.createPageParametersFromBeanId(beanIdPathElement);
         final int idx = getPagingNumber(pageNumber, pageable);
-        parameters.put(CmsPage.PAGING_NUMBER, idx);
+        parameters.put(ContentContext.generatePagingNumberKey(contentListId), idx);
         BookmarkablePageLink<CmsPage> link = new BookmarkablePageLink<CmsPage>(id, CmsPage.class, parameters) {
             public boolean linksTo(final Page page) {
                 return idx == pageable.getCurrentPage();
@@ -49,7 +52,7 @@ public class BookmarkablePagingNavigator extends PagingNavigator {
         idx = Math.max(0, Math.min(pageable.getPageCount() - 1, idx));
 
         PageParameters parameters = cmsUiService.createPageParametersFromBeanId(beanIdPathElement);
-        parameters.put(CmsPage.PAGING_NUMBER, getPagingNumber(idx, pageable));
+        parameters.put(ContentContext.generatePagingNumberKey(contentListId), getPagingNumber(idx, pageable));
         BookmarkablePageLink<CmsPage> link = new BookmarkablePageLink<CmsPage>(id, CmsPage.class, parameters) {
             public boolean linksTo(final Page page) {
                 if (pageable.getCurrentPage() <= 0) {
