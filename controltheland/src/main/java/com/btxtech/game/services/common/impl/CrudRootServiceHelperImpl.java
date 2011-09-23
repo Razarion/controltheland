@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.common.impl;
 
+import com.btxtech.game.services.common.ContentSortList;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.common.NoSuchChildException;
@@ -38,7 +39,6 @@ import java.lang.reflect.Field;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -81,7 +81,7 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
     @Override
     @Transactional(readOnly = true)
     @SuppressWarnings("unchecked")
-    public Collection<T> readDbChildren(final List<Order> orderList) {
+    public Collection<T> readDbChildren(final ContentSortList contentSortList) {
         return hibernateTemplate.executeFind(new HibernateCallback() {
             @Override
             public Object doInHibernate(Session session) throws HibernateException, SQLException {
@@ -90,8 +90,8 @@ public class CrudRootServiceHelperImpl<T extends CrudChild> implements CrudRootS
                 for (Criterion criterion : criterionMap.values()) {
                     criteria.add(criterion);
                 }
-                if (orderList != null && !orderList.isEmpty()) {
-                    for (Order order : orderList) {
+                if (contentSortList != null) {
+                    for (Order order : contentSortList.generateHibernateOrders()) {
                         criteria.addOrder(order);
                     }
                 } else if (orderColumn != null) {

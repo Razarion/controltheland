@@ -13,6 +13,8 @@ import java.util.Collection;
 public interface ContentProvider<T extends CrudChild> {
     Collection<T> readDbChildren();
 
+    Collection<T> readDbChildren(ContentSortList contentSortList);
+
     T readDbChild(Serializable id);
 
     T createDbChild(UserService userService);
@@ -20,4 +22,5 @@ public interface ContentProvider<T extends CrudChild> {
     void deleteDbChild(T child);
 
     void updateDbChild(T t);
+
 }

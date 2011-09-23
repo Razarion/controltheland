@@ -13,13 +13,13 @@ import java.io.Serializable;
  */
 public class CurrentStatisticEntry extends SimpleCrudChild {
     private DbAbstractLevel level;
-    private String user;
+    private User user;
     private String baseName;
-    private String baseUpTime;
-    private int itemCount;
-    private int money;
+    private Long baseUpTime;
+    private Integer itemCount;
+    private Integer money;
 
-    public CurrentStatisticEntry(DbAbstractLevel level, String user, String baseName, String baseUpTime, int itemCount, int money) {
+    public CurrentStatisticEntry(DbAbstractLevel level, User user, String baseName, Long baseUpTime, Integer itemCount, Integer money) {
         this.level = level;
         this.user = user;
         this.baseName = baseName;
@@ -32,7 +32,7 @@ public class CurrentStatisticEntry extends SimpleCrudChild {
         return level;
     }
 
-    public String getUser() {
+    public User getUser() {
         return user;
     }
 
@@ -40,15 +40,15 @@ public class CurrentStatisticEntry extends SimpleCrudChild {
         return baseName;
     }
 
-    public String getBaseUpTime() {
+    public Long getBaseUpTime() {
         return baseUpTime;
     }
 
-    public int getItemCount() {
+    public Integer getItemCount() {
         return itemCount;
     }
 
-    public int getMoney() {
+    public Integer getMoney() {
         return money;
     }
 

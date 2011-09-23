@@ -3,12 +3,10 @@ package com.btxtech.game.wicket.pages.cms.content;
 import com.btxtech.game.services.cms.DbContent;
 import com.btxtech.game.services.cms.DbContentList;
 import com.btxtech.game.services.common.CrudChild;
-import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.pages.cms.EditPanel;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import com.btxtech.game.wicket.uiservices.DetachHashListProvider;
-import com.btxtech.game.wicket.uiservices.TableHead;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.DataGridView;
@@ -78,40 +76,29 @@ public class ContentList extends Panel {
             });
         }
 
-        // Head
-        table.add(new TableHead("tHead", getHeaderNames(dbContentList), dbContentList.getCssClassHead()));
 
         DetachHashListProvider detachHashListProvider = new DetachHashListProvider() {
             @Override
             protected List createList() {
-                return cmsUiService.getDataProviderBeans(beanIdPathElement);
+                return cmsUiService.getDataProviderBeans(beanIdPathElement, contentId, contentContext);
             }
         };
 
         @SuppressWarnings("unchecked")
-        DataGridView dataGridView = new DataGridView("rows", columns, detachHashListProvider);
+        final DataGridView dataGridView = new DataGridView("rows", columns, detachHashListProvider);
+        // Head
+        table.add(new TableHead("tHead", dbContentList, dbContentList.getCssClassHead(), beanIdPathElement, contentContext));
         table.add(dataGridView);
-        BookmarkablePagingNavigator pagingNavigator = new BookmarkablePagingNavigator("navigator", dataGridView, beanIdPathElement);
+        BookmarkablePagingNavigator pagingNavigator = new BookmarkablePagingNavigator("navigator", contentId, dataGridView, beanIdPathElement);
 
         if (dbContentList.isPageable()) {
             dataGridView.setRowsPerPage(dbContentList.getRowsPerPage());
         }
-        if (contentContext.getPageParameters().containsKey(CmsPage.PAGING_NUMBER)) {
-            dataGridView.setCurrentPage(contentContext.getPageParameters().getInt(CmsPage.PAGING_NUMBER));
+        if (contentContext.hasContentPagingNumber(contentId)) {
+            dataGridView.setCurrentPage(contentContext.getContentPagingNumber(contentId));
         }
         pagingNavigator.setVisible(dbContentList.isPageable());
         add(pagingNavigator);
-    }
-
-    private List<String> getHeaderNames(DbContentList dbContentList) {
-        if (!dbContentList.isShowHead()) {
-            return null;
-        }
-        List<String> name = new ArrayList<String>();
-        for (DbContent dbContent : dbContentList.getColumnsCrud().readDbChildren()) {
-            name.add(dbContent.getName());
-        }
-        return name;
     }
 
     @Override

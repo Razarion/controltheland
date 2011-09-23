@@ -12,12 +12,18 @@ import javax.persistence.Entity;
 @DiscriminatorValue("EXPRESSION_PROPERTY")
 public class DbExpressionProperty extends DbContent implements DataProviderInfo {
     public enum Type {
-        DATE_DDMMYYYY_HH_MM_SS
+        DATE_DDMMYYYY_HH_MM_SS,
+        DURATION_HH_MM_SS
     }
+
     private String expression;
     private String springBeanName;
     private boolean escapeMarkup = true;
     private Type optionalType;
+    private boolean sortable = false;
+    private String sortHintExpression;
+    private boolean defaultSortable = false;
+    private boolean defaultSortableAsc = false;
 
     @Override
     public String getExpression() {
@@ -53,5 +59,37 @@ public class DbExpressionProperty extends DbContent implements DataProviderInfo 
 
     public void setOptionalType(Type optionalType) {
         this.optionalType = optionalType;
+    }
+
+    public boolean isSortable() {
+        return sortable;
+    }
+
+    public void setSortable(boolean sortable) {
+        this.sortable = sortable;
+    }
+
+    public String getSortHintExpression() {
+        return sortHintExpression;
+    }
+
+    public void setSortHintExpression(String sortHintExpression) {
+        this.sortHintExpression = sortHintExpression;
+    }
+
+    public boolean isDefaultSortable() {
+        return defaultSortable;
+    }
+
+    public void setDefaultSortable(boolean defaultSortable) {
+        this.defaultSortable = defaultSortable;
+    }
+
+    public boolean isDefaultSortableAsc() {
+        return defaultSortableAsc;
+    }
+
+    public void setDefaultSortableAsc(boolean defaultSortableAsc) {
+        this.defaultSortableAsc = defaultSortableAsc;
     }
 }

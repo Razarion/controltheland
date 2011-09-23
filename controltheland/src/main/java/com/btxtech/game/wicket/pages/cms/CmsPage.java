@@ -40,6 +40,9 @@ public class CmsPage extends WebPage implements IHeaderContributor {
     public static final String INVOKE_ID = "invokeId";
     public static final String MESSAGE_ID = "messageId";
     public static final String PAGING_NUMBER = "paging";
+    public static final String SORT_INFO = "sort";
+    public static final char SORT_ASCENDING = 'a';
+    public static final char SORT_DESCENDING = 'd';
     public static final String JAVA_SCRIPT_DETECTION = "var f = document.createElement('script');\n" +
             "f.setAttribute(\"type\", \"text/javascript\");\n" +
             "f.setAttribute(\"src\", \"/spring/statJS\");\n" +

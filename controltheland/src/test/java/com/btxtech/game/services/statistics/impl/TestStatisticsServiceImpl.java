@@ -7,6 +7,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.common.ContentSortList;
 import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.common.ReadonlyListContentProvider;
 import com.btxtech.game.services.statistics.CurrentStatisticEntry;
@@ -17,7 +18,6 @@ import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import org.easymock.EasyMock;
-import org.hibernate.criterion.Order;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.aop.framework.Advised;
@@ -818,10 +818,9 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
 
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.addOneDay(date).getTime());
-        List<Order> orderList = new ArrayList<Order>();
-        orderList.add(Order.desc("moneyEarned"));
-
-        Collection<DbStatisticsEntry> collection = statisticsService.getDayStatistics().readDbChildren(orderList);
+        ContentSortList contentSortList = new ContentSortList();
+        contentSortList.addDesc("moneyEarned");
+        Collection<DbStatisticsEntry> collection = statisticsService.getDayStatistics().readDbChildren(contentSortList);
 
         Assert.assertEquals(2, collection.size());
         Iterator<DbStatisticsEntry> iterator = collection.iterator();
@@ -864,10 +863,9 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
 
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.addOneDay(date2).getTime());
-        List<Order> orderList = new ArrayList<Order>();
-        orderList.add(Order.desc("moneyEarned"));
-
-        Collection<DbStatisticsEntry> collection = statisticsService.getDayStatistics().readDbChildren(orderList);
+        ContentSortList contentSortList = new ContentSortList();
+        contentSortList.addDesc("moneyEarned");
+        Collection<DbStatisticsEntry> collection = statisticsService.getDayStatistics().readDbChildren(contentSortList);
 
         Assert.assertEquals(1, collection.size());
         Iterator<DbStatisticsEntry> iterator = collection.iterator();
@@ -907,9 +905,9 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         beginHttpRequestAndOpenSessionInViewFilter();
 
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 20).getTime());
-        List<Order> orderList = new ArrayList<Order>();
-        orderList.add(Order.desc("moneyEarned"));
-        Collection<DbStatisticsEntry> collection = statisticsService.getWeekStatistics().readDbChildren(orderList);
+        ContentSortList contentSortList = new ContentSortList();
+        contentSortList.addDesc("moneyEarned");
+        Collection<DbStatisticsEntry> collection = statisticsService.getWeekStatistics().readDbChildren(contentSortList);
 
         Assert.assertEquals(1, collection.size());
         Iterator<DbStatisticsEntry> iterator = collection.iterator();
@@ -920,23 +918,23 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         Assert.assertEquals(DbStatisticsEntry.Type.WEEK, dbStatisticsEntry1.getType());
 
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 19).getTime());
-        Assert.assertEquals(0, statisticsService.getWeekStatistics().readDbChildren(orderList).size());
+        Assert.assertEquals(0, statisticsService.getWeekStatistics().readDbChildren(contentSortList).size());
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 20).getTime());
-        Assert.assertEquals(1, statisticsService.getWeekStatistics().readDbChildren(orderList).size());
+        Assert.assertEquals(1, statisticsService.getWeekStatistics().readDbChildren(contentSortList).size());
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 21).getTime());
-        Assert.assertEquals(1, statisticsService.getWeekStatistics().readDbChildren(orderList).size());
+        Assert.assertEquals(1, statisticsService.getWeekStatistics().readDbChildren(contentSortList).size());
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 22).getTime());
-        Assert.assertEquals(1, statisticsService.getWeekStatistics().readDbChildren(orderList).size());
+        Assert.assertEquals(1, statisticsService.getWeekStatistics().readDbChildren(contentSortList).size());
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 23).getTime());
-        Assert.assertEquals(1, statisticsService.getWeekStatistics().readDbChildren(orderList).size());
+        Assert.assertEquals(1, statisticsService.getWeekStatistics().readDbChildren(contentSortList).size());
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 24).getTime());
-        Assert.assertEquals(1, statisticsService.getWeekStatistics().readDbChildren(orderList).size());
+        Assert.assertEquals(1, statisticsService.getWeekStatistics().readDbChildren(contentSortList).size());
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 25).getTime());
-        Assert.assertEquals(1, statisticsService.getWeekStatistics().readDbChildren(orderList).size());
+        Assert.assertEquals(1, statisticsService.getWeekStatistics().readDbChildren(contentSortList).size());
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 26).getTime());
-        Assert.assertEquals(1, statisticsService.getWeekStatistics().readDbChildren(orderList).size());
+        Assert.assertEquals(1, statisticsService.getWeekStatistics().readDbChildren(contentSortList).size());
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 27).getTime());
-        Assert.assertEquals(0, statisticsService.getWeekStatistics().readDbChildren(orderList).size());
+        Assert.assertEquals(0, statisticsService.getWeekStatistics().readDbChildren(contentSortList).size());
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -960,9 +958,9 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 20).getTime());
-        List<Order> orderList = new ArrayList<Order>();
-        orderList.add(Order.desc("moneyEarned"));
-        Collection<DbStatisticsEntry> collection = statisticsService.getAllTimeStatistics().readDbChildren(orderList);
+        ContentSortList contentSortList = new ContentSortList();
+        contentSortList.addDesc("moneyEarned");
+        Collection<DbStatisticsEntry> collection = statisticsService.getAllTimeStatistics().readDbChildren(contentSortList);
         Assert.assertEquals(1, collection.size());
         Iterator<DbStatisticsEntry> iterator = collection.iterator();
         DbStatisticsEntry dbStatisticsEntry1 = iterator.next();
@@ -979,9 +977,9 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 20).getTime());
-        orderList = new ArrayList<Order>();
-        orderList.add(Order.desc("moneyEarned"));
-        collection = statisticsService.getAllTimeStatistics().readDbChildren(orderList);
+        contentSortList = new ContentSortList();
+        contentSortList.addDesc("moneyEarned");
+        collection = statisticsService.getAllTimeStatistics().readDbChildren(contentSortList);
         Assert.assertEquals(1, collection.size());
         iterator = collection.iterator();
         dbStatisticsEntry1 = iterator.next();
@@ -998,9 +996,9 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 20).getTime());
-        orderList = new ArrayList<Order>();
-        orderList.add(Order.desc("moneyEarned"));
-        collection = statisticsService.getAllTimeStatistics().readDbChildren(orderList);
+        contentSortList = new ContentSortList();
+        contentSortList.addDesc("moneyEarned");
+        collection = statisticsService.getAllTimeStatistics().readDbChildren(contentSortList);
         Assert.assertEquals(1, collection.size());
         iterator = collection.iterator();
         dbStatisticsEntry1 = iterator.next();
@@ -1019,9 +1017,9 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         setPrivateField(StatisticsServiceImpl.class, statisticsService, "nextDay", DateUtil.createDate(2011, Calendar.SEPTEMBER, 20).getTime());
-        orderList = new ArrayList<Order>();
-        orderList.add(Order.desc("moneyEarned"));
-        collection = statisticsService.getAllTimeStatistics().readDbChildren(orderList);
+        contentSortList = new ContentSortList();
+        contentSortList.addDesc("moneyEarned");
+        collection = statisticsService.getAllTimeStatistics().readDbChildren(contentSortList);
         Assert.assertEquals(1, collection.size());
         iterator = collection.iterator();
         dbStatisticsEntry1 = iterator.next();
@@ -1095,7 +1093,7 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
         userState = new UserState();
         userState.setUser(user);
         Base base2 = new Base(userState, 2);
-        base2.setAccountBalance(90);        
+        base2.setAccountBalance(90);
         setPrivateField(Base.class, base2, "startTime", new Date(System.currentTimeMillis() - DateUtil.MILLIS_IN_MINUTE));
         base2.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(1, 1, 1)));
         base2.addItem(createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(100, 100), new Id(2, 1, 1)));
@@ -1122,24 +1120,24 @@ public class TestStatisticsServiceImpl extends AbstractServiceTest {
 
         CurrentStatisticEntry entry = current.readDbChildren().get(0);
         Assert.assertEquals(TEST_LEVEL_1_SIMULATED, entry.getLevel().getName());
-        Assert.assertEquals("-", entry.getUser());
-        Assert.assertEquals(0, entry.getMoney());
-        Assert.assertEquals("-", entry.getBaseName());
-        Assert.assertEquals("-", entry.getBaseUpTime());
-        Assert.assertEquals(0, entry.getItemCount());
+        Assert.assertEquals(null, entry.getUser());
+        Assert.assertEquals(null, entry.getMoney());
+        Assert.assertEquals(null, entry.getBaseName());
+        Assert.assertEquals(null, entry.getBaseUpTime());
+        Assert.assertEquals(null, entry.getItemCount());
         entry = current.readDbChildren().get(1);
         Assert.assertEquals(TEST_LEVEL_2_REAL, entry.getLevel().getName());
-        Assert.assertEquals("-", entry.getUser());
-        Assert.assertEquals(1234, entry.getMoney());
+        Assert.assertEquals(null, entry.getUser());
+        Assert.assertEquals(1234, (int) entry.getMoney());
         Assert.assertEquals("Base 1", entry.getBaseName());
-        Assert.assertEquals("1:00:00", entry.getBaseUpTime());
-        Assert.assertEquals(2, entry.getItemCount());
+        Assert.assertEquals(DateUtil.MILLIS_IN_HOUR, DateUtil.stripOfMillis(entry.getBaseUpTime()));
+        Assert.assertEquals(2, (int) entry.getItemCount());
         entry = current.readDbChildren().get(2);
         Assert.assertEquals(TEST_LEVEL_2_REAL, entry.getLevel().getName());
-        Assert.assertEquals("xxx", entry.getUser());
-        Assert.assertEquals(90, entry.getMoney());
+        Assert.assertEquals("xxx", entry.getUser().getUsername());
+        Assert.assertEquals(90, (int) entry.getMoney());
         Assert.assertEquals("RegUser", entry.getBaseName());
-        Assert.assertEquals("0:01:00", entry.getBaseUpTime());
-        Assert.assertEquals(5, entry.getItemCount()); 
+        Assert.assertEquals(DateUtil.MILLIS_IN_MINUTE, DateUtil.stripOfMillis(entry.getBaseUpTime()));
+        Assert.assertEquals(5, (int) entry.getItemCount());
     }
 }

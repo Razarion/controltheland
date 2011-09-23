@@ -87,4 +87,8 @@ public class DateUtil {
         return new Date(cal.getTimeInMillis());
     }
 
+    public static long stripOfMillis(long time) {
+       return  (time / 1000) * 1000;
+    }
+
 }

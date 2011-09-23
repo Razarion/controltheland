@@ -18,6 +18,7 @@ import com.btxtech.game.services.user.UserService;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -54,10 +55,16 @@ public class CrudListChildServiceHelper<T extends CrudChild> implements Serializ
         this(children, childClass, crudParent, null, null);
     }
 
+    @Override
     public List<T> readDbChildren() {
         return children;
     }
 
+    @Override
+    public Collection<T> readDbChildren(ContentSortList contentSortList) {
+        return children;
+    }
+    
     public T readDbChild(Serializable id) {
         for (T child : children) {
             if (child.getId().equals(id)) {
