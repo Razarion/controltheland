@@ -27,9 +27,9 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.effects.ExplosionHandler;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
+import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -348,8 +348,7 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
     @Override
     public boolean isUnmovableSyncItemOverlapping(BoundingBox boundingBox, Index positionToCheck) {
         for (ClientSyncItem clientSyncItem : items.values()) {
-            if (orphanItems.containsKey(clientSyncItem.getSyncItem().getId()) ||
-                    !seeminglyDeadItems.containsKey(clientSyncItem.getSyncItem().getId())) {
+            if (orphanItems.containsKey(clientSyncItem.getSyncItem().getId()) || seeminglyDeadItems.containsKey(clientSyncItem.getSyncItem().getId())) {
                 continue;
             }
             if (clientSyncItem.isSyncBaseItem()) {

@@ -77,27 +77,29 @@ public class PlaceablePreviewSyncItem extends PlaceablePreviewWidget {
 
     @Override
     protected boolean allowedToPlace(int relX, int relY) {
-        Index relative = Index.createSaveIndex(relX, relY);
+        int offsetX = itemTypeToBuilt.getBoundingBox().getEffectiveWidth() / 2;
+        int offsetY = itemTypeToBuilt.getBoundingBox().getEffectiveHeight() / 2;
+        Index relative = Index.createSaveIndex(relX, relY).add(offsetX, offsetY);
 
         // Check if over cockpit
-        if(itemTypeToBuilt.getBoundingBox().contains(relative, Cockpit.getInstance().getArea())) {
+        if (itemTypeToBuilt.getBoundingBox().contains(relative, Cockpit.getInstance().getArea())) {
             return false;
         }
 
-        // Check terrain
         Index absolute = TerrainView.getInstance().toAbsoluteIndex(relative);
 
+        // Check terrain
         if (!ClientServices.getInstance().getTerrainService().isFree(absolute, itemTypeToBuilt)) {
             return false;
         }
 
         // Check if Item allowed to play in territory
-        if (!ClientTerritoryService.getInstance().isAllowed(relative, itemTypeToBuilt)) {
+        if (!ClientTerritoryService.getInstance().isAllowed(absolute, itemTypeToBuilt)) {
             return false;
         }
 
         // Check if builder is allowed to build in territory
-        if (!ClientTerritoryService.getInstance().isAtLeastOneAllowed(relative, group.getSyncBaseItems())) {
+        if (!ClientTerritoryService.getInstance().isAtLeastOneAllowed(absolute, group.getSyncBaseItems())) {
             return false;
         }
 
