@@ -518,7 +518,10 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
 
     @Override
     public AttackFormationItem getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItemArea target, TerrainType targetTerrainType) {
-        return new AttackFormationItem(syncBaseItem, range, target.getPosition(), syncBaseItem.getSyncItemArea().getTurnToAngel(target), true);
+        double angel = target.getPosition().getAngleToNord(syncBaseItem.getSyncItemArea().getPosition());
+        int radius = syncBaseItem.getSyncItemArea().getBoundingBox().getHeight() / 2 + range + (int)target.getBoundingBox().getMinRadius();
+        Index attackerPos = target.getPosition().getPointFromAngelToNord(angel, radius);
+        return new AttackFormationItem(syncBaseItem, range, attackerPos, angel, true);
     }
 
     public void clear() {
