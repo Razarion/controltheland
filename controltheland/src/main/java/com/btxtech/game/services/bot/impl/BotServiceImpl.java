@@ -26,6 +26,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -87,13 +88,17 @@ public class BotServiceImpl implements BotService {
 
     @Override
     public void activate() {
+        destroy();
+        start();
+    }
+
+    @PreDestroy
+    public void destroy() {
         // Kill all bots
         for (BotRunner botRunner : botRunners.values()) {
             botRunner.kill();
         }
         botRunners.clear();
-
-        start();
     }
 
     public BotRunner getBotRunner(DbBotConfig dbBotConfig) {
