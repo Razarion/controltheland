@@ -543,7 +543,7 @@ public class TestCmsService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void testBlogRead() {
+    public void testBlogRead() throws InterruptedException {
         // Setup CMS content
         int id = setupBlogPage();
 
@@ -562,6 +562,8 @@ public class TestCmsService extends AbstractServiceTest {
         dbBlogEntry1.setName("News 1");
         blogCrud.updateDbChild(dbBlogEntry1);
 
+        Thread.sleep(10); // Make Blog 1 older than blog 2
+
         DbBlogEntry dbBlogEntry2 = blogCrud.createDbChild();
         dbBlogEntry2.setHtml("Blog 2");
         dbBlogEntry2.setName("News 2");
@@ -569,7 +571,6 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        // Activate
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbPage cachePage = cmsService.getPage(id);

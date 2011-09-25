@@ -65,7 +65,7 @@ public class BotRunner {
         if (botConfig.isIntervalBot()) {
             if (botConfig.isIntervalValid()) {
                 intervalState = IntervalState.INACTIVE;
-                timer = new Timer();
+                timer = new Timer("Interval bot timer: " + botConfig.getName(), true);
                 scheduleTimer(botConfig.getMinInactiveMs(), botConfig.getMaxInactiveMs());
             } else {
                 log.warn("Bot has invalid interval configuration: " + botConfig.getName());
@@ -156,7 +156,7 @@ public class BotRunner {
                         } catch (InterruptedException e) {
                             throw e;
                         } catch (Exception e) {
-                            log.error("Bot " + botConfig.getName() + ": " + e.getMessage());
+                            log.error("Bot " + botConfig.getName(), e);
                         }
                     }
                 } catch (InterruptedException e) {

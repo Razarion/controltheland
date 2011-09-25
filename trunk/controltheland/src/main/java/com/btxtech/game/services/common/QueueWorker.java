@@ -37,7 +37,7 @@ public abstract class QueueWorker<T> {
 
     public QueueWorker() {
         buffer = BufferUtils.synchronizedBuffer(new BoundedFifoBuffer(MAX_QUEUE_SIZE));
-        timer = new Timer();
+        timer = new Timer("QueueWorker timer", true);
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
