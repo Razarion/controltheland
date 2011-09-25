@@ -17,6 +17,7 @@ import com.btxtech.game.services.utg.DbAbstractLevel;
 import com.btxtech.game.services.utg.DbRealGameLevel;
 import com.btxtech.game.services.utg.DbSimulationLevel;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -47,6 +48,7 @@ public class DbStartup implements Serializable {
     private Date timeStamp;
     private String level;
     @Column(nullable = false)
+    @Index(name = "TRACKER_STARTUP_INDEX_SESSION")
     private String sessionId;
     private long startupDuration;
     private long clientTimeStamp;

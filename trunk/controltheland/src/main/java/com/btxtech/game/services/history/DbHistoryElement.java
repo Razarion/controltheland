@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.utg.DbAbstractLevel;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -50,7 +51,9 @@ public class DbHistoryElement implements Serializable {
     private long timeStampMs;
     @Column(nullable = false)
     private Type type;
+    @Index(name = "GAME_HISTORY_INDEX_ACTOR_USER")
     private String actorUserName;
+    @Index(name = "GAME_HISTORY_INDEX_TARGET_USER")            
     private String targetUserName;
     private Integer actorBaseId;
     private String actorBaseName;
@@ -58,6 +61,7 @@ public class DbHistoryElement implements Serializable {
     private String targetBaseName;
     private String itemTypeName;
     private String levelName;
+    @Index(name = "GAME_HISTORY_INDEX_SESSION")        
     private String sessionId;
 
     /**

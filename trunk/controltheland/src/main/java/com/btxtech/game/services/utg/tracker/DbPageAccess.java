@@ -13,6 +13,8 @@
 
 package com.btxtech.game.services.utg.tracker;
 
+import org.hibernate.annotations.Index;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
@@ -33,6 +35,7 @@ public class DbPageAccess implements Serializable {
     @Column(nullable = false)
     private Date timeStamp;
     @Column(nullable = false)
+    @Index(name = "TRACKER_PAGE_ACCESS_INDEX_SESSION")
     private String sessionId;
     @Column(nullable = false)
     private String page;
