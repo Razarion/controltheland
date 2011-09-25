@@ -343,7 +343,13 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
         if (clientSyncItem.isSyncBaseItem() && !clientSyncItem.getSyncBaseItem().isReady() && !GwtCommon.isIe6()) {
             SyncBaseItem syncBaseItem = clientSyncItem.getSyncBaseItem();
             int width = (int) (syncBaseItem.getItemType().getBoundingBox().getImageWidth() * syncBaseItem.getBuildup());
+            if (width < 1) {
+                width = 1;
+            }
             int height = (int) (syncBaseItem.getItemType().getBoundingBox().getImageHeight() * syncBaseItem.getBuildup());
+            if (height < 1) {
+                height = 1;
+            }
             image.setPixelSize(width, height);
             int imgX = (syncBaseItem.getItemType().getBoundingBox().getImageWidth() - width) / 2;
             int imgY = (syncBaseItem.getItemType().getBoundingBox().getImageHeight() - height) / 2;
