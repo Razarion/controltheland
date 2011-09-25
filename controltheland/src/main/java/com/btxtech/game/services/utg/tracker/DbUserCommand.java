@@ -15,6 +15,7 @@ package com.btxtech.game.services.utg.tracker;
 
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.services.connection.Connection;
+import org.hibernate.annotations.Index;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,6 +40,7 @@ public class DbUserCommand implements Serializable {
     @Column(nullable = false)
     private long clientTimeStamp;
     @Column(nullable = false)
+    @Index(name = "TRACKER_USER_COMMAND_INDEX_SESSION")    
     private String sessionId;
     @Column(nullable = false)
     private String interaction;
