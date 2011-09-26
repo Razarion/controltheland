@@ -18,6 +18,14 @@ import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.mgmt.cms.Cms;
 import com.btxtech.game.wicket.pages.mgmt.tracking.SessionTable;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.TutorialTable;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.spring.injection.annot.SpringBean;
+
 import java.io.Serializable;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
@@ -25,12 +33,6 @@ import java.lang.management.MemoryUsage;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.Link;
-import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
-import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
  * User: beat
@@ -57,6 +59,17 @@ public class MgmtPage extends MgmtWebPage {
         add(new Label("noHeapUsed", bytesToMega(noHeapMemoryUsage.getUsed())));
         add(new Label("noHeapCommitted", bytesToMega(noHeapMemoryUsage.getCommitted())));
         add(new Label("noHeapMax", bytesToMega(noHeapMemoryUsage.getMax())));
+
+        Form form = new Form("gcForm");
+        add(form);
+        form.add(new Button("runGc") {
+
+            @Override
+            public void onSubmit() {
+                Runtime.getRuntime().gc();
+                setResponsePage(MgmtPage.class);
+            }
+        });
 
         setupToolList();
     }
