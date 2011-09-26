@@ -203,7 +203,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isRegistered() {
-        return getUserState().isRegistered();
+        return hasUserState() && getUserState().isRegistered();
     }
 
     @Override
@@ -345,6 +345,10 @@ public class UserServiceImpl implements UserService {
             userGuidanceService.setLevelForNewUser(userState);
         }
         return session.getUserState();
+    }
+
+    private boolean hasUserState() {
+        return session.getUserState() != null;
     }
 
     @Override
