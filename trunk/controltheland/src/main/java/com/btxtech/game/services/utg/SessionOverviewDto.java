@@ -30,7 +30,6 @@ public class SessionOverviewDto {
     private boolean startupFailure;
     private int commands;
     private int levelPromotions;
-    private String cookie;
     private String referer;
 
     public SessionOverviewDto(Date date,
@@ -40,7 +39,6 @@ public class SessionOverviewDto {
                        int successfulStarts,
                        boolean startupFailure, int commands,
                        int levelPromotions,
-                       String cookie,
                        String referer) {
         this.date = date;
         this.sessionId = sessionId;
@@ -50,7 +48,6 @@ public class SessionOverviewDto {
         this.startupFailure = startupFailure;
         this.commands = commands;
         this.levelPromotions = levelPromotions;
-        this.cookie = cookie;
         if (referer != null && referer.length() > MAX_REFERER_LENGTH) {
             this.referer = referer.substring(0, MAX_REFERER_LENGTH);
         } else {
@@ -76,10 +73,6 @@ public class SessionOverviewDto {
 
     public int getCommands() {
         return commands;
-    }
-
-    public String getCookie() {
-        return cookie;
     }
 
     public String getReferer() {

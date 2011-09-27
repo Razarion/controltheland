@@ -33,16 +33,16 @@
             <td valign="top"><input wicket:id="days" type="text" size="6" maxlength="6"></td>
         </tr>
         <tr>
-            <td valign="top">Cookie</td>
-            <td><span valign="top" wicket:id="cookieEnabled"></span></td>
-        </tr>
-        <tr>
             <td valign="top">Page Hits (>=)</td>
             <td valign="top"><input wicket:id="hits" type="text" size="6" maxlength="6"></td>
         </tr>
         <tr>
             <td valign="top">Session Id</td>
             <td valign="top"><input wicket:id="sessionId" type="text" size="40"></td>
+        </tr>
+        <tr>
+            <td valign="top">Cookie Id</td>
+            <td valign="top"><input wicket:id="cookieId" type="text" size="40"></td>
         </tr>
         <tr>
             <td colspan="2" align="center">
@@ -62,7 +62,6 @@
         <th bgcolor="#dadada">F</th>
         <th bgcolor="#dadada">Promotions</th>
         <th bgcolor="#dadada">Commands</th>
-        <th bgcolor="#dadada">Cookie</th>
         <th bgcolor="#dadada">Session Id</th>
         <th bgcolor="#dadada">Referer</th>
     </tr>
@@ -74,7 +73,6 @@
         <td align="right" style="font-weight:bold;color:red;" wicket:id="startupFailure"/>
         <td align="right" wicket:id="levelPromotions"/>
         <td align="right" wicket:id="commands"/>
-        <td align="right" wicket:id="cookie"/>
         <td align="right">
             <a href="" wicket:id="visitorLink" target="_blank"><span wicket:id="sessionId">xxx</span></a>
         </td>

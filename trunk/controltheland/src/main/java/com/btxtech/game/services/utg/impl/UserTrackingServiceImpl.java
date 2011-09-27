@@ -185,6 +185,10 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         if (filter.getSessionId() != null && !filter.getSessionId().trim().isEmpty()) {
             criteria.add(Restrictions.eq("sessionId", filter.getSessionId()));
         }
+        if (filter.getCookieId() != null && !filter.getCookieId().trim().isEmpty()) {
+            criteria.add(Restrictions.eq("cookieId", filter.getCookieId()));
+        }
+
         criteria.addOrder(Order.desc("timeStamp"));
         List<DbSessionDetail> browserDetails = criteria.list();
 
@@ -202,7 +206,6 @@ public class UserTrackingServiceImpl implements UserTrackingService {
                     failure,
                     commands,
                     levelPromotions,
-                    browserDetail.getCookieId(),
                     browserDetail.getReferer()));
         }
         return sessionOverviewDtos;
