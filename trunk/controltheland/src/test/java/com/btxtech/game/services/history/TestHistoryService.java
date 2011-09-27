@@ -5,12 +5,16 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
+import com.btxtech.game.services.history.impl.HistoryServiceImpl;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.user.UserService;
+import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -379,8 +383,91 @@ public class TestHistoryService extends AbstractServiceTest {
         System.out.println("----- Actor End -----");
         Assert.assertEquals(4, displayHistoryElements.size());
         Assert.assertTrue(displayHistoryElements.get(0).getTimeStamp() >= displayHistoryElements.get(1).getTimeStamp());
-        Assert.assertEquals(TEST_START_BUILDER_ITEM  + " has been sold", displayHistoryElements.get(0).getMessage());
+        Assert.assertEquals(TEST_START_BUILDER_ITEM + " has been sold", displayHistoryElements.get(0).getMessage());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
+    public void dbHistoryElementBaseSurrenderedHuman() throws Exception {
+        configureMinimalGame();
+
+        SimpleBase humanBase1 = new SimpleBase(1);
+        SimpleBase humanBase2 = new SimpleBase(2);
+        SimpleBase botBase1 = new SimpleBase(3);
+        SimpleBase botBase2 = new SimpleBase(4);
+        SyncBaseItem humanBaseItem = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(500, 500), new Id(1, 1, 1), humanBase1);
+        SyncBaseItem botBaseItem = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(500, 500), new Id(2, 1, 1), botBase1);
+
+        BaseService baseService = EasyMock.createNiceMock(BaseService.class);
+        EasyMock.expect(baseService.isBot(humanBase1)).andReturn(false).anyTimes();
+        EasyMock.expect(baseService.isBot(botBase1)).andReturn(true).anyTimes();
+        EasyMock.expect(baseService.isBot(humanBase2)).andReturn(false).anyTimes();
+        EasyMock.expect(baseService.isBot(botBase2)).andReturn(true).anyTimes();
+        EasyMock.replay(baseService);
+        setPrivateField(HistoryServiceImpl.class, historyService, "baseService", baseService);
+
+        historyService.addBaseSurrenderedEntry(humanBase1);
+        checkSource(DbHistoryElement.Source.HUMAN);
+
+        historyService.addBaseSurrenderedEntry(botBase1);
+        checkSource(DbHistoryElement.Source.BOT);
+
+        historyService.addBaseDefeatedEntry(humanBase1, humanBase2);
+        checkSource(DbHistoryElement.Source.HUMAN);
+
+        historyService.addBaseDefeatedEntry(botBase1, botBase2);
+        checkSource(DbHistoryElement.Source.BOT);
+
+        historyService.addBaseDefeatedEntry(humanBase1, botBase1);
+        checkSource(DbHistoryElement.Source.HUMAN);
+
+        historyService.addBaseDefeatedEntry(botBase1, humanBase1);
+        checkSource(DbHistoryElement.Source.HUMAN);
+
+        historyService.addBaseDefeatedEntry(null, humanBase1);
+        checkSource(DbHistoryElement.Source.HUMAN);
+
+        historyService.addBaseDefeatedEntry(null, botBase1);
+        checkSource(DbHistoryElement.Source.BOT);
+
+        historyService.addBaseStartEntry(humanBase1);
+        checkSource(DbHistoryElement.Source.HUMAN);
+
+        historyService.addBaseStartEntry(botBase1);
+        checkSource(DbHistoryElement.Source.BOT);
+
+        historyService.addItemCreatedEntry(humanBaseItem);
+        checkSource(DbHistoryElement.Source.HUMAN);
+
+        historyService.addItemCreatedEntry(botBaseItem);
+        checkSource(DbHistoryElement.Source.BOT);
+
+        historyService.addItemDestroyedEntry(humanBase2, humanBaseItem);
+        checkSource(DbHistoryElement.Source.HUMAN);
+
+        historyService.addItemDestroyedEntry(botBase1, humanBaseItem);
+        checkSource(DbHistoryElement.Source.HUMAN);
+
+        historyService.addItemDestroyedEntry(humanBase1, botBaseItem);
+        checkSource(DbHistoryElement.Source.HUMAN);
+
+        historyService.addItemDestroyedEntry(botBase2, botBaseItem);
+        checkSource(DbHistoryElement.Source.BOT);
+
+        historyService.addItemDestroyedEntry(null, humanBaseItem);
+        checkSource(DbHistoryElement.Source.HUMAN);
+
+        historyService.addItemDestroyedEntry(null, botBaseItem);
+        checkSource(DbHistoryElement.Source.BOT);
+    }
+
+    private void checkSource(DbHistoryElement.Source source) {
+        List<DbHistoryElement> dbHistoryElements;
+        dbHistoryElements = getHibernateTemplate().loadAll(DbHistoryElement.class);
+        Assert.assertEquals(1, dbHistoryElements.size());
+        Assert.assertEquals(source, dbHistoryElements.get(0).getSource());
+        getHibernateTemplate().deleteAll(dbHistoryElements);
     }
 }
