@@ -18,11 +18,12 @@ import com.btxtech.game.services.utg.UserTrackingFilter;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RadioChoice;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.link.Link;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -59,6 +60,7 @@ public class SessionTable extends MgmtWebPage {
         form.add(new TextField("days"));
         form.add(new RadioChoice<UserTrackingFilter>("cookieEnabled", UserTrackingFilter.COOKIE_ENABLED_CHOICES));
         form.add(new TextField("hits"));
+        form.add(new TextField("sessionId"));
     }
 
     private void resultTable() {
@@ -84,7 +86,7 @@ public class SessionTable extends MgmtWebPage {
             }
         }) {
             @Override
-            protected void populateItem(final ListItem<SessionOverviewDto> listItem) {
+            protected void populateItem(ListItem<SessionOverviewDto> listItem) {
                 listItem.add(new Label("date", simpleDateFormat.format(listItem.getModelObject().getDate())));
                 listItem.add(new Label("pageHits", Integer.toString(listItem.getModelObject().getPageHits())));
                 listItem.add(new Label("enterGame", Integer.toString(listItem.getModelObject().getEnterGameHits())));
@@ -93,13 +95,9 @@ public class SessionTable extends MgmtWebPage {
                 listItem.add(new Label("commands", Integer.toString(listItem.getModelObject().getCommands())));
                 listItem.add(new Label("levelPromotions", Integer.toString(listItem.getModelObject().getLevelPromotions())));
                 listItem.add(new Label("cookie", listItem.getModelObject().getCookie() != null ? "Yes" : ""));
-                Link link = new Link("visitorLink") {
-
-                    @Override
-                    public void onClick() {
-                        setResponsePage(new SessionDetail(listItem.getModelObject().getSessionId()));
-                    }
-                };
+                PageParameters pageParameters = new PageParameters();
+                pageParameters.add(SessionDetail.SESSION_KEY, listItem.getModelObject().getSessionId());
+                BookmarkablePageLink<SessionDetail> link = new BookmarkablePageLink<SessionDetail>("visitorLink", SessionDetail.class, pageParameters);
                 link.add(new Label("sessionId", listItem.getModelObject().getSessionId()));
                 listItem.add(link);
                 listItem.add(new Label("referer", listItem.getModelObject().getReferer()));

@@ -172,6 +172,67 @@ public class TestTracking extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
+    public void tesSessionFilter() throws Exception {
+        configureMinimalGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        String sessionId1 = getHttpSessionId();
+        userTrackingService.pageAccess("Page 1");
+        userTrackingService.onJavaScriptDetected();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        String sessionId2 = getHttpSessionId();
+        userTrackingService.pageAccess("Page 1");
+        userTrackingService.onJavaScriptDetected();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        String sessionId3 = getHttpSessionId();
+        userTrackingService.pageAccess("Page 1");
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        List<SessionOverviewDto> sessionOverviewDto = userTrackingService.getSessionOverviewDtos(UserTrackingFilter.newDefaultFilter());
+        Assert.assertEquals(2, sessionOverviewDto.size());
+
+        UserTrackingFilter userTrackingFilter = UserTrackingFilter.newDefaultFilter();
+        userTrackingFilter.setJsEnabled(UserTrackingFilter.BOTH);
+        sessionOverviewDto = userTrackingService.getSessionOverviewDtos(userTrackingFilter);
+        Assert.assertEquals(3, sessionOverviewDto.size());
+
+        userTrackingFilter = UserTrackingFilter.newDefaultFilter();
+        userTrackingFilter.setSessionId(sessionId1);
+        sessionOverviewDto = userTrackingService.getSessionOverviewDtos(userTrackingFilter);
+        Assert.assertEquals(1, sessionOverviewDto.size());
+        Assert.assertEquals(sessionId1, sessionOverviewDto.get(0).getSessionId());
+
+        userTrackingFilter = UserTrackingFilter.newDefaultFilter();
+        userTrackingFilter.setSessionId(sessionId2);
+        sessionOverviewDto = userTrackingService.getSessionOverviewDtos(userTrackingFilter);
+        Assert.assertEquals(1, sessionOverviewDto.size());
+        Assert.assertEquals(sessionId2, sessionOverviewDto.get(0).getSessionId());
+
+        userTrackingFilter = UserTrackingFilter.newDefaultFilter();
+        userTrackingFilter.setSessionId(sessionId3);
+        sessionOverviewDto = userTrackingService.getSessionOverviewDtos(userTrackingFilter);
+        Assert.assertEquals(0, sessionOverviewDto.size());
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+
+    @Test
+    @DirtiesContext
     public void testTutorialTracking() throws Exception {
         configureMinimalGame();
 
@@ -517,5 +578,4 @@ public class TestTracking extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
-
 }

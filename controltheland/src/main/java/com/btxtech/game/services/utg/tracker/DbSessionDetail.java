@@ -13,6 +13,8 @@
 
 package com.btxtech.game.services.utg.tracker;
 
+import org.hibernate.annotations.Index;
+
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -35,6 +37,7 @@ public class DbSessionDetail implements Serializable {
     @Column(nullable = false)
     private Date timeStamp;
     @Column(nullable = false)
+    @Index(name = "TRACKER_BROWSER_DETAILS_INDEX_SESSION")        
     private String sessionId;
     @Column(length = 10000)
     private String userAgent;

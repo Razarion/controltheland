@@ -32,6 +32,7 @@ public class UserTrackingFilter implements Serializable {
     private int days;
     private String cookieEnabled;
     private Integer hits;
+    private String sessionId;
 
     public static UserTrackingFilter newDefaultFilter() {
         UserTrackingFilter userTrackingFilter = new UserTrackingFilter();
@@ -71,5 +72,13 @@ public class UserTrackingFilter implements Serializable {
 
     public void setHits(Integer hits) {
         this.hits = hits;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 }

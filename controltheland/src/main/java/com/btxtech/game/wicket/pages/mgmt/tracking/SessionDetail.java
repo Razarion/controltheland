@@ -13,13 +13,14 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tracking;
 
-import com.btxtech.game.services.utg.SessionDetailDto;
-import com.btxtech.game.services.utg.tracker.DbSessionDetail;
 import com.btxtech.game.services.utg.LifecycleTrackingInfo;
-import com.btxtech.game.services.utg.tracker.DbPageAccess;
+import com.btxtech.game.services.utg.SessionDetailDto;
 import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.services.utg.tracker.DbPageAccess;
+import com.btxtech.game.services.utg.tracker.DbSessionDetail;
 import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
+import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
@@ -33,10 +34,16 @@ import java.util.Date;
  * Time: 10:31:43 PM
  */
 public class SessionDetail extends MgmtWebPage {
+    public static final String SESSION_KEY = "sessionId";
     @SpringBean
     private UserTrackingService userTrackingService;
 
-    public SessionDetail(String sessionId) {
+    public SessionDetail(PageParameters parameters) {
+        super(parameters);
+        String sessionId = parameters.getString(SESSION_KEY);
+        if (sessionId == null) {
+            throw new IllegalArgumentException(SESSION_KEY + " must be available in the PageParameters");
+        }
         SessionDetailDto sessionDetailDto = userTrackingService.getSessionDetailDto(sessionId);
 
         userInfo(sessionId, sessionDetailDto);
@@ -72,7 +79,7 @@ public class SessionDetail extends MgmtWebPage {
         ListView<LifecycleTrackingInfo> gameTrackingInfoList = new ListView<LifecycleTrackingInfo>("detailTrackings", sessionDetailDto.getLifecycleTrackingInfos()) {
             @Override
             protected void populateItem(ListItem<LifecycleTrackingInfo> listItem) {
-                if(listItem.getModelObject().isRealGame()) {
+                if (listItem.getModelObject().isRealGame()) {
                     listItem.add(new RealGameTracking("detailTracking", listItem.getModelObject()));
                 } else {
                     listItem.add(new TutorialTracking("detailTracking", listItem.getModelObject()));

@@ -182,6 +182,9 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             criteria.add(Restrictions.eq("javaScriptDetected", filter.getJsEnabled().equals(UserTrackingFilter.ENABLED)));
         }
         criteria.add(Restrictions.gt("timeStamp", gregorianCalendar.getTime()));
+        if (filter.getSessionId() != null && !filter.getSessionId().trim().isEmpty()) {
+            criteria.add(Restrictions.eq("sessionId", filter.getSessionId()));
+        }
         criteria.addOrder(Order.desc("timeStamp"));
         List<DbSessionDetail> browserDetails = criteria.list();
 
