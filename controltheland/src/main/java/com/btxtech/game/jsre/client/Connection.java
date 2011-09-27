@@ -64,8 +64,10 @@ import java.util.List;
  * Time: 11:23:52 AM
  */
 public class Connection implements AsyncCallback<Void>, StartupProgressListener {
+    public static final int MAX_DISCONNECTION_COUNT = 20;
     public static final int MIN_DELAY_BETWEEN_POLL = 200;
     public static final int STATISTIC_DELAY = 10000;
+    private static final String CONNECTION_DIALOG = "Lost connection to game server.<br />Try to reload the page.<br />You may have to login again.";
     public static final Connection INSTANCE = new Connection();
     private boolean isRegistered;
     private GameInfo gameInfo;
@@ -74,6 +76,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
 
     private MovableServiceAsync movableServiceAsync = GWT.create(MovableService.class);
     private Timer timer;
+    private int disconnectionCount = 0;
 
     static public Connection getInstance() {
         return INSTANCE;
@@ -98,6 +101,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
 
                 @Override
                 public void onSuccess(GameInfo gameInfo) {
+                    disconnectionCount = 0;
                     Connection.this.gameInfo = gameInfo;
                     deferredStartup.finished();
                 }
@@ -128,6 +132,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
 
                 @Override
                 public void onSuccess(Collection<SyncItemInfo> syncInfos) {
+                    disconnectionCount = 0;
                     if (syncInfos != null) {
                         Connection.this.syncInfos = syncInfos;
                         deferredStartup.finished();
@@ -165,20 +170,27 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
         movableServiceAsync.getSyncInfo(new AsyncCallback<Collection<Packet>>() {
             @Override
             public void onFailure(Throwable throwable) {
-                handleDisconnection(throwable);
+                if (!handleDisconnection(throwable)) {
+                    scheduleTimer();
+                }
             }
 
             @Override
             public void onSuccess(Collection<Packet> packets) {
                 try {
+                    disconnectionCount = 0;
                     handlePackets(packets);
                 } finally {
-                    if (timer != null) {
-                        timer.schedule(MIN_DELAY_BETWEEN_POLL);
-                    }
+                    scheduleTimer();
                 }
             }
         });
+    }
+
+    private void scheduleTimer() {
+        if (timer != null) {
+            timer.schedule(MIN_DELAY_BETWEEN_POLL);
+        }
     }
 
     private void handlePackets(Collection<Packet> packets) {
@@ -323,10 +335,20 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
 
     @Override
     public void onSuccess(Void result) {
-        // Ignore
+        disconnectionCount = 0;
     }
 
-    private void handleDisconnection(Throwable throwable) {
+    private boolean handleDisconnection(Throwable throwable) {
+        if (GwtCommon.checkAndReportHttpStatusCode0(throwable)) {
+            disconnectionCount++;
+            if (disconnectionCount < MAX_DISCONNECTION_COUNT) {
+                return false;
+            }
+            movableServiceAsync = null;
+            GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected due to HTTP status code 0");
+            DialogManager.showDialog(new MessageDialog(CONNECTION_DIALOG), DialogManager.Type.PROMPTLY);
+        }
+
         if (throwable instanceof NotYourBaseException) {
             movableServiceAsync = null;
             DialogManager.showDialog(new MessageDialog("Not your Base: Most likely you start another<br />base in another browser window"), DialogManager.Type.PROMPTLY);
@@ -335,7 +357,9 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
         } else {
             movableServiceAsync = null;
             GwtCommon.handleException(throwable);
+            DialogManager.showDialog(new MessageDialog(CONNECTION_DIALOG), DialogManager.Type.PROMPTLY);
         }
+        return true;
     }
 
     public static boolean isConnected() {

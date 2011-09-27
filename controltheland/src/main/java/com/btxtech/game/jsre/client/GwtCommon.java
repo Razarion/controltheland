@@ -26,6 +26,7 @@ import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.StatusCodeException;
+
 import java.util.Date;
 
 public class GwtCommon {
@@ -41,6 +42,15 @@ public class GwtCommon {
         });
     }
 
+    public static boolean checkAndReportHttpStatusCode0(Throwable t) {
+        if (t instanceof StatusCodeException && ((StatusCodeException) t).getStatusCode() == 0) {
+            sendLogViaLoadScriptCommunication("HTTP status code 0 detected");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public static void handleException(Throwable t) {
         handleException(null, t, false);
     }
@@ -54,9 +64,6 @@ public class GwtCommon {
     }
 
     public static void handleException(String message, Throwable t, boolean showDialog) {
-        if (t instanceof StatusCodeException) {
-            System.out.println("StatusCodeException status code: " + ((StatusCodeException) t).getStatusCode());
-        }
         if (showDialog) {
             if (exceptionDialog != null) {
                 exceptionDialog.hide(true);
@@ -97,11 +104,6 @@ public class GwtCommon {
     public static void setupStackTrace(StringBuilder builder, Throwable throwable, boolean isCause) {
         if (isCause) {
             builder.append("Caused by: ");
-        }
-        if (throwable instanceof StatusCodeException) {
-            builder.append("StatusCodeException status code: ");
-            builder.append(((StatusCodeException) throwable).getStatusCode());
-            builder.append("\n");
         }
         builder.append(throwable.toString());
         builder.append("\n");
