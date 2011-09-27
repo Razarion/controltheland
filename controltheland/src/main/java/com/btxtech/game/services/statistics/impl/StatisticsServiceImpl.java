@@ -124,6 +124,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Transactional
     public void cleanup() {
         moveCacheToDb();
+        scheduledThreadPoolExecutor.shutdownNow();
     }
 
     @Autowired

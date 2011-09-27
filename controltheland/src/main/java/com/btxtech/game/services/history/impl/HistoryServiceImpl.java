@@ -65,6 +65,16 @@ public class HistoryServiceImpl implements HistoryService {
         hibernateTemplate = new HibernateTemplate(sessionFactory);
     }
 
+    private DbHistoryElement.Source determineSource(SimpleBase actor, SimpleBase target) {
+        if (actor != null && !baseService.isBot(actor)) {
+            return DbHistoryElement.Source.HUMAN;
+        }
+        if (target != null && !baseService.isBot(target)) {
+            return DbHistoryElement.Source.HUMAN;
+        }
+        return DbHistoryElement.Source.BOT;
+    }
+
     @Override
     public void addBaseStartEntry(SimpleBase simpleBase) {
         save(new DbHistoryElement(DbHistoryElement.Type.BASE_STARTED,
@@ -75,7 +85,8 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 baseService,
-                getSessionId(simpleBase)));
+                getSessionId(simpleBase),
+                determineSource(simpleBase, null)));
     }
 
     @Override
@@ -88,7 +99,8 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 baseService,
-                getSessionId(actor)));
+                getSessionId(actor),
+                determineSource(actor, target)));
     }
 
     @Override
@@ -101,7 +113,8 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 null,
                 baseService,
-                getSessionId(simpleBase)));
+                getSessionId(simpleBase),
+                determineSource(simpleBase, null)));
     }
 
     @Override
@@ -114,7 +127,8 @@ public class HistoryServiceImpl implements HistoryService {
                 syncBaseItem,
                 null,
                 baseService,
-                getSessionId(syncBaseItem.getBase())));
+                getSessionId(syncBaseItem.getBase()),
+                determineSource(syncBaseItem.getBase(), null)));
     }
 
     @Override
@@ -127,7 +141,8 @@ public class HistoryServiceImpl implements HistoryService {
                 target,
                 null,
                 baseService,
-                getSessionId(actor)));
+                getSessionId(actor),
+                determineSource(actor, target.getBase())));
     }
 
     @Override
@@ -140,7 +155,8 @@ public class HistoryServiceImpl implements HistoryService {
                 null,
                 level,
                 baseService,
-                userState.getSessionId()));
+                userState.getSessionId(),
+                DbHistoryElement.Source.HUMAN));
     }
 
     private String getSessionId(SimpleBase simpleBase) {
@@ -306,7 +322,7 @@ public class HistoryServiceImpl implements HistoryService {
     @Override
     public ReadonlyListContentProvider<DisplayHistoryElement> getNewestHistoryElements() {
         User user = userService.getUser();
-        if(user != null) {
+        if (user != null) {
             return new ReadonlyListContentProvider<DisplayHistoryElement>(getNewestHistoryElements(user, NEWEST_HISTORY_ELEMENT_COUNT));
         } else {
             return new ReadonlyListContentProvider<DisplayHistoryElement>(Collections.<DisplayHistoryElement>emptyList());

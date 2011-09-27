@@ -43,6 +43,11 @@ public class DbHistoryElement implements Serializable {
         LEVEL_PROMOTION
     }
 
+    public enum Source {
+        HUMAN,
+        BOT
+    }
+
     @Id
     @GeneratedValue
     private Integer id;
@@ -53,7 +58,7 @@ public class DbHistoryElement implements Serializable {
     private Type type;
     @Index(name = "GAME_HISTORY_INDEX_ACTOR_USER")
     private String actorUserName;
-    @Index(name = "GAME_HISTORY_INDEX_TARGET_USER")            
+    @Index(name = "GAME_HISTORY_INDEX_TARGET_USER")
     private String targetUserName;
     private Integer actorBaseId;
     private String actorBaseName;
@@ -61,8 +66,9 @@ public class DbHistoryElement implements Serializable {
     private String targetBaseName;
     private String itemTypeName;
     private String levelName;
-    @Index(name = "GAME_HISTORY_INDEX_SESSION")        
+    @Index(name = "GAME_HISTORY_INDEX_SESSION")
     private String sessionId;
+    private Source source;
 
     /**
      * Used by hibernate
@@ -70,7 +76,7 @@ public class DbHistoryElement implements Serializable {
     protected DbHistoryElement() {
     }
 
-    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncBaseItem syncBaseItem, DbAbstractLevel level, BaseService baseService, String sessionId) {
+    public DbHistoryElement(Type type, User actorUser, User targetUser, SimpleBase actorBase, SimpleBase targetBase, SyncBaseItem syncBaseItem, DbAbstractLevel level, BaseService baseService, String sessionId, Source source) {
         this.sessionId = sessionId;
         timeStamp = new Date();
         timeStampMs = timeStamp.getTime();
@@ -83,6 +89,7 @@ public class DbHistoryElement implements Serializable {
         targetBaseName = targetBase != null ? baseService.getBaseName(targetBase) : null;
         itemTypeName = syncBaseItem != null ? syncBaseItem.getBaseItemType().getName() : null;
         levelName = level != null ? level.getName() : null;
+        this.source = source;
     }
 
     public Integer getId() {
@@ -135,6 +142,10 @@ public class DbHistoryElement implements Serializable {
 
     public Integer getTargetBaseId() {
         return targetBaseId;
+    }
+
+    public Source getSource() {
+        return source;
     }
 
     @Override
