@@ -17,8 +17,11 @@ import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.wicket.pages.cms.CmsPage;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
+import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
@@ -33,12 +36,11 @@ import java.util.Arrays;
  * Date: Jun 1, 2009
  * Time: 12:10:57 AM
  */
-public class Game extends WebPage {
+public class Game extends WebPage implements IHeaderContributor {
     private static final String WORKING = "working.gif";
     private static final String FINISHED = "finished.png";
     private static final String FAILED = "failed.png";
     private static final String WORKING_BLACK = "working_black.gif";
-
     @SpringBean
     private UserTrackingService userTrackingService;
     @SpringBean
@@ -107,5 +109,12 @@ public class Game extends WebPage {
     protected void onBeforeRender() {
         super.onBeforeRender();
         userTrackingService.pageAccess(getClass());
+    }
+
+    @Override
+    public void renderHead(IHeaderResponse iHeaderResponse) {
+        if (!userTrackingService.isJavaScriptDetected()) {
+            iHeaderResponse.renderJavascript(CmsPage.JAVA_SCRIPT_DETECTION, null);
+        }
     }
 }
