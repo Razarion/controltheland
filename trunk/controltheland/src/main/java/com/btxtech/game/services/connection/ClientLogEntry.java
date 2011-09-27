@@ -99,7 +99,7 @@ public class ClientLogEntry {
         StringBuilder builder = new StringBuilder();
         builder.append("CLIENT LOG ENTRY ---------------------------\n");
 
-        builder.append("Cleint Time: ");
+        builder.append("Client Time: ");
         builder.append(clientTimeStamp);
         builder.append("\n");
 
