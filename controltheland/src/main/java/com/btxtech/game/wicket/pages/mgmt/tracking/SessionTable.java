@@ -58,9 +58,9 @@ public class SessionTable extends MgmtWebPage {
         add(form);
         form.add(new RadioChoice<UserTrackingFilter>("jsEnabled", UserTrackingFilter.JS_ENABLED_CHOICES));
         form.add(new TextField("days"));
-        form.add(new RadioChoice<UserTrackingFilter>("cookieEnabled", UserTrackingFilter.COOKIE_ENABLED_CHOICES));
         form.add(new TextField("hits"));
         form.add(new TextField("sessionId"));
+        form.add(new TextField("cookieId"));
     }
 
     private void resultTable() {
@@ -94,7 +94,6 @@ public class SessionTable extends MgmtWebPage {
                 listItem.add(new Label("startupFailure", listItem.getModelObject().isStartupFailure() ? "!" : ""));
                 listItem.add(new Label("commands", Integer.toString(listItem.getModelObject().getCommands())));
                 listItem.add(new Label("levelPromotions", Integer.toString(listItem.getModelObject().getLevelPromotions())));
-                listItem.add(new Label("cookie", listItem.getModelObject().getCookie() != null ? "Yes" : ""));
                 PageParameters pageParameters = new PageParameters();
                 pageParameters.add(SessionDetail.SESSION_KEY, listItem.getModelObject().getSessionId());
                 BookmarkablePageLink<SessionDetail> link = new BookmarkablePageLink<SessionDetail>("visitorLink", SessionDetail.class, pageParameters);

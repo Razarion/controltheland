@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.btxtech.game.jsre.playback.PlaybackInfo;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.playback.PlaybackService;
 import com.btxtech.game.services.utg.tracker.DbStartupTask;
 import com.btxtech.game.wicket.WebCommon;
@@ -41,6 +42,8 @@ public class TestTracking extends AbstractServiceTest {
     private MovableService movableService;
     @Autowired
     private PlaybackService playbackService;
+    @Autowired
+    private Session session;
 
     @Test
     @DirtiesContext
@@ -106,24 +109,44 @@ public class TestTracking extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        Assert.assertTrue(userTrackingService.hasCookieToAdd());
-        WebCommon.addCookieId(getMockHttpServletResponse(), userTrackingService.getAndClearCookieToAdd());
-        Assert.assertFalse(userTrackingService.hasCookieToAdd());
-        Assert.assertNotNull(getMockHttpServletResponse().getCookie(WebCommon.COOKIE_ID));
-        String cookieId = getMockHttpServletResponse().getCookie(WebCommon.COOKIE_ID).getValue();
+        userTrackingService.pageAccess("Page 1");
+        userTrackingService.onJavaScriptDetected();
+        String cookieId1 = session.getCookieId();
+        endHttpRequestAndOpenSessionInViewFilter();
+
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userTrackingService.pageAccess("Page 2");
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        UserTrackingFilter userTrackingFilter = UserTrackingFilter.newDefaultFilter();
-        userTrackingFilter.setJsEnabled(UserTrackingFilter.DISABLED);
-        List<SessionOverviewDto> sessionOverviewDto = userTrackingService.getSessionOverviewDtos(userTrackingFilter);
-        Assert.assertEquals(1, sessionOverviewDto.size());
-        Assert.assertEquals(cookieId, sessionOverviewDto.get(0).getCookie());
+        userTrackingService.pageAccess("Page 1");
+        String cookieId2 = session.getCookieId();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
+        // Verify
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        UserTrackingFilter userTrackingFilter = UserTrackingFilter.newDefaultFilter();
+        userTrackingFilter.setCookieId(cookieId1);
+        List<SessionOverviewDto> sessionOverviewDto = userTrackingService.getSessionOverviewDtos(userTrackingFilter);
+        Assert.assertEquals(1, sessionOverviewDto.size());
+
+        userTrackingFilter = UserTrackingFilter.newDefaultFilter();
+        userTrackingFilter.setCookieId(cookieId2);
+        userTrackingFilter.setJsEnabled(UserTrackingFilter.DISABLED);
+        sessionOverviewDto = userTrackingService.getSessionOverviewDtos(userTrackingFilter);
+        Assert.assertEquals(1, sessionOverviewDto.size());
+
+        userTrackingFilter = UserTrackingFilter.newDefaultFilter();
+        userTrackingFilter.setCookieId("hol' ihn der Klabautermann!");
+        sessionOverviewDto = userTrackingService.getSessionOverviewDtos(userTrackingFilter);
+        Assert.assertEquals(0, sessionOverviewDto.size());
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
     }
 
     @Test
