@@ -40,7 +40,6 @@ public class Game extends WebPage implements IHeaderContributor {
     private static final String WORKING = "working.gif";
     private static final String FINISHED = "finished.png";
     private static final String FAILED = "failed.png";
-    private static final String WORKING_BLACK = "working_black.gif";
     @SpringBean
     private UserTrackingService userTrackingService;
     @SpringBean
@@ -49,7 +48,7 @@ public class Game extends WebPage implements IHeaderContributor {
     public Game() {
         GameStartupSeq gameStartupSeq = userGuidanceService.getColdStartupSeq();
 
-        add(new Image("miniLoading", WORKING_BLACK));
+        add(new Label("startupTaskText", gameStartupSeq.getAbstractStartupTaskEnum()[0].getStartupTaskEnumHtmlHelper().getNiceText()));
 
         setupStartupSeq(gameStartupSeq);
 

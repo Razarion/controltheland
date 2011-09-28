@@ -24,8 +24,10 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.Timer;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.TreeSet;
 
 /**
  * User: beat
@@ -38,8 +40,9 @@ public class StartupScreen implements StartupProgressListener {
     private static final String WORKING_IMG_SRC = "resources/com.btxtech.game.wicket.pages.Game/working.gif";
     private static final String FINISHED_IMG_SRC = "resources/com.btxtech.game.wicket.pages.Game/finished.png";
     private static final String FAILED_IMG_SRC = "resources/com.btxtech.game.wicket.pages.Game/failed.png";
-    private static final String TABLE_ID = "startupTaskTable";
-    private static final String MINI_LOADING_TABLE_ID = "miniLoading";
+    private static final String PROGRESS_BAR_ID = "progressBar";
+    private static final String PROGRESS_TEXT_ID = "progressText";
+    private static final int MAX_PROGRESS = 30;
     private final static StartupScreen INSTANCE = new StartupScreen();
     private Timer fadeTimer;
     private double currentFade;
@@ -49,6 +52,7 @@ public class StartupScreen implements StartupProgressListener {
     private ButtonElement closeButton;
     private com.google.gwt.user.client.Element closeButtonElement;
     private StartupSeq startupSeq;
+    private Collection<StartupTaskEnum> remainingTasks;
 
     public static StartupScreen getInstance() {
         return INSTANCE;
@@ -64,6 +68,7 @@ public class StartupScreen implements StartupProgressListener {
     public void setupScreen(StartupSeq startupSeq) {
         StartupSeq oldStartupSeq = this.startupSeq;
         this.startupSeq = startupSeq;
+        remainingTasks = new TreeSet<StartupTaskEnum>(Arrays.asList(startupSeq.getAbstractStartupTaskEnum()));
         if (parent == null) {
             startScreen = DOM.getElementById("startScreen");
             parent = startScreen.getParentElement();
@@ -74,21 +79,17 @@ public class StartupScreen implements StartupProgressListener {
         if (!startupSeq.isCold()) {
             setupTable(startupSeq, oldStartupSeq);
         }
-        showMiniLoading();
     }
 
-    private void showMiniLoading() {
-        Element miniLoadingTable = DOM.getElementById(MINI_LOADING_TABLE_ID);
-        miniLoadingTable.getStyle().setVisibility(Style.Visibility.VISIBLE);
-        Element detailTable = DOM.getElementById(TABLE_ID);
-        detailTable.getStyle().setVisibility(Style.Visibility.HIDDEN);
-    }
+    private void setProgressBar(StartupTaskEnum task) {
+        remainingTasks.remove(task);
+        double progress = 1 - (double) remainingTasks.size() / (double) startupSeq.getAbstractStartupTaskEnum().length;
 
-    private void showTaskTableLoading() {
-        Element miniLoadingTable = DOM.getElementById(MINI_LOADING_TABLE_ID);
-        miniLoadingTable.getStyle().setVisibility(Style.Visibility.HIDDEN);
-        Element detailTable = DOM.getElementById(TABLE_ID);
-        detailTable.getStyle().setVisibility(Style.Visibility.VISIBLE);
+        Element progressBar = DOM.getElementById(PROGRESS_BAR_ID);
+        progressBar.getStyle().setWidth(progress * MAX_PROGRESS, Style.Unit.EM);
+
+        Element progressText = DOM.getElementById(PROGRESS_TEXT_ID);
+        progressText.setInnerText(task.getStartupTaskEnumHtmlHelper().getNiceText());
     }
 
     private void setupTable(StartupSeq newStartupSeq, StartupSeq oldStartupSeq) {
@@ -234,7 +235,6 @@ public class StartupScreen implements StartupProgressListener {
         if (!parent.getFirstChild().equals(startScreen)) {
             parent.insertFirst(startScreen);
         }
-        showTaskTableLoading();
         setOpacity(1.0);
         showCloseButton();
     }
@@ -311,6 +311,7 @@ public class StartupScreen implements StartupProgressListener {
     @Override
     public void onNextTask(StartupTaskEnum taskEnum) {
         displayTaskRunning(taskEnum);
+        setProgressBar(taskEnum);
     }
 
     @Override
@@ -320,7 +321,6 @@ public class StartupScreen implements StartupProgressListener {
 
     @Override
     public void onTaskFailed(AbstractStartupTask task, String error) {
-        showTaskTableLoading();
         displayTaskFailed(task, error);
     }
 
