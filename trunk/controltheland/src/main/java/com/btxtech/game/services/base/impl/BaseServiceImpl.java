@@ -218,6 +218,19 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         return base;
     }
 
+    @Override
+    public Base getBaseCms() {
+        // Prevent creating a UserState -> search engine
+        if (!userService.hasUserState()) {
+            return null;
+        }
+        Base base = userService.getUserState().getBase();
+        if (base == null) {
+            throw new NoConnectionException("Base does not exist", session.getSessionId());
+        }
+        return base;
+    }
+
     private boolean hasBase() {
         return userService.getUserState().getBase() != null;
     }
@@ -524,7 +537,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
 
     @Override
     public ContentProvider<BaseItemTypeCount> getBaseItems() {
-        if (hasBase()) {
+        if (userService.hasUserState() && hasBase()) {
             Map<BaseItemType, BaseItemTypeCount> items = new HashMap<BaseItemType, BaseItemTypeCount>();
             for (SyncBaseItem syncBaseItem : getBase().getItems()) {
                 BaseItemType baseItemType = syncBaseItem.getBaseItemType();

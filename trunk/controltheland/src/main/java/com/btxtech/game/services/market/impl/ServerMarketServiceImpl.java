@@ -383,6 +383,10 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     @Override
     public ReadonlyCollectionContentProvider<AvailableMarketEntry> getAvailableCrud() {
         ArrayList<AvailableMarketEntry> availableMarketEntries = new ArrayList<AvailableMarketEntry>();
+        if(!userService.hasUserState()) {
+            // Prevent creating a UserState -> search engine
+            return new ReadonlyCollectionContentProvider<AvailableMarketEntry>(availableMarketEntries);
+        }
 
         UserItemTypeAccess userItemTypeAccess = getUserItemTypeAccess();
         Collection<DbMarketEntry> marketEntries = marketEntryCrudRootServiceHelper.readDbChildren();

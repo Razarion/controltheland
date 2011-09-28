@@ -347,7 +347,18 @@ public class UserServiceImpl implements UserService {
         return session.getUserState();
     }
 
-    private boolean hasUserState() {
+    @Override
+    public UserState getUserStateCms() {
+        // Prevent creating a UserState -> search engine
+        if (hasUserState()) {
+            return getUserState();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public boolean hasUserState() {
         return session.getUserState() != null;
     }
 

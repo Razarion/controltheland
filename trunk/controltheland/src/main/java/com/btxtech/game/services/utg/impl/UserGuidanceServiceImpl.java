@@ -300,7 +300,7 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
 
     @Override
     public DbRealGameLevel getDbLevel(SimpleBase simpleBase) {
-        if(baseService.isAbandoned(simpleBase)) {
+        if (baseService.isAbandoned(simpleBase)) {
             return getDummyRealGameLevel();
         }
         return toHighestPossibleRealGameLevel(baseService.getUserState(simpleBase).getCurrentAbstractLevel());
@@ -310,6 +310,17 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
     public DbAbstractLevel getDbAbstractLevel() {
         return userService.getUserState().getCurrentAbstractLevel();
     }
+
+    @Override
+    public DbAbstractLevel getDbAbstractLevelCms() {
+        // Prevent creating a UserState -> search engine
+        if (userService.hasUserState()) {
+            return userService.getUserState().getCurrentAbstractLevel();
+        } else {
+            return null;
+        }
+    }
+
 
     @Override
     public DbAbstractLevel getDbLevel(String levelName) {
