@@ -59,6 +59,8 @@ public interface BaseService extends AbstractBaseService, SyncItemListener {
 
     Base getBase();
 
+    Base getBaseCms();
+
     Base createNewBase(UserState userState, DbBaseItemType dbBaseItemType, Territory territory, int startItemFreeRange) throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException;
 
     Base createBotBase(UserState userState, String name);

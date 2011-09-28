@@ -56,6 +56,10 @@ public interface UserService extends UserDetailsService {
 
     UserState getUserState();
 
+    UserState getUserStateCms();
+
+    boolean hasUserState();
+
     UserState getUserState(User user);
 
     UserState getUserState(DbBotConfig botConfig);

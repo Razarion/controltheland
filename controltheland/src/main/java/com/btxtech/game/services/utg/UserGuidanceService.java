@@ -41,6 +41,8 @@ public interface UserGuidanceService {
 
     DbAbstractLevel getDbAbstractLevel();
 
+    DbAbstractLevel getDbAbstractLevelCms();
+
     DbAbstractLevel getDbLevel(String levelName);
 
     DbAbstractLevel getDbLevel(int id);
