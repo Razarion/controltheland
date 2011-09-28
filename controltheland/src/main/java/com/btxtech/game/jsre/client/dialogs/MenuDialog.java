@@ -15,7 +15,6 @@ package com.btxtech.game.jsre.client.dialogs;
 
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.ImageHandler;
-import com.btxtech.game.jsre.client.control.StartupScreen;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -68,15 +67,6 @@ public class MenuDialog extends Dialog {
                 }
             });
         }
-        addRow(flexTable, "Startup screen", "clock-select", new Runnable() {
-
-            @Override
-            public void run() {
-                close();
-                StartupScreen.getInstance().showStartScreen();
-            }
-        });
-
         dialogVPanel.add(flexTable);
     }
 

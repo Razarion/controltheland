@@ -36,45 +36,6 @@
         }
     </script>
     <script type="text/javascript" language="javascript" src="game/game.nocache.js"></script>
-    <style type="text/css">
-        table.stats {
-            font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
-            font-weight: normal;
-            font-size: 13px;
-            color: #fff;
-            width: 280px;
-            background-color: #666;
-            border: 0;
-            border-collapse: collapse;
-            border-spacing: 0;
-        }
-
-        table.stats td {
-            background-color: #CCC;
-            color: #000;
-            text-align: left;
-            border: 1px #000000 solid;
-            height: 24px;
-        }
-
-        table.stats td.time {
-            background-color: #CCC;
-            color: #000;
-            border: 1px #000000 solid;
-            height: 24px;
-            text-align: right;
-        }
-
-        table.stats td.hed {
-            background-color: #666;
-            color: #fff;
-            padding: 4px;
-            text-align: left;
-            border-bottom: 1px #000000 solid;
-            font-size: 15px;
-            font-weight: bold;
-        }
-    </style>
 </head>
 
 <body style="height: 100%;">
@@ -90,7 +51,7 @@
 <div style="position:fixed;top:0; left:0;height:100%;width:100%;z-index:100;background-color:#000000" id="startScreen">
     <table style="height:100%;width:100%">
         <tr align="center">
-            <td valign="middle">
+            <td valign="middle" id="progressTable">
                 <a style="text-decoration:none" href="javascript:showTable()">
                     <p style="color:#FFFFFF;font-family:Arial, Verdana;font-size:3.0em">Loading Game...</p>
                     <p id="progressText" style="color:#FFFFFF;font-family:Arial, Verdana;font-size:1.0em" wicket:id="startupTaskText"></p>
@@ -101,25 +62,6 @@
                         <td></td>
                     </tr>
                 </table>
-            </td>
-        </tr>
-        <tr align="center">
-            <td valign="middle">
-                <table class="stats" id="startupTaskTable" style="visibility:hidden;">
-                    <tr>
-                        <td class="hed" colspan="3">Start game engine</td>
-                    </tr>
-                    <tr wicket:id="tasks">
-                        <td height="24" width="24"><img wicket:id="taskImageLoad"/><img wicket:id="taskImageDone"/><img
-                                wicket:id="taskImageFailed"/></td>
-                        <td wicket:id="taskName"></td>
-                        <td class="time" wicket:id="taskTime" align="right"></td>
-                    </tr>
-                </table>
-                <label>
-                    <input type="button" name="Text 2" value="Close" id="startScreenClose" disabled="true"
-                           style="visibility:hidden;">
-                </label>
             </td>
         </tr>
     </table>
