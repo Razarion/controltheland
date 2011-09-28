@@ -11,11 +11,12 @@ CREATE TABLE tmp_data_mining (
     gameAttemps INT NULL,
     startups INT NULL,
     maxLevelIndex INT NULL,
+    userAgent VARCHAR(1000) NULL,
     PRIMARY KEY ( id )
  );
  
-INSERT INTO tmp_data_mining (sessionId,pages) SELECT 
-            a.sessionId, COUNT(*)
+INSERT INTO tmp_data_mining (sessionId,pages,userAgent) SELECT 
+            a.sessionId, COUNT(*), b.userAgent
     FROM
         TRACKER_BROWSER_DETAILS b,
         TRACKER_PAGE_ACCESS a
@@ -49,6 +50,7 @@ CREATE TABLE tmp_data_mining_startup (
     timeStamp DATETIME,
     level VARCHAR(255) NULL,   
     levelIndex INT NULL,
+    task1Duration INT NULL,
     PRIMARY KEY ( id )
  );
  
@@ -58,7 +60,7 @@ INSERT INTO tmp_data_mining_startup (sessionId, startupId, taskCount, timeStamp,
     AND t.dbStartup = s.id
     AND l.name = s.level
     GROUP BY s.id;
-
+    
 -- Startups
 SELECT * FROM tmp_data_mining_startup ORDER BY timeStamp ASC;
 
@@ -81,11 +83,12 @@ SELECT COUNT(*) FROM tmp_data_mining WHERE pages = 2 AND secondPage = 'com.btxte
 SELECT COUNT(*)"Game Attemps" FROM tmp_data_mining WHERE gameAttemps > 0; 
 
 -- Game attemps but never reached the game
-SELECT * FROM tmp_data_mining WHERE gameAttemps > 0 AND startups = 0;        
 SELECT COUNT(*)"Game attemps but never reached the game" FROM tmp_data_mining WHERE gameAttemps > 0 AND startups = 0;        
+SELECT * FROM tmp_data_mining WHERE gameAttemps > 0 AND startups = 0;        
 
--- Game attemps but never reached the game
+-- Game attemps but and reached the game
 SELECT COUNT(*)"Game attemps and reached the game" FROM tmp_data_mining WHERE gameAttemps > 0 AND startups > 0; 
+SELECT * FROM tmp_data_mining WHERE gameAttemps > 0 AND startups > 0; 
 
 -- All pages
 SELECT COUNT(*)"Count", a.page"Page" FROM tmp_data_mining m, TRACKER_PAGE_ACCESS a WHERE a.sessionId = m.sessionId GROUP BY a.page ORDER BY COUNT(*) DESC; 
@@ -103,7 +106,22 @@ SELECT count(l.orderIndex)"Users", l.name"Max Level"
 -- User with at least one level promotions
 SELECT count(*)"User with at least one level promotions" FROM tmp_data_mining WHERE maxLevelIndex > 0;
 
--- SELECT * FROM tmp_data_mining where pages = 2 and secondPage = 'com.btxtech.game.wicket.pages.Game';        
--- SELECT count(*) FROM tmp_data_mining where secondPage = 'com.btxtech.game.wicket.pages.Game';        
-         
+-- User which successfully entered the game but stayed on Noob 1 level (count)
+SELECT count(*)"User witch successfully entered the game but stayed on Noob 1 level"  FROM tmp_data_mining WHERE startups > 0 AND maxLevelIndex IS NULL;
+
+-- User which successfully entered the game but stayed on Noob 1 level
+SELECT * FROM tmp_data_mining WHERE startups > 0 AND maxLevelIndex IS NULL;
+
+-- Startup min max avg of first task
+SELECT MIN(startupDuration) / 1000, MAX(startupDuration)/1000 , AVG(startupDuration)/1000 
+  FROM TRACKER_STARTUP 
+  WHERE id IN (SELECT startupId FROM tmp_data_mining_startup);
+
+-- Startup min max avg of first task
+SELECT task, MIN(duration) / 1000, MAX(duration)/1000 , AVG(duration)/1000 
+  FROM TRACKER_STARTUP_TASK 
+  WHERE dbStartup IN (SELECT startupId FROM tmp_data_mining_startup) 
+  GROUP BY task 
+  ORDER BY task ASC;
+
 SET SQL_SAFE_UPDATES=1;
