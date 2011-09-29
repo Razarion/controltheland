@@ -13,12 +13,12 @@
 
 package com.btxtech.game.jsre.client.cockpit.radar;
 
+import com.btxtech.game.jsre.client.ColorConstants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.TerrainScrollListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.widgetideas.graphics.client.Color;
 
 /**
  * User: beat
@@ -38,20 +38,20 @@ public class RadarFrameView extends MiniMap implements TerrainScrollListener, Mi
             return;
         }
         clear();
-        beginPath();
+        getContext2d().beginPath();
         double leftDouble = (double) left / (double) getTerrainSettings().getTileWidth();
         double topDouble = (double) top / (double) getTerrainSettings().getTileHeight();
         double widthDouble = (double) width / (double) getTerrainSettings().getTileWidth();
         double heightDouble = (double) height / (double) getTerrainSettings().getTileHeight();
-        rect(leftDouble, topDouble, widthDouble, heightDouble);
-        stroke();
+        getContext2d().rect(leftDouble, topDouble, widthDouble, heightDouble);
+        getContext2d().stroke();
     }
 
     @Override
     public void onTerrainSettings(TerrainSettings terrainSettings) {
         super.onTerrainSettings(terrainSettings);
-        setLineWidth(1.0 / getScale());
-        setStrokeStyle(Color.LIGHTGREY);
+        getContext2d().setLineWidth(1.0 / getScale());
+        getContext2d().setStrokeStyle(ColorConstants.LIGHTGREY);
         onScroll(TerrainView.getInstance().getViewOriginLeft(),
                 TerrainView.getInstance().getViewOriginTop(),
                 TerrainView.getInstance().getViewWidth(),

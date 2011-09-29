@@ -14,19 +14,21 @@
 package com.btxtech.game.jsre.client.terrain;
 
 import com.btxtech.game.jsre.client.ClientSyncItem;
-import com.btxtech.game.jsre.client.ExtendedCanvas;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
 import com.btxtech.game.jsre.client.item.ItemContainer;
+import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -36,10 +38,9 @@ import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.widgetideas.graphics.client.GWTCanvas;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -59,7 +60,8 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
     private int viewHeight = 1;
     private TerrainMouseButtonListener terrainMouseButtonListener;
     private ArrayList<TerrainScrollListener> terrainScrollListeners = new ArrayList<TerrainScrollListener>();
-    private ExtendedCanvas canvas = new ExtendedCanvas();
+    public Canvas canvas;
+    public Context2d context2d;
     private AbsolutePanel parent;
     private TerrainHandler terrainHandler = new TerrainHandler();
     public static boolean uglySuppressRadar = false;
@@ -68,8 +70,12 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
      * Singleton
      */
     private TerrainView() {
+        canvas = Canvas.createIfSupported();
+        if (canvas == null) {
+            throw new Html5NotSupportedException("TerrainView: Canvas not supported.");
+        }
+        context2d = canvas.getContext2d();
         canvas.addMouseOutHandler(this);
-        canvas.sinkEvents(Event.ONMOUSEMOVE);
     }
 
     public void setupTerrain(TerrainSettings terrainSettings,
@@ -95,7 +101,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
             return;
         }
         terrainHandler.setupTerrain(terrainSettings, terrainImagePositions, surfaceRects, surfaceImages, terrainImages);
-        if(!uglySuppressRadar) {
+        if (!uglySuppressRadar) {
             RadarPanel.getInstance().onTerrainSettings(terrainSettings);
         }
     }
@@ -139,7 +145,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
                     height = imageElement.getWidth();
                 }
                 try {
-                    canvas.drawImage(imageElement,
+                    context2d.drawImage(imageElement,
                             0, //the start X position in the source image
                             0, //the start Y position in the source image
                             width, //the width in the source image you want to sample
@@ -174,14 +180,13 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
                 continue;
             }
             try {
-                canvas.drawImage(imageElement, relXStart, relYStart);
+                context2d.drawImage(imageElement, relXStart, relYStart);
             } catch (Throwable t) {
                 GwtCommon.handleException(t);
                 sendErrorInfoToServer("drawImages", imageElement, relXStart, relYStart, 0, 0, 0, 0);
             }
         }
     }
-
 
     public void moveDelta(int left, int top) {
         if (terrainHandler.getTerrainSettings() == null) {
@@ -282,7 +287,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
         moveDelta(left, top);
     }
 
-    public GWTCanvas getCanvas() {
+    public Canvas getCanvas() {
         return canvas;
     }
 
@@ -324,7 +329,10 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
     public void updateSize() {
         viewWidth = parent.getOffsetWidth();
         viewHeight = parent.getOffsetHeight();
-        canvas.resize(viewWidth, viewHeight);
+        canvas.setCoordinateSpaceWidth(viewWidth);
+        canvas.setCoordinateSpaceHeight(viewHeight);
+        canvas.setCoordinateSpaceWidth(viewWidth);
+        canvas.setCoordinateSpaceHeight(viewHeight);
         onTerrainChanged();
     }
 
@@ -378,7 +386,7 @@ public class TerrainView implements MouseDownHandler, MouseOutHandler, MouseUpHa
 
     @Override
     public void onTerrainChanged() {
-        canvas.clear();
+        context2d.clearRect(0, 0, viewWidth, viewHeight);
         drawSurface();
         drawImages();
     }

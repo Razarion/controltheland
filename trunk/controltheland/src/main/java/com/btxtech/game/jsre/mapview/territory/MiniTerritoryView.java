@@ -13,20 +13,19 @@
 
 package com.btxtech.game.jsre.mapview.territory;
 
+import com.btxtech.game.jsre.client.ColorConstants;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniMap;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniMapMouseDownListener;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniMapMouseMoveListener;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniMapMouseUpListener;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.mapview.common.GeometricalUtil;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseUpEvent;
-import com.google.gwt.widgetideas.graphics.client.Color;
 
 import java.util.HashSet;
 
@@ -107,15 +106,15 @@ public class MiniTerritoryView extends MiniMap implements MiniMapMouseMoveListen
         }
 
         clear();
-        setFillStyle(Color.ALPHA_RED);
+        getContext2d().setFillStyle(ColorConstants.ALPHA_RED);
         for (Index index : tiles) {
-            fillRect(index.getX(), index.getY(), 1, 1);
+            getContext2d().fillRect(index.getX(), index.getY(), 1, 1);
         }
-        setFillStyle(Color.ALPHA_GREY);
+        getContext2d().setFillStyle(ColorConstants.ALPHA_GREY);
         for (Territory territory : ClientTerritoryService.getInstance().getTerritories()) {
             if (!territory.equals(this.territory)) {
                 for (Rectangle rectangle : territory.getTerritoryTileRegions()) {
-                    fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
+                    getContext2d().fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
                 }
             }
         }

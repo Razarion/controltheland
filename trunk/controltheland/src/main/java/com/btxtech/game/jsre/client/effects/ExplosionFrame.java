@@ -16,15 +16,16 @@ package com.btxtech.game.jsre.client.effects;
 import com.allen_sauer.gwt.voices.client.Sound;
 import com.allen_sauer.gwt.voices.client.SoundController;
 import com.btxtech.game.jsre.client.ClientSyncItem;
-import com.btxtech.game.jsre.client.ExtendedCanvas;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.common.Html5NotSupportedException;
+import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.widgetideas.graphics.client.ImageLoader;
 
 /**
@@ -32,7 +33,7 @@ import com.google.gwt.widgetideas.graphics.client.ImageLoader;
  * Date: Jul 1, 2009
  * Time: 2:28:42 PM
  */
-public class ExplosionFrame extends ExtendedCanvas {
+public class ExplosionFrame {
     public static final int COUNT = 10;
     public static final double START_ALPHA = 0.80;
     public static final double REMOVE = 0.70;
@@ -44,11 +45,17 @@ public class ExplosionFrame extends ExtendedCanvas {
     private int width;
     private int height;
     private ImageElement imageElement;
+    private Canvas canvas;
+    private Context2d context2d;
 
     public ExplosionFrame(ClientSyncItem clientSyncItem) {
         this.clientSyncItemView = clientSyncItem;
+        canvas = Canvas.createIfSupported();
+        if (canvas == null) {
+            throw new Html5NotSupportedException("MuzzleFlash: Canvas not supported.");
+        }
         frame = 1;
-        if(clientSyncItem.isSyncProjectileItem()){
+        if (clientSyncItem.isSyncProjectileItem()) {
             width = clientSyncItem.getSyncProjectileItem().getProjectileItemType().getExplosionRadius() * 2;
             //noinspection SuspiciousNameCombination
             height = width;
@@ -60,11 +67,11 @@ public class ExplosionFrame extends ExtendedCanvas {
         Sound sound = soundController.createSound(Sound.MIME_TYPE_AUDIO_MPEG, "/sounds/explosion.mp3");
         sound.play();
         Index relativeMiddle = TerrainView.getInstance().toRelativeIndex(clientSyncItem.getSyncItem().getSyncItemArea().getPosition());
-        MapWindow.getAbsolutePanel().add(this, relativeMiddle.getX() - width / 2, relativeMiddle.getY() - height / 2);
-        setPixelSize(width, height);
-        sinkEvents(Event.ONMOUSEMOVE);
-        resize(width, height);
-        getElement().getStyle().setZIndex(Constants.Z_INDEX_EXPLOSION);
+        canvas.setCoordinateSpaceWidth(width);
+        canvas.setCoordinateSpaceHeight(height);
+        context2d = canvas.getContext2d();
+        MapWindow.getAbsolutePanel().add(canvas, relativeMiddle.getX() - width / 2, relativeMiddle.getY() - height / 2);
+        canvas.getElement().getStyle().setZIndex(Constants.Z_INDEX_EXPLOSION);
         middleX = width / 2;
         middleY = height / 2;
 
@@ -88,11 +95,11 @@ public class ExplosionFrame extends ExtendedCanvas {
         }
         frame++;
         if (frame <= COUNT) {
-            clear();
+            context2d.clearRect(0, 0, width, height);
 
             double frameFactor = (double) frame / (double) COUNT;
 
-            drawImage(imageElement,
+            context2d.drawImage(imageElement,
                     0, 0, // Source pos
                     80, 80, // Source size
                     middleX - middleX * frameFactor, middleY - middleY * frameFactor,// Canvas pos
@@ -101,7 +108,7 @@ public class ExplosionFrame extends ExtendedCanvas {
 
             if ((double) frame / COUNT >= START_ALPHA) {
                 double alpha = (COUNT - (double) frame) / (COUNT * START_ALPHA);
-                setGlobalAlpha(alpha);
+                context2d.setGlobalAlpha(alpha);
             }
 
             //stroke();
@@ -110,7 +117,7 @@ public class ExplosionFrame extends ExtendedCanvas {
             }
             return false;
         } else {
-            MapWindow.getAbsolutePanel().remove(this);
+            MapWindow.getAbsolutePanel().remove(canvas);
             return true;
         }
 

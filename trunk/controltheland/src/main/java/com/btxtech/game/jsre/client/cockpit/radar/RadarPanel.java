@@ -16,7 +16,6 @@ package com.btxtech.game.jsre.client.cockpit.radar;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * User: beat
@@ -60,21 +59,21 @@ public class RadarPanel {
 
         // Terrain
         miniTerrain = new MiniTerrain(width, height);
-        miniTerrain.getElement().getStyle().setZIndex(1);
-        miniTerrain.setVisible(state);
-        absolutePanel.add(miniTerrain, 0, 0);
+        miniTerrain.getCanvas().getElement().getStyle().setZIndex(1);
+        miniTerrain.getCanvas().setVisible(state);
+        absolutePanel.add(miniTerrain.getCanvas(), 0, 0);
 
         // Own item view
         radarItemView = new RadarItemView(width, height);
-        radarItemView.getElement().getStyle().setZIndex(2);
-        radarItemView.setVisible(hasRadar1 && hasEnergy);
-        absolutePanel.add(radarItemView, 0, 0);
+        radarItemView.getCanvas().getElement().getStyle().setZIndex(2);
+        radarItemView.getCanvas().setVisible(hasRadar1 && hasEnergy);
+        absolutePanel.add(radarItemView.getCanvas(), 0, 0);
 
         // Frame view
         radarFrameView = new RadarFrameView(width, height);
-        radarFrameView.getElement().getStyle().setZIndex(3);
-        radarFrameView.setVisible(state);
-        absolutePanel.add(radarFrameView, 0, 0);
+        radarFrameView.getCanvas().getElement().getStyle().setZIndex(3);
+        radarFrameView.getCanvas().setVisible(state);
+        absolutePanel.add(radarFrameView.getCanvas(), 0, 0);
 
         return absolutePanel;
     }
@@ -91,13 +90,13 @@ public class RadarPanel {
         boolean state = !hasRadar1 || hasEnergy;
 
         if (miniTerrain != null) {
-            miniTerrain.setVisible(state);
+            miniTerrain.getCanvas().setVisible(state);
         }
         if (radarFrameView != null) {
-            radarFrameView.setVisible(state);
+            radarFrameView.getCanvas().setVisible(state);
         }
         if (radarItemView != null) {
-            radarItemView.setVisible(hasRadar1 && hasEnergy);
+            radarItemView.getCanvas().setVisible(hasRadar1 && hasEnergy);
         }
         if (noRadarPanel != null) {
             if (hasRadar1 && !hasEnergy) {

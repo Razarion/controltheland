@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.pathfinding;
 
+import com.btxtech.game.jsre.client.ColorConstants;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniMap;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniMapMouseDownListener;
@@ -21,7 +22,6 @@ import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.widgetideas.graphics.client.Color;
 
 import java.util.List;
 
@@ -70,17 +70,16 @@ public class PathMiniMap extends MiniMap implements MiniMapMouseDownListener {
 
     private void displayPath(Index start, List<Index> indexes) {
         clear();
-        setStrokeStyle(Color.BLACK);
-        setLineWidth(1);
+        getContext2d().setStrokeStyle(ColorConstants.BLACK);
+        getContext2d().setLineWidth(1);
 
-        beginPath();
+        getContext2d().beginPath();
         start = TerrainView.getInstance().getTerrainHandler().getTerrainTileIndexForAbsPosition(start);
-        moveTo(start.getX(), start.getY());
+        getContext2d().moveTo(start.getX(), start.getY());
         for (Index index : indexes) {
-            index = TerrainView.getInstance().getTerrainHandler().getTerrainTileIndexForAbsPosition(index);            
-            lineTo(index.getX(), index.getY());
+            index = TerrainView.getInstance().getTerrainHandler().getTerrainTileIndexForAbsPosition(index);
+            getContext2d().lineTo(index.getX(), index.getY());
         }
-        stroke();
-
+        getContext2d().stroke();
     }
 }

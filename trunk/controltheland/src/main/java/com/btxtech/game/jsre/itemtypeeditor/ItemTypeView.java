@@ -32,9 +32,10 @@ public class ItemTypeView extends DecoratorPanel {
         this.boundingBoxControl = boundingBoxControl;
         Canvas canvas = Canvas.createIfSupported();
         if (canvas == null) {
-            throw new IllegalStateException("Canvas is not supported.");
+            throw new IllegalStateException("ItemTypeEditorPanel: Canvas is not supported.");
         }
-        canvas.setPixelSize(canvasWidth, canvasHeight);
+        canvas.setCoordinateSpaceWidth(canvasWidth);
+        canvas.setCoordinateSpaceHeight(canvasHeight);
         setWidget(canvas);
         canvas.setCoordinateSpaceWidth(canvasWidth);
         canvas.setCoordinateSpaceHeight(canvasHeight);

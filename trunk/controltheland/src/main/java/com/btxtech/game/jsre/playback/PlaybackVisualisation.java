@@ -13,14 +13,16 @@
 
 package com.btxtech.game.jsre.playback;
 
-import com.btxtech.game.jsre.client.ExtendedCanvas;
+import com.btxtech.game.jsre.client.ColorConstants;
 import com.btxtech.game.jsre.client.TopMapPanel;
+import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
+import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.widgetideas.graphics.client.Color;
 
 /**
  * User: beat
@@ -30,8 +32,8 @@ import com.google.gwt.widgetideas.graphics.client.Color;
 public class PlaybackVisualisation {
     private static PlaybackVisualisation INSTANCE = new PlaybackVisualisation();
     private Player player;
-    private ExtendedCanvas mouseCanvas;
-    private ExtendedCanvas windowsCanvas;
+    private Context2d mouseContext2d;
+    private Context2d windowsContext2d;
     private PlaybackInfo playbackInfo;
 
     public static PlaybackVisualisation getInstance() {
@@ -48,8 +50,17 @@ public class PlaybackVisualisation {
         this.playbackInfo = playbackInfo;
         PlaybackControlPanel playbackControlPanel = new PlaybackControlPanel(this);
         player = new Player(playbackControlPanel, this);
-        mouseCanvas = new ExtendedCanvas(1920, 1200);
-        windowsCanvas = new ExtendedCanvas(1920, 1200);
+        Canvas mouseCanvas = Canvas.createIfSupported();
+        if (mouseCanvas == null) {
+            throw new Html5NotSupportedException("PlaybackVisualisation: Canvas not supported.");
+        }
+        Canvas windowsCanvas = Canvas.createIfSupported();
+        mouseCanvas.setCoordinateSpaceWidth(1920);
+        mouseCanvas.setCoordinateSpaceHeight(1200);
+        windowsCanvas.setCoordinateSpaceWidth(1920);
+        windowsCanvas.setCoordinateSpaceHeight(1200);
+        mouseContext2d = mouseCanvas.getContext2d();
+        windowsContext2d = windowsCanvas.getContext2d();
         AbsolutePanel absolutePanel = new AbsolutePanel();
         absolutePanel.getElement().getStyle().setZIndex(2);
         absolutePanel.setHeight("100%");
@@ -62,14 +73,14 @@ public class PlaybackVisualisation {
     }
 
     public void play() {
-        mouseCanvas.clear();
-        mouseCanvas.beginPath();
-        mouseCanvas.setLineWidth(1);
-        mouseCanvas.setStrokeStyle(Color.WHITE);
-        windowsCanvas.clear();
-        windowsCanvas.setLineWidth(5);
-        windowsCanvas.setStrokeStyle(Color.YELLOW);
-        windowsCanvas.strokeRect(playbackInfo.getEventTrackingStart().getScrollLeft(),
+        mouseContext2d.clearRect(0, 0, 1920, 1200);
+        mouseContext2d.beginPath();
+        mouseContext2d.setLineWidth(1);
+        mouseContext2d.setStrokeStyle(ColorConstants.WHITE);
+        windowsContext2d.clearRect(0, 0, 1920, 1200);
+        windowsContext2d.setLineWidth(5);
+        windowsContext2d.setStrokeStyle(ColorConstants.YELLOW);
+        windowsContext2d.strokeRect(playbackInfo.getEventTrackingStart().getScrollLeft(),
                 playbackInfo.getEventTrackingStart().getScrollTop(),
                 playbackInfo.getEventTrackingStart().getClientWidth(),
                 playbackInfo.getEventTrackingStart().getClientHeight());
@@ -80,26 +91,26 @@ public class PlaybackVisualisation {
     public void displayMouseTracking(EventTrackingItem eventTrackingItem) {
         switch (eventTrackingItem.getEventType()) {
             case Event.ONMOUSEMOVE: {
-                mouseCanvas.lineTo(eventTrackingItem.getXPos(), eventTrackingItem.getYPos());
-                mouseCanvas.stroke();
+                mouseContext2d.lineTo(eventTrackingItem.getXPos(), eventTrackingItem.getYPos());
+                mouseContext2d.stroke();
                 break;
             }
             case Event.ONMOUSEDOWN: {
-                mouseCanvas.setFillStyle(Color.RED);
-                mouseCanvas.fillRect(eventTrackingItem.getXPos(), eventTrackingItem.getYPos(), 10, 10);
+                mouseContext2d.setFillStyle(ColorConstants.RED);
+                mouseContext2d.fillRect(eventTrackingItem.getXPos(), eventTrackingItem.getYPos(), 10, 10);
                 break;
             }
             case Event.ONMOUSEUP: {
-                mouseCanvas.setFillStyle(Color.BLUE);
-                mouseCanvas.fillRect(eventTrackingItem.getXPos(), eventTrackingItem.getYPos(), 5, 5);
+                mouseContext2d.setFillStyle(ColorConstants.BLUE);
+                mouseContext2d.fillRect(eventTrackingItem.getXPos(), eventTrackingItem.getYPos(), 5, 5);
                 break;
             }
         }
     }
 
     public void displayBrowserWindow(BrowserWindowTracking browserWindowTracking) {
-        windowsCanvas.clear();
-        windowsCanvas.strokeRect(browserWindowTracking.getScrollLeft(),
+        windowsContext2d.clearRect(0, 0, 1920, 1200);
+        windowsContext2d.strokeRect(browserWindowTracking.getScrollLeft(),
                 browserWindowTracking.getScrollTop(),
                 browserWindowTracking.getClientWidth(),
                 browserWindowTracking.getClientHeight());

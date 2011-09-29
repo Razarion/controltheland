@@ -13,8 +13,10 @@
 
 package com.btxtech.game.jsre.client.cockpit.radar;
 
-import com.btxtech.game.jsre.client.ExtendedCanvas;
+import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
+import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
@@ -22,7 +24,6 @@ import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.DOM;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ import java.util.List;
  * Date: 22.12.2009
  * Time: 21:50:26
  */
-public class MiniMap extends ExtendedCanvas implements MouseMoveHandler, MouseDownHandler, MouseUpHandler {
+public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandler {
     private int height;
     private int width;
     private double scale = 1.0;
@@ -43,9 +44,17 @@ public class MiniMap extends ExtendedCanvas implements MouseMoveHandler, MouseDo
     private HandlerRegistration moveRegistration;
     private HandlerRegistration downRegistration;
     private HandlerRegistration upRegistration;
+    private Canvas canvas;
+    private Context2d context2d;
 
     public MiniMap(int width, int height) {
-        super(width, height);
+        canvas = Canvas.createIfSupported();
+        if (canvas == null) {
+            throw new Html5NotSupportedException("MiniMap: Canvas not supported.");
+        }
+        canvas.setCoordinateSpaceWidth(width);
+        canvas.setCoordinateSpaceHeight(height);
+        context2d = canvas.getContext2d();
         this.height = height;
         this.width = width;
     }
@@ -56,16 +65,16 @@ public class MiniMap extends ExtendedCanvas implements MouseMoveHandler, MouseDo
 
     public void onTerrainSettings(TerrainSettings terrainSettings) {
         this.terrainSettings = terrainSettings;
-
-        // Fix for clear bug in canvas library
-        setCoordSize(terrainSettings.getTileXCount(), terrainSettings.getTileYCount());
-        DOM.setElementProperty(getElement(), "width", String.valueOf(width));
-        DOM.setElementProperty(getElement(), "height", String.valueOf(height));
-
-        saveContext();
         scale = Math.min((double) width / (double) terrainSettings.getTileXCount(),
                 (double) height / (double) terrainSettings.getTileYCount());
-        scale(scale, scale);
+        // Restore & save to get old state before scale
+        context2d.restore();
+        context2d.save();
+        context2d.scale(scale, scale);
+    }
+
+    protected void clear() {
+        context2d.clearRect(0, 0, terrainSettings.getTileXCount(), terrainSettings.getTileYCount());
     }
 
     public TerrainSettings getTerrainSettings() {
@@ -75,7 +84,7 @@ public class MiniMap extends ExtendedCanvas implements MouseMoveHandler, MouseDo
     public void addMouseMoveListener(MiniMapMouseMoveListener miniMapMouseMoveListener) {
         miniMapMouseMoveListeners.add(miniMapMouseMoveListener);
         if (moveRegistration == null) {
-            moveRegistration = addMouseMoveHandler(this);
+            moveRegistration = canvas.addMouseMoveHandler(this);
         }
     }
 
@@ -90,7 +99,7 @@ public class MiniMap extends ExtendedCanvas implements MouseMoveHandler, MouseDo
     public void addMouseDownListener(MiniMapMouseDownListener miniMapMouseDownListener) {
         miniMapMouseDownListeners.add(miniMapMouseDownListener);
         if (downRegistration == null) {
-            downRegistration = addMouseDownHandler(this);
+            downRegistration = canvas.addMouseDownHandler(this);
         }
     }
 
@@ -105,7 +114,7 @@ public class MiniMap extends ExtendedCanvas implements MouseMoveHandler, MouseDo
     public void addMouseUpListener(MiniMapMouseUpListener miniMapMouseUpListener) {
         miniMapMouseUpListeners.add(miniMapMouseUpListener);
         if (upRegistration == null) {
-            upRegistration = addMouseUpHandler(this);
+            upRegistration = canvas.addMouseUpHandler(this);
         }
     }
 
@@ -119,11 +128,11 @@ public class MiniMap extends ExtendedCanvas implements MouseMoveHandler, MouseDo
 
     @Override
     public void onMouseMove(MouseMoveEvent event) {
-        int x = event.getRelativeX(getElement());
+        int x = event.getRelativeX(canvas.getElement());
         if (x < 0) {
             x = 0;
         }
-        int y = event.getRelativeY(getElement());
+        int y = event.getRelativeY(canvas.getElement());
         if (y < 0) {
             y = 0;
         }
@@ -137,11 +146,11 @@ public class MiniMap extends ExtendedCanvas implements MouseMoveHandler, MouseDo
 
     @Override
     public void onMouseDown(MouseDownEvent mouseDownEvent) {
-        int x = mouseDownEvent.getRelativeX(getElement());
+        int x = mouseDownEvent.getRelativeX(canvas.getElement());
         if (x < 0) {
             x = 0;
         }
-        int y = mouseDownEvent.getRelativeY(getElement());
+        int y = mouseDownEvent.getRelativeY(canvas.getElement());
         if (y < 0) {
             y = 0;
         }
@@ -155,11 +164,11 @@ public class MiniMap extends ExtendedCanvas implements MouseMoveHandler, MouseDo
 
     @Override
     public void onMouseUp(MouseUpEvent event) {
-        int x = event.getRelativeX(getElement());
+        int x = event.getRelativeX(canvas.getElement());
         if (x < 0) {
             x = 0;
         }
-        int y = event.getRelativeY(getElement());
+        int y = event.getRelativeY(canvas.getElement());
         if (y < 0) {
             y = 0;
         }
@@ -177,5 +186,13 @@ public class MiniMap extends ExtendedCanvas implements MouseMoveHandler, MouseDo
 
     public int getWidth() {
         return width;
+    }
+
+    protected Context2d getContext2d() {
+        return context2d;
+    }
+
+    public Canvas getCanvas() {
+        return canvas;
     }
 }

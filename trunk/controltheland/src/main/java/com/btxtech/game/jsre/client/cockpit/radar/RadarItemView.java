@@ -15,11 +15,11 @@ package com.btxtech.game.jsre.client.cockpit.radar;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientSyncItem;
+import com.btxtech.game.jsre.client.ColorConstants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.widgetideas.graphics.client.Color;
 
 /**
  * User: beat
@@ -40,7 +40,7 @@ public class RadarItemView extends MiniMap {
         super.onTerrainSettings(terrainSettings);
         double scale = Math.min((double) getWidth() / (double) getTerrainSettings().getPlayFieldXSize(),
                 (double) getHeight() / (double) getTerrainSettings().getPlayFieldYSize()) / getScale();
-        setLineWidth(2.0 / scale);
+        getContext2d().setLineWidth(2.0 / scale);
         Timer timer = new Timer() {
 
             @Override
@@ -52,25 +52,25 @@ public class RadarItemView extends MiniMap {
     }
 
     private void refreshItems() {
-        clear();
-        saveContext();
+        getContext2d().save();
         double scale = Math.min((double) getWidth() / (double) getTerrainSettings().getPlayFieldXSize(),
                 (double) getHeight() / (double) getTerrainSettings().getPlayFieldYSize()) / getScale();
-        scale(scale, scale);
+        getContext2d().clearRect(0, 0, getTerrainSettings().getPlayFieldXSize(), getTerrainSettings().getPlayFieldYSize());
+        getContext2d().scale(scale, scale);
         for (ClientSyncItem clientSyncItem : ItemContainer.getInstance().getItems()) {
             if (clientSyncItem.isSyncBaseItem()) {
                 Index pos = clientSyncItem.getSyncItem().getSyncItemArea().getPosition();
                 if (pos == null) {
                     continue;
                 }
-                setStrokeStyle(new Color(ClientBase.getInstance().getBaseHtmlColor(clientSyncItem.getSyncBaseItem().getBase())));
-                strokeRect(pos.getX(), pos.getY(), BASE_ITEM_SIZE, BASE_ITEM_SIZE);
+                getContext2d().setStrokeStyle(ClientBase.getInstance().getBaseHtmlColor(clientSyncItem.getSyncBaseItem().getBase()));
+                getContext2d().strokeRect(pos.getX(), pos.getY(), BASE_ITEM_SIZE, BASE_ITEM_SIZE);
             } else if (clientSyncItem.isSyncResourceItem()) {
                 Index pos = clientSyncItem.getSyncItem().getSyncItemArea().getPosition();
-                setStrokeStyle(Color.WHITE);
-                strokeRect(pos.getX(), pos.getY(), RESOURCE_ITEM_SIZE, RESOURCE_ITEM_SIZE);
+                getContext2d().setStrokeStyle(ColorConstants.WHITE);
+                getContext2d().strokeRect(pos.getX(), pos.getY(), RESOURCE_ITEM_SIZE, RESOURCE_ITEM_SIZE);
             }
         }
-        restoreContext();        
+        getContext2d().restore();
     }
 }

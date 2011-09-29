@@ -13,12 +13,14 @@
 
 package com.btxtech.game.jsre.common;
 
-import com.btxtech.game.jsre.client.ExtendedCanvas;
+import com.btxtech.game.jsre.client.ColorConstants;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -35,7 +37,6 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.widgetideas.graphics.client.Color;
 
 /**
  * User: beat
@@ -58,7 +59,7 @@ public abstract class ResizeablePreviewWidget extends AbsolutePanel implements M
     private Image image;
     private Direction direction;
     private Rectangle absRectangle;
-    private ExtendedCanvas marker;
+    private Canvas marker;
     private FocusPanel focusPanel;
 
     protected ResizeablePreviewWidget(Image image, Direction direction, Rectangle absRectangle) {
@@ -103,18 +104,24 @@ public abstract class ResizeablePreviewWidget extends AbsolutePanel implements M
     }
 
     private void setupMarker() {
-        marker = new ExtendedCanvas(image.getOffsetWidth(), image.getOffsetHeight());
+        marker = Canvas.createIfSupported();
+        if (marker == null) {
+            throw new Html5NotSupportedException("ResizeablePreviewWidget: Canvas not supported.");
+        }
+        marker.setCoordinateSpaceWidth(image.getOffsetWidth());
+        marker.setCoordinateSpaceHeight(image.getOffsetHeight());
+        Context2d context2d = marker.getContext2d();
         marker.getElement().getStyle().setZIndex(1);
         add(marker, 0, 0);
         marker.setVisible(false);
-        marker.setStrokeStyle(Color.RED);
-        marker.setLineWidth(10);
-        marker.beginPath();
-        marker.moveTo(0, 0);
-        marker.lineTo(image.getOffsetWidth() - 1, image.getOffsetHeight() - 1);
-        marker.moveTo(0, image.getOffsetWidth() - 1);
-        marker.lineTo(image.getOffsetWidth() - 1, 0);
-        marker.stroke();
+        context2d.setStrokeStyle(ColorConstants.RED);
+        context2d.setLineWidth(10);
+        context2d.beginPath();
+        context2d.moveTo(0, 0);
+        context2d.lineTo(image.getOffsetWidth() - 1, image.getOffsetHeight() - 1);
+        context2d.moveTo(0, image.getOffsetHeight() - 1);
+        context2d.lineTo(image.getOffsetWidth() - 1, 0);
+        context2d.stroke();
     }
 
     public void close() {
