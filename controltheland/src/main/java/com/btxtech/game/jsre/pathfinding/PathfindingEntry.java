@@ -43,13 +43,13 @@ public class PathfindingEntry implements EntryPoint {
         RootPanel.get().add(absolutePanel);
 
         final MiniTerrain miniTerrain = new MiniTerrain(RootPanel.get().getOffsetWidth(), RootPanel.get().getOffsetHeight());
-        miniTerrain.getElement().getStyle().setZIndex(1);
-        absolutePanel.add(miniTerrain, 0, 0);
+        miniTerrain.getCanvas().getElement().getStyle().setZIndex(1);
+        absolutePanel.add(miniTerrain.getCanvas(), 0, 0);
 
         PathfindingAsync pathfinding = GWT.create(Pathfinding.class);
         final PathMiniMap pathMiniMap = new PathMiniMap(RootPanel.get().getOffsetWidth(), RootPanel.get().getOffsetHeight(), pathfinding);
-        pathMiniMap.getElement().getStyle().setZIndex(2);
-        absolutePanel.add(pathMiniMap, 0, 0);
+        pathMiniMap.getCanvas().getElement().getStyle().setZIndex(2);
+        absolutePanel.add(pathMiniMap.getCanvas(), 0, 0);
 
         pathfinding.getTerrainInfo(new AsyncCallback<TerrainInfo>() {
             @Override

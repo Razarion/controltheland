@@ -33,13 +33,13 @@ public class MapEditorRadar extends TopMapPanel {
     @Override
     protected Widget createBody() {
         Widget widget = RadarPanel.getInstance().createWidget(RADAR_WIDTH, RADAR_HEIGHT);
-        RadarPanel.getInstance().getRadarFrameView().addMouseDownHandler(new MouseDownHandler() {
+        RadarPanel.getInstance().getRadarFrameView().getCanvas().addMouseDownHandler(new MouseDownHandler() {
             @Override
             public void onMouseDown(MouseDownEvent event) {
                 event.stopPropagation();
             }
         });
-        RadarPanel.getInstance().getRadarFrameView().addMouseUpHandler(new MouseUpHandler() {
+        RadarPanel.getInstance().getRadarFrameView().getCanvas().addMouseUpHandler(new MouseUpHandler() {
             @Override
             public void onMouseUp(MouseUpEvent event) {
                 event.stopPropagation();

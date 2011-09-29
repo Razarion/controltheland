@@ -23,12 +23,14 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
-import com.google.gwt.widgetideas.graphics.client.GWTCanvas;
 import com.google.gwt.widgetideas.graphics.client.ImageLoader;
 
 /**
@@ -39,10 +41,11 @@ import com.google.gwt.widgetideas.graphics.client.ImageLoader;
 public class MuzzleFlash {
     public static final long MILIS_SHOW_TIME = 100;
     private Index normCenter;
-    private GWTCanvas canvas;
     private ClientSyncItem clientSyncItem;
     private double angel;
     private long time;
+    private Canvas canvas;
+    private Context2d context2d;
 
     public MuzzleFlash(ClientSyncItem clientSyncItem) throws ItemDoesNotExistException {
         time = System.currentTimeMillis();
@@ -74,7 +77,15 @@ public class MuzzleFlash {
 
         Rectangle rectangle = new Rectangle(x, y, width, height);
         rectangle = rectangle.getSurroundedRectangle(center, angel);
-        canvas = new GWTCanvas(rectangle.getWidth(), rectangle.getHeight());
+
+        canvas = Canvas.createIfSupported();
+        if (canvas == null) {
+            throw new Html5NotSupportedException("MuzzleFlash: Canvas not supported.");
+        }
+        canvas.setCoordinateSpaceWidth(rectangle.getWidth());
+        canvas.setCoordinateSpaceHeight(rectangle.getHeight());
+        context2d = canvas.getContext2d();
+
         MapWindow.getAbsolutePanel().add(canvas,
                 rectangle.getStart().getX() - TerrainView.getInstance().getViewOriginLeft(),
                 rectangle.getStart().getY() - TerrainView.getInstance().getViewOriginTop());
@@ -92,9 +103,9 @@ public class MuzzleFlash {
                         throw new IllegalArgumentException("MuzzleFlash: Wrong image count received: " + imageElements.length);
                     }
                     WeaponType weaponType = clientSyncItem.getSyncBaseItem().getSyncWeapon().getWeaponType();
-                    canvas.translate(normCenter.getX(), normCenter.getY());
-                    canvas.rotate(-angel);
-                    canvas.drawImage(imageElements[0], -Math.round(weaponType.getMuzzleFlashWidth() / 2.0), -weaponType.getMuzzleFlashLength());
+                    context2d.translate(normCenter.getX(), normCenter.getY());
+                    context2d.rotate(-angel);
+                    context2d.drawImage(imageElements[0], -Math.round(weaponType.getMuzzleFlashWidth() / 2.0), -weaponType.getMuzzleFlashLength());
                 } catch (Throwable throwable) {
                     GwtCommon.handleException(throwable);
                 }

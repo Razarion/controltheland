@@ -13,19 +13,21 @@
 
 package com.btxtech.game.jsre.mapeditor;
 
-import com.btxtech.game.jsre.client.ExtendedCanvas;
+import com.btxtech.game.jsre.client.ColorConstants;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainMouseMoveListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.ResizeablePreviewWidget;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
+import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.widgetideas.graphics.client.Color;
 
 /**
  * User: beat
@@ -35,7 +37,8 @@ import com.google.gwt.widgetideas.graphics.client.Color;
 public class SurfaceModifier implements TerrainMouseMoveListener, MouseDownHandler {
     public static final int LINE_WIDTH = 2;
     public static final int RESIZE_CURSOR_SPACE = 10;
-    private ExtendedCanvas marker;
+    private Canvas marker;
+    private Context2d context2d;
     private Cockpit cockpit;
     private boolean nr;
     private boolean er;
@@ -44,11 +47,17 @@ public class SurfaceModifier implements TerrainMouseMoveListener, MouseDownHandl
 
     public SurfaceModifier(Cockpit cockpit) {
         this.cockpit = cockpit;
-        marker = new ExtendedCanvas(100, 100);
+        marker = Canvas.createIfSupported();
+        if (marker == null) {
+            throw new Html5NotSupportedException("SurfaceModifier: Canvas not supported.");
+        }
+        marker.setCoordinateSpaceWidth(100);
+        marker.setCoordinateSpaceHeight(100);
         marker.getElement().getStyle().setZIndex(Constants.Z_INDEX_GROUP_SELECTION_FRAME);
         MapWindow.getAbsolutePanel().add(marker, 0, 0);
+        context2d = marker.getContext2d();
         marker.setVisible(false);
-        marker.setStrokeStyle(Color.BLACK);
+        context2d.setStrokeStyle(ColorConstants.BLACK);
         marker.addMouseDownHandler(this);
     }
 
@@ -67,14 +76,15 @@ public class SurfaceModifier implements TerrainMouseMoveListener, MouseDownHandl
             int markerX = absolute.getX() - TerrainView.getInstance().getViewOriginLeft();
             int markerY = absolute.getY() - TerrainView.getInstance().getViewOriginTop();
             MapWindow.getAbsolutePanel().setWidgetPosition(marker, markerX, markerY);
-            marker.resize(size.getX(), size.getY());
-            marker.setLineWidth(LINE_WIDTH);
-            marker.clear();
-            marker.rect(LINE_WIDTH / 2,
+            marker.setCoordinateSpaceWidth(size.getX());
+            marker.setCoordinateSpaceHeight(size.getY());
+            context2d.setLineWidth(LINE_WIDTH);
+            context2d.clearRect(0, 0, size.getX(), size.getY());
+            context2d.rect(LINE_WIDTH / 2,
                     LINE_WIDTH / 2,
                     size.getX() - LINE_WIDTH,
                     size.getY() - LINE_WIDTH);
-            marker.stroke();
+            context2d.stroke();
             int inMarkerX = absoluteLeft - markerX - TerrainView.getInstance().getViewOriginLeft();
             int inMarkerY = absoluteTop - markerY - TerrainView.getInstance().getViewOriginTop();
             nr = false;

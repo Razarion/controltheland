@@ -61,12 +61,12 @@ public class MapView implements EntryPoint {
         territoryEditModel.setTerritoryCockpit(cockpit);
 
         final MiniTerrain miniTerrain = new MiniTerrain(RootPanel.get().getOffsetWidth(), RootPanel.get().getOffsetHeight());
-        miniTerrain.getElement().getStyle().setZIndex(1);
-        absolutePanel.add(miniTerrain, 0, 0);
+        miniTerrain.getCanvas().getElement().getStyle().setZIndex(1);
+        absolutePanel.add(miniTerrain.getCanvas(), 0, 0);
 
         final MiniTerritoryView miniTerritoryView = new MiniTerritoryView(RootPanel.get().getOffsetWidth(), RootPanel.get().getOffsetHeight());
-        miniTerritoryView.getElement().getStyle().setZIndex(2);
-        absolutePanel.add(miniTerritoryView, 0, 0);
+        miniTerritoryView.getCanvas().getElement().getStyle().setZIndex(2);
+        absolutePanel.add(miniTerritoryView.getCanvas(), 0, 0);
         territoryEditModel.setMiniTerritoryView(miniTerritoryView);
 
         TerrainEditorAsync terrainEditor = GWT.create(TerrainEditor.class);

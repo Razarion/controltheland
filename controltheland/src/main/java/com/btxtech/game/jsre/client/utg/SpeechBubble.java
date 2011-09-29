@@ -13,19 +13,20 @@
 
 package com.btxtech.game.jsre.client.utg;
 
-import com.btxtech.game.jsre.client.ExtendedCanvas;
+import com.btxtech.game.jsre.client.ColorConstants;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.widgetideas.graphics.client.Color;
-import com.google.gwt.widgetideas.graphics.client.GWTCanvas;
 
 /**
  * User: beat
@@ -39,9 +40,9 @@ public class SpeechBubble extends AbsolutePanel {
     public static final int HTML_OFFSET = CURVE_SIZE / 4 + LINE_SIZE;
     public static final int BEAK_LENGTH = 20;
     public static final int BEAK_WIDTH = 10;
-    private ExtendedCanvas extendedCanvas;
     private boolean blink = false;
     private boolean scrollWithTerrain;
+    private Context2d context2d;
 
     enum Direction {
         TOP,
@@ -179,8 +180,8 @@ public class SpeechBubble extends AbsolutePanel {
         }
 
         buildBubble(LINE_SIZE, LINE_SIZE, totalBubbleWidth - LINE_SIZE, totalBubbleHeight - LINE_SIZE, beakOffset, direction);
-        if(bottomRelative) {
-            int bottom = Document.get().getScrollHeight() - top  - totalBubbleHeight;
+        if (bottomRelative) {
+            int bottom = Document.get().getScrollHeight() - top - totalBubbleHeight;
             getElement().getStyle().setProperty("top", "");
             getElement().getStyle().setProperty("bottom", bottom + "px");
         }
@@ -259,142 +260,148 @@ public class SpeechBubble extends AbsolutePanel {
                 break;
         }
 
-        extendedCanvas = new ExtendedCanvas(right + LINE_SIZE, bottom + LINE_SIZE);
-        extendedCanvas.getElement().getStyle().setZIndex(1);
-        add(extendedCanvas, 0, 0);
-        extendedCanvas.setLineWidth(LINE_SIZE);
-        extendedCanvas.beginPath();
-        extendedCanvas.moveTo(CURVE_SIZE + bodyLeft, bodyTop);
-        extendedCanvas.quadraticCurveTo(bodyLeft, bodyTop, bodyLeft, CURVE_SIZE + bodyTop);
+        Canvas canvas = Canvas.createIfSupported();
+        if (canvas == null) {
+            throw new Html5NotSupportedException("SpeechBubble: Canvas not supported.");
+        }
+        canvas.setCoordinateSpaceWidth(right + LINE_SIZE);
+        canvas.setCoordinateSpaceHeight(bottom + LINE_SIZE);
+        context2d = canvas.getContext2d();
+        canvas.getElement().getStyle().setZIndex(1);
+        add(canvas, 0, 0);
+        context2d.setLineWidth(LINE_SIZE);
+        context2d.beginPath();
+        context2d.moveTo(CURVE_SIZE + bodyLeft, bodyTop);
+        context2d.quadraticCurveTo(bodyLeft, bodyTop, bodyLeft, CURVE_SIZE + bodyTop);
         leftBeakOrLine(direction == Direction.LEFT, left, beakOffset, bodyTop, bodyBottom, bodyLeft);
-        extendedCanvas.quadraticCurveTo(bodyLeft, bodyBottom, CURVE_SIZE + bodyLeft, bodyBottom);
+        context2d.quadraticCurveTo(bodyLeft, bodyBottom, CURVE_SIZE + bodyLeft, bodyBottom);
         bottomBeakOrLine(direction == Direction.BOTTOM, beakOffset, bottom, bodyLeft, bodyRight, bodyBottom);
-        extendedCanvas.quadraticCurveTo(bodyRight, bodyBottom, bodyRight, bodyBottom - CURVE_SIZE);
+        context2d.quadraticCurveTo(bodyRight, bodyBottom, bodyRight, bodyBottom - CURVE_SIZE);
         rightBeakOrLine(direction == Direction.RIGHT, right, beakOffset, bodyTop, bodyBottom, bodyRight);
-        extendedCanvas.quadraticCurveTo(bodyRight, bodyTop, bodyRight - CURVE_SIZE, bodyTop);
+        context2d.quadraticCurveTo(bodyRight, bodyTop, bodyRight - CURVE_SIZE, bodyTop);
         topBeakOrLine(direction == Direction.TOP, beakOffset, top, bodyLeft, bodyRight, bodyTop);
 
-        extendedCanvas.stroke();
-        extendedCanvas.setFillStyle(Color.WHITE);
-        extendedCanvas.fill();
+        context2d.stroke();
+        context2d.setFillStyle(ColorConstants.WHITE);
+        context2d.fill();
     }
 
     private void bottomBeakOrLine(boolean makeBeak, int beakLeft, int beakTop, int bodyLeft, int bodyRight, int bodyBottom) {
         if (!makeBeak) {
-            extendedCanvas.lineTo(bodyRight - CURVE_SIZE, bodyBottom);
+            context2d.lineTo(bodyRight - CURVE_SIZE, bodyBottom);
             return;
         }
         if (beakLeft < CURVE_SIZE + BEAK_WIDTH / 2 + bodyLeft) {
             // too much left
-            extendedCanvas.lineTo(beakLeft, beakTop); // beak
-            extendedCanvas.lineTo(CURVE_SIZE + BEAK_WIDTH + bodyLeft, bodyBottom); // beak
-            extendedCanvas.lineTo(bodyRight - CURVE_SIZE, bodyBottom);
+            context2d.lineTo(beakLeft, beakTop); // beak
+            context2d.lineTo(CURVE_SIZE + BEAK_WIDTH + bodyLeft, bodyBottom); // beak
+            context2d.lineTo(bodyRight - CURVE_SIZE, bodyBottom);
         } else if (beakLeft + BEAK_WIDTH / 2 > bodyRight - CURVE_SIZE) {
             // too much right
-            extendedCanvas.lineTo(bodyRight - CURVE_SIZE - BEAK_WIDTH, bodyBottom);
-            extendedCanvas.lineTo(beakLeft, beakTop); // beak
-            extendedCanvas.lineTo(bodyRight - CURVE_SIZE, bodyBottom); // beak
+            context2d.lineTo(bodyRight - CURVE_SIZE - BEAK_WIDTH, bodyBottom);
+            context2d.lineTo(beakLeft, beakTop); // beak
+            context2d.lineTo(bodyRight - CURVE_SIZE, bodyBottom); // beak
         } else {
             // line
             if (beakLeft > CURVE_SIZE + BEAK_WIDTH / 2 + bodyLeft) {
-                extendedCanvas.lineTo(beakLeft - BEAK_WIDTH / 2, bodyBottom);
+                context2d.lineTo(beakLeft - BEAK_WIDTH / 2, bodyBottom);
             }
             // beak
-            extendedCanvas.lineTo(beakLeft, beakTop); // beak
-            extendedCanvas.lineTo(beakLeft + BEAK_WIDTH / 2, bodyBottom); // beak
+            context2d.lineTo(beakLeft, beakTop); // beak
+            context2d.lineTo(beakLeft + BEAK_WIDTH / 2, bodyBottom); // beak
             //line
             if (beakLeft + BEAK_WIDTH / 2 < bodyRight - CURVE_SIZE) {
-                extendedCanvas.lineTo(bodyRight - CURVE_SIZE, bodyBottom);
+                context2d.lineTo(bodyRight - CURVE_SIZE, bodyBottom);
             }
         }
     }
 
     private void topBeakOrLine(boolean makeBeak, int beakLeft, int beakTop, int bodyLeft, int bodyRight, int bodyTop) {
         if (!makeBeak) {
-            extendedCanvas.lineTo(CURVE_SIZE + bodyLeft, bodyTop);
+            context2d.lineTo(CURVE_SIZE + bodyLeft, bodyTop);
             return;
         }
         if (beakLeft < CURVE_SIZE + BEAK_WIDTH / 2 + bodyLeft) {
             // too much left
-            extendedCanvas.lineTo(bodyLeft + CURVE_SIZE + BEAK_WIDTH, bodyTop);
-            extendedCanvas.lineTo(beakLeft, beakTop); // beak
-            extendedCanvas.lineTo(bodyLeft + CURVE_SIZE, bodyTop); // beak
+            context2d.lineTo(bodyLeft + CURVE_SIZE + BEAK_WIDTH, bodyTop);
+            context2d.lineTo(beakLeft, beakTop); // beak
+            context2d.lineTo(bodyLeft + CURVE_SIZE, bodyTop); // beak
         } else if (beakLeft + BEAK_WIDTH / 2 > bodyRight - CURVE_SIZE) {
             // too much right
-            extendedCanvas.lineTo(beakLeft, beakTop); // beak
-            extendedCanvas.lineTo(bodyRight - CURVE_SIZE - BEAK_WIDTH, bodyTop); // beak
-            extendedCanvas.lineTo(bodyLeft + CURVE_SIZE, bodyTop);
+            context2d.lineTo(beakLeft, beakTop); // beak
+            context2d.lineTo(bodyRight - CURVE_SIZE - BEAK_WIDTH, bodyTop); // beak
+            context2d.lineTo(bodyLeft + CURVE_SIZE, bodyTop);
         } else {
             //line
             if (beakLeft + BEAK_WIDTH / 2 < bodyRight - CURVE_SIZE) {
-                extendedCanvas.lineTo(beakLeft + BEAK_WIDTH / 2, bodyTop);
+                context2d.lineTo(beakLeft + BEAK_WIDTH / 2, bodyTop);
             }
             // beak
-            extendedCanvas.lineTo(beakLeft, beakTop); // beak
-            extendedCanvas.lineTo(beakLeft - BEAK_WIDTH / 2, bodyTop); // beak
+            context2d.lineTo(beakLeft, beakTop); // beak
+            context2d.lineTo(beakLeft - BEAK_WIDTH / 2, bodyTop); // beak
             // line
             if (beakLeft > CURVE_SIZE + BEAK_WIDTH / 2 + bodyLeft) {
-                extendedCanvas.lineTo(CURVE_SIZE + bodyLeft, bodyTop);
+                context2d.lineTo(CURVE_SIZE + bodyLeft, bodyTop);
             }
         }
     }
 
     private void leftBeakOrLine(boolean makeBeak, int beakLeft, int beakTop, int bodyTop, int bodyBottom, int bodyLeft) {
         if (!makeBeak) {
-            extendedCanvas.lineTo(bodyLeft, bodyBottom - CURVE_SIZE);
+            context2d.lineTo(bodyLeft, bodyBottom - CURVE_SIZE);
             return;
         }
         if (beakTop < CURVE_SIZE + BEAK_WIDTH / 2 + bodyTop) {
             // too much top
-            extendedCanvas.lineTo(beakLeft, beakTop); // beak
-            extendedCanvas.lineTo(bodyLeft, bodyTop + CURVE_SIZE + BEAK_WIDTH); // beak
-            extendedCanvas.lineTo(bodyLeft, bodyBottom - CURVE_SIZE);
+            context2d.lineTo(beakLeft, beakTop); // beak
+            context2d.lineTo(bodyLeft, bodyTop + CURVE_SIZE + BEAK_WIDTH); // beak
+            context2d.lineTo(bodyLeft, bodyBottom - CURVE_SIZE);
         } else if (beakTop + BEAK_WIDTH / 2 > bodyBottom - CURVE_SIZE) {
             // too much bottom
-            extendedCanvas.lineTo(bodyLeft, bodyBottom - CURVE_SIZE - BEAK_WIDTH);
-            extendedCanvas.lineTo(beakLeft, beakTop); // beak
-            extendedCanvas.lineTo(bodyLeft, bodyBottom - CURVE_SIZE); // beak
+            context2d.lineTo(bodyLeft, bodyBottom - CURVE_SIZE - BEAK_WIDTH);
+            context2d.lineTo(beakLeft, beakTop); // beak
+            context2d.lineTo(bodyLeft, bodyBottom - CURVE_SIZE); // beak
         } else {
             //line
             if (beakTop > bodyTop + CURVE_SIZE + BEAK_WIDTH / 2) {
-                extendedCanvas.lineTo(bodyLeft, beakTop - BEAK_WIDTH / 2);
+                context2d.lineTo(bodyLeft, beakTop - BEAK_WIDTH / 2);
             }
             // beak
-            extendedCanvas.lineTo(beakLeft, beakTop); // beak
-            extendedCanvas.lineTo(bodyLeft, beakTop + BEAK_WIDTH / 2); // beak
+            context2d.lineTo(beakLeft, beakTop); // beak
+            context2d.lineTo(bodyLeft, beakTop + BEAK_WIDTH / 2); // beak
             // line
             if (beakTop < bodyBottom - CURVE_SIZE - BEAK_WIDTH / 2) {
-                extendedCanvas.lineTo(bodyLeft, bodyBottom - CURVE_SIZE);
+                context2d.lineTo(bodyLeft, bodyBottom - CURVE_SIZE);
             }
         }
     }
 
     private void rightBeakOrLine(boolean makeBeak, int beakLeft, int beakTop, int bodyTop, int bodyBottom, int bodyRight) {
         if (!makeBeak) {
-            extendedCanvas.lineTo(bodyRight, bodyTop + CURVE_SIZE);
+            context2d.lineTo(bodyRight, bodyTop + CURVE_SIZE);
             return;
         }
         if (beakTop < CURVE_SIZE + BEAK_WIDTH / 2 + bodyTop) {
             // too much top
-            extendedCanvas.lineTo(bodyRight, bodyTop + CURVE_SIZE + BEAK_WIDTH);
-            extendedCanvas.lineTo(beakLeft, beakTop); // beak
-            extendedCanvas.lineTo(bodyRight, bodyTop + CURVE_SIZE); // beak
+            context2d.lineTo(bodyRight, bodyTop + CURVE_SIZE + BEAK_WIDTH);
+            context2d.lineTo(beakLeft, beakTop); // beak
+            context2d.lineTo(bodyRight, bodyTop + CURVE_SIZE); // beak
         } else if (beakTop + BEAK_WIDTH / 2 > bodyBottom - CURVE_SIZE) {
             // too much bottom
-            extendedCanvas.lineTo(beakLeft, beakTop); // beak
-            extendedCanvas.lineTo(bodyRight, bodyBottom - CURVE_SIZE - BEAK_WIDTH); // beak
-            extendedCanvas.lineTo(bodyRight, bodyTop + CURVE_SIZE);
+            context2d.lineTo(beakLeft, beakTop); // beak
+            context2d.lineTo(bodyRight, bodyBottom - CURVE_SIZE - BEAK_WIDTH); // beak
+            context2d.lineTo(bodyRight, bodyTop + CURVE_SIZE);
         } else {
             // line
             if (beakTop < bodyBottom - CURVE_SIZE - BEAK_WIDTH / 2) {
-                extendedCanvas.lineTo(bodyRight, beakTop + BEAK_WIDTH / 2);
+                context2d.lineTo(bodyRight, beakTop + BEAK_WIDTH / 2);
             }
             // beak
-            extendedCanvas.lineTo(beakLeft, beakTop); // beak
-            extendedCanvas.lineTo(bodyRight, beakTop - BEAK_WIDTH / 2); // beak
+            context2d.lineTo(beakLeft, beakTop); // beak
+            context2d.lineTo(bodyRight, beakTop - BEAK_WIDTH / 2); // beak
             //line
             if (beakTop > bodyTop + CURVE_SIZE + BEAK_WIDTH / 2) {
-                extendedCanvas.lineTo(bodyRight, bodyTop + CURVE_SIZE);
+                context2d.lineTo(bodyRight, bodyTop + CURVE_SIZE);
             }
         }
     }
@@ -407,22 +414,22 @@ public class SpeechBubble extends AbsolutePanel {
     }
 
     public void blink() {
-        extendedCanvas.setGlobalCompositeOperation(GWTCanvas.SOURCE_OVER);
+        context2d.setGlobalCompositeOperation(Context2d.Composite.SOURCE_OVER);
         if (blink) {
-            extendedCanvas.setFillStyle(Color.WHITE);
+            context2d.setFillStyle(ColorConstants.WHITE);
         } else {
-            extendedCanvas.setFillStyle(Color.RED);
+            context2d.setFillStyle(ColorConstants.RED);
         }
         blink = !blink;
-        extendedCanvas.fill();
-        extendedCanvas.setGlobalCompositeOperation(GWTCanvas.DESTINATION_OVER);
+        context2d.fill();
+        context2d.setGlobalCompositeOperation(Context2d.Composite.DESTINATION_OVER);
     }
 
     public void blinkOff() {
-        extendedCanvas.setGlobalCompositeOperation(GWTCanvas.SOURCE_OVER);
-        extendedCanvas.setFillStyle(Color.WHITE);
+        context2d.setGlobalCompositeOperation(Context2d.Composite.SOURCE_OVER);
+        context2d.setFillStyle(ColorConstants.WHITE);
         blink = false;
-        extendedCanvas.fill();
-        extendedCanvas.setGlobalCompositeOperation(GWTCanvas.DESTINATION_OVER);
+        context2d.fill();
+        context2d.setGlobalCompositeOperation(Context2d.Composite.DESTINATION_OVER);
     }
 }
