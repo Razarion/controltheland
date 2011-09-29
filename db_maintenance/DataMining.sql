@@ -1,4 +1,7 @@
-SET SQL_SAFE_UPDATES=0;
+SET @TIME_BEFORE = '2011-09-25 17:24:00'; 
+SET @TIME_AFTER = '2011-09-26 08:00:00';
+
+SET SQL_SAFE_UPDATES=0; 
 
 -- Case windonws problem
 
@@ -22,8 +25,8 @@ INSERT INTO tmp_data_mining (sessionId,pages,userAgent) SELECT
         TRACKER_PAGE_ACCESS a
     WHERE
         b.javaScriptDetected = TRUE 
-        AND b.timeStamp > '2011-09-25 17:24:00' 
-        AND b.timeStamp < '2011-09-26 08:00:00' 
+        AND b.timeStamp > @TIME_BEFORE 
+        AND b.timeStamp < @TIME_AFTER
         AND a.sessionId = b.sessionId
         AND b.cookieId NOT IN ("17B3CDCC-DF2B-4D42-BE18-E4C2917533F4")
     GROUP BY
@@ -77,7 +80,7 @@ SELECT COUNT(*)"Users with two clicks", secondPage"Second Page" FROM tmp_data_mi
 SELECT COUNT(*)"Users", secondPage"Second Page" FROM tmp_data_mining GROUP BY secondPage;        
 
 -- Two click users entered game but never reached game
-SELECT COUNT(*) FROM tmp_data_mining WHERE pages = 2 AND secondPage = 'com.btxtech.game.wicket.pages.Game' AND startups = 0;        
+SELECT COUNT(*)"Two click users entered game but never reached game" FROM tmp_data_mining WHERE pages = 2 AND secondPage = 'com.btxtech.game.wicket.pages.Game' AND startups = 0;        
 
 -- Game attemps but never reached the game
 SELECT COUNT(*)"Game Attemps" FROM tmp_data_mining WHERE gameAttemps > 0; 
@@ -106,10 +109,8 @@ SELECT count(l.orderIndex)"Users", l.name"Max Level"
 -- User with at least one level promotions
 SELECT count(*)"User with at least one level promotions" FROM tmp_data_mining WHERE maxLevelIndex > 0;
 
--- User which successfully entered the game but stayed on Noob 1 level (count)
-SELECT count(*)"User witch successfully entered the game but stayed on Noob 1 level"  FROM tmp_data_mining WHERE startups > 0 AND maxLevelIndex IS NULL;
-
 -- User which successfully entered the game but stayed on Noob 1 level
+SELECT count(*)"User witch successfully entered the game but stayed on Noob 1 level"  FROM tmp_data_mining WHERE startups > 0 AND maxLevelIndex IS NULL;
 SELECT * FROM tmp_data_mining WHERE startups > 0 AND maxLevelIndex IS NULL;
 
 -- Startup min max avg of first task
@@ -123,5 +124,15 @@ SELECT task, MIN(duration) / 1000, MAX(duration)/1000 , AVG(duration)/1000
   WHERE dbStartup IN (SELECT startupId FROM tmp_data_mining_startup) 
   GROUP BY task 
   ORDER BY task ASC;
+
+SELECT count(*)"MSIE 6", sum(startups)"startup", sum(gameAttemps)"gameAttemps" FROM tmp_data_mining WHERE userAgent like "%MSIE 6%";        
+SELECT count(*)"MSIE 7", sum(startups)"startup", sum(gameAttemps)"gameAttemps" FROM tmp_data_mining WHERE userAgent like "%MSIE 7%";        
+SELECT count(*)"MSIE 8", sum(startups)"startup", sum(gameAttemps)"gameAttemps" FROM tmp_data_mining WHERE userAgent like "%MSIE 8%";        
+SELECT count(*)"MSIE 9", sum(startups)"startup", sum(gameAttemps)"gameAttemps" FROM tmp_data_mining WHERE userAgent like "%MSIE 9%";        
+SELECT count(*)"MSIE ALL", sum(startups)"startup", sum(gameAttemps)"gameAttemps" FROM tmp_data_mining 
+   WHERE userAgent like "%MSIE 9%" 
+   OR userAgent like "%MSIE 8%" 
+   OR userAgent like "%MSIE 7%" 
+   OR userAgent like "%MSIE 6%";        
 
 SET SQL_SAFE_UPDATES=1;
