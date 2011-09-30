@@ -56,7 +56,7 @@ public class ClientRunnerDeferredStartupImpl implements DeferredStartup {
     public void failed(String error) {
         isFinished = true;
         task.correctDeferredDuration();
-        clientRunner.onTaskFailed(task, error);
+        clientRunner.onTaskFailed(task, error, null);
     }
 
     @Override

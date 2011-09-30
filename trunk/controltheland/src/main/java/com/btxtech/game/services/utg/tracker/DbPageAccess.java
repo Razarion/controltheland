@@ -37,7 +37,6 @@ public class DbPageAccess implements Serializable {
     @Column(nullable = false)
     @Index(name = "TRACKER_PAGE_ACCESS_INDEX_SESSION")
     private String sessionId;
-    @Column(nullable = false)
     private String page;
     private String additional;
 

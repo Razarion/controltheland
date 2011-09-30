@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.control;
 
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.control.task.AbstractStartupTask;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import org.easymock.EasyMock;
@@ -9,6 +10,7 @@ import org.junit.Test;
 import java.util.List;
 
 import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.eq;
 
 /**
  * User: beat
@@ -293,7 +295,8 @@ public class TestClientRunner {
         mockListener.onTaskFinished(eqAbstractStartupTask(SimpleExceptionTestTaskEnum.TEST_1));
 
         mockListener.onNextTask(SimpleExceptionTestTaskEnum.TEST_2_EXCEPTION);
-        mockListener.onTaskFailed(eqAbstractStartupTask(SimpleExceptionTestTaskEnum.TEST_2_EXCEPTION), contains(SimpleExceptionStartupTestTask.ERROR_STRING));
+        //noinspection ThrowableResultOfMethodCallIgnored
+        mockListener.onTaskFailed(eqAbstractStartupTask(SimpleExceptionTestTaskEnum.TEST_2_EXCEPTION), contains(SimpleExceptionStartupTestTask.ERROR_STRING), eq(SimpleExceptionStartupTestTask.EXCEPTION));
 
         mockListener.onStartupFailed(eqStartupTaskInfo(new StartupTaskEnum[]{SimpleExceptionTestTaskEnum.TEST_1, SimpleExceptionTestTaskEnum.TEST_2_EXCEPTION}), geq(0L));
         replay(mockListener);
@@ -304,7 +307,7 @@ public class TestClientRunner {
     }
 
     @Test
-    public void runDeferredException() {
+    public void runDeferredFail() {
         StartupProgressListener mockListener = createStrictMock(StartupProgressListener.class);
         mockListener.onStart(StartupTestSeq.TEST_BACKGROUND);
 
@@ -314,7 +317,7 @@ public class TestClientRunner {
         mockListener.onNextTask(DeferredBackgroundTestTaskEnum.TEST_2_BACKGROUND);
 
         mockListener.onNextTask(DeferredBackgroundTestTaskEnum.TEST_3);
-        mockListener.onTaskFailed(eqAbstractStartupTask(DeferredBackgroundTestTaskEnum.TEST_3), contains(ERROR_TEXT));
+        mockListener.onTaskFailed(eqAbstractStartupTask(DeferredBackgroundTestTaskEnum.TEST_3), contains(ERROR_TEXT), (Throwable) eq(null));
 
 
         mockListener.onStartupFailed(eqStartupTaskInfo(new StartupTaskEnum[]{DeferredBackgroundTestTaskEnum.TEST_1,
@@ -348,7 +351,10 @@ public class TestClientRunner {
 
         mockListener.onNextTask(DeferredBackgroundTestTaskEnum.TEST_4);
 
-        mockListener.onTaskFailed(eqAbstractStartupTask(DeferredBackgroundTestTaskEnum.TEST_2_BACKGROUND), contains(ERROR_TEXT));
+        //noinspection ThrowableInstanceNeverThrown
+        Exception exception = new Exception("Test");
+        //noinspection ThrowableResultOfMethodCallIgnored
+        mockListener.onTaskFailed(eqAbstractStartupTask(DeferredBackgroundTestTaskEnum.TEST_2_BACKGROUND), eq(GwtCommon.setupStackTrace(null, exception)), eq(exception));
 
 
         mockListener.onStartupFailed(eqStartupTaskInfo(new StartupTaskEnum[]{DeferredBackgroundTestTaskEnum.TEST_1,
@@ -362,7 +368,8 @@ public class TestClientRunner {
         clientRunner.start(StartupTestSeq.TEST_BACKGROUND);
         DeferredBackgroundTestTaskEnum.TEST_1.getTestDeferredStartupTask().finished();
         DeferredBackgroundTestTaskEnum.TEST_3.getTestDeferredStartupTask().finished();
-        DeferredBackgroundTestTaskEnum.TEST_2_BACKGROUND.getTestDeferredStartupTask().failed(ERROR_TEXT);
+        //noinspection ThrowableInstanceNeverThrown
+        DeferredBackgroundTestTaskEnum.TEST_2_BACKGROUND.getTestDeferredStartupTask().failed(exception);
         DeferredBackgroundTestTaskEnum.TEST_4.getTestDeferredStartupTask().finished();
 
         verify(mockListener);

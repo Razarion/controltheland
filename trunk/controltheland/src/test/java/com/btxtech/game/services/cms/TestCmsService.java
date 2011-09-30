@@ -2859,6 +2859,38 @@ public class TestCmsService extends AbstractServiceTest {
         endHttpSession();
     }
 
+
+    @Test
+    @DirtiesContext
+    public void noHtml5Browser() {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        CrudRootServiceHelper<DbPage> pageCrud = cmsService.getPageCrudRootServiceHelper();
+        DbPage dbPage = pageCrud.createDbChild();
+        dbPage.setPredefinedType(CmsUtil.CmsPredefinedPage.NO_HTML5_BROWSER);
+        pageCrud.updateDbChild(dbPage);
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        // Activate
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        cmsService.activateCms();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        tester.startPage(CmsPage.class, new PageParameters("page=NoHtml5Browser"));
+
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+
     @Test
     @DirtiesContext
     public void testSorting() throws Exception {

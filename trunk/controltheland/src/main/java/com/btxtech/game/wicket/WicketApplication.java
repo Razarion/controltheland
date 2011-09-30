@@ -13,6 +13,7 @@
 
 package com.btxtech.game.wicket;
 
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.wicket.pages.Game;
@@ -44,8 +45,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class WicketApplication extends AuthenticatedWebApplication {
-    static public final String MOUNT_GAME_CMS = "game_cms";
-    static public final String MOUNT_GAME = "game_run";
     @Autowired
     private Session session;
     @Autowired
@@ -61,8 +60,8 @@ public class WicketApplication extends AuthenticatedWebApplication {
         getSharedResources().add(CmsCssResource.CMS_SHARED_CSS_RESOURCES, new CmsCssResource());
         getSharedResources().add(CmsImageResource.CMS_SHARED_IMAGE_RESOURCES, new CmsImageResource());
         mountSharedResource(CmsImageResource.PATH, Application.class.getName() + "/" + CmsImageResource.CMS_SHARED_IMAGE_RESOURCES);
-        mountBookmarkablePage(MOUNT_GAME_CMS, CmsPage.class);
-        mountBookmarkablePage(MOUNT_GAME, Game.class);
+        mountBookmarkablePage(CmsUtil.MOUNT_GAME_CMS, CmsPage.class);
+        mountBookmarkablePage(CmsUtil.MOUNT_GAME, Game.class);
     }
 
     @Override
