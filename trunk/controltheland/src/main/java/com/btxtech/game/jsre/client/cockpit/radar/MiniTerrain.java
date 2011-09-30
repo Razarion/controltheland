@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.cockpit.radar;
 
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
@@ -95,16 +96,20 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
         for (TerrainImagePosition terrainImagePosition : TerrainView.getInstance().getTerrainHandler().getTerrainImagePositions()) {
             Index absolute = TerrainView.getInstance().getTerrainHandler().getAbsolutIndexForTerrainTileIndex(terrainImagePosition.getTileIndex());
             ImageElement imageElement = TerrainView.getInstance().getTerrainHandler().getTerrainImageElement(terrainImagePosition.getImageId());
-            if (imageElement != null) {
-                getContext2d().drawImage(imageElement,
-                        0,
-                        0,
-                        imageElement.getWidth(),
-                        imageElement.getHeight(),
-                        absolute.getX(),
-                        absolute.getY(),
-                        imageElement.getWidth() + factor,
-                        imageElement.getHeight() + factor);
+            try {
+                if (imageElement != null) {
+                    getContext2d().drawImage(imageElement,
+                            0,
+                            0,
+                            imageElement.getWidth(),
+                            imageElement.getHeight(),
+                            absolute.getX(),
+                            absolute.getY(),
+                            imageElement.getWidth() + factor,
+                            imageElement.getHeight() + factor);
+                }
+            } catch (Throwable throwable) {
+                GwtCommon.handleException(throwable);
             }
         }
         getContext2d().restore();

@@ -99,12 +99,16 @@ public class ExplosionFrame {
 
             double frameFactor = (double) frame / (double) COUNT;
 
-            context2d.drawImage(imageElement,
-                    0, 0, // Source pos
-                    80, 80, // Source size
-                    middleX - middleX * frameFactor, middleY - middleY * frameFactor,// Canvas pos
-                    width * frameFactor, height * frameFactor // Canvas size
-            );
+            try {
+                context2d.drawImage(imageElement,
+                        0, 0, // Source pos
+                        80, 80, // Source size
+                        middleX - middleX * frameFactor, middleY - middleY * frameFactor,// Canvas pos
+                        width * frameFactor, height * frameFactor // Canvas size
+                );
+            } catch (Throwable throwable) {
+                GwtCommon.handleException(throwable);
+            }
 
             if ((double) frame / COUNT >= START_ALPHA) {
                 double alpha = (COUNT - (double) frame) / (COUNT * START_ALPHA);
