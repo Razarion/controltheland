@@ -98,11 +98,11 @@ public class MuzzleFlash {
         ImageLoader.loadImages(new String[]{ImageHandler.getMuzzleFlashImageUrl(baseItemType)}, new ImageLoader.CallBack() {
             @Override
             public void onImagesLoaded(ImageElement[] imageElements) {
+                if (imageElements.length != 1) {
+                    throw new IllegalArgumentException("MuzzleFlash: Wrong image count received: " + imageElements.length);
+                }
+                WeaponType weaponType = clientSyncItem.getSyncBaseItem().getSyncWeapon().getWeaponType();
                 try {
-                    if (imageElements.length != 1) {
-                        throw new IllegalArgumentException("MuzzleFlash: Wrong image count received: " + imageElements.length);
-                    }
-                    WeaponType weaponType = clientSyncItem.getSyncBaseItem().getSyncWeapon().getWeaponType();
                     context2d.translate(normCenter.getX(), normCenter.getY());
                     context2d.rotate(-angel);
                     context2d.drawImage(imageElements[0], -Math.round(weaponType.getMuzzleFlashWidth() / 2.0), -weaponType.getMuzzleFlashLength());
