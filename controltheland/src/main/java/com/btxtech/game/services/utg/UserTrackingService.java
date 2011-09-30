@@ -49,7 +49,7 @@ public interface UserTrackingService {
 
     void pageAccess(Class theClass);
 
-    void pageAccess(String pageName);
+    void pageAccess(String pageName, String additional);
 
     boolean hasCookieToAdd();
 
@@ -79,9 +79,11 @@ public interface UserTrackingService {
 
     void trackUserMessage(UserMessage userMessage);
 
-    void onJavaScriptDetected();
+    void onJavaScriptDetected(Boolean html5Support);
 
     boolean isJavaScriptDetected();
+
+    boolean isHtml5Support();
 
     Level onTutorialProgressChanged(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp);
 

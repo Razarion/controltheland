@@ -58,6 +58,7 @@ public class SessionImpl implements Session, Serializable {
     private Connection connection;
     private Log log = LogFactory.getLog(SessionImpl.class);
     private EditMode editMode;
+    private boolean html5Support = true;
 
     @Override
     public Connection getConnection() {
@@ -141,18 +142,33 @@ public class SessionImpl implements Session, Serializable {
     }
 
     @Override
-    public void onJavaScriptDetected() {
+    public void onJavaScriptDetected(Boolean html5Support) {
         if (javaScriptDetected) {
             return;
         }
         javaScriptDetected = true;
-        dbSessionDetail.setJavaScriptDetected();
+        // Return true if html5Support == null the detection may be went wrong an a HTML5 ready browser
+        this.html5Support = html5Support == null || html5Support;
+        dbSessionDetail.setJavaScriptDetected(this.html5Support);
         userTrackingService.saveBrowserDetails(dbSessionDetail);
     }
 
     @Override
     public boolean isJavaScriptDetected() {
         return javaScriptDetected;
+    }
+
+    @Override
+    public boolean isHtml5Support() {
+        return html5Support;
+    }
+
+    public Boolean getHtml5Support() {
+        return html5Support;
+    }
+
+    public void setHtml5Support(Boolean html5Support) {
+        this.html5Support = html5Support;
     }
 
     @Override

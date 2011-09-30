@@ -48,6 +48,7 @@ public class DbSessionDetail implements Serializable {
     @Column(length = 50000)
     private String referer;
     private boolean javaScriptDetected = false;
+    private boolean html5Support;
 
 
     /**
@@ -104,12 +105,17 @@ public class DbSessionDetail implements Serializable {
         return referer;
     }
 
-    public void setJavaScriptDetected() {
+    public void setJavaScriptDetected(boolean html5Support) {
+        this.html5Support = html5Support;
         javaScriptDetected = true;
     }
 
     public boolean isJavaScriptDetected() {
         return javaScriptDetected;
+    }
+
+    public boolean isHtml5Support() {
+        return html5Support;
     }
 
     @Override

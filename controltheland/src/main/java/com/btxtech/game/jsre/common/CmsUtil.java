@@ -20,6 +20,7 @@ public class CmsUtil {
         REGISTER,
         MESSAGE,
         HIGH_SCORE,
-        INFO
+        INFO,
+        NO_HTML5_BROWSER
     }
 }

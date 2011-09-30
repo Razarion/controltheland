@@ -126,7 +126,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     @Transactional
     public void pageAccess(Class theClass) {
         try {
-            DbPageAccess dbPageAccess = new DbPageAccess(session.getSessionId(), theClass.getName(), "");
+            DbPageAccess dbPageAccess = new DbPageAccess(session.getSessionId(), theClass.getName(), null);
             hibernateTemplate.save(dbPageAccess);
         } catch (NoConnectionException e) {
             log.error("", e);
@@ -135,9 +135,9 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     @Transactional
-    public void pageAccess(String pageName) {
+    public void pageAccess(String pageName, String additional) {
         try {
-            DbPageAccess dbPageAccess = new DbPageAccess(session.getSessionId(), pageName, null);
+            DbPageAccess dbPageAccess = new DbPageAccess(session.getSessionId(), pageName, additional);
             hibernateTemplate.saveOrUpdate(dbPageAccess);
         } catch (NoConnectionException e) {
             log.error("", e);
@@ -556,13 +556,18 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
-    public void onJavaScriptDetected() {
-        session.onJavaScriptDetected();
+    public void onJavaScriptDetected(Boolean html5Support) {
+        session.onJavaScriptDetected(html5Support);
     }
 
     @Override
     public boolean isJavaScriptDetected() {
         return session.isJavaScriptDetected();
+    }
+
+    @Override
+    public boolean isHtml5Support() {
+        return session.isHtml5Support();
     }
 
     @Override
