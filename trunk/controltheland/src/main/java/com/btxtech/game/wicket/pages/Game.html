@@ -11,7 +11,8 @@
   ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~   GNU General Public License for more details.
   -->
-<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd" style="height: 100%;margin:0;border:0;padding:0">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd"
+      style="height: 100%;margin:0;border:0;padding:0">
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <link type="text/css" rel="stylesheet" href="Game.css">
@@ -27,11 +28,6 @@
             script.src = '/spring/lsc?e=' + errorMessage;
             head.appendChild(script);
             return true;
-        }
-
-        function showTable() {
-            document.getElementById("startupTaskTable").style.visibility = "visible";
-            document.getElementById("miniLoading").style.visibility = "hidden";
         }
     </script>
     <script type="text/javascript" language="javascript" src="game/game.nocache.js"></script>
@@ -51,10 +47,10 @@
     <table style="height:100%;width:100%">
         <tr align="center">
             <td valign="middle" id="progressTable">
-                <a style="text-decoration:none" href="javascript:showTable()">
-                    <p style="color:#FFFFFF;font-family:Arial, Verdana;font-size:3.0em">Loading Game...</p>
-                    <p id="progressText" style="color:#FFFFFF;font-family:Arial, Verdana;font-size:1.0em" wicket:id="startupTaskText"></p>
-                </a>
+                <p style="color:#FFFFFF;font-family:Arial, Verdana;font-size:3.0em">Loading Game...</p>
+
+                <p id="progressText" style="color:#FFFFFF;font-family:Arial, Verdana;font-size:1.0em"
+                   wicket:id="startupTaskText"></p>
                 <table style="border-style:solid; border-width:1px; border-color:#FFFFFF; width:30em">
                     <tr>
                         <td id="progressBar" style="background:#FFFFFF; width:1em; height:0.5em"></td>
