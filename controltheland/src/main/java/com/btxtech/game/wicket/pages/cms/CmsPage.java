@@ -33,7 +33,6 @@ import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 public class CmsPage extends WebPage implements IHeaderContributor {
-    public static final String ID = "page";
     private static final String CHILD_ID = "childId";
     public static final String DETAIL_CONTENT_ID = "detailId";
     public static final String CREATE_CONTENT_ID = "createId";
@@ -64,9 +63,18 @@ public class CmsPage extends WebPage implements IHeaderContributor {
             @Override
             protected DbPage load() {
                 DbPage dbPage;
-                if (pageParameters.containsKey(ID)) {
-                    pageId = pageParameters.getInt(ID);
-                    dbPage = cmsService.getPage(pageId);
+                if (pageParameters.containsKey(CmsUtil.ID)) {
+                    if (CmsUtil.NO_HTML5_BROWSER_PAGE_STRING_ID.equals(pageParameters.get(CmsUtil.ID))) {
+                        try {
+                            dbPage = cmsService.getPredefinedDbPage(CmsUtil.CmsPredefinedPage.NO_HTML5_BROWSER);
+                            pageId = dbPage.getId();
+                        } catch (CmsPredefinedPageDoesNotExistException e) {
+                            throw new RuntimeException(e);
+                        }
+                    } else {
+                        pageId = pageParameters.getInt(CmsUtil.ID);
+                        dbPage = cmsService.getPage(pageId);
+                    }
                 } else {
                     try {
                         dbPage = cmsService.getPredefinedDbPage(CmsUtil.CmsPredefinedPage.HOME);

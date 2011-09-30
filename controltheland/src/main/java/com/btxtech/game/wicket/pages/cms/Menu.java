@@ -1,5 +1,6 @@
 package com.btxtech.game.wicket.pages.cms;
 
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.DbMenu;
 import com.btxtech.game.services.cms.DbMenuItem;
 import com.btxtech.game.services.cms.DbPage;
@@ -52,7 +53,7 @@ public class Menu extends Panel {
                 DbPage dbPage = (DbPage) Menu.this.getParent().getDefaultModelObject();
                 boolean selected = item.getModelObject().getPage().equals(dbPage);
                 PageParameters pageParameters = new PageParameters();
-                pageParameters.add(CmsPage.ID, Integer.toString(item.getModelObject().getPage().getId()));
+                pageParameters.add(CmsUtil.ID, Integer.toString(item.getModelObject().getPage().getId()));
                 BookmarkablePageLink<CmsPage> link = new BookmarkablePageLink<CmsPage>("menuLink", CmsPage.class, pageParameters);
 
                 Label label = new Label("menuLinkName", item.getModelObject().getName());

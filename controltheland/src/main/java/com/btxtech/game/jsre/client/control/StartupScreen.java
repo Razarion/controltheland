@@ -156,7 +156,7 @@ public class StartupScreen implements StartupProgressListener {
     }
 
     @Override
-    public void onTaskFailed(AbstractStartupTask task, String error) {
+    public void onTaskFailed(AbstractStartupTask task, String error, Throwable t) {
     }
 
     @Override

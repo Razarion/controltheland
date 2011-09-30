@@ -33,7 +33,6 @@ import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.DbPageAccessControl;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.WebCommon;
-import com.btxtech.game.wicket.WicketApplication;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.pages.cms.ItemTypeImage;
@@ -130,13 +129,7 @@ public class CmsUiServiceImpl implements CmsUiService {
 
     private String getUrl4CmsPage(CmsUtil.CmsPredefinedPage predefinedType) {
         try {
-            StringBuilder builder = new StringBuilder();
-            builder.append(WicketApplication.MOUNT_GAME_CMS);
-            builder.append('/');
-            builder.append(CmsPage.ID);
-            builder.append('/');
-            builder.append(cmsService.getPredefinedDbPage(predefinedType).getId());
-            return builder.toString();
+            return CmsUtil.getUrl4CmsPage(Integer.toString(cmsService.getPredefinedDbPage(predefinedType).getId()));
         } catch (CmsPredefinedPageDoesNotExistException e) {
             log.error("", e);
             return "";
@@ -147,7 +140,7 @@ public class CmsUiServiceImpl implements CmsUiService {
     public PageParameters getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage predefinedType) {
         PageParameters pageParameters = new PageParameters();
         try {
-            pageParameters.put(CmsPage.ID, Integer.toString(cmsService.getPredefinedDbPage(predefinedType).getId()));
+            pageParameters.put(CmsUtil.ID, Integer.toString(cmsService.getPredefinedDbPage(predefinedType).getId()));
         } catch (CmsPredefinedPageDoesNotExistException e) {
             log.error("", e);
         }
@@ -157,7 +150,7 @@ public class CmsUiServiceImpl implements CmsUiService {
     @Override
     public PageParameters createPageParametersFromBeanId(BeanIdPathElement beanIdPathElement) {
         PageParameters pageParameters = new PageParameters();
-        pageParameters.put(CmsPage.ID, Integer.toString(beanIdPathElement.getPageId()));
+        pageParameters.put(CmsUtil.ID, Integer.toString(beanIdPathElement.getPageId()));
         List<Serializable> beanIds = new ArrayList<Serializable>();
         BeanIdPathElement tmpBeanIdPathElement = beanIdPathElement;
         while (tmpBeanIdPathElement != null) {
@@ -197,14 +190,14 @@ public class CmsUiServiceImpl implements CmsUiService {
     @Override
     public void setResponsePage(Component component, int dbPageId) {
         PageParameters pageParameters = new PageParameters();
-        pageParameters.put(CmsPage.ID, Integer.toString(dbPageId));
+        pageParameters.put(CmsUtil.ID, Integer.toString(dbPageId));
         component.setResponsePage(CmsPage.class, pageParameters);
     }
 
     @Override
     public void setInvokerResponsePage(Component component, int dbPageId, DbContentInvoker dbContentInvoker) {
         PageParameters parameters = new PageParameters();
-        parameters.put(CmsPage.ID, Integer.toString(dbPageId));
+        parameters.put(CmsUtil.ID, Integer.toString(dbPageId));
         parameters.put(CmsPage.INVOKE_ID, Integer.toString(dbContentInvoker.getId()));
         component.setResponsePage(CmsPage.class, parameters);
     }

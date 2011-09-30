@@ -23,6 +23,7 @@ import com.btxtech.game.jsre.client.control.task.DeferredStartup;
  */
 public class SimpleExceptionStartupTestTask extends AbstractStartupTask {
     public static final String ERROR_STRING = "crash in SimpleExceptionStartupTestTask";
+    public static final RuntimeException EXCEPTION = new RuntimeException(ERROR_STRING);
 
     public SimpleExceptionStartupTestTask(StartupTaskEnum taskEnum) {
         super(taskEnum);
@@ -30,7 +31,7 @@ public class SimpleExceptionStartupTestTask extends AbstractStartupTask {
 
     @Override
     protected void privateStart(final DeferredStartup deferredStartup) {
-        throw new RuntimeException(ERROR_STRING);
+        throw EXCEPTION;
     }
 
 }

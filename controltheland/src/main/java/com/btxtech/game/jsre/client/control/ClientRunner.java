@@ -144,7 +144,7 @@ public class ClientRunner {
         }
     }
 
-    void onTaskFailed(AbstractStartupTask abstractStartupTask, String error) {
+    void onTaskFailed(AbstractStartupTask abstractStartupTask, String error, Throwable t) {
         if (failed) {
             return;
         }
@@ -153,7 +153,7 @@ public class ClientRunner {
             GwtCommon.sendLogToServer(error);
         } else {
             for (StartupProgressListener listener : listeners) {
-                listener.onTaskFailed(abstractStartupTask, error);
+                listener.onTaskFailed(abstractStartupTask, error, t);
             }
 
             long totalTime = System.currentTimeMillis() - (finishedTasks.isEmpty() ? abstractStartupTask.getStartTime() : finishedTasks.get(0).getStartTime());
@@ -166,7 +166,7 @@ public class ClientRunner {
     }
 
     void onTaskFailed(AbstractStartupTask abstractStartupTask, Throwable t) {
-        onTaskFailed(abstractStartupTask, GwtCommon.setupStackTrace(null, t));
+        onTaskFailed(abstractStartupTask, GwtCommon.setupStackTrace(null, t), t);
     }
 
     private void setupStartupSeq(StartupSeq startupSeq) {

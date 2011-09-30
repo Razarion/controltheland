@@ -18,7 +18,7 @@ public interface StartupProgressListener {
 
     void onTaskFinished(AbstractStartupTask task);
 
-    void onTaskFailed(AbstractStartupTask task, String error);
+    void onTaskFailed(AbstractStartupTask task, String error, Throwable t);
 
     void onStartupFinished(List<StartupTaskInfo> taskInfo, long totalTime);
 

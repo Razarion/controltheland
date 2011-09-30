@@ -1,5 +1,6 @@
 package com.btxtech.game.wicket.pages.cms.content;
 
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.cms.DbContentPageLink;
 import com.btxtech.game.wicket.pages.cms.CmsImageResource;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
@@ -26,7 +27,7 @@ public class ContentPageLink extends Panel {
         super(id);
         contentId = dbContentPageLink.getId();
         PageParameters pageParameters = new PageParameters();
-        pageParameters.add(CmsPage.ID, Integer.toString(dbContentPageLink.getDbPage().getId()));
+        pageParameters.add(CmsUtil.ID, Integer.toString(dbContentPageLink.getDbPage().getId()));
         BookmarkablePageLink<CmsPage> link = new BookmarkablePageLink<CmsPage>("link", CmsPage.class, pageParameters);
         if (dbContentPageLink.getDbCmsImage() != null) {
             link.add(new Label("label", "").setVisible(false));

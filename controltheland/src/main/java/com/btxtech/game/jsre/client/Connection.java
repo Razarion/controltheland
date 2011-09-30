@@ -32,7 +32,10 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
+import com.btxtech.game.jsre.common.CmsUtil;
+import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.EnergyPacket;
+import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
@@ -51,6 +54,7 @@ import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import java.util.ArrayList;
@@ -403,8 +407,12 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
     }
 
     @Override
-    public void onTaskFailed(AbstractStartupTask task, String error) {
-        // Ignore
+    public void onTaskFailed(AbstractStartupTask task, String error, Throwable t) {
+        @SuppressWarnings({"ThrowableResultOfMethodCallIgnored"})
+        Throwable cause = CommonJava.getMostInnerThrowable(t);
+        if (cause instanceof Html5NotSupportedException) {
+            Window.Location.assign(CmsUtil.PREDEFINED_PAGE_URL_NO_HTML_5);
+        }
     }
 
     @Override
