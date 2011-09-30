@@ -14,9 +14,11 @@
 package com.btxtech.game.wicket.pages;
 
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
+import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
+import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.IHeaderContributor;
@@ -35,8 +37,15 @@ public class Game extends WebPage implements IHeaderContributor {
     private UserTrackingService userTrackingService;
     @SpringBean
     private UserGuidanceService userGuidanceService;
+    @SpringBean
+    private CmsUiService cmsUiService;
 
     public Game() {
+        if (!userTrackingService.isHtml5Support()) {
+            cmsUiService.setPredefinedResponsePage(this, CmsUtil.CmsPredefinedPage.NO_HTML5_BROWSER);
+            return;
+        }
+
         GameStartupSeq gameStartupSeq = userGuidanceService.getColdStartupSeq();
 
         add(new Label("startupTaskText", gameStartupSeq.getAbstractStartupTaskEnum()[0].getStartupTaskEnumHtmlHelper().getNiceText()));
@@ -60,7 +69,7 @@ public class Game extends WebPage implements IHeaderContributor {
     @Override
     public void renderHead(IHeaderResponse iHeaderResponse) {
         if (!userTrackingService.isJavaScriptDetected()) {
-            iHeaderResponse.renderJavascript(CmsPage.JAVA_SCRIPT_DETECTION, null);
+            iHeaderResponse.renderJavascript(CmsPage.JAVA_SCRIPT_HTML5_DETECTION, null);
         }
     }
 }

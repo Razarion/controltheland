@@ -14,6 +14,7 @@
 package com.btxtech.game.controllers;
 
 import com.btxtech.game.services.utg.UserTrackingService;
+import com.btxtech.game.wicket.pages.cms.CmsPage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,6 @@ import org.springframework.web.servlet.mvc.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 @Component(value = "statisticsController")
 public class StatisticsController implements Controller {
@@ -34,7 +34,16 @@ public class StatisticsController implements Controller {
     @Override
     public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
         try {
-            userTrackingService.onJavaScriptDetected();
+            String html5 = httpServletRequest.getParameter(CmsPage.HTML5_KEY);
+            Boolean html5Support = null;
+            if (html5.equals((CmsPage.HTML5_KEY_Y))) {
+                html5Support = true;
+            } else if (html5.equals((CmsPage.HTML5_KEY_N))) {
+                html5Support = false;
+            } else {
+                log.warn("StatisticsController: Unknown HTML5 parameter received: " + html5);
+            }
+            userTrackingService.onJavaScriptDetected(html5Support);
         } catch (Exception e) {
             log.error("", e);
         }

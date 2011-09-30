@@ -38,9 +38,11 @@ public interface Session {
 
     String getUserAgent();
 
-    void onJavaScriptDetected();
+    void onJavaScriptDetected(Boolean html5Support);
 
     boolean isJavaScriptDetected();
+
+    boolean isHtml5Support();
 
     UserState getUserState();
 

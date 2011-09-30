@@ -20,7 +20,6 @@ import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.playback.PlaybackService;
 import com.btxtech.game.services.utg.tracker.DbStartupTask;
-import com.btxtech.game.wicket.WebCommon;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +51,8 @@ public class TestTracking extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.pageAccess("Page 1");
-        userTrackingService.onJavaScriptDetected();
+        userTrackingService.pageAccess("Page 1", null);
+        userTrackingService.onJavaScriptDetected(true);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -83,11 +82,11 @@ public class TestTracking extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.onJavaScriptDetected();
+        userTrackingService.onJavaScriptDetected(true);
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.pageAccess("Page 1");
+        userTrackingService.pageAccess("Page 1", null);
         endHttpRequestAndOpenSessionInViewFilter();
 
         endHttpSession();
@@ -109,19 +108,19 @@ public class TestTracking extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.pageAccess("Page 1");
-        userTrackingService.onJavaScriptDetected();
+        userTrackingService.pageAccess("Page 1", null);
+        userTrackingService.onJavaScriptDetected(true);
         String cookieId1 = session.getCookieId();
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.pageAccess("Page 2");
+        userTrackingService.pageAccess("Page 2", null);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.pageAccess("Page 1");
+        userTrackingService.pageAccess("Page 1", null);
         String cookieId2 = session.getCookieId();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -156,21 +155,21 @@ public class TestTracking extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.pageAccess("Page 1");
-        userTrackingService.onJavaScriptDetected();
+        userTrackingService.pageAccess("Page 1", null);
+        userTrackingService.onJavaScriptDetected(true);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.pageAccess("Page 1");
-        userTrackingService.onJavaScriptDetected();
+        userTrackingService.pageAccess("Page 1", null);
+        userTrackingService.onJavaScriptDetected(true);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.pageAccess("Page 1");
+        userTrackingService.pageAccess("Page 1", null);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -201,23 +200,23 @@ public class TestTracking extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         String sessionId1 = getHttpSessionId();
-        userTrackingService.pageAccess("Page 1");
-        userTrackingService.onJavaScriptDetected();
+        userTrackingService.pageAccess("Page 1", null);
+        userTrackingService.onJavaScriptDetected(true);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         String sessionId2 = getHttpSessionId();
-        userTrackingService.pageAccess("Page 1");
-        userTrackingService.onJavaScriptDetected();
+        userTrackingService.pageAccess("Page 1", null);
+        userTrackingService.onJavaScriptDetected(true);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         String sessionId3 = getHttpSessionId();
-        userTrackingService.pageAccess("Page 1");
+        userTrackingService.pageAccess("Page 1", null);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -274,8 +273,8 @@ public class TestTracking extends AbstractServiceTest {
     private void tutorial1() throws Exception {
         // 0 until 1550 (client time )
         beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.pageAccess("Page 1");
-        userTrackingService.onJavaScriptDetected();
+        userTrackingService.pageAccess("Page 1", null);
+        userTrackingService.onJavaScriptDetected(true);
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -285,7 +284,7 @@ public class TestTracking extends AbstractServiceTest {
         infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GUI, 1250, 50));
         infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_MAP, 1300, 200));
         movableService.sendStartupInfo(infos, 500);
-        userTrackingService.onJavaScriptDetected();
+        userTrackingService.onJavaScriptDetected(true);
         endHttpRequestAndOpenSessionInViewFilter();
 
 
@@ -338,8 +337,8 @@ public class TestTracking extends AbstractServiceTest {
     private void tutorial2() throws Exception {
         // 1600 until 3100 (client time )
         beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.pageAccess("Page 1");
-        userTrackingService.onJavaScriptDetected();
+        userTrackingService.pageAccess("Page 1", null);
+        userTrackingService.onJavaScriptDetected(true);
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -349,7 +348,7 @@ public class TestTracking extends AbstractServiceTest {
         infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.INIT_GUI, 1850, 50));
         infos.add(new StartupTaskInfo(ColdRealGameStartupTaskEnum.LOAD_MAP, 1900, 200));
         movableService.sendStartupInfo(infos, 500);
-        userTrackingService.onJavaScriptDetected();
+        userTrackingService.onJavaScriptDetected(true);
         endHttpRequestAndOpenSessionInViewFilter();
 
 
@@ -405,7 +404,7 @@ public class TestTracking extends AbstractServiceTest {
     private void realGame1() throws Exception {
         // 1600 until 3100 (client time )
         beginHttpRequestAndOpenSessionInViewFilter();
-        userTrackingService.pageAccess("Page 1");
+        userTrackingService.pageAccess("Page 1", null);
         endHttpRequestAndOpenSessionInViewFilter();
 
         beginHttpRequestAndOpenSessionInViewFilter();
@@ -601,4 +600,37 @@ public class TestTracking extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
+
+
+    @Test
+    @DirtiesContext
+    public void testHtml5Detection() throws Exception {
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        Assert.assertTrue(userTrackingService.isHtml5Support());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userTrackingService.onJavaScriptDetected(null);
+        Assert.assertTrue(userTrackingService.isHtml5Support());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userTrackingService.onJavaScriptDetected(true);
+        Assert.assertTrue(userTrackingService.isHtml5Support());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userTrackingService.onJavaScriptDetected(false);
+        Assert.assertFalse(userTrackingService.isHtml5Support());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
 }

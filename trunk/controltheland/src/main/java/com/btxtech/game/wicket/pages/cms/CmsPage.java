@@ -41,12 +41,13 @@ public class CmsPage extends WebPage implements IHeaderContributor {
     public static final String MESSAGE_ID = "messageId";
     public static final String PAGING_NUMBER = "paging";
     public static final String SORT_INFO = "sort";
+    public static final String HTML5_KEY = "html5";
+    public static final String HTML5_KEY_N = "n";
+    public static final String HTML5_KEY_Y = "y";
     public static final char SORT_ASCENDING = 'a';
     public static final char SORT_DESCENDING = 'd';
-    public static final String JAVA_SCRIPT_DETECTION = "var f = document.createElement('script');\n" +
-            "f.setAttribute(\"type\", \"text/javascript\");\n" +
-            "f.setAttribute(\"src\", \"/spring/statJS\");\n" +
-            "document.getElementsByTagName(\"head\")[0].appendChild(f)";
+    public static final String JAVA_SCRIPT_HTML5_DETECTION = "var value='/spring/statJS?" + HTML5_KEY + "=';if(window.HTMLCanvasElement){value+='" + HTML5_KEY_Y + "';}else{value+='" + HTML5_KEY_N + "';}var f = document.createElement('script');f.setAttribute('type','text/javascript');f.setAttribute('src',value);document.getElementsByTagName('head')[0].appendChild(f);";
+    public static final int MAX_LEVELS = 20;
 
     @SpringBean
     private CmsService cmsService;
@@ -55,7 +56,7 @@ public class CmsPage extends WebPage implements IHeaderContributor {
     @SpringBean
     private UserTrackingService userTrackingService;
     private int pageId;
-    public static final int MAX_LEVELS = 20;
+    private ContentContext contentContext;
 
     public CmsPage(final PageParameters pageParameters) {
         setDefaultModel(new CompoundPropertyModel<DbPage>(new LoadableDetachableModel<DbPage>() {
@@ -77,7 +78,7 @@ public class CmsPage extends WebPage implements IHeaderContributor {
                 return dbPage;
             }
         }));
-        ContentContext contentContext = new ContentContext(pageParameters);
+        contentContext = new ContentContext(pageParameters);
         DbPage dbPage = (DbPage) getDefaultModelObject();
         add(new Label("title", dbPage.getName()));
         add(CmsCssResource.createCss("css", dbPage));
@@ -108,14 +109,14 @@ public class CmsPage extends WebPage implements IHeaderContributor {
     @Override
     public void renderHead(IHeaderResponse iHeaderResponse) {
         if (!userTrackingService.isJavaScriptDetected()) {
-            iHeaderResponse.renderJavascript(JAVA_SCRIPT_DETECTION, null);
+            iHeaderResponse.renderJavascript(JAVA_SCRIPT_HTML5_DETECTION, null);
         }
     }
 
     @Override
     protected void onBeforeRender() {
         DbPage dbPage = (DbPage) getDefaultModelObject();
-        userTrackingService.pageAccess(dbPage.getName());
+        userTrackingService.pageAccess(dbPage.getName(), contentContext.getPageParameters().toString());
         super.onBeforeRender();
         if (userTrackingService.hasCookieToAdd()) {
             WebCommon.addCookieId(((WebResponse) getRequestCycle().getResponse()).getHttpServletResponse(), userTrackingService.getAndClearCookieToAdd());
