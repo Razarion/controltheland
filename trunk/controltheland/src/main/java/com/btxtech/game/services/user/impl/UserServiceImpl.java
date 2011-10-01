@@ -42,6 +42,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.core.Authentication;
@@ -109,6 +110,8 @@ public class UserServiceImpl implements UserService {
             } else {
                 return false;
             }
+        } catch (BadCredentialsException e) {
+            return false;
         } catch (AuthenticationException authenticationException) {
             log.error("", authenticationException);
             return false;
@@ -217,7 +220,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
-        return getUser(username);
+        User user = getUser(username);
+        if (user != null) {
+            return user;
+        } else {
+            throw new UsernameNotFoundException("User does not exist: " + username);
+        }
     }
 
     @Override
