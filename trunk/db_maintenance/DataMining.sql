@@ -1,5 +1,9 @@
-SET @TIME_BEFORE = '2011-09-25 17:24:00'; 
-SET @TIME_AFTER = '2011-09-26 08:00:00';
+-- CHANGE THIS
+SET @TIME_BEFORE = '2011-09-29 09:36:00'; 
+SET @TIME_AFTER = '2011-09-29 22:00:00';
+SET @detectedUsers = 266;
+SET @twoClickUsers = 89;
+-- CHANGE THIS
 
 SET SQL_SAFE_UPDATES=0; 
 
@@ -28,7 +32,8 @@ INSERT INTO tmp_data_mining (sessionId,pages,userAgent) SELECT
         AND b.timeStamp > @TIME_BEFORE 
         AND b.timeStamp < @TIME_AFTER
         AND a.sessionId = b.sessionId
-        AND b.cookieId NOT IN ("17B3CDCC-DF2B-4D42-BE18-E4C2917533F4")
+        -- Cookie: Beat Chrome, Beat FF
+        AND b.cookieId NOT IN ("17B3CDCC-DF2B-4D42-BE18-E4C2917533F4", "248FE9A0-7242-4708-B38B-CD2A20E2D9D2")
     GROUP BY
         b.sessionId
     ORDER BY
@@ -65,52 +70,52 @@ INSERT INTO tmp_data_mining_startup (sessionId, startupId, taskCount, timeStamp,
     GROUP BY s.id;
     
 -- Startups
-SELECT * FROM tmp_data_mining_startup ORDER BY timeStamp ASC;
+-- SELECT * FROM tmp_data_mining_startup ORDER BY timeStamp ASC;
 
 -- Detected users
-SELECT COUNT(*) FROM tmp_data_mining;        
+SELECT COUNT(*)"All detected users" FROM tmp_data_mining;        
 
 -- Page Click count / User
-SELECT pages"Page Clicks", COUNT(*)"Users" FROM tmp_data_mining GROUP BY pages;        
+SELECT pages"Page Clicks", COUNT(*)"Users", COUNT(*)/@detectedUsers*100"% all Users" FROM tmp_data_mining GROUP BY pages;        
 
 -- Two click users / Second Page
-SELECT COUNT(*)"Users with two clicks", secondPage"Second Page" FROM tmp_data_mining WHERE pages = 2 GROUP BY secondPage;        
+SELECT COUNT(*)"Users with two clicks", COUNT(*)/@twoClickUsers*100"%", secondPage"Second Page"FROM tmp_data_mining WHERE pages = 2 GROUP BY secondPage;        
 
 -- Users / Second Page
-SELECT COUNT(*)"Users", secondPage"Second Page" FROM tmp_data_mining GROUP BY secondPage;        
+SELECT COUNT(*)"Users", COUNT(*)/@detectedUsers*100"% all Users", secondPage"Second Page" FROM tmp_data_mining GROUP BY secondPage;        
 
 -- Two click users entered game but never reached game
-SELECT COUNT(*)"Two click users entered game but never reached game" FROM tmp_data_mining WHERE pages = 2 AND secondPage = 'com.btxtech.game.wicket.pages.Game' AND startups = 0;        
+SELECT COUNT(*)"Two click users entered game but never reached game", COUNT(*)/@twoClickUsers*100"%" FROM tmp_data_mining WHERE pages = 2 AND secondPage = 'com.btxtech.game.wicket.pages.Game' AND startups = 0;        
+
+-- Game attemps
+SELECT COUNT(*)"Game Attemps", COUNT(*)/@detectedUsers*100"% all Users" FROM tmp_data_mining WHERE gameAttemps > 0; 
 
 -- Game attemps but never reached the game
-SELECT COUNT(*)"Game Attemps" FROM tmp_data_mining WHERE gameAttemps > 0; 
-
--- Game attemps but never reached the game
-SELECT COUNT(*)"Game attemps but never reached the game" FROM tmp_data_mining WHERE gameAttemps > 0 AND startups = 0;        
+SELECT COUNT(*)"Game attemps but never reached the game", COUNT(*)/@detectedUsers*100"% all Users" FROM tmp_data_mining WHERE gameAttemps > 0 AND startups = 0;        
 SELECT * FROM tmp_data_mining WHERE gameAttemps > 0 AND startups = 0;        
 
--- Game attemps but and reached the game
-SELECT COUNT(*)"Game attemps and reached the game" FROM tmp_data_mining WHERE gameAttemps > 0 AND startups > 0; 
+-- Game attemps and reached the game
+SELECT COUNT(*)"Game attemps and reached the game", COUNT(*)/@detectedUsers*100"% all Users" FROM tmp_data_mining WHERE gameAttemps > 0 AND startups > 0; 
 SELECT * FROM tmp_data_mining WHERE gameAttemps > 0 AND startups > 0; 
 
 -- All pages
-SELECT COUNT(*)"Count", a.page"Page" FROM tmp_data_mining m, TRACKER_PAGE_ACCESS a WHERE a.sessionId = m.sessionId GROUP BY a.page ORDER BY COUNT(*) DESC; 
+SELECT COUNT(*)"Count", COUNT(*)/@detectedUsers*100"% all Users", a.page"Page" FROM tmp_data_mining m, TRACKER_PAGE_ACCESS a WHERE a.sessionId = m.sessionId GROUP BY a.page ORDER BY COUNT(*) DESC; 
 
 -- Max Levels Promotions all users
 SELECT m.*, l.name FROM tmp_data_mining m, GUIDANCE_LEVEL l where m.maxLevelIndex = l.orderIndex ORDER BY maxLevelIndex DESC;
 
 -- Max Levels Promotions
-SELECT count(l.orderIndex)"Users", l.name"Max Level" 
+SELECT count(l.orderIndex)"Users", COUNT(l.orderIndex)/@detectedUsers*100"% all Users" , l.name"Max Level" 
   FROM tmp_data_mining m, GUIDANCE_LEVEL l 
     where m.maxLevelIndex = l.orderIndex 
     GROUP BY l.orderIndex 
     ORDER BY l.orderIndex DESC, count(l.orderIndex) ASC;
 
 -- User with at least one level promotions
-SELECT count(*)"User with at least one level promotions" FROM tmp_data_mining WHERE maxLevelIndex > 0;
+SELECT count(*)"User with at least one level promotions", COUNT(*)/@detectedUsers*100"% all Users" FROM tmp_data_mining WHERE maxLevelIndex > 0;
 
 -- User which successfully entered the game but stayed on Noob 1 level
-SELECT count(*)"User witch successfully entered the game but stayed on Noob 1 level"  FROM tmp_data_mining WHERE startups > 0 AND maxLevelIndex IS NULL;
+SELECT count(*)"User witch successfully entered the game but stayed on Noob 1 level", COUNT(*)/@detectedUsers*100"% all Users"  FROM tmp_data_mining WHERE startups > 0 AND maxLevelIndex IS NULL;
 SELECT * FROM tmp_data_mining WHERE startups > 0 AND maxLevelIndex IS NULL;
 
 -- Startup min max avg of first task
