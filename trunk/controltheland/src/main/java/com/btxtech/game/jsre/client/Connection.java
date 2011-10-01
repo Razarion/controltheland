@@ -99,7 +99,6 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
 
                 @Override
                 public void onFailure(Throwable caught) {
-                    handleDisconnection(caught);
                     deferredStartup.failed(caught);
                 }
 
@@ -130,7 +129,6 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
             movableServiceAsync.getAllSyncInfo(new AsyncCallback<Collection<SyncItemInfo>>() {
                 @Override
                 public void onFailure(Throwable throwable) {
-                    handleDisconnection(throwable);
                     deferredStartup.failed(throwable);
                 }
 
@@ -254,12 +252,14 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
         commandQueue.clear();
     }
 
-    public void sendTutorialProgress(TutorialConfig.TYPE type, String name, String parent, long duration, long clientTimeStamp, final ParametrisedRunnable<Level> runnable) {
+    public void sendTutorialProgress(final TutorialConfig.TYPE type, final String name, final String parent, final long duration, final long clientTimeStamp, final ParametrisedRunnable<Level> runnable) {
         if (movableServiceAsync != null) {
             movableServiceAsync.sendTutorialProgress(type, name, parent, duration, clientTimeStamp, new AsyncCallback<Level>() {
                 @Override
                 public void onFailure(Throwable caught) {
-                    GwtCommon.handleException(caught);
+                    if (handleDisconnection(caught)) {
+                        sendTutorialProgress(type, name, parent, duration, clientTimeStamp, runnable);
+                    }
                 }
 
                 @Override
@@ -412,6 +412,9 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
         Throwable cause = CommonJava.getMostInnerThrowable(t);
         if (cause instanceof Html5NotSupportedException) {
             Window.Location.assign(CmsUtil.PREDEFINED_PAGE_URL_NO_HTML_5);
+        } else if (GwtCommon.checkAndReportHttpStatusCode0(cause)) {
+            // Reload whole browser
+            Window.Location.reload();
         }
     }
 
