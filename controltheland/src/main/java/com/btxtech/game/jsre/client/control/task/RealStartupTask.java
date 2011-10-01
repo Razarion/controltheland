@@ -15,9 +15,7 @@ package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientEnergyService;
-import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
-import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
@@ -36,7 +34,10 @@ public class RealStartupTask extends GameEngineStartupTask {
 
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
-        RealityInfo realityInfo = (RealityInfo) Connection.getInstance().getGameInfo();
+        RealityInfo realityInfo = reloadIfNotCorrectInfoClass(RealityInfo.class, deferredStartup);
+        if (realityInfo == null) {
+            return;
+        }
         setupGameStructure(realityInfo);
         ClientBase.getInstance().setAllBaseAttributes(realityInfo.getAllBase());
         ClientBase.getInstance().setBase(realityInfo.getBase());
@@ -44,7 +45,7 @@ public class RealStartupTask extends GameEngineStartupTask {
         Cockpit.getInstance().setGameInfo(realityInfo);
         ClientItemTypeAccess.getInstance().setAllowedItemTypes(realityInfo.getAllowedItemTypes());
         ClientEnergyService.getInstance().init(true);
-        ClientBase.getInstance().setConnectedToServer4FakedHouseSpace(true);        
+        ClientBase.getInstance().setConnectedToServer4FakedHouseSpace(true);
         ClientEnergyService.getInstance().onEnergyPacket(realityInfo.getEnergyGenerating(), realityInfo.getEnergyConsuming());
         ClientTerritoryService.getInstance().setTerritories(realityInfo.getTerritories());
         ClientBase.getInstance().setHouseSpace(realityInfo.getHouseSpace());
