@@ -32,7 +32,6 @@ import com.btxtech.game.services.utg.tracker.DbEventTrackingStart;
 import com.btxtech.game.services.utg.tracker.DbScrollTrackingItem;
 import com.btxtech.game.services.utg.tracker.DbSelectionTrackingItem;
 import com.btxtech.game.services.utg.tracker.DbSessionDetail;
-import com.btxtech.game.wicket.pages.basepage.BasePage;
 
 import java.util.Collection;
 import java.util.List;
@@ -44,8 +43,6 @@ import java.util.List;
  */
 public interface UserTrackingService {
     void saveBrowserDetails(DbSessionDetail dbSessionDetail);
-
-    void pageAccess(BasePage basePage);
 
     void pageAccess(Class theClass);
 
