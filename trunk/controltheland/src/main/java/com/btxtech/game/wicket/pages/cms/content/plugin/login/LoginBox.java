@@ -21,8 +21,8 @@ import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeAction;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
+import org.apache.wicket.markup.html.form.StatelessForm;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -43,7 +43,7 @@ public class LoginBox extends Panel {
 
     public LoginBox(String id, boolean showRegisterLink) {
         super(id);
-        Form form = new Form<LoginBox>("loginForm", new CompoundPropertyModel<LoginBox>(this)) {
+        StatelessForm<LoginBox> form = new StatelessForm<LoginBox>("loginForm", new CompoundPropertyModel<LoginBox>(this)) {
             @Override
             protected void onSubmit() {
                 try {
