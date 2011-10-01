@@ -15,7 +15,6 @@ package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientEnergyService;
-import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
@@ -35,7 +34,10 @@ public class RealDeltaStartupTask extends GameEngineStartupTask {
 
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
-        RealityInfo realityInfo = (RealityInfo) Connection.getInstance().getGameInfo();
+        RealityInfo realityInfo = reloadIfNotCorrectInfoClass(RealityInfo.class, deferredStartup);
+        if (realityInfo == null) {
+            return;
+        }
         deltaSetupGameStructure(realityInfo);
         ClientBase.getInstance().setAllBaseAttributes(realityInfo.getAllBase());
         ClientBase.getInstance().setBase(realityInfo.getBase());
@@ -49,4 +51,5 @@ public class RealDeltaStartupTask extends GameEngineStartupTask {
         ClientBase.getInstance().setHouseSpace(realityInfo.getHouseSpace());
         Cockpit.getInstance().enableOnlinePanel(true);
     }
+
 }

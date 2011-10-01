@@ -15,10 +15,13 @@ package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
+import com.btxtech.game.jsre.client.common.info.RealityInfo;
+import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
+import com.google.gwt.user.client.Window;
 
 /**
  * User: beat
@@ -31,9 +34,28 @@ public abstract class GameEngineStartupTask extends AbstractStartupTask {
         super(taskEnum);
     }
 
+    protected <T extends GameInfo> T reloadIfNotCorrectInfoClass(Class<T> infoClass, DeferredStartup deferredStartup) {
+        GameInfo gameInfo = Connection.getInstance().getGameInfo();
+        // GWT only supports a few java.lang.Class members
+        if (gameInfo instanceof RealityInfo && infoClass.equals(RealityInfo.class)) {
+            // noinspection unchecked
+            return (T) gameInfo;
+        } else if (gameInfo instanceof SimulationInfo && infoClass.equals(SimulationInfo.class)) {
+            // noinspection unchecked
+            return (T) gameInfo;
+        } else {
+            // The level on the game may has changed but the browser caches the old Startup
+            // Set deferred to prevent starting any new tasks
+            deferredStartup.setDeferred();
+            // Reload the whole page
+            Window.Location.reload();
+            return null;
+        }
+    }
+
     protected void setupGameStructure(GameInfo gameInfo) {
         Connection.getInstance().setRegistered(gameInfo.isRegistered());
-        ClientLevelHandler.getInstance().setLevel(gameInfo.getLevel());        
+        ClientLevelHandler.getInstance().setLevel(gameInfo.getLevel());
         TerrainView.getInstance().setupTerrain(gameInfo.getTerrainSettings(),
                 gameInfo.getTerrainImagePositions(),
                 gameInfo.getSurfaceRects(),

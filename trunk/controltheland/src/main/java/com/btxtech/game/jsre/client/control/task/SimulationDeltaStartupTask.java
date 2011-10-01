@@ -15,11 +15,9 @@ package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientEnergyService;
-import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
-import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 
 /**
  * User: beat
@@ -35,8 +33,11 @@ public class SimulationDeltaStartupTask extends GameEngineStartupTask {
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
         ClientEnergyService.getInstance().init(false);
-        ClientBase.getInstance().setConnectedToServer4FakedHouseSpace(false);        
-        SimulationInfo simulationInfo = (SimulationInfo) Connection.getInstance().getGameInfo();
+        ClientBase.getInstance().setConnectedToServer4FakedHouseSpace(false);
+        SimulationInfo simulationInfo = reloadIfNotCorrectInfoClass(SimulationInfo.class, deferredStartup);
+        if (simulationInfo == null) {
+            return;
+        }
         deltaSetupGameStructure(simulationInfo);
         ClientBase.getInstance().setAllBaseAttributes(simulationInfo.getTutorialConfig().getBaseAttributes());
         Cockpit.getInstance().enableOnlinePanel(false);
