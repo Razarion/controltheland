@@ -21,7 +21,7 @@ import org.apache.wicket.authentication.AuthenticatedWebSession;
 import org.apache.wicket.authorization.Action;
 import org.apache.wicket.authorization.strategies.role.annotations.AuthorizeAction;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.StatelessForm;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -42,7 +42,7 @@ public class LoggedinBox extends Panel {
 
     public LoggedinBox(String id) {
         super(id);
-        Form form = new Form<LoggedinBox>("loginForm", new Model<LoggedinBox>()) {
+        StatelessForm<LoggedinBox> form = new StatelessForm<LoggedinBox>("loginForm", new Model<LoggedinBox>()) {
             @Override
             protected void onSubmit() {
                 AuthenticatedWebSession session = AuthenticatedWebSession.get();

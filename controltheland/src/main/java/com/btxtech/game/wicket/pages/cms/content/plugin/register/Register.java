@@ -19,8 +19,8 @@ import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsEx
 import com.btxtech.game.services.user.AlreadyLoggedInException;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
-import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
+import org.apache.wicket.markup.html.form.StatelessForm;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -43,7 +43,7 @@ public class Register extends Panel {
             return;
         }
 
-        Form form = new Form<Register>("newUserForm", new CompoundPropertyModel<Register>(this)) {
+        StatelessForm<Register> form = new StatelessForm<Register>("newUserForm", new CompoundPropertyModel<Register>(this)) {
             @Override
             protected void onSubmit() {
                 try {
