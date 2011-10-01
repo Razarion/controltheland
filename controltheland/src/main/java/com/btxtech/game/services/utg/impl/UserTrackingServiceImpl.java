@@ -60,7 +60,6 @@ import com.btxtech.game.services.utg.tracker.DbTutorialProgress;
 import com.btxtech.game.services.utg.tracker.DbUserCommand;
 import com.btxtech.game.services.utg.tracker.DbUserHistory;
 import com.btxtech.game.wicket.pages.Game;
-import com.btxtech.game.wicket.pages.basepage.BasePage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -109,17 +108,6 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
         hibernateTemplate = new HibernateTemplate(sessionFactory);
-    }
-
-    @Override
-    @Transactional
-    public void pageAccess(BasePage basePage) {
-        try {
-            DbPageAccess dbPageAccess = new DbPageAccess(session.getSessionId(), basePage.getClass().getName(), basePage.getAdditionalPageInfo());
-            hibernateTemplate.saveOrUpdate(dbPageAccess);
-        } catch (NoConnectionException e) {
-            log.error("", e);
-        }
     }
 
     @Override

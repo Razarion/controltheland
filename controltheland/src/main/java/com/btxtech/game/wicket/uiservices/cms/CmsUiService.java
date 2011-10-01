@@ -7,9 +7,11 @@ import com.btxtech.game.services.cms.DbContentInvoker;
 import com.btxtech.game.services.cms.DbPage;
 import com.btxtech.game.services.cms.EditMode;
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.uiservices.BeanIdPathElement;
 import org.apache.wicket.Component;
+import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
 
 import java.lang.reflect.InvocationTargetException;
@@ -26,6 +28,8 @@ public interface CmsUiService {
     PageParameters getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage predefinedType);
 
     PageParameters createPageParametersFromBeanId(BeanIdPathElement beanIdPathElement);
+
+    CmsPage getPredefinedNotFound();
 
     void setupPredefinedUrls();
 

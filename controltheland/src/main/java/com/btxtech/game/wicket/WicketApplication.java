@@ -17,10 +17,10 @@ import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.wicket.pages.Game;
-import com.btxtech.game.wicket.pages.PageExpired;
 import com.btxtech.game.wicket.pages.cms.CmsCssResource;
 import com.btxtech.game.wicket.pages.cms.CmsImageResource;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
+import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.wicket.Application;
@@ -36,6 +36,7 @@ import org.apache.wicket.protocol.http.PageExpiredException;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebRequestCycle;
+import org.apache.wicket.protocol.http.request.InvalidUrlException;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -51,6 +52,8 @@ public class WicketApplication extends AuthenticatedWebApplication {
     private MgmtService mgmtService;
     private String configurationType;
     private Log log = LogFactory.getLog(WicketApplication.class);
+    @Autowired
+    private CmsUiService cmsUiService;
 
     @Override
     protected void init() {
@@ -113,7 +116,10 @@ public class WicketApplication extends AuthenticatedWebApplication {
                 log.error("Page: " + cause);
                 log.error("User Agent: " + session.getUserAgent());
                 log.error("Session Id: " + session.getSessionId());
-                return new PageExpired();
+                return cmsUiService.getPredefinedNotFound();
+            } else if (e instanceof InvalidUrlException) {
+                log.error("", e);
+                return cmsUiService.getPredefinedNotFound();
             } else {
                 log.error("", e);
                 return new CmsPage(new PageParameters());

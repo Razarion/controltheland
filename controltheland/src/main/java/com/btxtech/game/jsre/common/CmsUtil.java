@@ -31,7 +31,8 @@ public class CmsUtil {
         MESSAGE,
         HIGH_SCORE,
         INFO,
-        NO_HTML5_BROWSER
+        NO_HTML5_BROWSER,
+        NOT_FOUND
     }
 
     public static String getUrl4CmsPage(String id) {

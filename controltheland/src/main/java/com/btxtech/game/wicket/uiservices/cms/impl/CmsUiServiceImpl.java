@@ -64,12 +64,14 @@ import org.apache.wicket.RequestCycle;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.protocol.http.WebRequest;
+import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -174,6 +176,13 @@ public class CmsUiServiceImpl implements CmsUiService {
         return pageParameters;
     }
 
+    @Override
+    public CmsPage getPredefinedNotFound() {
+        PageParameters pageParameters = getPredefinedDbPageParameters(CmsUtil.CmsPredefinedPage.NOT_FOUND);
+        CmsPage cmsPage = new CmsPage(pageParameters);
+        ((WebRequestCycle) cmsPage.getRequestCycle()).getWebResponse().getHttpServletResponse().setStatus(HttpServletResponse.SC_NOT_FOUND);
+        return cmsPage;
+    }
 
     @Override
     public void setPredefinedResponsePage(Component component, CmsUtil.CmsPredefinedPage predefinedType) {
