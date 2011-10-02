@@ -243,7 +243,9 @@ public class ServerMarketServiceImpl implements ServerMarketService {
 
     @Override
     public void increaseXp(Base actorBase, SyncBaseItem killedItem) {
-        xpPerKillQueueWorker.put(new XpPerKill(actorBase, killedItem));
+        if (!baseService.isBot(actorBase.getSimpleBase())) {
+            xpPerKillQueueWorker.put(new XpPerKill(actorBase, killedItem));
+        }
     }
 
     @Override
@@ -383,7 +385,7 @@ public class ServerMarketServiceImpl implements ServerMarketService {
     @Override
     public ReadonlyCollectionContentProvider<AvailableMarketEntry> getAvailableCrud() {
         ArrayList<AvailableMarketEntry> availableMarketEntries = new ArrayList<AvailableMarketEntry>();
-        if(!userService.hasUserState()) {
+        if (!userService.hasUserState()) {
             // Prevent creating a UserState -> search engine
             return new ReadonlyCollectionContentProvider<AvailableMarketEntry>(availableMarketEntries);
         }
@@ -394,7 +396,7 @@ public class ServerMarketServiceImpl implements ServerMarketService {
             if (userItemTypeAccess.contains(marketEntry)) {
                 continue;
             }
-            if(marketEntry.getItemType() == null) {
+            if (marketEntry.getItemType() == null) {
                 // this should not be checked here. This is a miss configuration.
                 continue;
             }
