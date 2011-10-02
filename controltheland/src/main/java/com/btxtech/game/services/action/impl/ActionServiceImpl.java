@@ -15,10 +15,10 @@ package com.btxtech.game.services.action.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
-import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.PositionCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
+import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.BaseDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -35,6 +35,7 @@ import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.action.ActionServiceUtil;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
+import com.btxtech.game.services.collision.PathCanNotBeFoundException;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
@@ -433,6 +434,8 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
             syncItem.stop();
             syncItem.executeCommand(baseCommand);
             finalizeCommand(syncItem);
+        } catch (PathCanNotBeFoundException e) {
+            connectionService.sendSyncInfo(syncItem);
         } catch (ItemDoesNotExistException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Can not execute command. Item does no longer exist " + baseCommand);
