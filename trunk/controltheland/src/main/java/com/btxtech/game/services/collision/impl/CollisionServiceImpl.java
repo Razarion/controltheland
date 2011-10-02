@@ -34,6 +34,7 @@ import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.collision.CollisionServiceChangedListener;
 import com.btxtech.game.services.collision.PassableRectangle;
 import com.btxtech.game.services.collision.Path;
+import com.btxtech.game.services.collision.PathCanNotBeFoundException;
 import com.btxtech.game.services.collision.Port;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.MgmtService;
@@ -347,6 +348,9 @@ public class CollisionServiceImpl implements CollisionService, TerrainListener {
             gumPath.calculateShortestPath();
             positions = gumPath.getPath();
             return positions;
+        } catch (PathCanNotBeFoundException e) {
+            log.fatal("PathCanNotBeFoundException: " + e.getMessage());
+            throw e;
         } finally {
             if (System.currentTimeMillis() - time > 200 || positions == null) {
                 log.fatal("Pathfinding took: " + (System.currentTimeMillis() - time) + "ms start: " + start + " destination: " + destination);

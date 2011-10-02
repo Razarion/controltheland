@@ -102,7 +102,7 @@ public class Path {
                 return removed.getRank();
             }
         }
-        throw new IllegalStateException("Path can not be backtracked");
+        throw new PathCanNotBeFoundException("Path can not be backtracked");        
     }
 
     public void reverse() {

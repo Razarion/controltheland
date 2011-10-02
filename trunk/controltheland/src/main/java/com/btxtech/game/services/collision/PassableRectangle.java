@@ -110,7 +110,7 @@ public class PassableRectangle {
             }
         }
 
-        throw new IllegalStateException("Path can not be found. Max tries exceeded");
+        throw new PathCanNotBeFoundException("Max tries exceeded");
     }
 
     private boolean findPath(Index absStart, Index absDestination, PassableRectangle destinationRect, Path path) {
