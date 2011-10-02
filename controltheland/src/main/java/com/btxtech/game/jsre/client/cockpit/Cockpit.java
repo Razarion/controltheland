@@ -258,7 +258,8 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         add(radar, RADAR_LEFT, RADAR_TOP);
         Image radarFrame = ImageHandler.createImageIE6TransparencyProblem("/images/cockpit/radarframe.png", RADAR_WIDTH, RADAR_HEIGHT);
         radarFrame.getElement().getStyle().setZIndex(100);
-        radarFrame.addMouseDownHandler(RadarPanel.getInstance().getRadarFrameView());
+        radarFrame.getElement().getStyle().setCursor(Style.Cursor.POINTER);
+        radarFrame.addMouseDownHandler(RadarPanel.getInstance().getRadarFrameView());        
         radar.add(radarFrame, 0, 0);
     }
 

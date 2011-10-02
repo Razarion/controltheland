@@ -26,6 +26,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemContainer;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.Widget;
+
 import java.util.Collection;
 
 /**
@@ -148,7 +149,7 @@ public class CursorHandler implements TerrainMouseMoveListener {
         }
 
         if (cursorState == null) {
-            setCursor(clientSyncItemView, null, false);
+            setCursor(clientSyncItemView, Style.Cursor.POINTER);
             return;
         }
         Index position = clientSyncItemView.getClientSyncItem().getSyncItem().getSyncItemArea().getPosition();
@@ -170,7 +171,7 @@ public class CursorHandler implements TerrainMouseMoveListener {
         } else if (cursorState.isCanLaunch() && cursorItemState.isAttackTarget()) {
             setCursor(clientSyncItemView, CursorType.ATTACK, SelectionHandler.getInstance().atLeastOneAllowedToLaunch(position));
         } else {
-            setCursor(clientSyncItemView, null, false);
+            setCursor(clientSyncItemView, Style.Cursor.POINTER);
         }
     }
 
@@ -194,15 +195,18 @@ public class CursorHandler implements TerrainMouseMoveListener {
     }
 
     private void setTerrainCursor(CursorType cursorType, boolean allowed) {
-        setCursor(MapWindow.getAbsolutePanel(), cursorType, allowed);
+        if (cursorType != null) {
+            setCursor(MapWindow.getAbsolutePanel(), cursorType, allowed);
+        } else {
+            setCursor(MapWindow.getAbsolutePanel(), Style.Cursor.DEFAULT);
+        }
+    }
+
+    private void setCursor(Widget widget, Style.Cursor cursor) {
+        widget.getElement().getStyle().setCursor(cursor);
     }
 
     private void setCursor(Widget widget, CursorType cursorType, boolean allowed) {
-        if (cursorType == null) {
-            widget.getElement().getStyle().setCursor(Style.Cursor.POINTER);
-            return;
-        }
-
         String url;
         Style.Cursor alternativeDefault;
         if (allowed) {
