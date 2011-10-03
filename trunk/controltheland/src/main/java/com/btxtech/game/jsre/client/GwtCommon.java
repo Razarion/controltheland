@@ -28,11 +28,14 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.StatusCodeException;
 
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GwtCommon {
     private static ExceptionDialog exceptionDialog;
     private static Boolean isIe6;
     private static Boolean isOpera;
+    private static Logger log = Logger.getLogger(GwtCommon.class.getName());
 
     public static void setUncaughtExceptionHandler() {
         GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
@@ -76,6 +79,9 @@ public class GwtCommon {
 
     private static void sendExceptionToServer(String message, Throwable throwable) {
         sendLogToServer(setupStackTrace(message, throwable));
+        if (throwable != null) {
+            log.log(Level.SEVERE, message, throwable);
+        }
     }
 
     public static String setupStackTrace(String message, Throwable throwable) {
@@ -83,7 +89,7 @@ public class GwtCommon {
             StringBuilder stringBuilder = new StringBuilder();
             if (message != null) {
                 stringBuilder.append(message);
-                stringBuilder.append("\n");
+                stringBuilder.append(" ");
             }
             boolean isCause = false;
             while (true) {
@@ -104,23 +110,17 @@ public class GwtCommon {
     public static void setupStackTrace(StringBuilder builder, Throwable throwable, boolean isCause) {
         if (isCause) {
             builder.append("Caused by: ");
+        } else {
+            builder.append(" ");
         }
         builder.append(throwable.toString());
-        builder.append("\n");
-        for (Object element : throwable.getStackTrace()) {
-            builder.append("  at ");
-            builder.append(element.toString());
-            builder.append("\n");
-        }
     }
 
     public static void sendLogToServer(String logMessage) {
         System.out.println(logMessage);
         try {
-            if (Connection.isConnected()) {
-                Connection.getInstance().log(logMessage, new Date());
-                return;
-            }
+            Connection.getInstance().log(logMessage, new Date());
+            return;
         } catch (Throwable ignore) {
             // Ignore
         }

@@ -18,6 +18,7 @@ import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.common.ServerServices;
+import com.btxtech.game.services.common.Utils;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.BackupSummary;
@@ -80,8 +81,6 @@ import java.util.List;
 public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     public static final String LOG_DIR_NAME = "logs";
     public static final File LOG_DIR;
-    public static final String TEST_MODE_PROPERTY = "testmode";
-    public static final String TEST_MODE_NO_GAME_ENGINE = "noGameEngine";
     private Date startTime = new Date();
     private JdbcTemplate readonlyJdbcTemplate;
     @Autowired
@@ -359,17 +358,16 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
     @PostConstruct
     public void startup() {
         try {
-            testMode = System.getProperty(TEST_MODE_PROPERTY) != null && Boolean.parseBoolean(System.getProperty(TEST_MODE_PROPERTY));
+            testMode = Utils.isTestModeStatic();
             if (!testMode) {
                 LogManager.getLogger("com.btxtech").setLevel(Level.INFO);
             }
-            noGameEngine = System.getProperty(TEST_MODE_PROPERTY) != null && Boolean.parseBoolean(System.getProperty(TEST_MODE_NO_GAME_ENGINE));
+            noGameEngine = System.getProperty(Utils.TEST_MODE_NO_GAME_ENGINE) != null && Boolean.parseBoolean(System.getProperty(Utils.TEST_MODE_NO_GAME_ENGINE));
             startupData = readStartupData();
         } catch (Throwable t) {
             log.error("", t);
         }
     }
-
 
     @Override
     public StartupData getStartupData() {

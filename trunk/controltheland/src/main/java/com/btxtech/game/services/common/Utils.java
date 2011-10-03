@@ -13,6 +13,9 @@
 
 package com.btxtech.game.services.common;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,7 +28,13 @@ import java.util.StringTokenizer;
  * Time: 19:04:53
  */
 public class Utils {
+    // VM parameters
+    public static final String TEST_MODE_PROPERTY = "testmode";
+    public static final String TEST_MODE_NO_GAME_ENGINE = "noGameEngine";
+
     public static final String DELIMITER = ";";
+
+    private static Log log = LogFactory.getLog(Utils.class);
 
     public static Collection<Integer> stringToIntegers(String s) {
         if (s == null) {
@@ -55,4 +64,12 @@ public class Utils {
         return builder.toString();
     }
 
+    public static boolean isTestModeStatic() {
+        try {
+            return System.getProperty(TEST_MODE_PROPERTY) != null && Boolean.parseBoolean(System.getProperty(TEST_MODE_PROPERTY));
+        } catch (Throwable t) {
+            log.error("", t);
+            return false;
+        }
+    }
 }

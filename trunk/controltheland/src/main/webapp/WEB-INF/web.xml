@@ -71,8 +71,13 @@
         <servlet-name>remoteLogging</servlet-name>
         <servlet-class>com.btxtech.game.services.gwt.ExtendedRemoteLoggingServiceImpl</servlet-class>
         <init-param>
-            <param-name>symbolMapsDirectory</param-name>
-            <param-value>src/main/webapp/WEB-INF/deploy/itemtypeeditor/symbolMaps</param-value>
+            <param-name>symbolMapsDirectoryProd</param-name>
+            <!--param-value>src/main/webapp/WEB-INF/deploy/itemtypeeditor/symbolMaps</param-value-->
+            <param-value>WEB-INF/deploy/game/symbolMaps</param-value>
+        </init-param>
+        <init-param>
+            <param-name>symbolMapsDirectoryDev</param-name>
+            <param-value>src/main/webapp/WEB-INF/deploy/game/symbolMaps</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
