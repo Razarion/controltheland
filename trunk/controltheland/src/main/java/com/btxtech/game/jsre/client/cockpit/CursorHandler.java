@@ -29,6 +29,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import java.util.Collection;
 
+// Make an ico file with gimp and rename it to cur
+
 /**
  * User: beat
  * Date: Jun 27, 2009
