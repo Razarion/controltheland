@@ -146,28 +146,32 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
 
     @Override
     public void run() {
-        for (Iterator<Connection> it = onlineConnection.iterator(); it.hasNext();) {
-            Connection connection = it.next();
-            try {
-                int tickCount = connection.resetAndGetTickCount();
-                if (connection.getNoTickCount() > MAX_NO_TICK_COUNT) {
-                    log.info("User kicked due timeout: " + baseService.getBaseName(connection.getBase().getSimpleBase()));
-                    if (connection.getBase() != null && connection.getBase().getUserState() != null && connection.getBase().getUserState().getUser() != null) {
-                        userTrackingService.onUserLeftGame(connection.getBase().getUserState().getUser());
+        try {
+            for (Iterator<Connection> it = onlineConnection.iterator(); it.hasNext();) {
+                Connection connection = it.next();
+                try {
+                    int tickCount = connection.resetAndGetTickCount();
+                    if (connection.getNoTickCount() > MAX_NO_TICK_COUNT) {
+                        log.info("User kicked due timeout: " + baseService.getBaseName(connection.getBase().getSimpleBase()));
+                        if (connection.getBase() != null && connection.getBase().getUserState() != null && connection.getBase().getUserState().getUser() != null) {
+                            userTrackingService.onUserLeftGame(connection.getBase().getUserState().getUser());
+                        }
+                        connection.setClosed();
+                        it.remove();
+                    } else {
+                        double ticksPerSecond = (double) tickCount / (double) (USER_TRACKING_PERIODE / 1000);
+                        if (!Double.isInfinite(ticksPerSecond) && !Double.isNaN(ticksPerSecond)) {
+                            String baseName = baseService.getBaseName(connection.getBase().getSimpleBase());
+                            ConnectionStatistics connectionStatistics = new ConnectionStatistics(baseName, connection.getSessionId(), ticksPerSecond);
+                            hibernateTemplate.saveOrUpdate(connectionStatistics);
+                        }
                     }
-                    connection.setClosed();
-                    it.remove();
-                } else {
-                    double ticksPerSecond = (double) tickCount / (double) (USER_TRACKING_PERIODE / 1000);
-                    if (!Double.isInfinite(ticksPerSecond) && !Double.isNaN(ticksPerSecond)) {
-                        String baseName = baseService.getBaseName(connection.getBase().getSimpleBase());
-                        ConnectionStatistics connectionStatistics = new ConnectionStatistics(baseName, connection.getSessionId(), ticksPerSecond);
-                        hibernateTemplate.saveOrUpdate(connectionStatistics);
-                    }
+                } catch (Throwable t) {
+                    log.error("", t);
                 }
-            } catch (Throwable t) {
-                log.error("", t);
             }
+        } catch (Throwable t) {
+            log.error("", t);
         }
     }
 

@@ -365,8 +365,8 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         setBaseAbandoned(base.getSimpleBase(), true);
         UserState userState = base.getUserState();
         userState.setBase(null);
-        setBaseName(base.getSimpleBase(), setupBaseName(base));
         base.setAbandoned();
+        setBaseName(base.getSimpleBase(), setupBaseName(base));
         sendBaseChangedPacket(BaseChangedPacket.Type.CHANGED, base.getSimpleBase());
     }
 

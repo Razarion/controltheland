@@ -123,6 +123,26 @@ public class TestBaseService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
+    public void testSurrender() throws Exception {
+        configureMinimalGame();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+
+        setupResource();
+        userService.createUser("U1", "test", "test", "test");
+        userService.login("U1", "test");
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
+        SimpleBase simpleBase = getMyBase(); // Setup connection
+        Assert.assertEquals("U1" , baseService.getBaseName(simpleBase));
+        movableService.surrenderBase();
+        Assert.assertEquals("Base 1" , baseService.getBaseName(simpleBase));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+    }
+
+    @Test
+    @DirtiesContext
     public void testGetBaseItems() throws Exception {
         configureMinimalGame();
 
