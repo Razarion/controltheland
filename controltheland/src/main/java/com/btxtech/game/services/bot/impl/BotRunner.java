@@ -132,6 +132,7 @@ public class BotRunner {
                 base = baseService.createBotBase(userState, botConfig.getName());
             }
             baseService.setBot(base.getSimpleBase(), true);
+            baseService.changeBotBaseName(base, botConfig.getName());
         }
     }
 
