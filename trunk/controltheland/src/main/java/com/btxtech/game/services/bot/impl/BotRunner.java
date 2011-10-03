@@ -127,12 +127,13 @@ public class BotRunner {
 
     private void checkBase() {
         if (base == null || !baseService.isAlive(base.getSimpleBase())) {
-            base = baseService.getBase(userState);
+            base = baseService.getBase(userState);                                             
             if (base == null) {
                 base = baseService.createBotBase(userState, botConfig.getName());
+            } else {
+                baseService.changeBotBaseName(base, botConfig.getName());
             }
             baseService.setBot(base.getSimpleBase(), true);
-            baseService.changeBotBaseName(base, botConfig.getName());
         }
     }
 
