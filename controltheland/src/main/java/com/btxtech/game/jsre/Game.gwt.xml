@@ -32,4 +32,9 @@
 
     <!-- Specify the app entry point class.                         -->
     <entry-point class='com.btxtech.game.jsre.client.Game'/>
+    <!-- Logging -->
+    <inherits name="com.google.gwt.logging.Logging"/>
+    <set-property name="gwt.logging.firebugHandler" value="DISABLED"/>
+    <set-property name="gwt.logging.simpleRemoteHandler" value="ENABLED"/>
+    <set-property name="gwt.logging.popupHandler" value="DISABLED"/>
 </module>
