@@ -40,6 +40,7 @@ public class TestBotRunner extends AbstractServiceTest {
 
         DbBotConfig dbBotConfig = new DbBotConfig();
         dbBotConfig.init(userService);
+        dbBotConfig.setName("Bot");
         dbBotConfig.setActionDelay(10);
         DbBotItemConfig config1 = dbBotConfig.getBotItemCrud().createDbChild();
         config1.setCount(1);
@@ -53,6 +54,8 @@ public class TestBotRunner extends AbstractServiceTest {
         waitForBotRunner(botRunner);
 
         assertWholeItemCount(1);
+        Assert.assertEquals("Bot", baseService.getBaseName(botRunner.getBase().getSimpleBase()));
+
     }
 
     @Test
@@ -105,6 +108,7 @@ public class TestBotRunner extends AbstractServiceTest {
         DbBotConfig dbBotConfig = new DbBotConfig();
         dbBotConfig.init(userService);
         dbBotConfig.setActionDelay(10);
+        dbBotConfig.setName("Bot2");
         DbBotItemConfig config1 = dbBotConfig.getBotItemCrud().createDbChild();
         config1.setCount(1);
         config1.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
@@ -117,12 +121,14 @@ public class TestBotRunner extends AbstractServiceTest {
         waitForBotRunner(botRunner);
         assertWholeItemCount(1);
         SimpleBase simpleBase1 = botRunner.getBase().getSimpleBase();
+        Assert.assertEquals("Bot2", baseService.getBaseName(simpleBase1));
         itemService.killSyncItemIds(getAllSynItemId(simpleBase1, TEST_START_BUILDER_ITEM_ID, null));
 
         waitForBotRunner(botRunner);
         assertWholeItemCount(1);
         SimpleBase simpleBase2 = botRunner.getBase().getSimpleBase();
         Assert.assertNotSame(simpleBase1, simpleBase2);
+        Assert.assertEquals("Bot2", baseService.getBaseName(simpleBase2));
     }
 
     @Test
@@ -314,6 +320,7 @@ public class TestBotRunner extends AbstractServiceTest {
         dbBotConfig.init(userService);
         dbBotConfig.setActionDelay(10);
         dbBotConfig.setRealm(new Rectangle(0, 0, 4000, 4000));
+        dbBotConfig.setName("Bot4");
         DbBotItemConfig config1 = dbBotConfig.getBotItemCrud().createDbChild();
         config1.setCount(3);
         config1.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
@@ -326,6 +333,7 @@ public class TestBotRunner extends AbstractServiceTest {
         assertWholeItemCount(0);
         Thread.sleep(250);
         assertWholeItemCount(3);
+        Assert.assertEquals("Bot4", baseService.getBaseName(botRunner.getBase().getSimpleBase()));
 
         botRunner.kill(); //Avoid background timer & thread
     }
