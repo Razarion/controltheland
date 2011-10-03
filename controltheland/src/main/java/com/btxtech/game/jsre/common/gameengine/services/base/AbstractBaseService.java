@@ -18,8 +18,6 @@ import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.btxtech.game.services.base.BaseItemTypeCount;
-import com.btxtech.game.services.common.ContentProvider;
 
 import java.util.Collection;
 

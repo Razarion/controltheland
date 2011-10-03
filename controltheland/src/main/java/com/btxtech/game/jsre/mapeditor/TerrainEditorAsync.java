@@ -27,8 +27,7 @@ import java.util.Collection;
  * Date: Sep 2, 2009
  * Time: 8:18:09 PM
  */
-@RemoteServiceRelativePath("gwtrpc/TerrainServiceService")
-public interface TerrainEditorAsync extends RemoteService {
+public interface TerrainEditorAsync {
     public static final String TERRAIN_SETTING_ID = "terrain_id";
 
     void saveTerrainImagePositions(Collection<TerrainImagePosition> terrainImagePositions, Collection<SurfaceRect> surfaceRects, int terrainId, AsyncCallback<Void> async);

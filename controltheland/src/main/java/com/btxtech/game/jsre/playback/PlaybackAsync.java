@@ -23,6 +23,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * Time: 11:08:20
  */
 @RemoteServiceRelativePath("gwtrpc/PlaybackServiceService")
-public interface PlaybackAsync extends RemoteService {
+public interface PlaybackAsync {
     void getPlaybackInfo(String sessionId, long startTime, String levelName, AsyncCallback<PlaybackInfo> async);
 }

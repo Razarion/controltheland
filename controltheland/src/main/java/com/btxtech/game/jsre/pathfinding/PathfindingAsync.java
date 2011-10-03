@@ -28,8 +28,7 @@ import java.util.Map;
  * Date: 13.02.2010
  * Time: 12:16:13
  */
-@RemoteServiceRelativePath("gwtrpc/TerrainServiceService")
-public interface PathfindingAsync extends RemoteService {
+public interface PathfindingAsync {
     void getPassableRectangles(AsyncCallback<Map<TerrainType, List<Rectangle>>> async);
 
     void getTerrainInfo(AsyncCallback<TerrainInfo> async);
