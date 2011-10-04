@@ -17,6 +17,7 @@ CREATE TABLE tmp_data_mining (
     secondPage VARCHAR(255) NULL,
     gameAttemps INT NULL,
     startups INT NULL,
+    startupFails INT NULL,
     maxLevelIndex INT NULL,
     userAgent VARCHAR(1000) NULL,
     PRIMARY KEY ( id )
@@ -42,6 +43,7 @@ INSERT INTO tmp_data_mining (sessionId,pages,userAgent) SELECT
 UPDATE tmp_data_mining m SET secondPage = (SELECT page FROM TRACKER_PAGE_ACCESS a WHERE a.sessionId = m.sessionId LIMIT 1,1);
 UPDATE tmp_data_mining m SET gameAttemps = (SELECT COUNT(*) FROM TRACKER_PAGE_ACCESS a WHERE a.sessionId = m.sessionId AND a.page = 'com.btxtech.game.wicket.pages.Game');
 UPDATE tmp_data_mining m SET startups = (SELECT COUNT(*) FROM TRACKER_STARTUP s WHERE s.sessionId = m.sessionId);
+UPDATE tmp_data_mining m SET startupFails = (SELECT COUNT(*) FROM TRACKER_STARTUP s, TRACKER_STARTUP_TASK t WHERE s.sessionId = m.sessionId AND s.id = t.dbStartup AND failureText IS NOT NULL);
 UPDATE tmp_data_mining m SET maxLevelIndex = (SELECT max(l.orderIndex) 
           FROM GAME_HISTORY h, GUIDANCE_LEVEL l 
           WHERE h.sessionId = m.sessionId 
@@ -110,6 +112,12 @@ SELECT count(l.orderIndex)"Users", COUNT(l.orderIndex)/@detectedUsers*100"% all 
     where m.maxLevelIndex = l.orderIndex 
     GROUP BY l.orderIndex 
     ORDER BY l.orderIndex DESC, count(l.orderIndex) ASC;
+
+-- Level promotions
+SELECT sum(maxLevelIndex)"Level promotions" FROM tmp_data_mining WHERE maxLevelIndex > 0;
+
+-- Users at least Noob 3 reached
+SELECT count(*)"Users Noob 3 reached" FROM `gamedb`.`tmp_data_mining` WHERE maxLevelIndex > 1;
 
 -- User with at least one level promotions
 SELECT count(*)"User with at least one level promotions", COUNT(*)/@detectedUsers*100"% all Users" FROM tmp_data_mining WHERE maxLevelIndex > 0;
