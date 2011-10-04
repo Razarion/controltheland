@@ -13,9 +13,9 @@
 
 package com.btxtech.game.jsre.client.utg;
 
-import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ParametrisedRunnable;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
@@ -33,7 +33,6 @@ import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
@@ -51,7 +50,7 @@ import java.util.List;
  * Time: 15:12:08
  */
 public class ClientUserTracker implements SelectionListener, TerrainScrollListener {
-    private static final int SEND_TIMEOUT = 1000 * 30;
+    private static final int SEND_TIMEOUT = 1000 * 5;
     private static final ClientUserTracker INSTANCE = new ClientUserTracker();
     private List<EventTrackingItem> eventTrackingItems = new ArrayList<EventTrackingItem>();
     private List<BrowserWindowTracking> browserWindowTrackings = new ArrayList<BrowserWindowTracking>();
@@ -97,7 +96,11 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
         timer = new Timer() {
             @Override
             public void run() {
-                sendEventTrackerItems();
+                try {
+                    sendEventTrackerItems();
+                } catch (Throwable t) {
+                    GwtCommon.handleException(t);
+                }
             }
         };
         timer.scheduleRepeating(SEND_TIMEOUT);
@@ -108,8 +111,8 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
                 Window.getClientHeight(),
                 Window.getScrollLeft(),
                 Window.getScrollTop(),
-                Document.get().getScrollWidth(),
-                Document.get().getScrollHeight()));
+                MapWindow.getAbsolutePanel().getOffsetWidth(),
+                MapWindow.getAbsolutePanel().getOffsetHeight()));
         scrollHandlerRegistration = Window.addWindowScrollHandler(new Window.ScrollHandler() {
             @Override
             public void onWindowScroll(Window.ScrollEvent event) {
@@ -156,8 +159,8 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
                     Window.getClientHeight(),
                     Window.getScrollLeft(),
                     Window.getScrollTop(),
-                    Document.get().getScrollWidth(),
-                    Document.get().getScrollHeight());
+                    MapWindow.getAbsolutePanel().getOffsetWidth(),
+                    MapWindow.getAbsolutePanel().getOffsetHeight());
 
             browserWindowTrackings.add(wind);
         }
