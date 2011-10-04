@@ -181,7 +181,7 @@ public class SpeechBubble extends AbsolutePanel {
 
         buildBubble(LINE_SIZE, LINE_SIZE, totalBubbleWidth - LINE_SIZE, totalBubbleHeight - LINE_SIZE, beakOffset, direction);
         if (bottomRelative) {
-            int bottom = Document.get().getScrollHeight() - top - totalBubbleHeight;
+            int bottom = MapWindow.getAbsolutePanel().getOffsetHeight() - top - totalBubbleHeight;
             getElement().getStyle().setProperty("top", "");
             getElement().getStyle().setProperty("bottom", bottom + "px");
         }

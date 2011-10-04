@@ -118,7 +118,7 @@ public class PlaybackServiceImpl implements PlaybackService {
             }
             playbackInfo.setScrollTrackingItems(terrainScrollTrackings);
 
-            // Scrolling
+            // Browser window tracking
             ArrayList<BrowserWindowTracking> browserWindowTrackings = new ArrayList<BrowserWindowTracking>();
             for (DbBrowserWindowTracking dbBrowserWindowTracking : userTrackingService.getDbBrowserWindowTrackings(sessionId, startClient, endClient)) {
                 browserWindowTrackings.add(dbBrowserWindowTracking.createBrowserWindowTracking());
