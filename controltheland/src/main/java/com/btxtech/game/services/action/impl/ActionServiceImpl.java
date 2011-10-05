@@ -454,15 +454,12 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
     public void executeCommands(List<BaseCommand> baseCommands) {
         try {
             ActionServiceUtil.addDestinationHintToCommands(baseCommands, collisionService, itemService);
+        } catch (PathCanNotBeFoundException positionCanNotBeFoundException) {
+            sendStornoInfo(baseCommands);
+            return;
         } catch (PositionCanNotBeFoundException positionCanNotBeFoundException) {
             log.warn("", positionCanNotBeFoundException);
-            for (BaseCommand baseCommand : baseCommands) {
-                try {
-                    connectionService.sendSyncInfo(itemService.getItem(baseCommand.getId()));
-                } catch (ItemDoesNotExistException e) {
-                    // Item may be killed
-                }
-            }
+            sendStornoInfo(baseCommands);
             return;
         }
         for (BaseCommand baseCommand : baseCommands) {
@@ -470,6 +467,16 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
                 executeCommand(baseCommand, false);
             } catch (Throwable t) {
                 log.debug("", t);
+            }
+        }
+    }
+
+    private void sendStornoInfo(List<BaseCommand> baseCommands) {
+        for (BaseCommand baseCommand : baseCommands) {
+            try {
+                connectionService.sendSyncInfo(itemService.getItem(baseCommand.getId()));
+            } catch (ItemDoesNotExistException e) {
+                // Item may be killed
             }
         }
     }
