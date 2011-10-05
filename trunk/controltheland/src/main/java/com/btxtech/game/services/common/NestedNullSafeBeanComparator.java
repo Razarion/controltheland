@@ -43,6 +43,7 @@ public class NestedNullSafeBeanComparator extends BeanComparator {
 
         if (property == null) {
             // compare the actual objects
+            // noinspection unchecked
             return this.comparator.compare(o1, o2);
         }
 
@@ -72,6 +73,7 @@ public class NestedNullSafeBeanComparator extends BeanComparator {
                 return this.nullsAreHigh ? -1 : 1;
             }
 
+            // noinspection unchecked
             return this.comparator.compare(val1, val2);
         } catch (Exception e) {
             e.printStackTrace();
