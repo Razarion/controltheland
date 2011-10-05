@@ -257,7 +257,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
             movableServiceAsync.sendTutorialProgress(type, name, parent, duration, clientTimeStamp, new AsyncCallback<Level>() {
                 @Override
                 public void onFailure(Throwable caught) {
-                    if (handleDisconnection(caught)) {
+                    if (!handleDisconnection(caught)) {
                         sendTutorialProgress(type, name, parent, duration, clientTimeStamp, runnable);
                     }
                 }
