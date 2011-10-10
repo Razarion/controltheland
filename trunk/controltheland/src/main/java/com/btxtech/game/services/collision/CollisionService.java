@@ -31,19 +31,13 @@ import java.util.Map;
  * Time: 6:46:48 PM
  */
 public interface CollisionService extends CommonCollisionService {
-    Map<TerrainType, List<PassableRectangle>> getPassableRectangles();
-
     Index getFreeRandomPosition(ItemType itemType, Rectangle region, int itemFreeRange, boolean botFree);
 
     Index getFreeRandomPosition(ItemType itemType, Territory territory, int itemFreeRange, boolean botFree);
-
-    Index getFreeSyncMovableRandomPositionIfTaken(SyncItem syncItem, int targetMaxRange);
 
     void addCollisionServiceChangedListener(CollisionServiceChangedListener collisionServiceChangedListener);
 
     void removeCollisionServiceChangedListener(CollisionServiceChangedListener collisionServiceChangedListener);
 
-    List<Index> setupPathToDestination(Index start, Index destination, TerrainType terrainType);
-
-    List<AttackFormationItem> setupDestinationHints(SyncItem target, List<AttackFormationItem> items);
+    boolean checkIfPathValid(List<Index> pathToDestination);
 }

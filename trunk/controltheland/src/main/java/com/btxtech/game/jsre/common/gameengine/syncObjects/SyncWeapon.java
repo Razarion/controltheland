@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
@@ -28,7 +27,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInf
 public class SyncWeapon extends SyncBaseAbility {
     private WeaponType weaponType;
     private Id target;
-    private Index destinationHint;
     private Double destinationAngel;
     private boolean followTarget;
     private double reloadProgress;
@@ -42,6 +40,10 @@ public class SyncWeapon extends SyncBaseAbility {
         return target != null && getSyncBaseItem().isAlive();
     }
 
+    /**
+     * @param factor time in s since the last ticks
+     * @return true if more tick are needed to fulfil the job
+     */
     public boolean tick(double factor) {
         if (!getSyncBaseItem().isAlive()) {
             return false;
@@ -56,62 +58,47 @@ public class SyncWeapon extends SyncBaseAbility {
         } else {
             return returnFalseIfReloaded();
         }
-
     }
 
     private boolean tickAttack(double factor) {
         try {
+            if (followTarget && !getSyncBaseItem().hasSyncMovable()) {
+                throw new IllegalArgumentException("Weapon is followTarget but has now SyncMovable: " + getSyncBaseItem());
+            }
+
+            if (followTarget && getSyncBaseItem().hasSyncMovable() && getSyncBaseItem().getSyncMovable().tickMove(factor, destinationAngel)) {
+                return true;
+            }
+
             SyncBaseItem targetItem = (SyncBaseItem) getServices().getItemService().getItem(target);
-            if ((destinationHint == null || getSyncItemArea().positionReached(destinationHint))&& isInRange(targetItem)) {
-                getSyncItemArea().turnTo(targetItem);
-                if (!getServices().getTerritoryService().isAllowed(targetItem.getSyncItemArea().getPosition(), getSyncBaseItem())) {
-                    throw new IllegalArgumentException(this + " Weapon not allowed to attack item on territory: " + targetItem.getSyncItemArea().getPosition() + "  " + getSyncBaseItem());
-                }
-                if (!getServices().getTerritoryService().isAllowed(getSyncItemArea().getPosition(), getSyncBaseItem())) {
-                    throw new IllegalArgumentException(this + " Weapon not allowed to attack on territory: " + getSyncItemArea().getPosition() + "  " + getSyncBaseItem());
-                }
-                if (reloadProgress >= weaponType.getReloadTime()) {
-                    handleAttackState();
-                    targetItem.decreaseHealth(weaponType.getDemage() * reloadProgress / weaponType.getReloadTime(), getSyncBaseItem().getBase());
-                    targetItem.onAttacked(getSyncBaseItem());
-                    reloadProgress = 0;
-                }
-            } else {
-                if (followTarget && getSyncBaseItem().hasSyncMovable()) {
-                    if (getSyncItemArea().positionReached(destinationHint)) {
-                        // Target has moved away
-                        SyncItemArea targetSyncItemArea;
-                        if (targetItem.hasSyncMovable() && targetItem.getSyncMovable().getDestination() != null) {
-                            targetSyncItemArea = targetItem.getBaseItemType().getBoundingBox().createSyntheticSyncItemArea(targetItem.getSyncMovable().getDestination());
-                        } else {
-                            targetSyncItemArea = targetItem.getSyncItemArea();
-                        }
-                        AttackFormationItem formation = getServices().getCollisionService().getDestinationHint(getSyncBaseItem(), weaponType.getRange(), targetSyncItemArea, targetItem.getBaseItemType().getTerrainType());
-                        if (formation != null) {
-                            destinationHint = formation.getDestinationHint();
-                            destinationAngel = formation.getDestinationAngel();
-                        }
-                        if (destinationHint != null) {
-                            boolean moreTicksNeeded = getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, destinationHint, destinationAngel, targetItem.getSyncItemArea().getPosition());
-                            if (!moreTicksNeeded) {
-                                destinationHint = null;
-                            }
-                        } else {
-                            stop();
-                        }
-                    } else {
-                        boolean moreTicksNeeded = getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, destinationHint, destinationAngel, targetItem.getSyncItemArea().getPosition());
-                        if (!moreTicksNeeded) {
-                            destinationHint = null;
-                        }
-                    }
-                } else {
-                    stop();
-                    return returnFalseIfReloaded();
-                }
+            if (!followTarget && !isInRange(targetItem)) {
+                stop();
+                return returnFalseIfReloaded();
+            }
+
+            if (!isInRange(targetItem)) {
+                // Destination place was may be taken. Calculate a new one or target has moved away
+                recalculateNewPath(weaponType.getRange(), targetItem.getSyncItemArea());
+                getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+                return true;
+            }
+
+            getSyncItemArea().turnTo(targetItem);
+            if (!getServices().getTerritoryService().isAllowed(targetItem.getSyncItemArea().getPosition(), getSyncBaseItem())) {
+                throw new IllegalArgumentException(this + " Weapon not allowed to attack item on territory: " + targetItem.getSyncItemArea().getPosition() + "  " + getSyncBaseItem());
+            }
+            if (!getServices().getTerritoryService().isAllowed(getSyncItemArea().getPosition(), getSyncBaseItem())) {
+                throw new IllegalArgumentException(this + " Weapon not allowed to attack on territory: " + getSyncItemArea().getPosition() + "  " + getSyncBaseItem());
+            }
+            if (reloadProgress >= weaponType.getReloadTime()) {
+                handleAttackState();
+                targetItem.decreaseHealth(weaponType.getDemage() * reloadProgress / weaponType.getReloadTime(), getSyncBaseItem().getBase());
+                targetItem.onAttacked(getSyncBaseItem());
+                reloadProgress = 0;
             }
             return true;
-        } catch (ItemDoesNotExistException ignore) {
+        }
+        catch (ItemDoesNotExistException ignore) {
             // It has may be killed
             stop();
             return returnFalseIfReloaded();
@@ -130,7 +117,6 @@ public class SyncWeapon extends SyncBaseAbility {
     public void stop() {
         target = null;
         destinationAngel = null;
-        destinationHint = null;
         if (getSyncBaseItem().hasSyncMovable()) {
             getSyncBaseItem().getSyncMovable().stop();
         }
@@ -142,7 +128,6 @@ public class SyncWeapon extends SyncBaseAbility {
         followTarget = syncItemInfo.isFollowTarget();
         reloadProgress = syncItemInfo.getReloadProgress();
         destinationAngel = syncItemInfo.getDestinationAngel();
-        destinationHint = syncItemInfo.getDestinationHint();
     }
 
     @Override
@@ -151,7 +136,6 @@ public class SyncWeapon extends SyncBaseAbility {
         syncItemInfo.setFollowTarget(followTarget);
         syncItemInfo.setReloadProgress(reloadProgress);
         syncItemInfo.setDestinationAngel(destinationAngel);
-        syncItemInfo.setDestinationHint(destinationHint);
     }
 
     public void executeCommand(AttackCommand attackCommand) throws ItemDoesNotExistException {
@@ -169,9 +153,9 @@ public class SyncWeapon extends SyncBaseAbility {
         }
 
         this.target = attackCommand.getTarget();
-        destinationHint = attackCommand.getDestinationHint();
         destinationAngel = attackCommand.getDestinationAngel();
         followTarget = attackCommand.isFollowTarget();
+        setPathToDestinationIfSyncMovable(attackCommand.getPathToDestination());
     }
 
     public boolean isItemTypeAllowed(SyncBaseItem target) {

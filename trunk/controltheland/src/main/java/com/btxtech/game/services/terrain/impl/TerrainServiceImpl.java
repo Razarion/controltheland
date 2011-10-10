@@ -13,14 +13,11 @@
 
 package com.btxtech.game.services.terrain.impl;
 
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
@@ -259,21 +256,6 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         }
 
         hibernateTemplate.saveOrUpdate(dbTerrainSetting);
-    }
-
-    @Override
-    public List<Index> setupPathToDestination(Index start, Index destination, TerrainType terrainType) {
-        return collisionService.setupPathToDestination(start, destination, terrainType);
-    }
-
-    @Override
-    public List<Index> setupPathToSyncMovableRandomPositionIfTaken(SyncItem syncItem) {
-        Index position = collisionService.getFreeSyncMovableRandomPositionIfTaken(syncItem, 500);
-        if (position != null) {
-            return setupPathToDestination(syncItem.getSyncItemArea().getPosition(), position, syncItem.getTerrainType());
-        } else {
-            return null;
-        }
     }
 
     @Override

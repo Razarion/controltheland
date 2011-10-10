@@ -23,6 +23,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * Date: 14.12.2010
  * Time: 18:36:49
  */
+@Deprecated
 public class LevelTargetDialog extends Dialog {
     private String html;
 

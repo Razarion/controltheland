@@ -28,4 +28,6 @@ public class GameCommon {
         ActionHandler.getInstance().clear();
         SelectionHandler.getInstance().clearSelection();
     }
+
+    
 }

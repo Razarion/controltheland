@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.action;
 
+import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -28,7 +29,7 @@ import java.util.List;
  * Time: 12:47:37 PM
  */
 public interface ActionService extends CommonActionService, SyncItemListener {
-    void executeCommand(BaseCommand baseCommand, boolean supressUserCheck) throws IllegalAccessException, ItemDoesNotExistException;
+    void executeCommand(BaseCommand baseCommand, boolean supressUserCheck) throws ItemDoesNotExistException, NotYourBaseException;
 
     void executeCommands(List<BaseCommand> baseCommands);
 

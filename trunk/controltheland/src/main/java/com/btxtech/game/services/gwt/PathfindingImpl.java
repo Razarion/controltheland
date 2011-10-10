@@ -19,7 +19,7 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.btxtech.game.jsre.pathfinding.Pathfinding;
 import com.btxtech.game.services.collision.CollisionService;
-import com.btxtech.game.services.collision.PassableRectangle;
+import com.btxtech.game.jsre.common.gameengine.services.collision.PassableRectangle;
 import com.btxtech.game.services.terrain.TerrainService;
 import java.util.ArrayList;
 import java.util.HashMap;

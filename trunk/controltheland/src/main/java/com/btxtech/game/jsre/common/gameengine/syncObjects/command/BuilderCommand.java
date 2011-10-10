@@ -20,7 +20,7 @@ import com.btxtech.game.jsre.client.common.Index;
  * Date: Aug 1, 2009
  * Time: 1:04:16 PM
  */
-public class BuilderCommand extends BaseCommand {
+public class BuilderCommand extends PathToDestinationCommand {
     private int toBeBuilt;
     private Index positionToBeBuilt;
 

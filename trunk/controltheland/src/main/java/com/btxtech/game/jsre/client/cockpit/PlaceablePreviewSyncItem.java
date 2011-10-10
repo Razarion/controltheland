@@ -51,7 +51,7 @@ public class PlaceablePreviewSyncItem extends PlaceablePreviewWidget {
         }
         Index positionToBuilt = new Index(absX, absY);
         try {
-            ActionHandler.getInstance().buildFactory(group.getItems(), positionToBuilt, itemTypeToBuilt);
+            ActionHandler.getInstance().build(group.getItems(), positionToBuilt, itemTypeToBuilt);
         } catch (NoSuchItemTypeException e) {
             GwtCommon.handleException(e);
         }

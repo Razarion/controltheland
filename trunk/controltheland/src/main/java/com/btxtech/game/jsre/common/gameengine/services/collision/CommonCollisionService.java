@@ -15,12 +15,15 @@ package com.btxtech.game.jsre.common.gameengine.services.collision;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
@@ -28,9 +31,17 @@ import java.util.Collection;
  * Time: 19:46:17
  */
 public interface CommonCollisionService {
-    static final int MAX_TRIES = 1000000;
-
     Index getRallyPoint(SyncBaseItem factory, Collection<SurfaceType> allowedSurfaces);
 
     AttackFormationItem getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItemArea target, TerrainType targetTerrainType);
+
+    List<Index> setupPathToSyncMovableRandomPositionIfTaken(SyncItem syncItem);
+
+    List<Index> setupPathToDestination(SyncBaseItem syncItem, Index destination);
+
+    List<Index> setupPathToDestination(Index position, Index destinationHint, TerrainType terrainType);
+
+    Map<TerrainType, List<PassableRectangle>> getPassableRectangles();
+
+    List<AttackFormationItem> setupDestinationHints(SyncItem target, List<AttackFormationItem> items);
 }

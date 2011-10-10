@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.action.ActionHandler;
+import com.btxtech.game.jsre.client.collision.ClientCollisionService;
 import com.btxtech.game.jsre.client.control.ClientRunner;
 import com.btxtech.game.jsre.client.control.StartupScreen;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
@@ -94,7 +95,7 @@ public class ClientServices implements Services {
 
     @Override
     public CommonCollisionService getCollisionService() {
-        return ItemContainer.getInstance();
+        return ClientCollisionService.getInstance();
     }
 
     @Override

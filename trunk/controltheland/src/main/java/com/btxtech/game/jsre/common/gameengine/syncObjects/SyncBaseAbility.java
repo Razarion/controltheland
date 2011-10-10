@@ -13,10 +13,15 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
+import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.collision.PathCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+
+import java.util.List;
 
 /**
  * User: beat
@@ -40,6 +45,26 @@ public abstract class SyncBaseAbility {
 
     public SyncItemArea getSyncItemArea() {
         return syncBaseItem.getSyncItemArea();
+    }
+
+    public void setPathToDestinationIfSyncMovable(List<Index> pathToDestination) {
+        if (syncBaseItem.hasSyncMovable()) {
+            syncBaseItem.getSyncMovable().setPathToDestination(pathToDestination);
+        }
+    }
+
+    public double recalculateNewPath(int range, SyncItemArea target) {
+        SyncBaseItem syncItem = getSyncBaseItem();
+        AttackFormationItem format = getServices().getCollisionService().getDestinationHint(syncItem,
+                range,
+                target,
+                syncItem.getTerrainType());
+        if (format.isInRange()) {
+            setPathToDestinationIfSyncMovable(getServices().getCollisionService().setupPathToDestination(syncItem, format.getDestinationHint()));
+            return format.getDestinationAngel();
+        } else {
+            throw new PathCanNotBeFoundException("Can not fin path in recalculateNewPath: " + syncItem);
+        }
     }
 
     public abstract void synchronize(SyncItemInfo syncItemInfo) throws NoSuchItemTypeException, ItemDoesNotExistException;

@@ -29,7 +29,7 @@ public class TerrainSettings implements Serializable {
     /**
      * Used gy BWT
      */
-    public TerrainSettings() {
+    TerrainSettings() {
     }
 
     public TerrainSettings(int tileXCount, int tileYCount, int tileHeight, int tileWidth) {

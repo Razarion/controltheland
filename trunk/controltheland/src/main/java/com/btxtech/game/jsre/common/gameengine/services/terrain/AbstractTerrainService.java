@@ -29,8 +29,6 @@ import java.util.List;
  * Time: 14:23:09
  */
 public interface AbstractTerrainService {
-    List<Index> setupPathToDestination(Index start, Index destination, TerrainType terrainType);
-
     Collection<TerrainImagePosition> getTerrainImagePositions();
 
     Collection<SurfaceRect> getSurfaceRects();
@@ -100,5 +98,5 @@ public interface AbstractTerrainService {
 
     Index correctPosition(SyncItem syncItem, Index position);
 
-    List<Index> setupPathToSyncMovableRandomPositionIfTaken(SyncItem syncItem);
+    SurfaceType[][] createSurfaceTypeField();
 }

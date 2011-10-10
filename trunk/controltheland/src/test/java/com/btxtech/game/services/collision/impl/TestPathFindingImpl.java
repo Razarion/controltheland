@@ -2,12 +2,14 @@ package com.btxtech.game.services.collision.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.gameengine.services.collision.PassableRectangle;
+import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
+import com.btxtech.game.jsre.common.gameengine.services.collision.Port;
+import com.btxtech.game.jsre.common.gameengine.services.collision.impl.GumPath;
+import com.btxtech.game.jsre.common.gameengine.services.collision.impl.PathFinderUtilities;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.collision.CollisionService;
-import com.btxtech.game.services.collision.PassableRectangle;
-import com.btxtech.game.services.collision.Path;
-import com.btxtech.game.services.collision.Port;
 import com.btxtech.game.services.collision.TestPathFinding;
 import com.btxtech.game.services.terrain.TerrainService;
 import org.easymock.EasyMock;
@@ -132,7 +134,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
 
     private void assertNeighbor(List<PassableRectangle> passableRectangles, Rectangle rectangle, Rectangle... neighbors) {
         for (PassableRectangle passableRectangle : passableRectangles) {
-            HashMap<PassableRectangle, PassableRectangle.Neighbor> neighborHashMap = passableRectangle.getNeighbors();
+            Map<PassableRectangle, PassableRectangle.Neighbor> neighborHashMap = passableRectangle.getNeighbors();
             if (passableRectangle.getRectangle().equals(rectangle)) {
                 Assert.assertEquals(neighbors.length, neighborHashMap.size());
                 assertContains(neighborHashMap, neighbors);
@@ -140,7 +142,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
         }
     }
 
-    private void assertContains(HashMap<PassableRectangle, PassableRectangle.Neighbor> neighborHashMap, Rectangle... neighbors) {
+    private void assertContains(Map<PassableRectangle, PassableRectangle.Neighbor> neighborHashMap, Rectangle... neighbors) {
         for (PassableRectangle passableRectangle : neighborHashMap.keySet()) {
             boolean found = false;
             Rectangle rectangle = passableRectangle.getRectangle();
@@ -225,7 +227,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
         Assert.assertNotNull(startRect);
         PassableRectangle end = PathFinderUtilities.getPassableRectangleOfAbsoluteIndex(destination, TerrainType.LAND, passableRectangles4TerrainType, terrainService);
         Assert.assertNotNull(end);
-        Path path = startRect.findPossiblePassableRectanglePaths(start, end, destination);
+        Path path = startRect.findPossiblePassableRectanglePaths(terrainService, start, end, destination);
         Assert.assertEquals(3, path.getPathElements().size());
         Assert.assertEquals(RECT_22_13, path.getPathElements().get(0).getPassableRectangle().getRectangle());
         Assert.assertEquals(RECT_25_12, path.getPathElements().get(1).getPassableRectangle().getRectangle());
@@ -237,7 +239,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
         Assert.assertNotNull(startRect);
         end = PathFinderUtilities.getPassableRectangleOfAbsoluteIndex(destination, TerrainType.LAND, passableRectangles4TerrainType, terrainService);
         Assert.assertNotNull(end);
-        path = startRect.findPossiblePassableRectanglePaths(start, end, destination);
+        path = startRect.findPossiblePassableRectanglePaths(terrainService, start, end, destination);
         Assert.assertEquals(3, path.getPathElements().size());
         Assert.assertEquals(RECT_24_05, path.getPathElements().get(0).getPassableRectangle().getRectangle());
         Assert.assertEquals(RECT_25_12, path.getPathElements().get(1).getPassableRectangle().getRectangle());
@@ -255,7 +257,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
         Assert.assertNotNull(startRect);
         PassableRectangle end = PathFinderUtilities.getPassableRectangleOfAbsoluteIndex(destination, TerrainType.LAND, passableRectangles4TerrainType, terrainService);
         Assert.assertNotNull(end);
-        Path path = startRect.findPossiblePassableRectanglePaths(start, end, destination);
+        Path path = startRect.findPossiblePassableRectanglePaths(terrainService, start, end, destination);
         Assert.assertEquals(5, path.getPathElements().size());
         Assert.assertEquals(RECT_13_13, path.getPathElements().get(0).getPassableRectangle().getRectangle());
         Assert.assertEquals(RECT_13_16, path.getPathElements().get(1).getPassableRectangle().getRectangle());
@@ -407,7 +409,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
             if (startRect.equals(endRect)) {
                 continue;
             }
-            startRect.findPossiblePassableRectanglePaths(start, endRect, destination);
+            startRect.findPossiblePassableRectanglePaths(terrainService, start, endRect, destination);
 
         }
     }

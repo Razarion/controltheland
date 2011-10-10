@@ -13,28 +13,12 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects.command;
 
-import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.CommonJava;
 
 /**
  * User: beat
  * Date: Aug 1, 2009
  * Time: 1:04:35 PM
  */
-public class MoveCommand extends BaseCommand {
-    private Index destination;
-
-    public Index getDestination() {
-        return destination;
-    }
-
-    public void setDestination(Index destination) {
-        this.destination = destination;
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + " destination: " + destination;
-    }
-
-
+public class MoveCommand extends PathToDestinationCommand {
 }

@@ -14,6 +14,7 @@
 package com.btxtech.game.services.base;
 
 import com.btxtech.game.jsre.client.AlreadyUsedException;
+import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.Territory;
@@ -39,7 +40,7 @@ import java.util.List;
  * Time: 8:12:50 PM
  */
 public interface BaseService extends AbstractBaseService, SyncItemListener {
-    void checkBaseAccess(SyncBaseItem item) throws IllegalAccessException;
+    void checkBaseAccess(SyncBaseItem item) throws NotYourBaseException;
 
     void checkCanBeAttack(SyncBaseItem victim);
 

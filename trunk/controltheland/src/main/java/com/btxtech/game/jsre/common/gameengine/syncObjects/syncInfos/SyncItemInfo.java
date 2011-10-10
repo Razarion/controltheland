@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
@@ -55,7 +56,6 @@ public class SyncItemInfo extends Packet {
     private Index unloadPos;
     private boolean explode;
     private Index targetPosition;
-    private Index destinationHint;
     private Double destinationAngel;
 
 
@@ -283,39 +283,12 @@ public class SyncItemInfo extends Packet {
         this.targetPosition = targetPosition;
     }
 
-    public Index getDestinationHint() {
-        return destinationHint;
-    }
-
-    public void setDestinationHint(Index destinationHint) {
-        this.destinationHint = destinationHint;
-    }
-
     public void setDestinationAngel(Double destinationAngel) {
         this.destinationAngel = destinationAngel;
     }
 
     public Double getDestinationAngel() {
         return destinationAngel;
-    }
-
-    private String pathToDestinationAsString() {
-        StringBuilder builder = new StringBuilder();
-        if (pathToDestination != null) {
-            builder.append("{");
-            Iterator<Index> iterator = pathToDestination.iterator();
-            while (iterator.hasNext()) {
-                Index index = iterator.next();
-                builder.append(index.toString());
-                if (iterator.hasNext()) {
-                    builder.append(", ");
-                }
-            }
-            builder.append("}");
-        } else {
-            builder.append("{-}");
-        }
-        return builder.toString();
     }
 
     private String intCollectionAsString() {
@@ -361,7 +334,7 @@ public class SyncItemInfo extends Packet {
                 " isAlive:" + isAlive +
                 " explode:" + explode +
                 base +
-                " pathToDestination:" + pathToDestinationAsString() +
+                " pathToDestination:" + CommonJava.pathToDestinationAsString(pathToDestination) +
                 " angel:" + angel +
                 " toBeBuildPosition:" + toBeBuildPosition +
                 " toBeBuiltTypeId:" + toBeBuiltTypeId +
@@ -380,7 +353,6 @@ public class SyncItemInfo extends Packet {
                 " containedIn:" + containedIn +
                 " unloadPos:" + unloadPos +
                 " targetPosition:" + targetPosition +
-                " destinationHint:" + destinationHint +
                 " destinationAngel:" + destinationAngel;
     }
 }

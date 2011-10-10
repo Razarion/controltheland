@@ -28,8 +28,6 @@ import com.btxtech.game.jsre.client.effects.ExplosionHandler;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
-import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
-import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -37,15 +35,12 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ProjectileItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
-import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.items.impl.AbstractItemService;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.common.gameengine.services.items.impl.ItemHandler;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
@@ -64,7 +59,7 @@ import java.util.Map;
  * Date: Jul 4, 2009
  * Time: 12:26:56 PM
  */
-public class ItemContainer extends AbstractItemService implements CommonCollisionService {
+public class ItemContainer extends AbstractItemService {
     public static final int CLEANUP_INTERVALL = 3000;
     private static final ItemContainer INSATNCE = new ItemContainer();
     private HashMap<Id, ClientSyncItem> items = new HashMap<Id, ClientSyncItem>();
@@ -288,6 +283,20 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
         return items.values();
     }
 
+    @Override
+    protected <T> T iterateOverItems(ItemHandler<T> itemHandler, T defaultReturn) {
+        for (ClientSyncItem clientSyncItem : items.values()) {
+            if (orphanItems.containsKey(clientSyncItem.getSyncItem().getId()) || seeminglyDeadItems.containsKey(clientSyncItem.getSyncItem().getId())) {
+                continue;
+            }
+            T result = itemHandler.handleItem(clientSyncItem.getSyncItem());
+            if (result != null) {
+                return result;
+            }
+        }
+        return defaultReturn;
+    }
+
     public Collection<ClientSyncItem> getItemsInRect(Rectangle rectangle, boolean onlyOwnItems) {
         ArrayList<ClientSyncItem> clientBaseItems = new ArrayList<ClientSyncItem>();
         for (ClientSyncItem clientSyncItem : items.values()) {
@@ -333,44 +342,6 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
     @Override
     public boolean isSyncItemOverlapping(SyncItem syncItem) {
         return isSyncItemOverlapping(syncItem, null, null);
-    }
-
-    @Override
-    public boolean isSyncItemOverlapping(SyncItem syncItem, Index positionToCheck, Collection<SyncItem> exceptionThem) {
-        return false;
-    }
-
-    @Override
-    public boolean hasStandingItemsInRect(Rectangle rectangle, SyncItem exceptThat) {
-        return false;
-    }
-
-    @Override
-    public boolean isUnmovableSyncItemOverlapping(BoundingBox boundingBox, Index positionToCheck) {
-        for (ClientSyncItem clientSyncItem : items.values()) {
-            if (orphanItems.containsKey(clientSyncItem.getSyncItem().getId()) || seeminglyDeadItems.containsKey(clientSyncItem.getSyncItem().getId())) {
-                continue;
-            }
-            if (clientSyncItem.isSyncBaseItem()) {
-                if (!(clientSyncItem.getSyncBaseItem()).hasSyncMovable()) {
-                    if (clientSyncItem.getSyncItem().getSyncItemArea().contains(boundingBox, positionToCheck)) {
-                        return true;
-                    }
-                }
-            } else if (clientSyncItem.isSyncResourceItem()) {
-                if (clientSyncItem.getSyncItem().getSyncItemArea().contains(boundingBox, positionToCheck)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void checkBuildingsInRect(BaseItemType toBeBuiltType, Index toBeBuildPosition) {
-        if (isUnmovableSyncItemOverlapping(toBeBuiltType.getBoundingBox(), toBeBuildPosition)) {
-            throw new PositionTakenException(toBeBuildPosition, toBeBuiltType);
-        }
     }
 
     public Collection<ClientSyncItem> getOwnItems() {
@@ -509,19 +480,6 @@ public class ItemContainer extends AbstractItemService implements CommonCollisio
     @Override
     public Map<BaseItemType, List<SyncBaseItem>> getItems4Base(SimpleBase simpleBase) {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Index getRallyPoint(SyncBaseItem factory, Collection<SurfaceType> allowedSurfaces) {
-        return factory.getSyncItemArea().getPosition().add(factory.getItemType().getBoundingBox().getMaxRadius() + 20, 0);
-    }
-
-    @Override
-    public AttackFormationItem getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItemArea target, TerrainType targetTerrainType) {
-        double angel = target.getPosition().getAngleToNord(syncBaseItem.getSyncItemArea().getPosition());
-        int radius = syncBaseItem.getSyncItemArea().getBoundingBox().getHeight() / 2 + range + (int)target.getBoundingBox().getMinRadius();
-        Index attackerPos = target.getPosition().getPointFromAngelToNord(angel, radius);
-        return new AttackFormationItem(syncBaseItem, range, attackerPos, angel, true);
     }
 
     public void clear() {

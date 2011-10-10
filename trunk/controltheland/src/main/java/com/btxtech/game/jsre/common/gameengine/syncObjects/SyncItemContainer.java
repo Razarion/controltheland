@@ -107,21 +107,26 @@ public class SyncItemContainer extends SyncBaseAbility {
         if (!isActive()) {
             return false;
         }
-        if (getSyncItemArea().isInRange(itemContainerType.getRange(), unloadPos)) {
-            getSyncItemArea().turnTo(unloadPos);
-            unload();
-            stop();
-            return false;
-        } else {
-            if (getSyncBaseItem().hasSyncMovable()) {
-                getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, null, null, unloadPos);
-                return true;
-            } else {
-                stop();
-                return false;
-            }
+
+        if (getSyncBaseItem().getSyncMovable().tickMove(factor, null)) {
+            return true;
         }
 
+        if (!isInRange(unloadPos)) {
+            // Destination place was may be taken. Calculate a new one.
+            recalculateNewPath(itemContainerType.getRange(), getSyncItemArea().getBoundingBox().createSyntheticSyncItemArea(unloadPos));
+            getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+            return true;
+        }
+
+        getSyncItemArea().turnTo(unloadPos);
+        unload();
+        stop();
+        return false;
+    }
+
+    private boolean isInRange(Index unloadPos) {
+        return getSyncItemArea().isInRange(itemContainerType.getRange(), getSyncItemArea().getBoundingBox().createSyntheticSyncItemArea(unloadPos));
     }
 
     private void unload() throws ItemDoesNotExistException {

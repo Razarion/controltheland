@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.collision;
+package com.btxtech.game.jsre.common.gameengine.services.collision;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -102,7 +102,7 @@ public class Path {
                 return removed.getRank();
             }
         }
-        throw new PathCanNotBeFoundException("Path can not be backtracked");        
+        throw new PathCanNotBeFoundException("Path can not be backtracked");
     }
 
     public void reverse() {

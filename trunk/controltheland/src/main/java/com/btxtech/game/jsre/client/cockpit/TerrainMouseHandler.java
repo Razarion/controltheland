@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.client.cockpit;
 
+import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.common.Index;
@@ -76,7 +77,8 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
             return;
         }
 
-        SyncBaseItem syncBaseItem = selection.getFirst().getSyncBaseItem();
+        ClientSyncItem clientSyncItem = selection.getFirst();
+        SyncBaseItem syncBaseItem = clientSyncItem.getSyncBaseItem();
         Index position = new Index(absoluteX, absoluteY);
         if (!ClientTerritoryService.getInstance().isAllowed(position, syncBaseItem)) {
             return;
@@ -86,7 +88,7 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
             return;
         }
 
-        ActionHandler.getInstance().unloadContainer(syncBaseItem, position);
+        ActionHandler.getInstance().unloadContainer(clientSyncItem, position);
     }
 
     private void executeMoveCommand(int absoluteX, int absoluteY) {

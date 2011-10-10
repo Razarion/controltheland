@@ -15,7 +15,9 @@ package com.btxtech.game.services.bot.impl;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.item.ItemService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,6 +42,8 @@ import java.util.Map;
 public class IntruderHandler {
     @Autowired
     private ItemService itemService;
+    @Autowired
+    private CollisionService collisionService;
     private Map<SyncBaseItem, Collection<BotSyncBaseItem>> intruders = new HashMap<SyncBaseItem, Collection<BotSyncBaseItem>>();
     private BotItemContainer botItemContainer;
     private Rectangle region;
@@ -107,8 +111,14 @@ public class IntruderHandler {
         BotSyncBaseItem attacker = botItemContainer.getFirstIdleAttacker(intruder);
         if (attacker != null) {
             try {
-                attacker.attack(intruder);
-                attackers.add(attacker);
+                AttackFormationItem attackFormationItem = collisionService.getDestinationHint(attacker.getSyncBaseItem(),
+                        attacker.getSyncBaseItem().getBaseItemType().getWeaponType().getRange(),
+                        intruder.getSyncItemArea(),
+                        attacker.getSyncBaseItem().getTerrainType());
+                if (attackFormationItem.isInRange()) {
+                    attacker.attack(intruder, attackFormationItem.getDestinationHint(), attackFormationItem.getDestinationAngel());
+                    attackers.add(attacker);
+                }
             } catch (Exception e) {
                 log.error("", e);
             }

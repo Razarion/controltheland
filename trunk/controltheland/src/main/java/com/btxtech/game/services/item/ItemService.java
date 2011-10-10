@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.item;
 
+import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
@@ -40,8 +41,6 @@ import java.util.List;
  */
 public interface ItemService extends com.btxtech.game.jsre.common.gameengine.services.items.ItemService {
     Collection<SyncItemInfo> getSyncInfo();
-
-    boolean hasItemsInRectangle(Rectangle rectangle);
 
     SyncBaseItem getFirstEnemyItemInRange(SyncBaseItem baseSyncItem);
 
@@ -83,7 +82,7 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
 
     DbItemTypeData getMuzzleFlashSound(int itemTypeId);
 
-    void sellItem(Id id) throws ItemDoesNotExistException, IllegalAccessException;
+    void sellItem(Id id) throws ItemDoesNotExistException, NotYourBaseException;
 
     ItemType getItemType(DbItemType dbItemType);
 

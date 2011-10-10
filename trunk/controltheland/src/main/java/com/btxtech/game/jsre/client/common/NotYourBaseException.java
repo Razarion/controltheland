@@ -19,4 +19,10 @@ package com.btxtech.game.jsre.client.common;
  * Time: 12:32:11 PM
  */
 public class NotYourBaseException extends Exception {
+    public NotYourBaseException() {
+    }
+
+    public NotYourBaseException(String actorBaseName, String targetBaseName) {
+        super("Invalid access from base: " + actorBaseName + " to " + targetBaseName);
+    }
 }

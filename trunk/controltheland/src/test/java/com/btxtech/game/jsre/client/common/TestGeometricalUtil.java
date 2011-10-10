@@ -1,6 +1,6 @@
 package com.btxtech.game.jsre.client.common;
 
-import com.btxtech.game.jsre.mapview.common.GeometricalUtil;
+import com.btxtech.game.jsre.common.GeometricalUtil;
 import org.junit.Assert;
 import org.junit.Test;
 

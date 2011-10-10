@@ -21,7 +21,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
  * Date: Sep 12, 2010
  * Time: 1:04:16 PM
  */
-public class BuilderFinalizeCommand extends BaseCommand {
+public class BuilderFinalizeCommand extends PathToDestinationCommand {
     private Id toBeBuilt;
     private Index destinationHint;
     private double destinationAngel;

@@ -26,8 +26,6 @@ import java.util.Date;
 public class BaseCommand implements Serializable {
     private Id id;
     private long timeStamp;
-    private Index destinationHint;
-    private double destinationAngel;
     
     public Id getId() {
         return id;
