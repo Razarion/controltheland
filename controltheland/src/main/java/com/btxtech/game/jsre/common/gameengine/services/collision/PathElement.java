@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.collision;
+package com.btxtech.game.jsre.common.gameengine.services.collision;
 
 import java.util.Comparator;
 
@@ -67,6 +67,6 @@ public class PathElement {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " " + passableRectangle + " rank: " + rank + " hasAlternativeSiblings: " + hasAlternativeSiblings;
+        return "PathElement: " + passableRectangle + " rank: " + rank + " hasAlternativeSiblings: " + hasAlternativeSiblings;
     }
 }

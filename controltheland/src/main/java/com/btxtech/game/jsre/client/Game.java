@@ -29,7 +29,6 @@ public class Game implements EntryPoint {
         try {
             GwtCommon.setUncaughtExceptionHandler();
             isDebug = Boolean.parseBoolean(Window.Location.getParameter(DEBUG_PARAM));
-            DialogManager.showDialog(new LevelTargetDialog(getLevelHtml()), DialogManager.Type.PROMPTLY);
             ClientServices.getInstance().connectStartupListeners();
             ClientServices.getInstance().getClientRunner().start(getStartupSeqFromHtml());
         } catch (Throwable t) {
@@ -39,11 +38,6 @@ public class Game implements EntryPoint {
 
     public static boolean isDebug() {
         return isDebug;
-    }
-
-    private String getLevelHtml() {
-        RootPanel div = getStartupInformation();
-        return div.getElement().getInnerHTML();
     }
 
     private GameStartupSeq getStartupSeqFromHtml() {

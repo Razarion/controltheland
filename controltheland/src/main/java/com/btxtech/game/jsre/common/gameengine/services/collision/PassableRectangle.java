@@ -11,32 +11,41 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.collision;
+package com.btxtech.game.jsre.common.gameengine.services.collision;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
-import com.btxtech.game.services.terrain.TerrainService;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
  * Date: May 27, 2009
  * Time: 9:42:28 AM
  */
-public class PassableRectangle {
+public class PassableRectangle implements Serializable {
+    // No equals() and no hashCode() due to the GWT serialization/de-serialization
     private static final int MAX_TRIES = 10000;
-    private HashMap<PassableRectangle, Neighbor> neighbors = new HashMap<PassableRectangle, Neighbor>();
+    private Map<PassableRectangle, Neighbor> neighbors = new HashMap<PassableRectangle, Neighbor>();
     private Rectangle rectangle;
-    private TerrainService terrainService;
 
-    public class Neighbor {
+    public static class Neighbor implements Serializable {
+        // No equals() and no hashCode() due to the GWT serialization/de-serialization
         private PassableRectangle passableRectangle;
         private Port port;
+
+        /**
+         * Used by GWT
+         */
+        Neighbor() {
+        }
 
         private Neighbor(PassableRectangle passableRectangle, Port port) {
             this.passableRectangle = passableRectangle;
@@ -50,33 +59,23 @@ public class PassableRectangle {
         public Port getPort() {
             return port;
         }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            Neighbor neighbor = (Neighbor) o;
-
-            return !(passableRectangle != null ? !passableRectangle.equals(neighbor.passableRectangle) : neighbor.passableRectangle != null);
-        }
-
-        @Override
-        public int hashCode() {
-            return passableRectangle != null ? passableRectangle.hashCode() : 0;
-        }
     }
 
-    public PassableRectangle(Rectangle rectangle, TerrainService terrainService) {
+    /**
+     * Used by GWT
+     */
+    PassableRectangle() {
+    }
+
+    public PassableRectangle(Rectangle rectangle) {
         this.rectangle = rectangle;
-        this.terrainService = terrainService;
     }
 
     public Rectangle getRectangle() {
         return rectangle;
     }
 
-    public void addNeighbor(PassableRectangle neighborPassableRectangle, TerrainService terrainService) {
+    public void addNeighbor(PassableRectangle neighborPassableRectangle, AbstractTerrainService terrainService) {
         Neighbor neighbor = new Neighbor(neighborPassableRectangle, new Port(terrainService.convertToAbsolutePosition(rectangle),
                 terrainService.convertToAbsolutePosition(neighborPassableRectangle.rectangle)));
         neighbors.put(neighborPassableRectangle, neighbor);
@@ -96,15 +95,15 @@ public class PassableRectangle {
         return getPixelRectangle(terrainSettings).containsExclusive(absoluteIndex);
     }
 
-    public Path findPossiblePassableRectanglePaths(Index absStart, PassableRectangle destinationRect, Index absDestination) {
+    public Path findPossiblePassableRectanglePaths(AbstractTerrainService terrainService, Index absStart, PassableRectangle destinationRect, Index absDestination) {
         Path pathStartToDestination = new Path(this);
         Path pathDestinationToStart = new Path(destinationRect);
 
         for (int tries = 0; tries < MAX_TRIES; tries++) {
-            if (findPath(absStart, absDestination, destinationRect, pathStartToDestination)) {
+            if (findPath(terrainService, absStart, absDestination, destinationRect, pathStartToDestination)) {
                 return pathStartToDestination;
             }
-            if (findPath(absDestination, absStart, this, pathDestinationToStart)) {
+            if (findPath(terrainService, absDestination, absStart, this, pathDestinationToStart)) {
                 pathDestinationToStart.reverse();
                 return pathDestinationToStart;
             }
@@ -113,26 +112,26 @@ public class PassableRectangle {
         throw new PathCanNotBeFoundException("Max tries exceeded");
     }
 
-    private boolean findPath(Index absStart, Index absDestination, PassableRectangle destinationRect, Path path) {
-        PathElement next = getBestSuitable(path, absStart, absDestination, 0);
+    private boolean findPath(AbstractTerrainService terrainService, Index absStart, Index absDestination, PassableRectangle destinationRect, Path path) {
+        PathElement next = getBestSuitable(terrainService, path, absStart, absDestination, 0);
         if (next == null) {
-            next = backtracking(path, absStart, absDestination);
+            next = backtracking(terrainService, path, absStart, absDestination);
         }
         path.add(next);
         return next.equalsTo(destinationRect);
     }
 
-    private PathElement backtracking(Path path, Index absStart, Index absDestination) {
+    private PathElement backtracking(AbstractTerrainService terrainService, Path path, Index absStart, Index absDestination) {
         int oldRank = path.backToElementWithAlternatives();
-        PathElement alternativeNext = getBestSuitable(path, absStart, absDestination, oldRank + 1);
+        PathElement alternativeNext = getBestSuitable(terrainService, path, absStart, absDestination, oldRank + 1);
         if (alternativeNext != null) {
             return alternativeNext;
         } else {
-            return backtracking(path, absStart, absDestination);
+            return backtracking(terrainService, path, absStart, absDestination);
         }
     }
 
-    private PathElement getBestSuitable(Path path, Index absStart, Index absDestination, int rank) {
+    private PathElement getBestSuitable(AbstractTerrainService terrainService, Path path, Index absStart, Index absDestination, int rank) {
         List<PathElement> allNeighbors = new ArrayList<PathElement>();
         for (PassableRectangle neighbor : path.getLast().getPassableRectangle().neighbors.keySet()) {
             if (path.containsPassableRectangle(neighbor)) {
@@ -183,7 +182,7 @@ public class PassableRectangle {
         return neighbors.get(passableRectangle).getPort();
     }
 
-    public HashMap<PassableRectangle, Neighbor> getNeighbors() {
+    public Map<PassableRectangle, Neighbor> getNeighbors() {
         return neighbors;
     }
 
@@ -192,23 +191,7 @@ public class PassableRectangle {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        PassableRectangle that = (PassableRectangle) o;
-
-        return !(rectangle != null ? !rectangle.equals(that.rectangle) : that.rectangle != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        return rectangle != null ? rectangle.hashCode() : 0;
-    }
-
-    @Override
     public String toString() {
-        return getClass().getSimpleName() + " " + rectangle;
+        return "PassableRectangle: " + rectangle;
     }
 }

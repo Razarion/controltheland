@@ -19,7 +19,6 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.user.client.Random;
@@ -221,6 +220,7 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
 
     @Override
     public SurfaceRect getSurfaceRect(Index tileIndex) {
+        // TODO slow!!!
         for (SurfaceRect surfaceRect : surfaceRects) {
             if (surfaceRect.getTileRectangle().containsExclusive(tileIndex)) {
                 return surfaceRect;
@@ -309,13 +309,6 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
         Index start = getAbsolutIndexForTerrainTileIndex(rectangle.getStart());
         Index end = getAbsolutIndexForTerrainTileIndex(rectangle.getEnd());
         return new Rectangle(start, end);
-    }
-
-    @Override
-    public List<Index> setupPathToDestination(Index start, Index destination, TerrainType terrainType) {
-        ArrayList<Index> path = new ArrayList<Index>();
-        path.add(destination);
-        return path;
     }
 
     @Override
@@ -443,6 +436,7 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
         return new Rectangle(widget.getAbsoluteLeft(), widget.getAbsoluteTop(), widget.getOffsetWidth(), widget.getOffsetHeight());
     }
 
+    @Override
     public Index correctPosition(SyncItem syncItem, Index position) {
         int x;
         int maxRadius = syncItem.getItemType().getBoundingBox().getMaxRadius();
@@ -462,5 +456,45 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
             y = position.getY();
         }
         return new Index(x, y);
+    }
+
+    @Override
+    public SurfaceType[][] createSurfaceTypeField() {
+        if (terrainSettings == null) {
+            throw new IllegalStateException("terrainSettings == null");
+        }
+        SurfaceType[][] surfaceTypeFiled = new SurfaceType[terrainSettings.getTileXCount()][terrainSettings.getTileYCount()];
+        for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
+            TerrainImage terrainImage = terrainImages.get(terrainImagePosition.getImageId());
+            Index imageIndex = terrainImagePosition.getTileIndex();
+            for (int x = 0; x < terrainImage.getTileWidth(); x++) {
+                if (x + imageIndex.getX() > terrainSettings.getTileXCount() - 1) {
+                    continue;
+                }
+                for (int y = 0; y < terrainImage.getTileHeight(); y++) {
+                    if (y + imageIndex.getY() > terrainSettings.getTileYCount() - 1) {
+                        continue;
+                    }
+                    surfaceTypeFiled[x + imageIndex.getX()][y + imageIndex.getY()] = terrainImage.getSurfaceType(x, y);
+                }
+            }
+        }
+        for (SurfaceRect surfaceRect : surfaceRects) {
+            SurfaceType surfaceType = surfaceImages.get(surfaceRect.getSurfaceImageId()).getSurfaceType();
+            for (int x = surfaceRect.getTileIndex().getX(); x < surfaceRect.getTileWidth() + surfaceRect.getTileIndex().getX(); x++) {
+                if (x > terrainSettings.getTileXCount() - 1) {
+                    continue;
+                }
+                for (int y = surfaceRect.getTileIndex().getY(); y < surfaceRect.getTileHeight() + surfaceRect.getTileIndex().getY(); y++) {
+                    if (y > terrainSettings.getTileYCount() - 1) {
+                        continue;
+                    }
+                    if (surfaceTypeFiled[x][y] == null) {
+                        surfaceTypeFiled[x][y] = surfaceType;
+                    }
+                }
+            }
+        }
+        return surfaceTypeFiled;
     }
 }

@@ -26,19 +26,25 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
  * Time: 19:48:28
  */
 public interface CommonActionService {
+    void syncItemActivated(SyncTickItem syncTickItem);
+
     void move(SyncBaseItem syncItem, Index destination);
 
-    void buildFactory(SyncBaseItem builder, Index position, BaseItemType itemTypeToBuild);
+    void build(SyncBaseItem builder, Index position, BaseItemType itemTypeToBuild);
 
-    void build(SyncBaseItem builder, BaseItemType itemTypeToBuild);
+    void finalizeBuild(SyncBaseItem builder, SyncBaseItem building, Index destinationHint, double destinationAngel);
 
-    void collect(SyncBaseItem harvester, SyncResourceItem moneyItem);
+    void fabricate(SyncBaseItem builder, BaseItemType itemTypeToBuild);
 
-    void attack(SyncBaseItem attacker, SyncBaseItem target, boolean followTarget);
+    void collect(SyncBaseItem harvester, SyncResourceItem moneyItem, Index destinationHint, double destinationAngel);
+
+    void attack(SyncBaseItem syncBaseItem, SyncBaseItem target, Index destinationHint, double destinationAngel, boolean followTarget);
+
+    void defend(SyncBaseItem attacker, SyncBaseItem target);
 
     void upgrade(SyncBaseItem item) throws InsufficientFundsException;
 
-    void syncItemActivated(SyncTickItem syncTickItem);
+    void loadContainer(SyncBaseItem container, SyncBaseItem item, Index destinationHint);
 
-    void defend(SyncBaseItem attacker, SyncBaseItem target, boolean followTarget);
+    void unloadContainer(SyncBaseItem container, Index unloadPos);
 }

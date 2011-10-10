@@ -1,9 +1,9 @@
-package com.btxtech.game.services.collision.impl;
+package com.btxtech.game.jsre.common.gameengine.services.collision.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Line;
 import com.btxtech.game.jsre.common.SimpleEntry;
-import com.btxtech.game.services.collision.Port;
+import com.btxtech.game.jsre.common.gameengine.services.collision.Port;
 
 import java.util.ArrayList;
 import java.util.HashSet;

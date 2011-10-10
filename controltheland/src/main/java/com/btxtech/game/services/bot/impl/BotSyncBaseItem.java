@@ -56,7 +56,7 @@ public class BotSyncBaseItem {
 
     public void buildBuilding(Index position, BaseItemType toBeBuilt) {
         try {
-            actionService.buildFactory(syncBaseItem, position, toBeBuilt);
+            actionService.build(syncBaseItem, position, toBeBuilt);
             idle = false;
         } catch (Exception e) {
             idle = true;
@@ -66,7 +66,7 @@ public class BotSyncBaseItem {
 
     public void buildUnit(BaseItemType toBeBuilt) {
         try {
-            actionService.build(syncBaseItem, toBeBuilt);
+            actionService.fabricate(syncBaseItem, toBeBuilt);
             idle = false;
         } catch (Exception e) {
             idle = true;
@@ -74,9 +74,9 @@ public class BotSyncBaseItem {
         }
     }
 
-    public void attack(SyncBaseItem target) {
+    public void attack(SyncBaseItem target, Index destinationHint, double destinationAngel) {
         try {
-            actionService.attack(syncBaseItem, target, true);
+            actionService.attack(syncBaseItem, target, destinationHint, destinationAngel, true);
             idle = false;
         } catch (Exception e) {
             idle = true;

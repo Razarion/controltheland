@@ -91,10 +91,10 @@ public class TestIntruderHandler extends AbstractServiceTest {
         SimpleBase botBase = new SimpleBase(1);
         Rectangle region = new Rectangle(0, 0, 2000, 2000);
         SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1, 0));
-        SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-2, -2, 0));
+        SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-2, -2, 0));
 
         ActionService mockActionService = EasyMock.createStrictMock(ActionService.class);
-        mockActionService.attack(defender, intruder, true);
+        mockActionService.attack(EasyMock.eq(defender), EasyMock.eq(intruder), EasyMock.eq(new Index(862, 862)), EasyMock.eq(3.9269, 0.0001), EasyMock.eq(true));
 
         BotItemContainer mockBotItemContainer = EasyMock.createStrictMock(BotItemContainer.class);
         BotSyncBaseItem defenderBotItem = new BotSyncBaseItem(defender, mockActionService);
@@ -124,10 +124,10 @@ public class TestIntruderHandler extends AbstractServiceTest {
         SimpleBase botBase = new SimpleBase(1);
         Rectangle region = new Rectangle(0, 0, 2000, 2000);
         SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1, 0));
-        SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-2, -2, 0));
+        SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-2, -2, 0));
 
         ActionService mockActionService = EasyMock.createStrictMock(ActionService.class);
-        mockActionService.attack(defender, intruder, true);
+        mockActionService.attack(EasyMock.eq(defender), EasyMock.eq(intruder), EasyMock.eq(new Index(862, 862)), EasyMock.eq(3.9269, 0.0001), EasyMock.eq(true));
 
         BotItemContainer mockBotItemContainer = EasyMock.createStrictMock(BotItemContainer.class);
         BotSyncBaseItem defenderBotItem = new BotSyncBaseItem(defender, mockActionService);
@@ -159,10 +159,10 @@ public class TestIntruderHandler extends AbstractServiceTest {
         SimpleBase botBase = new SimpleBase(1);
         Rectangle region = new Rectangle(0, 0, 2000, 2000);
         SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1, 0));
-        SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-2, -2, 0));
+        SyncBaseItem defender = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-2, -2, 0));
 
         ActionService mockActionService = EasyMock.createStrictMock(ActionService.class);
-        mockActionService.attack(defender, intruder, true);
+        mockActionService.attack(EasyMock.eq(defender), EasyMock.eq(intruder), EasyMock.eq(new Index(862, 862)), EasyMock.eq(3.9269, 0.0001), EasyMock.eq(true));
 
         BotItemContainer mockBotItemContainer = EasyMock.createStrictMock(BotItemContainer.class);
         BotSyncBaseItem defenderBotItem = new BotSyncBaseItem(defender, mockActionService);
@@ -196,11 +196,11 @@ public class TestIntruderHandler extends AbstractServiceTest {
         SimpleBase botBase = new SimpleBase(1);
         Rectangle region = new Rectangle(0, 0, 2000, 2000);
         SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1, 0));
-        SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-2, -2, 0));
+        SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-2, -2, 0));
 
         ActionService mockActionService = EasyMock.createStrictMock(ActionService.class);
-        mockActionService.attack(attacker, intruder, true);
-        mockActionService.attack(attacker, intruder, true);
+        mockActionService.attack(EasyMock.eq(attacker), EasyMock.eq(intruder), EasyMock.eq(new Index(862, 862)), EasyMock.eq(3.9269, 0.0001), EasyMock.eq(true));
+        mockActionService.attack(EasyMock.eq(attacker), EasyMock.eq(intruder), EasyMock.eq(new Index(862, 862)), EasyMock.eq(3.9269, 0.0001), EasyMock.eq(true));
 
         BotItemContainer mockBotItemContainer = EasyMock.createStrictMock(BotItemContainer.class);
         BotSyncBaseItem attackerBotItem = new BotSyncBaseItem(attacker, mockActionService);
@@ -234,13 +234,13 @@ public class TestIntruderHandler extends AbstractServiceTest {
         SimpleBase botBase = new SimpleBase(1);
         Rectangle region = new Rectangle(0, 0, 2000, 2000);
         SyncBaseItem intruder = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-1, -1, 0));
-        SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(-2, -2, 0));
+        SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(200, 200), new Id(-2, -2, 0));
 
         ActionService mockActionService = EasyMock.createStrictMock(ActionService.class);
-        mockActionService.attack(attacker, intruder, true);
+        mockActionService.attack(EasyMock.eq(attacker), EasyMock.eq(intruder), EasyMock.eq(new Index(862, 862)), EasyMock.eq(3.9269, 0.0001), EasyMock.eq(true));
         //noinspection ThrowableInstanceNeverThrown
         EasyMock.expectLastCall().andThrow(new RuntimeException());
-        mockActionService.attack(attacker, intruder, true);
+        mockActionService.attack(EasyMock.eq(attacker), EasyMock.eq(intruder), EasyMock.eq(new Index(862, 862)), EasyMock.eq(3.9269, 0.0001), EasyMock.eq(true));
 
         BotItemContainer mockBotItemContainer = EasyMock.createStrictMock(BotItemContainer.class);
         BotSyncBaseItem attackerBotItem = new BotSyncBaseItem(attacker, mockActionService);

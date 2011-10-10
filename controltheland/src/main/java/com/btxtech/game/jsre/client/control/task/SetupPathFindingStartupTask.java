@@ -11,23 +11,24 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.common.gameengine.syncObjects.command;
+package com.btxtech.game.jsre.client.control.task;
 
-import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.collision.ClientCollisionService;
+import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 
 /**
  * User: beat
- * Date: 05.05.2010
- * Time: 12:27:00
+ * Date: 07.10.2010
+ * Time: 12:59:49
  */
-public class UnloadContainerCommand extends PathToDestinationCommand {
-    private Index unloadPos;
+public class SetupPathFindingStartupTask extends AbstractStartupTask {
 
-    public Index getUnloadPos() {
-        return unloadPos;
+    public SetupPathFindingStartupTask(StartupTaskEnum taskEnum) {
+        super(taskEnum);
     }
 
-    public void setUnloadPos(Index unloadPos) {
-        this.unloadPos = unloadPos;
+    @Override
+    protected void privateStart(DeferredStartup deferredStartup) {
+        ClientCollisionService.getInstance().setup();
     }
 }

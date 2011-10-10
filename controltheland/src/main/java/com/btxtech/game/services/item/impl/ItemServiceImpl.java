@@ -14,10 +14,10 @@
 package com.btxtech.game.services.item.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
-import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -27,6 +27,7 @@ import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededEx
 import com.btxtech.game.jsre.common.gameengine.services.items.BaseDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.items.impl.AbstractItemService;
+import com.btxtech.game.jsre.common.gameengine.services.items.impl.ItemHandler;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
@@ -311,22 +312,6 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public boolean hasItemsInRectangle(Rectangle rectangle) {
-        synchronized (items) {
-            for (SyncItem syncItem : items.values()) {
-                if (!syncItem.getSyncItemArea().hasPosition()) {
-                    continue;
-                }
-
-                if (syncItem.getSyncItemArea().contains(rectangle)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
     public SyncBaseItem getFirstEnemyItemInRange(SyncBaseItem baseSyncItem) {
         synchronized (items) {
             for (SyncItem syncItem : items.values()) {
@@ -372,6 +357,19 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         }
         this.lastId = lastId + 1;
         actionService.reload();
+    }
+
+    @Override
+    protected <T> T iterateOverItems(ItemHandler<T> itemHandler, T defaultReturn) {
+        synchronized (items) {
+            for (SyncItem syncItem : items.values()) {
+                T result = itemHandler.handleItem(syncItem);
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+        return defaultReturn;
     }
 
     @Override
@@ -663,116 +661,12 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public boolean hasStandingItemsInRect(Rectangle rectangle, SyncItem exceptThat) {
-        synchronized (items) {
-            for (SyncItem syncItem : items.values()) {
-                if (syncItem.equals(exceptThat)) {
-                    continue;
-                }
-                if (!syncItem.getSyncItemArea().hasPosition()) {
-                    continue;
-                }
-                if (syncItem instanceof SyncBaseItem) {
-                    SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
-                    if (!syncBaseItem.hasSyncMovable() || !syncBaseItem.getSyncMovable().isActive()) {
-                        if (syncItem.getSyncItemArea().contains(rectangle)) {
-                            return true;
-                        }
-                    }
-                } else if (syncItem instanceof SyncResourceItem) {
-                    if (syncItem.getSyncItemArea().contains(rectangle)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
     public boolean isSyncItemOverlapping(SyncItem syncItem) {
         return isSyncItemOverlapping(syncItem, null, null);
     }
 
     @Override
-    public boolean isSyncItemOverlapping(SyncItem syncItem, Index positionToCheck, Collection<SyncItem> exceptionThem) {
-        synchronized (items) {
-            for (SyncItem otherItem : items.values()) {
-                if (otherItem.equals(syncItem)) {
-                    continue;
-                }
-                if (!otherItem.getSyncItemArea().hasPosition()) {
-                    continue;
-                }
-
-                if (exceptionThem != null && exceptionThem.contains(otherItem)) {
-                    continue;
-                }
-
-                if (otherItem instanceof SyncBaseItem) {
-                    SyncBaseItem syncBaseItem = (SyncBaseItem) otherItem;
-                    if (!syncBaseItem.hasSyncMovable() || !syncBaseItem.getSyncMovable().isActive()) {
-                        if (positionToCheck == null) {
-                            if (syncItem.getSyncItemArea().contains(syncBaseItem)) {
-                                return true;
-                            }
-                        } else {
-                            if (syncItem.getSyncItemArea().contains(syncBaseItem, positionToCheck)) {
-                                return true;
-                            }
-                        }
-                    }
-                } else if (otherItem instanceof SyncResourceItem) {
-                    if (positionToCheck == null) {
-                        if (syncItem.getSyncItemArea().contains(otherItem)) {
-                            return true;
-                        }
-                    } else {
-                        if (syncItem.getSyncItemArea().contains(otherItem, positionToCheck)) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean isUnmovableSyncItemOverlapping(BoundingBox boundingBox, Index positionToCheck) {
-        synchronized (items) {
-            for (SyncItem syncItem : items.values()) {
-                if (!syncItem.getSyncItemArea().hasPosition()) {
-                    continue;
-                }
-
-                if (syncItem instanceof SyncBaseItem) {
-                    SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
-                    if (!syncBaseItem.hasSyncMovable()) {
-                        if (syncBaseItem.getSyncItemArea().contains(boundingBox, positionToCheck)) {
-                            return true;
-                        }
-                    }
-                } else if (syncItem instanceof SyncResourceItem) {
-                    if (syncItem.getSyncItemArea().contains(boundingBox, positionToCheck)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-
-    @Override
-    public void checkBuildingsInRect(BaseItemType toBeBuiltType, Index toBeBuildPosition) {
-        if (isUnmovableSyncItemOverlapping(toBeBuiltType.getBoundingBox(), toBeBuildPosition)) {
-            throw new PositionTakenException(toBeBuildPosition, toBeBuiltType);
-        }
-    }
-
-    @Override
-    public void sellItem(Id id) throws ItemDoesNotExistException, IllegalAccessException {
+    public void sellItem(Id id) throws ItemDoesNotExistException, NotYourBaseException {
         SyncBaseItem syncBaseItem = (SyncBaseItem) getItem(id);
         baseService.checkBaseAccess(syncBaseItem);
         double health = syncBaseItem.getHealth();

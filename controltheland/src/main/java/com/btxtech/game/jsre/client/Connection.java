@@ -61,6 +61,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -77,6 +78,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
     private GameInfo gameInfo;
     private Collection<SyncItemInfo> syncInfos;
     private ArrayList<BaseCommand> commandQueue = new ArrayList<BaseCommand>();
+    private static Logger log = Logger.getLogger(Connection.class.getName());
 
     private MovableServiceAsync movableServiceAsync = GWT.create(MovableService.class);
     private Timer timer;
@@ -415,6 +417,8 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
         } else if (GwtCommon.checkAndReportHttpStatusCode0(cause)) {
             // Reload whole browser
             Window.Location.reload();
+        } else {
+            log.log(java.util.logging.Level.SEVERE, "Startup task failed: '" + task.getTaskEnum().getStartupTaskEnumHtmlHelper().getNiceText() + "' error: " + error, t);
         }
     }
 

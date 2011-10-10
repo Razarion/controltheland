@@ -13,29 +13,27 @@
 
 package com.btxtech.game.services.action.impl;
 
-import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.NotYourBaseException;
+import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
-import com.btxtech.game.jsre.common.gameengine.PositionCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
-import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
-import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.action.impl.CommonActionServiceImpl;
+import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.collision.PathCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.items.BaseDoesNotExistException;
+import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.command.PathToDestinationCommand;
 import com.btxtech.game.services.action.ActionService;
-import com.btxtech.game.services.action.ActionServiceUtil;
 import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.collision.CollisionService;
-import com.btxtech.game.services.collision.PathCanNotBeFoundException;
+import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.connection.ConnectionService;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
@@ -64,7 +62,7 @@ import java.util.TimerTask;
  * Time: 12:50:08 PM
  */
 @Component("actionService")
-public class ActionServiceImpl extends TimerTask implements ActionService {
+public class ActionServiceImpl extends CommonActionServiceImpl implements ActionService {
     public static final int TICK_TIME_MILI_SECONDS = 100;
 
     @Autowired
@@ -83,6 +81,8 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
     private ServerEnergyService energyService;
     @Autowired
     private TerritoryService territoryService;
+    @Autowired
+    private ServerServices serverServices;
     private final HashSet<SyncTickItem> activeItems = new HashSet<SyncTickItem>();
     private final HashSet<SyncBaseItem> guardingItems = new HashSet<SyncBaseItem>();
     private final ArrayList<SyncTickItem> tmpActiveItems = new ArrayList<SyncTickItem>();
@@ -91,10 +91,64 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
     private long lastTickTime = 0;
     private boolean pause = false;
 
+    private class ActionServiceTimerTask extends TimerTask {
+        @Override
+        public void run() {
+            if (pause) {
+                return;
+            }
+            try {
+                synchronized (activeItems) {
+                    synchronized (tmpActiveItems) {
+                        activeItems.addAll(tmpActiveItems);
+                        tmpActiveItems.clear();
+                    }
+                    Iterator<SyncTickItem> iterator = activeItems.iterator();
+                    long time = System.currentTimeMillis();
+                    double factor = calculateFactor(time);
+                    while (iterator.hasNext()) {
+                        SyncTickItem activeItem = iterator.next();
+                        try {
+                            if (!activeItem.tick(factor)) {
+                                iterator.remove();
+                                activeItem.stop();
+                                addGuardingBaseItem(activeItem);
+                                connectionService.sendSyncInfo(activeItem);
+                                if (activeItem instanceof SyncBaseItem && ((SyncBaseItem) activeItem).hasSyncHarvester()) {
+                                    baseService.sendAccountBaseUpdate((SyncBaseItem) activeItem);
+                                }
+                                if (activeItem instanceof SyncBaseItem && ((SyncBaseItem) activeItem).isMoneyEarningOrConsuming()) {
+                                    baseService.sendAccountBaseUpdate((SyncBaseItem) activeItem);
+                                }
+                            }
+                        } catch (BaseDoesNotExistException e) {
+                            log.info("BaseDoesNotExistException: " + e.getMessage());
+                            activeItem.stop();
+                            iterator.remove();
+                        } catch (PositionTakenException ife) {
+                            log.info("PositionTakenException: " + ife.getMessage());
+                            activeItem.stop();
+                            iterator.remove();
+                            connectionService.sendSyncInfo(activeItem);
+                        } catch (Throwable t) {
+                            log.error("ActiveItem: " + activeItem, t);
+                            activeItem.stop();
+                            iterator.remove();
+                            connectionService.sendSyncInfo(activeItem);
+                        }
+                    }
+                    lastTickTime = time;
+                }
+            } catch (Throwable t) {
+                log.error("", t);
+            }
+        }
+    }
+
     @PostConstruct
     public void start() {
         timer = new Timer(getClass().getName(), true);
-        timer.scheduleAtFixedRate(this, 0, TICK_TIME_MILI_SECONDS);
+        timer.scheduleAtFixedRate(new ActionServiceTimerTask(), 0, TICK_TIME_MILI_SECONDS);
     }
 
     @PreDestroy
@@ -128,57 +182,7 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
 
     }
 
-    @Override
-    public void run() {
-        if (pause) {
-            return;
-        }
-        try {
-            synchronized (activeItems) {
-                synchronized (tmpActiveItems) {
-                    activeItems.addAll(tmpActiveItems);
-                    tmpActiveItems.clear();
-                }
-                Iterator<SyncTickItem> iterator = activeItems.iterator();
-                long time = System.currentTimeMillis();
-                double factor = calculateFactor(time);
-                while (iterator.hasNext()) {
-                    SyncTickItem activeItem = iterator.next();
-                    try {
-                        if (!activeItem.tick(factor)) {
-                            iterator.remove();
-                            activeItem.stop();
-                            addGuardingBaseItem(activeItem);
-                            connectionService.sendSyncInfo(activeItem);
-                            if (activeItem instanceof SyncBaseItem && ((SyncBaseItem) activeItem).hasSyncHarvester()) {
-                                baseService.sendAccountBaseUpdate((SyncBaseItem) activeItem);
-                            }
-                            if (activeItem instanceof SyncBaseItem && ((SyncBaseItem) activeItem).isMoneyEarningOrConsuming()) {
-                                baseService.sendAccountBaseUpdate((SyncBaseItem) activeItem);
-                            }
-                        }
-                    } catch (BaseDoesNotExistException e) {
-                        log.info("BaseDoesNotExistException: " + e.getMessage());
-                        activeItem.stop();
-                        iterator.remove();
-                    } catch (PositionTakenException ife) {
-                        log.info("PositionTakenException: " + ife.getMessage());
-                        activeItem.stop();
-                        iterator.remove();
-                        connectionService.sendSyncInfo(activeItem);
-                    } catch (Throwable t) {
-                        log.error("ActiveItem: " + activeItem, t);
-                        activeItem.stop();
-                        iterator.remove();
-                        connectionService.sendSyncInfo(activeItem);
-                    }
-                }
-                lastTickTime = time;
-            }
-        } catch (Throwable t) {
-            log.error("", t);
-        }
-    }
+    // TODO put in common
 
     @Override
     public void addGuardingBaseItem(SyncTickItem syncTickItem) {
@@ -212,6 +216,9 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
         }
     }
 
+    // TODO put in common
+
+    @Override
     public void removeGuardingBaseItem(SyncBaseItem syncItem) {
         if (!syncItem.hasSyncWeapon()) {
             return;
@@ -219,6 +226,33 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
 
         synchronized (guardingItems) {
             guardingItems.remove(syncItem);
+        }
+    }
+
+    // TODO put in common
+
+    @Override
+    public void interactionGuardingItems(SyncBaseItem target) {
+        synchronized (guardingItems) {
+            for (SyncBaseItem attacker : guardingItems) {
+                if (attacker.isEnemy(target)
+                        && attacker.getSyncWeapon().isAttackAllowedWithoutMoving(target)
+                        && attacker.getSyncWeapon().isItemTypeAllowed(target)) {
+                    defend(attacker, target);
+                }
+            }
+        }
+    }
+
+    // TODO put in common
+
+    private boolean checkGuardingItemHasEnemiesInRange(SyncBaseItem guardingItem) {
+        SyncBaseItem target = itemService.getFirstEnemyItemInRange(guardingItem);
+        if (target != null) {
+            defend(guardingItem, target);
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -250,151 +284,6 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
         }
     }
 
-    private boolean checkGuardingItemHasEnemiesInRange(SyncBaseItem guardingItem) {
-        SyncBaseItem target = itemService.getFirstEnemyItemInRange(guardingItem);
-        if (target == null) {
-            return false;
-        }
-        AttackCommand attackCommand = createAttackCommand(guardingItem, target);
-        try {
-            executeCommand(attackCommand, true);
-        } catch (IllegalAccessException e) {
-            log.error("", e);
-        } catch (ItemDoesNotExistException e) {
-            // Ignore, may the item has just now been destroyed
-        }
-        return true;
-    }
-
-    @Override
-    public void interactionGuardingItems(SyncBaseItem target) {
-        ArrayList<AttackCommand> cmds = new ArrayList<AttackCommand>();
-        // Collect command
-        synchronized (guardingItems) {
-            for (SyncBaseItem attacker : guardingItems) {
-                //TankSyncItem tank = (TankSyncItem) baseSyncItem;
-                if (attacker.isEnemy(target)
-                        && attacker.getSyncWeapon().isAttackAllowedWithoutMoving(target)
-                        && attacker.getSyncWeapon().isItemTypeAllowed(target)) {
-                    AttackCommand attackCommand = createAttackCommand(attacker, target);
-                    cmds.add(attackCommand);
-                    connectionService.sendSyncInfo(target);
-                }
-            }
-        }
-        // Execute commands
-        for (AttackCommand cmd : cmds) {
-            try {
-                executeCommand(cmd, true);
-            } catch (IllegalAccessException e) {
-                log.error("", e);
-            } catch (ItemDoesNotExistException e) {
-                // Ignore, may the item has just now been destroyed
-            }
-        }
-    }
-
-    private AttackCommand createAttackCommand(SyncBaseItem attacker, SyncBaseItem target) {
-        AttackCommand attackCommand = new AttackCommand();
-        attackCommand.setId(attacker.getId());
-        attackCommand.setTimeStamp();
-        attackCommand.setFollowTarget(false);
-        attackCommand.setTarget(target.getId());
-        return attackCommand;
-    }
-
-
-    @Override
-    public void buildFactory(SyncBaseItem builder, Index position, BaseItemType itemTypeToBuild) {
-        builder.stop();
-        BuilderCommand builderCommand = new BuilderCommand();
-        builderCommand.setId(builder.getId());
-        builderCommand.setTimeStamp();
-        builderCommand.setToBeBuilt(itemTypeToBuild.getId());
-        builderCommand.setPositionToBeBuilt(position);
-        try {
-            executeCommand(builderCommand, true);
-        } catch (Exception e) {
-            log.error("", e);
-        }
-    }
-
-    @Override
-    public void build(SyncBaseItem factory, BaseItemType itemType) {
-        FactoryCommand factoryCommand = new FactoryCommand();
-        factoryCommand.setId(factory.getId());
-        factoryCommand.setTimeStamp();
-        factoryCommand.setToBeBuilt(itemType.getId());
-        try {
-            executeCommand(factoryCommand, true);
-        } catch (Exception e) {
-            log.error("", e);
-        }
-    }
-
-    @Override
-    public void collect(SyncBaseItem collector, SyncResourceItem money) {
-        collector.stop();
-        MoneyCollectCommand collectCommand = new MoneyCollectCommand();
-        collectCommand.setId(collector.getId());
-        collectCommand.setTimeStamp();
-        collectCommand.setTarget(money.getId());
-
-        try {
-            executeCommand(collectCommand, true);
-        } catch (Exception e) {
-            log.error("", e);
-        }
-    }
-
-    @Override
-    public void attack(SyncBaseItem tank, SyncBaseItem target, boolean followTarget) {
-        tank.stop();
-        AttackCommand attackCommand = createAttackCommand(tank, target);
-        attackCommand.setFollowTarget(true);
-
-        if (followTarget) {
-            AttackFormationItem format = collisionService.getDestinationHint(tank,
-                    tank.getSyncWeapon().getWeaponType().getRange(),
-                    target.getSyncItemArea(),
-                    target.getBaseItemType().getTerrainType());
-            if (format != null) {
-                attackCommand.setDestinationHint(format.getDestinationHint());
-                attackCommand.setDestinationAngel(format.getDestinationAngel());
-            }
-        }
-
-        try {
-            executeCommand(attackCommand, true);
-        } catch (Exception e) {
-            log.error("", e);
-        }
-    }
-
-    @Override
-    public void defend(SyncBaseItem attacker, SyncBaseItem target, boolean followTarget) {
-        attack(attacker, target, followTarget);
-    }
-
-    @Override
-    public void move(SyncBaseItem syncItem, Index destination) {
-        syncItem.stop();
-        MoveCommand moveCommand = new MoveCommand();
-        moveCommand.setId(syncItem.getId());
-        moveCommand.setTimeStamp();
-        moveCommand.setDestination(destination);
-        try {
-            executeCommand(moveCommand, true);
-        } catch (Exception e) {
-            log.error("", e);
-        }
-    }
-
-    @Override
-    public void upgrade(SyncBaseItem item) {
-        throw new UnsupportedOperationException();
-    }
-
     @Override
     public void syncItemActivated(SyncTickItem syncTickItem) {
         synchronized (tmpActiveItems) {
@@ -416,7 +305,12 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
     }
 
     @Override
-    public void executeCommand(BaseCommand baseCommand, boolean cmdFromSystem) throws IllegalAccessException, ItemDoesNotExistException {
+    protected void executeCommand(SyncBaseItem syncItem, BaseCommand baseCommand) throws ItemLimitExceededException, HouseSpaceExceededException, ItemDoesNotExistException, NoSuchItemTypeException, InsufficientFundsException, NotYourBaseException {
+        executeCommand(baseCommand, true);
+    }
+
+    @Override
+    public void executeCommand(BaseCommand baseCommand, boolean cmdFromSystem) throws ItemDoesNotExistException, NotYourBaseException {
         SyncBaseItem syncItem;
         try {
             syncItem = (SyncBaseItem) itemService.getItem(baseCommand.getId());
@@ -429,6 +323,13 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
         if (!cmdFromSystem) {
             baseService.checkBaseAccess(syncItem);
             userTrackingService.saveUserCommand(baseCommand);
+            if (baseCommand instanceof PathToDestinationCommand) {
+                if (!collisionService.checkIfPathValid(((PathToDestinationCommand) baseCommand).getPathToDestination())) {
+                    log.error("Path is invalid: " + CommonJava.pathToDestinationAsString(((PathToDestinationCommand) baseCommand).getPathToDestination()));
+                    connectionService.sendSyncInfo(syncItem);
+                    return;
+                }
+            }
         }
         try {
             syncItem.stop();
@@ -450,42 +351,6 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
         }
     }
 
-    @Override
-    public void executeCommands(List<BaseCommand> baseCommands) {
-        try {
-            ActionServiceUtil.addDestinationHintToCommands(baseCommands, collisionService, itemService);
-        } catch (PathCanNotBeFoundException positionCanNotBeFoundException) {
-            sendStornoInfo(baseCommands);
-            return;
-        } catch (PositionCanNotBeFoundException positionCanNotBeFoundException) {
-            log.warn("", positionCanNotBeFoundException);
-            sendStornoInfo(baseCommands);
-            return;
-        }
-        for (BaseCommand baseCommand : baseCommands) {
-            try {
-                executeCommand(baseCommand, false);
-            } catch (Throwable t) {
-                log.debug("", t);
-            }
-        }
-    }
-
-    private void sendStornoInfo(List<BaseCommand> baseCommands) {
-        for (BaseCommand baseCommand : baseCommands) {
-            try {
-                connectionService.sendSyncInfo(itemService.getItem(baseCommand.getId()));
-            } catch (ItemDoesNotExistException e) {
-                // Item may be killed
-            }
-        }
-    }
-
-    @Override
-    public boolean isBusy() {
-        return !activeItems.isEmpty() || !tmpActiveItems.isEmpty();
-    }
-
     private void finalizeCommand(SyncBaseItem syncItem) {
         synchronized (tmpActiveItems) {
             if (!activeItems.contains(syncItem)) {
@@ -496,4 +361,24 @@ public class ActionServiceImpl extends TimerTask implements ActionService {
         connectionService.sendSyncInfo(syncItem);
     }
 
+    @Override
+    public void executeCommands(List<BaseCommand> baseCommands) {
+        for (BaseCommand baseCommand : baseCommands) {
+            try {
+                executeCommand(baseCommand, false);
+            } catch (Throwable t) {
+                log.debug("", t);
+            }
+        }
+    }
+
+    @Override
+    public boolean isBusy() {
+        return !activeItems.isEmpty() || !tmpActiveItems.isEmpty();
+    }
+
+    @Override
+    protected Services getServices() {
+        return serverServices;
+    }
 }

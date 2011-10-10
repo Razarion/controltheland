@@ -1,12 +1,12 @@
-package com.btxtech.game.services.collision.impl;
+package com.btxtech.game.jsre.common.gameengine.services.collision.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.gameengine.services.collision.PassableRectangle;
+import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
+import com.btxtech.game.jsre.common.gameengine.services.collision.PathElement;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
-import com.btxtech.game.services.collision.PassableRectangle;
-import com.btxtech.game.services.collision.Path;
-import com.btxtech.game.services.collision.PathElement;
-import com.btxtech.game.services.terrain.TerrainService;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,11 +20,11 @@ import java.util.Map;
  */
 public class PathFinderUtilities {
 
-    public static List<PassableRectangle> buildPassableRectangleList(Collection<Rectangle> rectangles, TerrainService terrainService) {
+    public static List<PassableRectangle> buildPassableRectangleList(Collection<Rectangle> rectangles, AbstractTerrainService terrainService) {
         List<PassableRectangle> passableRectangles = new ArrayList<PassableRectangle>();
 
         for (Rectangle rectangle : rectangles) {
-            PassableRectangle passableRectangle = new PassableRectangle(rectangle, terrainService);
+            PassableRectangle passableRectangle = new PassableRectangle(rectangle);
             passableRectangles.add(passableRectangle);
         }
 
@@ -46,12 +46,12 @@ public class PathFinderUtilities {
     public static PassableRectangle getPassableRectangleOfAbsoluteIndex(Index absoluteIndex,
                                                                         TerrainType terrainType,
                                                                         Map<TerrainType, List<PassableRectangle>> passableRectangles4TerrainType,
-                                                                        TerrainService terrainService) {
+                                                                        AbstractTerrainService terrainService) {
         List<PassableRectangle> passableRectangles = passableRectangles4TerrainType.get(terrainType);
         if (passableRectangles == null) {
             return null;
         }
-        // Slow!
+        // TODO Slow!
         for (PassableRectangle passableRectangle : passableRectangles) {
             if (passableRectangle.containAbsoluteIndex(absoluteIndex, terrainService.getTerrainSettings())) {
                 return passableRectangle;
@@ -65,7 +65,7 @@ public class PathFinderUtilities {
                                                                                                    TerrainType terrainTypeTarget,
                                                                                                    TerrainType terrainType,
                                                                                                    Map<TerrainType, List<PassableRectangle>> passableRectangles4TerrainType,
-                                                                                                   TerrainService terrainService) {
+                                                                                                   AbstractTerrainService terrainService) {
         PassableRectangle targetPassableRectangle = getPassableRectangleOfAbsoluteIndex(absoluteIndexTaget, terrainTypeTarget, passableRectangles4TerrainType, terrainService);
         if (targetPassableRectangle == null) {
             return null;

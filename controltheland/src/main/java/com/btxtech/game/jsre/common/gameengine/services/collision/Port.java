@@ -1,19 +1,28 @@
-package com.btxtech.game.services.collision;
+package com.btxtech.game.jsre.common.gameengine.services.collision;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Line;
 import com.btxtech.game.jsre.client.common.Rectangle;
+
+import java.io.Serializable;
 
 /**
  * User: beat
  * Date: 14.09.2011
  * Time: 13:26:41
  */
-public class Port {
+public class Port implements Serializable {
     private Line currentCrossLine;
     private Line destinationCrossLine;
     private Rectangle absoluteCurrent;
     private Rectangle absoluteDestination;
+
+    /**
+     * Used by GWT
+     */
+    Port() {
+
+    }
 
     public Port(Rectangle absoluteCurrent, Rectangle absoluteDestination) {
         this.absoluteCurrent = absoluteCurrent;
@@ -73,4 +82,6 @@ public class Port {
     public Index getDestinationNearestCrossPoint(Index point) {
         return destinationCrossLine.getNearestPointOnLine(point);
     }
+
+
 }

@@ -11,6 +11,7 @@ import com.btxtech.game.jsre.common.LevelPacket;
 import com.btxtech.game.jsre.common.Packet;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.XpBalancePacket;
+import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
@@ -22,14 +23,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UnloadContainerCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.HouseSpacePacket;
 import com.btxtech.game.jsre.common.utg.config.ConditionTrigger;
@@ -39,6 +32,7 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.bot.DbBotItemConfig;
+import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
@@ -224,6 +218,8 @@ abstract public class AbstractServiceTest {
     private UserService userService;
     @Autowired
     private PlatformTransactionManager transactionManager;
+    @Autowired
+    private CollisionService collisionService;
     private SessionHolder sessionHolder;
     private MockHttpServletRequest mockHttpServletRequest;
     private MockHttpServletResponse mockHttpServletResponse;
@@ -469,107 +465,71 @@ abstract public class AbstractServiceTest {
         }
     }
 
-    protected void sendMoveCommand(Id movable, Index destination) {
-        List<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
-        MoveCommand moveCommand = new MoveCommand();
-        moveCommand.setDestination(destination);
-        moveCommand.setId(movable);
-        moveCommand.setTimeStamp();
-        baseCommands.add(moveCommand);
-        movableService.sendCommands(baseCommands);
+    protected void sendMoveCommand(Id movable, Index destination) throws Exception {
+        SyncBaseItem syncItem = (SyncBaseItem) itemService.getItem(movable);
+        actionService.move(syncItem, destination);
     }
 
-    protected void sendBuildCommand(Id builderId, Index toBeBuiltPosition, int toBeBuiltId) {
-        List<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
-        BuilderCommand builderCommand = new BuilderCommand();
-        builderCommand.setPositionToBeBuilt(toBeBuiltPosition);
-        builderCommand.setId(builderId);
-        builderCommand.setToBeBuilt(toBeBuiltId);
-        builderCommand.setTimeStamp();
-        baseCommands.add(builderCommand);
-        movableService.sendCommands(baseCommands);
+    protected void sendBuildCommand(Id builderId, Index toBeBuiltPosition, int toBeBuiltId) throws Exception {
+        SyncBaseItem builder = (SyncBaseItem) itemService.getItem(builderId);
+        BaseItemType itemType = (BaseItemType) itemService.getItemType(toBeBuiltId);
+        actionService.build(builder, toBeBuiltPosition, itemType);
     }
 
-    protected void sendFactoryCommand(Id factoryId, int toBeBuiltId) {
-        List<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
-        FactoryCommand factoryCommand = new FactoryCommand();
-        factoryCommand.setId(factoryId);
-        factoryCommand.setToBeBuilt(toBeBuiltId);
-        factoryCommand.setTimeStamp();
-        baseCommands.add(factoryCommand);
-        movableService.sendCommands(baseCommands);
+    protected void sendFactoryCommand(Id factoryId, int toBeBuiltId) throws Exception {
+        SyncBaseItem factory = (SyncBaseItem) itemService.getItem(factoryId);
+        BaseItemType itemType = (BaseItemType) itemService.getItemType(toBeBuiltId);
+        actionService.fabricate(factory, itemType);
     }
 
-    protected void sendAttackCommand(Id actorId, Id targetId) {
-        List<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
-        AttackCommand attackCommand = new AttackCommand();
-        attackCommand.setFollowTarget(true);
-        attackCommand.setId(actorId);
-        attackCommand.setTarget(targetId);
-        attackCommand.setTimeStamp();
-        baseCommands.add(attackCommand);
-        movableService.sendCommands(baseCommands);
-    }
-
-    protected void sendAttackCommands(Collection<Id> attackers, Id targetId) {
-        List<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
-        for (Id attacker : attackers) {
-            AttackCommand attackCommand = new AttackCommand();
-            attackCommand.setFollowTarget(true);
-            attackCommand.setId(attacker);
-            attackCommand.setTarget(targetId);
-            attackCommand.setTimeStamp();
-            baseCommands.add(attackCommand);
+    protected void sendAttackCommand(Id actorId, Id targetId) throws Exception {
+        SyncBaseItem actor = (SyncBaseItem) itemService.getItem(actorId);
+        SyncBaseItem target = (SyncBaseItem) itemService.getItem(targetId);
+        AttackFormationItem attackFormationItem = collisionService.getDestinationHint(actor,
+                actor.getBaseItemType().getWeaponType().getRange(),
+                target.getSyncItemArea(),
+                actor.getTerrainType());
+        if (!attackFormationItem.isInRange()) {
+            throw new IllegalStateException("Not in range");
         }
-        movableService.sendCommands(baseCommands);
+        actionService.attack(actor, target, attackFormationItem.getDestinationHint(), attackFormationItem.getDestinationAngel(), true);
     }
 
-    protected void sendCollectCommand(Id harvesterId, Id resourceId) {
-        List<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
-        MoneyCollectCommand moneyCollectCommand = new MoneyCollectCommand();
-        moneyCollectCommand.setId(harvesterId);
-        moneyCollectCommand.setTarget(resourceId);
-        moneyCollectCommand.setTimeStamp();
-        baseCommands.add(moneyCollectCommand);
-        movableService.sendCommands(baseCommands);
+    protected void sendAttackCommands(Collection<Id> attackers, Id targetId) throws Exception {
+        for (Id attacker : attackers) {
+            sendAttackCommand(attacker, targetId);
+        }
     }
 
-    protected void sendContainerLoadCommand(Id item, Id container) {
-        List<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
-        LoadContainCommand loadContainCommand = new LoadContainCommand();
-        loadContainCommand.setId(item);
-        loadContainCommand.setItemContainer(container);
-        loadContainCommand.setTimeStamp();
-        baseCommands.add(loadContainCommand);
-        movableService.sendCommands(baseCommands);
-
+    protected void sendCollectCommand(Id harvesterId, Id resourceId) throws Exception {
+        SyncBaseItem harvester = (SyncBaseItem) itemService.getItem(harvesterId);
+        SyncResourceItem syncResourceItem = (SyncResourceItem) itemService.getItem(resourceId);
+        AttackFormationItem attackFormationItem = collisionService.getDestinationHint(harvester,
+                harvester.getBaseItemType().getHarvesterType().getRange(),
+                syncResourceItem.getSyncItemArea(),
+                harvester.getTerrainType());
+        if (!attackFormationItem.isInRange()) {
+            throw new IllegalStateException("Not in range");
+        }
+        actionService.collect(harvester, syncResourceItem, attackFormationItem.getDestinationHint(), attackFormationItem.getDestinationAngel());
     }
 
-    protected void sendUnloadContainerCommand(Id container, Index position) {
-        List<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
-        UnloadContainerCommand unloadContainerCommand = new UnloadContainerCommand();
-        unloadContainerCommand.setId(container);
-        unloadContainerCommand.setUnloadPos(position);
-        unloadContainerCommand.setTimeStamp();
-        baseCommands.add(unloadContainerCommand);
-        movableService.sendCommands(baseCommands);
+    protected void sendContainerLoadCommand(Id item, Id containerId) throws Exception {
+        SyncBaseItem container = (SyncBaseItem) itemService.getItem(containerId);
+        SyncBaseItem syncItem = (SyncBaseItem) itemService.getItem(item);
+        AttackFormationItem attackFormationItem = collisionService.getDestinationHint(syncItem,
+                container.getBaseItemType().getItemContainerType().getRange(),
+                container.getSyncItemArea(),
+                syncItem.getTerrainType());
+        if (!attackFormationItem.isInRange()) {
+            throw new IllegalStateException("Not in range");
+        }
+        actionService.loadContainer(container, syncItem, attackFormationItem.getDestinationHint());
     }
 
-    protected AttackCommand createAttackCommand(Id actor, Id target) {
-        AttackCommand attackCommand = new AttackCommand();
-        attackCommand.setFollowTarget(true);
-        attackCommand.setId(actor);
-        attackCommand.setTarget(target);
-        attackCommand.setTimeStamp();
-        return attackCommand;
-    }
-
-    protected MoneyCollectCommand createMoneyCollectCommand(Id actor, Id target) {
-        MoneyCollectCommand moneyCollectCommand = new MoneyCollectCommand();
-        moneyCollectCommand.setId(actor);
-        moneyCollectCommand.setTarget(target);
-        moneyCollectCommand.setTimeStamp();
-        return moneyCollectCommand;
+    protected void sendUnloadContainerCommand(Id containerId, Index position) throws Exception {
+        SyncBaseItem container = (SyncBaseItem) itemService.getItem(containerId);
+        actionService.unloadContainer(container, position);
     }
 
     // -------------------  Game Config --------------------

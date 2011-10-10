@@ -4,7 +4,6 @@ import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.SimpleBase;
-import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BuilderType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -12,17 +11,14 @@ import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
 import com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBuilder;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncMovable;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.action.ActionService;
-import com.btxtech.game.services.collision.CollisionService;
+import com.btxtech.game.services.terrain.TerrainService;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.junit.Assert;
@@ -67,19 +63,8 @@ public class TestBuilder extends AbstractServiceTest {
         }).once();
         EasyMock.replay(itemServiceMock);
 
-        CollisionService collisionServiceMock = EasyMock.createNiceMock(CollisionService.class);
-        AttackFormationItem formation = new AttackFormationItem(null, 0, new Index(5000, 5200), 0, false);
-        EasyMock.expect(collisionServiceMock.getDestinationHint(EasyMock.<SyncBaseItem>anyObject(),
-                EasyMock.anyInt(),
-                EasyMock.<SyncItemArea>anyObject(),
-                EasyMock.<TerrainType>anyObject())).andReturn(formation).anyTimes();
-        EasyMock.replay(collisionServiceMock);
-
-        AbstractTerrainService terrainServiceMock = EasyMock.createNiceMock(AbstractTerrainService.class);
-        List<Index> path = new ArrayList<Index>();
-        path.add(new Index(5000, 5000));
-        path.add(new Index(5000, 5200));
-        EasyMock.expect(terrainServiceMock.setupPathToDestination(EasyMock.<Index>anyObject(), EasyMock.<Index>anyObject(), EasyMock.<TerrainType>anyObject())).andReturn(path).anyTimes();
+        TerrainService terrainServiceMock = EasyMock.createNiceMock(TerrainService.class);
+        EasyMock.expect(terrainServiceMock.correctPosition(EasyMock.<SyncItem>anyObject(), EasyMock.<Index>anyObject())).andReturn(new Index(5000, 5000));
         EasyMock.replay(terrainServiceMock);
 
         ConnectionService connectionServiceMock = EasyMock.createNiceMock(ConnectionService.class);
@@ -90,7 +75,6 @@ public class TestBuilder extends AbstractServiceTest {
 
         servicesMock = EasyMock.createNiceMock(Services.class);
         EasyMock.expect(servicesMock.getItemService()).andReturn(itemServiceMock).anyTimes();
-        EasyMock.expect(servicesMock.getCollisionService()).andReturn(collisionServiceMock).anyTimes();
         EasyMock.expect(servicesMock.getTerrainService()).andReturn(terrainServiceMock).anyTimes();
         EasyMock.expect(servicesMock.getConnectionService()).andReturn(connectionServiceMock).anyTimes();
         EasyMock.expect(servicesMock.getBaseService()).andReturn(abstractBaseServiceMock).anyTimes();
@@ -115,6 +99,10 @@ public class TestBuilder extends AbstractServiceTest {
     public void testBuildup() throws Exception {
         SyncBaseItem syncBaseItem = createSyncBuilderItem();
 
+        List<Index> path = new ArrayList<Index>();
+        path.add(new Index(5000, 5000));
+        path.add(new Index(5000, 5200));
+        syncBaseItem.getSyncMovable().setPathToDestination(path);
         syncBaseItem.getSyncBuilder().setToBeBuildPosition(new Index(5000, 5290));
         syncBaseItem.getSyncBuilder().setToBeBuiltType((BaseItemType) itemService.getItemType(TEST_SIMPLE_BUILDING_ID));
 
@@ -123,10 +111,6 @@ public class TestBuilder extends AbstractServiceTest {
 
         Assert.assertTrue(syncBaseItem.tick(1));
         Assert.assertEquals(new Index(5000, 5100), syncBaseItem.getSyncItemArea().getPosition());
-        Assert.assertNull(syncBaseItem.getSyncBuilder().getCurrentBuildup());
-
-        Assert.assertTrue(syncBaseItem.tick(1));
-        Assert.assertEquals(new Index(5000, 5200), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertNull(syncBaseItem.getSyncBuilder().getCurrentBuildup());
 
         Assert.assertTrue(syncBaseItem.tick(1));
@@ -169,6 +153,10 @@ public class TestBuilder extends AbstractServiceTest {
         Id id2 = new Id(2, 1, 1);
         SyncBaseItem buildupBaseItem = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(5000, 5290), id2, servicesMock);
         buildupBaseItem.setBuildup(0.5);
+        List<Index> path = new ArrayList<Index>();
+        path.add(new Index(5000, 5000));
+        path.add(new Index(5000, 5200));
+        syncBaseItem.getSyncMovable().setPathToDestination(path);
         syncBaseItem.getSyncBuilder().setCurrentBuildup(buildupBaseItem);
         syncBaseItem.getSyncBuilder().setToBeBuildPosition(buildupBaseItem.getSyncItemArea().getPosition());
         syncBaseItem.getSyncBuilder().setToBeBuiltType(buildupBaseItem.getBaseItemType());
@@ -180,12 +168,6 @@ public class TestBuilder extends AbstractServiceTest {
 
         Assert.assertTrue(syncBaseItem.tick(1));
         Assert.assertEquals(new Index(5000, 5100), syncBaseItem.getSyncItemArea().getPosition());
-        Assert.assertNotNull(syncBaseItem.getSyncBuilder().getCurrentBuildup());
-        Assert.assertEquals(0.5, syncBaseItem.getSyncBuilder().getCurrentBuildup().getBuildup(), 0.001);
-        Assert.assertFalse(syncBaseItem.getSyncBuilder().getCurrentBuildup().isReady());
-
-        Assert.assertTrue(syncBaseItem.tick(1));
-        Assert.assertEquals(new Index(5000, 5200), syncBaseItem.getSyncItemArea().getPosition());
         Assert.assertNotNull(syncBaseItem.getSyncBuilder().getCurrentBuildup());
         Assert.assertEquals(0.5, syncBaseItem.getSyncBuilder().getCurrentBuildup().getBuildup(), 0.001);
         Assert.assertFalse(syncBaseItem.getSyncBuilder().getCurrentBuildup().isReady());

@@ -14,57 +14,53 @@
 package com.btxtech.game.jsre.client.action;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.cockpit.Group;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
+import com.btxtech.game.jsre.client.collision.ClientCollisionService;
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.dialogs.DialogManager;
-import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
+import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.RectangleFormation;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
+import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionService;
+import com.btxtech.game.jsre.common.gameengine.services.action.impl.CommonActionServiceImpl;
+import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderFinalizeCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LaunchCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.LoadContainCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UnloadContainerCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UpgradeCommand;
 import com.google.gwt.user.client.Timer;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * User: beat
  * Date: Aug 7, 2009
  * Time: 10:22:31 PM
  */
-public class ActionHandler implements CommonActionService {
+public class ActionHandler extends CommonActionServiceImpl implements CommonActionService {
     private final static ActionHandler INSTANCE = new ActionHandler();
     private static final int TICK_INTERVAL = 40;
     private long lastTickTime = 0;
@@ -156,24 +152,7 @@ public class ActionHandler implements CommonActionService {
         Connection.getInstance().sendCommandQueue();
     }
 
-    public void move(SyncBaseItem syncItem, Index destination) {
-        if (checkCommand(syncItem)) {
-            return;
-        }
-        syncItem.stop();
-        MoveCommand moveCommand = new MoveCommand();
-        moveCommand.setId(syncItem.getId());
-        moveCommand.setTimeStamp();
-        moveCommand.setDestination(destination);
-        try {
-            syncItem.executeCommand(moveCommand);
-            executeCommand(syncItem, moveCommand);
-        } catch (Exception e) {
-            GwtCommon.handleException(e);
-        }
-    }
-
-    public void buildFactory(Collection<ClientSyncItem> clientSyncItems, Index positionToBeBuild, BaseItemType toBeBuilt) throws NoSuchItemTypeException {
+    public void build(Collection<ClientSyncItem> clientSyncItems, Index positionToBeBuild, BaseItemType toBeBuilt) throws NoSuchItemTypeException {
         if (!ClientBase.getInstance().checkItemLimit4ItemAddingDialog(toBeBuilt)) {
             return;
         }
@@ -183,7 +162,7 @@ public class ActionHandler implements CommonActionService {
                 if (ClientTerritoryService.getInstance().isAllowed(positionToBeBuild, clientSyncItem.getSyncBaseItem())
                         && ClientTerritoryService.getInstance().isAllowed(positionToBeBuild, toBeBuilt)) {
 
-                    buildFactory(clientSyncItem.getSyncBaseItem(), positionToBeBuild, toBeBuilt);
+                    build(clientSyncItem.getSyncBaseItem(), positionToBeBuild, toBeBuilt);
                     // Just get the first CV to buildBuilding the building
                     // Prevent to buildBuilding multiple buildings
                     Connection.getInstance().sendCommandQueue();
@@ -197,60 +176,30 @@ public class ActionHandler implements CommonActionService {
         GwtCommon.sendLogToServer("ActionHandler.buildFactory(): can not build on territory: " + clientSyncItems + " " + positionToBeBuild + " " + toBeBuilt);
     }
 
-    @Override
-    public void buildFactory(SyncBaseItem syncItem, Index positionToBeBuild, BaseItemType toBeBuilt) {
-        if (checkCommand(syncItem)) {
-            return;
-        }
-        syncItem.stop();
-        BuilderCommand builderCommand = new BuilderCommand();
-        builderCommand.setId(syncItem.getId());
-        builderCommand.setTimeStamp();
-        builderCommand.setToBeBuilt(toBeBuilt.getId());
-        builderCommand.setPositionToBeBuilt(positionToBeBuild);
-        try {
-            syncItem.executeCommand(builderCommand);
-            executeCommand(syncItem, builderCommand);
-        } catch (Exception e) {
-            GwtCommon.handleException(e);
-        }
-    }
-
-
     public void finalizeBuild(Collection<ClientSyncItem> builders, ClientSyncItem building) {
+        List<AttackFormationItem> attackFormationItemList = new ArrayList<AttackFormationItem>();
         for (ClientSyncItem builder : builders) {
             if (builder.getSyncBaseItem().hasSyncBuilder()
                     && ClientTerritoryService.getInstance().isAllowed(building.getSyncItem().getSyncItemArea().getPosition(), builder.getSyncBaseItem())
                     && ClientTerritoryService.getInstance().isAllowed(building.getSyncItem().getSyncItemArea().getPosition(), building.getSyncBaseItem())
                     && builder.getSyncBaseItem().getSyncBuilder().getBuilderType().isAbleToBuild(building.getSyncBaseItem().getItemType().getId())
                     && ClientItemTypeAccess.getInstance().isAllowed(building.getSyncBaseItem().getItemType().getId())) {
-                finalizeBuild(builder.getSyncBaseItem(), building.getSyncBaseItem());
+                attackFormationItemList.add(new AttackFormationItem(builder.getSyncBaseItem(), builder.getSyncBaseItem().getSyncBuilder().getBuilderType().getRange()));
             }
+        }
+        attackFormationItemList = ClientCollisionService.getInstance().setupDestinationHints(building.getSyncBaseItem(), attackFormationItemList);
+        for (AttackFormationItem item : attackFormationItemList) {
+            if (item.isInRange()) {
+                finalizeBuild(item.getSyncBaseItem(), building.getSyncBaseItem(), item.getDestinationHint(), item.getDestinationAngel());
+            } else {
+                move(item.getSyncBaseItem(), item.getDestinationHint());
+            }
+
         }
         Connection.getInstance().sendCommandQueue();
     }
 
-    private void finalizeBuild(SyncBaseItem builder, SyncBaseItem building) {
-        if (checkCommand(builder)) {
-            return;
-        }
-        if (checkCommand(building)) {
-            return;
-        }
-        builder.stop();
-        BuilderFinalizeCommand builderFinalizeCommand = new BuilderFinalizeCommand();
-        builderFinalizeCommand.setId(builder.getId());
-        builderFinalizeCommand.setTimeStamp();
-        builderFinalizeCommand.setToBeBuilt(building.getId());
-        try {
-            builder.executeCommand(builderFinalizeCommand);
-            executeCommand(builder, builderFinalizeCommand);
-        } catch (Exception e) {
-            GwtCommon.handleException(e);
-        }
-    }
-
-    public void build(Collection<ClientSyncItem> clientSyncItems, BaseItemType itemTypeToBuild) throws NoSuchItemTypeException {
+    public void fabricate(Collection<ClientSyncItem> clientSyncItems, BaseItemType itemTypeToBuild) throws NoSuchItemTypeException {
         if (!ClientBase.getInstance().checkItemLimit4ItemAddingDialog(itemTypeToBuild)) {
             return;
         }
@@ -259,7 +208,7 @@ public class ActionHandler implements CommonActionService {
             if (clientSyncItem.getSyncBaseItem().hasSyncFactory()) {
                 if (ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem())
                         && ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition(), itemTypeToBuild)) {
-                    build(clientSyncItem.getSyncBaseItem(), itemTypeToBuild);
+                    fabricate(clientSyncItem.getSyncBaseItem(), itemTypeToBuild);
                 }
             } else {
                 GwtCommon.sendLogToServer("ActionHandler.build(): can not cast to FactorySyncItem:" + clientSyncItem);
@@ -268,124 +217,69 @@ public class ActionHandler implements CommonActionService {
         Connection.getInstance().sendCommandQueue();
     }
 
-    @Override
-    public void build(SyncBaseItem factory, BaseItemType itemType) {
-        if (checkCommand(factory) || !factory.isReady() || factory.getSyncFactory().isActive()) {
-            return;
-        }
-        FactoryCommand factoryCommand = new FactoryCommand();
-        factoryCommand.setId(factory.getId());
-        factoryCommand.setTimeStamp();
-        factoryCommand.setToBeBuilt(itemType.getId());
-
-        try {
-            factory.executeCommand(factoryCommand);
-            executeCommand(factory, factoryCommand);
-        } catch (InsufficientFundsException e) {
-            DialogManager.showDialog(new MessageDialog("You do not have enough money. You have to Collect more money"), DialogManager.Type.QUEUE_ABLE);
-        } catch (Exception e) {
-            GwtCommon.handleException(e);
-        }
-    }
-
     public void attack(Collection<ClientSyncItem> clientSyncItems, SyncBaseItem target) {
+        List<AttackFormationItem> attackFormationItemList = new ArrayList<AttackFormationItem>();
         for (ClientSyncItem clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncWeapon()) {
                 if (ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem())
                         && ClientTerritoryService.getInstance().isAllowed(target.getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem())
                         && clientSyncItem.getSyncBaseItem().getSyncWeapon().isItemTypeAllowed(target)) {
-                    attack(clientSyncItem.getSyncBaseItem(), target, true);
+                    attackFormationItemList.add(new AttackFormationItem(clientSyncItem.getSyncBaseItem(), clientSyncItem.getSyncBaseItem().getSyncWeapon().getWeaponType().getRange()));
                 }
             } else {
                 GwtCommon.sendLogToServer("ActionHandler.attack(): can not cast to TankSyncItem:" + clientSyncItem);
             }
         }
+        attackFormationItemList = ClientCollisionService.getInstance().setupDestinationHints(target, attackFormationItemList);
+        for (AttackFormationItem item : attackFormationItemList) {
+            if (item.isInRange()) {
+                attack(item.getSyncBaseItem(), target, item.getDestinationHint(), item.getDestinationAngel(), true);
+            } else {
+                move(item.getSyncBaseItem(), item.getDestinationHint());
+            }
+
+        }
+
         Connection.getInstance().sendCommandQueue();
     }
 
-    @Override
-    public void attack(SyncBaseItem tank, SyncBaseItem target, boolean followTarget) {
-        if (checkCommand(tank)) {
-            return;
-        }
-        tank.stop();
-        AttackCommand attackCommand = new AttackCommand();
-        attackCommand.setId(tank.getId());
-        attackCommand.setTimeStamp();
-        attackCommand.setTarget(target.getId());
-        attackCommand.setFollowTarget(followTarget);
-
-        try {
-            tank.executeCommand(attackCommand);
-            executeCommand(tank, attackCommand);
-        } catch (Exception e) {
-            GwtCommon.handleException(e);
-        }
-    }
-
-    @Override
-    public void defend(SyncBaseItem attacker, SyncBaseItem target, boolean followTarget) {
-        if (!Connection.getInstance().getGameInfo().hasServerCommunication()) {
-            // In real game, server handles attack
-            attack(attacker, target, followTarget);
-        }
-    }
-
     public void collect(Collection<ClientSyncItem> clientSyncItems, SyncResourceItem money) {
+        List<AttackFormationItem> attackFormationItemList = new ArrayList<AttackFormationItem>();
         for (ClientSyncItem clientSyncItem : clientSyncItems) {
             if (clientSyncItem.getSyncBaseItem().hasSyncHarvester()) {
                 if (ClientTerritoryService.getInstance().isAllowed(money.getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem())) {
-                    collect(clientSyncItem.getSyncBaseItem(), money);
+                    attackFormationItemList.add(new AttackFormationItem(clientSyncItem.getSyncBaseItem(), clientSyncItem.getSyncBaseItem().getSyncHarvester().getHarvesterType().getRange()));
                 }
             } else {
                 GwtCommon.sendLogToServer("ActionHandler.collect(): can not cast to MoneyCollectorSyncItem:" + clientSyncItem);
             }
         }
+        attackFormationItemList = ClientCollisionService.getInstance().setupDestinationHints(money, attackFormationItemList);
+        for (AttackFormationItem item : attackFormationItemList) {
+            if (item.isInRange()) {
+                collect(item.getSyncBaseItem(), money, item.getDestinationHint(), item.getDestinationAngel());
+            } else {
+                move(item.getSyncBaseItem(), item.getDestinationHint());
+            }
+
+        }
+
         Connection.getInstance().sendCommandQueue();
-    }
-
-    @Override
-    public void collect(SyncBaseItem collector, SyncResourceItem money) {
-        if (checkCommand(collector)) {
-            return;
-        }
-        collector.stop();
-        MoneyCollectCommand collectCommand = new MoneyCollectCommand();
-        collectCommand.setId(collector.getId());
-        collectCommand.setTimeStamp();
-        collectCommand.setTarget(money.getId());
-
-        try {
-            collector.executeCommand(collectCommand);
-            executeCommand(collector, collectCommand);
-        } catch (Exception e) {
-            GwtCommon.handleException(e);
-        }
-    }
-
-    @Override
-    public void upgrade(SyncBaseItem item) {
-        if (checkCommand(item)) {
-            return;
-        }
-        item.stop();
-        UpgradeCommand upgradeCommand = new UpgradeCommand();
-        upgradeCommand.setId(item.getId());
-        upgradeCommand.setTimeStamp();
-        try {
-            item.executeCommand(upgradeCommand);
-            executeCommand(item, upgradeCommand);
-            Connection.getInstance().sendCommandQueue();
-        } catch (InsufficientFundsException e) {
-            DialogManager.showDialog(new MessageDialog("You do not have enough money. You have to Collect more money"), DialogManager.Type.QUEUE_ABLE);
-        } catch (Exception e) {
-            GwtCommon.handleException(e);
-        }
     }
 
     public void loadContainer(ClientSyncItem container, Collection<ClientSyncItem> items) {
         if (!container.getSyncBaseItem().hasSyncItemContainer()) {
             GwtCommon.sendLogToServer("ActionHandler.loadContainer(): can not cast to ItemContainer:" + container);
+            return;
+        }
+        SyncBaseItem syncBaseItem = CommonJava.getFirst(items).getSyncBaseItem();
+        AttackFormationItem attackFormationItem = ClientCollisionService.getInstance().getDestinationHint(syncBaseItem,
+                container.getSyncBaseItem().getSyncItemContainer().getRange(),
+                container.getSyncBaseItem().getSyncItemArea(),
+                syncBaseItem.getBaseItemType().getTerrainType());
+
+        if (!attackFormationItem.isInRange()) {
+            move(items, container.getSyncBaseItem().getSyncItemArea().getPosition());
             return;
         }
 
@@ -394,7 +288,7 @@ public class ActionHandler implements CommonActionService {
                 if (ClientTerritoryService.getInstance().isAllowed(container.getSyncBaseItem().getSyncItemArea().getPosition(), container.getSyncBaseItem())
                         && container.getSyncBaseItem().getSyncItemContainer().isAbleToContain(item.getSyncBaseItem())
                         && item.getSyncBaseItem().getSyncMovable().isLoadPosReachable(container.getSyncBaseItem().getSyncItemContainer())) {
-                    putToContainer(container.getSyncBaseItem(), item.getSyncBaseItem());
+                    loadContainer(container.getSyncBaseItem(), item.getSyncBaseItem(), container.getSyncBaseItem().getSyncItemArea().getPosition());
                 }
             } else {
                 GwtCommon.sendLogToServer("ActionHandler.loadContainer(): has no movable:" + item);
@@ -403,55 +297,9 @@ public class ActionHandler implements CommonActionService {
         Connection.getInstance().sendCommandQueue();
     }
 
-    private void putToContainer(SyncBaseItem container, SyncBaseItem item) {
-        if (checkCommand(item)) {
-            return;
-        }
-        if (checkCommand(container)) {
-            return;
-        }
-
-        container.stop();
-        LoadContainCommand loadContainCommand = new LoadContainCommand();
-        loadContainCommand.setId(item.getId());
-        loadContainCommand.setTimeStamp();
-        loadContainCommand.setItemContainer(container.getId());
-
-        try {
-            item.executeCommand(loadContainCommand);
-            executeCommand(item, loadContainCommand);
-        } catch (Exception e) {
-            GwtCommon.handleException(e);
-        }
-    }
-
-    public void unloadContainer(SyncBaseItem container, Index unloadPos) {
-        if (checkCommand(container)) {
-            return;
-        }
-
-        if (!container.hasSyncItemContainer()) {
-            GwtCommon.sendLogToServer("ActionHandler.unloadContainer(): can not cast to ItemContainer:" + container);
-            return;
-        }
-
-        if (!ClientTerritoryService.getInstance().isAllowed(unloadPos, container)) {
-            GwtCommon.sendLogToServer("ActionHandler.unloadContainer(): can not unload on territory:" + unloadPos);
-            return;
-        }
-
-        UnloadContainerCommand unloadContainerCommand = new UnloadContainerCommand();
-        unloadContainerCommand.setId(container.getId());
-        unloadContainerCommand.setTimeStamp();
-        unloadContainerCommand.setUnloadPos(unloadPos);
-
-        try {
-            container.executeCommand(unloadContainerCommand);
-            executeCommand(container, unloadContainerCommand);
-            Connection.getInstance().sendCommandQueue();
-        } catch (Exception e) {
-            GwtCommon.handleException(e);
-        }
+    public void unloadContainer(ClientSyncItem container, Index unloadPos) {
+        unloadContainer(container.getSyncBaseItem(), unloadPos);
+        Connection.getInstance().sendCommandQueue();
     }
 
     public void executeLaunchCommand(int absoluteX, int absoluteY) {
@@ -470,47 +318,13 @@ public class ActionHandler implements CommonActionService {
         }
 
         launch(selection.getFirst().getSyncBaseItem(), new Index(absoluteX, absoluteY));
+        Connection.getInstance().sendCommandQueue();
         Cockpit.getInstance().getCockpitMode().clearLaunchMode();
     }
 
-    public void launch(SyncBaseItem launcherItem, Index target) {
-        if (checkCommand(launcherItem)) {
-            return;
-        }
+    protected void executeCommand(SyncBaseItem syncItem, BaseCommand baseCommand) throws ItemLimitExceededException, HouseSpaceExceededException, ItemDoesNotExistException, NoSuchItemTypeException, InsufficientFundsException {
+        syncItem.executeCommand(baseCommand);
 
-        if (!launcherItem.hasSyncLauncher()) {
-            GwtCommon.sendLogToServer("ActionHandler.launch(): can not cast to SyncLauncher:" + launcherItem);
-            return;
-        }
-
-        LaunchCommand launchCommand = new LaunchCommand();
-        launchCommand.setId(launcherItem.getId());
-        launchCommand.setTimeStamp();
-        launchCommand.setTarget(target);
-
-        try {
-            launcherItem.executeCommand(launchCommand);
-            executeCommand(launcherItem, launchCommand);
-            Connection.getInstance().sendCommandQueue();
-        } catch (Exception e) {
-            GwtCommon.handleException(e);
-        }
-    }
-
-    private boolean checkCommand(SyncItem syncItem) {
-        Id id = syncItem.getId();
-        if (id == null) {
-            GwtCommon.sendLogToServer("Can not send command: id is null");
-            return true;
-        }
-        if (!id.isSynchronized()) {
-            GwtCommon.sendLogToServer("Can not send command: Id is not synchronized: " + id);
-            return true;
-        }
-        return false;
-    }
-
-    private void executeCommand(SyncBaseItem syncItem, BaseCommand baseCommand) {
         Connection.getInstance().addCommandToQueue(baseCommand);
         ClientUserTracker.getInstance().onExecuteCommand(baseCommand);
         SimulationConditionServiceImpl.getInstance().onSendCommand(syncItem, baseCommand);
@@ -539,5 +353,10 @@ public class ActionHandler implements CommonActionService {
     public void clear() {
         tmpAddActiveItems.clear();
         tmpRemoveActiveItems.addAll(activeItems);
+    }
+
+    @Override
+    protected Services getServices() {
+        return ClientServices.getInstance();
     }
 }

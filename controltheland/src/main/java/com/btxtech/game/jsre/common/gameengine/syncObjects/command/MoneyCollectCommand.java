@@ -21,9 +21,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
  * Date: Aug 1, 2009
  * Time: 1:04:16 PM
  */
-public class MoneyCollectCommand extends BaseCommand {
+public class MoneyCollectCommand extends PathToDestinationCommand {
     private Id target;
-    private Index destinationHint;
     private double destinationAngel;
 
     public Id getTarget() {
@@ -32,14 +31,6 @@ public class MoneyCollectCommand extends BaseCommand {
 
     public void setTarget(Id target) {
         this.target = target;
-    }
-
-    public Index getDestinationHint() {
-        return destinationHint;
-    }
-
-    public void setDestinationHint(Index destinationHint) {
-        this.destinationHint = destinationHint;
     }
 
     public double getDestinationAngel() {

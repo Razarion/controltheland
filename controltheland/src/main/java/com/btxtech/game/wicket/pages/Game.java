@@ -54,7 +54,7 @@ public class Game extends WebPage implements IHeaderContributor {
     }
 
     private void setupStartupSeq(GameStartupSeq gameStartupSeq) {
-        Component startupSeqLabel = new Label("startupSeq", userGuidanceService.getDbLevelHtml()).setEscapeModelStrings(false);
+        Component startupSeqLabel = new Label("startupSeq", "");
         startupSeqLabel.add(new SimpleAttributeModifier("id", com.btxtech.game.jsre.client.Game.STARTUP_SEQ_ID));
         startupSeqLabel.add(new SimpleAttributeModifier(com.btxtech.game.jsre.client.Game.STARTUP_SEQ_ID, gameStartupSeq.name()));
         add(startupSeqLabel);

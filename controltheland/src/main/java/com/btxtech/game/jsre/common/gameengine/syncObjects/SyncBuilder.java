@@ -17,7 +17,6 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.PositionTakenException;
-import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BuilderType;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
@@ -38,7 +37,6 @@ public class SyncBuilder extends SyncBaseAbility {
     private Index toBeBuildPosition;
     private BaseItemType toBeBuiltType;
     private int createdChildCount;
-    private Index destinationHint;
     private Double destinationAngel;
 
     public SyncBuilder(BuilderType builderType, SyncBaseItem syncBaseItem) {
@@ -54,67 +52,68 @@ public class SyncBuilder extends SyncBaseAbility {
         if (toBeBuildPosition == null || toBeBuiltType == null) {
             return false;
         }
-        if ((destinationHint == null || getSyncItemArea().positionReached(destinationHint)) && getSyncItemArea().isInRange(builderType.getRange(), toBeBuildPosition, toBeBuiltType)) {
-            if (currentBuildup == null) {
-                if (toBeBuiltType == null || toBeBuildPosition == null) {
-                    throw new IllegalArgumentException("Invalid attributes |" + toBeBuiltType + "|" + toBeBuildPosition);
-                }
 
-                getServices().getItemService().checkBuildingsInRect(toBeBuiltType, toBeBuildPosition);
+        if (getSyncBaseItem().getSyncMovable().tickMove(factor, destinationAngel)) {
+            return true;
+        }
 
-                try {
-                    currentBuildup = (SyncBaseItem) getServices().getItemService().createSyncObject(toBeBuiltType, toBeBuildPosition, getSyncBaseItem(), getSyncBaseItem().getBase(), createdChildCount);
-                    createdChildCount++;
-                } catch (ItemLimitExceededException e) {
-                    stop();
-                    return false;
-                } catch (HouseSpaceExceededException e) {
-                    stop();
-                    return false;
-                }
-            }
-            getSyncItemArea().turnTo(toBeBuildPosition);            
-            if (getServices().getItemService().baseObjectExists(currentBuildup)) {
-                double buildFactor = factor * builderType.getProgress() / (double) toBeBuiltType.getBuildup();
-                if (buildFactor + currentBuildup.getBuildup() > 1.0) {
-                    buildFactor = 1.0 - currentBuildup.getBuildup();
-                }
-                try {
-                    getServices().getBaseService().withdrawalMoney(buildFactor * (double) toBeBuiltType.getPrice(), getSyncBaseItem().getBase());
-                    currentBuildup.addBuildup(buildFactor);
-                    if (currentBuildup.isReady()) {
-                        stop();
-                        return false;
-                    }
-                    return true;
-                } catch (InsufficientFundsException e) {
-                    return true;
-                }
+        if (!isInRange()) {
+            // Destination place was may be taken. Calculate a new one.
+            SyncItemArea syncItemArea;
+            if (currentBuildup != null) {
+                syncItemArea = currentBuildup.getSyncItemArea();
             } else {
-                // It has may be killed
+                syncItemArea = toBeBuiltType.getBoundingBox().createSyntheticSyncItemArea(toBeBuildPosition);
+            }
+            recalculateNewPath(builderType.getRange(), syncItemArea);
+            getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+            return true;
+        }
+
+        if (currentBuildup == null) {
+            if (toBeBuiltType == null || toBeBuildPosition == null) {
+                throw new IllegalArgumentException("Invalid attributes |" + toBeBuiltType + "|" + toBeBuildPosition);
+            }
+
+            getServices().getItemService().checkBuildingsInRect(toBeBuiltType, toBeBuildPosition);
+
+            try {
+                currentBuildup = (SyncBaseItem) getServices().getItemService().createSyncObject(toBeBuiltType, toBeBuildPosition, getSyncBaseItem(), getSyncBaseItem().getBase(), createdChildCount);
+                createdChildCount++;
+            } catch (ItemLimitExceededException e) {
+                stop();
+                return false;
+            } catch (HouseSpaceExceededException e) {
                 stop();
                 return false;
             }
-        } else {
-            if (toBeBuildPosition == null) {
-                throw new IllegalStateException(this + " toBeBuildPosition == null");
-            }
-            if (destinationHint == null) {
-                AttackFormationItem format = getServices().getCollisionService().getDestinationHint(getSyncBaseItem(),
-                        builderType.getRange(),
-                        toBeBuiltType.getBoundingBox().createSyntheticSyncItemArea(toBeBuildPosition),
-                        toBeBuiltType.getTerrainType());
-                if (format != null) {
-                    destinationHint = format.getDestinationHint();
-                    destinationAngel = format.getDestinationAngel();
-                }
-                if (destinationHint == null) {
-                    stop();
-                }
-            }
-            getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, destinationHint, destinationAngel, toBeBuildPosition);
-            return true;
         }
+        getSyncItemArea().turnTo(toBeBuildPosition);
+        if (getServices().getItemService().baseObjectExists(currentBuildup)) {
+            double buildFactor = factor * builderType.getProgress() / (double) toBeBuiltType.getBuildup();
+            if (buildFactor + currentBuildup.getBuildup() > 1.0) {
+                buildFactor = 1.0 - currentBuildup.getBuildup();
+            }
+            try {
+                getServices().getBaseService().withdrawalMoney(buildFactor * (double) toBeBuiltType.getPrice(), getSyncBaseItem().getBase());
+                currentBuildup.addBuildup(buildFactor);
+                if (currentBuildup.isReady()) {
+                    stop();
+                    return false;
+                }
+                return true;
+            } catch (InsufficientFundsException e) {
+                return true;
+            }
+        } else {
+            // It has may be killed
+            stop();
+            return false;
+        }
+    }
+
+    private boolean isInRange() {
+        return getSyncItemArea().isInRange(builderType.getRange(), toBeBuildPosition, toBeBuiltType);
     }
 
     public void stop() {
@@ -124,7 +123,6 @@ public class SyncBuilder extends SyncBaseAbility {
         currentBuildup = null;
         toBeBuiltType = null;
         toBeBuildPosition = null;
-        destinationHint = null;
         destinationAngel = null;
         getSyncBaseItem().getSyncMovable().stop();
     }
@@ -138,7 +136,6 @@ public class SyncBuilder extends SyncBaseAbility {
             toBeBuiltType = null;
         }
         createdChildCount = syncItemInfo.getCreatedChildCount();
-        destinationHint = syncItemInfo.getDestinationHint();
         destinationAngel = syncItemInfo.getDestinationAngel();
     }
 
@@ -149,7 +146,6 @@ public class SyncBuilder extends SyncBaseAbility {
             syncItemInfo.setToBeBuiltTypeId(toBeBuiltType.getId());
         }
         syncItemInfo.setCreatedChildCount(createdChildCount);
-        syncItemInfo.setDestinationHint(destinationHint);
         syncItemInfo.setDestinationAngel(destinationAngel);
     }
 
@@ -177,8 +173,8 @@ public class SyncBuilder extends SyncBaseAbility {
 
         toBeBuiltType = tmpToBeBuiltType;
         toBeBuildPosition = builderCommand.getPositionToBeBuilt();
-        destinationHint = null;
         destinationAngel = null;
+        setPathToDestinationIfSyncMovable(builderCommand.getPathToDestination());
     }
 
     public void executeCommand(BuilderFinalizeCommand builderFinalizeCommand) throws NoSuchItemTypeException, ItemDoesNotExistException {
@@ -202,8 +198,8 @@ public class SyncBuilder extends SyncBaseAbility {
         currentBuildup = syncBaseItem;
         toBeBuiltType = syncBaseItem.getBaseItemType();
         toBeBuildPosition = syncBaseItem.getSyncItemArea().getPosition();
-        destinationHint = builderFinalizeCommand.getDestinationHint();
         destinationAngel = builderFinalizeCommand.getDestinationAngel();
+        setPathToDestinationIfSyncMovable(builderFinalizeCommand.getPathToDestination());
     }
 
     public Index getToBeBuildPosition() {

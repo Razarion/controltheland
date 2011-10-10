@@ -21,10 +21,9 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
  * Date: Aug 1, 2009
  * Time: 1:04:16 PM
  */
-public class AttackCommand extends BaseCommand {
+public class AttackCommand extends PathToDestinationCommand {
     private Id target;
     private boolean followTarget;
-    private Index destinationHint;
     private double destinationAngel;
 
     public Id getTarget() {
@@ -41,14 +40,6 @@ public class AttackCommand extends BaseCommand {
 
     public void setFollowTarget(boolean followTarget) {
         this.followTarget = followTarget;
-    }
-
-    public Index getDestinationHint() {
-        return destinationHint;
-    }
-
-    public void setDestinationHint(Index destinationHint) {
-        this.destinationHint = destinationHint;
     }
 
     public double getDestinationAngel() {

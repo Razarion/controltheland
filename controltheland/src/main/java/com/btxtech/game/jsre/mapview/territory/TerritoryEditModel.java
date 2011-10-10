@@ -17,7 +17,7 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.mapeditor.TerrainEditorAsync;
-import com.btxtech.game.jsre.mapview.common.GeometricalUtil;
+import com.btxtech.game.jsre.common.GeometricalUtil;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

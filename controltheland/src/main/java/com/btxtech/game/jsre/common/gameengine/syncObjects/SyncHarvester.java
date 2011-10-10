@@ -13,7 +13,6 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.HarvesterType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
@@ -27,7 +26,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInf
 public class SyncHarvester extends SyncBaseAbility {
     private HarvesterType harvesterType;
     private Id target;
-    private Index destinationHint;
     private Double destinationAngel;
 
     public SyncHarvester(HarvesterType harvesterType, SyncBaseItem syncBaseItem) {
@@ -44,15 +42,21 @@ public class SyncHarvester extends SyncBaseAbility {
             return false;
         }
 
+        if (getSyncBaseItem().getSyncMovable().tickMove(factor, destinationAngel)) {
+            return true;
+        }
+
         try {
             SyncResourceItem resource = (SyncResourceItem) getServices().getItemService().getItem(target);
-            if ((destinationHint == null || getSyncItemArea().positionReached(destinationHint)) && getSyncItemArea().isInRange(harvesterType.getRange(), resource)) {
-                getSyncItemArea().turnTo(resource);
-                double money = resource.harvest(factor * harvesterType.getProgress());
-                getServices().getBaseService().depositResource(money, getSyncBaseItem().getBase());
-            } else {
-                getSyncBaseItem().getSyncMovable().tickMoveToTarget(factor, destinationHint, destinationAngel, resource.getSyncItemArea().getPosition());
+            if (!isInRange(resource)) {
+                // Destination place was may be taken. Calculate a new one.
+                recalculateNewPath(harvesterType.getRange(), resource.getSyncItemArea());
+                getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
+                return true;
             }
+            getSyncItemArea().turnTo(resource);
+            double money = resource.harvest(factor * harvesterType.getProgress());
+            getServices().getBaseService().depositResource(money, getSyncBaseItem().getBase());
             return true;
         } catch (ItemDoesNotExistException ignore) {
             // Target may be empty
@@ -64,21 +68,18 @@ public class SyncHarvester extends SyncBaseAbility {
     public void stop() {
         target = null;
         destinationAngel = null;
-        destinationHint = null;
         getSyncBaseItem().getSyncMovable().stop();
     }
 
     @Override
     public void synchronize(SyncItemInfo syncItemInfo) {
         target = syncItemInfo.getTarget();
-        destinationHint = syncItemInfo.getDestinationHint();
         destinationAngel = syncItemInfo.getDestinationAngel();
     }
 
     @Override
     public void fillSyncItemInfo(SyncItemInfo syncItemInfo) {
         syncItemInfo.setTarget(target);
-        syncItemInfo.setDestinationHint(destinationHint);
         syncItemInfo.setDestinationAngel(destinationAngel);
     }
 
@@ -90,8 +91,12 @@ public class SyncHarvester extends SyncBaseAbility {
         }
 
         this.target = resource.getId();
-        destinationHint = attackCommand.getDestinationHint();
         destinationAngel = attackCommand.getDestinationAngel();
+        setPathToDestinationIfSyncMovable(attackCommand.getPathToDestination());
+    }
+
+    public boolean isInRange(SyncResourceItem target) {
+        return getSyncItemArea().isInRange(harvesterType.getRange(), target);
     }
 
     public Id getTarget() {

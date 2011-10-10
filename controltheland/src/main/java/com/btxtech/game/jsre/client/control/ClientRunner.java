@@ -21,6 +21,8 @@ import com.btxtech.game.jsre.common.StartupTaskInfo;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -33,6 +35,7 @@ public class ClientRunner {
     private List<DeferredStartup> deferredStartups = new ArrayList<DeferredStartup>();
     private List<AbstractStartupTask> finishedTasks = new ArrayList<AbstractStartupTask>();
     private boolean failed;
+    private Logger log = Logger.getLogger(ClientRunner.class.getName());
 
     public void addStartupProgressListener(StartupProgressListener startupProgressListener) {
         listeners.add(startupProgressListener);
@@ -61,7 +64,11 @@ public class ClientRunner {
             AbstractStartupTask task = startupList.remove(0);
             ClientRunnerDeferredStartupImpl deferredStartup = new ClientRunnerDeferredStartupImpl(task, this);
             for (StartupProgressListener listener : listeners) {
-                listener.onNextTask(task.getTaskEnum());
+                try {
+                    listener.onNextTask(task.getTaskEnum());
+                } catch (Throwable t) {
+                    log.log(Level.SEVERE, "", t);
+                }
             }
             try {
                 task.start(deferredStartup);

@@ -1,4 +1,4 @@
-package com.btxtech.game.services.collision;
+package com.btxtech.game.jsre.common.gameengine.services.collision;
 
 /**
  * User: beat

@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.AlreadyUsedException;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.Message;
+import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.common.AccountBalancePacket;
 import com.btxtech.game.jsre.common.BaseChangedPacket;
 import com.btxtech.game.jsre.common.EnergyPacket;
@@ -114,9 +115,9 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     private int lastBaseId = 0;
 
     @Override
-    public void checkBaseAccess(SyncBaseItem item) throws IllegalAccessException {
+    public void checkBaseAccess(SyncBaseItem item) throws NotYourBaseException {
         if (!getBase().getSimpleBase().equals(item.getBase())) {
-            throw new IllegalAccessException("Invalid access from base: " + getBaseName(getBase().getSimpleBase()) + " to " + getBaseName(item.getBase()));
+            throw new NotYourBaseException(getBaseName(getBase().getSimpleBase()), getBaseName(item.getBase()));
         }
     }
 

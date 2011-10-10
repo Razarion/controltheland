@@ -167,9 +167,4 @@ public class TerrainHandler extends AbstractTerrainServiceImpl {
     public HashMap<Integer, ImageElement> getSurfaceImageElements() {
         return surfaceImageElements;
     }
-
-    @Override
-    public List<Index> setupPathToSyncMovableRandomPositionIfTaken(SyncItem syncItem) {
-        return null;
-    }
 }
