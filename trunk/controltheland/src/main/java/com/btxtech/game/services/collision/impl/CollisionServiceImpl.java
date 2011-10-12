@@ -82,30 +82,6 @@ public class CollisionServiceImpl extends CommonCollisionServiceImpl implements 
     }
 
     @Override
-    public Index getFreeRandomPosition(ItemType itemType, Rectangle region, int itemFreeRange, boolean botFree) {
-        Random random = new Random();
-        for (int i = 0; i < MAX_TRIES; i++) {
-            int x = random.nextInt(region.getWidth()) + region.getX();
-            int y = random.nextInt(region.getHeight()) + region.getY();
-            Index point = new Index(x, y);
-            if (botFree && botService.isInRealm(point)) {
-                continue;
-            }
-
-            if (!terrainService.isFree(point, itemType)) {
-                continue;
-            }
-            Index start = point.sub(new Index(itemFreeRange / 2, itemFreeRange / 2));
-            Rectangle rectangle = new Rectangle(start.getX(), start.getY(), itemFreeRange, itemFreeRange);
-            if (itemService.hasItemsInRectangle(rectangle)) {
-                continue;
-            }
-            return point;
-        }
-        throw new IllegalStateException("Can not find free position. itemType: " + itemType + " region: " + region + " itemFreeRange: " + itemFreeRange);
-    }
-
-    @Override
     public Index getFreeRandomPosition(ItemType itemType, Territory territory, int itemFreeRange, boolean botFree) {
         if (!territory.isItemAllowed(itemType.getId())) {
             throw new IllegalArgumentException("Item Type '" + itemType + "' not allowed on territory: " + territory);

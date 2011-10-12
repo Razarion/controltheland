@@ -29,7 +29,6 @@ import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
-import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ProjectileItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
@@ -475,11 +474,6 @@ public class ItemContainer extends AbstractItemService {
             }
         }
         return false;
-    }
-
-    @Override
-    public Map<BaseItemType, List<SyncBaseItem>> getItems4Base(SimpleBase simpleBase) {
-        throw new UnsupportedOperationException();
     }
 
     public void clear() {

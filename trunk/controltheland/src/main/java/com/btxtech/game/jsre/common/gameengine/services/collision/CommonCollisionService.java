@@ -14,7 +14,10 @@
 package com.btxtech.game.jsre.common.gameengine.services.collision;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
@@ -44,4 +47,6 @@ public interface CommonCollisionService {
     Map<TerrainType, List<PassableRectangle>> getPassableRectangles();
 
     List<AttackFormationItem> setupDestinationHints(SyncItem target, List<AttackFormationItem> items);
+
+    Index getFreeRandomPosition(ItemType itemType, Rectangle region, int itemFreeRange, boolean botFree);
 }

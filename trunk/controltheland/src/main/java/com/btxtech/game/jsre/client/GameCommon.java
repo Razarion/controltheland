@@ -27,6 +27,7 @@ public class GameCommon {
         ItemContainer.getInstance().clear();
         ActionHandler.getInstance().clear();
         SelectionHandler.getInstance().clearSelection();
+        ClientBase.getInstance().cleanup();
     }
 
     

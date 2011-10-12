@@ -3,20 +3,19 @@ package com.btxtech.game.services.bot;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.services.bot.impl.BotItemContainer;
+import com.btxtech.game.jsre.common.gameengine.services.bot.impl.BotSyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.services.bot.impl.IntruderHandler;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.services.AbstractServiceTest;
+import com.btxtech.game.services.TestServices;
 import com.btxtech.game.services.action.ActionService;
-import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.bot.impl.BotItemContainer;
-import com.btxtech.game.services.bot.impl.BotSyncBaseItem;
-import com.btxtech.game.services.bot.impl.IntruderHandler;
+import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.user.UserService;
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Collections;
@@ -28,11 +27,7 @@ import java.util.Collections;
  */
 public class TestIntruderHandler extends AbstractServiceTest {
     @Autowired
-    private ApplicationContext applicationContext;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private BaseService baseService;
+    private CollisionService collisionService;
 
     @Test
     @DirtiesContext
@@ -44,9 +39,10 @@ public class TestIntruderHandler extends AbstractServiceTest {
         ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
         EasyMock.expect(mockItemService.getEnemyItems(botBase, region, true)).andReturn(Collections.<SyncBaseItem>emptyList());
 
-        IntruderHandler intruderHandler = (IntruderHandler) applicationContext.getBean("intruderHandler");
-        setPrivateField(IntruderHandler.class, intruderHandler, "itemService", mockItemService);
-        intruderHandler.init(mockBotItemContainer, region);
+        TestServices testServices = new TestServices();
+        testServices.setItemService(mockItemService);
+
+        IntruderHandler intruderHandler = new IntruderHandler(mockBotItemContainer, region, testServices);
 
         EasyMock.replay(mockBotItemContainer);
         EasyMock.replay(mockItemService);
@@ -70,9 +66,10 @@ public class TestIntruderHandler extends AbstractServiceTest {
         ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
         EasyMock.expect(mockItemService.getEnemyItems(botBase, region, true)).andReturn(Collections.<SyncBaseItem>singletonList(intruder)).times(3);
 
-        IntruderHandler intruderHandler = (IntruderHandler) applicationContext.getBean("intruderHandler");
-        setPrivateField(IntruderHandler.class, intruderHandler, "itemService", mockItemService);
-        intruderHandler.init(mockBotItemContainer, region);
+        TestServices testServices = new TestServices();
+        testServices.setItemService(mockItemService);
+
+        IntruderHandler intruderHandler = new IntruderHandler(mockBotItemContainer, region, testServices);
 
         EasyMock.replay(mockBotItemContainer);
         EasyMock.replay(mockItemService);
@@ -103,9 +100,11 @@ public class TestIntruderHandler extends AbstractServiceTest {
         ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
         EasyMock.expect(mockItemService.getEnemyItems(botBase, region, true)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
 
-        IntruderHandler intruderHandler = (IntruderHandler) applicationContext.getBean("intruderHandler");
-        setPrivateField(IntruderHandler.class, intruderHandler, "itemService", mockItemService);
-        intruderHandler.init(mockBotItemContainer, region);
+        TestServices testServices = new TestServices();
+        testServices.setItemService(mockItemService);
+        testServices.setCollisionService(collisionService);
+
+        IntruderHandler intruderHandler = new IntruderHandler(mockBotItemContainer, region, testServices);
 
         EasyMock.replay(mockBotItemContainer);
         EasyMock.replay(mockItemService);
@@ -137,9 +136,11 @@ public class TestIntruderHandler extends AbstractServiceTest {
         EasyMock.expect(mockItemService.getEnemyItems(botBase, region, true)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
         EasyMock.expect(mockItemService.getEnemyItems(botBase, region, true)).andReturn(Collections.<SyncBaseItem>emptyList());
 
-        IntruderHandler intruderHandler = (IntruderHandler) applicationContext.getBean("intruderHandler");
-        setPrivateField(IntruderHandler.class, intruderHandler, "itemService", mockItemService);
-        intruderHandler.init(mockBotItemContainer, region);
+        TestServices testServices = new TestServices();
+        testServices.setItemService(mockItemService);
+        testServices.setCollisionService(collisionService);
+
+        IntruderHandler intruderHandler = new IntruderHandler(mockBotItemContainer, region, testServices);
 
         EasyMock.replay(mockBotItemContainer);
         EasyMock.replay(mockItemService);
@@ -173,9 +174,11 @@ public class TestIntruderHandler extends AbstractServiceTest {
         EasyMock.expect(mockItemService.getEnemyItems(botBase, region, true)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
         EasyMock.expect(mockItemService.getEnemyItems(botBase, region, true)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
 
-        IntruderHandler intruderHandler = (IntruderHandler) applicationContext.getBean("intruderHandler");
-        setPrivateField(IntruderHandler.class, intruderHandler, "itemService", mockItemService);
-        intruderHandler.init(mockBotItemContainer, region);
+        TestServices testServices = new TestServices();
+        testServices.setItemService(mockItemService);
+        testServices.setCollisionService(collisionService);
+
+        IntruderHandler intruderHandler = new IntruderHandler(mockBotItemContainer, region, testServices);
 
         EasyMock.replay(mockBotItemContainer);
         EasyMock.replay(mockItemService);
@@ -211,9 +214,11 @@ public class TestIntruderHandler extends AbstractServiceTest {
         EasyMock.expect(mockItemService.getEnemyItems(botBase, region, true)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
         EasyMock.expect(mockItemService.getEnemyItems(botBase, region, true)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
 
-        IntruderHandler intruderHandler = (IntruderHandler) applicationContext.getBean("intruderHandler");
-        setPrivateField(IntruderHandler.class, intruderHandler, "itemService", mockItemService);
-        intruderHandler.init(mockBotItemContainer, region);
+        TestServices testServices = new TestServices();
+        testServices.setItemService(mockItemService);
+        testServices.setCollisionService(collisionService);
+        
+        IntruderHandler intruderHandler = new IntruderHandler(mockBotItemContainer, region, testServices);
 
         EasyMock.replay(mockBotItemContainer);
         EasyMock.replay(mockItemService);
@@ -251,9 +256,11 @@ public class TestIntruderHandler extends AbstractServiceTest {
         EasyMock.expect(mockItemService.getEnemyItems(botBase, region, true)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
         EasyMock.expect(mockItemService.getEnemyItems(botBase, region, true)).andReturn(Collections.<SyncBaseItem>singletonList(intruder));
 
-        IntruderHandler intruderHandler = (IntruderHandler) applicationContext.getBean("intruderHandler");
-        setPrivateField(IntruderHandler.class, intruderHandler, "itemService", mockItemService);
-        intruderHandler.init(mockBotItemContainer, region);
+        TestServices testServices = new TestServices();
+        testServices.setItemService(mockItemService);
+        testServices.setCollisionService(collisionService);
+     
+        IntruderHandler intruderHandler = new IntruderHandler(mockBotItemContainer, region, testServices);
 
         EasyMock.replay(mockBotItemContainer);
         EasyMock.replay(mockItemService);

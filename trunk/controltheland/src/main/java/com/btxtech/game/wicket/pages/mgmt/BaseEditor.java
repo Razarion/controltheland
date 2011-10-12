@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * User: beat
@@ -328,7 +329,7 @@ public class BaseEditor extends MgmtWebPage {
         form.add(new Button("apply") {
             @Override
             public void onSubmit() {
-                HashSet<SyncBaseItem> syncBaseItems = baseService.getBase(simpleBase).getItems();
+                Set<SyncBaseItem> syncBaseItems = baseService.getBase(simpleBase).getItems();
                 if (!syncBaseItems.isEmpty()) {
                     baseService.sendAccountBaseUpdate(syncBaseItems.iterator().next());
                     connectionService.sendSyncInfos(syncBaseItems);

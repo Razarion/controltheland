@@ -46,6 +46,8 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
 
     List<SyncItem> getItemsCopy();
 
+    Collection<SyncItem> getItemsCopyNoBot();
+
     void restoreItems(Collection<SyncItem> syncItems);
 
     void saveDbItemTypes(Collection<DbItemType> itemTypes);
@@ -85,8 +87,6 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
     void sellItem(Id id) throws ItemDoesNotExistException, NotYourBaseException;
 
     ItemType getItemType(DbItemType dbItemType);
-
-    void killSyncItems(Collection<SyncItem> itemsToKill);
 
     void killSyncItemIds(Collection<Id> itemsToKill);
 

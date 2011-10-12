@@ -339,12 +339,12 @@ public class ServerMarketServiceImpl implements ServerMarketService {
 
         private void periodicalXpIncrease() {
             HashMap<SimpleBase, Integer> xpIncreasePreBase = new HashMap<SimpleBase, Integer>();
-            List<SyncItem> syncItems = itemService.getItemsCopy();
+            Collection<SyncItem> syncItems = itemService.getItemsCopyNoBot();
             for (SyncItem syncItem : syncItems) {
                 if (syncItem instanceof SyncBaseItem) {
                     SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
                     Base base = baseService.getBase(syncBaseItem.getBase());
-                    if (base == null || base.isAbandoned() || base.getUserState().isBot()) {
+                    if (base == null || base.isAbandoned()) {
                         // Base is may be killed in the mean time
                         continue;
                     }

@@ -32,6 +32,7 @@ import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.impl.AbstractBaseServiceImpl;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseObject;
@@ -176,16 +177,16 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public Base createBotBase(UserState userState, String name) {
+    public SimpleBase createBotBase(BotConfig botConfig) {
         synchronized (bases) {
             lastBaseId++;
-            Base base = new Base(userState, lastBaseId);
-            createBase(base.getSimpleBase(), name, false);
+            Base base = new Base(lastBaseId);
+            createBase(base.getSimpleBase(), botConfig.getName(), false);
             log.debug("Bot Base created: " + base);
             bases.put(base.getSimpleBase(), base);
             setBot(base.getSimpleBase(), true);
             sendBaseChangedPacket(BaseChangedPacket.Type.CREATED, base.getSimpleBase());
-            return base;
+            return base.getSimpleBase();
         }
     }
 
@@ -273,11 +274,6 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
     }
 
     @Override
-    public boolean isAlive(SimpleBase simpleBase) {
-        return bases.containsKey(simpleBase);
-    }
-
-    @Override
     public void itemCreated(SyncBaseItem syncItem) {
         Base base = getBase(syncItem);
         base.addItem(syncItem);
@@ -300,7 +296,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             }
             statisticsService.onBaseKilled(base.getSimpleBase(), actor);
             deleteBase(base);
-            if (!base.isAbandoned()) {
+            if (!base.isAbandoned() && base.getUserState() != null) {
                 base.getUserState().setBase(null);
             }
         } else {
@@ -553,5 +549,14 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         } else {
             return new ReadonlyCollectionContentProvider<BaseItemTypeCount>(Collections.<BaseItemTypeCount>emptyList());
         }
+    }
+
+    @Override
+    public Collection<SyncBaseItem> getItems(SimpleBase simpleBase) {
+        Base base = getBase(simpleBase);
+        if (base == null) {
+            return null;
+        }
+        return base.getItems();
     }
 }

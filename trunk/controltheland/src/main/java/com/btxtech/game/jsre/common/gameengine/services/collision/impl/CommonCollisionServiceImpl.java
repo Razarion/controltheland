@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -331,4 +332,30 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
                 + " targetMinRange: " + targetMinRange
                 + " targetMaxRange: " + targetMaxRange);
     }
+
+    @Override
+    public Index getFreeRandomPosition(ItemType itemType, Rectangle region, int itemFreeRange, boolean botFree) {
+        Random random = new Random();
+        for (int i = 0; i < MAX_TRIES; i++) {
+            int x = random.nextInt(region.getWidth()) + region.getX();
+            int y = random.nextInt(region.getHeight()) + region.getY();
+            Index point = new Index(x, y);
+            if (botFree && getServices().getBotService().isInRealm(point)) {
+                continue;
+            }
+
+            if (!getServices().getTerrainService().isFree(point, itemType)) {
+                continue;
+            }
+            Index start = point.sub(new Index(itemFreeRange / 2, itemFreeRange / 2));
+            Rectangle rectangle = new Rectangle(start.getX(), start.getY(), itemFreeRange, itemFreeRange);
+            if (getServices().getItemService().hasItemsInRectangle(rectangle)) {
+                continue;
+            }
+            return point;
+        }
+        throw new IllegalStateException("Can not find free position. itemType: " + itemType + " region: " + region + " itemFreeRange: " + itemFreeRange);
+    }
+
+
 }

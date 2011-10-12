@@ -31,8 +31,6 @@ import java.util.Map;
  * Time: 6:46:48 PM
  */
 public interface CollisionService extends CommonCollisionService {
-    Index getFreeRandomPosition(ItemType itemType, Rectangle region, int itemFreeRange, boolean botFree);
-
     Index getFreeRandomPosition(ItemType itemType, Territory territory, int itemFreeRange, boolean botFree);
 
     void addCollisionServiceChangedListener(CollisionServiceChangedListener collisionServiceChangedListener);

@@ -27,6 +27,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +62,7 @@ public interface ItemService {
 
     List<BaseItemType> ableToBuild(BaseItemType toBeBuilt);
 
-    Map<BaseItemType, List<SyncBaseItem>> getItems4Base(SimpleBase simpleBase);
+    Collection<SyncBaseItem> getItems4Base(SimpleBase simpleBase);
 
     List<? extends SyncItem> getItems(ItemType itemType, SimpleBase simpleBase);
 
@@ -84,4 +85,6 @@ public interface ItemService {
     Collection<SyncBaseItem> getBaseItemsInRectangle(Rectangle rectangle, SimpleBase simpleBase, Collection<BaseItemType> baseItemTypeFilter);
 
     boolean hasItemsInRectangle(Rectangle rectangle);
+
+    void killSyncItems(Collection<SyncItem> syncItems);
 }

@@ -38,6 +38,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -46,6 +48,7 @@ import java.util.List;
  */
 abstract public class AbstractItemService implements ItemService {
     private final HashMap<Integer, ItemType> itemTypes = new HashMap<Integer, ItemType>();
+    private Logger log = Logger.getLogger(AbstractItemService.class.getName());
 
     /**
      * Iterates over all sync items
@@ -325,6 +328,36 @@ abstract public class AbstractItemService implements ItemService {
                 return null;
             }
         }, false);
+    }
+
+    @Override
+    public Collection<SyncBaseItem> getItems4Base(final SimpleBase simpleBase) {
+        final Collection<SyncBaseItem> itemsInBase = new ArrayList<SyncBaseItem>();
+        iterateOverItems(new ItemHandler<Void>() {
+            @Override
+            public Void handleItem(SyncItem syncItem) {
+                if (!syncItem.getSyncItemArea().hasPosition()) {
+                    return null;
+                }
+
+                if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).getBase().equals(simpleBase)) {
+                    itemsInBase.add((SyncBaseItem) syncItem);
+                }
+                return null;
+            }
+        }, null);
+        return itemsInBase;
+    }
+
+    @Override
+    public void killSyncItems(Collection<SyncItem> itemsToKill) {
+        for (SyncItem syncItem : itemsToKill) {
+            try {
+                killSyncItem(syncItem, null, true, false);
+            } catch (Exception e) {
+                log.log(Level.SEVERE, "", e);
+            }
+        }
     }
 
 

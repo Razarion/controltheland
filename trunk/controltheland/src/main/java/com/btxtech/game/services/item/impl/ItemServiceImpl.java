@@ -80,7 +80,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 /**
  * User: beat
@@ -273,18 +272,6 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public void killSyncItems(Collection<SyncItem> itemsToKill) {
-        for (SyncItem syncItem : itemsToKill) {
-            try {
-                killSyncItem(syncItem, null, true, false);
-
-            } catch (Exception e) {
-                log.error("", e);
-            }
-        }
-    }
-
-    @Override
     public void killSyncItemIds(Collection<Id> itemsToKill) {
         Collection<SyncItem> syncItems = new ArrayList<SyncItem>();
         for (Id id : itemsToKill) {
@@ -334,6 +321,24 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         synchronized (items) {
             return new ArrayList<SyncItem>(items.values());
         }
+    }
+
+    @Override
+    public Collection<SyncItem> getItemsCopyNoBot() {
+        Collection<SyncItem> result = new ArrayList<SyncItem>();
+        synchronized (items) {
+            for (SyncItem syncItem : items.values()) {
+                if (syncItem instanceof SyncBaseItem) {
+                    SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
+                    if (!baseService.isBot(syncBaseItem.getBase())) {
+                        result.add(syncItem);
+                    }
+                } else {
+                    result.add(syncItem);
+                }
+            }
+        }
+        return result;
     }
 
     @Override
@@ -620,25 +625,6 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             }
         }
         return syncItems;
-    }
-
-    @Override
-    public Map<BaseItemType, List<SyncBaseItem>> getItems4Base(SimpleBase simpleBase) {
-        Map<BaseItemType, List<SyncBaseItem>> result = new HashMap<BaseItemType, List<SyncBaseItem>>();
-        synchronized (items) {
-            for (SyncItem syncItem : items.values()) {
-                if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).getBase().equals(simpleBase)) {
-                    SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
-                    List<SyncBaseItem> syncBaseItems = result.get(syncBaseItem.getBaseItemType());
-                    if (syncBaseItems == null) {
-                        syncBaseItems = new ArrayList<SyncBaseItem>();
-                        result.put(syncBaseItem.getBaseItemType(), syncBaseItems);
-                    }
-                    syncBaseItems.add(syncBaseItem);
-                }
-            }
-        }
-        return result;
     }
 
     @Override

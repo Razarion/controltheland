@@ -14,8 +14,11 @@
 package com.btxtech.game.services.bot;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotItemConfig;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.db.RectangleUserType;
+import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Columns;
@@ -127,5 +130,10 @@ public class DbBotItemConfig implements CrudChild<DbBotConfig>, Serializable {
     @Override
     public int hashCode() {
         return id != null ? id.hashCode() : System.identityHashCode(this);
+    }
+
+    public BotItemConfig createBotItemConfig(ItemService itemService) {
+        BaseItemType baseItemType = (BaseItemType) itemService.getItemType(this.baseItemType);
+        return new BotItemConfig(baseItemType, count, createDirectly, region);
     }
 }

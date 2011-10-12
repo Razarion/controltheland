@@ -24,6 +24,7 @@ import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * User: beat
@@ -45,18 +46,16 @@ public class Base implements Serializable {
     @Transient
     private int houseSpace = 0;
 
-    /**
-     * Used by hibernate
-     */
-    public Base() {
-    }
-
-    public Base(UserState userState, int baseId) {
-        this.userState = userState;
-        userState.setBase(this);
+    public Base(int baseId) {
         startTime = new Date();
         abandoned = false;
         this.baseId = baseId;
+    }
+
+    public Base(UserState userState, int baseId) {
+        this(baseId);
+        userState.setBase(this);
+        this.userState = userState;
     }
 
     public Base(double accountBalance,
@@ -80,10 +79,6 @@ public class Base implements Serializable {
     }
 
     public void addItem(SyncBaseItem syncItem) {
-        addItemNoCreateCount(syncItem);
-    }
-
-    public void addItemNoCreateCount(SyncBaseItem syncItem) {
         synchronized (items) {
             items.add(syncItem);
         }
@@ -93,8 +88,8 @@ public class Base implements Serializable {
         return !items.isEmpty();
     }
 
-    public HashSet<SyncBaseItem> getItems() {
-        return items;
+    public Set<SyncBaseItem> getItems() {
+        return new HashSet<SyncBaseItem>(items);
     }
 
     public SimpleBase getSimpleBase() {

@@ -13,8 +13,8 @@
 
 package com.btxtech.game.services.bot;
 
-import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.services.bot.impl.BotRunner;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
+import com.btxtech.game.jsre.common.gameengine.services.bot.CommonBotService;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 
 /**
@@ -22,14 +22,12 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
  * Date: 14.03.2010
  * Time: 17:17:01
  */
-public interface BotService {
+public interface BotService extends CommonBotService {
     CrudRootServiceHelper<DbBotConfig> getDbBotConfigCrudServiceHelper();
-
-    void start();
 
     void activate();
 
-    BotRunner getBotRunner(DbBotConfig dbBotConfig);
+    BotConfig getSimulationBotConfig(int id);
 
-    boolean isInRealm(Index point);
+    void cleanup();
 }
