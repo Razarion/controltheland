@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.common.gameengine.services;
 
 import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionService;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
+import com.btxtech.game.jsre.common.gameengine.services.bot.CommonBotService;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService;
 import com.btxtech.game.jsre.common.gameengine.services.energy.EnergyService;
@@ -46,4 +47,6 @@ public interface Services {
     CommonActionService getActionService();
 
     AbstractTerritoryService getTerritoryService();
+
+    CommonBotService getBotService();
 }

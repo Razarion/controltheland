@@ -16,6 +16,7 @@ package com.btxtech.game.services.common;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionService;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
+import com.btxtech.game.jsre.common.gameengine.services.bot.CommonBotService;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
 import com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService;
 import com.btxtech.game.jsre.common.gameengine.services.energy.EnergyService;
@@ -24,6 +25,7 @@ import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.territory.AbstractTerritoryService;
 import com.btxtech.game.services.action.ActionService;
+import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.market.ServerMarketService;
@@ -57,6 +59,8 @@ public class ServerServices implements Services {
     private ActionService actionService;
     @Autowired
     private TerritoryService territoryService;
+    @Autowired
+    private BotService botService;
 
     @Override
     public ItemService getItemService() {
@@ -101,5 +105,10 @@ public class ServerServices implements Services {
     @Override
     public AbstractTerritoryService getTerritoryService() {
         return territoryService;
+    }
+
+    @Override
+    public CommonBotService getBotService() {
+        return botService;
     }
 }

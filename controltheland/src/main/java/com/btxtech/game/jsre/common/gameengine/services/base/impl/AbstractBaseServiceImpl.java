@@ -66,6 +66,10 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         return new ArrayList<BaseAttributes>(bases.values());
     }
 
+    protected Collection<SimpleBase> getAllSimpleBases() {
+        return bases.keySet();
+    }
+
     public void setAllBaseAttributes(Collection<BaseAttributes> allBaseAttributes) {
         synchronized (bases) {
             bases.clear();
@@ -136,6 +140,7 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         baseAttributes.setBot(bot);
     }
 
+    @Override
     public void checkItemLimit4ItemAdding(BaseItemType newItemType, SimpleBase simpleBase) throws ItemLimitExceededException, HouseSpaceExceededException, NoSuchItemTypeException {
         if (isLevelLimitation4ItemTypeExceeded(newItemType, simpleBase)) {
             throw new ItemLimitExceededException();
@@ -145,13 +150,22 @@ abstract public class AbstractBaseServiceImpl implements AbstractBaseService {
         }
     }
 
+    @Override
     public boolean isLevelLimitation4ItemTypeExceeded(BaseItemType newItemType, SimpleBase simpleBase) throws NoSuchItemTypeException {
         Level level = getLevel(simpleBase);
         return getItemCount(simpleBase, newItemType.getId()) >= level.getLimitation4ItemType(newItemType.getId());
     }
 
+    @Override
     public boolean isHouseSpaceExceeded(SimpleBase simpleBase) throws NoSuchItemTypeException {
         Level level = getLevel(simpleBase);
         return getItemCount(simpleBase) >= getHouseSpace(simpleBase) + level.getHouseSpace();
     }
+
+    @Override
+    public boolean isAlive(SimpleBase simpleBase) {
+        return bases.containsKey(simpleBase);
+    }
+
+
 }

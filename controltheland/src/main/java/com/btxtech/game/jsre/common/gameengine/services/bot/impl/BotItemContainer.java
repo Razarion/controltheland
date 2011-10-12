@@ -11,77 +11,58 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.bot.impl;
+package com.btxtech.game.jsre.common.gameengine.services.bot.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotItemConfig;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.services.action.ActionService;
-import com.btxtech.game.services.base.Base;
-import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.bot.DbBotItemConfig;
-import com.btxtech.game.services.collision.CollisionService;
-import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.user.UserState;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * User: beat
  * Date: 18.09.2010
  * Time: 11:41:21
  */
-@Component(value = "botItemContainer")
-@Scope("prototype")
 public class BotItemContainer {
     private HashMap<SyncBaseItem, BotSyncBaseItem> botItems = new HashMap<SyncBaseItem, BotSyncBaseItem>();
-    private Map<DbBotItemConfig, Collection<BotSyncBaseItem>> buildingItems = new HashMap<DbBotItemConfig, Collection<BotSyncBaseItem>>();
+    private Map<BotItemConfig, Collection<BotSyncBaseItem>> buildingItems = new HashMap<BotItemConfig, Collection<BotSyncBaseItem>>();
     private Need need;
-    @Autowired
-    private ActionService actionService;
-    @Autowired
-    private CollisionService collisionService;
-    @Autowired
-    private ItemService itemService;
-    @Autowired
-    private BaseService baseService;
-    private Log log = LogFactory.getLog(BotItemContainer.class);
+    private Logger log = Logger.getLogger(BotItemContainer.class.getName());
+    private Services services;
 
-    public void init(Collection<DbBotItemConfig> dbBotItemConfigs) {
-        need = new Need(dbBotItemConfigs);
+    public BotItemContainer(Collection<BotItemConfig> botItems, Services services) {
+        this.services = services;
+        need = new Need(botItems);
     }
 
-    public void buildup(SimpleBase simpleBase, UserState userState) {
-        if (isFulfilled(userState)) {
+    public void buildup(SimpleBase simpleBase) {
+        if (isFulfilled(simpleBase)) {
             return;
         }
         buildItems(simpleBase);
     }
 
-    public boolean isFulfilled(UserState userStat) {
-        updateState(userStat);
+    public boolean isFulfilled(SimpleBase simpleBase) {
+        updateState(simpleBase);
         return need.getNeedCount() == 0;
     }
 
     public void killAllItems() {
-        itemService.killSyncItems(new ArrayList<SyncItem>(botItems.keySet()));
+        services.getItemService().killSyncItems(new ArrayList<SyncItem>(botItems.keySet()));
     }
 
     public BotSyncBaseItem getFirstIdleAttacker(SyncBaseItem target) {
@@ -99,11 +80,13 @@ public class BotItemContainer {
         return attacker;
     }
 
-    private void updateState(UserState userState) {
-        Set<SyncBaseItem> newItems = getItems(userState);
-        newItems.removeAll(botItems.keySet());
-        for (SyncBaseItem newItem : newItems) {
-            add(newItem);
+    private void updateState(SimpleBase simpleBase) {
+        Collection<SyncBaseItem> newItems = services.getBaseService().getItems(simpleBase);
+        if (newItems != null) {
+            newItems.removeAll(botItems.keySet());
+            for (SyncBaseItem newItem : newItems) {
+                add(newItem);
+            }
         }
 
         ArrayList<BotSyncBaseItem> remove = new ArrayList<BotSyncBaseItem>();
@@ -117,8 +100,8 @@ public class BotItemContainer {
         for (BotSyncBaseItem botSyncBaseItem : remove) {
             remove(botSyncBaseItem);
         }
-        for (Iterator<Map.Entry<DbBotItemConfig, Collection<BotSyncBaseItem>>> iterator = buildingItems.entrySet().iterator(); iterator.hasNext();) {
-            Map.Entry<DbBotItemConfig, Collection<BotSyncBaseItem>> entry = iterator.next();
+        for (Iterator<Map.Entry<BotItemConfig, Collection<BotSyncBaseItem>>> iterator = buildingItems.entrySet().iterator(); iterator.hasNext();) {
+            Map.Entry<BotItemConfig, Collection<BotSyncBaseItem>> entry = iterator.next();
             for (Iterator<BotSyncBaseItem> builderIterator = entry.getValue().iterator(); builderIterator.hasNext();) {
                 BotSyncBaseItem buildingItem = builderIterator.next();
                 if (!buildingItem.isAlive() || buildingItem.isIdle()) {
@@ -131,17 +114,8 @@ public class BotItemContainer {
         }
     }
 
-    private Set<SyncBaseItem> getItems(UserState userState) {
-        Base base = baseService.getBase(userState);
-        if (base != null) {
-            return new HashSet<SyncBaseItem>(base.getItems());
-        } else {
-            return Collections.emptySet();
-        }
-    }
-
     private void add(SyncBaseItem syncBaseItem) {
-        BotSyncBaseItem botSyncBaseItem = new BotSyncBaseItem(syncBaseItem, actionService);
+        BotSyncBaseItem botSyncBaseItem = new BotSyncBaseItem(syncBaseItem, services.getActionService());
         botItems.put(syncBaseItem, botSyncBaseItem);
         need.onItemAdded(botSyncBaseItem);
     }
@@ -152,10 +126,10 @@ public class BotItemContainer {
     }
 
     private void buildItems(SimpleBase simpleBase) {
-        for (DbBotItemConfig dbBotItemConfig : need.getItemNeed()) {
+        for (BotItemConfig botItemConfig : need.getItemNeed()) {
 
-            int effectiveNeed = need.getNeedCount(dbBotItemConfig);
-            Collection<BotSyncBaseItem> currentlyBuilding = buildingItems.get(dbBotItemConfig);
+            int effectiveNeed = need.getNeedCount(botItemConfig);
+            Collection<BotSyncBaseItem> currentlyBuilding = buildingItems.get(botItemConfig);
             if (currentlyBuilding != null) {
                 effectiveNeed -= currentlyBuilding.size();
                 if (effectiveNeed < 0) {
@@ -165,19 +139,19 @@ public class BotItemContainer {
 
             for (int i = 0; i < effectiveNeed; i++) {
                 try {
-                    createItem(dbBotItemConfig, simpleBase);
+                    createItem(botItemConfig, simpleBase);
                 } catch (Exception e) {
-                    log.error("", e);
+                    log.log(Level.SEVERE, "", e);
                 }
             }
         }
     }
 
-    private void createItem(DbBotItemConfig dbBotItemConfig, SimpleBase simpleBase) throws ItemLimitExceededException, HouseSpaceExceededException, NoSuchItemTypeException {
-        BaseItemType toBeBuilt = (BaseItemType) itemService.getItemType(dbBotItemConfig.getBaseItemType());
-        if (dbBotItemConfig.isCreateDirectly()) {
-            Index position = collisionService.getFreeRandomPosition(toBeBuilt, dbBotItemConfig.getRegion(), 100, false);
-            SyncBaseItem newItem = (SyncBaseItem) itemService.createSyncObject(toBeBuilt, position, null, simpleBase, 0);
+    private void createItem(BotItemConfig botItemConfig, SimpleBase simpleBase) throws ItemLimitExceededException, HouseSpaceExceededException, NoSuchItemTypeException {
+        BaseItemType toBeBuilt = botItemConfig.getBaseItemType();
+        if (botItemConfig.isCreateDirectly()) {
+            Index position = services.getCollisionService().getFreeRandomPosition(toBeBuilt, botItemConfig.getRegion(), 100, false);
+            SyncBaseItem newItem = (SyncBaseItem) services.getItemService().createSyncObject(toBeBuilt, position, null, simpleBase, 0);
             newItem.setBuildup(1.0);
         } else {
             BotSyncBaseItem botSyncBuilder = getFirstIdleBuilder(toBeBuilt);
@@ -187,13 +161,13 @@ public class BotItemContainer {
             if (botSyncBuilder.getSyncBaseItem().hasSyncFactory()) {
                 botSyncBuilder.buildUnit(toBeBuilt);
             } else {
-                Index position = collisionService.getFreeRandomPosition(toBeBuilt, dbBotItemConfig.getRegion(), 0, false);
+                Index position = services.getCollisionService().getFreeRandomPosition(toBeBuilt, botItemConfig.getRegion(), 0, false);
                 botSyncBuilder.buildBuilding(position, toBeBuilt);
             }
-            Collection<BotSyncBaseItem> builders = buildingItems.get(dbBotItemConfig);
+            Collection<BotSyncBaseItem> builders = buildingItems.get(botItemConfig);
             if (builders == null) {
                 builders = new ArrayList<BotSyncBaseItem>();
-                buildingItems.put(dbBotItemConfig, builders);
+                buildingItems.put(botItemConfig, builders);
             }
             builders.add(botSyncBuilder);
         }

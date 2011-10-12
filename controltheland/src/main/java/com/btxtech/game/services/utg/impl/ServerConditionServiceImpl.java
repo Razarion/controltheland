@@ -99,9 +99,6 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState> 
         synchronized (triggerMap) {
             triggerMap.clear();
             for (Map.Entry<DbUserState, UserState> entry : userStates.entrySet()) {
-                if (entry.getValue().isBot()) {
-                    continue;
-                }
                 DbAbstractLevel dbAbstractLevel = userGuidanceService.getDbLevel(entry.getValue().getCurrentAbstractLevel().getId());
                 AbstractConditionTrigger<UserState> abstractConditionTrigger = activateCondition(dbAbstractLevel.getConditionConfig(), entry.getValue());
                 if (entry.getKey().getDbAbstractComparisonBackup() != null) {
@@ -113,9 +110,6 @@ public class ServerConditionServiceImpl extends ConditionServiceImpl<UserState> 
 
     @Override
     public DbAbstractComparisonBackup createBackup(DbUserState dbUserState, UserState userState) {
-        if (userState.isBot()) {
-            return null;
-        }
         AbstractConditionTrigger abstractConditionTrigger;
         synchronized (triggerMap) {
             abstractConditionTrigger = triggerMap.get(userState);

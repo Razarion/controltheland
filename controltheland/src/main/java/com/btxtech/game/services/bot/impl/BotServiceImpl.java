@@ -13,20 +13,24 @@
 
 package com.btxtech.game.services.bot.impl;
 
-import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
+import com.btxtech.game.jsre.common.gameengine.services.bot.impl.BotRunner;
+import com.btxtech.game.jsre.common.gameengine.services.bot.impl.CommonBotServiceImpl;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
-import com.btxtech.game.services.bot.DbBotItemConfig;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
+import com.btxtech.game.services.common.ServerServices;
+import com.btxtech.game.services.item.ItemService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,15 +40,37 @@ import java.util.Map;
  * Time: 17:18:11
  */
 @Component(value = "botService")
-public class BotServiceImpl implements BotService {
+public class BotServiceImpl extends CommonBotServiceImpl implements BotService {
     @Autowired
     private CrudRootServiceHelper<DbBotConfig> dbBotConfigCrudServiceHelper;
     @Autowired
     private ApplicationContext applicationContext;
-    final private Map<DbBotConfig, BotRunner> botRunners = new HashMap<DbBotConfig, BotRunner>();
+    @Autowired
+    private ItemService itemService;
+    @Autowired
+    private ServerServices serverServices;
     private Log log = LogFactory.getLog(BotServiceImpl.class);
+    private Map<Integer, BotConfig> simulatedBotConfigs = new HashMap<Integer, BotConfig>();
 
     // TODO save & restore
+
+    private void fillBotConfigs() {
+        simulatedBotConfigs.clear();
+        Collection<BotConfig> realGameBotConfigs = new ArrayList<BotConfig>();
+        for (DbBotConfig botConfig : dbBotConfigCrudServiceHelper.readDbChildren()) {
+            try {
+                if (botConfig.isRealGameBot()) {
+                    realGameBotConfigs.add(botConfig.createBotConfig(itemService));
+                } else {
+                    simulatedBotConfigs.put(botConfig.getId(), botConfig.createBotConfig(itemService));
+                }
+            } catch (Exception e) {
+                log.error("", e);
+            }
+        }
+        setBotConfigs(realGameBotConfigs);
+    }
+
 
     @PostConstruct
     public void init() {
@@ -52,68 +78,30 @@ public class BotServiceImpl implements BotService {
     }
 
     @Override
-    public void start() {
-        for (DbBotConfig botConfig : dbBotConfigCrudServiceHelper.readDbChildren()) {
-            try {
-                hibernateInitialize(botConfig);
-                Hibernate.initialize(botConfig);
-                Hibernate.initialize(botConfig.getBotItemCrud().readDbChildren());
-                startBot(botConfig);
-            } catch (Exception e) {
-                log.error("", e);
-            }
-        }
-    }
-
-    private void hibernateInitialize(DbBotConfig botConfig) {
-        Hibernate.initialize(botConfig);
-        for (DbBotItemConfig dbBotItemConfig : botConfig.getBotItemCrud().readDbChildren()) {
-            Hibernate.initialize(dbBotItemConfig);
-            Hibernate.initialize(dbBotItemConfig.getBaseItemType());
-        }
-    }
-
-    @Override
     public CrudRootServiceHelper<DbBotConfig> getDbBotConfigCrudServiceHelper() {
         return dbBotConfigCrudServiceHelper;
     }
 
-    private void startBot(DbBotConfig botConfig) {
-        BotRunner botRunner = (BotRunner) applicationContext.getBean("botRunner");
-        botRunner.start(botConfig);
-        synchronized (botRunners) {
-            botRunners.put(botConfig, botRunner);
-        }
-    }
-
     @Override
     public void activate() {
-        destroy();
-        start();
+        killAllBots();
+        fillBotConfigs();
+        startAllBots();
     }
 
     @PreDestroy
-    public void destroy() {
-        // Kill all bots
-        for (BotRunner botRunner : botRunners.values()) {
-            botRunner.kill();
-        }
-        botRunners.clear();
-    }
-
-    public BotRunner getBotRunner(DbBotConfig dbBotConfig) {
-        return botRunners.get(dbBotConfig);
+    @Override
+    public void cleanup() {
+        killAllBots();
     }
 
     @Override
-    public boolean isInRealm(Index point) {
-        synchronized (botRunners) {
-            for (BotRunner botRunner : botRunners.values()) {
-                if (botRunner.isInRealm(point)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    public BotConfig getSimulationBotConfig(int id) {
+        return simulatedBotConfigs.get(id);
+    }
+
+    @Override
+    protected BotRunner createBotRunner() {
+       return new ServerBotRunner(serverServices);
     }
 }

@@ -17,7 +17,6 @@ import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.user.PasswordNotMatchException;
 import com.btxtech.game.jsre.common.gameengine.services.user.UserAlreadyExistsException;
 import com.btxtech.game.services.base.BaseService;
-import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.services.user.AlreadyLoggedInException;
@@ -62,9 +61,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Component("userService")
 public class UserServiceImpl implements UserService {
@@ -86,7 +83,6 @@ public class UserServiceImpl implements UserService {
     private String md5HashSalt;
 
     private HibernateTemplate hibernateTemplate;
-    private final Map<DbBotConfig, UserState> botStates = new HashMap<DbBotConfig, UserState>();
     private final Collection<UserState> userStates = new ArrayList<UserState>();
     private Log log = LogFactory.getLog(UserServiceImpl.class);
 
@@ -383,22 +379,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserState getUserState(DbBotConfig botConfig) {
-        UserState userState = botStates.get(botConfig);
-        if (userState == null) {
-            userState = new UserState();
-            userState.setBotConfig(botConfig);
-            botStates.put(botConfig, userState);
-        }
-        return userState;
-    }
-
-    @Override
-    public void deleteUserState(DbBotConfig botConfig) {
-        botStates.remove(botConfig);
-    }
-
-    @Override
     public List<UserState> getAllUserStates() {
         ArrayList<UserState> userStateCopy;
         synchronized (userStates) {
@@ -408,25 +388,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserState> getAllBotUserStates() {
-        ArrayList<UserState> userStateCopy;
-        synchronized (botStates) {
-            userStateCopy = new ArrayList<UserState>(botStates.values());
-        }
-        return userStateCopy;
-    }
-
-
-    @Override
     public void restore(Collection<UserState> restoreUserStates) {
-        botStates.clear();
         userStates.clear();
         for (UserState userState : restoreUserStates) {
-            if (userState.isBot()) {
-                botStates.put(userState.getBotConfig(), userState);
-            } else {
-                userStates.add(userState);
-            }
+            userStates.add(userState);
         }
     }
 

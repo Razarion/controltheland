@@ -62,15 +62,9 @@ public interface UserService extends UserDetailsService {
 
     UserState getUserState(User user);
 
-    UserState getUserState(DbBotConfig botConfig);
-
-    void deleteUserState(DbBotConfig botConfig);
-
     void onSessionTimedOut(UserState userState, String sessionId);
 
     List<UserState> getAllUserStates();
-
-    List<UserState> getAllBotUserStates();
 
     void restore(Collection<UserState> userStates);
 

@@ -10,7 +10,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
-import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
@@ -20,6 +20,7 @@ import com.btxtech.game.services.base.BaseService;
 import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.collision.CollisionService;
+import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.market.DbMarketEntry;
 import com.btxtech.game.services.market.impl.UserItemTypeAccess;
 import com.btxtech.game.services.terrain.TerrainService;
@@ -34,8 +35,8 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * User: beat
@@ -95,7 +96,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         movableService.getGameInfo();
         movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
         SimpleBase u2Base = ((RealityInfo) movableService.getGameInfo()).getBase();
-        Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID),new Rectangle(0,0,100000,100000), 400, true);
+        Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true);
         sendBuildCommand(getFirstSynItemId(u2Base, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
         waitForActionServiceDone();
         sendFactoryCommand(getFirstSynItemId(u2Base, TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
@@ -112,7 +113,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         userService.login("U3", "test");
         movableService.getGameInfo();
         movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
-        movableService.getGameInfo();        
+        movableService.getGameInfo();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -132,7 +133,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        waitForActionServiceDone();        
+        waitForActionServiceDone();
         Thread.sleep(3000); // Wait for XP 
 
         beginHttpSession();
@@ -195,7 +196,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         backupSummaries = mgmtService.getBackupSummary();
-        Assert.assertEquals(3, backupSummaries.size());        
+        Assert.assertEquals(3, backupSummaries.size());
         mgmtService.deleteBackupEntry(backupSummaries.get(0).getDate());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -278,34 +279,31 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbBotConfig dbBotConfig = setupMinimalBot(new Rectangle(4000, 4000, 3000, 3000));
+        BotConfig botConfig = setupMinimalBot(new Rectangle(4000, 4000, 3000, 3000)).createBotConfig(itemService);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
-        waitForBotToBuildup(dbBotConfig);
+        waitForBotToBuildup(botConfig);
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         Assert.assertEquals(1, baseService.getBases().size());
         Assert.assertEquals(4, baseService.getBases().get(0).getItems().size());
-        Assert.assertTrue(baseService.getBases().get(0).getUserState().isBot());
         Assert.assertEquals(0, userService.getAllUserStates().size());
-        Assert.assertEquals(1, userService.getAllBotUserStates().size());
         mgmtService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        assertBackupSummery(1, 4, 1, 1);
+        assertBackupSummery(1, 0, 0, 0);
 
         List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
         mgmtService.restore(backupSummaries.get(0).getDate());
+        waitForActionServiceDone();
         Assert.assertEquals(1, baseService.getBases().size());
-        Assert.assertTrue(baseService.getBases().get(0).getUserState().isBot());
-        Assert.assertEquals(0, userService.getAllUserStates().size());
-        Assert.assertEquals(1, userService.getAllBotUserStates().size());
         Assert.assertEquals(4, baseService.getBases().get(0).getItems().size());
+        Assert.assertEquals(0, userService.getAllUserStates().size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -317,14 +315,13 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        assertBackupSummery(2, 4, 1, 1);        
+        assertBackupSummery(2, 0, 0, 0);
         backupSummaries = mgmtService.getBackupSummary();
         mgmtService.restore(backupSummaries.get(0).getDate());
+        waitForActionServiceDone();
         Assert.assertEquals(1, baseService.getBases().size());
-        Assert.assertTrue(baseService.getBases().get(0).getUserState().isBot());
-        Assert.assertEquals(0, userService.getAllUserStates().size());
-        Assert.assertEquals(1, userService.getAllBotUserStates().size());
         Assert.assertEquals(4, baseService.getBases().get(0).getItems().size());
+        Assert.assertEquals(0, userService.getAllUserStates().size());
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
     }
@@ -362,7 +359,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         userService.login("U1", "test");
-        Assert.assertEquals(TEST_LEVEL_1_SIMULATED, movableService.getGameInfo().getLevel().getName());        
+        Assert.assertEquals(TEST_LEVEL_1_SIMULATED, movableService.getGameInfo().getLevel().getName());
         movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
         Assert.assertEquals(TEST_LEVEL_2_REAL, movableService.getGameInfo().getLevel().getName());
 
@@ -374,18 +371,9 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         Assert.assertEquals(oldUserStates.size(), newUserStates.size());
         for (UserState oldUserState : oldUserStates) {
             User oldUser = oldUserState.getUser();
-            DbBotConfig oldBotConfig = oldUserState.getBotConfig();
             UserState newUserState = findUserState(oldUserState, newUserStates);
             User newUser = newUserState.getUser();
-            DbBotConfig newBotConfig = oldUserState.getBotConfig();
-            if (newUser != null && newBotConfig != null) {
-                Assert.fail("UserState is not allowed to have a User and a DbBotConfig");
-            }
-            if (newUser == null && newBotConfig == null) {
-                Assert.fail("UserState is not allowed to have neither a User nor a DbBotConfig");
-            }
             Assert.assertEquals(oldUser, newUser);
-            Assert.assertEquals(oldBotConfig, newBotConfig);
             Assert.assertEquals(oldUserState.getCurrentAbstractLevel(), newUserState.getCurrentAbstractLevel());
             Assert.assertEquals(oldUserState.getCurrentAbstractLevel().getLevel(), newUserState.getCurrentAbstractLevel().getLevel());
             verifyUserItemTypeAccess(oldUserState.getUserItemTypeAccess(), newUserState.getUserItemTypeAccess());
@@ -421,21 +409,14 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
     private UserState findUserState(UserState oldUserState, List<UserState> newUserStates) {
         UserState foundUserState = null;
         User oldUsr = oldUserState.getUser();
-        DbBotConfig oldBotConfig = oldUserState.getBotConfig();
         for (UserState newUserState : newUserStates) {
             User newUsr = newUserState.getUser();
-            DbBotConfig newBotConfig = oldUserState.getBotConfig();
             if (newUsr != null && newUsr.equals(oldUsr)) {
                 if (foundUserState != null) {
                     Assert.fail("Second matching UserState found: " + newUserState + " fist matching base: " + foundUserState);
                 }
                 foundUserState = newUserState;
-            } else if (newBotConfig != null && newBotConfig.equals(oldBotConfig)) {
-                if (foundUserState != null) {
-                    Assert.fail("Second matching UserState found: " + newUserState + " fist matching base: " + foundUserState);
-                }
-                foundUserState = newUserState;
-            }
+            } 
         }
         if (foundUserState == null) {
             Assert.fail("No matching UserState found for: " + oldUserState);
@@ -475,7 +456,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         verifyItems(oldBase.getItems(), newBase.getItems());
     }
 
-    private void verifyItems(HashSet<SyncBaseItem> oldItems, HashSet<SyncBaseItem> newItems) {
+    private void verifyItems(Set<SyncBaseItem> oldItems, Set<SyncBaseItem> newItems) {
         Assert.assertEquals(oldItems.size(), newItems.size());
         // TODO compare and verify items
     }
@@ -511,6 +492,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
     }
 
     // @Test
+
     public void testBigBackup() throws AlreadyUsedException, NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
         for (int i = 0; i < ITEM_COUNT; i++) {
             ItemType itemType = getRandomItemType();

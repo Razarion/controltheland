@@ -31,8 +31,11 @@ import com.btxtech.game.jsre.common.gameengine.services.base.BaseAttributes;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.impl.AbstractBaseServiceImpl;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+
+import java.util.Collection;
 
 /**
  * User: beat
@@ -246,5 +249,29 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
 
     public void setConnectedToServer4FakedHouseSpace(boolean connectedToServer) {
         this.connectedToServer = connectedToServer;
+    }
+
+    @Override
+    public Collection<SyncBaseItem> getItems(SimpleBase simpleBase) {
+        return ItemContainer.getInstance().getItems4Base(simpleBase);
+    }
+
+    @Override
+    public SimpleBase createBotBase(BotConfig botConfig) {
+        int maxId = 0;
+        for (SimpleBase simpleBase : getAllSimpleBases()) {
+            if (simpleBase.getId() > maxId) {
+                maxId = simpleBase.getId();
+            }
+        }
+        maxId++;
+        SimpleBase simpleBase = new SimpleBase(maxId);
+        createBase(simpleBase, botConfig.getName(), false);
+        setBot(simpleBase, true);
+        return simpleBase;
+    }
+
+    public void cleanup() {
+        clear();
     }
 }

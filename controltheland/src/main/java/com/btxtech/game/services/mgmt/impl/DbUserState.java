@@ -25,8 +25,6 @@ public class DbUserState {
     @GeneratedValue
     private Integer id;
     @ManyToOne
-    private DbBotConfig botConfig;
-    @ManyToOne
     private User user;
     @OneToOne
     private DbBase base;
@@ -47,7 +45,6 @@ public class DbUserState {
 
     public DbUserState(BackupEntry backupEntry, UserState userState) {
         this.backupEntry = backupEntry;
-        botConfig = userState.getBotConfig();
         user = userState.getUser();
         currentAbstractLevel = userState.getCurrentAbstractLevel();
         if (userState.getUserItemTypeAccess() != null) {
@@ -57,7 +54,6 @@ public class DbUserState {
 
     public UserState createUserState(UserGuidanceService userGuidanceService) {
         UserState userState = new UserState();
-        userState.setBotConfig(botConfig);
         userState.setUser(user);
         if (currentAbstractLevel != null) {
             userState.setCurrentAbstractLevel(userGuidanceService.getDbLevel(currentAbstractLevel.getId()));

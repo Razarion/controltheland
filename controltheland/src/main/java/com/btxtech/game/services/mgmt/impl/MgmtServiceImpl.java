@@ -336,7 +336,7 @@ public class MgmtServiceImpl implements MgmtService, ApplicationListener {
                     }
                 }
                 resourceService.activate();
-                botService.start();
+                botService.activate();
             }
         } catch (Throwable t) {
             log.error("", t);

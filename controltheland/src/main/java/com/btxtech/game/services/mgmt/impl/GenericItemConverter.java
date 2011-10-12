@@ -26,6 +26,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInf
 import com.btxtech.game.services.action.ActionService;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.base.BaseService;
+import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
@@ -45,7 +46,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -72,6 +72,8 @@ public class GenericItemConverter {
     private UserService userService;
     @Autowired
     private ServerConditionService serverConditionService;
+    @Autowired
+    private BotService botService;
     private BackupEntry backupEntry;
     private HashMap<Id, GenericItem> genericItems = new HashMap<Id, GenericItem>();
     private HashMap<Id, SyncItem> syncItems = new HashMap<Id, SyncItem>();
@@ -90,7 +92,7 @@ public class GenericItemConverter {
     public BackupEntry generateBackupEntry() {
         backupEntry = new BackupEntry();
         fillHelperCache();
-        List<SyncItem> syncItems = itemService.getItemsCopy();
+        Collection<SyncItem> syncItems = itemService.getItemsCopyNoBot();
         backupEntry.setTimeStamp(new Date());
 
         for (SyncItem item : syncItems) {
@@ -112,9 +114,6 @@ public class GenericItemConverter {
             dbUserState.setDbAbstractComparisonBackup(serverConditionService.createBackup(dbUserState, userState));
             dbUserStates.add(dbUserState);
         }
-        for (UserState userState : userService.getAllBotUserStates()) {
-            dbUserStates.add(createDbUserState(userState));
-        }
 
         backupEntry.setUserStates(dbUserStates);
         return backupEntry;
@@ -135,6 +134,7 @@ public class GenericItemConverter {
     }
 
     public void restoreBackup(BackupEntry backupEntry) throws NoSuchItemTypeException {
+        botService.cleanup();
         actionService.pause(true);
         serverEnergyService.pauseService(true);
 
@@ -153,7 +153,7 @@ public class GenericItemConverter {
                     DbBase dBbase = ((GenericBaseItem) genericItem).getBase();
                     Base base = getBase(userStates, dbBases, dBbase);
                     SyncBaseItem syncItem = addSyncBaseItem((GenericBaseItem) genericItem, base);
-                    base.addItemNoCreateCount(syncItem);
+                    base.addItem(syncItem);
                 } else if (genericItem instanceof GenericResourceItem) {
                     addSyncItem((GenericResourceItem) genericItem);
                 } else if (genericItem instanceof GenericProjectileItem) {
@@ -188,6 +188,7 @@ public class GenericItemConverter {
         serverEnergyService.pauseService(false);
         serverEnergyService.restoreItems(syncItems.values());
         actionService.pause(false);
+        botService.activate();
     }
 
     private Base getBase(Map<DbUserState, UserState> userStates, Map<DbBase, Base> dbBases, DbBase dBbase) {

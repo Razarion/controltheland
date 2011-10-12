@@ -11,14 +11,15 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.services.bot.impl;
+package com.btxtech.game.jsre.common.gameengine.services.bot.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.services.action.ActionService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -27,11 +28,11 @@ import org.apache.commons.logging.LogFactory;
  */
 public class BotSyncBaseItem {
     private SyncBaseItem syncBaseItem;
-    private ActionService actionService;
-    private Log log = LogFactory.getLog(BotSyncBaseItem.class);
+    private CommonActionService actionService;
+    private Logger log = Logger.getLogger(BotSyncBaseItem.class.getName());
     private boolean idle = true;
 
-    public BotSyncBaseItem(SyncBaseItem syncBaseItem, ActionService actionService) {
+    public BotSyncBaseItem(SyncBaseItem syncBaseItem, CommonActionService actionService) {
         this.syncBaseItem = syncBaseItem;
         this.actionService = actionService;
     }
@@ -60,7 +61,7 @@ public class BotSyncBaseItem {
             idle = false;
         } catch (Exception e) {
             idle = true;
-            log.error("", e);
+            log.log(Level.SEVERE, "", e);
         }
     }
 
@@ -70,7 +71,7 @@ public class BotSyncBaseItem {
             idle = false;
         } catch (Exception e) {
             idle = true;
-            log.error("", e);
+            log.log(Level.SEVERE, "", e);
         }
     }
 
@@ -80,7 +81,7 @@ public class BotSyncBaseItem {
             idle = false;
         } catch (Exception e) {
             idle = true;
-            log.error("", e);
+            log.log(Level.SEVERE, "", e);
         }
     }
 

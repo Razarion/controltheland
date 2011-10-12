@@ -2,6 +2,7 @@ package com.btxtech.game.services.bot;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.mgmt.MgmtService;
@@ -60,7 +61,7 @@ public class TestBotService extends AbstractServiceTest {
 
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
-        DbBotConfig dbBotConfig = setupMinimalBot(new Rectangle(1, 1, 5000, 5000));
+        BotConfig botConfig = setupMinimalBot(new Rectangle(1, 1, 5000, 5000)).createBotConfig(itemService);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
@@ -73,7 +74,7 @@ public class TestBotService extends AbstractServiceTest {
 
 
         // Wait for bot to complete
-        waitForBotToBuildup(dbBotConfig);
+        waitForBotToBuildup(botConfig);
         assertWholeItemCount(4);
     }
 
@@ -85,13 +86,13 @@ public class TestBotService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
 
-        DbBotConfig dbBotConfig = setupMinimalBot(new Rectangle(1, 1, 5000, 5000));
+        BotConfig botConfig = setupMinimalBot(new Rectangle(1, 1, 5000, 5000)).createBotConfig(itemService);
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // Wait for bot to complete
-        waitForBotToBuildup(dbBotConfig);
+        waitForBotToBuildup(botConfig);
         assertWholeItemCount(4);
 
         // Save
@@ -105,8 +106,8 @@ public class TestBotService extends AbstractServiceTest {
         endHttpSession();
 
         // Wait for bot to complete
-        waitForBotToBuildup(dbBotConfig);
-        assertWholeItemCount(4);
+        waitForBotToBuildup(botConfig);
+        assertWholeItemCount(0);
     }
 
     @Test
@@ -117,11 +118,12 @@ public class TestBotService extends AbstractServiceTest {
         beginHttpSession();
         beginHttpRequestAndOpenSessionInViewFilter();
         DbBotConfig dbBotConfig = setupMinimalBot(new Rectangle(1, 1, 5000, 5000));
+        BotConfig botConfig = dbBotConfig.createBotConfig(itemService);
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
         // Wait for bot to complete
-        waitForBotToBuildup(dbBotConfig);
+        waitForBotToBuildup(botConfig);
         assertWholeItemCount(4);
 
         beginHttpSession();
@@ -132,7 +134,6 @@ public class TestBotService extends AbstractServiceTest {
         endHttpSession();
 
         assertWholeItemCount(0);
-        Assert.assertEquals(0, userService.getAllBotUserStates().size());
 
         // Make sure backup still works
         beginHttpSession();
@@ -140,33 +141,5 @@ public class TestBotService extends AbstractServiceTest {
         mgmtService.backup();
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
-    }
-
-    @Test
-    @DirtiesContext
-    public void testRestoreInvalidBot() throws Exception {
-        configureMinimalGame();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        DbBotConfig dbBotConfig = setupMinimalBot(new Rectangle(1, 1, 5000, 5000));
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Wait for bot to complete
-        waitForBotToBuildup(dbBotConfig);
-        assertWholeItemCount(4);
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-        mgmtService.backup();
-        try {
-            botService.getDbBotConfigCrudServiceHelper().deleteDbChild(dbBotConfig);
-            Assert.fail("Bot is in backup table and can not be deleted");
-        } catch (Exception e) {
-        }
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
     }
 }

@@ -17,9 +17,12 @@ import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * User: beat
@@ -52,4 +55,10 @@ public interface AbstractBaseService {
     boolean isHouseSpaceExceeded(SimpleBase simpleBase) throws NoSuchItemTypeException;
 
     Level getLevel(SimpleBase simpleBase);
+
+    boolean isAlive(SimpleBase base);
+
+    SimpleBase createBotBase(BotConfig botConfig);
+
+    Collection<SyncBaseItem> getItems(SimpleBase simpleBase);
 }

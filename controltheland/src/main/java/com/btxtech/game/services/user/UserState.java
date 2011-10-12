@@ -26,7 +26,6 @@ import java.io.Serializable;
  * Time: 10:42:00
  */
 public class UserState implements Serializable {
-    private DbBotConfig botConfig;
     private User user;
     private Base base;
     private DbAbstractLevel currentAbstractLevel;
@@ -35,18 +34,6 @@ public class UserState implements Serializable {
 
     public boolean isRegistered() {
         return user != null;
-    }
-
-    public void setBotConfig(DbBotConfig botConfig) {
-        this.botConfig = botConfig;
-    }
-
-    public boolean isBot() {
-        return botConfig != null;
-    }
-
-    public DbBotConfig getBotConfig() {
-        return botConfig;
     }
 
     public void setBase(Base base) {

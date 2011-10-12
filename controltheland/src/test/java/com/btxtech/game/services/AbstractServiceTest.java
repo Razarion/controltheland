@@ -16,6 +16,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ResourceType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
@@ -1181,6 +1182,7 @@ abstract public class AbstractServiceTest {
         DbBotConfig dbBotConfig = botService.getDbBotConfigCrudServiceHelper().createDbChild();
         dbBotConfig.setActionDelay(10);
         dbBotConfig.setRealm(realm);
+        dbBotConfig.setRealGameBot(true);
         DbBotItemConfig builder = dbBotConfig.getBotItemCrud().createDbChild();
         builder.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
         builder.setCount(1);
@@ -1198,13 +1200,13 @@ abstract public class AbstractServiceTest {
         return dbBotConfig;
     }
 
-    protected void waitForBotToBuildup(DbBotConfig dbBotConfig) throws InterruptedException, TimeoutException {
-        waitForBotToBuildup(dbBotConfig, 100000);
+    protected void waitForBotToBuildup(BotConfig botConfig) throws InterruptedException, TimeoutException {
+        waitForBotToBuildup(botConfig, 100000);
     }
 
-    protected void waitForBotToBuildup(DbBotConfig dbBotConfig, int timeOut) throws InterruptedException, TimeoutException {
+    protected void waitForBotToBuildup(BotConfig botConfig, int timeOut) throws InterruptedException, TimeoutException {
         long maxTime = System.currentTimeMillis() + timeOut;
-        while (!botService.getBotRunner(dbBotConfig).isBuildup()) {
+        while (!botService.getBotRunner(botConfig).isBuildup()) {
             if (System.currentTimeMillis() > maxTime) {
                 throw new TimeoutException();
             }

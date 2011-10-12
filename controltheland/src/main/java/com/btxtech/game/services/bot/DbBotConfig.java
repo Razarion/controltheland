@@ -14,10 +14,13 @@
 package com.btxtech.game.services.bot;
 
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotItemConfig;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.common.db.RectangleUserType;
+import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.user.UserService;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Columns;
@@ -33,6 +36,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -60,6 +65,7 @@ public class DbBotConfig implements CrudChild, CrudParent {
     private Long maxInactiveMs;
     private Long minActiveMs;
     private Long maxActiveMs;
+    private boolean realGameBot;
 
     @Transient
     private CrudChildServiceHelper<DbBotItemConfig> botItemCrud;
@@ -109,17 +115,6 @@ public class DbBotConfig implements CrudChild, CrudParent {
         this.name = name;
     }
 
-    public boolean isIntervalBot() {
-        return minInactiveMs != null || maxInactiveMs != null || minActiveMs != null || maxActiveMs != null;
-    }
-
-    public boolean isIntervalValid() {
-        return !(minInactiveMs == null || maxInactiveMs == null || minActiveMs == null || maxActiveMs == null)
-                && !(minInactiveMs <= 0 || maxInactiveMs <= 0 || minActiveMs <= 0 || maxActiveMs <= 0)
-                && minInactiveMs <= maxInactiveMs
-                && minActiveMs <= maxActiveMs;
-    }
-
     public Long getMinInactiveMs() {
         return minInactiveMs;
     }
@@ -152,6 +147,14 @@ public class DbBotConfig implements CrudChild, CrudParent {
         this.maxActiveMs = maxActiveMs;
     }
 
+    public boolean isRealGameBot() {
+        return realGameBot;
+    }
+
+    public void setRealGameBot(boolean realGameBot) {
+        this.realGameBot = realGameBot;
+    }
+
     @Override
     public void init(UserService userService) {
         actionDelay = 3000;
@@ -168,5 +171,21 @@ public class DbBotConfig implements CrudChild, CrudParent {
             botItemCrud = new CrudChildServiceHelper<DbBotItemConfig>(botItems, DbBotItemConfig.class, this);
         }
         return botItemCrud;
+    }
+
+    public BotConfig createBotConfig(ItemService itemService) {
+        Collection<BotItemConfig> botItems = new ArrayList<BotItemConfig>();
+        if (this.botItems != null) {
+            for (DbBotItemConfig botItem : this.botItems) {
+                botItems.add(botItem.createBotItemConfig(itemService));
+            }
+        }
+        int tmpId;
+        if (id != null) {
+            tmpId = id;
+        } else {
+            tmpId = System.identityHashCode(this);
+        }
+        return new BotConfig(tmpId, actionDelay, botItems, realm, name, minInactiveMs, maxInactiveMs, minActiveMs, maxActiveMs);
     }
 }
