@@ -1178,6 +1178,25 @@ abstract public class AbstractServiceTest {
 
     // ------------------- Setup minimal bot --------------------
 
+    protected DbBotConfig setupMinimalNoAttackBot(Rectangle realm) {
+        DbBotConfig dbBotConfig = botService.getDbBotConfigCrudServiceHelper().createDbChild();
+        dbBotConfig.setActionDelay(10);
+        dbBotConfig.setRealm(realm);
+        dbBotConfig.setRealGameBot(true);
+        DbBotItemConfig builder = dbBotConfig.getBotItemCrud().createDbChild();
+        builder.setBaseItemType(itemService.getDbBaseItemType(TEST_START_BUILDER_ITEM_ID));
+        builder.setCount(1);
+        builder.setCreateDirectly(true);
+        builder.setRegion(realm);
+        DbBotItemConfig factory = dbBotConfig.getBotItemCrud().createDbChild();
+        factory.setBaseItemType(itemService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
+        factory.setCount(1);
+        factory.setRegion(realm);
+        botService.getDbBotConfigCrudServiceHelper().updateDbChild(dbBotConfig);
+        botService.activate();
+        return dbBotConfig;
+    }
+
     protected DbBotConfig setupMinimalBot(Rectangle realm) {
         DbBotConfig dbBotConfig = botService.getDbBotConfigCrudServiceHelper().createDbChild();
         dbBotConfig.setActionDelay(10);

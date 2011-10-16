@@ -14,6 +14,7 @@
 package com.btxtech.game.services.mgmt.impl;
 
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
@@ -345,11 +346,18 @@ public class GenericItemConverter {
         }
         if (syncBaseItem.hasSyncWeapon()) {
             if (syncBaseItem.getSyncWeapon().getTarget() != null) {
-                GenericBaseItem target = (GenericBaseItem) genericItems.get(syncBaseItem.getSyncWeapon().getTarget());
-                if (target == null) {
-                    log.error("BACKUP: No generic syncBaseItem for: " + syncBaseItem.getSyncWeapon().getTarget());
+                try {
+                    SimpleBase simpleBase = ((SyncBaseItem) itemService.getItem(syncBaseItem.getSyncWeapon().getTarget())).getBase();
+                    if (!baseService.isBot(simpleBase)) {
+                        GenericBaseItem target = (GenericBaseItem) genericItems.get(syncBaseItem.getSyncWeapon().getTarget());
+                        if (target == null) {
+                            log.error("BACKUP: No generic syncBaseItem for: " + syncBaseItem.getSyncWeapon().getTarget());
+                        }
+                        genericBaseItem.setBaseTarget(target);
+                    }
+                } catch (ItemDoesNotExistException e) {
+                    log.error("", e);
                 }
-                genericBaseItem.setBaseTarget(target);
             }
         }
         if (syncBaseItem.hasSyncBuilder()) {

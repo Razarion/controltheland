@@ -330,6 +330,62 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
+    public void botAttacking() throws Exception {
+        configureMinimalGame();
+        System.out.println("**** bot ****");
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        BotConfig botConfig = setupMinimalNoAttackBot(new Rectangle(4000, 4000, 3000, 3000)).createBotConfig(itemService);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        waitForBotToBuildup(botConfig);
+
+        Assert.assertEquals(1, baseService.getBases().size());
+        SimpleBase botBase = baseService.getBases().get(0).getSimpleBase();
+
+
+        // U1 reg user
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        userService.createUser("U1", "test", "test", "test");
+        userService.login("U1", "test");
+        movableService.getGameInfo();
+        movableService.sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, "", "", 0, 0);
+        SimpleBase realUser = ((RealityInfo) movableService.getGameInfo()).getBase();
+        Index buildPos = collisionService.getFreeRandomPosition(itemService.getItemType(TEST_FACTORY_ITEM_ID), new Rectangle(0, 0, 100000, 100000), 400, true);
+        sendBuildCommand(getFirstSynItemId(realUser, TEST_START_BUILDER_ITEM_ID), buildPos, TEST_FACTORY_ITEM_ID);
+        waitForActionServiceDone();
+        sendFactoryCommand(getFirstSynItemId(realUser, TEST_FACTORY_ITEM_ID), TEST_ATTACK_ITEM_ID);
+        waitForActionServiceDone();
+        sendAttackCommand(getFirstSynItemId(realUser, TEST_ATTACK_ITEM_ID), getFirstSynItemId(botBase, TEST_FACTORY_ITEM_ID));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        mgmtService.backup();
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        assertBackupSummery(1, 3, 1, 1);
+        List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
+        mgmtService.restore(backupSummaries.get(0).getDate());
+        waitForActionServiceDone();
+        waitForBotToBuildup(botConfig);
+        Assert.assertEquals(2, baseService.getBases().size());
+        Assert.assertEquals(1, userService.getAllUserStates().size());
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+
+    }
+
+    @Test
+    @DirtiesContext
     public void conditionServiceImpl() throws Exception {
         configureMinimalGame();
         System.out.println("**** twoRegUserOneUnregUserAllOffline ****");
