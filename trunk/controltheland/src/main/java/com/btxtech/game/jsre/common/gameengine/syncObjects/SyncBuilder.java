@@ -65,7 +65,7 @@ public class SyncBuilder extends SyncBaseAbility {
             } else {
                 syncItemArea = toBeBuiltType.getBoundingBox().createSyntheticSyncItemArea(toBeBuildPosition);
             }
-            recalculateNewPath(builderType.getRange(), syncItemArea);
+            destinationAngel = recalculateNewPath(builderType.getRange(), syncItemArea);
             getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
             return true;
         }
@@ -173,7 +173,7 @@ public class SyncBuilder extends SyncBaseAbility {
 
         toBeBuiltType = tmpToBeBuiltType;
         toBeBuildPosition = builderCommand.getPositionToBeBuilt();
-        destinationAngel = null;
+        destinationAngel = builderCommand.getDestinationAngel();
         setPathToDestinationIfSyncMovable(builderCommand.getPathToDestination());
     }
 

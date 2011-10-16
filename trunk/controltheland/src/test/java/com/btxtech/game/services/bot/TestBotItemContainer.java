@@ -178,7 +178,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         DbBotItemConfig config2 = new DbBotItemConfig();
         config2.setCount(1);
         config2.setBaseItemType(itemService.getDbBaseItemType(TEST_FACTORY_ITEM_ID));
-        config2.setRegion(new Rectangle(2000, 2000, 2000, 2000));
+        config2.setRegion(new Rectangle(4000, 2000, 2000, 2000));
         dbBotItemConfigs.add(config2);
         DbBotItemConfig config3 = new DbBotItemConfig();
         config3.setCount(3);
@@ -187,7 +187,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         DbBotItemConfig config4 = new DbBotItemConfig();
         config4.setCount(2);
         config4.setBaseItemType(itemService.getDbBaseItemType(TEST_SIMPLE_BUILDING_ID));
-        config4.setRegion(new Rectangle(2000, 2000, 2000, 2000));
+        config4.setRegion(new Rectangle(4000, 4000, 2000, 2000));
         config4.setCreateDirectly(true);
         dbBotItemConfigs.add(config4);
 

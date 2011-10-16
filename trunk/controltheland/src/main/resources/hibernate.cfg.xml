@@ -100,6 +100,7 @@
         <mapping class="com.btxtech.game.services.tutorial.hint.DbResourceHintConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.hint.DbTerrainPositionSpeechBubbleHintConfig"/>
         <mapping class="com.btxtech.game.services.tutorial.hint.DbCockpitSpeechBubbleHintConfig"/>
+        <mapping class="com.btxtech.game.services.tutorial.DbTaskBot"/>
         <!-- Backup -->
         <mapping class="com.btxtech.game.services.mgmt.impl.BackupEntry"/>
         <mapping class="com.btxtech.game.services.mgmt.impl.GenericBaseItem"/>

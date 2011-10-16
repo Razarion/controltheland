@@ -13,6 +13,7 @@ import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisio
 import com.btxtech.game.jsre.common.gameengine.services.collision.PassableRectangle;
 import com.btxtech.game.jsre.common.gameengine.services.collision.Path;
 import com.btxtech.game.jsre.common.gameengine.services.collision.PathCanNotBeFoundException;
+import com.btxtech.game.jsre.common.gameengine.services.collision.PlaceCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.collision.Port;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
@@ -38,10 +39,10 @@ import java.util.logging.Logger;
 public abstract class CommonCollisionServiceImpl implements CommonCollisionService {
     protected static final int STEPS_ANGEL = 30;
     protected static final int STEPS_DISTANCE = 50;
-    protected static final int MAX_TRIES = 1000000;
+    protected static final int MAX_TRIES = 10000;
     private static final int MAX_RANGE_RALLY_POINT = 300;
     private Map<TerrainType, List<PassableRectangle>> passableRectangles4TerrainType = new HashMap<TerrainType, List<PassableRectangle>>();
-    private static Logger log = Logger.getLogger(CommonCollisionServiceImpl.class.getName());
+    private Logger log = Logger.getLogger(CommonCollisionServiceImpl.class.getName());
 
     protected abstract Services getServices();
 
@@ -191,7 +192,10 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
             if (!getServices().getTerrainService().isFree(attackFormationItem.getDestinationHint(), syncBaseItem.getItemType())) {
                 continue;
             }
-            if (getServices().getItemService().isSyncItemOverlapping(syncBaseItem, attackFormationItem.getDestinationHint(), placeAbleItems)) {
+            if (getServices().getItemService().isSyncItemOverlapping(syncBaseItem,
+                    attackFormationItem.getDestinationHint(),
+                    attackFormationItem.getDestinationAngel(),
+                    placeAbleItems)) {
                 continue;
             }
             attackFormation.lastAccepted();
@@ -233,44 +237,9 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
         return setupDestinationHints(target.getSyncItemArea(), target.getTerrainType(), items);
     }
 
-    private Index getFreeSyncMovableRandomPositionIfTaken(SyncItem syncItem, int targetMaxRange) {
-        ItemType itemType = syncItem.getItemType();
-        Index origin = syncItem.getSyncItemArea().getPosition();
-        BoundingBox boundingBox = itemType.getBoundingBox();
-        int targetMinRange = boundingBox.getMaxRadius();
-        int delta = (targetMaxRange - targetMinRange) / STEPS_DISTANCE;
-        for (int distance = 0; distance < (targetMaxRange - targetMinRange); distance += delta) {
-            for (double angel = 0.0; angel < 2.0 * Math.PI; angel += (2.0 * Math.PI / STEPS_ANGEL)) {
-                Index point = origin.getPointFromAngelToNord(angel, distance + targetMinRange);
-
-                if (point.getX() >= getServices().getTerrainService().getTerrainSettings().getPlayFieldXSize()) {
-                    continue;
-                }
-                if (point.getY() >= getServices().getTerrainService().getTerrainSettings().getPlayFieldYSize()) {
-                    continue;
-                }
-                if (!getServices().getTerrainService().isFree(point, boundingBox.getMaxDiameter(), boundingBox.getMaxDiameter(), itemType.getTerrainType().getSurfaceTypes())) {
-                    continue;
-                }
-                if (getServices().getItemService().isSyncItemOverlapping(syncItem, point, null)) {
-                    continue;
-
-                }
-                return point;
-            }
-        }
-
-        log.log(Level.SEVERE, "getFreeSyncMovableRandomPositionIfTaken: Can not find free position. "
-                + syncItem
-                + " Origin: " + origin
-                + " targetMinRange: " + targetMinRange
-                + " targetMaxRange: " + targetMaxRange);
-        return null;
-    }
-
     @Override
     public List<Index> setupPathToSyncMovableRandomPositionIfTaken(SyncItem syncItem) {
-        Index position = getFreeSyncMovableRandomPositionIfTaken(syncItem, 500);
+        Index position = getFreeRandomPosition(syncItem.getItemType(), Rectangle.generateRectangleFromMiddlePoint(syncItem.getSyncItemArea().getPosition(), 500, 500), 0, false);
         if (position != null) {
             return setupPathToDestination(syncItem.getSyncItemArea().getPosition(), position, syncItem.getTerrainType());
         } else {
@@ -347,14 +316,16 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
             if (!getServices().getTerrainService().isFree(point, itemType)) {
                 continue;
             }
-            Index start = point.sub(new Index(itemFreeRange / 2, itemFreeRange / 2));
-            Rectangle rectangle = new Rectangle(start.getX(), start.getY(), itemFreeRange, itemFreeRange);
+            int width = itemFreeRange + itemType.getBoundingBox().getWidth();
+            int height = itemFreeRange + itemType.getBoundingBox().getHeight();
+            Index start = point.sub(new Index(width / 2, height / 2));
+            Rectangle rectangle = new Rectangle(start.getX(), start.getY(), width, height);
             if (getServices().getItemService().hasItemsInRectangle(rectangle)) {
                 continue;
             }
             return point;
         }
-        throw new IllegalStateException("Can not find free position. itemType: " + itemType + " region: " + region + " itemFreeRange: " + itemFreeRange);
+        throw new PlaceCanNotBeFoundException(itemType, region, itemFreeRange);
     }
 
 

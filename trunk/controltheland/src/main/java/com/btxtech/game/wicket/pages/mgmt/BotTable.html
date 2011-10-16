@@ -13,7 +13,7 @@
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
 <head>
     <title>Bot Table</title>
 </head>
@@ -26,11 +26,13 @@
 
     <table cellpadding="1" cellspacing="1" border="0">
         <tr>
+            <th bgcolor="#dadada">Id</th>
             <th bgcolor="#dadada">Name</th>
             <th bgcolor="#dadada">Edit</th>
             <th bgcolor="#dadada">Delete</th>
         </tr>
         <tr wicket:id="bots">
+            <td wicket:id="id"></td>
             <td><input wicket:id="name" type="text" size="30"></td>
             <td valign="center">
                 <input type="submit" value="Edit" wicket:id="edit"/>
@@ -41,7 +43,7 @@
         </tr>
     </table>
     <br>
-    <input type="submit" value="Save" wicket:id="save"/>    
+    <input type="submit" value="Save" wicket:id="save"/>
     <input type="submit" value="Create" wicket:id="create"/>
     <input type="submit" value="Activate" wicket:id="activate"/>
 </form>

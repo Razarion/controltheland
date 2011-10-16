@@ -301,6 +301,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         List<BackupSummary> backupSummaries = mgmtService.getBackupSummary();
         mgmtService.restore(backupSummaries.get(0).getDate());
         waitForActionServiceDone();
+        waitForBotToBuildup(botConfig);
         Assert.assertEquals(1, baseService.getBases().size());
         Assert.assertEquals(4, baseService.getBases().get(0).getItems().size());
         Assert.assertEquals(0, userService.getAllUserStates().size());
@@ -319,6 +320,7 @@ public class TestBackupRestoreMgmtService extends AbstractServiceTest {
         backupSummaries = mgmtService.getBackupSummary();
         mgmtService.restore(backupSummaries.get(0).getDate());
         waitForActionServiceDone();
+        waitForBotToBuildup(botConfig);
         Assert.assertEquals(1, baseService.getBases().size());
         Assert.assertEquals(4, baseService.getBases().get(0).getItems().size());
         Assert.assertEquals(0, userService.getAllUserStates().size());

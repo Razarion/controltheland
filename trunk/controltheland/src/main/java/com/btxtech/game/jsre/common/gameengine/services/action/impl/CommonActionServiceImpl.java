@@ -114,6 +114,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
                 syncItem.getTerrainType());
         if (format.isInRange()) {
             builderCommand.setPathToDestination(getServices().getCollisionService().setupPathToDestination(syncItem, format.getDestinationHint()));
+            builderCommand.setDestinationAngel(format.getDestinationAngel());
         } else {
             move(syncItem, format.getDestinationHint());
             return;

@@ -20,6 +20,7 @@ import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 /**
@@ -48,6 +49,12 @@ public class BotTable extends MgmtWebPage {
             @Override
             protected void onEditSubmit(DbBotConfig dbBotConfig) {
                 setResponsePage(new BotEditor(dbBotConfig));
+            }
+
+            @Override
+            protected void extendedPopulateItem(Item<DbBotConfig> dbBotConfigItem) {
+                displayId(dbBotConfigItem);
+                super.extendedPopulateItem(dbBotConfigItem);
             }
         };
 

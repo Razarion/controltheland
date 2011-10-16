@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -42,6 +43,7 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
     private Map<Integer, SurfaceImage> surfaceImages = new HashMap<Integer, SurfaceImage>();
     private ArrayList<TerrainListener> terrainListeners = new ArrayList<TerrainListener>();
     private TerrainSettings terrainSettings;
+    private Logger log = Logger.getLogger(AbstractTerrainServiceImpl.class.getName());
 
     @Override
     public Collection<TerrainImagePosition> getTerrainImagePositions() {
@@ -319,7 +321,12 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
         if (x < 0 || y < 0) {
             return false;
         }
-
+        if (x + itemFreeWidth > terrainSettings.getPlayFieldXSize()) {
+            return false;
+        }
+        if (y + itemFreeHeight > terrainSettings.getPlayFieldYSize()) {
+            return false;
+        }
         Rectangle rectangle = new Rectangle(x, y, itemFreeWidth, itemFreeHeight);
         Collection<SurfaceType> surfaceTypes = getSurfaceTypeTilesInRegion(rectangle);
         return !surfaceTypes.isEmpty() && (allowedSurfaces == null || allowedSurfaces.containsAll(surfaceTypes));
@@ -439,19 +446,24 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
     @Override
     public Index correctPosition(SyncItem syncItem, Index position) {
         int x;
-        int maxRadius = syncItem.getItemType().getBoundingBox().getMaxRadius();
-        if (position.getX() - maxRadius < 0) {
-            x = maxRadius;
-        } else if (position.getX() + maxRadius > terrainSettings.getPlayFieldXSize()) {
-            x = terrainSettings.getPlayFieldXSize() - maxRadius;
+        int halfWidth = syncItem.getSyncItemArea().getBoundingBox().getWidth() / 2;
+        if (position.getX() - halfWidth < 0) {
+            log.warning("Corrected min x position for: " + syncItem);
+            x = halfWidth;
+        } else if (position.getX() + halfWidth > terrainSettings.getPlayFieldXSize()) {
+            log.warning("Corrected max x position for: " + syncItem);
+            x = terrainSettings.getPlayFieldXSize() - halfWidth;
         } else {
             x = position.getX();
         }
         int y;
-        if (position.getY() - maxRadius < 0) {
-            y = maxRadius;
-        } else if (position.getY() + maxRadius > terrainSettings.getPlayFieldYSize()) {
-            y = terrainSettings.getPlayFieldYSize() - maxRadius;
+        int halfHeight = syncItem.getSyncItemArea().getBoundingBox().getHeight() / 2;
+        if (position.getY() - halfHeight < 0) {
+            log.warning("Corrected min y position for: " + syncItem);
+            y = halfHeight;
+        } else if (position.getY() + halfHeight > terrainSettings.getPlayFieldYSize()) {
+            log.warning("Corrected max y position for: " + syncItem);
+            y = terrainSettings.getPlayFieldYSize() - halfHeight;
         } else {
             y = position.getY();
         }

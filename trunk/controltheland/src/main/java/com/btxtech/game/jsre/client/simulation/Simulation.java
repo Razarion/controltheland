@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameCommon;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ParametrisedRunnable;
+import com.btxtech.game.jsre.client.bot.ClientBotService;
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.common.Constants;
@@ -96,10 +97,6 @@ public class Simulation implements ConditionServiceListener<Object> {
     }
 
     private void processPreparation(TaskConfig taskConfig) {
-        if (taskConfig.isClearGame()) {
-            GameCommon.clearGame();
-        }
-
         Cockpit.getInstance().setVisibleRadar(taskConfig.isScrollingAllowed());
         MapWindow.getInstance().setScrollingAllowed(taskConfig.isScrollingAllowed());
         Cockpit.getInstance().enableFocusWidget(CockpitWidgetEnum.SCROLL_HOME_BUTTON, taskConfig.isScrollingAllowed());
@@ -107,6 +104,11 @@ public class Simulation implements ConditionServiceListener<Object> {
         Cockpit.getInstance().enableFocusWidget(CockpitWidgetEnum.SELL_BUTTON, taskConfig.isSellingAllowed());
         ClientLevelHandler.getInstance().getLevel().setHouseSpace(taskConfig.getHouseCount());
         Cockpit.getInstance().updateItemLimit();
+
+        if (taskConfig.hasBots()) {
+            ClientBotService.getInstance().setBotConfigs(taskConfig.getBotConfigs());
+            ClientBotService.getInstance().start();
+        }
 
         for (ItemTypeAndPosition itemTypeAndPosition : taskConfig.getOwnItems()) {
             try {
@@ -186,6 +188,7 @@ public class Simulation implements ConditionServiceListener<Object> {
             long time = System.currentTimeMillis();
             activeTask.cleanup();
             ClientUserTracker.getInstance().onTaskFinished(activeTask, time - taskTime, time);
+            cleanupGameEngine(activeTask);
             if (activeTask.getTaskConfig().getFinishImageDuration() > 0 && activeTask.getTaskConfig().getFinishImageId() != null) {
                 tutorialGui.showFinishImage(activeTask.getTaskConfig().getFinishImageId(), activeTask.getTaskConfig().getFinishImageDuration());
                 final Task closedTask = activeTask;
@@ -200,6 +203,12 @@ public class Simulation implements ConditionServiceListener<Object> {
             } else {
                 runNextTask(activeTask);
             }
+        }
+    }
+
+    private void cleanupGameEngine(Task activeTask) {
+        if (activeTask.getTaskConfig().isClearGame()) {
+            GameCommon.clearGame();
         }
     }
 }

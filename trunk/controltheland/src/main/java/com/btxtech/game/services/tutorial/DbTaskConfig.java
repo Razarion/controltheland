@@ -14,6 +14,7 @@
 package com.btxtech.game.services.tutorial;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.jsre.common.tutorial.StepConfig;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
@@ -87,6 +88,10 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     private byte[] finishImageData;
     private int houseCount;
     private String taskText;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "dbTaskConfig", nullable = false)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+    private Set<DbTaskBot> dbTaskBots;
 
     @Transient
     private CrudChildServiceHelper<DbItemTypeAndPosition> itemTypeAndPositionCrudHelper;
@@ -94,6 +99,8 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
     private CrudChildServiceHelper<DbStepConfig> stepConfigCrudHelper;
     @Transient
     private CrudChildServiceHelper<DbTaskAllowedItem> allowedItemHelper;
+    @Transient
+    private CrudChildServiceHelper<DbTaskBot> botCrudHelper;
 
     public Integer getId() {
         return id;
@@ -115,6 +122,7 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         scroll = new Index(0, 0);
         stepConfigs = new ArrayList<DbStepConfig>();
         dbTaskAllowedItems = new HashSet<DbTaskAllowedItem>();
+        dbTaskBots = new HashSet<DbTaskBot>();
     }
 
     @Override
@@ -255,7 +263,8 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
                 accountBalance,
                 finishImageDuration * 1000,
                 name,
-                finishImageId);
+                finishImageId,
+                convertTaskBots(itemService));
     }
 
     public CrudChildServiceHelper<DbItemTypeAndPosition> getItemCrudServiceHelper() {
@@ -281,10 +290,30 @@ public class DbTaskConfig implements CrudParent, CrudChild<DbTutorialConfig> {
         return result;
     }
 
+    private Collection<BotConfig> convertTaskBots(ItemService itemService) {
+        if (dbTaskBots == null || dbTaskBots.isEmpty()) {
+            return null;
+        }
+        List<BotConfig> result = new ArrayList<BotConfig>();
+        for (DbTaskBot dbTaskBot : dbTaskBots) {
+            if (dbTaskBot.getDbBotConfig() != null) {
+                result.add(dbTaskBot.getDbBotConfig().createBotConfig(itemService));
+            }
+        }
+        return result;
+    }
+
     public CrudChildServiceHelper<DbTaskAllowedItem> getAllowedItemHelper() {
         if (allowedItemHelper == null) {
             allowedItemHelper = new CrudChildServiceHelper<DbTaskAllowedItem>(dbTaskAllowedItems, DbTaskAllowedItem.class, this);
         }
         return allowedItemHelper;
+    }
+
+    public CrudChildServiceHelper<DbTaskBot> getBotCrudHelper() {
+        if (botCrudHelper == null) {
+            botCrudHelper = new CrudChildServiceHelper<DbTaskBot>(dbTaskBots, DbTaskBot.class, this);
+        }
+        return botCrudHelper;
     }
 }

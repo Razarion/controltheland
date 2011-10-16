@@ -217,6 +217,21 @@ public class SyncItemArea {
      *
      * @param syncItem        to check against
      * @param positionToCheck position to move this to
+     * @param angel           angel move to. If null -> 0
+     * @return true if contains
+     */
+    public boolean contains(SyncItem syncItem, Index positionToCheck, Double angel) {
+        if (angel == null) {
+            angel = 0.0;
+        }
+        return getBoundingBox().createSyntheticSyncItemArea(positionToCheck, angel).contains(syncItem);
+    }
+
+    /**
+     * Move this SyncItemArea to the given position and
+     *
+     * @param syncItem        to check against
+     * @param positionToCheck position to move this to
      * @return true if contains
      */
     public boolean contains(SyncItem syncItem, Index positionToCheck) {

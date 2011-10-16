@@ -60,6 +60,8 @@ abstract public class AbstractItemService implements ItemService {
      */
     protected abstract <T> T iterateOverItems(ItemHandler<T> itemHandler, T defaultReturn);
 
+    protected abstract Services getServices();
+
     public SyncItem newSyncItem(Id id, Index position, int itemTypeId, SimpleBase base, Services services) throws NoSuchItemTypeException {
         ItemType itemType = getItemType(itemTypeId);
         SyncItem syncItem;
@@ -210,7 +212,12 @@ abstract public class AbstractItemService implements ItemService {
     }
 
     @Override
-    public boolean isSyncItemOverlapping(final SyncItem syncItem, final Index positionToCheck, final Collection<SyncItem> exceptionThem) {
+    public boolean isSyncItemOverlapping(SyncItem syncItem) {
+        return isSyncItemOverlapping(syncItem, null, null, null);
+    }
+
+    @Override
+    public boolean isSyncItemOverlapping(final SyncItem syncItem, final Index positionToCheck, final Double angelToCheck, final Collection<SyncItem> exceptionThem) {
 
         return iterateOverItems(new ItemHandler<Boolean>() {
             @Override
@@ -234,7 +241,7 @@ abstract public class AbstractItemService implements ItemService {
                                 return true;
                             }
                         } else {
-                            if (syncItem.getSyncItemArea().contains(syncBaseItem, positionToCheck)) {
+                            if (syncItem.getSyncItemArea().contains(syncBaseItem, positionToCheck, angelToCheck)) {
                                 return true;
                             }
                         }
@@ -245,7 +252,7 @@ abstract public class AbstractItemService implements ItemService {
                             return true;
                         }
                     } else {
-                        if (syncItem.getSyncItemArea().contains(otherItem, positionToCheck)) {
+                        if (syncItem.getSyncItemArea().contains(otherItem, positionToCheck, angelToCheck)) {
                             return true;
                         }
                     }
@@ -360,5 +367,26 @@ abstract public class AbstractItemService implements ItemService {
         }
     }
 
+    @Override
+    public Collection<SyncBaseItem> getEnemyItems(final SimpleBase simpleBase, final Rectangle region, final boolean ignoreBot) {
+        final Collection<SyncBaseItem> enemyItems = new ArrayList<SyncBaseItem>();
+        iterateOverItems(new ItemHandler<Void>() {
+            @Override
+            public Void handleItem(SyncItem syncItem) {
+                if (!syncItem.getSyncItemArea().hasPosition()) {
+                    return null;
+                }
 
+                if (syncItem instanceof SyncBaseItem
+                        && !((SyncBaseItem) syncItem).getBase().equals(simpleBase)
+                        && region.contains(syncItem.getSyncItemArea().getPosition())
+                        && (!ignoreBot || !getServices().getBaseService().isBot(((SyncBaseItem) syncItem).getBase()))) {
+                    enemyItems.add((SyncBaseItem) syncItem);
+                }
+
+                return null;
+            }
+        }, null);
+        return enemyItems;
+    }
 }

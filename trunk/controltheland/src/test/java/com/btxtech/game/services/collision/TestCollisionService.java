@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.collision.PlaceCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.debug.DebugService;
@@ -51,7 +52,7 @@ public class TestCollisionService extends AbstractServiceTest {
         try {
             collisionService.getFreeRandomPosition(itemType, new Rectangle(4050, 4050, 1000, 1000), 100, true);
             Assert.fail("Exception expected");
-        } catch (IllegalStateException e) {
+        } catch (PlaceCanNotBeFoundException e) {
             // Expceted
         }
     }

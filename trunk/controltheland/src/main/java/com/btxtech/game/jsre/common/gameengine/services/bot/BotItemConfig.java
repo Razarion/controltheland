@@ -16,6 +16,12 @@ public class BotItemConfig implements Serializable {
     private boolean createDirectly;
     private Rectangle region;
 
+    /**
+     * Used by GWT
+     */
+    BotItemConfig() {
+    }
+
     public BotItemConfig(BaseItemType baseItemType, int count, boolean createDirectly, Rectangle region) {
         this.baseItemType = baseItemType;
         this.count = count;

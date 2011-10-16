@@ -27,10 +27,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /**
  * User: beat
@@ -68,18 +66,18 @@ public interface ItemService {
 
     List<? extends SyncItem> getItems(String itemTypeName, SimpleBase simpleBase) throws NoSuchItemTypeException;
 
-    List<SyncBaseItem> getEnemyItems(SimpleBase base, Rectangle region, boolean ignoreBot);
+    Collection<SyncBaseItem> getEnemyItems(SimpleBase base, Rectangle region, boolean ignoreBot);
 
     boolean hasStandingItemsInRect(Rectangle rectangle, SyncItem exceptThat);
 
     boolean isSyncItemOverlapping(SyncItem syncItem);
 
-    boolean isSyncItemOverlapping(SyncItem syncItem, Index positionToCheck, Collection<SyncItem> exceptionThem);
+    boolean isSyncItemOverlapping(SyncItem syncItem, Index positionToCheck, Double angelToCheck, Collection<SyncItem> exceptionThem);
 
     boolean isUnmovableSyncItemOverlapping(BoundingBox boundingBox, Index positionToCheck);
 
     void checkBuildingsInRect(BaseItemType toBeBuiltType, Index toBeBuildPosition);
-    
+
     Collection<SyncBaseItem> getBaseItemsInRadius(Index position, int radius, SimpleBase simpleBase, Collection<BaseItemType> baseItemTypeFilter);
 
     Collection<SyncBaseItem> getBaseItemsInRectangle(Rectangle rectangle, SimpleBase simpleBase, Collection<BaseItemType> baseItemTypeFilter);

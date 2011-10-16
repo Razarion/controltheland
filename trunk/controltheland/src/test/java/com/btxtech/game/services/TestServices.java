@@ -11,12 +11,15 @@ import com.btxtech.game.jsre.common.gameengine.services.itemTypeAccess.ItemTypeA
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.territory.AbstractTerritoryService;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * User: beat
  * Date: 11.10.2011
  * Time: 14:32:37
  */
+@Ignore
 public class TestServices implements Services {
     private ItemService itemService;
     private AbstractTerrainService terrainService;

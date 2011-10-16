@@ -31,6 +31,10 @@ public class TestTerrainService extends AbstractServiceTest {
         Assert.assertFalse(terrainService.isFree(new Index(49, 49), 100, 100, allowedSurfaces));
         Assert.assertTrue(terrainService.isFree(new Index(50, 50), 100, 100, allowedSurfaces));
         Assert.assertFalse(terrainService.isFree(new Index(1050, 50), 100, 100, allowedSurfaces));
+
+        Assert.assertTrue(terrainService.isFree(new Index(9950, 9950), 100, 100, allowedSurfaces));
+        Assert.assertFalse(terrainService.isFree(new Index(9951, 9950), 100, 100, allowedSurfaces));
+        Assert.assertFalse(terrainService.isFree(new Index(9950, 9951), 100, 100, allowedSurfaces));
     }
 
     @Test

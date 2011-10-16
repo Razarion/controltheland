@@ -17,7 +17,9 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
+import com.btxtech.game.jsre.common.gameengine.services.collision.PlaceCanNotBeFoundException;
 
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -159,7 +161,8 @@ public abstract class BotRunner {
     }
 
     private void scheduleTimer(long min, long max) {
-        long delay = min + (long) (Math.random() * (double) (max - min));
+        Random random = new Random();
+        long delay = min + (long) (random.nextDouble() * (double) (max - min));
         scheduleTimer(delay, new BotTimer());
     }
 }

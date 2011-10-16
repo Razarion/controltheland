@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.action.ActionHandler;
+import com.btxtech.game.jsre.client.bot.ClientBotService;
 import com.btxtech.game.jsre.client.collision.ClientCollisionService;
 import com.btxtech.game.jsre.client.control.ClientRunner;
 import com.btxtech.game.jsre.client.control.StartupScreen;
@@ -111,8 +112,7 @@ public class ClientServices implements Services {
 
     @Override
     public CommonBotService getBotService() {
-        // TODO
-        throw new UnsupportedOperationException();
+        return ClientBotService.getInstance();
     }
 
     public ClientRunner getClientRunner() {

@@ -54,6 +54,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -67,6 +68,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
     private final HashSet<SyncTickItem> activeItems = new HashSet<SyncTickItem>();
     private HashSet<SyncTickItem> tmpAddActiveItems = new HashSet<SyncTickItem>();
     private HashSet<SyncTickItem> tmpRemoveActiveItems = new HashSet<SyncTickItem>();
+    private Logger log = Logger.getLogger(ActionHandler.class.getName());
 
     public static ActionHandler getInstance() {
         return INSTANCE;
@@ -104,9 +106,11 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                 } catch (ItemDoesNotExistException ife) {
                     iterator.remove();
                     activeItem.stop();
+                    log.warning("ItemDoesNotExistException");
                 } catch (PositionTakenException ife) {
                     iterator.remove();
                     activeItem.stop();
+                    log.warning("PositionTakenException");
                 } catch (Throwable throwable) {
                     GwtCommon.handleException(throwable);
                     activeItem.stop();

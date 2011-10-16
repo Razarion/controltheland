@@ -19,9 +19,11 @@ import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.tutorial.DbItemTypeAndPosition;
 import com.btxtech.game.services.tutorial.DbStepConfig;
 import com.btxtech.game.services.tutorial.DbTaskAllowedItem;
+import com.btxtech.game.services.tutorial.DbTaskBot;
 import com.btxtech.game.services.tutorial.DbTaskConfig;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import com.btxtech.game.wicket.uiservices.BaseItemTypePanel;
+import com.btxtech.game.wicket.uiservices.BotPanel;
 import com.btxtech.game.wicket.uiservices.CrudChildTableHelper;
 import com.btxtech.game.wicket.uiservices.IndexPanel;
 import com.btxtech.game.wicket.uiservices.ItemTypePanel;
@@ -145,6 +147,29 @@ public class TaskEditor extends MgmtWebPage {
 
             }
         };
+
+        new CrudChildTableHelper<DbTaskConfig, DbTaskBot>("botTable", null, "createBot", false, form, false) {
+            @Override
+            protected RuServiceHelper<DbTaskConfig> getRuServiceHelper() {
+                return ruTaskServiceHelper;
+            }
+
+            @Override
+            protected DbTaskConfig getParent() {
+                return (DbTaskConfig) form.getDefaultModelObject();
+            }
+
+            @Override
+            protected CrudChildServiceHelper<DbTaskBot> getCrudChildServiceHelperImpl() {
+                return ((DbTaskConfig) form.getDefaultModelObject()).getBotCrudHelper();
+            }
+
+            @Override
+            protected void extendedPopulateItem(final Item<DbTaskBot> dbTaskBotItem) {
+                dbTaskBotItem.add(new BotPanel("dbBotConfig"));
+            }
+        };
+
         new CrudChildTableHelper<DbTaskConfig, DbStepConfig>("stepTable", null, "createStep", true, form, true) {
             @Override
             protected void onEditSubmit(DbStepConfig dbStepConfig) {
