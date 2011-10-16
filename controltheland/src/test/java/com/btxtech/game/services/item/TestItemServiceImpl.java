@@ -14,6 +14,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.awt.*;
+
 /**
  * User: beat
  * Date: 26.08.2011
@@ -77,6 +79,35 @@ public class TestItemServiceImpl extends AbstractServiceTest {
         SyncItem syncItem2 = itemService.createSyncObject(itemType2, new Index(1396, 2225), null, base2, 0);
 
 
-        Assert.assertFalse(itemService.isSyncItemOverlapping(syncItem2, new Index(1425, 2331), null));
+        Assert.assertFalse(itemService.isSyncItemOverlapping(syncItem2, new Index(1425, 2331), null, null));
     }
+
+    @Test
+    @DirtiesContext
+    public void isSyncItemOverlappingAngel() throws Exception {
+        configureMinimalGame();
+
+        SimpleBase base1 = new SimpleBase(1);
+        SimpleBase base2 = new SimpleBase(2);
+
+
+        BaseService baseService = EasyMock.createNiceMock(BaseService.class);
+        EasyMock.expect(baseService.isAlive(EasyMock.<SimpleBase>anyObject())).andReturn(true).anyTimes();
+        setPrivateField(ItemServiceImpl.class, itemService, "baseService", baseService);
+
+        EasyMock.replay(baseService);
+
+
+        ItemType itemType1 = itemService.getItemType(TEST_HARVESTER_ITEM_ID);
+        itemType1.setBoundingBox(new BoundingBox(180, 130, 182, 120, 1));
+        itemService.createSyncObject(itemType1, new Index(2820, 2626), null, base1, 0);
+
+        ItemType itemType2 = itemService.getItemType(TEST_ATTACK_ITEM_ID);
+        itemType2.setBoundingBox(new BoundingBox(80, 80, 54, 60, 24));
+        SyncItem syncItem2 = itemService.createSyncObject(itemType2, new Index(2940, 2609), null, base2, 0);
+
+        Assert.assertFalse(itemService.isSyncItemOverlapping(syncItem2, new Index(2940, 2609), null, null));
+        Assert.assertTrue(itemService.isSyncItemOverlapping(syncItem2, new Index(2940, 2609), 0.2053953891897674, null));
+    }
+
 }

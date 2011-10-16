@@ -23,6 +23,7 @@ import com.btxtech.game.jsre.client.common.Index;
 public class BuilderCommand extends PathToDestinationCommand {
     private int toBeBuilt;
     private Index positionToBeBuilt;
+    private double destinationAngel;
 
     public int getToBeBuilt() {
         return toBeBuilt;
@@ -38,6 +39,14 @@ public class BuilderCommand extends PathToDestinationCommand {
 
     public void setPositionToBeBuilt(Index positionToBeBuilt) {
         this.positionToBeBuilt = positionToBeBuilt;
+    }
+
+    public double getDestinationAngel() {
+        return destinationAngel;
+    }
+
+    public void setDestinationAngel(double destinationAngel) {
+        this.destinationAngel = destinationAngel;
     }
 
     @Override

@@ -65,6 +65,9 @@ public class TestBotService extends AbstractServiceTest {
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
 
+        // Wait for bot to complete
+        waitForBotToBuildup(botConfig);
+
         SessionFactoryUtils.initDeferredClose(getHibernateTemplate().getSessionFactory());
         try {
             botService.activate();
@@ -76,38 +79,6 @@ public class TestBotService extends AbstractServiceTest {
         // Wait for bot to complete
         waitForBotToBuildup(botConfig);
         assertWholeItemCount(4);
-    }
-
-    @Test
-    @DirtiesContext
-    public void testSaveRestoreBot() throws Exception {
-        configureMinimalGame();
-
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        BotConfig botConfig = setupMinimalBot(new Rectangle(1, 1, 5000, 5000)).createBotConfig(itemService);
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Wait for bot to complete
-        waitForBotToBuildup(botConfig);
-        assertWholeItemCount(4);
-
-        // Save
-        beginHttpSession();
-        beginHttpRequestAndOpenSessionInViewFilter();
-
-        mgmtService.backup();
-        mgmtService.restore(mgmtService.getBackupSummary().get(0).getDate());
-
-        endHttpRequestAndOpenSessionInViewFilter();
-        endHttpSession();
-
-        // Wait for bot to complete
-        waitForBotToBuildup(botConfig);
-        assertWholeItemCount(0);
     }
 
     @Test

@@ -52,7 +52,7 @@ public class IntruderHandler {
 
     public void handleIntruders(SimpleBase simpleBase) {
         removeDeadAttackers();
-        List<SyncBaseItem> items = services.getItemService().getEnemyItems(simpleBase, region, true);
+        Collection<SyncBaseItem> items = services.getItemService().getEnemyItems(simpleBase, region, true);
         Map<SyncBaseItem, Collection<BotSyncBaseItem>> oldIntruders = intruders;
         intruders = new HashMap<SyncBaseItem, Collection<BotSyncBaseItem>>();
         for (SyncBaseItem intruder : items) {

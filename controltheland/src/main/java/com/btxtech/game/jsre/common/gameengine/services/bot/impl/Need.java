@@ -109,7 +109,7 @@ public class Need {
                 }
             }
         }
-        throw new IllegalStateException("No DbBotItemConfig found for: " + botSyncBaseItem);
+        throw new IllegalStateException("No DbBotItemConfig found for: " + botSyncBaseItem.getSyncBaseItem());
     }
 
 }

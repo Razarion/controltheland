@@ -52,7 +52,11 @@ public class SyncMovable extends SyncBaseAbility {
     }
 
     boolean tickMove(double factor, Double destinationAngel) {
-        if (pathToDestination == null || pathToDestination.isEmpty()) {
+        if (pathToDestination == null) {
+            return false;
+        }
+
+        if (pathToDestination.isEmpty()) {
             pathToDestination = null;
             // no new destination
             return onFinished();
@@ -160,7 +164,7 @@ public class SyncMovable extends SyncBaseAbility {
             throw new IllegalArgumentException("Can not contain oneself: " + getSyncBaseItem());
         }
         targetContainer = loadContainCommand.getItemContainer();
-        pathToDestination = loadContainCommand.getPathToDestination();        
+        pathToDestination = loadContainCommand.getPathToDestination();
     }
 
     public List<Index> getPathToDestination() {

@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
@@ -378,6 +379,11 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
+    protected Services getServices() {
+        return services;
+    }
+
+    @Override
     protected AbstractBaseService getBaseService() {
         return baseService;
     }
@@ -625,30 +631,6 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             }
         }
         return syncItems;
-    }
-
-    @Override
-    public List<SyncBaseItem> getEnemyItems(SimpleBase simpleBase, Rectangle region, boolean ignoreBot) {
-        ArrayList<SyncBaseItem> clientBaseItems = new ArrayList<SyncBaseItem>();
-        synchronized (items) {
-            for (SyncItem syncItem : items.values()) {
-                if (!syncItem.getSyncItemArea().hasPosition()) {
-                    continue;
-                }
-                if (syncItem instanceof SyncBaseItem
-                        && !((SyncBaseItem) syncItem).getBase().equals(simpleBase)
-                        && region.contains(syncItem.getSyncItemArea().getPosition())
-                        && (!ignoreBot || !baseService.isBot(((SyncBaseItem) syncItem).getBase()))) {
-                    clientBaseItems.add((SyncBaseItem) syncItem);
-                }
-            }
-        }
-        return clientBaseItems;
-    }
-
-    @Override
-    public boolean isSyncItemOverlapping(SyncItem syncItem) {
-        return isSyncItemOverlapping(syncItem, null, null);
     }
 
     @Override

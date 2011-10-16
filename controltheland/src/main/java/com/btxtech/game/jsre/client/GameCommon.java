@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.action.ActionHandler;
+import com.btxtech.game.jsre.client.bot.ClientBotService;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 
@@ -24,6 +25,7 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
  */
 public class GameCommon {
     public static void clearGame() {
+        ClientBotService.getInstance().clear();
         ItemContainer.getInstance().clear();
         ActionHandler.getInstance().clear();
         SelectionHandler.getInstance().clearSelection();

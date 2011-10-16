@@ -31,6 +31,7 @@ import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ProjectileItemType;
+import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
@@ -141,8 +142,12 @@ public class ItemContainer extends AbstractItemService {
             ClientBase.getInstance().checkItemLimit4ItemAdding((BaseItemType) toBeBuilt);
         }
         ClientSyncItem itemView;
+        int parentId = Id.NO_ID;
+        if (creator != null) {
+            parentId = creator.getId().getId();
+        }
         if (Connection.getInstance().getGameInfo().hasServerCommunication()) {
-            Id id = new Id(creator.getId().getId(), createdChildCount);
+            Id id = new Id(parentId, createdChildCount);
             itemView = items.get(id);
             if (itemView != null) {
                 return itemView.getSyncItem();
@@ -156,7 +161,7 @@ public class ItemContainer extends AbstractItemService {
             orphanItems.put(id, itemView);
             itemView.setHidden(true);
         } else {
-            Id id = createSimulationId();
+            Id id = createSimulationId(parentId, createdChildCount);
             itemView = createAndAddItem(id, position, toBeBuilt.getId(), base);
             itemView.setHidden(false);
             id.setUserTimeStamp(System.currentTimeMillis());
@@ -166,11 +171,11 @@ public class ItemContainer extends AbstractItemService {
         return itemView.getSyncItem();
     }
 
-    public Id createSimulationId(int id) {
-        return new Id(id, -1, -1);
+    public Id createSimulationId(int id, int parentId, int createdChildCount) {
+        return new Id(id, parentId, createdChildCount);
     }
 
-    private Id createSimulationId() {
+    private Id createSimulationId(int parentId, int createdChildCount) {
         int intId = 1;
         for (Id id : items.keySet()) {
             if (id.getId() > intId) {
@@ -178,7 +183,7 @@ public class ItemContainer extends AbstractItemService {
             }
         }
         intId++;
-        return createSimulationId(intId);
+        return createSimulationId(intId, parentId, createdChildCount);
     }
 
     public ClientSyncItem getSimulationItem(int intId) {
@@ -191,7 +196,7 @@ public class ItemContainer extends AbstractItemService {
     }
 
     public SyncItem createSimulationSyncObject(ItemTypeAndPosition itemTypeAndPosition) throws NoSuchItemTypeException {
-        Id id = createSimulationId(itemTypeAndPosition.getId());
+        Id id = createSimulationId(itemTypeAndPosition.getId(), Id.SIMULATION_ID, Id.SIMULATION_ID);
         if (items.containsKey(id)) {
             throw new IllegalStateException(this + " simulated id is already used: " + id);
         }
@@ -296,6 +301,13 @@ public class ItemContainer extends AbstractItemService {
         return defaultReturn;
     }
 
+    @Override
+    protected Services getServices() {
+        return ClientServices.getInstance();
+    }
+
+    // TODO move up
+
     public Collection<ClientSyncItem> getItemsInRect(Rectangle rectangle, boolean onlyOwnItems) {
         ArrayList<ClientSyncItem> clientBaseItems = new ArrayList<ClientSyncItem>();
         for (ClientSyncItem clientSyncItem : items.values()) {
@@ -314,6 +326,8 @@ public class ItemContainer extends AbstractItemService {
         }
         return clientBaseItems;
     }
+
+    // TODO move up
 
     @Override
     public Collection<SyncBaseItem> getBaseItemsInRectangle(Rectangle rectangle, SimpleBase simpleBase, Collection<BaseItemType> baseItemTypeFilter) {
@@ -338,10 +352,7 @@ public class ItemContainer extends AbstractItemService {
         return result;
     }
 
-    @Override
-    public boolean isSyncItemOverlapping(SyncItem syncItem) {
-        return isSyncItemOverlapping(syncItem, null, null);
-    }
+    // TODO move up
 
     public Collection<ClientSyncItem> getOwnItems() {
         ArrayList<ClientSyncItem> clientBaseItems = new ArrayList<ClientSyncItem>();
@@ -356,10 +367,7 @@ public class ItemContainer extends AbstractItemService {
         return clientBaseItems;
     }
 
-    @Override
-    public List<SyncBaseItem> getEnemyItems(SimpleBase base, Rectangle region, boolean ignoreBot) {
-        return null;
-    }
+    // TODO move up
 
     public boolean hasOwnAttackingMovable() {
         for (ClientSyncItem clientSyncItem : items.values()) {
@@ -374,6 +382,8 @@ public class ItemContainer extends AbstractItemService {
         }
         return false;
     }
+
+    // TODO move up
 
     @Override
     public List<? extends SyncItem> getItems(ItemType itemType, SimpleBase simpleBase) {

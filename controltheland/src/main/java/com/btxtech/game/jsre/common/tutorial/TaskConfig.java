@@ -14,6 +14,8 @@
 package com.btxtech.game.jsre.common.tutorial;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,6 +41,7 @@ public class TaskConfig implements Serializable {
     private int finishImageDuration;
     private String name;
     private Integer finishImageId;
+    private Collection<BotConfig> botConfigs;
 
     /**
      * Used by GWT
@@ -46,7 +49,7 @@ public class TaskConfig implements Serializable {
     public TaskConfig() {
     }
 
-    public TaskConfig(boolean clearGame, String taskText, ArrayList<ItemTypeAndPosition> ownItems, boolean scrollingAllowed, boolean sellingAllowed, boolean optionAllowed, Index scroll, ArrayList<StepConfig> stepConfigs, Collection<Integer> allowedItemTypes, int houseCount, int accountBalance, int finishImageDuration, String name, Integer finishImageId) {
+    public TaskConfig(boolean clearGame, String taskText, ArrayList<ItemTypeAndPosition> ownItems, boolean scrollingAllowed, boolean sellingAllowed, boolean optionAllowed, Index scroll, ArrayList<StepConfig> stepConfigs, Collection<Integer> allowedItemTypes, int houseCount, int accountBalance, int finishImageDuration, String name, Integer finishImageId, Collection<BotConfig> botConfigs) {
         this.clearGame = clearGame;
         this.taskText = taskText;
         this.ownItems = ownItems;
@@ -61,6 +64,7 @@ public class TaskConfig implements Serializable {
         this.finishImageDuration = finishImageDuration;
         this.name = name;
         this.finishImageId = finishImageId;
+        this.botConfigs = botConfigs;
     }
 
     public boolean isClearGame() {
@@ -117,5 +121,13 @@ public class TaskConfig implements Serializable {
 
     public String getTaskText() {
         return taskText;
+    }
+
+    public Collection<BotConfig> getBotConfigs() {
+        return botConfigs;
+    }
+
+    public boolean hasBots() {
+        return botConfigs != null && !botConfigs.isEmpty();
     }
 }

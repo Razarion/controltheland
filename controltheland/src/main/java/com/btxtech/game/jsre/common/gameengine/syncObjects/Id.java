@@ -26,6 +26,7 @@ public class Id implements Serializable {
     private int childIndex;
     private long userTimeStamp;
     public static final int NO_ID = 0;
+    public static final int SIMULATION_ID = -1;
 
     /**
      * Used by GWT
