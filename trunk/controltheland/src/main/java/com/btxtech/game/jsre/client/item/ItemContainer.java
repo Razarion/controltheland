@@ -130,7 +130,7 @@ public class ItemContainer extends AbstractItemService {
             }
         } else {
             if (clientSyncItem != null) {
-                definitelyKillItem(clientSyncItem, syncItemInfo.isExplode());
+                definitelyKillItem(clientSyncItem, true, syncItemInfo.isExplode());
             }
 
         }
@@ -226,11 +226,14 @@ public class ItemContainer extends AbstractItemService {
 
     @Override
     public void killSyncItem(SyncItem killedItem, SimpleBase actor, boolean force, boolean explode) {
-        ClientSyncItem ClientSyncItem = items.get(killedItem.getId());
+        ClientSyncItem clientSyncItem = items.get(killedItem.getId());
+        if (clientSyncItem == null) {
+            throw new IllegalStateException("No ClientSyncItem for: " + killedItem);
+        }
         if (Connection.getInstance().getGameInfo().hasServerCommunication()) {
-            makeItemSeeminglyDead(killedItem, actor, ClientSyncItem);
+            makeItemSeeminglyDead(killedItem, actor, clientSyncItem);
         } else {
-            definitelyKillItem(ClientSyncItem, explode);
+            definitelyKillItem(clientSyncItem, force, explode);
         }
         if (killedItem instanceof SyncBaseItem) {
             SimulationConditionServiceImpl.getInstance().onSyncItemKilled(actor, (SyncBaseItem) killedItem);
@@ -246,7 +249,15 @@ public class ItemContainer extends AbstractItemService {
         }
     }
 
-    private void definitelyKillItem(ClientSyncItem itemView, boolean explode) {
+    private void definitelyKillItem(ClientSyncItem itemView, boolean force, boolean explode) {
+        if (force) {
+            if (itemView.isSyncBaseItem()) {
+                itemView.getSyncBaseItem().setHealth(0);
+            } else if (itemView.isSyncResourceItem()) {
+                itemView.getSyncResourceItem().setAmount(0);
+            }
+        }
+
         items.remove(itemView.getSyncItem().getId());
         if (itemView.isMyOwnProperty()) {
             ownItemCount--;

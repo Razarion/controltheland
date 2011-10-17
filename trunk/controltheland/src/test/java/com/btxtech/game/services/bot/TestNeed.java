@@ -16,6 +16,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * User: beat
@@ -40,7 +41,7 @@ public class TestNeed extends AbstractServiceTest {
         Collection<DbBotItemConfig> dbBotItemConfigs = new ArrayList<DbBotItemConfig>();
         dbBotItemConfigs.add(config1);
 
-        Collection<BotItemConfig> botItemConfigs = TestBotItemContainer.convert(dbBotItemConfigs, itemService);
+        List<BotItemConfig> botItemConfigs = TestBotItemContainer.convert(dbBotItemConfigs, itemService);
 
         Need need = new Need(botItemConfigs);
         Assert.assertEquals(1, need.getNeedCount());

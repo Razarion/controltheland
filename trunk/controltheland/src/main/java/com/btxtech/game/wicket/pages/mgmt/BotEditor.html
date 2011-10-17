@@ -41,6 +41,8 @@
                         <th bgcolor="#dadada">Count</th>
                         <th bgcolor="#dadada">Create Directly</th>
                         <th bgcolor="#dadada">Region</th>
+                        <th bgcolor="#dadada">Move to Realm if Idle</th>
+                        <th bgcolor="#dadada">Idle TTL [ms]</th>
                         <th bgcolor="#dadada">Delete</th>
                     </tr>
                     <tr wicket:id="botItems">
@@ -48,6 +50,8 @@
                         <td><input type="text" wicket:id="count" size="6"></td>
                         <td><input type="checkbox" wicket:id="createDirectly"></td>
                         <td wicket:id="region"></td>
+                        <td><input type="checkbox" wicket:id="moveRealmIfIdle"></td>
+                        <td><input type="text" wicket:id="idleTtl" size="6"></td>
                         <td valign="center">
                             <input type="submit" value="Delete" wicket:id="delete"/>
                         </td>

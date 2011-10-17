@@ -55,6 +55,8 @@ public class DbBotItemConfig implements CrudChild<DbBotConfig>, Serializable {
     private Rectangle region;
     @ManyToOne
     private DbBotConfig parent;
+    private boolean moveRealmIfIdle;
+    private Integer idleTtl;
 
     /**
      * Used by Hibernate
@@ -117,6 +119,22 @@ public class DbBotItemConfig implements CrudChild<DbBotConfig>, Serializable {
         this.region = region;
     }
 
+    public boolean isMoveRealmIfIdle() {
+        return moveRealmIfIdle;
+    }
+
+    public void setMoveRealmIfIdle(boolean moveRealmIfIdle) {
+        this.moveRealmIfIdle = moveRealmIfIdle;
+    }
+
+    public Integer getIdleTtl() {
+        return idleTtl;
+    }
+
+    public void setIdleTtl(Integer idleTtl) {
+        this.idleTtl = idleTtl;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -134,6 +152,6 @@ public class DbBotItemConfig implements CrudChild<DbBotConfig>, Serializable {
 
     public BotItemConfig createBotItemConfig(ItemService itemService) {
         BaseItemType baseItemType = (BaseItemType) itemService.getItemType(this.baseItemType);
-        return new BotItemConfig(baseItemType, count, createDirectly, region);
+        return new BotItemConfig(baseItemType, count, createDirectly, region, moveRealmIfIdle, idleTtl);
     }
 }
