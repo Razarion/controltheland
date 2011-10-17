@@ -64,10 +64,11 @@ public class Need {
     public void onItemAdded(BotSyncBaseItem botSyncBaseItem) {
         BotItemConfig botItemConfig = getSuitableDbBotItemConfig(botSyncBaseItem, false);
         setNeedCount(botItemConfig, false);
+        botSyncBaseItem.setBotItemConfig(botItemConfig);
     }
 
     public void onItemRemoved(BotSyncBaseItem botSyncBaseItem) {
-        BotItemConfig botItemConfig = getSuitableDbBotItemConfig(botSyncBaseItem, true);
+        BotItemConfig botItemConfig = botSyncBaseItem.getBotItemConfig();
         setNeedCount(botItemConfig, true);
     }
 

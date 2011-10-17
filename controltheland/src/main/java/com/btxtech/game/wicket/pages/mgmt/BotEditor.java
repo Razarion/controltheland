@@ -86,6 +86,8 @@ public class BotEditor extends MgmtWebPage {
                 item.add(new TextField("count"));
                 item.add(new CheckBox("createDirectly"));
                 item.add(new RectanglePanel("region"));
+                item.add(new CheckBox("moveRealmIfIdle"));
+                item.add(new TextField("idleTtl"));
             }
         };
 

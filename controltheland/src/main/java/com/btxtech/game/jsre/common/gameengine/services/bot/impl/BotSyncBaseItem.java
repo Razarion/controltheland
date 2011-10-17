@@ -14,8 +14,10 @@
 package com.btxtech.game.jsre.common.gameengine.services.bot.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
-import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionService;
+import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotItemConfig;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
 import java.util.logging.Level;
@@ -28,13 +30,24 @@ import java.util.logging.Logger;
  */
 public class BotSyncBaseItem {
     private SyncBaseItem syncBaseItem;
-    private CommonActionService actionService;
+    private Services services;
+    private BotItemConfig botItemConfig;
     private Logger log = Logger.getLogger(BotSyncBaseItem.class.getName());
-    private boolean idle = true;
+    private boolean idle;
+    private long idleTimeStamp;
 
-    public BotSyncBaseItem(SyncBaseItem syncBaseItem, CommonActionService actionService) {
+    public BotSyncBaseItem(SyncBaseItem syncBaseItem, Services services) {
         this.syncBaseItem = syncBaseItem;
-        this.actionService = actionService;
+        this.services = services;
+        setIdle();
+    }
+
+    public BotItemConfig getBotItemConfig() {
+        return botItemConfig;
+    }
+
+    public void setBotItemConfig(BotItemConfig botItemConfig) {
+        this.botItemConfig = botItemConfig;
     }
 
     public SyncBaseItem getSyncBaseItem() {
@@ -45,6 +58,10 @@ public class BotSyncBaseItem {
         return idle;
     }
 
+    public long getIdleTimeStamp() {
+        return idleTimeStamp;
+    }
+
     public boolean isAbleToBuild(BaseItemType toBeBuilt) {
         return syncBaseItem.hasSyncFactory() && syncBaseItem.getSyncFactory().getFactoryType().isAbleToBuild(toBeBuilt.getId())
                 || syncBaseItem.hasSyncBuilder() && syncBaseItem.getSyncBuilder().getBuilderType().isAbleToBuild(toBeBuilt.getId());
@@ -52,41 +69,66 @@ public class BotSyncBaseItem {
 
     public boolean isAbleToAttack(BaseItemType baseItemType) {
         return syncBaseItem.hasSyncWeapon() && syncBaseItem.hasSyncMovable() && syncBaseItem.getSyncWeapon().getWeaponType().isItemTypeAllowed(baseItemType.getId());
+    }
 
+    public boolean canMove() {
+        return syncBaseItem.hasSyncMovable();
     }
 
     public void buildBuilding(Index position, BaseItemType toBeBuilt) {
         try {
-            actionService.build(syncBaseItem, position, toBeBuilt);
-            idle = false;
+            services.getActionService().build(syncBaseItem, position, toBeBuilt);
+            clearIdle();
         } catch (Exception e) {
-            idle = true;
+            setIdle();
             log.log(Level.SEVERE, "", e);
         }
     }
 
     public void buildUnit(BaseItemType toBeBuilt) {
         try {
-            actionService.fabricate(syncBaseItem, toBeBuilt);
-            idle = false;
+            services.getActionService().fabricate(syncBaseItem, toBeBuilt);
+            clearIdle();
         } catch (Exception e) {
-            idle = true;
+            setIdle();
             log.log(Level.SEVERE, "", e);
         }
     }
 
     public void attack(SyncBaseItem target, Index destinationHint, double destinationAngel) {
         try {
-            actionService.attack(syncBaseItem, target, destinationHint, destinationAngel, true);
-            idle = false;
+            services.getActionService().attack(syncBaseItem, target, destinationHint, destinationAngel, true);
+            clearIdle();
         } catch (Exception e) {
-            idle = true;
+            setIdle();
             log.log(Level.SEVERE, "", e);
         }
     }
 
+    public void move(Rectangle region) {
+        try {
+            Index position = services.getCollisionService().getFreeRandomPosition(syncBaseItem.getBaseItemType(), region, 0, false);
+            services.getActionService().move(syncBaseItem, position);
+            clearIdle();
+        } catch (Exception e) {
+            setIdle();
+            log.log(Level.SEVERE, "", e);
+        }
+    }
+
+    public void kill() {
+        services.getItemService().killSyncItem(syncBaseItem, null, true, false);
+    }
+
     public void updateIdleState() {
-        idle = syncBaseItem.isIdle();
+        boolean tmpIdle = syncBaseItem.isIdle();
+        if(tmpIdle != idle) {
+            if(tmpIdle) {
+                setIdle();
+            } else {
+                clearIdle();
+            }
+        }
     }
 
     public boolean isAlive() {
@@ -95,10 +137,24 @@ public class BotSyncBaseItem {
 
     public void stop() {
         syncBaseItem.stop();
-        idle = true;
+        setIdle();
     }
 
     public double getDistanceTo(SyncBaseItem syncBaseItem) {
         return this.syncBaseItem.getSyncItemArea().getDistance(syncBaseItem);
     }
+
+    public Index getPosition() {
+        return syncBaseItem.getSyncItemArea().getPosition();
+    }
+
+    private void setIdle() {
+        idleTimeStamp = System.currentTimeMillis();
+        idle = true;
+    }
+
+    private void clearIdle() {
+        idle = false;
+    }
+
 }

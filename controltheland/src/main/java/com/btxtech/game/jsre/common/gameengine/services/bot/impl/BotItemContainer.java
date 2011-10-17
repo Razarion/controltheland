@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.common.gameengine.services.bot.impl;
 
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
@@ -44,17 +45,19 @@ public class BotItemContainer {
     private Need need;
     private Logger log = Logger.getLogger(BotItemContainer.class.getName());
     private Services services;
+    private Rectangle realm;
 
-    public BotItemContainer(Collection<BotItemConfig> botItems, Services services) {
+    public BotItemContainer(Collection<BotItemConfig> botItems, Rectangle realm, Services services) {
+        this.realm = realm;
         this.services = services;
         need = new Need(botItems);
     }
 
-    public void buildup(SimpleBase simpleBase) {
-        if (isFulfilled(simpleBase)) {
-            return;
+    public void work(SimpleBase simpleBase) {
+        if (!isFulfilled(simpleBase)) {
+            buildItems(simpleBase);
         }
-        buildItems(simpleBase);
+        handleIdleItems();
     }
 
     public boolean isFulfilled(SimpleBase simpleBase) {
@@ -116,7 +119,7 @@ public class BotItemContainer {
     }
 
     private void add(SyncBaseItem syncBaseItem) {
-        BotSyncBaseItem botSyncBaseItem = new BotSyncBaseItem(syncBaseItem, services.getActionService());
+        BotSyncBaseItem botSyncBaseItem = new BotSyncBaseItem(syncBaseItem, services);
         botItems.put(syncBaseItem, botSyncBaseItem);
         need.onItemAdded(botSyncBaseItem);
     }
@@ -186,4 +189,18 @@ public class BotItemContainer {
         return null;
     }
 
+    private void handleIdleItems() {
+        for (BotSyncBaseItem botSyncBaseItem : botItems.values()) {
+            if (!botSyncBaseItem.isIdle()) {
+                continue;
+            }
+
+            BotItemConfig botItemConfig = botSyncBaseItem.getBotItemConfig();
+            if (botItemConfig.isMoveRealmIfIdle() && botSyncBaseItem.canMove() && !realm.contains(botSyncBaseItem.getPosition())) {
+                botSyncBaseItem.move(realm);
+            } else if (botItemConfig.getIdleTtl() != null && botSyncBaseItem.getIdleTimeStamp() + botItemConfig.getIdleTtl() < System.currentTimeMillis()) {
+                botSyncBaseItem.kill();
+            }
+        }
+    }
 }

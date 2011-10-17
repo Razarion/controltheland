@@ -17,7 +17,6 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
-import com.btxtech.game.jsre.common.gameengine.services.collision.PlaceCanNotBeFoundException;
 
 import java.util.Random;
 import java.util.logging.Level;
@@ -65,7 +64,7 @@ public abstract class BotRunner {
                     if (base == null || !getServices().getBaseService().isAlive(base)) {
                         base = getServices().getBaseService().createBotBase(botConfig);
                     }
-                    botItemContainer.buildup(base);
+                    botItemContainer.work(base);
                     intruderHandler.handleIntruders(base);
                 }
             } catch (Throwable t) {
@@ -133,7 +132,7 @@ public abstract class BotRunner {
 
     private void startBot() {
         synchronized (syncObject) {
-            botItemContainer = new BotItemContainer(botConfig.getBotItems(), getServices());
+            botItemContainer = new BotItemContainer(botConfig.getBotItems(), botConfig.getRealm(), getServices());
             intruderHandler = new IntruderHandler(botItemContainer, botConfig.getRealm(), getServices());
         }
         startBotThread(botConfig.getActionDelay(), new BotTicker());

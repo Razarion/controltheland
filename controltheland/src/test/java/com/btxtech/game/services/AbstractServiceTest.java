@@ -272,7 +272,9 @@ abstract public class AbstractServiceTest {
         AbstractTerrainService terrainService = EasyMock.createNiceMock(AbstractTerrainService.class);
         EasyMock.expect(services.getTerrainService()).andReturn(terrainService);
         EasyMock.replay(services);
-        return createSyncBaseItem(itemTypeId, position, id, services, simpleBase);
+        SyncBaseItem syncBaseItem = createSyncBaseItem(itemTypeId, position, id, services, simpleBase);
+        syncBaseItem.setBuildup(1.0);
+        return syncBaseItem;
     }
 
     protected SyncBaseItem createSyncBaseItem(int itemTypeId, Index position, Id id) throws Exception {
