@@ -18,6 +18,7 @@ import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import org.apache.wicket.markup.html.form.Button;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.repeater.Item;
@@ -55,6 +56,7 @@ public class BotTable extends MgmtWebPage {
             protected void extendedPopulateItem(Item<DbBotConfig> dbBotConfigItem) {
                 displayId(dbBotConfigItem);
                 super.extendedPopulateItem(dbBotConfigItem);
+                dbBotConfigItem.add(new CheckBox("realGameBot"));
             }
         };
 
