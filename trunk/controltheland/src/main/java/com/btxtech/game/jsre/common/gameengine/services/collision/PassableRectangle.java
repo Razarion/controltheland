@@ -18,7 +18,6 @@ import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,13 +29,15 @@ import java.util.Map;
  * Date: May 27, 2009
  * Time: 9:42:28 AM
  */
-public class PassableRectangle implements Serializable {
-    // No equals() and no hashCode() due to the GWT serialization/de-serialization
+public class PassableRectangle {
+    // No equals and hash du to the GeometricalUtil.setupPassableRectangle()
     private static final int MAX_TRIES = 10000;
     private Map<PassableRectangle, Neighbor> neighbors = new HashMap<PassableRectangle, Neighbor>();
     private Rectangle rectangle;
+    private boolean canGrowX = true;
+    private boolean canGrowY = true;
 
-    public static class Neighbor implements Serializable {
+    public static class Neighbor {
         // No equals() and no hashCode() due to the GWT serialization/de-serialization
         private PassableRectangle passableRectangle;
         private Port port;
@@ -76,6 +77,9 @@ public class PassableRectangle implements Serializable {
     }
 
     public void addNeighbor(PassableRectangle neighborPassableRectangle, AbstractTerrainService terrainService) {
+        if (neighbors.containsKey(neighborPassableRectangle)) {
+            return;
+        }
         Neighbor neighbor = new Neighbor(neighborPassableRectangle, new Port(terrainService.convertToAbsolutePosition(rectangle),
                 terrainService.convertToAbsolutePosition(neighborPassableRectangle.rectangle)));
         neighbors.put(neighborPassableRectangle, neighbor);
@@ -188,6 +192,38 @@ public class PassableRectangle implements Serializable {
 
     public boolean isNeighbor(PassableRectangle passableRectangle) {
         return neighbors.containsKey(passableRectangle);
+    }
+
+    public boolean isCanGrowX() {
+        return canGrowX;
+    }
+
+    public void clearCanGrowX() {
+        canGrowX = false;
+    }
+
+    public boolean isCanGrowY() {
+        return canGrowY;
+    }
+
+    public void clearCanGrowY() {
+        canGrowY = false;
+    }
+
+    public void setY(int y) {
+        rectangle.setY(y);
+    }
+
+    public void setEndX(int x) {
+        rectangle.setEndX(x);
+    }
+
+    public void setEndY(int y) {
+        rectangle.setEndY(y);
+    }
+
+    public void growSouth(int size) {
+        rectangle.growSouth(size);
     }
 
     @Override

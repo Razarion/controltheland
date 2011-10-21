@@ -6,7 +6,6 @@ import com.btxtech.game.jsre.common.GeometricalUtil;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormation;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationFactory;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
-import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
@@ -41,7 +40,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
     protected static final int STEPS_DISTANCE = 50;
     protected static final int MAX_TRIES = 10000;
     private static final int MAX_RANGE_RALLY_POINT = 300;
-    private Map<TerrainType, List<PassableRectangle>> passableRectangles4TerrainType = new HashMap<TerrainType, List<PassableRectangle>>();
+    private Map<TerrainType, Collection<PassableRectangle>> passableRectangles4TerrainType = new HashMap<TerrainType, Collection<PassableRectangle>>();
     private Logger log = Logger.getLogger(CommonCollisionServiceImpl.class.getName());
 
     protected abstract Services getServices();
@@ -49,43 +48,10 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
     protected void setupPassableTerrain() {
         log.info("Starting setup collision service");
         long time = System.currentTimeMillis();
-        SurfaceType[][] surfaceTypeField = getServices().getTerrainService().createSurfaceTypeField();
+        Map<TerrainType, boolean[][]> terrainTypeMap = getServices().getTerrainService().createSurfaceTypeField();
         log.info("Collision service flatten to field: " + (System.currentTimeMillis() - time));
-        setupPassableRectangles(surfaceTypeField);
+        passableRectangles4TerrainType = GeometricalUtil.setupPassableRectangle(terrainTypeMap, getServices().getTerrainService());
         log.info("Time needed to start up collision service: " + (System.currentTimeMillis() - time) + "ms");
-    }
-
-    private void setupPassableRectangles(SurfaceType[][] surfaceTypeField) {
-        passableRectangles4TerrainType.clear();
-        Map<TerrainType, Collection<Index>> tiles = separateIntoTerrainTypeTiles(surfaceTypeField);
-        if (tiles.isEmpty()) {
-            log.log(Level.SEVERE, "Terrain does not have any tiles");
-            return;
-        }
-        for (Map.Entry<TerrainType, Collection<Index>> entry : tiles.entrySet()) {
-            ArrayList<Rectangle> mapAsRectangles = GeometricalUtil.separateIntoRectangles(entry.getValue());
-            List<PassableRectangle> passableRectangles = PathFinderUtilities.buildPassableRectangleList(mapAsRectangles, getServices().getTerrainService());
-            passableRectangles4TerrainType.put(entry.getKey(), passableRectangles);
-        }
-    }
-
-    private Map<TerrainType, Collection<Index>> separateIntoTerrainTypeTiles(SurfaceType[][] surfaceTypeField) {
-        Map<TerrainType, Collection<Index>> map = new HashMap<TerrainType, Collection<Index>>();
-        for (int x = 0; x < surfaceTypeField.length; x++) {
-            for (int y = 0; y < surfaceTypeField[x].length; y++) {
-                SurfaceType surfaceType = surfaceTypeField[x][y];
-                Collection<TerrainType> terrainTypes = TerrainType.getAllowedTerrainType(surfaceType);
-                for (TerrainType terrainType : terrainTypes) {
-                    Collection<Index> tiles = map.get(terrainType);
-                    if (tiles == null) {
-                        tiles = new ArrayList<Index>();
-                        map.put(terrainType, tiles);
-                    }
-                    tiles.add(new Index(x, y));
-                }
-            }
-        }
-        return map;
     }
 
     @Override
@@ -248,7 +214,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
     }
 
     @Override
-    public Map<TerrainType, List<PassableRectangle>> getPassableRectangles() {
+    public Map<TerrainType, Collection<PassableRectangle>> getPassableRectangles() {
         return passableRectangles4TerrainType;
     }
 

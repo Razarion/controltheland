@@ -16,12 +16,12 @@ package com.btxtech.game.jsre.common.gameengine.services.terrain;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
-import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
@@ -98,5 +98,5 @@ public interface AbstractTerrainService {
 
     Index correctPosition(SyncItem syncItem, Index position);
 
-    SurfaceType[][] createSurfaceTypeField();
+    Map<TerrainType, boolean[][]> createSurfaceTypeField();
 }

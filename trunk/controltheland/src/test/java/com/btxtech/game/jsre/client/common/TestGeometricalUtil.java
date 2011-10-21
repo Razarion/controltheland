@@ -1,12 +1,18 @@
 package com.btxtech.game.jsre.client.common;
 
 import com.btxtech.game.jsre.common.GeometricalUtil;
+import com.btxtech.game.jsre.common.gameengine.services.collision.PassableRectangle;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainServiceImpl;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * User: beat
@@ -14,98 +20,644 @@ import java.util.List;
  * Time: 21:06:58
  */
 public class TestGeometricalUtil {
-    @Test
-    public void testOne() {
-        Collection<Index> indexes = new ArrayList<Index>();
-        addTileIndex(indexes, 0, true, true, true, true);
-        addTileIndex(indexes, 1, true, true, true, true);
-        addTileIndex(indexes, 2, true, true, true, true);
-        addTileIndex(indexes, 3, true, true, true, true);
-        addTileIndex(indexes, 4, true, true, true, true);
-        addTileIndex(indexes, 5, true, true, true, true);
+    private AbstractTerrainServiceImpl terrainService;
 
-        List<Rectangle> rectangles = GeometricalUtil.separateIntoRectangles(indexes);
+    @Before
+    public void mockTerrainService() {
+        TerrainSettings terrainSettings = new TerrainSettings(100, 100, 100, 100);
+        terrainService = new AbstractTerrainServiceImpl() {
+        };
+        terrainService.setTerrainSettings(terrainSettings);
+    }
+
+    @Test
+    public void setup1Rectangle() {
+        boolean[][] field = new boolean[10][10];
+        addTileIndex(field, 0, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 1, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 2, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 3, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 4, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 5, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 6, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 7, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 8, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 9, true, true, true, true, true, true, true, true, true, true);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        assertField(field, rectangles);
         Assert.assertEquals(1, rectangles.size());
-        assertRectangle(rectangles, new Rectangle(0, 0, 4, 6));
-        Assert.assertEquals(0, rectangles.size());
     }
 
     @Test
-    public void testTwo() {
-        Collection<Index> indexes = new ArrayList<Index>();
-        addTileIndex(indexes, 0, true, false, true, true);
-        addTileIndex(indexes, 1, true, false, true, true);
-        addTileIndex(indexes, 2, true, false, true, true);
-        addTileIndex(indexes, 3, true, false, true, true);
-        addTileIndex(indexes, 4, true, false, true, true);
-        addTileIndex(indexes, 5, true, false, true, true);
+    public void setup2Rectangle() {
+        boolean[][] field = new boolean[1][10];
+        addTileIndex(field, 0, true);
+        addTileIndex(field, 1, false);
+        addTileIndex(field, 2, true);
+        addTileIndex(field, 3, true);
+        addTileIndex(field, 4, true);
+        addTileIndex(field, 5, true);
+        addTileIndex(field, 6, true);
+        addTileIndex(field, 7, true);
+        addTileIndex(field, 8, true);
+        addTileIndex(field, 9, true);
 
-        List<Rectangle> rectangles = GeometricalUtil.separateIntoRectangles(indexes);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        assertField(field, rectangles);
         Assert.assertEquals(2, rectangles.size());
-        assertRectangle(rectangles, new Rectangle(0, 0, 1, 6));
-        assertRectangle(rectangles, new Rectangle(2, 0, 2, 6));
-        Assert.assertEquals(0, rectangles.size());
-
     }
 
     @Test
-    public void testFour() {
-        Collection<Index> indexes = new ArrayList<Index>();
-        addTileIndex(indexes, 0, true, false, true, true);
-        addTileIndex(indexes, 1, true, false, true, true);
-        addTileIndex(indexes, 2, false, false, false, false);
-        addTileIndex(indexes, 3, true, false, true, true);
-        addTileIndex(indexes, 4, true, false, true, true);
-        addTileIndex(indexes, 5, true, false, true, true);
+    public void setup3Rectangle() {
+        boolean[][] field = new boolean[2][10];
+        addTileIndex(field, 0, true, true);
+        addTileIndex(field, 1, false, true);
+        addTileIndex(field, 2, true, true);
+        addTileIndex(field, 3, true, true);
+        addTileIndex(field, 4, true, true);
+        addTileIndex(field, 5, true, true);
+        addTileIndex(field, 6, true, true);
+        addTileIndex(field, 7, true, true);
+        addTileIndex(field, 8, true, true);
+        addTileIndex(field, 9, true, true);
 
-        List<Rectangle> rectangles = GeometricalUtil.separateIntoRectangles(indexes);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        assertField(field, rectangles);
+        Assert.assertEquals(3, rectangles.size());
+    }
+
+    @Test
+    public void setup3Rectangle2() {
+        boolean[][] field = new boolean[3][10];
+        addTileIndex(field, 0, true, true, true);
+        addTileIndex(field, 1, false, true, true);
+        addTileIndex(field, 2, true, true, true);
+        addTileIndex(field, 3, true, true, true);
+        addTileIndex(field, 4, true, true, true);
+        addTileIndex(field, 5, true, true, true);
+        addTileIndex(field, 6, true, true, true);
+        addTileIndex(field, 7, true, true, true);
+        addTileIndex(field, 8, true, true, true);
+        addTileIndex(field, 9, true, true, true);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        assertField(field, rectangles);
+        Assert.assertEquals(3, rectangles.size());
+    }
+
+    @Test
+    public void setup3Rectangle3() {
+        boolean[][] field = new boolean[2][10];
+        addTileIndex(field, 0, true, true);
+        addTileIndex(field, 1, true, true);
+        addTileIndex(field, 2, true, true);
+        addTileIndex(field, 3, true, false);
+        addTileIndex(field, 4, true, true);
+        addTileIndex(field, 5, true, true);
+        addTileIndex(field, 6, true, true);
+        addTileIndex(field, 7, true, true);
+        addTileIndex(field, 8, true, true);
+        addTileIndex(field, 9, true, true);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        assertField(field, rectangles);
+        Assert.assertEquals(3, rectangles.size());
+    }
+
+    @Test
+    public void setupDiagonalRectangle1() {
+        boolean[][] field = new boolean[2][2];
+        addTileIndex(field, 0, false, true);
+        addTileIndex(field, 1, true, false);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        assertField(field, rectangles);
+        Assert.assertEquals(2, rectangles.size());
+    }
+
+    @Test
+    public void setup3RectangleCorner() {
+        boolean[][] field = new boolean[3][3];
+        addTileIndex(field, 0, true, true, true);
+        addTileIndex(field, 1, true, false, false);
+        addTileIndex(field, 2, true, true, false);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        assertField(field, rectangles);
+        Assert.assertEquals(3, rectangles.size());
+    }
+
+    @Test
+    public void setupDiagonalRectangle2() {
+        boolean[][] field = new boolean[3][3];
+        addTileIndex(field, 0, false, true, true);
+        addTileIndex(field, 1, true, false, true);
+        addTileIndex(field, 2, true, true, false);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        assertField(field, rectangles);
         Assert.assertEquals(4, rectangles.size());
-        assertRectangle(rectangles, new Rectangle(0, 0, 1, 2));
-        assertRectangle(rectangles, new Rectangle(2, 0, 2, 2));
-        assertRectangle(rectangles, new Rectangle(0, 3, 1, 3));
-        assertRectangle(rectangles, new Rectangle(2, 3, 2, 3));
-        Assert.assertEquals(0, rectangles.size());
-
     }
 
     @Test
-    public void testAdjoin() {
-        Collection<Index> indexes = new ArrayList<Index>();
-        addTileIndex(indexes, 0, true, true, true, true);
-        addTileIndex(indexes, 1, true, false, true, true);
-        addTileIndex(indexes, 2, true, true, true, true);
-        addTileIndex(indexes, 3, true, true, true, true);
-        addTileIndex(indexes, 4, true, true, false, true);
-        addTileIndex(indexes, 5, true, true, true, true);
+    public void setup3RectangleGap() {
+        boolean[][] field = new boolean[3][3];
+        addTileIndex(field, 0, true, true, true);
+        addTileIndex(field, 1, true, true, true);
+        addTileIndex(field, 2, false, true, false);
 
-        List<Rectangle> rectangles = GeometricalUtil.separateIntoRectangles(indexes);
-        Assert.assertEquals(7, rectangles.size());
-        Index index1 = new Index(1,1);
-        Index index2 = new Index(2,4);
-        for (Rectangle rectangle1 : rectangles) {
-            for (Rectangle rectangle2 : rectangles) {
-                if (rectangle2.equals(rectangle1)) {
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        assertField(field, rectangles);
+        Assert.assertEquals(2, rectangles.size());
+    }
+
+    @Test
+    public void setup3RectangleUnk() {
+        boolean[][] field = new boolean[4][3];
+        addTileIndex(field, 0, false, false, false, true);
+        addTileIndex(field, 1, true, false, false, true);
+        addTileIndex(field, 2, true, true, true, true);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Assert.assertEquals(3, rectangles.size());
+        assertField(field, rectangles);
+    }
+
+
+    @Test
+    public void setup4Rectangle() {
+        boolean[][] field = new boolean[10][10];
+        addTileIndex(field, 0, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 1, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 2, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 3, true, true, true, true, false, true, true, true, true, true);
+        addTileIndex(field, 4, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 5, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 6, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 7, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 8, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 9, true, true, true, true, true, true, true, true, true, true);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Assert.assertEquals(4, rectangles.size());
+        assertField(field, rectangles);
+    }
+
+    @Test
+    public void setupRectangle1() {
+        boolean[][] field = new boolean[10][10];
+        addTileIndex(field, 0, true, true, true, false, true, true, true, true, true, true);
+        addTileIndex(field, 1, true, true, true, false, true, true, true, true, true, true);
+        addTileIndex(field, 2, true, true, true, false, true, true, true, true, true, true);
+        addTileIndex(field, 3, true, true, true, false, true, true, true, true, true, true);
+        addTileIndex(field, 4, true, true, true, false, true, true, true, true, true, true);
+        addTileIndex(field, 5, true, true, true, false, true, true, true, true, true, true);
+        addTileIndex(field, 6, true, true, true, false, true, true, true, true, true, true);
+        addTileIndex(field, 7, true, true, true, false, true, true, true, true, true, true);
+        addTileIndex(field, 8, true, true, true, false, true, true, true, true, true, true);
+        addTileIndex(field, 9, true, true, true, false, true, true, true, true, true, true);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Assert.assertEquals(2, rectangles.size());
+        assertField(field, rectangles);
+    }
+
+    @Test
+    public void setupRectangle2() {
+        boolean[][] field = new boolean[10][10];
+        addTileIndex(field, 0, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 1, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 2, true, true, true, false, true, true, true, true, true, true);
+        addTileIndex(field, 3, true, true, true, false, true, true, true, true, true, true);
+        addTileIndex(field, 4, true, true, true, false, true, true, true, true, true, true);
+        addTileIndex(field, 5, true, true, true, false, true, true, true, true, true, true);
+        addTileIndex(field, 6, true, true, true, false, true, true, true, true, true, true);
+        addTileIndex(field, 7, true, true, true, false, true, true, true, true, true, true);
+        addTileIndex(field, 8, true, true, true, false, true, true, true, true, true, true);
+        addTileIndex(field, 9, true, true, true, false, true, true, true, true, true, true);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Assert.assertEquals(3, rectangles.size());
+        assertField(field, rectangles);
+    }
+
+    @Test
+    public void setupRectangle3() {
+        boolean[][] field = new boolean[10][10];
+        addTileIndex(field, 0, false, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 1, false, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 2, false, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 3, false, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 4, false, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 5, false, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 6, false, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 7, false, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 8, false, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 9, false, true, true, true, true, true, true, true, true, true);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Assert.assertEquals(1, rectangles.size());
+        assertField(field, rectangles);
+    }
+
+    @Test
+    public void setupRectangle4() {
+        boolean[][] field = new boolean[10][10];
+        addTileIndex(field, 0, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 1, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 2, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 3, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 4, false, false, false, false, false, false, false, false, false, false);
+        addTileIndex(field, 5, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 6, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 7, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 8, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 9, true, true, true, true, true, true, true, true, true, true);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Assert.assertEquals(2, rectangles.size());
+        assertField(field, rectangles);
+    }
+
+    @Test
+    public void setupRectangle5() {
+        boolean[][] field = new boolean[10][10];
+        addTileIndex(field, 0, false, false, false, false, false, false, false, false, false, false);
+        addTileIndex(field, 1, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 2, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 3, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 4, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 5, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 6, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 7, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 8, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 9, true, true, true, true, true, true, true, true, true, true);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Assert.assertEquals(1, rectangles.size());
+        assertField(field, rectangles);
+    }
+
+    @Test
+    public void setupRectangle6() {
+        boolean[][] field = new boolean[10][10];
+        addTileIndex(field, 0, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 1, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 2, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 3, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 4, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 5, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 6, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 7, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 8, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 9, false, false, false, false, false, false, false, false, false, false);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Assert.assertEquals(1, rectangles.size());
+        assertField(field, rectangles);
+    }
+
+    @Test
+    public void setupRectangle7() {
+        boolean[][] field = new boolean[10][10];
+        addTileIndex(field, 0, false, false, false, false, false, false, false, false, false, false);
+        addTileIndex(field, 1, false, false, false, false, false, false, false, false, false, false);
+        addTileIndex(field, 2, false, false, false, false, false, false, false, false, false, false);
+        addTileIndex(field, 3, false, false, false, false, false, false, false, false, false, false);
+        addTileIndex(field, 4, false, false, false, false, false, false, false, false, false, false);
+        addTileIndex(field, 5, false, false, false, false, false, false, false, false, false, false);
+        addTileIndex(field, 6, false, false, false, false, false, false, false, false, false, false);
+        addTileIndex(field, 7, false, false, false, false, false, false, false, false, false, false);
+        addTileIndex(field, 8, false, false, false, false, false, false, false, false, false, false);
+        addTileIndex(field, 9, false, false, false, false, false, false, false, false, false, false);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Assert.assertEquals(0, rectangles.size());
+        assertField(field, rectangles);
+    }
+
+    @Test
+    public void setupRectangle8() {
+        boolean[][] field = new boolean[10][10];
+        addTileIndex(field, 0, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 1, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 2, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 3, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 4, true, true, true, false, false, true, true, true, true, true);
+        addTileIndex(field, 5, true, true, true, false, false, true, true, true, true, true);
+        addTileIndex(field, 6, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 7, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 8, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 9, true, true, true, true, true, true, true, true, true, true);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Assert.assertEquals(4, rectangles.size());
+        assertField(field, rectangles);
+    }
+
+    @Test
+    public void setupRectangle9() {
+        boolean[][] field = new boolean[10][10];
+        addTileIndex(field, 0, false, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 1, true, false, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 2, true, true, false, true, true, true, true, true, true, true);
+        addTileIndex(field, 3, true, true, true, false, true, true, true, true, true, true);
+        addTileIndex(field, 4, true, true, true, true, false, true, true, true, true, true);
+        addTileIndex(field, 5, true, true, true, true, true, false, true, true, true, true);
+        addTileIndex(field, 6, true, true, true, true, true, true, false, true, true, true);
+        addTileIndex(field, 7, true, true, true, true, true, true, true, false, true, true);
+        addTileIndex(field, 8, true, true, true, true, true, true, true, true, false, true);
+        addTileIndex(field, 9, true, true, true, true, true, true, true, true, true, false);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Assert.assertEquals(18, rectangles.size());
+        assertField(field, rectangles);
+    }
+
+    @Test
+    public void setupRectangle10() {
+        boolean[][] field = new boolean[10][10];
+        addTileIndex(field, 0, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 1, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 2, true, true, true, false, false, false, false, false, true, true);
+        addTileIndex(field, 3, true, true, true, false, true, true, true, false, true, true);
+        addTileIndex(field, 4, true, true, true, false, true, true, true, false, true, true);
+        addTileIndex(field, 5, true, true, true, false, true, true, true, false, true, true);
+        addTileIndex(field, 6, true, true, true, false, true, true, true, false, true, true);
+        addTileIndex(field, 7, true, true, true, false, false, false, false, false, true, true);
+        addTileIndex(field, 8, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 9, true, true, true, true, true, true, true, true, true, true);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Assert.assertEquals(5, rectangles.size());
+        assertField(field, rectangles);
+    }
+
+    @Test
+    public void setupRectangle11() {
+        boolean[][] field = new boolean[10][10];
+        addTileIndex(field, 0, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 1, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 2, true, true, true, false, true, false, false, false, true, true);
+        addTileIndex(field, 3, true, true, true, false, true, true, true, false, true, true);
+        addTileIndex(field, 4, true, true, true, false, true, true, true, false, true, true);
+        addTileIndex(field, 5, true, true, true, false, true, true, true, false, true, true);
+        addTileIndex(field, 6, true, true, true, false, true, true, true, false, true, true);
+        addTileIndex(field, 7, true, true, true, false, false, false, false, false, true, true);
+        addTileIndex(field, 8, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 9, true, true, true, true, true, true, true, true, true, true);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Assert.assertEquals(6, rectangles.size());
+        assertField(field, rectangles);
+    }
+
+    @Test
+    public void setupRectangle12() {
+        boolean[][] field = new boolean[10][10];
+        addTileIndex(field, 0, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 1, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 2, true, false, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 3, true, false, false, false, true, true, true, true, true, true);
+        addTileIndex(field, 4, true, false, false, false, true, true, true, true, true, true);
+        addTileIndex(field, 5, true, true, false, false, true, true, true, true, true, true);
+        addTileIndex(field, 6, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 7, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 8, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 9, true, true, true, true, true, true, true, true, true, true);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Assert.assertEquals(6, rectangles.size());
+        assertField(field, rectangles);
+    }
+
+    @Test
+    public void setupRectangle13() {
+        boolean[][] field = new boolean[10][10];
+        addTileIndex(field, 0, true, true, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 1, true, true, true, true, true, true, false, true, true, true);
+        addTileIndex(field, 2, true, false, true, true, true, true, true, true, true, true);
+        addTileIndex(field, 3, true, false, false, false, true, true, true, true, true, true);
+        addTileIndex(field, 4, true, false, false, false, true, true, true, false, true, true);
+        addTileIndex(field, 5, true, true, false, false, true, true, true, true, true, true);
+        addTileIndex(field, 6, true, true, false, true, true, true, false, true, true, true);
+        addTileIndex(field, 7, true, true, false, true, true, true, true, true, true, true);
+        addTileIndex(field, 8, true, true, false, true, true, true, true, true, true, false);
+        addTileIndex(field, 9, true, true, false, true, true, true, true, true, true, true);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        assertField(field, rectangles);
+        Assert.assertEquals(14, rectangles.size());
+    }
+
+    @Test
+    public void setupRectangle14() {
+        boolean[][] field = new boolean[10][10];
+        addTileIndex(field, 0, false, true, true, true, true, true, true, true, true, false);
+        addTileIndex(field, 1, true, false, true, true, true, true, true, true, false, true);
+        addTileIndex(field, 2, true, true, false, true, true, true, true, false, true, true);
+        addTileIndex(field, 3, true, true, true, false, true, true, false, true, true, true);
+        addTileIndex(field, 4, true, true, true, true, false, false, true, true, true, true);
+        addTileIndex(field, 5, true, true, true, true, false, false, true, true, true, true);
+        addTileIndex(field, 6, true, true, true, false, true, true, false, true, true, true);
+        addTileIndex(field, 7, true, true, false, true, true, true, true, false, true, true);
+        addTileIndex(field, 8, true, false, true, true, true, true, true, true, false, true);
+        addTileIndex(field, 9, false, true, true, true, true, true, true, true, true, false);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        assertField(field, rectangles);
+        Assert.assertEquals(19, rectangles.size());
+    }
+
+    @Test
+    public void setupRectangle15() {
+        boolean[][] field = new boolean[10][10];
+        addTileIndex(field, 0, true, true, true, true, false, true, true, true, true, true);
+        addTileIndex(field, 1, true, true, true, true, false, true, true, true, true, true);
+        addTileIndex(field, 2, true, true, true, true, false, true, true, true, true, true);
+        addTileIndex(field, 3, true, true, true, true, false, true, true, true, true, true);
+        addTileIndex(field, 4, true, true, true, true, false, true, true, true, true, true);
+        addTileIndex(field, 5, false, false, false, false, false, false, false, false, false, false);
+        addTileIndex(field, 6, true, true, true, true, false, true, true, true, true, true);
+        addTileIndex(field, 7, true, true, true, true, false, true, true, true, true, true);
+        addTileIndex(field, 8, true, true, true, true, false, true, true, true, true, true);
+        addTileIndex(field, 9, true, true, true, true, false, true, true, true, true, true);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        assertField(field, rectangles);
+        Assert.assertEquals(4, rectangles.size());
+    }
+
+    @Test
+    public void setupRectangle16() {
+        boolean[][] field = new boolean[10][10];
+        addTileIndex(field, 0, false, false, false, true, true, true, true, true, true, true);
+        addTileIndex(field, 1, false, false, false, false, false, false, true, true, true, true);
+        addTileIndex(field, 2, true, true, false, true, true, true, false, true, true, true);
+        addTileIndex(field, 3, true, false, true, true, true, true, true, false, true, true);
+        addTileIndex(field, 4, true, false, true, true, false, false, true, false, true, true);
+        addTileIndex(field, 5, true, false, true, true, false, false, true, false, true, true);
+        addTileIndex(field, 6, true, false, false, true, true, true, true, false, true, true);
+        addTileIndex(field, 7, true, true, true, false, true, true, true, false, true, true);
+        addTileIndex(field, 8, true, true, true, true, false, false, false, true, true, true);
+        addTileIndex(field, 9, true, true, true, true, true, true, true, true, true, true);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        assertField(field, rectangles);
+        Assert.assertEquals(16, rectangles.size());
+    }
+
+    @Test
+    public void setupRectangle17() {
+        boolean[][] field = new boolean[10][10];
+        addTileIndex(field, 0, false, false, false, false, false, false, false, false, false, false);
+        addTileIndex(field, 1, false, false, false, false, false, false, false, false, false, false);
+        addTileIndex(field, 2, false, false, false, false, false, false, false, false, false, false);
+        addTileIndex(field, 3, false, false, false, false, false, false, false, false, false, false);
+        addTileIndex(field, 4, false, false, false, true, false, false, false, false, false, false);
+        addTileIndex(field, 5, false, false, false, false, false, false, false, false, false, false);
+        addTileIndex(field, 6, false, false, false, false, false, false, false, false, false, false);
+        addTileIndex(field, 7, false, false, false, false, false, false, false, false, false, false);
+        addTileIndex(field, 8, false, false, false, false, false, false, false, false, false, false);
+        addTileIndex(field, 9, false, false, false, false, false, false, false, false, false, false);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        assertField(field, rectangles);
+        Assert.assertEquals(1, rectangles.size());
+    }
+
+    @Test
+    public void setupRectangle18() {
+        boolean[][] field = new boolean[10][10];
+        addTileIndex(field, 0, false, false, false, false, false, false, false, false, true, true);
+        addTileIndex(field, 1, false, false, false, false, false, false, false, false, true, true);
+        addTileIndex(field, 2, false, false, false, false, false, false, false, false, false, false);
+        addTileIndex(field, 3, false, false, false, false, true, false, false, false, false, false);
+        addTileIndex(field, 4, false, false, false, true, true, true, false, false, false, false);
+        addTileIndex(field, 5, false, false, false, true, true, true, false, false, false, false);
+        addTileIndex(field, 6, false, false, false, false, true, false, false, false, false, false);
+        addTileIndex(field, 7, false, false, false, false, false, false, false, false, false, false);
+        addTileIndex(field, 8, false, false, false, false, false, false, false, false, false, false);
+        addTileIndex(field, 9, false, false, false, false, false, false, false, false, false, false);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        assertField(field, rectangles);
+        Assert.assertEquals(4, rectangles.size());
+    }
+
+    private void assertField(boolean[][] field, Collection<PassableRectangle> rectangles) {
+        Set<Index> blockedIndexes = new HashSet<Index>();
+        Set<Index> freeIndexes = new HashSet<Index>();
+
+        for (int x = 0; x < field.length; x++) {
+            for (int y = 0; y < field[x].length; y++) {
+                if (field[x][y]) {
+                    freeIndexes.add(new Index(x, y));
+                } else {
+                    blockedIndexes.add(new Index(x, y));
+                }
+            }
+        }
+
+        for (PassableRectangle rectangle : rectangles) {
+            Assert.assertTrue("Rectangle width is 0: " + rectangle, rectangle.getRectangle().getWidth() > 0);
+            Assert.assertTrue("Rectangle height is 0: " + rectangle, rectangle.getRectangle().getHeight() > 0);
+            Collection<Rectangle> tileRectangles = rectangle.getRectangle().split(1, 1);
+            for (Rectangle tileRect : tileRectangles) {
+                Index index = new Index(tileRect.getX(), tileRect.getY());
+                if (!freeIndexes.remove(index)) {
+                    Assert.fail("The index '" + index + "' could not be found in the filed for rectangle: " + rectangle);
+                }
+                if (blockedIndexes.contains(index)) {
+                    Assert.fail("The index '" + index + "' should not be contained in the rectangle: " + rectangle);
+                }
+            }
+        }
+
+        if (!freeIndexes.isEmpty()) {
+            StringBuffer stringBuffer = new StringBuffer();
+            stringBuffer.append("This indexes are not contained in a rectangle:\n");
+            for (Index freeIndex : freeIndexes) {
+                stringBuffer.append(freeIndex);
+                stringBuffer.append("\n");
+            }
+            Assert.fail(stringBuffer.toString());
+        }
+
+        // Check neighbors
+        for (PassableRectangle rectangle : rectangles) {
+            Map<PassableRectangle, PassableRectangle.Neighbor> neighbors = new HashMap<PassableRectangle, PassableRectangle.Neighbor>(rectangle.getNeighbors());
+            for (PassableRectangle possibleNeighbor : rectangles) {
+                if (possibleNeighbor.equals(rectangle)) {
                     continue;
                 }
-                Assert.assertFalse("Rectangles are not allowed to overlap: [" + rectangle1 + "] [" + rectangle2 + "]", rectangle1.adjoinsEclusive(rectangle2));
+                if (rectangle.getRectangle().adjoins(possibleNeighbor.getRectangle()) &&
+                        !rectangle.getRectangle().getCrossSection(possibleNeighbor.getRectangle()).isEmpty()) {
+                    Assert.assertNotNull("'" + rectangle + "' does not know neighbor '" + possibleNeighbor + "'", neighbors.remove(possibleNeighbor));
+                }
             }
-            Assert.assertFalse("Index not allowed to be in rectangle: [" + rectangle1 + "] Index[" + index1 + "]" , rectangle1.containsExclusive(index1));
-            Assert.assertFalse("Index not allowed to be in rectangle: [" + rectangle1 + "] Index[" + index2 + "]" , rectangle1.containsExclusive(index2));
+            Assert.assertTrue("Passable rectangle does bot know all neighbors", neighbors.isEmpty());
+        }
+
+    }
+
+
+    private void printRectangle(boolean[][] field, Collection<PassableRectangle> rectangles) {
+        char[][] charFiled = new char[field.length][];
+        for (int x = 0; x < field.length; x++) {
+            charFiled[x] = new char[field[x].length];
+            for (int y = 0; y < field[x].length; y++) {
+                if (!field[x][y]) {
+                    charFiled[x][y] = '#';
+                } else {
+                    charFiled[x][y] = '?';
+                }
+            }
+        }
+
+        char rectChar = 'a';
+        for (PassableRectangle rectangle : rectangles) {
+            Collection<Rectangle> tileRectangles = rectangle.getRectangle().split(1, 1);
+            for (Rectangle tileRect : tileRectangles) {
+                if (charFiled[tileRect.getX()][tileRect.getY()] != '?') {
+                    System.out.println("(" + charFiled[tileRect.getX()][tileRect.getY()] + rectChar + ")");
+                    charFiled[tileRect.getX()][tileRect.getY()] = '!';
+                } else {
+                    charFiled[tileRect.getX()][tileRect.getY()] = rectChar;
+                }
+            }
+            rectChar++;
+        }
+
+        int x = 0;
+        for (int y = 0; y < charFiled[x].length; y++) {
+            for (; x < field.length; x++) {
+                System.out.print(charFiled[x][y]);
+            }
+            System.out.println();
+            x = 0;
+        }
+        System.out.println("---------------------------------");
+        for (PassableRectangle rectangle : rectangles) {
+            System.out.println(rectangle.getRectangle() + " '" + rectangle.getRectangle().testString() + "'");
         }
     }
 
-    private void addTileIndex(Collection<Index> indexes, int y, boolean... tiles) {
-        for (int i = 0, tilesLength = tiles.length; i < tilesLength; i++) {
-            if (tiles[i]) {
-                indexes.add(new Index(i, y));
-            }
+    private void addTileIndex(boolean[][] field, int y, boolean... value) {
+        for (int x = 0; x < value.length; x++) {
+            field[x][y] = value[x];
         }
     }
 
-    private void assertRectangle(Collection<Rectangle> actual, Rectangle expected) {
-        if (!actual.remove(expected)) {
-            System.out.println("Rectangles actual: " + actual);
-            Assert.fail("Rectangle expected: " + expected);
+    private void printField(boolean[][] field) {
+        int x = 0;
+        for (int y = 0; y < field[x].length; y++) {
+            for (; x < field.length; x++) {
+                System.out.print(field[x][y] ? "." : "#");
+            }
+            System.out.println();
+            x = 0;
         }
     }
 }
