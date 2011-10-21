@@ -165,6 +165,10 @@ public class ItemContainer extends AbstractItemService {
             itemView = createAndAddItem(id, position, toBeBuilt.getId(), base);
             itemView.setHidden(false);
             id.setUserTimeStamp(System.currentTimeMillis());
+            ActionHandler.getInstance().addGuardingBaseItem(itemView.getSyncTickItem());
+            if (itemView.isSyncBaseItem()) {
+                ActionHandler.getInstance().interactionGuardingItems(itemView.getSyncBaseItem());
+            }
         }
         itemView.checkVisibility();
         itemView.update();
@@ -234,6 +238,9 @@ public class ItemContainer extends AbstractItemService {
             makeItemSeeminglyDead(killedItem, actor, clientSyncItem);
         } else {
             definitelyKillItem(clientSyncItem, force, explode);
+            if (killedItem instanceof SyncBaseItem) {
+                ActionHandler.getInstance().removeGuardingBaseItem((SyncBaseItem) killedItem);
+            }
         }
         if (killedItem instanceof SyncBaseItem) {
             SimulationConditionServiceImpl.getInstance().onSyncItemKilled(actor, (SyncBaseItem) killedItem);

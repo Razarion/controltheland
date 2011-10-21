@@ -84,7 +84,6 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
     @Autowired
     private ServerServices serverServices;
     private final HashSet<SyncTickItem> activeItems = new HashSet<SyncTickItem>();
-    private final HashSet<SyncBaseItem> guardingItems = new HashSet<SyncBaseItem>();
     private final ArrayList<SyncTickItem> tmpActiveItems = new ArrayList<SyncTickItem>();
     private Timer timer;
     private Log log = LogFactory.getLog(ActionServiceImpl.class);
@@ -170,7 +169,7 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
     public void reload() {
         synchronized (activeItems) {
             activeItems.clear();
-            guardingItems.clear();
+            clearGuardingBaseItem();
             tmpActiveItems.clear();
             Collection<SyncItem> syncItems = itemService.getItemsCopy();
             for (SyncItem syncItem : syncItems) {
@@ -180,80 +179,6 @@ public class ActionServiceImpl extends CommonActionServiceImpl implements Action
             }
         }
 
-    }
-
-    // TODO put in common
-
-    @Override
-    public void addGuardingBaseItem(SyncTickItem syncTickItem) {
-        if (!(syncTickItem instanceof SyncBaseItem)) {
-            return;
-        }
-
-        SyncBaseItem syncBaseItem = (SyncBaseItem) syncTickItem;
-        if (!syncBaseItem.hasSyncWeapon() || !syncBaseItem.isAlive()) {
-            return;
-        }
-
-        if (syncBaseItem.hasSyncConsumer() && !syncBaseItem.getSyncConsumer().isOperating()) {
-            return;
-        }
-
-        if (!syncBaseItem.getSyncItemArea().hasPosition()) {
-            return;
-        }
-
-        if (!territoryService.isAllowed(syncBaseItem.getSyncItemArea().getPosition(), syncBaseItem)) {
-            return;
-        }
-
-        if (checkGuardingItemHasEnemiesInRange(syncBaseItem)) {
-            return;
-        }
-
-        synchronized (guardingItems) {
-            guardingItems.add(syncBaseItem);
-        }
-    }
-
-    // TODO put in common
-
-    @Override
-    public void removeGuardingBaseItem(SyncBaseItem syncItem) {
-        if (!syncItem.hasSyncWeapon()) {
-            return;
-        }
-
-        synchronized (guardingItems) {
-            guardingItems.remove(syncItem);
-        }
-    }
-
-    // TODO put in common
-
-    @Override
-    public void interactionGuardingItems(SyncBaseItem target) {
-        synchronized (guardingItems) {
-            for (SyncBaseItem attacker : guardingItems) {
-                if (attacker.isEnemy(target)
-                        && attacker.getSyncWeapon().isAttackAllowedWithoutMoving(target)
-                        && attacker.getSyncWeapon().isItemTypeAllowed(target)) {
-                    defend(attacker, target);
-                }
-            }
-        }
-    }
-
-    // TODO put in common
-
-    private boolean checkGuardingItemHasEnemiesInRange(SyncBaseItem guardingItem) {
-        SyncBaseItem target = itemService.getFirstEnemyItemInRange(guardingItem);
-        if (target != null) {
-            defend(guardingItem, target);
-            return true;
-        } else {
-            return false;
-        }
     }
 
     @Override

@@ -15,6 +15,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
@@ -27,6 +28,9 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UnloadContainerCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.UpgradeCommand;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,6 +41,7 @@ import java.util.logging.Logger;
  */
 public abstract class CommonActionServiceImpl implements CommonActionService {
     private static Logger log = Logger.getLogger(CommonActionServiceImpl.class.getName());
+    private final HashSet<SyncBaseItem> guardingItems = new HashSet<SyncBaseItem>();
 
     protected abstract void executeCommand(SyncBaseItem syncItem, BaseCommand baseCommand) throws ItemLimitExceededException, HouseSpaceExceededException, ItemDoesNotExistException, NoSuchItemTypeException, InsufficientFundsException, NotYourBaseException;
 
@@ -270,5 +275,81 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         }
     }
 
+    @Override
+    public void addGuardingBaseItem(SyncTickItem syncTickItem) {
+        if (!(syncTickItem instanceof SyncBaseItem)) {
+            return;
+        }
+
+        SyncBaseItem syncBaseItem = (SyncBaseItem) syncTickItem;
+        if (!syncBaseItem.hasSyncWeapon() || !syncBaseItem.isAlive()) {
+            return;
+        }
+
+        if (syncBaseItem.hasSyncConsumer() && !syncBaseItem.getSyncConsumer().isOperating()) {
+            return;
+        }
+
+        if (!syncBaseItem.getSyncItemArea().hasPosition()) {
+            return;
+        }
+
+        if (!getServices().getTerritoryService().isAllowed(syncBaseItem.getSyncItemArea().getPosition(), syncBaseItem)) {
+            return;
+        }
+
+        if (checkGuardingItemHasEnemiesInRange(syncBaseItem)) {
+            return;
+        }
+
+        synchronized (guardingItems) {
+            guardingItems.add(syncBaseItem);
+        }
+    }
+
+    @Override
+    public void removeGuardingBaseItem(SyncBaseItem syncItem) {
+        if (!syncItem.hasSyncWeapon()) {
+            return;
+        }
+
+        synchronized (guardingItems) {
+            guardingItems.remove(syncItem);
+        }
+    }
+
+    protected void clearGuardingBaseItem() {
+        synchronized (guardingItems) {
+            guardingItems.clear();
+        }
+    }
+
+    @Override
+    public void interactionGuardingItems(SyncBaseItem target) {
+        // Prevent ConcurrentModificationException
+        List<SyncBaseItem> attackers = new ArrayList<SyncBaseItem>();
+        synchronized (guardingItems) {
+            for (SyncBaseItem attacker : guardingItems) {
+                if (attacker.isEnemy(target)
+                        && attacker.getSyncWeapon().isAttackAllowedWithoutMoving(target)
+                        && attacker.getSyncWeapon().isItemTypeAllowed(target)) {
+                    attackers.add(target);
+                }
+            }
+        }
+        for (SyncBaseItem attacker : attackers) {
+            defend(attacker, target);
+        }
+    }
+
+    private boolean checkGuardingItemHasEnemiesInRange(SyncBaseItem guardingItem) {
+        SyncBaseItem target = getServices().getItemService().getFirstEnemyItemInRange(guardingItem);
+        if (target != null) {
+            defend(guardingItem, target);
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 }
