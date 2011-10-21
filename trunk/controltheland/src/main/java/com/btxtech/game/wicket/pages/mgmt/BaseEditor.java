@@ -131,6 +131,7 @@ public class BaseEditor extends MgmtWebPage {
             public void detach() {
             }
         }));
+        form.add(new Label("bot", new Model<String>(baseService.isBot(simpleBase) ? "Yes" : "No")));
         form.add(new TextField<String>("accountBalance", new IModel<String>() {
             @Override
             public String getObject() {

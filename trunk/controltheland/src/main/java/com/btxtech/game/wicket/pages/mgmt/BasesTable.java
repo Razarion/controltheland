@@ -15,14 +15,14 @@ package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.services.base.BaseService;
-import java.util.List;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import java.util.List;
 
 /**
  * User: beat
@@ -64,7 +64,7 @@ public class BasesTable extends MgmtWebPage {
                         setResponsePage(new BaseEditor(listItem.getModelObject()));
                     }
                 };
-                link.add(new Label("baseName", baseService.getBaseName(listItem.getModelObject())));
+                link.add(new Label("baseName", baseService.getBaseName(listItem.getModelObject()) + " (" + listItem.getModelObject().getId() + ")"));
                 listItem.add(link);
             }
         };
