@@ -13,10 +13,16 @@
 
 package com.btxtech.game.jsre.client;
 
+import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.item.ItemViewContainer;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.*;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncProjectileItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncResourceItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncTickItem;
 
 /**
  * User: beat
@@ -40,15 +46,21 @@ public class ClientSyncItem implements SyncItemListener {
         switch (change) {
             case POSITION:
                 checkVisibility();
+                if (syncItem instanceof SyncBaseItem && !Connection.getInstance().getGameInfo().hasServerCommunication()) {
+                    ActionHandler.getInstance().interactionGuardingItems((SyncBaseItem) syncItem);
+                }
                 break;
             case BUILD:
                 if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).isReady()) {
                     SimulationConditionServiceImpl.getInstance().onSyncItemBuilt(((SyncBaseItem) syncItem));
                     ClientBase.getInstance().recalculate4FakedHouseSpace((SyncBaseItem) syncItem);
+                    if (!Connection.getInstance().getGameInfo().hasServerCommunication()) {
+                        ActionHandler.getInstance().addGuardingBaseItem((SyncBaseItem) syncItem);
+                    }
                 }
                 break;
             case CONTAINED_IN_CHANGED:
-                SimulationConditionServiceImpl.getInstance().onContainedInChanged(((SyncBaseItem)syncItem).isContainedIn());
+                SimulationConditionServiceImpl.getInstance().onContainedInChanged(((SyncBaseItem) syncItem).isContainedIn());
                 break;
         }
         if (clientSyncItemView != null) {

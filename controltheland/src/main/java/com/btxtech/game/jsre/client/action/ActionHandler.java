@@ -102,6 +102,9 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                     if (!activeItem.tick(factor)) {
                         SimulationConditionServiceImpl.getInstance().onSyncItemDeactivated(activeItem);
                         iterator.remove();
+                        if (!Connection.getInstance().getGameInfo().hasServerCommunication()) {
+                            ActionHandler.getInstance().addGuardingBaseItem(activeItem);
+                        }
                     }
                 } catch (ItemDoesNotExistException ife) {
                     iterator.remove();
@@ -124,6 +127,9 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
     @Override
     public void syncItemActivated(SyncTickItem syncTickItem) {
         tmpAddActiveItems.add(syncTickItem);
+        if (!Connection.getInstance().getGameInfo().hasServerCommunication()) {
+            ActionHandler.getInstance().addGuardingBaseItem(syncTickItem);
+        }
     }
 
     public void removeActiveItem(SyncTickItem syncTickItem) {
@@ -333,6 +339,9 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
         ClientUserTracker.getInstance().onExecuteCommand(baseCommand);
         SimulationConditionServiceImpl.getInstance().onSendCommand(syncItem, baseCommand);
         syncItemActivated(syncItem);
+        if (!Connection.getInstance().getGameInfo().hasServerCommunication()) {
+            removeGuardingBaseItem(syncItem);
+        }
     }
 
     public void injectCommand(BaseCommand baseCommand) {
@@ -357,6 +366,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
     public void clear() {
         tmpAddActiveItems.clear();
         tmpRemoveActiveItems.addAll(activeItems);
+        clearGuardingBaseItem();
     }
 
     @Override

@@ -85,4 +85,6 @@ public interface ItemService {
     boolean hasItemsInRectangle(Rectangle rectangle);
 
     void killSyncItems(Collection<SyncItem> syncItems);
+
+    SyncBaseItem getFirstEnemyItemInRange(final SyncBaseItem baseSyncItem);
 }

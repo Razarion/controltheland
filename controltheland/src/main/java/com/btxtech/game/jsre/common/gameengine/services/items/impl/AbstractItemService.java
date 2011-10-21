@@ -389,4 +389,23 @@ abstract public class AbstractItemService implements ItemService {
         }, null);
         return enemyItems;
     }
+
+    @Override
+    public SyncBaseItem getFirstEnemyItemInRange(final SyncBaseItem baseSyncItem) {
+        return iterateOverItems(new ItemHandler<SyncBaseItem>() {
+            @Override
+            public SyncBaseItem handleItem(SyncItem syncItem) {
+                if (!syncItem.getSyncItemArea().hasPosition()) {
+                    return null;
+                }
+
+                if (syncItem instanceof SyncBaseItem
+                        && baseSyncItem.isEnemy((SyncBaseItem) syncItem)
+                        && baseSyncItem.getSyncWeapon().isAttackAllowedWithoutMoving(syncItem)) {
+                    return (SyncBaseItem) syncItem;
+                }
+                return null;
+            }
+        }, null);
+    }
 }

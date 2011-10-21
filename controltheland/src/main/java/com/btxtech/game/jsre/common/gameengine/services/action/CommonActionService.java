@@ -47,4 +47,11 @@ public interface CommonActionService {
     void loadContainer(SyncBaseItem container, SyncBaseItem item, Index destinationHint);
 
     void unloadContainer(SyncBaseItem container, Index unloadPos);
+
+    void addGuardingBaseItem(SyncTickItem syncItem);
+
+    void interactionGuardingItems(SyncBaseItem target);
+
+    void removeGuardingBaseItem(SyncBaseItem syncItem);
+
 }

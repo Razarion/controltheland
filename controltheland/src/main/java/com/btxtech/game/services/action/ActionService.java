@@ -33,12 +33,6 @@ public interface ActionService extends CommonActionService, SyncItemListener {
 
     void executeCommands(List<BaseCommand> baseCommands);
 
-    void addGuardingBaseItem(SyncTickItem syncItem);
-
-    void interactionGuardingItems(SyncBaseItem target);
-
-    void removeGuardingBaseItem(SyncBaseItem syncItem);
-
     void reload();
 
     void pause(boolean pause);

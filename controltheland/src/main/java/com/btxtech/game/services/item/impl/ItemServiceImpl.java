@@ -300,24 +300,6 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public SyncBaseItem getFirstEnemyItemInRange(SyncBaseItem baseSyncItem) {
-        synchronized (items) {
-            for (SyncItem syncItem : items.values()) {
-                if (!syncItem.getSyncItemArea().hasPosition()) {
-                    continue;
-                }
-
-                if (syncItem instanceof SyncBaseItem
-                        && baseSyncItem.isEnemy((SyncBaseItem) syncItem)
-                        && baseSyncItem.getSyncWeapon().isAttackAllowedWithoutMoving(syncItem))
-                    return (SyncBaseItem) syncItem;
-            }
-        }
-        return null;
-    }
-
-
-    @Override
     public List<SyncItem> getItemsCopy() {
         synchronized (items) {
             return new ArrayList<SyncItem>(items.values());
