@@ -45,9 +45,9 @@ public class PathFinderUtilities {
 
     public static PassableRectangle getPassableRectangleOfAbsoluteIndex(Index absoluteIndex,
                                                                         TerrainType terrainType,
-                                                                        Map<TerrainType, List<PassableRectangle>> passableRectangles4TerrainType,
+                                                                        Map<TerrainType, Collection<PassableRectangle>> passableRectangles4TerrainType,
                                                                         AbstractTerrainService terrainService) {
-        List<PassableRectangle> passableRectangles = passableRectangles4TerrainType.get(terrainType);
+        Collection<PassableRectangle> passableRectangles = passableRectangles4TerrainType.get(terrainType);
         if (passableRectangles == null) {
             return null;
         }
@@ -64,13 +64,13 @@ public class PathFinderUtilities {
     public static PassableRectangle getNearestPassableRectangleDifferentTerrainTypeOfAbsoluteIndex(Index absoluteIndexTaget,
                                                                                                    TerrainType terrainTypeTarget,
                                                                                                    TerrainType terrainType,
-                                                                                                   Map<TerrainType, List<PassableRectangle>> passableRectangles4TerrainType,
+                                                                                                   Map<TerrainType, Collection<PassableRectangle>> passableRectangles4TerrainType,
                                                                                                    AbstractTerrainService terrainService) {
         PassableRectangle targetPassableRectangle = getPassableRectangleOfAbsoluteIndex(absoluteIndexTaget, terrainTypeTarget, passableRectangles4TerrainType, terrainService);
         if (targetPassableRectangle == null) {
             return null;
         }
-        List<PassableRectangle> passableRectangles = passableRectangles4TerrainType.get(terrainType);
+        Collection<PassableRectangle> passableRectangles = passableRectangles4TerrainType.get(terrainType);
         if (passableRectangles == null) {
             return null;
         }

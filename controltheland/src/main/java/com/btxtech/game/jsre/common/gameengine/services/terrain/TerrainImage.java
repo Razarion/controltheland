@@ -56,4 +56,7 @@ public class TerrainImage implements Serializable {
         return surfaceTypes[tileX][tileY];
     }
 
+    public SurfaceType[][] getSurfaceTypes() {
+        return surfaceTypes;
+    }
 }

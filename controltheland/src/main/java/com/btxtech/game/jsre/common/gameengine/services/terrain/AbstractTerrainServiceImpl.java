@@ -471,42 +471,58 @@ public abstract class AbstractTerrainServiceImpl implements AbstractTerrainServi
     }
 
     @Override
-    public SurfaceType[][] createSurfaceTypeField() {
+    public Map<TerrainType, boolean[][]> createSurfaceTypeField() {
         if (terrainSettings == null) {
             throw new IllegalStateException("terrainSettings == null");
         }
-        SurfaceType[][] surfaceTypeFiled = new SurfaceType[terrainSettings.getTileXCount()][terrainSettings.getTileYCount()];
+
+        Map<TerrainType, boolean[][]> terrainTypeMap = new HashMap<TerrainType, boolean[][]>();
+        for (TerrainType terrainType : TerrainType.values()) {
+            terrainTypeMap.put(terrainType, new boolean[terrainSettings.getTileXCount()][terrainSettings.getTileYCount()]);
+        }
+
+        for (SurfaceRect surfaceRect : surfaceRects) {
+            SurfaceType surfaceType = surfaceImages.get(surfaceRect.getSurfaceImageId()).getSurfaceType();
+            Collection<TerrainType> allowedTerrainTypes = TerrainType.getAllowedTerrainType(surfaceType);
+            for (TerrainType terrainType : allowedTerrainTypes) {
+                int endX = surfaceRect.getTileWidth() + surfaceRect.getTileIndex().getX();
+                for (int x = surfaceRect.getTileIndex().getX(); x < endX; x++) {
+                    if (x > terrainSettings.getTileXCount() - 1) {
+                        continue;
+                    }
+                    int endY = surfaceRect.getTileHeight() + surfaceRect.getTileIndex().getY();
+                    for (int y = surfaceRect.getTileIndex().getY(); y < endY; y++) {
+                        if (y > terrainSettings.getTileYCount() - 1) {
+                            continue;
+                        }
+                        terrainTypeMap.get(terrainType)[x][y] = true;
+                    }
+                }
+            }
+        }
         for (TerrainImagePosition terrainImagePosition : terrainImagePositions) {
             TerrainImage terrainImage = terrainImages.get(terrainImagePosition.getImageId());
             Index imageIndex = terrainImagePosition.getTileIndex();
-            for (int x = 0; x < terrainImage.getTileWidth(); x++) {
-                if (x + imageIndex.getX() > terrainSettings.getTileXCount() - 1) {
+            SurfaceType[][] surfaceTypes = terrainImage.getSurfaceTypes();
+            for (int x = 0; x < surfaceTypes.length; x++) {
+                int absX = x + imageIndex.getX();
+                if (absX > terrainSettings.getTileXCount() - 1) {
                     continue;
                 }
-                for (int y = 0; y < terrainImage.getTileHeight(); y++) {
-                    if (y + imageIndex.getY() > terrainSettings.getTileYCount() - 1) {
+                for (int y = 0; y < surfaceTypes[x].length; y++) {
+                    int absY = y + imageIndex.getY();
+                    if (absY > terrainSettings.getTileYCount() - 1) {
                         continue;
                     }
-                    surfaceTypeFiled[x + imageIndex.getX()][y + imageIndex.getY()] = terrainImage.getSurfaceType(x, y);
-                }
-            }
-        }
-        for (SurfaceRect surfaceRect : surfaceRects) {
-            SurfaceType surfaceType = surfaceImages.get(surfaceRect.getSurfaceImageId()).getSurfaceType();
-            for (int x = surfaceRect.getTileIndex().getX(); x < surfaceRect.getTileWidth() + surfaceRect.getTileIndex().getX(); x++) {
-                if (x > terrainSettings.getTileXCount() - 1) {
-                    continue;
-                }
-                for (int y = surfaceRect.getTileIndex().getY(); y < surfaceRect.getTileHeight() + surfaceRect.getTileIndex().getY(); y++) {
-                    if (y > terrainSettings.getTileYCount() - 1) {
-                        continue;
-                    }
-                    if (surfaceTypeFiled[x][y] == null) {
-                        surfaceTypeFiled[x][y] = surfaceType;
+
+                    for (TerrainType terrainType : TerrainType.values()) {
+                        terrainTypeMap.get(terrainType)[absX][absY] = terrainType.allowSurfaceType(surfaceTypes[x][y]);
+
                     }
                 }
             }
         }
-        return surfaceTypeFiled;
+        return terrainTypeMap;
     }
+
 }

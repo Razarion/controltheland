@@ -16,13 +16,12 @@ package com.btxtech.game.jsre.common.gameengine.services.collision;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
-import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 
 import java.util.Collection;
 import java.util.List;
@@ -44,7 +43,7 @@ public interface CommonCollisionService {
 
     List<Index> setupPathToDestination(Index position, Index destinationHint, TerrainType terrainType);
 
-    Map<TerrainType, List<PassableRectangle>> getPassableRectangles();
+    Map<TerrainType, Collection<PassableRectangle>> getPassableRectangles();
 
     List<AttackFormationItem> setupDestinationHints(SyncItem target, List<AttackFormationItem> items);
 

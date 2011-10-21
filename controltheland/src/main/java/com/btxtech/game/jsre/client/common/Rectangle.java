@@ -594,4 +594,8 @@ public class Rectangle implements Serializable {
         }
         return false;
     }
+
+    public String testString() {
+        return "new Rectangle(" + getX() + ", " + getY() + ", " + getWidth() + ", " + getHeight() + ")";
+    }
 }

@@ -15,20 +15,22 @@ package com.btxtech.game.services.gwt;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.gameengine.services.collision.PassableRectangle;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.btxtech.game.jsre.pathfinding.Pathfinding;
 import com.btxtech.game.services.collision.CollisionService;
-import com.btxtech.game.jsre.common.gameengine.services.collision.PassableRectangle;
 import com.btxtech.game.services.terrain.TerrainService;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * User: beat
@@ -47,8 +49,8 @@ public class PathfindingImpl implements Pathfinding {
     public Map<TerrainType, List<Rectangle>> getPassableRectangles() {
         try {
             Map<TerrainType, List<Rectangle>> result = new HashMap<TerrainType, List<Rectangle>>();
-            Map<TerrainType, List<PassableRectangle>> passableRectangles = collisionService.getPassableRectangles();
-            for (Map.Entry<TerrainType, List<PassableRectangle>> entry : passableRectangles.entrySet()) {
+            Map<TerrainType, Collection<PassableRectangle>> passableRectangles = collisionService.getPassableRectangles();
+            for (Map.Entry<TerrainType, Collection<PassableRectangle>> entry : passableRectangles.entrySet()) {
                 List<Rectangle> rectangles = new ArrayList<Rectangle>();
                 for (PassableRectangle passableRectangle : entry.getValue()) {
                     rectangles.add(passableRectangle.getPixelRectangle(terrainService.getTerrainSettings()));

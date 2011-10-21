@@ -88,9 +88,9 @@ public class TestPathFindingImpl extends AbstractServiceTest {
     public void testPassableRectangles() throws Exception {
         configureComplexGame();
 
-        Map<TerrainType, List<PassableRectangle>> passableRectanglesPerTerrainType = collisionService.getPassableRectangles();
+        Map<TerrainType, Collection<PassableRectangle>> passableRectanglesPerTerrainType = collisionService.getPassableRectangles();
         Assert.assertNotNull(passableRectanglesPerTerrainType.get(TerrainType.LAND));
-        List<PassableRectangle> passableRectangles = passableRectanglesPerTerrainType.get(TerrainType.LAND);
+        Collection<PassableRectangle> passableRectangles = passableRectanglesPerTerrainType.get(TerrainType.LAND);
         for (PassableRectangle passableRectangle : passableRectangles) {
             TestPathFinding.assertRectangleNotInTerrainImage(terrainService.convertToAbsolutePosition(passableRectangle.getRectangle()));
         }
@@ -157,7 +157,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
         }
     }
 
-    private Map<TerrainType, List<PassableRectangle>> setupPassableRectangle() throws Exception {
+    private Map<TerrainType, Collection<PassableRectangle>> setupPassableRectangle() throws Exception {
         configureComplexGame();
 
         Collection<Rectangle> rectangles = new ArrayList<Rectangle>();
@@ -211,7 +211,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
         List<PassableRectangle> passableRectangles = PathFinderUtilities.buildPassableRectangleList(rectangles, terrainService);
         Assert.assertEquals(rectangles.size(), passableRectangles.size());
 
-        Map<TerrainType, List<PassableRectangle>> passableRectangles4TerrainType = new HashMap<TerrainType, List<PassableRectangle>>();
+        Map<TerrainType, Collection<PassableRectangle>> passableRectangles4TerrainType = new HashMap<TerrainType, Collection<PassableRectangle>>();
         passableRectangles4TerrainType.put(TerrainType.LAND, passableRectangles);
         return passableRectangles4TerrainType;
     }
@@ -219,7 +219,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testFindPossiblePassableRectanglePaths1() throws Exception {
-        Map<TerrainType, List<PassableRectangle>> passableRectangles4TerrainType = setupPassableRectangle();
+        Map<TerrainType, Collection<PassableRectangle>> passableRectangles4TerrainType = setupPassableRectangle();
 
         Index start = new Index(2900, 1600);
         Index destination = new Index(2500, 800);
@@ -249,7 +249,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testFindPossiblePassableRectanglePaths_Checkerboard1() throws Exception {
-        Map<TerrainType, List<PassableRectangle>> passableRectangles4TerrainType = setupPassableRectangle();
+        Map<TerrainType, Collection<PassableRectangle>> passableRectangles4TerrainType = setupPassableRectangle();
 
         Index start = new Index(1300, 1300);
         Index destination = new Index(1300, 2500);
@@ -395,8 +395,8 @@ public class TestPathFindingImpl extends AbstractServiceTest {
 
     @DirtiesContext
     public void testFindPossiblePassableRectanglePaths_Random() throws Exception {
-        Map<TerrainType, List<PassableRectangle>> passableRectangles4TerrainType = setupPassableRectangle();
-        List<PassableRectangle> passableRectangles = passableRectangles4TerrainType.get(TerrainType.LAND);
+        Map<TerrainType, Collection<PassableRectangle>> passableRectangles4TerrainType = setupPassableRectangle();
+        Collection<PassableRectangle> passableRectangles = passableRectangles4TerrainType.get(TerrainType.LAND);
 
         while (true) {
             Index start = getRandomPossition(passableRectangles);
@@ -414,9 +414,10 @@ public class TestPathFindingImpl extends AbstractServiceTest {
         }
     }
 
-    private Index getRandomPossition(List<PassableRectangle> passableRectangles) {
+    private Index getRandomPossition(Collection<PassableRectangle> passableRectangles) {
         Random random = new Random();
-        PassableRectangle passableRectangle = passableRectangles.get(random.nextInt(passableRectangles.size()));
+        List<PassableRectangle> passableRectanglesList = new ArrayList<PassableRectangle>(passableRectangles);
+        PassableRectangle passableRectangle = passableRectanglesList.get(random.nextInt(passableRectangles.size()));
         Rectangle absRectangle = terrainService.convertToAbsolutePosition(passableRectangle.getRectangle());
         int x = absRectangle.getX() + random.nextInt(absRectangle.getWidth());
         int y = absRectangle.getY() + random.nextInt(absRectangle.getHeight());
