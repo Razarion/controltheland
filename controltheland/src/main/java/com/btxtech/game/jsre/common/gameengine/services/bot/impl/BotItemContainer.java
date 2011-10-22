@@ -45,11 +45,13 @@ public class BotItemContainer {
     private Need need;
     private Logger log = Logger.getLogger(BotItemContainer.class.getName());
     private Services services;
+    private String botName;
     private Rectangle realm;
 
-    public BotItemContainer(Collection<BotItemConfig> botItems, Rectangle realm, Services services) {
+    public BotItemContainer(Collection<BotItemConfig> botItems, Rectangle realm, Services services, String botName) {
         this.realm = realm;
         this.services = services;
+        this.botName = botName;
         need = new Need(botItems);
     }
 
@@ -145,9 +147,9 @@ public class BotItemContainer {
                 try {
                     createItem(botItemConfig, simpleBase);
                 } catch (PlaceCanNotBeFoundException t) {
-                    log.warning("BotTicker: " + t.getMessage());
+                    log.warning(botName + ": " + t.getMessage());
                 } catch (Exception e) {
-                    log.log(Level.SEVERE, "", e);
+                    log.log(Level.SEVERE, botName, e);
                 }
             }
         }

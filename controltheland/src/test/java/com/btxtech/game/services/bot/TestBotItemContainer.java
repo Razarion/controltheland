@@ -63,7 +63,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         dbBotItemConfigs.add(config1);
 
         Collection<BotItemConfig> botItemConfigs = convert(dbBotItemConfigs, itemService);
-        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverServices);
+        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverServices, "Test Bot");
         SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, botItemConfigs, null, "Test Bot", null, null, null, null));
 
         Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
@@ -106,7 +106,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         dbBotItemConfigs.add(config2);
 
         Collection<BotItemConfig> botItemConfigs = convert(dbBotItemConfigs, itemService);
-        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverServices);
+        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverServices, "Test Bot");
         SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, botItemConfigs, null, "Test Bot", null, null, null, null));
 
         Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
@@ -195,7 +195,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         dbBotItemConfigs.add(config4);
 
         Collection<BotItemConfig> botItemConfigs = convert(dbBotItemConfigs, itemService);
-        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverServices);
+        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverServices, "Test Bot");
         SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, botItemConfigs, null, "Test Bot", null, null, null, null));
 
         Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
@@ -252,7 +252,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         dbBotItemConfigs.add(config3);
 
         Collection<BotItemConfig> botItemConfigs = convert(dbBotItemConfigs, itemService);
-        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverServices);
+        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverServices, "Test Bot");
         SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, botItemConfigs, null, "Test Bot", null, null, null, null));
 
         Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
@@ -299,7 +299,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         dbBotItemConfigs.add(config2);
 
         Collection<BotItemConfig> botItemConfigs = convert(dbBotItemConfigs, itemService);
-        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverServices);
+        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, serverServices, "Test Bot");
         SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, botItemConfigs, null, "Test Bot", null, null, null, null));
 
         Assert.assertFalse(botItemContainer.isFulfilled(simpleBase));
@@ -352,7 +352,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         testServices.setItemService(mockItemService);
         testServices.setCollisionService(mockCollisionService);
         testServices.setBaseService(baseService);
-        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, testServices);
+        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, null, testServices, "Test Bot");
 
 
         EasyMock.replay(baseService);
@@ -415,7 +415,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         EasyMock.replay(baseServiceMock);
         EasyMock.replay(mockActionService);
         EasyMock.replay(mockCollisionService);
-        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, new Rectangle(2000, 3000, 1000, 2000), testServices);
+        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, new Rectangle(2000, 3000, 1000, 2000), testServices, "Test Bot");
         botItemContainer.work(simpleBase);
         syncBaseItem.setBuildup(0.0); // Simulate busy
         botItemContainer.work(simpleBase);
@@ -453,7 +453,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
 
         EasyMock.replay(baseServiceMock);
         EasyMock.replay(mockItemService);
-        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, new Rectangle(2000, 3000, 1000, 2000), testServices);
+        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, new Rectangle(2000, 3000, 1000, 2000), testServices, "Test Bot");
         botItemContainer.work(simpleBase);
         Thread.sleep(60);
         botItemContainer.work(simpleBase);

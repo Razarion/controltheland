@@ -17,7 +17,7 @@ public abstract class CommonBotServiceImpl implements CommonBotService {
     private Collection<BotConfig> botConfigs;
     final private Map<BotConfig, BotRunner> botRunners = new HashMap<BotConfig, BotRunner>();
 
-    protected abstract BotRunner createBotRunner();
+    protected abstract BotRunner createBotRunner(BotConfig botConfig);
 
     protected void startAllBots() {
         for (BotConfig botConfig : botConfigs) {
@@ -26,8 +26,8 @@ public abstract class CommonBotServiceImpl implements CommonBotService {
     }
 
     private void startBot(BotConfig botConfig) {
-        BotRunner botRunner = createBotRunner();
-        botRunner.start(botConfig);
+        BotRunner botRunner = createBotRunner(botConfig);
+        botRunner.start();
         synchronized (botRunners) {
             botRunners.put(botConfig, botRunner);
         }

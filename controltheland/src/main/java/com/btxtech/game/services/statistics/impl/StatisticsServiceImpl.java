@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.orm.hibernate3.SessionFactoryUtils;
+import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -90,7 +91,7 @@ public class StatisticsServiceImpl implements StatisticsService {
         allTimeStatistics.init(DbStatisticsEntry.class);
         allTimeStatistics.putCriterion(DbStatisticsEntry.Type.ALL_TIME, Restrictions.eq("type", DbStatisticsEntry.Type.ALL_TIME));
         setupNextDay();
-        scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
+        scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1, new CustomizableThreadFactory("StatisticsServiceImpl Thread "));
         scheduleNextEndDayProcessing();
 
     }

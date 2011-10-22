@@ -52,8 +52,6 @@ public class BotServiceImpl extends CommonBotServiceImpl implements BotService {
     private Log log = LogFactory.getLog(BotServiceImpl.class);
     private Map<Integer, BotConfig> simulatedBotConfigs = new HashMap<Integer, BotConfig>();
 
-    // TODO save & restore
-
     private void fillBotConfigs() {
         simulatedBotConfigs.clear();
         Collection<BotConfig> realGameBotConfigs = new ArrayList<BotConfig>();
@@ -101,7 +99,7 @@ public class BotServiceImpl extends CommonBotServiceImpl implements BotService {
     }
 
     @Override
-    protected BotRunner createBotRunner() {
-       return new ServerBotRunner(serverServices);
+    protected BotRunner createBotRunner(BotConfig botConfig) {
+        return new ServerBotRunner(botConfig, serverServices);
     }
 }

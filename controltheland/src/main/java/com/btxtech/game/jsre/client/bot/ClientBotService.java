@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.bot;
 
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.bot.impl.BotRunner;
 import com.btxtech.game.jsre.common.gameengine.services.bot.impl.CommonBotServiceImpl;
 
@@ -16,8 +17,8 @@ public class ClientBotService extends CommonBotServiceImpl {
     }
 
     @Override
-    protected BotRunner createBotRunner() {
-        return new ClientBotRunner();
+    protected BotRunner createBotRunner(BotConfig botConfig) {
+        return new ClientBotRunner(botConfig);
     }
 
     public void clear() {
