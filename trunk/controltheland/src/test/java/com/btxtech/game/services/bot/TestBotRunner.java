@@ -50,8 +50,8 @@ public class TestBotRunner extends AbstractServiceTest {
         config1.setRegion(new Rectangle(2000, 2000, 1000, 1000));
         config1.setCreateDirectly(true);
 
-        BotRunner botRunner = new ServerBotRunner(serverServices);
-        botRunner.start(dbBotConfig.createBotConfig(itemService));
+        BotRunner botRunner = new ServerBotRunner(dbBotConfig.createBotConfig(itemService), serverServices);
+        botRunner.start();
 
         waitForBotRunner(botRunner);
 
@@ -81,8 +81,8 @@ public class TestBotRunner extends AbstractServiceTest {
         config3.setCount(3);
         config3.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
 
-        BotRunner botRunner = new ServerBotRunner(serverServices);
-        botRunner.start(dbBotConfig.createBotConfig(itemService));
+        BotRunner botRunner = new ServerBotRunner(dbBotConfig.createBotConfig(itemService), serverServices);
+        botRunner.start();
 
         waitForBotRunner(botRunner);
         SimpleBase simpleBase1 = botRunner.getBase();
@@ -117,8 +117,8 @@ public class TestBotRunner extends AbstractServiceTest {
         config1.setRegion(new Rectangle(2000, 2000, 1000, 1000));
         config1.setCreateDirectly(true);
 
-        BotRunner botRunner = new ServerBotRunner(serverServices);
-        botRunner.start(dbBotConfig.createBotConfig(itemService));
+        BotRunner botRunner = new ServerBotRunner(dbBotConfig.createBotConfig(itemService), serverServices);
+        botRunner.start();
 
         waitForBotRunner(botRunner);
         assertWholeItemCount(1);
@@ -154,8 +154,8 @@ public class TestBotRunner extends AbstractServiceTest {
         config3.setCount(4);
         config3.setBaseItemType(itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID));
 
-        BotRunner botRunner = new ServerBotRunner(serverServices);
-        botRunner.start(dbBotConfig.createBotConfig(itemService));
+        BotRunner botRunner = new ServerBotRunner(dbBotConfig.createBotConfig(itemService), serverServices);
+        botRunner.start();
 
         waitForBotRunner(botRunner);
         assertWholeItemCount(8);
@@ -199,8 +199,8 @@ public class TestBotRunner extends AbstractServiceTest {
         config1.setRegion(new Rectangle(0, 0, 1000, 1000));
         config1.setCreateDirectly(true);
 
-        BotRunner botRunner = new ServerBotRunner(serverServices);
-        botRunner.start(dbBotConfig.createBotConfig(itemService));
+        BotRunner botRunner = new ServerBotRunner(dbBotConfig.createBotConfig(itemService), serverServices);
+        botRunner.start();
 
         waitForBotRunner(botRunner);
         assertWholeItemCount(2);
@@ -354,8 +354,8 @@ public class TestBotRunner extends AbstractServiceTest {
 
         BotConfig botConfig = dbBotConfig.createBotConfig(itemService);
 
-        BotRunner botRunner = new ServerBotRunner(serverServices);
-        botRunner.start(botConfig);
+        BotRunner botRunner = new ServerBotRunner(botConfig, serverServices);
+        botRunner.start();
 
         assertWholeItemCount(0);
         Thread.sleep(250);
@@ -386,8 +386,8 @@ public class TestBotRunner extends AbstractServiceTest {
 
         BotConfig botConfig = dbBotConfig.createBotConfig(itemService);
 
-        BotRunner botRunner = new ServerBotRunner(serverServices);
-        botRunner.start(botConfig);
+        BotRunner botRunner = new ServerBotRunner(botConfig, serverServices);
+        botRunner.start();
         Thread.sleep(250);
 
         for (int i = 0; i < 10; i++) {
@@ -421,8 +421,8 @@ public class TestBotRunner extends AbstractServiceTest {
 
         BotConfig botConfig = dbBotConfig.createBotConfig(itemService);
 
-        BotRunner botRunner = new ServerBotRunner(serverServices);
-        botRunner.start(botConfig);
+        BotRunner botRunner = new ServerBotRunner(botConfig, serverServices);
+        botRunner.start();
         assertWholeItemCount(0);
 
         Thread.sleep(100);
@@ -458,8 +458,8 @@ public class TestBotRunner extends AbstractServiceTest {
 
         BotConfig botConfig = dbBotConfig.createBotConfig(itemService);
 
-        BotRunner botRunner = new ServerBotRunner(serverServices);
-        botRunner.start(botConfig);
+        BotRunner botRunner = new ServerBotRunner(botConfig, serverServices);
+        botRunner.start();
         assertWholeItemCount(0);
         Thread.sleep(40);
 

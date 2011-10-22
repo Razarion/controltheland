@@ -84,8 +84,11 @@ public abstract class BotRunner {
         }
     }
 
-    public void start(BotConfig botConfig) {
+    protected BotRunner(BotConfig botConfig) {
         this.botConfig = botConfig;
+    }
+
+    public void start() {
         if (botConfig.isIntervalBot()) {
             if (botConfig.isIntervalValid()) {
                 intervalState = IntervalState.INACTIVE;
@@ -132,7 +135,7 @@ public abstract class BotRunner {
 
     private void startBot() {
         synchronized (syncObject) {
-            botItemContainer = new BotItemContainer(botConfig.getBotItems(), botConfig.getRealm(), getServices());
+            botItemContainer = new BotItemContainer(botConfig.getBotItems(), botConfig.getRealm(), getServices(), botConfig.getName());
             intruderHandler = new IntruderHandler(botItemContainer, botConfig.getRealm(), getServices());
         }
         startBotThread(botConfig.getActionDelay(), new BotTicker());

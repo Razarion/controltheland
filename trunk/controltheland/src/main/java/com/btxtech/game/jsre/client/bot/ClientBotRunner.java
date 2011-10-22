@@ -2,6 +2,7 @@ package com.btxtech.game.jsre.client.bot;
 
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.bot.impl.BotRunner;
 import com.google.gwt.user.client.Timer;
 
@@ -16,6 +17,10 @@ public class ClientBotRunner extends BotRunner {
     private Timer botThread;
     private Timer botTimer;
     private Logger log = Logger.getLogger(ClientBotRunner.class.getName());
+
+    public ClientBotRunner(BotConfig botConfig) {
+        super(botConfig);
+    }
 
     @Override
     protected void scheduleTimer(long delay, final Runnable runnable) {

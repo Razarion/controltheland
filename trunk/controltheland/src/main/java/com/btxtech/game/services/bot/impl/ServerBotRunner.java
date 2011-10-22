@@ -1,7 +1,9 @@
 package com.btxtech.game.services.bot.impl;
 
 import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
 import com.btxtech.game.jsre.common.gameengine.services.bot.impl.BotRunner;
+import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -14,12 +16,15 @@ import java.util.concurrent.TimeUnit;
  */
 public class ServerBotRunner extends BotRunner {
     private Services services;
-    private ScheduledThreadPoolExecutor botTread = new ScheduledThreadPoolExecutor(1);
-    private ScheduledThreadPoolExecutor botTimer = new ScheduledThreadPoolExecutor(1);
+    private ScheduledThreadPoolExecutor botThread;
+    private ScheduledThreadPoolExecutor botTimer;
     private ScheduledFuture botThreadScheduledFuture;
 
-    public ServerBotRunner(Services services) {
+    public ServerBotRunner(BotConfig botConfig, Services services) {
+        super(botConfig);
         this.services = services;
+        botThread = new ScheduledThreadPoolExecutor(1, new CustomizableThreadFactory("BotRunner botThread: " + botConfig.getName() + " "));
+        botTimer = new ScheduledThreadPoolExecutor(1, new CustomizableThreadFactory("BotRunner botTimer: " + botConfig.getName() + " "));
     }
 
     @Override
@@ -37,16 +42,16 @@ public class ServerBotRunner extends BotRunner {
 
     @Override
     protected void startBotThread(int actionDelayMs, Runnable runnable) {
-        botThreadScheduledFuture = botTread.scheduleAtFixedRate(runnable, 0, actionDelayMs, TimeUnit.MILLISECONDS);
+        botThreadScheduledFuture = botThread.scheduleAtFixedRate(runnable, 0, actionDelayMs, TimeUnit.MILLISECONDS);
     }
 
     @Override
     protected void killResources() {
         killTimer();
         killBotThread();
-        if (botTread != null) {
-            botTread.shutdownNow();
-            botTread = null;
+        if (botThread != null) {
+            botThread.shutdownNow();
+            botThread = null;
         }
 
     }
