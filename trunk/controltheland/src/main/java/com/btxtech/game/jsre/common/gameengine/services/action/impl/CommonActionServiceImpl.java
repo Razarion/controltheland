@@ -333,7 +333,7 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
                 if (attacker.isEnemy(target)
                         && attacker.getSyncWeapon().isAttackAllowedWithoutMoving(target)
                         && attacker.getSyncWeapon().isItemTypeAllowed(target)) {
-                    attackers.add(target);
+                    attackers.add(attacker);
                 }
             }
         }
