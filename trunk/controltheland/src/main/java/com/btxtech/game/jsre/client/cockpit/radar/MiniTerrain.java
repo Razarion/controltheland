@@ -91,7 +91,6 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
         double scale = Math.min((double) getWidth() / (double) getTerrainSettings().getPlayFieldXSize(),
                 (double) getHeight() / (double) getTerrainSettings().getPlayFieldYSize()) / getScale();
         getContext2d().scale(scale, scale);
-        double factor = 1.0 / scale;
 
         for (TerrainImagePosition terrainImagePosition : TerrainView.getInstance().getTerrainHandler().getTerrainImagePositions()) {
             Index absolute = TerrainView.getInstance().getTerrainHandler().getAbsolutIndexForTerrainTileIndex(terrainImagePosition.getTileIndex());
@@ -105,8 +104,8 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
                             imageElement.getHeight(),
                             absolute.getX(),
                             absolute.getY(),
-                            imageElement.getWidth() + factor,
-                            imageElement.getHeight() + factor);
+                            imageElement.getWidth(),
+                            imageElement.getHeight());
                 }
             } catch (Throwable throwable) {
                 GwtCommon.handleException(throwable);

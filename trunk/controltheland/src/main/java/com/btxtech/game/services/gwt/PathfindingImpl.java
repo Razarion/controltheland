@@ -13,24 +13,13 @@
 
 package com.btxtech.game.services.gwt;
 
-import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.common.gameengine.services.collision.PassableRectangle;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.btxtech.game.jsre.pathfinding.Pathfinding;
-import com.btxtech.game.services.collision.CollisionService;
 import com.btxtech.game.services.terrain.TerrainService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * User: beat
@@ -40,55 +29,18 @@ import java.util.Map;
 @Component("pathfinding")
 public class PathfindingImpl implements Pathfinding {
     @Autowired
-    private CollisionService collisionService;
-    @Autowired
     private TerrainService terrainService;
     private Log log = LogFactory.getLog(PathfindingImpl.class);
 
     @Override
-    public Map<TerrainType, List<Rectangle>> getPassableRectangles() {
-        try {
-            Map<TerrainType, List<Rectangle>> result = new HashMap<TerrainType, List<Rectangle>>();
-            Map<TerrainType, Collection<PassableRectangle>> passableRectangles = collisionService.getPassableRectangles();
-            for (Map.Entry<TerrainType, Collection<PassableRectangle>> entry : passableRectangles.entrySet()) {
-                List<Rectangle> rectangles = new ArrayList<Rectangle>();
-                for (PassableRectangle passableRectangle : entry.getValue()) {
-                    rectangles.add(passableRectangle.getPixelRectangle(terrainService.getTerrainSettings()));
-                }
-                result.put(entry.getKey(), rectangles);
-            }
-            return result;
-        } catch (Throwable t) {
-            log.error("", t);
-            return null;
-        }
-    }
-
-    @Override
-    public TerrainInfo getTerrainInfo() {
+    public TerrainInfo getTerrainInfo(int terrainId) {
         try {
             TerrainInfo terrainInfo = new TerrainInfo();
-            terrainInfo.setTerrainSettings(terrainService.getTerrainSettings());
-            terrainInfo.setTerrainImagePositions(terrainService.getTerrainImagePositions());
-            terrainInfo.setTerrainImages(terrainService.getTerrainImages());
-            terrainInfo.setSurfaceImages(terrainService.getSurfaceImages());
-            terrainInfo.setSurfaceRects(terrainService.getSurfaceRects());
+            terrainService.setupTerrain(terrainInfo, terrainId);
             return terrainInfo;
         } catch (Throwable t) {
             log.error("", t);
             return null;
         }
     }
-
-    @Override
-    public List<Index> findPath(Index start, Index destination, TerrainType terrainType) {
-        try {
-            return collisionService.setupPathToDestination(start, destination, terrainType);
-        } catch (Throwable t) {
-            log.error("", t);
-            return null;
-        }
-    }
-
-
 }

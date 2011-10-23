@@ -15,11 +15,14 @@ package com.btxtech.game.jsre.pathfinding;
 
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniTerrain;
+import com.btxtech.game.jsre.client.collision.ClientCollisionService;
 import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.mapeditor.TerrainEditorAsync;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -36,7 +39,9 @@ public class PathfindingEntry implements EntryPoint {
         GwtCommon.setUncaughtExceptionHandler();
         GwtCommon.disableBrowserContextMenuJSNI();
 
-        TerrainView.uglySuppressRadar = true;        
+        int terrainId = Integer.parseInt(Window.Location.getParameter(TerrainEditorAsync.TERRAIN_SETTING_ID));
+
+        TerrainView.uglySuppressRadar = true;
 
         AbsolutePanel absolutePanel = new AbsolutePanel();
         absolutePanel.setSize("100%", "100%");
@@ -46,12 +51,16 @@ public class PathfindingEntry implements EntryPoint {
         miniTerrain.getCanvas().getElement().getStyle().setZIndex(1);
         absolutePanel.add(miniTerrain.getCanvas(), 0, 0);
 
+        final PassableRectangleMiniMap passableRectangleMiniMap = new PassableRectangleMiniMap(RootPanel.get().getOffsetWidth(), RootPanel.get().getOffsetHeight());
+        passableRectangleMiniMap.getCanvas().getElement().getStyle().setZIndex(2);
+        absolutePanel.add(passableRectangleMiniMap.getCanvas(), 0, 0);
+
         PathfindingAsync pathfinding = GWT.create(Pathfinding.class);
-        final PathMiniMap pathMiniMap = new PathMiniMap(RootPanel.get().getOffsetWidth(), RootPanel.get().getOffsetHeight(), pathfinding);
-        pathMiniMap.getCanvas().getElement().getStyle().setZIndex(2);
+        final PathMiniMap pathMiniMap = new PathMiniMap(RootPanel.get().getOffsetWidth(), RootPanel.get().getOffsetHeight());
+        pathMiniMap.getCanvas().getElement().getStyle().setZIndex(3);
         absolutePanel.add(pathMiniMap.getCanvas(), 0, 0);
 
-        pathfinding.getTerrainInfo(new AsyncCallback<TerrainInfo>() {
+        pathfinding.getTerrainInfo(terrainId, new AsyncCallback<TerrainInfo>() {
             @Override
             public void onFailure(Throwable throwable) {
                 GwtCommon.handleException(throwable);
@@ -67,6 +76,9 @@ public class PathfindingEntry implements EntryPoint {
                 TerrainView.getInstance().getTerrainHandler().loadImagesAndDrawMap(new SimpleDeferredStartup());
                 miniTerrain.onTerrainSettings(terrainInfo.getTerrainSettings());
                 pathMiniMap.onTerrainSettings(terrainInfo.getTerrainSettings());
+                passableRectangleMiniMap.onTerrainSettings(terrainInfo.getTerrainSettings());
+                ClientCollisionService.getInstance().setup();
+                passableRectangleMiniMap.showPassableRectangles();
             }
         });
     }

@@ -13,15 +13,8 @@
 
 package com.btxtech.game.jsre.pathfinding;
 
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
-import com.google.gwt.user.client.rpc.RemoteService;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.btxtech.game.jsre.client.common.Rectangle;
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
-import java.util.List;
-import java.util.Map;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
  * User: beat
@@ -29,9 +22,5 @@ import java.util.Map;
  * Time: 12:16:13
  */
 public interface PathfindingAsync {
-    void getPassableRectangles(AsyncCallback<Map<TerrainType, List<Rectangle>>> async);
-
-    void getTerrainInfo(AsyncCallback<TerrainInfo> async);
-
-    void findPath(Index start, Index destination, TerrainType terrainType, AsyncCallback<List<Index>> async);
+    void getTerrainInfo(int terrainId, AsyncCallback<TerrainInfo> async);
 }

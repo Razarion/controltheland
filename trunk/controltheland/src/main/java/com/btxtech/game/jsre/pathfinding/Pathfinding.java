@@ -29,9 +29,5 @@ import java.util.Map;
  */
 @RemoteServiceRelativePath("gwtrpc/TerrainServiceService")
 public interface Pathfinding extends RemoteService {
-    Map<TerrainType, List<Rectangle>> getPassableRectangles();
-
-    TerrainInfo getTerrainInfo();
-
-    List<Index> findPath(Index start, Index destination, TerrainType terrainType);
+    TerrainInfo getTerrainInfo(int terrainId);
 }
