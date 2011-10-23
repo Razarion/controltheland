@@ -63,6 +63,10 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
         return scale;
     }
 
+    protected void setScale(double scale) {
+        this.scale = scale;
+    }
+
     public void onTerrainSettings(TerrainSettings terrainSettings) {
         this.terrainSettings = terrainSettings;
         scale = Math.min((double) width / (double) terrainSettings.getTileXCount(),

@@ -13,8 +13,6 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
-import org.apache.wicket.markup.html.WebPage;
-
 /**
  * User: beat
  * Date: Aug 4, 2009

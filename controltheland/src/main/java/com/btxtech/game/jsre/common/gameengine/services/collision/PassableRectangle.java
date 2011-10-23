@@ -38,15 +38,8 @@ public class PassableRectangle {
     private boolean canGrowY = true;
 
     public static class Neighbor {
-        // No equals() and no hashCode() due to the GWT serialization/de-serialization
         private PassableRectangle passableRectangle;
         private Port port;
-
-        /**
-         * Used by GWT
-         */
-        Neighbor() {
-        }
 
         private Neighbor(PassableRectangle passableRectangle, Port port) {
             this.passableRectangle = passableRectangle;

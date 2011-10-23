@@ -75,6 +75,7 @@ public class TerrainSettingsTable extends MgmtWebPage {
                 PageParameters pageParameters = new PageParameters();
                 pageParameters.add(TerrainEditorAsync.TERRAIN_SETTING_ID, item.getModelObject().getId().toString());
                 item.add(new BookmarkablePageLink<TerrainFieldEditor>("editorLink", TerrainFieldEditor.class, pageParameters));
+                item.add(new BookmarkablePageLink<TerrainFieldEditor>("pathFindingLinkLink", Pathfinding.class, pageParameters));
             }
         };
         form.add(new Button("activate") {

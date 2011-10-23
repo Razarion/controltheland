@@ -129,7 +129,6 @@ public class MgmtPage extends MgmtWebPage {
         toolPages.add(new LinkAndName("Resource", ResourceEditor.class));
         toolPages.add(new LinkAndName("Market", MarketEntryEditor.class));
         toolPages.add(new LinkAndName("User Tracking", SessionTable.class));
-        toolPages.add(new LinkAndName("Pathfinding", Pathfinding.class));
         toolPages.add(new LinkAndName("Bases", BasesTable.class));
         toolPages.add(new LinkAndName("XP Settings", XpSettingsEditor.class));
         toolPages.add(new LinkAndName("Levels", DbLevelTable.class));
