@@ -86,5 +86,5 @@ public interface ItemService {
 
     void killSyncItems(Collection<SyncItem> syncItems);
 
-    SyncBaseItem getFirstEnemyItemInRange(final SyncBaseItem baseSyncItem);
+    SyncBaseItem getFirstEnemyItemInRange(SyncBaseItem baseSyncItem);
 }

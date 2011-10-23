@@ -42,8 +42,6 @@ import java.util.List;
 public interface ItemService extends com.btxtech.game.jsre.common.gameengine.services.items.ItemService {
     Collection<SyncItemInfo> getSyncInfo();
 
-    SyncBaseItem getFirstEnemyItemInRange(SyncBaseItem baseSyncItem);
-
     List<SyncItem> getItemsCopy();
 
     Collection<SyncItem> getItemsCopyNoBot();
