@@ -20,7 +20,7 @@ import java.util.Map;
  */
 public class PathFinderUtilities {
 
-    public static List<PassableRectangle> buildPassableRectangleList(Collection<Rectangle> rectangles, AbstractTerrainService terrainService) {
+    public static List<PassableRectangle> buildPassableRectangleList(Collection<Rectangle> rectangles) {
         List<PassableRectangle> passableRectangles = new ArrayList<PassableRectangle>();
 
         for (Rectangle rectangle : rectangles) {
@@ -34,8 +34,8 @@ public class PathFinderUtilities {
             for (PassableRectangle possibleNeighbor : remaining) {
                 if (passableRectangle.getRectangle().adjoins(possibleNeighbor.getRectangle()) &&
                         !passableRectangle.getRectangle().getCrossSection(possibleNeighbor.getRectangle()).isEmpty()) {
-                    passableRectangle.addNeighbor(possibleNeighbor, terrainService);
-                    possibleNeighbor.addNeighbor(passableRectangle, terrainService);
+                    passableRectangle.addNeighbor(possibleNeighbor);
+                    possibleNeighbor.addNeighbor(passableRectangle);
                 }
             }
         }
@@ -88,10 +88,10 @@ public class PathFinderUtilities {
         return shortest;
     }
 
-    public static Path optimizePath(Path path) {
+    public static Path optimizePath(Path path, AbstractTerrainService terrainService) {
         Path optimized = path;
         while (optimized != null) {
-            optimized = optimizePathOnePass(optimized);
+            optimized = optimizePathOnePass(optimized, terrainService);
             if (optimized != null) {
                 path = optimized;
             }
@@ -99,7 +99,7 @@ public class PathFinderUtilities {
         return path;
     }
 
-    public static Path optimizePathOnePass(Path path) {
+    public static Path optimizePathOnePass(Path path, AbstractTerrainService terrainService) {
         if (path.length() < 3) {
             return null;
         }
@@ -109,7 +109,7 @@ public class PathFinderUtilities {
 
             for (int upperPathElementIndex = path.length() - 1; upperPathElementIndex > lowerPathElementIndex + 1; upperPathElementIndex--) {
                 PathElement point2 = path.getPathElements().get(upperPathElementIndex);
-                if (point1.getPassableRectangle().isNeighbor(point2.getPassableRectangle())) {
+                if (point1.getPassableRectangle().isNeighbor(point2.getPassableRectangle(), terrainService)) {
                     return path.subPath(0, lowerPathElementIndex).add(path.subPath(upperPathElementIndex, path.length() - 1));
                 }
             }

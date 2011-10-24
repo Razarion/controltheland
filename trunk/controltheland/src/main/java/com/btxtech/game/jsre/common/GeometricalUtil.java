@@ -33,16 +33,16 @@ import java.util.Set;
  * Time: 11:07:15
  */
 public class GeometricalUtil {
-    public static Map<TerrainType, Collection<PassableRectangle>> setupPassableRectangle(Map<TerrainType, boolean[][]> terrainTypeMap, AbstractTerrainService terrainService) {
+    public static Map<TerrainType, Collection<PassableRectangle>> setupPassableRectangle(Map<TerrainType, boolean[][]> terrainTypeMap) {
         Map<TerrainType, Collection<PassableRectangle>> passableRectangles4TerrainType = new HashMap<TerrainType, Collection<PassableRectangle>>();
         for (Map.Entry<TerrainType, boolean[][]> terrainTypeEntry : terrainTypeMap.entrySet()) {
-            Collection<PassableRectangle> passableRectangles = setupPassableRectangle(terrainTypeEntry.getValue(), terrainService);
+            Collection<PassableRectangle> passableRectangles = setupPassableRectangle(terrainTypeEntry.getValue());
             passableRectangles4TerrainType.put(terrainTypeEntry.getKey(), passableRectangles);
         }
         return passableRectangles4TerrainType;
     }
 
-    public static Collection<PassableRectangle> setupPassableRectangle(boolean[][] field, AbstractTerrainService terrainService) {
+    public static Collection<PassableRectangle> setupPassableRectangle(boolean[][] field) {
         List<PassableRectangle> rectangles = new ArrayList<PassableRectangle>();
         PassableRectangle[] lastColumn = new PassableRectangle[field[0].length];
         for (int x = 0; x < field.length; x++) {
@@ -50,24 +50,24 @@ public class GeometricalUtil {
                 if (field[x][y]) {
                     if (lastColumn[y] == null) {
                         if (y == 0) {
-                            createRectangle(rectangles, lastColumn, x, y, terrainService);
+                            createRectangle(rectangles, lastColumn, x, y);
                         } else if (x == 0 && lastColumn[y - 1] == null) {
-                            createRectangle(rectangles, lastColumn, x, y, terrainService);
+                            createRectangle(rectangles, lastColumn, x, y);
                         } else if (x > 0) {
                             if (lastColumn[y - 1] == null) {
-                                createRectangle(rectangles, lastColumn, x, y, terrainService);
+                                createRectangle(rectangles, lastColumn, x, y);
                             } else if (lastColumn[y - 1].isCanGrowY()) {
                                 lastColumn[y] = lastColumn[y - 1];
                                 lastColumn[y].growSouth(1);
                             } else {
-                                createRectangle(rectangles, lastColumn, x, y, terrainService);
+                                createRectangle(rectangles, lastColumn, x, y);
                             }
                         } else {
                             if (lastColumn[y - 1] != null && lastColumn[y - 1].isCanGrowY()) {
                                 lastColumn[y] = lastColumn[y - 1];
                                 lastColumn[y].growSouth(1);
                             } else {
-                                createRectangle(rectangles, lastColumn, x, y, terrainService);
+                                createRectangle(rectangles, lastColumn, x, y);
                             }
                         }
                     } else {
@@ -75,19 +75,19 @@ public class GeometricalUtil {
                         if (lastColumn[y].isCanGrowX()) {
                             lastColumn[y].setEndX(x + 1);
                             if (y > 0 && lastColumn[y - 1] != null && lastColumn[y] != lastColumn[y - 1]) {
-                                lastColumn[y - 1].addNeighbor(lastColumn[y], terrainService);
-                                lastColumn[y].addNeighbor(lastColumn[y - 1], terrainService);
+                                lastColumn[y - 1].addNeighbor(lastColumn[y]);
+                                lastColumn[y].addNeighbor(lastColumn[y - 1]);
                             }
                         } else if (lastColumn[y - 1] != null && lastColumn[y - 1].isCanGrowY()) {
                             lastColumn[y] = lastColumn[y - 1];
                             lastColumn[y].growSouth(1);
                         } else {
-                            createRectangle(rectangles, lastColumn, x, y, terrainService);
+                            createRectangle(rectangles, lastColumn, x, y);
                         }
                     }
                 } else {
                     // Terminate old rectangle
-                    PassableRectangle rectangle = substituteRect(lastColumn, x, y, terrainService);
+                    PassableRectangle rectangle = substituteRect(lastColumn, x, y);
                     if (rectangle != null) {
                         rectangles.add(rectangle);
                     }
@@ -98,21 +98,21 @@ public class GeometricalUtil {
         return rectangles;
     }
 
-    private static void createRectangle(List<PassableRectangle> rectangles, PassableRectangle[] lastColumn, int x, int y, AbstractTerrainService terrainService) {
+    private static void createRectangle(List<PassableRectangle> rectangles, PassableRectangle[] lastColumn, int x, int y) {
         PassableRectangle rectangle = new PassableRectangle(new Rectangle(x, y, 1, 1));
         if (lastColumn[y] != null) {
-            lastColumn[y].addNeighbor(rectangle, terrainService);
-            rectangle.addNeighbor(lastColumn[y], terrainService);
+            lastColumn[y].addNeighbor(rectangle);
+            rectangle.addNeighbor(lastColumn[y]);
         }
         if (y > 0 && lastColumn[y - 1] != null) {
-            lastColumn[y - 1].addNeighbor(rectangle, terrainService);
-            rectangle.addNeighbor(lastColumn[y - 1], terrainService);
+            lastColumn[y - 1].addNeighbor(rectangle);
+            rectangle.addNeighbor(lastColumn[y - 1]);
         }
         lastColumn[y] = rectangle;
         rectangles.add(rectangle);
     }
 
-    private static PassableRectangle substituteRect(PassableRectangle[] lastColumn, int x, int y, AbstractTerrainService terrainService) {
+    private static PassableRectangle substituteRect(PassableRectangle[] lastColumn, int x, int y) {
         if (y == 0) {
             if (lastColumn[y] != null) {
                 lastColumn[y].clearCanGrowX();
@@ -126,27 +126,41 @@ public class GeometricalUtil {
                 // terminate rectangle x and replace y
                 lastColumn[y].setEndX(x);
                 lastColumn[y].clearCanGrowX();
-                PassableRectangle current = lastColumn[y];
-                PassableRectangle substituteRect = new PassableRectangle(new Rectangle(x, 0, 1, 1));
+                PassableRectangle toBeReplaced = lastColumn[y];
+                // get start y
+                int startY = y;
+                for (int tmpStartY = y; tmpStartY >= 0 && (lastColumn[tmpStartY] != null && lastColumn[tmpStartY].equals(toBeReplaced)); tmpStartY--) {
+                    startY = tmpStartY;
+                }
+
+                PassableRectangle substituteRect;
+                boolean returnNull = false;
+                if (startY > 0 && lastColumn[startY - 1] != null && lastColumn[startY - 1].getRectangle().getWidth() == 1) {
+                    substituteRect = lastColumn[startY - 1];
+                    returnNull = true;
+                } else {
+                    substituteRect = new PassableRectangle(new Rectangle(x, startY, 1, 1));
+                    lastColumn[startY].addNeighbor(substituteRect);
+                    substituteRect.addNeighbor(lastColumn[startY]);
+                }
+
                 // Replace y with new rect
-                int startY = y - 1;
                 substituteRect.setEndY(y);
                 substituteRect.clearCanGrowY();
-                for (; startY >= 0; startY--) {
-                    if (lastColumn[startY] == null || !lastColumn[startY].equals(current)) {
-                        break;
-                    }
-                    lastColumn[startY].addNeighbor(substituteRect, terrainService);
-                    substituteRect.addNeighbor(lastColumn[startY], terrainService);
 
-                    lastColumn[startY] = substituteRect;
-                    substituteRect.setY(startY);
-                    if (startY > 0 && lastColumn[startY - 1] != null) {
-                        lastColumn[startY - 1].addNeighbor(substituteRect, terrainService);
-                        substituteRect.addNeighbor(lastColumn[startY - 1], terrainService);
-                    }
+                for (int tmpY = startY; tmpY < y; tmpY++) {
+                    lastColumn[tmpY] = substituteRect;
                 }
-                return substituteRect;
+
+                if (startY > 0 && lastColumn[startY - 1] != null && lastColumn[startY - 1] != substituteRect) {
+                    lastColumn[startY - 1].addNeighbor(substituteRect);
+                    substituteRect.addNeighbor(lastColumn[startY - 1]);
+                }
+                if (returnNull) {
+                    return null;
+                } else {
+                    return substituteRect;
+                }
             } else {
                 lastColumn[y].clearCanGrowX();
                 lastColumn[y - 1].clearCanGrowY();
@@ -164,8 +178,7 @@ public class GeometricalUtil {
         }
     }
 
-    @Deprecated
-    private static void checkField(boolean[][] field, Collection<? extends Rectangle> rectangles) {
+    public static void checkField(boolean[][] field, Collection<PassableRectangle> rectangles, AbstractTerrainService terrainService) {
         Set<Index> blockedIndexes = new HashSet<Index>();
         Set<Index> freeIndexes = new HashSet<Index>();
 
@@ -179,14 +192,14 @@ public class GeometricalUtil {
             }
         }
 
-        for (Rectangle rectangle : rectangles) {
-            if (rectangle.getWidth() == 0) {
+        for (PassableRectangle rectangle : rectangles) {
+            if (rectangle.getRectangle().getWidth() == 0) {
                 throw new RuntimeException("Rectangle width is 0: " + rectangle);
             }
-            if (rectangle.getHeight() == 0) {
+            if (rectangle.getRectangle().getHeight() == 0) {
                 throw new RuntimeException("Rectangle height is 0: " + rectangle);
             }
-            Collection<? extends Rectangle> tileRectangles = rectangle.split(1, 1);
+            Collection<Rectangle> tileRectangles = rectangle.getRectangle().split(1, 1);
             for (Rectangle tileRect : tileRectangles) {
                 Index index = new Index(tileRect.getX(), tileRect.getY());
                 if (!freeIndexes.remove(index)) {
@@ -207,8 +220,42 @@ public class GeometricalUtil {
             }
             throw new RuntimeException(stringBuffer.toString());
         }
+
+        // Check neighbors
+        for (PassableRectangle rectangle : rectangles) {
+            Map<PassableRectangle, PassableRectangle.Neighbor> neighbors = new HashMap<PassableRectangle, PassableRectangle.Neighbor>(rectangle.getNeighbors(terrainService));
+            for (PassableRectangle possibleNeighbor : rectangles) {
+                if (possibleNeighbor.equals(rectangle)) {
+                    continue;
+                }
+                if (rectangle.getRectangle().adjoins(possibleNeighbor.getRectangle()) &&
+                        !rectangle.getRectangle().getCrossSection(possibleNeighbor.getRectangle()).isEmpty()) {
+                    if (neighbors.remove(possibleNeighbor) == null) {
+                        throw new RuntimeException("'" + rectangle + "' does not know neighbor '" + possibleNeighbor + "'");
+                    }
+                    // Check size of port
+                    Rectangle absRectangle = terrainService.convertToAbsolutePosition(rectangle.getRectangle());
+                    Rectangle absNeighborRectangle = terrainService.convertToAbsolutePosition(possibleNeighbor.getRectangle());
+                    Rectangle crossSection = absRectangle.getCrossSection(absNeighborRectangle);
+                    int min = Math.min(crossSection.getWidth(), crossSection.getHeight());
+                    int length = Math.max(crossSection.getWidth(), crossSection.getHeight());
+                    if (min != 0) {
+                        throw new RuntimeException("Min width/heigh should be 0");
+                    }
+                    PassableRectangle.Neighbor neighbor = rectangle.getNeighbors(terrainService).get(possibleNeighbor);
+                    if (length - 1 != neighbor.getPort().getCurrentCrossLine().getLength()) {
+                        throw new RuntimeException("Crossline lenght is wrong");
+                    }
+
+                }
+            }
+            if (!neighbors.isEmpty()) {
+                throw new RuntimeException("Passable rectangle does bot know all neighbors");
+            }
+        }
+
     }
-    // ----------------------------------------------------------------------------------------------------------------
+
 
     public static ArrayList<Rectangle> separateIntoRectangles(Collection<Index> tiles) {
         ArrayList<Rectangle> rectangles = new ArrayList<Rectangle>();

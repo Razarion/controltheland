@@ -50,7 +50,13 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
         long time = System.currentTimeMillis();
         Map<TerrainType, boolean[][]> terrainTypeMap = getServices().getTerrainService().createSurfaceTypeField();
         log.info("Collision service flatten to field: " + (System.currentTimeMillis() - time));
-        passableRectangles4TerrainType = GeometricalUtil.setupPassableRectangle(terrainTypeMap, getServices().getTerrainService());
+        passableRectangles4TerrainType = GeometricalUtil.setupPassableRectangle(terrainTypeMap);
+        ////
+        // Check field
+        //for (TerrainType terrainType : terrainTypeMap.keySet()) {
+        //    GeometricalUtil.checkField(terrainTypeMap.get(terrainType), passableRectangles4TerrainType.get(terrainType), getServices().getTerrainService());
+        //}
+        ////
         log.info("Time needed to start up collision service: " + (System.currentTimeMillis() - time) + "ms");
     }
 
@@ -81,8 +87,8 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
         List<Index> positions = null;
         try {
             Path path = atomStartRect.findPossiblePassableRectanglePaths(getServices().getTerrainService(), start, atomDestRect, destination);
-            path = PathFinderUtilities.optimizePath(path);
-            List<Port> ports = path.getAllPassableBorders();
+            path = PathFinderUtilities.optimizePath(path, getServices().getTerrainService());
+            List<Port> ports = path.getAllPassableBorders(getServices().getTerrainService());
             GumPath gumPath = new GumPath(start, destination, ports);
             gumPath.calculateShortestPath();
             positions = gumPath.getPath();
@@ -114,8 +120,8 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
         List<Index> positions = null;
         try {
             Path path = atomStartRect.findPossiblePassableRectanglePaths(getServices().getTerrainService(), start, atomDestRect, destination);
-            path = PathFinderUtilities.optimizePath(path);
-            List<Port> ports = path.getAllPassableBorders();
+            path = PathFinderUtilities.optimizePath(path, getServices().getTerrainService());
+            List<Port> ports = path.getAllPassableBorders(getServices().getTerrainService());
             GumPath gumPath = new GumPath(start, destination, ports);
             gumPath.calculateShortestPath();
             positions = gumPath.getPath();

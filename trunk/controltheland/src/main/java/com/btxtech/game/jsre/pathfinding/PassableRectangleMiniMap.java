@@ -65,7 +65,7 @@ public class PassableRectangleMiniMap extends MiniMap {
     private void drawNeighbor(PassableRectangle passableRectangle) {
         getContext2d().setLineWidth(2.0 / getScale());
         getContext2d().setStrokeStyle(ColorConstants.WHITE);
-        for (PassableRectangle.Neighbor neighbor : passableRectangle.getNeighbors().values()) {
+        for (PassableRectangle.Neighbor neighbor : passableRectangle.getNeighbors(TerrainView.getInstance().getTerrainHandler()).values()) {
             Line line = neighbor.getPort().getCurrentCrossLine();
             getContext2d().beginPath();
             getContext2d().moveTo(line.getPoint1().getX(), line.getPoint1().getY());

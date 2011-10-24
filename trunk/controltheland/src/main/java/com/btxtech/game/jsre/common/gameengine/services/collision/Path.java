@@ -13,6 +13,8 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.collision;
 
+import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,12 +58,12 @@ public class Path {
         }
     }
 
-    public List<Port> getAllPassableBorders() {
+    public List<Port> getAllPassableBorders(AbstractTerrainService terrainService) {
         PathElement previous = null;
         ArrayList<Port> allPorts = new ArrayList<Port>();
         for (PathElement pathElement : pathElements) {
             if (previous != null) {
-                allPorts.add(previous.getPassableRectangle().getBorder(pathElement.getPassableRectangle()));
+                allPorts.add(previous.getPassableRectangle().getBorder(pathElement.getPassableRectangle(), terrainService));
             }
             previous = pathElement;
         }

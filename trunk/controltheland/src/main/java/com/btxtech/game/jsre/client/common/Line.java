@@ -203,37 +203,41 @@ public class Line implements Segment, Serializable {
         }
     }
 
-/*    @Override
-    public boolean isNextPointOnSegment(PlaceableFormatItem last, PlaceableFormatItem next, Index reference, boolean counterClock) {
-        Index directionTo = getEndPoint(reference, counterClock);
-        if (directionTo.equals(last.getMiddleFront())) {
-            return false;
-        }
-        //if(!isPointInLine(last.getEndCorner())) {
-        //    return false;
-        //}
-        PlaceableFormatItem tmp = new PlaceableFormatItem(next);
-        Index lastPointOnLine = projectOnInfiniteLine(last.getEndCorner()).getPointWithDistance((int) DISTANCE, directionTo, true);
-        if (lastPointOnLine.equals(directionTo) || !isPointInLine(lastPointOnLine)) {
-            return false;
-        }
-        tmp.setStartCorner(lastPointOnLine);
-        tmp.calculateMiddleAndEndCorner(directionTo);
-        return isPointInLine(tmp.getMiddleFront());
+    public int getLength() {
+        return point1.getDistance(point2);
     }
 
-    @Override
-    public PlaceableFormatItem getNextPoint(PlaceableFormatItem last, PlaceableFormatItem next, Index reference, boolean counterClock) {
-        Index directionTo = getEndPoint(reference, counterClock);
-        Index lastPointOnLine = projectOnInfiniteLine(last.getEndCorner()).getPointWithDistance((int) DISTANCE, directionTo, true);
-        next.setStartCorner(lastPointOnLine);
-        next.calculateMiddleAndEndCorner(directionTo);
-        if (isPointInLine(next.getMiddleFront())) {
-            return next;
-        } else {
-            throw new IllegalArgumentException("Given point is not on the line: " + next.getMiddleFront() + " " + this);
-        }
-    }*/
+/*    @Override
+public boolean isNextPointOnSegment(PlaceableFormatItem last, PlaceableFormatItem next, Index reference, boolean counterClock) {
+    Index directionTo = getEndPoint(reference, counterClock);
+    if (directionTo.equals(last.getMiddleFront())) {
+        return false;
+    }
+    //if(!isPointInLine(last.getEndCorner())) {
+    //    return false;
+    //}
+    PlaceableFormatItem tmp = new PlaceableFormatItem(next);
+    Index lastPointOnLine = projectOnInfiniteLine(last.getEndCorner()).getPointWithDistance((int) DISTANCE, directionTo, true);
+    if (lastPointOnLine.equals(directionTo) || !isPointInLine(lastPointOnLine)) {
+        return false;
+    }
+    tmp.setStartCorner(lastPointOnLine);
+    tmp.calculateMiddleAndEndCorner(directionTo);
+    return isPointInLine(tmp.getMiddleFront());
+}
+
+@Override
+public PlaceableFormatItem getNextPoint(PlaceableFormatItem last, PlaceableFormatItem next, Index reference, boolean counterClock) {
+    Index directionTo = getEndPoint(reference, counterClock);
+    Index lastPointOnLine = projectOnInfiniteLine(last.getEndCorner()).getPointWithDistance((int) DISTANCE, directionTo, true);
+    next.setStartCorner(lastPointOnLine);
+    next.calculateMiddleAndEndCorner(directionTo);
+    if (isPointInLine(next.getMiddleFront())) {
+        return next;
+    } else {
+        throw new IllegalArgumentException("Given point is not on the line: " + next.getMiddleFront() + " " + this);
+    }
+}*/
 
     @Override
     public Index getPerpendicular(Index crossPoint, int perpendicularDistance, Index otherDirection) {
