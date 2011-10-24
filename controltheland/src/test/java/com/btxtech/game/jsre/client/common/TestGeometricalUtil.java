@@ -9,10 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * User: beat
@@ -44,7 +40,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, true, true, true, true, true, true, true, true, true, true);
         addTileIndex(field, 9, true, true, true, true, true, true, true, true, true, true);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         assertField(field, rectangles);
         Assert.assertEquals(1, rectangles.size());
     }
@@ -63,7 +59,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, true);
         addTileIndex(field, 9, true);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         assertField(field, rectangles);
         Assert.assertEquals(2, rectangles.size());
     }
@@ -82,7 +78,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, true, true);
         addTileIndex(field, 9, true, true);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         assertField(field, rectangles);
         Assert.assertEquals(3, rectangles.size());
     }
@@ -101,7 +97,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, true, true, true);
         addTileIndex(field, 9, true, true, true);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         assertField(field, rectangles);
         Assert.assertEquals(3, rectangles.size());
     }
@@ -120,7 +116,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, true, true);
         addTileIndex(field, 9, true, true);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         assertField(field, rectangles);
         Assert.assertEquals(3, rectangles.size());
     }
@@ -131,9 +127,21 @@ public class TestGeometricalUtil {
         addTileIndex(field, 0, false, true);
         addTileIndex(field, 1, true, false);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         assertField(field, rectangles);
         Assert.assertEquals(2, rectangles.size());
+    }
+
+    @Test
+    public void setup3Rectangle2Corner() {
+        boolean[][] field = new boolean[3][3];
+        addTileIndex(field, 0, false, true, true);
+        addTileIndex(field, 1, true, true, true);
+        addTileIndex(field, 2, true, true, false);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
+        printRectangle(field, rectangles);
+        Assert.assertEquals(3, rectangles.size());
     }
 
     @Test
@@ -143,7 +151,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 1, true, false, false);
         addTileIndex(field, 2, true, true, false);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         assertField(field, rectangles);
         Assert.assertEquals(3, rectangles.size());
     }
@@ -155,7 +163,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 1, true, false, true);
         addTileIndex(field, 2, true, true, false);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         assertField(field, rectangles);
         Assert.assertEquals(4, rectangles.size());
     }
@@ -167,19 +175,19 @@ public class TestGeometricalUtil {
         addTileIndex(field, 1, true, true, true);
         addTileIndex(field, 2, false, true, false);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         assertField(field, rectangles);
         Assert.assertEquals(2, rectangles.size());
     }
 
     @Test
-    public void setup3RectangleUnk() {
+    public void setup3Rectangle1() {
         boolean[][] field = new boolean[4][3];
         addTileIndex(field, 0, false, false, false, true);
         addTileIndex(field, 1, true, false, false, true);
         addTileIndex(field, 2, true, true, true, true);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         Assert.assertEquals(3, rectangles.size());
         assertField(field, rectangles);
     }
@@ -199,7 +207,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, true, true, true, true, true, true, true, true, true, true);
         addTileIndex(field, 9, true, true, true, true, true, true, true, true, true, true);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         Assert.assertEquals(4, rectangles.size());
         assertField(field, rectangles);
     }
@@ -218,7 +226,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, true, true, true, false, true, true, true, true, true, true);
         addTileIndex(field, 9, true, true, true, false, true, true, true, true, true, true);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         Assert.assertEquals(2, rectangles.size());
         assertField(field, rectangles);
     }
@@ -237,7 +245,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, true, true, true, false, true, true, true, true, true, true);
         addTileIndex(field, 9, true, true, true, false, true, true, true, true, true, true);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         Assert.assertEquals(3, rectangles.size());
         assertField(field, rectangles);
     }
@@ -256,7 +264,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, false, true, true, true, true, true, true, true, true, true);
         addTileIndex(field, 9, false, true, true, true, true, true, true, true, true, true);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         Assert.assertEquals(1, rectangles.size());
         assertField(field, rectangles);
     }
@@ -275,7 +283,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, true, true, true, true, true, true, true, true, true, true);
         addTileIndex(field, 9, true, true, true, true, true, true, true, true, true, true);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         Assert.assertEquals(2, rectangles.size());
         assertField(field, rectangles);
     }
@@ -294,7 +302,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, true, true, true, true, true, true, true, true, true, true);
         addTileIndex(field, 9, true, true, true, true, true, true, true, true, true, true);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         Assert.assertEquals(1, rectangles.size());
         assertField(field, rectangles);
     }
@@ -313,7 +321,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, true, true, true, true, true, true, true, true, true, true);
         addTileIndex(field, 9, false, false, false, false, false, false, false, false, false, false);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         Assert.assertEquals(1, rectangles.size());
         assertField(field, rectangles);
     }
@@ -332,7 +340,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, false, false, false, false, false, false, false, false, false, false);
         addTileIndex(field, 9, false, false, false, false, false, false, false, false, false, false);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         Assert.assertEquals(0, rectangles.size());
         assertField(field, rectangles);
     }
@@ -351,7 +359,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, true, true, true, true, true, true, true, true, true, true);
         addTileIndex(field, 9, true, true, true, true, true, true, true, true, true, true);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         Assert.assertEquals(4, rectangles.size());
         assertField(field, rectangles);
     }
@@ -370,7 +378,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, true, true, true, true, true, true, true, true, false, true);
         addTileIndex(field, 9, true, true, true, true, true, true, true, true, true, false);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         Assert.assertEquals(18, rectangles.size());
         assertField(field, rectangles);
     }
@@ -389,7 +397,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, true, true, true, true, true, true, true, true, true, true);
         addTileIndex(field, 9, true, true, true, true, true, true, true, true, true, true);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         Assert.assertEquals(5, rectangles.size());
         assertField(field, rectangles);
     }
@@ -408,7 +416,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, true, true, true, true, true, true, true, true, true, true);
         addTileIndex(field, 9, true, true, true, true, true, true, true, true, true, true);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         Assert.assertEquals(6, rectangles.size());
         assertField(field, rectangles);
     }
@@ -427,7 +435,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, true, true, true, true, true, true, true, true, true, true);
         addTileIndex(field, 9, true, true, true, true, true, true, true, true, true, true);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         Assert.assertEquals(6, rectangles.size());
         assertField(field, rectangles);
     }
@@ -446,7 +454,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, true, true, false, true, true, true, true, true, true, false);
         addTileIndex(field, 9, true, true, false, true, true, true, true, true, true, true);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         assertField(field, rectangles);
         Assert.assertEquals(14, rectangles.size());
     }
@@ -465,7 +473,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, true, false, true, true, true, true, true, true, false, true);
         addTileIndex(field, 9, false, true, true, true, true, true, true, true, true, false);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         assertField(field, rectangles);
         Assert.assertEquals(19, rectangles.size());
     }
@@ -484,7 +492,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, true, true, true, true, false, true, true, true, true, true);
         addTileIndex(field, 9, true, true, true, true, false, true, true, true, true, true);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         assertField(field, rectangles);
         Assert.assertEquals(4, rectangles.size());
     }
@@ -503,7 +511,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, true, true, true, true, false, false, false, true, true, true);
         addTileIndex(field, 9, true, true, true, true, true, true, true, true, true, true);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         assertField(field, rectangles);
         Assert.assertEquals(16, rectangles.size());
     }
@@ -522,7 +530,7 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, false, false, false, false, false, false, false, false, false, false);
         addTileIndex(field, 9, false, false, false, false, false, false, false, false, false, false);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         assertField(field, rectangles);
         Assert.assertEquals(1, rectangles.size());
     }
@@ -541,64 +549,138 @@ public class TestGeometricalUtil {
         addTileIndex(field, 8, false, false, false, false, false, false, false, false, false, false);
         addTileIndex(field, 9, false, false, false, false, false, false, false, false, false, false);
 
-        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field, terrainService);
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
         assertField(field, rectangles);
         Assert.assertEquals(4, rectangles.size());
     }
 
-    private void assertField(boolean[][] field, Collection<PassableRectangle> rectangles) {
-        Set<Index> blockedIndexes = new HashSet<Index>();
-        Set<Index> freeIndexes = new HashSet<Index>();
 
+    @Test
+    public void setupRectangle19() {
+        boolean[][] field = new boolean[3][3];
+        addTileIndex(field, 0, false, false, true);
+        addTileIndex(field, 1, true, true, true);
+        addTileIndex(field, 2, true, true, false);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
+        printRectangle(field, rectangles);
+        assertField(field, rectangles);
+        Assert.assertEquals(2, rectangles.size());
+    }
+
+    @Test
+    public void setupRectangle20() {
+        boolean[][] field = new boolean[3][4];
+        addTileIndex(field, 0, false, false, true);
+        addTileIndex(field, 1, false, false, true);
+        addTileIndex(field, 2, true, true, true);
+        addTileIndex(field, 3, true, true, false);
+
+        Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
+        assertField(field, rectangles);
+        Assert.assertEquals(2, rectangles.size());
+    }
+
+    @Test
+    public void setupRectangleDynamic() {
+        final int x = 4;
+        final int y = 5;
+        boolean[][] field = new boolean[x][y];
+        long count = (long) Math.pow(2, (x * y));
+
+        for (int i = 0; i < count; i++) {
+            if (i % 1000 == 0) {
+                System.out.println("Test: " + i + "/" + count);
+            }
+            Collection<PassableRectangle> rectangles = GeometricalUtil.setupPassableRectangle(field);
+            assertField(field, rectangles);
+            increaseField(field);
+        }
+    }
+
+    private void increaseField(boolean[][] field) {
         for (int x = 0; x < field.length; x++) {
             for (int y = 0; y < field[x].length; y++) {
                 if (field[x][y]) {
-                    freeIndexes.add(new Index(x, y));
-                } else {
-                    blockedIndexes.add(new Index(x, y));
+                    field[x][y] = false;
+                } else if (!field[x][y]) {
+                    field[x][y] = true;
+                    return;
                 }
             }
         }
 
-        for (PassableRectangle rectangle : rectangles) {
-            Assert.assertTrue("Rectangle width is 0: " + rectangle, rectangle.getRectangle().getWidth() > 0);
-            Assert.assertTrue("Rectangle height is 0: " + rectangle, rectangle.getRectangle().getHeight() > 0);
-            Collection<Rectangle> tileRectangles = rectangle.getRectangle().split(1, 1);
-            for (Rectangle tileRect : tileRectangles) {
-                Index index = new Index(tileRect.getX(), tileRect.getY());
-                if (!freeIndexes.remove(index)) {
-                    Assert.fail("The index '" + index + "' could not be found in the filed for rectangle: " + rectangle);
-                }
-                if (blockedIndexes.contains(index)) {
-                    Assert.fail("The index '" + index + "' should not be contained in the rectangle: " + rectangle);
-                }
-            }
+    }
+
+    private void assertField(boolean[][] field, Collection<PassableRectangle> rectangles) {
+        try {
+            GeometricalUtil.checkField(field, rectangles, terrainService);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            Assert.fail();
         }
 
-        if (!freeIndexes.isEmpty()) {
-            StringBuffer stringBuffer = new StringBuffer();
-            stringBuffer.append("This indexes are not contained in a rectangle:\n");
-            for (Index freeIndex : freeIndexes) {
-                stringBuffer.append(freeIndex);
-                stringBuffer.append("\n");
-            }
-            Assert.fail(stringBuffer.toString());
-        }
+        /*  Set<Index> blockedIndexes = new HashSet<Index>();
+       Set<Index> freeIndexes = new HashSet<Index>();
 
-        // Check neighbors
-        for (PassableRectangle rectangle : rectangles) {
-            Map<PassableRectangle, PassableRectangle.Neighbor> neighbors = new HashMap<PassableRectangle, PassableRectangle.Neighbor>(rectangle.getNeighbors());
-            for (PassableRectangle possibleNeighbor : rectangles) {
-                if (possibleNeighbor.equals(rectangle)) {
-                    continue;
-                }
-                if (rectangle.getRectangle().adjoins(possibleNeighbor.getRectangle()) &&
-                        !rectangle.getRectangle().getCrossSection(possibleNeighbor.getRectangle()).isEmpty()) {
-                    Assert.assertNotNull("'" + rectangle + "' does not know neighbor '" + possibleNeighbor + "'", neighbors.remove(possibleNeighbor));
-                }
-            }
-            Assert.assertTrue("Passable rectangle does bot know all neighbors", neighbors.isEmpty());
-        }
+       for (int x = 0; x < field.length; x++) {
+           for (int y = 0; y < field[x].length; y++) {
+               if (field[x][y]) {
+                   freeIndexes.add(new Index(x, y));
+               } else {
+                   blockedIndexes.add(new Index(x, y));
+               }
+           }
+       }
+
+       for (PassableRectangle rectangle : rectangles) {
+           Assert.assertTrue("Rectangle width is 0: " + rectangle, rectangle.getRectangle().getWidth() > 0);
+           Assert.assertTrue("Rectangle height is 0: " + rectangle, rectangle.getRectangle().getHeight() > 0);
+           Collection<Rectangle> tileRectangles = rectangle.getRectangle().split(1, 1);
+           for (Rectangle tileRect : tileRectangles) {
+               Index index = new Index(tileRect.getX(), tileRect.getY());
+               if (!freeIndexes.remove(index)) {
+                   Assert.fail("The index '" + index + "' could not be found in the filed for rectangle: " + rectangle);
+               }
+               if (blockedIndexes.contains(index)) {
+                   Assert.fail("The index '" + index + "' should not be contained in the rectangle: " + rectangle);
+               }
+           }
+       }
+
+       if (!freeIndexes.isEmpty()) {
+           StringBuffer stringBuffer = new StringBuffer();
+           stringBuffer.append("This indexes are not contained in a rectangle:\n");
+           for (Index freeIndex : freeIndexes) {
+               stringBuffer.append(freeIndex);
+               stringBuffer.append("\n");
+           }
+           Assert.fail(stringBuffer.toString());
+       }
+
+       // Check neighbors
+       for (PassableRectangle rectangle : rectangles) {
+           Map<PassableRectangle, PassableRectangle.Neighbor> neighbors = new HashMap<PassableRectangle, PassableRectangle.Neighbor>(rectangle.getNeighbors(terrainService));
+           for (PassableRectangle possibleNeighbor : rectangles) {
+               if (possibleNeighbor.equals(rectangle)) {
+                   continue;
+               }
+               if (rectangle.getRectangle().adjoins(possibleNeighbor.getRectangle()) &&
+                       !rectangle.getRectangle().getCrossSection(possibleNeighbor.getRectangle()).isEmpty()) {
+                   Assert.assertNotNull("'" + rectangle + "' does not know neighbor '" + possibleNeighbor + "'", neighbors.remove(possibleNeighbor));
+                   // Check size of port
+                   Rectangle absRectangle = terrainService.convertToAbsolutePosition(rectangle.getRectangle());
+                   Rectangle absNeighborRectangle = terrainService.convertToAbsolutePosition(possibleNeighbor.getRectangle());
+                   Rectangle crossSection = absRectangle.getCrossSection(absNeighborRectangle);
+                   int min = Math.min(crossSection.getWidth(), crossSection.getHeight());
+                   int length = Math.max(crossSection.getWidth(), crossSection.getHeight());
+                   Assert.assertEquals(0, min);
+                   PassableRectangle.Neighbor neighbor = rectangle.getNeighbors(terrainService).get(possibleNeighbor);
+                   Assert.assertEquals(length - 1, neighbor.getPort().getCurrentCrossLine().getLength());
+               }
+           }
+           Assert.assertTrue("Passable rectangle does bot know all neighbors", neighbors.isEmpty());
+       } */
 
     }
 
@@ -638,6 +720,8 @@ public class TestGeometricalUtil {
             System.out.println();
             x = 0;
         }
+        System.out.println("---------------------------------");
+        printField(field);
         System.out.println("---------------------------------");
         for (PassableRectangle rectangle : rectangles) {
             System.out.println(rectangle.getRectangle() + " '" + rectangle.getRectangle().testString() + "'");

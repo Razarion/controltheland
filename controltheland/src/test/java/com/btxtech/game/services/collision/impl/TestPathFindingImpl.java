@@ -106,7 +106,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
         rectangles.add(RECT_13_19);
         rectangles.add(RECT_16_19);
 
-        List<PassableRectangle> passableRectangles = PathFinderUtilities.buildPassableRectangleList(rectangles, terrainService);
+        List<PassableRectangle> passableRectangles = PathFinderUtilities.buildPassableRectangleList(rectangles);
         Assert.assertEquals(4, passableRectangles.size());
         assertNeighbor(passableRectangles, RECT_13_16, RECT_16_16, RECT_13_19);
         assertNeighbor(passableRectangles, RECT_16_16, RECT_13_16, RECT_16_19);
@@ -124,7 +124,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
         rectangles.add(RECT_19_22);
         rectangles.add(RECT_35_13);
 
-        List<PassableRectangle> passableRectangles = PathFinderUtilities.buildPassableRectangleList(rectangles, terrainService);
+        List<PassableRectangle> passableRectangles = PathFinderUtilities.buildPassableRectangleList(rectangles);
         Assert.assertEquals(4, passableRectangles.size());
         assertNeighbor(passableRectangles, RECT_22_13, RECT_19_16, RECT_19_22, RECT_35_13);
         assertNeighbor(passableRectangles, RECT_19_16, RECT_22_13);
@@ -134,7 +134,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
 
     private void assertNeighbor(List<PassableRectangle> passableRectangles, Rectangle rectangle, Rectangle... neighbors) {
         for (PassableRectangle passableRectangle : passableRectangles) {
-            Map<PassableRectangle, PassableRectangle.Neighbor> neighborHashMap = passableRectangle.getNeighbors();
+            Map<PassableRectangle, PassableRectangle.Neighbor> neighborHashMap = passableRectangle.getNeighbors(terrainService);
             if (passableRectangle.getRectangle().equals(rectangle)) {
                 Assert.assertEquals(neighbors.length, neighborHashMap.size());
                 assertContains(neighborHashMap, neighbors);
@@ -208,7 +208,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
         rectangles.add(RECT_34_46);
 
 
-        List<PassableRectangle> passableRectangles = PathFinderUtilities.buildPassableRectangleList(rectangles, terrainService);
+        List<PassableRectangle> passableRectangles = PathFinderUtilities.buildPassableRectangleList(rectangles);
         Assert.assertEquals(rectangles.size(), passableRectangles.size());
 
         Map<TerrainType, Collection<PassableRectangle>> passableRectangles4TerrainType = new HashMap<TerrainType, Collection<PassableRectangle>>();

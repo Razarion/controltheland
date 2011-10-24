@@ -33,6 +33,7 @@ public class PassableRectangle {
     // No equals and hash du to the GeometricalUtil.setupPassableRectangle()
     private static final int MAX_TRIES = 10000;
     private Map<PassableRectangle, Neighbor> neighbors = new HashMap<PassableRectangle, Neighbor>();
+    private boolean neighborsReady = false;
     private Rectangle rectangle;
     private boolean canGrowX = true;
     private boolean canGrowY = true;
@@ -69,13 +70,15 @@ public class PassableRectangle {
         return rectangle;
     }
 
-    public void addNeighbor(PassableRectangle neighborPassableRectangle, AbstractTerrainService terrainService) {
-        if (neighbors.containsKey(neighborPassableRectangle)) {
-            return;
+    public void addNeighbor(PassableRectangle neighborPassableRectangle) {
+        if(neighborPassableRectangle == this) {
+            throw new RuntimeException();
         }
-        Neighbor neighbor = new Neighbor(neighborPassableRectangle, new Port(terrainService.convertToAbsolutePosition(rectangle),
-                terrainService.convertToAbsolutePosition(neighborPassableRectangle.rectangle)));
-        neighbors.put(neighborPassableRectangle, neighbor);
+        neighbors.put(neighborPassableRectangle, null);
+    }
+
+    public void removeNeighbor(PassableRectangle neighborPassableRectangle) {
+        neighbors.remove(neighborPassableRectangle);
     }
 
     public Rectangle getPixelRectangle(TerrainSettings terrainSettings) {
@@ -130,7 +133,7 @@ public class PassableRectangle {
 
     private PathElement getBestSuitable(AbstractTerrainService terrainService, Path path, Index absStart, Index absDestination, int rank) {
         List<PathElement> allNeighbors = new ArrayList<PathElement>();
-        for (PassableRectangle neighbor : path.getLast().getPassableRectangle().neighbors.keySet()) {
+        for (PassableRectangle neighbor : path.getLast().getPassableRectangle().getNeighbors(terrainService).keySet()) {
             if (path.containsPassableRectangle(neighbor)) {
                 // Don't go back
                 continue;
@@ -175,16 +178,28 @@ public class PassableRectangle {
         return result;
     }
 
-    public Port getBorder(PassableRectangle passableRectangle) {
-        return neighbors.get(passableRectangle).getPort();
+    public Port getBorder(PassableRectangle passableRectangle, AbstractTerrainService terrainService) {
+        return getNeighbors(terrainService).get(passableRectangle).getPort();
     }
 
-    public Map<PassableRectangle, Neighbor> getNeighbors() {
+    public Map<PassableRectangle, Neighbor> getNeighbors(AbstractTerrainService terrainService) {
+        if (!neighborsReady) {
+            neighborsReady = true;
+            for (PassableRectangle neighborPassableRectangle : neighbors.keySet()) {
+                try {
+                    Neighbor neighbor = new Neighbor(neighborPassableRectangle, new Port(terrainService.convertToAbsolutePosition(rectangle),
+                            terrainService.convertToAbsolutePosition(neighborPassableRectangle.rectangle)));
+                    neighbors.put(neighborPassableRectangle, neighbor);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         return neighbors;
     }
 
-    public boolean isNeighbor(PassableRectangle passableRectangle) {
-        return neighbors.containsKey(passableRectangle);
+    public boolean isNeighbor(PassableRectangle passableRectangle, AbstractTerrainService terrainService) {
+        return getNeighbors(terrainService).containsKey(passableRectangle);
     }
 
     public boolean isCanGrowX() {
