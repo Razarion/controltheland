@@ -275,7 +275,7 @@
     <radialGradient
        inkscape:collect="always"
        xlink:href="#linearGradient4720"
-       id="radialGradient3085"
+       id="radialGradient3164"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(1,0,0,0.399281,0,23.91614)"
        cx="24.25"
@@ -286,7 +286,7 @@
     <radialGradient
        inkscape:collect="always"
        xlink:href="#linearGradient4710"
-       id="radialGradient3087"
+       id="radialGradient3166"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(1.045211,0,0,0.989736,-41.10767,-11.64667)"
        cx="24.500004"
@@ -297,7 +297,7 @@
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient4728"
-       id="linearGradient3089"
+       id="linearGradient3168"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(0.482147,0,0,0.456557,-27.11755,4.266796)"
        x1="24.095442"
@@ -307,7 +307,7 @@
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient4750"
-       id="linearGradient3091"
+       id="linearGradient3170"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(0.524157,0,0,0.524157,2.40962,3.280934)"
        x1="38.292995"
@@ -317,7 +317,7 @@
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient4750"
-       id="linearGradient3093"
+       id="linearGradient3172"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(0.524157,0,0,0.524157,3.529108,3.248174)"
        x1="8.1168785"
@@ -332,9 +332,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.70710678"
-     inkscape:cx="-739.25019"
-     inkscape:cy="20.335892"
+     inkscape:zoom="2"
+     inkscape:cx="180.09474"
+     inkscape:cy="309.74615"
      inkscape:document-units="px"
      inkscape:current-layer="layer0001"
      showgrid="true"
@@ -345,10 +345,16 @@
      inkscape:window-maximized="1"
      showguides="true"
      inkscape:guide-bbox="true"
-     inkscape:snap-grids="false">
+     inkscape:snap-grids="true">
     <inkscape:grid
        type="xygrid"
-       id="grid3004" />
+       id="grid3004"
+       empspacing="5"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true"
+       spacingx="0.5px"
+       spacingy="0.5px" />
   </sodipodi:namedview>
   <metadata
      id="metadata3092">
@@ -401,41 +407,32 @@
         <rect
            y="38"
            x="25"
-           height="160"
+           height="137"
            width="130"
            id="monitor"
            style="fill:#bcbdff;fill-opacity:0" />
         <g
            id="text1"
-           style="opacity:0"
-           transform="matrix(0.85568986,0,0,0.7104466,5.9640674,16.123373)">
+           style="opacity:0">
           <text
              sodipodi:linespacing="125%"
              id="text0001"
-             y="70"
+             style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#fff3ff;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
+             xml:space="preserve"
              x="40"
-             style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#fff3ff;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
-             xml:space="preserve"><tspan
-               y="70"
+             y="70"><tspan
+               sodipodi:role="line"
+               id="tspan3124"
                x="40"
-               id="tspan3844"
-               sodipodi:role="line">Find the </tspan><tspan
-               id="tspan3846"
-               y="95"
+               y="70">Find the illegal </tspan><tspan
+               sodipodi:role="line"
+               id="tspan3126"
                x="40"
-               sodipodi:role="line">illegal </tspan><tspan
-               id="tspan3848"
-               y="120"
-               x="40"
-               sodipodi:role="line">Razarion </tspan><tspan
-               id="tspan3850"
-               y="145"
-               x="40"
-               sodipodi:role="line">Base</tspan></text>
+               y="87">Razarion Base</tspan></text>
         </g>
         <g
            id="planet"
-           transform="matrix(0.17451822,0,0,0.17451822,39.754783,124.39892)"
+           transform="matrix(0.17451822,0,0,0.17451822,39.754783,99.320121)"
            style="opacity:0">
           <path
              style="fill:none;stroke:#ff0000;stroke-width:0.33333334px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0"
@@ -485,70 +482,72 @@
           <path
              inkscape:connector-curvature="0"
              id="crosshairs1"
-             d="M 86.66667,118.33333 85,118.33333 85,120"
+             d="m 86.66667,109.38555 -1.66667,0 0,1.67"
              style="fill:none;stroke:#ff0000;stroke-width:0.33333334px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0" />
           <path
              inkscape:connector-curvature="0"
              id="crosshairs2"
-             d="m 85,121.66666 0,1.66667 1.66667,0"
+             d="m 85,112.72222 0,1.66667 1.66667,0"
              style="fill:none;stroke:#ff0000;stroke-width:0.33333334px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0" />
           <path
              inkscape:connector-curvature="0"
              id="crosshairs3"
-             d="m 88.33334,118.33333 1.66666,0 L 90,120"
+             d="m 88.33334,109.38888 1.66666,0 0,1.66667"
              style="fill:none;stroke:#ff0000;stroke-width:0.33333334px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0" />
           <path
              inkscape:connector-curvature="0"
              id="crosshairs4"
-             d="m 90,121.66666 0,1.66667 -1.66666,0"
+             d="m 90,112.72222 0,1.66667 -1.66666,0"
              style="fill:none;stroke:#ff0000;stroke-width:0.33333334px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:0" />
         </g>
       </g>
       <g
          id="monitor2"
-         transform="matrix(1.1652894,0,0,1.1652894,-9.3760392,-12.334757)"
          style="opacity:0">
         <rect
-           y="50.960999"
-           x="29.960993"
-           height="96.929092"
-           width="110.63828"
+           y="38"
+           x="25"
+           height="140"
+           width="130"
            id="rect3069"
            style="fill:#bcbdff;fill-opacity:0.2" />
         <text
            xml:space="preserve"
-           style="font-size:14.07693768px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
-           x="46.813568"
-           y="49.392624"
+           style="font-size:13.7304945px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
+           x="40"
+           y="70"
            id="text3081"
-           sodipodi:linespacing="125%"
-           transform="scale(0.74632159,1.339905)"><tspan
+           sodipodi:linespacing="125%"><tspan
              sodipodi:role="line"
-             id="tspan3085"
-             x="46.813568"
-             y="49.392624">Use the arrow keys </tspan><tspan
+             id="tspan3128"
+             x="40"
+             y="70">Use the arrow</tspan><tspan
              sodipodi:role="line"
-             id="tspan3087"
-             x="46.813568"
-             y="66.988792">to navigate on the planet</tspan></text>
+             id="tspan3130"
+             x="40"
+             y="87">keys to navigate </tspan><tspan
+             sodipodi:role="line"
+             id="tspan3132"
+             x="40"
+             y="104">on the planet</tspan></text>
         <g
            id="key">
           <g
              inkscape:r_cy="true"
              inkscape:r_cx="true"
-             transform="translate(74.411811,117.60869)"
+             transform="translate(74.411811,136.48812)"
              id="g1495">
             <path
                transform="matrix(0.524157,0,0,0.273884,2.448298,12.69591)"
                inkscape:r_cy="true"
                inkscape:r_cx="true"
-               d="m 41.625,39.8125 a 17.375,6.9375 0 1 1 -34.75,0 17.375,6.9375 0 1 1 34.75,0 z"
+               d="m 41.625,39.8125 c 0,3.831475 -7.779052,6.9375 -17.375,6.9375 -9.595948,0 -17.375,-3.106025 -17.375,-6.9375 0,-3.831475 7.779052,-6.9375 17.375,-6.9375 9.595948,0 17.375,3.106025 17.375,6.9375 z"
                sodipodi:ry="6.9375"
                sodipodi:rx="17.375"
                sodipodi:cy="39.8125"
                sodipodi:cx="24.25"
                id="path1497"
-               style="opacity:0.38888891;color:#000000;fill:url(#radialGradient3085);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:block;overflow:visible"
+               style="opacity:0.38888891;color:#000000;fill:url(#radialGradient3164);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:block;overflow:visible"
                sodipodi:type="arc" />
             <rect
                ry="2.5662651"
@@ -563,7 +562,7 @@
                style="color:#000000;fill:#babdb6;fill-opacity:1;fill-rule:nonzero;stroke:#888a85;stroke-width:0.99999928;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:block;overflow:visible" />
             <rect
                transform="scale(-1,1)"
-               style="color:#000000;fill:url(#radialGradient3087);fill-opacity:1;fill-rule:nonzero;stroke:url(#linearGradient3089);stroke-width:0.99999982;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:block;overflow:visible"
+               style="color:#000000;fill:url(#radialGradient3166);fill-opacity:1;fill-rule:nonzero;stroke:url(#linearGradient3168);stroke-width:0.99999982;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:block;overflow:visible"
                id="rect1501"
                width="12.703331"
                height="11.734217"
@@ -607,10 +606,10 @@
                inkscape:r_cx="true"
                id="path1509"
                d="M 24.029566,7.0818461 C 23.977024,6.4997455 23.650197,6.0533138 23.015555,6 l -0.860875,1.1442794 0.601883,0.6346428 1.273003,-0.6970761 z"
-               style="color:#000000;fill:url(#linearGradient3091);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:block;overflow:visible" />
+               style="color:#000000;fill:url(#linearGradient3170);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:block;overflow:visible" />
             <path
                inkscape:connector-curvature="0"
-               style="color:#000000;fill:url(#linearGradient3093);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:block;overflow:visible"
+               style="color:#000000;fill:url(#linearGradient3172);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:block;overflow:visible"
                d="M 6.9033707,6.9827949 C 7.0443013,6.4669855 7.4488535,6.0312166 8.017205,6 L 8.7790291,7.1877019 8.2197971,7.8223447 6.9033707,6.9827949 z"
                id="path1511"
                inkscape:r_cx="true"
@@ -620,7 +619,7 @@
           <use
              height="48"
              width="48"
-             transform="translate(22.312054,1.1475493e-7)"
+             transform="translate(22.312054,4.0906639e-7)"
              id="use3079"
              xlink:href="#g1495"
              y="0"
@@ -628,7 +627,7 @@
           <use
              height="48"
              width="48"
-             transform="translate(-22.312054,1.1475493e-7)"
+             transform="translate(-22.312054,4.0906639e-7)"
              id="use3081"
              xlink:href="#g1495"
              y="0"
@@ -636,7 +635,7 @@
           <use
              height="48"
              width="48"
-             transform="translate(6.4810404e-8,-23.17021)"
+             transform="translate(6.4810404e-8,-23.170203)"
              id="use3083"
              xlink:href="#g1495"
              y="0"
@@ -645,12 +644,12 @@
              sodipodi:nodetypes="cccccc"
              inkscape:connector-curvature="0"
              id="path3101"
-             d="m 89.570916,113.84045 0,-4 2,0 -2,-4 -2,4 2,0"
+             d="m 89.141838,133.01066 0,-4 2,0 -2,-4 -2,4 2,0"
              style="fill:#000000;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
           <use
              height="48"
              width="48"
-             transform="matrix(-1,0,0,-1,179.14183,241.42558)"
+             transform="matrix(-1.072696,0,0,-1,184.76432,279.36795)"
              id="use3105"
              xlink:href="#path3101"
              y="0"
@@ -658,7 +657,7 @@
           <use
              height="48"
              width="48"
-             transform="matrix(0,-1,1,0,-42.581588,222.87236)"
+             transform="matrix(0,-1,1,0,-60.893646,239.17732)"
              id="use3107"
              xlink:href="#path3101"
              y="0"
@@ -666,14 +665,15 @@
           <use
              height="48"
              width="48"
-             transform="matrix(0,1,-1,0,221.72342,43.730526)"
+             transform="matrix(0,1,-1,0,240.32625,60.893644)"
              id="use3109"
              xlink:href="#path3101"
              y="0"
              x="0" />
           <g
              id="keyPress"
-             style="opacity:0">
+             style="opacity:0"
+             transform="translate(0,18.686978)">
             <rect
                ry="1.2766916"
                rx="1.3431772"
@@ -705,7 +705,8 @@ function startup(evt)  {
     monitor2 = svgDocument.getElementById(&quot;monitor2&quot;);
     keyPress = svgDocument.getElementById(&quot;keyPress&quot;);
     keyPressVisible = false;
-    width = -200;
+    width = -200;    
+    moveMonitorStep = 0;
     openCrosshairsStep = 0;
     moveCockpit();
 }
@@ -758,7 +759,7 @@ function closeCrosshairs() {
     } else {
          moveCrosshairs();
          text1.setAttribute (&quot;style&quot;, &quot;opacity:1&quot;);
-         window.setTimeout(&quot;showMonitor2()&quot;, 1000); 
+         window.setTimeout(&quot;moveMonitor()&quot;, 1000); 
     }
 }
 
@@ -776,12 +777,20 @@ function setCrosshairsSize(positionX, positionY, size) {
 
 //------------------------------------------------------------------------------------------------------------
 
+function moveMonitor() {
+     monitor1.setAttribute (&quot;transform&quot;, &quot;translate(0, &quot; + moveMonitorStep + &quot;)&quot;);
+     moveMonitorStep++;
+     if(moveMonitorStep &lt; 160) {
+        window.setTimeout(&quot;moveMonitor()&quot;, 10); 
+     } else {
+         showMonitor2();
+     }
+}
+
 function showMonitor2() {
-    monitor1.setAttribute (&quot;transform&quot;, &quot;translate(0, 130)&quot;);
+    //monitor1.setAttribute (&quot;transform&quot;, &quot;translate(0, 160)&quot;);
     monitor2.setAttribute (&quot;style&quot;, &quot;opacity:1&quot;);
     window.setTimeout(&quot;showKeyPress()&quot;, 1000); 
-    // OK keyPress.setAttribute (&quot;style&quot;, &quot;opacity:1&quot;);
-    // showKeyPress();
 }
 
 function showKeyPress() {
