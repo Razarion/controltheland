@@ -14,6 +14,7 @@
 package com.btxtech.game.controllers;
 
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbItemTypeData;
 import org.apache.commons.logging.Log;
@@ -48,6 +49,7 @@ public class MuzzleFlashController implements Controller {
                 DbItemTypeData image = itemService.getMuzzleFlashImage(itemTypeId);
                 httpServletResponse.setContentLength(image.getData().length);
                 httpServletResponse.setContentType(image.getContentType());
+                httpServletResponse.addDateHeader("Expires", System.currentTimeMillis() + DateUtil.MILLIS_IN_DAY);
                 OutputStream out = httpServletResponse.getOutputStream();
                 out.write(image.getData());
                 out.close();
@@ -55,6 +57,7 @@ public class MuzzleFlashController implements Controller {
                 DbItemTypeData sound = itemService.getMuzzleFlashSound(itemTypeId);
                 httpServletResponse.setContentLength(sound.getData().length);
                 httpServletResponse.setContentType(sound.getContentType());
+                httpServletResponse.addDateHeader("Expires", System.currentTimeMillis() + DateUtil.MILLIS_IN_DAY);
                 OutputStream out = httpServletResponse.getOutputStream();
                 out.write(sound.getData());
                 out.close();
