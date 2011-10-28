@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.common.utg.condition.AbstractComparison;
 import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.CockpitButtonTrigger;
 import com.btxtech.game.jsre.common.utg.condition.ContainedInTrigger;
+import com.btxtech.game.jsre.common.utg.condition.PositionConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.SimpleConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.SyncItemConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.ValueConditionTrigger;
@@ -76,8 +77,12 @@ public enum ConditionTrigger {
         @Override
         public <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison abstractComparison, T t) {
             return new ContainedInTrigger<T>(abstractComparison, t);
+        }},
+    SCROLL_TO_POSITION(true) {
+        @Override
+        public <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison abstractComparison, T t) {
+            return new PositionConditionTrigger<T>(this, abstractComparison, t);
         }};
-
 
     private boolean comparisonNeeded;
 

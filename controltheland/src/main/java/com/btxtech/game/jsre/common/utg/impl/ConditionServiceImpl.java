@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.common.utg.impl;
 
 import com.btxtech.game.jsre.client.cockpit.Group;
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -26,6 +27,7 @@ import com.btxtech.game.jsre.common.utg.condition.AbstractConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.AbstractSyncItemComparison;
 import com.btxtech.game.jsre.common.utg.condition.CockpitButtonTrigger;
 import com.btxtech.game.jsre.common.utg.condition.ContainedInTrigger;
+import com.btxtech.game.jsre.common.utg.condition.PositionConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.SimpleConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.SyncItemConditionTrigger;
 import com.btxtech.game.jsre.common.utg.condition.ValueConditionTrigger;
@@ -46,7 +48,7 @@ public abstract class ConditionServiceImpl<T> implements ConditionService<T> {
     protected abstract AbstractConditionTrigger<T> getAbstractConditionPrivate(SimpleBase simpleBase, ConditionTrigger conditionTrigger);
 
     protected abstract Services getServices();
-    
+
     protected void cleanup() {
 
     }
@@ -117,6 +119,17 @@ public abstract class ConditionServiceImpl<T> implements ConditionService<T> {
         }
     }
 
+    private void triggerPosition(ConditionTrigger conditionTrigger, Index position) {
+        PositionConditionTrigger<T> positionConditionTrigger = getAbstractCondition(null, conditionTrigger);
+        if (positionConditionTrigger == null) {
+            return;
+        }
+        positionConditionTrigger.onPosition(position);
+        if (positionConditionTrigger.isFulfilled()) {
+            conditionPassed(positionConditionTrigger.getUserObject());
+        }
+    }
+
     //------ Client ------
 
     @Override
@@ -141,6 +154,9 @@ public abstract class ConditionServiceImpl<T> implements ConditionService<T> {
     @Override
     public void onScroll(int left, int top, int width, int height, int deltaLeft, int deltaTop) {
         triggerSimple(ConditionTrigger.SCROLL);
+        Index position = new Index(left, top);
+        position = position.add(width / 2, height / 2);
+        triggerPosition(ConditionTrigger.SCROLL_TO_POSITION, position);
     }
 
     @Override

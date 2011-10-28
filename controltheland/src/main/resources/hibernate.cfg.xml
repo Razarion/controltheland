@@ -80,6 +80,7 @@
         <mapping class="com.btxtech.game.services.utg.condition.DbSyncItemIdPositionComparisonConfig"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbContainedInComparisonConfig"/>
         <mapping class="com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig"/>
+        <mapping class="com.btxtech.game.services.utg.condition.DbPositionComparisonConfig"/>
         <mapping class="com.btxtech.game.services.forum.DbSubForum"/>
         <mapping class="com.btxtech.game.services.forum.DbCategory"/>
         <mapping class="com.btxtech.game.services.forum.DbForumThread"/>

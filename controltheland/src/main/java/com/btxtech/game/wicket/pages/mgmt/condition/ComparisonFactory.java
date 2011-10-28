@@ -20,14 +20,16 @@ import com.btxtech.game.services.utg.condition.DbConditionConfig;
 import com.btxtech.game.services.utg.condition.DbContainedInComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbCountComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbItemTypePositionComparisonConfig;
+import com.btxtech.game.services.utg.condition.DbPositionComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemIdComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemIdPositionComparisonConfig;
 import com.btxtech.game.services.utg.condition.DbSyncItemTypeComparisonConfig;
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.html.basic.Label;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.basic.Label;
 
 /**
  * User: beat
@@ -45,7 +47,8 @@ public class ComparisonFactory {
         COCKPIT_BUTTON_EVENT(ConditionTrigger.COCKPIT_BUTTON_EVENT, DbCockpitButtonClickedComparisonConfig.class),
         MONEY_INCREASED(ConditionTrigger.MONEY_INCREASED, DbCountComparisonConfig.class),
         XP_INCREASED(ConditionTrigger.XP_INCREASED, DbCountComparisonConfig.class),
-        CONTAINED_IN(ConditionTrigger.CONTAINED_IN, DbContainedInComparisonConfig.class);
+        CONTAINED_IN(ConditionTrigger.CONTAINED_IN, DbContainedInComparisonConfig.class),
+        SCROLL_TO_POSITION(ConditionTrigger.SCROLL_TO_POSITION, DbPositionComparisonConfig.class);
 
         private ConditionTrigger conditionTrigger;
         private List<Class<? extends DbAbstractComparisonConfig>> comparisons;
@@ -90,6 +93,8 @@ public class ComparisonFactory {
                 return new ContainedInComparisonConfigPanel(id);
             } else if (config instanceof DbItemTypePositionComparisonConfig) {
                 return new ItemTypePositionComparisonConfigPanel(id);
+            } else if (config instanceof DbPositionComparisonConfig) {
+                return new PositionComparisonConfigPanel(id);
             } else {
                 throw new IllegalArgumentException("No panel for " + config);
             }
