@@ -138,6 +138,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
     private SelectedItemPanel selectedItemPanel;
     private Label debugPosition;
     private ExtendedCustomButton sellButton;
+    private boolean active = false;
 
     public static Cockpit getInstance() {
         return INSTANCE;
@@ -259,11 +260,11 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         Image radarFrame = ImageHandler.createImageIE6TransparencyProblem("/images/cockpit/radarframe.png", RADAR_WIDTH, RADAR_HEIGHT);
         radarFrame.getElement().getStyle().setZIndex(100);
         radarFrame.getElement().getStyle().setCursor(Style.Cursor.POINTER);
-        radarFrame.addMouseDownHandler(RadarPanel.getInstance().getRadarFrameView());        
+        radarFrame.addMouseDownHandler(RadarPanel.getInstance().getRadarFrameView());
         radar.add(radarFrame, 0, 0);
     }
 
-    public void addToParent(AbsolutePanel parent) {
+    private void addToParent(AbsolutePanel parent) {
         parent.add(this, 0, 1);
         getElement().getStyle().setProperty("top", "");
         getElement().getStyle().setProperty("bottom", 0 + "px");
@@ -454,6 +455,22 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
             return;
         }
         sellButton.setDownState(false);
+    }
+
+    public void activate(AbsolutePanel parent) {
+        if (active) {
+            return;
+        }
+        active = true;
+        addToParent(parent);
+    }
+
+    public void inactivate(AbsolutePanel parent) {
+        if (!active) {
+            return;
+        }
+        active = false;
+        parent.remove(this);
     }
 
 }
