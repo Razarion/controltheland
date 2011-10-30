@@ -12,8 +12,8 @@
   ~   GNU General Public License for more details.
   -->
 <module rename-to='game'>
-    <source path="client" />
-    <source path="common" />
+    <source path="client"/>
+    <source path="common"/>
 
     <!-- Inherit the core Web Toolkit stuff.                        -->
     <inherits name='com.google.gwt.user.User'/>
@@ -25,6 +25,7 @@
     <inherits name='com.google.gwt.widgetideas.GWTCanvas'/>
     <inherits name='com.google.gwt.widgetideas.GlassPanel'/>
     <inherits name='com.allen_sauer.gwt.voices.gwt-voices'/>
+    <!--inherits name="com.google.gwt.precompress.Precompress"/-->
     <!-- <inherits name='com.google.gwt.base.theme.chrome.Chrome'/> -->
     <!-- <inherits name='com.google.gwt.base.theme.dark.Dark'/>     -->
 
