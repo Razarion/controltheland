@@ -74,6 +74,9 @@ public class GwtCommon {
             exceptionDialog = new ExceptionDialog(t);
             DialogManager.showDialog(exceptionDialog, DialogManager.Type.PROMPTLY);
         }
+        if (!GWT.isProdMode()) {
+            t.printStackTrace();
+        }
         sendExceptionToServer(message, t);
     }
 
@@ -87,7 +90,7 @@ public class GwtCommon {
     public static String setupStackTrace(String message, Throwable throwable) {
         try {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append("(See GWT log for stack trace) ");            
+            stringBuilder.append("(See GWT log for stack trace) ");
             if (message != null) {
                 stringBuilder.append(message);
                 stringBuilder.append(" ");

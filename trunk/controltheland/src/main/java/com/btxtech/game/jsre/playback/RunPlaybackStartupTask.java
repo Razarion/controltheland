@@ -31,7 +31,7 @@ public class RunPlaybackStartupTask extends AbstractStartupTask {
 
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
-        Simulation.getInstance().start();
+        Simulation.getInstance().initGameEngine();
         PlaybackVisualisation.getInstance().play();
     }
 }

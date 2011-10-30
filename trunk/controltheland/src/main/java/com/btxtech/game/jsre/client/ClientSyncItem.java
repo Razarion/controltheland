@@ -46,7 +46,7 @@ public class ClientSyncItem implements SyncItemListener {
         switch (change) {
             case POSITION:
                 checkVisibility();
-                if (syncItem instanceof SyncBaseItem && !Connection.getInstance().getGameInfo().hasServerCommunication()) {
+                if (syncItem instanceof SyncBaseItem && Connection.getInstance().getClientMode() == ClientMode.MASTER) {
                     ActionHandler.getInstance().interactionGuardingItems((SyncBaseItem) syncItem);
                 }
                 break;
@@ -54,7 +54,7 @@ public class ClientSyncItem implements SyncItemListener {
                 if (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).isReady()) {
                     SimulationConditionServiceImpl.getInstance().onSyncItemBuilt(((SyncBaseItem) syncItem));
                     ClientBase.getInstance().recalculate4FakedHouseSpace((SyncBaseItem) syncItem);
-                    if (!Connection.getInstance().getGameInfo().hasServerCommunication()) {
+                    if (Connection.getInstance().getClientMode() == ClientMode.MASTER) {
                         ActionHandler.getInstance().addGuardingBaseItem((SyncBaseItem) syncItem);
                     }
                 }

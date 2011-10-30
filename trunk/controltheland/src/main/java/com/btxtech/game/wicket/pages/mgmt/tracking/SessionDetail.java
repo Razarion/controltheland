@@ -13,12 +13,12 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tracking;
 
+import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.utg.LifecycleTrackingInfo;
 import com.btxtech.game.services.utg.SessionDetailDto;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.tracker.DbPageAccess;
 import com.btxtech.game.services.utg.tracker.DbSessionDetail;
-import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
@@ -61,9 +61,9 @@ public class SessionDetail extends MgmtWebPage {
 
             @Override
             protected void populateItem(ListItem<DbPageAccess> listItem) {
-                listItem.add(new Label("time", WebCommon.formatDateTime(listItem.getModelObject().getTimeStamp())));
+                listItem.add(new Label("time", DateUtil.formatDateTime(listItem.getModelObject().getTimeStamp())));
                 if (previous != null) {
-                    listItem.add(new Label("delta", WebCommon.getTimeDiff(previous, listItem.getModelObject().getTimeStamp())));
+                    listItem.add(new Label("delta", DateUtil.getTimeDiff(previous, listItem.getModelObject().getTimeStamp())));
                 } else {
                     listItem.add(new Label("delta", ""));
                 }
@@ -92,7 +92,7 @@ public class SessionDetail extends MgmtWebPage {
     private void userInfo(String sessionId, SessionDetailDto sessionDetailDto) {
         DbSessionDetail dbSessionDetail = sessionDetailDto.getUserDetails();
         add(new Label("sessionId", sessionId));
-        add(new Label("timeStamp", WebCommon.formatDateTime(dbSessionDetail.getTimeStamp())));
+        add(new Label("timeStamp", DateUtil.formatDateTime(dbSessionDetail.getTimeStamp())));
         add(new Label("userAgent", dbSessionDetail.getUserAgent()));
         add(new Label("language", dbSessionDetail.getLanguage()));
         add(new Label("remoteHost", dbSessionDetail.getRemoteHost()));

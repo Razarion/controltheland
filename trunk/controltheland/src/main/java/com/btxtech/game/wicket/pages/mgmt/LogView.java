@@ -13,13 +13,13 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
+import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.mgmt.MgmtService;
-import com.btxtech.game.wicket.WebCommon;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.apache.wicket.Resource;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.html.list.ListItem;
@@ -36,7 +36,7 @@ import org.apache.wicket.util.resource.IResourceStream;
 public class LogView extends MgmtWebPage {
     @SpringBean
     private MgmtService mgmtService;
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(WebCommon.DATE_TIME_FORMAT_STRING);
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DateUtil.DATE_TIME_FORMAT_STRING);
     
     public LogView() {
         ListView<File> logs = new ListView<File>("logFiles", mgmtService.getLogFiles()) {

@@ -14,7 +14,7 @@
 package com.btxtech.game.jsre.playback;
 
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
@@ -32,7 +32,7 @@ public class PlaybackInfo extends SimulationInfo {
     private EventTrackingStart eventTrackingStart;
     private List<EventTrackingItem> eventTrackingItems;
     private List<SelectionTrackingItem> selectionTrackingItems;
-    private List<BaseCommand> baseCommands;
+    private List<SyncItemInfo> syncItemInfos;
     private List<TerrainScrollTracking> terrainScrollTrackings;
     private List<BrowserWindowTracking> browserWindowTrackings;
 
@@ -60,12 +60,12 @@ public class PlaybackInfo extends SimulationInfo {
         this.selectionTrackingItems = selectionTrackingItems;
     }
 
-    public void setCommands(List<BaseCommand> baseCommands) {
-        this.baseCommands = baseCommands;
+    public void setSyncItemInfos(List<SyncItemInfo> syncItemInfos) {
+        this.syncItemInfos = syncItemInfos;
     }
 
-    public List<BaseCommand> getBaseCommands() {
-        return baseCommands;
+    public List<SyncItemInfo> getSyncItemInfos() {
+        return syncItemInfos;
     }
 
     public void setScrollTrackingItems(List<TerrainScrollTracking> terrainScrollTrackings) {

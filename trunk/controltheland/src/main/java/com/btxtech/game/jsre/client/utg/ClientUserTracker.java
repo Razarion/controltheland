@@ -26,7 +26,8 @@ import com.btxtech.game.jsre.client.simulation.Task;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainScrollListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
@@ -56,7 +57,7 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
     private List<BrowserWindowTracking> browserWindowTrackings = new ArrayList<BrowserWindowTracking>();
     private List<SelectionTrackingItem> selectionTrackingItems = new ArrayList<SelectionTrackingItem>();
     private List<TerrainScrollTracking> terrainScrollTrackings = new ArrayList<TerrainScrollTracking>();
-    private List<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
+    private List<SyncItemInfo> syncItemInfos = new ArrayList<SyncItemInfo>();
     private Timer timer;
     private boolean isCollecting = false;
     private HandlerRegistration scrollHandlerRegistration;
@@ -166,23 +167,25 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
         }
     }
 
-    public void onExecuteCommand(BaseCommand baseCommand) {
+    public void trackSyncInfo(SyncItem syncItem) {
         if (isCollecting) {
-            baseCommands.add(baseCommand);
+            SyncItemInfo syncItemInfo = syncItem.getSyncInfo();
+            syncItemInfo.setClientTimeStamp();
+            syncItemInfos.add(syncItemInfo);
         }
     }
 
     private void sendEventTrackerItems() {
-        if (eventTrackingItems.isEmpty() && baseCommands.isEmpty() && selectionTrackingItems.isEmpty() && terrainScrollTrackings.isEmpty() && browserWindowTrackings.isEmpty()) {
+        if (eventTrackingItems.isEmpty() && syncItemInfos.isEmpty() && selectionTrackingItems.isEmpty() && terrainScrollTrackings.isEmpty() && browserWindowTrackings.isEmpty()) {
             return;
         }
-        Connection.getInstance().sendEventTrackerItems(eventTrackingItems, baseCommands, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings);
+        Connection.getInstance().sendEventTrackerItems(eventTrackingItems, syncItemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings);
         clearTracking();
     }
 
     private void clearTracking() {
         eventTrackingItems = new ArrayList<EventTrackingItem>();
-        baseCommands = new ArrayList<BaseCommand>();
+        syncItemInfos = new ArrayList<SyncItemInfo>();
         selectionTrackingItems = new ArrayList<SelectionTrackingItem>();
         terrainScrollTrackings = new ArrayList<TerrainScrollTracking>();
         browserWindowTrackings = new ArrayList<BrowserWindowTracking>();

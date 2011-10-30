@@ -212,11 +212,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
     @Override
     public List<Index> setupPathToSyncMovableRandomPositionIfTaken(SyncItem syncItem) {
         Index position = getFreeRandomPosition(syncItem.getItemType(), Rectangle.generateRectangleFromMiddlePoint(syncItem.getSyncItemArea().getPosition(), 500, 500), 0, false);
-        if (position != null) {
-            return setupPathToDestination(syncItem.getSyncItemArea().getPosition(), position, syncItem.getTerrainType());
-        } else {
-            return null;
-        }
+        return setupPathToDestination(syncItem.getSyncItemArea().getPosition(), position, syncItem.getTerrainType());
     }
 
     @Override
@@ -225,40 +221,40 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
     }
 
     @Override
-    public Index getRallyPoint(SyncBaseItem factory, Collection<SurfaceType> allowedSurfaces) {
-        return getFreeRandomPosition(factory.getSyncItemArea().getPosition(),
-                0,
-                0,
-                allowedSurfaces,
+    public Index getRallyPoint(SyncBaseItem factory, Collection<ItemType> ableToBuild) {
+        int maxWidth = 0;
+        int maxHeight = 0;
+        Collection<TerrainType> types = new ArrayList<TerrainType>();
+
+        for (ItemType itemType : ableToBuild) {
+            if (itemType.getBoundingBox().getWidth() > maxWidth) {
+                maxWidth = itemType.getBoundingBox().getWidth();
+            }
+            if (itemType.getBoundingBox().getHeight() > maxHeight) {
+                maxHeight = itemType.getBoundingBox().getHeight();
+            }
+            types.add(itemType.getTerrainType());
+        }
+        return getFreeRandomPosition(factory,
+                maxWidth,
+                maxHeight,
+                TerrainType.leastCommonMultiple(types),
                 factory.getItemType().getBoundingBox().getMaxRadius(),
                 MAX_RANGE_RALLY_POINT);
     }
 
-    private Index getFreeRandomPosition(Index origin, int itemFreeWidth, int itemFreeHeight, Collection<SurfaceType> allowedSurfaces, int targetMinRange, int targetMaxRange) {
+    private Index getFreeRandomPosition(SyncBaseItem origin, int itemFreeWidth, int itemFreeHeight, Collection<SurfaceType> allowedSurfaces, int targetMinRange, int targetMaxRange) {
         int delta = (targetMaxRange - targetMinRange) / STEPS_DISTANCE;
         for (int distance = 0; distance < (targetMaxRange - targetMinRange); distance += delta) {
             for (double angel = 0.0; angel < 2.0 * Math.PI; angel += (2.0 * Math.PI / STEPS_ANGEL)) {
-                Index point = origin.getPointFromAngelToNord(angel, distance + targetMinRange);
-
-                if (point.getX() >= getServices().getTerrainService().getTerrainSettings().getPlayFieldXSize()) {
-                    continue;
-                }
-                if (point.getY() >= getServices().getTerrainService().getTerrainSettings().getPlayFieldYSize()) {
-                    continue;
-                }
+                Index point = origin.getSyncItemArea().getPosition().getPointFromAngelToNord(angel, distance + targetMinRange);
 
                 if (!getServices().getTerrainService().isFree(point, itemFreeWidth, itemFreeHeight, allowedSurfaces)) {
                     continue;
                 }
-                Rectangle itemRectangle = null;
-                if (itemFreeWidth > 0 || itemFreeHeight > 0) {
-                    itemRectangle = new Rectangle(point.getX() - itemFreeWidth / 2,
-                            point.getY() - itemFreeHeight / 2,
-                            itemFreeWidth,
-                            itemFreeHeight);
 
-                }
-                if (itemRectangle != null && getServices().getItemService().hasItemsInRectangle(itemRectangle)) {
+                Rectangle rectangle = Rectangle.generateRectangleFromMiddlePoint(point, itemFreeWidth, itemFreeHeight);
+                if (getServices().getItemService().hasItemsInRectangle(rectangle)) {
                     continue;
                 }
                 return point;

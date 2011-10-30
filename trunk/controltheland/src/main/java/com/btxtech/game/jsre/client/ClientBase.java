@@ -193,7 +193,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     }
 
     public boolean checkItemLimit4ItemAddingDialog(BaseItemType itemType) throws NoSuchItemTypeException {
-        if (!Connection.getInstance().getGameInfo().hasServerCommunication()) {
+        if (Connection.getInstance().getClientMode() != ClientMode.MASTER) {
             return true;
         }
         try {

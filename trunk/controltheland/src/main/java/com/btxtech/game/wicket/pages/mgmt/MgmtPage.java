@@ -13,8 +13,8 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
+import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.mgmt.MgmtService;
-import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.mgmt.cms.Cms;
 import com.btxtech.game.wicket.pages.mgmt.tracking.SessionTable;
 import com.btxtech.game.wicket.pages.mgmt.tutorial.TutorialTable;
@@ -45,7 +45,7 @@ public class MgmtPage extends MgmtWebPage {
     private MgmtService mgmtService;
 
     public MgmtPage() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(WebCommon.DATE_TIME_FORMAT_STRING);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DateUtil.DATE_TIME_FORMAT_STRING);
         add(new Label("sysstart", simpleDateFormat.format(mgmtService.getStartTime())));
         add(new Label("systemTime", simpleDateFormat.format(new Date())));
         MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();

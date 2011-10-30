@@ -68,7 +68,7 @@ public interface MovableService extends RemoteService {
     void sendEventTrackingStart(EventTrackingStart eventTrackingStart);
 
     void sendEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems,
-                               Collection<BaseCommand> baseCommands,
+                               Collection<SyncItemInfo> syncItemInfos,
                                Collection<SelectionTrackingItem> selectionTrackingItems,
                                Collection<TerrainScrollTracking> terrainScrollTrackings,
                                Collection<BrowserWindowTracking> browserWindowTrackings);

@@ -13,10 +13,10 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tracking;
 
+import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.utg.SessionOverviewDto;
 import com.btxtech.game.services.utg.UserTrackingFilter;
 import com.btxtech.game.services.utg.UserTrackingService;
-import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.markup.html.basic.Label;
@@ -43,7 +43,7 @@ public class SessionTable extends MgmtWebPage {
     @SpringBean
     private UserTrackingService userTrackingService;
     private UserTrackingFilter userTrackingFilter;
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(WebCommon.DATE_TIME_FORMAT_STRING);
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DateUtil.DATE_TIME_FORMAT_STRING);
 
     public SessionTable() {
         userTrackingFilter = UserTrackingFilter.newDefaultFilter();
