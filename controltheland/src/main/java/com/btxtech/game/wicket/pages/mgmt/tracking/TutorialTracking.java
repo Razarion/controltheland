@@ -14,12 +14,12 @@
 package com.btxtech.game.wicket.pages.mgmt.tracking;
 
 import com.btxtech.game.jsre.playback.PlaybackEntry;
+import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.utg.tracker.DbEventTrackingStart;
 import com.btxtech.game.services.utg.tracker.DbTutorialProgress;
 import com.btxtech.game.services.utg.LifecycleTrackingInfo;
 import com.btxtech.game.services.utg.TutorialTrackingInfo;
 import com.btxtech.game.services.utg.UserTrackingService;
-import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.mgmt.PlaybackPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
@@ -56,7 +56,7 @@ public class TutorialTracking extends Panel {
                 gameStartupListItem.add(new Label("type", gameStartupListItem.getModelObject().getType()));
                 gameStartupListItem.add(new Label("name", gameStartupListItem.getModelObject().getName()));
                 gameStartupListItem.add(new Label("parent", gameStartupListItem.getModelObject().getParent()));
-                gameStartupListItem.add(new Label("duration", WebCommon.formatDurationMilis(gameStartupListItem.getModelObject().getDuration())));
+                gameStartupListItem.add(new Label("duration", DateUtil.formatDurationMilis(gameStartupListItem.getModelObject().getDuration())));
             }
         });
     }

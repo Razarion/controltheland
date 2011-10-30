@@ -13,10 +13,9 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
+import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.mgmt.BackupSummary;
 import com.btxtech.game.services.mgmt.MgmtService;
-import com.btxtech.game.wicket.WebCommon;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.CheckBox;
@@ -43,7 +42,7 @@ import java.util.List;
 public class BackupRestore extends MgmtWebPage {
     @SpringBean
     private MgmtService mgmtService;
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(WebCommon.DATE_TIME_FORMAT_STRING);
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DateUtil.DATE_TIME_FORMAT_STRING);
     private Collection<Date> toBeDeleted = new ArrayList<Date>();
 
     public BackupRestore() {

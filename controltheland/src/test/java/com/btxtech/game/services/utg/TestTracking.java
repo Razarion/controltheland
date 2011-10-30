@@ -5,10 +5,8 @@ import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.control.ColdRealGameStartupTaskEnum;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderCommand;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
@@ -307,11 +305,13 @@ public class TestTracking extends AbstractServiceTest {
         eventTrackingItems.add(new EventTrackingItem(1, 10, 3, 1200));
         eventTrackingItems.add(new EventTrackingItem(1, 10, 4, 1300));
         eventTrackingItems.add(new EventTrackingItem(1, 10, 5, 1400));
-        // Commands                                                                     1
-        Collection<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
-        BuilderCommand builderCommand = new BuilderCommand();
-        setPrivateField(BaseCommand.class, builderCommand, "timeStamp", 1200);
-        baseCommands.add(builderCommand);
+        // SyncItemInfo                                                                     1
+        Collection<SyncItemInfo> itemInfos = new ArrayList<SyncItemInfo>();
+        SyncItemInfo syncItemInfo = new SyncItemInfo();
+        syncItemInfo.setAmount(0.5);
+        syncItemInfo.setId(new Id(1, 1, 1));
+        setPrivateField(SyncItemInfo.class, syncItemInfo, "clientTimeStamp", 1200L);
+        itemInfos.add(syncItemInfo);
         // Selection
         Collection<SelectionTrackingItem> selectionTrackingItems = new ArrayList<SelectionTrackingItem>();
         SelectionTrackingItem selectionTrackingItem = new SelectionTrackingItem();
@@ -329,7 +329,7 @@ public class TestTracking extends AbstractServiceTest {
         browserWindowTrackings.add(new BrowserWindowTracking(3, 2, 3, 4, 5, 6, 1300));
         browserWindowTrackings.add(new BrowserWindowTracking(4, 2, 3, 4, 5, 6, 1400));
 
-        movableService.sendEventTrackerItems(eventTrackingItems, baseCommands, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings);
+        movableService.sendEventTrackerItems(eventTrackingItems, itemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings);
         userTrackingService.onTutorialProgressChanged(TutorialConfig.TYPE.TASK, "tutorial1", null, 1, 1550);
         endHttpRequestAndOpenSessionInViewFilter();
     }
@@ -371,11 +371,13 @@ public class TestTracking extends AbstractServiceTest {
         eventTrackingItems.add(new EventTrackingItem(3, 10, 1, 1930));
         eventTrackingItems.add(new EventTrackingItem(4, 10, 1, 1940));
         eventTrackingItems.add(new EventTrackingItem(5, 10, 1, 1950));
-        // Commands                                                                     1
-        Collection<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
-        AttackCommand attackCommand = new AttackCommand();
-        setPrivateField(BaseCommand.class, attackCommand, "timeStamp", 2000);
-        baseCommands.add(attackCommand);
+        // SyncItemInfos                                                                     1
+        Collection<SyncItemInfo> syncItemInfos = new ArrayList<SyncItemInfo>();
+        SyncItemInfo syncItemInfo = new SyncItemInfo();
+        syncItemInfo.setFollowTarget(true);
+        syncItemInfo.setId(new Id(2, 2, 2));
+        setPrivateField(SyncItemInfo.class, syncItemInfo, "clientTimeStamp", 2000L);
+        syncItemInfos.add(syncItemInfo);
         // Selection
         Collection<SelectionTrackingItem> selectionTrackingItems = new ArrayList<SelectionTrackingItem>();
         SelectionTrackingItem selectionTrackingItem1 = new SelectionTrackingItem();
@@ -396,7 +398,7 @@ public class TestTracking extends AbstractServiceTest {
         browserWindowTrackings.add(new BrowserWindowTracking(1, 4, 3, 4, 5, 6, 2140));
         browserWindowTrackings.add(new BrowserWindowTracking(1, 5, 3, 4, 5, 6, 2150));
 
-        movableService.sendEventTrackerItems(eventTrackingItems, baseCommands, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings);
+        movableService.sendEventTrackerItems(eventTrackingItems, syncItemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings);
         userTrackingService.onTutorialProgressChanged(TutorialConfig.TYPE.TUTORIAL, "tutorial2", null, 1, 3100);
         endHttpRequestAndOpenSessionInViewFilter();
     }
@@ -467,9 +469,10 @@ public class TestTracking extends AbstractServiceTest {
         Assert.assertEquals(3, playbackInfo.getEventTrackingItems().get(2).getEventType());
         Assert.assertEquals(4, playbackInfo.getEventTrackingItems().get(3).getEventType());
         Assert.assertEquals(5, playbackInfo.getEventTrackingItems().get(4).getEventType());
-        // Commands
-        Assert.assertEquals(1, playbackInfo.getBaseCommands().size());
-        Assert.assertTrue(playbackInfo.getBaseCommands().get(0) instanceof BuilderCommand);
+        // SyncItemInfos
+        Assert.assertEquals(1, playbackInfo.getSyncItemInfos().size());
+        Assert.assertEquals(new Id(1, 1, 1), playbackInfo.getSyncItemInfos().get(0).getId());
+        Assert.assertEquals(0.5, playbackInfo.getSyncItemInfos().get(0).getAmount(), 0.001);
         // Selection
         Assert.assertEquals(1, playbackInfo.getSelectionTrackingItems().size());
         Assert.assertNull(playbackInfo.getSelectionTrackingItems().get(0).isOwn());
@@ -534,8 +537,9 @@ public class TestTracking extends AbstractServiceTest {
         Assert.assertEquals(4, playbackInfo.getEventTrackingItems().get(3).getXPos());
         Assert.assertEquals(5, playbackInfo.getEventTrackingItems().get(4).getXPos());
         // Commands
-        Assert.assertEquals(1, playbackInfo.getBaseCommands().size());
-        Assert.assertTrue(playbackInfo.getBaseCommands().get(0) instanceof AttackCommand);
+        Assert.assertEquals(1, playbackInfo.getSyncItemInfos().size());
+        Assert.assertEquals(new Id(2, 2, 2), playbackInfo.getSyncItemInfos().get(0).getId());
+        Assert.assertTrue(playbackInfo.getSyncItemInfos().get(0).isFollowTarget());
         // Selection
         Assert.assertEquals(2, playbackInfo.getSelectionTrackingItems().size());
         Assert.assertNull(playbackInfo.getSelectionTrackingItems().get(0).isOwn());

@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.action;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientMode;
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
@@ -28,7 +29,6 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
-import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.RectangleFormation;
@@ -54,6 +54,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -102,22 +103,27 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                     if (!activeItem.tick(factor)) {
                         SimulationConditionServiceImpl.getInstance().onSyncItemDeactivated(activeItem);
                         iterator.remove();
-                        if (!Connection.getInstance().getGameInfo().hasServerCommunication()) {
+                        activeItem.stop();
+                        if (Connection.getInstance().getClientMode() == ClientMode.MASTER) {
                             ActionHandler.getInstance().addGuardingBaseItem(activeItem);
+                            ClientServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
                         }
                     }
                 } catch (ItemDoesNotExistException ife) {
                     iterator.remove();
                     activeItem.stop();
+                    ClientServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
                     log.warning("ItemDoesNotExistException");
                 } catch (PositionTakenException ife) {
                     iterator.remove();
                     activeItem.stop();
+                    ClientServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
                     log.warning("PositionTakenException");
                 } catch (Throwable throwable) {
                     GwtCommon.handleException(throwable);
                     activeItem.stop();
                     iterator.remove();
+                    ClientServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
                 }
             }
             lastTickTime = time;
@@ -127,7 +133,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
     @Override
     public void syncItemActivated(SyncTickItem syncTickItem) {
         tmpAddActiveItems.add(syncTickItem);
-        if (!Connection.getInstance().getGameInfo().hasServerCommunication()) {
+        if (Connection.getInstance().getClientMode() == ClientMode.MASTER) {
             ActionHandler.getInstance().addGuardingBaseItem(syncTickItem);
         }
     }
@@ -333,26 +339,19 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
     }
 
     protected void executeCommand(SyncBaseItem syncItem, BaseCommand baseCommand) throws ItemLimitExceededException, HouseSpaceExceededException, ItemDoesNotExistException, NoSuchItemTypeException, InsufficientFundsException {
-        syncItem.executeCommand(baseCommand);
-
-        Connection.getInstance().addCommandToQueue(baseCommand);
-        ClientUserTracker.getInstance().onExecuteCommand(baseCommand);
-        SimulationConditionServiceImpl.getInstance().onSendCommand(syncItem, baseCommand);
-        syncItemActivated(syncItem);
-        if (!Connection.getInstance().getGameInfo().hasServerCommunication()) {
-            removeGuardingBaseItem(syncItem);
-        }
-    }
-
-    public void injectCommand(BaseCommand baseCommand) {
         try {
-            SyncBaseItem syncBaseItem = (SyncBaseItem) ItemContainer.getInstance().getItem(baseCommand.getId());
-            syncBaseItem.executeCommand(baseCommand);
-            executeCommand(syncBaseItem, baseCommand);
-            Connection.getInstance().sendCommandQueue();
-        } catch (Exception e) {
-            GwtCommon.handleException(e);
+            syncItem.executeCommand(baseCommand);
+
+            Connection.getInstance().addCommandToQueue(baseCommand);
+            SimulationConditionServiceImpl.getInstance().onSendCommand(syncItem, baseCommand);
+            syncItemActivated(syncItem);
+            if (Connection.getInstance().getClientMode() == ClientMode.MASTER) {
+                removeGuardingBaseItem(syncItem);
+            }
+        } catch (Throwable t) {
+            log.log(Level.SEVERE, "", t);
         }
+        ClientServices.getInstance().getConnectionService().sendSyncInfo(syncItem);
     }
 
     private double calculateFactor(long time) {

@@ -13,18 +13,17 @@
 
 package com.btxtech.game.wicket.pages.mgmt.tracking;
 
+import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.utg.LifecycleTrackingInfo;
 import com.btxtech.game.services.utg.RealGameTrackingInfo;
 import com.btxtech.game.services.utg.UserCommandHistoryElement;
 import com.btxtech.game.services.utg.UserTrackingService;
-import com.btxtech.game.wicket.WebCommon;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -54,16 +53,16 @@ public class RealGameTracking extends Panel {
 
             @Override
             protected void populateItem(ListItem<UserCommandHistoryElement> listItem) {
-                listItem.add(new Label("timeStamp", WebCommon.formatTime(listItem.getModelObject().getTimeStamp())));
+                listItem.add(new Label("timeStamp", DateUtil.formatTime(listItem.getModelObject().getTimeStamp())));
 
                 if (previous != null) {
-                    listItem.add(new Label("timeDelta", WebCommon.getTimeDiff(previous, listItem.getModelObject().getTimeStamp())));
+                    listItem.add(new Label("timeDelta", DateUtil.getTimeDiff(previous, listItem.getModelObject().getTimeStamp())));
                 } else {
                     listItem.add(new Label("timeDelta", ""));
                 }
                 previous = listItem.getModelObject().getTimeStamp();
                 if (listItem.getModelObject().getClientTimeStamp() != null) {
-                    listItem.add(new Label("clientTimeStamp", WebCommon.formatTime(listItem.getModelObject().getClientTimeStamp())));
+                    listItem.add(new Label("clientTimeStamp", DateUtil.formatTime(listItem.getModelObject().getClientTimeStamp())));
                 } else {
                     listItem.add(new Label("clientTimeStamp", ""));
                 }

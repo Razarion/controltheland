@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
+import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionService;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
@@ -46,7 +47,7 @@ public class ClientServices implements Services {
     private ConnectionService dummyConnectionService = new ConnectionService() {
         @Override
         public void sendSyncInfo(SyncItem syncItem) {
-            // Ignore
+            ClientUserTracker.getInstance().trackSyncInfo(syncItem);
         }
     };
 

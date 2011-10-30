@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BuilderComman
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoneyCollectCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
@@ -47,7 +48,7 @@ import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingFilter;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.tracker.DbBrowserWindowTracking;
-import com.btxtech.game.services.utg.tracker.DbCommand;
+import com.btxtech.game.services.utg.tracker.DbSyncItemInfo;
 import com.btxtech.game.services.utg.tracker.DbEventTrackingItem;
 import com.btxtech.game.services.utg.tracker.DbEventTrackingStart;
 import com.btxtech.game.services.utg.tracker.DbPageAccess;
@@ -576,9 +577,9 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     @Transactional
-    public void onEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<BaseCommand> baseCommands, Collection<SelectionTrackingItem> selectionTrackingItems, Collection<TerrainScrollTracking> terrainScrollTrackings, Collection<BrowserWindowTracking> browserWindowTrackings) {
+    public void onEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<SyncItemInfo> syncItemInfos, Collection<SelectionTrackingItem> selectionTrackingItems, Collection<TerrainScrollTracking> terrainScrollTrackings, Collection<BrowserWindowTracking> browserWindowTrackings) {
         onEventTrackerItems(eventTrackingItems);
-        saveCommand(baseCommands);
+        saveSyncItemInfos(syncItemInfos);
         saveSelections(selectionTrackingItems);
         saveScrollTrackingItems(terrainScrollTrackings);
         saveBrowserWindowTrackings(browserWindowTrackings);
@@ -593,12 +594,12 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         hibernateTemplate.saveOrUpdateAll(dbEventTrackingItems);
     }
 
-    private void saveCommand(Collection<BaseCommand> baseCommand) {
-        ArrayList<DbCommand> dbCommands = new ArrayList<DbCommand>();
-        for (BaseCommand command : baseCommand) {
-            dbCommands.add(new DbCommand(command, session.getSessionId()));
+    private void saveSyncItemInfos(Collection<SyncItemInfo> syncItemInfos) {
+        ArrayList<DbSyncItemInfo> dbSyncItemInfos = new ArrayList<DbSyncItemInfo>();
+        for (SyncItemInfo syncItemInfo : syncItemInfos) {
+            dbSyncItemInfos.add(new DbSyncItemInfo(syncItemInfo, session.getSessionId()));
         }
-        hibernateTemplate.saveOrUpdateAll(dbCommands);
+        hibernateTemplate.saveOrUpdateAll(dbSyncItemInfos);
     }
 
     private void saveSelections(Collection<SelectionTrackingItem> selectionTrackingItems) {
@@ -711,11 +712,11 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<DbCommand> getDbCommands(final String sessionId, final long startTime, final Long endTime) {
+    public List<DbSyncItemInfo> getDbSyncItemInfos(final String sessionId, final long startTime, final Long endTime) {
         return hibernateTemplate.executeFind(new HibernateCallback() {
             @Override
             public Object doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
-                Criteria criteria = session.createCriteria(DbCommand.class);
+                Criteria criteria = session.createCriteria(DbSyncItemInfo.class);
                 criteria.add(Restrictions.eq("sessionId", sessionId));
                 criteria.add(Restrictions.ge("clientTimeStamp", startTime));
                 if (endTime != null) {

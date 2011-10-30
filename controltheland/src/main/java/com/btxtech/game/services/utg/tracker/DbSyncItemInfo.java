@@ -13,13 +13,14 @@
 
 package com.btxtech.game.services.utg.tracker;
 
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
-import java.io.Serializable;
-import java.util.Date;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * User: beat
@@ -27,8 +28,8 @@ import javax.persistence.Id;
  * Time: 11:09:27 AM
  */
 // Tutorial command
-@Entity(name = "TRACKER_COMMAND")
-public class DbCommand implements Serializable {
+@Entity(name = "TRACKER_SYNC_INFOS")
+public class DbSyncItemInfo implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
@@ -38,20 +39,20 @@ public class DbCommand implements Serializable {
     private long clientTimeStamp;
     @Column(nullable = false)
     private String sessionId;
-    @Column(nullable = false, length = 50000)
-    private BaseCommand baseCommand;
+    @Column(nullable = false, length = 100000)
+    private SyncItemInfo syncItemInfo;
 
     /**
      * Used by hibernate
      */
-    public DbCommand() {
+    public DbSyncItemInfo() {
     }
 
-    public DbCommand(BaseCommand baseCommand, String sessionId) {
+    public DbSyncItemInfo(SyncItemInfo syncItemInfo, String sessionId) {
         this.sessionId = sessionId;
-        clientTimeStamp = baseCommand.getTimeStamp();
+        clientTimeStamp = syncItemInfo.getClientTimeStamp();
         niceTimeStamp = new Date();
-        this.baseCommand = baseCommand;
+        this.syncItemInfo = syncItemInfo;
     }
 
     public Date getNiceTimeStamp() {
@@ -66,8 +67,8 @@ public class DbCommand implements Serializable {
         return sessionId;
     }
 
-    public BaseCommand getBaseCommand() {
-        return baseCommand;
+    public SyncItemInfo getSyncItemInfo() {
+        return syncItemInfo;
     }
 
     @Override
@@ -75,14 +76,13 @@ public class DbCommand implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        DbCommand that = (DbCommand) o;
+        DbSyncItemInfo that = (DbSyncItemInfo) o;
 
-        return !(id != null ? !id.equals(that.id) : that.id != null);
-
+        return id != null && id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 }

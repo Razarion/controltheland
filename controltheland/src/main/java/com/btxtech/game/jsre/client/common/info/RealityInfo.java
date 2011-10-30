@@ -89,7 +89,7 @@ public class RealityInfo extends GameInfo {
     }
 
     @Override
-    public boolean hasServerCommunication() {
+    public boolean isRealGame() {
         return true;
     }
 

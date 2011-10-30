@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.StartupTaskInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
@@ -26,7 +27,7 @@ import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.utg.tracker.DbBrowserWindowTracking;
-import com.btxtech.game.services.utg.tracker.DbCommand;
+import com.btxtech.game.services.utg.tracker.DbSyncItemInfo;
 import com.btxtech.game.services.utg.tracker.DbEventTrackingItem;
 import com.btxtech.game.services.utg.tracker.DbEventTrackingStart;
 import com.btxtech.game.services.utg.tracker.DbScrollTrackingItem;
@@ -86,7 +87,7 @@ public interface UserTrackingService {
 
     void onEventTrackingStart(EventTrackingStart eventTrackingStart);
 
-    void onEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<BaseCommand> baseCommands, Collection<SelectionTrackingItem> selectionTrackingItems, Collection<TerrainScrollTracking> terrainScrollTrackings, Collection<BrowserWindowTracking> browserWindowTrackings);
+    void onEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<SyncItemInfo> syncItemInfos, Collection<SelectionTrackingItem> selectionTrackingItems, Collection<TerrainScrollTracking> terrainScrollTrackings, Collection<BrowserWindowTracking> browserWindowTrackings);
 
     List<DbEventTrackingItem> getDbEventTrackingItem(String sessionId, long startClient, Long endClient);
 
@@ -100,7 +101,7 @@ public interface UserTrackingService {
 
     List<DbSelectionTrackingItem> getDbSelectionTrackingItems(String sessionId, long startTime, Long endTime);
 
-    List<DbCommand> getDbCommands(String sessionId, long startTime, Long endTime);
+    List<DbSyncItemInfo> getDbSyncItemInfos(String sessionId, long startTime, Long endTime);
 
     List<DbScrollTrackingItem> getDbScrollTrackingItems(final String sessionId, final long startTime, final Long endTime);
 

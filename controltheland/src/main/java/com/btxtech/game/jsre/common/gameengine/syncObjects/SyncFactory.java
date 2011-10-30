@@ -168,11 +168,10 @@ public class SyncFactory extends SyncBaseAbility {
     }
 
     private void calculateRallyPoint() throws NoSuchItemTypeException {
-        Collection<TerrainType> types = new ArrayList<TerrainType>();
+        Collection<ItemType> types = new ArrayList<ItemType>();
         for (int id : factoryType.getAbleToBuild()) {
-            ItemType itemType = getServices().getItemService().getItemType(id);
-            types.add(itemType.getTerrainType());
+            types.add(getServices().getItemService().getItemType(id));
         }
-        rallyPoint = getServices().getCollisionService().getRallyPoint(getSyncBaseItem(), TerrainType.leastCommonMultiple(types));
+        rallyPoint = getServices().getCollisionService().getRallyPoint(getSyncBaseItem(), types);
     }
 }

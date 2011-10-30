@@ -13,7 +13,7 @@
 
 package com.btxtech.game.services.playback.impl;
 
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
@@ -32,7 +32,7 @@ import com.btxtech.game.services.utg.LifecycleTrackingInfo;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.tracker.DbBrowserWindowTracking;
-import com.btxtech.game.services.utg.tracker.DbCommand;
+import com.btxtech.game.services.utg.tracker.DbSyncItemInfo;
 import com.btxtech.game.services.utg.tracker.DbEventTrackingItem;
 import com.btxtech.game.services.utg.tracker.DbScrollTrackingItem;
 import com.btxtech.game.services.utg.tracker.DbSelectionTrackingItem;
@@ -105,11 +105,11 @@ public class PlaybackServiceImpl implements PlaybackService {
             playbackInfo.setSelectionTrackingItems(selectionTrackingItems);
 
             // Commands
-            ArrayList<BaseCommand> baseCommands = new ArrayList<BaseCommand>();
-            for (DbCommand dbCommand : userTrackingService.getDbCommands(sessionId, startClient, endClient)) {
-                baseCommands.add(dbCommand.getBaseCommand());
+            ArrayList<SyncItemInfo> syncItemInfos = new ArrayList<SyncItemInfo>();
+            for (DbSyncItemInfo dbSyncItemInfo : userTrackingService.getDbSyncItemInfos(sessionId, startClient, endClient)) {
+                syncItemInfos.add(dbSyncItemInfo.getSyncItemInfo());
             }
-            playbackInfo.setCommands(baseCommands);
+            playbackInfo.setSyncItemInfos(syncItemInfos);
 
             // Scrolling
             ArrayList<TerrainScrollTracking> terrainScrollTrackings = new ArrayList<TerrainScrollTracking>();

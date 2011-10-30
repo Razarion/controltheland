@@ -65,8 +65,17 @@ public class Simulation implements ConditionServiceListener<Object> {
         return SIMULATION;
     }
 
-    public void start() {
+    public void initGameEngine() {
         simulationInfo = (SimulationInfo) Connection.getInstance().getGameInfo();
+        TutorialConfig tutorialConfig = simulationInfo.getTutorialConfig();
+        if (tutorialConfig == null) {
+            return;
+        }
+        ClientBase.getInstance().setBase(tutorialConfig.getOwnBase());
+    }
+
+    public void start() {
+        initGameEngine();
         TutorialConfig tutorialConfig = simulationInfo.getTutorialConfig();
         if (tutorialConfig == null) {
             return;
@@ -77,7 +86,6 @@ public class Simulation implements ConditionServiceListener<Object> {
             tutorialGui = new TutorialGui();
         }
         SimulationConditionServiceImpl.getInstance().setConditionServiceListener(this);
-        ClientBase.getInstance().setBase(tutorialConfig.getOwnBase());
         Cockpit.getInstance().updateBase();
         tutorialTime = System.currentTimeMillis();
         MapWindow.getInstance().setMinimalSize(tutorialConfig.getWidth(), tutorialConfig.getHeight());

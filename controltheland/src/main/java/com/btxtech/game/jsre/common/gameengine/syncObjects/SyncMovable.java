@@ -99,6 +99,8 @@ public class SyncMovable extends SyncBaseAbility {
             if (pathToDestination != null) {
                 getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
                 return true;
+            } else {
+                throw new NullPointerException("Position is null " + getSyncBaseItem());
             }
         }
         return false;

@@ -13,17 +13,19 @@
 
 package com.btxtech.game.jsre.playback;
 
-import com.btxtech.game.jsre.client.action.ActionHandler;
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.google.gwt.user.client.Timer;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -55,8 +57,8 @@ public class Player {
         for (SelectionTrackingItem selectionTrackingItem : playbackInfo.getSelectionTrackingItems()) {
             frames.add(new Frame(selectionTrackingItem.getTimeStamp(), selectionTrackingItem));
         }
-        for (BaseCommand baseCommand : playbackInfo.getBaseCommands()) {
-            frames.add(new Frame(baseCommand.getTimeStamp(), baseCommand));
+        for (SyncItemInfo syncItemInfo : playbackInfo.getSyncItemInfos()) {
+            frames.add(new Frame(syncItemInfo.getClientTimeStamp(), syncItemInfo));
         }
         for (TerrainScrollTracking terrainScrollTracking : playbackInfo.getScrollTrackingItems()) {
             frames.add(new Frame(terrainScrollTracking.getClientTimeStamp(), terrainScrollTracking));
@@ -101,8 +103,8 @@ public class Player {
             displayEventTrackingItemFrame((EventTrackingItem) object);
         } else if (object instanceof SelectionTrackingItem) {
             displaySelectionTrackingItemFrame((SelectionTrackingItem) object);
-        } else if (object instanceof BaseCommand) {
-            displayBaseCommandFrame((BaseCommand) object);
+        } else if (object instanceof SyncItemInfo) {
+            displaySyncItemInfoFrame((SyncItemInfo) object);
         } else if (object instanceof TerrainScrollTracking) {
             displayScrollingFrame((TerrainScrollTracking) object);
         } else if (object instanceof BrowserWindowTracking) {
@@ -115,8 +117,12 @@ public class Player {
         loadNextItem();
     }
 
-    private void displayBaseCommandFrame(BaseCommand baseCommand) {
-        ActionHandler.getInstance().injectCommand(baseCommand);
+    private void displaySyncItemInfoFrame(SyncItemInfo syncItemInfo) {
+        try {
+            ItemContainer.getInstance().sychronize(syncItemInfo);
+        } catch (Exception e) {
+            GwtCommon.handleException(e);
+        }
     }
 
     private void displaySelectionTrackingItemFrame(SelectionTrackingItem selectionTrackingItem) {

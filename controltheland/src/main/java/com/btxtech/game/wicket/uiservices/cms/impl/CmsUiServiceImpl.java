@@ -26,13 +26,13 @@ import com.btxtech.game.services.cms.EditMode;
 import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.common.ContentSortList;
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.connection.NoConnectionException;
 import com.btxtech.game.services.connection.Session;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.user.DbContentAccessControl;
 import com.btxtech.game.services.user.DbPageAccessControl;
 import com.btxtech.game.services.user.UserService;
-import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.ContentContext;
 import com.btxtech.game.wicket.pages.cms.ItemTypeImage;
@@ -400,17 +400,17 @@ public class CmsUiServiceImpl implements CmsUiService {
         switch (type) {
             case DATE_DDMMYYYY_HH_MM_SS:
                 if (value instanceof Date) {
-                    return WebCommon.formatDateTime((Date) value);
+                    return DateUtil.formatDateTime((Date) value);
                 } else if (value instanceof Number) {
-                    return WebCommon.formatDateTime(new Date(((Number) value).longValue()));
+                    return DateUtil.formatDateTime(new Date(((Number) value).longValue()));
                 } else {
                     throw new IllegalArgumentException("Date value must be Number ore Date: " + value);
                 }
             case DURATION_HH_MM_SS:
                 if (value instanceof Date) {
-                    return WebCommon.formatDuration(((Date) value).getTime());
+                    return DateUtil.formatDuration(((Date) value).getTime());
                 } else if (value instanceof Number) {
-                    return WebCommon.formatDuration(((Number) value).longValue());
+                    return DateUtil.formatDuration(((Number) value).longValue());
                 } else {
                     throw new IllegalArgumentException("Date value must be Number ore Date: " + value);
                 }

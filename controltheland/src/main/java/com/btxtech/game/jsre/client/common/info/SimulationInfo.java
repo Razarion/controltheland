@@ -24,7 +24,7 @@ public class SimulationInfo extends GameInfo {
     private TutorialConfig tutorialConfig;
 
     @Override
-    public boolean hasServerCommunication() {
+    public boolean isRealGame() {
         return false;
     }
 

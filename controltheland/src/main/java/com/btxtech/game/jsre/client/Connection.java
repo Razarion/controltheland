@@ -79,6 +79,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
     private Collection<SyncItemInfo> syncInfos;
     private ArrayList<BaseCommand> commandQueue = new ArrayList<BaseCommand>();
     private static Logger log = Logger.getLogger(Connection.class.getName());
+    private ClientMode clientMode;
 
     private MovableServiceAsync movableServiceAsync = GWT.create(MovableService.class);
     private Timer timer;
@@ -102,6 +103,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
                 @Override
                 public void onFailure(Throwable caught) {
                     deferredStartup.failed(caught);
+                    clientMode = null;
                 }
 
                 @Override
@@ -109,6 +111,11 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
                     disconnectionCount = 0;
                     Connection.this.gameInfo = gameInfo;
                     deferredStartup.finished();
+                    if (gameInfo.isRealGame()) {
+                        clientMode = ClientMode.SLAVE;
+                    } else {
+                        clientMode = ClientMode.MASTER;
+                    }
                 }
             });
         } else {
@@ -124,6 +131,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
      */
     public void setGameInfo(GameInfo gameInfo) {
         this.gameInfo = gameInfo;
+        clientMode = ClientMode.PLAYBACK;
     }
 
     public void downloadAllSyncInfo(final DeferredStartup deferredStartup) {
@@ -242,13 +250,13 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
 
 
     public void addCommandToQueue(BaseCommand baseCommand) {
-        if (movableServiceAsync != null && gameInfo.hasServerCommunication()) {
+        if (movableServiceAsync != null && clientMode == ClientMode.SLAVE) {
             commandQueue.add(baseCommand);
         }
     }
 
     public void sendCommandQueue() {
-        if (movableServiceAsync != null && !commandQueue.isEmpty() && gameInfo.hasServerCommunication()) {
+        if (movableServiceAsync != null && !commandQueue.isEmpty() && clientMode == ClientMode.SLAVE) {
             movableServiceAsync.sendCommands(commandQueue, this);
         }
         commandQueue.clear();
@@ -289,9 +297,9 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
         }
     }
 
-    public void sendEventTrackerItems(List<EventTrackingItem> eventTrackingItems, List<BaseCommand> baseCommands, List<SelectionTrackingItem> selectionTrackingItems, List<TerrainScrollTracking> terrainScrollTrackings, List<BrowserWindowTracking> browserWindowTrackings) {
+    public void sendEventTrackerItems(List<EventTrackingItem> eventTrackingItems, List<SyncItemInfo> syncItemInfos, List<SelectionTrackingItem> selectionTrackingItems, List<TerrainScrollTracking> terrainScrollTrackings, List<BrowserWindowTracking> browserWindowTrackings) {
         if (movableServiceAsync != null) {
-            movableServiceAsync.sendEventTrackerItems(eventTrackingItems, baseCommands, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings, this);
+            movableServiceAsync.sendEventTrackerItems(eventTrackingItems, syncItemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings, this);
         }
     }
 
@@ -430,5 +438,12 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
     @Override
     public void onStartupFailed(List<StartupTaskInfo> taskInfo, long totalTime) {
         sendStartupFinished(taskInfo, totalTime);
+    }
+
+    public ClientMode getClientMode() {
+        if (clientMode == null) {
+            throw new NullPointerException("ClientMode is null");
+        }
+        return clientMode;
     }
 }

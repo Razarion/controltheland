@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.item;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientMode;
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
@@ -48,6 +49,7 @@ import com.google.gwt.user.client.Timer;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -138,7 +140,10 @@ public class ItemContainer extends AbstractItemService {
 
     @Override
     public SyncItem createSyncObject(ItemType toBeBuilt, Index position, SyncBaseItem creator, SimpleBase base, int createdChildCount) throws NoSuchItemTypeException, ItemLimitExceededException, HouseSpaceExceededException {
-        if (toBeBuilt instanceof BaseItemType && ClientBase.getInstance().isMyOwnBase(base) && !ClientBase.getInstance().isBot(base) && Connection.getInstance().getGameInfo().hasServerCommunication()) {
+        if (toBeBuilt instanceof BaseItemType
+                && ClientBase.getInstance().isMyOwnBase(base)
+                && !ClientBase.getInstance().isBot(base)
+                && Connection.getInstance().getClientMode() == ClientMode.SLAVE) {
             ClientBase.getInstance().checkItemLimit4ItemAdding((BaseItemType) toBeBuilt);
         }
         ClientSyncItem itemView;
@@ -146,7 +151,17 @@ public class ItemContainer extends AbstractItemService {
         if (creator != null) {
             parentId = creator.getId().getId();
         }
-        if (Connection.getInstance().getGameInfo().hasServerCommunication()) {
+        if (Connection.getInstance().getClientMode() == ClientMode.MASTER) {
+            Id id = createSimulationId(parentId, createdChildCount);
+            itemView = createAndAddItem(id, position, toBeBuilt.getId(), base);
+            itemView.setHidden(false);
+            id.setUserTimeStamp(System.currentTimeMillis());
+            ActionHandler.getInstance().addGuardingBaseItem(itemView.getSyncTickItem());
+            if (itemView.isSyncBaseItem()) {
+                ActionHandler.getInstance().interactionGuardingItems(itemView.getSyncBaseItem());
+            }
+            ClientServices.getInstance().getConnectionService().sendSyncInfo(itemView.getSyncItem());
+        } else {
             Id id = new Id(parentId, createdChildCount);
             itemView = items.get(id);
             if (itemView != null) {
@@ -160,15 +175,6 @@ public class ItemContainer extends AbstractItemService {
             id.setUserTimeStamp(System.currentTimeMillis());
             orphanItems.put(id, itemView);
             itemView.setHidden(true);
-        } else {
-            Id id = createSimulationId(parentId, createdChildCount);
-            itemView = createAndAddItem(id, position, toBeBuilt.getId(), base);
-            itemView.setHidden(false);
-            id.setUserTimeStamp(System.currentTimeMillis());
-            ActionHandler.getInstance().addGuardingBaseItem(itemView.getSyncTickItem());
-            if (itemView.isSyncBaseItem()) {
-                ActionHandler.getInstance().interactionGuardingItems(itemView.getSyncBaseItem());
-            }
         }
         itemView.checkVisibility();
         itemView.update();
@@ -214,6 +220,7 @@ public class ItemContainer extends AbstractItemService {
         }
         itemView.checkVisibility();
         itemView.update();
+        ClientServices.getInstance().getConnectionService().sendSyncInfo(itemView.getSyncItem());
         return itemView.getSyncItem();
     }
 
@@ -234,13 +241,14 @@ public class ItemContainer extends AbstractItemService {
         if (clientSyncItem == null) {
             throw new IllegalStateException("No ClientSyncItem for: " + killedItem);
         }
-        if (Connection.getInstance().getGameInfo().hasServerCommunication()) {
-            makeItemSeeminglyDead(killedItem, actor, clientSyncItem);
-        } else {
+        if (Connection.getInstance().getClientMode() == ClientMode.MASTER) {
             definitelyKillItem(clientSyncItem, force, explode);
             if (killedItem instanceof SyncBaseItem) {
                 ActionHandler.getInstance().removeGuardingBaseItem((SyncBaseItem) killedItem);
             }
+            ClientServices.getInstance().getConnectionService().sendSyncInfo(killedItem);
+        } else {
+            makeItemSeeminglyDead(killedItem, actor, clientSyncItem);
         }
         if (killedItem instanceof SyncBaseItem) {
             SimulationConditionServiceImpl.getInstance().onSyncItemKilled(actor, (SyncBaseItem) killedItem);

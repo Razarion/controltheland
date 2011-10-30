@@ -32,14 +32,12 @@ import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.user.UserService;
 import com.btxtech.game.services.user.UserState;
 import com.btxtech.game.services.utg.UserGuidanceService;
-import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.wicket.pages.cms.CmsPage;
 import com.btxtech.game.wicket.pages.cms.CmsStringGenerator;
 import com.btxtech.game.wicket.pages.cms.content.plugin.PluginEnum;
 import com.btxtech.game.wicket.uiservices.cms.CmsUiService;
 import com.btxtech.game.wicket.uiservices.cms.SecurityCmsUiService;
 import com.btxtech.game.wicket.uiservices.cms.impl.CmsUiServiceImpl;
-import org.apache.wicket.Page;
 import org.apache.wicket.PageParameters;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.markup.html.form.Button;
@@ -590,11 +588,11 @@ public class TestCmsService extends AbstractServiceTest {
         tester.startPage(CmsPage.class);
         tester.assertRenderedPage(CmsPage.class);
         tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:1", "News 2");
-        tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:2", WebCommon.formatDateTime(new Date(dbBlogEntry2.getTimeStamp())));
+        tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:2", DateUtil.formatDateTime(new Date(dbBlogEntry2.getTimeStamp())));
         tester.assertLabel("form:content:table:rows:1:cells:1:cell:container:3", "Blog 2");
 
         tester.assertLabel("form:content:table:rows:2:cells:1:cell:container:1", "News 1");
-        tester.assertLabel("form:content:table:rows:2:cells:1:cell:container:2", WebCommon.formatDateTime(new Date(dbBlogEntry1.getTimeStamp())));
+        tester.assertLabel("form:content:table:rows:2:cells:1:cell:container:2", DateUtil.formatDateTime(new Date(dbBlogEntry1.getTimeStamp())));
         tester.assertLabel("form:content:table:rows:2:cells:1:cell:container:3", "Blog 1");
 
         endHttpRequestAndOpenSessionInViewFilter();

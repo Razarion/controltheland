@@ -13,12 +13,12 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
+import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.mgmt.BackupSummary;
 import com.btxtech.game.services.mgmt.MgmtService;
-import com.btxtech.game.wicket.WebCommon;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import java.text.SimpleDateFormat;
-import org.apache.wicket.markup.html.WebPage;
+
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
@@ -35,7 +35,7 @@ public class ConfirmRestorePage extends MgmtWebPage {
     @SpringBean
     private MgmtService mgmtService;
 
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(WebCommon.DATE_TIME_FORMAT_STRING);
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DateUtil.DATE_TIME_FORMAT_STRING);
     private static Log log = LogFactory.getLog(ConfirmRestorePage.class);
 
     public ConfirmRestorePage(final BackupSummary backupSummary) {

@@ -57,6 +57,7 @@ public class SyncItemInfo extends Packet {
     private boolean explode;
     private Index targetPosition;
     private Double destinationAngel;
+    private Long clientTimeStamp;
 
 
     public Id getId() {
@@ -310,6 +311,14 @@ public class SyncItemInfo extends Packet {
         return builder.toString();
     }
 
+    public Long getClientTimeStamp() {
+        return clientTimeStamp;
+    }
+
+    public void setClientTimeStamp() {
+        clientTimeStamp = System.currentTimeMillis();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -353,6 +362,7 @@ public class SyncItemInfo extends Packet {
                 " containedIn:" + containedIn +
                 " unloadPos:" + unloadPos +
                 " targetPosition:" + targetPosition +
-                " destinationAngel:" + destinationAngel;
+                " destinationAngel:" + destinationAngel +
+                " clientTimeStamp:" + clientTimeStamp;
     }
 }

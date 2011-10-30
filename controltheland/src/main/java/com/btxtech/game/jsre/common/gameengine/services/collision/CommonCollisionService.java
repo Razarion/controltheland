@@ -33,7 +33,7 @@ import java.util.Map;
  * Time: 19:46:17
  */
 public interface CommonCollisionService {
-    Index getRallyPoint(SyncBaseItem factory, Collection<SurfaceType> allowedSurfaces);
+    Index getRallyPoint(SyncBaseItem factory, Collection<ItemType> ableToBuild);
 
     AttackFormationItem getDestinationHint(SyncBaseItem syncBaseItem, int range, SyncItemArea target, TerrainType targetTerrainType);
 
