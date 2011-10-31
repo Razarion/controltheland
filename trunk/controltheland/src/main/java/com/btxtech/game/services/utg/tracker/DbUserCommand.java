@@ -42,7 +42,7 @@ public class DbUserCommand implements Serializable {
     @Column(nullable = false)
     @Index(name = "TRACKER_USER_COMMAND_INDEX_SESSION")    
     private String sessionId;
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50000)
     private String interaction;
     @Column(nullable = false)
     private String interactionClass;
