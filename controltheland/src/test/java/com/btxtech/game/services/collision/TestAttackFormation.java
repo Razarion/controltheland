@@ -19,6 +19,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.btxtech.game.services.AbstractServiceTest;
 import com.btxtech.game.services.debug.DebugService;
 import com.btxtech.game.services.item.ItemService;
+import com.btxtech.game.services.terrain.TerrainService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,8 @@ public class TestAttackFormation extends AbstractServiceTest {
     private DebugService debugService;
     @Autowired
     private ItemService itemService;
+    @Autowired
+    private TerrainService terrainService;
 
     @Test
     @DirtiesContext
@@ -392,31 +395,31 @@ public class TestAttackFormation extends AbstractServiceTest {
         debugService.waitForClose();
     }
 
-    // TODO @Test
-
+    @Test
     @DirtiesContext
-    public void testCircleFormationNoBlockingObjectNeverOverbooked() throws Exception {
+    public void testFormationWithNegativePosition() throws Exception {
         configureMinimalGame();
-        SyncBaseItem target = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(1, -100, -100));
-        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(1, -100, -100));
+        SyncBaseItem target = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 200), new Id(1, -100, -100));
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(2, -100, -100));
 
         List<AttackFormationItem> items = new ArrayList<AttackFormationItem>();
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 19; i++) {
             items.add(new AttackFormationItem(syncBaseItem, 200));
         }
 
-        for (double angel = 0.0; angel < MathHelper.ONE_RADIANT; angel += 0.001) {
+            double angel = MathHelper.HALF_RADIANT;
             AttackFormation attackFormation = AttackFormationFactory.create(target.getSyncItemArea(), angel, items);
             while (attackFormation.hasNext()) {
                 AttackFormationItem attackFormationItem = attackFormation.calculateNextEntry();
-                SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, attackFormationItem.getDestinationHint(), new Id(1, -100, -100));
-                attacker.getSyncItemArea().turnTo(target);
-                if (!attackFormationItem.isInRange()) {
-                    Assert.fail("Overbooked not expected");
+                if (!terrainService.isFree(attackFormationItem.getDestinationHint(), syncBaseItem.getItemType())) {
+                    continue;
                 }
+
+                SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, attackFormationItem.getDestinationHint(), new Id(1, -100, -100));
+
+                attacker.getSyncItemArea().turnTo(target);
                 attackFormation.lastAccepted();
             }
-        }
     }
 
     // TODO @Test
