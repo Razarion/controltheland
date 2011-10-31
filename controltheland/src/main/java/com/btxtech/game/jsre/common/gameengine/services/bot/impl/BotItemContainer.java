@@ -158,7 +158,7 @@ public class BotItemContainer {
     private void createItem(BotItemConfig botItemConfig, SimpleBase simpleBase) throws ItemLimitExceededException, HouseSpaceExceededException, NoSuchItemTypeException {
         BaseItemType toBeBuilt = botItemConfig.getBaseItemType();
         if (botItemConfig.isCreateDirectly()) {
-            Index position = services.getCollisionService().getFreeRandomPosition(toBeBuilt, botItemConfig.getRegion(), 100, false);
+            Index position = services.getCollisionService().getFreeRandomPosition(toBeBuilt, botItemConfig.getRegion(), 100, false, false);
             SyncBaseItem newItem = (SyncBaseItem) services.getItemService().createSyncObject(toBeBuilt, position, null, simpleBase, 0);
             newItem.setBuildup(1.0);
         } else {
@@ -169,7 +169,7 @@ public class BotItemContainer {
             if (botSyncBuilder.getSyncBaseItem().hasSyncFactory()) {
                 botSyncBuilder.buildUnit(toBeBuilt);
             } else {
-                Index position = services.getCollisionService().getFreeRandomPosition(toBeBuilt, botItemConfig.getRegion(), 0, false);
+                Index position = services.getCollisionService().getFreeRandomPosition(toBeBuilt, botItemConfig.getRegion(), 0, false, true);
                 botSyncBuilder.buildBuilding(position, toBeBuilt);
             }
             Collection<BotSyncBaseItem> builders = buildingItems.get(botItemConfig);

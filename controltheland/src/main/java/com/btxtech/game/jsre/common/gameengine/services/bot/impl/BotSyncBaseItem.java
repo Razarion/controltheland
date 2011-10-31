@@ -107,7 +107,7 @@ public class BotSyncBaseItem {
 
     public void move(Rectangle region) {
         try {
-            Index position = services.getCollisionService().getFreeRandomPosition(syncBaseItem.getBaseItemType(), region, 0, false);
+            Index position = services.getCollisionService().getFreeRandomPosition(syncBaseItem.getBaseItemType(), region, 0, false, false);
             services.getActionService().move(syncBaseItem, position);
             clearIdle();
         } catch (Exception e) {

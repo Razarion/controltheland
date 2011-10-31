@@ -211,7 +211,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
 
     @Override
     public List<Index> setupPathToSyncMovableRandomPositionIfTaken(SyncItem syncItem) {
-        Index position = getFreeRandomPosition(syncItem.getItemType(), Rectangle.generateRectangleFromMiddlePoint(syncItem.getSyncItemArea().getPosition(), 500, 500), 0, false);
+        Index position = getFreeRandomPosition(syncItem.getItemType(), Rectangle.generateRectangleFromMiddlePoint(syncItem.getSyncItemArea().getPosition(), 500, 500), 0, false, false);
         return setupPathToDestination(syncItem.getSyncItemArea().getPosition(), position, syncItem.getTerrainType());
     }
 
@@ -271,7 +271,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
     }
 
     @Override
-    public Index getFreeRandomPosition(ItemType itemType, Rectangle region, int itemFreeRange, boolean botFree) {
+    public Index getFreeRandomPosition(ItemType itemType, Rectangle region, int itemFreeRange, boolean botFree, boolean ignoreNoneMovable) {
         Random random = new Random();
         for (int i = 0; i < MAX_TRIES; i++) {
             int x = random.nextInt(region.getWidth()) + region.getX();
@@ -284,12 +284,18 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
             if (!getServices().getTerrainService().isFree(point, itemType)) {
                 continue;
             }
-            int width = itemFreeRange + itemType.getBoundingBox().getWidth();
-            int height = itemFreeRange + itemType.getBoundingBox().getHeight();
-            Index start = point.sub(new Index(width / 2, height / 2));
-            Rectangle rectangle = new Rectangle(start.getX(), start.getY(), width, height);
-            if (getServices().getItemService().hasItemsInRectangle(rectangle)) {
-                continue;
+            if (ignoreNoneMovable) {
+                if (getServices().getItemService().isUnmovableSyncItemOverlapping(itemType.getBoundingBox(), point)) {
+                    continue;
+                }
+            } else {
+                int width = itemFreeRange + itemType.getBoundingBox().getWidth();
+                int height = itemFreeRange + itemType.getBoundingBox().getHeight();
+                Index start = point.sub(new Index(width / 2, height / 2));
+                Rectangle rectangle = new Rectangle(start.getX(), start.getY(), width, height);
+                if (getServices().getItemService().hasItemsInRectangle(rectangle)) {
+                    continue;
+                }
             }
             return point;
         }

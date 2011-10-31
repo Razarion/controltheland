@@ -76,7 +76,7 @@ public class RegionResource {
     private void createResourceItems(int count) {
         try {
             for (int i = 0; i < count; i++) {
-                Index position = collisionService.getFreeRandomPosition(resourceType, dbRegionResource.getRegion(), dbRegionResource.getMinDistanceToItems(), true);
+                Index position = collisionService.getFreeRandomPosition(resourceType, dbRegionResource.getRegion(), dbRegionResource.getMinDistanceToItems(), true, false);
                 SyncItem syncItem = itemService.createSyncObject(resourceType, position, null, null, 0);
                 synchronized (syncResourceItems) {
                     syncResourceItems.add((SyncResourceItem) syncItem);
