@@ -60,6 +60,14 @@ public class SyncItemArea {
     }
 
     public void setPosition(Index position) {
+        setPositionNoCheck(position);
+        checkPosition();
+        if (syncItem != null) {
+            syncItem.fireItemChanged(SyncItemListener.Change.POSITION);
+        }
+    }
+
+    public void setPositionNoCheck(Index position) {
         if (position != null) {
             if (this.position != null) {
                 this.position.setPosition(position);
@@ -69,11 +77,6 @@ public class SyncItemArea {
         } else {
             this.position = null;
         }
-        checkPosition();
-        if (syncItem != null) {
-            syncItem.fireItemChanged(SyncItemListener.Change.POSITION);
-        }
-
     }
 
     public void setDecimalPosition(DecimalPosition decimalPoint) {

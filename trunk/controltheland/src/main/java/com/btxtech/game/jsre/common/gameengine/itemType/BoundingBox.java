@@ -127,11 +127,13 @@ public class BoundingBox implements Serializable {
     }
 
     public SyncItemArea createSyntheticSyncItemArea(Index destination) {
-        return new SyncItemArea(this, destination);
+        SyncItemArea syncItemArea = new SyncItemArea(this, null);
+        syncItemArea.setPositionNoCheck(destination);
+        return syncItemArea;
     }
 
     public SyncItemArea createSyntheticSyncItemArea(Index destination, double angel) {
-        SyncItemArea syncItemArea = new SyncItemArea(this, destination);
+        SyncItemArea syncItemArea = createSyntheticSyncItemArea(destination);
         syncItemArea.setAngel(angel);
         return syncItemArea;
     }
