@@ -271,7 +271,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
     }
 
     @Override
-    public Index getFreeRandomPosition(ItemType itemType, Rectangle region, int itemFreeRange, boolean botFree, boolean ignoreNoneMovable) {
+    public Index getFreeRandomPosition(ItemType itemType, Rectangle region, int itemFreeRange, boolean botFree, boolean ignoreMovable) {
         Random random = new Random();
         for (int i = 0; i < MAX_TRIES; i++) {
             int x = random.nextInt(region.getWidth()) + region.getX();
@@ -284,7 +284,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
             if (!getServices().getTerrainService().isFree(point, itemType)) {
                 continue;
             }
-            if (ignoreNoneMovable) {
+            if (ignoreMovable) {
                 if (getServices().getItemService().isUnmovableSyncItemOverlapping(itemType.getBoundingBox(), point)) {
                     continue;
                 }
