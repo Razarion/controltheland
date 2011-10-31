@@ -55,8 +55,8 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
         canvas.setCoordinateSpaceWidth(width);
         canvas.setCoordinateSpaceHeight(height);
         context2d = canvas.getContext2d();
-        this.height = height;
         this.width = width;
+        this.height = height;
     }
 
     public double getScale() {
