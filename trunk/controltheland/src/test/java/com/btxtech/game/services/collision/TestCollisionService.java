@@ -48,9 +48,9 @@ public class TestCollisionService extends AbstractServiceTest {
         endHttpSession();
 
         ItemType itemType = itemService.getItemType(TEST_START_BUILDER_ITEM_ID);
-        collisionService.getFreeRandomPosition(itemType, new Rectangle(8000, 8000, 1000, 1000), 100, true);
+        collisionService.getFreeRandomPosition(itemType, new Rectangle(8000, 8000, 1000, 1000), 100, true, false);
         try {
-            collisionService.getFreeRandomPosition(itemType, new Rectangle(4050, 4050, 1000, 1000), 100, true);
+            collisionService.getFreeRandomPosition(itemType, new Rectangle(4050, 4050, 1000, 1000), 100, true, false);
             Assert.fail("Exception expected");
         } catch (PlaceCanNotBeFoundException e) {
             // Expceted

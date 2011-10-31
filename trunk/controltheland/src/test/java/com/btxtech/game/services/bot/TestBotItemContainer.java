@@ -404,7 +404,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
         testServices.setActionService(mockActionService);
 
         CollisionService mockCollisionService = EasyMock.createStrictMock(CollisionService.class);
-        EasyMock.expect(mockCollisionService.getFreeRandomPosition(syncBaseItem.getBaseItemType(), new Rectangle(2000, 3000, 1000, 2000), 0, false)).andReturn(new Index(3000, 3500));
+        EasyMock.expect(mockCollisionService.getFreeRandomPosition(syncBaseItem.getBaseItemType(), new Rectangle(2000, 3000, 1000, 2000), 0, false, false)).andReturn(new Index(3000, 3500));
         testServices.setCollisionService(mockCollisionService);
 
         BaseItemType baseItemType = (BaseItemType) itemService.getItemType(TEST_ATTACK_ITEM_ID);

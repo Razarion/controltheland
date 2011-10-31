@@ -47,5 +47,5 @@ public interface CommonCollisionService {
 
     List<AttackFormationItem> setupDestinationHints(SyncItem target, List<AttackFormationItem> items);
 
-    Index getFreeRandomPosition(ItemType itemType, Rectangle region, int itemFreeRange, boolean botFree);
+    Index getFreeRandomPosition(ItemType itemType, Rectangle region, int itemFreeRange, boolean botFree, boolean ignoreNoneMovable);
 }
