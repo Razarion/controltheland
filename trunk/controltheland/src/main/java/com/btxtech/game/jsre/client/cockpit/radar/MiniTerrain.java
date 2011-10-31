@@ -14,7 +14,6 @@
 package com.btxtech.game.jsre.client.cockpit.radar;
 
 import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.terrain.TerrainListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -49,16 +48,21 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
     public void onTerrainChanged() {
         clear();
 
-        double factor = 1.0 / getScale();
+        getContext2d().setLineWidth(2);
 
         // Draw surface
         for (SurfaceRect surfaceRect : TerrainView.getInstance().getTerrainHandler().getSurfaceRects()) {
             Rectangle tileRectangle = surfaceRect.getTileRectangle();
             SurfaceImage surfaceImage = TerrainView.getInstance().getTerrainHandler().getSurfaceImage(surfaceRect);
             if (surfaceImage != null) {
-                setFillColor(surfaceImage.getSurfaceType());
-                // If +2 is omitted, there are ugly lines in the MiniTerrain
-                getContext2d().fillRect(tileRectangle.getX(), tileRectangle.getY(), tileRectangle.getWidth() + factor, tileRectangle.getHeight() + factor);
+                setColor(surfaceImage.getSurfaceType());
+                int x = tileRectangle.getX();
+                int y = tileRectangle.getY();
+                int width = tileRectangle.getWidth();
+                int height = tileRectangle.getHeight();
+
+                getContext2d().fillRect(x, y, width, height);
+                getContext2d().strokeRect(x, y, width, height);
             }
         }
 
@@ -76,24 +80,19 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
             for (int x = 0; x < terrainImage.getTileWidth(); x++) {
                 for (int y = 0; y < terrainImage.getTileHeight(); y++) {
                     SurfaceType surfaceType = terrainImage.getSurfaceType(x, y);
-                    setFillColor(surfaceType);
-                    getContext2d().fillRect(terrainImagePosition.getTileIndex().getX() + x,
-                            terrainImagePosition.getTileIndex().getY() + y,
-                            1,
-                            1);
+                    setColor(surfaceType);
+                    int startX = terrainImagePosition.getTileIndex().getX() + x;
+                    int startY = terrainImagePosition.getTileIndex().getY() + y;
+                    getContext2d().fillRect(startX, startY, 1, 1);
+                    getContext2d().strokeRect(startX, startY, 1, 1);
                 }
             }
         }
     }
 
     private void terrainWithImages() {
-        getContext2d().save();
-        double scale = Math.min((double) getWidth() / (double) getTerrainSettings().getPlayFieldXSize(),
-                (double) getHeight() / (double) getTerrainSettings().getPlayFieldYSize()) / getScale();
-        getContext2d().scale(scale, scale);
-
         for (TerrainImagePosition terrainImagePosition : TerrainView.getInstance().getTerrainHandler().getTerrainImagePositions()) {
-            Index absolute = TerrainView.getInstance().getTerrainHandler().getAbsolutIndexForTerrainTileIndex(terrainImagePosition.getTileIndex());
+            TerrainImage terrainImage = TerrainView.getInstance().getTerrainHandler().getTerrainImage(terrainImagePosition);
             ImageElement imageElement = TerrainView.getInstance().getTerrainHandler().getTerrainImageElement(terrainImagePosition.getImageId());
             try {
                 if (imageElement != null) {
@@ -102,34 +101,38 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
                             0,
                             imageElement.getWidth(),
                             imageElement.getHeight(),
-                            absolute.getX(),
-                            absolute.getY(),
-                            imageElement.getWidth(),
-                            imageElement.getHeight());
+                            terrainImagePosition.getTileIndex().getX(),
+                            terrainImagePosition.getTileIndex().getY(),
+                            terrainImage.getTileWidth(),
+                            terrainImage.getTileHeight());
                 }
             } catch (Throwable throwable) {
                 GwtCommon.handleException(throwable);
             }
         }
-        getContext2d().restore();
     }
 
-    private void setFillColor(SurfaceType surfaceType) {
+    private void setColor(SurfaceType surfaceType) {
         switch (surfaceType) {
             case WATER:
                 getContext2d().setFillStyle(WATER_COLOR);
+                getContext2d().setStrokeStyle(WATER_COLOR);
                 break;
             case LAND:
                 getContext2d().setFillStyle(LAND_COLOR);
+                getContext2d().setStrokeStyle(LAND_COLOR);
                 break;
             case NONE:
                 getContext2d().setFillStyle(NONE_COLOR);
+                getContext2d().setStrokeStyle(NONE_COLOR);
                 break;
             case LAND_COAST:
                 getContext2d().setFillStyle(LAND_COAST_COLOR);
+                getContext2d().setStrokeStyle(LAND_COAST_COLOR);
                 break;
             case WATER_COAST:
                 getContext2d().setFillStyle(WATER_COAST_COLOR);
+                getContext2d().setStrokeStyle(WATER_COAST_COLOR);
                 break;
             default:
                 throw new IllegalArgumentException(this + " unknown surface type: " + surfaceType);
