@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.connection.impl;
 
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.common.NoConnectionException;
 import com.btxtech.game.jsre.common.Packet;
@@ -292,4 +293,8 @@ public class ConnectionServiceImpl extends TimerTask implements ConnectionServic
         return simpleBases;
     }
 
+    @Override
+    public GameEngineMode getGameEngineMode() {
+        return GameEngineMode.MASTER;
+    }
 }

@@ -14,7 +14,7 @@
 package com.btxtech.game.jsre.client.item;
 
 import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.ClientMode;
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
@@ -49,7 +49,6 @@ import com.google.gwt.user.client.Timer;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -143,7 +142,7 @@ public class ItemContainer extends AbstractItemService {
         if (toBeBuilt instanceof BaseItemType
                 && ClientBase.getInstance().isMyOwnBase(base)
                 && !ClientBase.getInstance().isBot(base)
-                && Connection.getInstance().getClientMode() == ClientMode.SLAVE) {
+                && Connection.getInstance().getGameEngineMode() == GameEngineMode.SLAVE) {
             ClientBase.getInstance().checkItemLimit4ItemAdding((BaseItemType) toBeBuilt);
         }
         ClientSyncItem itemView;
@@ -151,7 +150,7 @@ public class ItemContainer extends AbstractItemService {
         if (creator != null) {
             parentId = creator.getId().getId();
         }
-        if (Connection.getInstance().getClientMode() == ClientMode.MASTER) {
+        if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
             Id id = createSimulationId(parentId, createdChildCount);
             itemView = createAndAddItem(id, position, toBeBuilt.getId(), base);
             itemView.setHidden(false);
@@ -241,7 +240,7 @@ public class ItemContainer extends AbstractItemService {
         if (clientSyncItem == null) {
             throw new IllegalStateException("No ClientSyncItem for: " + killedItem);
         }
-        if (Connection.getInstance().getClientMode() == ClientMode.MASTER) {
+        if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
             definitelyKillItem(clientSyncItem, force, explode);
             if (killedItem instanceof SyncBaseItem) {
                 ActionHandler.getInstance().removeGuardingBaseItem((SyncBaseItem) killedItem);

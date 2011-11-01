@@ -14,7 +14,7 @@
 package com.btxtech.game.jsre.client.action;
 
 import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.ClientMode;
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
@@ -25,7 +25,6 @@ import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.collision.ClientCollisionService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
-import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.simulation.SimulationConditionServiceImpl;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.territory.ClientTerritoryService;
@@ -104,7 +103,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                         SimulationConditionServiceImpl.getInstance().onSyncItemDeactivated(activeItem);
                         iterator.remove();
                         activeItem.stop();
-                        if (Connection.getInstance().getClientMode() == ClientMode.MASTER) {
+                        if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
                             ActionHandler.getInstance().addGuardingBaseItem(activeItem);
                             ClientServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
                         }
@@ -133,7 +132,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
     @Override
     public void syncItemActivated(SyncTickItem syncTickItem) {
         tmpAddActiveItems.add(syncTickItem);
-        if (Connection.getInstance().getClientMode() == ClientMode.MASTER) {
+        if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
             ActionHandler.getInstance().addGuardingBaseItem(syncTickItem);
         }
     }
@@ -345,7 +344,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
             Connection.getInstance().addCommandToQueue(baseCommand);
             SimulationConditionServiceImpl.getInstance().onSendCommand(syncItem, baseCommand);
             syncItemActivated(syncItem);
-            if (Connection.getInstance().getClientMode() == ClientMode.MASTER) {
+            if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
                 removeGuardingBaseItem(syncItem);
             }
         } catch (Throwable t) {
