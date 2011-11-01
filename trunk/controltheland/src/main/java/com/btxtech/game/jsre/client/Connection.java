@@ -110,12 +110,12 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
                 public void onSuccess(GameInfo gameInfo) {
                     disconnectionCount = 0;
                     Connection.this.gameInfo = gameInfo;
-                    deferredStartup.finished();
                     if (gameInfo.isRealGame()) {
                         gameEngineMode = GameEngineMode.SLAVE;
                     } else {
                         gameEngineMode = GameEngineMode.MASTER;
                     }
+                    deferredStartup.finished();
                 }
             });
         } else {
