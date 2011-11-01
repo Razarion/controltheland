@@ -83,5 +83,8 @@ public class Port implements Serializable {
         return destinationCrossLine.getNearestPointOnLine(point);
     }
 
-
+    @Override
+    public String toString() {
+        return "Post: " + currentCrossLine + " destination: " + destinationCrossLine + " absoluteCurrent: " + absoluteCurrent + " absoluteDestination: " + absoluteDestination;
+    }
 }

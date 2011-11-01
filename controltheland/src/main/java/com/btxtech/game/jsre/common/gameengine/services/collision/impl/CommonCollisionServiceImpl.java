@@ -90,8 +90,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
             path = PathFinderUtilities.optimizePath(path, getServices().getTerrainService());
             List<Port> ports = path.getAllPassableBorders(getServices().getTerrainService());
             GumPath gumPath = new GumPath(start, destination, ports);
-            gumPath.calculateShortestPath();
-            positions = gumPath.getPath();
+            positions = gumPath.getOptimizedPath();
             return positions;
         } catch (PathCanNotBeFoundException e) {
             log.severe("PathCanNotBeFoundException: " + e.getMessage());
@@ -123,8 +122,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
             path = PathFinderUtilities.optimizePath(path, getServices().getTerrainService());
             List<Port> ports = path.getAllPassableBorders(getServices().getTerrainService());
             GumPath gumPath = new GumPath(start, destination, ports);
-            gumPath.calculateShortestPath();
-            positions = gumPath.getPath();
+            positions = gumPath.getOptimizedPath();
             return positions;
         } finally {
             if (System.currentTimeMillis() - time > 200 || positions == null) {

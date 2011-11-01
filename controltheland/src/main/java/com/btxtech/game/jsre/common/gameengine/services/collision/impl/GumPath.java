@@ -31,7 +31,7 @@ public class GumPath {
         middlePoint = start.getMiddlePoint(destination);
     }
 
-    public void calculateShortestPath() {
+    private void calculateShortestPath() {
         pathPorts = new ArrayList<Map.Entry<Index, Line>>();
         fillPath();
         optimizePath();
@@ -82,11 +82,14 @@ public class GumPath {
         pathPorts.add(new SimpleEntry<Index, Line>(destination, null));
     }
 
-    public List<Index> getPath() {
+    public List<Index> getOptimizedPath() {
+        calculateShortestPath();
         List<Index> path = new ArrayList<Index>();
         for (Map.Entry<Index, Line> pathBorder : pathPorts) {
             if (!indexToRemove.contains(pathBorder.getKey())) {
                 path.add(pathBorder.getKey());
+            } else {
+                indexToRemove.remove(pathBorder.getKey());
             }
         }
         return path;
