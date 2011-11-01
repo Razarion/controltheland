@@ -15,6 +15,8 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
  * Time: 12:02:47
  */
 public class SvgCockpit {
+    private static final int WIDTH = 200;
+    private static final int HEIGHT = 360;
     private static final SvgCockpit INSTANCE = new SvgCockpit();
     private boolean active = false;
     private SvgWidget svgWidget;
@@ -30,11 +32,11 @@ public class SvgCockpit {
         }
         active = true;
         if (svgWidget == null) {
-            svgWidget = new SvgWidget("/images/cockpit/gui.svg");
+            svgWidget = new SvgWidget("/images/cockpit/gui.svg", WIDTH, HEIGHT);
             svgWidget.getElement().getStyle().setZIndex(Constants.Z_INDEX_TOP_MAP_PANEL);
             absolutePanel = new AbsolutePanel();
             absolutePanel.getElement().getStyle().setZIndex(Constants.Z_INDEX_TOP_MAP_PANEL + 1);
-            absolutePanel.setPixelSize(200, 360);
+            absolutePanel.setPixelSize(WIDTH, HEIGHT);
             preventEvents();
         }
         parent.add(svgWidget, 0, 0);
