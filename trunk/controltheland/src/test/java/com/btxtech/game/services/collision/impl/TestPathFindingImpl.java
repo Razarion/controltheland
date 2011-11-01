@@ -431,7 +431,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
         configureComplexGame();
 
         GumPath gumPathMock = EasyMock.createNiceMock(GumPath.class);
-        EasyMock.expect(gumPathMock.getPath()).andReturn(Arrays.asList(new Index(1700, 200), new Index(3200, 200)));
+        EasyMock.expect(gumPathMock.getOptimizedPath()).andReturn(Arrays.asList(new Index(1700, 200), new Index(3200, 200)));
         EasyMock.replay(gumPathMock);
 
         List<Rectangle> borders = new ArrayList<Rectangle>();
@@ -448,7 +448,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
         configureComplexGame();
 
         GumPath gumPathMock = EasyMock.createNiceMock(GumPath.class);
-        EasyMock.expect(gumPathMock.getPath()).andReturn(Arrays.asList(
+        EasyMock.expect(gumPathMock.getOptimizedPath()).andReturn(Arrays.asList(
                 new Index(700, 1300),
                 new Index(1200, 1300),
                 new Index(1800, 1500),
@@ -472,7 +472,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
         configureComplexGame();
 
         GumPath gumPathMock = EasyMock.createNiceMock(GumPath.class);
-        EasyMock.expect(gumPathMock.getPath()).andReturn(Arrays.asList(
+        EasyMock.expect(gumPathMock.getOptimizedPath()).andReturn(Arrays.asList(
                 new Index(700, 1300),
                 new Index(1200, 1300),
                 new Index(2500, 3000)));
@@ -503,11 +503,10 @@ public class TestPathFindingImpl extends AbstractServiceTest {
         ports.add(new Port(new Rectangle(new Index(2500, 0), new Index(2900, 300)), new Rectangle(new Index(2900, 0), new Index(3500, 300))));
 
         GumPath gumPath = new GumPath(new Index(1700, 200), new Index(3200, 200), ports);
-        gumPath.calculateShortestPath();
 
-        Assert.assertEquals(2, gumPath.getPath().size());
-        Assert.assertEquals(new Index(1700, 200), gumPath.getPath().get(0));
-        Assert.assertEquals(new Index(3200, 200), gumPath.getPath().get(1));
+        Assert.assertEquals(2, gumPath.getOptimizedPath().size());
+        Assert.assertEquals(new Index(1700, 200), gumPath.getOptimizedPath().get(0));
+        Assert.assertEquals(new Index(3200, 200), gumPath.getOptimizedPath().get(1));
     }
 
     @Test
@@ -522,12 +521,11 @@ public class TestPathFindingImpl extends AbstractServiceTest {
         ports.add(new Port(new Rectangle(new Index(2100, 2000), new Index(3000, 2500)), new Rectangle(new Index(2100, 2500), new Index(3000, 3100))));
 
         GumPath gumPath = new GumPath(new Index(700, 1300), new Index(2500, 3000), ports);
-        gumPath.calculateShortestPath();
 
-        Assert.assertEquals(3, gumPath.getPath().size());
-        Assert.assertEquals(new Index(700, 1300), gumPath.getPath().get(0));
-        Assert.assertEquals(new Index(2100, 1999), gumPath.getPath().get(1));
-        Assert.assertEquals(new Index(2500, 3000), gumPath.getPath().get(2));
+        Assert.assertEquals(3, gumPath.getOptimizedPath().size());
+        Assert.assertEquals(new Index(700, 1300), gumPath.getOptimizedPath().get(0));
+        Assert.assertEquals(new Index(2100, 1999), gumPath.getOptimizedPath().get(1));
+        Assert.assertEquals(new Index(2500, 3000), gumPath.getOptimizedPath().get(2));
     }
 
     @Test
@@ -544,15 +542,14 @@ public class TestPathFindingImpl extends AbstractServiceTest {
 
 
         GumPath gumPath = new GumPath(new Index(4400, 1300), new Index(4400, 2000), ports);
-        gumPath.calculateShortestPath();
 
-        Assert.assertEquals(6, gumPath.getPath().size());
-        Assert.assertEquals(new Index(4400, 1300), gumPath.getPath().get(0));
-        Assert.assertEquals(new Index(5200, 1499), gumPath.getPath().get(1));
-        Assert.assertEquals(new Index(5500, 1599), gumPath.getPath().get(2));
-        Assert.assertEquals(new Index(5500, 1600), gumPath.getPath().get(3));
-        Assert.assertEquals(new Index(5200, 1800), gumPath.getPath().get(4));
-        Assert.assertEquals(new Index(4400, 2000), gumPath.getPath().get(5));
+        Assert.assertEquals(6, gumPath.getOptimizedPath().size());
+        Assert.assertEquals(new Index(4400, 1300), gumPath.getOptimizedPath().get(0));
+        Assert.assertEquals(new Index(5200, 1499), gumPath.getOptimizedPath().get(1));
+        Assert.assertEquals(new Index(5500, 1599), gumPath.getOptimizedPath().get(2));
+        Assert.assertEquals(new Index(5500, 1600), gumPath.getOptimizedPath().get(3));
+        Assert.assertEquals(new Index(5200, 1800), gumPath.getOptimizedPath().get(4));
+        Assert.assertEquals(new Index(4400, 2000), gumPath.getOptimizedPath().get(5));
     }
 
     @Test
@@ -574,16 +571,15 @@ public class TestPathFindingImpl extends AbstractServiceTest {
 
 
         GumPath gumPath = new GumPath(new Index(200, 4200), new Index(5100, 3400), ports);
-        gumPath.calculateShortestPath();
 
-        Assert.assertEquals(7, gumPath.getPath().size());
-        Assert.assertEquals(new Index(200, 4200), gumPath.getPath().get(0));
-        Assert.assertEquals(new Index(1000, 3800), gumPath.getPath().get(1));
-        Assert.assertEquals(new Index(2499, 4900), gumPath.getPath().get(2));
-        Assert.assertEquals(new Index(3100, 4600), gumPath.getPath().get(3));
-        Assert.assertEquals(new Index(3300, 4400), gumPath.getPath().get(4));
-        Assert.assertEquals(new Index(4100, 3800), gumPath.getPath().get(5));
-        Assert.assertEquals(new Index(5100, 3400), gumPath.getPath().get(6));
+        Assert.assertEquals(7, gumPath.getOptimizedPath().size());
+        Assert.assertEquals(new Index(200, 4200), gumPath.getOptimizedPath().get(0));
+        Assert.assertEquals(new Index(1000, 3800), gumPath.getOptimizedPath().get(1));
+        Assert.assertEquals(new Index(2499, 4900), gumPath.getOptimizedPath().get(2));
+        Assert.assertEquals(new Index(3100, 4600), gumPath.getOptimizedPath().get(3));
+        Assert.assertEquals(new Index(3300, 4400), gumPath.getOptimizedPath().get(4));
+        Assert.assertEquals(new Index(4100, 3800), gumPath.getOptimizedPath().get(5));
+        Assert.assertEquals(new Index(5100, 3400), gumPath.getOptimizedPath().get(6));
     }
 
     @Test
@@ -599,12 +595,11 @@ public class TestPathFindingImpl extends AbstractServiceTest {
         ports.add(new Port(new Rectangle(new Index(2200, 6600), new Index(2800, 7200)), new Rectangle(new Index(2800, 6600), new Index(3800, 7000))));
 
         GumPath gumPath = new GumPath(new Index(300, 6200), new Index(3200, 6800), ports);
-        gumPath.calculateShortestPath();
 
-        Assert.assertEquals(3, gumPath.getPath().size());
-        Assert.assertEquals(new Index(300, 6200), gumPath.getPath().get(0));
-        Assert.assertEquals(new Index(2200, 6700), gumPath.getPath().get(1));
-        Assert.assertEquals(new Index(3200, 6800), gumPath.getPath().get(2));
+        Assert.assertEquals(3, gumPath.getOptimizedPath().size());
+        Assert.assertEquals(new Index(300, 6200), gumPath.getOptimizedPath().get(0));
+        Assert.assertEquals(new Index(2200, 6700), gumPath.getOptimizedPath().get(1));
+        Assert.assertEquals(new Index(3200, 6800), gumPath.getOptimizedPath().get(2));
     }
 
     @Test
@@ -618,22 +613,38 @@ public class TestPathFindingImpl extends AbstractServiceTest {
         ports.add(new Port(new Rectangle(new Index(7500, 7500), new Index(7800, 7800)), new Rectangle(new Index(7800, 7500), new Index(8700, 7800))));
 
         GumPath gumPath = new GumPath(new Index(5500, 7500), new Index(8400, 7500), ports);
-        gumPath.calculateShortestPath();
 
-        Assert.assertEquals(6, gumPath.getPath().size());
-        Assert.assertEquals(new Index(5500, 7500), gumPath.getPath().get(0));
-        Assert.assertEquals(new Index(6000, 7500), gumPath.getPath().get(1));
-        Assert.assertEquals(new Index(6999, 6699), gumPath.getPath().get(2));
-        Assert.assertEquals(new Index(7000, 6699), gumPath.getPath().get(3));
-        Assert.assertEquals(new Index(7799, 7500), gumPath.getPath().get(4));
-        Assert.assertEquals(new Index(8400, 7500), gumPath.getPath().get(5));
+        Assert.assertEquals(6, gumPath.getOptimizedPath().size());
+        Assert.assertEquals(new Index(5500, 7500), gumPath.getOptimizedPath().get(0));
+        Assert.assertEquals(new Index(6000, 7500), gumPath.getOptimizedPath().get(1));
+        Assert.assertEquals(new Index(6999, 6699), gumPath.getOptimizedPath().get(2));
+        Assert.assertEquals(new Index(7000, 6699), gumPath.getOptimizedPath().get(3));
+        Assert.assertEquals(new Index(7799, 7500), gumPath.getOptimizedPath().get(4));
+        Assert.assertEquals(new Index(8400, 7500), gumPath.getOptimizedPath().get(5));
+    }
+
+    @Test
+    @DirtiesContext
+    public void testGumPath7() throws Exception {
+        List<Port> ports = new ArrayList<Port>();
+        ports.add(new Port(new Rectangle(new Index(1400, 1500), new Index(2300, 1600)), new Rectangle(new Index(1100, 1400), new Index(2200, 1500))));
+        ports.add(new Port(new Rectangle(new Index(1100, 1400), new Index(2200, 1500)), new Rectangle(new Index(900, 1300), new Index(1100, 1500))));
+        ports.add(new Port(new Rectangle(new Index(900, 1300), new Index(1100, 1500)), new Rectangle(new Index(300, 1500), new Index(1100, 1600))));
+
+        GumPath gumPath = new GumPath(new Index(1471, 1538), new Index(960, 1551), ports);
+
+        Assert.assertEquals(4, gumPath.getOptimizedPath().size());
+        Assert.assertEquals(new Index(1471, 1538), gumPath.getOptimizedPath().get(0));
+        Assert.assertEquals(new Index(1400, 1499), gumPath.getOptimizedPath().get(1));
+        Assert.assertEquals(new Index(1099, 1499), gumPath.getOptimizedPath().get(2));
+        Assert.assertEquals(new Index(960, 1551), gumPath.getOptimizedPath().get(3));
     }
 
 
     private void assertPathInAllBorders(List<Rectangle> borders, GumPath gumPath) {
         Index previousPoint = null;
         int borderIndex = 0;
-        for (Index point : gumPath.getPath()) {
+        for (Index point : gumPath.getOptimizedPath()) {
             if (previousPoint != null) {
                 while (borderIndex < borders.size()) {
                     Rectangle border = borders.get(borderIndex);
