@@ -196,7 +196,6 @@ public class Simulation implements ConditionServiceListener<Object> {
             long time = System.currentTimeMillis();
             activeTask.cleanup();
             ClientUserTracker.getInstance().onTaskFinished(activeTask, time - taskTime, time);
-            cleanupGameEngine(activeTask);
             if (activeTask.getTaskConfig().getFinishImageDuration() > 0 && activeTask.getTaskConfig().getFinishImageId() != null) {
                 tutorialGui.showFinishImage(activeTask.getTaskConfig().getFinishImageId(), activeTask.getTaskConfig().getFinishImageDuration());
                 final Task closedTask = activeTask;
@@ -204,19 +203,16 @@ public class Simulation implements ConditionServiceListener<Object> {
                 Timer timer = new Timer() {
                     @Override
                     public void run() {
+                        GameCommon.clearGame();
                         runNextTask(closedTask);
                     }
                 };
                 timer.schedule(closedTask.getTaskConfig().getFinishImageDuration());
             } else {
+                GameCommon.clearGame();
                 runNextTask(activeTask);
             }
         }
     }
 
-    private void cleanupGameEngine(Task activeTask) {
-        if (activeTask.getTaskConfig().isClearGame()) {
-            GameCommon.clearGame();
-        }
-    }
 }
