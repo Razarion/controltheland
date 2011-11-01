@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.connection;
 
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 /**
@@ -22,4 +23,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
  */
 public interface ConnectionService {
     void sendSyncInfo(SyncItem syncItem);
+
+    GameEngineMode getGameEngineMode();
 }

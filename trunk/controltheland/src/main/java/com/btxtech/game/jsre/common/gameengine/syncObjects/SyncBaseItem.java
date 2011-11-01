@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
 import com.btxtech.game.jsre.common.SimpleBase;
@@ -85,6 +86,9 @@ public class SyncBaseItem extends SyncTickItem implements SyncBaseObject {
 
         if (baseItemType.getFactoryType() != null) {
             syncFactory = new SyncFactory(baseItemType.getFactoryType(), this);
+            if (getServices().getConnectionService().getGameEngineMode() == GameEngineMode.MASTER) {
+                syncFactory.calculateRallyPoint();
+            }
             isMoneyEarningOrConsuming = true;
         } else {
             syncFactory = null;

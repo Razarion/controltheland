@@ -21,9 +21,9 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.FactoryCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -42,7 +42,6 @@ public class SyncFactory extends SyncBaseAbility {
     public SyncFactory(FactoryType factoryType, SyncBaseItem syncBaseItem) throws NoSuchItemTypeException {
         super(syncBaseItem);
         this.factoryType = factoryType;
-        calculateRallyPoint();
     }
 
     public FactoryType getFactoryType() {
@@ -119,7 +118,7 @@ public class SyncFactory extends SyncBaseAbility {
     public void stop() {
         buildup = 0;
         toBeBuiltType = null;
-        getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS);        
+        getSyncBaseItem().fireItemChanged(SyncItemListener.Change.FACTORY_PROGRESS);
     }
 
     public void executeCommand(FactoryCommand factoryCommand) throws InsufficientFundsException, NoSuchItemTypeException {
@@ -167,7 +166,7 @@ public class SyncFactory extends SyncBaseAbility {
         this.rallyPoint = rallyPoint;
     }
 
-    private void calculateRallyPoint() throws NoSuchItemTypeException {
+    void calculateRallyPoint() throws NoSuchItemTypeException {
         Collection<ItemType> types = new ArrayList<ItemType>();
         for (int id : factoryType.getAbleToBuild()) {
             types.add(getServices().getItemService().getItemType(id));

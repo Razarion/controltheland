@@ -49,6 +49,11 @@ public class ClientServices implements Services {
         public void sendSyncInfo(SyncItem syncItem) {
             ClientUserTracker.getInstance().trackSyncInfo(syncItem);
         }
+
+        @Override
+        public GameEngineMode getGameEngineMode() {
+            return Connection.getInstance().getGameEngineMode();
+        }
     };
 
     public static ClientServices getInstance() {

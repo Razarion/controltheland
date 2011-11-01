@@ -79,7 +79,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
     private Collection<SyncItemInfo> syncInfos;
     private ArrayList<BaseCommand> commandQueue = new ArrayList<BaseCommand>();
     private static Logger log = Logger.getLogger(Connection.class.getName());
-    private ClientMode clientMode;
+    private GameEngineMode gameEngineMode;
 
     private MovableServiceAsync movableServiceAsync = GWT.create(MovableService.class);
     private Timer timer;
@@ -103,7 +103,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
                 @Override
                 public void onFailure(Throwable caught) {
                     deferredStartup.failed(caught);
-                    clientMode = null;
+                    gameEngineMode = null;
                 }
 
                 @Override
@@ -112,9 +112,9 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
                     Connection.this.gameInfo = gameInfo;
                     deferredStartup.finished();
                     if (gameInfo.isRealGame()) {
-                        clientMode = ClientMode.SLAVE;
+                        gameEngineMode = GameEngineMode.SLAVE;
                     } else {
-                        clientMode = ClientMode.MASTER;
+                        gameEngineMode = GameEngineMode.MASTER;
                     }
                 }
             });
@@ -131,7 +131,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
      */
     public void setGameInfo(GameInfo gameInfo) {
         this.gameInfo = gameInfo;
-        clientMode = ClientMode.PLAYBACK;
+        gameEngineMode = GameEngineMode.PLAYBACK;
     }
 
     public void downloadAllSyncInfo(final DeferredStartup deferredStartup) {
@@ -250,13 +250,13 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
 
 
     public void addCommandToQueue(BaseCommand baseCommand) {
-        if (movableServiceAsync != null && clientMode == ClientMode.SLAVE) {
+        if (movableServiceAsync != null && gameEngineMode == GameEngineMode.SLAVE) {
             commandQueue.add(baseCommand);
         }
     }
 
     public void sendCommandQueue() {
-        if (movableServiceAsync != null && !commandQueue.isEmpty() && clientMode == ClientMode.SLAVE) {
+        if (movableServiceAsync != null && !commandQueue.isEmpty() && gameEngineMode == GameEngineMode.SLAVE) {
             movableServiceAsync.sendCommands(commandQueue, this);
         }
         commandQueue.clear();
@@ -440,10 +440,10 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
         sendStartupFinished(taskInfo, totalTime);
     }
 
-    public ClientMode getClientMode() {
-        if (clientMode == null) {
-            throw new NullPointerException("ClientMode is null");
+    public GameEngineMode getGameEngineMode() {
+        if (gameEngineMode == null) {
+            throw new NullPointerException("GameEngineMode is null");
         }
-        return clientMode;
+        return gameEngineMode;
     }
 }

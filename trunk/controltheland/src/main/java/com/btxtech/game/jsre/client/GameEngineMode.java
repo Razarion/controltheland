@@ -5,7 +5,7 @@ package com.btxtech.game.jsre.client;
  * Date: 29.10.2011
  * Time: 00:47:33
  */
-public enum ClientMode {
+public enum GameEngineMode {
     SLAVE,
     MASTER,
     PLAYBACK
