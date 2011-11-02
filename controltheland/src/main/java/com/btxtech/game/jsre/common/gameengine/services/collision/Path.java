@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.services.collision;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 
 import java.util.ArrayList;
@@ -97,14 +98,14 @@ public class Path {
         return false;
     }
 
-    public int backToElementWithAlternatives() {
+    public int backToElementWithAlternatives(Index absStart, Index absDestination) {
         while (!pathElements.isEmpty()) {
             PathElement removed = pathElements.remove(pathElements.size() - 1);
             if (removed.isHasAlternativeSiblings()) {
                 return removed.getRank();
             }
         }
-        throw new PathCanNotBeFoundException("Path can not be backtracked");
+        throw new PathCanNotBeFoundException("Path can not be backtracked", absStart, absDestination);
     }
 
     public void reverse() {

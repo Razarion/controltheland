@@ -63,7 +63,7 @@ public abstract class SyncBaseAbility {
             setPathToDestinationIfSyncMovable(getServices().getCollisionService().setupPathToDestination(syncItem, format.getDestinationHint()));
             return format.getDestinationAngel();
         } else {
-            throw new PathCanNotBeFoundException("Can not fin path in recalculateNewPath: " + syncItem);
+            throw new PathCanNotBeFoundException("Can not fin path in recalculateNewPath: " + syncItem, syncItem.getSyncItemArea().getPosition(), null);
         }
     }
 
