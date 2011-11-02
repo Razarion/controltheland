@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.pathfinding;
 
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.TopMapPanel;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniTerrain;
 import com.btxtech.game.jsre.client.collision.ClientCollisionService;
 import com.btxtech.game.jsre.client.control.task.SimpleDeferredStartup;
@@ -59,6 +60,10 @@ public class PathfindingEntry implements EntryPoint {
         final PathMiniMap pathMiniMap = new PathMiniMap(RootPanel.get().getOffsetWidth(), RootPanel.get().getOffsetHeight());
         pathMiniMap.getCanvas().getElement().getStyle().setZIndex(3);
         absolutePanel.add(pathMiniMap.getCanvas(), 0, 0);
+
+        PathfindingCockpit pathfindingCockpit = new PathfindingCockpit(pathMiniMap);
+        pathfindingCockpit.addToParent(absolutePanel, TopMapPanel.Direction.RIGHT_TOP, 20);
+        pathfindingCockpit.getElement().getStyle().setZIndex(4);
 
         pathfinding.getTerrainInfo(terrainId, new AsyncCallback<TerrainInfo>() {
             @Override

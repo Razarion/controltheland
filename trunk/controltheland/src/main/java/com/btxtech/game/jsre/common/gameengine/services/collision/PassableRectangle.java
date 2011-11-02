@@ -71,7 +71,7 @@ public class PassableRectangle {
     }
 
     public void addNeighbor(PassableRectangle neighborPassableRectangle) {
-        if(neighborPassableRectangle == this) {
+        if (neighborPassableRectangle == this) {
             throw new RuntimeException();
         }
         neighbors.put(neighborPassableRectangle, null);
@@ -109,7 +109,7 @@ public class PassableRectangle {
             }
         }
 
-        throw new PathCanNotBeFoundException("Max tries exceeded");
+        throw new PathCanNotBeFoundException("Max tries exceeded", absStart, absDestination);
     }
 
     private boolean findPath(AbstractTerrainService terrainService, Index absStart, Index absDestination, PassableRectangle destinationRect, Path path) {
@@ -122,7 +122,7 @@ public class PassableRectangle {
     }
 
     private PathElement backtracking(AbstractTerrainService terrainService, Path path, Index absStart, Index absDestination) {
-        int oldRank = path.backToElementWithAlternatives();
+        int oldRank = path.backToElementWithAlternatives(absStart, absDestination);
         PathElement alternativeNext = getBestSuitable(terrainService, path, absStart, absDestination, oldRank + 1);
         if (alternativeNext != null) {
             return alternativeNext;

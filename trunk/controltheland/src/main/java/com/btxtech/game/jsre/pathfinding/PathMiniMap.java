@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.ColorConstants;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniMap;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniMapMouseDownListener;
+import com.btxtech.game.jsre.client.cockpit.radar.MiniMapMouseMoveListener;
 import com.btxtech.game.jsre.client.collision.ClientCollisionService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
@@ -30,12 +31,14 @@ import java.util.List;
  * Date: 28.06.2010
  * Time: 22:27:01
  */
-public class PathMiniMap extends MiniMap implements MiniMapMouseDownListener {
+public class PathMiniMap extends MiniMap implements MiniMapMouseDownListener, MiniMapMouseMoveListener {
     private Index start;
+    private PathfindingCockpit pathfindingCockpit;
 
     public PathMiniMap(int width, int height) {
         super(width, height);
         addMouseDownListener(this);
+        addMouseMoveListener(this);
     }
 
     @Override
@@ -61,7 +64,7 @@ public class PathMiniMap extends MiniMap implements MiniMapMouseDownListener {
         }
     }
 
-    private void findPath(final Index start, Index destination) {
+    public void findPath(final Index start, Index destination) {
         try {
             List<Index> indexes = ClientCollisionService.getInstance().setupPathToDestination(start, destination, TerrainType.LAND);
             if (indexes == null) {
@@ -88,4 +91,12 @@ public class PathMiniMap extends MiniMap implements MiniMapMouseDownListener {
         getContext2d().clearRect(0, 0, getTerrainSettings().getPlayFieldXSize(), getTerrainSettings().getPlayFieldYSize());
     }
 
+    @Override
+    public void onMouseMove(int absX, int absY) {
+       pathfindingCockpit.showMousePosition(absX, absY);
+    }
+
+    public void setPathfindingCockpit(PathfindingCockpit pathfindingCockpit) {
+        this.pathfindingCockpit = pathfindingCockpit;
+    }
 }
