@@ -27,6 +27,8 @@ import com.google.gwt.event.shared.HandlerRegistration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -46,6 +48,7 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
     private HandlerRegistration upRegistration;
     private Canvas canvas;
     private Context2d context2d;
+    private Logger log = Logger.getLogger(MiniMap.class.getName());
 
     public MiniMap(int width, int height) {
         canvas = Canvas.createIfSupported();
@@ -74,7 +77,12 @@ public class MiniMap implements MouseMoveHandler, MouseDownHandler, MouseUpHandl
         // Restore & save to get old state before scale
         context2d.restore();
         context2d.save();
-        context2d.scale(scale, scale);
+        try {
+            context2d.scale(scale, scale);
+        } catch (Exception e) {
+            // Fails during tests
+            log.log(Level.SEVERE, "", e);
+        }
     }
 
     protected void clear() {

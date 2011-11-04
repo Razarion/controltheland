@@ -39,4 +39,6 @@
     <set-property name="gwt.logging.firebugHandler" value="DISABLED"/>
     <set-property name="gwt.logging.simpleRemoteHandler" value="ENABLED"/>
     <set-property name="gwt.logging.popupHandler" value="DISABLED"/>
+
+    <servlet path="/gwtrpc/movableService" class="com.btxtech.game.mockservlet.MockMovableService"/>
 </module>

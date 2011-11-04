@@ -21,6 +21,9 @@ import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.user.client.Timer;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * User: beat
  * Date: 06.04.2010
@@ -30,6 +33,7 @@ public class RadarItemView extends MiniMap {
     public static final int BASE_ITEM_SIZE = 20;
     public static final int RESOURCE_ITEM_SIZE = 60;
     public static final double WHOLE_RADIUS = 2 * Math.PI;
+    private Logger log = Logger.getLogger(RadarItemView.class.getName());
 
     public RadarItemView(int width, int height) {
         super(width, height);
@@ -56,7 +60,12 @@ public class RadarItemView extends MiniMap {
         double scale = Math.min((double) getWidth() / (double) getTerrainSettings().getPlayFieldXSize(),
                 (double) getHeight() / (double) getTerrainSettings().getPlayFieldYSize()) / getScale();
         getContext2d().clearRect(0, 0, getTerrainSettings().getPlayFieldXSize(), getTerrainSettings().getPlayFieldYSize());
-        getContext2d().scale(scale, scale);
+        try {
+            getContext2d().scale(scale, scale);
+        } catch (Exception e) {
+            // Fails during tests
+            log.log(Level.SEVERE, "", e);
+        }
         for (ClientSyncItem clientSyncItem : ItemContainer.getInstance().getItems()) {
             if (clientSyncItem.isSyncBaseItem()) {
                 Index pos = clientSyncItem.getSyncItem().getSyncItemArea().getPosition();
