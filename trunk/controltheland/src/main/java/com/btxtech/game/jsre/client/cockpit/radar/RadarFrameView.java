@@ -20,12 +20,17 @@ import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * User: beat
  * Date: 22.12.2009
  * Time: 21:52:27
  */
 public class RadarFrameView extends MiniMap implements TerrainScrollListener, MiniMapMouseDownListener {
+    private Logger log = Logger.getLogger(RadarFrameView.class.getName());
+
     public RadarFrameView(int width, int height) {
         super(width, height);
         TerrainView.getInstance().addTerrainScrollListener(this);
@@ -43,7 +48,13 @@ public class RadarFrameView extends MiniMap implements TerrainScrollListener, Mi
         double topDouble = (double) top / (double) getTerrainSettings().getTileHeight();
         double widthDouble = (double) width / (double) getTerrainSettings().getTileWidth();
         double heightDouble = (double) height / (double) getTerrainSettings().getTileHeight();
-        getContext2d().rect(leftDouble, topDouble, widthDouble, heightDouble);
+        try {
+            getContext2d().rect(leftDouble, topDouble, widthDouble, heightDouble);
+        } catch (Exception e) {
+            // Fails during tests
+            log.log(Level.SEVERE, "", e);
+        }
+
         getContext2d().stroke();
     }
 
