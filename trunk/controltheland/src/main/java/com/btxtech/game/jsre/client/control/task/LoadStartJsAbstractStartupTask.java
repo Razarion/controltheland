@@ -14,9 +14,6 @@
 package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
-import com.google.gwt.core.client.JavaScriptObject;
-
-import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -24,7 +21,6 @@ import java.util.logging.Logger;
  * Time: 12:32:48
  */
 public class LoadStartJsAbstractStartupTask extends AbstractStartupTask {
-    private Logger log = Logger.getLogger(LoadStartJsAbstractStartupTask.class.getName());
 
     public LoadStartJsAbstractStartupTask(StartupTaskEnum taskEnum) {
         super(taskEnum);
@@ -36,19 +32,10 @@ public class LoadStartJsAbstractStartupTask extends AbstractStartupTask {
 
     @Override
     protected long calculateStartTime() {
-        Object object = getNativeCtlStartTime();
-        if (object == null) {
-            log.severe("LoadStartJsAbstractStartupTask getNativeCtlStartTime() returned 0");
-            return 0;
-        } else if (object instanceof Number) {
-            return (Long) object;
-        } else {
-            log.severe("LoadStartJsAbstractStartupTask getNativeCtlStartTime() returned: " + object);
-            return 0;
-        }
+        return (long) getNativeCtlStartTime();
     }
 
-    private native JavaScriptObject getNativeCtlStartTime() /*-{
+    private native double getNativeCtlStartTime() /*-{
       return $wnd.ctlStartTime;
     }-*/;
 }
