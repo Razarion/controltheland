@@ -14,10 +14,10 @@
 package com.btxtech.game.jsre.client.item;
 
 import com.btxtech.game.jsre.client.ClientBase;
-import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
@@ -68,6 +68,7 @@ public class ItemContainer extends AbstractItemService {
     private HashMap<Id, ClientSyncItem> orphanItems = new HashMap<Id, ClientSyncItem>();
     private HashMap<Id, ClientSyncItem> seeminglyDeadItems = new HashMap<Id, ClientSyncItem>();
     private int ownItemCount = 0;
+    private int itemId = 1;
 
     /**
      * Singleton
@@ -151,7 +152,7 @@ public class ItemContainer extends AbstractItemService {
             parentId = creator.getId().getId();
         }
         if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
-            Id id = createSimulationId(parentId, createdChildCount);
+            Id id = createId(parentId, createdChildCount);
             itemView = createAndAddItem(id, position, toBeBuilt.getId(), base);
             itemView.setHidden(false);
             id.setUserTimeStamp(System.currentTimeMillis());
@@ -181,18 +182,15 @@ public class ItemContainer extends AbstractItemService {
     }
 
     public Id createSimulationId(int id, int parentId, int createdChildCount) {
+        if (itemId <= id) {
+            itemId = id + 1;
+        }
         return new Id(id, parentId, createdChildCount);
     }
 
-    private Id createSimulationId(int parentId, int createdChildCount) {
-        int intId = 1;
-        for (Id id : items.keySet()) {
-            if (id.getId() > intId) {
-                intId = id.getId();
-            }
-        }
-        intId++;
-        return createSimulationId(intId, parentId, createdChildCount);
+    private Id createId(int parentId, int createdChildCount) {
+        itemId++;
+        return createSimulationId(itemId, parentId, createdChildCount);
     }
 
     public ClientSyncItem getSimulationItem(int intId) {

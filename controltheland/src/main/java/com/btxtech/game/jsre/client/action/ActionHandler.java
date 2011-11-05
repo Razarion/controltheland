@@ -343,7 +343,7 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
 
             Connection.getInstance().addCommandToQueue(baseCommand);
             SimulationConditionServiceImpl.getInstance().onSendCommand(syncItem, baseCommand);
-            syncItemActivated(syncItem);
+            tmpAddActiveItems.add(syncItem);
             if (Connection.getInstance().getGameEngineMode() == GameEngineMode.MASTER) {
                 removeGuardingBaseItem(syncItem);
             }
