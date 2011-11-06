@@ -39,7 +39,7 @@ public class SyncMovable extends SyncBaseAbility {
     }
 
     public boolean isActive() {
-        return targetContainer != null || (pathToDestination != null && !pathToDestination.isEmpty());
+        return getSyncBaseItem().isAlive() && (targetContainer != null || (pathToDestination != null && !pathToDestination.isEmpty()));
     }
 
     /**
