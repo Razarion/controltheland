@@ -14,14 +14,11 @@
 package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.Connection;
-import com.btxtech.game.jsre.client.cockpit.Cockpit;
-import com.btxtech.game.jsre.client.cockpit.SvgCockpit;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.item.ItemContainer;
-import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.google.gwt.user.client.Window;
@@ -65,7 +62,6 @@ public abstract class GameEngineStartupTask extends AbstractStartupTask {
                 gameInfo.getSurfaceImages(),
                 gameInfo.getTerrainImages());
         ItemContainer.getInstance().setItemTypes(gameInfo.getItemTypes());
-        setupCockpit(gameInfo);
     }
 
     protected void deltaSetupGameStructure(GameInfo gameInfo) {
@@ -77,16 +73,5 @@ public abstract class GameEngineStartupTask extends AbstractStartupTask {
                 gameInfo.getSurfaceImages(),
                 gameInfo.getTerrainImages());
         ItemContainer.getInstance().addDeltaItemTypes(gameInfo.getItemTypes());
-        setupCockpit(gameInfo);
-    }
-
-    public void setupCockpit(GameInfo gameInfo) {
-        if (gameInfo.getLevel().getName().equals("Noob 1")) {
-            SvgCockpit.getInstance().activate(MapWindow.getAbsolutePanel());
-            Cockpit.getInstance().inactivate(MapWindow.getAbsolutePanel());
-        } else {
-            Cockpit.getInstance().activate(MapWindow.getAbsolutePanel());
-            SvgCockpit.getInstance().inactivate(MapWindow.getAbsolutePanel());
-        }
     }
 }

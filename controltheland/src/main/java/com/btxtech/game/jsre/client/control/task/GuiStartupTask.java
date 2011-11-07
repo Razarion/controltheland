@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.control.task;
 
 import com.btxtech.game.jsre.client.GwtCommon;
+import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.cockpit.TerrainMouseHandler;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
@@ -35,6 +36,7 @@ public class GuiStartupTask extends AbstractStartupTask {
     @Override
     protected void privateStart(DeferredStartup deferredStartup) {
         GwtCommon.disableBrowserContextMenuJSNI();
+        SideCockpit.getInstance().addToParent(MapWindow.getAbsolutePanel());
         RootPanel.get().add(MapWindow.getAbsolutePanel(), 0, 0);
 
         TerrainView.getInstance().addToParent(MapWindow.getAbsolutePanel());

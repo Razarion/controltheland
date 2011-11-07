@@ -121,7 +121,6 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
     private static final int DEBUG_POSITION__TOP = 26;
 
     private CockpitMode cockpitMode;
-    private AbsolutePanel radar;
     private Label money;
     private Label xp;
     private Label level;
@@ -152,7 +151,6 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         getElement().getStyle().setBackgroundImage("url(/images/cockpit/cockpit.png)");
         setPixelSize(WIDTH, HEIGHT);
         preventEvents();
-        setupRadar();
         setupButtons();
         setupInfo();
         setupOnline();
@@ -253,17 +251,6 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         widgets.put(CockpitWidgetEnum.LEVEL_BUTTON, levelTarget);
     }
 
-    private void setupRadar() {
-        radar = RadarPanel.getInstance().createWidget(RADAR_WIDTH, RADAR_HEIGHT);
-        widgets.put(CockpitWidgetEnum.RADAR_PANEL, radar);
-        add(radar, RADAR_LEFT, RADAR_TOP);
-        Image radarFrame = ImageHandler.createImageIE6TransparencyProblem("/images/cockpit/radarframe.png", RADAR_WIDTH, RADAR_HEIGHT);
-        radarFrame.getElement().getStyle().setZIndex(100);
-        radarFrame.getElement().getStyle().setCursor(Style.Cursor.POINTER);
-        radarFrame.addMouseDownHandler(RadarPanel.getInstance().getRadarFrameView());
-        radar.add(radarFrame, 0, 0);
-    }
-
     private void addToParent(AbsolutePanel parent) {
         parent.add(this, 0, 1);
         getElement().getStyle().setProperty("top", "");
@@ -272,7 +259,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
     }
 
     public void setVisibleRadar(boolean visible) {
-        radar.setVisible(visible);
+        // TODO
     }
 
     private void preventEvents() {
