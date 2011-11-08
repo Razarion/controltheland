@@ -11,15 +11,14 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 public class SideCockpit extends AbsolutePanel {
     private static final SideCockpit INSTANCE = new SideCockpit();
     private static final int WIDTH = 200;
-    public static final int HEIGHT = 375;
+    public static final int HEIGHT = 395;
     // Common
-    private static final int CONTROL_PANEL_WIDTH = 165;
+    private static final int CONTROL_PANEL_WIDTH = 185;
     private static final int CONTROL_PANEL_LEFT = 5;
     // Control Panel
     private static final int CONTROL_PANEL_HEIGHT = 160;
     private static final int CONTROL_PANEL_TOP = 25;
     // Radar
-    private static final int RADAR_HEIGHT = 150;
     private static final int RADAR_TOP = CONTROL_PANEL_HEIGHT + CONTROL_PANEL_TOP + 10;
 
     public static SideCockpit getInstance() {
@@ -69,7 +68,8 @@ public class SideCockpit extends AbsolutePanel {
     }
 
     private void setupRadar() {
-        RadarControlPanel radarControlPanel = new RadarControlPanel(CONTROL_PANEL_WIDTH, RADAR_HEIGHT);
+        @SuppressWarnings({"SuspiciousNameCombination"})
+        RadarControlPanel radarControlPanel = new RadarControlPanel(CONTROL_PANEL_WIDTH, CONTROL_PANEL_WIDTH);
         add(radarControlPanel, CONTROL_PANEL_LEFT, RADAR_TOP);
     }
 }
