@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client.cockpit;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.client.cockpit.item.BuildupItemPanel;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.tutorial.CockpitSpeechBubbleHintConfig;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -52,7 +53,7 @@ public class OwnSingleSelectedPanel extends AbsolutePanel implements HintWidgetP
         add(description, DESCRIPTION_LEFT, DESCRIPTION_TOP);
         specialFunctionPanel = new SpecialFunctionPanel();
         add(specialFunctionPanel, SPECIAL_FUNCTION_LEFT, SPECIAL_FUNCTION_TOP);
-        buildupItemPanel = new BuildupItemPanel();
+        buildupItemPanel = new BuildupItemPanel(null);
         add(buildupItemPanel, BUILDUP_ITEM_LEFT, BUILDUP_ITEM_TOP);
     }
 

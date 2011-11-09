@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.client.cockpit.item.BuildupItemPanel;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -41,7 +42,7 @@ public class OwnMultiSelectedPanel extends AbsolutePanel {
         getElement().getStyle().setBackgroundImage("url(/images/cockpit/ownmultiselection.png)");
         setPixelSize(SelectedItemPanel.WIDTH, SelectedItemPanel.HEIGHT);
 
-        buildupItemPanel = new BuildupItemPanel();
+        buildupItemPanel = new BuildupItemPanel(null);
         add(buildupItemPanel, BUILDUP_ITEM_LEFT, BUILDUP_ITEM_TOP);
 
         itemTypes = new HorizontalPanel();
