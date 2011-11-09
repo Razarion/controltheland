@@ -1,4 +1,4 @@
-package com.btxtech.game.jsre.client.cockpit;
+package com.btxtech.game.jsre.client.cockpit.item;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.GwtCommon;

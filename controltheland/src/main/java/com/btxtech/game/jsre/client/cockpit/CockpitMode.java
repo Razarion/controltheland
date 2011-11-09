@@ -14,6 +14,8 @@
 package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.ClientSyncItem;
+import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 
 /**
  * User: beat
@@ -69,6 +71,7 @@ public class CockpitMode implements SelectionListener {
 
     @Override
     public void onTargetSelectionChanged(ClientSyncItem selection) {
+        ItemCockpit.getInstance().deActivate();
         if (selection.isSyncBaseItem()) {
             Cockpit.getInstance().getSelectedItemPanel().displayEnemyItem(selection.getSyncBaseItem());
         } else if (selection.isSyncResourceItem()) {
@@ -87,10 +90,18 @@ public class CockpitMode implements SelectionListener {
     public void onOwnSelectionChanged(Group selectedGroup) {
         clearUnloadMode();
         clearLaunchMode();
+
+
         if (selectedGroup.getCount() == 1) {
-            Cockpit.getInstance().getSelectedItemPanel().displayOwnSingleItem(selectedGroup.getFirst());
+            SyncBaseItem syncBaseItem = selectedGroup.getFirst().getSyncBaseItem();
+            if (syncBaseItem.hasSyncBuilder() || syncBaseItem.hasSyncFactory()) {
+                ItemCockpit.getInstance().activate(selectedGroup.getFirst());
+            } else {
+                ItemCockpit.getInstance().deActivate();
+            }
         } else {
-            Cockpit.getInstance().getSelectedItemPanel().displayMultiOwnItems(selectedGroup);
-        }
+            ItemCockpit.getInstance().deActivate();
+            // TODO Cockpit.getInstance().getSelectedItemPanel().displayMultiOwnItems(selectedGroup);
+        } 
     }
 }

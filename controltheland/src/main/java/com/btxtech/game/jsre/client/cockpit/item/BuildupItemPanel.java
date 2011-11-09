@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.jsre.client.cockpit;
+package com.btxtech.game.jsre.client.cockpit.item;
 
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.ClientSyncItem;
@@ -19,6 +19,10 @@ import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.client.action.ActionHandler;
+import com.btxtech.game.jsre.client.cockpit.Group;
+import com.btxtech.game.jsre.client.cockpit.HintWidgetException;
+import com.btxtech.game.jsre.client.cockpit.HintWidgetProvider;
+import com.btxtech.game.jsre.client.cockpit.PlaceablePreviewSyncItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.tutorial.CockpitSpeechBubbleHintConfig;
@@ -46,8 +50,9 @@ public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvide
     private static final String TOOL_TIP_SCROLL_LEFT = "Scroll left";
     private static final String TOOL_TIP_SCROLL_RIGHT = "Scroll right";
 
-    private static final int SCROLL_STEP = 50;
+    private static final int WIDTH = 355;
     private static final int HEIGHT = 100;
+    private static final int SCROLL_STEP = 50;
     private static final int ARROW_L_LEFT = 0;
     private static final int ARROW_L_TOP = 0;
     private static final int ARROW_R_LEFT = 300;
@@ -57,10 +62,16 @@ public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvide
     private static final int SCROLL_LENGTH = 250;
     private static final int SCROLL_HEIGHT = 100;
     private ScrollPanel scrollPanel;
-    private Map<Integer, BuildupItem> builupItem = new HashMap<Integer, BuildupItem>();
+    private Map<Integer, BuildupItem> buildupItem = new HashMap<Integer, BuildupItem>();
+    private BuildListener buildListener;
 
-    public BuildupItemPanel() {
-        setPixelSize(SelectedItemPanel.WIDTH, HEIGHT);
+    public interface BuildListener {
+        void onBuild();
+    }
+
+    public BuildupItemPanel(BuildListener buildListener) {
+        this.buildListener = buildListener;
+        setPixelSize(WIDTH, HEIGHT);
         ExtendedCustomButton leftArrow = new ExtendedCustomButton("/images/cockpit/leftArrowButton-up.png", "/images/cockpit/leftArrowButton-down.png", false, TOOL_TIP_SCROLL_LEFT, new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -118,7 +129,7 @@ public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvide
     }
 
     private void setupBuildupItemsCV(final Group constructionVehicles) throws NoSuchItemTypeException {
-        builupItem.clear();
+        buildupItem.clear();
         HorizontalPanel itemsToBuild = new HorizontalPanel();
         Collection<Integer> itemTypeIDs = constructionVehicles.getFirst().getSyncBaseItem().getBaseItemType().getBuilderType().getAbleToBuild();
         for (Integer itemTypeID : itemTypeIDs) {
@@ -126,6 +137,9 @@ public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvide
             itemsToBuild.add(setupBuildupBlock(itemType, new MouseDownHandler() {
                 @Override
                 public void onMouseDown(MouseDownEvent event) {
+                    if (buildListener != null) {
+                        buildListener.onBuild();
+                    }
                     new PlaceablePreviewSyncItem(ImageHandler.getItemTypeImage(itemType), event, constructionVehicles, itemType);
                 }
             }));
@@ -135,7 +149,7 @@ public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvide
     }
 
     private void setupBuildupItemsFactory(final Group factories) throws NoSuchItemTypeException {
-        builupItem.clear();
+        buildupItem.clear();
         HorizontalPanel itemsToBuild = new HorizontalPanel();
         Collection<Integer> itemTypeIDs = factories.getFirst().getSyncBaseItem().getBaseItemType().getFactoryType().getAbleToBuild();
         for (Integer itemTypeID : itemTypeIDs) {
@@ -143,6 +157,9 @@ public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvide
             itemsToBuild.add(setupBuildupBlock(itemType, new MouseDownHandler() {
                 @Override
                 public void onMouseDown(MouseDownEvent event) {
+                    if (buildListener != null) {
+                        buildListener.onBuild();
+                    }
                     try {
                         ActionHandler.getInstance().fabricate(factories.getItems(), itemType);
                     } catch (NoSuchItemTypeException e) {
@@ -157,7 +174,7 @@ public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvide
 
     private Widget setupBuildupBlock(BaseItemType itemType, MouseDownHandler mouseDownHandler) {
         BuildupItem buildupItem = new BuildupItem(itemType, mouseDownHandler);
-        builupItem.put(itemType.getId(), buildupItem);
+        this.buildupItem.put(itemType.getId(), buildupItem);
         return buildupItem;
     }
 
@@ -169,7 +186,7 @@ public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvide
         if (!isVisible()) {
             throw new HintWidgetException(this + " BuildupItemPanel not visible", config);
         }
-        Widget widget = builupItem.get(config.getBaseItemTypeId());
+        Widget widget = buildupItem.get(config.getBaseItemTypeId());
         if (widget != null) {
             scrollPanel.setHorizontalScrollPosition(widget.getAbsoluteLeft() - scrollPanel.getAbsoluteLeft());
             return widget;
@@ -179,13 +196,13 @@ public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvide
     }
 
     public void onMoneyChanged(double accountBalance) {
-        for (BuildupItem buildupItem : builupItem.values()) {
+        for (BuildupItem buildupItem : this.buildupItem.values()) {
             buildupItem.onMoneyChanged(accountBalance);
         }
     }
 
     public void onStateChanged() {
-        for (BuildupItem buildupItem : builupItem.values()) {
+        for (BuildupItem buildupItem : this.buildupItem.values()) {
             buildupItem.onStateChanged();
         }
     }
