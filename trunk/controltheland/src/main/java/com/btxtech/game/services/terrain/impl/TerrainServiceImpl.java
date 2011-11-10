@@ -17,6 +17,7 @@ import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.common.gameengine.services.items.ItemService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImageBackground;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.mapeditor.TerrainInfo;
 import com.btxtech.game.services.collision.CollisionService;
@@ -25,6 +26,7 @@ import com.btxtech.game.services.mgmt.MgmtService;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbSurfaceRect;
 import com.btxtech.game.services.terrain.DbTerrainImage;
+import com.btxtech.game.services.terrain.DbTerrainImageGroup;
 import com.btxtech.game.services.terrain.DbTerrainImagePosition;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainService;
@@ -68,7 +70,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     @Autowired
     private CrudRootServiceHelper<DbTerrainSetting> dbTerrainSettingCrudServiceHelper;
     @Autowired
-    private CrudRootServiceHelper<DbTerrainImage> dbTerrainImageCrudServiceHelper;
+    private CrudRootServiceHelper<DbTerrainImageGroup> dbTerrainImageGroupCrudRootServiceHelper;
     @Autowired
     private CrudRootServiceHelper<DbSurfaceImage> dbSurfaceImageCrudServiceHelper;
     @Autowired
@@ -78,6 +80,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     private HashMap<Integer, DbTerrainImage> dbTerrainImages = new HashMap<Integer, DbTerrainImage>();
     private HashMap<Integer, DbSurfaceImage> dbSurfaceImages = new HashMap<Integer, DbSurfaceImage>();
     private Log log = LogFactory.getLog(TerrainServiceImpl.class);
+    private TerrainImageBackground terrainImageBackground;
 
     @Autowired
     public void setSessionFactory(SessionFactory sessionFactory) {
@@ -89,7 +92,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         if (mgmtService.isNoGameEngine()) {
             return;
         }
-        dbTerrainImageCrudServiceHelper.init(DbTerrainImage.class);
+        dbTerrainImageGroupCrudRootServiceHelper.init(DbTerrainImageGroup.class);
         dbSurfaceImageCrudServiceHelper.init(DbSurfaceImage.class);
         dbTerrainSettingCrudServiceHelper.init(DbTerrainSetting.class);
         SessionFactoryUtils.initDeferredClose(hibernateTemplate.getSessionFactory());
@@ -105,8 +108,8 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
     }
 
     @Override
-    public CrudRootServiceHelper<DbTerrainImage> getDbTerrainImageCrudServiceHelper() {
-        return dbTerrainImageCrudServiceHelper;
+    public CrudRootServiceHelper<DbTerrainImageGroup> getDbTerrainImageGroupCrudServiceHelper() {
+        return dbTerrainImageGroupCrudRootServiceHelper;
     }
 
     @Override
@@ -137,12 +140,17 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
         }
 
         // Terrain images
-        Collection<DbTerrainImage> imageList = dbTerrainImageCrudServiceHelper.readDbChildren();
+        terrainImageBackground = new TerrainImageBackground();
+        Collection<DbTerrainImageGroup> imageGroupList = dbTerrainImageGroupCrudRootServiceHelper.readDbChildren();
         clearTerrainImages();
         dbTerrainImages = new HashMap<Integer, DbTerrainImage>();
-        for (DbTerrainImage dbTerrainImage : imageList) {
-            dbTerrainImages.put(dbTerrainImage.getId(), dbTerrainImage);
-            putTerrainImage(dbTerrainImage.createTerrainImage());
+        for (DbTerrainImageGroup dbTerrainImageGroup : imageGroupList) {
+            Collection<DbTerrainImage> imageList = dbTerrainImageGroup.getTerrainImageCrud().readDbChildren();
+            for (DbTerrainImage dbTerrainImage : imageList) {
+                dbTerrainImages.put(dbTerrainImage.getId(), dbTerrainImage);
+                putTerrainImage(dbTerrainImage.createTerrainImage());
+                terrainImageBackground.put(dbTerrainImage.getId(), dbTerrainImageGroup.getHtmlBackgroundColor());
+            }
         }
 
         // Surface images
@@ -260,6 +268,7 @@ public class TerrainServiceImpl extends AbstractTerrainServiceImpl implements Te
 
     @Override
     public void setupTerrain(GameInfo gameInfo, DbAbstractLevel dbAbstractLevel) {
+        gameInfo.setTerrainImageBackground(terrainImageBackground);
         if (dbAbstractLevel instanceof DbRealGameLevel) {
             gameInfo.setTerrainSettings(getTerrainSettings());
             gameInfo.setTerrainImagePositions(getTerrainImagePositions());

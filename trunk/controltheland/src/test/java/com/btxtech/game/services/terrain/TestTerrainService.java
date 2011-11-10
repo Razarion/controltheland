@@ -44,10 +44,10 @@ public class TestTerrainService extends AbstractServiceTest {
 
         Collection<SurfaceType> allowedSurfaces = Arrays.asList(SurfaceType.LAND);
 
-        Rectangle terrainImage1 =  new Rectangle(1000, 0, 400, 1000);
+        Rectangle terrainImage1 = new Rectangle(1000, 0, 400, 1000);
 
         for (int i = 100; i < 1500; i++) {
-           Index index = new Index(i, 100);
+            Index index = new Index(i, 100);
             Assert.assertEquals(!terrainImage1.adjoinsEclusive(new Rectangle(i - 50, 50, 100, 100)), terrainService.isFree(index, 100, 100, allowedSurfaces));
         }
     }

@@ -16,7 +16,7 @@ package com.btxtech.game.wicket.pages.mgmt;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
-import com.btxtech.game.services.terrain.DbTerrainImage;
+import com.btxtech.game.services.terrain.DbTerrainImageGroup;
 import com.btxtech.game.services.terrain.TerrainService;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
 import org.apache.wicket.AttributeModifier;
@@ -24,6 +24,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.markup.html.image.Image;
@@ -33,7 +34,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.resource.ByteArrayResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import javax.swing.*;
 import java.util.Arrays;
 
 /**
@@ -58,6 +58,7 @@ public class TerrainTileEditor extends MgmtWebPage {
 
             @Override
             protected void extendedPopulateItem(final Item<DbSurfaceImage> item) {
+                displayId(item);
                 // image
                 if (item.getModelObject().getImageData() != null && item.getModelObject().getImageData().length > 0) {
                     item.add(new Image("image", new ByteArrayResource("", item.getModelObject().getImageData())));
@@ -104,6 +105,7 @@ public class TerrainTileEditor extends MgmtWebPage {
                     }
                 };
                 item.add(new DropDownChoice<SurfaceType>("surfaceType", surfaceTypeIModel, Arrays.asList(SurfaceType.values())));
+                item.add(new TextField("htmlBackgroundColor"));
                 // alternating row color
                 item.add(new AttributeModifier("class", true, new Model<String>(item.getIndex() % 2 == 0 ? "even" : "odd")));
             }
@@ -127,52 +129,21 @@ public class TerrainTileEditor extends MgmtWebPage {
             }
         }));
 
-        new CrudRootTableHelper<DbTerrainImage>("terrainImages", "updateTerrainImages", "createTerrainImage", true, form, false) {
+        new CrudRootTableHelper<DbTerrainImageGroup>("terrainImageGroups", "updateTerrainImageGroups", "createTerrainImageGroup", true, form, false) {
             @Override
-            protected CrudRootServiceHelper<DbTerrainImage> getCrudRootServiceHelperImpl() {
-                return terrainService.getDbTerrainImageCrudServiceHelper();
+            protected CrudRootServiceHelper<DbTerrainImageGroup> getCrudRootServiceHelperImpl() {
+                return terrainService.getDbTerrainImageGroupCrudServiceHelper();
             }
 
             @Override
-            protected void extendedPopulateItem(final Item<DbTerrainImage> item) {
-                // image
-                if (item.getModelObject().getImageData() != null && item.getModelObject().getImageData().length > 0) {
-                    item.add(new Image("image", new ByteArrayResource("", item.getModelObject().getImageData())));
-                } else {
-                    item.add(new Image("image").setVisible(false));
-                }
-                // upload
-                FileUploadField upload = new FileUploadField("upload", new IModel<FileUpload>() {
-                    @Override
-                    public FileUpload getObject() {
-                        return null;
-                    }
-
-                    @Override
-                    public void setObject(FileUpload fileUpload) {
-                        ImageIcon image = new ImageIcon(fileUpload.getBytes());
-                        item.getModelObject().setImageData(fileUpload.getBytes());
-                        item.getModelObject().setContentType(fileUpload.getContentType());
-                        item.getModelObject().setTiles((int) Math.ceil(image.getIconWidth() / terrainService.getTerrainSettings().getTileWidth()),
-                                (int) Math.ceil(image.getIconHeight() / terrainService.getTerrainSettings().getTileHeight()));
-                    }
-
-                    @Override
-                    public void detach() {
-                        //Ignored
-                    }
-                });
-                item.add(upload);
-                // Size
-                double size = item.getModelObject().getImageData() != null ? item.getModelObject().getImageData().length / 1000.0 : 0;
-                item.add(new Label("size", Double.toString(size)));
-                // alternating row color
-                item.add(new AttributeModifier("class", true, new Model<String>(item.getIndex() % 2 == 0 ? "even" : "odd")));
+            protected void extendedPopulateItem(Item<DbTerrainImageGroup> dbTerrainImageGroupItem) {
+                displayId(dbTerrainImageGroupItem);                
+                super.extendedPopulateItem(dbTerrainImageGroupItem);
             }
 
             @Override
-            protected void onEditSubmit(DbTerrainImage dbTerrainImage) {
-                setResponsePage(new TerrainImageSurfaceTypeEditor(dbTerrainImage));
+            protected void onEditSubmit(DbTerrainImageGroup dbTerrainImageGroup) {
+                setResponsePage(new TerrainImageGroupEditor(dbTerrainImageGroup));
             }
         };
 

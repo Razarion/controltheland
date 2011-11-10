@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.client.utg;
 
 import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
+import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.control.StartupScreen;
@@ -42,7 +43,7 @@ public class ClientLevelHandler {
 
     public void setLevel(Level level) {
         this.level = level;
-        Cockpit.getInstance().setLevel(level.getName());
+        SideCockpit.getInstance().setLevel(level.getName());
     }
 
 
@@ -54,7 +55,7 @@ public class ClientLevelHandler {
         this.level = level;
         DialogManager.showDialog(new LevelTargetDialog(level.getHtml()), DialogManager.Type.PROMPTLY);
         if (oldLevel.isRealGame() && level.isRealGame()) {
-            Cockpit.getInstance().setLevel(level.getName());
+            SideCockpit.getInstance().setLevel(level.getName());
             Cockpit.getInstance().updateItemLimit();
         } else {
             StartupScreen.getInstance().fadeOut(new Runnable() {

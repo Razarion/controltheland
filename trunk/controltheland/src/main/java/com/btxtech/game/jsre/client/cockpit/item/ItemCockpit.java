@@ -26,7 +26,7 @@ import com.google.gwt.user.client.ui.Widget;
  * Date: 08.11.2011
  * Time: 00:29:45
  */
-public class ItemCockpit extends AbstractControlPanel implements BuildupItemPanel.BuildListener{
+public class ItemCockpit extends AbstractControlPanel implements BuildupItemPanel.BuildListener {
     private static final ItemCockpit INSTANCE = new ItemCockpit();
     private static final int WIDTH = 410;
     private static final int HEIGHT = 166;
@@ -150,5 +150,17 @@ public class ItemCockpit extends AbstractControlPanel implements BuildupItemPane
     @Override
     public void onBuild() {
         deActivate();
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void onMoneyChanged(double accountBalance) {
+        buildupItemPanel.onMoneyChanged(accountBalance);
+    }
+
+    public void onStateChanged() {
+        buildupItemPanel.onStateChanged();
     }
 }

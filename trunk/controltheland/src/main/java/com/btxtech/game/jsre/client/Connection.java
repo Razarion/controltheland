@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
+import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.Message;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
@@ -227,7 +228,7 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
                 } else if (packet instanceof ItemTypeAccessSyncInfo) {
                     ItemTypeAccessSyncInfo itemTypeAccessSyncInfo = (ItemTypeAccessSyncInfo) packet;
                     ClientItemTypeAccess.getInstance().setAllowedItemTypes(itemTypeAccessSyncInfo.getAllowedItemTypes());
-                    Cockpit.getInstance().onStateChanged();
+                    SideCockpit.getInstance().onStateChanged();
                 } else if (packet instanceof EnergyPacket) {
                     ClientEnergyService.getInstance().onEnergyPacket((EnergyPacket) packet);
                 } else if (packet instanceof UserMessage) {

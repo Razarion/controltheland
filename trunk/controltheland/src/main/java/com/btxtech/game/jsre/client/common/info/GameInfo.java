@@ -17,17 +17,15 @@ import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.common.CmsUtil;
 import com.btxtech.game.jsre.common.Territory;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
-import com.btxtech.game.jsre.common.gameengine.services.collision.PassableRectangle;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
+import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImageBackground;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImagePosition;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
-import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,6 +39,7 @@ public abstract class GameInfo implements Serializable {
     private Collection<SurfaceRect> surfaceRects;
     private Collection<SurfaceImage> surfaceImages;
     private Collection<TerrainImage> terrainImages;
+    private TerrainImageBackground terrainImageBackground;
     private boolean registered;
     private int registerDialogDelay;
     private Collection<Territory> territories;
@@ -86,6 +85,14 @@ public abstract class GameInfo implements Serializable {
 
     public void setTerrainImages(Collection<TerrainImage> terrainImages) {
         this.terrainImages = terrainImages;
+    }
+
+    public TerrainImageBackground getTerrainImageBackground() {
+        return terrainImageBackground;
+    }
+
+    public void setTerrainImageBackground(TerrainImageBackground terrainImageBackground) {
+        this.terrainImageBackground = terrainImageBackground;
     }
 
     public int getRegisterDialogDelayInS() {

@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client;
 
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
+import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.client.dialogs.UnfrequentDialog;
@@ -77,7 +78,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
 
     public void setAccountBalance(double accountBalance) {
         this.accountBalance = accountBalance;
-        Cockpit.getInstance().updateMoney();
+        SideCockpit.getInstance().updateMoney();
     }
 
     public boolean isMyOwnProperty(SyncBaseItem syncItem) {
@@ -99,7 +100,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
             } else {
                 accountBalance += price;
             }
-            Cockpit.getInstance().updateMoney();
+            SideCockpit.getInstance().updateMoney();
             SimulationConditionServiceImpl.getInstance().onMoneyIncrease(simpleBase, price);
         }
     }
@@ -114,7 +115,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
             throw new InsufficientFundsException();
         } else {
             accountBalance -= price;
-            Cockpit.getInstance().updateMoney();
+            SideCockpit.getInstance().updateMoney();
         }
         SimulationConditionServiceImpl.getInstance().onWithdrawalMoney();
     }

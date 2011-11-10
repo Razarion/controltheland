@@ -52,6 +52,7 @@ import com.btxtech.game.services.resource.ResourceService;
 import com.btxtech.game.services.terrain.DbSurfaceImage;
 import com.btxtech.game.services.terrain.DbSurfaceRect;
 import com.btxtech.game.services.terrain.DbTerrainImage;
+import com.btxtech.game.services.terrain.DbTerrainImageGroup;
 import com.btxtech.game.services.terrain.DbTerrainImagePosition;
 import com.btxtech.game.services.terrain.DbTerrainSetting;
 import com.btxtech.game.services.terrain.TerrainService;
@@ -811,25 +812,25 @@ abstract public class AbstractServiceTest {
     }
 
     protected void setupTerrainImages() {
-        DbTerrainImage dbTerrainImage = terrainService.getDbTerrainImageCrudServiceHelper().createDbChild();
-        dbTerrainImage.setTiles(4, 10);
-        terrainService.getDbTerrainImageCrudServiceHelper().updateDbChild(dbTerrainImage);
-        TERRAIN_IMAGE_4x10 = dbTerrainImage.getId();
+        DbTerrainImageGroup dbTerrainImageGroup = terrainService.getDbTerrainImageGroupCrudServiceHelper().createDbChild();
+        DbTerrainImage dbTerrainImage1 = dbTerrainImageGroup.getTerrainImageCrud().createDbChild();
+        dbTerrainImage1.setTiles(4, 10);
 
-        dbTerrainImage = terrainService.getDbTerrainImageCrudServiceHelper().createDbChild();
-        dbTerrainImage.setTiles(10, 4);
-        terrainService.getDbTerrainImageCrudServiceHelper().updateDbChild(dbTerrainImage);
-        TERRAIN_IMAGE_10x4 = dbTerrainImage.getId();
+        DbTerrainImage dbTerrainImage2 = dbTerrainImageGroup.getTerrainImageCrud().createDbChild();
+        dbTerrainImage2.setTiles(10, 4);
 
-        dbTerrainImage = terrainService.getDbTerrainImageCrudServiceHelper().createDbChild();
-        dbTerrainImage.setTiles(4, 4);
-        terrainService.getDbTerrainImageCrudServiceHelper().updateDbChild(dbTerrainImage);
-        TERRAIN_IMAGE_4x4 = dbTerrainImage.getId();
+        DbTerrainImage dbTerrainImage3 = dbTerrainImageGroup.getTerrainImageCrud().createDbChild();
+        dbTerrainImage3.setTiles(4, 4);
 
-        dbTerrainImage = terrainService.getDbTerrainImageCrudServiceHelper().createDbChild();
-        dbTerrainImage.setTiles(10, 10);
-        terrainService.getDbTerrainImageCrudServiceHelper().updateDbChild(dbTerrainImage);
-        TERRAIN_IMAGE_10x10 = dbTerrainImage.getId();
+        DbTerrainImage dbTerrainImage4 = dbTerrainImageGroup.getTerrainImageCrud().createDbChild();
+        dbTerrainImage4.setTiles(10, 10);
+
+        terrainService.getDbTerrainImageGroupCrudServiceHelper().updateDbChild(dbTerrainImageGroup);
+
+        TERRAIN_IMAGE_4x10 = dbTerrainImage1.getId();
+        TERRAIN_IMAGE_10x4 = dbTerrainImage2.getId();
+        TERRAIN_IMAGE_4x4 = dbTerrainImage3.getId();
+        TERRAIN_IMAGE_10x10 = dbTerrainImage4.getId();
     }
 
     protected DbTerrainSetting setupMinimalTerrain() {
@@ -847,9 +848,10 @@ abstract public class AbstractServiceTest {
     }
 
     protected DbTerrainImage createDbTerrainImage(int tileWidth, int tileHeight) {
-        DbTerrainImage dbTerrainImage = terrainService.getDbTerrainImageCrudServiceHelper().createDbChild();
+        DbTerrainImageGroup dbTerrainImageGroup = terrainService.getDbTerrainImageGroupCrudServiceHelper().createDbChild();
+        DbTerrainImage dbTerrainImage = dbTerrainImageGroup.getTerrainImageCrud().createDbChild();
         dbTerrainImage.setTiles(tileWidth, tileHeight);
-        terrainService.getDbTerrainImageCrudServiceHelper().updateDbChild(dbTerrainImage);
+        terrainService.getDbTerrainImageGroupCrudServiceHelper().updateDbChild(dbTerrainImageGroup);
         terrainService.activateTerrain();
         return dbTerrainImage;
     }
@@ -880,6 +882,8 @@ abstract public class AbstractServiceTest {
     }
 
     protected DbTerrainSetting setupComplexRealGameTerrain(DbSurfaceImage dbSurfaceImage) {
+        DbTerrainImageGroup dbTerrainImageGroup = terrainService.getDbTerrainImageGroupCrudServiceHelper().readDbChildren().iterator().next();
+
         DbTerrainSetting dbTerrainSetting = terrainService.getDbTerrainSettingCrudServiceHelper().createDbChild();
         dbTerrainSetting.setRealGame(true);
         dbTerrainSetting.setTileXCount(100);
@@ -890,17 +894,17 @@ abstract public class AbstractServiceTest {
         dbTerrainSetting.getDbSurfaceRectCrudServiceHelper().addChild(dbSurfaceRect, null);
         // Setup Terrain Images
         Collection<DbTerrainImagePosition> dbTerrainImagePositions = new ArrayList<DbTerrainImagePosition>();
-        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(10, 0), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_4x10)));
-        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(0, 13), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_10x4)));
-        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(0, 21), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_10x4)));
-        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(13, 22), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_10x4)));
-        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(20, 16), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_10x4)));
-        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(20, 7), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_10x4)));
-        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(10, 29), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_4x10)));
-        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(15, 26), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_4x10)));
-        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(21, 29), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_4x10)));
-        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(35, 20), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_4x10)));
-        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(36, 5), terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(TERRAIN_IMAGE_4x10)));
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(10, 0), dbTerrainImageGroup.getTerrainImageCrud().readDbChild(TERRAIN_IMAGE_4x10)));
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(0, 13), dbTerrainImageGroup.getTerrainImageCrud().readDbChild(TERRAIN_IMAGE_10x4)));
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(0, 21), dbTerrainImageGroup.getTerrainImageCrud().readDbChild(TERRAIN_IMAGE_10x4)));
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(13, 22), dbTerrainImageGroup.getTerrainImageCrud().readDbChild(TERRAIN_IMAGE_10x4)));
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(20, 16), dbTerrainImageGroup.getTerrainImageCrud().readDbChild(TERRAIN_IMAGE_10x4)));
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(20, 7), dbTerrainImageGroup.getTerrainImageCrud().readDbChild(TERRAIN_IMAGE_10x4)));
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(10, 29), dbTerrainImageGroup.getTerrainImageCrud().readDbChild(TERRAIN_IMAGE_4x10)));
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(15, 26), dbTerrainImageGroup.getTerrainImageCrud().readDbChild(TERRAIN_IMAGE_4x10)));
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(21, 29), dbTerrainImageGroup.getTerrainImageCrud().readDbChild(TERRAIN_IMAGE_4x10)));
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(35, 20), dbTerrainImageGroup.getTerrainImageCrud().readDbChild(TERRAIN_IMAGE_4x10)));
+        dbTerrainImagePositions.add(new DbTerrainImagePosition(new Index(36, 5), dbTerrainImageGroup.getTerrainImageCrud().readDbChild(TERRAIN_IMAGE_4x10)));
 
 
         dbTerrainSetting.getDbTerrainImagePositionCrudServiceHelper().updateDbChildren(dbTerrainImagePositions);

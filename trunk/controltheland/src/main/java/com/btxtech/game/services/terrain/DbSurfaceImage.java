@@ -18,11 +18,11 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.user.UserService;
 
-import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.io.Serializable;
 
 
 /**
@@ -40,6 +40,7 @@ public class DbSurfaceImage implements CrudChild, Serializable {
     private String contentType;
     @Column(nullable = false)
     private SurfaceType surfaceType;
+    private String htmlBackgroundColor;
 
     @Override
     public String getName() {
@@ -54,6 +55,7 @@ public class DbSurfaceImage implements CrudChild, Serializable {
     @Override
     public void init(UserService userService) {
         surfaceType = SurfaceType.LAND;
+        htmlBackgroundColor = "#FFFFFF";
     }
 
     @Override
@@ -90,7 +92,15 @@ public class DbSurfaceImage implements CrudChild, Serializable {
     }
 
     public SurfaceImage createSurfaceImage() {
-        return new SurfaceImage(surfaceType, id);
+        return new SurfaceImage(surfaceType, id, htmlBackgroundColor);
+    }
+
+    public String getHtmlBackgroundColor() {
+        return htmlBackgroundColor;
+    }
+
+    public void setHtmlBackgroundColor(String htmlBackgroundColor) {
+        this.htmlBackgroundColor = htmlBackgroundColor;
     }
 
     @Override
@@ -106,8 +116,6 @@ public class DbSurfaceImage implements CrudChild, Serializable {
 
     @Override
     public int hashCode() {
-        int hash = id != null ? id.hashCode() : System.identityHashCode(this);
-        return hash;
-
+        return id != null ? id : System.identityHashCode(this);
     }
 }

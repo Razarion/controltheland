@@ -116,12 +116,8 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
     // Selection
     private static final int SELECTION_LEFT = 240;
     private static final int SELECTION_TOP = 26;
-    // Debug
-    private static final int DEBUG_POSITION_LEFT = 240;
-    private static final int DEBUG_POSITION__TOP = 26;
 
     private CockpitMode cockpitMode;
-    private Label money;
     private Label xp;
     private Label level;
     private Label itemLimit;
@@ -135,7 +131,6 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
     private Timer timer;
     private Map<CockpitWidgetEnum, Widget> widgets = new HashMap<CockpitWidgetEnum, Widget>();
     private SelectedItemPanel selectedItemPanel;
-    private Label debugPosition;
     private ExtendedCustomButton sellButton;
     private boolean active = false;
 
@@ -156,11 +151,6 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         setupOnline();
         selectedItemPanel = new SelectedItemPanel();
         add(selectedItemPanel, SELECTION_LEFT, SELECTION_TOP);
-        if (Game.isDebug()) {
-            debugPosition = new Label();
-            debugPosition.getElement().getStyle().setBackgroundColor("#FFFFFF");
-            add(debugPosition, DEBUG_POSITION_LEFT, DEBUG_POSITION__TOP);
-        }
     }
 
     private void setupOnline() {
@@ -187,10 +177,6 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
     }
 
     private void setupInfo() {
-        money = new Label();
-        add(money, MONEY_LEFT, MONEY_TOP);
-        money.setTitle(TOOL_TIP_MONEY);
-        widgets.put(CockpitWidgetEnum.MONEY_FIELD, money);
         xp = new Label();
         add(xp, XP_LEFT, XP_TOP);
         xp.setTitle(TOOL_TIP_XP);
@@ -285,23 +271,10 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         }, MouseDownEvent.getType());
     }
 
-    public void updateMoney() {
-        if (money != null) {
-            double accountBalance = ClientBase.getInstance().getAccountBalance();
-            money.setText(Integer.toString((int) Math.round(accountBalance)));
-            selectedItemPanel.onMoneyChanged(accountBalance);
-        }
-    }
-
     public void updateXp(int amount) {
         if (xp != null) {
             xp.setText(Integer.toString(amount));
         }
-    }
-
-    public void setLevel(String level) {
-        this.level.setText(level);
-        onStateChanged();
     }
 
     public void updateItemLimit() {
@@ -314,7 +287,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         builder.append("/");
         builder.append(ClientBase.getInstance().getHouseSpace() + ClientLevelHandler.getInstance().getLevel().getHouseSpace());
         itemLimit.setText(builder.toString());
-        onStateChanged();
+        // TODO onStateChanged();
     }
 
     public void updateEnergy(int generating, int consuming) {
@@ -332,8 +305,7 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         userColor.getElement().getStyle().setBackgroundColor(ClientBase.getInstance().getOwnBaseHtmlColor());
     }
 
-    public void setGameInfo(RealityInfo realityInfo) {
-        money.setText(Integer.toString((int) Math.round(realityInfo.getAccountBalance())));
+    public void _setGameInfo(RealityInfo realityInfo) {
         xp.setText(Integer.toString(realityInfo.getXp()));
         updateBase();
     }
@@ -394,10 +366,6 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
         send.setEnabled(enabled);
     }
 
-    public void debugAbsoluteCursorPos(int x, int y) {
-        debugPosition.setText(x + ":" + y);
-    }
-
     public SelectedItemPanel getSelectedItemPanel() {
         return selectedItemPanel;
     }
@@ -430,10 +398,6 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
                 throw new HintWidgetException(this + " selectedItemPanel is not visible", config);
             }
         }
-    }
-
-    public void onStateChanged() {
-        selectedItemPanel.onStateChanged();
     }
 
     public void clearSellMode() {

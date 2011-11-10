@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client.control.task;
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.ClientEnergyService;
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
+import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.item.ClientItemTypeAccess;
@@ -42,7 +43,7 @@ public class RealDeltaStartupTask extends GameEngineStartupTask {
         ClientBase.getInstance().setAllBaseAttributes(realityInfo.getAllBase());
         ClientBase.getInstance().setBase(realityInfo.getBase());
         ClientBase.getInstance().setAccountBalance(realityInfo.getAccountBalance());
-        Cockpit.getInstance().setGameInfo(realityInfo);
+        SideCockpit.getInstance().setGameInfo(realityInfo);
         ClientItemTypeAccess.getInstance().setAllowedItemTypes(realityInfo.getAllowedItemTypes());
         ClientEnergyService.getInstance().init(true);
         ClientBase.getInstance().setConnectedToServer4FakedHouseSpace(true);
