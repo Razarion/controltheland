@@ -1,7 +1,12 @@
 package com.btxtech.game.jsre.client.cockpit;
 
+import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.Game;
+import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.Label;
 
 /**
  * User: beat
@@ -21,6 +26,9 @@ public class SideCockpit extends AbsolutePanel {
     // Radar
     private static final int RADAR_TOP = CONTROL_PANEL_HEIGHT + CONTROL_PANEL_TOP + 10;
 
+    private CockpitControlPanel cockpitControlPanel;
+    private Label debugPosition;
+
     public static SideCockpit getInstance() {
         return INSTANCE;
     }
@@ -33,6 +41,12 @@ public class SideCockpit extends AbsolutePanel {
         setupMetal();
         setupControlPanel();
         setupRadar();
+        if (Game.isDebug()) {
+            debugPosition = new Label();
+            debugPosition.getElement().getStyle().setBackgroundColor("#FFFFFF");
+            add(debugPosition, CONTROL_PANEL_LEFT, CONTROL_PANEL_TOP);
+        }
+
     }
 
     public void addToParent(AbsolutePanel parent) {
@@ -63,7 +77,7 @@ public class SideCockpit extends AbsolutePanel {
     }
 
     private void setupControlPanel() {
-        CockpitControlPanel cockpitControlPanel = new CockpitControlPanel(CONTROL_PANEL_WIDTH, CONTROL_PANEL_HEIGHT);
+        cockpitControlPanel = new CockpitControlPanel(CONTROL_PANEL_WIDTH, CONTROL_PANEL_HEIGHT);
         add(cockpitControlPanel, CONTROL_PANEL_LEFT, CONTROL_PANEL_TOP);
     }
 
@@ -72,4 +86,38 @@ public class SideCockpit extends AbsolutePanel {
         RadarControlPanel radarControlPanel = new RadarControlPanel(CONTROL_PANEL_WIDTH, CONTROL_PANEL_WIDTH);
         add(radarControlPanel, CONTROL_PANEL_LEFT, RADAR_TOP);
     }
+
+    public void debugAbsoluteCursorPos(int x, int y) {
+        debugPosition.setText(x + ":" + y);
+    }
+
+    public void updateMoney() {
+        double accountBalance = ClientBase.getInstance().getAccountBalance();
+        if (cockpitControlPanel != null) {
+            cockpitControlPanel.updateMoney(accountBalance);
+        }
+        if (ItemCockpit.getInstance().isActive()) {
+            ItemCockpit.getInstance().onMoneyChanged(accountBalance);
+        }
+    }
+
+    public void setGameInfo(RealityInfo realityInfo) {
+        cockpitControlPanel.updateMoney(realityInfo.getAccountBalance());
+        // TODO updateBase();
+    }
+
+    public void setLevel(String level) {
+        if (cockpitControlPanel != null) {
+            cockpitControlPanel.setLevel(level);
+        }
+        onStateChanged();
+    }
+
+    public void onStateChanged() {
+        if (ItemCockpit.getInstance().isActive()) {
+            ItemCockpit.getInstance().onStateChanged();
+        }
+    }
+
+
 }

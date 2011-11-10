@@ -15,18 +15,21 @@ package com.btxtech.game.wicket.pages.mgmt;
 
 import com.btxtech.game.jsre.client.ImageHandler;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
+import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.terrain.DbTerrainImage;
 import com.btxtech.game.services.terrain.TerrainService;
-import java.util.Arrays;
+import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.markup.html.WebMarkupContainer;
-import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.repeater.RepeatingView;
+import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import java.util.Arrays;
 
 /**
  * User: beat
@@ -37,33 +40,19 @@ public class TerrainImageSurfaceTypeEditor extends MgmtWebPage {
     public static final int LINE_WIDTH = 2;
     @SpringBean
     private TerrainService terrainService;
+    @SpringBean
+    private RuServiceHelper<DbTerrainImage> serviceHelper;
 
     public TerrainImageSurfaceTypeEditor(DbTerrainImage dbTerrainImage) {
-        final int dbTerrainImageId = dbTerrainImage.getId();
         int cellWidth = terrainService.getTerrainSettings().getTileWidth() - LINE_WIDTH;
         int cellHeight = terrainService.getTerrainSettings().getTileHeight() - LINE_WIDTH;
 
-        final Form<DbTerrainImage> form = new Form<DbTerrainImage>("form", new IModel<DbTerrainImage>() {
-            private DbTerrainImage dbTerrainImage;
-
+        final Form<DbTerrainImage> form = new Form<DbTerrainImage>("form", new CompoundPropertyModel<DbTerrainImage>(new RuModel<DbTerrainImage>(dbTerrainImage, DbTerrainImage.class) {
             @Override
-            public DbTerrainImage getObject() {
-                if (dbTerrainImage == null) {
-                    dbTerrainImage = terrainService.getDbTerrainImageCrudServiceHelper().readDbChild(dbTerrainImageId);
-                }
-                return dbTerrainImage;
+            protected RuServiceHelper<DbTerrainImage> getRuServiceHelper() {
+                return serviceHelper;
             }
-
-            @Override
-            public void setObject(DbTerrainImage object) {
-                // Ignore
-            }
-
-            @Override
-            public void detach() {
-                dbTerrainImage = null;
-            }
-        });
+        }));
         add(form);
 
         String bgImageUrl = ImageHandler.getTerrainImageUrl(dbTerrainImage.getId());
@@ -86,12 +75,12 @@ public class TerrainImageSurfaceTypeEditor extends MgmtWebPage {
                 DropDownChoice dropDownChoice = new DropDownChoice<SurfaceType>("surfaceType", new IModel<SurfaceType>() {
                     @Override
                     public SurfaceType getObject() {
-                        return ((DbTerrainImage) form.getDefaultModelObject()).getSurfaceType(finalX, finalY);
+                        return form.getModelObject().getSurfaceType(finalX, finalY);
                     }
 
                     @Override
                     public void setObject(SurfaceType surfaceType) {
-                        ((DbTerrainImage) form.getDefaultModelObject()).setSurfaceType(finalX, finalY, surfaceType);
+                        form.getModelObject().setSurfaceType(finalX, finalY, surfaceType);
                     }
 
                     @Override
@@ -108,7 +97,7 @@ public class TerrainImageSurfaceTypeEditor extends MgmtWebPage {
 
             @Override
             public void onSubmit() {
-                terrainService.getDbTerrainImageCrudServiceHelper().updateDbChild((DbTerrainImage) form.getDefaultModelObject());
+                serviceHelper.updateDbEntity(form.getModelObject());
             }
         });
 

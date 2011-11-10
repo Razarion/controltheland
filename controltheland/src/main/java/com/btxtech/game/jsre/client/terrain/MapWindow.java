@@ -18,8 +18,7 @@ import com.btxtech.game.jsre.client.ClientSyncItemView;
 import com.btxtech.game.jsre.client.ExtendedAbsolutePanel;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GwtCommon;
-import com.btxtech.game.jsre.client.cockpit.Cockpit;
-import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.item.ItemViewContainer;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
@@ -197,7 +196,7 @@ public class MapWindow implements TerrainScrollListener, MouseMoveHandler, Mouse
         executeScrolling(tmpScrollDirectionX, tmpScrollDirectionY);
         */
         if (Game.isDebug()) {
-            Cockpit.getInstance().debugAbsoluteCursorPos(x + TerrainView.getInstance().getViewOriginLeft(), y + TerrainView.getInstance().getViewOriginTop());
+            SideCockpit.getInstance().debugAbsoluteCursorPos(x + TerrainView.getInstance().getViewOriginLeft(), y + TerrainView.getInstance().getViewOriginTop());
         }
         if (terrainMouseMoveListener != null) {
             terrainMouseMoveListener.onMove(x + TerrainView.getInstance().getViewOriginLeft(), y + TerrainView.getInstance().getViewOriginTop(), x, y);

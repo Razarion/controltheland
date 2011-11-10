@@ -18,16 +18,17 @@ import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainImage;
 import com.btxtech.game.services.common.CrudChild;
 import com.btxtech.game.services.user.UserService;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 
 
 /**
@@ -36,7 +37,7 @@ import javax.persistence.OneToMany;
  * Time: 22:09:11
  */
 @Entity(name = "TERRAIN_IMAGE")
-public class DbTerrainImage implements CrudChild, Serializable {
+public class DbTerrainImage implements CrudChild<DbTerrainImageGroup> {
     @Id
     @GeneratedValue
     private Integer id;
@@ -47,6 +48,8 @@ public class DbTerrainImage implements CrudChild, Serializable {
     private int tileHeight;
     @OneToMany(mappedBy = "dbTerrainImage", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Collection<TerrainImageTileSurfaceType> surfaceTypes;
+    @ManyToOne
+    private DbTerrainImageGroup parent;
 
     @Override
     public String getName() {
@@ -64,8 +67,8 @@ public class DbTerrainImage implements CrudChild, Serializable {
     }
 
     @Override
-    public void setParent(Object o) {
-        // Ignore
+    public void setParent(DbTerrainImageGroup parent) {
+        this.parent = parent;
     }
 
     public Integer getId() {

@@ -23,6 +23,7 @@ import java.io.Serializable;
 public class SurfaceImage implements Serializable {
     private SurfaceType surfaceType;
     private int id;
+    private String htmlBackgroundColor;
 
     /**
      * Used by GWT
@@ -30,9 +31,14 @@ public class SurfaceImage implements Serializable {
     public SurfaceImage() {
     }
 
-    public SurfaceImage(SurfaceType surfaceType, int id) {
+    public SurfaceImage(SurfaceType surfaceType, int id, String htmlBackgroundColor) {
         this.surfaceType = surfaceType;
         this.id = id;
+        if (htmlBackgroundColor != null) {
+            this.htmlBackgroundColor = htmlBackgroundColor;
+        } else {
+            this.htmlBackgroundColor = "#FFFFFF";
+        }
     }
 
     public SurfaceType getSurfaceType() {
@@ -41,5 +47,9 @@ public class SurfaceImage implements Serializable {
 
     public int getImageId() {
         return id;
+    }
+
+    public String getHtmlBackgroundColor() {
+        return htmlBackgroundColor;
     }
 }
