@@ -409,7 +409,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
 
         BaseItemType baseItemType = (BaseItemType) itemService.getItemType(TEST_ATTACK_ITEM_ID);
         Collection<BotItemConfig> botItemConfigs = new ArrayList<BotItemConfig>();
-        botItemConfigs.add(new BotItemConfig(baseItemType, 1, true, new Rectangle(0, 0, 1000, 1000), true, null));
+        botItemConfigs.add(new BotItemConfig(baseItemType, 1, true, new Rectangle(0, 0, 1000, 1000), true, null, false));
 
 
         EasyMock.replay(baseServiceMock);
@@ -449,7 +449,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
 
         BaseItemType baseItemType = (BaseItemType) itemService.getItemType(TEST_ATTACK_ITEM_ID);
         Collection<BotItemConfig> botItemConfigs = new ArrayList<BotItemConfig>();
-        botItemConfigs.add(new BotItemConfig(baseItemType, 1, true, new Rectangle(0, 0, 1000, 1000), false, 50));
+        botItemConfigs.add(new BotItemConfig(baseItemType, 1, true, new Rectangle(0, 0, 1000, 1000), false, 50, false));
 
         EasyMock.replay(baseServiceMock);
         EasyMock.replay(mockItemService);
@@ -459,6 +459,45 @@ public class TestBotItemContainer extends AbstractServiceTest {
         botItemContainer.work(simpleBase);
         EasyMock.verify(baseServiceMock);
         EasyMock.verify(mockItemService);
+    }
+
+    @Test
+    @DirtiesContext
+    public void noRebuild() throws Exception {
+        configureMinimalGame();
+
+        SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(1, Id.NO_ID, 0));
+
+        TestServices testServices = new TestServices();
+
+        BaseService baseServiceMock = EasyMock.createStrictMock(BaseService.class);
+        Collection<SyncBaseItem> botItems = new ArrayList<SyncBaseItem>();
+        botItems.add(syncBaseItem);
+        EasyMock.expect(baseServiceMock.getItems(simpleBase)).andReturn(null);
+        EasyMock.expect(baseServiceMock.getItems(simpleBase)).andReturn(botItems);
+        EasyMock.expect(baseServiceMock.getItems(simpleBase)).andReturn(null);
+        testServices.setBaseService(baseServiceMock);
+
+        BaseItemType baseItemType = (BaseItemType) itemService.getItemType(TEST_ATTACK_ITEM_ID);
+        Collection<BotItemConfig> botItemConfigs = new ArrayList<BotItemConfig>();
+        botItemConfigs.add(new BotItemConfig(baseItemType, 1, true, new Rectangle(0, 0, 1000, 1000), false, null, true));
+
+        CollisionService mockCollisionService = EasyMock.createStrictMock(CollisionService.class);
+        EasyMock.expect(mockCollisionService.getFreeRandomPosition(syncBaseItem.getBaseItemType(), new Rectangle(0, 0, 1000, 1000), 100, false, false)).andReturn(new Index(3000, 3500));
+        testServices.setCollisionService(mockCollisionService);
+
+        ItemService mockItemService = EasyMock.createStrictMock(ItemService.class);
+        EasyMock.expect(mockItemService.createSyncObject(itemService.getItemType(TEST_ATTACK_ITEM_ID), new Index(3000, 3500), null, simpleBase, 0)).andReturn(syncBaseItem);
+        testServices.setItemService(mockItemService);
+
+        EasyMock.replay(baseServiceMock, mockCollisionService, mockItemService);
+        BotItemContainer botItemContainer = new BotItemContainer(botItemConfigs, new Rectangle(2000, 3000, 1000, 2000), testServices, "Test Bot");
+        botItemContainer.work(simpleBase);
+        botItemContainer.work(simpleBase);
+        syncBaseItem.setHealth(0);
+        botItemContainer.work(simpleBase);
+        EasyMock.verify(baseServiceMock, mockCollisionService, mockItemService);
     }
 
 }

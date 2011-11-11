@@ -17,6 +17,7 @@ public class BotItemConfig implements Serializable {
     private Rectangle region;
     private boolean moveRealmIfIdle;
     private Integer idleTtl;
+    private boolean noRebuild;
 
     /**
      * Used by GWT
@@ -24,13 +25,14 @@ public class BotItemConfig implements Serializable {
     BotItemConfig() {
     }
 
-    public BotItemConfig(BaseItemType baseItemType, int count, boolean createDirectly, Rectangle region, boolean moveRealmIfIdle, Integer idleTtl) {
+    public BotItemConfig(BaseItemType baseItemType, int count, boolean createDirectly, Rectangle region, boolean moveRealmIfIdle, Integer idleTtl, boolean noRebuild) {
         this.baseItemType = baseItemType;
         this.count = count;
         this.createDirectly = createDirectly;
         this.region = region;
         this.moveRealmIfIdle = moveRealmIfIdle;
         this.idleTtl = idleTtl;
+        this.noRebuild = noRebuild;
     }
 
     public BaseItemType getBaseItemType() {
@@ -55,5 +57,9 @@ public class BotItemConfig implements Serializable {
 
     public Integer getIdleTtl() {
         return idleTtl;
+    }
+
+    public boolean isNoRebuild() {
+        return noRebuild;
     }
 }
