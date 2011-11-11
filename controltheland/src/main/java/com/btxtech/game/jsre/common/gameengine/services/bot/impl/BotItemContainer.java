@@ -128,7 +128,9 @@ public class BotItemContainer {
 
     private void remove(BotSyncBaseItem botSyncBaseItem) {
         botItems.remove(botSyncBaseItem.getSyncBaseItem());
-        need.onItemRemoved(botSyncBaseItem);
+        if (!botSyncBaseItem.getBotItemConfig().isNoRebuild()) {
+            need.onItemRemoved(botSyncBaseItem);
+        }
     }
 
     private void buildItems(SimpleBase simpleBase) {

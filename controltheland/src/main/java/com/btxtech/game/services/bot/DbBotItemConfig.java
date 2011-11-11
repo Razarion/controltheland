@@ -57,6 +57,7 @@ public class DbBotItemConfig implements CrudChild<DbBotConfig>, Serializable {
     private DbBotConfig parent;
     private boolean moveRealmIfIdle;
     private Integer idleTtl;
+    private boolean noRebuild;
 
     /**
      * Used by Hibernate
@@ -135,6 +136,14 @@ public class DbBotItemConfig implements CrudChild<DbBotConfig>, Serializable {
         this.idleTtl = idleTtl;
     }
 
+    public boolean isNoRebuild() {
+        return noRebuild;
+    }
+
+    public void setNoRebuild(boolean noRebuild) {
+        this.noRebuild = noRebuild;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -152,6 +161,6 @@ public class DbBotItemConfig implements CrudChild<DbBotConfig>, Serializable {
 
     public BotItemConfig createBotItemConfig(ItemService itemService) {
         BaseItemType baseItemType = (BaseItemType) itemService.getItemType(this.baseItemType);
-        return new BotItemConfig(baseItemType, count, createDirectly, region, moveRealmIfIdle, idleTtl);
+        return new BotItemConfig(baseItemType, count, createDirectly, region, moveRealmIfIdle, idleTtl, noRebuild);
     }
 }
