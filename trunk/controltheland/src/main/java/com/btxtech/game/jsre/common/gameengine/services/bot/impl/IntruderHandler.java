@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,7 +33,7 @@ import java.util.logging.Logger;
  * Time: 19:01:40
  */
 public class IntruderHandler {
-    private Map<SyncBaseItem, Collection<BotSyncBaseItem>> intruders = new HashMap<SyncBaseItem, Collection<BotSyncBaseItem>>();
+    private Map<SyncBaseItem, BotSyncBaseItem> intruders = new HashMap<SyncBaseItem, BotSyncBaseItem>();
     private BotItemContainer botItemContainer;
     private Rectangle region;
     private Services services;
@@ -53,54 +52,46 @@ public class IntruderHandler {
     public void handleIntruders(SimpleBase simpleBase) {
         removeDeadAttackers();
         Collection<SyncBaseItem> items = services.getItemService().getEnemyItems(simpleBase, region, true);
-        Map<SyncBaseItem, Collection<BotSyncBaseItem>> oldIntruders = intruders;
-        intruders = new HashMap<SyncBaseItem, Collection<BotSyncBaseItem>>();
+        Map<SyncBaseItem, BotSyncBaseItem> oldIntruders = intruders;
+        intruders = new HashMap<SyncBaseItem, BotSyncBaseItem>();
+        Collection<SyncBaseItem> newIntruders = new ArrayList<SyncBaseItem>();
         for (SyncBaseItem intruder : items) {
-            Collection<BotSyncBaseItem> attacker = oldIntruders.remove(intruder);
+            BotSyncBaseItem attacker = oldIntruders.remove(intruder);
             if (attacker != null) {
                 intruders.put(intruder, attacker);
-                checkIntruder(intruder);
             } else {
-                putAttackerToIntruder(intruder);
+                newIntruders.add(intruder);
             }
         }
 
-        for (Collection<BotSyncBaseItem> botSyncBaseItems : oldIntruders.values()) {
-            for (BotSyncBaseItem botSyncBaseItem : botSyncBaseItems) {
-                botSyncBaseItem.stop();
-            }
+        if (!newIntruders.isEmpty()) {
+            putAttackerToIntruders(newIntruders);
+        }
+
+        for (BotSyncBaseItem botSyncBaseItem : oldIntruders.values()) {
+            botSyncBaseItem.stop();
         }
     }
 
     private void removeDeadAttackers() {
-        for (Iterator<Collection<BotSyncBaseItem>> attackersIterator = intruders.values().iterator(); attackersIterator.hasNext();) {
-            Collection<BotSyncBaseItem> attackers = attackersIterator.next();
-            for (Iterator<BotSyncBaseItem> attackerIterator = attackers.iterator(); attackerIterator.hasNext();) {
-                BotSyncBaseItem attacker = attackerIterator.next();
-                if (!attacker.isAlive() || attacker.isIdle()) {
-                    attackerIterator.remove();
-                }
-            }
-            if (attackers.isEmpty()) {
-                attackersIterator.remove();
+        for (Iterator<BotSyncBaseItem> attackerIterator = intruders.values().iterator(); attackerIterator.hasNext();) {
+            BotSyncBaseItem attacker = attackerIterator.next();
+            if (!attacker.isAlive() || attacker.isIdle()) {
+                attackerIterator.remove();
             }
         }
     }
 
-    private void checkIntruder(SyncBaseItem intruder) {
-        Collection<BotSyncBaseItem> attackers = intruders.get(intruder);
-        if (attackers == null || attackers.isEmpty()) {
-            putAttackerToIntruder(intruder);
+    private void putAttackerToIntruders(Collection<SyncBaseItem> newIntruders) {
+        Collection<BotSyncBaseItem> idleAttackers = botItemContainer.getAllIdleAttackers();
+        Map<BotSyncBaseItem, SyncBaseItem> assignedAttackers = ShortestWaySorter.setupAttackerTarget(idleAttackers, newIntruders);
+
+        for (Map.Entry<BotSyncBaseItem, SyncBaseItem> entry : assignedAttackers.entrySet()) {
+            putAttackerToIntruder(entry.getKey(), entry.getValue());
         }
     }
 
-    private void putAttackerToIntruder(SyncBaseItem intruder) {
-        Collection<BotSyncBaseItem> attackers = intruders.get(intruder);
-        if (attackers == null) {
-            attackers = new ArrayList<BotSyncBaseItem>();
-            intruders.put(intruder, attackers);
-        }
-        BotSyncBaseItem attacker = botItemContainer.getFirstIdleAttacker(intruder);
+    private void putAttackerToIntruder(BotSyncBaseItem attacker, SyncBaseItem intruder) {
         if (attacker != null) {
             try {
                 AttackFormationItem attackFormationItem = services.getCollisionService().getDestinationHint(attacker.getSyncBaseItem(),
@@ -109,7 +100,7 @@ public class IntruderHandler {
                         attacker.getSyncBaseItem().getTerrainType());
                 if (attackFormationItem.isInRange()) {
                     attacker.attack(intruder, attackFormationItem.getDestinationHint(), attackFormationItem.getDestinationAngel());
-                    attackers.add(attacker);
+                    intruders.put(intruder, attacker);
                 }
             } catch (Exception e) {
                 log.log(Level.SEVERE, "", e);

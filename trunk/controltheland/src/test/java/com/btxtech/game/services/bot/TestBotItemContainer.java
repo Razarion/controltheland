@@ -2,6 +2,7 @@ package com.btxtech.game.services.bot;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.common.CommonJava;
 import com.btxtech.game.jsre.common.SimpleBase;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.services.bot.BotConfig;
@@ -314,7 +315,7 @@ public class TestBotItemContainer extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void getFirstIdleAttacker() throws Exception {
+    public void getIdleAttackers() throws Exception {
         configureMinimalGame();
 
         SimpleBase simpleBase = baseService.createBotBase(new BotConfig(0, 0, null, null, "Test Bot", null, null, null, null));
@@ -322,8 +323,6 @@ public class TestBotItemContainer extends AbstractServiceTest {
         SyncBaseItem defender1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1000), new Id(1, Id.NO_ID, 0));
         SyncBaseItem defender2 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1200), new Id(2, Id.NO_ID, 0));
         SyncBaseItem defender3 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1000, 1400), new Id(3, Id.NO_ID, 0));
-
-        SyncBaseItem enemy1 = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(1500, 1000), new Id(4, Id.NO_ID, 0));
 
         BaseService baseService = EasyMock.createStrictMock(BaseService.class);
         EasyMock.expect(baseService.getItems(simpleBase)).andReturn(null).times(2);
@@ -363,21 +362,23 @@ public class TestBotItemContainer extends AbstractServiceTest {
         botItemContainer.work(simpleBase);
         Assert.assertTrue(botItemContainer.isFulfilled(simpleBase));
 
-        BotSyncBaseItem botItem1 = botItemContainer.getFirstIdleAttacker(enemy1);
-        Assert.assertEquals(defender1, botItem1.getSyncBaseItem());
-        botItem1 = botItemContainer.getFirstIdleAttacker(enemy1);
-        Assert.assertEquals(defender1, botItem1.getSyncBaseItem());
+        Collection<BotSyncBaseItem> idleAttackers = botItemContainer.getAllIdleAttackers();
+        Assert.assertEquals(3, idleAttackers.size());
+        BotSyncBaseItem botItem1 = CommonJava.getFirst(idleAttackers);
         setPrivateField(BotSyncBaseItem.class, botItem1, "idle", false);
 
-        BotSyncBaseItem botItem2 = botItemContainer.getFirstIdleAttacker(enemy1);
-        Assert.assertEquals(defender2, botItem2.getSyncBaseItem());
+        idleAttackers = botItemContainer.getAllIdleAttackers();
+        Assert.assertEquals(2, idleAttackers.size());
+        BotSyncBaseItem botItem2 = CommonJava.getFirst(idleAttackers);
         setPrivateField(BotSyncBaseItem.class, botItem2, "idle", false);
 
-        BotSyncBaseItem botItem3 = botItemContainer.getFirstIdleAttacker(enemy1);
-        Assert.assertEquals(defender3, botItem3.getSyncBaseItem());
+        idleAttackers = botItemContainer.getAllIdleAttackers();
+        Assert.assertEquals(1, idleAttackers.size());
+        BotSyncBaseItem botItem3 = CommonJava.getFirst(idleAttackers);
         setPrivateField(BotSyncBaseItem.class, botItem3, "idle", false);
 
-        Assert.assertNull(botItemContainer.getFirstIdleAttacker(enemy1));
+        idleAttackers = botItemContainer.getAllIdleAttackers();
+        Assert.assertTrue(idleAttackers.isEmpty());
 
         EasyMock.verify(baseService);
         EasyMock.verify(mockItemService);
