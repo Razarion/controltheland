@@ -134,6 +134,8 @@ abstract public class AbstractServiceTest {
     protected static int TEST_FACTORY_ITEM_ID = -1;
     protected static final String TEST_ATTACK_ITEM = "TestAttackItem";
     protected static int TEST_ATTACK_ITEM_ID = -1;
+    protected static final String TEST_ATTACK_ITEM_2 = "TestAttackItem2";
+    protected static int TEST_ATTACK_ITEM_ID_2 = -1;
     protected static final String TEST_CONTAINER_ITEM = "TestContainerItem";
     protected static int TEST_CONTAINER_ITEM_ID = -1;
     protected static final String TEST_SIMPLE_BUILDING = "TEST_SIMPLE_BUILDING";
@@ -552,6 +554,7 @@ abstract public class AbstractServiceTest {
         createBuilderBaseItemType();
         finishAttackBaseItemType();
         finishContainerBaseItemType();
+        createAttackBaseItemType2();
         createMoney();
         // Terrain
         setupMinimalTerrain();
@@ -684,6 +687,35 @@ abstract public class AbstractServiceTest {
 
         itemService.saveDbItemType(dbBaseItemType);
         itemService.activate();
+    }
+
+    protected DbBaseItemType createAttackBaseItemType2() {
+        DbBaseItemType dbBaseItemType = new DbBaseItemType();
+        dbBaseItemType.setName(TEST_ATTACK_ITEM_2);
+        dbBaseItemType.setTerrainType(TerrainType.LAND);
+        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));
+        dbBaseItemType.setHealth(10);
+        dbBaseItemType.setBuildup(10);
+        dbBaseItemType.setPrice(3);
+        // DbWeaponType
+        DbWeaponType dbWeaponType = new DbWeaponType();
+        dbWeaponType.setRange(100);
+        dbWeaponType.setReloadTime(1);
+        dbWeaponType.setDamage(1000);
+        dbBaseItemType.setDbWeaponType(dbWeaponType);
+        // DbMovableType
+        DbMovableType dbMovableType = new DbMovableType();
+        dbMovableType.setSpeed(10000);
+        dbMovableType.setTerrainType(SurfaceType.LAND);
+        dbBaseItemType.setDbMovableType(dbMovableType);
+
+        itemService.saveDbItemType(dbBaseItemType);
+        TEST_ATTACK_ITEM_ID_2 = dbBaseItemType.getId();
+        // DbWeaponType
+        dbBaseItemType.getDbWeaponType().setItemTypeAllowed((DbBaseItemType) itemService.getDbItemType(TEST_ATTACK_ITEM_ID_2), true);
+        itemService.saveDbItemType(dbBaseItemType);
+        itemService.activate();
+        return dbBaseItemType;
     }
 
     protected DbBaseItemType createContainerBaseItemType() {

@@ -71,19 +71,14 @@ public class BotItemContainer {
         services.getItemService().killSyncItems(new ArrayList<SyncItem>(botItems.keySet()));
     }
 
-    public BotSyncBaseItem getFirstIdleAttacker(SyncBaseItem target) {
-        double distance = Integer.MAX_VALUE;
-        BotSyncBaseItem attacker = null;
+    public Collection<BotSyncBaseItem> getAllIdleAttackers() {
+        Collection<BotSyncBaseItem> idleAttackers = new ArrayList<BotSyncBaseItem>();
         for (BotSyncBaseItem botSyncBaseItem : botItems.values()) {
-            if (botSyncBaseItem.isIdle() && botSyncBaseItem.isAbleToAttack(target.getBaseItemType())) {
-                double dist = botSyncBaseItem.getDistanceTo(target);
-                if (dist < distance) {
-                    distance = dist;
-                    attacker = botSyncBaseItem;
-                }
+            if (botSyncBaseItem.isIdle()) {
+                idleAttackers.add(botSyncBaseItem);
             }
         }
-        return attacker;
+        return idleAttackers;
     }
 
     private void updateState(SimpleBase simpleBase) {
@@ -207,4 +202,5 @@ public class BotItemContainer {
             }
         }
     }
+
 }
