@@ -94,7 +94,7 @@ public class CockpitMode implements SelectionListener {
 
         if (selectedGroup.getCount() == 1) {
             SyncBaseItem syncBaseItem = selectedGroup.getFirst().getSyncBaseItem();
-            if (syncBaseItem.hasSyncBuilder() || syncBaseItem.hasSyncFactory()) {
+            if (ItemCockpit.hasItemCockpit(syncBaseItem)) {
                 ItemCockpit.getInstance().activate(selectedGroup.getFirst());
             } else {
                 ItemCockpit.getInstance().deActivate();
@@ -102,6 +102,6 @@ public class CockpitMode implements SelectionListener {
         } else {
             ItemCockpit.getInstance().deActivate();
             // TODO Cockpit.getInstance().getSelectedItemPanel().displayMultiOwnItems(selectedGroup);
-        } 
+        }
     }
 }
