@@ -23,7 +23,6 @@ import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -414,21 +413,22 @@ public class SpeechBubble extends AbsolutePanel {
     }
 
     public void blink() {
-        context2d.setGlobalCompositeOperation(Context2d.Composite.SOURCE_OVER);
         if (blink) {
-            context2d.setFillStyle(ColorConstants.WHITE);
+            setBgColor(ColorConstants.WHITE);
         } else {
-            context2d.setFillStyle(ColorConstants.RED);
+            setBgColor(ColorConstants.RED);
         }
         blink = !blink;
-        context2d.fill();
-        context2d.setGlobalCompositeOperation(Context2d.Composite.DESTINATION_OVER);
     }
 
     public void blinkOff() {
-        context2d.setGlobalCompositeOperation(Context2d.Composite.SOURCE_OVER);
-        context2d.setFillStyle(ColorConstants.WHITE);
         blink = false;
+        setBgColor(ColorConstants.WHITE);
+    }
+
+    public void setBgColor(String color) {
+        context2d.setGlobalCompositeOperation(Context2d.Composite.SOURCE_OVER);
+        context2d.setFillStyle(color);
         context2d.fill();
         context2d.setGlobalCompositeOperation(Context2d.Composite.DESTINATION_OVER);
     }

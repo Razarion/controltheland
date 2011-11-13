@@ -24,11 +24,14 @@ import com.btxtech.game.jsre.client.effects.AttackEffectHandler;
 import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.client.utg.SpeechBubbleHandler;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
@@ -38,7 +41,6 @@ import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.widgetideas.client.ProgressBar;
 
 /**
@@ -46,7 +48,7 @@ import com.google.gwt.widgetideas.client.ProgressBar;
  * Date: May 20, 2009
  * Time: 2:48:36 PM
  */
-public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandler, MouseOverHandler {
+public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandler, MouseOverHandler, MouseOutHandler {
     private Image image;
     private ClientSyncItem clientSyncItem;
     private CursorItemState cursorItemState;
@@ -59,6 +61,7 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
         sinkEvents(Event.ONMOUSEMOVE);
         addDomHandler(this, MouseDownEvent.getType());
         addDomHandler(this, MouseOverEvent.getType());
+        addDomHandler(this, MouseOutEvent.getType());
         addDomHandler(new MouseUpHandler() {
             @Override
             public void onMouseUp(MouseUpEvent event) {
@@ -414,9 +417,16 @@ public class ClientSyncItemView extends AbsolutePanel implements MouseDownHandle
         }
     }
 
+    @Override
     public void onMouseOver(MouseOverEvent event) {
         CursorHandler.getInstance().setItemCursor(this, cursorItemState);
+        SpeechBubbleHandler.getInstance().show(getClientSyncItem().getSyncItem());
         GwtCommon.preventDefault(event);
+    }
+
+    @Override
+    public void onMouseOut(MouseOutEvent event) {
+        SpeechBubbleHandler.getInstance().hide();
     }
 
     public ClientSyncItem getClientSyncItem() {
