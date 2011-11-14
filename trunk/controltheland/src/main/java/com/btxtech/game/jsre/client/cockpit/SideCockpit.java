@@ -2,9 +2,15 @@ package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.Game;
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Label;
 
@@ -46,7 +52,7 @@ public class SideCockpit extends AbsolutePanel {
             debugPosition.getElement().getStyle().setBackgroundColor("#FFFFFF");
             add(debugPosition, CONTROL_PANEL_LEFT, CONTROL_PANEL_TOP);
         }
-
+        preventEvents();
     }
 
     public void addToParent(AbsolutePanel parent) {
@@ -119,5 +125,28 @@ public class SideCockpit extends AbsolutePanel {
         }
     }
 
+
+    private void preventEvents() {
+        getElement().getStyle().setCursor(Style.Cursor.DEFAULT);
+        addDomHandler(new MouseUpHandler() {
+            @Override
+            public void onMouseUp(MouseUpEvent event) {
+                GwtCommon.preventDefault(event);
+            }
+        }, MouseUpEvent.getType());
+
+        addDomHandler(new MouseDownHandler() {
+            @Override
+            public void onMouseDown(MouseDownEvent event) {
+                GwtCommon.preventDefault(event);
+            }
+        }, MouseDownEvent.getType());
+        addDomHandler(new MouseDownHandler() {
+            @Override
+            public void onMouseDown(MouseDownEvent event) {
+                GwtCommon.preventDefault(event);
+            }
+        }, MouseDownEvent.getType());
+    }
 
 }

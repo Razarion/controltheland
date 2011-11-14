@@ -1,6 +1,11 @@
 package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.ImageHandler;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
@@ -25,20 +30,24 @@ public class CockpitControlPanel extends AbstractControlPanel {
     protected Widget createBody() {
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.setHeight("100%");
+        // Mission
         HTML mission = new HTML("<B>Mission</B> adasd asd asdasd  asdas  asdas rw gtz hbe th t zqw etf  uilo8iktz  ew re t rt4");
         mission.setTitle(ToolTips.TOOL_TIP_LEVEL_TARGET);
         verticalPanel.add(mission);
+        
         Grid grid = new Grid(3, 2);
         verticalPanel.add(grid);
         grid.setWidget(0, 0, mission);
         grid.getCellFormatter().getElement(0, 0).setAttribute("colspan", "2");
         grid.getElement().getStyle().setColor("#C2D7EC");
+        // Level
         Image image = ImageHandler.getIcon16("medal");
         image.setTitle(ToolTips.TOOL_TIP_LEVEL);
         grid.setWidget(1, 0, image);
         level = new Label();
         level.setTitle(ToolTips.TOOL_TIP_LEVEL);
         grid.setWidget(1, 1, level);
+        // Money
         image = ImageHandler.getIcon16("money");
         image.setTitle(ToolTips.TOOL_TIP_MONEY);
         grid.setWidget(2, 0, image);
