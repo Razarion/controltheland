@@ -1,6 +1,7 @@
 package com.btxtech.game.jsre.client.cockpit.item;
 
 import com.btxtech.game.jsre.client.ClientSyncItem;
+import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.AbstractControlPanel;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
@@ -106,20 +107,20 @@ public class ItemCockpit extends AbstractControlPanel implements BuildupItemPane
         addDomHandler(new MouseUpHandler() {
             @Override
             public void onMouseUp(MouseUpEvent event) {
-                event.stopPropagation();
+                GwtCommon.preventDefault(event);
             }
         }, MouseUpEvent.getType());
 
         addDomHandler(new MouseDownHandler() {
             @Override
             public void onMouseDown(MouseDownEvent event) {
-                event.stopPropagation();
+                GwtCommon.preventDefault(event);
             }
         }, MouseDownEvent.getType());
         addDomHandler(new MouseDownHandler() {
             @Override
             public void onMouseDown(MouseDownEvent event) {
-                event.stopPropagation();
+                GwtCommon.preventDefault(event);
             }
         }, MouseDownEvent.getType());
     }
