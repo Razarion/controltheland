@@ -40,7 +40,7 @@ public class DbUserState {
     /**
      * Used by hibernate
      */
-    public DbUserState() {
+    protected DbUserState() {
     }
 
     public DbUserState(BackupEntry backupEntry, UserState userState) {

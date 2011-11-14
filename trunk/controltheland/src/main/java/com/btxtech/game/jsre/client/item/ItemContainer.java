@@ -242,6 +242,7 @@ public class ItemContainer extends AbstractItemService {
             definitelyKillItem(clientSyncItem, force, explode);
             if (killedItem instanceof SyncBaseItem) {
                 ActionHandler.getInstance().removeGuardingBaseItem((SyncBaseItem) killedItem);
+                ClientBase.getInstance().onItemKilled((SyncBaseItem) killedItem);
             }
             ClientServices.getInstance().getConnectionService().sendSyncInfo(killedItem);
         } else {

@@ -48,7 +48,8 @@ public class ComparisonFactory {
         MONEY_INCREASED(ConditionTrigger.MONEY_INCREASED, DbCountComparisonConfig.class),
         XP_INCREASED(ConditionTrigger.XP_INCREASED, DbCountComparisonConfig.class),
         CONTAINED_IN(ConditionTrigger.CONTAINED_IN, DbContainedInComparisonConfig.class),
-        SCROLL_TO_POSITION(ConditionTrigger.SCROLL_TO_POSITION, DbPositionComparisonConfig.class);
+        SCROLL_TO_POSITION(ConditionTrigger.SCROLL_TO_POSITION, DbPositionComparisonConfig.class),
+        BASE_DELETED(ConditionTrigger.BASE_DELETED, DbCountComparisonConfig.class);
 
         private ConditionTrigger conditionTrigger;
         private List<Class<? extends DbAbstractComparisonConfig>> comparisons;

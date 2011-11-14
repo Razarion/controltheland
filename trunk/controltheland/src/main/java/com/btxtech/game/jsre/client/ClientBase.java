@@ -275,4 +275,16 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     public void cleanup() {
         clear();
     }
+
+    public void onItemKilled(SyncBaseItem syncBaseItem) {
+        if (getItems(syncBaseItem.getBase()).size() > 0) {
+            return;
+        }
+
+        if (isMyOwnProperty(syncBaseItem)) {
+            // TODO
+        } else {
+            SimulationConditionServiceImpl.getInstance().onBaseDeleted(null);
+        }
+    }
 }

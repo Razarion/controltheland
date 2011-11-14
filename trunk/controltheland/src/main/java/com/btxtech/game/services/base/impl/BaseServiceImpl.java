@@ -195,9 +195,9 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
         super.setBot(simpleBase, bot);
     }
 
-    private void deleteBase(Base base) {
+    private void deleteBase(SimpleBase actor, Base base) {
         log.debug("Base deleted: " + base);
-        boolean isBot = isBot(base.getSimpleBase());
+        boolean isBot = isBot(actor);
         synchronized (bases) {
             if (bases.remove(base.getSimpleBase()) == null) {
                 throw new IllegalArgumentException("Base does not exist: " + getBaseName(base.getSimpleBase()));
@@ -207,7 +207,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
             serverEnergyService.onBaseKilled(base);
         }
         if (!isBot) {
-            userGuidanceService.onBaseDeleted(base.getSimpleBase(), base.getUserState());
+            userGuidanceService.onBaseDeleted(actor, base.getSimpleBase());
         }
     }
 
@@ -295,7 +295,7 @@ public class BaseServiceImpl extends AbstractBaseServiceImpl implements BaseServ
                 userTrackingService.onBaseDefeated(base.getUserState().getUser(), base);
             }
             statisticsService.onBaseKilled(base.getSimpleBase(), actor);
-            deleteBase(base);
+            deleteBase(actor, base);
             if (!base.isAbandoned() && base.getUserState() != null) {
                 base.getUserState().setBase(null);
             }

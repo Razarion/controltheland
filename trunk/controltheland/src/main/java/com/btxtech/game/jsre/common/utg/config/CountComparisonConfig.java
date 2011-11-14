@@ -28,7 +28,7 @@ public class CountComparisonConfig implements AbstractComparisonConfig {
     /**
      * Used by GWT
      */
-    public CountComparisonConfig() {
+    protected CountComparisonConfig() {
     }
 
     public CountComparisonConfig(Integer excludedTerritoryId, int count) {

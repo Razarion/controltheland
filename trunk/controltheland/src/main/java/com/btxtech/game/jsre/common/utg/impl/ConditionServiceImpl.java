@@ -208,15 +208,15 @@ public abstract class ConditionServiceImpl<T> implements ConditionService<T> {
         triggerValue(base, ConditionTrigger.MONEY_INCREASED, accountBalance);
     }
 
+    @Override
+    public void onBaseDeleted(SimpleBase actorBase) {
+        triggerValue(actorBase, ConditionTrigger.BASE_DELETED, 1.0);
+    }
+
     //------ Only used for fail ------
 
     @Override
     public void onWithdrawalMoney() {
-        // TODO
-    }
-
-    @Override
-    public void onBaseDeleted(SimpleBase base) {
         // TODO
     }
 }

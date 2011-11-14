@@ -50,7 +50,7 @@ public interface ConditionService<T> {
 
     void onWithdrawalMoney();
 
-    void onBaseDeleted(SimpleBase base);
+    void onBaseDeleted(SimpleBase actorBase);
 
     void setConditionServiceListener(ConditionServiceListener<T> conditionServiceListener);
 }
