@@ -82,6 +82,11 @@ public enum ConditionTrigger {
         @Override
         public <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison abstractComparison, T t) {
             return new PositionConditionTrigger<T>(this, abstractComparison, t);
+        }},
+    BASE_DELETED(true) {
+        @Override
+        public <T> AbstractConditionTrigger<T> createAbstractConditionTrigger(AbstractComparison abstractComparison, T t) {
+            return new ValueConditionTrigger<T>(this, abstractComparison, t);
         }};
 
     private boolean comparisonNeeded;

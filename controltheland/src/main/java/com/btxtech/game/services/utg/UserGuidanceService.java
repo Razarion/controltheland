@@ -75,7 +75,7 @@ public interface UserGuidanceService {
 
     DbAbstractLevel copyDbAbstractLevel(Serializable copyFromId);
 
-    void onBaseDeleted(SimpleBase simpleBase, UserState userState);
+    void onBaseDeleted(SimpleBase actorBase, SimpleBase targetBase);
 
     void executeResurrection(UserState userState);
 

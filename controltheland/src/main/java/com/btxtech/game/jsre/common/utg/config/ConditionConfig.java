@@ -27,7 +27,7 @@ public class ConditionConfig implements Serializable {
     /**
      * Used by GWT
      */
-    public ConditionConfig() {
+    protected ConditionConfig() {
     }
 
     public ConditionConfig(ConditionTrigger conditionTrigger, AbstractComparisonConfig abstractComparisonConfig) {
