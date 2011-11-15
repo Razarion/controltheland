@@ -38,6 +38,11 @@ public enum GameStartupSeq implements StartupSeq {
         @Override
         public StartupTaskEnum[] getAbstractStartupTaskEnum() {
             return WarmSimulatedGameStartupTaskEnum.values();
+        }},
+    WARM_RESTART_SIMULATED(false) {
+        @Override
+        public StartupTaskEnum[] getAbstractStartupTaskEnum() {
+            return WarmRestartSimulatedGameStartupTaskEnum.values();
         }};
     private boolean cold;
 

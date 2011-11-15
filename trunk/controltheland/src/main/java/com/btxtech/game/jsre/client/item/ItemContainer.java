@@ -242,7 +242,7 @@ public class ItemContainer extends AbstractItemService {
             definitelyKillItem(clientSyncItem, force, explode);
             if (killedItem instanceof SyncBaseItem) {
                 ActionHandler.getInstance().removeGuardingBaseItem((SyncBaseItem) killedItem);
-                ClientBase.getInstance().onItemKilled((SyncBaseItem) killedItem);
+                ClientBase.getInstance().onItemKilled((SyncBaseItem) killedItem, actor);
             }
             ClientServices.getInstance().getConnectionService().sendSyncInfo(killedItem);
         } else {
@@ -511,8 +511,8 @@ public class ItemContainer extends AbstractItemService {
     }
 
     public void clear() {
-        for (ClientSyncItem ClientSyncItem : items.values()) {
-            ClientSyncItem.dispose();
+        for (ClientSyncItem clientSyncItem : items.values()) {
+            clientSyncItem.dispose();
         }
         items.clear();
         specialItems.clear();

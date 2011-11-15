@@ -79,6 +79,10 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
         });
     }
 
+    public void onTutorialFailed(long duration, long clientTimeStamp) {
+        Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL_FAILED, null, null, duration, clientTimeStamp, null);
+    }
+
     public void onTutorialFinished(long duration, long clientTimeStamp, ParametrisedRunnable<Level> runnable) {
         Connection.getInstance().sendTutorialProgress(TutorialConfig.TYPE.TUTORIAL, null, null, duration, clientTimeStamp, runnable);
     }

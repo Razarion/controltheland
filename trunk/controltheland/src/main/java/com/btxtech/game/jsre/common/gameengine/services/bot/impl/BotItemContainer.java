@@ -24,7 +24,6 @@ import com.btxtech.game.jsre.common.gameengine.services.bot.BotItemConfig;
 import com.btxtech.game.jsre.common.gameengine.services.collision.PlaceCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -68,7 +67,11 @@ public class BotItemContainer {
     }
 
     public void killAllItems() {
-        services.getItemService().killSyncItems(new ArrayList<SyncItem>(botItems.keySet()));
+        for (SyncBaseItem syncBaseItem : botItems.keySet()) {
+            if (syncBaseItem.isAlive()) {
+                services.getItemService().killSyncItem(syncBaseItem, null, true, false);
+            }
+        }
     }
 
     public Collection<BotSyncBaseItem> getAllIdleAttackers() {
