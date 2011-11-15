@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.client.simulation;
 
 import com.btxtech.game.jsre.client.ClientBase;
+import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.Connection;
 import com.btxtech.game.jsre.client.GameCommon;
 import com.btxtech.game.jsre.client.GwtCommon;
@@ -24,6 +25,7 @@ import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
+import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.MessageDialog;
 import com.btxtech.game.jsre.client.item.ItemContainer;
@@ -47,7 +49,7 @@ import java.util.List;
  * Date: 17.07.2010
  * Time: 17:21:24
  */
-public class Simulation implements ConditionServiceListener<Object> {
+public class Simulation implements ConditionServiceListener<Object>, ClientBase.OwnBaseDestroyedListener {
     private static final Simulation SIMULATION = new Simulation();
     private SimulationInfo simulationInfo;
     private Task activeTask;
@@ -84,6 +86,9 @@ public class Simulation implements ConditionServiceListener<Object> {
             SelectionHandler.getInstance().addSelectionListener(SimulationConditionServiceImpl.getInstance());
             TerrainView.getInstance().addTerrainScrollListener(SimulationConditionServiceImpl.getInstance());
             tutorialGui = new TutorialGui();
+        }
+        if (tutorialConfig.isFailOnOwnItemsLost()) {
+            ClientBase.getInstance().setOwnBaseDestroyedListener(this);
         }
         SimulationConditionServiceImpl.getInstance().setConditionServiceListener(this);
         Cockpit.getInstance().updateBase();
@@ -185,6 +190,7 @@ public class Simulation implements ConditionServiceListener<Object> {
             tutorialGui.cleanup();
             tutorialGui = null;
         }
+        activeTask = null;
         SelectionHandler.getInstance().removeSelectionListener(SimulationConditionServiceImpl.getInstance());
         TerrainView.getInstance().removeTerrainScrollListener(SimulationConditionServiceImpl.getInstance());
         SimulationConditionServiceImpl.getInstance().setConditionServiceListener(null);
@@ -215,4 +221,16 @@ public class Simulation implements ConditionServiceListener<Object> {
         }
     }
 
+    @Override
+    public void onOwnBaseDestroyed() {
+        long time = System.currentTimeMillis();
+        ClientUserTracker.getInstance().onTutorialFailed(time - tutorialTime, time);
+        Timer timer = new Timer() {
+            @Override
+            public void run() {
+                ClientServices.getInstance().getClientRunner().start(GameStartupSeq.WARM_RESTART_SIMULATED);
+            }
+        };
+        timer.schedule(1000);
+    }
 }

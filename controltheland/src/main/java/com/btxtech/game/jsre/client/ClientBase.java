@@ -44,6 +44,10 @@ import java.util.Collection;
  * Time: 5:07:34 PM
  */
 public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseService {
+    public static interface OwnBaseDestroyedListener {
+        void onOwnBaseDestroyed();
+    }
+
     private final static String OWN_BASE_COLOR = "#ffd800";
     private final static String ENEMY_BASE_COLOR = "#FF0000";
     private final static String BOT_BASE_COLOR = "#000000";
@@ -53,6 +57,7 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
     private SimpleBase simpleBase;
     private int houseSpace;
     private boolean connectedToServer = true;
+    private OwnBaseDestroyedListener ownBaseDestroyedListener;
 
     /**
      * Singleton
@@ -274,17 +279,24 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
 
     public void cleanup() {
         clear();
+        ownBaseDestroyedListener = null;
     }
 
-    public void onItemKilled(SyncBaseItem syncBaseItem) {
+    public void onItemKilled(SyncBaseItem syncBaseItem, SimpleBase actor) {
         if (getItems(syncBaseItem.getBase()).size() > 0) {
             return;
         }
 
         if (isMyOwnProperty(syncBaseItem)) {
-            // TODO
-        } else {
+            if (ownBaseDestroyedListener != null) {
+                ownBaseDestroyedListener.onOwnBaseDestroyed();
+            }
+        } else if (isMyOwnBase(actor)) {
             SimulationConditionServiceImpl.getInstance().onBaseDeleted(null);
         }
+    }
+
+    public void setOwnBaseDestroyedListener(OwnBaseDestroyedListener ownBaseDestroyedListener) {
+        this.ownBaseDestroyedListener = ownBaseDestroyedListener;
     }
 }
