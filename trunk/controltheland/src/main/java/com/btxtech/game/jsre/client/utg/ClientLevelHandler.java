@@ -43,7 +43,7 @@ public class ClientLevelHandler {
 
     public void setLevel(Level level) {
         this.level = level;
-        SideCockpit.getInstance().setLevel(level.getName());
+        SideCockpit.getInstance().setLevel(level);
     }
 
 
@@ -55,7 +55,7 @@ public class ClientLevelHandler {
         this.level = level;
         DialogManager.showDialog(new LevelTargetDialog(level.getHtml()), DialogManager.Type.PROMPTLY);
         if (oldLevel.isRealGame() && level.isRealGame()) {
-            SideCockpit.getInstance().setLevel(level.getName());
+            SideCockpit.getInstance().setLevel(level);
             Cockpit.getInstance().updateItemLimit();
         } else {
             StartupScreen.getInstance().fadeOut(new Runnable() {

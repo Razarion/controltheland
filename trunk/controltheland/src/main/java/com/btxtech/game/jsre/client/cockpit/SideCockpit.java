@@ -5,6 +5,7 @@ import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -112,7 +113,7 @@ public class SideCockpit extends AbsolutePanel {
         // TODO updateBase();
     }
 
-    public void setLevel(String level) {
+    public void setLevel(Level level) {
         if (cockpitControlPanel != null) {
             cockpitControlPanel.setLevel(level);
         }
