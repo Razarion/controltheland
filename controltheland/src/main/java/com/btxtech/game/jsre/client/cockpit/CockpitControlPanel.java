@@ -1,11 +1,7 @@
 package com.btxtech.game.jsre.client.cockpit;
 
 import com.btxtech.game.jsre.client.ImageHandler;
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseUpEvent;
-import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.btxtech.game.jsre.client.common.Level;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
@@ -20,6 +16,7 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class CockpitControlPanel extends AbstractControlPanel {
     private Label money;
+    private HTML mission;
     private Label level;
 
     public CockpitControlPanel(int width, int height) {
@@ -31,10 +28,10 @@ public class CockpitControlPanel extends AbstractControlPanel {
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.setHeight("100%");
         // Mission
-        HTML mission = new HTML("<B>Mission</B> adasd asd asdasd  asdas  asdas rw gtz hbe th t zqw etf  uilo8iktz  ew re t rt4");
+        mission = new HTML();
         mission.setTitle(ToolTips.TOOL_TIP_LEVEL_TARGET);
         verticalPanel.add(mission);
-        
+
         Grid grid = new Grid(3, 2);
         verticalPanel.add(grid);
         grid.setWidget(0, 0, mission);
@@ -52,7 +49,7 @@ public class CockpitControlPanel extends AbstractControlPanel {
         image.setTitle(ToolTips.TOOL_TIP_MONEY);
         grid.setWidget(2, 0, image);
         money = new Label();
-        money.setTitle(ToolTips.TOOL_TIP_MONEY);        
+        money.setTitle(ToolTips.TOOL_TIP_MONEY);
         grid.setWidget(2, 1, money);
         return verticalPanel;
     }
@@ -61,7 +58,8 @@ public class CockpitControlPanel extends AbstractControlPanel {
         money.setText(Integer.toString((int) Math.round(accountBalance)));
     }
 
-    public void setLevel(String level) {
-        this.level.setText(level);
+    public void setLevel(Level level) {
+        this.level.setText(level.getName());
+        mission.setHTML(level.getHtml());
     }
 }
