@@ -74,6 +74,7 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
         Window.addCloseHandler(new CloseHandler<Window>() {
             @Override
             public void onClose(CloseEvent<Window> windowCloseEvent) {
+                GwtCommon.sendLogViaLoadScriptCommunication("Window closed");
                 sendEventTrackerItems();
             }
         });

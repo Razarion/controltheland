@@ -360,17 +360,19 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
                 return false;
             }
             movableServiceAsync = null;
-            GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected due to HTTP status code 0");
+            GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected (1) due to HTTP status code 0");
             DialogManager.showDialog(new MessageDialog(CONNECTION_DIALOG), DialogManager.Type.PROMPTLY);
         }
 
         if (throwable instanceof NotYourBaseException) {
             movableServiceAsync = null;
+            GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected (2) due to HTTP status code 0");
             DialogManager.showDialog(new MessageDialog("Not your Base: Most likely you start another<br />base in another browser window"), DialogManager.Type.PROMPTLY);
         } else if (throwable instanceof NoConnectionException) {
             ClientServices.getInstance().getClientRunner().start(GameStartupSeq.WARM_REAL);
         } else {
             movableServiceAsync = null;
+            GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected (3) due to HTTP status code 0");
             GwtCommon.handleException(throwable);
             DialogManager.showDialog(new MessageDialog(CONNECTION_DIALOG), DialogManager.Type.PROMPTLY);
         }
