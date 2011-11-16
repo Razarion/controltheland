@@ -6,6 +6,7 @@ import com.btxtech.game.jsre.client.cockpit.AbstractControlPanel;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
+import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.BlurEvent;
@@ -74,11 +75,14 @@ public class ItemCockpit extends AbstractControlPanel implements BuildupItemPane
 
         buildupItemPanel.display(clientSyncItem);
 
+        ClientUserTracker.getInstance().onDialogAppears(this, "ItemCockpit");
+
         isActive = true;
     }
 
     public void deActivate() {
         if (isActive) {
+            ClientUserTracker.getInstance().onDialogDisappears(this);
             isActive = false;
             setVisible(false);
         }

@@ -15,9 +15,9 @@ package com.btxtech.game.jsre.client.dialogs;
 
 import com.btxtech.game.jsre.client.ExtendedCustomButton;
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -59,6 +59,7 @@ public abstract class Dialog extends DialogBox {
         }
         center();
         getElement().getStyle().setZIndex(getZIndex());
+        ClientUserTracker.getInstance().onDialogAppears(this, "Dialog");
     }
 
     protected int getZIndex() {
@@ -68,6 +69,7 @@ public abstract class Dialog extends DialogBox {
 
     public void close() {
         hide(true);
+        ClientUserTracker.getInstance().onDialogDisappears(this);
     }
 
     abstract protected void setupPanel(VerticalPanel dialogVPanel);

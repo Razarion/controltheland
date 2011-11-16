@@ -18,6 +18,7 @@ import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.client.common.UserMessage;
 import com.btxtech.game.jsre.client.common.info.GameInfo;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.NoConnectionException;
@@ -71,7 +72,8 @@ public interface MovableService extends RemoteService {
                                Collection<SyncItemInfo> syncItemInfos,
                                Collection<SelectionTrackingItem> selectionTrackingItems,
                                Collection<TerrainScrollTracking> terrainScrollTrackings,
-                               Collection<BrowserWindowTracking> browserWindowTrackings);
+                               Collection<BrowserWindowTracking> browserWindowTrackings,
+                               Collection<DialogTracking> dialogTrackings);
 
     void sellItem(Id id);
 }

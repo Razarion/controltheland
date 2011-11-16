@@ -72,12 +72,14 @@ public class SpeechBubble extends AbsolutePanel {
                 setup(relative.getX(), relative.getY() + deltaY, html, htmlSize.getX(), htmlSize.getY(), direction, false);
                 break;
         }
+        ClientUserTracker.getInstance().onDialogAppears(this, "SpeechBubble1");
     }
 
     public SpeechBubble(int beakRelX, int beakRelY, String html, boolean scrollWithTerrain, boolean bottomRelative) {
         this.scrollWithTerrain = scrollWithTerrain;
         Index htmlSize = getHtmlSize(html);
         setup(beakRelX, beakRelY, html, htmlSize.getX(), htmlSize.getY(), null, bottomRelative);
+        ClientUserTracker.getInstance().onDialogAppears(this, "SpeechBubble2");
     }
 
     private Index getHtmlSize(String html) {
@@ -410,6 +412,7 @@ public class SpeechBubble extends AbsolutePanel {
             MapWindow.getInstance().removeToScrollElements(this);
         }
         MapWindow.getAbsolutePanel().remove(this);
+        ClientUserTracker.getInstance().onDialogDisappears(this);
     }
 
     public void blink() {

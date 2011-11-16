@@ -16,11 +16,13 @@ package com.btxtech.game.jsre.playback;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,6 +37,7 @@ public class PlaybackInfo extends SimulationInfo {
     private List<SyncItemInfo> syncItemInfos;
     private List<TerrainScrollTracking> terrainScrollTrackings;
     private List<BrowserWindowTracking> browserWindowTrackings;
+    private ArrayList<DialogTracking> dialogTrackings;
 
     public EventTrackingStart getEventTrackingStart() {
         return eventTrackingStart;
@@ -82,5 +85,13 @@ public class PlaybackInfo extends SimulationInfo {
 
     public List<BrowserWindowTracking> getBrowserWindowTrackings() {
         return browserWindowTrackings;
+    }
+
+    public void setDialogTrackings(ArrayList<DialogTracking> dialogTrackings) {
+        this.dialogTrackings = dialogTrackings;
+    }
+
+    public ArrayList<DialogTracking> getDialogTrackings() {
+        return dialogTrackings;
     }
 }
