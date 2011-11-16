@@ -19,8 +19,6 @@ import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.control.GameStartupSeq;
 import com.btxtech.game.jsre.client.control.StartupScreen;
-import com.btxtech.game.jsre.client.dialogs.DialogManager;
-import com.btxtech.game.jsre.client.dialogs.LevelTargetDialog;
 
 /**
  * User: beat
@@ -53,7 +51,6 @@ public class ClientLevelHandler {
         }
         Level oldLevel = this.level;
         this.level = level;
-        DialogManager.showDialog(new LevelTargetDialog(level.getHtml()), DialogManager.Type.PROMPTLY);
         if (oldLevel.isRealGame() && level.isRealGame()) {
             SideCockpit.getInstance().setLevel(level);
             Cockpit.getInstance().updateItemLimit();
