@@ -21,13 +21,18 @@ import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: beat
@@ -42,6 +47,7 @@ public class Player {
     private Frame nextFrame;
     private long startTime;
     private PlaybackVisualisation playbackVisualisation;
+    private Map<Integer, Widget> dialogs = new HashMap<Integer, Widget>();
 
     public Player(PlaybackControlPanel playbackControlPanel, PlaybackVisualisation playbackVisualisation) {
         this.playbackControlPanel = playbackControlPanel;
@@ -65,6 +71,9 @@ public class Player {
         }
         for (BrowserWindowTracking browserWindowTracking : playbackInfo.getBrowserWindowTrackings()) {
             frames.add(new Frame(browserWindowTracking.getClientTimeStamp(), browserWindowTracking));
+        }
+        for (DialogTracking dialogTracking : playbackInfo.getDialogTrackings()) {
+            frames.add(new Frame(dialogTracking.getClientTimeStamp(), dialogTracking));
         }
         Collections.sort(frames);
     }
@@ -109,6 +118,8 @@ public class Player {
             displayScrollingFrame((TerrainScrollTracking) object);
         } else if (object instanceof BrowserWindowTracking) {
             displayBrowserWindowFrame((BrowserWindowTracking) object);
+        } else if (object instanceof DialogTracking) {
+            displayDialogFrame((DialogTracking) object);
         } else {
             throw new IllegalArgumentException(this + " Unknown Frame: " + object);
         }
@@ -142,6 +153,23 @@ public class Player {
         playbackVisualisation.displayBrowserWindow(browserWindowTracking);
     }
 
+    private void displayDialogFrame(DialogTracking dialogTracking) {
+        if (dialogTracking.isAppearing()) {
+            Label dialog = new Label();
+            dialog.setText(dialogTracking.getDescription());
+            dialog.setPixelSize(dialogTracking.getWidth(), dialogTracking.getHeight());
+            dialog.getElement().getStyle().setZIndex(dialogTracking.getZIndex());
+            dialog.getElement().getStyle().setBackgroundColor("rgba(255,255,255,0.5)");
+            MapWindow.getAbsolutePanel().add(dialog, dialogTracking.getLeft(), dialogTracking.getTop());
+            dialogs.put(dialogTracking.getIdentityHashCode(), dialog);
+        } else {
+            Widget widget = dialogs.get(dialogTracking.getIdentityHashCode());
+            if (widget != null) {
+                MapWindow.getAbsolutePanel().remove(widget);
+            }
+        }
+    }
+
     private void loadNextItem() {
         Frame oldFrame = nextFrame;
         nextFrameIndex++;
@@ -163,11 +191,19 @@ public class Player {
             timer.cancel();
             timer = null;
         }
+        removeAllDialogs();
         play();
     }
 
     public void skip() {
         timer.cancel();
         displayItem();
+    }
+
+    private void removeAllDialogs() {
+        for (Widget widget : dialogs.values()) {
+            MapWindow.getAbsolutePanel().remove(widget);
+        }
+        dialogs.clear();
     }
 }

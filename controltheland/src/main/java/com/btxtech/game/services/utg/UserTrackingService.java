@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
@@ -27,6 +28,7 @@ import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
 import com.btxtech.game.services.base.Base;
 import com.btxtech.game.services.user.User;
 import com.btxtech.game.services.utg.tracker.DbBrowserWindowTracking;
+import com.btxtech.game.services.utg.tracker.DbDialogTracking;
 import com.btxtech.game.services.utg.tracker.DbSyncItemInfo;
 import com.btxtech.game.services.utg.tracker.DbEventTrackingItem;
 import com.btxtech.game.services.utg.tracker.DbEventTrackingStart;
@@ -87,7 +89,7 @@ public interface UserTrackingService {
 
     void onEventTrackingStart(EventTrackingStart eventTrackingStart);
 
-    void onEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<SyncItemInfo> syncItemInfos, Collection<SelectionTrackingItem> selectionTrackingItems, Collection<TerrainScrollTracking> terrainScrollTrackings, Collection<BrowserWindowTracking> browserWindowTrackings);
+    void onEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<SyncItemInfo> syncItemInfos, Collection<SelectionTrackingItem> selectionTrackingItems, Collection<TerrainScrollTracking> terrainScrollTrackings, Collection<BrowserWindowTracking> browserWindowTrackings, Collection<DialogTracking> dialogTrackings);
 
     List<DbEventTrackingItem> getDbEventTrackingItem(String sessionId, long startClient, Long endClient);
 
@@ -103,9 +105,11 @@ public interface UserTrackingService {
 
     List<DbSyncItemInfo> getDbSyncItemInfos(String sessionId, long startTime, Long endTime);
 
-    List<DbScrollTrackingItem> getDbScrollTrackingItems(final String sessionId, final long startTime, final Long endTime);
+    List<DbScrollTrackingItem> getDbScrollTrackingItems(String sessionId, long startTime, Long endTime);
 
-    List<DbBrowserWindowTracking> getDbBrowserWindowTrackings(final String sessionId, final long startTime, final Long endTime);
+    List<DbBrowserWindowTracking> getDbBrowserWindowTrackings(String sessionId, long startTime, Long endTime);
 
-    LifecycleTrackingInfo getLifecycleTrackingInfo(final String sessionId, final long startServer);
+    List<DbDialogTracking> getDbDialogTrackings(String sessionId, long startTime, Long endTime);
+
+    LifecycleTrackingInfo getLifecycleTrackingInfo(String sessionId, long startServer);
 }

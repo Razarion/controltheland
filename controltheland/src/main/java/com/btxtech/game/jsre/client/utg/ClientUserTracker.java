@@ -30,6 +30,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
@@ -41,6 +42,7 @@ import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Widget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +60,7 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
     private List<SelectionTrackingItem> selectionTrackingItems = new ArrayList<SelectionTrackingItem>();
     private List<TerrainScrollTracking> terrainScrollTrackings = new ArrayList<TerrainScrollTracking>();
     private List<SyncItemInfo> syncItemInfos = new ArrayList<SyncItemInfo>();
+    private List<DialogTracking> dialogTrackings = new ArrayList<DialogTracking>();
     private Timer timer;
     private boolean isCollecting = false;
     private HandlerRegistration scrollHandlerRegistration;
@@ -181,10 +184,15 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
     }
 
     private void sendEventTrackerItems() {
-        if (eventTrackingItems.isEmpty() && syncItemInfos.isEmpty() && selectionTrackingItems.isEmpty() && terrainScrollTrackings.isEmpty() && browserWindowTrackings.isEmpty()) {
+        if (eventTrackingItems.isEmpty()
+                && syncItemInfos.isEmpty()
+                && selectionTrackingItems.isEmpty()
+                && terrainScrollTrackings.isEmpty()
+                && browserWindowTrackings.isEmpty()
+                && dialogTrackings.isEmpty()) {
             return;
         }
-        Connection.getInstance().sendEventTrackerItems(eventTrackingItems, syncItemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings);
+        Connection.getInstance().sendEventTrackerItems(eventTrackingItems, syncItemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings, dialogTrackings);
         clearTracking();
     }
 
@@ -194,6 +202,7 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
         selectionTrackingItems = new ArrayList<SelectionTrackingItem>();
         terrainScrollTrackings = new ArrayList<TerrainScrollTracking>();
         browserWindowTrackings = new ArrayList<BrowserWindowTracking>();
+        dialogTrackings = new ArrayList<DialogTracking>();
     }
 
     @Override
@@ -221,6 +230,31 @@ public class ClientUserTracker implements SelectionListener, TerrainScrollListen
     public void onScroll(int left, int top, int width, int height, int deltaLeft, int deltaTop) {
         if (isCollecting) {
             terrainScrollTrackings.add(new TerrainScrollTracking(left, top, width, height));
+        }
+    }
+
+    public void onDialogAppears(Widget widget, String description) {
+        if (isCollecting) {
+            Integer zIndex = null;
+            try {
+                zIndex = Integer.parseInt(widget.getElement().getStyle().getZIndex());
+            } catch (NumberFormatException e) {
+                // Ignore
+            }
+
+            dialogTrackings.add(new DialogTracking(widget.getAbsoluteLeft(),
+                    widget.getAbsoluteTop(),
+                    widget.getOffsetWidth(),
+                    widget.getOffsetHeight(),
+                    zIndex,
+                    description,
+                    System.identityHashCode(widget)));
+        }
+    }
+
+    public void onDialogDisappears(Widget widget) {
+        if (isCollecting) {
+            dialogTrackings.add(new DialogTracking(System.identityHashCode(widget)));
         }
     }
 }

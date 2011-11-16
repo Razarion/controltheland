@@ -30,6 +30,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
@@ -280,9 +281,14 @@ public class MovableServiceImpl implements MovableService {
     }
 
     @Override
-    public void sendEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<SyncItemInfo> syncItemInfos, Collection<SelectionTrackingItem> selectionTrackingItems, Collection<TerrainScrollTracking> terrainScrollTrackings, Collection<BrowserWindowTracking> browserWindowTrackings) {
+    public void sendEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems,
+                                      Collection<SyncItemInfo> syncItemInfos,
+                                      Collection<SelectionTrackingItem> selectionTrackingItems,
+                                      Collection<TerrainScrollTracking> terrainScrollTrackings,
+                                      Collection<BrowserWindowTracking> browserWindowTrackings,
+                                      Collection<DialogTracking> dialogTrackings) {
         try {
-            userTrackingService.onEventTrackerItems(eventTrackingItems, syncItemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings);
+            userTrackingService.onEventTrackerItems(eventTrackingItems, syncItemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings, dialogTrackings);
         } catch (Throwable t) {
             log.error("", t);
         }

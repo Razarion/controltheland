@@ -15,6 +15,7 @@ package com.btxtech.game.services.playback.impl;
 
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
@@ -32,6 +33,7 @@ import com.btxtech.game.services.utg.LifecycleTrackingInfo;
 import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.tracker.DbBrowserWindowTracking;
+import com.btxtech.game.services.utg.tracker.DbDialogTracking;
 import com.btxtech.game.services.utg.tracker.DbSyncItemInfo;
 import com.btxtech.game.services.utg.tracker.DbEventTrackingItem;
 import com.btxtech.game.services.utg.tracker.DbScrollTrackingItem;
@@ -124,6 +126,13 @@ public class PlaybackServiceImpl implements PlaybackService {
                 browserWindowTrackings.add(dbBrowserWindowTracking.createBrowserWindowTracking());
             }
             playbackInfo.setBrowserWindowTrackings(browserWindowTrackings);
+
+            // Dialogs
+            ArrayList<DialogTracking> dialogTrackings = new ArrayList<DialogTracking>();
+            for (DbDialogTracking dbDialogTracking : userTrackingService.getDbDialogTrackings(sessionId, startClient, endClient)) {
+                dialogTrackings.add(dbDialogTracking.createDialogTracking());
+            }
+            playbackInfo.setDialogTrackings(dialogTrackings);
 
             return playbackInfo;
         } catch (Throwable t) {

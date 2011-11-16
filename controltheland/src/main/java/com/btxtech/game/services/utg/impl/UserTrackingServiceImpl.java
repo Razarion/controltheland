@@ -25,6 +25,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
@@ -48,6 +49,7 @@ import com.btxtech.game.services.utg.UserGuidanceService;
 import com.btxtech.game.services.utg.UserTrackingFilter;
 import com.btxtech.game.services.utg.UserTrackingService;
 import com.btxtech.game.services.utg.tracker.DbBrowserWindowTracking;
+import com.btxtech.game.services.utg.tracker.DbDialogTracking;
 import com.btxtech.game.services.utg.tracker.DbSyncItemInfo;
 import com.btxtech.game.services.utg.tracker.DbEventTrackingItem;
 import com.btxtech.game.services.utg.tracker.DbEventTrackingStart;
@@ -577,12 +579,13 @@ public class UserTrackingServiceImpl implements UserTrackingService {
 
     @Override
     @Transactional
-    public void onEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<SyncItemInfo> syncItemInfos, Collection<SelectionTrackingItem> selectionTrackingItems, Collection<TerrainScrollTracking> terrainScrollTrackings, Collection<BrowserWindowTracking> browserWindowTrackings) {
+    public void onEventTrackerItems(Collection<EventTrackingItem> eventTrackingItems, Collection<SyncItemInfo> syncItemInfos, Collection<SelectionTrackingItem> selectionTrackingItems, Collection<TerrainScrollTracking> terrainScrollTrackings, Collection<BrowserWindowTracking> browserWindowTrackings, Collection<DialogTracking> dialogTrackings) {
         onEventTrackerItems(eventTrackingItems);
         saveSyncItemInfos(syncItemInfos);
         saveSelections(selectionTrackingItems);
         saveScrollTrackingItems(terrainScrollTrackings);
         saveBrowserWindowTrackings(browserWindowTrackings);
+        saveDialogTrackings(dialogTrackings);
     }
 
     @Transactional
@@ -624,6 +627,14 @@ public class UserTrackingServiceImpl implements UserTrackingService {
             dbBrowserWindowTrackings.add(new DbBrowserWindowTracking(browserWindowTracking, session.getSessionId()));
         }
         hibernateTemplate.saveOrUpdateAll(dbBrowserWindowTrackings);
+    }
+
+    private void saveDialogTrackings(Collection<DialogTracking> dialogTrackings) {
+        ArrayList<DbDialogTracking> dbDialogTrackings = new ArrayList<DbDialogTracking>();
+        for (DialogTracking dialogTracking : dialogTrackings) {
+            dbDialogTrackings.add(new DbDialogTracking(dialogTracking, session.getSessionId()));
+        }
+        hibernateTemplate.saveOrUpdateAll(dbDialogTrackings);
     }
 
     @Override
@@ -747,6 +758,7 @@ public class UserTrackingServiceImpl implements UserTrackingService {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<DbBrowserWindowTracking> getDbBrowserWindowTrackings(final String sessionId, final long startTime, final Long endTime) {
         return hibernateTemplate.execute(new HibernateCallback<List<DbBrowserWindowTracking>>() {
             @Override
@@ -763,4 +775,21 @@ public class UserTrackingServiceImpl implements UserTrackingService {
         });
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<DbDialogTracking> getDbDialogTrackings(final String sessionId, final long startTime, final Long endTime) {
+        return hibernateTemplate.execute(new HibernateCallback<List<DbDialogTracking>>() {
+            @Override
+            public List<DbDialogTracking> doInHibernate(org.hibernate.Session session) throws HibernateException, SQLException {
+                Criteria criteria = session.createCriteria(DbDialogTracking.class);
+                criteria.add(Restrictions.eq("sessionId", sessionId));
+                criteria.add(Restrictions.ge("clientTimeStamp", startTime));
+                if (endTime != null) {
+                    criteria.add(Restrictions.lt("clientTimeStamp", endTime));
+                }
+                criteria.addOrder(Order.asc("clientTimeStamp"));
+                return criteria.list();
+            }
+        });
+    }
 }

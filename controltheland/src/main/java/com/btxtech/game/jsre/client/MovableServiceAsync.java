@@ -24,6 +24,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.command.BaseCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
@@ -65,6 +66,7 @@ public interface MovableServiceAsync {
                                Collection<SelectionTrackingItem> selectionTrackingItems,
                                Collection<TerrainScrollTracking> terrainScrollTrackings,
                                Collection<BrowserWindowTracking> browserWindowTrackings,
+                               Collection<DialogTracking> dialogTrackings,
                                AsyncCallback<Void> asyncCallback);
 
     void sellItem(Id id, AsyncCallback<Void> asyncCallback);

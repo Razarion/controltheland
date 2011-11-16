@@ -9,6 +9,7 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.jsre.common.tutorial.TutorialConfig;
 import com.btxtech.game.jsre.common.utg.tracking.BrowserWindowTracking;
+import com.btxtech.game.jsre.common.utg.tracking.DialogTracking;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
@@ -328,8 +329,13 @@ public class TestTracking extends AbstractServiceTest {
         browserWindowTrackings.add(new BrowserWindowTracking(2, 2, 3, 4, 5, 6, 1200));
         browserWindowTrackings.add(new BrowserWindowTracking(3, 2, 3, 4, 5, 6, 1300));
         browserWindowTrackings.add(new BrowserWindowTracking(4, 2, 3, 4, 5, 6, 1400));
+        // Dialogs
+        Collection<DialogTracking> dialogTrackings = new ArrayList<DialogTracking>();
+        dialogTrackings.add(new DialogTracking(1, 2, 3, 4, 1, "dialog1", false, 42, 1100));
+        dialogTrackings.add(new DialogTracking(5, 6, 7, 8, 2, "dialog2", false, 43, 1120));
+        dialogTrackings.add(new DialogTracking(null, null, null, null, null, "dialog3", false, 44, 1140));
 
-        movableService.sendEventTrackerItems(eventTrackingItems, itemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings);
+        movableService.sendEventTrackerItems(eventTrackingItems, itemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings, dialogTrackings);
         userTrackingService.onTutorialProgressChanged(TutorialConfig.TYPE.TASK, "tutorial1", null, 1, 1550);
         endHttpRequestAndOpenSessionInViewFilter();
     }
@@ -397,8 +403,14 @@ public class TestTracking extends AbstractServiceTest {
         browserWindowTrackings.add(new BrowserWindowTracking(1, 3, 3, 4, 5, 6, 2130));
         browserWindowTrackings.add(new BrowserWindowTracking(1, 4, 3, 4, 5, 6, 2140));
         browserWindowTrackings.add(new BrowserWindowTracking(1, 5, 3, 4, 5, 6, 2150));
+        // Dialogs
+        Collection<DialogTracking> dialogTrackings = new ArrayList<DialogTracking>();
+        dialogTrackings.add(new DialogTracking(10, 2, 3, 4, 19, "dialog11", true, 52, 2100));
+        dialogTrackings.add(new DialogTracking(50, 6, 7, 8, 29, "dialog12", true, 53, 2120));
+        dialogTrackings.add(new DialogTracking(90, 10, 11, 12, 39, "dialog13", true, 54, 2140));
+        dialogTrackings.add(new DialogTracking(130, 14, 15, 16, 49, "dialog14", true, 55, 2160));
 
-        movableService.sendEventTrackerItems(eventTrackingItems, syncItemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings);
+        movableService.sendEventTrackerItems(eventTrackingItems, syncItemInfos, selectionTrackingItems, terrainScrollTrackings, browserWindowTrackings, dialogTrackings);
         userTrackingService.onTutorialProgressChanged(TutorialConfig.TYPE.TUTORIAL, "tutorial2", null, 1, 3100);
         endHttpRequestAndOpenSessionInViewFilter();
     }
@@ -481,14 +493,21 @@ public class TestTracking extends AbstractServiceTest {
         Assert.assertEquals(1, playbackInfo.getScrollTrackingItems().get(0).getLeft());
         Assert.assertEquals(2, playbackInfo.getScrollTrackingItems().get(1).getLeft());
         Assert.assertEquals(3, playbackInfo.getScrollTrackingItems().get(2).getLeft());
-
         // Browser Window Tracking
         Assert.assertEquals(4, playbackInfo.getBrowserWindowTrackings().size());
         Assert.assertEquals(1, playbackInfo.getBrowserWindowTrackings().get(0).getClientWidth());
         Assert.assertEquals(2, playbackInfo.getBrowserWindowTrackings().get(1).getClientWidth());
         Assert.assertEquals(3, playbackInfo.getBrowserWindowTrackings().get(2).getClientWidth());
         Assert.assertEquals(4, playbackInfo.getBrowserWindowTrackings().get(3).getClientWidth());
-
+        // Dialog trcking
+        Assert.assertEquals(3, playbackInfo.getDialogTrackings().size());
+        Assert.assertEquals(1, (int)playbackInfo.getDialogTrackings().get(0).getLeft());
+        Assert.assertEquals(2, (int)playbackInfo.getDialogTrackings().get(0).getTop());
+        Assert.assertEquals(3, (int)playbackInfo.getDialogTrackings().get(0).getWidth());
+        Assert.assertEquals(4, (int)playbackInfo.getDialogTrackings().get(0).getHeight());
+        Assert.assertEquals(1, (int) playbackInfo.getDialogTrackings().get(0).getZIndex());
+        Assert.assertEquals("dialog1", playbackInfo.getDialogTrackings().get(0).getDescription());
+        Assert.assertEquals(42, playbackInfo.getDialogTrackings().get(0).getIdentityHashCode());
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -548,7 +567,6 @@ public class TestTracking extends AbstractServiceTest {
         Assert.assertEquals(2, playbackInfo.getScrollTrackingItems().size());
         Assert.assertEquals(1, playbackInfo.getScrollTrackingItems().get(0).getTop());
         Assert.assertEquals(2, playbackInfo.getScrollTrackingItems().get(1).getTop());
-
         // Browser Window Tracking
         Assert.assertEquals(5, playbackInfo.getBrowserWindowTrackings().size());
         Assert.assertEquals(1, playbackInfo.getBrowserWindowTrackings().get(0).getClientHeight());
@@ -556,7 +574,12 @@ public class TestTracking extends AbstractServiceTest {
         Assert.assertEquals(3, playbackInfo.getBrowserWindowTrackings().get(2).getClientHeight());
         Assert.assertEquals(4, playbackInfo.getBrowserWindowTrackings().get(3).getClientHeight());
         Assert.assertEquals(5, playbackInfo.getBrowserWindowTrackings().get(4).getClientHeight());
-
+        // Dialog trcking
+        Assert.assertEquals(4, playbackInfo.getDialogTrackings().size());
+        Assert.assertEquals(10, (int)playbackInfo.getDialogTrackings().get(0).getLeft());
+        Assert.assertEquals(50, (int)playbackInfo.getDialogTrackings().get(1).getLeft());
+        Assert.assertEquals(90, (int)playbackInfo.getDialogTrackings().get(2).getLeft());
+        Assert.assertEquals(130, (int)playbackInfo.getDialogTrackings().get(3).getLeft());
 
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
@@ -598,7 +621,7 @@ public class TestTracking extends AbstractServiceTest {
 
         Assert.assertEquals(2, userCommandHistoryElements.size());
         //Assert.assertEquals(BuilderCommand.class.getName(), userCommandHistoryElements.get(offset).getInfo1());
-        Assert.assertEquals("Item created: TestFactoryItem", userCommandHistoryElements.get(0 + offset).getInfo1());
+        Assert.assertEquals("Item created: TestFactoryItem", userCommandHistoryElements.get(offset).getInfo1());
         //Assert.assertEquals(FactoryCommand.class.getName(), userCommandHistoryElements.get(2 + offset).getInfo1());
         Assert.assertEquals("Item created: TestAttackItem", userCommandHistoryElements.get(1 + offset).getInfo1());
         endHttpRequestAndOpenSessionInViewFilter();
