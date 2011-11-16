@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client.cockpit;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.action.ActionHandler;
+import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.TerrainMouseButtonListener;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
@@ -42,6 +43,7 @@ public class TerrainMouseHandler implements TerrainMouseButtonListener {
 
     @Override
     public void onMouseDown(int absoluteX, int absoluteY, MouseDownEvent mouseDownEvent) {
+        ItemCockpit.getInstance().deActivate();
         if (SelectionHandler.getInstance().isSellMode()) {
             return;
         }
