@@ -129,7 +129,9 @@ public class UserGuidanceServiceImpl implements UserGuidanceService, ConditionSe
 
     @Override
     public void onBaseDeleted(SimpleBase actorBase, SimpleBase targetBase) {
-        serverConditionService.onBaseDeleted(actorBase);
+        if (actorBase != null) {
+            serverConditionService.onBaseDeleted(actorBase);
+        }
 
         if (connectionService.hasConnection(targetBase)) {
             connectionService.closeConnection(targetBase);
