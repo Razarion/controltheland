@@ -361,23 +361,25 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
                 return false;
             }
             movableServiceAsync = null;
-            GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected (1) due to HTTP status code 0");
+            GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected due to HTTP status code 0");
             DialogManager.showDialog(new MessageDialog(CONNECTION_DIALOG), DialogManager.Type.PROMPTLY);
+            return true;
         }
 
         if (throwable instanceof NotYourBaseException) {
             movableServiceAsync = null;
-            GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected (2) due to HTTP status code 0");
+            GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected due to NotYourBaseException");
             DialogManager.showDialog(new MessageDialog("Not your Base: Most likely you start another<br />base in another browser window"), DialogManager.Type.PROMPTLY);
+            return true;
         } else if (throwable instanceof NoConnectionException) {
+            GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected due to NoConnectionException");
             ClientServices.getInstance().getClientRunner().start(GameStartupSeq.WARM_REAL);
+            return true;
         } else {
-            movableServiceAsync = null;
-            GwtCommon.sendLogViaLoadScriptCommunication("Client disconnected (3) due to HTTP status code 0");
+            GwtCommon.sendLogViaLoadScriptCommunication("Unknown Error (See GWT log for stack trace): " + throwable.getMessage());
             GwtCommon.handleException(throwable);
-            DialogManager.showDialog(new MessageDialog(CONNECTION_DIALOG), DialogManager.Type.PROMPTLY);
+            return false;
         }
-        return true;
     }
 
     public static boolean isConnected() {
