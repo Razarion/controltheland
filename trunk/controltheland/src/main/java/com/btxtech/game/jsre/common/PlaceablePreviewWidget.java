@@ -47,8 +47,10 @@ public abstract class PlaceablePreviewWidget extends AbsolutePanel implements Mo
     private Image image;
     private Canvas marker;
     private FocusPanel focusPanel;
+    private long minimalTime;
 
     protected PlaceablePreviewWidget(Image image, MouseEvent mouseEvent) {
+        minimalTime = System.currentTimeMillis() + 1000;
         this.image = image;
         DOM.setCapture(getElement());
         int x = mouseEvent.getRelativeX(MapWindow.getAbsolutePanel().getElement())/* - image.getWidth() / 2*/;
@@ -116,6 +118,9 @@ public abstract class PlaceablePreviewWidget extends AbsolutePanel implements Mo
 
     @Override
     public void onMouseMove(MouseMoveEvent event) {
+        if (minimalTime > System.currentTimeMillis()) {
+            return;
+        }
         int x = event.getRelativeX(MapWindow.getAbsolutePanel().getElement())/* - image.getOffsetWidth() / 2*/;
         int y = event.getRelativeY(MapWindow.getAbsolutePanel().getElement())/* - image.getOffsetHeight() / 2*/;
         x = specialMoveX(x);

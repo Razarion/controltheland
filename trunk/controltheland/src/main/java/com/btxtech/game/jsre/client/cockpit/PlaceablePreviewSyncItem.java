@@ -82,7 +82,7 @@ public class PlaceablePreviewSyncItem extends PlaceablePreviewWidget {
         Index relative = Index.createSaveIndex(relX, relY).add(offsetX, offsetY);
 
         // Check if over cockpit
-        if (itemTypeToBuilt.getBoundingBox().contains(relative, Cockpit.getInstance().getArea())) {
+        if (itemTypeToBuilt.getBoundingBox().contains(relative, SideCockpit.getInstance().getArea())) {
             return false;
         }
 

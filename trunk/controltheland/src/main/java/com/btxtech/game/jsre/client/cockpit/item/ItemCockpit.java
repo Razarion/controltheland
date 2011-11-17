@@ -94,8 +94,7 @@ public class ItemCockpit extends AbstractControlPanel implements BuildupItemPane
         setVisible(false);
     }
 
-    // @Override
-
+     @Override
     protected Widget createBody() {
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.getElement().getStyle().setColor("#C2D7EC");

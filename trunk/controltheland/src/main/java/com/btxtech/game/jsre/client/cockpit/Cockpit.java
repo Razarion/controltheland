@@ -56,6 +56,7 @@ import java.util.Map;
  * Date: 08.11.2010
  * Time: 23:14:36
  */
+@Deprecated
 public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
     private static final Cockpit INSTANCE = new Cockpit();
     private static final int WIDTH = 1015;
@@ -355,10 +356,6 @@ public class Cockpit extends AbsolutePanel implements HintWidgetProvider {
 
     public boolean contains(Index point) {
         return Rectangle.contains(getAbsoluteLeft(), getAbsoluteTop(), WIDTH, HEIGHT, point);
-    }
-
-    public Rectangle getArea() {
-        return new Rectangle(getAbsoluteLeft(), getAbsoluteTop(), WIDTH, HEIGHT);
     }
 
     public void enableOnlinePanel(boolean enabled) {
