@@ -6,6 +6,7 @@ import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Level;
+import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.client.common.info.RealityInfo;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -150,5 +151,10 @@ public class SideCockpit extends AbsolutePanel {
             }
         }, MouseDownEvent.getType());
     }
+
+    public Rectangle getArea() {
+        return new Rectangle(getAbsoluteLeft(), getAbsoluteTop(), WIDTH, HEIGHT);
+    }
+
 
 }

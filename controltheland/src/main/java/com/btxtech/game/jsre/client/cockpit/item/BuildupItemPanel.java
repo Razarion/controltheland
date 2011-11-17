@@ -139,7 +139,7 @@ public class BuildupItemPanel extends AbsolutePanel implements HintWidgetProvide
                 public void onMouseDown(MouseDownEvent event) {
                     if (buildListener != null) {
                         buildListener.onBuild();
-                    }
+                }
                     new PlaceablePreviewSyncItem(ImageHandler.getItemTypeImage(itemType), event, constructionVehicles, itemType);
                 }
             }));
