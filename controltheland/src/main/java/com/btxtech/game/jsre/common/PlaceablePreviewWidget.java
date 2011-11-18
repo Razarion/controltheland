@@ -118,9 +118,6 @@ public abstract class PlaceablePreviewWidget extends AbsolutePanel implements Mo
 
     @Override
     public void onMouseMove(MouseMoveEvent event) {
-        if (minimalTime > System.currentTimeMillis()) {
-            return;
-        }
         int x = event.getRelativeX(MapWindow.getAbsolutePanel().getElement())/* - image.getOffsetWidth() / 2*/;
         int y = event.getRelativeY(MapWindow.getAbsolutePanel().getElement())/* - image.getOffsetHeight() / 2*/;
         x = specialMoveX(x);
@@ -170,6 +167,9 @@ public abstract class PlaceablePreviewWidget extends AbsolutePanel implements Mo
 
     @Override
     public void onMouseUp(MouseUpEvent event) {
+        if (minimalTime > System.currentTimeMillis()) {
+            return;
+        }        
         int x = event.getRelativeX(MapWindow.getAbsolutePanel().getElement());
         int y = event.getRelativeY(MapWindow.getAbsolutePanel().getElement());
         x = specialMoveX(x);
