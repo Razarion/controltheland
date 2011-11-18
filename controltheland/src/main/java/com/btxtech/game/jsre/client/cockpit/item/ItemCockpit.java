@@ -1,6 +1,8 @@
 package com.btxtech.game.jsre.client.cockpit.item;
 
 import com.btxtech.game.jsre.client.ClientSyncItem;
+import com.btxtech.game.jsre.client.Connection;
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.AbstractControlPanel;
 import com.btxtech.game.jsre.client.common.Constants;
@@ -52,6 +54,10 @@ public class ItemCockpit extends AbstractControlPanel implements BuildupItemPane
     }
 
     public void activate(ClientSyncItem clientSyncItem) {
+        if(Connection.getInstance().getGameEngineMode() == GameEngineMode.PLAYBACK) {
+            return;
+        }
+        
         excFocusPanel.setFocus(true);
 
         Index relPosition = TerrainView.getInstance().toRelativeIndex(clientSyncItem.getSyncItem().getSyncItemArea().getPosition());

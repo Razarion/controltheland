@@ -116,6 +116,9 @@ public class ClientBase extends AbstractBaseServiceImpl implements AbstractBaseS
             return;
         }
         if (Math.round(price) > Math.round(accountBalance)) {
+            if(Connection.getInstance().getGameEngineMode() == GameEngineMode.PLAYBACK) {
+                return;
+            }
             UnfrequentDialog.open(UnfrequentDialog.Type.NO_MONEY);
             throw new InsufficientFundsException();
         } else {

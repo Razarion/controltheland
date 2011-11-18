@@ -13,6 +13,7 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.common.DecimalPosition;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
@@ -93,6 +94,9 @@ public class SyncMovable extends SyncBaseAbility {
     }
 
     public boolean onFinished() {
+        if(getServices().getConnectionService().getGameEngineMode() != GameEngineMode.MASTER) {
+            return false;
+        }
         SyncBaseItem syncBaseItem = getSyncBaseItem();
         if (getServices().getItemService().isSyncItemOverlapping(syncBaseItem)) {
             pathToDestination = getServices().getCollisionService().setupPathToSyncMovableRandomPositionIfTaken(syncBaseItem);
