@@ -68,22 +68,44 @@
 
     <!-- GWT Logging -->
     <servlet>
-        <servlet-name>remoteLogging</servlet-name>
+        <servlet-name>gameRemoteLogging</servlet-name>
         <servlet-class>com.btxtech.game.services.gwt.ExtendedRemoteLoggingServiceImpl</servlet-class>
         <init-param>
             <param-name>symbolMapsDirectory</param-name>
-            <!--param-value>WEB-INF/deploy/itemtypeeditor/symbolMaps</param-value-->
             <param-value>WEB-INF/deploy/game/symbolMaps</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
-        <servlet-name>remoteLogging</servlet-name>
+        <servlet-name>gameRemoteLogging</servlet-name>
         <url-pattern>/game/remote_logging</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>itemTypeEditorRemoteLogging</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.ExtendedRemoteLoggingServiceImpl</servlet-class>
+        <init-param>
+            <param-name>symbolMapsDirectory</param-name>
+            <param-value>WEB-INF/deploy/itemtypeeditor/symbolMaps</param-value>
+        </init-param>
+    </servlet>
     <servlet-mapping>
-        <servlet-name>remoteLogging</servlet-name>
+        <servlet-name>itemTypeEditorRemoteLogging</servlet-name>
         <url-pattern>/itemtypeeditor/remote_logging</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>playbackRemoteLogging</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.ExtendedRemoteLoggingServiceImpl</servlet-class>
+        <init-param>
+            <param-name>symbolMapsDirectory</param-name>
+            <param-value>WEB-INF/deploy/playback/symbolMaps</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>playbackRemoteLogging</servlet-name>
+        <url-pattern>/playback/remote_logging</url-pattern>
+    </servlet-mapping>
+
 
     <filter>
         <filter-name>spring-security</filter-name>

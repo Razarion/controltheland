@@ -13,8 +13,8 @@
 
 package com.btxtech.game.jsre.common.gameengine.syncObjects;
 
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
-import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.AttackCommand;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
@@ -77,6 +77,9 @@ public class SyncWeapon extends SyncBaseAbility {
             }
 
             if (!isInRange(targetItem)) {
+                if (getServices().getConnectionService().getGameEngineMode() == GameEngineMode.PLAYBACK) {
+                    return false;
+                }
                 // Destination place was may be taken. Calculate a new one or target has moved away
                 destinationAngel = recalculateNewPath(weaponType.getRange(), targetItem.getSyncItemArea());
                 getServices().getConnectionService().sendSyncInfo(getSyncBaseItem());
