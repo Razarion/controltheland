@@ -239,7 +239,16 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                 if (ClientTerritoryService.getInstance().isAllowed(clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem())
                         && ClientTerritoryService.getInstance().isAllowed(target.getSyncItemArea().getPosition(), clientSyncItem.getSyncBaseItem())
                         && clientSyncItem.getSyncBaseItem().getSyncWeapon().isItemTypeAllowed(target)) {
-                    attackFormationItemList.add(new AttackFormationItem(clientSyncItem.getSyncBaseItem(), clientSyncItem.getSyncBaseItem().getSyncWeapon().getWeaponType().getRange()));
+                    if(clientSyncItem.getSyncBaseItem().getSyncWeapon().isAttackAllowedWithoutMoving(target)) {
+                        attack(clientSyncItem.getSyncBaseItem(),
+                                target,
+                                clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition(),
+                                clientSyncItem.getSyncBaseItem().getSyncItemArea().getTurnToAngel(target.getSyncItemArea()),
+                                clientSyncItem.getSyncBaseItem().hasSyncMovable());
+                    } else if(clientSyncItem.getSyncBaseItem().hasSyncMovable()) {
+                        attackFormationItemList.add(new AttackFormationItem(clientSyncItem.getSyncBaseItem(),
+                                clientSyncItem.getSyncBaseItem().getSyncWeapon().getWeaponType().getRange()));
+                    }
                 }
             } else {
                 GwtCommon.sendLogToServer("ActionHandler.attack(): can not cast to TankSyncItem:" + clientSyncItem);
