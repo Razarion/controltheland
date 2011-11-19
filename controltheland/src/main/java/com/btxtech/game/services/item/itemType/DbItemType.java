@@ -17,7 +17,10 @@ import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.common.CrudChildServiceHelper;
+import com.btxtech.game.services.common.CrudParent;
 import com.btxtech.game.services.user.UserService;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorColumn;
@@ -29,6 +32,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,7 +47,7 @@ import java.util.Set;
 @Entity(name = "ITEM_TYPE")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TYPE", discriminatorType = DiscriminatorType.STRING)
-public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild {
+public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild, CrudParent {
     @Id
     @GeneratedValue
     private Integer id;
@@ -52,6 +56,7 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
     private String proDescription;
     private String contraDescription;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "itemType", orphanRemoval = true)
+    @Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE})
     private Set<DbItemTypeImage> itemTypeImages;
     private TerrainType terrainType;
     private int imageWidth;
@@ -59,6 +64,8 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
     private int boundingBoxWidth;
     private int boundingBoxHeight;
     private int imageCount;
+    @Transient
+    private CrudChildServiceHelper<DbItemTypeImage> itemTypeImageCrud;
 
 
     @Override
@@ -84,22 +91,6 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
     @Override
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public Set<DbItemTypeImage> getItemTypeImages() {
-        if (itemTypeImages == null) {
-            itemTypeImages = new HashSet<DbItemTypeImage>();
-        }
-        return itemTypeImages;
-    }
-
-    @Override
-    public void setItemTypeImages(Collection<DbItemTypeImage> itemTypeImages) {
-        getItemTypeImages().clear();
-        for (DbItemTypeImage itemTypeImage : itemTypeImages) {
-            getItemTypeImages().add(itemTypeImage);
-        }
     }
 
     @Override
@@ -219,9 +210,19 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
 
     @Override
     public void init(UserService userService) {
+        itemTypeImages = new HashSet<DbItemTypeImage>();
     }
 
     @Override
     public void setParent(Object o) {
     }
+
+    public CrudChildServiceHelper<DbItemTypeImage> getItemTypeImageCrud() {
+        if (itemTypeImageCrud == null) {
+            itemTypeImageCrud = new CrudChildServiceHelper<DbItemTypeImage>(itemTypeImages, DbItemTypeImage.class, this);
+        }
+        return itemTypeImageCrud;
+    }
+
+
 }

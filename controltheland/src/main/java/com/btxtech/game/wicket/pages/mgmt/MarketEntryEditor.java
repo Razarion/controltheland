@@ -17,8 +17,8 @@ import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
-import com.btxtech.game.services.market.DbMarketEntry;
 import com.btxtech.game.services.market.DbMarketCategory;
+import com.btxtech.game.services.market.DbMarketEntry;
 import com.btxtech.game.services.market.DbMarketFunction;
 import com.btxtech.game.services.market.ServerMarketService;
 import com.btxtech.game.wicket.uiservices.CrudRootTableHelper;
@@ -35,7 +35,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.resource.ByteArrayResource;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import java.util.Set;
+import java.util.Collection;
 
 /**
  * User: beat
@@ -112,7 +112,7 @@ public class MarketEntryEditor extends MgmtWebPage {
     }
 
     private byte[] getImage(DbItemType itemType) {
-        Set<DbItemTypeImage> dbItemTypeImages = itemType.getItemTypeImages();
+        Collection<DbItemTypeImage> dbItemTypeImages = itemType.getItemTypeImageCrud().readDbChildren();
         if (dbItemTypeImages == null || dbItemTypeImages.isEmpty()) {
             return null;
         }

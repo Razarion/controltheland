@@ -11,12 +11,16 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.wicket.pages.mgmt;
+package com.btxtech.game.wicket.pages.mgmt.items;
 
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
+import com.btxtech.game.wicket.pages.mgmt.BoundingBoxEditor;
+import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
+import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -30,7 +34,6 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import javax.swing.*;
 import java.util.Arrays;
-import java.util.HashSet;
 
 /**
  * User: beat
@@ -40,21 +43,25 @@ import java.util.HashSet;
 public class ResourceItemTypeEditor extends MgmtWebPage {
     @SpringBean
     private ItemService itemService;
+    @SpringBean
+    private RuServiceHelper<DbResourceItemType> ruServiceHelper;
 
+    public ResourceItemTypeEditor(DbResourceItemType dbResourceItemType) {
+        add(new FeedbackPanel("msgs"));
 
-    public ResourceItemTypeEditor(final DbResourceItemType dbResourceItemType) {
-        FeedbackPanel feedbackPanel = new FeedbackPanel("msgs");
-        add(feedbackPanel);
-
-        Form<DbResourceItemType> form = new Form<DbResourceItemType>("itemTypeForm", new CompoundPropertyModel<DbResourceItemType>(dbResourceItemType));
-
+        final Form<DbResourceItemType> form = new Form<DbResourceItemType>("itemTypeForm", new CompoundPropertyModel<DbResourceItemType>(new RuModel<DbResourceItemType>(dbResourceItemType, DbResourceItemType.class) {
+            @Override
+            protected RuServiceHelper<DbResourceItemType> getRuServiceHelper() {
+                return ruServiceHelper;
+            }
+        }));
+        add(form);
         form.add(new Button("editBoundingBox") {
             @Override
             public void onSubmit() {
-                setResponsePage(new BoundingBoxEditor(dbResourceItemType.getId()));
+                setResponsePage(new BoundingBoxEditor(form.getModelObject().getId()));
             }
         });
-
         form.add(new TextField<String>("name"));
         form.add(new TextField<String>("description"));
         form.add(new TextField<String>("amount"));
@@ -68,18 +75,20 @@ public class ResourceItemTypeEditor extends MgmtWebPage {
 
             @Override
             public void setObject(FileUpload fileUpload) {
+                if(fileUpload == null) {
+                    // Don't know why...
+                    return;
+                }
+                DbResourceItemType dbResourceItemType = form.getModelObject();
                 ImageIcon image = new ImageIcon(fileUpload.getBytes());
                 dbResourceItemType.setImageHeight(image.getIconHeight());
                 dbResourceItemType.setImageWidth(image.getIconWidth());
                 dbResourceItemType.setImageCount(1);
-                DbItemTypeImage itemTypeImage = new DbItemTypeImage();
-                itemTypeImage.setItemType(dbResourceItemType);
+                dbResourceItemType.getItemTypeImageCrud().deleteAllChildren();
+                DbItemTypeImage itemTypeImage = dbResourceItemType.getItemTypeImageCrud().createDbChild();
                 itemTypeImage.setContentType(fileUpload.getContentType());
                 itemTypeImage.setNumber(1);
                 itemTypeImage.setData(fileUpload.getBytes());
-                HashSet<DbItemTypeImage> dbItemTypeImages = new HashSet<DbItemTypeImage>();
-                dbItemTypeImages.add(itemTypeImage);
-                dbResourceItemType.setItemTypeImages(dbItemTypeImages);
             }
 
             @Override
@@ -91,7 +100,7 @@ public class ResourceItemTypeEditor extends MgmtWebPage {
         form.add(new Button("save") {
             @Override
             public void onSubmit() {
-                itemService.saveDbItemType(dbResourceItemType);
+                ruServiceHelper.updateDbEntity(form.getModelObject());
                 setResponsePage(ItemTypeTable.class);
             }
         });

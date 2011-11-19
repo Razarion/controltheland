@@ -601,7 +601,7 @@ abstract public class AbstractServiceTest {
     // ------------------- Setup Item Types --------------------
 
     protected DbBaseItemType createBuilderBaseItemType() {
-        DbBaseItemType dbBaseItemType = new DbBaseItemType();
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
         dbBaseItemType.setName(TEST_START_BUILDER_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
         dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));
@@ -629,7 +629,7 @@ abstract public class AbstractServiceTest {
     }
 
     protected DbBaseItemType createFactoryBaseItemType() {
-        DbBaseItemType dbBaseItemType = new DbBaseItemType();
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
         dbBaseItemType.setName(TEST_FACTORY_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
         dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));
@@ -653,7 +653,7 @@ abstract public class AbstractServiceTest {
     }
 
     protected DbBaseItemType createAttackBaseItemType() {
-        DbBaseItemType dbBaseItemType = new DbBaseItemType();
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
         dbBaseItemType.setName(TEST_ATTACK_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
         dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));
@@ -690,7 +690,7 @@ abstract public class AbstractServiceTest {
     }
 
     protected DbBaseItemType createAttackBaseItemType2() {
-        DbBaseItemType dbBaseItemType = new DbBaseItemType();
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
         dbBaseItemType.setName(TEST_ATTACK_ITEM_2);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
         dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));
@@ -719,7 +719,7 @@ abstract public class AbstractServiceTest {
     }
 
     protected DbBaseItemType createContainerBaseItemType() {
-        DbBaseItemType dbBaseItemType = new DbBaseItemType();
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
         dbBaseItemType.setName(TEST_CONTAINER_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
         dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));
@@ -743,7 +743,7 @@ abstract public class AbstractServiceTest {
     }
 
     protected DbBaseItemType createSimpleBuilding() {
-        DbBaseItemType dbBaseItemType = new DbBaseItemType();
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
         dbBaseItemType.setName(TEST_SIMPLE_BUILDING);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
         dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));
@@ -768,7 +768,7 @@ abstract public class AbstractServiceTest {
     }
 
     private DbResourceItemType createMoney() {
-        DbResourceItemType dbResourceItemType = new DbResourceItemType();
+        DbResourceItemType dbResourceItemType = (DbResourceItemType) itemService.getDbItemTypeCrud().createDbChild(DbResourceItemType.class);
         dbResourceItemType.setName(TEST_RESOURCE_ITEM);
         dbResourceItemType.setTerrainType(TerrainType.LAND);
         dbResourceItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));
@@ -781,7 +781,7 @@ abstract public class AbstractServiceTest {
     }
 
     protected DbBaseItemType createHarvesterItemType() {
-        DbBaseItemType dbBaseItemType = new DbBaseItemType();
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
         dbBaseItemType.setName(TEST_HARVESTER_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
         dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));

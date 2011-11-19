@@ -11,11 +11,11 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.wicket.pages.mgmt;
+package com.btxtech.game.wicket.pages.mgmt.items;
 
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -75,7 +75,7 @@ public class ItemsUtil {
     public static DbProjectileItemType getProjectileItemType4Id(int id, Collection<DbProjectileItemType> dbProjectileItemTypes) {
         for (DbProjectileItemType dbProjectileItemType : dbProjectileItemTypes) {
             if (dbProjectileItemType.getId() == id) {
-                return  dbProjectileItemType;
+                return dbProjectileItemType;
             }
         }
         throw new IllegalArgumentException("Projectile Item type does not exist: " + id);

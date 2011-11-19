@@ -1,10 +1,12 @@
 package com.btxtech.game.services.item;
 
+import com.btxtech.game.jsre.client.GameEngineMode;
 import com.btxtech.game.jsre.client.MovableService;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
+import com.btxtech.game.jsre.common.gameengine.services.connection.ConnectionService;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.AbstractTerrainService;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -41,11 +43,16 @@ public class TestMove extends AbstractServiceTest {
         EasyMock.expect(itemServiceMock.hasItemsInRectangle(EasyMock.<Rectangle>anyObject())).andReturn(false).anyTimes();
         EasyMock.replay(itemServiceMock);
 
+        ConnectionService connectionService = EasyMock.createNiceMock(ConnectionService.class);
+        EasyMock.expect(connectionService.getGameEngineMode()).andReturn(GameEngineMode.MASTER).anyTimes();
+        EasyMock.replay(connectionService);
+
         AbstractTerrainService mockTerrainService = EasyMock.createNiceMock(AbstractTerrainService.class);
 
         Services services = EasyMock.createNiceMock(Services.class);
         EasyMock.expect(services.getItemService()).andReturn(itemServiceMock).anyTimes();
         EasyMock.expect(services.getTerrainService()).andReturn(mockTerrainService).anyTimes();
+        EasyMock.expect(services.getConnectionService()).andReturn(connectionService).anyTimes();
         EasyMock.replay(services);
 
         Id id = new Id(1, 1, 1);
@@ -102,7 +109,7 @@ public class TestMove extends AbstractServiceTest {
         path.add(new Index(2100, 2000));
         syncBaseItem.getSyncMovable().setPathToDestination(path);
 
-        for(int i = 0; i < 499; i++) {
+        for (int i = 0; i < 499; i++) {
             Assert.assertTrue(syncBaseItem.getSyncMovable().tick(0.002));
         }
 
@@ -154,7 +161,7 @@ public class TestMove extends AbstractServiceTest {
         path.add(new Index(2000, 2050));
         syncBaseItem.getSyncMovable().setPathToDestination(path);
 
-        for(int i = 0; i < 499; i++) {
+        for (int i = 0; i < 499; i++) {
             Assert.assertTrue(syncBaseItem.getSyncMovable().tick(0.001));
         }
 
@@ -187,7 +194,7 @@ public class TestMove extends AbstractServiceTest {
         path.add(new Index(2100, 2100));
         syncBaseItem.getSyncMovable().setPathToDestination(path);
 
-        for(int i = 0; i < 471; i++) {
+        for (int i = 0; i < 471; i++) {
             Assert.assertTrue(syncBaseItem.getSyncMovable().tick(0.003));
         }
 

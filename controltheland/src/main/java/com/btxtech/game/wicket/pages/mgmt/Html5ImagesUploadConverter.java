@@ -13,12 +13,12 @@
 
 package com.btxtech.game.wicket.pages.mgmt;
 
-import com.btxtech.game.services.item.itemType.DbItemType;
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.StringTokenizer;
 import org.apache.wicket.util.crypt.Base64;
+
+import javax.swing.*;
+import java.util.StringTokenizer;
 
 /**
  * User: beat
@@ -26,43 +26,38 @@ import org.apache.wicket.util.crypt.Base64;
  * Time: 22:12:07
  */
 public class Html5ImagesUploadConverter {
-    private Set<DbItemTypeImage> images = new HashSet<DbItemTypeImage>();
-
-    public Html5ImagesUploadConverter(String dataString, DbItemType dbItemType) {
+    public static void convertAndSetImages(String dataString, DbBaseItemType dbBaseItemType) {
         if (dataString == null) {
             return;
         }
+        dbBaseItemType.getItemTypeImageCrud().deleteAllChildren();
+
         StringTokenizer tokenizer = new StringTokenizer(dataString, ",");
+        int count = 0;
         while (tokenizer.hasMoreElements()) {
-            DbItemTypeImage itemTypeImage = new DbItemTypeImage();
-            itemTypeImage.setItemType(dbItemType);
+            DbItemTypeImage itemTypeImage = dbBaseItemType.getItemTypeImageCrud().createDbChild();
             itemTypeImage.setNumber(extractNumber(tokenizer.nextToken()));
             itemTypeImage.setContentType(extractContentType(tokenizer.nextToken()));
-            itemTypeImage.setData(Base64.decodeBase64(tokenizer.nextToken().getBytes()));
-            images.add(itemTypeImage);
+            byte[] imageData = Base64.decodeBase64(tokenizer.nextToken().getBytes());
+            itemTypeImage.setData(imageData);
+            if (count == 0) {
+                ImageIcon image = new ImageIcon(imageData);
+                dbBaseItemType.setImageWidth(image.getIconWidth());
+                dbBaseItemType.setImageHeight(image.getIconHeight());
+            }
+            count++;
         }
+        dbBaseItemType.setImageCount(count);
     }
 
-    private String extractContentType(String rawString) {
+    private static String extractContentType(String rawString) {
         rawString = rawString.substring(5);
         rawString = rawString.substring(0, rawString.indexOf(";base64"));
         return rawString;
     }
 
-    private int extractNumber(String fileName) {
+    private static int extractNumber(String fileName) {
         String numberString = fileName.substring(fileName.lastIndexOf("_") + 1, fileName.lastIndexOf("."));
         return Integer.parseInt(numberString);
-    }
-
-    public Set<DbItemTypeImage> getImages() {
-        return images;
-    }
-
-    public boolean isEmpty() {
-        return images.isEmpty();
-    }
-
-    public DbItemTypeImage getFirst() {
-        return images.iterator().next();
     }
 }

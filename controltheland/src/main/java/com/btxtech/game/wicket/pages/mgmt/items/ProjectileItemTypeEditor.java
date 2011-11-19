@@ -11,11 +11,15 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.wicket.pages.mgmt;
+package com.btxtech.game.wicket.pages.mgmt.items;
 
+import com.btxtech.game.services.common.RuServiceHelper;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
+import com.btxtech.game.wicket.pages.mgmt.BoundingBoxEditor;
+import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
+import com.btxtech.game.wicket.uiservices.RuModel;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
@@ -28,7 +32,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import javax.swing.*;
-import java.util.HashSet;
 
 /**
  * User: beat
@@ -38,17 +41,24 @@ import java.util.HashSet;
 public class ProjectileItemTypeEditor extends MgmtWebPage {
     @SpringBean
     private ItemService itemService;
+    @SpringBean
+    private RuServiceHelper<DbProjectileItemType> ruServiceHelper;
 
-    public ProjectileItemTypeEditor(final DbProjectileItemType dbProjectileItemType) {
-        FeedbackPanel feedbackPanel = new FeedbackPanel("msgs");
-        add(feedbackPanel);
+    public ProjectileItemTypeEditor(DbProjectileItemType dbProjectileItemType) {
+        add(new FeedbackPanel("msgs"));
 
-        Form<DbProjectileItemType> form = new Form<DbProjectileItemType>("itemTypeForm", new CompoundPropertyModel<DbProjectileItemType>(dbProjectileItemType));
+        final Form<DbProjectileItemType> form = new Form<DbProjectileItemType>("itemTypeForm", new CompoundPropertyModel<DbProjectileItemType>(new RuModel<DbProjectileItemType>(dbProjectileItemType, DbProjectileItemType.class) {
+            @Override
+            protected RuServiceHelper<DbProjectileItemType> getRuServiceHelper() {
+                return ruServiceHelper;
+            }
+        }));
+        add(form);
 
-        form.add(new Button("editBoundingBox"){
+        form.add(new Button("editBoundingBox") {
             @Override
             public void onSubmit() {
-                setResponsePage(new BoundingBoxEditor(dbProjectileItemType.getId()));
+                setResponsePage(new BoundingBoxEditor(form.getModelObject().getId()));
             }
         });
 
@@ -71,18 +81,19 @@ public class ProjectileItemTypeEditor extends MgmtWebPage {
 
             @Override
             public void setObject(FileUpload fileUpload) {
+                if (fileUpload == null) {
+                    // Don't know why...
+                    return;
+                }
                 ImageIcon image = new ImageIcon(fileUpload.getBytes());
-                dbProjectileItemType.setImageHeight(image.getIconHeight());
-                dbProjectileItemType.setImageWidth(image.getIconWidth());
-                dbProjectileItemType.setImageCount(1);
-                DbItemTypeImage itemTypeImage = new DbItemTypeImage();
-                itemTypeImage.setItemType(dbProjectileItemType);
+                form.getModelObject().setImageHeight(image.getIconHeight());
+                form.getModelObject().setImageWidth(image.getIconWidth());
+                form.getModelObject().setImageCount(1);
+                form.getModelObject().getItemTypeImageCrud().deleteAllChildren();
+                DbItemTypeImage itemTypeImage = form.getModelObject().getItemTypeImageCrud().createDbChild();
                 itemTypeImage.setContentType(fileUpload.getContentType());
                 itemTypeImage.setNumber(1);
                 itemTypeImage.setData(fileUpload.getBytes());
-                HashSet<DbItemTypeImage> dbItemTypeImages = new HashSet<DbItemTypeImage>();
-                dbItemTypeImages.add(itemTypeImage);
-                dbProjectileItemType.setItemTypeImages(dbItemTypeImages);
             }
 
             @Override
@@ -94,7 +105,7 @@ public class ProjectileItemTypeEditor extends MgmtWebPage {
         form.add(new Button("save") {
             @Override
             public void onSubmit() {
-                itemService.saveDbItemType(dbProjectileItemType);
+                ruServiceHelper.updateDbEntity(form.getModelObject());
                 setResponsePage(ItemTypeTable.class);
             }
         });

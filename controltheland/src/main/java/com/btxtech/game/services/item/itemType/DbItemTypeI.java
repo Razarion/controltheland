@@ -21,10 +21,6 @@ public interface DbItemTypeI {
 
     void setName(String name);
 
-    Set<DbItemTypeImage> getItemTypeImages();
-
-    void setItemTypeImages(Collection<DbItemTypeImage> itemTypeImages);
-
     String getProDescription();
 
     void setProDescription(String proDescription);
