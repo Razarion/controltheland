@@ -13,12 +13,15 @@
 
 package com.btxtech.game.services.item.itemType;
 
-import java.io.Serializable;
+import com.btxtech.game.services.common.CrudChild;
+import com.btxtech.game.services.user.UserService;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import java.io.Serializable;
 
 /**
  * User: beat
@@ -26,11 +29,11 @@ import javax.persistence.ManyToOne;
  * Time: 22:47:20
  */
 @Entity(name = "ITEM_TYPE_IMAGE")
-public class DbItemTypeImage implements Serializable {
+public class DbItemTypeImage implements Serializable, CrudChild<DbItemType> {
     @Id
     @GeneratedValue
     private Integer id;
-    @ManyToOne(optional = false)
+    @ManyToOne
     private DbItemType itemType;
     private int number;
     @Column(nullable = false)
@@ -38,12 +41,15 @@ public class DbItemTypeImage implements Serializable {
     @Column(nullable = false, length = 500000)
     private byte[] data;
 
-    public DbItemType getItemType() {
-        return itemType;
+
+    @Override
+    public void setParent(DbItemType dbItemType) {
+        itemType = dbItemType;
     }
 
-    public void setItemType(DbItemType itemType) {
-        this.itemType = itemType;
+    @Override
+    public Integer getId() {
+        return id;
     }
 
     public int getNumber() {
@@ -76,16 +82,26 @@ public class DbItemTypeImage implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
 
         DbItemTypeImage that = (DbItemTypeImage) o;
-        return id != null ? id.equals(that.id):super.equals(that);
+        return id != null && id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        if (id != null) {
-            return id.hashCode();
-        } else {
-            return super.hashCode();
-        }
+        return id != null ? id : System.identityHashCode(this);
+    }
+
+    @Override
+    public String getName() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setName(String name) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void init(UserService userService) {
     }
 }
 

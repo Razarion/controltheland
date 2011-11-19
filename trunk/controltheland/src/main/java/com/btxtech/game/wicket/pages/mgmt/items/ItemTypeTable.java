@@ -11,7 +11,7 @@
  *   GNU General Public License for more details.
  */
 
-package com.btxtech.game.wicket.pages.mgmt;
+package com.btxtech.game.wicket.pages.mgmt.items;
 
 import com.btxtech.game.services.energy.ServerEnergyService;
 import com.btxtech.game.services.item.ItemService;
@@ -20,6 +20,8 @@ import com.btxtech.game.services.item.itemType.DbItemType;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import java.util.Iterator;
+
+import com.btxtech.game.wicket.pages.mgmt.MgmtWebPage;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -89,7 +91,7 @@ public class ItemTypeTable extends MgmtWebPage {
         form.add(new Button("addBaseItemType") {
             @Override
             public void onSubmit() {
-                DbBaseItemType dbBaseItemType = new DbBaseItemType();
+                DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
                 itemService.saveDbItemType(dbBaseItemType);
                 setResponsePage(new BaseItemTypeEditor(dbBaseItemType));
             }
@@ -97,7 +99,7 @@ public class ItemTypeTable extends MgmtWebPage {
         form.add(new Button("addResourceItemType") {
             @Override
             public void onSubmit() {
-                DbResourceItemType dbResourceItemType = new DbResourceItemType();
+                DbResourceItemType dbResourceItemType = (DbResourceItemType) itemService.getDbItemTypeCrud().createDbChild(DbResourceItemType.class);
                 itemService.saveDbItemType(dbResourceItemType);
                 setResponsePage(new ResourceItemTypeEditor(dbResourceItemType));
             }
@@ -105,7 +107,7 @@ public class ItemTypeTable extends MgmtWebPage {
         form.add(new Button("addProjectileItemType") {
             @Override
             public void onSubmit() {
-                DbProjectileItemType dbProjectileItemType = new DbProjectileItemType();
+                DbProjectileItemType dbProjectileItemType = (DbProjectileItemType) itemService.getDbItemTypeCrud().createDbChild(DbProjectileItemType.class);
                 itemService.saveDbItemType(dbProjectileItemType);
                 setResponsePage(new ProjectileItemTypeEditor(dbProjectileItemType));
             }

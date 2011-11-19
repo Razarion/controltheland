@@ -1,0 +1,145 @@
+<!--
+  ~ Copyright (c) 2010.
+  ~
+  ~   This program is free software; you can redistribute it and/or modify
+  ~   it under the terms of the GNU General Public License as published by
+  ~   the Free Software Foundation; version 2 of the License.
+  ~
+  ~   This program is distributed in the hope that it will be useful,
+  ~   but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~   GNU General Public License for more details.
+  -->
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns:wicket="http://wicket.apache.org/dtds.data/wicket-xhtml1.4-strict.dtd">
+<head>
+    <link rel="stylesheet" type="text/css" href="GameEditor.css">
+    <title>Base Item Type Editor</title>
+    <script>
+        var count = 0;
+        var progress = 0;
+        var builder = '';
+        function dodrop(event) {
+            var data = event.dataTransfer;
+            count = data.files.length;
+            progress = 0;
+            builder = '';
+            for (var i = 0; i < data.files.length; i++) {
+                var file = data.files[i];
+                output(file.name + " " + file.type + "\n");
+                getAsText(file);
+            }
+        }
+
+        function output(text) {
+            document.getElementById("output").textContent += text;
+            //dump(text);
+        }
+
+        function getAsText(readFile) {
+            var reader = new FileReader();
+            reader.fileName = readFile.name;
+            reader.readAsDataURL(readFile);
+            //reader.onprogress = updateProgress;
+            reader.onload = loaded;
+            reader.onerror = errorHandler;
+        }
+
+        function loaded(evt) {
+            progress++;
+            output(progress + " of " + count + "\n");
+            builder += ",";
+            builder += this.fileName;
+            builder += ",";
+            builder += evt.target.result;
+            if (progress >= count) {
+                output("*** DONE ***");
+                document.getElementById("imageFileField").value = builder;
+            }
+        }
+
+        function errorHandler(evt) {
+            output("ERROR: " + evt);
+        }
+
+    </script>
+
+</head>
+<body>
+
+<h1>Item Type Editor</h1>
+
+<h2>Config</h2>
+<span wicket:id="msgs"/>
+
+<form wicket:id="itemTypeForm">
+    <table border="0" cellSpacing="1" cellPadding="0">
+        <tr bgcolor="#DDDDDD">
+            <td colspan="3" valign="top"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Bounding Box [Item mus be activated]</td>
+            <td valign="top"><input type="submit" wicket:id="editBoundingBox" value="Edit"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Name</td>
+            <td valign="top"><input wicket:id="name" type="text" size="30" maxlength="100"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Description</td>
+            <td valign="top"><textarea wicket:id="description" rows="10" cols="60">description</textarea></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Pro description</td>
+            <td valign="top"><textarea wicket:id="proDescription" rows="10" cols="60">proDescription</textarea></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Contra description</td>
+            <td valign="top"><textarea wicket:id="contraDescription" rows="10" cols="60">contraDescription</textarea>
+            </td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Health</td>
+            <td valign="top"><input wicket:id="health" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Price</td>
+            <td valign="top"><input wicket:id="price" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Buildup</td>
+            <td valign="top"><input wicket:id="buildup" type="text" size="30" maxlength="40"></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Terrain type</td>
+            <td valign="top"><select wicket:id="terrainType" name="top5" size="1"></select></td>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Upgradeable</td>
+            <td wicket:id="upgradable"/>
+        </tr>
+        <tr bgcolor="#DDDDDD">
+            <td colspan="2" valign="top">Upgrade progress</td>
+            <td valign="top"><input wicket:id="upgradeProgress" type="text" size="30" maxlength="40"></td>
+        </tr>
+    </table>
+    <br>
+    <input type="submit" wicket:id="editAbilities" value="Abilities">
+    <br>
+    <br>
+    <input type="submit" wicket:id="save" value="Save">
+    <input type="submit" wicket:id="cancel" value="Cancel">
+    <br>
+    <br>
+    <input type="hidden" id="imageFileField" wicket:id="imageFileField"/>
+
+    <div id="output" style="min-height: 100px; white-space: pre; border: 1px solid black;"
+         ondragenter="document.getElementById('output').textContent = ''; event.stopPropagation(); event.preventDefault();"
+         ondragover="event.stopPropagation(); event.preventDefault();"
+         ondrop="event.stopPropagation(); event.preventDefault(); dodrop(event);"></div>
+</form>
+
+</body>
+</html>

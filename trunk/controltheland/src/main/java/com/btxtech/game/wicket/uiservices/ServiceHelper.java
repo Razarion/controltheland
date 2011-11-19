@@ -2,7 +2,7 @@ package com.btxtech.game.wicket.uiservices;
 
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
-import com.btxtech.game.wicket.pages.mgmt.ItemsUtil;
+import com.btxtech.game.wicket.pages.mgmt.items.ItemsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

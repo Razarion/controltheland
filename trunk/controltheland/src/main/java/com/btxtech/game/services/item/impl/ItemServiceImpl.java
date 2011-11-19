@@ -515,7 +515,7 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             throw new IllegalArgumentException("Item Type Images already exits: " + dbItemType);
         }
         HashMap<Integer, DbItemTypeImage> indexImageHashMap = new HashMap<Integer, DbItemTypeImage>();
-        for (DbItemTypeImage itemTypeImage : dbItemType.getItemTypeImages()) {
+        for (DbItemTypeImage itemTypeImage : dbItemType.getItemTypeImageCrud().readDbChildren()) {
             if (indexImageHashMap.containsKey(itemTypeImage.getNumber())) {
                 throw new IllegalArgumentException("Item Type Image Index already exits: " + dbItemType + " index: " + itemTypeImage.getNumber());
             }
