@@ -18,6 +18,8 @@
 
     <!-- Inherit the core Web Toolkit stuff.                        -->
     <inherits name='com.google.gwt.user.User'/>
+    <!-- GWT Issue 5691: Logging mus be at the beginning otherwise log are lost in onModuleLoad() method-->
+    <inherits name="com.google.gwt.logging.Logging"/>
     <inherits name='com.google.gwt.user.theme.standard.Standard'/>
     <inherits name="com.google.gwt.widgetideas.HyperlinkOverride"/>
     <inherits name='com.google.gwt.widgetideas.GWTCanvas'/>
@@ -27,14 +29,14 @@
     <!-- the theme of your GWT application by uncommenting          -->
     <!-- any one of the following lines.                            -->
     <inherits name='com.google.gwt.user.theme.standard.Standard'/>
-    <inherits name="com.google.gwt.logging.Logging"/>
     <!-- Other module inherits                                      -->
 
-    <!-- Specify the app entry point class.                         -->
-    <entry-point class='com.btxtech.game.jsre.itemtypeeditor.ItemTypeEditor'/>
 
-    <!-- Logging -->
+    <!-- Logging Properties-->
     <set-property name="gwt.logging.firebugHandler" value="DISABLED"/>
     <set-property name="gwt.logging.simpleRemoteHandler" value="ENABLED"/>
     <set-property name="gwt.logging.popupHandler" value="DISABLED"/>
+
+    <!-- Specify the app entry point class.                         -->
+    <entry-point class='com.btxtech.game.jsre.itemtypeeditor.ItemTypeEditor'/>
 </module>
