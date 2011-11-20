@@ -13,11 +13,14 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.allen_sauer.gwt.voices.client.SoundController;
 import com.allen_sauer.gwt.voices.client.Sound;
-import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.allen_sauer.gwt.voices.client.SoundController;
 import com.btxtech.game.jsre.client.common.Constants;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -27,7 +30,9 @@ import java.util.HashMap;
 public class SoundHandler {
     private static final SoundHandler INSTANCE = new SoundHandler();
     private SoundController soundController = new SoundController();
-    private HashMap<BaseItemType, Sound>  sounds = new HashMap<BaseItemType, Sound>();
+    private HashMap<BaseItemType, Sound> sounds = new HashMap<BaseItemType, Sound>();
+    private Logger log = Logger.getLogger(SoundHandler.class.getName());
+    private boolean logCrash = true;
 
     /**
      * Singleton
@@ -37,11 +42,18 @@ public class SoundHandler {
 
     public void playSound(BaseItemType baseItemType) {
         Sound sound = sounds.get(baseItemType);
-        if(sound == null) {
+        if (sound == null) {
             sound = soundController.createSound(Sound.MIME_TYPE_AUDIO_MPEG, buildUrl(baseItemType));
             sounds.put(baseItemType, sound);
         }
-        sound.play();
+        try {
+            sound.play();
+        } catch (Throwable t) {
+            if (logCrash) {
+                log.log(Level.SEVERE, "Sound crashed", t);
+                logCrash = false;
+            }
+        }
     }
 
     public static void playMuzzleFlashSound(BaseItemType baseItemType) {
