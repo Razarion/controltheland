@@ -40,6 +40,7 @@ import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionServi
 import com.btxtech.game.jsre.common.gameengine.services.action.impl.CommonActionServiceImpl;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.collision.PathCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -118,6 +119,11 @@ public class ActionHandler extends CommonActionServiceImpl implements CommonActi
                     activeItem.stop();
                     ClientServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
                     log.warning("PositionTakenException");
+                } catch (PathCanNotBeFoundException e) {
+                    iterator.remove();
+                    activeItem.stop();
+                    ClientServices.getInstance().getConnectionService().sendSyncInfo(activeItem);
+                    log.warning("PathCanNotBeFoundException: " + e.getMessage());
                 } catch (Throwable throwable) {
                     GwtCommon.handleException(throwable);
                     activeItem.stop();

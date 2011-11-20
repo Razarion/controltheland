@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.common.gameengine.services.action.impl;
 
+import com.btxtech.game.jsre.client.ClientServices;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
 import com.btxtech.game.jsre.common.InsufficientFundsException;
@@ -10,6 +11,7 @@ import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.action.CommonActionService;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
 import com.btxtech.game.jsre.common.gameengine.services.base.ItemLimitExceededException;
+import com.btxtech.game.jsre.common.gameengine.services.collision.PathCanNotBeFoundException;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -69,6 +71,8 @@ public abstract class CommonActionServiceImpl implements CommonActionService {
         moveCommand.setPathToDestination(getServices().getCollisionService().setupPathToDestination(syncBaseItem, destination));
         try {
             executeCommand(syncBaseItem, moveCommand);
+        } catch (PathCanNotBeFoundException e) {
+            log.warning("PathCanNotBeFoundException: " + e.getMessage());
         } catch (Exception e) {
             log.log(Level.SEVERE, "", e);
         }
