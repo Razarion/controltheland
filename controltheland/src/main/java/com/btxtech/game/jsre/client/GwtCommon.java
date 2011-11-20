@@ -81,10 +81,17 @@ public class GwtCommon {
     }
 
     private static void sendExceptionToServer(String message, Throwable throwable) {
-        sendLogToServer(setupStackTrace(message, throwable));
+        StringBuilder builder = new StringBuilder();
+        builder.append(message);
         if (throwable != null) {
-            log.log(Level.SEVERE, message, throwable);
+            builder.append(": ");
+            builder.append(throwable.getMessage());
+            builder.append(": ");
+            builder.append(throwable.getCause());
+            builder.append(": ");
+            builder.append(throwable.getClass());
         }
+        log.log(Level.SEVERE, builder.toString(), throwable);
     }
 
     public static String setupStackTrace(String message, Throwable throwable) {
