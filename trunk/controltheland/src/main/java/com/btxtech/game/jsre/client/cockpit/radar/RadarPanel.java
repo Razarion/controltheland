@@ -124,4 +124,10 @@ public class RadarPanel {
     public RadarFrameView getRadarFrameView() {
         return radarFrameView;
     }
+
+    public void setRadarItemsVisible() {
+        hasEnergy = true;
+        hasRadar1 = true;
+        handleRadarState();        
+    }
 }

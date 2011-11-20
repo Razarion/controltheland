@@ -30,8 +30,8 @@ import java.util.logging.Logger;
  * Time: 21:23:04
  */
 public class RadarItemView extends MiniMap {
-    public static final int BASE_ITEM_SIZE = 20;
-    public static final int RESOURCE_ITEM_SIZE = 60;
+    public static final int BASE_ITEM_SIZE = 10;
+    public static final int RESOURCE_ITEM_SIZE = 30;
     public static final double WHOLE_RADIUS = 2 * Math.PI;
     private Logger log = Logger.getLogger(RadarItemView.class.getName());
 
@@ -44,7 +44,7 @@ public class RadarItemView extends MiniMap {
         super.onTerrainSettings(terrainSettings);
         double scale = Math.min((double) getWidth() / (double) getTerrainSettings().getPlayFieldXSize(),
                 (double) getHeight() / (double) getTerrainSettings().getPlayFieldYSize()) / getScale();
-        getContext2d().setLineWidth(2.0 / scale);
+        getContext2d().setLineWidth(1.0 / scale);
         Timer timer = new Timer() {
 
             @Override
