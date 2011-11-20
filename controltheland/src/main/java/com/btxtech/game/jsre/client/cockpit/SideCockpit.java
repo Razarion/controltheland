@@ -4,6 +4,7 @@ import com.btxtech.game.jsre.client.ClientBase;
 import com.btxtech.game.jsre.client.Game;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.cockpit.item.ItemCockpit;
+import com.btxtech.game.jsre.client.cockpit.radar.RadarPanel;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.Rectangle;
@@ -36,6 +37,7 @@ public class SideCockpit extends AbsolutePanel {
 
     private CockpitControlPanel cockpitControlPanel;
     private Label debugPosition;
+    private RadarControlPanel radarControlPanel;
 
     public static SideCockpit getInstance() {
         return INSTANCE;
@@ -90,8 +92,8 @@ public class SideCockpit extends AbsolutePanel {
     }
 
     private void setupRadar() {
-        @SuppressWarnings({"SuspiciousNameCombination"})
-        RadarControlPanel radarControlPanel = new RadarControlPanel(CONTROL_PANEL_WIDTH, CONTROL_PANEL_WIDTH);
+        //@SuppressWarnings({"SuspiciousNameCombination"})
+        radarControlPanel = new RadarControlPanel(CONTROL_PANEL_WIDTH, CONTROL_PANEL_WIDTH);
         add(radarControlPanel, CONTROL_PANEL_LEFT, RADAR_TOP);
     }
 
@@ -157,4 +159,7 @@ public class SideCockpit extends AbsolutePanel {
     }
 
 
+    public void setRadarItems() {
+        RadarPanel.getInstance().setRadarItemsVisible();
+    }
 }

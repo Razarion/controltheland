@@ -22,6 +22,7 @@ import com.btxtech.game.jsre.client.ParametrisedRunnable;
 import com.btxtech.game.jsre.client.bot.ClientBotService;
 import com.btxtech.game.jsre.client.cockpit.Cockpit;
 import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
+import com.btxtech.game.jsre.client.cockpit.SideCockpit;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Level;
 import com.btxtech.game.jsre.client.common.info.SimulationInfo;
@@ -111,6 +112,7 @@ public class Simulation implements ConditionServiceListener<Object>, ClientBase.
 
     private void processPreparation(TaskConfig taskConfig) {
         Cockpit.getInstance().setVisibleRadar(taskConfig.isScrollingAllowed());
+        SideCockpit.getInstance().setRadarItems(); //todo
         MapWindow.getInstance().setScrollingAllowed(taskConfig.isScrollingAllowed());
         Cockpit.getInstance().enableFocusWidget(CockpitWidgetEnum.SCROLL_HOME_BUTTON, taskConfig.isScrollingAllowed());
         Cockpit.getInstance().enableFocusWidget(CockpitWidgetEnum.OPTION_BUTTON, taskConfig.isOptionAllowed());
