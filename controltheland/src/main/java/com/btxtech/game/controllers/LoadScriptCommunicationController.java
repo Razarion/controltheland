@@ -34,9 +34,9 @@ public class LoadScriptCommunicationController implements Controller {
     public ModelAndView handleRequest(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
         try {
             log.error("------------------LoadScriptCommunication---------------------------------");
-            log.error(httpServletRequest.getParameter(Constants.ERROR_KEY));
             log.error("User Agent: " + session.getUserAgent());
             log.error("Session Id: " + session.getSessionId());
+            log.error(httpServletRequest.getParameter(Constants.ERROR_KEY));
         } catch (Exception e) {
             log.error("", e);
         }
