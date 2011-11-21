@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.client.dialogs;
 
+import com.btxtech.game.jsre.client.utg.ClientUserTracker;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -63,6 +64,7 @@ public class DialogManager implements CloseHandler<PopupPanel> {
         dialog.addCloseHandler(this);
         stackedDialogs.add(dialog);
         dialog.setupDialog();
+        ClientUserTracker.getInstance().onDialogAppears(dialog, "Dialog");        
     }
 
     @Override
@@ -78,6 +80,7 @@ public class DialogManager implements CloseHandler<PopupPanel> {
         } else if (stackedDialogs.contains(dialog)) {
             stackedDialogs.remove(dialog);
         }
+        ClientUserTracker.getInstance().onDialogDisappears(dialog);        
     }
 
     private void removeAllStackedDialogs() {

@@ -59,7 +59,6 @@ public abstract class Dialog extends DialogBox {
         }
         center();
         getElement().getStyle().setZIndex(getZIndex());
-        ClientUserTracker.getInstance().onDialogAppears(this, "Dialog");
     }
 
     protected int getZIndex() {
@@ -69,7 +68,6 @@ public abstract class Dialog extends DialogBox {
 
     public void close() {
         hide(true);
-        ClientUserTracker.getInstance().onDialogDisappears(this);
     }
 
     abstract protected void setupPanel(VerticalPanel dialogVPanel);

@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class RadarControlPanel extends AbstractControlPanel {
     public RadarControlPanel(int width, int height) {
         super(width, height);
+        setup();
     }
 
     @Override

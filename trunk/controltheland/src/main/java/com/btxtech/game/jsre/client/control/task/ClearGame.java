@@ -20,6 +20,7 @@ import com.btxtech.game.jsre.client.cockpit.SelectionHandler;
 import com.btxtech.game.jsre.client.control.StartupTaskEnum;
 import com.btxtech.game.jsre.client.simulation.Simulation;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
+import com.btxtech.game.jsre.client.utg.TipManager;
 
 /**
  * User: beat
@@ -41,5 +42,6 @@ public class ClearGame extends AbstractStartupTask {
         SelectionHandler.getInstance().setSellMode(false);
         Cockpit.getInstance().getCockpitMode().clearLaunchMode();
         Cockpit.getInstance().getCockpitMode().clearUnloadMode();
+        TipManager.getInstance().deactivate();
     }
 }

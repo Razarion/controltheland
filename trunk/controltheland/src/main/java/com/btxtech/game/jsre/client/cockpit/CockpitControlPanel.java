@@ -21,6 +21,7 @@ public class CockpitControlPanel extends AbstractControlPanel {
 
     public CockpitControlPanel(int width, int height) {
         super(width, height);
+        setup();
     }
 
     @Override

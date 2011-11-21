@@ -44,6 +44,7 @@ public class Constants {
     public static final int Z_INDEX_LEVEL_DIALOG = 101;
     public static final int Z_INDEX_STARTUP_SCREEN = 100; // Fix coded in Game.html
     public static final int Z_INDEX_GLASS_PANEL = 99;
+    public static final int Z_INDEX_TIP = 18;
     public static final int Z_INDEX_DIALOG = 17;
     public static final int Z_INDEX_GROUP_SELECTION_FRAME = 16;
     public static final int Z_INDEX_SPEECH_BUBBLE = 15;
