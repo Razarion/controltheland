@@ -24,6 +24,7 @@ import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Widget;
 
 import java.util.HashSet;
 
@@ -40,6 +41,7 @@ public class ImageHandler {
     public static final String IMAGES = "images";
     public static final String EXPLOSION = "effects";
     public static final String ICONS = "icons";
+    public static final String TIPS = "tips";
     public static double ONE_RADIANT = 2.0 * Math.PI;
     public static double QUARTER_RADIANT = Math.PI / 2.0;
 
@@ -186,6 +188,10 @@ public class ImageHandler {
         return createImageIE6TransparencyProblem("/" + IMAGES + "/" + ICONS + "/" + icon + PNG_SUFFIX, 16, 16);
     }
 
+    public static Widget getTipImage(String tip) {
+        return new Image("/" + IMAGES + "/" + TIPS + "/" + tip);
+    }
+
     /**
      * @param id                image id
      * @param imageSizeCallback called when the image was loaded. If the image is already loaded is is not called
@@ -212,7 +218,6 @@ public class ImageHandler {
         loadImage(urlStr);
         return image;
     }
-
 
     private static class ImageForIe6 extends Image {
         public ImageForIe6(Element element) {

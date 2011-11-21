@@ -14,10 +14,10 @@ public abstract class AbstractControlPanel extends Grid {
     private static final String URL_IMAGES_COCKPIT_CONTROL_PANEL_PNG = "url(/images/cockpit/controlPanel.png)";
     private static final String URL_IMAGES_COCKPIT_CONTROL_PANEL_V_PNG = "url(/images/cockpit/controlPanelV.png)";
     private static final String URL_IMAGES_COCKPIT_CONTROL_PANEL_H_PNG = "url(/images/cockpit/controlPanelH.png)";
-    private static final int WIDTH_IMAGE_LEFT = 15;
-    private static final int HEIGHT_IMAGE_TOP = 15;
-    private static final int WIDTH_IMAGE_RIGHT = 34;
-    private static final int HEIGHT_IMAGE_BOTTOM = 34;
+    protected static final int WIDTH_IMAGE_LEFT = 15;
+    protected static final int HEIGHT_IMAGE_TOP = 15;
+    protected static final int WIDTH_IMAGE_RIGHT = 34;
+    protected static final int HEIGHT_IMAGE_BOTTOM = 34;
     private Integer width;
     private Integer height;
 
@@ -25,6 +25,9 @@ public abstract class AbstractControlPanel extends Grid {
         super(3, 3);
         this.width = width;
         this.height = height;
+    }
+
+    protected void setup() {
         setPixelSize(width, height);
         setCellSpacing(0);
         setCellPadding(0);

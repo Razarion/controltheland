@@ -34,6 +34,7 @@ import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.client.utg.ClientUserTracker;
+import com.btxtech.game.jsre.client.utg.TipManager;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.tutorial.ItemTypeAndPosition;
 import com.btxtech.game.jsre.common.tutorial.TaskConfig;
@@ -107,6 +108,7 @@ public class Simulation implements ConditionServiceListener<Object>, ClientBase.
             };
             DialogManager.showDialog(messageDialog, DialogManager.Type.STACK_ABLE);
         }
+        TipManager.getInstance().activate();
         runNextTask(activeTask);
     }
 

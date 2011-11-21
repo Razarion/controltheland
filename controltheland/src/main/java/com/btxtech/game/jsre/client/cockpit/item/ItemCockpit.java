@@ -49,6 +49,7 @@ public class ItemCockpit extends AbstractControlPanel implements BuildupItemPane
      */
     private ItemCockpit() {
         super(WIDTH, HEIGHT);
+        setup();
         getElement().getStyle().setZIndex(Constants.Z_INDEX_ITEM_COCKPIT);
         preventEvents();
     }
