@@ -7,6 +7,7 @@ import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemListener;
+import com.google.gwt.core.client.Scheduler;
 
 /**
  * User: beat
@@ -85,7 +86,7 @@ public class SpeechBubbleHandler implements SyncItemListener {
             if (syncBaseItem.hasSyncMovable()) {
                 syncBaseItem.addSyncItemListener(this);
                 positionOrigin = syncItem.getSyncItemArea().getPosition();
-
+                this.syncBaseItem = syncBaseItem;
             }
         }
     }
@@ -101,7 +102,13 @@ public class SpeechBubbleHandler implements SyncItemListener {
     public void onItemChanged(Change change, SyncItem syncItem) {
         if (change == Change.POSITION) {
             if (syncItem.getSyncItemArea().getPosition().getDistance(positionOrigin) > 100) {
-                hide();
+                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                    @Override
+                    public void execute() {
+                        // Prevent ConcurrentModificationException
+                        hide();
+                    }
+                });
             }
         }
     }
