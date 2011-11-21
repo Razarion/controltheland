@@ -55,15 +55,14 @@ public class ItemCockpit extends AbstractControlPanel implements BuildupItemPane
     }
 
     public void activate(ClientSyncItem clientSyncItem) {
-        if(Connection.getInstance().getGameEngineMode() == GameEngineMode.PLAYBACK) {
+        if (Connection.getInstance().getGameEngineMode() == GameEngineMode.PLAYBACK) {
             return;
         }
-        
+
         excFocusPanel.setFocus(true);
 
         Index relPosition = TerrainView.getInstance().toRelativeIndex(clientSyncItem.getSyncItem().getSyncItemArea().getPosition());
-        relPosition = relPosition.sub(0, clientSyncItem.getSyncItem().getSyncItemArea().getBoundingBox().getHeight() / 2);
-        relPosition = relPosition.sub(WIDTH / 2, HEIGHT / 2);
+        relPosition = relPosition.sub(WIDTH / 2, HEIGHT);
         if (relPosition.getX() < 0) {
             relPosition.setX(0);
         }
@@ -101,7 +100,7 @@ public class ItemCockpit extends AbstractControlPanel implements BuildupItemPane
         setVisible(false);
     }
 
-     @Override
+    @Override
     protected Widget createBody() {
         VerticalPanel verticalPanel = new VerticalPanel();
         verticalPanel.getElement().getStyle().setColor("#C2D7EC");
