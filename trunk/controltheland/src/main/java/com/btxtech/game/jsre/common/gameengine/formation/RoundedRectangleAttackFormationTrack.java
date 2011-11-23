@@ -26,7 +26,7 @@ public class RoundedRectangleAttackFormationTrack {
     private SyncItemArea last;
 
 
-    public RoundedRectangleAttackFormationTrack(SyncItemArea target, int range, boolean counterClock) {
+    public RoundedRectangleAttackFormationTrack(double startAngel, SyncItemArea target, int range, boolean counterClock) {
         this.target = target;
         this.counterClock = counterClock;
         // Line 1
@@ -63,16 +63,16 @@ public class RoundedRectangleAttackFormationTrack {
             Collections.reverse(segments);
             segments.add(0, segment1);
         }
+        crossPoint = setupStartSegment(startAngel);
     }
 
     public List<Segment> getSegments() {
         return segments;
     }
 
-    public SyncItemArea start(double startAngel, AttackFormationItem attackFormationItem) {
-        crossPoint = setupStartSegment(startAngel);
-        last = createSyncItemArea(attackFormationItem);
-        return last;
+    public SyncItemArea getStartPoint(AttackFormationItem attackFormationItem) {
+        findNextPointOnSegment();
+        return createSyncItemArea(attackFormationItem);
     }
 
     private SyncItemArea createSyncItemArea(AttackFormationItem attackFormationItem) {
@@ -97,7 +97,7 @@ public class RoundedRectangleAttackFormationTrack {
                 break;
             }
             maxTries--;
-            if(maxTries < 0) {
+            if (maxTries < 0) {
                 throw new IllegalStateException("Max tries in RoundedRectangleAttackFormationTrack exceeded");
             }
         }
@@ -106,6 +106,10 @@ public class RoundedRectangleAttackFormationTrack {
 
     public SyncItemArea getLast() {
         return last;
+    }
+
+    public void setLast(SyncItemArea last) {
+        this.last = last;
     }
 
     private void findNextPointOnSegment() {

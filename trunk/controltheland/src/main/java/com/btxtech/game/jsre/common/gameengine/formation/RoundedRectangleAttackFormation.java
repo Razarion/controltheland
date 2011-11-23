@@ -37,6 +37,7 @@ public class RoundedRectangleAttackFormation implements AttackFormation {
     }
 
     private SyncItemArea target;
+    private SyncItemArea start;
     private List<AttackFormationItem> attackFormationItems;
     private int tryCount;
     private Mode mode = Mode.FINDING_START;
@@ -59,8 +60,8 @@ public class RoundedRectangleAttackFormation implements AttackFormation {
         overbookedRange = target.getBoundingBox().getMaxDiameter() + range + maxDiameter;
         overbookedDeltaAngel = Math.atan((maxDiameter + Segment.DISTANCE) / 2.0 / overbookedRange) * 2.0;
 
-        counterClockwiseTrackRoundedRectangle = new RoundedRectangleAttackFormationTrack(target, range, true);
-        clockwiseTrackRoundedRectangle = new RoundedRectangleAttackFormationTrack(target, range, false);
+        counterClockwiseTrackRoundedRectangle = new RoundedRectangleAttackFormationTrack(startAngel, target, range, true);
+        clockwiseTrackRoundedRectangle = new RoundedRectangleAttackFormationTrack(startAngel, target, range, false);
     }
 
     @Override
@@ -70,6 +71,11 @@ public class RoundedRectangleAttackFormation implements AttackFormation {
 
     @Override
     public void lastAccepted() {
+        if (mode == Mode.FINDING_START) {
+            counterClockwiseTrackRoundedRectangle.setLast(start);
+            clockwiseTrackRoundedRectangle.setLast(start);
+            mode = Mode.PLACING_AROUND_TARGET;
+        }
         attackFormationItems.remove(0);
     }
 
@@ -90,10 +96,13 @@ public class RoundedRectangleAttackFormation implements AttackFormation {
 
     private AttackFormationItem findStart() {
         AttackFormationItem attackFormationItem = attackFormationItems.get(0);
-        SyncItemArea syncItemArea = counterClockwiseTrackRoundedRectangle.start(startAngel, attackFormationItem);
-        clockwiseTrackRoundedRectangle.start(startAngel, attackFormationItem);
-        mode = Mode.PLACING_AROUND_TARGET;
-        return returnNextAttackFormationItemInRange(syncItemArea);
+        if (counterClockWise) {
+            start = counterClockwiseTrackRoundedRectangle.getStartPoint(attackFormationItem);
+        } else {
+            start = clockwiseTrackRoundedRectangle.getStartPoint(attackFormationItem);
+        }
+        counterClockWise = !counterClockWise;
+        return returnNextAttackFormationItemInRange(start);
     }
 
     private AttackFormationItem placeNextAttacker() {
