@@ -49,7 +49,7 @@ public class TestAttackFormation extends AbstractServiceTest {
     public void testAttackFormationTrack() throws Exception {
         BoundingBox boundingBox = new BoundingBox(300, 200, 200, 100, 24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(500, 500));
-        RoundedRectangleAttackFormationTrack trackRoundedRectangle = new RoundedRectangleAttackFormationTrack(syncItemArea, 100, true);
+        RoundedRectangleAttackFormationTrack trackRoundedRectangle = new RoundedRectangleAttackFormationTrack(0, syncItemArea, 100, true);
 
         Assert.assertEquals(new Line(new Index(600, 350), new Index(400, 350)), trackRoundedRectangle.getSegments().get(0));
         Assert.assertEquals(new Arc(new Index(400, 350), new Index(300, 450), new Index(400, 450)), trackRoundedRectangle.getSegments().get(1));
@@ -67,7 +67,7 @@ public class TestAttackFormation extends AbstractServiceTest {
         BoundingBox boundingBox = new BoundingBox(300, 200, 200, 100, 24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(500, 500));
         syncItemArea.setAngel(MathHelper.gradToRad(80));
-        RoundedRectangleAttackFormationTrack trackRoundedRectangle = new RoundedRectangleAttackFormationTrack(syncItemArea, 100, true);
+        RoundedRectangleAttackFormationTrack trackRoundedRectangle = new RoundedRectangleAttackFormationTrack(0, syncItemArea, 100, true);
 
         Assert.assertEquals(new Line(new Index(370, 376), new Index(335, 573)), trackRoundedRectangle.getSegments().get(0));
         Assert.assertEquals(new Arc(new Index(335, 573), new Index(416, 688), new Index(433, 590)), trackRoundedRectangle.getSegments().get(1));
@@ -85,7 +85,7 @@ public class TestAttackFormation extends AbstractServiceTest {
     public void testAttackFormationTrack1Attacker() throws Exception {
         BoundingBox boundingBox = new BoundingBox(300, 200, 200, 100, 24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(500, 500));
-        RoundedRectangleAttackFormationTrack track = new RoundedRectangleAttackFormationTrack(syncItemArea, 100, true);
+        RoundedRectangleAttackFormationTrack track = new RoundedRectangleAttackFormationTrack(0, syncItemArea, 100, true);
         //     Index position = track.start(0, 80, 100);
         //    Assert.assertEquals(new Index(500, 250), position);
     }
@@ -97,7 +97,7 @@ public class TestAttackFormation extends AbstractServiceTest {
         BoundingBox boundingBox = new BoundingBox(300, 200, 200, 100, 24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(500, 500));
         syncItemArea.setAngel(MathHelper.gradToRad(45));
-        RoundedRectangleAttackFormationTrack track = new RoundedRectangleAttackFormationTrack(syncItemArea, 100, true);
+        RoundedRectangleAttackFormationTrack track = new RoundedRectangleAttackFormationTrack(0, syncItemArea, 100, true);
         //     Index position = track.start(0, 80, 200);
         //     Assert.assertEquals(new Index(430, 112), position);
     }
@@ -108,7 +108,7 @@ public class TestAttackFormation extends AbstractServiceTest {
     public void testAttackFormationTrack5AttackerRot() throws Exception {
         BoundingBox boundingBox = new BoundingBox(300, 200, 200, 100, 24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(500, 500));
-        RoundedRectangleAttackFormationTrack track = new RoundedRectangleAttackFormationTrack(syncItemArea, 100, true);
+        RoundedRectangleAttackFormationTrack track = new RoundedRectangleAttackFormationTrack(0, syncItemArea, 100, true);
 //        Assert.assertEquals(new Index(500, 250), track.start(0, 100, 100));
 //        Assert.assertEquals(new Index(400, 250), track.getNextPoint(100, 100));
 //        Assert.assertEquals(new Index(260, 350), track.getNextPoint(100, 100));
@@ -127,7 +127,7 @@ public class TestAttackFormation extends AbstractServiceTest {
     public void testAttackFormationTrack5AttackerRotCounter() throws Exception {
         BoundingBox boundingBox = new BoundingBox(300, 200, 200, 100, 24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(500, 500));
-        RoundedRectangleAttackFormationTrack track = new RoundedRectangleAttackFormationTrack(syncItemArea, 100, false);
+        RoundedRectangleAttackFormationTrack track = new RoundedRectangleAttackFormationTrack(0, syncItemArea, 100, false);
 //        Assert.assertEquals(new Index(500, 250), track.start(0, 100, 100));
 //        Assert.assertEquals(new Index(670, 280), track.getNextPoint(100, 100));
 //        Assert.assertEquals(new Index(740, 350), track.getNextPoint(100, 100));
@@ -147,7 +147,7 @@ public class TestAttackFormation extends AbstractServiceTest {
         BoundingBox boundingBox = new BoundingBox(300, 200, 200, 100, 24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(500, 500));
         for (double angel = 0.0; angel < MathHelper.ONE_RADIANT; angel += MathHelper.gradToRad(0.01)) {
-            RoundedRectangleAttackFormationTrack track = new RoundedRectangleAttackFormationTrack(syncItemArea, 100, false);
+            RoundedRectangleAttackFormationTrack track = new RoundedRectangleAttackFormationTrack(0, syncItemArea, 100, false);
             // Assert.assertNotNull(track.start(angel, 100, 100));
         }
     }
@@ -215,6 +215,7 @@ public class TestAttackFormation extends AbstractServiceTest {
 
 
     // TODO @Test
+
     @DirtiesContext
     public void testAttackFormationNoBlockingObject__TMP() throws Throwable {
         configureMinimalGame();
@@ -362,39 +363,6 @@ public class TestAttackFormation extends AbstractServiceTest {
         }
     }
 
-    // TODO @Test
-
-    @DirtiesContext
-    public void testCircleFormationNoBlockingObject2() throws Exception {
-        configureMinimalGame();
-        SyncBaseItem target = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(500, 500), new Id(1, -100, -100));
-        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(1, -100, -100));
-
-        List<AttackFormationItem> items = new ArrayList<AttackFormationItem>();
-        for (int i = 0; i < 19; i++) {
-            items.add(new AttackFormationItem(syncBaseItem, 200));
-        }
-        AttackFormation attackFormation = AttackFormationFactory.create(target.getSyncItemArea(), 0, items);
-
-        debugService.drawSyncItemArea(target.getSyncItemArea(), Color.BLACK);
-        debugService.drawSegments(((RoundedRectangleAttackFormation) attackFormation).getClockwiseTrack().getSegments());
-        debugService.drawSegments(((RoundedRectangleAttackFormation) attackFormation).getCounterClockwiseTrack().getSegments());
-        while (attackFormation.hasNext()) {
-            AttackFormationItem attackFormationItem = attackFormation.calculateNextEntry();
-            SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, attackFormationItem.getDestinationHint(), new Id(1, -100, -100));
-            attacker.getSyncItemArea().turnTo(target);
-            if (attackFormationItem.isInRange()) {
-                debugService.drawSyncItemArea(attacker.getSyncItemArea(), Color.RED);
-                debugService.drawPosition(attackFormationItem.getDestinationHint(), Color.RED);
-            } else {
-                debugService.drawSyncItemArea(attacker.getSyncItemArea(), Color.GRAY);
-                debugService.drawPosition(attackFormationItem.getDestinationHint(), Color.GRAY);
-            }
-            attackFormation.lastAccepted();
-        }
-        debugService.waitForClose();
-    }
-
     @Test
     @DirtiesContext
     public void testFormationWithNegativePosition() throws Exception {
@@ -407,78 +375,89 @@ public class TestAttackFormation extends AbstractServiceTest {
             items.add(new AttackFormationItem(syncBaseItem, 200));
         }
 
-            double angel = MathHelper.HALF_RADIANT;
-            AttackFormation attackFormation = AttackFormationFactory.create(target.getSyncItemArea(), angel, items);
-            while (attackFormation.hasNext()) {
-                AttackFormationItem attackFormationItem = attackFormation.calculateNextEntry();
-                if (!terrainService.isFree(attackFormationItem.getDestinationHint(), syncBaseItem.getItemType())) {
-                    continue;
-                }
-
-                SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, attackFormationItem.getDestinationHint(), new Id(1, -100, -100));
-
-                attacker.getSyncItemArea().turnTo(target);
-                attackFormation.lastAccepted();
-            }
-    }
-
-    // TODO @Test
-
-    @DirtiesContext
-    public void testCircleFormationBlockingChannel() throws Exception {
-        configureMinimalGame();
-
-        Rectangle rectangle1 = new Rectangle(0, 0, 1000, 300);
-        Rectangle rectangle2 = new Rectangle(0, 300, 300, 500);
-        Rectangle rectangle3 = new Rectangle(500, 300, 300, 500);
-
-        SyncBaseItem target = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(1, -100, -100));
-        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(1, -100, -100));
-
-        List<AttackFormationItem> items = new ArrayList<AttackFormationItem>();
-        items.add(new AttackFormationItem(syncBaseItem, 160));
-        items.add(new AttackFormationItem(syncBaseItem, 160));
-        items.add(new AttackFormationItem(syncBaseItem, 160));
-        items.add(new AttackFormationItem(syncBaseItem, 160));
-        items.add(new AttackFormationItem(syncBaseItem, 160));
-        items.add(new AttackFormationItem(syncBaseItem, 160));
-        items.add(new AttackFormationItem(syncBaseItem, 160));
-        AttackFormation attackFormation = AttackFormationFactory.create(target.getSyncItemArea(), MathHelper.SOUTH - 0.35, items);
-
-        List<Rectangle> expected = new ArrayList<Rectangle>();
-        expected.add(new Rectangle(395, 504, 100, 100));
-        expected.add(new Rectangle(352, 651, 100, 100));
-        expected.add(new Rectangle(313, 790, 100, 100));
-        expected.add(new Rectangle(74, 864, 100, 100));
-        expected.add(new Rectangle(174, 906, 100, 100));
-        expected.add(new Rectangle(274, 928, 100, 100));
-        expected.add(new Rectangle(374, 932, 100, 100));
-
-        List<Rectangle> rectangles = new ArrayList<Rectangle>();
-        int count = 0;
+        double angel = MathHelper.HALF_RADIANT;
+        AttackFormation attackFormation = AttackFormationFactory.create(target.getSyncItemArea(), angel, items);
         while (attackFormation.hasNext()) {
             AttackFormationItem attackFormationItem = attackFormation.calculateNextEntry();
-            Assert.assertNotNull(attackFormationItem.getDestinationHint());
-            Assert.fail("See above");
-//            if (rectangle1.adjoinsEclusive(attackFormationItem.getRectangle())
-//                    || rectangle2.adjoinsEclusive(attackFormationItem.getRectangle())
-//                    || rectangle3.adjoinsEclusive(attackFormationItem.getRectangle())) {
-//                continue;
-//            }
-            if (count < 1) {
-                Assert.assertTrue(attackFormationItem.isInRange());
-            } else {
-                Assert.assertFalse(attackFormationItem.isInRange());
+            if (!terrainService.isFree(attackFormationItem.getDestinationHint(), syncBaseItem.getItemType())) {
+                continue;
             }
-            count++;
 
+            SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, attackFormationItem.getDestinationHint(), new Id(1, -100, -100));
+
+            attacker.getSyncItemArea().turnTo(target);
             attackFormation.lastAccepted();
-            rectangles.add(Rectangle.generateRectangleFromMiddlePoint(attackFormationItem.getDestinationHint(), 100, 100));
         }
-        for (int i = 0, rectanglesSize = rectangles.size(); i < rectanglesSize; i++) {
-            Assert.assertEquals(expected.get(i), rectangles.get(i));
+    }
+
+    @Test
+    @DirtiesContext
+    public void testCircleFormationBlockingChannel() throws Throwable {
+        configureMinimalGame();
+
+        Rectangle blockingRect1 = new Rectangle(0, 0, 300, 800);
+        Rectangle blockingRect2 = new Rectangle(400, 0, 300, 800);
+
+        Rectangle northRect = new Rectangle(250, 50, 200, 200);
+        Rectangle southRect = new Rectangle(250, 550, 200, 200);
+
+
+        SyncBaseItem target = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(350, 400), new Id(1, -100, -100));
+
+        SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(1, -100, -100));
+
+        int range = 160;
+        double targetAngel = 0;
+        double attackerAngel = 0;
+        try {
+            for (targetAngel = 0.0; targetAngel <= MathHelper.ONE_RADIANT; targetAngel += 0.1) {
+                System.out.println("targetAngel: " + MathHelper.radToGrad(targetAngel));
+                target.getSyncItemArea().turnTo(targetAngel);
+
+                for (attackerAngel = 0.0; attackerAngel <= MathHelper.ONE_RADIANT; attackerAngel += 0.1) {
+                    List<AttackFormationItem> items = new ArrayList<AttackFormationItem>();
+                    items.add(new AttackFormationItem(syncBaseItem, range));
+
+                    AttackFormation attackFormation = AttackFormationFactory.create(target.getSyncItemArea(), attackerAngel, items);
+                    List<SyncBaseItem> attackers = new ArrayList<SyncBaseItem>();
+                    attackers.add(target);
+                    while (attackFormation.hasNext()) {
+                        AttackFormationItem attackFormationItem = attackFormation.calculateNextEntry();
+                        SyncBaseItem attacker = createSyncBaseItem(TEST_ATTACK_ITEM_ID, attackFormationItem.getDestinationHint(), new Id(2, -100, -100));
+                        attacker.getSyncItemArea().turnTo(attackFormationItem.getDestinationAngel());
+
+                        if (attacker.getSyncItemArea().contains(blockingRect1) || attacker.getSyncItemArea().contains(blockingRect2)) {
+                            continue;
+                        }
+
+
+                        if (attackFormationItem.isInRange()) {
+                            Assert.assertTrue("Not in range: " + attacker.getSyncItemArea().getDistance(target.getSyncItemArea()), attacker.getSyncItemArea().getDistanceRounded(target.getSyncItemArea()) <= range);
+                            Assert.assertEquals(attacker.getSyncItemArea().getTurnToAngel(target.getSyncItemArea()), attackFormationItem.getDestinationAngel(), 0.001);
+                        } else {
+                            Assert.assertTrue("In range", attacker.getSyncItemArea().getDistance(target.getSyncItemArea()) > range);
+                            Assert.fail("Overbooked not expected");
+                        }
+
+                        if (MathHelper.isInSection(attackerAngel, MathHelper.EAST + 0.1, MathHelper.HALF_RADIANT - 0.2)) {
+                            Assert.assertTrue(northRect.contains(attacker.getSyncItemArea().getPosition()));
+                        } else if (MathHelper.isInSection(attackerAngel, MathHelper.WEST + 0.1, MathHelper.HALF_RADIANT - 0.2)) {
+                            Assert.assertTrue(southRect.contains(attacker.getSyncItemArea().getPosition()));
+                        }
+
+                        attackFormation.lastAccepted();
+                        attackers.add(attacker);
+                    }
+                    Assert.assertEquals(2, attackers.size());
+                    assertOverlapping(attackers);
+                }
+            }
+        } catch (Throwable t) {
+            System.out.println("-----------------");
+            System.out.println("targetAngel: " + MathHelper.radToGrad(targetAngel));
+            System.out.println("attackerAngel: " + MathHelper.radToGrad(attackerAngel));
+            throw t;
         }
-        Assert.assertFalse(Rectangle.adjoinsExclusive(rectangles));
     }
 
     // TODO @Test
