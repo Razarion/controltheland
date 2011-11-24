@@ -22,12 +22,10 @@ public class ItemTypeEditor implements EntryPoint {
     public void onModuleLoad() {
         GwtCommon.setUncaughtExceptionHandler();
         GwtCommon.disableBrowserContextMenuJSNI();
-        log.log(Level.SEVERE, "Start ItemTypeEditor");
         try {
             RootPanel rootPanel = RootPanel.get(ITEM_TYPE_EDITOR);
             removeLoadingText(rootPanel);
             int itemTypeId = getItemTypeId(rootPanel);
-            log.log(Level.SEVERE, "Id: " + itemTypeId);
             rootPanel.add(new ItemTypeEditorPanel(itemTypeId));
         } catch (Throwable throwable) {
             log.log(Level.SEVERE, "Error: ", throwable);
