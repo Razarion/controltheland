@@ -2,6 +2,7 @@ package com.btxtech.game.jsre.itemtypeeditor;
 
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
@@ -22,13 +23,13 @@ public class ItemTypeView extends DecoratorPanel {
     private CssColor redrawColor = CssColor.make(255, 255, 255);
     private int canvasWidth;
     private int canvasHeight;
-    private BoundingBox boundingBox;
+    private ItemType itemType;
     private BoundingBoxControl boundingBoxControl;
 
-    public ItemTypeView(int canvasWidth, int canvasHeight, int itemTypeId, BoundingBox boundingBox, BoundingBoxControl boundingBoxControl) {
+    public ItemTypeView(int canvasWidth, int canvasHeight, ItemType itemType, BoundingBoxControl boundingBoxControl) {
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
-        this.boundingBox = boundingBox;
+        this.itemType = itemType;
         this.boundingBoxControl = boundingBoxControl;
         Canvas canvas = Canvas.createIfSupported();
         if (canvas == null) {
@@ -40,7 +41,7 @@ public class ItemTypeView extends DecoratorPanel {
         canvas.setCoordinateSpaceWidth(canvasWidth);
         canvas.setCoordinateSpaceHeight(canvasHeight);
         context2d = canvas.getContext2d();
-        imageLoader = new ImageLoader(itemTypeId, boundingBox.getImageCount(), new ImageLoader.Listener() {
+        imageLoader = new ImageLoader(itemType.getId(), itemType.getBoundingBox().getAngels().length, new ImageLoader.Listener() {
             @Override
             public void onLoaded() {
                 draw(0);
@@ -55,15 +56,14 @@ public class ItemTypeView extends DecoratorPanel {
         if (!imageLoader.isLoaded()) {
             return;
         }
-        //context2d.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         context2d.setFillStyle(redrawColor);
         context2d.fillRect(0, 0, canvasWidth, canvasHeight);
         context2d.setLineWidth(2);
 
         context2d.drawImage(imageLoader.getImage(imageNr), ITEM_TYPE_LEFT, ITEM_TYPE_TOP);
         // Bounding box
-        SyncItemArea syncItemArea = boundingBox.createSyntheticSyncItemArea(boundingBox.getMiddleFromImage(offset), boundingBox.getAngel(imageNr));
+        BoundingBox boundingBox = itemType.getBoundingBox();
+        SyncItemArea syncItemArea = boundingBox.createSyntheticSyncItemArea(boundingBox.getMiddleFromImage(offset), boundingBox.imageNumberToAngel(imageNr));
         boundingBoxControl.draw(syncItemArea, context2d);
     }
-
 }

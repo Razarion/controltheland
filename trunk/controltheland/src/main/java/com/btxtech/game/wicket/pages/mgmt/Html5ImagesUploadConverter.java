@@ -18,6 +18,9 @@ import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import org.apache.wicket.util.crypt.Base64;
 
 import javax.swing.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 /**
@@ -30,6 +33,7 @@ public class Html5ImagesUploadConverter {
         if (dataString == null) {
             return;
         }
+        Map<Integer, Double> angelMap = getAngelMap(dbBaseItemType.getItemTypeImageCrud().readDbChildren());
         dbBaseItemType.getItemTypeImageCrud().deleteAllChildren();
 
         StringTokenizer tokenizer = new StringTokenizer(dataString, ",");
@@ -39,6 +43,9 @@ public class Html5ImagesUploadConverter {
             itemTypeImage.setNumber(extractNumber(tokenizer.nextToken()));
             itemTypeImage.setContentType(extractContentType(tokenizer.nextToken()));
             byte[] imageData = Base64.decodeBase64(tokenizer.nextToken().getBytes());
+            if (angelMap.containsKey(itemTypeImage.getNumber())) {
+                itemTypeImage.setAngel(angelMap.get(itemTypeImage.getNumber()));
+            }
             itemTypeImage.setData(imageData);
             if (count == 0) {
                 ImageIcon image = new ImageIcon(imageData);
@@ -47,7 +54,14 @@ public class Html5ImagesUploadConverter {
             }
             count++;
         }
-        dbBaseItemType.setImageCount(count);
+    }
+
+    private static Map<Integer, Double> getAngelMap(Collection<DbItemTypeImage> dbItemTypeImages) {
+        Map<Integer, Double> angelMap = new HashMap<Integer, Double>();
+        for (DbItemTypeImage dbItemTypeImage : dbItemTypeImages) {
+            angelMap.put(dbItemTypeImage.getNumber(), dbItemTypeImage.getAngel());
+        }
+        return angelMap;
     }
 
     private static String extractContentType(String rawString) {

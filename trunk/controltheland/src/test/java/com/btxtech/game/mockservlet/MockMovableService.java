@@ -34,6 +34,7 @@ import com.btxtech.game.jsre.common.utg.tracking.EventTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.EventTrackingStart;
 import com.btxtech.game.jsre.common.utg.tracking.SelectionTrackingItem;
 import com.btxtech.game.jsre.common.utg.tracking.TerrainScrollTracking;
+import com.btxtech.game.services.AbstractServiceTest;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import java.util.ArrayList;
@@ -94,7 +95,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
         BaseItemType baseItemType = new BaseItemType();
         baseItemType.setId(AbstractGwtTest.ITEM_MOVABLE);
         baseItemType.setHealth(10);
-        baseItemType.setBoundingBox(new BoundingBox(80, 80, 50, 50, 24));
+        baseItemType.setBoundingBox(new BoundingBox(80, 80, 50, 50, AbstractServiceTest.ANGELS_24));
         baseItemType.setMovableType(new MovableType(100, SurfaceType.LAND));
         return baseItemType;
     }
@@ -103,7 +104,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
         BaseItemType baseItemType = new BaseItemType();
         baseItemType.setId(AbstractGwtTest.ITEM_ATTACKER);
         baseItemType.setHealth(10);
-        baseItemType.setBoundingBox(new BoundingBox(80, 80, 60, 60, 24));
+        baseItemType.setBoundingBox(new BoundingBox(80, 80, 60, 60, AbstractServiceTest.ANGELS_24));
         baseItemType.setMovableType(new MovableType(100, SurfaceType.LAND));
         Collection<Integer> allowedItemTypes = new ArrayList<Integer>();
         allowedItemTypes.add(AbstractGwtTest.ITEM_ATTACKER);
@@ -116,7 +117,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
         BaseItemType baseItemType = new BaseItemType();
         baseItemType.setId(AbstractGwtTest.ITEM_DEFENSE_TOWER);
         baseItemType.setHealth(20);
-        baseItemType.setBoundingBox(new BoundingBox(100, 100, 80, 80, 24));
+        baseItemType.setBoundingBox(new BoundingBox(100, 100, 80, 80, AbstractServiceTest.ANGELS_24));
         Collection<Integer> allowedItemTypes = new ArrayList<Integer>();
         allowedItemTypes.add(AbstractGwtTest.ITEM_ATTACKER);
         allowedItemTypes.add(AbstractGwtTest.ITEM_DEFENSE_TOWER);

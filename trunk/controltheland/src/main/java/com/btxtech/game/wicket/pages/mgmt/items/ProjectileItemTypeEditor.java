@@ -88,7 +88,6 @@ public class ProjectileItemTypeEditor extends MgmtWebPage {
                 ImageIcon image = new ImageIcon(fileUpload.getBytes());
                 form.getModelObject().setImageHeight(image.getIconHeight());
                 form.getModelObject().setImageWidth(image.getIconWidth());
-                form.getModelObject().setImageCount(1);
                 form.getModelObject().getItemTypeImageCrud().deleteAllChildren();
                 DbItemTypeImage itemTypeImage = form.getModelObject().getItemTypeImageCrud().createDbChild();
                 itemTypeImage.setContentType(fileUpload.getContentType());

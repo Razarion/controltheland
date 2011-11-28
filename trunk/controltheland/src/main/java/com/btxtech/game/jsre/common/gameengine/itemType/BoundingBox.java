@@ -17,20 +17,20 @@ public class BoundingBox implements Serializable {
     private int imageHeight;
     private int width;
     private int height;
-    private int imageCount;
+    private double[] angels;
 
     /**
      * Used by GWT
      */
-    private BoundingBox() {
+    protected BoundingBox() {
     }
 
-    public BoundingBox(int imageWidth, int imageHeight, int width, int height, int imageCount) {
+    public BoundingBox(int imageWidth, int imageHeight, int width, int height, double[] angels) {
         this.imageWidth = imageWidth;
         this.imageHeight = imageHeight;
         this.width = width;
         this.height = height;
-        this.imageCount = imageCount;
+        this.angels = angels;
     }
 
     public void setWidth(int width) {
@@ -90,11 +90,7 @@ public class BoundingBox implements Serializable {
     }
 
     public boolean isTurnable() {
-        return imageCount > 1;
-    }
-
-    public int getImageCount() {
-        return imageCount;
+        return angels != null;
     }
 
     /**
@@ -104,18 +100,14 @@ public class BoundingBox implements Serializable {
      */
     public int getCosmeticImageIndex() {
         if (isTurnable()) {
-            return imageCount / 8;
+            return angels.length / 8;
         } else {
             return 1;
         }
     }
 
     public double getCosmeticAngel() {
-        return (double) getCosmeticImageIndex() / (double) imageCount * MathHelper.ONE_RADIANT;
-    }
-
-    public double getAngel(int imageNr) {
-        return (double) imageNr * 2.0 * Math.PI / (double) imageCount;
+        return (double) getCosmeticImageIndex() / (double) angels.length * MathHelper.ONE_RADIANT;
     }
 
     public int getEffectiveWidth() {
@@ -166,12 +158,58 @@ public class BoundingBox implements Serializable {
         return getMiddleFromImage().add(offset);
     }
 
+    public Index getTopLeftFromImage(Index offset) {
+        return offset.sub(getMiddleFromImage());
+    }
+
     public int getSmallerstSide() {
         return Math.min(width, height);
     }
 
+    public double getAllowedAngel(double angel) {
+        angel = MathHelper.normaliseAngel(angel);
+        double minDelta = Double.MAX_VALUE;
+        double bestFitAngel = 0;
+        for (double allowedAngel : angels) {
+            double delta = Math.abs(allowedAngel - angel);
+            if (delta < minDelta) {
+                minDelta = delta;
+                bestFitAngel = allowedAngel;
+            }
+        }
+        return bestFitAngel;
+    }
+
+    public double[] getAngels() {
+        return angels;
+    }
+
+    /**
+     * @param imageNr 0..x
+     * @return allowed angel
+     */
+    public double imageNumberToAngel(int imageNr) {
+        return angels[imageNr];
+    }
+
+    public int angelToImageNr(double angel) {
+        angel = MathHelper.normaliseAngel(angel);
+        double minDelta = Double.MAX_VALUE;
+        int imageNr = 0;
+        for (int i = 0, angelsLength = angels.length; i < angelsLength; i++) {
+            double allowedAngel = angels[i];
+            double delta = Math.abs(allowedAngel - angel);
+            if (delta < minDelta) {
+                minDelta = delta;
+                imageNr = i;
+            }
+        }
+        return imageNr;
+    }
+
     @Override
     public String toString() {
-        return "BoundingBox: imageWidth: " + imageWidth + " imageHeight: " + imageHeight + " width: " + width + " height: " + height + " imageCount: " + imageCount;
+        return "BoundingBox: imageWidth: " + imageWidth + " imageHeight: " + imageHeight + " width: " + width + " height: " + height + " angels: " + angels.length;
     }
+
 }

@@ -47,7 +47,7 @@ public class TestAttackFormation extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testAttackFormationTrack() throws Exception {
-        BoundingBox boundingBox = new BoundingBox(300, 200, 200, 100, 24);
+        BoundingBox boundingBox = new BoundingBox(300, 200, 200, 100, ANGELS_24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(500, 500));
         RoundedRectangleAttackFormationTrack trackRoundedRectangle = new RoundedRectangleAttackFormationTrack(0, syncItemArea, 100, true);
 
@@ -64,7 +64,7 @@ public class TestAttackFormation extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testAttackFormationTrackRotated() throws Exception {
-        BoundingBox boundingBox = new BoundingBox(300, 200, 200, 100, 24);
+        BoundingBox boundingBox = new BoundingBox(300, 200, 200, 100, ANGELS_24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(500, 500));
         syncItemArea.setAngel(MathHelper.gradToRad(80));
         RoundedRectangleAttackFormationTrack trackRoundedRectangle = new RoundedRectangleAttackFormationTrack(0, syncItemArea, 100, true);
@@ -83,7 +83,7 @@ public class TestAttackFormation extends AbstractServiceTest {
 
     @DirtiesContext
     public void testAttackFormationTrack1Attacker() throws Exception {
-        BoundingBox boundingBox = new BoundingBox(300, 200, 200, 100, 24);
+        BoundingBox boundingBox = new BoundingBox(300, 200, 200, 100, ANGELS_24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(500, 500));
         RoundedRectangleAttackFormationTrack track = new RoundedRectangleAttackFormationTrack(0, syncItemArea, 100, true);
         //     Index position = track.start(0, 80, 100);
@@ -94,7 +94,7 @@ public class TestAttackFormation extends AbstractServiceTest {
 
     @DirtiesContext
     public void testAttackFormationTrack1AttackerRot() throws Exception {
-        BoundingBox boundingBox = new BoundingBox(300, 200, 200, 100, 24);
+        BoundingBox boundingBox = new BoundingBox(300, 200, 200, 100, ANGELS_24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(500, 500));
         syncItemArea.setAngel(MathHelper.gradToRad(45));
         RoundedRectangleAttackFormationTrack track = new RoundedRectangleAttackFormationTrack(0, syncItemArea, 100, true);
@@ -106,7 +106,7 @@ public class TestAttackFormation extends AbstractServiceTest {
 
     @DirtiesContext
     public void testAttackFormationTrack5AttackerRot() throws Exception {
-        BoundingBox boundingBox = new BoundingBox(300, 200, 200, 100, 24);
+        BoundingBox boundingBox = new BoundingBox(300, 200, 200, 100, ANGELS_24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(500, 500));
         RoundedRectangleAttackFormationTrack track = new RoundedRectangleAttackFormationTrack(0, syncItemArea, 100, true);
 //        Assert.assertEquals(new Index(500, 250), track.start(0, 100, 100));
@@ -125,7 +125,7 @@ public class TestAttackFormation extends AbstractServiceTest {
 
     @DirtiesContext
     public void testAttackFormationTrack5AttackerRotCounter() throws Exception {
-        BoundingBox boundingBox = new BoundingBox(300, 200, 200, 100, 24);
+        BoundingBox boundingBox = new BoundingBox(300, 200, 200, 100, ANGELS_24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(500, 500));
         RoundedRectangleAttackFormationTrack track = new RoundedRectangleAttackFormationTrack(0, syncItemArea, 100, false);
 //        Assert.assertEquals(new Index(500, 250), track.start(0, 100, 100));
@@ -144,7 +144,7 @@ public class TestAttackFormation extends AbstractServiceTest {
 
     @DirtiesContext
     public void testAttackFormationTrackDifferentAngel() throws Exception {
-        BoundingBox boundingBox = new BoundingBox(300, 200, 200, 100, 24);
+        BoundingBox boundingBox = new BoundingBox(300, 200, 200, 100, ANGELS_24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(500, 500));
         for (double angel = 0.0; angel < MathHelper.ONE_RADIANT; angel += MathHelper.gradToRad(0.01)) {
             RoundedRectangleAttackFormationTrack track = new RoundedRectangleAttackFormationTrack(0, syncItemArea, 100, false);
@@ -158,7 +158,7 @@ public class TestAttackFormation extends AbstractServiceTest {
         configureMinimalGame();
 
         ItemType targetItemType = itemService.getItemType(TEST_SIMPLE_BUILDING_ID);
-        targetItemType.setBoundingBox(new BoundingBox(100, 100, 200, 80, 1));
+        targetItemType.setBoundingBox(new BoundingBox(100, 100, 200, 80, ANGELS_24));
         SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(1500, 1500), new Id(1, -100, -100));
 
         //ItemType attackItemType = itemService.getItemType(TEST_ATTACK_ITEM_ID);
@@ -221,7 +221,7 @@ public class TestAttackFormation extends AbstractServiceTest {
         configureMinimalGame();
 
         ItemType targetItemType = itemService.getItemType(TEST_SIMPLE_BUILDING_ID);
-        targetItemType.setBoundingBox(new BoundingBox(100, 100, 200, 80, 1));
+        targetItemType.setBoundingBox(new BoundingBox(100, 100, 200, 80, ANGELS_24));
         SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(1500, 1500), new Id(1, -100, -100));
 
         //ItemType attackItemType = itemService.getItemType(TEST_ATTACK_ITEM_ID);
@@ -287,11 +287,11 @@ public class TestAttackFormation extends AbstractServiceTest {
         configureMinimalGame();
 
         ItemType targetItemType = itemService.getItemType(TEST_SIMPLE_BUILDING_ID);
-        targetItemType.setBoundingBox(new BoundingBox(100, 100, 80, 80, 1));
+        targetItemType.setBoundingBox(new BoundingBox(100, 100, 80, 80, ANGELS_24));
         SyncBaseItem target = createSyncBaseItem(TEST_SIMPLE_BUILDING_ID, new Index(500, 500), new Id(1, -100, -100));
 
         ItemType attackItemType = itemService.getItemType(TEST_ATTACK_ITEM_ID);
-        attackItemType.setBoundingBox(new BoundingBox(100, 100, 38, 68, 24));
+        attackItemType.setBoundingBox(new BoundingBox(100, 100, 38, 68, ANGELS_24));
         SyncBaseItem syncBaseItem = createSyncBaseItem(TEST_ATTACK_ITEM_ID, new Index(400, 400), new Id(2, -100, -100));
 
         double targetAngel = 0;

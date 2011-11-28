@@ -40,6 +40,7 @@ public class DbItemTypeImage implements Serializable, CrudChild<DbItemType> {
     private String contentType;
     @Column(nullable = false, length = 500000)
     private byte[] data;
+    private double angel;
 
 
     @Override
@@ -74,6 +75,14 @@ public class DbItemTypeImage implements Serializable, CrudChild<DbItemType> {
 
     public void setData(byte[] data) {
         this.data = data;
+    }
+
+    public double getAngel() {
+        return angel;
+    }
+
+    public void setAngel(double angel) {
+        this.angel = angel;
     }
 
     @Override

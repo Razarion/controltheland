@@ -14,6 +14,7 @@
 package com.btxtech.game.jsre.itemtypeeditor;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -22,7 +23,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * Time: 8:18:09 PM
  */
 public interface ItemTypeAccessAsync {
-    void getBoundingBox(int itemTypeId, AsyncCallback<BoundingBox> async);
+    void getItemType(int itemTypeId, AsyncCallback<ItemType> async);
 
     void saveBoundingBox(int itemTypeId, BoundingBox boundingBox, AsyncCallback<Void> async);
 }

@@ -34,6 +34,7 @@ import com.btxtech.game.services.bot.BotService;
 import com.btxtech.game.services.bot.DbBotConfig;
 import com.btxtech.game.services.bot.DbBotItemConfig;
 import com.btxtech.game.services.collision.CollisionService;
+import com.btxtech.game.services.common.CrudChildServiceHelper;
 import com.btxtech.game.services.common.ServerServices;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
@@ -41,6 +42,8 @@ import com.btxtech.game.services.item.itemType.DbBuilderType;
 import com.btxtech.game.services.item.itemType.DbFactoryType;
 import com.btxtech.game.services.item.itemType.DbHarvesterType;
 import com.btxtech.game.services.item.itemType.DbItemContainerType;
+import com.btxtech.game.services.item.itemType.DbItemType;
+import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbMovableType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.services.item.itemType.DbWeaponType;
@@ -128,6 +131,8 @@ import java.util.concurrent.TimeoutException;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:AbstractServiceTest-context.xml")
 abstract public class AbstractServiceTest {
+    public static final double[] ANGELS_24 = {0, 0.261799387799149, 0.523598775598299, 0.785398163397448, 1.0471975511966, 1.30899693899575, 1.5707963267949, 1.83259571459405, 2.0943951023932, 2.35619449019234, 2.61799387799149, 2.87979326579064, 3.14159265358979, 3.40339204138894, 3.66519142918809, 3.92699081698724, 4.18879020478639, 4.45058959258554, 4.71238898038469, 4.97418836818384, 5.23598775598299, 5.49778714378214, 5.75958653158129, 6.02138591938044};
+    public static final double[] ANGELS_1 = {0};
     protected static final String TEST_START_BUILDER_ITEM = "TestStartBuilderItem";
     protected static int TEST_START_BUILDER_ITEM_ID = -1;
     protected static final String TEST_FACTORY_ITEM = "TestFactoryItem";
@@ -602,9 +607,10 @@ abstract public class AbstractServiceTest {
 
     protected DbBaseItemType createBuilderBaseItemType() {
         DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        setupImages(dbBaseItemType, 24);
         dbBaseItemType.setName(TEST_START_BUILDER_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));
+        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_24));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(1);
@@ -630,9 +636,10 @@ abstract public class AbstractServiceTest {
 
     protected DbBaseItemType createFactoryBaseItemType() {
         DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        setupImages(dbBaseItemType, 1);
         dbBaseItemType.setName(TEST_FACTORY_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));
+        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_1));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(2);
@@ -654,9 +661,10 @@ abstract public class AbstractServiceTest {
 
     protected DbBaseItemType createAttackBaseItemType() {
         DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        setupImages(dbBaseItemType, 24);
         dbBaseItemType.setName(TEST_ATTACK_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));
+        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_24));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(3);
@@ -691,9 +699,10 @@ abstract public class AbstractServiceTest {
 
     protected DbBaseItemType createAttackBaseItemType2() {
         DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        setupImages(dbBaseItemType, 24);
         dbBaseItemType.setName(TEST_ATTACK_ITEM_2);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));
+        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_24));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(3);
@@ -720,9 +729,10 @@ abstract public class AbstractServiceTest {
 
     protected DbBaseItemType createContainerBaseItemType() {
         DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        setupImages(dbBaseItemType, 24);
         dbBaseItemType.setName(TEST_CONTAINER_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));
+        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_24));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         // DbItemContainerType
@@ -744,9 +754,10 @@ abstract public class AbstractServiceTest {
 
     protected DbBaseItemType createSimpleBuilding() {
         DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        setupImages(dbBaseItemType, 1);
         dbBaseItemType.setName(TEST_SIMPLE_BUILDING);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));
+        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_1));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
 
@@ -769,9 +780,10 @@ abstract public class AbstractServiceTest {
 
     private DbResourceItemType createMoney() {
         DbResourceItemType dbResourceItemType = (DbResourceItemType) itemService.getDbItemTypeCrud().createDbChild(DbResourceItemType.class);
+        setupImages(dbResourceItemType, 1);
         dbResourceItemType.setName(TEST_RESOURCE_ITEM);
         dbResourceItemType.setTerrainType(TerrainType.LAND);
-        dbResourceItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));
+        dbResourceItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_1));
         dbResourceItemType.setAmount(3);
 
         itemService.saveDbItemType(dbResourceItemType);
@@ -782,9 +794,10 @@ abstract public class AbstractServiceTest {
 
     protected DbBaseItemType createHarvesterItemType() {
         DbBaseItemType dbBaseItemType = (DbBaseItemType) itemService.getDbItemTypeCrud().createDbChild(DbBaseItemType.class);
+        setupImages(dbBaseItemType, 24);
         dbBaseItemType.setName(TEST_HARVESTER_ITEM);
         dbBaseItemType.setTerrainType(TerrainType.LAND);
-        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, 1));
+        dbBaseItemType.setBounding(new BoundingBox(100, 100, 80, 80, ANGELS_24));
         dbBaseItemType.setHealth(10);
         dbBaseItemType.setBuildup(10);
         dbBaseItemType.setPrice(4);
@@ -803,6 +816,16 @@ abstract public class AbstractServiceTest {
         itemService.activate();
         TEST_HARVESTER_ITEM_ID = dbBaseItemType.getId();
         return dbBaseItemType;
+    }
+
+    private void setupImages(DbItemType dbItemType, int count) {
+        CrudChildServiceHelper<DbItemTypeImage> crud = dbItemType.getItemTypeImageCrud();
+        for (int i = 0; i < count; i++) {
+            DbItemTypeImage dbItemTypeImage = crud.createDbChild();
+            dbItemTypeImage.setNumber(i + 1);
+            dbItemTypeImage.setData(new byte[]{1, 2, 3});
+            dbItemTypeImage.setContentType("image");
+        }
     }
 
     // ------------------- Setup Market --------------------

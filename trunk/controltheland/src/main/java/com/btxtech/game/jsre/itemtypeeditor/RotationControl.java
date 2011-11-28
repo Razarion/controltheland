@@ -1,5 +1,6 @@
 package com.btxtech.game.jsre.itemtypeeditor;
 
+import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -9,6 +10,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DecoratorPanel;
+import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -21,13 +23,14 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class RotationControl extends DecoratorPanel {
     private static final int HORIZONTAL_SPACING = 5;
     private static final int VERTICAL_SPACING = 5;
-    private int currentImage = 1;
+    private int currentImage = 0;
     private BoundingBox boundingBox;
     private ItemTypeView itemTypeView;
     private HTML stepLabel;
     private Timer timer;
     private CheckBox clockwise;
     private int timerScheduleRepeating = 100;
+    private DoubleBox doubleBox;
 
 
     public RotationControl(BoundingBox boundingBox, ItemTypeView itemTypeView) {
@@ -38,7 +41,35 @@ public class RotationControl extends DecoratorPanel {
         verticalPanel.setSpacing(VERTICAL_SPACING);
         setupSingleStep(verticalPanel);
         setupAutoRotation(verticalPanel);
+        setupAngel(verticalPanel);
         update();
+    }
+
+    private void setupAngel(VerticalPanel verticalPanel) {
+        HorizontalPanel horizontalPanel = new HorizontalPanel();
+        doubleBox = new DoubleBox();
+        doubleBox.addValueChangeHandler(new ValueChangeHandler<Double>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Double> doubleValueChangeEvent) {
+                boundingBox.getAngels()[currentImage] = MathHelper.gradToRad(doubleValueChangeEvent.getValue());
+            }
+        });
+        horizontalPanel.add(doubleBox);
+        horizontalPanel.add(new Button("+", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                doubleBox.setValue(doubleBox.getValue() + 1, true);
+                update();
+            }
+        }));
+        horizontalPanel.add(new Button("-", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                doubleBox.setValue(doubleBox.getValue() - 1, true);
+                update();
+            }
+        }));
+        verticalPanel.add(horizontalPanel);
     }
 
     private void setupSingleStep(VerticalPanel verticalPanel) {
@@ -122,24 +153,24 @@ public class RotationControl extends DecoratorPanel {
 
     private void nextImage() {
         currentImage++;
-        if (currentImage > boundingBox.getImageCount()) {
-            currentImage = 1;
+        if (currentImage > boundingBox.getAngels().length - 1) {
+            currentImage = 0;
         }
         update();
     }
 
     private void previousImage() {
         currentImage--;
-        if (currentImage < 1) {
-            currentImage = boundingBox.getImageCount();
+        if (currentImage < 0) {
+            currentImage = boundingBox.getAngels().length;
         }
         update();
     }
 
     public void update() {
-        int grad = (int) ((double) (currentImage - 1) / (double) boundingBox.getImageCount() * 360.0);
-        stepLabel.setHTML(currentImage + " of " + boundingBox.getImageCount() + " (" + grad + "&deg;)");
-        itemTypeView.draw(currentImage - 1);
+        stepLabel.setHTML((currentImage + 1) + " of " + boundingBox.getAngels().length);
+        doubleBox.setValue(MathHelper.radToGrad(boundingBox.imageNumberToAngel(currentImage)));
+        itemTypeView.draw(currentImage);
     }
 
 }

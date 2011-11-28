@@ -1,6 +1,7 @@
 package com.btxtech.game.services.gwt;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.itemtypeeditor.ItemTypeAccess;
 import com.btxtech.game.services.item.ItemService;
@@ -18,8 +19,8 @@ public class ItemTypeAccessImpl implements ItemTypeAccess {
     private ItemService itemService;
 
     @Override
-    public BoundingBox getBoundingBox(int itemTypeId) throws NoSuchItemTypeException {
-        return itemService.getBoundingBox(itemTypeId);
+    public ItemType getItemType(int itemTypeId) throws NoSuchItemTypeException {
+        return itemService.getDbItemType(itemTypeId).createItemType();
     }
 
     @Override
