@@ -90,7 +90,7 @@ public class BoundingBox implements Serializable {
     }
 
     public boolean isTurnable() {
-        return angels != null;
+        return angels.length > 1;
     }
 
     /**
