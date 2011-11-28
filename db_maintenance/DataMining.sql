@@ -1,7 +1,7 @@
 -- CHANGE THIS
-SET @TIME_BEFORE = '2011-10-05 00:43:00'; 
-SET @TIME_AFTER = '2011-10-05 14:00:00';
-SET @CLICKS_ADWORDS = 307;
+SET @TIME_BEFORE = '2011-11-22 00:30:00'; 
+SET @TIME_AFTER = '2011-11-22 09:30:00';
+SET @CLICKS_ADWORDS = 457;
 -- CHANGE THIS
 
 SET SQL_SAFE_UPDATES=0; 
@@ -19,6 +19,7 @@ CREATE TABLE tmp_data_mining (
     startupFails INT NULL,
     maxLevelIndex INT NULL,
     userAgent VARCHAR(1000) NULL,
+    scrollCount INT NULL,
     PRIMARY KEY ( id )
  );
  
@@ -49,6 +50,8 @@ UPDATE tmp_data_mining m SET maxLevelIndex = (SELECT max(l.orderIndex)
           AND l.name = h.levelName
           AND h.type = 5
           GROUP BY h.sessionId);
+UPDATE tmp_data_mining m  SET scrollCount = (SELECT COUNT(*) FROM TRACKER_SCROLLING s WHERE m.sessionId = s.sessionId);
+
 
 DROP TABLE IF EXISTS tmp_data_mining_startup;
 CREATE TABLE tmp_data_mining_startup ( 
@@ -69,7 +72,7 @@ INSERT INTO tmp_data_mining_startup (sessionId, startupId, taskCount, timeStamp,
     AND t.dbStartup = s.id
     AND l.name = s.level
     GROUP BY s.id;
-    
+
 -- Startups
 -- SELECT * FROM tmp_data_mining_startup ORDER BY timeStamp ASC;
 
@@ -145,9 +148,8 @@ SELECT count(*)"MSIE 6", sum(startups)"startup", sum(gameAttemps)"gameAttemps" F
 SELECT count(*)"MSIE 7", sum(startups)"startup", sum(gameAttemps)"gameAttemps" FROM tmp_data_mining WHERE userAgent like "%MSIE 7%";        
 SELECT count(*)"MSIE 8", sum(startups)"startup", sum(gameAttemps)"gameAttemps" FROM tmp_data_mining WHERE userAgent like "%MSIE 8%";        
 SELECT count(*)"MSIE 9", sum(startups)"startup", sum(gameAttemps)"gameAttemps" FROM tmp_data_mining WHERE userAgent like "%MSIE 9%";        
-SELECT count(*)"MSIE ALL", sum(startups)"startup", sum(gameAttemps)"gameAttemps" FROM tmp_data_mining 
-   WHERE userAgent like "%MSIE 9%" 
-   OR userAgent like "%MSIE 8%" 
+SELECT count(*)"MSIE 6,7,8", sum(startups)"startup", sum(gameAttemps)"gameAttemps" FROM tmp_data_mining 
+   WHERE userAgent like "%MSIE 8%" 
    OR userAgent like "%MSIE 7%" 
    OR userAgent like "%MSIE 6%";        
 
