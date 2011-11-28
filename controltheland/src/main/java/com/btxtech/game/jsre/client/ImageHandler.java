@@ -54,11 +54,12 @@ public class ImageHandler {
 
     }
 
+    @Deprecated
     public static Image getItemTypeImage(SyncItem syncItem) {
         int imgIndex;
         BoundingBox boundingBox = syncItem.getItemType().getBoundingBox();
         if (boundingBox.isTurnable()) {
-            imgIndex = angleToNumber(syncItem.getSyncItemArea().getAngel(), boundingBox.getImageCount());
+            imgIndex = angleToNumber(syncItem.getSyncItemArea().getAngel(), boundingBox.getAngels().length);
             imgIndex++;// First image start with 1
         } else {
             imgIndex = 1;

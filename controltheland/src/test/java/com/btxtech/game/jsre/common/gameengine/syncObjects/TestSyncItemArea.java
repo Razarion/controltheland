@@ -12,8 +12,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.awt.*;
-
 /**
  * User: beat
  * Date: 23.08.2011
@@ -28,7 +26,7 @@ public class TestSyncItemArea extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testStrait() {
-        BoundingBox boundingBox = new BoundingBox(100, 100, 100, 100, 24);
+        BoundingBox boundingBox = new BoundingBox(100, 100, 100, 100, ANGELS_24);
         SyncItemArea syncItemArea1 = new SyncItemArea(boundingBox, new Index(300, 300));
         Assert.assertEquals(new Index(250, 250), syncItemArea1.getCorner1());
         Assert.assertEquals(new Index(250, 350), syncItemArea1.getCorner2());
@@ -39,7 +37,7 @@ public class TestSyncItemArea extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testRotated() {
-        BoundingBox boundingBox = new BoundingBox(200, 200, 100, 150, 24);
+        BoundingBox boundingBox = new BoundingBox(200, 200, 100, 150, ANGELS_24);
         SyncItemArea syncItemArea1 = new SyncItemArea(boundingBox, new Index(300, 300));
         syncItemArea1.setAngel(MathHelper.gradToRad(10));
         Assert.assertEquals(new Index(238, 235), syncItemArea1.getCorner1());
@@ -51,7 +49,7 @@ public class TestSyncItemArea extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testInRangePosition() {
-        BoundingBox boundingBox = new BoundingBox(400, 400, 200, 200, 1);
+        BoundingBox boundingBox = new BoundingBox(400, 400, 200, 200, ANGELS_24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(400, 400));
         Assert.assertTrue(syncItemArea.isInRange(100, new Index(200, 400)));
         Assert.assertTrue(syncItemArea.isInRange(101, new Index(200, 400)));
@@ -64,11 +62,11 @@ public class TestSyncItemArea extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testInRange() {
-        BoundingBox boundingBox = new BoundingBox(100, 100, 80, 80, 1);
+        BoundingBox boundingBox = new BoundingBox(100, 100, 80, 80, ANGELS_24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(5000, 5200));
 
         BaseItemType baseItemType = new BaseItemType();
-        baseItemType.setBoundingBox(new BoundingBox(100, 100, 80, 80, 1));
+        baseItemType.setBoundingBox(new BoundingBox(100, 100, 80, 80, ANGELS_24));
         Assert.assertTrue(syncItemArea.isInRange(10, new Index(5000, 5290), baseItemType));
         // TODO test angel != 0
     }
@@ -76,7 +74,7 @@ public class TestSyncItemArea extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void testInRangePositionInside() {
-        BoundingBox boundingBox = new BoundingBox(200, 200, 200, 200, 1);
+        BoundingBox boundingBox = new BoundingBox(200, 200, 200, 200, ANGELS_24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(300, 300));
         Assert.assertTrue(syncItemArea.isInRange(100, new Index(300, 300)));
         Assert.assertTrue(syncItemArea.isInRange(1, new Index(300, 300)));
@@ -100,7 +98,7 @@ public class TestSyncItemArea extends AbstractServiceTest {
         configureMinimalGame();
         // TODO test angel != 0
 
-        BoundingBox boundingBox = new BoundingBox(400, 400, 200, 200, 1);
+        BoundingBox boundingBox = new BoundingBox(400, 400, 200, 200, ANGELS_24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(400, 400));
         double max = 0;
         double min = Double.POSITIVE_INFINITY;
@@ -162,7 +160,7 @@ public class TestSyncItemArea extends AbstractServiceTest {
     private void assertSameDistance(double startAngel, int distance) throws Exception {
         for (double attackerAngel = startAngel; attackerAngel <= 360.0; attackerAngel += 90) {
             for (double targetAngel = startAngel; targetAngel <= 360.0; targetAngel += 90) {
-                BoundingBox boundingBox = new BoundingBox(400, 400, 200, 200, 1);
+                BoundingBox boundingBox = new BoundingBox(400, 400, 200, 200, ANGELS_24);
                 SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(400, 400));
                 syncItemArea.turnTo(MathHelper.gradToRad(attackerAngel));
 
@@ -179,9 +177,9 @@ public class TestSyncItemArea extends AbstractServiceTest {
     public void testInRangeSyncItemArea() throws Exception {
         configureMinimalGame();
 
-        BoundingBox boundingBox = new BoundingBox(400, 400, 200, 200, 1);
+        BoundingBox boundingBox = new BoundingBox(400, 400, 200, 200, ANGELS_24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(400, 400));
-        BoundingBox boundingBoxTarget = new BoundingBox(400, 400, 100, 100, 1);
+        BoundingBox boundingBoxTarget = new BoundingBox(400, 400, 100, 100, ANGELS_24);
         Assert.assertTrue(syncItemArea.isInRange(100, new SyncItemArea(boundingBoxTarget, new Index(400, 400))));
         Assert.assertTrue(syncItemArea.isInRange(100, new SyncItemArea(boundingBoxTarget, new Index(150, 400))));
         Assert.assertFalse(syncItemArea.isInRange(99, new SyncItemArea(boundingBoxTarget, new Index(150, 400))));
@@ -191,7 +189,7 @@ public class TestSyncItemArea extends AbstractServiceTest {
     @Test
     @DirtiesContext
     public void getDistanceToPoint() throws Exception {
-        BoundingBox boundingBox = new BoundingBox(400, 400, 200, 200, 1);
+        BoundingBox boundingBox = new BoundingBox(400, 400, 200, 200, ANGELS_24);
         SyncItemArea syncItemArea = new SyncItemArea(boundingBox, new Index(500, 500));
         Assert.assertEquals(300, syncItemArea.getDistance(new Index(100, 500)), 0.001);
         syncItemArea.setAngel(MathHelper.gradToRad(90));
@@ -219,7 +217,7 @@ public class TestSyncItemArea extends AbstractServiceTest {
         syncItemArea.setAngel(MathHelper.gradToRad(330));
         Assert.assertEquals(265.54848, syncItemArea.getDistance(new Index(100, 500)), 0.001);
 
-        boundingBox = new BoundingBox(400, 400, 300, 100, 1);
+        boundingBox = new BoundingBox(400, 400, 300, 100, ANGELS_24);
         syncItemArea = new SyncItemArea(boundingBox, new Index(300, 200));
         Assert.assertEquals(250, syncItemArea.getDistance(new Index(400, 500)), 0.001);
         syncItemArea.setAngel(MathHelper.gradToRad(10));
@@ -229,7 +227,7 @@ public class TestSyncItemArea extends AbstractServiceTest {
         syncItemArea.setAngel(MathHelper.gradToRad(111));
         Assert.assertEquals(166, syncItemArea.getDistance(new Index(400, 500)), 0.001);
 
-        boundingBox = new BoundingBox(400, 400, 300, 300, 1);
+        boundingBox = new BoundingBox(400, 400, 300, 300, ANGELS_24);
         syncItemArea = new SyncItemArea(boundingBox, new Index(400, 400));
         Assert.assertEquals(0, syncItemArea.getDistance(new Index(400, 500)), 0.001);
         syncItemArea.setAngel(MathHelper.gradToRad(359));

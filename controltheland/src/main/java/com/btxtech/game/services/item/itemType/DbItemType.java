@@ -36,7 +36,10 @@ import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -63,7 +66,7 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
     private int imageHeight;
     private int boundingBoxWidth;
     private int boundingBoxHeight;
-    private int imageCount;
+
     @Transient
     private CrudChildServiceHelper<DbItemTypeImage> itemTypeImageCrud;
 
@@ -143,11 +146,6 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
         return boundingBoxHeight;
     }
 
-    @Override
-    public int getImageCount() {
-        return imageCount;
-    }
-
     public void setImageWidth(int imageWidth) {
         this.imageWidth = imageWidth;
     }
@@ -156,12 +154,13 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
         this.imageHeight = imageHeight;
     }
 
-    public void setImageCount(int imageCount) {
-        this.imageCount = imageCount;
-    }
-
     public BoundingBox getBoundingBox() {
-        return new BoundingBox(imageWidth, imageHeight, boundingBoxWidth, boundingBoxHeight, imageCount);
+        double[] angels = new double[itemTypeImages.size()];
+        List<DbItemTypeImage> images = imagesAsList();
+        for (int i = 0; i < images.size(); i++) {
+            angels[i] = images.get(i).getAngel();
+        }
+        return new BoundingBox(imageWidth, imageHeight, boundingBoxWidth, boundingBoxHeight, angels);
     }
 
     public void setBounding(BoundingBox boundingBox) {
@@ -169,7 +168,24 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
         imageHeight = boundingBox.getImageHeight();
         boundingBoxWidth = boundingBox.getWidth();
         boundingBoxHeight = boundingBox.getHeight();
-        imageCount = boundingBox.getImageCount();
+        List<DbItemTypeImage> images = imagesAsList();
+        if (images.size() != boundingBox.getAngels().length) {
+            throw new IllegalArgumentException("Images in the DB and angels in the BoundingBox have different size " + images.size() + ":" + boundingBox.getAngels().length + " on item Id:" + id);
+        }
+        for (int i = 0; i < images.size(); i++) {
+            images.get(i).setAngel(boundingBox.getAngels()[i]);
+        }
+    }
+
+    private List<DbItemTypeImage> imagesAsList() {
+        List<DbItemTypeImage> list = new ArrayList<DbItemTypeImage>(itemTypeImages);
+        Collections.sort(list, new Comparator<DbItemTypeImage>() {
+            @Override
+            public int compare(DbItemTypeImage o1, DbItemTypeImage o2) {
+                return o1.getNumber() - o2.getNumber();
+            }
+        });
+        return list;
     }
 
     public abstract ItemType createItemType();

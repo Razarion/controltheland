@@ -2,9 +2,6 @@ package com.btxtech.game.services.item.itemType;
 
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 
-import java.util.Collection;
-import java.util.Set;
-
 /**
  * User: beat
  * Date: 16.03.2011
@@ -40,6 +37,4 @@ public interface DbItemTypeI {
     int getBoundingBoxWidth();
 
     int getBoundingBoxHeight();
-
-    int getImageCount();
 }

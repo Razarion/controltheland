@@ -83,7 +83,6 @@ public class ResourceItemTypeEditor extends MgmtWebPage {
                 ImageIcon image = new ImageIcon(fileUpload.getBytes());
                 dbResourceItemType.setImageHeight(image.getIconHeight());
                 dbResourceItemType.setImageWidth(image.getIconWidth());
-                dbResourceItemType.setImageCount(1);
                 dbResourceItemType.getItemTypeImageCrud().deleteAllChildren();
                 DbItemTypeImage itemTypeImage = dbResourceItemType.getItemTypeImageCrud().createDbChild();
                 itemTypeImage.setContentType(fileUpload.getContentType());

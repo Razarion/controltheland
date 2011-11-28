@@ -47,6 +47,10 @@ public class SyncItemArea {
         }
     }
 
+    public Index getTopLeftFromImagePosition() {
+        return getPosition().sub(boundingBox.getMiddleFromImage());
+    }
+
     public DecimalPosition getDecimalPosition() {
         return position;
     }
