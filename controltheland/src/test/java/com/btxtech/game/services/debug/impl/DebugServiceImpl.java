@@ -41,8 +41,8 @@ import java.util.Map;
  */
 @Component("debugService")
 public class DebugServiceImpl implements DebugService {
-    private static final int WIDTH = 3200;
-    private static final int HEIGHT = 3200;
+    private static final int WIDTH = 4200;
+    private static final int HEIGHT = 4200;
     private static final int GRID = 100;
     private Panel panel;
     private Frame frame;
@@ -55,7 +55,7 @@ public class DebugServiceImpl implements DebugService {
     private Thread blockedThread;
     private Label mousePosition;
 
-    //@PostConstruct
+    @PostConstruct
     public void init() {
         frame = new Frame();
         frame.addWindowListener(new WindowAdapter() {

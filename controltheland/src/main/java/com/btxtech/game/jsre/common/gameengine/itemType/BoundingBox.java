@@ -167,17 +167,28 @@ public class BoundingBox implements Serializable {
     }
 
     public double getAllowedAngel(double angel) {
-        angel = MathHelper.normaliseAngel(angel);
-        double minDelta = Double.MAX_VALUE;
-        double bestFitAngel = 0;
-        for (double allowedAngel : angels) {
-            double delta = Math.abs(allowedAngel - angel);
-            if (delta < minDelta) {
-                minDelta = delta;
-                bestFitAngel = allowedAngel;
+        double angel1 = angels[0];
+        for (double angel2 : angels) {
+            double result = MathHelper.closerToAngel(angel, angel1, angel2);
+            if (angel2 == result) {
+                angel1 = angel2;
             }
         }
-        return bestFitAngel;
+        return angel1;
+    }
+
+    public double getAllowedAngel(double angel, double exceptThatAngel) {
+        double angel1 = MathHelper.compareWithPrecision(angels[0], exceptThatAngel) ? angels[1] : angels[0];
+        for (double angel2 : angels) {
+            if (MathHelper.compareWithPrecision(angel2, exceptThatAngel)) {
+                continue;
+            }
+            double result = MathHelper.closerToAngel(angel, angel1, angel2);
+            if (angel2 == result) {
+                angel1 = angel2;
+            }
+        }
+        return angel1;
     }
 
     public double[] getAngels() {
@@ -211,5 +222,4 @@ public class BoundingBox implements Serializable {
     public String toString() {
         return "BoundingBox: imageWidth: " + imageWidth + " imageHeight: " + imageHeight + " width: " + width + " height: " + height + " angels: " + angels.length;
     }
-
 }

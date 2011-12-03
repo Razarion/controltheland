@@ -40,6 +40,7 @@ public class ItemTypeSimulation extends DecoratorPanel {
     private SyncItem syncItem;
     private Logger log = Logger.getLogger(ItemTypeSimulation.class.getName());
     private Line line;
+    private Index oldPosition;
 
     public ItemTypeSimulation(int canvasWidth, int canvasHeight, ItemType itemType, BoundingBoxControl boundingBoxControl) {
         this.canvasWidth = canvasWidth;
@@ -57,20 +58,7 @@ public class ItemTypeSimulation extends DecoratorPanel {
         canvas.addMouseDownHandler(new MouseDownHandler() {
             @Override
             public void onMouseDown(MouseDownEvent event) {
-                MoveCommand moveCommand = new MoveCommand();
-                moveCommand.setId(ID);
-                moveCommand.setTimeStamp();
-                List<Index> pathToDestination = new ArrayList<Index>();
-                pathToDestination.add(syncItem.getSyncItemArea().getPosition());
-                pathToDestination.add(new Index(event.getX(), event.getY()));
-                pathToDestination = correctPathAngel(pathToDestination, syncItem.getSyncItemArea().getBoundingBox());
-                moveCommand.setPathToDestination(pathToDestination);
-                SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
-                try {
-                    syncBaseItem.executeCommand(moveCommand);
-                } catch (Exception e) {
-                    log.log(Level.SEVERE, "", e);
-                }
+                executeMoveCommand(new Index(event.getX(), event.getY()));
             }
         });
         context2d = canvas.getContext2d();
@@ -90,6 +78,24 @@ public class ItemTypeSimulation extends DecoratorPanel {
         });
     }
 
+    private void executeMoveCommand(Index moveTo) {
+        oldPosition = syncItem.getSyncItemArea().getPosition();
+        MoveCommand moveCommand = new MoveCommand();
+        moveCommand.setId(ID);
+        moveCommand.setTimeStamp();
+        List<Index> pathToDestination = new ArrayList<Index>();
+        pathToDestination.add(syncItem.getSyncItemArea().getPosition());
+        pathToDestination.add(moveTo);
+        pathToDestination = correctPathAngel(pathToDestination, syncItem.getSyncItemArea().getBoundingBox());
+        moveCommand.setPathToDestination(pathToDestination);
+        SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
+        try {
+            syncBaseItem.executeCommand(moveCommand);
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "", e);
+        }
+    }
+
     private void createSyncItem(ItemType itemType) {
         try {
             syncItem = new SyncBaseItem(ID, new Index(100, 100), (BaseItemType) itemType, MinimalService.getInstance(), null);
@@ -101,26 +107,20 @@ public class ItemTypeSimulation extends DecoratorPanel {
     private void move() {
         SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
         try {
-            syncBaseItem.tick(0.040);
+            if (!syncBaseItem.tick(0.040)) {
+                if (oldPosition != null) {
+                    executeMoveCommand(oldPosition);
+                }
+            }
         } catch (Exception e) {
-            log.log(Level.SEVERE, "", e);
+            log.log(Level.FINEST, "", e);
         }
 
-        //////
         if (!imageLoader.isLoaded()) {
             return;
         }
-        //context2d.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         context2d.setFillStyle(redrawColor);
         context2d.fillRect(0, 0, canvasWidth, canvasHeight);
-        context2d.setLineWidth(2);
-        // Item
-        double angel = syncBaseItem.getSyncItemArea().getAngel();
-        int imageNr = syncBaseItem.getSyncItemArea().getBoundingBox().angelToImageNr(angel);
-        Index position = syncBaseItem.getSyncItemArea().getTopLeftFromImagePosition();
-        context2d.drawImage(imageLoader.getImage(imageNr), position.getX(), position.getY());
-        // Bounding box
-        boundingBoxControl.draw(syncItem.getSyncItemArea(), context2d);
         // Helpers
         if (line != null) {
             context2d.setLineWidth(1.0);
@@ -130,6 +130,14 @@ public class ItemTypeSimulation extends DecoratorPanel {
             context2d.lineTo(line.getPoint2().getX(), line.getPoint2().getY());
             context2d.stroke();
         }
+        // Item
+        double angel = syncBaseItem.getSyncItemArea().getAngel();
+        int imageNr = syncBaseItem.getSyncItemArea().getBoundingBox().angelToImageNr(angel);
+        Index position = syncBaseItem.getSyncItemArea().getTopLeftFromImagePosition();
+        context2d.drawImage(imageLoader.getImage(imageNr), position.getX(), position.getY());
+        // Bounding box
+        context2d.setLineWidth(2);
+        boundingBoxControl.draw(syncItem.getSyncItemArea(), context2d);
     }
 
     private List<Index> correctPathAngel(List<Index> pathToDestination, BoundingBox boundingBox) {
