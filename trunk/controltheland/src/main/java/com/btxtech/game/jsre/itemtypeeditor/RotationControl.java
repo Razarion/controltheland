@@ -162,7 +162,7 @@ public class RotationControl extends DecoratorPanel {
     private void previousImage() {
         currentImage--;
         if (currentImage < 0) {
-            currentImage = boundingBox.getAngels().length;
+            currentImage = boundingBox.getAngels().length - 1;
         }
         update();
     }

@@ -22,6 +22,7 @@ public class MathHelper {
     public static double NORTH_WEST = 0.25 * Math.PI;
     public static double SQRT_OF_2 = Math.sqrt(2.0);
     public static double PRECISION = 0.00001;
+    public static double ZERO_DOT_ONE_DEGREE_IN_RAD = gradToRad(0.1);
 
     /**
      * @param angel input
@@ -103,6 +104,20 @@ public class MathHelper {
         } else {
             return normaliseAngel(startAngel - endAngel);
         }
+    }
+
+    /**
+     * Returns the shortest angel from start to end.
+     * The shortest angel is taken regardless if clock ore counter-clock wise
+     *
+     * @param startAngel start angel
+     * @param endAngel   end angel
+     * @return resulting angel
+     */
+    public static double getAngel(double startAngel, double endAngel) {
+        startAngel = normaliseAngel(startAngel);
+        endAngel = normaliseAngel(endAngel);
+        return Math.abs(Math.min(getAngel(startAngel, endAngel, true), getAngel(startAngel, endAngel, false)));
     }
 
     public static double gradToRad(double grad) {

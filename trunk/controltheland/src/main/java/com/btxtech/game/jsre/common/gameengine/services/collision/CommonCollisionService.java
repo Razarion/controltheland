@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.common.gameengine.services.collision;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
+import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
@@ -40,7 +41,7 @@ public interface CommonCollisionService {
 
     List<Index> setupPathToDestination(SyncBaseItem syncItem, Index destination);
 
-    List<Index> setupPathToDestination(Index position, Index destinationHint, TerrainType terrainType);
+    List<Index> setupPathToDestination(Index position, Index destinationHint, TerrainType terrainType, BoundingBox boundingBox);
 
     Map<TerrainType, Collection<PassableRectangle>> getPassableRectangles();
 

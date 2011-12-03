@@ -6,6 +6,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.IntegerBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -57,7 +59,19 @@ public class PathfindingCockpit extends TopMapPanel {
         destinationBoxY = new TextBox();
         flexTable.setWidget(6, 2, destinationBoxY);
 
-        flexTable.setWidget(7, 2, new Button("Go!", new ClickHandler() {
+        flexTable.setText(7, 1, "ItemType Id");
+        final IntegerBox itemTypeBox = new IntegerBox();
+        HorizontalPanel itemTypePanel = new HorizontalPanel();
+        itemTypePanel.add(itemTypeBox);
+        itemTypePanel.add(new Button("Load", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                pathMiniMap.loadBoundingBox(itemTypeBox.getValue());
+            }
+        }));
+        flexTable.setWidget(7, 2, itemTypePanel);
+
+        flexTable.setWidget(8, 2, new Button("Go!", new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
 

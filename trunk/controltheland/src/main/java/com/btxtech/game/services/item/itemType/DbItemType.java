@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.item.itemType;
 
+import com.btxtech.game.jsre.common.MathHelper;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
@@ -158,7 +159,7 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
         double[] angels = new double[itemTypeImages.size()];
         List<DbItemTypeImage> images = imagesAsList();
         for (int i = 0; i < images.size(); i++) {
-            angels[i] = images.get(i).getAngel();
+            angels[i] = MathHelper.normaliseAngel(images.get(i).getAngel());
         }
         return new BoundingBox(imageWidth, imageHeight, boundingBoxWidth, boundingBoxHeight, angels);
     }

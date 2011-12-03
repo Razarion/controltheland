@@ -106,6 +106,19 @@
         <url-pattern>/playback/remote_logging</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>pathfindingRemoteLogging</servlet-name>
+        <servlet-class>com.btxtech.game.services.gwt.ExtendedRemoteLoggingServiceImpl</servlet-class>
+        <init-param>
+            <param-name>symbolMapsDirectory</param-name>
+            <param-value>WEB-INF/deploy/pathfinding/symbolMaps</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>pathfindingRemoteLogging</servlet-name>
+        <url-pattern>/pathfinding/remote_logging</url-pattern>
+    </servlet-mapping>
+
 
     <filter>
         <filter-name>spring-security</filter-name>

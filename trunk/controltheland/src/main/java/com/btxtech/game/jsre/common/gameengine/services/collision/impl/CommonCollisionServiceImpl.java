@@ -6,6 +6,7 @@ import com.btxtech.game.jsre.common.GeometricalUtil;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormation;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationFactory;
 import com.btxtech.game.jsre.common.gameengine.formation.AttackFormationItem;
+import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.collision.CommonCollisionService;
@@ -62,11 +63,11 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
 
     @Override
     public List<Index> setupPathToDestination(SyncBaseItem syncItem, Index destination) {
-        return setupPathToDestination(syncItem.getSyncItemArea().getPosition(), destination, syncItem.getTerrainType());
+        return setupPathToDestination(syncItem.getSyncItemArea().getPosition(), destination, syncItem.getTerrainType(), syncItem.getSyncItemArea().getBoundingBox());
     }
 
     @Override
-    public List<Index> setupPathToDestination(Index start, Index destination, TerrainType terrainType) {
+    public List<Index> setupPathToDestination(Index start, Index destination, TerrainType terrainType, BoundingBox boundingBox) {
         PassableRectangle atomStartRect = getPassableRectangleOfAbsoluteIndex(start, terrainType);
         PassableRectangle atomDestRect = getPassableRectangleOfAbsoluteIndex(destination, terrainType);
         if (atomStartRect == null || atomDestRect == null) {
@@ -78,9 +79,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
         }
 
         if (atomStartRect.equals(atomDestRect)) {
-            ArrayList<Index> singleIndex = new ArrayList<Index>();
-            singleIndex.add(destination);
-            return singleIndex;
+            return GumPath.toItemAngelSameAtom(start, destination, boundingBox);
         }
 
         long time = System.currentTimeMillis();
@@ -89,7 +88,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
             Path path = atomStartRect.findPossiblePassableRectanglePaths(getServices().getTerrainService(), start, atomDestRect, destination);
             path = PathFinderUtilities.optimizePath(path, getServices().getTerrainService());
             List<Port> ports = path.getAllPassableBorders(getServices().getTerrainService());
-            GumPath gumPath = new GumPath(start, destination, ports);
+            GumPath gumPath = new GumPath(start, destination, ports, boundingBox);
             positions = gumPath.getOptimizedPath();
             return positions;
         } catch (PathCanNotBeFoundException e) {
@@ -102,7 +101,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
         }
     }
 
-    private List<Index> setupPathToDifferentTerrainTypeDestination(Index start, TerrainType startTerrainType, Index destination, TerrainType destinationTerrainType) {
+    private List<Index> setupPathToDifferentTerrainTypeDestination(Index start, TerrainType startTerrainType, Index destination, TerrainType destinationTerrainType, BoundingBox boundingBox) {
         PassableRectangle atomStartRect = getPassableRectangleOfAbsoluteIndex(start, startTerrainType);
         PassableRectangle atomDestRect = PathFinderUtilities.getNearestPassableRectangleDifferentTerrainTypeOfAbsoluteIndex(destination, destinationTerrainType, startTerrainType, passableRectangles4TerrainType, getServices().getTerrainService());
         if (atomStartRect == null || atomDestRect == null) {
@@ -110,9 +109,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
         }
 
         if (atomStartRect.equals(atomDestRect)) {
-            ArrayList<Index> singleIndex = new ArrayList<Index>();
-            singleIndex.add(destination);
-            return singleIndex;
+            return GumPath.toItemAngelSameAtom(start, destination, boundingBox);
         }
 
         long time = System.currentTimeMillis();
@@ -121,7 +118,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
             Path path = atomStartRect.findPossiblePassableRectanglePaths(getServices().getTerrainService(), start, atomDestRect, destination);
             path = PathFinderUtilities.optimizePath(path, getServices().getTerrainService());
             List<Port> ports = path.getAllPassableBorders(getServices().getTerrainService());
-            GumPath gumPath = new GumPath(start, destination, ports);
+            GumPath gumPath = new GumPath(start, destination, ports, boundingBox);
             positions = gumPath.getOptimizedPath();
             return positions;
         } finally {
@@ -135,9 +132,9 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
         SyncItem actorItem = items.get(0).getSyncBaseItem();
         List<Index> path;
         if (terrainType == targetTerrainType) {
-            path = setupPathToDestination(actorItem.getSyncItemArea().getPosition(), target.getPosition(), terrainType);
+            path = setupPathToDestination(actorItem.getSyncItemArea().getPosition(), target.getPosition(), terrainType, actorItem.getSyncItemArea().getBoundingBox());
         } else {
-            path = setupPathToDifferentTerrainTypeDestination(actorItem.getSyncItemArea().getPosition(), terrainType, target.getPosition(), targetTerrainType);
+            path = setupPathToDifferentTerrainTypeDestination(actorItem.getSyncItemArea().getPosition(), terrainType, target.getPosition(), targetTerrainType, target.getBoundingBox());
         }
 
         path.remove(path.size() - 1); // Target pos
@@ -210,7 +207,7 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
     @Override
     public List<Index> setupPathToSyncMovableRandomPositionIfTaken(SyncItem syncItem) {
         Index position = getFreeRandomPosition(syncItem.getItemType(), Rectangle.generateRectangleFromMiddlePoint(syncItem.getSyncItemArea().getPosition(), 500, 500), 0, false, false);
-        return setupPathToDestination(syncItem.getSyncItemArea().getPosition(), position, syncItem.getTerrainType());
+        return setupPathToDestination(syncItem.getSyncItemArea().getPosition(), position, syncItem.getTerrainType(), syncItem.getSyncItemArea().getBoundingBox());
     }
 
     @Override

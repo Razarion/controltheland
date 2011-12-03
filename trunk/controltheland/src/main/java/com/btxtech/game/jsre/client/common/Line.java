@@ -55,9 +55,6 @@ public class Line implements Segment, Serializable {
 
     public double getShortestDistance(Index point) {
         Index projection = projectOnInfiniteLine(point);
-        if (projection == null) {
-            projection = point; // TODO
-        }
 
         int xMin = Math.min(point1.getX(), point2.getX());
         int xMax = Math.max(point1.getX(), point2.getX());
@@ -70,6 +67,11 @@ public class Line implements Segment, Serializable {
             return point.getDistanceDouble(projection);
         }
 
+    }
+
+    public double getShortestDistanceOnInfiniteLine(Index point) {
+        Index projection = projectOnInfiniteLine(point);
+        return point.getDistanceDouble(projection);
     }
 
     /**
@@ -91,9 +93,6 @@ public class Line implements Segment, Serializable {
         double c2 = (double) point.getY() - m2 * (double) point.getX();
         double x = (c2 - c) / (m - m2);
         double y = m2 * x + c2;
-        if (x < 0 || y < 0) {
-            return null;
-        }
         return new Index((int) Math.round(x), (int) Math.round(y));
     }
 
@@ -141,7 +140,7 @@ public class Line implements Segment, Serializable {
         return getCross(new Line(reference, angel, distance));
     }
 
-    public Index getCross(Line line) {
+    public Index getCrossInfinite(Line line) {
         if (Double.compare(m, line.m) == 0
                 || (Double.compare(Math.abs(m), 0.0) == 0 && Double.compare(Math.abs(line.m), 0.0) == 0)
                 || (Double.isInfinite(m) && Double.isInfinite(line.m))) {
@@ -167,7 +166,15 @@ public class Line implements Segment, Serializable {
             y = calculateY(x);
         }
 
-        Index point = new Index((int) Math.round(x), (int) Math.round(y));
+        return new Index((int) Math.round(x), (int) Math.round(y));
+    }
+
+    public Index getCross(Line line) {
+        Index point = getCrossInfinite(line);
+        if(point == null) {
+            return null;
+        }
+
         if (!isPointInLine(point)) {
             return null;
         }

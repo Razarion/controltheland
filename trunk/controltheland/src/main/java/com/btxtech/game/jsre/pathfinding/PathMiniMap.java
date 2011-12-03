@@ -20,11 +20,19 @@ import com.btxtech.game.jsre.client.cockpit.radar.MiniMapMouseDownListener;
 import com.btxtech.game.jsre.client.cockpit.radar.MiniMapMouseMoveListener;
 import com.btxtech.game.jsre.client.collision.ClientCollisionService;
 import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
+import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainSettings;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.TerrainType;
+import com.btxtech.game.jsre.itemtypeeditor.ItemTypeAccess;
+import com.btxtech.game.jsre.itemtypeeditor.ItemTypeAccessAsync;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * User: beat
@@ -34,11 +42,30 @@ import java.util.List;
 public class PathMiniMap extends MiniMap implements MiniMapMouseDownListener, MiniMapMouseMoveListener {
     private Index start;
     private PathfindingCockpit pathfindingCockpit;
+    private Logger log = Logger.getLogger(PathMiniMap.class.getName());
+    private BoundingBox boundingBox;
 
     public PathMiniMap(int width, int height) {
         super(width, height);
         addMouseDownListener(this);
         addMouseMoveListener(this);
+        loadBoundingBox(1);
+    }
+
+    public void loadBoundingBox(final int itemTypeId) {
+        ItemTypeAccessAsync itemTypeAccess = GWT.create(ItemTypeAccess.class);
+        itemTypeAccess.getItemType(itemTypeId, new AsyncCallback<ItemType>() {
+            @Override
+            public void onFailure(Throwable caught) {
+                log.log(Level.SEVERE, "getBoundingBox call failed", caught);
+            }
+
+            @Override
+            public void onSuccess(ItemType itemType) {
+                boundingBox = itemType.getBoundingBox();
+            }
+        });
+
     }
 
     @Override
@@ -65,8 +92,11 @@ public class PathMiniMap extends MiniMap implements MiniMapMouseDownListener, Mi
     }
 
     public void findPath(final Index start, Index destination) {
+        if (boundingBox == null) {
+            return;
+        }
         try {
-            List<Index> indexes = ClientCollisionService.getInstance().setupPathToDestination(start, destination, TerrainType.LAND);
+            List<Index> indexes = ClientCollisionService.getInstance().setupPathToDestination(start, destination, TerrainType.LAND, boundingBox);
             if (indexes == null) {
                 return;
             }
@@ -93,7 +123,7 @@ public class PathMiniMap extends MiniMap implements MiniMapMouseDownListener, Mi
 
     @Override
     public void onMouseMove(int absX, int absY) {
-       pathfindingCockpit.showMousePosition(absX, absY);
+        pathfindingCockpit.showMousePosition(absX, absY);
     }
 
     public void setPathfindingCockpit(PathfindingCockpit pathfindingCockpit) {
