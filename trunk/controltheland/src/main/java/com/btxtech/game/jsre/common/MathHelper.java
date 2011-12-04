@@ -120,6 +120,11 @@ public class MathHelper {
         return Math.abs(Math.min(getAngel(startAngel, endAngel, true), getAngel(startAngel, endAngel, false)));
     }
 
+    public static boolean isCounterClock(double startAngel, double endAngel) {
+        return getAngel(startAngel, endAngel, true) < getAngel(startAngel, endAngel, false);
+    }
+
+
     public static double gradToRad(double grad) {
         return grad / 360.0 * ONE_RADIANT;
     }

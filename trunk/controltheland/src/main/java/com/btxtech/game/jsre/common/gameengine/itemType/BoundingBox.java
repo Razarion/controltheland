@@ -31,6 +31,11 @@ public class BoundingBox implements Serializable {
         this.width = width;
         this.height = height;
         this.angels = angels;
+        for (int i = 0; i < angels.length - 1; i++) {
+            if (angels[i] >= angels[i + 1]) {
+                throw new IllegalArgumentException("Angels are not in ordered form: " + angels[i] + "[" + i + "] <" + angels[i + 1] + "[" + (i + 1) + "]");
+            }
+        }
     }
 
     public void setWidth(int width) {
@@ -167,6 +172,7 @@ public class BoundingBox implements Serializable {
     }
 
     public double getAllowedAngel(double angel) {
+        angel = MathHelper.normaliseAngel(angel);
         double angel1 = angels[0];
         for (double angel2 : angels) {
             double result = MathHelper.closerToAngel(angel, angel1, angel2);
@@ -178,17 +184,35 @@ public class BoundingBox implements Serializable {
     }
 
     public double getAllowedAngel(double angel, double exceptThatAngel) {
-        double angel1 = MathHelper.compareWithPrecision(angels[0], exceptThatAngel) ? angels[1] : angels[0];
-        for (double angel2 : angels) {
-            if (MathHelper.compareWithPrecision(angel2, exceptThatAngel)) {
-                continue;
+        angel = MathHelper.normaliseAngel(angel);
+        exceptThatAngel = MathHelper.normaliseAngel(exceptThatAngel);
+        if (MathHelper.compareWithPrecision(angel, exceptThatAngel)) {
+            for (int i = 0; i < angels.length; i++) {
+                double allowedAngel = angels[i];
+                if (MathHelper.compareWithPrecision(allowedAngel, exceptThatAngel)) {
+                    double prevAngel = angels[i == 0 ? angels.length - 1 : i - 1];
+                    double nextAngel = angels[i == angels.length - 1 ? 0 : i + 1];
+                    if (MathHelper.getAngel(angel, prevAngel) < MathHelper.getAngel(angel, nextAngel)) {
+                        return prevAngel;
+                    } else {
+                        return nextAngel;
+                    }
+                }
             }
-            double result = MathHelper.closerToAngel(angel, angel1, angel2);
-            if (angel2 == result) {
-                angel1 = angel2;
+            throw new IllegalArgumentException("exceptThatAngel is unknown:" + exceptThatAngel);
+        } else {
+            for (int i = 0; i < angels.length; i++) {
+                double allowedAngel = angels[i];
+                if (MathHelper.compareWithPrecision(allowedAngel, exceptThatAngel)) {
+                    if (MathHelper.isCounterClock(angel, exceptThatAngel)) {
+                        return angels[i == 0 ? angels.length - 1 : i - 1];
+                    } else {
+                        return angels[i == angels.length - 1 ? 0 : i + 1];
+                    }
+                }
             }
+            throw new IllegalArgumentException("exceptThatAngel is unknown:" + exceptThatAngel);
         }
-        return angel1;
     }
 
     public double[] getAngels() {
@@ -203,6 +227,11 @@ public class BoundingBox implements Serializable {
         return angels[imageNr];
     }
 
+    /**
+     *
+     * @param angel angel
+     * @return image nr starts with 0
+     */
     public int angelToImageNr(double angel) {
         angel = MathHelper.normaliseAngel(angel);
         double minDelta = Double.MAX_VALUE;

@@ -16,7 +16,6 @@ package com.btxtech.game.jsre.client;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.utg.ImageSizeCallback;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
-import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.event.dom.client.LoadEvent;
@@ -56,16 +55,10 @@ public class ImageHandler {
 
     @Deprecated
     public static Image getItemTypeImage(SyncItem syncItem) {
-        int imgIndex;
-        BoundingBox boundingBox = syncItem.getItemType().getBoundingBox();
-        if (boundingBox.isTurnable()) {
-            imgIndex = angleToNumber(syncItem.getSyncItemArea().getAngel(), boundingBox.getAngels().length);
-            imgIndex++;// First image start with 1
-        } else {
-            imgIndex = 1;
-        }
+        int imageNr = syncItem.getSyncItemArea().getBoundingBox().angelToImageNr(syncItem.getSyncItemArea().getAngel());
+        imageNr++;// First image start with 1
         ItemType itemType = syncItem.getItemType();
-        return getItemTypeImage(imgIndex, itemType);
+        return getItemTypeImage(imageNr, itemType);
     }
 
     public static Image getItemTypeImage(ItemType itemType) {
@@ -96,30 +89,7 @@ public class ImageHandler {
     * Always starts with 0
     */
 
-    public static int angleToNumber(double angle, int resolution) {
-        angle = normalizeAngel(angle);
-
-        double slice = getAngelSilce(resolution);
-        double halveSlice = slice / 2.0;
-        if (angle < halveSlice) {
-            return 0; //Always starts with 1
-        }
-        if (angle > ONE_RADIANT - halveSlice) {
-            return 0; //Always starts with 1
-        }
-        int slicePos = (int) Math.round(angle / slice);
-
-        if (slicePos > resolution - 1) {
-            throw new IllegalArgumentException();
-        }
-
-        return slicePos;
-    }
-
-    public static double getAngelSilce(int resolution) {
-        return ONE_RADIANT / (double) resolution;
-    }
-
+    @Deprecated
     public static double normalizeAngel(double angle) {
         if (angle < 0) {
             angle = ONE_RADIANT + angle;
