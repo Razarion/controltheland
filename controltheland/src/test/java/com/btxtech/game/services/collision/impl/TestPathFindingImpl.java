@@ -502,7 +502,7 @@ public class TestPathFindingImpl extends AbstractServiceTest {
 
     @Test
     @DirtiesContext
-    public void toItemAngelSameAtomLoop() throws Throwable {
+    public void toItemAngelSameAtomLoop1() throws Throwable {
         BoundingBox boundingBox = new BoundingBox(0, 0, 0, 0, ANGELS_24);
         Index start = new Index(1000, 1000);
         Index destination = new Index(3000, 3000);
@@ -520,6 +520,50 @@ public class TestPathFindingImpl extends AbstractServiceTest {
             System.out.println("start: " + start + " destination: " + destination);
             throw t;
         }
+    }
+
+    @Test
+    @DirtiesContext
+    public void toItemAngelSameAtomLoop2() throws Throwable {
+        BoundingBox boundingBox = new BoundingBox(0, 0, 0, 0, ANGELS_24_2);
+        Index start = new Index(1000, 1000);
+        Index destination = new Index(3000, 3000);
+        Index middle = new Index(2000, 2000);
+
+        try {
+            for (double angel = 0.0; angel <= MathHelper.ONE_RADIANT; angel += 0.0001) {
+                System.out.println("angel: " + MathHelper.radToGrad(angel));
+                List<Index> path = GumPath.toItemAngelSameAtom(start, destination, boundingBox);
+                assertPathAngels(path, boundingBox);
+                start = start.rotateCounterClock(middle, angel);
+                destination = destination.rotateCounterClock(middle, angel);
+            }
+        } catch (Throwable t) {
+            System.out.println("start: " + start + " destination: " + destination);
+            throw t;
+        }
+    }
+
+    @Test
+    @DirtiesContext
+    public void toItemAngelSameAtom1() throws Throwable {
+        BoundingBox boundingBox = new BoundingBox(0, 0, 0, 0, ANGELS_24_2);
+        Index start = new Index(2538, 1311);
+        Index destination = new Index(841, 1348);
+
+        List<Index> path = GumPath.toItemAngelSameAtom(start, destination, boundingBox);
+
+        Index point1 = null;
+        for (Index index : path) {
+            if (point1 != null) {
+                debugService.drawLine(new Line(point1, index), Color.RED);
+            }
+            point1 = index;
+        }
+        debugService.drawPosition(start, Color.BLUE);
+        debugService.drawPosition(destination, Color.BLUE);
+        debugService.waitForClose();
+        assertPathAngels(path, boundingBox);
     }
 
     private void assertPathAngels(List<Index> path, BoundingBox boundingBox) {
