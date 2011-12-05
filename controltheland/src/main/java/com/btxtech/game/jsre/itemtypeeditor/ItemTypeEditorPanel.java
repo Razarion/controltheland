@@ -40,17 +40,19 @@ public class ItemTypeEditorPanel extends FlexTable {
         ItemTypeSimulation itemTypeSimulation = new ItemTypeSimulation(500, 500, itemType);
         ItemTypeView itemTypeView = new ItemTypeView(300, 300, itemType, boundingBoxControl);
         RotationControl rotationControl = new RotationControl(itemType.getBoundingBox(), itemTypeView, itemTypeSimulation);
+        MuzzleFlashControl muzzleFlashControl = new MuzzleFlashControl(itemTypeId, itemTypeSimulation);
         // Init panels
         boundingBoxControl.setRotationControl(rotationControl);
         // Add panels to main panel
         setWidget(0, 0, itemTypeView);
         getFlexCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_TOP);
-        getFlexCellFormatter().setRowSpan(0, 0, 2);
+        getFlexCellFormatter().setRowSpan(0, 0, 3);
         setWidget(0, 1, rotationControl);
         // Col is 0 (only one col in second row)
         setWidget(1, 0, boundingBoxControl);
+        setWidget(2, 0, muzzleFlashControl);
         getFlexCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_TOP);
         setWidget(0, 2, itemTypeSimulation);
-        getFlexCellFormatter().setRowSpan(0, 2, 2);
+        getFlexCellFormatter().setRowSpan(0, 2, 3);
     }
 }
