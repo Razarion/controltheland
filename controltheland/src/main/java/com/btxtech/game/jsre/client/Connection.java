@@ -136,6 +136,10 @@ public class Connection implements AsyncCallback<Void>, StartupProgressListener 
         gameEngineMode = GameEngineMode.PLAYBACK;
     }
 
+    public void init4ItemTypeEditor() {
+        gameEngineMode = GameEngineMode.MASTER;
+    }
+
     public void downloadAllSyncInfo(final DeferredStartup deferredStartup) {
         if (movableServiceAsync != null) {
             movableServiceAsync.getAllSyncInfo(new AsyncCallback<Collection<SyncItemInfo>>() {
