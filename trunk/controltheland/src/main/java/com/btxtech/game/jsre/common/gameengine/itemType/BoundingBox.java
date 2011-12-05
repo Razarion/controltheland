@@ -228,23 +228,19 @@ public class BoundingBox implements Serializable {
     }
 
     /**
-     *
      * @param angel angel
      * @return image nr starts with 0
      */
     public int angelToImageNr(double angel) {
-        angel = MathHelper.normaliseAngel(angel);
-        double minDelta = Double.MAX_VALUE;
-        int imageNr = 0;
-        for (int i = 0, angelsLength = angels.length; i < angelsLength; i++) {
+        angel = getAllowedAngel(angel);
+        for (int i = 0; i < angels.length; i++) {
             double allowedAngel = angels[i];
-            double delta = Math.abs(allowedAngel - angel);
-            if (delta < minDelta) {
-                minDelta = delta;
-                imageNr = i;
+            if (MathHelper.compareWithPrecision(allowedAngel, angel)) {
+                return i;
             }
+
         }
-        return imageNr;
+        throw new IllegalArgumentException("angelToImageNr angel is unknown:" + angel);
     }
 
     @Override
