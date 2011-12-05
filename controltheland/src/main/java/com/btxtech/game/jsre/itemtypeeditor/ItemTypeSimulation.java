@@ -1,7 +1,6 @@
 package com.btxtech.game.jsre.itemtypeeditor;
 
 import com.btxtech.game.jsre.client.common.Index;
-import com.btxtech.game.jsre.client.common.Line;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
@@ -13,7 +12,6 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.command.MoveCommand;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.canvas.dom.client.CssColor;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.user.client.Timer;
@@ -32,20 +30,13 @@ import java.util.logging.Logger;
 public class ItemTypeSimulation extends DecoratorPanel {
     private static final Id ID = new Id(0, 0, 0);
     private Context2d context2d;
-    private ImageLoader imageLoader;
-    private CssColor redrawColor = CssColor.make(255, 255, 255);
-    private int canvasWidth;
-    private int canvasHeight;
-    private BoundingBoxControl boundingBoxControl;
+    private ItemTypeImageLoader itemTypeImageLoader;
+    private SurfaceImageLoader surfaceImageLoader;
     private SyncItem syncItem;
     private Logger log = Logger.getLogger(ItemTypeSimulation.class.getName());
-    private Line line;
     private Index oldPosition;
 
-    public ItemTypeSimulation(int canvasWidth, int canvasHeight, ItemType itemType, BoundingBoxControl boundingBoxControl) {
-        this.canvasWidth = canvasWidth;
-        this.canvasHeight = canvasHeight;
-        this.boundingBoxControl = boundingBoxControl;
+    public ItemTypeSimulation(int canvasWidth, int canvasHeight, ItemType itemType) {
         Canvas canvas = Canvas.createIfSupported();
         if (canvas == null) {
             throw new IllegalStateException("ItemTypeEditorPanel: Canvas is not supported.");
@@ -70,12 +61,13 @@ public class ItemTypeSimulation extends DecoratorPanel {
                 move();
             }
         };
-        imageLoader = new ImageLoader(itemType.getId(), itemType.getBoundingBox().getAngels().length, new ImageLoader.Listener() {
+        itemTypeImageLoader = new ItemTypeImageLoader(itemType.getId(), itemType.getBoundingBox().getAngels().length, new ImageLoader.Listener() {
             @Override
             public void onLoaded() {
                 timer.scheduleRepeating(40);
             }
         });
+        surfaceImageLoader = new SurfaceImageLoader(23);
     }
 
     private void executeMoveCommand(Index moveTo) {
@@ -105,6 +97,7 @@ public class ItemTypeSimulation extends DecoratorPanel {
     }
 
     private void move() {
+        // Execute move
         SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
         try {
             if (!syncBaseItem.tick(0.040)) {
@@ -115,29 +108,26 @@ public class ItemTypeSimulation extends DecoratorPanel {
         } catch (Exception e) {
             log.log(Level.FINEST, "", e);
         }
-
-        if (!imageLoader.isLoaded()) {
-            return;
-        }
-        context2d.setFillStyle(redrawColor);
-        context2d.fillRect(0, 0, canvasWidth, canvasHeight);
-        // Helpers
-        if (line != null) {
-            context2d.setLineWidth(1.0);
-            context2d.setStrokeStyle(CssColor.make(0, 0, 255));
-            context2d.beginPath();
-            context2d.moveTo(line.getPoint1().getX(), line.getPoint1().getY());
-            context2d.lineTo(line.getPoint2().getX(), line.getPoint2().getY());
-            context2d.stroke();
+        // Draw background
+        if (surfaceImageLoader.isLoaded()) {
+            context2d.drawImage(surfaceImageLoader.getImage(0), 0, 0);
+            context2d.drawImage(surfaceImageLoader.getImage(0), 200, 0);
+            context2d.drawImage(surfaceImageLoader.getImage(0), 400, 0);
+            context2d.drawImage(surfaceImageLoader.getImage(0), 0, 200);
+            context2d.drawImage(surfaceImageLoader.getImage(0), 200, 200);
+            context2d.drawImage(surfaceImageLoader.getImage(0), 400, 200);
+            context2d.drawImage(surfaceImageLoader.getImage(0), 0, 400);
+            context2d.drawImage(surfaceImageLoader.getImage(0), 200, 400);
+            context2d.drawImage(surfaceImageLoader.getImage(0), 400, 400);
         }
         // Item
+        if (!itemTypeImageLoader.isLoaded()) {
+            return;
+        }
         double angel = syncBaseItem.getSyncItemArea().getAngel();
         int imageNr = syncBaseItem.getSyncItemArea().getBoundingBox().angelToImageNr(angel);
         Index position = syncBaseItem.getSyncItemArea().getTopLeftFromImagePosition();
-        context2d.drawImage(imageLoader.getImage(imageNr), position.getX(), position.getY());
-        // Bounding box
-        context2d.setLineWidth(2);
-        boundingBoxControl.draw(syncItem.getSyncItemArea(), context2d);
+        context2d.drawImage(itemTypeImageLoader.getImage(imageNr), position.getX(), position.getY());
     }
 
     private List<Index> correctPathAngel(List<Index> pathToDestination, BoundingBox boundingBox) {
@@ -148,7 +138,6 @@ public class ItemTypeSimulation extends DecoratorPanel {
         double allowedAngel = boundingBox.getAllowedAngel(angel);
         Index newEnd = start.getPointFromAngelToNord(allowedAngel, distance);
         pathToDestination.set(1, newEnd);
-        line = new Line(start, newEnd);
         return pathToDestination;
     }
 
