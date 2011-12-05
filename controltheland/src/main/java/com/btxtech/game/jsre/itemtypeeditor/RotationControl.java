@@ -31,11 +31,13 @@ public class RotationControl extends DecoratorPanel {
     private CheckBox clockwise;
     private int timerScheduleRepeating = 100;
     private DoubleBox doubleBox;
+    private ItemTypeSimulation itemTypeSimulation;
 
 
-    public RotationControl(BoundingBox boundingBox, ItemTypeView itemTypeView) {
+    public RotationControl(BoundingBox boundingBox, ItemTypeView itemTypeView, ItemTypeSimulation itemTypeSimulation) {
         this.boundingBox = boundingBox;
         this.itemTypeView = itemTypeView;
+        this.itemTypeSimulation = itemTypeSimulation;
         VerticalPanel verticalPanel = new VerticalPanel();
         setWidget(verticalPanel);
         verticalPanel.setSpacing(VERTICAL_SPACING);
@@ -171,6 +173,7 @@ public class RotationControl extends DecoratorPanel {
         stepLabel.setHTML((currentImage + 1) + " of " + boundingBox.getAngels().length);
         doubleBox.setValue(MathHelper.radToGrad(boundingBox.imageNumberToAngel(currentImage)));
         itemTypeView.draw(currentImage);
+        itemTypeSimulation.onImageChanged(currentImage);
     }
 
 }
