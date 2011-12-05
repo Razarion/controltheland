@@ -35,6 +35,7 @@ public class ItemTypeSimulation extends DecoratorPanel {
     private int canvasWidth;
     private int canvasHeight;
     private int imageNr;
+    private boolean doMove = false;
 
     public ItemTypeSimulation(int canvasWidth, int canvasHeight, ItemType itemType) {
         this.canvasWidth = canvasWidth;
@@ -52,7 +53,7 @@ public class ItemTypeSimulation extends DecoratorPanel {
         final Timer timer = new Timer() {
             @Override
             public void run() {
-                move();
+                draw();
             }
         };
         itemTypeImageLoader = new ItemTypeImageLoader(itemType.getId(), itemType.getBoundingBox().getAngels().length, new ImageLoader.Listener() {
@@ -95,15 +96,17 @@ public class ItemTypeSimulation extends DecoratorPanel {
         }
     }
 
-    private void move() {
+    private void draw() {
         // Execute move
         SyncBaseItem syncBaseItem = (SyncBaseItem) syncItem;
-        try {
-            if (!syncBaseItem.tick(0.040)) {
-                executeMoveCommand();
+        if (doMove) {
+            try {
+                if (!syncBaseItem.tick(0.040)) {
+                    executeMoveCommand();
+                }
+            } catch (Exception e) {
+                log.log(Level.FINEST, "", e);
             }
-        } catch (Exception e) {
-            log.log(Level.FINEST, "", e);
         }
         // Draw background
         if (surfaceImageLoader.isLoaded()) {
@@ -147,7 +150,16 @@ public class ItemTypeSimulation extends DecoratorPanel {
 
     public void onImageChanged(int imageNr) {
         this.imageNr = imageNr;
-        executeMoveCommand();
+        if (doMove) {
+            executeMoveCommand();
+        }
     }
 
+    public void doMove(boolean value) {
+        doMove = value && (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).hasSyncMovable());
+    }
+
+    public SyncItem getSyncItem() {
+        return syncItem;
+    }
 }

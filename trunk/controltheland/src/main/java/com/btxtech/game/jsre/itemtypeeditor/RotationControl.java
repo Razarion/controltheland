@@ -44,7 +44,19 @@ public class RotationControl extends DecoratorPanel {
         setupSingleStep(verticalPanel);
         setupAutoRotation(verticalPanel);
         setupAngel(verticalPanel);
+        setupMove(verticalPanel);
         update();
+    }
+
+    private void setupMove(VerticalPanel verticalPanel) {
+        CheckBox checkBox = new CheckBox("Move");
+        verticalPanel.add(checkBox);
+        checkBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
+               itemTypeSimulation.doMove(booleanValueChangeEvent.getValue()); 
+            }
+        });
     }
 
     private void setupAngel(VerticalPanel verticalPanel) {
@@ -173,7 +185,9 @@ public class RotationControl extends DecoratorPanel {
         stepLabel.setHTML((currentImage + 1) + " of " + boundingBox.getAngels().length);
         doubleBox.setValue(MathHelper.radToGrad(boundingBox.imageNumberToAngel(currentImage)));
         itemTypeView.draw(currentImage);
-        itemTypeSimulation.onImageChanged(currentImage);
+        if (itemTypeSimulation != null) {
+            itemTypeSimulation.onImageChanged(currentImage);
+        }
     }
 
 }
