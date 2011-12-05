@@ -34,7 +34,9 @@ public class MiniTerrain extends MiniMap implements TerrainListener {
     public MiniTerrain(int width, int height) {
         super(width, height);
         getCanvas().getElement().getStyle().setBackgroundColor("#000000");
-        TerrainView.getInstance().getTerrainHandler().addTerrainListener(this);
+        if (!TerrainView.uglySuppressRadar) {
+            TerrainView.getInstance().getTerrainHandler().addTerrainListener(this);
+        }
     }
 
     @Override
