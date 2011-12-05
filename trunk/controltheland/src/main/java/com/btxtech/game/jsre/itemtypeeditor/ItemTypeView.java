@@ -19,7 +19,7 @@ public class ItemTypeView extends DecoratorPanel {
     private static final int ITEM_TYPE_TOP = 100;
     private final Index offset = new Index(ITEM_TYPE_LEFT, ITEM_TYPE_TOP);
     private Context2d context2d;
-    private ImageLoader imageLoader;
+    private ItemTypeImageLoader imageLoader;
     private CssColor redrawColor = CssColor.make(255, 255, 255);
     private int canvasWidth;
     private int canvasHeight;
@@ -41,7 +41,7 @@ public class ItemTypeView extends DecoratorPanel {
         canvas.setCoordinateSpaceWidth(canvasWidth);
         canvas.setCoordinateSpaceHeight(canvasHeight);
         context2d = canvas.getContext2d();
-        imageLoader = new ImageLoader(itemType.getId(), itemType.getBoundingBox().getAngels().length, new ImageLoader.Listener() {
+        imageLoader = new ItemTypeImageLoader(itemType.getId(), itemType.getBoundingBox().getAngels().length, new ImageLoader.Listener() {
             @Override
             public void onLoaded() {
                 draw(0);
