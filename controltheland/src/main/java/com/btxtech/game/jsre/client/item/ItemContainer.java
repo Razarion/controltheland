@@ -294,6 +294,14 @@ public class ItemContainer extends AbstractItemService {
         return items.containsKey(syncItem.getId());
     }
 
+    public ClientSyncItem getClientSyncItem(Id id) throws ItemDoesNotExistException {
+        ClientSyncItem clientSyncItem = items.get(id);
+        if (clientSyncItem == null) {
+            throw new ItemDoesNotExistException(id);
+        }
+        return clientSyncItem;
+    }
+
     @Override
     public SyncItem getItem(Id id) throws ItemDoesNotExistException {
         ClientSyncItem ClientSyncItem = items.get(id);

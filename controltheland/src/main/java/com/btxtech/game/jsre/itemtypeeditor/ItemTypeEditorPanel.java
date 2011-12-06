@@ -34,6 +34,7 @@ import java.util.logging.Logger;
  */
 public class ItemTypeEditorPanel extends FlexTable {
     public static final SimpleBase MY_BASE = new SimpleBase(1);
+    public static final SimpleBase ENEMY_BASE = new SimpleBase(2);
     private Logger log = Logger.getLogger(ItemTypeEditorPanel.class.getName());
     private int itemTypeId;
     private ItemTypeSimulation itemTypeSimulation;
@@ -83,8 +84,8 @@ public class ItemTypeEditorPanel extends FlexTable {
         BoundingBoxControl boundingBoxControl = new BoundingBoxControl(itemTypeId, itemType.getBoundingBox());
         itemTypeSimulation = new ItemTypeSimulation(500, 500, itemType);
         ItemTypeView itemTypeView = new ItemTypeView(300, 300, itemType, boundingBoxControl);
-        RotationControl rotationControl = new RotationControl(itemType.getBoundingBox(), itemTypeView, itemTypeSimulation);
-        MuzzleFlashControl muzzleFlashControl = new MuzzleFlashControl(itemTypeId, itemTypeSimulation);
+        MuzzleFlashControl muzzleFlashControl = new MuzzleFlashControl();
+        RotationControl rotationControl = new RotationControl(itemType.getBoundingBox(), itemTypeView, itemTypeSimulation, muzzleFlashControl);
         // Init panels
         boundingBoxControl.setRotationControl(rotationControl);
         // Add panels to main panel
