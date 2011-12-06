@@ -32,12 +32,14 @@ public class RotationControl extends DecoratorPanel {
     private int timerScheduleRepeating = 100;
     private DoubleBox doubleBox;
     private ItemTypeSimulation itemTypeSimulation;
+    private MuzzleFlashControl muzzleFlashControl;
 
 
-    public RotationControl(BoundingBox boundingBox, ItemTypeView itemTypeView, ItemTypeSimulation itemTypeSimulation) {
+    public RotationControl(BoundingBox boundingBox, ItemTypeView itemTypeView, ItemTypeSimulation itemTypeSimulation, MuzzleFlashControl muzzleFlashControl) {
         this.boundingBox = boundingBox;
         this.itemTypeView = itemTypeView;
         this.itemTypeSimulation = itemTypeSimulation;
+        this.muzzleFlashControl = muzzleFlashControl;
         VerticalPanel verticalPanel = new VerticalPanel();
         setWidget(verticalPanel);
         verticalPanel.setSpacing(VERTICAL_SPACING);
@@ -185,9 +187,8 @@ public class RotationControl extends DecoratorPanel {
         stepLabel.setHTML((currentImage + 1) + " of " + boundingBox.getAngels().length);
         doubleBox.setValue(MathHelper.radToGrad(boundingBox.imageNumberToAngel(currentImage)));
         itemTypeView.draw(currentImage);
-        if (itemTypeSimulation != null) {
             itemTypeSimulation.onImageChanged(currentImage);
-        }
+        muzzleFlashControl.onImageChanged(currentImage);
     }
 
 }

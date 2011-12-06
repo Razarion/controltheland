@@ -65,14 +65,6 @@ public class ItemTypeSimulation {
         }
     }
 
-    /**
-     * @param currentImage 1..x
-     */
-    public void setImageNumber(int currentImage) {
-        double allowedAngel = syncItem.getSyncItemArea().getBoundingBox().imageNumberToAngel(currentImage - 1);
-        syncItem.getSyncItemArea().setAngel(allowedAngel);
-    }
-
     public void onImageChanged(int imageNr) {
         this.imageNr = imageNr;
         if (doMove) {
