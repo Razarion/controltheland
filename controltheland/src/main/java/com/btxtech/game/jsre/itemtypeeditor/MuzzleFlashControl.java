@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.DecoratorPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IntegerBox;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import java.util.logging.Level;
@@ -43,10 +44,7 @@ public class MuzzleFlashControl extends DecoratorPanel {
     private int imageNr;
     private WeaponType weaponType;
     private SyncBaseItem syncBaseItem;
-
-    public MuzzleFlashControl() {
-        setupControls();
-    }
+    private int muzzleFlashEdit = 0;
 
     private void setupControls() {
         FlexTable flexTable = new FlexTable();
@@ -90,11 +88,76 @@ public class MuzzleFlashControl extends DecoratorPanel {
         });
         flexTable.setWidget(1, 0, showEditor);
         flexTable.getFlexCellFormatter().setColSpan(0, 0, 2);
-        flexTable.setText(2, 0, "Muzzle 1 X");
-        flexTable.setWidget(2, 1, createPositionBoxX());
-        flexTable.setText(3, 0, "Muzzle 1 Y");
-        flexTable.setWidget(3, 1, createPositionBoxY());
+        flexTable.setText(2, 0, "Muzzle Flash Count");
+        flexTable.setWidget(2, 1, createMuzzleFlashCount());
+        flexTable.setText(3, 0, "Edit Muzzle Flash");
+        flexTable.setWidget(3, 1, createEditMuzzleFlash());
+        flexTable.setText(4, 0, "Muzzle X");
+        flexTable.setWidget(4, 1, createPositionBoxX());
+        flexTable.setText(5, 0, "Muzzle Y");
+        flexTable.setWidget(5, 1, createPositionBoxY());
         setWidget(flexTable);
+    }
+
+    private Widget createMuzzleFlashCount() {
+        HorizontalPanel horizontalPanel = new HorizontalPanel();
+        final IntegerBox muzzleFlashCount = new IntegerBox();
+        muzzleFlashCount.setValue(weaponType.getMuzzleFlashCount());
+        muzzleFlashCount.addValueChangeHandler(new ValueChangeHandler<Integer>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Integer> integerValueChangeEvent) {
+                if (integerValueChangeEvent.getValue() < 2) {
+                    return;
+                }
+                weaponType.changeMuzzleFlashCount(integerValueChangeEvent.getValue());
+            }
+        });
+        horizontalPanel.add(muzzleFlashCount);
+        horizontalPanel.add(new Button("+", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                rotationControl.update();
+                muzzleFlashCount.setValue(muzzleFlashCount.getValue() + 1, true);
+            }
+        }));
+        horizontalPanel.add(new Button("-", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                if (muzzleFlashCount.getValue() < 2) {
+                    return;
+                }
+                rotationControl.update();
+                muzzleFlashCount.setValue(muzzleFlashCount.getValue() - 1, true);
+            }
+        }));
+        return horizontalPanel;
+    }
+
+    private Widget createEditMuzzleFlash() {
+        HorizontalPanel horizontalPanel = new HorizontalPanel();
+        final Label muzzleFlashEditLabel = new Label(Integer.toString(muzzleFlashEdit + 1));
+        horizontalPanel.add(muzzleFlashEditLabel);
+        horizontalPanel.add(new Button("+", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                if (muzzleFlashEdit < weaponType.getMuzzleFlashCount() - 1) {
+                    muzzleFlashEdit++;
+                    muzzleFlashEditLabel.setText(Integer.toString(muzzleFlashEdit + 1));
+                    rotationControl.update();
+                }
+            }
+        }));
+        horizontalPanel.add(new Button("-", new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                if (muzzleFlashEdit > 0) {
+                    muzzleFlashEdit--;
+                    muzzleFlashEditLabel.setText(Integer.toString(muzzleFlashEdit + 1));
+                    rotationControl.update();
+                }
+            }
+        }));
+        return horizontalPanel;
     }
 
     public void onImageChanged(int currentImage) {
@@ -102,7 +165,7 @@ public class MuzzleFlashControl extends DecoratorPanel {
         if (weaponType == null) {
             return;
         }
-        Index index = weaponType.getMuzzleFiresPositions()[imageNr];
+        Index index = weaponType.getMuzzleFlashPosition(muzzleFlashEdit, imageNr);
         integerBoxX.setValue(index.getX());
         integerBoxY.setValue(index.getY());
 
@@ -121,7 +184,7 @@ public class MuzzleFlashControl extends DecoratorPanel {
         if (weaponType == null) {
             return;
         }
-        Index index = weaponType.getMuzzleFiresPosition(imageNr);
+        Index index = weaponType.getMuzzleFlashPosition(muzzleFlashEdit, imageNr);
         // Draw cross
         Index crossMiddle = ItemTypeView.ITEM_POSITION.add(index);
         context2d.setStrokeStyle("#FF0000");
@@ -138,7 +201,7 @@ public class MuzzleFlashControl extends DecoratorPanel {
         if (!showInEditor) {
             return;
         }
-        weaponType.getMuzzleFiresPositions()[imageNr] = new Index(event.getX(), event.getY()).sub(ItemTypeView.ITEM_POSITION);
+        weaponType.setMuzzleFlashPosition(muzzleFlashEdit, imageNr, new Index(event.getX(), event.getY()).sub(ItemTypeView.ITEM_POSITION));
         rotationControl.update();
     }
 
@@ -152,9 +215,9 @@ public class MuzzleFlashControl extends DecoratorPanel {
         integerBoxX.addValueChangeHandler(new ValueChangeHandler<Integer>() {
             @Override
             public void onValueChange(ValueChangeEvent<Integer> integerValueChangeEvent) {
-                Index index = weaponType.getMuzzleFiresPositions()[imageNr];
+                Index index = weaponType.getMuzzleFlashPosition(muzzleFlashEdit, imageNr);
                 index.setX(integerValueChangeEvent.getValue());
-                weaponType.getMuzzleFiresPositions()[imageNr] = index;
+                weaponType.setMuzzleFlashPosition(muzzleFlashEdit, imageNr, index);
             }
         });
         horizontalPanel.add(integerBoxX);
@@ -181,9 +244,9 @@ public class MuzzleFlashControl extends DecoratorPanel {
         integerBoxY.addValueChangeHandler(new ValueChangeHandler<Integer>() {
             @Override
             public void onValueChange(ValueChangeEvent<Integer> integerValueChangeEvent) {
-                Index index = weaponType.getMuzzleFiresPositions()[imageNr];
+                Index index = weaponType.getMuzzleFlashPosition(muzzleFlashEdit, imageNr);
                 index.setY(integerValueChangeEvent.getValue());
-                weaponType.getMuzzleFiresPositions()[imageNr] = index;
+                weaponType.setMuzzleFlashPosition(muzzleFlashEdit, imageNr, index);
             }
         });
         horizontalPanel.add(integerBoxY);
@@ -211,7 +274,9 @@ public class MuzzleFlashControl extends DecoratorPanel {
         this.imageNr = imageNr;
         weaponType = baseItemType.getWeaponType();
 
-        Index index = weaponType.getMuzzleFiresPositions()[imageNr];
+        setupControls();
+
+        Index index = weaponType.getMuzzleFlashPosition(muzzleFlashEdit, imageNr);
         integerBoxX.setValue(index.getX());
         integerBoxY.setValue(index.getY());
     }

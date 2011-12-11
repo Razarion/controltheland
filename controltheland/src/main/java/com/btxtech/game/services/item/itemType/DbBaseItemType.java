@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.item.itemType;
 
+import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BuilderType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ConsumerType;
@@ -26,6 +27,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.LauncherType;
 import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
 import com.btxtech.game.jsre.common.gameengine.itemType.SpecialType;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
+
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -240,6 +242,13 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
             baseItemType.setMovableType(new MovableType(dbMovableType.getSpeed(), dbMovableType.getTerrainType()));
         }
         if (dbWeaponType != null) {
+            // TODO remove
+            Index[][] muzzleFlashPositions = new Index[1][];
+            muzzleFlashPositions[0] = new Index[24];
+            for (int i = 0; i < muzzleFlashPositions[0].length; i++) {
+                muzzleFlashPositions[0][i] = new Index(0, 0);
+            }
+            // TODO remove ends
             baseItemType.setWeaponType(new WeaponType(dbWeaponType.getRange(),
                     dbWeaponType.getDamage(),
                     dbWeaponType.getReloadTime(),
@@ -250,7 +259,8 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
                     dbWeaponType.getMuzzleFlashWidth(),
                     dbWeaponType.getMuzzleFlashLength(),
                     dbWeaponType.isStretchMuzzleFlashToTarget(),
-                    toInt(dbWeaponType.getAllowedItemTypes())));
+                    toInt(dbWeaponType.getAllowedItemTypes()),
+                    muzzleFlashPositions));
         }
         if (dbFactoryType != null) {
             baseItemType.setFactoryType(new FactoryType(dbFactoryType.getProgress(), toInt(dbFactoryType.getAbleToBuild())));

@@ -16,6 +16,7 @@ package com.btxtech.game.jsre.client.effects;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.google.gwt.user.client.Timer;
+
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -61,7 +62,10 @@ public class AttackEffectHandler {
             return;
         }
         try {
-            attacks.add(new MuzzleFlash(clientSyncItem));
+            int count = clientSyncItem.getSyncBaseItem().getSyncWeapon().getWeaponType().getMuzzleFlashCount();
+            for (int i = 0; i < count; i++) {
+                attacks.add(new MuzzleFlash(clientSyncItem, i));
+            }
         } catch (Exception e) {
             GwtCommon.handleException(e);
         }
