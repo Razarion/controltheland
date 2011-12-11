@@ -34,6 +34,8 @@ import java.util.logging.Logger;
  * Time: 20:27:37
  */
 public class ItemTypeEditorPanel extends FlexTable {
+    private static final int SIM_WIDTH = 600;
+    private static final int SIM_HEIGHT = 800;
     public static final SimpleBase MY_BASE = new SimpleBase(1);
     public static final SimpleBase ENEMY_BASE = new SimpleBase(2);
     private Logger log = Logger.getLogger(ItemTypeEditorPanel.class.getName());
@@ -60,7 +62,7 @@ public class ItemTypeEditorPanel extends FlexTable {
                 ArrayList<SurfaceImage> surfaceImages = new ArrayList<SurfaceImage>();
                 surfaceImages.add(new SurfaceImage(SurfaceType.LAND, 23, "#00FF00"));
                 ArrayList<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
-                surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, 5, 5), 23));
+                surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, SIM_WIDTH / 100, SIM_HEIGHT / 100), 23));
                 TerrainView.getInstance().setupTerrain(new TerrainSettings(5, 5, 100, 100),
                         new ArrayList<TerrainImagePosition>(),
                         surfaceRects,
@@ -89,7 +91,7 @@ public class ItemTypeEditorPanel extends FlexTable {
         // Create panels
         BoundingBoxControl boundingBoxControl = new BoundingBoxControl(itemTypeId, itemType.getBoundingBox());
         muzzleFlashControl = new MuzzleFlashControl();
-        itemTypeSimulation = new ItemTypeSimulation(500, 500, itemType, muzzleFlashControl);
+        itemTypeSimulation = new ItemTypeSimulation(SIM_WIDTH, SIM_HEIGHT, itemType, muzzleFlashControl);
         ItemTypeView itemTypeView = new ItemTypeView(300, 300, itemType, boundingBoxControl, muzzleFlashControl);
         RotationControl rotationControl = new RotationControl(itemType.getBoundingBox(), itemTypeView, itemTypeSimulation, muzzleFlashControl);
         muzzleFlashControl.setRotationControl(rotationControl);
@@ -106,6 +108,6 @@ public class ItemTypeEditorPanel extends FlexTable {
         getFlexCellFormatter().setVerticalAlignment(1, 0, HasVerticalAlignment.ALIGN_TOP);
         setWidget(0, 2, MapWindow.getAbsolutePanel());
         getFlexCellFormatter().setRowSpan(0, 2, 3);
-        MapWindow.getInstance().setMinimalSize(500, 500);
+        MapWindow.getInstance().setMinimalSize(SIM_WIDTH, SIM_HEIGHT);
     }
 }

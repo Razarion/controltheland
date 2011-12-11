@@ -45,6 +45,9 @@ public class MuzzleFlashControl extends DecoratorPanel {
     private WeaponType weaponType;
     private SyncBaseItem syncBaseItem;
     private int muzzleFlashEdit = 0;
+    private int itemTypeId;
+    private Label muzzleFlashEditLabel;
+    private ItemTypeSimulation itemTypeSimulation;
 
     private void setupControls() {
         FlexTable flexTable = new FlexTable();
@@ -54,9 +57,10 @@ public class MuzzleFlashControl extends DecoratorPanel {
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
                 if (booleanValueChangeEvent.getValue()) {
+                    itemTypeSimulation.doMove(false);
                     if (target == null || !target.isAlive()) {
                         try {
-                            target = (SyncBaseItem) ItemContainer.getInstance().createSimulationSyncObject(new ItemTypeAndPosition(ItemTypeEditorPanel.ENEMY_BASE, 1, 1, new Index(250, 150), 0));
+                            target = (SyncBaseItem) ItemContainer.getInstance().createSimulationSyncObject(new ItemTypeAndPosition(ItemTypeEditorPanel.ENEMY_BASE, 1, itemTypeId, new Index(250, 150), 0));
                             target.setHealth(1000000);
                         } catch (NoSuchItemTypeException e) {
                             log.log(Level.SEVERE, "", e);
@@ -64,15 +68,14 @@ public class MuzzleFlashControl extends DecoratorPanel {
                     }
                     ClientSyncItem clientSyncItem = CommonJava.getFirst(ItemContainer.getInstance().getOwnItems());
                     clientSyncItem.getSyncBaseItem().setHealth(1000000);
+                    setTargetPosition();
                     ActionHandler.getInstance().attack(clientSyncItem.getSyncBaseItem(),
                             target,
                             clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition(),
                             0,
                             false);
                 } else {
-                    if (target != null && target.isAlive()) {
-                        ItemContainer.getInstance().killSyncItem(target, null, true, false);
-                    }
+                    stopAttack();
                 }
             }
         });
@@ -106,8 +109,13 @@ public class MuzzleFlashControl extends DecoratorPanel {
         muzzleFlashCount.addValueChangeHandler(new ValueChangeHandler<Integer>() {
             @Override
             public void onValueChange(ValueChangeEvent<Integer> integerValueChangeEvent) {
-                if (integerValueChangeEvent.getValue() < 2) {
+                if (integerValueChangeEvent.getValue() < 1) {
                     return;
+                }
+                if (muzzleFlashEdit >= integerValueChangeEvent.getValue()) {
+                    muzzleFlashEdit = integerValueChangeEvent.getValue() - 1;
+                    muzzleFlashEditLabel.setText(Integer.toString(muzzleFlashEdit + 1));
+                    rotationControl.update();
                 }
                 weaponType.changeMuzzleFlashCount(integerValueChangeEvent.getValue());
             }
@@ -135,7 +143,7 @@ public class MuzzleFlashControl extends DecoratorPanel {
 
     private Widget createEditMuzzleFlash() {
         HorizontalPanel horizontalPanel = new HorizontalPanel();
-        final Label muzzleFlashEditLabel = new Label(Integer.toString(muzzleFlashEdit + 1));
+        muzzleFlashEditLabel = new Label(Integer.toString(muzzleFlashEdit + 1));
         horizontalPanel.add(muzzleFlashEditLabel);
         horizontalPanel.add(new Button("+", new ClickHandler() {
             @Override
@@ -172,8 +180,13 @@ public class MuzzleFlashControl extends DecoratorPanel {
         if (target == null || !target.isAlive()) {
             return;
         }
-        double angel = syncBaseItem.getSyncItemArea().getBoundingBox().imageNumberToAngel(currentImage);
-        Index targetPos = syncBaseItem.getSyncItemArea().getPosition().getPointFromAngelToNord(angel, weaponType.getRange() * 0.9);
+        setTargetPosition();
+    }
+
+    private void setTargetPosition() {
+        double angel = syncBaseItem.getSyncItemArea().getBoundingBox().imageNumberToAngel(imageNr);
+        Index targetPos = syncBaseItem.getSyncItemArea().getPosition().getPointFromAngelToNord(angel, (weaponType.getRange() + syncBaseItem.getSyncItemArea().getBoundingBox().getHeight()) * 0.9);
+        targetPos = Index.createSaveIndex(targetPos);
         target.getSyncItemArea().setPosition(targetPos);
     }
 
@@ -273,6 +286,7 @@ public class MuzzleFlashControl extends DecoratorPanel {
         }
         this.imageNr = imageNr;
         weaponType = baseItemType.getWeaponType();
+        itemTypeId = baseItemType.getId();
 
         setupControls();
 
@@ -285,4 +299,13 @@ public class MuzzleFlashControl extends DecoratorPanel {
         this.syncBaseItem = syncBaseItem;
     }
 
+    public void stopAttack() {
+        if (target != null && target.isAlive()) {
+            ItemContainer.getInstance().killSyncItem(target, null, true, false);
+        }
+    }
+
+    public void setItemTypeSimulation(ItemTypeSimulation itemTypeSimulation) {
+        this.itemTypeSimulation = itemTypeSimulation;
+    }
 }
