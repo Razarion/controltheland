@@ -13,6 +13,8 @@
 
 package com.btxtech.game.jsre.common.gameengine.itemType;
 
+import com.btxtech.game.jsre.client.common.Index;
+
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -25,14 +27,11 @@ public class WeaponType implements Serializable {
     private int range;
     private int demage;
     private double reloadTime;
-    private int muzzlePointX_0;
-    private int muzzlePointY_0;
-    private int muzzlePointY_90;
-    private int muzzlePointX_90;
     private int muzzleFlashWidth;
     private int muzzleFlashLength;
     private boolean stretchMuzzleFlashToTarget;
     private Collection<Integer> allowedItemTypes;
+    private Index[] muzzleFiresPositions;
 
     /**
      * Used by GWT
@@ -44,14 +43,16 @@ public class WeaponType implements Serializable {
         this.range = range;
         this.demage = demage;
         this.reloadTime = reloadTime;
-        this.muzzlePointX_0 = muzzlePointX_0;
-        this.muzzlePointY_0 = muzzlePointY_0;
-        this.muzzlePointY_90 = muzzlePointY_90;
-        this.muzzlePointX_90 = muzzlePointX_90;
         this.muzzleFlashWidth = muzzleFlashWidth;
         this.muzzleFlashLength = muzzleFlashLength;
         this.stretchMuzzleFlashToTarget = stretchMuzzleFlashToTarget;
         this.allowedItemTypes = allowedItemTypes;
+        // TODO replace
+        muzzleFiresPositions = new Index[24];
+        for (int i = 0; i < muzzleFiresPositions.length; i++) {
+            muzzleFiresPositions[i] = new Index(0, 0);
+        }
+        // TODO replace ends
     }
 
     public int getRange() {
@@ -70,30 +71,10 @@ public class WeaponType implements Serializable {
         range = weaponType.range;
         demage = weaponType.demage;
         reloadTime = weaponType.reloadTime;
-        muzzlePointX_0 = weaponType.muzzlePointX_0;
-        muzzlePointY_0 = weaponType.muzzlePointY_0;
-        muzzlePointY_90 = weaponType.muzzlePointY_90;
-        muzzlePointX_90 = weaponType.muzzlePointX_90;
         muzzleFlashWidth = weaponType.muzzleFlashWidth;
         muzzleFlashLength = weaponType.muzzleFlashLength;
         stretchMuzzleFlashToTarget = weaponType.stretchMuzzleFlashToTarget;
         allowedItemTypes = weaponType.allowedItemTypes;
-    }
-
-    public int getMuzzlePointX_0() {
-        return muzzlePointX_0;
-    }
-
-    public int getMuzzlePointY_0() {
-        return muzzlePointY_0;
-    }
-
-    public int getMuzzlePointY_90() {
-        return muzzlePointY_90;
-    }
-
-    public int getMuzzlePointX_90() {
-        return muzzlePointX_90;
     }
 
     public int getMuzzleFlashWidth() {
@@ -110,5 +91,13 @@ public class WeaponType implements Serializable {
 
     public boolean isItemTypeAllowed(int itemTypeId) {
         return allowedItemTypes.contains(itemTypeId);
+    }
+
+    public Index getMuzzleFiresPosition(int imageNr) {
+        return muzzleFiresPositions[imageNr];
+    }
+
+    public Index[] getMuzzleFiresPositions() {
+        return muzzleFiresPositions;
     }
 }

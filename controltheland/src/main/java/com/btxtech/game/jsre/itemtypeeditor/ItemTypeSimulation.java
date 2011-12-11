@@ -3,6 +3,7 @@ package com.btxtech.game.jsre.itemtypeeditor;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -27,11 +28,13 @@ public class ItemTypeSimulation {
     private boolean doMove = false;
     private int imageNr = 0;
     private Index destination;
+    private MuzzleFlashControl muzzleFlashControl;
 
-    public ItemTypeSimulation(int canvasWidth, int canvasHeight, ItemType itemType) {
+    public ItemTypeSimulation(int canvasWidth, int canvasHeight, ItemType itemType, MuzzleFlashControl muzzleFlashControl) {
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
         this.itemType = itemType;
+        this.muzzleFlashControl = muzzleFlashControl;
     }
 
     private void executeMoveCommand() {
@@ -59,6 +62,10 @@ public class ItemTypeSimulation {
                     }
                 }
             });
+            if (syncItem instanceof SyncBaseItem) {
+                muzzleFlashControl.initSyncItem((SyncBaseItem) syncItem);
+            }
+
 
         } catch (Exception e) {
             log.log(Level.SEVERE, "", e);

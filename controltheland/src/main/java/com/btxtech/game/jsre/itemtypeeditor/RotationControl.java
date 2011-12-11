@@ -56,7 +56,7 @@ public class RotationControl extends DecoratorPanel {
         checkBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
-               itemTypeSimulation.doMove(booleanValueChangeEvent.getValue()); 
+                itemTypeSimulation.doMove(booleanValueChangeEvent.getValue());
             }
         });
     }
@@ -187,7 +187,7 @@ public class RotationControl extends DecoratorPanel {
         stepLabel.setHTML((currentImage + 1) + " of " + boundingBox.getAngels().length);
         doubleBox.setValue(MathHelper.radToGrad(boundingBox.imageNumberToAngel(currentImage)));
         itemTypeView.draw(currentImage);
-            itemTypeSimulation.onImageChanged(currentImage);
+        itemTypeSimulation.onImageChanged(currentImage);
         muzzleFlashControl.onImageChanged(currentImage);
     }
 
