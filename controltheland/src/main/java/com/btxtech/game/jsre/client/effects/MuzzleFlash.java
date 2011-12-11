@@ -20,12 +20,14 @@ import com.btxtech.game.jsre.client.SoundHandler;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.common.Rectangle;
+import com.btxtech.game.jsre.client.item.ItemContainer;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.common.Html5NotSupportedException;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
+import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.dom.client.ImageElement;
@@ -56,25 +58,19 @@ public class MuzzleFlash {
         angel = clientSyncItem.getSyncBaseItem().getSyncItemArea().getAngel();
         angel = baseItemType.getBoundingBox().getAllowedAngel(angel);
         int imageNr = baseItemType.getBoundingBox().angelToImageNr(angel);
-        //tmpAngel += ImageHandler.QUARTER_RADIANT;
-        //tmpAngel = MathHelper.normaliseAngel(tmpAngel);
         Index muzzleStart = baseItemType.getWeaponType().getMuzzleFlashPosition(muzzleFlashNr, imageNr);
         Index absoluteMuzzleStart = clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition().add(muzzleStart);
-        int x = 0;
-        int y = 0;
-        int width = 0;
-        int height = 0;
+        int x = (int) (absoluteMuzzleStart.getX() - Math.round(weaponType.getMuzzleFlashWidth() / 2.0));
+        int y;
+        int width = weaponType.getMuzzleFlashWidth();
+        int height;
         if (weaponType.stretchMuzzleFlashToTarget()) {
-            /*   TODO  SyncItem target = ItemContainer.getInstance().getItem(clientSyncItem.getSyncBaseItem().getSyncWeapon().getTarget());
-        int distance = target.getSyncItemArea().getPosition().getDistance(center);
-        x = (int) (center.getX() - Math.round(weaponType.getMuzzleFlashWidth() / 2.0));
-        y = center.getY() - distance;
-        width = weaponType.getMuzzleFlashWidth();
-        height = distance;  */
+            SyncItem target = ItemContainer.getInstance().getItem(clientSyncItem.getSyncBaseItem().getSyncWeapon().getTarget());
+            int distance = target.getSyncItemArea().getPosition().getDistance(absoluteMuzzleStart);
+            y = absoluteMuzzleStart.getY() - distance;
+            height = distance;
         } else {
-            x = (int) (absoluteMuzzleStart.getX() - Math.round(weaponType.getMuzzleFlashWidth() / 2.0));
             y = absoluteMuzzleStart.getY() - weaponType.getMuzzleFlashLength();
-            width = weaponType.getMuzzleFlashWidth();
             height = weaponType.getMuzzleFlashLength();
         }
         if (x < 0 || y < 0 || width < 0 || height < 0) {

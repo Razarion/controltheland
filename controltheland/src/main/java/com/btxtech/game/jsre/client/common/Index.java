@@ -221,4 +221,9 @@ public class Index implements Serializable {
         }
         return new Index(x, y);
     }
+
+    public static Index createSaveIndex(Index index) {
+        return createSaveIndex(index.getX(), index.getY());
+    }
+
 }

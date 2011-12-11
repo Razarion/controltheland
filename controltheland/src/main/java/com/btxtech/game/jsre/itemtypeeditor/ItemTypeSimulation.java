@@ -3,7 +3,6 @@ package com.btxtech.game.jsre.itemtypeeditor;
 import com.btxtech.game.jsre.client.action.ActionHandler;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.item.ItemContainer;
-import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
@@ -29,12 +28,14 @@ public class ItemTypeSimulation {
     private int imageNr = 0;
     private Index destination;
     private MuzzleFlashControl muzzleFlashControl;
+    private Index middle;
 
     public ItemTypeSimulation(int canvasWidth, int canvasHeight, ItemType itemType, MuzzleFlashControl muzzleFlashControl) {
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
         this.itemType = itemType;
         this.muzzleFlashControl = muzzleFlashControl;
+        muzzleFlashControl.setItemTypeSimulation(this);
     }
 
     private void executeMoveCommand() {
@@ -47,12 +48,12 @@ public class ItemTypeSimulation {
 
     public void createSyncItem() {
         try {
-            Index middle = new Index(canvasWidth / 2, canvasHeight / 2);
+            middle = new Index(canvasWidth / 2, canvasHeight / 2);
             syncItem = ItemContainer.getInstance().createSimulationSyncObject(new ItemTypeAndPosition(ItemTypeEditorPanel.MY_BASE, 0, itemType.getId(), middle, 0));
             syncItem.addSyncItemListener(new SyncItemListener() {
                 @Override
                 public void onItemChanged(Change change, SyncItem syncItem) {
-                    if (change == Change.POSITION && destination != null && destination.equals(syncItem.getSyncItemArea().getPosition())) {
+                    if (doMove && change == Change.POSITION && destination != null && destination.equals(syncItem.getSyncItemArea().getPosition())) {
                         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                             @Override
                             public void execute() {
@@ -81,6 +82,15 @@ public class ItemTypeSimulation {
 
     public void doMove(boolean value) {
         doMove = value && (syncItem instanceof SyncBaseItem && ((SyncBaseItem) syncItem).hasSyncMovable());
+        if (doMove) {
+            executeMoveCommand();
+        } else {
+            muzzleFlashControl.stopAttack();
+            if (syncItem instanceof SyncBaseItem && middle != null) {
+                ((SyncBaseItem) syncItem).stop();
+                syncItem.getSyncItemArea().setPosition(middle);
+            }
+        }
     }
 
     public SyncItem getSyncItem() {
