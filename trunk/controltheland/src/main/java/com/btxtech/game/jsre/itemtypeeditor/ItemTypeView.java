@@ -7,6 +7,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItemArea;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.canvas.dom.client.CssColor;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.user.client.ui.DecoratorPanel;
 
 /**
@@ -15,9 +17,7 @@ import com.google.gwt.user.client.ui.DecoratorPanel;
  * Time: 12:28:30
  */
 public class ItemTypeView extends DecoratorPanel {
-    private static final int ITEM_TYPE_LEFT = 100;
-    private static final int ITEM_TYPE_TOP = 100;
-    private final Index offset = new Index(ITEM_TYPE_LEFT, ITEM_TYPE_TOP);
+    public static final Index ITEM_POSITION = new Index(150, 150);
     private Context2d context2d;
     private ItemTypeImageLoader imageLoader;
     private CssColor redrawColor = CssColor.make(255, 255, 255);
@@ -25,18 +25,24 @@ public class ItemTypeView extends DecoratorPanel {
     private int canvasHeight;
     private ItemType itemType;
     private BoundingBoxControl boundingBoxControl;
+    private MuzzleFlashControl muzzleFlashControl;
 
-    public ItemTypeView(int canvasWidth, int canvasHeight, ItemType itemType, BoundingBoxControl boundingBoxControl) {
+    public ItemTypeView(int canvasWidth, int canvasHeight, ItemType itemType, BoundingBoxControl boundingBoxControl, MuzzleFlashControl muzzleFlashControl) {
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
         this.itemType = itemType;
         this.boundingBoxControl = boundingBoxControl;
+        this.muzzleFlashControl = muzzleFlashControl;
         Canvas canvas = Canvas.createIfSupported();
         if (canvas == null) {
             throw new IllegalStateException("ItemTypeEditorPanel: Canvas is not supported.");
         }
-        canvas.setCoordinateSpaceWidth(canvasWidth);
-        canvas.setCoordinateSpaceHeight(canvasHeight);
+        canvas.addMouseDownHandler(new MouseDownHandler() {
+            @Override
+            public void onMouseDown(MouseDownEvent event) {
+                ItemTypeView.this.muzzleFlashControl.onClick(event);
+            }
+        });
         setWidget(canvas);
         canvas.setCoordinateSpaceWidth(canvasWidth);
         canvas.setCoordinateSpaceHeight(canvasHeight);
@@ -60,10 +66,13 @@ public class ItemTypeView extends DecoratorPanel {
         context2d.fillRect(0, 0, canvasWidth, canvasHeight);
         context2d.setLineWidth(2);
 
-        context2d.drawImage(imageLoader.getImage(imageNr), ITEM_TYPE_LEFT, ITEM_TYPE_TOP);
-        // Bounding box
         BoundingBox boundingBox = itemType.getBoundingBox();
-        SyncItemArea syncItemArea = boundingBox.createSyntheticSyncItemArea(boundingBox.getMiddleFromImage(offset), boundingBox.imageNumberToAngel(imageNr));
+        SyncItemArea syncItemArea = boundingBox.createSyntheticSyncItemArea(ITEM_POSITION, boundingBox.imageNumberToAngel(imageNr));
+
+        Index imageOffset = boundingBox.getTopLeftFromImage(ITEM_POSITION);
+        context2d.drawImage(imageLoader.getImage(imageNr), imageOffset.getX(), imageOffset.getY());
+        // Bounding box
         boundingBoxControl.draw(syncItemArea, context2d);
+        muzzleFlashControl.draw(imageNr, context2d);
     }
 }

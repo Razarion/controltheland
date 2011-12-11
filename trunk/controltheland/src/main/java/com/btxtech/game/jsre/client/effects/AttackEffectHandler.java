@@ -56,7 +56,6 @@ public class AttackEffectHandler {
         return INSTANCE;
     }
 
-
     public void onAttack(ClientSyncItem clientSyncItem) {
         if (!clientSyncItem.isVisible()) {
             return;

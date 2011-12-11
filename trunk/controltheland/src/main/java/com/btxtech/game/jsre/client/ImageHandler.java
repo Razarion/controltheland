@@ -41,8 +41,6 @@ public class ImageHandler {
     public static final String EXPLOSION = "effects";
     public static final String ICONS = "icons";
     public static final String TIPS = "tips";
-    public static double ONE_RADIANT = 2.0 * Math.PI;
-    public static double QUARTER_RADIANT = Math.PI / 2.0;
 
     private static HashSet<String> loadedUrls = new HashSet<String>();
 
@@ -83,22 +81,6 @@ public class ImageHandler {
         url.append("=");
         url.append(imgIndex);
         return url.toString();
-    }
-
-    /*
-    * Always starts with 0
-    */
-
-    @Deprecated
-    public static double normalizeAngel(double angle) {
-        if (angle < 0) {
-            angle = ONE_RADIANT + angle;
-        }
-
-        if (angle < 0 || angle > ONE_RADIANT) {
-            throw new IllegalArgumentException("Angel not in range: " + angle);
-        }
-        return angle;
     }
 
     public static String getMuzzleFlashImageUrl(BaseItemType baseItemType) {

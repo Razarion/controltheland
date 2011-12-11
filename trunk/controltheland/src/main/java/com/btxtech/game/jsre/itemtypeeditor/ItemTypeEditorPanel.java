@@ -10,6 +10,7 @@ import com.btxtech.game.jsre.client.terrain.MapWindow;
 import com.btxtech.game.jsre.client.terrain.TerrainView;
 import com.btxtech.game.jsre.client.utg.ClientLevelHandler;
 import com.btxtech.game.jsre.common.SimpleBase;
+import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceImage;
 import com.btxtech.game.jsre.common.gameengine.services.terrain.SurfaceRect;
@@ -38,6 +39,7 @@ public class ItemTypeEditorPanel extends FlexTable {
     private Logger log = Logger.getLogger(ItemTypeEditorPanel.class.getName());
     private int itemTypeId;
     private ItemTypeSimulation itemTypeSimulation;
+    private MuzzleFlashControl muzzleFlashControl;
 
     public ItemTypeEditorPanel(int itemTypeId) {
         this.itemTypeId = itemTypeId;
@@ -75,6 +77,10 @@ public class ItemTypeEditorPanel extends FlexTable {
                 ClientBase.getInstance().setBase(MY_BASE);
                 setupGui(itemType);
                 itemTypeSimulation.createSyncItem();
+                //---- Init the editors
+                if (itemType instanceof BaseItemType) {
+                    muzzleFlashControl.init(0, (BaseItemType) itemType);
+                }
             }
         });
     }
@@ -82,10 +88,11 @@ public class ItemTypeEditorPanel extends FlexTable {
     private void setupGui(ItemType itemType) {
         // Create panels
         BoundingBoxControl boundingBoxControl = new BoundingBoxControl(itemTypeId, itemType.getBoundingBox());
-        itemTypeSimulation = new ItemTypeSimulation(500, 500, itemType);
-        ItemTypeView itemTypeView = new ItemTypeView(300, 300, itemType, boundingBoxControl);
-        MuzzleFlashControl muzzleFlashControl = new MuzzleFlashControl();
+        muzzleFlashControl = new MuzzleFlashControl();
+        itemTypeSimulation = new ItemTypeSimulation(500, 500, itemType, muzzleFlashControl);
+        ItemTypeView itemTypeView = new ItemTypeView(300, 300, itemType, boundingBoxControl, muzzleFlashControl);
         RotationControl rotationControl = new RotationControl(itemType.getBoundingBox(), itemTypeView, itemTypeSimulation, muzzleFlashControl);
+        muzzleFlashControl.setRotationControl(rotationControl);
         // Init panels
         boundingBoxControl.setRotationControl(rotationControl);
         // Add panels to main panel
