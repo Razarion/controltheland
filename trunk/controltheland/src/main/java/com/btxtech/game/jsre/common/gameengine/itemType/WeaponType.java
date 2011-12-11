@@ -31,7 +31,8 @@ public class WeaponType implements Serializable {
     private int muzzleFlashLength;
     private boolean stretchMuzzleFlashToTarget;
     private Collection<Integer> allowedItemTypes;
-    private Index[] muzzleFiresPositions;
+    // dimension 1: muzzle nr, dimension 2: image nr
+    private Index[][] muzzleFlashPositions;
 
     /**
      * Used by GWT
@@ -39,7 +40,7 @@ public class WeaponType implements Serializable {
     WeaponType() {
     }
 
-    public WeaponType(int range, int demage, double reloadTime, int muzzlePointX_0, int muzzlePointY_0, int muzzlePointX_90, int muzzlePointY_90, int muzzleFlashWidth, int muzzleFlashLength, boolean stretchMuzzleFlashToTarget, Collection<Integer> allowedItemTypes) {
+    public WeaponType(int range, int demage, double reloadTime, int muzzlePointX_0, int muzzlePointY_0, int muzzlePointX_90, int muzzlePointY_90, int muzzleFlashWidth, int muzzleFlashLength, boolean stretchMuzzleFlashToTarget, Collection<Integer> allowedItemTypes, Index[][] muzzleFlashPositions) {
         this.range = range;
         this.demage = demage;
         this.reloadTime = reloadTime;
@@ -47,12 +48,7 @@ public class WeaponType implements Serializable {
         this.muzzleFlashLength = muzzleFlashLength;
         this.stretchMuzzleFlashToTarget = stretchMuzzleFlashToTarget;
         this.allowedItemTypes = allowedItemTypes;
-        // TODO replace
-        muzzleFiresPositions = new Index[24];
-        for (int i = 0; i < muzzleFiresPositions.length; i++) {
-            muzzleFiresPositions[i] = new Index(0, 0);
-        }
-        // TODO replace ends
+        this.muzzleFlashPositions = muzzleFlashPositions;
     }
 
     public int getRange() {
@@ -93,11 +89,34 @@ public class WeaponType implements Serializable {
         return allowedItemTypes.contains(itemTypeId);
     }
 
-    public Index getMuzzleFiresPosition(int imageNr) {
-        return muzzleFiresPositions[imageNr];
+    public Index getMuzzleFlashPosition(int muzzleNr, int imageNr) {
+        return muzzleFlashPositions[muzzleNr][imageNr];
     }
 
-    public Index[] getMuzzleFiresPositions() {
-        return muzzleFiresPositions;
+    public void setMuzzleFlashPosition(int muzzleNr, int imageNr, Index position) {
+        muzzleFlashPositions[muzzleNr][imageNr] = position;
+    }
+
+    public int getMuzzleFlashCount() {
+        return muzzleFlashPositions.length;
+    }
+
+    public void changeMuzzleFlashCount(int count) {
+        if (count < 1) {
+            throw new IllegalArgumentException("Item must have at least one muzzle flash");
+        }
+        Index[][] saveMuzzleFlashPositions = muzzleFlashPositions;
+        int imageCount = muzzleFlashPositions[0].length;
+        muzzleFlashPositions = new Index[count][];
+        for (int muzzleFireNr = 0; muzzleFireNr < count; muzzleFireNr++) {
+            muzzleFlashPositions[muzzleFireNr] = new Index[imageCount];
+            for (int imageNr = 0; imageNr < imageCount; imageNr++) {
+                if (muzzleFireNr < saveMuzzleFlashPositions.length) {
+                    muzzleFlashPositions[muzzleFireNr][imageNr] = saveMuzzleFlashPositions[muzzleFireNr][imageNr];
+                } else {
+                    muzzleFlashPositions[muzzleFireNr][imageNr] = new Index(0, 0);
+                }
+            }
+        }
     }
 }

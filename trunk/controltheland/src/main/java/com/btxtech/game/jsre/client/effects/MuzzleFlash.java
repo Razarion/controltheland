@@ -45,7 +45,7 @@ public class MuzzleFlash {
     private Canvas canvas;
     private Context2d context2d;
 
-    public MuzzleFlash(ClientSyncItem clientSyncItem) throws ItemDoesNotExistException {
+    public MuzzleFlash(ClientSyncItem clientSyncItem, int muzzleFlashNr) throws ItemDoesNotExistException {
         time = System.currentTimeMillis();
         this.clientSyncItem = clientSyncItem;
         BaseItemType baseItemType = clientSyncItem.getSyncBaseItem().getBaseItemType();
@@ -58,7 +58,7 @@ public class MuzzleFlash {
         int imageNr = baseItemType.getBoundingBox().angelToImageNr(angel);
         //tmpAngel += ImageHandler.QUARTER_RADIANT;
         //tmpAngel = MathHelper.normaliseAngel(tmpAngel);
-        Index muzzleStart = baseItemType.getWeaponType().getMuzzleFiresPosition(imageNr);
+        Index muzzleStart = baseItemType.getWeaponType().getMuzzleFlashPosition(muzzleFlashNr, imageNr);
         Index absoluteMuzzleStart = clientSyncItem.getSyncBaseItem().getSyncItemArea().getPosition().add(muzzleStart);
         int x = 0;
         int y = 0;
