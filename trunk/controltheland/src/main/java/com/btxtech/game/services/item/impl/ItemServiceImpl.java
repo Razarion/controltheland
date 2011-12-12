@@ -21,6 +21,7 @@ import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.btxtech.game.jsre.common.gameengine.services.Services;
 import com.btxtech.game.jsre.common.gameengine.services.base.AbstractBaseService;
 import com.btxtech.game.jsre.common.gameengine.services.base.HouseSpaceExceededException;
@@ -412,6 +413,30 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
             throw new NoSuchItemTypeException(itemTypeId);
         }
         dbItemType.setBounding(boundingBox);
+        saveDbItemType(dbItemType);
+    }
+
+    @Override
+    @Transactional
+    @Secured(SecurityRoles.ROLE_ADMINISTRATOR)
+    public void saveWeaponType(int itemTypeId, WeaponType weaponType) throws NoSuchItemTypeException {
+        if (weaponType == null) {
+            return;
+        }
+        DbItemType dbItemType = getDbItemType(itemTypeId);
+        if (dbItemType == null) {
+            throw new NoSuchItemTypeException(itemTypeId);
+        }
+        if (!(dbItemType instanceof DbBaseItemType)) {
+            throw new IllegalArgumentException("Given item type is not instance of a DbBaseItemType: " + dbItemType);
+        }
+
+        DbBaseItemType dbBaseItemType = (DbBaseItemType) dbItemType;
+        if (dbBaseItemType.getDbWeaponType() == null) {
+            throw new IllegalArgumentException("Given item type has no DbWeaponType: " + dbItemType);
+        }
+
+        dbBaseItemType.getDbWeaponType().setMuzzleFlashPositions(weaponType.getMuzzleFlashPositions());
         saveDbItemType(dbItemType);
     }
 

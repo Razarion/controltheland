@@ -191,17 +191,6 @@ public abstract class DbItemType implements Serializable, DbItemTypeI, CrudChild
 
     public abstract ItemType createItemType();
 
-    protected Collection<Integer> toInt(Collection<DbBaseItemType> items) {
-        ArrayList<Integer> ints = new ArrayList<Integer>();
-        if (items == null) {
-            return ints;
-        }
-        for (DbBaseItemType item : items) {
-            ints.add(item.getId());
-        }
-        return ints;
-    }
-
     protected void setupItemType(ItemType itemType) {
         itemType.setId(id);
         itemType.setName(getName());

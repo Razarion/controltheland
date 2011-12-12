@@ -14,13 +14,12 @@
 package com.btxtech.game.services.item;
 
 import com.btxtech.game.jsre.client.common.NotYourBaseException;
-import com.btxtech.game.jsre.client.common.Rectangle;
 import com.btxtech.game.jsre.common.gameengine.ItemDoesNotExistException;
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.Id;
-import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncBaseItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.SyncItem;
 import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInfo;
 import com.btxtech.game.services.common.CrudRootServiceHelper;
@@ -55,8 +54,10 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
     void saveDbItemType(DbItemType dBItemType);
 
     BoundingBox getBoundingBox(int itemTypeId) throws NoSuchItemTypeException;
-    
+
     void saveBoundingBox(int itemTypeId, BoundingBox boundingBox) throws NoSuchItemTypeException;
+
+    void saveWeaponType(int itemTypeId, WeaponType weaponType) throws NoSuchItemTypeException;
 
     Collection<DbItemType> getDbItemTypes();
 
@@ -75,7 +76,7 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
     DbResourceItemType getDbResourceItemType(int resourceItemType);
 
     void deleteItemType(DbItemType dbItemType);
-    
+
     DbItemTypeImage getItemTypeImage(int itemTypeId, int index);
 
     DbItemTypeData getMuzzleFlashImage(int itemTypeId);

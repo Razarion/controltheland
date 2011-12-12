@@ -31,12 +31,14 @@ public class BoundingBoxControl extends DecoratorPanel {
     private RotationControl rotationControl;
     private int itemTypeId;
     private BoundingBox boundingBox;
+    private MuzzleFlashControl muzzleFlashControl;
     private boolean showBoundingBox = true;
     private Logger log = Logger.getLogger(BoundingBoxControl.class.getName());
 
-    public BoundingBoxControl(int itemTypeId, BoundingBox boundingBox) {
+    public BoundingBoxControl(int itemTypeId, BoundingBox boundingBox, MuzzleFlashControl muzzleFlashControl) {
         this.itemTypeId = itemTypeId;
         this.boundingBox = boundingBox;
+        this.muzzleFlashControl = muzzleFlashControl;
         setupControls();
     }
 
@@ -80,7 +82,7 @@ public class BoundingBoxControl extends DecoratorPanel {
             public void onClick(ClickEvent event) {
                 final Button button = (Button) event.getSource();
                 ItemTypeAccessAsync itemTypeAccess = GWT.create(ItemTypeAccess.class);
-                itemTypeAccess.saveBoundingBox(itemTypeId, boundingBox, new AsyncCallback<Void>() {
+                itemTypeAccess.saveItemTypeProperties(itemTypeId, boundingBox, muzzleFlashControl.getWeaponType(), new AsyncCallback<Void>() {
                     @Override
                     public void onFailure(Throwable caught) {
                         button.setEnabled(true);

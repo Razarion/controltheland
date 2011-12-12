@@ -89,8 +89,8 @@ public class ItemTypeEditorPanel extends FlexTable {
 
     private void setupGui(ItemType itemType) {
         // Create panels
-        BoundingBoxControl boundingBoxControl = new BoundingBoxControl(itemTypeId, itemType.getBoundingBox());
         muzzleFlashControl = new MuzzleFlashControl();
+        BoundingBoxControl boundingBoxControl = new BoundingBoxControl(itemTypeId, itemType.getBoundingBox(), muzzleFlashControl);
         itemTypeSimulation = new ItemTypeSimulation(SIM_WIDTH, SIM_HEIGHT, itemType, muzzleFlashControl);
         ItemTypeView itemTypeView = new ItemTypeView(300, 300, itemType, boundingBoxControl, muzzleFlashControl);
         RotationControl rotationControl = new RotationControl(itemType.getBoundingBox(), itemTypeView, itemTypeSimulation, muzzleFlashControl);

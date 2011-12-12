@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.itemtypeeditor;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.btxtech.game.jsre.common.gameengine.services.items.NoSuchItemTypeException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -28,5 +29,5 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface ItemTypeAccess extends RemoteService {
     ItemType getItemType(int itemTypeId) throws NoSuchItemTypeException;
 
-    void saveBoundingBox(int itemTypeId, BoundingBox boundingBox) throws NoSuchItemTypeException;
+    void saveItemTypeProperties(int itemTypeId, BoundingBox boundingBox, WeaponType weaponType) throws NoSuchItemTypeException;
 }
