@@ -43,6 +43,13 @@ public class ItemTypeSimulation {
         double angel = syncItem.getSyncItemArea().getBoundingBox().imageNumberToAngel(imageNr);
         Index middle = new Index(canvasWidth / 2, canvasHeight / 2);
         destination = middle.getPointFromAngelToNord(angel, 200);
+        if(destination.getX() > canvasWidth - 1) {
+          destination.setX(canvasWidth - 1);
+        }
+        if(destination.getY() > canvasHeight - 1) {
+          destination.setY(canvasHeight - 1);
+        }
+        destination = Index.createSaveIndex(destination);
         ActionHandler.getInstance().move((SyncBaseItem) syncItem, destination);
     }
 
