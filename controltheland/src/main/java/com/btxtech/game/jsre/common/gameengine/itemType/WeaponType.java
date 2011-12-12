@@ -40,7 +40,7 @@ public class WeaponType implements Serializable {
     WeaponType() {
     }
 
-    public WeaponType(int range, int demage, double reloadTime, int muzzlePointX_0, int muzzlePointY_0, int muzzlePointX_90, int muzzlePointY_90, int muzzleFlashWidth, int muzzleFlashLength, boolean stretchMuzzleFlashToTarget, Collection<Integer> allowedItemTypes, Index[][] muzzleFlashPositions) {
+    public WeaponType(int range, int demage, double reloadTime, int muzzleFlashWidth, int muzzleFlashLength, boolean stretchMuzzleFlashToTarget, Collection<Integer> allowedItemTypes, Index[][] muzzleFlashPositions) {
         this.range = range;
         this.demage = demage;
         this.reloadTime = reloadTime;
@@ -71,6 +71,7 @@ public class WeaponType implements Serializable {
         muzzleFlashLength = weaponType.muzzleFlashLength;
         stretchMuzzleFlashToTarget = weaponType.stretchMuzzleFlashToTarget;
         allowedItemTypes = weaponType.allowedItemTypes;
+        muzzleFlashPositions = weaponType.muzzleFlashPositions;
     }
 
     public int getMuzzleFlashWidth() {
@@ -99,6 +100,10 @@ public class WeaponType implements Serializable {
 
     public int getMuzzleFlashCount() {
         return muzzleFlashPositions.length;
+    }
+
+    public Index[][] getMuzzleFlashPositions() {
+        return muzzleFlashPositions;
     }
 
     public void changeMuzzleFlashCount(int count) {

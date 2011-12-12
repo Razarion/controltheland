@@ -109,7 +109,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
         Collection<Integer> allowedItemTypes = new ArrayList<Integer>();
         allowedItemTypes.add(AbstractGwtTest.ITEM_ATTACKER);
         allowedItemTypes.add(AbstractGwtTest.ITEM_DEFENSE_TOWER);
-        baseItemType.setWeaponType(new WeaponType(100, 1, 0.1, 0, 0, 0, 0, 0, 0, false, allowedItemTypes, null));
+        baseItemType.setWeaponType(new WeaponType(100, 1, 0.1, 0, 0, false, allowedItemTypes, null));
         return baseItemType;
     }
 
@@ -122,7 +122,7 @@ public class MockMovableService extends RemoteServiceServlet implements MovableS
         allowedItemTypes.add(AbstractGwtTest.ITEM_ATTACKER);
         allowedItemTypes.add(AbstractGwtTest.ITEM_DEFENSE_TOWER);
         allowedItemTypes.add(AbstractGwtTest.ITEM_MOVABLE);
-        baseItemType.setWeaponType(new WeaponType(100, 1, 0.1, 0, 0, 0, 0, 0, 0, false, allowedItemTypes, null));
+        baseItemType.setWeaponType(new WeaponType(100, 1, 0.1, 0, 0, false, allowedItemTypes, null));
         return baseItemType;
     }
 

@@ -13,6 +13,7 @@
 
 package com.btxtech.game.services.common;
 
+import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -71,5 +72,16 @@ public class Utils {
             log.error("", t);
             return false;
         }
+    }
+
+    public static Collection<Integer> dbBaseItemTypesToInts(Collection<DbBaseItemType> items) {
+        ArrayList<Integer> ints = new ArrayList<Integer>();
+        if (items == null) {
+            return ints;
+        }
+        for (DbBaseItemType item : items) {
+            ints.add(item.getId());
+        }
+        return ints;
     }
 }

@@ -13,8 +13,11 @@
 
 package com.btxtech.game.services.item.itemType;
 
+import com.btxtech.game.jsre.client.common.Index;
+import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.btxtech.game.services.common.ContentProvider;
 import com.btxtech.game.services.common.ReadonlyCollectionContentProvider;
+import com.btxtech.game.services.common.Utils;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -25,8 +28,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -50,14 +55,6 @@ public class DbWeaponType implements Serializable {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DbItemTypeData dbMuzzleImage;
     @Column(nullable = false, columnDefinition = "INT default '0'")
-    private int muzzlePointX_0;
-    @Column(nullable = false, columnDefinition = "INT default '0'")
-    private int muzzlePointY_0;
-    @Column(nullable = false, columnDefinition = "INT default '0'")
-    private int muzzlePointY_90;
-    @Column(nullable = false, columnDefinition = "INT default '0'")
-    private int muzzlePointX_90;
-    @Column(nullable = false, columnDefinition = "INT default '0'")
     private int muzzleFlashWidth;
     @Column(nullable = false, columnDefinition = "INT default '0'")
     private int muzzleFlashLength;
@@ -69,6 +66,8 @@ public class DbWeaponType implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "allowedItemTypeId")
     )
     private Set<DbBaseItemType> allowedItemTypes;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "weaponType", orphanRemoval = true)
+    private Collection<DbWeaponTypeMuzzle> muzzles;
 
     public int getRange() {
         return range;
@@ -100,38 +99,6 @@ public class DbWeaponType implements Serializable {
 
     public void setDbMuzzleImage(DbItemTypeData dbMuzzleImage) {
         this.dbMuzzleImage = dbMuzzleImage;
-    }
-
-    public int getMuzzlePointX_0() {
-        return muzzlePointX_0;
-    }
-
-    public void setMuzzlePointX_0(int muzzlePointX_0) {
-        this.muzzlePointX_0 = muzzlePointX_0;
-    }
-
-    public int getMuzzlePointY_0() {
-        return muzzlePointY_0;
-    }
-
-    public void setMuzzlePointY_0(int muzzlePointY_0) {
-        this.muzzlePointY_0 = muzzlePointY_0;
-    }
-
-    public int getMuzzlePointY_90() {
-        return muzzlePointY_90;
-    }
-
-    public void setMuzzlePointY_90(int muzzlePointY_90) {
-        this.muzzlePointY_90 = muzzlePointY_90;
-    }
-
-    public int getMuzzlePointX_90() {
-        return muzzlePointX_90;
-    }
-
-    public void setMuzzlePointX_90(int muzzlePointX_90) {
-        this.muzzlePointX_90 = muzzlePointX_90;
     }
 
     public int getMuzzleFlashWidth() {
@@ -170,6 +137,56 @@ public class DbWeaponType implements Serializable {
         return new ReadonlyCollectionContentProvider<DbBaseItemType>(allowedItemTypes);
     }
 
+    public WeaponType createWeaponType(int imageCount) {
+        if (muzzles == null) {
+            muzzles = new ArrayList<DbWeaponTypeMuzzle>();
+        }
+        int length = muzzles.size() == 0 ? 1 : muzzles.size();
+        Index[][] muzzleFlashPositions = new Index[length][];
+        for (int outerIndex = 0; outerIndex < length; outerIndex++) {
+            muzzleFlashPositions[outerIndex] = new Index[imageCount];
+            for (int innerIndex = 0; innerIndex < muzzleFlashPositions[outerIndex].length; innerIndex++) {
+                muzzleFlashPositions[outerIndex][innerIndex] = new Index(0, 0);
+            }
+        }
+
+        for (DbWeaponTypeMuzzle muzzle : muzzles) {
+            Index[] positions = muzzleFlashPositions[muzzle.getMuzzleNumber()];
+            for (DbWeaponTypeMuzzlePosition position : muzzle.getPositions()) {
+                positions[position.getImageNumber()] = position.getPosition();
+            }
+        }
+
+        return new WeaponType(range,
+                damage,
+                reloadTime,
+                muzzleFlashWidth,
+                muzzleFlashLength,
+                stretchMuzzleFlashToTarget,
+                Utils.dbBaseItemTypesToInts(allowedItemTypes),
+                muzzleFlashPositions);
+    }
+
+
+    public void setMuzzleFlashPositions(Index[][] muzzleFlashPositions) {
+        muzzles.clear();
+        for (int muzzleIndex = 0, muzzleFlashPositionsLength = muzzleFlashPositions.length; muzzleIndex < muzzleFlashPositionsLength; muzzleIndex++) {
+            DbWeaponTypeMuzzle dbWeaponTypeMuzzle = new DbWeaponTypeMuzzle();
+            dbWeaponTypeMuzzle.setWeaponType(this);
+            dbWeaponTypeMuzzle.setMuzzleNumber(muzzleIndex);
+            dbWeaponTypeMuzzle.setPositions(new ArrayList<DbWeaponTypeMuzzlePosition>());
+            muzzles.add(dbWeaponTypeMuzzle);
+            Index[] muzzleFlashPosition = muzzleFlashPositions[muzzleIndex];
+            for (int positionIndex = 0, muzzleFlashPositionLength = muzzleFlashPosition.length; positionIndex < muzzleFlashPositionLength; positionIndex++) {
+                DbWeaponTypeMuzzlePosition dbWeaponTypeMuzzlePosition = new DbWeaponTypeMuzzlePosition();
+                dbWeaponTypeMuzzlePosition.setImageNumber(positionIndex);
+                dbWeaponTypeMuzzlePosition.setPosition(muzzleFlashPosition[positionIndex]);
+                dbWeaponTypeMuzzlePosition.setWeaponTypeMuzzle(dbWeaponTypeMuzzle);
+                dbWeaponTypeMuzzle.getPositions().add(dbWeaponTypeMuzzlePosition);
+            }
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -177,13 +194,12 @@ public class DbWeaponType implements Serializable {
 
         DbWeaponType that = (DbWeaponType) o;
 
-        return !(id != null ? !id.equals(that.id) : that.id != null);
-
+        return id != null && id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return id != null ? id.hashCode() : System.identityHashCode(this);
     }
 
     public Collection<DbBaseItemType> getAllowedItemTypes() {

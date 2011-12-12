@@ -55,7 +55,7 @@ public class DebugServiceImpl implements DebugService {
     private Thread blockedThread;
     private Label mousePosition;
 
-    @PostConstruct
+    //@PostConstruct
     public void init() {
         frame = new Frame();
         frame.addWindowListener(new WindowAdapter() {

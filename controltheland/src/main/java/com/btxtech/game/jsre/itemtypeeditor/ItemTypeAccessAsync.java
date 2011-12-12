@@ -15,6 +15,7 @@ package com.btxtech.game.jsre.itemtypeeditor;
 
 import com.btxtech.game.jsre.common.gameengine.itemType.BoundingBox;
 import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
+import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 /**
@@ -25,5 +26,5 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface ItemTypeAccessAsync {
     void getItemType(int itemTypeId, AsyncCallback<ItemType> async);
 
-    void saveBoundingBox(int itemTypeId, BoundingBox boundingBox, AsyncCallback<Void> async);
+    void saveItemTypeProperties(int itemTypeId, BoundingBox boundingBox, WeaponType weaponType, AsyncCallback<Void> async);
 }

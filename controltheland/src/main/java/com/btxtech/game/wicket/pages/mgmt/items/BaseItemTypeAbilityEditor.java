@@ -47,10 +47,6 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
     private double weaponReloadTime;
     private FileUpload weaponSound;
     private FileUpload weaponMuzzleImage;
-    private int weaponMuzzlePointX_0;
-    private int weaponMuzzlePointY_0;
-    private int weaponMuzzlePointX_90;
-    private int weaponMuzzlePointY_90;
     private boolean weaponMuzzleStretch;
     private boolean factory;
     private double factoryProgress;
@@ -99,10 +95,6 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
         form.add(new TextField("weaponReloadTime"));
         form.add(new FileUploadField("weaponSound"));
         form.add(new FileUploadField("weaponMuzzleImage"));
-        form.add(new TextField("weaponMuzzlePointX_0"));
-        form.add(new TextField("weaponMuzzlePointY_0"));
-        form.add(new TextField("weaponMuzzlePointX_90"));
-        form.add(new TextField("weaponMuzzlePointY_90"));
         form.add(new CheckBox("weaponMuzzleStretch"));
         form.add(new CheckBox("launcher"));
         form.add(new TextField("launcherProgress"));
@@ -161,10 +153,6 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
             damage = dbBaseItemType.getDbWeaponType().getDamage();
             weaponRange = dbBaseItemType.getDbWeaponType().getRange();
             weaponReloadTime = dbBaseItemType.getDbWeaponType().getReloadTime();
-            weaponMuzzlePointX_0 = dbBaseItemType.getDbWeaponType().getMuzzlePointX_0();
-            weaponMuzzlePointY_0 = dbBaseItemType.getDbWeaponType().getMuzzlePointY_0();
-            weaponMuzzlePointX_90 = dbBaseItemType.getDbWeaponType().getMuzzlePointX_90();
-            weaponMuzzlePointY_90 = dbBaseItemType.getDbWeaponType().getMuzzlePointY_90();
             weaponMuzzleStretch = dbBaseItemType.getDbWeaponType().isStretchMuzzleFlashToTarget();
         } else {
             weapon = false;
@@ -265,10 +253,6 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
             weaponType.setRange(weaponRange);
             weaponType.setDamage(damage);
             weaponType.setReloadTime(weaponReloadTime);
-            weaponType.setMuzzlePointX_0(weaponMuzzlePointX_0);
-            weaponType.setMuzzlePointY_0(weaponMuzzlePointY_0);
-            weaponType.setMuzzlePointX_90(weaponMuzzlePointX_90);
-            weaponType.setMuzzlePointY_90(weaponMuzzlePointY_90);
             weaponType.setStretchMuzzleFlashToTarget(weaponMuzzleStretch);
             if (weaponMuzzleImage != null) {
                 ImageIcon image = new ImageIcon(weaponMuzzleImage.getBytes());

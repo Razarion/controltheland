@@ -31,8 +31,8 @@
     <inherits name='com.google.gwt.user.theme.standard.Standard'/>
     <!-- Other module inherits                                      -->
 
-
     <!-- Logging Properties-->
+    <set-property name="gwt.logging.logLevel" value="WARNING"/>
     <set-property name="gwt.logging.firebugHandler" value="DISABLED"/>
     <set-property name="gwt.logging.simpleRemoteHandler" value="ENABLED"/>
     <set-property name="gwt.logging.popupHandler" value="DISABLED"/>

@@ -13,7 +13,6 @@
 
 package com.btxtech.game.services.item.itemType;
 
-import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.BuilderType;
 import com.btxtech.game.jsre.common.gameengine.itemType.ConsumerType;
@@ -26,7 +25,7 @@ import com.btxtech.game.jsre.common.gameengine.itemType.ItemType;
 import com.btxtech.game.jsre.common.gameengine.itemType.LauncherType;
 import com.btxtech.game.jsre.common.gameengine.itemType.MovableType;
 import com.btxtech.game.jsre.common.gameengine.itemType.SpecialType;
-import com.btxtech.game.jsre.common.gameengine.itemType.WeaponType;
+import com.btxtech.game.services.common.Utils;
 
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
@@ -242,34 +241,16 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
             baseItemType.setMovableType(new MovableType(dbMovableType.getSpeed(), dbMovableType.getTerrainType()));
         }
         if (dbWeaponType != null) {
-            // TODO remove
-            Index[][] muzzleFlashPositions = new Index[1][];
-            muzzleFlashPositions[0] = new Index[24];
-            for (int i = 0; i < muzzleFlashPositions[0].length; i++) {
-                muzzleFlashPositions[0][i] = new Index(0, 0);
-            }
-            // TODO remove ends
-            baseItemType.setWeaponType(new WeaponType(dbWeaponType.getRange(),
-                    dbWeaponType.getDamage(),
-                    dbWeaponType.getReloadTime(),
-                    dbWeaponType.getMuzzlePointX_0(),
-                    dbWeaponType.getMuzzlePointY_0(),
-                    dbWeaponType.getMuzzlePointX_90(),
-                    dbWeaponType.getMuzzlePointY_90(),
-                    dbWeaponType.getMuzzleFlashWidth(),
-                    dbWeaponType.getMuzzleFlashLength(),
-                    dbWeaponType.isStretchMuzzleFlashToTarget(),
-                    toInt(dbWeaponType.getAllowedItemTypes()),
-                    muzzleFlashPositions));
+            baseItemType.setWeaponType(dbWeaponType.createWeaponType(getItemTypeImageCrud().readDbChildren().size()));
         }
         if (dbFactoryType != null) {
-            baseItemType.setFactoryType(new FactoryType(dbFactoryType.getProgress(), toInt(dbFactoryType.getAbleToBuild())));
+            baseItemType.setFactoryType(new FactoryType(dbFactoryType.getProgress(), Utils.dbBaseItemTypesToInts(dbFactoryType.getAbleToBuild())));
         }
         if (dbHarvesterType != null) {
             baseItemType.setHarvesterType(new HarvesterType(dbHarvesterType.getRange(), dbHarvesterType.getProgress()));
         }
         if (dbBuilderType != null) {
-            baseItemType.setBuilderType(new BuilderType(dbBuilderType.getRange(), dbBuilderType.getProgress(), toInt(dbBuilderType.getAbleToBuild())));
+            baseItemType.setBuilderType(new BuilderType(dbBuilderType.getRange(), dbBuilderType.getProgress(), Utils.dbBaseItemTypesToInts(dbBuilderType.getAbleToBuild())));
         }
         if (dbConsumerType != null) {
             baseItemType.setConsumerType(new ConsumerType(dbConsumerType.getWattage()));
@@ -281,7 +262,7 @@ public class DbBaseItemType extends DbItemType implements DbBaseItemTypeI {
             baseItemType.setSpecialType(new SpecialType(dbSpecialType.getString()));
         }
         if (dbItemContainerType != null) {
-            baseItemType.setItemContainerType(new ItemContainerType(toInt(dbItemContainerType.getAbleToContain()), dbItemContainerType.getMaxCount(), dbItemContainerType.getRange()));
+            baseItemType.setItemContainerType(new ItemContainerType(Utils.dbBaseItemTypesToInts(dbItemContainerType.getAbleToContain()), dbItemContainerType.getMaxCount(), dbItemContainerType.getRange()));
         }
         if (dbHouseType != null) {
             baseItemType.setHouseType(new HouseType(dbHouseType.getSpace()));

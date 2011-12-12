@@ -308,4 +308,8 @@ public class MuzzleFlashControl extends DecoratorPanel {
     public void setItemTypeSimulation(ItemTypeSimulation itemTypeSimulation) {
         this.itemTypeSimulation = itemTypeSimulation;
     }
+
+    public WeaponType getWeaponType() {
+        return weaponType;
+    }
 }
