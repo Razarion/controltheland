@@ -170,14 +170,17 @@ public class TestCreateModifyItems extends AbstractServiceTest {
         dbItemTypeImage.setData(new byte[]{1, 2});
         dbItemTypeImage.setNumber(1);
         dbItemTypeImage.setContentType("1");
+        dbItemTypeImage.setAngel(0.1);
         dbItemTypeImage = dbBaseItemType.getItemTypeImageCrud().createDbChild();
         dbItemTypeImage.setData(new byte[]{2, 3});
         dbItemTypeImage.setNumber(2);
         dbItemTypeImage.setContentType("2");
+        dbItemTypeImage.setAngel(0.2);
         dbItemTypeImage = dbBaseItemType.getItemTypeImageCrud().createDbChild();
         dbItemTypeImage.setData(new byte[]{3, 4});
         dbItemTypeImage.setNumber(3);
         dbItemTypeImage.setContentType("3");
+        dbItemTypeImage.setAngel(0.3);        
         itemService.getDbItemTypeCrud().updateDbChild(dbBaseItemType);
         endHttpRequestAndOpenSessionInViewFilter();
 

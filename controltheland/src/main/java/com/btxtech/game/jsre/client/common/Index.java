@@ -212,6 +212,10 @@ public class Index implements Serializable {
         return rotateCounterClock(center, sinus, cosines);
     }
 
+    public String testString() {
+        return "new Index(" + getX() + ", " + getY() + ")";
+    }
+
     public static Index createSaveIndex(int x, int y) {
         if (x < 0) {
             x = 0;

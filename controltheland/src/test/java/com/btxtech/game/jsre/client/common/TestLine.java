@@ -72,12 +72,6 @@ public class TestLine {
     }
 
     @Test
-    public void testProjectOnInfiniteLineNull() {
-        Line line = new Line(new Index(33, 1), new Index(38, 4));
-        Assert.assertNull(line.projectOnInfiniteLine(new Index(27, 2)));
-    }
-
-    @Test
     public void testGetShortestDistance1() {
         Line line = new Line(new Index(5, 5), new Index(10, 10));
         Assert.assertEquals(2.82, line.getShortestDistance(new Index(7, 3)), 0.01);
