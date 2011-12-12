@@ -60,10 +60,10 @@ public class ItemTypeEditorPanel extends FlexTable {
                 ClientLevelHandler.getInstance().setLevel(new com.btxtech.game.jsre.client.common.Level("ItemTypeEditorLevel", "", false, 0, null, 0));
                 ///--- Setup terrain
                 ArrayList<SurfaceImage> surfaceImages = new ArrayList<SurfaceImage>();
-                surfaceImages.add(new SurfaceImage(SurfaceType.LAND, 23, "#00FF00"));
+                surfaceImages.add(new SurfaceImage(itemType.getTerrainType().getSurfaceTypes().get(0), 23, "#00FF00"));
                 ArrayList<SurfaceRect> surfaceRects = new ArrayList<SurfaceRect>();
                 surfaceRects.add(new SurfaceRect(new Rectangle(0, 0, SIM_WIDTH / 100, SIM_HEIGHT / 100), 23));
-                TerrainView.getInstance().setupTerrain(new TerrainSettings(5, 5, 100, 100),
+                TerrainView.getInstance().setupTerrain(new TerrainSettings(SIM_WIDTH / 100, SIM_HEIGHT / 100, 100, 100),
                         new ArrayList<TerrainImagePosition>(),
                         surfaceRects,
                         surfaceImages,
