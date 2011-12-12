@@ -126,10 +126,6 @@ public class GumPath {
         while (true) {
             int pathSizeBefore = path.size();
             double remainingLength = line.getNearestPointOnLine(path.get(path.size() - 1)).getDistanceDouble(destination);
-            if (remainingLength < 5.0) {
-                path.add(destination);
-                return path;
-            }
             boolean callAgain = setupIntermediatePoint(angel, allowedAngel1, MAX_DISTANCE, remainingLength, path, line);
             if (pathSizeBefore != path.size()) {
                 // Swap angels
