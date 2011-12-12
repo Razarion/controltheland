@@ -125,6 +125,31 @@ public class TestWeaponType extends AbstractServiceTest {
         Assert.assertEquals(new Index(10, 13), weaponType.getMuzzleFlashPosition(0, 2));
         endHttpRequestAndOpenSessionInViewFilter();
         endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbBaseItemType = itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID);
+        dbWeaponType = dbBaseItemType.getDbWeaponType();
+        weaponType = dbWeaponType.createWeaponType(2);
+        Assert.assertEquals(1, weaponType.getMuzzleFlashCount());
+        Assert.assertEquals(new Index(10, 11), weaponType.getMuzzleFlashPosition(0, 0));
+        Assert.assertEquals(new Index(10, 12), weaponType.getMuzzleFlashPosition(0, 1));
+        itemService.saveWeaponType(dbBaseItemType.getId(), weaponType);
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
+        beginHttpSession();
+        beginHttpRequestAndOpenSessionInViewFilter();
+        dbBaseItemType = itemService.getDbBaseItemType(TEST_ATTACK_ITEM_ID);
+        dbWeaponType = dbBaseItemType.getDbWeaponType();
+        weaponType = dbWeaponType.createWeaponType(3);
+        Assert.assertEquals(1, weaponType.getMuzzleFlashCount());
+        Assert.assertEquals(new Index(10, 11), weaponType.getMuzzleFlashPosition(0, 0));
+        Assert.assertEquals(new Index(10, 12), weaponType.getMuzzleFlashPosition(0, 1));
+        Assert.assertEquals(new Index(0, 0), weaponType.getMuzzleFlashPosition(0, 2));
+        endHttpRequestAndOpenSessionInViewFilter();
+        endHttpSession();
+
     }
 
 }

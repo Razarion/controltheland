@@ -153,7 +153,9 @@ public class DbWeaponType implements Serializable {
         for (DbWeaponTypeMuzzle muzzle : muzzles) {
             Index[] positions = muzzleFlashPositions[muzzle.getMuzzleNumber()];
             for (DbWeaponTypeMuzzlePosition position : muzzle.getPositions()) {
-                positions[position.getImageNumber()] = position.getPosition();
+                if (positions.length > position.getImageNumber()) {
+                    positions[position.getImageNumber()] = position.getPosition();
+                }
             }
         }
 
