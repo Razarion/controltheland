@@ -51,9 +51,9 @@ public class DbWeaponType implements Serializable {
     private int damage;
     private double reloadTime;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private DbItemTypeData dbSound;
+    private DbItemTypeImageData muzzleFlashImageData;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private DbItemTypeData dbMuzzleImage;
+    private DbItemTypeSoundData muzzleFlashSoundData;
     @Column(nullable = false, columnDefinition = "INT default '0'")
     private int muzzleFlashWidth;
     @Column(nullable = false, columnDefinition = "INT default '0'")
@@ -93,14 +93,6 @@ public class DbWeaponType implements Serializable {
         this.reloadTime = reloadTime;
     }
 
-    public DbItemTypeData getDbMuzzleImage() {
-        return dbMuzzleImage;
-    }
-
-    public void setDbMuzzleImage(DbItemTypeData dbMuzzleImage) {
-        this.dbMuzzleImage = dbMuzzleImage;
-    }
-
     public int getMuzzleFlashWidth() {
         return muzzleFlashWidth;
     }
@@ -117,14 +109,6 @@ public class DbWeaponType implements Serializable {
         this.muzzleFlashLength = muzzleFlashLength;
     }
 
-    public DbItemTypeData getDbSound() {
-        return dbSound;
-    }
-
-    public void setDbSound(DbItemTypeData dbSound) {
-        this.dbSound = dbSound;
-    }
-
     public boolean isStretchMuzzleFlashToTarget() {
         return stretchMuzzleFlashToTarget;
     }
@@ -135,6 +119,22 @@ public class DbWeaponType implements Serializable {
 
     public ContentProvider<DbBaseItemType> getAllowedItemTypeCrud() {
         return new ReadonlyCollectionContentProvider<DbBaseItemType>(allowedItemTypes);
+    }
+
+    public DbItemTypeImageData getMuzzleFlashImageData() {
+        return muzzleFlashImageData;
+    }
+
+    public void setMuzzleFlashImageData(DbItemTypeImageData muzzleFlashImageData) {
+        this.muzzleFlashImageData = muzzleFlashImageData;
+    }
+
+    public DbItemTypeSoundData getMuzzleFlashSoundData() {
+        return muzzleFlashSoundData;
+    }
+
+    public void setMuzzleFlashSoundData(DbItemTypeSoundData muzzleFlashSoundData) {
+        this.muzzleFlashSoundData = muzzleFlashSoundData;
     }
 
     public WeaponType createWeaponType(int imageCount) {

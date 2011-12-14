@@ -25,7 +25,8 @@ import com.btxtech.game.jsre.common.gameengine.syncObjects.syncInfos.SyncItemInf
 import com.btxtech.game.services.common.CrudRootServiceHelper;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
-import com.btxtech.game.services.item.itemType.DbItemTypeData;
+import com.btxtech.game.services.item.itemType.DbItemTypeImageData;
+import com.btxtech.game.services.item.itemType.DbItemTypeSoundData;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
@@ -79,9 +80,9 @@ public interface ItemService extends com.btxtech.game.jsre.common.gameengine.ser
 
     DbItemTypeImage getItemTypeImage(int itemTypeId, int index);
 
-    DbItemTypeData getMuzzleFlashImage(int itemTypeId);
+    DbItemTypeImageData getMuzzleFlashImage(int itemTypeId);
 
-    DbItemTypeData getMuzzleFlashSound(int itemTypeId);
+    DbItemTypeSoundData getMuzzleFlashSound(int itemTypeId);
 
     void sellItem(Id id) throws ItemDoesNotExistException, NotYourBaseException;
 

@@ -13,41 +13,41 @@
 
 package com.btxtech.game.services.item.itemType;
 
-import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.io.Serializable;
 
 /**
  * User: beat
  * Date: 14.12.2009
  * Time: 22:47:20
  */
-@Entity(name = "ITEM_TYPE_DATA")
-public class DbItemTypeData implements Serializable {
+@Entity(name = "ITEM_TYPE_SOUND_DATA")
+public class DbItemTypeSoundData implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
-    @Column(nullable = false)
-    private String contentType;
-    @Column(nullable = false, length = 500000)
-    private byte[] data;
+    @Column(length = 500000)
+    private byte[] dataMp3;
+    @Column(length = 500000)
+    private byte[] dataOgg;
 
-    public String getContentType() {
-        return contentType;
+    public byte[] getDataMp3() {
+        return dataMp3;
     }
 
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
+    public void setDataMp3(byte[] dataMp3) {
+        this.dataMp3 = dataMp3;
     }
 
-    public byte[] getData() {
-        return data;
+    public byte[] getDataOgg() {
+        return dataOgg;
     }
 
-    public void setData(byte[] data) {
-        this.data = data;
+    public void setDataOgg(byte[] dataOgg) {
+        this.dataOgg = dataOgg;
     }
 
     @Override
@@ -55,16 +55,12 @@ public class DbItemTypeData implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        DbItemTypeData that = (DbItemTypeData) o;
-        return id != null ? id.equals(that.id):super.equals(that);
+        DbItemTypeSoundData that = (DbItemTypeSoundData) o;
+        return id != null && id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        if (id != null) {
-            return id.hashCode();
-        } else {
-            return super.hashCode();
-        }
+        return id != null ? id : System.identityHashCode(this);
     }
 }

@@ -35,6 +35,11 @@ public class Constants {
     public static final String TYPE_SOUND = "snd";
     public static final String ITEM_IMAGE_ID = "id";
     public static final String ITEM_IMAGE_INDEX = "ix";
+    public static final String CODEC = "cdc";
+
+    // Codecs
+    public static final String CODEC_TYPE_MP3 = "audio/mpeg";
+    public static final String CODEC_TYPE_OGG = "audio/ogg";
 
     // Tutorial
     public static final String TUTORIAL_RESOURCE_URL = "/spring/tutorial";

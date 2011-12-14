@@ -13,11 +13,10 @@
 
 package com.btxtech.game.jsre.client.effects;
 
-import com.allen_sauer.gwt.voices.client.Sound;
-import com.allen_sauer.gwt.voices.client.SoundController;
 import com.btxtech.game.jsre.client.ClientSyncItem;
 import com.btxtech.game.jsre.client.GwtCommon;
 import com.btxtech.game.jsre.client.ImageHandler;
+import com.btxtech.game.jsre.client.SoundHandler;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.client.common.Index;
 import com.btxtech.game.jsre.client.terrain.MapWindow;
@@ -63,9 +62,7 @@ public class ExplosionFrame {
             width = clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageWidth();
             height = clientSyncItem.getSyncItem().getItemType().getBoundingBox().getImageHeight();
         }
-        SoundController soundController = new SoundController();
-        Sound sound = soundController.createSound(Sound.MIME_TYPE_AUDIO_MPEG, "/sounds/explosion.mp3");
-        sound.play();
+        SoundHandler.getInstance().playItemExplode();
         Index relativeMiddle = TerrainView.getInstance().toRelativeIndex(clientSyncItem.getSyncItem().getSyncItemArea().getPosition());
         canvas.setCoordinateSpaceWidth(width);
         canvas.setCoordinateSpaceHeight(height);

@@ -53,8 +53,6 @@ public class MuzzleFlash {
         BaseItemType baseItemType = clientSyncItem.getSyncBaseItem().getBaseItemType();
         WeaponType weaponType = baseItemType.getWeaponType();
 
-        SoundHandler.playMuzzleFlashSound(baseItemType);
-
         angel = clientSyncItem.getSyncBaseItem().getSyncItemArea().getAngel();
         angel = baseItemType.getBoundingBox().getAllowedAngel(angel);
         int imageNr = baseItemType.getBoundingBox().angelToImageNr(angel);

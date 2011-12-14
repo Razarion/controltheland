@@ -48,8 +48,9 @@ import com.btxtech.game.services.history.HistoryService;
 import com.btxtech.game.services.item.ItemService;
 import com.btxtech.game.services.item.itemType.DbBaseItemType;
 import com.btxtech.game.services.item.itemType.DbItemType;
-import com.btxtech.game.services.item.itemType.DbItemTypeData;
 import com.btxtech.game.services.item.itemType.DbItemTypeImage;
+import com.btxtech.game.services.item.itemType.DbItemTypeImageData;
+import com.btxtech.game.services.item.itemType.DbItemTypeSoundData;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
 import com.btxtech.game.services.item.itemType.DbResourceItemType;
 import com.btxtech.game.services.market.ServerMarketService;
@@ -121,8 +122,8 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     private final HashMap<Id, SyncItem> items = new HashMap<Id, SyncItem>();
     private Log log = LogFactory.getLog(ItemServiceImpl.class);
     private HashMap<Integer, HashMap<Integer, DbItemTypeImage>> itemTypeImages = new HashMap<Integer, HashMap<Integer, DbItemTypeImage>>();
-    private HashMap<Integer, DbItemTypeData> muzzleItemTypeImages = new HashMap<Integer, DbItemTypeData>();
-    private HashMap<Integer, DbItemTypeData> muzzleItemTypeSounds = new HashMap<Integer, DbItemTypeData>();
+    private HashMap<Integer, DbItemTypeImageData> muzzleItemTypeImages = new HashMap<Integer, DbItemTypeImageData>();
+    private HashMap<Integer, DbItemTypeSoundData> muzzleItemTypeSounds = new HashMap<Integer, DbItemTypeSoundData>();
 
     @PostConstruct
     public void setup() {
@@ -557,14 +558,14 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
         if (muzzleItemTypeImages.containsKey(dbItemType.getId())) {
             throw new IllegalArgumentException("Item Type Images already exits: " + dbItemType);
         }
-        Hibernate.initialize(dbItemType.getDbWeaponType().getDbMuzzleImage());
-        muzzleItemTypeImages.put(dbItemType.getId(), dbItemType.getDbWeaponType().getDbMuzzleImage());
+        Hibernate.initialize(dbItemType.getDbWeaponType().getMuzzleFlashImageData());
+        muzzleItemTypeImages.put(dbItemType.getId(), dbItemType.getDbWeaponType().getMuzzleFlashImageData());
         // Sound
         if (muzzleItemTypeSounds.containsKey(dbItemType.getId())) {
             throw new IllegalArgumentException("Item Type sound already exits: " + dbItemType);
         }
-        Hibernate.initialize(dbItemType.getDbWeaponType().getDbSound());
-        muzzleItemTypeSounds.put(dbItemType.getId(), dbItemType.getDbWeaponType().getDbSound());
+        Hibernate.initialize(dbItemType.getDbWeaponType().getMuzzleFlashSoundData());
+        muzzleItemTypeSounds.put(dbItemType.getId(), dbItemType.getDbWeaponType().getMuzzleFlashSoundData());
     }
 
     @Override
@@ -603,17 +604,17 @@ public class ItemServiceImpl extends AbstractItemService implements ItemService 
     }
 
     @Override
-    public DbItemTypeData getMuzzleFlashImage(int itemTypeId) {
-        DbItemTypeData itemTypeImage = muzzleItemTypeImages.get(itemTypeId);
-        if (itemTypeImage == null) {
+    public DbItemTypeImageData getMuzzleFlashImage(int itemTypeId) {
+        DbItemTypeImageData dbItemTypeImageData = muzzleItemTypeImages.get(itemTypeId);
+        if (dbItemTypeImageData == null) {
             throw new IllegalArgumentException("Muzzle image does not exist: " + itemTypeId);
         }
-        return itemTypeImage;
+        return dbItemTypeImageData;
     }
 
     @Override
-    public DbItemTypeData getMuzzleFlashSound(int itemTypeId) {
-        DbItemTypeData sound = muzzleItemTypeSounds.get(itemTypeId);
+    public DbItemTypeSoundData getMuzzleFlashSound(int itemTypeId) {
+        DbItemTypeSoundData sound = muzzleItemTypeSounds.get(itemTypeId);
         if (sound == null) {
             throw new IllegalArgumentException("Muzzle sound does not exist: " + itemTypeId);
         }

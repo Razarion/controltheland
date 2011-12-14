@@ -16,7 +16,8 @@ package com.btxtech.game.controllers;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.services.common.DateUtil;
 import com.btxtech.game.services.item.ItemService;
-import com.btxtech.game.services.item.itemType.DbItemTypeData;
+import com.btxtech.game.services.item.itemType.DbItemTypeImageData;
+import com.btxtech.game.services.item.itemType.DbItemTypeSoundData;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,10 @@ public class MuzzleFlashController implements Controller {
             int itemTypeId = Integer.parseInt(httpServletRequest.getParameter(Constants.ITEM_IMAGE_ID));
             String type = httpServletRequest.getParameter(Constants.TYPE);
             if (Constants.TYPE_IMAGE.equals(type)) {
-                DbItemTypeData image = itemService.getMuzzleFlashImage(itemTypeId);
+                DbItemTypeImageData image = itemService.getMuzzleFlashImage(itemTypeId);
+                if (image.getData() == null) {
+                    throw new IllegalStateException("No image data for itemTypeId: " + itemTypeId);
+                }
                 httpServletResponse.setContentLength(image.getData().length);
                 httpServletResponse.setContentType(image.getContentType());
                 httpServletResponse.addDateHeader("Expires", System.currentTimeMillis() + DateUtil.MILLIS_IN_DAY);
@@ -54,12 +58,26 @@ public class MuzzleFlashController implements Controller {
                 out.write(image.getData());
                 out.close();
             } else if (Constants.TYPE_SOUND.equals(type)) {
-                DbItemTypeData sound = itemService.getMuzzleFlashSound(itemTypeId);
-                httpServletResponse.setContentLength(sound.getData().length);
-                httpServletResponse.setContentType(sound.getContentType());
+                DbItemTypeSoundData sound = itemService.getMuzzleFlashSound(itemTypeId);
+                String contentType = httpServletRequest.getParameter(Constants.CODEC);
+                byte[] data;
+                if (Constants.CODEC_TYPE_MP3.equals(contentType)) {
+                    data = sound.getDataMp3();
+                } else if (Constants.CODEC_TYPE_OGG.equals(contentType)) {
+                    data = sound.getDataOgg();
+                } else {
+                    throw new IllegalArgumentException("Unsupported sound content type: " + contentType);
+                }
+                if (data == null) {
+                    throw new IllegalStateException("No sound data for itemTypeId: " + itemTypeId + " contentType: " + contentType);
+                }
+                httpServletResponse.setContentLength(data.length);
+                httpServletResponse.setContentType(contentType);
                 httpServletResponse.addDateHeader("Expires", System.currentTimeMillis() + DateUtil.MILLIS_IN_DAY);
+                httpServletResponse.addHeader("Content-Range", "bytes 0-" + (data.length - 1) + "/" + data.length);
+                httpServletResponse.addHeader("Accept-Ranges", "bytes");
                 OutputStream out = httpServletResponse.getOutputStream();
-                out.write(sound.getData());
+                out.write(data);
                 out.close();
             }
         } catch (IOException e) {
