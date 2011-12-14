@@ -13,13 +13,14 @@
 
 package com.btxtech.game.jsre.client;
 
-import com.allen_sauer.gwt.voices.client.Sound;
-import com.allen_sauer.gwt.voices.client.SoundController;
 import com.btxtech.game.jsre.client.common.Constants;
 import com.btxtech.game.jsre.common.gameengine.itemType.BaseItemType;
+import com.google.gwt.media.client.Audio;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.logging.Level;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -28,11 +29,19 @@ import java.util.logging.Logger;
  * Time: 20:32:53
  */
 public class SoundHandler {
-    private static final SoundHandler INSTANCE = new SoundHandler();
-    private SoundController soundController = new SoundController();
-    private HashMap<BaseItemType, Sound> sounds = new HashMap<BaseItemType, Sound>();
+    public static final SoundHandler INSTANCE = new SoundHandler();
+    private static final int PARALLEL_PLAY_COUNT = 5;
+    private static final String EXPLODE_MP3 = "/sounds/explosion.mp3";
+    private static final String EXPLODE_OGG = "/sounds/explosion.ogg";
     private Logger log = Logger.getLogger(SoundHandler.class.getName());
-    private boolean logCrash = true;
+    private Map<BaseItemType, Collection<Audio>> muzzleSound = new HashMap<BaseItemType, Collection<Audio>>();
+    private Collection<Audio> explodeSounds = new ArrayList<Audio>();
+    private String mimeType;
+    private String explodeSrc;
+
+    public static SoundHandler getInstance() {
+        return INSTANCE;
+    }
 
     /**
      * Singleton
@@ -40,27 +49,115 @@ public class SoundHandler {
     private SoundHandler() {
     }
 
-    public void playSound(BaseItemType baseItemType) {
-        Sound sound = sounds.get(baseItemType);
-        if (sound == null) {
-            sound = soundController.createSound(Sound.MIME_TYPE_AUDIO_MPEG, buildUrl(baseItemType));
-            sounds.put(baseItemType, sound);
+    public void playMuzzleFlashSound(BaseItemType baseItemType) {
+        Audio audio = getMuzzleAudio(baseItemType);
+        if (audio != null) {
+            audio.play();
         }
-        try {
-            sound.play();
-        } catch (Throwable t) {
-            if (logCrash) {
-                log.log(Level.SEVERE, "Sound crashed", t);
-                logCrash = false;
+    }
+
+    private Audio getMuzzleAudio(BaseItemType baseItemType) {
+        Collection<Audio> available = muzzleSound.get(baseItemType);
+        if (available == null) {
+            available = new ArrayList<Audio>();
+            muzzleSound.put(baseItemType, available);
+        }
+        Audio audio = null;
+        for (Audio availableAudio : available) {
+            if (availableAudio.hasEnded()) {
+                audio = availableAudio;
+                break;
             }
         }
+        if (audio != null) {
+            return audio;
+        }
+        if (available.size() < PARALLEL_PLAY_COUNT) {
+            audio = Audio.createIfSupported();
+            if (audio == null) {
+                log.severe("Audio not supported for muzzle");
+                return null;
+            }
+            String codec = determineMimeType(audio);
+            if (codec == null) {
+                return null;
+            }
+
+
+            audio.setSrc(buildUrl(baseItemType, codec));
+            available.add(audio);
+            return audio;
+        } else {
+            return null;
+        }
     }
 
-    public static void playMuzzleFlashSound(BaseItemType baseItemType) {
-        INSTANCE.playSound(baseItemType);
+    private Audio getExplodeAudio() {
+        Audio audio = null;
+        for (Audio availableAudio : explodeSounds) {
+            if (availableAudio.hasEnded()) {
+                audio = availableAudio;
+                break;
+            }
+        }
+        if (audio != null) {
+            return audio;
+        }
+        if (explodeSounds.size() < PARALLEL_PLAY_COUNT) {
+            audio = Audio.createIfSupported();
+            if (audio == null) {
+                log.severe("Audio not supported for explode");
+                return null;
+            }
+            if (explodeSrc == null) {
+                String codec = determineMimeType(audio);
+                if (codec == null) {
+                    return null;
+                } else if (codec.equals(Constants.CODEC_TYPE_MP3)) {
+                    explodeSrc = EXPLODE_MP3;
+                } else if (codec.equals(Constants.CODEC_TYPE_OGG)) {
+                    explodeSrc = EXPLODE_OGG;
+                } else {
+                    return null;
+                }
+            }
+
+            audio.setSrc(explodeSrc);
+            explodeSounds.add(audio);
+            return audio;
+        } else {
+            return null;
+        }
     }
 
-    private static String buildUrl(BaseItemType baseItemType) {
+
+    private String determineMimeType(Audio audio) {
+        // TODO will be handled by GWT 2.4
+        if (mimeType != null) {
+            return mimeType;
+        }
+        if (!audio.canPlayType(Constants.CODEC_TYPE_MP3).equals("")) {
+            mimeType = Constants.CODEC_TYPE_MP3;
+            return mimeType;
+        } else if (!audio.canPlayType(Constants.CODEC_TYPE_OGG).equals("")) {
+            mimeType = Constants.CODEC_TYPE_OGG;
+            return mimeType;
+        } else {
+            log.severe("Can not play sound mime type OGG or MP3");
+            return null;
+        }
+    }
+
+
+    public void playItemExplode() {
+        Audio audio = getExplodeAudio();
+        if (audio != null) {
+            audio.play();
+        }
+    }
+
+
+    private static String buildUrl(BaseItemType baseItemType, String codec) {
         StringBuilder url = new StringBuilder();
         url.append(Constants.MUZZLE_ITEM_IMAGE_URL);
         url.append("?");
@@ -71,8 +168,10 @@ public class SoundHandler {
         url.append(Constants.TYPE);
         url.append("=");
         url.append(Constants.TYPE_SOUND);
+        url.append("&");
+        url.append(Constants.CODEC);
+        url.append("=");
+        url.append(codec);
         return url.toString();
     }
-
-
 }

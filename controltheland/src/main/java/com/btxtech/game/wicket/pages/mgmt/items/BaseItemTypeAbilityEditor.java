@@ -10,7 +10,8 @@ import com.btxtech.game.services.item.itemType.DbGeneratorType;
 import com.btxtech.game.services.item.itemType.DbHarvesterType;
 import com.btxtech.game.services.item.itemType.DbHouseType;
 import com.btxtech.game.services.item.itemType.DbItemContainerType;
-import com.btxtech.game.services.item.itemType.DbItemTypeData;
+import com.btxtech.game.services.item.itemType.DbItemTypeImageData;
+import com.btxtech.game.services.item.itemType.DbItemTypeSoundData;
 import com.btxtech.game.services.item.itemType.DbLauncherType;
 import com.btxtech.game.services.item.itemType.DbMovableType;
 import com.btxtech.game.services.item.itemType.DbProjectileItemType;
@@ -45,7 +46,8 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
     private int damage;
     private int weaponRange;
     private double weaponReloadTime;
-    private FileUpload weaponSound;
+    private FileUpload weaponMuzzleSoundMp3;
+    private FileUpload weaponMuzzleSoundOgg;
     private FileUpload weaponMuzzleImage;
     private boolean weaponMuzzleStretch;
     private boolean factory;
@@ -75,12 +77,12 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
     private String specialString;
     private Collection<DbBaseItemType> baseItemTypes;
     private Collection<DbProjectileItemType> projectileItemTypes;
+    private int dbBaseItemTypeId;
 
     public BaseItemTypeAbilityEditor(final DbBaseItemType dbBaseItemType) {
-        // Prevent circular object from with same id -> Hibernate problem
-        baseItemTypes = itemService.getDbBaseItemTypes();
-        projectileItemTypes = itemService.getDbProjectileItemTypes();
-        this.dbBaseItemType = ItemsUtil.getItemType4Id(dbBaseItemType.getId(), baseItemTypes);
+        dbBaseItemTypeId = dbBaseItemType.getId();
+        loadDataToSession();
+
 
         FeedbackPanel feedbackPanel = new FeedbackPanel("msgs");
         add(feedbackPanel);
@@ -93,7 +95,8 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
         form.add(new TextField("damage"));
         form.add(new TextField("weaponRange"));
         form.add(new TextField("weaponReloadTime"));
-        form.add(new FileUploadField("weaponSound"));
+        form.add(new FileUploadField("weaponMuzzleSoundMp3"));
+        form.add(new FileUploadField("weaponMuzzleSoundOgg"));
         form.add(new FileUploadField("weaponMuzzleImage"));
         form.add(new CheckBox("weaponMuzzleStretch"));
         form.add(new CheckBox("launcher"));
@@ -138,6 +141,13 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
         add(form);
 
         load();
+    }
+
+    private void loadDataToSession() {
+        // Prevent circular object from with same id -> Hibernate problem
+        baseItemTypes = itemService.getDbBaseItemTypes();
+        projectileItemTypes = itemService.getDbProjectileItemTypes();
+        this.dbBaseItemType = ItemsUtil.getItemType4Id(dbBaseItemTypeId, baseItemTypes);
     }
 
     private void load() {
@@ -232,6 +242,8 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
     }
 
     private void save() {
+        loadDataToSession();
+
         if (movable) {
             DbMovableType movableType = dbBaseItemType.getDbMovableType();
             if (movableType == null) {
@@ -258,16 +270,26 @@ public class BaseItemTypeAbilityEditor extends MgmtWebPage {
                 ImageIcon image = new ImageIcon(weaponMuzzleImage.getBytes());
                 weaponType.setMuzzleFlashWidth(image.getIconWidth());
                 weaponType.setMuzzleFlashLength(image.getIconHeight());
-                DbItemTypeData itemTypeImage = new DbItemTypeData();
-                itemTypeImage.setContentType(weaponMuzzleImage.getContentType());
-                itemTypeImage.setData(weaponMuzzleImage.getBytes());
-                weaponType.setDbMuzzleImage(itemTypeImage);
+                DbItemTypeImageData itemTypeImageData = new DbItemTypeImageData();
+                itemTypeImageData.setContentType(weaponMuzzleImage.getContentType());
+                itemTypeImageData.setData(weaponMuzzleImage.getBytes());
+                weaponType.setMuzzleFlashImageData(itemTypeImageData);
             }
-            if (weaponSound != null) {
-                DbItemTypeData sound = new DbItemTypeData();
-                sound.setContentType(weaponSound.getContentType());
-                sound.setData(weaponSound.getBytes());
-                weaponType.setDbSound(sound);
+            if (weaponMuzzleSoundMp3 != null) {
+                DbItemTypeSoundData sound = weaponType.getMuzzleFlashSoundData();
+                if (sound == null) {
+                    sound = new DbItemTypeSoundData();
+                }
+                sound.setDataMp3(weaponMuzzleSoundMp3.getBytes());
+                weaponType.setMuzzleFlashSoundData(sound);
+            }
+            if (weaponMuzzleSoundOgg != null) {
+                DbItemTypeSoundData sound = weaponType.getMuzzleFlashSoundData();
+                if (sound == null) {
+                    sound = new DbItemTypeSoundData();
+                }
+                sound.setDataOgg(weaponMuzzleSoundOgg.getBytes());
+                weaponType.setMuzzleFlashSoundData(sound);
             }
         } else {
             dbBaseItemType.setDbWeaponType(null);
