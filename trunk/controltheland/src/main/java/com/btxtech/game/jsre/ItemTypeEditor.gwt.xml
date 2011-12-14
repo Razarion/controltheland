@@ -24,7 +24,6 @@
     <inherits name="com.google.gwt.widgetideas.HyperlinkOverride"/>
     <inherits name='com.google.gwt.widgetideas.GWTCanvas'/>
     <inherits name='com.google.gwt.widgetideas.GlassPanel'/>
-    <inherits name='com.allen_sauer.gwt.voices.gwt-voices'/>
     <!-- Inherit the default GWT style sheet.  You can change       -->
     <!-- the theme of your GWT application by uncommenting          -->
     <!-- any one of the following lines.                            -->

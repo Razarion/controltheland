@@ -25,7 +25,6 @@
     <inherits name="com.google.gwt.widgetideas.HyperlinkOverride"/>
     <inherits name='com.google.gwt.widgetideas.GWTCanvas'/>
     <inherits name='com.google.gwt.widgetideas.GlassPanel'/>
-    <inherits name='com.allen_sauer.gwt.voices.gwt-voices'/>
     <!-- <inherits name='com.google.gwt.base.theme.chrome.Chrome'/> -->
     <!-- <inherits name='com.google.gwt.base.theme.dark.Dark'/>     -->
 
