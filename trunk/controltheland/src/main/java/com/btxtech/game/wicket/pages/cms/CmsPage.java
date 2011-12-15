@@ -45,7 +45,7 @@ public class CmsPage extends WebPage implements IHeaderContributor {
     public static final String HTML5_KEY_Y = "y";
     public static final char SORT_ASCENDING = 'a';
     public static final char SORT_DESCENDING = 'd';
-    public static final String JAVA_SCRIPT_HTML5_DETECTION = "var value='/spring/statJS?" + HTML5_KEY + "=';if(window.HTMLCanvasElement){value+='" + HTML5_KEY_Y + "';}else{value+='" + HTML5_KEY_N + "';}var f = document.createElement('script');f.setAttribute('type','text/javascript');f.setAttribute('src',value);document.getElementsByTagName('head')[0].appendChild(f);";
+    public static final String JAVA_SCRIPT_HTML5_DETECTION = "var value='/spring/statJS?" + HTML5_KEY + "=';if(window.HTMLCanvasElement){value+='" + HTML5_KEY_Y + "';}else{value+='" + HTML5_KEY_N + "';}var f = document.createElement('img');f.setAttribute('src',value);document.body.appendChild(f);";
     public static final int MAX_LEVELS = 20;
 
     @SpringBean
@@ -117,7 +117,7 @@ public class CmsPage extends WebPage implements IHeaderContributor {
     @Override
     public void renderHead(IHeaderResponse iHeaderResponse) {
         if (!userTrackingService.isJavaScriptDetected()) {
-            iHeaderResponse.renderJavascript(JAVA_SCRIPT_HTML5_DETECTION, null);
+            iHeaderResponse.renderOnLoadJavascript(JAVA_SCRIPT_HTML5_DETECTION);
         }
     }
 

@@ -44,6 +44,11 @@ public class StatisticsController implements Controller {
                 log.warn("StatisticsController: Unknown HTML5 parameter received: " + html5);
             }
             userTrackingService.onJavaScriptDetected(html5Support);
+
+            httpServletResponse.setContentType(LoadScriptCommunicationController.CONTENT_TYPE);
+            httpServletResponse.getOutputStream().write(LoadScriptCommunicationController.PIXEL_BYTES);
+            httpServletResponse.setContentLength(LoadScriptCommunicationController.PIXEL_BYTES.length);
+            httpServletResponse.getOutputStream().close();
         } catch (Exception e) {
             log.error("", e);
         }

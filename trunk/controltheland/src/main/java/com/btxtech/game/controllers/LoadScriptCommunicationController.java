@@ -28,7 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 
 @Component(value = "loadScriptCommunicationController")
 public class LoadScriptCommunicationController implements Controller {
-    private static final byte[] PIXEL_BYTES = Base64.decode("R0lGODlhAQABAPAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==");
+    public static final byte[] PIXEL_BYTES = Base64.decode("R0lGODlhAQABAPAAAAAAAAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==");
+    public static final String CONTENT_TYPE = "image/gif";
     @Autowired
     private Session session;
     private Log log = LogFactory.getLog(LoadScriptCommunicationController.class);
@@ -41,7 +42,7 @@ public class LoadScriptCommunicationController implements Controller {
             log.error("Session Id: " + session.getSessionId());
             log.error(httpServletRequest.getParameter(Constants.ERROR_KEY));
 
-            httpServletResponse.setContentType("image/gif");
+            httpServletResponse.setContentType(CONTENT_TYPE);
             httpServletResponse.getOutputStream().write(PIXEL_BYTES);
             httpServletResponse.setContentLength(PIXEL_BYTES.length);            
             httpServletResponse.getOutputStream().close();
