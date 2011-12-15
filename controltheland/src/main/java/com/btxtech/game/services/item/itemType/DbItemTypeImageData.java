@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.io.Serializable;
 
 /**
  * User: beat
@@ -11,7 +12,7 @@ import javax.persistence.Id;
  * Time: 18:03:14
  */
 @Entity(name = "ITEM_TYPE_IMAGE_DATA")
-public class DbItemTypeImageData {
+public class DbItemTypeImageData implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
