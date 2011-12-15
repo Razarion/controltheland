@@ -22,11 +22,9 @@
 
         function handleError(message, file, lineNumber) {
             errorMessage = "InPageError:\n" + message + " File: " + file + " Linenumber: " + lineNumber;
-            var head = document.getElementsByTagName('head')[0];
-            var script = document.createElement('script');
-            script.type = 'text/javascript';
-            script.src = '/spring/lsc?e=' + errorMessage;
-            head.appendChild(script);
+            var img = document.createElement('img');
+            img.src = '/spring/lsc?e=' + errorMessage;
+            document.body.appendChild(img);
             return true;
         }
     </script>
