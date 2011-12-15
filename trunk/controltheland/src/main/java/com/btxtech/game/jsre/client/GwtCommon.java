@@ -18,7 +18,7 @@ import com.btxtech.game.jsre.client.dialogs.DialogManager;
 import com.btxtech.game.jsre.client.dialogs.ExceptionDialog;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.ScriptElement;
+import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -140,10 +140,9 @@ public class GwtCommon {
 
     public static void sendLogViaLoadScriptCommunication(String logMessage) {
         try {
-            ScriptElement scriptElement = Document.get().createScriptElement();
-            scriptElement.setType("text/javascript");
-            scriptElement.setSrc("/spring/lsc?" + Constants.ERROR_KEY + "=" + logMessage);
-            Document.get().getElementsByTagName("head").getItem(0).appendChild(scriptElement);
+            ImageElement imageElement = Document.get().createImageElement();
+            imageElement.setSrc("/spring/lsc?" + Constants.ERROR_KEY + "=" + logMessage);
+            Document.get().appendChild(imageElement);
         } catch (Throwable ignore) {
             // Ignore
         }
