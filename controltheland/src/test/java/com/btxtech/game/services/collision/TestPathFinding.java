@@ -74,6 +74,17 @@ public class TestPathFinding extends AbstractServiceTest {
         // assertPathCanBeReduced(path); Do this may later
     }
 
+    @Test
+    @DirtiesContext
+    public void testPathSameStartAndDest() throws Exception {
+        configureComplexGame();
+        List<Index> path = collisionService.setupPathToDestination(new Index(800, 3400), new Index(800, 3400), TerrainType.LAND, new BoundingBox(0, 0, 0, 0, ANGELS_24));
+        assertPathNotInTerrainImage(path);
+        Assert.assertEquals(1, path.size());
+        Assert.assertEquals(new Index(800, 3400), path.get(0));
+    }
+
+
     private void assertPathNotInTerrainImage(List<Index> path) {
         Index previous = null;
         for (Index index : path) {

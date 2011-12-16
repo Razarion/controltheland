@@ -79,7 +79,13 @@ public abstract class CommonCollisionServiceImpl implements CommonCollisionServi
         }
 
         if (atomStartRect.equals(atomDestRect)) {
-            return GumPath.toItemAngelSameAtom(start, destination, boundingBox);
+            if (start.equals(destination)) {
+                List<Index> newPath = new ArrayList<Index>();
+                newPath.add(destination);
+                return newPath;
+            } else {
+                return GumPath.toItemAngelSameAtom(start, destination, boundingBox);
+            }
         }
 
         long time = System.currentTimeMillis();
